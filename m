@@ -2,138 +2,137 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3F2C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FE4C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0780206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0780206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 376CE20661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 23:41:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="dD9x0giI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376CE20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbeIEEEn (ORCPT
+        id S1726072AbeIEEIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 00:04:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34202 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726215AbeIEEEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 00:04:42 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 87BB13001500;
-        Tue,  4 Sep 2018 23:37:19 +0000 (UTC)
-Received: from sky.random (ovpn-120-15.rdu2.redhat.com [10.10.120.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 41A4A16C10;
-        Tue,  4 Sep 2018 23:37:15 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 19:37:14 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     "Schaufler, Casey" <casey.schaufler@intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
- be applied on arbitrary tasks
-Message-ID: <20180904233714.GJ4762@redhat.com>
-References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
- <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
- <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
- <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
- <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
+        Wed, 5 Sep 2018 00:08:35 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:44690 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbeIEEIe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 00:08:34 -0400
+Received: by mail-yw1-f65.google.com with SMTP id l9-v6so1943912ywc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 16:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=l7cfVWEo+s72Cr+f/IYhNLNnmwH47pf9W7a9az82J0Y=;
+        b=dD9x0giIiUICFigz0dtpjAo0Z1+LJYljzzrINoo9BCg/Tlf/PzhqUnQIj05u+VDCM0
+         DtL5hm4yOKQ6KuUGCZxI9RKLvBh8GANRbCV4OZC92CSXwKCVykSMdW2Vh0bJfRzQ/4zj
+         UaTK+GqQXQcXiLmzqMPKbY8TyrR42oAMnTfMJmKFbvO5rpjh4SHccAAPPEHOgiW1/fKp
+         uVrzgvbw4jnnGmqY+DDvDGE0adFz5YdD2/R+2kN8ZuzBfVCQAoKsCWcfN3lfcPyTPZzW
+         qO+ZgKFAWbdxVkrrFcCudVYZd6CkCJl06FWyFHmgXXkDHzgC0rJVjeou+MtjoiXO6pVf
+         nBxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=l7cfVWEo+s72Cr+f/IYhNLNnmwH47pf9W7a9az82J0Y=;
+        b=E0JJTtqgGGKNOFRQvY2cLcs7beFFbJsmIbDJUWEyWunY+JYExLYkaWH20ywTkMWO/u
+         j/R7/1oQaonGNUGfv5cQbl9EEI329ay353748Dn6cp2nxN88MQmsfOcZxDDWsDIcB7+A
+         LSA5Vim5jEstT6msfI/NYqRKtdnUCW3BFshEMllo3fozhoZvzv6KuE2J1FzPhVCz/8AN
+         lkv4MAWQSo1xDtqLCZP6TwaI7O8MeazY5/7lcwy5+K5HzI2nqGLsmp1kjUnEqPA46czG
+         Vit+9fI8gb05OtEVKu7LRnU+LQ9TED5oDuznw7iPKpM0yM97vuxruELSJqm7zzKHkhXl
+         T05Q==
+X-Gm-Message-State: APzg51DliwmFV9QeS8mNGLqx3lblGbc6aMHi/egBvcuExH+wnTp91Xca
+        inIBvQSjAU6ZnuXwNwNp+Pma3P0WamsSLFbNvz4/8A==
+X-Google-Smtp-Source: ANB0VdbeR1oZCqfPA+qZ/SShGK7kcGEsAbFhwIOTWM3X1MmvdF0ooEzaUUZT7NLubgu3UAvHq6Nio4HKNpwwL90rJZ8=
+X-Received: by 2002:a0d:ef01:: with SMTP id y1-v6mr20209976ywe.498.1536104469894;
+ Tue, 04 Sep 2018 16:41:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 04 Sep 2018 23:37:19 +0000 (UTC)
+Received: by 2002:a0d:e106:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 16:41:09 -0700 (PDT)
+In-Reply-To: <20180904212237.3078-2-atull@kernel.org>
+References: <20180904212237.3078-1-atull@kernel.org> <20180904212237.3078-2-atull@kernel.org>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Tue, 4 Sep 2018 16:41:09 -0700
+Message-ID: <CAAtXAHfzhmdZ6SnheZ-DXD14dde7Ccm66jEM=Q3UWDukKsyGBA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] fpga: do not access region struct after fpga_region_unregister
+To:     Alan Tull <atull@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Alan,
 
-On Tue, Sep 04, 2018 at 06:10:47PM +0000, Schaufler, Casey wrote:
-> The real reason to use an LSM based approach is that overloading ptrace
-> checks is a Really Bad Idea. Ptrace is a user interface. Side-channel is a
-> processor interface. Even if ptrace_may_access() does exactly what you
-
-"Side channel is a processor interface" doesn't make me optimistic,
-but I assume you're not speaking for Intel.
-
-> want it to for side-channel mitigation today it would be incredibly
-> inappropriate to tie the two together for eternity. You don't want to restrict
-> the ptrace checks to only those things that are also good for side-channel,
-> and vice versa. 
-
-It seems like you want to make this more configurable, we have all
-debugfs x86 specific tweaks to disable IBPB at runtime and we don't
-allow a runtime opt-out of IBPB alone.
-
-If you shutdown either IBRS or retpolines at runtime with debugfs,
-then IBPB goes away too.
-
-Giving a finegrined way to disable only IBPB we found was overkill
-because IBPB has never been measurable if done only when the prev task
-cannot ptrace the next task (which is a superset of the too weak
-upstream not dumpable check, but still not a performance issue).
-
-Allowing IBPB runtime opt-out doesn't make much sense if you don't
-allow to disable retpolines too still at runtime. And disabling
-retpolines from LSM doesn't sounds the right place, it's an x86
-temporary quirk only relevant for current buggy CPUs.
-
-There should be a function that decides when IBPB and flush_RSB should
-be run (flush_RSB has to be run if SMEP because with SMEP there's no
-need to run flush_RSB at every kernel entry anymore), and that
-function happens to check ptrace today, but it would check other stuff
-too if we had other interfaces besides ptrace that would allow the
-prev task to read the memory of the next task. So it's not so much
-about ptrace nor about IBPB, it's about "IBPB&flush_RSB" vs "prev task
-can read memory of next task". Then each arch can implement
-"IBPB&flush_RSB" method its own way but the check is for the common
-code and it should be in the scheduler and there's just 1 version of
-this check needed.
-
-I don't think there should be a ton of different versions of this
-function each providing a different answer, which is what LSM would
-provide.
-
-At most you can add a x86 debugfs tweak to shut off the logic but
-again it would make more sense if retpolines could be shut off at
-runtime too, doing it just for IBPB sounds backwards because it has
-such an unmeasurable overhead.
-
-> Yes. That would be me. 
-
-Even the attempt to make an innocuous call like
-ptrace_has_cap(tcred->user_ns, mode) will eventually
-deadlock there.
-
-I used a PTRACE_MODE_ check that the ptrace check code uses to filter
-out specific calls that may eventually enter LSM and hard lockup in
-non reproducible workloads (some false positive IBPB is ok, especially
-if it avoids a deadlock).
-
-Everything can be fixed in any way, but calling LSM from scheduler
-code doesn't sound the most robust thing to do in general because what
-works outside the scheduler doesn't work from within those semi atomic
-regions (it tends to work initially until it eventually
-deadlocks). The original code of such check, had all sort of deadlocks
-because of that.
+On Tue, Sep 4, 2018 at 2:22 PM, Alan Tull <atull@kernel.org> wrote:
+> A couple drivers were accessing the region struct after it had been
+> freed.  Save off the pointer to the mgr before the region struct gets
+> freed.
+>
+> Signed-off-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+> ---
+> v2: no change in v2 of patchset
+> ---
+>  drivers/fpga/dfl-fme-region.c | 4 +++-
+>  drivers/fpga/of-fpga-region.c | 3 ++-
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
+> index 0b7e19c..51a5ac2 100644
+> --- a/drivers/fpga/dfl-fme-region.c
+> +++ b/drivers/fpga/dfl-fme-region.c
+> @@ -14,6 +14,7 @@
+>   */
+>
+>  #include <linux/module.h>
+> +#include <linux/fpga/fpga-mgr.h>
+>  #include <linux/fpga/fpga-region.h>
+>
+>  #include "dfl-fme-pr.h"
+> @@ -66,9 +67,10 @@ static int fme_region_probe(struct platform_device *pdev)
+>  static int fme_region_remove(struct platform_device *pdev)
+>  {
+>         struct fpga_region *region = dev_get_drvdata(&pdev->dev);
+> +       struct fpga_manager *mgr = region->mgr;
+>
+>         fpga_region_unregister(region);
+> -       fpga_mgr_put(region->mgr);
+> +       fpga_mgr_put(mgr);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
+> index 35fabb8..052a134 100644
+> --- a/drivers/fpga/of-fpga-region.c
+> +++ b/drivers/fpga/of-fpga-region.c
+> @@ -437,9 +437,10 @@ static int of_fpga_region_probe(struct platform_device *pdev)
+>  static int of_fpga_region_remove(struct platform_device *pdev)
+>  {
+>         struct fpga_region *region = platform_get_drvdata(pdev);
+> +       struct fpga_manager *mgr = region->mgr;
+>
+>         fpga_region_unregister(region);
+> -       fpga_mgr_put(region->mgr);
+> +       fpga_mgr_put(mgr);
+>
+>         return 0;
+>  }
+> --
+> 2.7.4
+>
 
 Thanks,
-Andrea
+Moritz
