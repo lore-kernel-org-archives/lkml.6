@@ -2,136 +2,106 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73361C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5FAC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11CB92082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 049982082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:46:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=bidouilliste.com header.i=@bidouilliste.com header.b="KczURCAC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11CB92082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bidouilliste.com
+	dkim=pass (2024-bit key) header.d=lukas-braun.net header.i=@lukas-braun.net header.b="5kQGVRpi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049982082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=moshbit.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeIDVMW (ORCPT
+        id S1727637AbeIDVM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:12:22 -0400
-Received: from mail.blih.net ([212.83.177.182]:57667 "EHLO mail.blih.net"
+        Tue, 4 Sep 2018 17:12:29 -0400
+Received: from moshbit.net ([62.210.136.156]:39778 "EHLO mail.lukas-braun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbeIDVMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:12:21 -0400
-Received: from mail.blih.net (mail.blih.net [212.83.177.182])
-        by mail.blih.net (OpenSMTPD) with ESMTP id f311de5b;
-        Tue, 4 Sep 2018 18:46:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=bidouilliste.com; h=date
-        :from:to:cc:subject:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; s=mail;
-         bh=uSJ6UYRJXet2HMO71h9xlEAjfi0=; b=KczURCACHBttCOn8muVF/h14Pz/w
-        k4z85/n2Fpu1jmclRZci3k0S4nQX0YoJZqAK9TS/2eYgyNjWXzqV2FhL0jqir4Q+
-        9F39mVHuIdPGhQ+LEdhpQREFlc8o0QvkA6LyFf7op4JuCKd++MoDj5JgLd0CGRJz
-        IAiKlLDPgHOPyyg=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=bidouilliste.com; h=date
-        :from:to:cc:subject:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; q=dns; s=
-        mail; b=B1YVLF8JEW37MxokHzXqY0wYqeKO3LvrBDKlzjtNcS/Sx+xGK9P9y+KC
-        YUr+KGxxzY49bXWAmwKJIqIh34XFjSw7vYhN7f5GAPodhEzK3ZBqfQWy/MQ2C+CF
-        eOxV+giP5UrDaAx9IWueDzF0Q5y9UCft7UXKnHD0qputbKNmijM=
-Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
-        by mail.blih.net (OpenSMTPD) with ESMTPSA id b1c04b4f
-        TLS version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO;
-        Tue, 4 Sep 2018 18:46:23 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 18:46:23 +0200
-From:   Emmanuel Vadot <manu@bidouilliste.com>
-To:     Philipp Rossak <embed3d@gmail.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, linux@armlinux.org.uk,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, eugen.hristev@microchip.com,
-        rdunlap@infradead.org, vilhelm.gray@gmail.com,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        geert+renesas@glider.be, lukas@wunner.de, icenowy@aosc.io,
-        arnd@arndb.de, broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 27/30] ARM: dts: sun8i: h3: use calibration for ths
-Message-Id: <20180904184623.e4386b8e6b657b1b25e90c09@bidouilliste.com>
-In-Reply-To: <20180830154518.29507-28-embed3d@gmail.com>
-References: <20180830154518.29507-1-embed3d@gmail.com>
-        <20180830154518.29507-28-embed3d@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; amd64-portbld-freebsd12.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726211AbeIDVM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:12:28 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 17:12:27 EDT
+Received: from mail.lukas-braun.net (localhost [127.0.0.1])
+        by mail.lukas-braun.net (OpenSMTPD) with ESMTP id aa4180b1;
+        Tue, 4 Sep 2018 16:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=lukas-braun.net; h=from
+        :to:cc:subject:date:message-id; s=mail; bh=qSHZpv8YWtY1jjestNv3W
+        IG/nQ/3IsUweG2B88ANe9Q=; b=5kQGVRpiRyZRQZW70yf5/DlIMDJr8Z91tvbx0
+        mNCG942K0Mrdx1MpPDdMgUSSp0eXVAeH4QDoyv5qqJdYHgAJPF0MRbX8V0jFICTu
+        zmAUCa/luT+6oysfz8Jjezg4IrgdDLODeL8ijdYhbqJN/C9QmzDR1/Cg5p2AxZdl
+        FPLaNMrsi8911Ts3gdgMHydjm9UmKaLV1oDEnBx99RAO7/qWFTP9aM+GxH/Xnymg
+        VQVhl+8nqOaOVW0SBzK1P2VTu05mzqvYE0W2/W4vKUb6YGI8wGiOZFmrbOy1jt79
+        xW81Ruobur/MP8N3xxS5qzL38PCYCkg1y8tNEfedqC+AA==
+Received: from localhost (hedge.moshbit.net [IPv6:2001:bc8:313e:101::1])
+        by mail.lukas-braun.net (OpenSMTPD) with ESMTPSA id 9252d8ae (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Tue, 4 Sep 2018 16:39:50 +0000 (UTC)
+From:   Lukas Braun <koomi@moshbit.net>
+To:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Cc:     Ralph Palutke <ralph.palutke@fau.de>,
+        Lukas Braun <koomi@moshbit.net>
+Subject: [PATCH] KVM: arm/arm64: Check memslot bounds before mapping hugepages
+Date:   Tue,  4 Sep 2018 18:39:36 +0200
+Message-Id: <20180904163937.12759-1-koomi@moshbit.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Userspace can create a memslot with memory backed by (transparent)
+hugepages, but with bounds that do not align with hugepages.
+In that case, we cannot map the entire region in the guest as hugepages
+without exposing additional host memory to the guest and potentially
+interfering with other memslots.
+Consequently, this patch adds a bounds check when populating guest page
+tables and forces the creation of regular PTEs if mapping an entire
+hugepage would violate the memslots bounds.
 
- Hi Philipp,
+Signed-off-by: Lukas Braun <koomi@moshbit.net>
+---
+ virt/kvm/arm/mmu.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-On Thu, 30 Aug 2018 17:45:15 +0200
-Philipp Rossak <embed3d@gmail.com> wrote:
-
-> The H3 SID is supported by the kernel so we can add a NVMEM Data cell,
-> that contains the calibration data.
-> 
-> On the H3 the eFuses are located at the offset 0x200. The thermal data
-> itself has an offset of 0x34 from the eFuse base. So we end on an offset
-> of 0x234.
-> 
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
->  arch/arm/boot/dts/sun8i-h3.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-> index 1866aec69ec1..0fc447f0c02a 100644
-> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-> @@ -106,8 +106,15 @@
->  
->  	soc {
->  		sid: eeprom@1c14000 {
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
->  			compatible = "allwinner,sun8i-h3-sid";
->  			reg = <0x01c14000 0x400>;
-> +
-> +			/* Data cells */
-> +			thermal_calibration: calib@234 {
-> +				reg = <0x234 0x8>;
-> +			};
-
- You are declaring 8 bytes of calibration data but to my knowledge it's
-only 2 bytes per sensor, so 2 bytes for H3.
- Am I missing something ?
-
- Thanks,
->  		};
->  	};
->  
-> @@ -227,4 +234,6 @@
->  &ths {
->  	compatible = "allwinner,sun8i-h3-ths";
->  	#thermal-sensor-cells = <0>;
-> +	nvmem-cells = <&thermal_calibration>;
-> +	nvmem-cell-names = "calibration";
->  };
-> -- 
-> 2.11.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index ed162a6c57c5..bdbec1d136a1 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1504,6 +1504,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		hugetlb = true;
+ 		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+ 	} else {
++		unsigned long pmd_fn_mask = PTRS_PER_PMD - 1;
++
+ 		/*
+ 		 * Pages belonging to memslots that don't have the same
+ 		 * alignment for userspace and IPA cannot be mapped using
+@@ -1513,8 +1515,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		 * unmapping, updates, and splits of the THP or other pages
+ 		 * in the stage-2 block range.
+ 		 */
+-		if ((memslot->userspace_addr & ~PMD_MASK) !=
+-		    ((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK))
++		int aligned = ((memslot->userspace_addr & ~PMD_MASK) ==
++			((memslot->base_gfn << PAGE_SHIFT) & ~PMD_MASK));
++
++		/*
++		 * We also can't map a huge page if it would violate the bounds
++		 * of the containing memslot.
++		 */
++		int in_bounds = ((memslot->base_gfn <= (gfn & ~pmd_fn_mask)) &&
++			((memslot->base_gfn + memslot->npages) > (gfn | pmd_fn_mask)));
++
++		if (!aligned || !in_bounds)
+ 			force_pte = true;
+ 	}
+ 	up_read(&current->mm->mmap_sem);
 -- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+2.11.0
+
