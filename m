@@ -2,111 +2,152 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DEDC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342BAC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 029222077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD4C520659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:59:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C/rQC2eX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029222077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oLrjWxw4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4C520659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeIDWYF (ORCPT
+        id S1727692AbeIDWZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:24:05 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37275 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeIDWYF (ORCPT
+        Tue, 4 Sep 2018 18:25:32 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:41569 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeIDWZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:24:05 -0400
-Received: by mail-io0-f195.google.com with SMTP id v14-v6so3763932iob.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 10:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WfJIpNIBcJFhZzF66AaGNnJaEezM3BGzn5y88uenBc0=;
-        b=C/rQC2eXtgD7L0Ec0cvWeAL2/G5hlqR03LdWvbbFoDQOErp84BWvaGhZ4ZTmp5+wX6
-         pjRr3H9EnmL/Ddwq0ar3XJ4fB8rQ9b2JRlZREan7KbdmOBFCAKBFlMMaBGwWG3Zzv3wm
-         AkDvna3Dh+0XuFMaVa850vjnHYBs0h5MRPMASZMrh2BVkqBa+soaGIyWJEz+rvfgVTNs
-         57sFVrZtzH6H5xfzSewhRLobYhXQqubn4bZNDCBfz/i+zVNRc1nxExOGH9iQ9bZli4K8
-         nHzViRociHkpITeT5kpPS6VHddlMC44og9ojFJZOTJHdQoqjL3i8rKWtVerjAQRhKY6K
-         dNeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WfJIpNIBcJFhZzF66AaGNnJaEezM3BGzn5y88uenBc0=;
-        b=HrnT/2GleGZ7FnzuavAY92wysWF+lGRlF20LQB/CVnOCRSEX4HVbEDnxmlXdbFir9o
-         Vm874F3B7r/XtsN7MAIZkLVZ6JhFuu2vDmSRDuFXYB7Ux06ZB4ZGN0PQjIIQi4AMX8K9
-         xrXmg14tABO6uyXKK1RW09p9Zc05rdNW9J/43H/LVtUfV3IsNSUpnfmsbz32udJZ0lFO
-         SCNM23ImwaRSHpvQbLTc+eMsiq50HoLBcyR0/fPAhxni9ds4vvuBG51DmwPY9/lukB3g
-         ibngaGGn6cOAOuKWTZABR4IU7EleFodt/fb1Etxc/a6Z4Yo3n+5GqfS/3rhWTFBhnp6U
-         CZ9Q==
-X-Gm-Message-State: APzg51BXRG8xXWjN//HR9iK6GBGyPcKEOL8GjO329pPZpQcT37x11btv
-        IuYnG1D8H69aTmYaF7nag6Gogec3kLUOVBDDojQzqw==
-X-Google-Smtp-Source: ANB0VdY+oMOijOwSsY9dGHWEkF3sVmjQM5O/a957o21avynIGODBhhUiiH3v2T3k69uEO59m8hGM2jV0iKvmt2rrUUA=
-X-Received: by 2002:a6b:ee13:: with SMTP id i19-v6mr23727164ioh.132.1536083873826;
- Tue, 04 Sep 2018 10:57:53 -0700 (PDT)
+        Tue, 4 Sep 2018 18:25:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536083962; x=1567619962;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=FuBkKc7mLWWwFvCg5TBYpHiVRZl1zlicDiwT1uEST2k=;
+  b=oLrjWxw4aXBnJPJCqMdLJOdc0feaMtsWIBaun97wacbqCtQS8EOffcxv
+   oFEuZCIYygN3CYeBZxApGSLnay3FtzwQ3diQlD/9Ih1SZvpjOkpzNtlSG
+   2Oln+0qm1BGAGpU3bhBzwamJUZHb8tj4uIHPX7Of+IORQeUp5mvpoMDQw
+   mtb5Zg1gBHrFzaNc3QYDtQRTgxZxzC1/RSUQz/jSDa0RaZMNPWu3YYjkn
+   83ylOEEDUwBPRaYOqBd3rQJiOHBnXOUkiO/nYwvhFltoOVTu75CQ0Qg0B
+   EONs8W69sSBQx8ooaXAcuIEUvY9sAjX2jq9wqeHEu1WHmE2whwvvSP7D8
+   g==;
+X-IronPort-AV: E=Sophos;i="5.53,329,1531756800"; 
+   d="scan'208";a="90583680"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Sep 2018 01:59:21 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 04 Sep 2018 10:46:06 -0700
+Received: from use204589.ad.shared (HELO [10.86.59.178]) ([10.86.59.178])
+  by uls-op-cesaip02.wdc.com with ESMTP; 04 Sep 2018 10:59:21 -0700
+Subject: Re: [PATCH v2 1/3] RISC-V: Add logical CPU indexing for RISC-V
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "damein@vger.kernel.org" <damein@vger.kernel.org>
+References: <1535445370-19004-1-git-send-email-atish.patra@wdc.com>
+ <1535445370-19004-2-git-send-email-atish.patra@wdc.com>
+ <20180831060352.GA19292@infradead.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <5930c4f2-b091-6f20-ef6d-2358a370482d@wdc.com>
+Date:   Tue, 4 Sep 2018 10:59:20 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180829021754.21850-1-bhe@redhat.com> <20180829114940.k36272hhxa7fznva@kshutemo-mobl1>
-In-Reply-To: <20180829114940.k36272hhxa7fznva@kshutemo-mobl1>
-From:   Thomas Garnier <thgarnie@google.com>
-Date:   Tue, 4 Sep 2018 10:57:42 -0700
-Message-ID: <CAJcbSZGgyirW5E5cvz=oi0BhtcqfjJEw5xThQrm=irnqesFrNQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/mm/KASLR: Fix the wrong calculation of kalsr
- region initial size
-To:     kirill@shutemov.name
-Cc:     Baoquan He <bhe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180831060352.GA19292@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Baoquan!
+On 8/30/18 11:03 PM, Christoph Hellwig wrote:
+> On Tue, Aug 28, 2018 at 01:36:08AM -0700, Atish Patra wrote:
+>> Currently, both linux cpu id and hardware cpu id are same.
+>> This is not recommended as it will lead to discontinuous cpu
+>> indexing in Linux. Moreover, kdump kernel will run from CPU0
+>> which would be absent if we follow existing scheme.
+>>
+>> Implement a logical mapping between Linux cpu id and hardware
+>> cpuid to decouple these two. Always mark the boot processor as
+>> cpu0 and all other cpus get the logical cpu id based on their
+>> booting order.
+>>
+>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>> ---
+>>   arch/riscv/include/asm/smp.h | 18 +++++++++++++++++-
+>>   arch/riscv/kernel/setup.c    |  2 ++
+>>   arch/riscv/kernel/smp.c      | 19 +++++++++++++++++++
+>>   3 files changed, 38 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
+>> index 36016845..a5c257b3 100644
+>> --- a/arch/riscv/include/asm/smp.h
+>> +++ b/arch/riscv/include/asm/smp.h
+>> @@ -22,6 +22,13 @@
+>>   #include <linux/cpumask.h>
+>>   #include <linux/irqreturn.h>
+>>   
+>> +#define INVALID_HARTID -1
+>> +/*
+>> + * Mapping between linux logical cpu index and hartid.
+>> + */
+>> +extern unsigned long __cpu_logical_map[NR_CPUS];
+>> +#define cpu_logical_map(cpu)    __cpu_logical_map[cpu]
+> 
+> How about naming this cpuid_to_hardid_map to make things a little
+> more obvious?  
 
-Reviewed-by: Thomas Garnier <thgarnie@google.com>
+Sure.
+Also shouldn't this be signed given your INVALID_HARTID
+> definition above.
+> 
 
-On Wed, Aug 29, 2018 at 4:49 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Wed, Aug 29, 2018 at 10:17:53AM +0800, Baoquan He wrote:
-> > In memory KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate the
-> > initial size of the direct mapping region. This is right in the
-> > old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
-> > 46bit, and only 4-level mode was supported.
-> >
-> > Later, in commit:
-> > b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52"),
-> > __PHYSICAL_MASK_SHIFT was changed to be 52 always, no matter it's
-> > 5-level or 4-level. This is wrong for 4-level paging. Then when
-> > adapt phyiscal memory region size based on available memory, it
-> > will overflow if the amount of system RAM and the padding is bigger
-> > than 64TB.
-> >
-> > In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
-> > by replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
-> >
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
->
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->
-> --
->  Kirill A. Shutemov
+I don't know what I was thinking after adding INVALID_HARTID. I will fix 
+this.
+
+>> +static inline int riscv_hartid_to_cpuid(int hartid) { return 0 ; }
+>> +static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
+>> +				       struct cpumask *out) {
+>> +	cpumask_set_cpu(cpu_logical_map(0), out);
+>> +}
+> 
+> Please use normal coding style even for stubs:
+> 
+> static inline int riscv_hartid_to_cpuid(int hartid)
+> {
+> 	return 0;
+> }
+> 
+> static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
+> 			struct cpumask *out)
+> {
+> 	cpumask_set_cpu(cpu_logical_map(0), out);
+> }
+> 
+>> +unsigned long __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HARTID };
+> 
+> Please break the line into the usual format:
+> 
 
 
+> unsigned long __cpu_logical_map[NR_CPUS] = {
+> 	[0 ... NR_CPUS-1]	= INVALID_HARTID,
+> };
+> 
+ok.
 
--- 
-Thomas
+Regards,
+Atish
