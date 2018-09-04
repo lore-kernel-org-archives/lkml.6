@@ -2,115 +2,84 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EA0C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABACC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B257205F4
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B257205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id 5100320843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OUJE5yDE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5100320843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbeIDIBd (ORCPT
+        id S1726347AbeIDIHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 04:01:33 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:58589 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbeIDIBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 04:01:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 1661B2041E3;
-        Tue,  4 Sep 2018 05:38:25 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oCJqh9IzGCMh; Tue,  4 Sep 2018 05:38:23 +0200 (CEST)
-Received: from [192.168.16.56] (unknown [195.69.32.11])
-        by smtp.infotech.no (Postfix) with ESMTPA id 5B6E3204179;
-        Tue,  4 Sep 2018 05:38:22 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: Recent removal of bsg read/write support
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
-        drorl@infinidat.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>
-References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
- <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
- <6b907fed-d83f-de75-bde4-11270a0b1b0b@interlog.com>
- <20180903122804.GA15074@dhcp22.suse.cz>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <731941f0-c80d-605a-2750-01c8d5ec4dd9@interlog.com>
-Date:   Tue, 4 Sep 2018 05:38:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 04:07:14 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38885 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbeIDIHO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 04:07:14 -0400
+Received: by mail-it0-f68.google.com with SMTP id p129-v6so3113382ite.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 20:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GDotbDmjgK1ChKMiVVgSyzpMcHf9vdJ+z5CczE5yK1k=;
+        b=OUJE5yDEWrTAt1GjegYVlZjPpUHiUUG4lJqHVB6So56Tlx0SGnqGKlOVnbBYgvMEMr
+         5915xhY6r8TJYIoOONH8S535q4jUyTFIvnOOTegXK4takqRvP4Jg+3gW7Et4Kp+ZTJum
+         3ggL3YMq+CboptHIVxlVieJXjBCNc+FfrQyr0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GDotbDmjgK1ChKMiVVgSyzpMcHf9vdJ+z5CczE5yK1k=;
+        b=HpVJsCObowHs2dyPyi2LHpvVnIgpRqdCXjr6IgL+dxAf97DZg2UcT0YyoLow14iT62
+         BNO5Ay8H3qc7u6ozN5eR2X24UMKsVMNn8TYLrhwo6POvKviVRJ+PrNeRKOQPtZai0zZQ
+         pR+bqQGIXBxskGn89HX245LoBWRaxqIRpu8cIXqyWJXisDqJtzcxoCi4tOt8C6ur4oN3
+         Xugi4Eal2S7/pp6/WeJZVmcbPwkuhHWdgAQbyWdyCofBDiBJ+Cf4E9ZqxXliUSW2cUtg
+         /dMLzxlsB9fE+S/sr8gYE3PsNDTHp5JpJJ6DwGOwCQe8kfxXgpl9x6PGkajNHhZwQllr
+         8QvA==
+X-Gm-Message-State: APzg51ARvmHRzhpsXRNgTzrdG1jO2qAtG0RBbKNEKmKPu3Riki/+pr8Q
+        B6rddQV9T4Td6DgOuoNfTrDbBH50713sQ597evK/Eg==
+X-Google-Smtp-Source: ANB0VdYDxEg0Jw5rkKwQEhvY8u5KaOmQl5dOFip5naYG/Iru86UCYxFL82V8sApN/OY78v1RXRB7FX4mYwIXnDE7j7U=
+X-Received: by 2002:a24:3046:: with SMTP id q67-v6mr7020387itq.9.1536032646982;
+ Mon, 03 Sep 2018 20:44:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180903122804.GA15074@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+References: <cover.1536015544.git.luto@kernel.org>
+In-Reply-To: <cover.1536015544.git.luto@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 3 Sep 2018 20:43:56 -0700
+Message-ID: <CA+55aFz1BMeJ9P0MAG3BfmpX0gj3urVpaSy388j6TkkqhkPDMg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] x86/pti: Get rid of entry trampolines and add some docs
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-03 02:28 PM, Michal Hocko wrote:
-> On Sun 02-09-18 21:16:10, Douglas Gilbert wrote:
->> On 2018-09-02 01:44 PM, Richard Weinberger wrote:
->>> CC'ing relevant people. Otherwise your mail might get lost.
->>>
->>> On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
->>>>
->>>> Note: I am not subscribed to LKML so please CC replies to this email.
->>>>
->>>> Hi,
->>>>
->>>> We have an internal tool that uses the bsg read/write interface to
->>>> issue SCSI commands as part of a test suite for a storage device.
->>>>
->>>> After recently reading on LWN that this interface is to be removed we
->>>> tried porting our code to use sg instead. However, that raises new
->>>> issues - mainly getting ENOMEM over iSCSI for unknown reasons.
->>>>
->>>> Because of this we would like to continue using the bsg interface,
->>>> even if some changes are required to meet security concerns.
->>>>
->>>> Is there any chance for this removal to be reverted? I saw it was
->>>> already included in 4.19-rc1.
->>
->> Hi,
->> Both bsg and sg are relatively thin shims over the same block layer
->> pass-through calls. And neither driver will themselves generate ENOMEM
->> unless the CPU is running low of memory.
->>
->> In my experience, the main reason for unexpected ENOMEMs *** is from
->> blk_rq_map_user_iov() in block/blk_map.c called from both drivers.
->> That is a particular resource shortage rather than memory in general.
->> I do notice the blk_rq_map_user_iov() is/was called with GFP_KERNEL
->> in bsg and GFP_ATOMIC by sg. That suggests when you call write() on
->> a sg device and get ENOMEM, then wait a little (depends on your app)
->> and try again.
-> 
-> Well, what is the reason to use GFP_ATOMIC in the first place? I am not
-> familiar with the code so I might be easily wrong but sg_start_req which
-> calls blk_rq_map_user_iov resp. blk_rq_map_user with GFP_ATOMIC uses
-> mutex. It is a conditional usage so the sleeping context might depend
-> on the caller. But I guess it would be better to double check. It looks
-> suspicious to me.
+On Mon, Sep 3, 2018 at 3:59 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> Changes from v1: Get rid of the rsp_scratch macro
 
-Of the hundreds of 'hacks' on the sg driver over the years, the most
-common is an expert arguing that GFP_ATOMIC should be changed to GFP_KERNEL.
-They usually get their way. That is followed around 6 to 9 months later by
-a sg user complaining about an unexpected broken app. So back it goes to
-GFP_ATOMIC.
+I can't see anything wrong with this.
 
-Welcome to the merry-go-round.
-
-Doug Gilbert
-
+            Linus
