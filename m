@@ -2,130 +2,284 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCD4C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7408C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B7E2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:10:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HdRlZBjX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B7E2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 7608E2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7608E2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeIDTgI (ORCPT
+        id S1727533AbeIDTgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:36:08 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60636 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeIDTgI (ORCPT
+        Tue, 4 Sep 2018 15:36:22 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42026 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDTgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:36:08 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84FAPOB066673;
-        Tue, 4 Sep 2018 10:10:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536073825;
-        bh=OETzwtq61qtMmbilZ9uTfd0LxLxyrQ/vhyABHFmg/aA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HdRlZBjXqbEvFr2msCn2yY6Agr2fQHDF98doi5d2rx9RCHDJkdxdG5KpJGTbQjxvO
-         QEKZKcQt1PVqC1ENIlzofgnflLeGqB+acYfFKM3qDCPGNKI9BhQN8dgpXEtLPWsyqr
-         DPbXG+SNlHu3rDtDVH/5l9JGZ9d1k3agqaMi3vEs=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84FAP70002474;
-        Tue, 4 Sep 2018 10:10:25 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 4 Sep
- 2018 10:10:24 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 4 Sep 2018 10:10:24 -0500
-Received: from [172.22.184.106] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84FAOXp004270;
-        Tue, 4 Sep 2018 10:10:24 -0500
-Subject: Re: [PATCH] ASoC: tlv320aic31xx: Add MICBIAS off setting
-To:     Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180831180507.28867-1-afd@ti.com>
- <20180903112656.GF10302@sirena.org.uk>
- <701a066c-33e1-4476-7403-fdb9a3c366d8@ti.com>
- <20180904144159.GC12993@sirena.org.uk>
- <7163381a-ae09-ad3b-064d-990c98f13ccb@ti.com>
- <20180904145503.GD12993@sirena.org.uk>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <85973bf4-1acb-1731-d93e-29c8141a3c53@ti.com>
-Date:   Tue, 4 Sep 2018 10:10:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 15:36:22 -0400
+Received: by mail-ed1-f65.google.com with SMTP id l5so3538773edw.9;
+        Tue, 04 Sep 2018 08:10:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k5B6inshpXhdDnhT7XOIr2+uU0jzgCeVxUNISHbQ3Lo=;
+        b=ZJq/CujbsP6nWcNijrAtFtglA9BSyUg+FZYTnxcyCmwaAhGHvc26xr94cc/lNXGAeh
+         037NTrAYWUNxtEaxVeVREb91aHvKqW5h6u6lQlUPIZopZ1S0NTfC6VCUZZK87V/YjIuQ
+         O3gt5HTkSgJyEMVKdXsXn7L/H2S+UpxEp0i8w+XO3vAuyujZ6qyjbesIgu2lvgmULiPO
+         NQ7NyLjYlRookXx/Q3fG/S64rn0LL30m1SaQXOVafrkhegbU7L2ulQhLo3+xgYZxtDeS
+         8Xequ3uxbAS4VqWEMhH5gnyCNMi91xwGEELtr/9s4U7aKGEjcdWq2jWbes46AhDIsQ+A
+         OpMw==
+X-Gm-Message-State: APzg51DOklR4tzaoXkM/TpK+U85pwKOHObsnOksUqULT9qT+XQX4JNyO
+        t3jONq6Odo6P6R2EdrE45fm16UXnd54=
+X-Google-Smtp-Source: ANB0VdYffQ7QH9TjHWWf8B5rrWP8bFYFxO4NRewpO3oCnqZtD70ESyxi//56U/0yI74G2ivuduq8Cw==
+X-Received: by 2002:a50:a186:: with SMTP id 6-v6mr37841770edk.12.1536073849800;
+        Tue, 04 Sep 2018 08:10:49 -0700 (PDT)
+Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com. [74.125.82.46])
+        by smtp.gmail.com with ESMTPSA id d3-v6sm9210347edi.80.2018.09.04.08.10.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 08:10:49 -0700 (PDT)
+Received: by mail-wm0-f46.google.com with SMTP id o18-v6so4680194wmc.0;
+        Tue, 04 Sep 2018 08:10:49 -0700 (PDT)
+X-Received: by 2002:a1c:114:: with SMTP id 20-v6mr2827401wmb.4.1536073848838;
+ Tue, 04 Sep 2018 08:10:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180904145503.GD12993@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180728182615.20845-1-jagan@amarulasolutions.com>
+ <20180730090048.gl7fkduztjkxacqq@flea> <CAGb2v67wKFp2Fntm2O0xGXZjbyTZ_3YjRrD6b612jer1DDXxZw@mail.gmail.com>
+ <CAMty3ZBNM7mdtkBSq5BGuGoa5jKdSuuSVxkOoqPhDJZ-NM2THQ@mail.gmail.com>
+ <CAGb2v66Br9-KB-AD+N9mqRQ7rhrzYqUAQDkiepf2+3=FOgWKLg@mail.gmail.com>
+ <CAGb2v670WNu8tz+e0DqO5eiSvi8EEfhCrz3ksaAzvyxQvCGkgQ@mail.gmail.com> <3f31bff7-689a-3cf6-8e55-cfd98a19ad50@openedev.com>
+In-Reply-To: <3f31bff7-689a-3cf6-8e55-cfd98a19ad50@openedev.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 4 Sep 2018 23:10:37 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66zT++sakwB5WEmhXJad3CH9Fr4P06TRnM7g_etqsvRug@mail.gmail.com>
+Message-ID: <CAGb2v66zT++sakwB5WEmhXJad3CH9Fr4P06TRnM7g_etqsvRug@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH] arm64: allwinner: h6: Add OrangePi One
+ Plus initial support
+To:     Jagan Teki <jagan@openedev.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 09:55 AM, Mark Brown wrote:
-> On Tue, Sep 04, 2018 at 09:43:03AM -0500, Andrew F. Davis wrote:
->> On 09/04/2018 09:41 AM, Mark Brown wrote:
-> 
->>>>> If we really want to pay attention to something setting this up we'd
->>>>> need to completely remove the widget - what the code is doing at the
->>>>> minute is setting the voltage that the bias will go to when enabled,
->>>>> there's still a widget for turning it on and off.  There's some chance
->>>>> that this will break existing boards.
-> 
->>>> Turning on bias is controlled separately, automatically in user-space in
->>>> many cases, not based on the board. The DT needs to have a way to state
->>>> that 0v is the needed bias on this board, without this you can not set
->>>> 0v bias and 2v is chosen by default (which is IMHO should be 0v but that
->>>> would change existing behavior so I won't touch that).
-> 
->>> Surely turning on MICBIAS at 0V is equivalent to leaving the bias off?
-> 
->> It is, but DT doesn't control when or why MICBIAS is turned on or off,
->> only what voltage on should be.
-> 
-> The DT controls this in so far as it will arrange for the bias to be
-> connected to something, if it's not connected to anything then it will
-> only be turned on if the machine driver explicitly forces it on which is
-> a potential source of problems but seems comfortably in "you broke it,
-> you get to keep the pieces" territory.  If we really want to have a way
-> of explicitly specifying that some widgets should never be turned on
-> then it feels like rather than have something device and widget specific
-> like this we should instead have a higher level way of doing that which
-> can be applied to any widget, that is something that could be useful
-> especially with things like speaker drivers where there's real potential
-> for physical damage to the system.
-> 
+On Tue, Sep 4, 2018 at 10:31 PM Jagan Teki <jagan@openedev.com> wrote:
+>
+> On Monday 03 September 2018 11:05 AM, Chen-Yu Tsai wrote:
+> > On Tue, Jul 31, 2018 at 9:42 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> >>
+> >> On Tue, Jul 31, 2018 at 9:41 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >>> On Mon, Jul 30, 2018 at 2:47 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> >>>> On Mon, Jul 30, 2018 at 5:00 PM, Maxime Ripard
+> >>>> <maxime.ripard@bootlin.com> wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> On Sat, Jul 28, 2018 at 11:56:15PM +0530, Jagan Teki wrote:
+> >>>>>> OrangePi One Plus is Allwinner H6 based open-source SBC,
+> >>>>>> which support:
+> >>>>>> - Allwinner H6 Quad-core 64-bit ARM Cortex-A53
+> >>>>>> - GPU Mali-T720
+> >>>>>> - 1GB LPDDR3 RAM
+> >>>>>> - AXP805 PMIC
+> >>>>>> - 1Gbps GMAC via RTL8211
+> >>>>>> - USB 2.0 Host, OTG
+> >>>>>> - HDMI port
+> >>>>>> - 5V/2A DC power supply
+> >>>>>>
+> >>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>>>>> ---
+> >>>>>>   arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+> >>>>>>   .../allwinner/sun50i-h6-orangepi-one-plus.dts | 150 ++++++++++++++++++
+> >>>>>>   2 files changed, 151 insertions(+)
+> >>>>>>   create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> >>>>>>
+> >>>>>> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> >>>>>> index 9ffa7a038791..c38f326e7fec 100644
+> >>>>>> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> >>>>>> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> >>>>>> @@ -15,4 +15,5 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
+> >>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+> >>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus.dtb
+> >>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+> >>>>>> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
+> >>>>>>   dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
+> >>>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..0612c19cd994
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-one-plus.dts
+> >>>>>> @@ -0,0 +1,150 @@
+> >>>>>> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> >>>>>> +/*
+> >>>>>> + * Copyright (C) 2018 Amarula Solutions
+> >>>>>> + * Author: Jagan Teki <jagan@amarulasolutions.com>
+> >>>>>> + */
+> >>>>>> +
+> >>>>>> +/dts-v1/;
+> >>>>>> +
+> >>>>>> +#include "sun50i-h6.dtsi"
+> >>>>>> +
+> >>>>>> +#include <dt-bindings/gpio/gpio.h>
+> >>>>>> +
+> >>>>>> +/ {
+> >>>>>> +     model = "OrangePi One Plus";
+> >>>>>> +     compatible = "xunlong,orangepi-one-plus", "allwinner,sun50i-h6";
+> >>>>>> +
+> >>>>>> +     aliases {
+> >>>>>> +             serial0 = &uart0;
+> >>>>>> +     };
+> >>>>>> +
+> >>>>>> +     chosen {
+> >>>>>> +             stdout-path = "serial0:115200n8";
+> >>>>>> +     };
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +&mmc0 {
+> >>>>>> +     pinctrl-names = "default";
+> >>>>>> +     pinctrl-0 = <&mmc0_pins>;
+> >>>>>> +     vmmc-supply = <&reg_cldo1>;
+> >>>>>> +     cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
+> >>>>>> +     bus-width = <4>;
+> >>>>>> +     status = "okay";
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +&r_i2c {
+> >>>>>> +     status = "okay";
+> >>>>>> +
+> >>>>>> +     axp805: pmic@36 {
+> >>>>>> +             compatible = "x-powers,axp805", "x-powers,axp806";
+> >>>>>> +             reg = <0x36>;
+> >>>>>> +             interrupt-parent = <&r_intc>;
+> >>>>>> +             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> >>>>>> +             interrupt-controller;
+> >>>>>> +             #interrupt-cells = <1>;
+> >>>>>> +             x-powers,self-working-mode;
+> >>>>>> +
+> >>>>>> +             regulators {
+> >>>>>> +                     reg_aldo1: aldo1 {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <3300000>;
+> >>>>>> +                             regulator-max-microvolt = <3300000>;
+> >>>>>> +                             regulator-name = "vcc-pl";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_aldo2: aldo2 {
+> >>>>>> +                             regulator-min-microvolt = <3300000>;
+> >>>>>> +                             regulator-max-microvolt = <3300000>;
+> >>>>>> +                             regulator-name = "vcc-ac200";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_aldo3: aldo3 {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <3300000>;
+> >>>>>> +                             regulator-max-microvolt = <3300000>;
+> >>>>>> +                             regulator-name = "vcc25-dram";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_bldo1: bldo1 {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <1800000>;
+> >>>>>> +                             regulator-max-microvolt = <1800000>;
+> >>>>>> +                             regulator-name = "vcc-bias-pll";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_bldo2: bldo2 {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <1800000>;
+> >>>>>> +                             regulator-max-microvolt = <1800000>;
+> >>>>>> +                             regulator-name = "vcc-efuse-pcie-hdmi-io";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_bldo3: bldo3 {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <1800000>;
+> >>>>>> +                             regulator-max-microvolt = <1800000>;
+> >>>>>> +                             regulator-name = "vcc-dcxoio";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     bldo4 {
+> >>>>>> +                             /* unused */
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_cldo1: cldo1 {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <3300000>;
+> >>>>>> +                             regulator-max-microvolt = <3300000>;
+> >>>>>> +                             regulator-name = "vcc-3v3";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_cldo2: cldo2 {
+> >>>>>> +                             regulator-min-microvolt = <3300000>;
+> >>>>>> +                             regulator-max-microvolt = <3300000>;
+> >>>>>> +                             regulator-name = "vcc-wifi-1";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_cldo3: cldo3 {
+> >>>>>> +                             regulator-min-microvolt = <3300000>;
+> >>>>>> +                             regulator-max-microvolt = <3300000>;
+> >>>>>> +                             regulator-name = "vcc-wifi-2";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_dcdca: dcdca {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <810000>;
+> >>>>>> +                             regulator-max-microvolt = <1080000>;
+> >>>>>> +                             regulator-name = "vdd-cpu";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_dcdcc: dcdcc {
+> >>>>>> +                             regulator-min-microvolt = <810000>;
+> >>>>>> +                             regulator-max-microvolt = <1080000>;
+> >>>>>> +                             regulator-name = "vdd-gpu";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_dcdcd: dcdcd {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <960000>;
+> >>>>>> +                             regulator-max-microvolt = <960000>;
+> >>>>>> +                             regulator-name = "vdd-sys";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     reg_dcdce: dcdce {
+> >>>>>> +                             regulator-always-on;
+> >>>>>> +                             regulator-min-microvolt = <1200000>;
+> >>>>>> +                             regulator-max-microvolt = <1200000>;
+> >>>>>> +                             regulator-name = "vcc-dram";
+> >>>>>> +                     };
+> >>>>>> +
+> >>>>>> +                     sw {
+> >>>>>> +                             /* unused */
+> >>>>>> +                     };
+> >>>>>
+> >>>>> Can't we have a DTSI for this PMIC too?
+> >>>>
+> >>>> Back when we started adding the regulators, Mark wasn't too happy with
+> >>>> all the placeholders we put in the dtsi. I think we got away with it
+> >>>> because we had other things in there as well. That's not true for this
+> >>>> particular PMIC.
+> >>>
+> >>> So we need separate dtsi for this PMIC as well?
+> >>
+> >> I don't think we do. We don't gain much.
+> >
+> > Merged with Maxime's ack, and the subject prefix fixed.
+> > Also squashed in the Ethernet patch for this board.
+>
+> H6 EMAC node changes still in ML.
 
+Oops. Dropped that part. Sorry about that.
 
-Not sure how that could even look, it would need to be in DT as only
-that layer knows the connections, but then the it would also have to
-have internal knowledge of the widgets used in the driver..
-
-
-> Like I said in my original reply I'm also worried that this will break
-> existing boards by causing them to change to a voltage of 0 when they
-> had managed to end up with the default of 2V which happened to work for
-> them.
-> 
-
-Then only time this could happen is if they specified MICBIAS_OFF in DT
-but got the default 2v instead. In which case, yes, the behavior would
-change, but it would also be changing to the correct behavior. We can't
-avoid fixing code on the off chance someone depended on the broken
-behavior, no progress could ever be made.
+ChenYu
