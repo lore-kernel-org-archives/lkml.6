@@ -2,108 +2,176 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5712AC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D353C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:36:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CEBC20867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:36:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CEBC20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EB06B20843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:36:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lsitec-org-br.20150623.gappssmtp.com header.i=@lsitec-org-br.20150623.gappssmtp.com header.b="X/bI+GRI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB06B20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lsitec.org.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeIDUCP (ORCPT
+        id S1727806AbeIDUCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:02:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:21798 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbeIDUCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:02:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 08:36:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="82914239"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.138])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Sep 2018 08:36:34 -0700
-Date:   Tue, 4 Sep 2018 23:49:09 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     kbuild-all@01.org, robh+dt@kernel.org, maxime.ripard@bootlin.com,
-        wens@csie.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-        a.hajda@samsung.com, jernej.skrabec@siol.net,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/27] clk: sunxi-ng: h6: Set video PLLs limits
-Message-ID: <20180904154909.GR17047@intel.com>
+        Tue, 4 Sep 2018 16:02:18 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:47061 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727791AbeIDUCR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:02:17 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k14-v6so3588486edr.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 08:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lsitec-org-br.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=bFVfBd+O8ye20bkrzs7uAGs/JqJfuMdRRKtKkYL9tp8=;
+        b=X/bI+GRIAW1TLaOU+WKcW6SZ7v+YrfAP2wDGZsf9LWT5wPXcEW/5E71FVQN4BecBgv
+         wfPluKd7o0WDY9nA9ch55+7MNkRf1nCH/ahKDXhNnVkMHy+koyOgF+bCHDj4RRFe/V/N
+         iu1HwGc5NRPxa5vA/8PM6G3biuEf2EYQcXSVlXPobw/xNF90Ama23ZrBFSkFfRgbuwo6
+         S7fHivAToazUjQ1lHv1zx8+es9VhQTJxwAQ5GDxSU7wscBDJrxHvIGy/uWpFIHTC0oYc
+         WzVFys8rI7mRFw3AlK7u9b94oIPoolMFQ1N8yM80RokDx1wckMGFdA+2LhCJm10mcgzl
+         MYSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=bFVfBd+O8ye20bkrzs7uAGs/JqJfuMdRRKtKkYL9tp8=;
+        b=PWpa9tw1/ddXxaVCAU+mrEXGTjJiwPM8q3auSrOZCurBs279BFFsi0ghWHVomgAhT9
+         sJee2SekdahGuzbas+18AsZJyKAWJjxOZDwFe/gj3F21NIZOQ248ZkxjxTBROukYMIkk
+         qcA8Fa6xQLc/OvHL8/BRPQbBNeOKjjRoHeDzWK4lg9rmuRuX+l70Ty/vTXcrq2qJTuHx
+         YdimUnk14uWfOSgqEiDrkCzWbOioCw/JZELJxva4tDkKLpAu4zvlFvYDYpraFU1L6QhH
+         lBXLZ38vpGdF2nAPqpczDcnfHDdZ1E/mOydssj75bbvDWUzHbHuroQwiz5aaeRDILJIl
+         oIHg==
+X-Gm-Message-State: APzg51AKldi5Kaf4U6OMVHF+pwf/d+z/OoLPUq5/Im/Ln8ITmFX/6PfX
+        oTvyRXwPkjYYA9ifoLE3qkUDMBmvOIIvUJL9+mhFoA==
+X-Google-Smtp-Source: ANB0VdavH0BWvlwgcH65tSVOaFqbOPa0/XicwXfxQDq/8Pra2ZQID3rsS7SyJfhVzmwaKeC+wIWC8VkM/lAKWUxWfN8=
+X-Received: by 2002:a50:a7a2:: with SMTP id i31-v6mr38590202edc.296.1536075397653;
+ Tue, 04 Sep 2018 08:36:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180902072643.4917-7-jernej.skrabec@siol.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a17:906:2443:0:0:0:0 with HTTP; Tue, 4 Sep 2018 08:36:36
+ -0700 (PDT)
+From:   Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date:   Tue, 4 Sep 2018 12:36:36 -0300
+Message-ID: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
+Subject: [PATCH v2 01/03] dt-bindings: clock: Add Clock Management Unit for
+ Actions Semi S500 SoC
+To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= 
+        <guilherme.simoes@lsitec.org.br>,
+        Jon maddog Hall <jon.maddog.hall@gmail.com>,
+        mkzuffo@lsi.usp.br,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
+        support@cubietech.com, catalin.marinas@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        will.deacon@arm.com, thomas liau <thomas.liau@actions-semi.com>,
+        darren@cubietech.com, robh+dt@kernel.org,
+        jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+        Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jernej,
+Add Clock Management Unit for Actions Semi S500 SoC. Dt-Bindings
+constants added.
+Tested on a Lemaker Guitar board.
 
-Thank you for the patch! Perhaps something to improve:
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
-[auto build test WARNING on sunxi/sunxi/for-next]
-[also build test WARNING on v4.19-rc2 next-20180831]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Jernej-Skrabec/Allwinner-H6-DE3-and-HDMI-support/20180903-082543
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi/for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-:::::: branch date: 6 hours ago
-:::::: commit date: 6 hours ago
-
->> drivers/clk/sunxi-ng/ccu-sun50i-h6.c:124:27: sparse: constant 2400000000 is so big it is long
-   drivers/clk/sunxi-ng/ccu-sun50i-h6.c:142:27: sparse: constant 2400000000 is so big it is long
-
-# https://github.com/0day-ci/linux/commit/752a88510f0bcada69753fccb31adb187f80f29a
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 752a88510f0bcada69753fccb31adb187f80f29a
-vim +124 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-
-524353ea4 Icenowy Zheng  2018-03-16  111  
-524353ea4 Icenowy Zheng  2018-03-16  112  /*
-524353ea4 Icenowy Zheng  2018-03-16  113   * For Video PLLs, the output divider is described as "used for testing"
-524353ea4 Icenowy Zheng  2018-03-16  114   * in the user manual. So it's not modelled and forced to 0.
-524353ea4 Icenowy Zheng  2018-03-16  115   */
-524353ea4 Icenowy Zheng  2018-03-16  116  #define SUN50I_H6_PLL_VIDEO0_REG	0x040
-524353ea4 Icenowy Zheng  2018-03-16  117  static struct ccu_nm pll_video0_clk = {
-524353ea4 Icenowy Zheng  2018-03-16  118  	.enable		= BIT(31),
-524353ea4 Icenowy Zheng  2018-03-16  119  	.lock		= BIT(28),
-524353ea4 Icenowy Zheng  2018-03-16  120  	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
-524353ea4 Icenowy Zheng  2018-03-16  121  	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-524353ea4 Icenowy Zheng  2018-03-16  122  	.fixed_post_div	= 4,
-752a88510 Jernej Skrabec 2018-09-02  123  	.min_rate	= 288000000,
-752a88510 Jernej Skrabec 2018-09-02 @124  	.max_rate	= 2400000000,
-524353ea4 Icenowy Zheng  2018-03-16  125  	.common		= {
-524353ea4 Icenowy Zheng  2018-03-16  126  		.reg		= 0x040,
-524353ea4 Icenowy Zheng  2018-03-16  127  		.features	= CCU_FEATURE_FIXED_POSTDIV,
-524353ea4 Icenowy Zheng  2018-03-16  128  		.hw.init	= CLK_HW_INIT("pll-video0", "osc24M",
-524353ea4 Icenowy Zheng  2018-03-16  129  					      &ccu_nm_ops,
-524353ea4 Icenowy Zheng  2018-03-16  130  					      CLK_SET_RATE_UNGATE),
-524353ea4 Icenowy Zheng  2018-03-16  131  	},
-524353ea4 Icenowy Zheng  2018-03-16  132  };
-524353ea4 Icenowy Zheng  2018-03-16  133  
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+diff --git a/include/dt-bindings/clock/actions,s500-cmu.h
+b/include/dt-bindings/clock/actions,s500-cmu.h
+new file mode 100644
+index 000000000000..34e5849ffcf1
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s500-cmu.h
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Device Tree binding constants for Actions Semi S500 Clock Management Unit
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Copyright (c) 2018 Linaro Ltd.
++// Copyright (c) 2018 LSI-TEC - Caninos Loucos
++
++#ifndef __DT_BINDINGS_CLOCK_S500_CMU_H
++#define __DT_BINDINGS_CLOCK_S500_CMU_H
++
++#define CLK_NONE            0
++
++/* fixed rate clocks */
++#define CLK_LOSC            1
++#define CLK_HOSC            2
++
++/* pll clocks */
++#define CLK_CORE_PLL        3
++#define CLK_DEV_PLL            4
++#define CLK_DDR_PLL            5
++#define CLK_NAND_PLL        6
++#define CLK_DISPLAY_PLL        7
++#define CLK_ETHERNET_PLL    8
++#define CLK_AUDIO_PLL        9
++
++/* system clock */
++#define CLK_DEV                10
++#define CLK_H                11
++#define CLK_AHBPREDIV        12
++#define CLK_AHB                13
++#define CLK_DE                14
++#define CLK_BISP            15
++#define CLK_VCE                16
++#define CLK_VDE                17
++
++/* peripheral device clock */
++#define CLK_TIMER            18
++#define CLK_I2C0            19
++#define CLK_I2C1            20
++#define CLK_I2C2            21
++#define CLK_I2C3            22
++#define CLK_PWM0            23
++#define CLK_PWM1            24
++#define CLK_PWM2            25
++#define CLK_PWM3            26
++#define CLK_PWM4            27
++#define CLK_PWM5            28
++#define CLK_SD0                29
++#define CLK_SD1                30
++#define CLK_SD2                31
++#define CLK_SENSOR0            32
++#define CLK_SENSOR1            33
++#define CLK_SPI0            34
++#define CLK_SPI1            35
++#define CLK_SPI2            36
++#define CLK_SPI3            37
++#define CLK_UART0            38
++#define CLK_UART1            39
++#define CLK_UART2            40
++#define CLK_UART3            41
++#define CLK_UART4            42
++#define CLK_UART5            43
++#define CLK_UART6            44
++#define CLK_DE1                45
++#define CLK_DE2                46
++#define CLK_I2SRX            47
++#define CLK_I2STX            48
++#define CLK_HDMI_AUDIO        49
++#define CLK_HDMI            50
++#define CLK_SPDIF            51
++#define CLK_NAND            52
++#define CLK_ECC                53
++#define CLK_RMII_REF        54
++
++#define CLK_NR_CLKS            (CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
+-- 
+2.11.0
