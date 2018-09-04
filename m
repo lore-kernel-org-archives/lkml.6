@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30805C4321E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033D2C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30812077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A78462077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 21:22:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTvGZT2p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30812077C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJOd1ps2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78462077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbeIEBtn (ORCPT
+        id S1727509AbeIEBto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 21:49:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56092 "EHLO mail.kernel.org"
+        Tue, 4 Sep 2018 21:49:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727258AbeIEBtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 21:49:41 -0400
+        id S1726507AbeIEBtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 21:49:43 -0400
 Received: from localhost.localdomain (unknown [136.62.81.41])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DC0A20867;
-        Tue,  4 Sep 2018 21:22:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 587962086C;
+        Tue,  4 Sep 2018 21:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536096165;
-        bh=aZxJa9EwC2odA6ZDwQBJIVN9fEVpkXZh1r+aESjIn5c=;
+        s=default; t=1536096167;
+        bh=dJ9kZICIcJRgCtPKa2k6p0yMCq1iY7snJPr0mbEJR9I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VTvGZT2pRygiK9YCMKHVcUYA+G+cxR2mQ55ZMh+l3tr+Kz+O7ud00u7mjER2A/Dnz
-         kh95swN0j7PHMLjWhAX9kJLJZfND2YZzGa946FZVllTU7YeQBNkix1a/T1Yti12ia6
-         7gttOu/R86LqMOvqBDAHbDk9BqeNJ/RY07jN55yw=
+        b=HJOd1ps2J/Jb8UzidBgTVeQZwoC04trA7an5Roi+JWmWSqr85iHoJXAuUjgF3GmjY
+         sujukD5DJTGnNa8/3tdAvUdeKkIIRd2pw/6v+lj+uPOg//73d2TDT+fywjVTemsVSC
+         xQCTJ2ry00TR9Y7nikVUcL8987u6QHRrUX5qIl+U=
 From:   Alan Tull <atull@kernel.org>
 To:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
         linux-fpga@vger.kernel.org, linux-doc@vger.kernel.org,
         Alan Tull <atull@kernel.org>
-Subject: [PATCH v2 4/8] fpga: add devm_fpga_region_create
-Date:   Tue,  4 Sep 2018 16:22:33 -0500
-Message-Id: <20180904212237.3078-5-atull@kernel.org>
+Subject: [PATCH v2 7/8] docs: fpga: document fpga manager flags
+Date:   Tue,  4 Sep 2018 16:22:36 -0500
+Message-Id: <20180904212237.3078-8-atull@kernel.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180904212237.3078-1-atull@kernel.org>
 References: <20180904212237.3078-1-atull@kernel.org>
@@ -52,255 +52,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devm_fpga_region_create() which is the
-managed version of fpga_region_create().
-
-Change current region drivers to use
-devm_fpga_region_create().
+Add flags #defines to kerneldoc documentation in a
+useful place.
 
 Signed-off-by: Alan Tull <atull@kernel.org>
-Suggested-by: Federico Vaga <federico.vaga@cern.ch>
 ---
-v2: add suggested-by
+v2: add description for FPGA_MGR_ENCRYPTED_BITSTREAM
 ---
- Documentation/driver-api/fpga/fpga-region.rst |  3 ++
- drivers/fpga/dfl-fme-region.c                 |  6 +--
- drivers/fpga/dfl.c                            |  6 +--
- drivers/fpga/fpga-region.c                    | 68 +++++++++++++++++++++++----
- drivers/fpga/of-fpga-region.c                 |  6 +--
- include/linux/fpga/fpga-region.h              |  4 ++
- 6 files changed, 73 insertions(+), 20 deletions(-)
+ Documentation/driver-api/fpga/fpga-mgr.rst |  5 +++++
+ include/linux/fpga/fpga-mgr.h              | 20 ++++++++++++++------
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
-index f30333c..dc9f75c 100644
---- a/Documentation/driver-api/fpga/fpga-region.rst
-+++ b/Documentation/driver-api/fpga/fpga-region.rst
-@@ -90,6 +90,9 @@ API to add a new FPGA region
-    :functions: fpga_region
+diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
+index 431556d..db8885e 100644
+--- a/Documentation/driver-api/fpga/fpga-mgr.rst
++++ b/Documentation/driver-api/fpga/fpga-mgr.rst
+@@ -183,6 +183,11 @@ API for implementing a new FPGA Manager driver
+ API for programming an FPGA
+ ---------------------------
  
- .. kernel-doc:: drivers/fpga/fpga-region.c
-+   :functions: devm_fpga_region_create
++FPGA Manager flags
 +
-+.. kernel-doc:: drivers/fpga/fpga-region.c
-    :functions: fpga_region_create
- 
- .. kernel-doc:: drivers/fpga/fpga-region.c
-diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
-index 51a5ac2..ec134ec 100644
---- a/drivers/fpga/dfl-fme-region.c
-+++ b/drivers/fpga/dfl-fme-region.c
-@@ -39,7 +39,7 @@ static int fme_region_probe(struct platform_device *pdev)
- 	if (IS_ERR(mgr))
- 		return -EPROBE_DEFER;
- 
--	region = fpga_region_create(dev, mgr, fme_region_get_bridges);
-+	region = devm_fpga_region_create(dev, mgr, fme_region_get_bridges);
- 	if (!region) {
- 		ret = -ENOMEM;
- 		goto eprobe_mgr_put;
-@@ -51,14 +51,12 @@ static int fme_region_probe(struct platform_device *pdev)
- 
- 	ret = fpga_region_register(region);
- 	if (ret)
--		goto region_free;
-+		goto eprobe_mgr_put;
- 
- 	dev_dbg(dev, "DFL FME FPGA Region probed\n");
- 
- 	return 0;
- 
--region_free:
--	fpga_region_free(region);
- eprobe_mgr_put:
- 	fpga_mgr_put(mgr);
- 	return ret;
-diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-index a9b521b..2c09e50 100644
---- a/drivers/fpga/dfl.c
-+++ b/drivers/fpga/dfl.c
-@@ -899,7 +899,7 @@ dfl_fpga_feature_devs_enumerate(struct dfl_fpga_enum_info *info)
- 	if (!cdev)
- 		return ERR_PTR(-ENOMEM);
- 
--	cdev->region = fpga_region_create(info->dev, NULL, NULL);
-+	cdev->region = devm_fpga_region_create(info->dev, NULL, NULL);
- 	if (!cdev->region) {
- 		ret = -ENOMEM;
- 		goto free_cdev_exit;
-@@ -911,7 +911,7 @@ dfl_fpga_feature_devs_enumerate(struct dfl_fpga_enum_info *info)
- 
- 	ret = fpga_region_register(cdev->region);
- 	if (ret)
--		goto free_region_exit;
-+		goto free_cdev_exit;
- 
- 	/* create and init build info for enumeration */
- 	binfo = devm_kzalloc(info->dev, sizeof(*binfo), GFP_KERNEL);
-@@ -942,8 +942,6 @@ dfl_fpga_feature_devs_enumerate(struct dfl_fpga_enum_info *info)
- 
- unregister_region_exit:
- 	fpga_region_unregister(cdev->region);
--free_region_exit:
--	fpga_region_free(cdev->region);
- free_cdev_exit:
- 	devm_kfree(info->dev, cdev);
- 	return ERR_PTR(ret);
-diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-index 0d65220..56f773d 100644
---- a/drivers/fpga/fpga-region.c
-+++ b/drivers/fpga/fpga-region.c
-@@ -185,6 +185,10 @@ ATTRIBUTE_GROUPS(fpga_region);
-  * @mgr: manager that programs this region
-  * @get_bridges: optional function to get bridges to a list
-  *
-+ * The caller of this function is responsible for freeing the resulting region
-+ * struct with fpga_region_free().  Using devm_fpga_region_create() instead is
-+ * recommended.
-+ *
-  * Return: struct fpga_region or NULL
-  */
- struct fpga_region
-@@ -230,8 +234,8 @@ struct fpga_region
- EXPORT_SYMBOL_GPL(fpga_region_create);
- 
- /**
-- * fpga_region_free - free a struct fpga_region
-- * @region: FPGA region created by fpga_region_create
-+ * fpga_region_free - free a FPGA region created by fpga_region_create()
-+ * @region: FPGA region
-  */
- void fpga_region_free(struct fpga_region *region)
- {
-@@ -240,21 +244,72 @@ void fpga_region_free(struct fpga_region *region)
- }
- EXPORT_SYMBOL_GPL(fpga_region_free);
- 
-+static void devm_fpga_region_release(struct device *dev, void *res)
-+{
-+	struct fpga_region *region = *(struct fpga_region **)res;
++.. kernel-doc:: include/linux/fpga/fpga-mgr.h
++   :doc: FPGA Manager flags
 +
-+	fpga_region_free(region);
-+}
-+
+ .. kernel-doc:: include/linux/fpga/fpga-mgr.h
+    :functions: fpga_image_info
+ 
+diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+index 1ca02ce..e8ca62b 100644
+--- a/include/linux/fpga/fpga-mgr.h
++++ b/include/linux/fpga/fpga-mgr.h
+@@ -53,12 +53,20 @@ enum fpga_mgr_states {
+ 	FPGA_MGR_STATE_OPERATING,
+ };
+ 
+-/*
+- * FPGA Manager flags
+- * FPGA_MGR_PARTIAL_RECONFIG: do partial reconfiguration if supported
+- * FPGA_MGR_EXTERNAL_CONFIG: FPGA has been configured prior to Linux booting
+- * FPGA_MGR_BITSTREAM_LSB_FIRST: SPI bitstream bit order is LSB first
+- * FPGA_MGR_COMPRESSED_BITSTREAM: FPGA bitstream is compressed
 +/**
-+ * devm_fpga_region_create - create and initialize a managed FPGA region struct
-+ * @dev: device parent
-+ * @mgr: manager that programs this region
-+ * @get_bridges: optional function to get bridges to a list
++ * DOC: FPGA Manager flags
 + *
-+ * This function is intended for use in a FPGA region driver's probe function.
-+ * After the region driver creates the region struct with
-+ * devm_fpga_region_create(), it should register it with fpga_region_register().
-+ * The region driver's remove function should call fpga_region_unregister().
-+ * The region struct allocated with this function will be freed automatically on
-+ * driver detach.  This includes the case of a probe function returning error
-+ * before calling fpga_region_register(), the struct will still get cleaned up.
++ * Flags used in the &fpga_image_info->flags field
 + *
-+ * Return: struct fpga_region or NULL
-+ */
-+struct fpga_region
-+*devm_fpga_region_create(struct device *dev,
-+			 struct fpga_manager *mgr,
-+			 int (*get_bridges)(struct fpga_region *))
-+{
-+	struct fpga_region **ptr, *region;
-+
-+	ptr = devres_alloc(devm_fpga_region_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return NULL;
-+
-+	region = fpga_region_create(dev, mgr, get_bridges);
-+	if (!region) {
-+		devres_free(ptr);
-+	} else {
-+		*ptr = region;
-+		devres_add(dev, ptr);
-+	}
-+
-+	return region;
-+}
-+EXPORT_SYMBOL_GPL(devm_fpga_region_create);
-+
- /**
-  * fpga_region_register - register a FPGA region
-- * @region: FPGA region created by fpga_region_create
-+ * @region: FPGA region
++ * %FPGA_MGR_PARTIAL_RECONFIG: do partial reconfiguration if supported
 + *
-  * Return: 0 or -errno
++ * %FPGA_MGR_EXTERNAL_CONFIG: FPGA has been configured prior to Linux booting
++ *
++ * %FPGA_MGR_ENCRYPTED_BITSTREAM: indicates bitstream is encrypted
++ *
++ * %FPGA_MGR_BITSTREAM_LSB_FIRST: SPI bitstream bit order is LSB first
++ *
++ * %FPGA_MGR_COMPRESSED_BITSTREAM: FPGA bitstream is compressed
   */
- int fpga_region_register(struct fpga_region *region)
- {
- 	return device_add(&region->dev);
--
- }
- EXPORT_SYMBOL_GPL(fpga_region_register);
- 
- /**
-- * fpga_region_unregister - unregister and free a FPGA region
-+ * fpga_region_unregister - unregister a FPGA region
-  * @region: FPGA region
-+ *
-+ * This function is intended for use in a FPGA region driver's remove function.
-+ * If the region was created by devm_fpga_region_create(), it will be
-+ * automatically freed.  If the region was created by fpga_region_create(), the
-+ * caller is responsible for freeing it with fpga_region_free().
-  */
- void fpga_region_unregister(struct fpga_region *region)
- {
-@@ -264,9 +319,6 @@ EXPORT_SYMBOL_GPL(fpga_region_unregister);
- 
- static void fpga_region_dev_release(struct device *dev)
- {
--	struct fpga_region *region = to_fpga_region(dev);
--
--	fpga_region_free(region);
- }
- 
- /**
-diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
-index 052a134..122286f 100644
---- a/drivers/fpga/of-fpga-region.c
-+++ b/drivers/fpga/of-fpga-region.c
-@@ -410,7 +410,7 @@ static int of_fpga_region_probe(struct platform_device *pdev)
- 	if (IS_ERR(mgr))
- 		return -EPROBE_DEFER;
- 
--	region = fpga_region_create(dev, mgr, of_fpga_region_get_bridges);
-+	region = devm_fpga_region_create(dev, mgr, of_fpga_region_get_bridges);
- 	if (!region) {
- 		ret = -ENOMEM;
- 		goto eprobe_mgr_put;
-@@ -418,7 +418,7 @@ static int of_fpga_region_probe(struct platform_device *pdev)
- 
- 	ret = fpga_region_register(region);
- 	if (ret)
--		goto eprobe_free;
-+		goto eprobe_mgr_put;
- 
- 	of_platform_populate(np, fpga_region_of_match, NULL, &region->dev);
- 	dev_set_drvdata(dev, region);
-@@ -427,8 +427,6 @@ static int of_fpga_region_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--eprobe_free:
--	fpga_region_free(region);
- eprobe_mgr_put:
- 	fpga_mgr_put(mgr);
- 	return ret;
-diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-index 0521b7f..27cb706 100644
---- a/include/linux/fpga/fpga-region.h
-+++ b/include/linux/fpga/fpga-region.h
-@@ -44,4 +44,8 @@ void fpga_region_free(struct fpga_region *region);
- int fpga_region_register(struct fpga_region *region);
- void fpga_region_unregister(struct fpga_region *region);
- 
-+struct fpga_region
-+*devm_fpga_region_create(struct device *dev, struct fpga_manager *mgr,
-+			int (*get_bridges)(struct fpga_region *));
-+
- #endif /* _FPGA_REGION_H */
+ #define FPGA_MGR_PARTIAL_RECONFIG	BIT(0)
+ #define FPGA_MGR_EXTERNAL_CONFIG	BIT(1)
 -- 
 2.7.4
 
