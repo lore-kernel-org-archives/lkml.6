@@ -6,91 +6,212 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC7AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1512BC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8C2020843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C2020843
+	by mail.kernel.org (Postfix) with ESMTP id AA67B20867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA67B20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeIDTpF (ORCPT
+        id S1727704AbeIDTp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:45:05 -0400
-Received: from mga01.intel.com ([192.55.52.88]:15042 "EHLO mga01.intel.com"
+        Tue, 4 Sep 2018 15:45:29 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21227 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727142AbeIDTpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:45:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727142AbeIDTp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:45:29 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 08:19:32 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 08:19:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="260602246"
+   d="scan'208";a="87531171"
 Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.138])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Sep 2018 08:19:28 -0700
-Date:   Tue, 4 Sep 2018 23:32:04 +0800
+  by orsmga001.jf.intel.com with ESMTP; 04 Sep 2018 08:16:42 -0700
+Date:   Tue, 4 Sep 2018 23:29:18 +0800
 From:   kbuild test robot <lkp@intel.com>
-To:     Kenneth Lee <nek.in.cn@gmail.com>
-Cc:     kbuild-all@01.org, Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
-Subject: Re: [PATCH 3/7] vfio: add sdmdev support
-Message-ID: <20180904153204.GJ17047@intel.com>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-nvdimm@ml01.01.org, jack@suse.cz, stefanha@redhat.com,
+        dan.j.williams@intel.com, riel@surriel.com, nilal@redhat.com,
+        kwolf@redhat.com, pbonzini@redhat.com, ross.zwisler@intel.com,
+        david@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
+        mst@redhat.com, niteshnarayanlal@hotmail.com,
+        lcapitulino@redhat.com, imammedo@redhat.com, eblake@redhat.com,
+        pagupta@redhat.com
+Subject: Re: [PATCH 2/3] libnvdimm: nd_region flush callback support
+Message-ID: <20180904152917.GE17047@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180903005204.26041-4-nek.in.cn@gmail.com>
+In-Reply-To: <20180831133019.27579-3-pagupta@redhat.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kenneth,
+Hi Pankaj,
 
 Thank you for the patch! Perhaps something to improve:
 
-[auto build test WARNING on cryptodev/master]
+[auto build test WARNING on linux-nvdimm/libnvdimm-for-next]
 [also build test WARNING on v4.19-rc2 next-20180831]
 [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-url:    https://github.com/0day-ci/linux/commits/Kenneth-Lee/A-General-Accelerator-Framework-WarpDrive/20180903-162733
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+url:    https://github.com/0day-ci/linux/commits/Pankaj-Gupta/kvm-fake-DAX-device/20180903-160032
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git libnvdimm-for-next
 reproduce:
         # apt-get install sparse
         make ARCH=x86_64 allmodconfig
         make C=1 CF=-D__CHECK_ENDIAN__
-:::::: branch date: 3 hours ago
-:::::: commit date: 3 hours ago
+:::::: branch date: 7 hours ago
+:::::: commit date: 7 hours ago
 
->> drivers/vfio/sdmdev/vfio_sdmdev.c:106:30: sparse: symbol 'vfio_sdmdev_groups' was not declared. Should it be static?
-   drivers/vfio/sdmdev/vfio_sdmdev.c: In function 'vfio_sdmdev_mdev_remove':
-   drivers/vfio/sdmdev/vfio_sdmdev.c:178:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-     if (sdmdev->ops->put_queue);
-     ^~
-   drivers/vfio/sdmdev/vfio_sdmdev.c:179:3: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
-      sdmdev->ops->put_queue(q);
-      ^~~~~~
+   drivers/nvdimm/pmem.c:116:25: sparse: expression using sizeof(void)
+   drivers/nvdimm/pmem.c:135:25: sparse: expression using sizeof(void)
+>> drivers/nvdimm/pmem.c:204:32: sparse: incorrect type in assignment (different base types) @@    expected restricted blk_status_t [usertype] bi_status @@    got e] bi_status @@
+   drivers/nvdimm/pmem.c:204:32:    expected restricted blk_status_t [usertype] bi_status
+   drivers/nvdimm/pmem.c:204:32:    got int
+   drivers/nvdimm/pmem.c:208:9: sparse: expression using sizeof(void)
+   drivers/nvdimm/pmem.c:208:9: sparse: expression using sizeof(void)
+   include/linux/bvec.h:82:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:82:37: sparse: expression using sizeof(void)
+   include/linux/bvec.h:83:32: sparse: expression using sizeof(void)
+   include/linux/bvec.h:83:32: sparse: expression using sizeof(void)
+   drivers/nvdimm/pmem.c:220:32: sparse: incorrect type in assignment (different base types) @@    expected restricted blk_status_t [usertype] bi_status @@    got e] bi_status @@
+   drivers/nvdimm/pmem.c:220:32:    expected restricted blk_status_t [usertype] bi_status
+   drivers/nvdimm/pmem.c:220:32:    got int
 
-Please review and possibly fold the followup patch.
+# https://github.com/0day-ci/linux/commit/69b95edd2a1f4676361988fa36866b59427e2cfa
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 69b95edd2a1f4676361988fa36866b59427e2cfa
+vim +204 drivers/nvdimm/pmem.c
+
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  107  
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  108  static void write_pmem(void *pmem_addr, struct page *page,
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  109  		unsigned int off, unsigned int len)
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  110  {
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  111  	unsigned int chunk;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  112  	void *mem;
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  113  
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  114  	while (len) {
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  115  		mem = kmap_atomic(page);
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06 @116  		chunk = min_t(unsigned int, len, PAGE_SIZE);
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  117  		memcpy_flushcache(pmem_addr, mem + off, chunk);
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  118  		kunmap_atomic(mem);
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  119  		len -= chunk;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  120  		off = 0;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  121  		page++;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  122  		pmem_addr += PAGE_SIZE;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  123  	}
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  124  }
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  125  
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  126  static blk_status_t read_pmem(struct page *page, unsigned int off,
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  127  		void *pmem_addr, unsigned int len)
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  128  {
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  129  	unsigned int chunk;
+60622d682 drivers/nvdimm/pmem.c Dan Williams      2018-05-03  130  	unsigned long rem;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  131  	void *mem;
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  132  
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  133  	while (len) {
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  134  		mem = kmap_atomic(page);
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  135  		chunk = min_t(unsigned int, len, PAGE_SIZE);
+60622d682 drivers/nvdimm/pmem.c Dan Williams      2018-05-03  136  		rem = memcpy_mcsafe(mem + off, pmem_addr, chunk);
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  137  		kunmap_atomic(mem);
+60622d682 drivers/nvdimm/pmem.c Dan Williams      2018-05-03  138  		if (rem)
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  139  			return BLK_STS_IOERR;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  140  		len -= chunk;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  141  		off = 0;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  142  		page++;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  143  		pmem_addr += PAGE_SIZE;
+98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  144  	}
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  145  	return BLK_STS_OK;
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  146  }
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  147  
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  148  static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
+3f289dcb4 drivers/nvdimm/pmem.c Tejun Heo         2018-07-18  149  			unsigned int len, unsigned int off, unsigned int op,
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  150  			sector_t sector)
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  151  {
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  152  	blk_status_t rc = BLK_STS_OK;
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  153  	bool bad_pmem = false;
+32ab0a3f5 drivers/nvdimm/pmem.c Dan Williams      2015-08-01  154  	phys_addr_t pmem_off = sector * 512 + pmem->data_offset;
+7a9eb2066 drivers/nvdimm/pmem.c Dan Williams      2016-06-03  155  	void *pmem_addr = pmem->virt_addr + pmem_off;
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  156  
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  157  	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  158  		bad_pmem = true;
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  159  
+3f289dcb4 drivers/nvdimm/pmem.c Tejun Heo         2018-07-18  160  	if (!op_is_write(op)) {
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  161  		if (unlikely(bad_pmem))
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  162  			rc = BLK_STS_IOERR;
+b5ebc8ec6 drivers/nvdimm/pmem.c Dan Williams      2016-03-06  163  		else {
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  164  			rc = read_pmem(page, off, pmem_addr, len);
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  165  			flush_dcache_page(page);
+b5ebc8ec6 drivers/nvdimm/pmem.c Dan Williams      2016-03-06  166  		}
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  167  	} else {
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  168  		/*
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  169  		 * Note that we write the data both before and after
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  170  		 * clearing poison.  The write before clear poison
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  171  		 * handles situations where the latest written data is
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  172  		 * preserved and the clear poison operation simply marks
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  173  		 * the address range as valid without changing the data.
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  174  		 * In this case application software can assume that an
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  175  		 * interrupted write will either return the new good
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  176  		 * data or an error.
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  177  		 *
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  178  		 * However, if pmem_clear_poison() leaves the data in an
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  179  		 * indeterminate state we need to perform the write
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  180  		 * after clear poison.
+0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  181  		 */
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  182  		flush_dcache_page(page);
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  183  		write_pmem(pmem_addr, page, off, len);
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  184  		if (unlikely(bad_pmem)) {
+3115bb02b drivers/nvdimm/pmem.c Toshi Kani        2016-10-13  185  			rc = pmem_clear_poison(pmem, pmem_off, len);
+bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  186  			write_pmem(pmem_addr, page, off, len);
+59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  187  		}
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  188  	}
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  189  
+b5ebc8ec6 drivers/nvdimm/pmem.c Dan Williams      2016-03-06  190  	return rc;
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  191  }
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  192  
+dece16353 drivers/nvdimm/pmem.c Jens Axboe        2015-11-05  193  static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  194  {
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  195  	blk_status_t rc = 0;
+f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  196  	bool do_acct;
+f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  197  	unsigned long start;
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  198  	struct bio_vec bvec;
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  199  	struct bvec_iter iter;
+bd842b8ca drivers/nvdimm/pmem.c Dan Williams      2016-03-18  200  	struct pmem_device *pmem = q->queuedata;
+7e267a8c7 drivers/nvdimm/pmem.c Dan Williams      2016-06-01  201  	struct nd_region *nd_region = to_region(pmem);
+7e267a8c7 drivers/nvdimm/pmem.c Dan Williams      2016-06-01  202  
+d2d6364dc drivers/nvdimm/pmem.c Ross Zwisler      2018-06-06  203  	if (bio->bi_opf & REQ_PREFLUSH)
+69b95edd2 drivers/nvdimm/pmem.c Pankaj Gupta      2018-08-31 @204  		bio->bi_status = nd_region->flush(nd_region);
+69b95edd2 drivers/nvdimm/pmem.c Pankaj Gupta      2018-08-31  205  
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  206  
+f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  207  	do_acct = nd_iostat_start(bio, &start);
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  208  	bio_for_each_segment(bvec, bio, iter) {
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  209  		rc = pmem_do_bvec(pmem, bvec.bv_page, bvec.bv_len,
+3f289dcb4 drivers/nvdimm/pmem.c Tejun Heo         2018-07-18  210  				bvec.bv_offset, bio_op(bio), iter.bi_sector);
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  211  		if (rc) {
+4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  212  			bio->bi_status = rc;
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  213  			break;
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  214  		}
+e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  215  	}
+f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  216  	if (do_acct)
+f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  217  		nd_iostat_end(bio, start);
+61031952f drivers/nvdimm/pmem.c Ross Zwisler      2015-06-25  218  
+1eff9d322 drivers/nvdimm/pmem.c Jens Axboe        2016-08-05  219  	if (bio->bi_opf & REQ_FUA)
+69b95edd2 drivers/nvdimm/pmem.c Pankaj Gupta      2018-08-31  220  		bio->bi_status = nd_region->flush(nd_region);
+61031952f drivers/nvdimm/pmem.c Ross Zwisler      2015-06-25  221  
+4246a0b63 drivers/nvdimm/pmem.c Christoph Hellwig 2015-07-20  222  	bio_endio(bio);
+dece16353 drivers/nvdimm/pmem.c Jens Axboe        2015-11-05  223  	return BLK_QC_T_NONE;
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  224  }
+9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  225  
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
