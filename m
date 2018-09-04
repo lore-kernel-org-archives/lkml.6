@@ -2,68 +2,65 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D18DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62463C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 061712073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:31:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 061712073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 29F312073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:31:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F312073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbeIDX5o (ORCPT
+        id S1728055AbeIDX6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:57:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34946 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727682AbeIDX5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:57:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 24AE2B12E;
-        Tue,  4 Sep 2018 19:31:10 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 21:31:09 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tue, 4 Sep 2018 19:58:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60624 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeIDX6N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 19:58:13 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 141CBCA4;
+        Tue,  4 Sep 2018 19:31:39 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 21:31:36 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 1/4] HID: multitouch: fix Elan panels with 2 input modes
- declaration
-In-Reply-To: <20180904133115.5111-2-benjamin.tissoires@redhat.com>
-Message-ID: <nycvar.YFH.7.76.1809042130260.15880@cbobk.fhfr.pm>
-References: <20180904133115.5111-1-benjamin.tissoires@redhat.com> <20180904133115.5111-2-benjamin.tissoires@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+Subject: Re: [PATCH 4.14 000/165] 4.14.68-stable review
+Message-ID: <20180904193136.GA17786@kroah.com>
+References: <20180903165655.003605184@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903165655.003605184@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018, Benjamin Tissoires wrote:
-
-> When implementing commit 7f81c8db5489 ("HID: multitouch: simplify
-> the settings of the various features"), I wrongly removed a test
-> that made sure we never try to set the second InputMode feature
-> to something else than 0.
+On Mon, Sep 03, 2018 at 06:54:46PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.68 release.
+> There are 165 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> This broke badly some recent Elan panels that now forget to send the
-> click button in some area of the touchpad.
+> Responses should be made by Wed Sep  5 16:56:19 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> Fixes 7f81c8db5489
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.68-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
 
-Please make sure that the 'Fixes:' tag is always in proper format. There 
-are tools depending on that :)
-
-I'll fix that up manually.
-
-Thanks!
-
--- 
-Jiri Kosina
-SUSE Labs
+I have released a -rc2 kernel to fix a reported problem in -rc1:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.68-rc2.gz
 
