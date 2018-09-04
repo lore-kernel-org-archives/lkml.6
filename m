@@ -6,96 +6,90 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8260C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78592C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8953720779
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:16:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8953720779
+	by mail.kernel.org (Postfix) with ESMTP id F39872086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39872086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeIDHjS (ORCPT
+        id S1726319AbeIDHlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 03:39:18 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:38700 "EHLO
+        Tue, 4 Sep 2018 03:41:08 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:38708 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeIDHjR (ORCPT
+        with ESMTP id S1725874AbeIDHlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 03:39:17 -0400
+        Tue, 4 Sep 2018 03:41:08 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fx1ob-000793-Th; Tue, 04 Sep 2018 11:15:42 +0800
+        id 1fx1qt-0007AR-Id; Tue, 04 Sep 2018 11:18:03 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fx1o5-0001jP-BG; Tue, 04 Sep 2018 11:15:09 +0800
-Date:   Tue, 4 Sep 2018 11:15:09 +0800
+        id 1fx1qN-0001jx-Hf; Tue, 04 Sep 2018 11:17:31 +0800
+Date:   Tue, 4 Sep 2018 11:17:31 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Eric Biggers <ebiggers@google.com>,
+To:     Megha Dey <megha.dey@linux.intel.com>
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        linux-crypto@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiggers@google.com, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-crypto@vger.kernel.org, dm-devel@redhat.com,
-        qat-linux@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 9/9] crypto: skcipher: Remove VLA usage for
- SKCIPHER_REQUEST_ON_STACK
-Message-ID: <20180904031509.korwr7o7e4i7cjcq@gondor.apana.org.au>
-References: <20180807211843.47586-1-keescook@chromium.org>
- <20180807211843.47586-10-keescook@chromium.org>
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH] crypto: x86 - remove SHA multibuffer routines and mcryptd
+Message-ID: <20180904031731.ehi2jzx3retkhyql@gondor.apana.org.au>
+References: <20180822085144.4872-1-ard.biesheuvel@linaro.org>
+ <a877e275-4dd7-6580-2351-db8d3a4ba1a2@linux.intel.com>
+ <1535411993.3516.4.camel@megha-Z97X-UD7-TH>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180807211843.47586-10-keescook@chromium.org>
+In-Reply-To: <1535411993.3516.4.camel@megha-Z97X-UD7-TH>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 07, 2018 at 02:18:43PM -0700, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> caps the skcipher request size similar to other limits and adds a sanity
-> check at registration. Looking at instrumented tcrypt output, the largest
-> is for lrw:
+On Mon, Aug 27, 2018 at 04:19:53PM -0700, Megha Dey wrote:
+> On Mon, 2018-08-27 at 15:28 -0700, Tim Chen wrote:
+> > On 08/22/2018 01:51 AM, Ard Biesheuvel wrote:
+> > > As it turns out, the AVX2 multibuffer SHA routines are currently
+> > > broken [0], in a way that would have likely been noticed if this
+> > > code were in wide use. Since the code is too complicated to be
+> > > maintained by anyone except the original authors, and since the
+> > > performance benefits for real-world use cases are debatable to
+> > > begin with, it is better to drop it entirely for the moment.
+> > > 
+> > > [0] https://marc.info/?l=linux-crypto-vger&m=153476243825350&w=2
+> > 
+> > Sorry I was out of the loop for a while and haven't been following
+> > the code too closely.
+> > 
+> > Megha is maintaining the code now.  Before we pull the code,
+> > please give us a chance to fix it first.
+> > 
+> > Thanks.
+> > 
+> > Tim
+> > 
 > 
-> 	crypt: testing lrw(aes)
-> 	crypto_skcipher_set_reqsize: 8
-> 	crypto_skcipher_set_reqsize: 88
-> 	crypto_skcipher_set_reqsize: 472
+> Hi,
 > 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  include/crypto/internal/skcipher.h | 1 +
->  include/crypto/skcipher.h          | 4 +++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
-> index e42f7063f245..5035482cbe68 100644
-> --- a/include/crypto/internal/skcipher.h
-> +++ b/include/crypto/internal/skcipher.h
-> @@ -130,6 +130,7 @@ static inline struct crypto_skcipher *crypto_spawn_skcipher(
->  static inline void crypto_skcipher_set_reqsize(
->  	struct crypto_skcipher *skcipher, unsigned int reqsize)
->  {
-> +	BUG_ON(reqsize > SKCIPHER_MAX_REQSIZE);
+> I am working to find a fix for these corner cases. If possible, we would
+> like to fix the issues instead of removing the code altogether.
 
-Please do not add these BUG_ONs.  Instead allow this function to
-fail and check for the failure in the caller.
+I think it has taken way too long to fix these issues.  The fact
+that these issues have existed for so long also means that hardly
+anyone uses these mb algorithms.
+
+So I think it is best if we remove everything and then add them
+back after a proper review process.
 
 Thanks,
 -- 
