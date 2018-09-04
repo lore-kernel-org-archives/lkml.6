@@ -5,162 +5,101 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDB1C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB6EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8699720659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8699720659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B14C20867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:33:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B14C20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeIDR47 (ORCPT
+        id S1727541AbeIDR6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:56:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46166 "EHLO mx1.redhat.com"
+        Tue, 4 Sep 2018 13:58:09 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:56687 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727057AbeIDR46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:56:58 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E64040241C5;
-        Tue,  4 Sep 2018 13:31:49 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-116-25.ams2.redhat.com [10.36.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AA0EA9EF7;
-        Tue,  4 Sep 2018 13:31:48 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] HID: multitouch: simplify the application retrieval
-Date:   Tue,  4 Sep 2018 15:31:15 +0200
-Message-Id: <20180904133115.5111-5-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180904133115.5111-1-benjamin.tissoires@redhat.com>
-References: <20180904133115.5111-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 04 Sep 2018 13:31:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 04 Sep 2018 13:31:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+        id S1726355AbeIDR6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 13:58:09 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-10 (Coremail) with SMTP id tACowAAnLsZ5iY5bBftyBw--.12338S2;
+        Tue, 04 Sep 2018 21:32:42 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v5 05/16] x86/pmu: enable Hygon support to PMU
+ infrastructure
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <dcd5b900e26e3175e4cafded91ec28e53c79adf8.1535459013.git.puwen@hygon.cn>
+ <20180904104812.GF32615@zn.tnic>
+Message-ID: <f97a0b69-3117-3f59-257e-3aa837f54444@hygon.cn>
+Date:   Tue, 4 Sep 2018 21:32:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180904104812.GF32615@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: tACowAAnLsZ5iY5bBftyBw--.12338S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw18ZF4kAry8XFyftr1kXwb_yoWDtrb_uw
+        4rtFZ0kwsFgr409F4kJF45C39rXr18JryIqas5CasrX39YyanYqr1qkrW8CF4SkFWS9F12
+        kr13Xa1Iy3W7ZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbcAYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
+        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4UJVWxJr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l
+        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
+        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+        42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7ZqXDUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the application is simply stored in struct hid_input, we can
-overwrite it in mt_input_mapping() for the faulty egalax and have a
-simpler suffix processing in mt_input_configured()
+On 2018/9/4 18:48, Borislav Petkov wrote:
+> On Wed, Aug 29, 2018 at 08:43:54PM +0800, Pu Wen wrote:
+>> Hygon PMU arch is similar to AMD Family 17h. To support Hygon PMU, the
+>> initialization flow for it just call amd_pmu_init() and change PMU name
+>
+> That sentence reads funny.
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/hid/hid-multitouch.c | 72 ++++++++++++++++++++------------------------
- 1 file changed, 32 insertions(+), 40 deletions(-)
+Will rewrite this sentence to make it more understandable. :)
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index da954f3f4da7..f7c6de2b6730 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1319,6 +1319,13 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max,
- 					      application);
- 
-+	/*
-+	 * some egalax touchscreens have "application == DG_TOUCHSCREEN"
-+	 * for the stylus. Overwrite the hid_input application
-+	 */
-+	if (field->physical == HID_DG_STYLUS)
-+		hi->application = HID_DG_STYLUS;
-+
- 	/* let hid-core decide for the others */
- 	return 0;
- }
-@@ -1507,14 +1514,12 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 	struct mt_device *td = hid_get_drvdata(hdev);
- 	char *name;
- 	const char *suffix = NULL;
--	unsigned int application = 0;
- 	struct mt_report_data *rdata;
- 	struct mt_application *mt_application = NULL;
- 	struct hid_report *report;
- 	int ret;
- 
- 	list_for_each_entry(report, &hi->reports, hidinput_list) {
--		application = report->application;
- 		rdata = mt_find_report_data(td, report);
- 		if (!rdata) {
- 			hid_err(hdev, "failed to allocate data for report\n");
-@@ -1529,46 +1534,33 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 			if (ret)
- 				return ret;
- 		}
--
--		/*
--		 * some egalax touchscreens have "application == DG_TOUCHSCREEN"
--		 * for the stylus. Check this first, and then rely on
--		 * the application field.
--		 */
--		if (report->field[0]->physical == HID_DG_STYLUS) {
--			suffix = "Pen";
--			/* force BTN_STYLUS to allow tablet matching in udev */
--			__set_bit(BTN_STYLUS, hi->input->keybit);
--		}
- 	}
- 
--	if (!suffix) {
--		switch (application) {
--		case HID_GD_KEYBOARD:
--		case HID_GD_KEYPAD:
--		case HID_GD_MOUSE:
--		case HID_DG_TOUCHPAD:
--		case HID_GD_SYSTEM_CONTROL:
--		case HID_CP_CONSUMER_CONTROL:
--		case HID_GD_WIRELESS_RADIO_CTLS:
--		case HID_GD_SYSTEM_MULTIAXIS:
--			/* already handled by hid core */
--			break;
--		case HID_DG_TOUCHSCREEN:
--			/* we do not set suffix = "Touchscreen" */
--			hi->input->name = hdev->name;
--			break;
--		case HID_DG_STYLUS:
--			/* force BTN_STYLUS to allow tablet matching in udev */
--			__set_bit(BTN_STYLUS, hi->input->keybit);
--			break;
--		case HID_VD_ASUS_CUSTOM_MEDIA_KEYS:
--			suffix = "Custom Media Keys";
--			break;
--		default:
--			suffix = "UNKNOWN";
--			break;
--		}
-+	switch (hi->application) {
-+	case HID_GD_KEYBOARD:
-+	case HID_GD_KEYPAD:
-+	case HID_GD_MOUSE:
-+	case HID_DG_TOUCHPAD:
-+	case HID_GD_SYSTEM_CONTROL:
-+	case HID_CP_CONSUMER_CONTROL:
-+	case HID_GD_WIRELESS_RADIO_CTLS:
-+	case HID_GD_SYSTEM_MULTIAXIS:
-+		/* already handled by hid core */
-+		break;
-+	case HID_DG_TOUCHSCREEN:
-+		/* we do not set suffix = "Touchscreen" */
-+		hi->input->name = hdev->name;
-+		break;
-+	case HID_DG_STYLUS:
-+		/* force BTN_STYLUS to allow tablet matching in udev */
-+		__set_bit(BTN_STYLUS, hi->input->keybit);
-+		break;
-+	case HID_VD_ASUS_CUSTOM_MEDIA_KEYS:
-+		suffix = "Custom Media Keys";
-+		break;
-+	default:
-+		suffix = "UNKNOWN";
-+		break;
- 	}
- 
- 	if (suffix) {
--- 
-2.14.3
+> In general, you seem to be explaining *what* your patches do and not
+> *why*. This is the wrong. Always explain the *why* - the *what* is
+> visible from the diff.
+>
+> You probably need to brush up on
+> Documentation/process/submitting-patches.rst, section 2.
+
+All right, will relearn the document and rework the patch descriptions.
+
+>> +	case 0x18:
+>> +		if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+>> +			pr_cont("Fam18h ");
+>
+> Didn't we agree that you'll verify whether family 0x18 is going to be
+> Hygon only?
+>
+> What happened to that checking?
+...
+> Same here.
+>
+> What's up?
+
+Will remove all the remaining unneeded Hygon vendor checking through
+the whole patch set to minimize the code modification.
+
+Thanks,
+Pu Wen
 
