@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4583EC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A837BC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8CC92075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C4DF206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:20:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MPvackgX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8CC92075E
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g/V4p8rC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4DF206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbeIDSpz (ORCPT
+        id S1727522AbeIDSp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 14:45:55 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:32846 "EHLO
+        Tue, 4 Sep 2018 14:45:59 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:32850 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeIDSpz (ORCPT
+        with ESMTP id S1727072AbeIDSp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 14:45:55 -0400
+        Tue, 4 Sep 2018 14:45:59 -0400
 Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84EKJDX047230;
-        Tue, 4 Sep 2018 09:20:19 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84EKKH1047335;
+        Tue, 4 Sep 2018 09:20:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536070819;
-        bh=azXH0lrlVGhdqlgwiFDyYe7Dj+v4E5lzM+mQz1GRr/Q=;
-        h=From:To:CC:Subject:Date;
-        b=MPvackgXrceMMQqZTv+boWcV8OemRB4evkCK+jscYY10Q2cavh5Rx47OiL9/Wz8om
-         qBgjGlB1Pvbt/7OLDb8LM7Vj1Ai7QUqUWQAb7K8A2uZUXtuMzHFQoURObjrFpOKDKV
-         UW68BAdcqil7u4VPjb0TMdQyoGnhSOKNlE78DTK0=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EKJpV027825;
-        Tue, 4 Sep 2018 09:20:19 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1536070820;
+        bh=rD3aN3vkAjJq06ze7rIDdKFujdNunBBQ8tRWFn/urCA=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=g/V4p8rCT4pHOv/8o5RwIQIqn7FrR1ptDXLtydY8m3zehX7/X8U5AgSbRCgPEnhs+
+         84R5wlO7svtByEqI3SDhrxtoU0y7iMvxwietLaWc3WuqGGlxnFV8A9nY9wsf/Mfg0R
+         /VDCP9+Z5wGHZCSCQXCPaBfF+g8FENphDgcr1fZ4=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EKKmB027864;
+        Tue, 4 Sep 2018 09:20:20 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 4 Sep
- 2018 09:20:19 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ 2018 09:20:20 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 4 Sep 2018 09:20:19 -0500
+ Tue, 4 Sep 2018 09:20:20 -0500
 Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EKJUU031608;
-        Tue, 4 Sep 2018 09:20:19 -0500
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EKKtJ030243;
+        Tue, 4 Sep 2018 09:20:20 -0500
 Received: from localhost (uda0226330.dhcp.ti.com [172.22.184.106])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w84EKIx03644;
-        Tue, 4 Sep 2018 09:20:18 -0500 (CDT)
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w84EKJx03648;
+        Tue, 4 Sep 2018 09:20:19 -0500 (CDT)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -61,10 +61,12 @@ To:     Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH v2 1/2] ARM: dts: imx6: RDU2: Use new CODEC reset pin name
-Date:   Tue, 4 Sep 2018 09:20:17 -0500
-Message-ID: <20180904142018.4267-1-afd@ti.com>
+Subject: [PATCH v2 2/2] ARM: dts: imx: Use new CODEC reset pin name
+Date:   Tue, 4 Sep 2018 09:20:18 -0500
+Message-ID: <20180904142018.4267-2-afd@ti.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180904142018.4267-1-afd@ti.com>
+References: <20180904142018.4267-1-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -82,31 +84,22 @@ Signed-off-by: Andrew F. Davis <afd@ti.com>
 Changes from v1:
  - Remove "fix" from commit message
 
- arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx6qdl-gw5903.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-index 7fff3717cf7c..a0f5cfda0055 100644
---- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-@@ -384,7 +384,7 @@
- 		AVDD-supply = <&reg_3p3v>;
- 		IOVDD-supply = <&reg_3p3v>;
- 		DVDD-supply = <&vgen4_reg>;
--		gpio-reset = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
- 	};
- 
- 	accel@1c {
-@@ -572,7 +572,7 @@
- 		AVDD-supply = <&reg_3p3v>;
- 		IOVDD-supply = <&reg_3p3v>;
- 		DVDD-supply = <&vgen4_reg>;
--		gpio-reset = <&gpio1 0 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
- 	};
- 
- 	touchscreen@20 {
+diff --git a/arch/arm/boot/dts/imx6qdl-gw5903.dtsi b/arch/arm/boot/dts/imx6qdl-gw5903.dtsi
+index 368132274a91..ddabab168a8a 100644
+--- a/arch/arm/boot/dts/imx6qdl-gw5903.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-gw5903.dtsi
+@@ -310,7 +310,7 @@
+ 	tlv320aic3105: codec@18 {
+ 		compatible = "ti,tlv320aic3x";
+ 		reg = <0x18>;
+-		gpio-reset = <&gpio5 17 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
+ 		clocks = <&clks IMX6QDL_CLK_CKO>;
+ 		ai3x-micbias-vg = <2>; /* MICBIAS_2_5V */
+ 		/* Regulators */
 -- 
 2.18.0
 
