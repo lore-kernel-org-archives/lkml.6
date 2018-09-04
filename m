@@ -2,96 +2,103 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56369C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E2CC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBB320645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C575F20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:06:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NSCL4yCg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBB320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jG89lFEe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C575F20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbeIDUbb (ORCPT
+        id S1727688AbeIDUcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:31:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33748 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbeIDUbb (ORCPT
+        Tue, 4 Sep 2018 16:32:24 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:37199 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDUcX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:31:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wamesnXEMkJQ7j+0Ah2I7TqKePqH+2af/Qpjxo0f79g=; b=NSCL4yCguGIkPrOQ3VRiNBaNb
-        7sO219YG+6yQkjFC+gQaznTQII3J7hRrTZIBzT2nAzAMiKlo1tXtpHKK/3RnI74WpxcNk8Wt0fMzG
-        +ibWiZI2k+zdmFLF+ozWlunDr7JIyuuWFOCnM6uW/OlsPzs37QoTR9nKnipysoYT4XAUTxUcWGPMs
-        KG8EiQpBa0VuNF+aXjUYNVIYdqe73nw0t8oijyiMwdXjxx3puu58WoWFInW5UCtv8AauHhzjawC/x
-        +pniaHjaHqtznKuf04r5ldX0+oG6eEgi0tvj77lyymG3VKTBmU3kyeVqrlul4Uz48ptA2yzWr0XR/
-        2c6a/w0jQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxDpn-0003VQ-HS; Tue, 04 Sep 2018 16:05:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9838A202AFE0D; Tue,  4 Sep 2018 18:05:41 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 18:05:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [RFC] perf tool improvement requests
-Message-ID: <20180904160541.GK24124@hirez.programming.kicks-ass.net>
-References: <CABPqkBT0kEMOnTw1-E1kezCvtWNSws7dp2qzCWKVmjGPOEga8Q@mail.gmail.com>
- <20180904071049.GY24124@hirez.programming.kicks-ass.net>
- <20180904134218.GA5364@kernel.org>
- <CABPqkBSm9xgqiPx1hUY2njn3SsPGhxjqK02HbM5Qar8di-q97w@mail.gmail.com>
+        Tue, 4 Sep 2018 16:32:23 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so4582744qtl.4;
+        Tue, 04 Sep 2018 09:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MQGn3b9dcfwdP2p0w9uJac7HrY2amUtgOZR6sQnMh4E=;
+        b=jG89lFEeQrA7b5L2wywqIGiCgHqJZdt2IYPyVWH7Opl1GTS7Wd8Hk24sLOhW8IbA3E
+         M0Vqh6Sg6nzLxRGSpPHyiKVKlv6GPrtbeIJEevdpH6QZaSDiFO88d58ju6EHdVOTNrdb
+         GYC4vE1a8X4RcaSVIDzJgWQ6cMdmFraMgn34YQ/sexVjFz9R88LxM0b+Ur928+Pi545K
+         kFDAFk4leemup9KuABSTelSrT5PUYhrKpIQKr71wfxXxBtP1WaU9sH7s2FUazOE4prHw
+         Vq8MMR0fKGiKSKDoiAt/DmBsGaflJKhppt04YH04spwaG4ce4p8Txfi9X/H+g+KCjDBV
+         /8WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MQGn3b9dcfwdP2p0w9uJac7HrY2amUtgOZR6sQnMh4E=;
+        b=dmlQghRHDeAtzOKIrDEJ9c1h9ArXraAr8SUspCBxoc1XolVmnRtzo2MGFPQjiMGfga
+         v43d3R9WDFnNyKruBMcGcMKT/URfAla/iXRl6zYCATFVYzl4+Loywp+ZxIcmgArLg5Kv
+         q7EFWXWSbDnC7kbmnVrjenG+WVURWB4kZup7P2XgUdcfqUuoIgsBXBIXZhKVD+rq9wwf
+         +lYNetyBzYurPP0MppeSh9w833zvaHqCSsmk+QybKARDlQIgGchVGCwi5xU3I1Y+s9Tm
+         oyInXih100MKYnjqJB50Bi1kz8bsC3cNuOIaTaTr/3yBs1kJby1XR3HQwEahWMq1J9lA
+         3hJQ==
+X-Gm-Message-State: APzg51DxSeqBlOkoy5aRX3RELlXasysve4vhjcmOo+E6Crp3tp/5ekeo
+        OCUzXKZjO7Pp0UZiCgdfbFdmHG0QMFvpBsDBN/g=
+X-Google-Smtp-Source: ANB0VdYZoiWg74oot/Upu8SbaS2AkcdsM4shvcgdVm9Sdt4g0Iey412yGg6EwPjgyd5hKsTTHv+UpQx0cfpN1u8YfxY=
+X-Received: by 2002:ac8:435e:: with SMTP id a30-v6mr30427040qtn.261.1536077197329;
+ Tue, 04 Sep 2018 09:06:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBSm9xgqiPx1hUY2njn3SsPGhxjqK02HbM5Qar8di-q97w@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com> <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+ <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
+In-Reply-To: <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Sep 2018 19:06:26 +0300
+Message-ID: <CAHp75VfqFAgPbHDLBdDF_VRFRoGuBBMtA0HuOeDTZtNgFe-8yQ@mail.gmail.com>
+Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 08:50:07AM -0700, Stephane Eranian wrote:
-> > > When we get an exact IP (using PEBS) and were sampling a data related
-> > > event (say L1 misses), we can get the data type from the instruction
-> > > itself; that is, through DWARF. We _know_ what type (structure::member)
-> > > is read/written to.
-> >
-> I have been asking this from the compiler people for a long time!
-> I don't think it is there. I'd like each load/store to be annotated
-> with a data type + offset
-> within the type. It would allow data type profiling. This would not be
-> bulletproof though
-> because of the accessor function problem:
->   void incr(int *v) { (*v)++; }
->   struct foo { int a, int b } bar;
->   incr(&bar.a);
+On Tue, Sep 4, 2018 at 7:04 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 09/03/2018 06:16 AM, Andy Shevchenko wrote:
+> >> +       EBLOCK  = 0x9,
+> >> +       EPA     = 0xA,
+> >> +       EWB     = 0xB,
+> >> +       ETRACK  = 0xC,
+> >> +       EAUG    = 0xD,
+> >> +       EMODPR  = 0xE,
+> >> +       EMODT   = 0xF,
+> >> +};
+> > Hmm... This E prefix confuses me with (system wide) error codes. Has
+> > it been discussed before? If so, can you point on the conclusion why
+> > the current format is good?
+>
+> Making them SGX_EWHATEVER isn't a horrible idea.
 
-Cute, yes. Also, array accesses are tricky.
++1 here. Namespace will not shadow SDM naming scheme.
 
-But I think even with those caveats it would be _very_ useful.
-
-> There are concern with the volume of data that this
-> would generate. But my argument
-> is that this is just debug binaries, does not make the stripped binary
-> any bigger.
-
-Right; the alternative is that we build an asm interpreter and follow
-the data types throughout the function, because DWARF can tell us about
-the types at a number of places, like function call arguments etc..
-
-That is, of course, a terrible lot of work :/
+-- 
+With Best Regards,
+Andy Shevchenko
