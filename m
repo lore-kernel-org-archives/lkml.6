@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1BCC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C14C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13E6D20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55A6520645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:55:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMj0ggN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13E6D20645
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blsfUuB/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A6520645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeIDQUY (ORCPT
+        id S1727493AbeIDQU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 12:20:24 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40138 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbeIDQUW (ORCPT
+        Tue, 4 Sep 2018 12:20:27 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46098 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbeIDQU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 12:20:22 -0400
-Received: by mail-pl1-f194.google.com with SMTP id s17-v6so1523118plp.7;
-        Tue, 04 Sep 2018 04:55:33 -0700 (PDT)
+        Tue, 4 Sep 2018 12:20:26 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u24-v6so1563679pfn.13;
+        Tue, 04 Sep 2018 04:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=280EP+QgaX/l+BzeVZuKBc4Hv62//0y2K3uoqdg3hqA=;
-        b=nMj0ggN1LJ1ty0RrTuU0j5fTTqh3/T+s0nyBzGUGamr4Dd5i8UFIwUiXv3QQmqSMng
-         F0qKNRG4XF2NyKPBWy7d2DMI2+sB4ch6n8B/HQX8X0czVn3B4gTWpWK+neaw1g4F40ev
-         VXivD9vuNUo2bdM1WcgnlsEPkThplqYml8Y5WsEqvTzFhO2VRyUoyF1s//w30bn8uwZb
-         G5ZjJAuzL82z+PFQmucQJtyeM4iRapZX9Sq7WryCavVl3SN6y5QOi0L+ryfKCnQtaJ4Z
-         efVAefg+GzJFE+jdGym7u3sCNxgoYpyJ+hjPjEhlWO89pfAc07NQ0lrKaxBsh8ttsQ52
-         ANPQ==
+        bh=rTck22z5Fb2QfzdSq16kU7wq0iTR4gwoypzlJecOfhs=;
+        b=blsfUuB/fKiCPAlfPuopDoVBQ7jUCV35NqynYNtJH2nj5fGgpd/gkpZ6glhljqy3jN
+         hHHyWoKAvZrhJAHbJCJe1gUDDaDG9QMI3WKy8y8wK+nMCwuiGAQ6j8W9hta1EAIyG01U
+         fFKBlsIQq/Co7oG7AQtMRAYmdbNDa0cpIFQHVp5qJmQpmheJPn4QfeCvkU1tIK1kRkHw
+         xyGCiWWdwMT4gmfw400Ddg/grqSzZWarmqVV5RjHa/B94AZIk4CjFGza8eJIC65XYOLY
+         HKrj6S33aosY1Dwmv9sS0UmSKeme4QVhaNWT50eX70OQGZSzqV76zurwgGdHJ//9IV0u
+         ijXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=280EP+QgaX/l+BzeVZuKBc4Hv62//0y2K3uoqdg3hqA=;
-        b=XwifwfKolJ8bJq5SQipqEECxzW1MEOc3vbp7lcPEPJODRL4/YpxoC5cfr6HURFCD8K
-         dTb3fR8q9o1IlCn9gmh4rEIupu4zGLoauLMe4OKyWHqNdNlEBXAW+3kYx2/OylVFbWCs
-         rdEWbC0zpQw8c1OjeVPXlEevF72Zd3XLRpmESoPV5iMEr7r2EU1SSZRtkZUut21nSfVV
-         3jOId7li225Etop4FMB2eFiKFAWdt0X1v6wkoHcoTQdrdjwY3XVvIF4ZRzcAEeWwpK80
-         oM7vo/slt4/e0AUNiJYqVHWvPKmYtwBwdg939ZeqSejwseeKg6DhbCaNO2kdJk0sI5S9
-         zDIQ==
-X-Gm-Message-State: APzg51CZEVYfiQ5vCWGUVKY3gRO+mswJsyvyrh/M0rGQoasZwqgHPubt
-        FYSuU4zSQgqGkVgp3BAymzyzs/kw
-X-Google-Smtp-Source: ANB0VdZWdWhC6G9+eebVlueB0gx8oOgoZAgt8/8Ylvjo6+0TT6BxIRegAG3skQisPydCS+Paly0WFQ==
-X-Received: by 2002:a17:902:e281:: with SMTP id cf1-v6mr33271286plb.86.1536062133148;
-        Tue, 04 Sep 2018 04:55:33 -0700 (PDT)
+        bh=rTck22z5Fb2QfzdSq16kU7wq0iTR4gwoypzlJecOfhs=;
+        b=fJ594BS4bnCEwgL9Ti5DmoFvjVK5L1hgZMgZrZHq5DYz1w2XEWtzETk1g9KHq98nBt
+         1M7FIAWSumVT/1xdWG+PrRnMQeelwixt7bPwOWw2WdryjvAvIOpKj1aoc+Z6HTg5VJOJ
+         Gc+fLV+KE85kEjd8dAXoziU+lWtijDh29/XEUCCMqvcMisIIWdHW7RHG9Cgut8ERHZ4q
+         a2aGNPfRRirNG++JxvOOCr9xyUENlmdFkUf/Q3IsPkP0zBEfqbvRujHTVnwyaTod9mbf
+         iwwSQwRnvJcU4t5kfOYuCrUyr84F4O8wo2j43XEaJt5zX8Ai51z5cU03hbWQqCbJDyZL
+         fGKQ==
+X-Gm-Message-State: APzg51CjzKxQ7n2PmDQ3KTdufTVdDKEo7xXcBz3cMl7G2CNs4dc0IFXG
+        Al1wFoqiloAzmbhdy+u0snlpng1l
+X-Google-Smtp-Source: ANB0VdZozI0CjPwLHGI3vTNU+MqWls4AO9BdZXUTZ7Bx2D/iE4ALgfhiE6bAm1UlR8eJYkB+S6ncrQ==
+X-Received: by 2002:a63:5964:: with SMTP id j36-v6mr30731170pgm.222.1536062137144;
+        Tue, 04 Sep 2018 04:55:37 -0700 (PDT)
 Received: from machine421.caveonetworks.com ([115.113.156.2])
-        by smtp.googlemail.com with ESMTPSA id u184-v6sm29740190pgd.46.2018.09.04.04.55.29
+        by smtp.googlemail.com with ESMTPSA id u184-v6sm29740190pgd.46.2018.09.04.04.55.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 04:55:32 -0700 (PDT)
+        Tue, 04 Sep 2018 04:55:36 -0700 (PDT)
 From:   sunil.kovvuri@gmail.com
 To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
         andrew@lunn.ch, davem@davemloft.net,
-        Sunil Goutham <sgoutham@marvell.com>
-Subject: [PATCH v2 05/15] soc: octeontx2: Add mailbox IRQ and msg handlers
-Date:   Tue,  4 Sep 2018 17:24:40 +0530
-Message-Id: <1536062090-30446-6-git-send-email-sunil.kovvuri@gmail.com>
+        Aleksey Makarov <amakarov@marvell.com>
+Subject: [PATCH v2 06/15] soc: octeontx2: Convert mbox msg id check to a macro
+Date:   Tue,  4 Sep 2018 17:24:41 +0530
+Message-Id: <1536062090-30446-7-git-send-email-sunil.kovvuri@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536062090-30446-1-git-send-email-sunil.kovvuri@gmail.com>
 References: <1536062090-30446-1-git-send-email-sunil.kovvuri@gmail.com>
@@ -74,425 +74,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sunil Goutham <sgoutham@marvell.com>
+From: Aleksey Makarov <amakarov@marvell.com>
 
-This patch adds support for mailbox interrupt and message
-handling. Mapped mailbox region and registered a workqueue
-for message handling. Enabled mailbox IRQ of RVU PFs
-and registered a interrupt handler. When IRQ is triggered
-work is added to the mbox workqueue for msgs to get processed.
+With 10's of mailbox messages expected to be handled in future,
+checking for message id could become a lengthy switch case. Hence
+added a macro to auto generate the switch case for each msg id.
 
-Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
+Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
 ---
- drivers/soc/marvell/octeontx2/mbox.h       |  14 +-
- drivers/soc/marvell/octeontx2/rvu.c        | 254 +++++++++++++++++++++++++++++
- drivers/soc/marvell/octeontx2/rvu.h        |  22 +++
- drivers/soc/marvell/octeontx2/rvu_struct.h |  22 +++
- 4 files changed, 309 insertions(+), 3 deletions(-)
+ drivers/soc/marvell/octeontx2/rvu.c | 44 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 38 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/soc/marvell/octeontx2/mbox.h b/drivers/soc/marvell/octeontx2/mbox.h
-index 8e205fd..fc593f0 100644
---- a/drivers/soc/marvell/octeontx2/mbox.h
-+++ b/drivers/soc/marvell/octeontx2/mbox.h
-@@ -33,6 +33,8 @@
- # error "incorrect mailbox area sizes"
- #endif
- 
-+#define INTR_MASK(pfvfs) ((pfvfs < 64) ? (BIT_ULL(pfvfs) - 1) : (~0ull))
-+
- #define MBOX_RSP_TIMEOUT	1000 /* in ms, Time to wait for mbox response */
- 
- #define MBOX_MSG_ALIGN		16  /* Align mbox msg start to 16bytes */
-@@ -90,8 +92,9 @@ struct mbox_msghdr {
- 
- void otx2_mbox_reset(struct otx2_mbox *mbox, int devid);
- void otx2_mbox_destroy(struct otx2_mbox *mbox);
--int otx2_mbox_init(struct otx2_mbox *mbox, void *hwbase, struct pci_dev *pdev,
--		   void *reg_base, int direction, int ndevs);
-+int otx2_mbox_init(struct otx2_mbox *mbox, void __force *hwbase,
-+		   struct pci_dev *pdev, void __force *reg_base,
-+		   int direction, int ndevs);
- void otx2_mbox_msg_send(struct otx2_mbox *mbox, int devid);
- int otx2_mbox_wait_for_rsp(struct otx2_mbox *mbox, int devid);
- int otx2_mbox_busy_poll_for_rsp(struct otx2_mbox *mbox, int devid);
-@@ -115,7 +118,7 @@ static inline struct mbox_msghdr *otx2_mbox_alloc_msg(struct otx2_mbox *mbox,
- #define MBOX_MSG_MAX				0xFFFF
- 
- #define MBOX_MESSAGES							\
--M(READY,		0x001, msg_req, msg_rsp)
-+M(READY,		0x001, msg_req, ready_msg_rsp)
- 
- enum {
- #define M(_name, _id, _1, _2) MBOX_MSG_ ## _name = _id,
-@@ -139,4 +142,9 @@ struct msg_rsp {
- 	struct mbox_msghdr hdr;
- };
- 
-+struct ready_msg_rsp {
-+	struct mbox_msghdr hdr;
-+	u16    sclk_feq;	/* SCLK frequency */
-+};
-+
- #endif /* MBOX_H */
 diff --git a/drivers/soc/marvell/octeontx2/rvu.c b/drivers/soc/marvell/octeontx2/rvu.c
-index fa5f40b..e795c2f 100644
+index e795c2f..25f79bf 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.c
 +++ b/drivers/soc/marvell/octeontx2/rvu.c
-@@ -258,6 +258,245 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+@@ -258,6 +258,12 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
  	return 0;
  }
  
-+static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
-+				struct mbox_msghdr *req)
++static int rvu_mbox_handler_READY(struct rvu *rvu, struct msg_req *req,
++				  struct ready_msg_rsp *rsp)
 +{
-+	/* Check if valid, if not reply with a invalid msg */
-+	if (req->sig != OTX2_MBOX_REQ_SIG)
-+		goto bad_message;
-+
-+	if (req->id == MBOX_MSG_READY)
-+		return 0;
-+
-+bad_message:
-+	otx2_reply_invalid_msg(&rvu->mbox, devid, req->pcifunc,
-+			       req->id);
-+	return -ENODEV;
-+}
-+
-+static void rvu_mbox_handler(struct work_struct *work)
-+{
-+	struct rvu_work *mwork = container_of(work, struct rvu_work, work);
-+	struct rvu *rvu = mwork->rvu;
-+	struct otx2_mbox_dev *mdev;
-+	struct mbox_hdr *req_hdr;
-+	struct mbox_msghdr *msg;
-+	struct otx2_mbox *mbox;
-+	int offset, id, err;
-+	u16 pf;
-+
-+	mbox = &rvu->mbox;
-+	pf = mwork - rvu->mbox_wrk;
-+	mdev = &mbox->dev[pf];
-+
-+	/* Process received mbox messages */
-+	req_hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
-+	if (req_hdr->num_msgs == 0)
-+		return;
-+
-+	offset = mbox->rx_start + ALIGN(sizeof(*req_hdr), MBOX_MSG_ALIGN);
-+
-+	for (id = 0; id < req_hdr->num_msgs; id++) {
-+		msg = (struct mbox_msghdr *)(mdev->mbase + offset);
-+
-+		/* Set which PF sent this message based on mbox IRQ */
-+		msg->pcifunc &= ~(RVU_PFVF_PF_MASK << RVU_PFVF_PF_SHIFT);
-+		msg->pcifunc |= (pf << RVU_PFVF_PF_SHIFT);
-+		err = rvu_process_mbox_msg(rvu, pf, msg);
-+		if (!err) {
-+			offset = mbox->rx_start + msg->next_msgoff;
-+			continue;
-+		}
-+
-+		if (msg->pcifunc & RVU_PFVF_FUNC_MASK)
-+			dev_warn(rvu->dev, "Error %d when processing message %s (0x%x) from PF%d:VF%d\n",
-+				 err, otx2_mbox_id2name(msg->id), msg->id, pf,
-+				 (msg->pcifunc & RVU_PFVF_FUNC_MASK) - 1);
-+		else
-+			dev_warn(rvu->dev, "Error %d when processing message %s (0x%x) from PF%d\n",
-+				 err, otx2_mbox_id2name(msg->id), msg->id, pf);
-+	}
-+
-+	/* Send mbox responses to PF */
-+	otx2_mbox_msg_send(mbox, pf);
-+}
-+
-+static int rvu_mbox_init(struct rvu *rvu)
-+{
-+	struct rvu_hwinfo *hw = rvu->hw;
-+	struct rvu_work *mwork;
-+	void __iomem *hwbase = NULL;
-+	u64 bar4_addr;
-+	int err, pf;
-+
-+	rvu->mbox_wq = alloc_workqueue("rvu_afpf_mailbox",
-+				       WQ_UNBOUND | WQ_HIGHPRI | WQ_MEM_RECLAIM,
-+				       hw->total_pfs);
-+	if (!rvu->mbox_wq)
-+		return -ENOMEM;
-+
-+	rvu->mbox_wrk = devm_kcalloc(rvu->dev, hw->total_pfs,
-+				     sizeof(struct rvu_work), GFP_KERNEL);
-+	if (!rvu->mbox_wrk) {
-+		err = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	/* Map mbox region shared with PFs */
-+	bar4_addr = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_PF_BAR4_ADDR);
-+	/* Mailbox is a reserved memory (in RAM) region shared between
-+	 * RVU devices, shouldn't be mapped as device memory to allow
-+	 * unaligned accesses.
-+	 */
-+	hwbase = ioremap_wc(bar4_addr, MBOX_SIZE * hw->total_pfs);
-+	if (!hwbase) {
-+		dev_err(rvu->dev, "Unable to map mailbox region\n");
-+		err = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	err = otx2_mbox_init(&rvu->mbox, hwbase, rvu->pdev, rvu->afreg_base,
-+			     MBOX_DIR_AFPF, hw->total_pfs);
-+	if (err)
-+		goto exit;
-+
-+	for (pf = 0; pf < hw->total_pfs; pf++) {
-+		mwork = &rvu->mbox_wrk[pf];
-+		mwork->rvu = rvu;
-+		INIT_WORK(&mwork->work, rvu_mbox_handler);
-+	}
-+
 +	return 0;
-+exit:
-+	if (hwbase)
-+		iounmap((void __iomem *)hwbase);
-+	destroy_workqueue(rvu->mbox_wq);
-+	return err;
 +}
 +
-+static void rvu_mbox_destroy(struct rvu *rvu)
-+{
-+	if (rvu->mbox_wq) {
-+		flush_workqueue(rvu->mbox_wq);
-+		destroy_workqueue(rvu->mbox_wq);
-+		rvu->mbox_wq = NULL;
-+	}
-+
-+	if (rvu->mbox.hwbase)
-+		iounmap((void __iomem *)rvu->mbox.hwbase);
-+
-+	otx2_mbox_destroy(&rvu->mbox);
-+}
-+
-+static irqreturn_t rvu_mbox_intr_handler(int irq, void *rvu_irq)
-+{
-+	struct rvu *rvu = (struct rvu *)rvu_irq;
-+	struct otx2_mbox_dev *mdev;
-+	struct otx2_mbox *mbox;
-+	struct mbox_hdr *hdr;
-+	u64 intr;
-+	u8  pf;
-+
-+	intr = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT);
-+	/* Clear interrupts */
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT, intr);
-+
-+	/* Sync with mbox memory region */
-+	smp_wmb();
-+
-+	for (pf = 0; pf < rvu->hw->total_pfs; pf++) {
-+		if (intr & (1ULL << pf)) {
-+			mbox = &rvu->mbox;
-+			mdev = &mbox->dev[pf];
-+			hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
-+			if (hdr->num_msgs)
-+				queue_work(rvu->mbox_wq,
-+					   &rvu->mbox_wrk[pf].work);
-+		}
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void rvu_enable_mbox_intr(struct rvu *rvu)
-+{
-+	struct rvu_hwinfo *hw = rvu->hw;
-+
-+	/* Clear spurious irqs, if any */
-+	rvu_write64(rvu, BLKADDR_RVUM,
-+		    RVU_AF_PFAF_MBOX_INT, INTR_MASK(hw->total_pfs));
-+
-+	/* Enable mailbox interrupt for all PFs except PF0 i.e AF itself */
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT_ENA_W1S,
-+		    INTR_MASK(hw->total_pfs) & ~1ULL);
-+}
-+
-+static void rvu_unregister_interrupts(struct rvu *rvu)
-+{
-+	int irq;
-+
-+	/* Disable the Mbox interrupt */
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT_ENA_W1C,
-+		    INTR_MASK(rvu->hw->total_pfs) & ~1ULL);
-+
-+	for (irq = 0; irq < rvu->num_vec; irq++) {
-+		if (rvu->irq_allocated[irq])
-+			free_irq(pci_irq_vector(rvu->pdev, irq), rvu);
-+	}
-+
-+	pci_free_irq_vectors(rvu->pdev);
-+	rvu->num_vec = 0;
-+}
-+
-+static int rvu_register_interrupts(struct rvu *rvu)
-+{
-+	int ret;
-+
-+	rvu->num_vec = pci_msix_vec_count(rvu->pdev);
-+
-+	rvu->irq_name = devm_kmalloc_array(rvu->dev, rvu->num_vec,
-+					   NAME_SIZE, GFP_KERNEL);
-+	if (!rvu->irq_name)
-+		return -ENOMEM;
-+
-+	rvu->irq_allocated = devm_kcalloc(rvu->dev, rvu->num_vec,
-+					  sizeof(bool), GFP_KERNEL);
-+	if (!rvu->irq_allocated)
-+		return -ENOMEM;
-+
-+	/* Enable MSI-X */
-+	ret = pci_alloc_irq_vectors(rvu->pdev, rvu->num_vec,
-+				    rvu->num_vec, PCI_IRQ_MSIX);
-+	if (ret < 0) {
-+		dev_err(rvu->dev,
-+			"RVUAF: Request for %d msix vectors failed, ret %d\n",
-+			rvu->num_vec, ret);
-+		return ret;
-+	}
-+
-+	/* Register mailbox interrupt handler */
-+	sprintf(&rvu->irq_name[RVU_AF_INT_VEC_MBOX * NAME_SIZE], "RVUAF Mbox");
-+	ret = request_irq(pci_irq_vector(rvu->pdev, RVU_AF_INT_VEC_MBOX),
-+			  rvu_mbox_intr_handler, 0,
-+			  &rvu->irq_name[RVU_AF_INT_VEC_MBOX * NAME_SIZE], rvu);
-+	if (ret) {
-+		dev_err(rvu->dev,
-+			"RVUAF: IRQ registration failed for mbox irq\n");
-+		goto fail;
-+	}
-+
-+	rvu->irq_allocated[RVU_AF_INT_VEC_MBOX] = true;
-+
-+	/* Enable mailbox interrupts from all PFs */
-+	rvu_enable_mbox_intr(rvu);
-+
-+	return 0;
-+
-+fail:
-+	pci_free_irq_vectors(rvu->pdev);
-+	return ret;
-+}
-+
- static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
+ 				struct mbox_msghdr *req)
  {
- 	struct device *dev = &pdev->dev;
-@@ -320,8 +559,21 @@ static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (err)
- 		goto err_release_regions;
+@@ -265,13 +271,39 @@ static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
+ 	if (req->sig != OTX2_MBOX_REQ_SIG)
+ 		goto bad_message;
  
-+	err = rvu_mbox_init(rvu);
-+	if (err)
-+		goto err_hwsetup;
-+
-+	err = rvu_register_interrupts(rvu);
-+	if (err)
-+		goto err_mbox;
-+
- 	return 0;
+-	if (req->id == MBOX_MSG_READY)
+-		return 0;
+-
++	switch (req->id) {
++#define M(_name, _id, _req_type, _rsp_type)				\
++	case _id: {							\
++		struct _rsp_type *rsp;					\
++		int err;						\
++									\
++		rsp = (struct _rsp_type *)otx2_mbox_alloc_msg(		\
++			&rvu->mbox, devid,				\
++			sizeof(struct _rsp_type));			\
++		if (rsp) {						\
++			rsp->hdr.id = _id;				\
++			rsp->hdr.sig = OTX2_MBOX_RSP_SIG;		\
++			rsp->hdr.pcifunc = req->pcifunc;		\
++			rsp->hdr.rc = 0;				\
++		}							\
++									\
++		err = rvu_mbox_handler_ ## _name(rvu,			\
++						 (struct _req_type *)req, \
++						 rsp);			\
++		if (rsp && err)						\
++			rsp->hdr.rc = err;				\
++									\
++		return rsp ? err : -ENOMEM;				\
++	}
++MBOX_MESSAGES
++#undef M
++		break;
+ bad_message:
+-	otx2_reply_invalid_msg(&rvu->mbox, devid, req->pcifunc,
+-			       req->id);
+-	return -ENODEV;
++	default:
++		otx2_reply_invalid_msg(&rvu->mbox, devid, req->pcifunc,
++				       req->id);
++		return -ENODEV;
++	}
+ }
  
-+err_mbox:
-+	rvu_mbox_destroy(rvu);
-+err_hwsetup:
-+	rvu_reset_all_blocks(rvu);
-+	rvu_free_hw_resources(rvu);
- err_release_regions:
- 	pci_release_regions(pdev);
- err_disable_device:
-@@ -337,6 +589,8 @@ static void rvu_remove(struct pci_dev *pdev)
- {
- 	struct rvu *rvu = pci_get_drvdata(pdev);
- 
-+	rvu_unregister_interrupts(rvu);
-+	rvu_mbox_destroy(rvu);
- 	rvu_reset_all_blocks(rvu);
- 	rvu_free_hw_resources(rvu);
- 
-diff --git a/drivers/soc/marvell/octeontx2/rvu.h b/drivers/soc/marvell/octeontx2/rvu.h
-index 592b820..2fb9407 100644
---- a/drivers/soc/marvell/octeontx2/rvu.h
-+++ b/drivers/soc/marvell/octeontx2/rvu.h
-@@ -12,6 +12,7 @@
- #define RVU_H
- 
- #include "rvu_struct.h"
-+#include "mbox.h"
- 
- /* PCI device IDs */
- #define	PCI_DEVID_OCTEONTX2_RVU_AF		0xA065
-@@ -23,6 +24,17 @@
- 
- #define NAME_SIZE				32
- 
-+/* PF_FUNC */
-+#define RVU_PFVF_PF_SHIFT	10
-+#define RVU_PFVF_PF_MASK	0x3F
-+#define RVU_PFVF_FUNC_SHIFT	0
-+#define RVU_PFVF_FUNC_MASK	0x3FF
-+
-+struct rvu_work {
-+	struct	work_struct work;
-+	struct	rvu *rvu;
-+};
-+
- struct rsrc_bmap {
- 	unsigned long *bmap;	/* Pointer to resource bitmap */
- 	u16  max;		/* Max resource id or count */
-@@ -57,6 +69,16 @@ struct rvu {
- 	struct pci_dev		*pdev;
- 	struct device		*dev;
- 	struct rvu_hwinfo       *hw;
-+
-+	/* Mbox */
-+	struct otx2_mbox	mbox;
-+	struct rvu_work		*mbox_wrk;
-+	struct workqueue_struct *mbox_wq;
-+
-+	/* MSI-X */
-+	u16			num_vec;
-+	char			*irq_name;
-+	bool			*irq_allocated;
- };
- 
- static inline void rvu_write64(struct rvu *rvu, u64 block, u64 offset, u64 val)
-diff --git a/drivers/soc/marvell/octeontx2/rvu_struct.h b/drivers/soc/marvell/octeontx2/rvu_struct.h
-index 4122559..1dc1518 100644
---- a/drivers/soc/marvell/octeontx2/rvu_struct.h
-+++ b/drivers/soc/marvell/octeontx2/rvu_struct.h
-@@ -33,4 +33,26 @@ enum rvu_block_addr_e {
- 	BLK_COUNT	= 0xfULL,
- };
- 
-+/* RVU Admin function Interrupt Vector Enumeration */
-+enum rvu_af_int_vec_e {
-+	RVU_AF_INT_VEC_POISON = 0x0,
-+	RVU_AF_INT_VEC_PFFLR  = 0x1,
-+	RVU_AF_INT_VEC_PFME   = 0x2,
-+	RVU_AF_INT_VEC_GEN    = 0x3,
-+	RVU_AF_INT_VEC_MBOX   = 0x4,
-+};
-+
-+/**
-+ * RVU PF Interrupt Vector Enumeration
-+ */
-+enum rvu_pf_int_vec_e {
-+	RVU_PF_INT_VEC_VFFLR0     = 0x0,
-+	RVU_PF_INT_VEC_VFFLR1     = 0x1,
-+	RVU_PF_INT_VEC_VFME0      = 0x2,
-+	RVU_PF_INT_VEC_VFME1      = 0x3,
-+	RVU_PF_INT_VEC_VFPF_MBOX0 = 0x4,
-+	RVU_PF_INT_VEC_VFPF_MBOX1 = 0x5,
-+	RVU_PF_INT_VEC_AFPF_MBOX  = 0x6,
-+};
-+
- #endif /* RVU_STRUCT_H */
+ static void rvu_mbox_handler(struct work_struct *work)
 -- 
 2.7.4
 
