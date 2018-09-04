@@ -2,167 +2,129 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1CEC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C54C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C4520867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C38B820659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 13:25:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UCI5NWW5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TadBigMt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C4520867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=coker.com.au header.i=@coker.com.au header.b="qjPmlgCK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38B820659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=coker.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeIDRuS (ORCPT
+        id S1727479AbeIDRux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:50:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49748 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbeIDRuS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:50:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C8AA060AA2; Tue,  4 Sep 2018 13:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536067509;
-        bh=F/VcYaZ4aDYWRPIqHm+XVzb6H1bIr7poEwVFPLtQEaM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UCI5NWW5QAi0+BYTPNrRLPLTcPHyoBHwqk+HbKQPYLyPuVQcEH2lfo8znj8YlgsvW
-         xPYJoCaQdGeJYfm4WPIfpJkjodO7ok/aEkUb+1c+KE1D3RpeJKwSfAOh+hdrm0efJ6
-         hy+sR9cr0wlstKQx0DdiDiMujYn1wq5fVmB/uALc=
-Received: from controller.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wufan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5AE93608BF;
-        Tue,  4 Sep 2018 13:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536067508;
-        bh=F/VcYaZ4aDYWRPIqHm+XVzb6H1bIr7poEwVFPLtQEaM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TadBigMt19eEnaJgbWa1/o+oi3vkrDauqCG/kzHsyQhoDxUm5GbAoQdpaBC4k+Rb0
-         2pHf2JE9A7iKHHPVHLO9Jw6zguzIZ7sinojMN+NOxUKwPdl9jNW9Zioluq/hxOrL8Y
-         ZisiStaZ3Vg6spDTcWlHp+IH7Fn6iCFo011j4V18=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AE93608BF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
-From:   Fan Wu <wufan@codeaurora.org>
-To:     mchehab@kernel.org
-Cc:     bp@alien8.de, james.morse@arm.com, baicar.tyler@gmail.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, john.garry@huawei.com,
-        toshi.kani@hpe.com, tanxiaofei@huawei.com, wanghuiqiang@huawei.com,
-        shiju.jose@huawei.com, Fan Wu <wufan@codeaurora.org>
-Subject: [PATCH v4] EDAC, ghes: use CPER module handles to locate DIMMs
-Date:   Tue,  4 Sep 2018 13:24:53 +0000
-Message-Id: <1536067493-31454-1-git-send-email-wufan@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 4 Sep 2018 13:50:53 -0400
+Received: from smtp.sws.net.au ([46.4.88.250]:43436 "EHLO smtp.sws.net.au"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726208AbeIDRux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 13:50:53 -0400
+X-Greylist: delayed 560 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 13:50:52 EDT
+Received: from liv.localnet (localhost [127.0.0.1])
+        by smtp.sws.net.au (Postfix) with ESMTP id 3F355EC18;
+        Tue,  4 Sep 2018 23:16:18 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=coker.com.au;
+        s=2008; t=1536066985;
+        bh=b+K/ce5HqJXqQf0BtgnwjklJkJtx07WMftYgMNbXfRw=; l=3296;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qjPmlgCKMqfa8gPpCRBGhPeg4RYHD0hVY8uhlog97Ajik9sngrajOYyFvxxGZEBmC
+         fyC9lKkLvEwI1xpebqWJn4BQ5xD2fl8+dFIUJMuhcidBy2EUh216yDQbVsSOXl5UCD
+         BprKnOOKeSejW1nSpfmcXgyWP3+Ux4E7S5IHtSiU=
+From:   Russell Coker <russell@coker.com.au>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Laurent Bigonville <bigon@debian.org>
+Subject: Re: WARNING in apparmor_secid_to_secctx
+Date:   Tue, 04 Sep 2018 23:16:11 +1000
+Message-ID: <5806108.mdyebWjNCB@liv>
+In-Reply-To: <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+References: <000000000000c178e305749daba4@google.com> <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com> <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For platforms whose firmwares provide valid module handles
-(SMBIOS type 17) in error records, this patch uses the module
-handles to locate corresponding DIMMs and enables per-DIMM
-error counter update.
+On Tuesday, 4 September 2018 10:57:15 PM AEST Stephen Smalley wrote:
+> > I installed the tools, and we started loading policy.
+> > But then it turned out that wheezy policy does not allows mounting
+> > cgroup2 fs and maybe some others even in non-enforcing mode. As far as
+> > I understand that's because the policy does not have definition for
+> > the fs, and so loading bails out with an error.
 
-Signed-off-by: Fan Wu <wufan@codeaurora.org>
-Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
-Tested-by: Toshi Kani <toshi.kani@hpe.com>
----
+The aim has always been with SE Linux in Debian that the policy will support 
+the kernel from the next release and from the previous release.  Much of this 
+comes from upstream, but sometimes we have to go out of our way to get it.  
+Sometimes if you want to run unusual combinations of kernel and OS Debian 
+doesn't get a backport of the policy to support it in which case I often have 
+a special policy on my site to do it.
 
-Changes from v3:
-* Updated Reviewed-by list
+It seems strange that you wouldn't be able to mount a filesystem in permissive 
+mode.  Which program was trying to mount it?  Was it systemd?  It might be a 
+systemd bug.
 
-Changes from v2:
-* Fixed coding style glitch
-* Added Tested-by/Reviewed-by
+> > We need cgroup2 both for testing and for better sandboxing (no other
+> > way to restrict e.g. memory consumption). Moreover, we did not test
+> > any actual interesting interactions with selinux (there must be some?
+> > but I don't know what are they).
+> > So I had to uninstall the tool and policy is not loaded again.
+> > I investigated building a newer debian image with debootstrap (which
+> > should have newer policy I guess). But they don't work, some cryptic
+> > errors in init. Other people reported the same.
+> > So that's we are. I don't have any ideas left...
 
-Changes from v1:
-*  Changed the new function name to get_dimm_smbios_index
-*  Removed unnecessary checks inside get_dimm_smbios_index
-*  Reverted the change of the DMI handle print
-*  Updated commit message
-
-
----
- drivers/edac/ghes_edac.c | 23 +++++++++++++++++++++++
- include/linux/edac.h     |  2 ++
- 2 files changed, 25 insertions(+)
-
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index 473aeec..ba46160 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -81,6 +81,18 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
- 		(*num_dimm)++;
- }
+It would be nice to know what the errors are.  Although we aren't really 
+interested in bug reports from Wheezy, Stretch is the current stable release.
  
-+static int get_dimm_smbios_index(u16 handle)
-+{
-+	int i;
-+	struct mem_ctl_info *mci = ghes_pvt->mci;
-+
-+	for (i = 0; i < mci->tot_dimms; i++) {
-+		if (mci->dimms[i]->smbios_handle == handle)
-+			return i;
-+	}
-+	return -1;
-+}
-+
- static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- {
- 	struct ghes_edac_dimm_fill *dimm_fill = arg;
-@@ -177,6 +189,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- 				entry->total_width, entry->data_width);
- 		}
- 
-+		dimm->smbios_handle = entry->handle;
-+
- 		dimm_fill->count++;
- 	}
- }
-@@ -327,12 +341,21 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
- 		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
- 	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
- 		const char *bank = NULL, *device = NULL;
-+		int index = -1;
-+
- 		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
- 		if (bank != NULL && device != NULL)
- 			p += sprintf(p, "DIMM location:%s %s ", bank, device);
- 		else
- 			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
- 				     mem_err->mem_dev_handle);
-+
-+		index = get_dimm_smbios_index(mem_err->mem_dev_handle);
-+		if (index >= 0) {
-+			e->top_layer = index;
-+			e->enable_per_layer_report = true;
-+		}
-+
- 	}
- 	if (p > e->location)
- 		*(p - 1) = '\0';
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index bffb978..a45ce1f 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -451,6 +451,8 @@ struct dimm_info {
- 	u32 nr_pages;			/* number of pages on this dimm */
- 
- 	unsigned csrow, cschannel;	/* Points to the old API data */
-+
-+	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
- };
- 
- /**
+> So why not ask for help from the SELinux community?  I've cc'd the
+> selinux list and a couple of folks involved in Debian selinux.  I see a
+> couple of options but I don't know your constraints for syzbot:
+> 
+> 1) Run an instance of syzbot on a distro that supports SELinux enabled
+> out of the box like Fedora. Then you don't have to fight with SELinux
+> and can just focus on syzbot, while still testing SELinux enabled and
+> enforcing.
+> 
+> 2) Report the problems you are having with enabling SELinux on newer
+> Debian to the selinux list and/or the Debian selinux package maintainers
+> so that someone can help you resolve them.
+> 
+> 3) Back-port the cgroup2 policy definitions to your wheezy policy,
+> rebuild it, and install that.  We could help provide guidance on that.
+> I think you'll need to rebuild the base policy on wheezy; in
+> distributions with modern SELinux userspace, one could do it just by
+> adding a CIL module locally.
+
+I could backport that myself and put the package on my apt repository.  Tell 
+me what version of the kernel you are using and I'll have a look at it.
+
+> As for exercising SELinux, you'll exercise SELinux just by enabling it
+> and loading a policy, since it will perform permission checking on all
+> object accesses.   But you can get more extensive coverage by running
+> the selinux-testsuite.  We only test that on Fedora and RHEL however, so
+> getting it to work on Debian might take some effort.
+
+
 -- 
-2.7.4
+My Main Blog         http://etbe.coker.com.au/
+My Documents Blog    http://doc.coker.com.au/
+
+
 
