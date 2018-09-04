@@ -2,128 +2,143 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7207BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF972073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:02:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF972073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 41FA82075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41FA82075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeIEC3Z (ORCPT
+        id S1727458AbeIECks convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:29:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55091 "EHLO mail.bootlin.com"
+        Tue, 4 Sep 2018 22:40:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29214 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbeIEC3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:29:24 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B8E652072C; Wed,  5 Sep 2018 00:02:18 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8BC7F208AF;
-        Wed,  5 Sep 2018 00:02:08 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 00:02:07 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Ales Novak <alnovak@suse.cz>,
-        a.zummo@towertech.it, akpm@linux-foundation.org,
-        rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: rtc: fix chardev initialization races
-Message-ID: <20180904220207.GK13888@piout.net>
-References: <1393410793-7315-1-git-send-email-alnovak@suse.cz>
- <20180521122509.GA4251@taurus.defre.kleine-koenig.org>
- <nycvar.YFH.7.76.1805221407100.27054@cbobk.fhfr.pm>
- <20180522133955.jrqijs7xj3cz2lr4@pengutronix.de>
- <nycvar.YFH.7.76.1805221726300.27054@cbobk.fhfr.pm>
+        id S1726528AbeIECks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 22:40:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 15:13:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
+   d="scan'208";a="87642938"
+Received: from pgsmsx107.gar.corp.intel.com ([10.221.44.105])
+  by orsmga001.jf.intel.com with ESMTP; 04 Sep 2018 15:13:35 -0700
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
+ PGSMSX107.gar.corp.intel.com ([169.254.7.2]) with mapi id 14.03.0319.002;
+ Wed, 5 Sep 2018 06:13:34 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+CC:     "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMAgACchICAAhw1QIAC8vSAgABkDoCABMj0AIAAzxpQgAB5ToCAAAnrgIAAEkcAgADj9JA=
+Date:   Tue, 4 Sep 2018 22:13:34 +0000
+Message-ID: <105F7BF4D0229846AF094488D65A09893541AF39@PGSMSX112.gar.corp.intel.com>
+References: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+ <20180831181509.GB21555@linux.intel.com>
+ <20180903191926.GC13497@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
+ <20180904145451.GA5233@linux.intel.com>
+ <20180904153021.GB8344@linux.intel.com>
+ <20180904163546.GA5421@linux.intel.com>
+In-Reply-To: <20180904163546.GA5421@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWQwN2RhYWQtNDg0Mi00ZjZmLWE3OTYtYzE5OGMwN2FlOTAzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZVQxNmdQaWR2THNJS0VRdlFsb0QycVN1TkFrUlhqamFcL1wvb2Y5cDk5blpVdnZWcDJTeE82WmFMUW1wMkl0dk5mIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <nycvar.YFH.7.76.1805221726300.27054@cbobk.fhfr.pm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/2018 17:33:40+0200, Jiri Kosina wrote:
-> On Tue, 22 May 2018, Uwe Kleine-König wrote:
-> > [adding linux-rtc ML and Alexandre to Cc:]
-> > 
-> > Hello,
-> > 
-> > On Tue, May 22, 2018 at 02:09:36PM +0200, Jiri Kosina wrote:
-> > > On Mon, 21 May 2018, Uwe Kleine-König wrote:
-> > > 
-> > > > > The race looks like that (thanks Jiri):
-> > > > > 
-> > > > > CPU0:                                CPU1:
-> > > > > sys_load_module()
-> > > > >  do_init_module()
-> > > > >   do_one_initcall()
-> > > > >    cmos_do_probe()
-> > > > >     rtc_device_register()
-> > > > >      __register_chrdev()
-> > > > >      cdev->owner = struct module*
-> > > > >                                      open("/dev/rtc0")
-> > > > >     rtc_device_unregister()
-> > > > >   module_put()
-> > > > >   free_module()
-> > > > >    module_free(mod->module_core)
-> > > > >    /* struct module *module is now
-> > > > >       freed */
-> > > > >                                       chrdev_open()
-> > > > >                                        spin_lock(cdev_lock)
-> > > > >                                        cdev_get()
-> > > > >                                         try_module_get()
-> > > > >                                          module_is_live()
-> > > > >                                          /* dereferences already
-> > > > >                                             freed struct module* */
-> > > > 
-> > > > [Context: For a patch to rtc-pcf2127.c Alexandre Belloni asked not to
-> > > > fail after rtc_device_register successfully finished and pointed to this
-> > > > reasoning as explaination.]
-> > > > 
-> > > > If there is really such a race then (I hope) there is
-> > > > something in the cdev code that needs fixing. According to my
-> > > > understanding, when rtc_device_unregister returned, the cdev is gone and
-> > > > so chrdev_open is supposed to fail.
-> > > 
-> > > Oh wow, hello back to 4 years ago!
-> > 
-> > :-)
-> > 
-> 
-> > > Looking at the current code, I don't think there is no such race any more, 
-> > > as the last thing cmos_do_probe() -> __rtc_register_device() does that can 
-> > > potentially fail is the chardev creation itself.
-> > 
-> > OK, so you agree that it's also save to do something in a driver's probe
-> > after rtc_device_register() and call rtc_device_unregister() in the error
-> > path, right? 
-> 
-> Hmm, not really; that's what the code apparently did 4 years ago (judging 
-> from the scenario in the old mail, I of course forgot all the details), 
-> but doesn't do it any more.
-> 
-> Looking at the current code, if you call rtc_device_unregister() in the 
-> probe path, where is the guarantee that cdev_get() will not derefernce 
-> already freed struct module*?
-> 
 
-I've also tried to produce it and couldn't. The whole magic happens in
-kobj_lookup. Freeing the module before ends up with the application
-opening the char dev getting -ENXIO. Freeing the module after
-kobj_lookup is not possible and ends up with -EBUSY.
+> -----Original Message-----
+> From: platform-driver-x86-owner@vger.kernel.org [mailto:platform-driver-x86-
+> owner@vger.kernel.org] On Behalf Of Sean Christopherson
+> Sent: Wednesday, September 5, 2018 4:36 AM
+> To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: Huang, Kai <kai.huang@intel.com>; platform-driver-x86@vger.kernel.org;
+> x86@kernel.org; nhorman@redhat.com; linux-kernel@vger.kernel.org;
+> tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun, Serge
+> <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
+> mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
+> <dave.hansen@intel.com>
+> Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
+> 
+> On Tue, Sep 04, 2018 at 06:30:21PM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Sep 04, 2018 at 07:54:51AM -0700, Sean Christopherson wrote:
+> > > I don't see any value in trying to rule out specific causes of
+> > > INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
+> > > and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs
+> > > to be checked for validity as they're a package deal, i.e. they'll
+> > > all be valid or all be reset.  There shouldn't be a limit on retry
+> > > attempts, e.g. the MSRs could theoretically be reset between WRMSR and
+> EINIT.
+> >
+> > Why is doing rdmsrs necessary? With the INVALID_TOKEN error we know we
+> > are out-of-sync i.e. have been sleeping and then one just needs to do
+> > wrmsrs.
+> 
+> As Kai mentioned, INVALID_TOKEN is returned for other reasons, e.g. a
+> production enclave trying to use a debug token or reserved bits set in the token.
+> And in the KVM case, the hash and token are provided by the guest, so it's
+> entirely possible the enclave/token is not signed with the key specified in the
+> hash.  RDMSR is relatively inexpensive compared to the overall cost of EINIT.
+> Though of course EINIT failure isn't exactly a fast path, so I'm ok if you want to
+> opt for simplicity and retry on INVALID_TOKEN without checking the MSRs, just
+> make sure to add a comment indicating we're intentionally not checking the
+> MSRs.
+> 
+> > I think one retry should be enough given that VMM traps EINIT. One
+> > retry is needed to take care of the guest itself (or host if we are
+> > running on bare metal) having been in a sleep state.
+> 
+> Assuming we do RDMSR(hash0), that should be sufficient to prevent infinite retry
+> and 
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+IMHO probably we need to review this assumption w/ crypto guys, at least Intel internally.
+
+Thanks,
+-Kai
+
+it protects against the MSRs being lost between WRMSR and EINIT during
+> retry.  That being said, I'm ok retrying only once, especially if you want to omit
+> the RDMSR.  Disabling preemption should prevent the kernel from suspending
+> between WRMSR and EINIT, I'm just being paranoid.
+
+
