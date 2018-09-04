@@ -2,86 +2,137 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAB1C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9510C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726B920843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 05:49:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726B920843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 579EB20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:00:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hD/3kJZj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 579EB20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbeIDKMk (ORCPT
+        id S1727072AbeIDKWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 06:12:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38319 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727169AbeIDKMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 06:12:39 -0400
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w845kdJp3575320
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 3 Sep 2018 22:46:39 -0700
-Subject: Re: [PATCH 1/3] x86/boot: Add bit fields into xloadflags for 5-level
- kernel checking
-To:     Baoquan He <bhe@redhat.com>
-Cc:     x86@kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-References: <20180829141624.13985-1-bhe@redhat.com>
- <20180829141624.13985-2-bhe@redhat.com>
- <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
- <20180904034414.GI1740@192.168.1.3>
- <4546fc39-4982-4c91-c812-0df1e9bc9e20@zytor.com>
- <20180904052036.GJ1740@192.168.1.3>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <c4f65956-ad99-84ee-d4bf-044a6f0c5010@zytor.com>
-Date:   Mon, 3 Sep 2018 22:46:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 06:22:13 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46381 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeIDKWM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 06:22:12 -0400
+Received: by mail-yb1-f196.google.com with SMTP id y20-v6so857193ybi.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 22:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=686k+jR7J1yFAzxJs05rB+UFpjjH5ySkMF76lib8S7o=;
+        b=hD/3kJZjwnu5Sg72w5x4lg9gPAFlue/XmA/2PFCDht7H6d7t1IvAnFFL2glraukaeM
+         Q8J4RwZZkZoRxGWOjIm2ZNmTP71JRuXfAKlhVOl9vytrvu0CbcoWCKcnyOcT6PfvAEZ/
+         OrJ1e5FqVGjFnb7CEsfKMqswxidb4FnZvDBes=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=686k+jR7J1yFAzxJs05rB+UFpjjH5ySkMF76lib8S7o=;
+        b=htRRxjYQ7u1ZWxz7BWyeQ4b2qLHENHJ49qOJ37EMfBN12GtpyYBSre5weatQCj4EWX
+         BB5IQy0h9PrCFOhr5wR7zefQK4c5A1on8FdizLN/BQfhvuBbapzrlggG7nXo8vdMQCZq
+         5sZywb3m8Hxj7f+n5XQZ3yAK8eOEumL1kL3hCw/40QuQ3ZBW+ttVtLPTkyr6N0qLANYQ
+         35NfjRQqVD7dwPDGbcg7nLa7KFLK7yJyK//nZUGTaZnVM2Ar+c7YWfaWsD5w7CuU5mrf
+         zYFxk2J7HwyKIpkjFTS7m/HpEdeqUU7xAb0tI4G3ggo73Cjnt5FC2C7CUP7pno9ZW2SP
+         G8BA==
+X-Gm-Message-State: APzg51AtDb7hQRTDozC+IK1NxSXr5yNFxDVF64FAgewDnh59iRCpGxrk
+        DmrZK4YgGSFE+dwK1DGKGhQaqTaiCIY=
+X-Google-Smtp-Source: ANB0Vdb/Pqk1DrMNVQ+R484MPYlYm7c1ryVHPLbRFjRs0WRZR6nKjADeCN+HIv4+7uO/4uZ7jufrfw==
+X-Received: by 2002:a25:d34f:: with SMTP id e76-v6mr4697051ybf.227.1536040717727;
+        Mon, 03 Sep 2018 22:58:37 -0700 (PDT)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id h65-v6sm7782929ywe.75.2018.09.03.22.58.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Sep 2018 22:58:37 -0700 (PDT)
+Received: by mail-yw1-f53.google.com with SMTP id n21-v6so842222ywh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 22:58:37 -0700 (PDT)
+X-Received: by 2002:a81:9fd6:: with SMTP id w205-v6mr18030125ywg.288.1536040242096;
+ Mon, 03 Sep 2018 22:50:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180904052036.GJ1740@192.168.1.3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Mon, 3 Sep 2018 22:50:41 -0700 (PDT)
+In-Reply-To: <20180904051905.a2vyzijz6xyxvyhb@gondor.apana.org.au>
+References: <20180807211843.47586-1-keescook@chromium.org> <20180904051905.a2vyzijz6xyxvyhb@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 3 Sep 2018 22:50:41 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLHkNSGhR7Tk6wg8Vw-7nHPFfAgWyJ0NLMjGQw1BOKovg@mail.gmail.com>
+Message-ID: <CAGXu5jLHkNSGhR7Tk6wg8Vw-7nHPFfAgWyJ0NLMjGQw1BOKovg@mail.gmail.com>
+Subject: Re: [PATCH v8 0/9] crypto: Remove VLA usage
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/18 22:20, Baoquan He wrote:
-> On 09/03/18 at 09:13pm, H. Peter Anvin wrote:
->> On 09/03/18 20:44, Baoquan He wrote:
->>>
->>> 1) in arch/x86/kernel/relocate_kernel_64.S, we set X86_CR4_LA57 into cr4
->>> if the 1st kernel is in 5-level mode. Then in
->>> arch/x86/boot/compressed/head_64.S, paging_prepare() is called to decide
->>> if 5-level mode will be enabled, and prepare the trampoline. If
->>> kexec/kdump kernel is expected to be in 4-level, e.g with 'nolv5'
->>> specified, it still can handle well. But for the old kernel w/o these
->>>  5-level codes, it will ignore the fact that X86_CR4_LA57 has been set
->>> in CR4 and proceed anyway, then #GP is triggered. That's why XLF_5LEVEL
->>> is used to mark. 
->>>
+On Mon, Sep 3, 2018 at 10:19 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Tue, Aug 07, 2018 at 02:18:34PM -0700, Kees Cook wrote:
+>> v8 cover letter:
 >>
->> That's what I'm saying, don't do that.  Always jump into the second kernel in
->> 4-level mode, i.e. X86_CR4_LA57 unset.  That's the only sane thing.
-> 
-> Well, this might not be suggested. Kexec has been a formal feature in
-> our distro, our customers usually use it to reboot high end servers
-> because those machines may take one hour to boot up from firmware. And
-> 5-level may be also supported very soon, if people want to do a fast
-> reboot from the current kernel in 5-level, and expect to see it's in
-> 5-level too in the 2nd kernel, this always kexec jumping to the 2nd
-> kernel in 4-level mode might be unaccepted.
-> 
+>> I continue to hope this can land in v4.19, but I realize that's unlikely.
+>> It would be nice, though, if some of the "trivial" patches could get taken
+>> (e.g. cbc, xcbc, ccm VLA removals) so I don't have to keep repeating them.
+>> *fingers crossed*
+>>
+>> Series cover letter:
+>>
+>> This is nearly the last of the VLA removals[1], but it's one of the
+>> largest because crypto gets used in lots of places. After looking
+>> through code, usage, reading the threads Gustavo started, and comparing
+>> the use-cases to the other VLA removals that have landed in the kernel,
+>> I think this series is likely the best way forward to shut the door on
+>> VLAs forever.
+>>
+>> For background, the crypto stack usage is for callers to do an immediate
+>> bit of work that doesn't allocate new memory. This means that other VLA
+>> removal techniques (like just using kmalloc) aren't workable, and the
+>> next common technique is needed: examination of maximum stack usage and
+>> the addition of sanity checks. This series does that, and in several
+>> cases, these maximums were already implicit in the code.
+>>
+>> This series is intended to land via the crypto tree for 4.19, though it
+>> touches dm, networking, and a few other things as well, since there are
+>> dependent patches (new crypto #defines being used, etc).
+>
+> I have applied patches 1-4 and 6-8.  I'd like to get an ack from
+> the dm folks regarding patch 5.  As to patch 9, please fix it so
+> it doesn't rely on the BUG_ON to catch things.
 
-That makes no sense.  I'm talking about *entering* the kernel; the second
-kernel should switch to 5-level mode as necessary.
+Great! Thanks very much. I'll get a patch prepared to plumb
+crypto_skcipher_set_reqsize() failures.
 
-	-hpa
+-Kees
 
+-- 
+Kees Cook
+Pixel Security
