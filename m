@@ -2,76 +2,89 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E43C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2866EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD5712082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:54:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5712082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A29220645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:56:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GO9UDAHK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A29220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeIDXUf (ORCPT
+        id S1727798AbeIDXW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:20:35 -0400
-Received: from fieldses.org ([173.255.197.46]:56578 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbeIDXUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:20:35 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 7BE451DCB; Tue,  4 Sep 2018 14:54:11 -0400 (EDT)
-Date:   Tue, 4 Sep 2018 14:54:11 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Rogier Wolff <R.E.Wolff@BitWizard.nl>
-Cc:     Jeff Layton <jlayton@redhat.com>,
-        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: POSIX violation by writeback error
-Message-ID: <20180904185411.GA22166@fieldses.org>
-References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
- <20180904075347.GH11854@BitWizard.nl>
- <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
- <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
- <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
- <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
- <20180904161203.GD17478@fieldses.org>
- <20180904162348.GN17123@BitWizard.nl>
+        Tue, 4 Sep 2018 19:22:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57436 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeIDXW5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 19:22:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jETR/wfXy9x/msfoWJqYG80XlhsDcZhqiUgmwlwtDhI=; b=GO9UDAHKjGGnSnFgQ+z6hC1X1
+        cLvcdJiu3DOsvGCVgxsh00t4pxC0nCjrG+dFHI3BDZ7aOzR3onlPUCLqxONPs/YjRLBayo0wb7vwy
+        Kh9VI1ur6KSUvpC+nl0hZZmQDeoFErWBQVxfhRtgi4IQWSDrzQaL3B3NiUPcqK3TyvbmaLM6z//Js
+        YuT5OYehwIhfmmJmktS17kcZYpqKJRXNiwkb8xAo8txtq4LJgzjiLLOX0Ae9QP9yTft/nyOPso3Nn
+        YZ4p2Ausdk3BUDV/bSdpBx2IFSwMDE2/ktNWobLwihI8+NkexbuUnxnXLUX7OtrDi1LsgoAHuHTLE
+        M2gY47PtA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxGV3-0001Q8-8P; Tue, 04 Sep 2018 18:56:29 +0000
+Date:   Tue, 4 Sep 2018 11:56:29 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 3/5] RISC-V: Select useful GENERIC_IRQ kconfig options
+Message-ID: <20180904185629.GC25119@infradead.org>
+References: <20180904124514.6290-1-anup@brainfault.org>
+ <20180904124514.6290-4-anup@brainfault.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180904162348.GN17123@BitWizard.nl>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180904124514.6290-4-anup@brainfault.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 06:23:48PM +0200, Rogier Wolff wrote:
-> On Tue, Sep 04, 2018 at 12:12:03PM -0400, J. Bruce Fields wrote:
-> > Well, I think the point was that in the above examples you'd prefer that
-> > the read just fail--no need to keep the data.  A bit marking the file
-> > (or even the entire filesystem) unreadable would satisfy posix, I guess.
-> > Whether that's practical, I don't know.
-> 
-> When you would do it like that (mark the whole filesystem as "in
-> error") things go from bad to worse even faster. The Linux kernel 
-> tries to keep the system up even in the face of errors. 
-> 
-> With that suggestion, having one application run into a writeback
-> error would effectively crash the whole system because the filesystem
-> may be the root filesystem and stuff like "sshd" that you need to
-> diagnose the problem needs to be read from the disk.... 
+On Tue, Sep 04, 2018 at 06:15:12PM +0530, Anup Patel wrote:
+> This patch selects following GENERIC_IRQ kconfig options:
+> GENERIC_IRQ_MULTI_HANDLER
 
-Well, the absolutist position on posix compliance here would be that a
-crash is still preferable to returning the wrong data.  And for the
-cases 焦晓冬 gives, that sounds right?  Maybe it's the wrong balance in
-general, I don't know.  And we do already have filesystems with
-panic-on-error options, so if they aren't used maybe then maybe users
-have already voted against that level of strictness.
+This is already selected by arch/riscv/Kconfig.
 
---b.
+> GENERIC_IRQ_PROBE
+
+This is something only used by ISA drivers.  Why would we want that
+on RISC-V?
+
+> GENERIC_IRQ_SHOW_LEVEL
+
+We don't really have any special level triggerd irq handling in
+RISC-V.  That being said this is trivial and I don't see why it
+even is a Kconfig option.  Please have a discussion with Thomas
+and Marc on why we have this option instead of a default.
+
+> HANDLE_DOMAIN_IRQ
+
+We aren't using handle_domain_irq anywhere in RISC-V, no need to
+build this.
