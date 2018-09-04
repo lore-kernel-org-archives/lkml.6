@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8683CC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6520C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF8F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CDEF2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 11:20:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=upb.ro header.i=@upb.ro header.b="OEotLCjR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF8F2086D
+	dkim=pass (1024-bit key) header.d=upb.ro header.i=@upb.ro header.b="Iw48BKAr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CDEF2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=upb.ro
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbeIDPpA (ORCPT
+        id S1727543AbeIDPpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 11:45:00 -0400
-Received: from mail-sender220.upb.ro ([141.85.13.220]:56680 "EHLO mx.upb.ro"
+        Tue, 4 Sep 2018 11:45:03 -0400
+Received: from mail-sender200.upb.ro ([141.85.13.200]:56684 "EHLO mx.upb.ro"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727024AbeIDPpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 11:45:00 -0400
-X-Greylist: delayed 417 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 11:44:58 EDT
+        id S1727093AbeIDPpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 11:45:01 -0400
 Received: from mx.upb.ro (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTPS id CE26DB560055;
-        Tue,  4 Sep 2018 14:13:20 +0300 (EEST)
+        by mx.upb.ro (Postfix) with ESMTPS id 52F0AB560059;
+        Tue,  4 Sep 2018 14:13:21 +0300 (EEST)
 Received: from localhost (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTP id A2887B560060;
-        Tue,  4 Sep 2018 14:13:20 +0300 (EEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro A2887B560060
+        by mx.upb.ro (Postfix) with ESMTP id 35712B560062;
+        Tue,  4 Sep 2018 14:13:21 +0300 (EEST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro 35712B560062
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upb.ro;
-        s=96342B8A-77E4-11E5-BA93-D93D0963A2DF; t=1536059600;
-        bh=GizGxiIYDY1aiH2NIckjJ2QnXBxpCUyGdy4bR3YGWFQ=;
+        s=96342B8A-77E4-11E5-BA93-D93D0963A2DF; t=1536059601;
+        bh=dn6ZXRrTJTduKrknE2IfptjLohq4bSJMVee26tmhsiw=;
         h=From:To:Date:Message-Id;
-        b=OEotLCjRxFLEr1ceWvNq1Tz6eVyyneVNC0ME5eG9ScsmFLnsToTdYh6i+QNs0rHPa
-         lrSbcGGpQTcr6Kgx398GkSlpb+HhBrnGmAr6HUuVTki1cjE43B568oFIZSlt3a2Aad
-         GCz8vf/uc7Dva64gVgJwnvviCtDgTZDjU+QvHx7I=
+        b=Iw48BKArCiJQZzigFGYXTZCWvFF/rDDZVHbDL0sfzAxCv8/+mfwwPsqIt5zMNACS/
+         8jynN/ZtvBwj1FQG/0DNxL2lqmRZLuPStR7kHrKy8m/eMw/Z9fbs0YbGIO/Byhtn98
+         th8xWA6W5nQ7cUOPpcwfx5NSiIVUth2x5HjP2iZU=
 Received: from mx.upb.ro ([127.0.0.1])
         by localhost (mx.upb.ro [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ax-OS_qEvFl1; Tue,  4 Sep 2018 14:13:20 +0300 (EEST)
+        with ESMTP id 58sB_kFhVZPh; Tue,  4 Sep 2018 14:13:21 +0300 (EEST)
 Received: from asus-rog.localdomain (arh.pub.ro [141.85.160.17])
-        by mx.upb.ro (Postfix) with ESMTPSA id 7AFC7B560055;
+        by mx.upb.ro (Postfix) with ESMTPSA id F1E51B560059;
         Tue,  4 Sep 2018 14:13:20 +0300 (EEST)
 From:   Radu Pirea <radu_nicolae.pirea@upb.ro>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -55,9 +54,9 @@ To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-spi@vger.kernel.org, Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v12 1/6] MAINTAINERS: add at91 usart mfd driver
-Date:   Tue,  4 Sep 2018 14:13:05 +0300
-Message-Id: <20180904111310.4049-2-radu_nicolae.pirea@upb.ro>
+Subject: [PATCH v12 5/6] spi: at91-usart: add driver for at91-usart as spi
+Date:   Tue,  4 Sep 2018 14:13:09 +0300
+Message-Id: <20180904111310.4049-6-radu_nicolae.pirea@upb.ro>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
 References: <20180904111310.4049-1-radu_nicolae.pirea@upb.ro>
@@ -68,42 +67,492 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Radu Pirea <radu.pirea@microchip.com>
 
-Added entry for at91 usart mfd driver.
+This is the driver for at91-usart in spi mode. The USART IP can be configured
+to work in many modes and one of them is SPI.
+
+The driver was tested on sama5d3-xplained and sama5d4-xplained boards with
+enc28j60 ethernet controller as slave.
 
 Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reviwed-by: Mark Brown <broonie@kernel.org>
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/spi/Kconfig          |   8 +
+ drivers/spi/Makefile         |   1 +
+ drivers/spi/spi-at91-usart.c | 432 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 441 insertions(+)
+ create mode 100644 drivers/spi/spi-at91-usart.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 544cac829cf4..8aeaa2cc3e14 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9322,6 +9322,7 @@ M:	Richard Genoud <richard.genoud@gmail.com>
- S:	Maintained
- F:	drivers/tty/serial/atmel_serial.c
- F:	drivers/tty/serial/atmel_serial.h
-+F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index ad5d68e1dab7..6d9e309fab67 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -83,6 +83,14 @@ config SPI_ATMEL
+ 	  This selects a driver for the Atmel SPI Controller, present on
+ 	  many AT91 ARM chips.
  
- MICROCHIP / ATMEL DMA DRIVER
- M:	Ludovic Desroches <ludovic.desroches@microchip.com>
-@@ -9354,6 +9355,14 @@ S:	Supported
- F:	drivers/mtd/nand/raw/atmel/*
- F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
- 
-+MICROCHIP AT91 USART MFD DRIVER
-+M:	Radu Pirea <radu_nicolae.pirea@upb.ro>
-+L:	linux-kernel@vger.kernel.org
-+S:	Supported
-+F:	drivers/mfd/at91-usart.c
-+F:	include/dt-bindings/mfd/at91-usart.h
-+F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
++config SPI_AT91_USART
++	tristate "Atmel USART Controller SPI driver"
++	depends on (ARCH_AT91 || COMPILE_TEST)
++	depends on MFD_AT91_USART
++	help
++	  This selects a driver for the AT91 USART Controller as SPI Master,
++	  present on AT91 and SAMA5 SoC series.
 +
- MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER
- M:	Woojung Huh <Woojung.Huh@microchip.com>
- M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+ config SPI_AU1550
+ 	tristate "Au1550/Au1200/Au1300 SPI Controller"
+ 	depends on MIPS_ALCHEMY
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index cb1f4378b87c..901ff606e6e5 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_SPI_LOOPBACK_TEST)		+= spi-loopback-test.o
+ obj-$(CONFIG_SPI_ALTERA)		+= spi-altera.o
+ obj-$(CONFIG_SPI_ARMADA_3700)		+= spi-armada-3700.o
+ obj-$(CONFIG_SPI_ATMEL)			+= spi-atmel.o
++obj-$(CONFIG_SPI_AT91_USART)		+= spi-at91-usart.o
+ obj-$(CONFIG_SPI_ATH79)			+= spi-ath79.o
+ obj-$(CONFIG_SPI_AU1550)		+= spi-au1550.o
+ obj-$(CONFIG_SPI_AXI_SPI_ENGINE)	+= spi-axi-spi-engine.o
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+new file mode 100644
+index 000000000000..a924657642fa
+--- /dev/null
++++ b/drivers/spi/spi-at91-usart.c
+@@ -0,0 +1,432 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Driver for AT91 USART Controllers as SPI
++//
++// Copyright (C) 2018 Microchip Technology Inc.
++//
++// Author: Radu Pirea <radu.pirea@microchip.com>
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_gpio.h>
++#include <linux/platform_device.h>
++
++#include <linux/spi/spi.h>
++
++#define US_CR			0x00
++#define US_MR			0x04
++#define US_IER			0x08
++#define US_IDR			0x0C
++#define US_CSR			0x14
++#define US_RHR			0x18
++#define US_THR			0x1C
++#define US_BRGR			0x20
++#define US_VERSION		0xFC
++
++#define US_CR_RSTRX		BIT(2)
++#define US_CR_RSTTX		BIT(3)
++#define US_CR_RXEN		BIT(4)
++#define US_CR_RXDIS		BIT(5)
++#define US_CR_TXEN		BIT(6)
++#define US_CR_TXDIS		BIT(7)
++
++#define US_MR_SPI_MASTER	0x0E
++#define US_MR_CHRL		GENMASK(7, 6)
++#define US_MR_CPHA		BIT(8)
++#define US_MR_CPOL		BIT(16)
++#define US_MR_CLKO		BIT(18)
++#define US_MR_WRDBT		BIT(20)
++#define US_MR_LOOP		BIT(15)
++
++#define US_IR_RXRDY		BIT(0)
++#define US_IR_TXRDY		BIT(1)
++#define US_IR_OVRE		BIT(5)
++
++#define US_BRGR_SIZE		BIT(16)
++
++#define US_MIN_CLK_DIV		0x06
++#define US_MAX_CLK_DIV		BIT(16)
++
++#define US_RESET		(US_CR_RSTRX | US_CR_RSTTX)
++#define US_DISABLE		(US_CR_RXDIS | US_CR_TXDIS)
++#define US_ENABLE		(US_CR_RXEN | US_CR_TXEN)
++#define US_OVRE_RXRDY_IRQS	(US_IR_OVRE | US_IR_RXRDY)
++
++#define US_INIT \
++	(US_MR_SPI_MASTER | US_MR_CHRL | US_MR_CLKO | US_MR_WRDBT)
++
++/* Register access macros */
++#define at91_usart_spi_readl(port, reg) \
++	readl_relaxed((port)->regs + US_##reg)
++#define at91_usart_spi_writel(port, reg, value) \
++	writel_relaxed((value), (port)->regs + US_##reg)
++
++#define at91_usart_spi_readb(port, reg) \
++	readb_relaxed((port)->regs + US_##reg)
++#define at91_usart_spi_writeb(port, reg, value) \
++	writeb_relaxed((value), (port)->regs + US_##reg)
++
++struct at91_usart_spi {
++	struct spi_transfer	*current_transfer;
++	void __iomem		*regs;
++	struct device		*dev;
++	struct clk		*clk;
++
++	/*used in interrupt to protect data reading*/
++	spinlock_t		lock;
++
++	int			irq;
++	unsigned int		current_tx_remaining_bytes;
++	unsigned int		current_rx_remaining_bytes;
++
++	u32			spi_clk;
++	u32			status;
++
++	bool			xfer_failed;
++};
++
++static inline u32 at91_usart_spi_tx_ready(struct at91_usart_spi *aus)
++{
++	return aus->status & US_IR_TXRDY;
++}
++
++static inline u32 at91_usart_spi_rx_ready(struct at91_usart_spi *aus)
++{
++	return aus->status & US_IR_RXRDY;
++}
++
++static inline u32 at91_usart_spi_check_overrun(struct at91_usart_spi *aus)
++{
++	return aus->status & US_IR_OVRE;
++}
++
++static inline u32 at91_usart_spi_read_status(struct at91_usart_spi *aus)
++{
++	aus->status = at91_usart_spi_readl(aus, CSR);
++	return aus->status;
++}
++
++static inline void at91_usart_spi_tx(struct at91_usart_spi *aus)
++{
++	unsigned int len = aus->current_transfer->len;
++	unsigned int remaining = aus->current_tx_remaining_bytes;
++	const u8  *tx_buf = aus->current_transfer->tx_buf;
++
++	if (!remaining)
++		return;
++
++	if (at91_usart_spi_tx_ready(aus)) {
++		at91_usart_spi_writeb(aus, THR, tx_buf[len - remaining]);
++		aus->current_tx_remaining_bytes--;
++	}
++}
++
++static inline void at91_usart_spi_rx(struct at91_usart_spi *aus)
++{
++	int len = aus->current_transfer->len;
++	int remaining = aus->current_rx_remaining_bytes;
++	u8  *rx_buf = aus->current_transfer->rx_buf;
++
++	if (!remaining)
++		return;
++
++	rx_buf[len - remaining] = at91_usart_spi_readb(aus, RHR);
++	aus->current_rx_remaining_bytes--;
++}
++
++static inline void
++at91_usart_spi_set_xfer_speed(struct at91_usart_spi *aus,
++			      struct spi_transfer *xfer)
++{
++	at91_usart_spi_writel(aus, BRGR,
++			      DIV_ROUND_UP(aus->spi_clk, xfer->speed_hz));
++}
++
++static irqreturn_t at91_usart_spi_interrupt(int irq, void *dev_id)
++{
++	struct spi_controller *controller = dev_id;
++	struct at91_usart_spi *aus = spi_master_get_devdata(controller);
++
++	spin_lock(&aus->lock);
++	at91_usart_spi_read_status(aus);
++
++	if (at91_usart_spi_check_overrun(aus)) {
++		aus->xfer_failed = true;
++		at91_usart_spi_writel(aus, IDR, US_IR_OVRE | US_IR_RXRDY);
++		spin_unlock(&aus->lock);
++		return IRQ_HANDLED;
++	}
++
++	if (at91_usart_spi_rx_ready(aus)) {
++		at91_usart_spi_rx(aus);
++		spin_unlock(&aus->lock);
++		return IRQ_HANDLED;
++	}
++
++	spin_unlock(&aus->lock);
++
++	return IRQ_NONE;
++}
++
++static int at91_usart_spi_setup(struct spi_device *spi)
++{
++	struct at91_usart_spi *aus = spi_master_get_devdata(spi->controller);
++	u32 *ausd = spi->controller_state;
++	unsigned int mr = at91_usart_spi_readl(aus, MR);
++	u8 bits = spi->bits_per_word;
++
++	if (bits != 8) {
++		dev_dbg(&spi->dev, "Only 8 bits per word are supported\n");
++		return -EINVAL;
++	}
++
++	if (spi->mode & SPI_CPOL)
++		mr |= US_MR_CPOL;
++	else
++		mr &= ~US_MR_CPOL;
++
++	if (spi->mode & SPI_CPHA)
++		mr |= US_MR_CPHA;
++	else
++		mr &= ~US_MR_CPHA;
++
++	if (spi->mode & SPI_LOOP)
++		mr |= US_MR_LOOP;
++	else
++		mr &= ~US_MR_LOOP;
++
++	if (!ausd) {
++		ausd = kzalloc(sizeof(*ausd), GFP_KERNEL);
++		if (!ausd)
++			return -ENOMEM;
++
++		spi->controller_state = ausd;
++	}
++
++	*ausd = mr;
++
++	dev_dbg(&spi->dev,
++		"setup: bpw %u mode 0x%x -> mr %d %08x\n",
++		bits, spi->mode, spi->chip_select, mr);
++
++	return 0;
++}
++
++static int at91_usart_spi_transfer_one(struct spi_controller *ctlr,
++				       struct spi_device *spi,
++				       struct spi_transfer *xfer)
++{
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++
++	at91_usart_spi_set_xfer_speed(aus, xfer);
++	aus->xfer_failed = false;
++	aus->current_transfer = xfer;
++	aus->current_tx_remaining_bytes = xfer->len;
++	aus->current_rx_remaining_bytes = xfer->len;
++
++	while ((aus->current_tx_remaining_bytes ||
++		aus->current_rx_remaining_bytes) && !aus->xfer_failed) {
++		at91_usart_spi_read_status(aus);
++		at91_usart_spi_tx(aus);
++		cpu_relax();
++	}
++
++	if (aus->xfer_failed) {
++		dev_err(aus->dev, "Overrun!\n");
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int at91_usart_spi_prepare_message(struct spi_controller *ctlr,
++					  struct spi_message *message)
++{
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++	struct spi_device *spi = message->spi;
++	u32 *ausd = spi->controller_state;
++
++	at91_usart_spi_writel(aus, CR, US_ENABLE);
++	at91_usart_spi_writel(aus, IER, US_OVRE_RXRDY_IRQS);
++	at91_usart_spi_writel(aus, MR, *ausd);
++
++	return 0;
++}
++
++static int at91_usart_spi_unprepare_message(struct spi_controller *ctlr,
++					    struct spi_message *message)
++{
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++
++	at91_usart_spi_writel(aus, CR, US_RESET | US_DISABLE);
++	at91_usart_spi_writel(aus, IDR, US_OVRE_RXRDY_IRQS);
++
++	return 0;
++}
++
++static void at91_usart_spi_cleanup(struct spi_device *spi)
++{
++	struct at91_usart_spi_device *ausd = spi->controller_state;
++
++	spi->controller_state = NULL;
++	kfree(ausd);
++}
++
++static void at91_usart_spi_init(struct at91_usart_spi *aus)
++{
++	at91_usart_spi_writel(aus, MR, US_INIT);
++	at91_usart_spi_writel(aus, CR, US_RESET | US_DISABLE);
++}
++
++static int at91_usart_gpio_setup(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.parent->of_node;
++	int i;
++	int ret;
++	int nb;
++
++	if (!np)
++		return -EINVAL;
++
++	nb = of_gpio_named_count(np, "cs-gpios");
++	for (i = 0; i < nb; i++) {
++		int cs_gpio = of_get_named_gpio(np, "cs-gpios", i);
++
++		if (cs_gpio < 0)
++			return cs_gpio;
++
++		if (gpio_is_valid(cs_gpio)) {
++			ret = devm_gpio_request_one(&pdev->dev, cs_gpio,
++						    GPIOF_DIR_OUT,
++						    dev_name(&pdev->dev));
++			if (ret)
++				return ret;
++		}
++	}
++
++	return 0;
++}
++
++static int at91_usart_spi_probe(struct platform_device *pdev)
++{
++	struct resource *regs;
++	struct spi_controller *controller;
++	struct at91_usart_spi *aus;
++	struct clk *clk;
++	int irq;
++	int ret;
++
++	regs = platform_get_resource(to_platform_device(pdev->dev.parent),
++				     IORESOURCE_MEM, 0);
++	if (!regs)
++		return -EINVAL;
++
++	irq = platform_get_irq(to_platform_device(pdev->dev.parent), 0);
++	if (irq < 0)
++		return irq;
++
++	clk = devm_clk_get(pdev->dev.parent, "usart");
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	ret = -ENOMEM;
++	controller = spi_alloc_master(&pdev->dev, sizeof(*aus));
++	if (!controller)
++		goto at91_usart_spi_probe_fail;
++
++	ret = at91_usart_gpio_setup(pdev);
++	if (ret)
++		goto at91_usart_spi_probe_fail;
++
++	controller->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP | SPI_CS_HIGH;
++	controller->dev.of_node = pdev->dev.parent->of_node;
++	controller->bits_per_word_mask = SPI_BPW_MASK(8);
++	controller->setup = at91_usart_spi_setup;
++	controller->flags = SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX;
++	controller->transfer_one = at91_usart_spi_transfer_one;
++	controller->prepare_message = at91_usart_spi_prepare_message;
++	controller->unprepare_message = at91_usart_spi_unprepare_message;
++	controller->cleanup = at91_usart_spi_cleanup;
++	controller->max_speed_hz = DIV_ROUND_UP(clk_get_rate(clk),
++						US_MIN_CLK_DIV);
++	controller->min_speed_hz = DIV_ROUND_UP(clk_get_rate(clk),
++						US_MAX_CLK_DIV);
++	platform_set_drvdata(pdev, controller);
++
++	aus = spi_master_get_devdata(controller);
++
++	aus->dev = &pdev->dev;
++	aus->regs = devm_ioremap_resource(&pdev->dev, regs);
++	if (IS_ERR(aus->regs)) {
++		ret = PTR_ERR(aus->regs);
++		goto at91_usart_spi_probe_fail;
++	}
++
++	aus->irq = irq;
++	aus->clk = clk;
++
++	ret = devm_request_irq(&pdev->dev, irq, at91_usart_spi_interrupt, 0,
++			       dev_name(&pdev->dev), controller);
++	if (ret)
++		goto at91_usart_spi_probe_fail;
++
++	ret = clk_prepare_enable(clk);
++	if (ret)
++		goto at91_usart_spi_probe_fail;
++
++	aus->spi_clk = clk_get_rate(clk);
++	at91_usart_spi_init(aus);
++
++	spin_lock_init(&aus->lock);
++	ret = devm_spi_register_master(&pdev->dev, controller);
++	if (ret)
++		goto at91_usart_fail_register_master;
++
++	dev_info(&pdev->dev,
++		 "AT91 USART SPI Controller version 0x%x at %pa (irq %d)\n",
++		 at91_usart_spi_readl(aus, VERSION),
++		 &regs->start, irq);
++
++	return 0;
++
++at91_usart_fail_register_master:
++	clk_disable_unprepare(clk);
++at91_usart_spi_probe_fail:
++	spi_master_put(controller);
++	return ret;
++}
++
++static int at91_usart_spi_remove(struct platform_device *pdev)
++{
++	struct spi_controller *ctlr = platform_get_drvdata(pdev);
++	struct at91_usart_spi *aus = spi_master_get_devdata(ctlr);
++
++	clk_disable_unprepare(aus->clk);
++
++	return 0;
++}
++
++static const struct of_device_id at91_usart_spi_dt_ids[] = {
++	{ .compatible = "microchip,at91sam9g45-usart-spi"},
++	{ /* sentinel */}
++};
++
++MODULE_DEVICE_TABLE(of, at91_usart_spi_dt_ids);
++
++static struct platform_driver at91_usart_spi_driver = {
++	.driver = {
++		.name = "at91_usart_spi",
++	},
++	.probe = at91_usart_spi_probe,
++	.remove = at91_usart_spi_remove,
++};
++
++module_platform_driver(at91_usart_spi_driver);
++
++MODULE_DESCRIPTION("Microchip AT91 USART SPI Controller driver");
++MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:at91_usart_spi");
 -- 
 2.18.0
 
