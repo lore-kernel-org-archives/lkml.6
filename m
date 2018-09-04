@@ -2,270 +2,166 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9144EC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0486C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 482D020661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482D020661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 3C23B2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C23B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbeIDVYv (ORCPT
+        id S1727716AbeIDV0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:24:51 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52850 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbeIDVYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:24:51 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 43o6G1UEj_uI; Tue,  4 Sep 2018 18:58:33 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC9A500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:a500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7D3571EC0253;
-        Tue,  4 Sep 2018 18:58:33 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 18:58:28 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
-        mchehab@kernel.org, leoyang.li@nxp.com, amit.kucheria@linaro.org,
-        olof@lixom.net, sgoud@xilinx.com, anirudh@xilinx.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] edac: synps: Add platform specific structures for
- ddrc controller
-Message-ID: <20180904165828.GM32615@zn.tnic>
-References: <1535722070-10394-1-git-send-email-manish.narani@xilinx.com>
- <1535722070-10394-2-git-send-email-manish.narani@xilinx.com>
+        Tue, 4 Sep 2018 17:26:40 -0400
+Received: from uhil19pa10.eemsg.mail.mil ([214.24.21.83]:49555 "EHLO
+        uhil19pa10.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbeIDV0j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:26:39 -0400
+X-EEMSG-check-008: 332928334|UHIL19PA10_EEMSG_MP8.csd.disa.mil
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by uhil19pa10.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Sep 2018 17:00:34 +0000
+X-IronPort-AV: E=Sophos;i="5.53,329,1531785600"; 
+   d="scan'208";a="15481024"
+IronPort-PHdr: =?us-ascii?q?9a23=3AS7KgvxywWRRoBJjXCy+O+j09IxM/srCxBDY+r6?=
+ =?us-ascii?q?Qd0uwUI/ad9pjvdHbS+e9qxAeQG9mDtLQc06L/iOPJYSQ4+5GPsXQPItRndi?=
+ =?us-ascii?q?QuroEopTEmG9OPEkbhLfTnPGQQFcVGU0J5rTngaRAGUMnxaEfPrXKs8DUcBg?=
+ =?us-ascii?q?vwNRZvJuTyB4Xek9m72/q99pHPYQhEniaxba9vJxiqsAvdsdUbj5F/Iagr0B?=
+ =?us-ascii?q?vJpXVIe+VSxWx2IF+Yggjx6MSt8pN96ipco/0u+dJOXqX8ZKQ4UKdXDC86PG?=
+ =?us-ascii?q?Av5c3krgfMQA2S7XYBSGoWkx5IAw/Y7BHmW5r6ryX3uvZh1CScIMb7Vq4/Vy?=
+ =?us-ascii?q?i84Kh3SR/okCYHOCA/8GHLkcx7kaZXrAu8qxBj34LYZYeYO/RkfqPZYNgUW2?=
+ =?us-ascii?q?xPUMhMXCBFG4+wcpcDA+8HMO1FrYfyukEOoAOjCweyCuPhyjxGiHH40qI10e?=
+ =?us-ascii?q?suDQ7I0Rc8H98MqnnYsMn5OakQXO2z0aLGzS/Db/RT2Trl9YbIbg4uoemMXb?=
+ =?us-ascii?q?1ud8ra1FQhFwbfgVWUrYzqITOU3fkKvmiA8uVgTvmii3Inqg5tojivwd0gio?=
+ =?us-ascii?q?/Sho0P0FzE+iJ5wJgsKNC+VUV1b9mkEJ5KuCGbMYt7WsciQ2JtuCY+0LEGvo?=
+ =?us-ascii?q?S7fCcMxZ86xBDfc+SKf5WH7x/sTuqcISp0iGh7dL+wmRq+61Wsx+vhXceuyl?=
+ =?us-ascii?q?lKtDBKktzUu3AI0Bzc99aIR+Nm/kekxTaPzwfT6vxYIUwslarUNZohwrkom5?=
+ =?us-ascii?q?oPq0vDBC72mFjtjKOMd0Uk/Oao6+P8Yrr4upCQLZN0iwHiPaQuncyzG+I4PR?=
+ =?us-ascii?q?QVX2eH4+i80bzj/UnhTLVLiP05jLXZvYjHKckUqaO1GQ9Y3ps55xqhADqqzs?=
+ =?us-ascii?q?4UkWQfIFJAYh2HjozpO1/UIPD/CPeym0+snypwx/3dIr3gAonCLnjEkLv7e7?=
+ =?us-ascii?q?Z98FRTxBA8zdBY+ZJYEqsBL+7rWk/tqNzYCQc0PBGqw+fnFdV91YQeWXyUD6?=
+ =?us-ascii?q?+WN6PStlCI5uYxLOWWeIAVvzP9IeA/5/HylX85hUMdfa6x0JsPcn+4A/BmLl?=
+ =?us-ascii?q?6BYXX2n9cBFX4Gvg85TOztkl2NTyRfaGq1X6I5/js7Ep6pDZ/fRoCxh7yMxD?=
+ =?us-ascii?q?y7H51XZ29dDVCMDXDke5uZV/sQdS6fI9JtnzIYWbe6V4Ms1RKjuBPgxLdjM+?=
+ =?us-ascii?q?Xb5CMVuonj2dVu/O3SlRAz9T9uAMSZ12GCUXt0knkSSD8uxKB/ulR9ylCf0a?=
+ =?us-ascii?q?h9mfNYFNhT6+lVXQc9MJ7W1/Z6BMzqWgLdYteJT06rQsmmADExT9I+39wOY1?=
+ =?us-ascii?q?1mFtq+lB/D2S2qA7kUl7OXHpM09rjQ0GT2J8Z403zGzrUuj0E6QstTMm2rnq?=
+ =?us-ascii?q?x/9w/TB47PiUmZlaGqdaQG0y7L72eM02yOsVpEXwFqV6XFWnYfZkrKotvj4k?=
+ =?us-ascii?q?POVaOhCbMiMgFZ086NNrNKasH1jVVBXPrjOtHeY2Wrm2eqBBaI3aiBbIzwdG?=
+ =?us-ascii?q?UYwirdCVIIkwcJ/XaJLQI+HDuuo3rCDDxyElLie0fs8eh4qHOmQU441gKKYF?=
+ =?us-ascii?q?N717qz5BEVgeeRS+0c3r0aoictsTZ0E0in39LQFdWAoxBtfKJGYdMy+F1Hz3?=
+ =?us-ascii?q?7WtxRhPpy8KKBvnloecwVxv0Pz2BR7E55AntY2o3M31gpyKL6Y0VNYezOd2p?=
+ =?us-ascii?q?D/J6DXKm3s8x20da7W1U/R0MyM9qcM9vs4sVPjsx+tFkY49HVnydZV2WOG5p?=
+ =?us-ascii?q?rWFAoSTY7xUkEv+hhhub7aeCY96J3P2H1sK6a0tjvC2tIvBOc/1hmgeNJfOr?=
+ =?us-ascii?q?ueFADuC80aG9SuKOsylliybhMFPeNS+7QwP8OiafSGwrenM/19nDKplmRK+4?=
+ =?us-ascii?q?990kWL9ypzTu7HwZkFw+uf3guaTzf8l02tvdzwmYBBfTsSBHawyTD4BI5NYa?=
+ =?us-ascii?q?1/ZYQLBnmgI8252NVznJHtW3lf9F6sA1MJxtWldgaVb1z4xQdQz1gYoWS7mS?=
+ =?us-ascii?q?ukyDx5iysprreE3CzV3evicB4HN3VXS2lljlfjP5K0g8oGU0ivaggljgGq5V?=
+ =?us-ascii?q?vizahBuKt/N3XTQVtPfyXuNG5iU6Swtr2EY8NU9Zwnrz5YUOWmblCcULL9pA?=
+ =?us-ascii?q?Ea0yywV1dZkRw+di2wq93HjgF5j3zVeHptvWfaft9YyhDY69jRA/VW22xVaj?=
+ =?us-ascii?q?N/jGzsGlWkP9Svte6RnpPHv/H2A3mtTbVPYCLrysWGryL96mp0V07s18uvk8?=
+ =?us-ascii?q?HqRFBpmRTw0MNnAGCR9U7x?=
+X-IPAS-Result: =?us-ascii?q?A2DlAgCruY5b/wHyM5BbGwEBAQEDAQEBCQEBAYMkgQ9tE?=
+ =?us-ascii?q?iiDcohxjBwBAQEBAQEGgTWIY4hyhlIqhE0Cg1g4FAECAQEBAQEBAgFsHAyCN?=
+ =?us-ascii?q?SQBgl4BBSMVQRALDgoCAiYCAlcGDQYCAQEQgk4/AYF0DQ+jJoEuhC4BPYURB?=
+ =?us-ascii?q?YELiWR5gQeBOYJrgwIZAYRjglcCjXGNZQmGNIk/BheOWSuKfIoWIYFVKwgCG?=
+ =?us-ascii?q?AghDzuCbB+CBheIWYVaIzCNLgEB?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 04 Sep 2018 17:00:33 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id w84H0Qri014846;
+        Tue, 4 Sep 2018 13:00:27 -0400
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        "russell@coker.com.au" <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>
+References: <000000000000c178e305749daba4@google.com>
+ <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+ <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
+ <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
+ <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+ <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
+ <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
+Date:   Tue, 4 Sep 2018 13:02:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1535722070-10394-2-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 06:57:47PM +0530, Manish Narani wrote:
-> Add platform specific structures, so that we can add different IP
-> support later using quirks.
+On 09/04/2018 11:38 AM, Dmitry Vyukov wrote:
+> On Tue, Sep 4, 2018 at 5:28 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>>> So why not ask for help from the SELinux community? I've cc'd the selinux
+>>>> list and a couple of folks involved in Debian selinux.  I see a couple of
+>>>> options but I don't know your constraints for syzbot:
+>>>>
+>>>> 1) Run an instance of syzbot on a distro that supports SELinux enabled
+>>>> out
+>>>> of the box like Fedora. Then you don't have to fight with SELinux and can
+>>>> just focus on syzbot, while still testing SELinux enabled and enforcing.
+>>>>
+>>>> 2) Report the problems you are having with enabling SELinux on newer
+>>>> Debian
+>>>> to the selinux list and/or the Debian selinux package maintainers so that
+>>>> someone can help you resolve them.
+>>>>
+>>>> 3) Back-port the cgroup2 policy definitions to your wheezy policy,
+>>>> rebuild
+>>>> it, and install that.  We could help provide guidance on that. I think
+>>>> you'll need to rebuild the base policy on wheezy; in distributions with
+>>>> modern SELinux userspace, one could do it just by adding a CIL module
+>>>> locally.
+>>>
+>>>
+>>> Thanks, Stephen!
+>>>
+>>> I would like to understand first if failing mount(2) for unknown fs is
+>>> selinux bug or not. Because if it is and it is fixed, then it would
+>>> resolve the problem without actually doing anything (well, at least on
+>>> our side :)).
+>>
+>>
+>> Yes, I think that's a selinux kernel regression, previously reported here:
+>> https://lkml.org/lkml/2017/10/6/658
+>>
+>> Unfortunately I don't think it has been fixed upstream.  Generally people
+>> using SELinux with a newer kernel are also using a newer policy. That said,
+>> I agree it is a regression and ought to be fixed.
 > 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/edac/synopsys_edac.c | 78 +++++++++++++++++++++++++++++++++-----------
->  1 file changed, 59 insertions(+), 19 deletions(-)
 > 
-> diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-> index 0c9c59e..2470d35 100644
-> --- a/drivers/edac/synopsys_edac.c
-> +++ b/drivers/edac/synopsys_edac.c
-> @@ -22,6 +22,8 @@
->  #include <linux/edac.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
->  
->  #include "edac_module.h"
->  
-> @@ -130,6 +132,7 @@ struct synps_ecc_status {
->   * @baseaddr:	Base address of the DDR controller
->   * @message:	Buffer for framing the event specific info
->   * @stat:	ECC status information
-> + * @p_data:	Pointer to platform data
->   * @ce_cnt:	Correctable Error count
->   * @ue_cnt:	Uncorrectable Error count
->   */
-> @@ -137,24 +140,47 @@ struct synps_edac_priv {
->  	void __iomem *baseaddr;
->  	char message[SYNPS_EDAC_MSG_SIZE];
->  	struct synps_ecc_status stat;
-> +	const struct synps_platform_data *p_data;
->  	u32 ce_cnt;
->  	u32 ue_cnt;
->  };
->  
->  /**
-> + * struct synps_platform_data -  synps platform data structure
-> + * @edac_geterror_info:	function pointer to synps edac error info
-> + * @edac_get_mtype:	function pointer to synps edac mtype
-> + * @edac_get_dtype:	function pointer to synps edac dtype
-> + * @edac_get_eccstate:	function pointer to synps edac eccstate
-> + * @quirks:		to differentiate IPs
+> How hard is it to fix it? We are on upstream head, so once it's in we
+> are ready to go.
+> Using multiple images is somewhat problematic (besides the fact that I
+> don't know how to build a fedora image) because syzbot does not
+> capture what image was used, and in the docs we just provide the
+> single image, so people will start complaining that bugs don't
+> reproduce but they are just using a wrong image.
 
-Kill all that "function pointer" fluff. Here's how I've changed it:
-
-/**
- * struct synps_platform_data -  synps platform data structure
- * @edac_geterror_info: edac error info
- * @edac_get_mtype:     get mtype
- * @edac_get_dtype:     get dtype
- * @edac_get_eccstate:  get ECC state
- * @quirks:             to differentiate IPs
- */
-
-Shorter, quicker to read/scan/etc...
-
-> + */
-> +struct synps_platform_data {
-> +	int (*edac_geterror_info)(struct synps_edac_priv *priv);
-> +	enum mem_type (*edac_get_mtype)(const void __iomem *base);
-> +	enum dev_type (*edac_get_dtype)(const void __iomem *base);
-> +	bool (*edac_get_eccstate)(void __iomem *base);
-> +	int quirks;
-> +};
-> +
-> +/**
->   * synps_edac_geterror_info - Get the current ecc error info
-> - * @base:	Pointer to the base address of the ddr memory controller
-> - * @p:		Pointer to the synopsys ecc status structure
-> + * @priv:	Pointer to DDR memory controller private instance data
->   *
->   * Determines there is any ecc error or not
-
-All sentences end with a fullstop. Check all your patches.
-
-Also, it is not "ecc" it is "ECC". Also go over all your patches.
-
->   *
->   * Return: one if there is no error otherwise returns zero
->   */
-> -static int synps_edac_geterror_info(void __iomem *base,
-> -				    struct synps_ecc_status *p)
-> +static int synps_edac_geterror_info(struct synps_edac_priv *priv)
->  {
-> +	void __iomem *base;
-> +	struct synps_ecc_status *p;
->  	u32 regval, clearval = 0;
-
-Please sort function local variables declaration in a reverse christmas
-tree order:
-
-	<type> longest_variable_name;
-	<type> shorter_var_name;
-	<type> even_shorter;
-	<type> i;
-
->  
-> +	if (!priv)
-> +		return 1;
-
-Why are you even checking this here?
-
-synps_edac_check() is merrily dereferencing it - if anything we will
-explode there already.
-
-> +
-> +	base = priv->baseaddr;
-> +	p = &priv->stat;
-> +
->  	regval = readl(base + STAT_OFST);
->  	if (!regval)
->  		return 1;
-> @@ -240,9 +266,10 @@ static void synps_edac_handle_error(struct mem_ctl_info *mci,
->  static void synps_edac_check(struct mem_ctl_info *mci)
->  {
->  	struct synps_edac_priv *priv = mci->pvt_info;
-> +	const struct synps_platform_data *p_data = priv->p_data;
->  	int status;
->  
-> -	status = synps_edac_geterror_info(priv->baseaddr, &priv->stat);
-> +	status = p_data->edac_geterror_info(priv);
->  	if (status)
->  		return;
->  
-> @@ -362,6 +389,7 @@ static int synps_edac_init_csrows(struct mem_ctl_info *mci)
->  	struct csrow_info *csi;
->  	struct dimm_info *dimm;
->  	struct synps_edac_priv *priv = mci->pvt_info;
-> +	const struct synps_platform_data *p_data = priv->p_data;
->  	u32 size;
->  	int row, j;
->  
-> @@ -370,12 +398,12 @@ static int synps_edac_init_csrows(struct mem_ctl_info *mci)
-
-That function returns 0 unconditionally. Make it a void in a prepatch.
-
->  		size = synps_edac_get_memsize();
->  
->  		for (j = 0; j < csi->nr_channels; j++) {
-> -			dimm            = csi->channels[j]->dimm;
-> -			dimm->edac_mode = EDAC_FLAG_SECDED;
-> -			dimm->mtype     = synps_edac_get_mtype(priv->baseaddr);
-> -			dimm->nr_pages  = (size >> PAGE_SHIFT) / csi->nr_channels;
-> -			dimm->grain     = SYNPS_EDAC_ERR_GRAIN;
-> -			dimm->dtype     = synps_edac_get_dtype(priv->baseaddr);
-> +			dimm		= csi->channels[j]->dimm;
-> +			dimm->edac_mode	= EDAC_FLAG_SECDED;
-> +			dimm->mtype	= p_data->edac_get_mtype(priv->baseaddr);
-> +			dimm->nr_pages	= (size >> PAGE_SHIFT) / csi->nr_channels;
-> +			dimm->grain	= SYNPS_EDAC_ERR_GRAIN;
-> +			dimm->dtype	= p_data->edac_get_dtype(priv->baseaddr);
->  		}
->  	}
->  
-> @@ -423,6 +451,21 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
->  	return status;
->  }
->  
-> +static const struct synps_platform_data zynq_edac_def = {
-> +	.edac_geterror_info	= synps_edac_geterror_info,
-> +	.edac_get_mtype		= synps_edac_get_mtype,
-> +	.edac_get_dtype		= synps_edac_get_dtype,
-> +	.edac_get_eccstate	= synps_edac_get_eccstate,
-> +	.quirks			= 0,
-> +};
-> +
-> +static const struct of_device_id synps_edac_match[] = {
-> +	{ .compatible = "xlnx,zynq-ddrc-a05", .data = (void *)&zynq_edac_def },
-> +	{ /* end of table */ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, synps_edac_match);
-> +
->  /**
->   * synps_edac_mc_probe - Check controller and bind driver
->   * @pdev:	Pointer to the platform_device struct
-> @@ -440,13 +483,15 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
->  	int rc;
->  	struct resource *res;
->  	void __iomem *baseaddr;
-> +	const struct synps_platform_data *p_data;
-
-Please sort function local variables declaration in a reverse christmas
-tree order:
-
-	<type> longest_variable_name;
-	<type> shorter_var_name;
-	<type> even_shorter;
-	<type> i;
-
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	baseaddr = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(baseaddr))
->  		return PTR_ERR(baseaddr);
->  
-> -	if (!synps_edac_get_eccstate(baseaddr)) {
-> +	p_data = of_device_get_match_data(&pdev->dev);
-> +	if (!(p_data->edac_get_eccstate(baseaddr))) {
-
-Too many parentheses:
-
-	if (!p_data->...
-
-is enough.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+I'll take a look and see if I can provide a trivial fix.
