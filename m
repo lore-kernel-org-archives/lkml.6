@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B342CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F96EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4B32082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3514520659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 12:47:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="xZbGjSlG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4B32082B
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="TMrrbJGo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3514520659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeIDRML (ORCPT
+        id S1727536AbeIDRMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 13:12:11 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43698 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeIDRML (ORCPT
+        Tue, 4 Sep 2018 13:12:18 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35851 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbeIDRMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 13:12:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id x6-v6so1582627plv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 05:47:11 -0700 (PDT)
+        Tue, 4 Sep 2018 13:12:18 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d1-v6so1630147pgo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 05:47:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xCtpF/SUSM6i86wme8H/evRhGjGiqPLInmg5oyQMX7A=;
-        b=xZbGjSlGLNNIL8DeiHDAOt1/g2On9vMfgzZJr1yRNbGm0pk4jamOQ3xoar13sleK7i
-         HlONOepGZEnJPzLYIP3brc/+dxwd0z3gg6XSY4rQSXe4We0idNnBPuw3GJqY7DneXqGk
-         BBp22zcHunw+iUkqg96IVdbHuKt4AvNR06xPiOakLAo5r6c+8QqSX3BnIT/YO9rOOwqC
-         ry0cb6k5HqVOqT3drfgtD9j8BH8vvXThmqbAOtzjtAjzJx78ynZ2ADxXmWw2RVQDpIF2
-         H+Yo2J3AOJ1pVr9y5ZUhD6+doqJJqu5AII97kwyr0epbNNovAYHujrolcMKV/Eof3fdt
-         EDCA==
+        bh=jBpIWSgBkjREW9nerVWH2meQAGwlPcHIWyDg/ffT3BU=;
+        b=TMrrbJGowI7/SEsKAUSIGyd+3aOr0CeokijFEo+SeP2Y2KyJlD9WQ8RZRpevCqB1sJ
+         ebPRHO22NcTXiGQRhPAHZS9iBuIojJT00D6MYyVzXK76i/1acH/jF6cm89DYox+tbnMJ
+         z0KKkCG5LQwjHMvk+AbYAthkEhwZWyVtFZ/GNC/Wbd11UutCyeJKAyot1wA+vxI1/niQ
+         WSUDEVF9j49P6GdYg555eqUazwSXO7eZwZ0IPcaPrwXjJq5+Y/ynTCPJsme8XgVJLAXD
+         l4KgOupVCUpMZri7Qlx8hpVJklaG6jlWQb6W5Z93BS01ADYnT3LniZJIwSrdUV48m9bH
+         6y1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xCtpF/SUSM6i86wme8H/evRhGjGiqPLInmg5oyQMX7A=;
-        b=RrI996sth8/wVYj4fiL8nwhGP57Bvq71rKgYeIjai75l2UTiaID1BIcU9Ou2Rk8b4K
-         JyIYeJ4OOuQEYLLnSQ3FG0jRzSZLPTf0+JBUoqlWVXyN+EsWEBICp+zMvUTkqSS50nTV
-         yWbwQf7uSmuTrp2pTR2yNO5R1eouGmpEYnFCR+tNwkMbpk1NZhUm7MD8f7xII8NynBrR
-         dRq2GP84ONLeKePQr6xraFnk21D1k696arCIDAophF7gioDhfIVtARF+qWwybMJkoEPv
-         LkUlIIpxlYXwTIvdh/nyX3xbtbxRQploDbavUt8OnblMbNDlZNJmqx42W27sYHRQSdLG
-         njOA==
-X-Gm-Message-State: APzg51Ar2AQewqkf167D0VzYRkOcLYKPpuC6HTkqnmYDTSzqecF8nbUO
-        SmT/2WP8h1fZ9Zo3p0AwLaajyg==
-X-Google-Smtp-Source: ANB0VdZRqXJUdPuD3UHXFhjZLTzaWM6ZgAwy299mQnZ4SogpbTRIOowNjx/bZX//3GfdjWpHRUEwsw==
-X-Received: by 2002:a17:902:8308:: with SMTP id bd8-v6mr13499181plb.134.1536065231278;
-        Tue, 04 Sep 2018 05:47:11 -0700 (PDT)
+        bh=jBpIWSgBkjREW9nerVWH2meQAGwlPcHIWyDg/ffT3BU=;
+        b=Rzhovwp7KdUtT7ZlzUNAxcgu0+f+rs8+4mU10+0vTxtk22IfHQRfGRSE3xcCd+2nEh
+         2fD+VFnHI9EiYt+1pZnijgJhqGECphLpQO9IGUknIlziX9Rppda+lHsbr0399ZuF/zv+
+         p/Xp7lbSxFqgvE4Vlfq6RPtUXOiUnIERwuQWd5ody0c92dxEWUn4M6luw4qE4NMFcN6u
+         1mbjydhiC7Vcw1aM0MJ7ECcrXbNQH/ne95iCVRN80qtg9Ll3JGQeopL98otQGLXqEwN+
+         rgCMhk2KcNFliba0Y/Ej9JHW4hAWnvRiG96XCil/bv3uDyMgAPFyoY2WjrPNsj2lB249
+         Bbog==
+X-Gm-Message-State: APzg51A06rKi7mN8g4PiC5gOnQtUymUWi6jw+JfiIPWG7lMn/nME3xrT
+        1w+t4eQ4Ovvd0bVj6nx2pyqV/Q==
+X-Google-Smtp-Source: ANB0VdY69vu2gKwZwL21yR1SXziYavShuQ0Y07oihHg1PAPhmi73dinn5wjeJCxxH44C8bnbMKmQwQ==
+X-Received: by 2002:a65:6413:: with SMTP id a19-v6mr23166203pgv.359.1536065238154;
+        Tue, 04 Sep 2018 05:47:18 -0700 (PDT)
 Received: from anup-ubuntu64.wlan.qualcomm.com ([106.51.30.16])
-        by smtp.googlemail.com with ESMTPSA id p11-v6sm31621773pfj.72.2018.09.04.05.47.05
+        by smtp.googlemail.com with ESMTPSA id p11-v6sm31621773pfj.72.2018.09.04.05.47.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 05:47:10 -0700 (PDT)
+        Tue, 04 Sep 2018 05:47:17 -0700 (PDT)
 From:   Anup Patel <anup@brainfault.org>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -67,11 +67,10 @@ To:     Palmer Dabbelt <palmer@sifive.com>,
 Cc:     Atish Patra <atish.patra@wdc.com>,
         Christoph Hellwig <hch@infradead.org>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-Subject: [RFC PATCH 4/5] irqchip: RISC-V Local Interrupt Controller Driver
-Date:   Tue,  4 Sep 2018 18:15:13 +0530
-Message-Id: <20180904124514.6290-5-anup@brainfault.org>
+        Anup Patel <anup@brainfault.org>
+Subject: [RFC PATCH 5/5] clocksource: riscv_timer: Make timer interrupt as a per-CPU interrupt
+Date:   Tue,  4 Sep 2018 18:15:14 +0530
+Message-Id: <20180904124514.6290-6-anup@brainfault.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180904124514.6290-1-anup@brainfault.org>
 References: <20180904124514.6290-1-anup@brainfault.org>
@@ -80,96 +79,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RISC-V local interrupt controller manages software interrupts,
-timer interrupts, external interrupts (which are routed via the
-platform level interrupt controller) and per-HART local interrupts.
-
-This patch add a driver for RISC-V local interrupt controller. It's
-a major re-write over perviously submitted version.
-(Refer, https://www.spinics.net/lists/devicetree/msg241230.html)
-
-Few advantages of this new driver over previous one are:
-1. It registers all local interrupts as per-CPU interrupts
-2. We can develop drivers for devices with per-CPU local interrupts
-without changing arch code or this driver
-3. It allows local interrupt controller DT node under each CPU DT node
-as well as single system-wide DT node for local interrupt controller.
-
-The RISC-V INTC driver is compliant with RISC-V Hart-Level Interrupt
-Controller DT bindings located at:
-Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+Instead of directly calling RISC-V timer interrupt handler from
+RISC-V local interrupt conntroller driver, this patch implements
+RISC-V timer interrupt as a per-CPU interrupt using per-CPU APIs
+of Linux IRQ subsystem.
 
 Signed-off-by: Anup Patel <anup@brainfault.org>
-Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
 ---
- arch/riscv/include/asm/irq.h      |  15 ++-
- arch/riscv/kernel/irq.c           |  59 +----------
- drivers/irqchip/Kconfig           |  15 ++-
- drivers/irqchip/Makefile          |   1 +
- drivers/irqchip/irq-riscv-intc.c  | 164 ++++++++++++++++++++++++++++++
- drivers/irqchip/irq-sifive-plic.c |  21 +++-
- include/linux/cpuhotplug.h        |   1 +
- 7 files changed, 214 insertions(+), 62 deletions(-)
- create mode 100644 drivers/irqchip/irq-riscv-intc.c
+ arch/riscv/include/asm/irq.h      |  2 -
+ drivers/clocksource/riscv_timer.c | 76 +++++++++++++++++++++++++------
+ drivers/irqchip/irq-riscv-intc.c  |  8 ----
+ 3 files changed, 62 insertions(+), 24 deletions(-)
 
 diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
-index 93eb75eac4ff..fe503d71876a 100644
+index fe503d71876a..7ff3751e7816 100644
 --- a/arch/riscv/include/asm/irq.h
 +++ b/arch/riscv/include/asm/irq.h
-@@ -15,7 +15,20 @@
- #ifndef _ASM_RISCV_IRQ_H
- #define _ASM_RISCV_IRQ_H
+@@ -30,8 +30,6 @@
+  */
+ #define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
  
--#define NR_IRQS         0
-+/*
-+ * Possible interrupt causes:
-+ */
-+#define INTERRUPT_CAUSE_SOFTWARE    1
-+#define INTERRUPT_CAUSE_TIMER       5
-+#define INTERRUPT_CAUSE_EXTERNAL    9
+-void riscv_timer_interrupt(void);
+-
+ #include <asm-generic/irq.h>
+ 
+ #endif /* _ASM_RISCV_IRQ_H */
+diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
+index 4e8b347e43e2..c7ac60a82754 100644
+--- a/drivers/clocksource/riscv_timer.c
++++ b/drivers/clocksource/riscv_timer.c
+@@ -3,11 +3,17 @@
+  * Copyright (C) 2012 Regents of the University of California
+  * Copyright (C) 2017 SiFive
+  */
++#define pr_fmt(fmt) "riscv-timer: " fmt
+ #include <linux/clocksource.h>
+ #include <linux/clockchips.h>
+ #include <linux/cpu.h>
+ #include <linux/delay.h>
+ #include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/interrupt.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/sched_clock.h>
+ #include <asm/sbi.h>
+ 
+ /*
+@@ -31,6 +37,7 @@ static int riscv_clock_next_event(unsigned long delta,
+ 	return 0;
+ }
+ 
++static unsigned int riscv_clock_event_irq;
+ static DEFINE_PER_CPU(struct clock_event_device, riscv_clock_event) = {
+ 	.name			= "riscv_timer_clockevent",
+ 	.features		= CLOCK_EVT_FEAT_ONESHOT,
+@@ -38,6 +45,11 @@ static DEFINE_PER_CPU(struct clock_event_device, riscv_clock_event) = {
+ 	.set_next_event		= riscv_clock_next_event,
+ };
+ 
++static u64 riscv_sched_clock(void)
++{
++	return get_cycles64();
++}
 +
-+/*
-+ * The high order bit of the trap cause register is always set for
-+ * interrupts, which allows us to differentiate them from exceptions
-+ * quickly.  The INTERRUPT_CAUSE_* macros don't contain that bit, so we
-+ * need to mask it off.
-+ */
-+#define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
+ /*
+  * It is guaranteed that all the timers across all the harts are synchronized
+  * within one tick of each other, so while this could technically go
+@@ -48,7 +60,7 @@ static unsigned long long riscv_clocksource_rdtime(struct clocksource *cs)
+ 	return get_cycles64();
+ }
  
- void riscv_timer_interrupt(void);
+-static DEFINE_PER_CPU(struct clocksource, riscv_clocksource) = {
++static struct clocksource riscv_clocksource = {
+ 	.name		= "riscv_clocksource",
+ 	.rating		= 300,
+ 	.mask		= CLOCKSOURCE_MASK(BITS_PER_LONG),
+@@ -61,45 +73,81 @@ static int riscv_timer_starting_cpu(unsigned int cpu)
+ 	struct clock_event_device *ce = per_cpu_ptr(&riscv_clock_event, cpu);
  
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index c51c9b402e87..46a311e5f0f6 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -7,69 +7,16 @@
+ 	ce->cpumask = cpumask_of(cpu);
++	ce->irq = riscv_clock_event_irq;
+ 	clockevents_config_and_register(ce, riscv_timebase, 100, 0x7fffffff);
  
- #include <linux/interrupt.h>
- #include <linux/irqchip.h>
--#include <linux/irqdomain.h>
+-	csr_set(sie, SIE_STIE);
++	enable_percpu_irq(riscv_clock_event_irq, IRQ_TYPE_NONE);
+ 	return 0;
+ }
+ 
+ static int riscv_timer_dying_cpu(unsigned int cpu)
+ {
+-	csr_clear(sie, SIE_STIE);
++	disable_percpu_irq(riscv_clock_event_irq);
+ 	return 0;
+ }
+ 
+-/* called directly from the low-level interrupt handler */
+-void riscv_timer_interrupt(void)
++static irqreturn_t riscv_timer_interrupt(int irq, void *dev_id)
+ {
+ 	struct clock_event_device *evdev = this_cpu_ptr(&riscv_clock_event);
+ 
+ 	csr_clear(sie, SIE_STIE);
+ 	evdev->event_handler(evdev);
++
++	return IRQ_HANDLED;
+ }
+ 
+ static int __init riscv_timer_init_dt(struct device_node *n)
+ {
+-	int cpu_id = riscv_of_processor_hart(n), error;
+-	struct clocksource *cs;
 -
--#include <asm/sbi.h>
--
--/*
-- * Possible interrupt causes:
-- */
--#define INTERRUPT_CAUSE_SOFTWARE    1
--#define INTERRUPT_CAUSE_TIMER       5
--#define INTERRUPT_CAUSE_EXTERNAL    9
--
--/*
-- * The high order bit of the trap cause register is always set for
-- * interrupts, which allows us to differentiate them from exceptions
-- * quickly.  The INTERRUPT_CAUSE_* macros don't contain that bit, so we
-- * need to mask it off.
-- */
--#define INTERRUPT_CAUSE_FLAG	(1UL << (__riscv_xlen - 1))
+-	if (cpu_id != smp_processor_id())
++	int error;
++	struct irq_domain *domain;
++	struct of_phandle_args oirq;
++
++	/*
++	 * Either we have one INTC DT node under each CPU DT node
++	 * or a single system wide INTC DT node. Irrespective to
++	 * number of INTC DT nodes, we only proceed if we are able
++	 * to find irq_domain of INTC.
++	 *
++	 * Once we have INTC irq_domain, we create mapping for timer
++	 * interrupt HWIRQ and request_percpu_irq() on it.
++	 */
++
++	if (riscv_clock_event_irq)
+ 		return 0;
  
- asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
+-	cs = per_cpu_ptr(&riscv_clocksource, cpu_id);
+-	clocksource_register_hz(cs, riscv_timebase);
++	oirq.np = n;
++	oirq.args_count = 1;
++	oirq.args[0] = INTERRUPT_CAUSE_TIMER;
++
++	domain = irq_find_host(oirq.np);
++	if (!domain)
++		return -ENODEV;
++
++	riscv_clock_event_irq = irq_create_of_mapping(&oirq);
++	if (!riscv_clock_event_irq)
++		return -ENODEV;
++
++	clocksource_register_hz(&riscv_clocksource, riscv_timebase);
++	sched_clock_register(riscv_sched_clock,
++			     BITS_PER_LONG, riscv_timebase);
++
++	error = request_percpu_irq(riscv_clock_event_irq,
++				   riscv_timer_interrupt,
++				   "riscv_timer", &riscv_clock_event);
++	if (error)
++		return error;
+ 
+ 	error = cpuhp_setup_state(CPUHP_AP_RISCV_TIMER_STARTING,
+ 			 "clockevents/riscv/timer:starting",
+ 			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
+ 	if (error)
+-		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
+-		       error, cpu_id);
++		pr_err("RISCV timer register failed error %d\n", error);
++
++	pr_info("running at %lu.%02luMHz frequency\n",
++		(unsigned long)riscv_timebase / 1000000,
++		(unsigned long)(riscv_timebase / 10000) % 100);
++
+ 	return error;
+ }
+ 
+-TIMER_OF_DECLARE(riscv_timer, "riscv", riscv_timer_init_dt);
++TIMER_OF_DECLARE(riscv_timer, "riscv,cpu-intc", riscv_timer_init_dt);
+diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
+index c80502a1e12b..f40827a27227 100644
+--- a/drivers/irqchip/irq-riscv-intc.c
++++ b/drivers/irqchip/irq-riscv-intc.c
+@@ -22,20 +22,12 @@ static atomic_t intc_init = ATOMIC_INIT(0);
+ 
+ static void riscv_intc_irq(struct pt_regs *regs)
  {
 -	struct pt_regs *old_regs;
--
--	switch (regs->scause & ~INTERRUPT_CAUSE_FLAG) {
+ 	unsigned long cause = regs->scause & ~INTERRUPT_CAUSE_FLAG;
+ 
+ 	if (unlikely(cause >= BITS_PER_LONG))
+ 		panic("unexpected interrupt cause");
+ 
+ 	switch (cause) {
 -	case INTERRUPT_CAUSE_TIMER:
 -		old_regs = set_irq_regs(regs);
 -		irq_enter();
@@ -177,347 +272,9 @@ index c51c9b402e87..46a311e5f0f6 100644
 -		irq_exit();
 -		set_irq_regs(old_regs);
 -		break;
--#ifdef CONFIG_SMP
--	case INTERRUPT_CAUSE_SOFTWARE:
--		/*
--		 * We only use software interrupts to pass IPIs, so if a non-SMP
--		 * system gets one, then we don't know what to do.
--		 */
--		handle_IPI(regs);
--		break;
--#endif
--	case INTERRUPT_CAUSE_EXTERNAL:
--		old_regs = set_irq_regs(regs);
--		irq_enter();
-+	if (handle_arch_irq)
- 		handle_arch_irq(regs);
--		irq_exit();
--		set_irq_regs(old_regs);
--		break;
--	default:
--		panic("unexpected interrupt cause");
--	}
--}
--
--#ifdef CONFIG_SMP
--static void smp_ipi_trigger_sbi(const struct cpumask *to_whom)
--{
--	sbi_send_ipi(cpumask_bits(to_whom));
- }
--#endif
- 
- void __init init_IRQ(void)
- {
- 	irqchip_init();
--#ifdef CONFIG_SMP
--	set_smp_ipi_trigger(smp_ipi_trigger_sbi);
--#endif
-+	if (!handle_arch_irq)
-+		panic("No interrupt controller found.");
- }
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 383e7b70221d..885e182586f4 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -371,7 +371,18 @@ config QCOM_PDC
- 	  Power Domain Controller driver to manage and configure wakeup
- 	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
- 
--endmenu
-+config RISCV_INTC
-+	bool "RISC-V Interrupt Controller"
-+	depends on RISCV
-+	default y
-+	help
-+	   This enables support for the local interrupt controller found in
-+	   standard RISC-V systems.  The local interrupt controller handles
-+	   timer interrupts, software interrupts, and hardware interrupts.
-+	   Without a local interrupt controller the system will be unable to
-+	   handle any interrupts, including those passed via the PLIC.
-+
-+	   If you don't know what to do here, say Y.
- 
- config SIFIVE_PLIC
- 	bool "SiFive Platform-Level Interrupt Controller"
-@@ -384,3 +395,5 @@ config SIFIVE_PLIC
- 	   interrupt sources are subordinate to the PLIC.
- 
- 	   If you don't know what to do here, say Y.
-+
-+endmenu
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index fbd1ec8070ef..e638ee5c4452 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -87,4 +87,5 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
- obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
- obj-$(CONFIG_NDS32)			+= irq-ativic32.o
- obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
-+obj-$(CONFIG_RISCV_INTC)		+= irq-riscv-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
-new file mode 100644
-index 000000000000..c80502a1e12b
---- /dev/null
-+++ b/drivers/irqchip/irq-riscv-intc.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2012 Regents of the University of California
-+ * Copyright (C) 2017-2018 SiFive
-+ * Copyright (C) 2018 Anup Patel
-+ */
-+
-+#define pr_fmt(fmt) "riscv-intc: " fmt
-+#include <linux/atomic.h>
-+#include <linux/bits.h>
-+#include <linux/cpu.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqdomain.h>
-+#include <linux/interrupt.h>
-+#include <linux/of.h>
-+#include <linux/smp.h>
-+#include <asm/sbi.h>
-+
-+static struct irq_domain *intc_domain;
-+static atomic_t intc_init = ATOMIC_INIT(0);
-+
-+static void riscv_intc_irq(struct pt_regs *regs)
-+{
-+	struct pt_regs *old_regs;
-+	unsigned long cause = regs->scause & ~INTERRUPT_CAUSE_FLAG;
-+
-+	if (unlikely(cause >= BITS_PER_LONG))
-+		panic("unexpected interrupt cause");
-+
-+	switch (cause) {
-+	case INTERRUPT_CAUSE_TIMER:
-+		old_regs = set_irq_regs(regs);
-+		irq_enter();
-+		riscv_timer_interrupt();
-+		irq_exit();
-+		set_irq_regs(old_regs);
-+		break;
-+#ifdef CONFIG_SMP
-+	case INTERRUPT_CAUSE_SOFTWARE:
-+		/*
-+		 * We only use software interrupts to pass IPIs, so if a non-SMP
-+		 * system gets one, then we don't know what to do.
-+		 */
-+		handle_IPI(regs);
-+		break;
-+#endif
-+	default:
-+		handle_domain_irq(intc_domain, cause, regs);
-+		break;
-+	}
-+}
-+
-+/*
-+ * On RISC-V systems local interrupts are masked or unmasked by writing the SIE
-+ * (Supervisor Interrupt Enable) CSR.  As CSRs can only be written on the local
-+ * hart, these functions can only be called on the hart that corresponds to the
-+ * IRQ chip.  They are only called internally to this module, so they BUG_ON if
-+ * this condition is violated rather than attempting to handle the error by
-+ * forwarding to the target hart, as that's already expected to have been done.
-+ */
-+static void riscv_intc_irq_mask(struct irq_data *d)
-+{
-+	csr_clear(sie, 1 << (long)d->hwirq);
-+}
-+
-+static void riscv_intc_irq_unmask(struct irq_data *d)
-+{
-+	csr_set(sie, 1 << (long)d->hwirq);
-+}
-+
-+#ifdef CONFIG_SMP
-+static void riscv_intc_ipi_trigger(const struct cpumask *to_whom)
-+{
-+	sbi_send_ipi(cpumask_bits(to_whom));
-+}
-+
-+static int riscv_intc_cpu_starting(unsigned int cpu)
-+{
-+	csr_set(sie, 1 << INTERRUPT_CAUSE_SOFTWARE);
-+	return 0;
-+}
-+
-+static int riscv_intc_cpu_dying(unsigned int cpu)
-+{
-+	csr_clear(sie, 1 << INTERRUPT_CAUSE_SOFTWARE);
-+	return 0;
-+}
-+
-+static void riscv_intc_smp_init(void)
-+{
-+	csr_write(sie, 0);
-+	csr_write(sip, 0);
-+
-+	set_smp_ipi_trigger(riscv_intc_ipi_trigger);
-+
-+	cpuhp_setup_state(CPUHP_AP_IRQ_RISCV_STARTING,
-+			  "irqchip/riscv/intc:starting",
-+			  riscv_intc_cpu_starting,
-+			  riscv_intc_cpu_dying);
-+
-+}
-+#else
-+static void riscv_intc_smp_init(void)
-+{
-+	csr_write(sie, 0);
-+	csr_write(sip, 0);
-+}
-+#endif
-+
-+static struct irq_chip riscv_intc_chip = {
-+	.name = "RISC-V INTC",
-+	.irq_mask = riscv_intc_irq_mask,
-+	.irq_unmask = riscv_intc_irq_unmask,
-+};
-+
-+static int riscv_intc_domain_map(struct irq_domain *d, unsigned int irq,
-+				 irq_hw_number_t hwirq)
-+{
-+	irq_set_percpu_devid(irq);
-+	irq_domain_set_info(d, irq, hwirq, &riscv_intc_chip, d->host_data,
-+			    handle_percpu_devid_irq, NULL, NULL);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops riscv_intc_domain_ops = {
-+	.map	= riscv_intc_domain_map,
-+	.xlate	= irq_domain_xlate_onecell,
-+};
-+
-+static int __init riscv_intc_init(struct device_node *node,
-+				  struct device_node *parent)
-+{
-+	/*
-+	 * RISC-V device trees can have one INTC DT node under
-+	 * each CPU DT node so INTC init function will be called
-+	 * once for each INTC DT node. We only need to do INTC
-+	 * init once for boot CPU so we use atomic counter to
-+	 * achieve this.
-+	 */
-+	if (atomic_inc_return(&intc_init) > 1)
-+		return 0;
-+
-+	intc_domain = irq_domain_add_linear(node, BITS_PER_LONG,
-+					    &riscv_intc_domain_ops, NULL);
-+	if (!intc_domain)
-+		goto error_add_linear;
-+
-+	set_handle_irq(&riscv_intc_irq);
-+
-+	riscv_intc_smp_init();
-+
-+	pr_info("%lu local interrupts mapped\n", (long)BITS_PER_LONG);
-+
-+	return 0;
-+
-+error_add_linear:
-+	pr_warn("unable to add IRQ domain\n");
-+	return -ENXIO;
-+}
-+
-+IRQCHIP_DECLARE(riscv, "riscv,cpu-intc", riscv_intc_init);
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 532e9d68c704..ab9614d5a2b4 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -8,6 +8,7 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -146,14 +147,17 @@ static struct irq_domain *plic_irqdomain;
-  * that source ID back to the same claim register.  This automatically enables
-  * and disables the interrupt, so there's nothing else to do.
-  */
--static void plic_handle_irq(struct pt_regs *regs)
-+static void plic_handle_irq(struct irq_desc *desc)
- {
- 	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	void __iomem *claim = plic_hart_offset(handler->ctxid) + CONTEXT_CLAIM;
- 	irq_hw_number_t hwirq;
- 
- 	WARN_ON_ONCE(!handler->present);
- 
-+	chained_irq_enter(chip, desc);
-+
- 	csr_clear(sie, SIE_SEIE);
- 	while ((hwirq = readl(claim))) {
- 		int irq = irq_find_mapping(plic_irqdomain, hwirq);
-@@ -166,6 +170,8 @@ static void plic_handle_irq(struct pt_regs *regs)
- 		writel(hwirq, claim);
- 	}
- 	csr_set(sie, SIE_SEIE);
-+
-+	chained_irq_exit(chip, desc);
- }
- 
- /*
-@@ -183,7 +189,7 @@ static int plic_find_hart_id(struct device_node *node)
- }
- 
- static int __init plic_init(struct device_node *node,
--		struct device_node *parent)
-+			    struct device_node *parent)
- {
- 	int error = 0, nr_handlers, nr_mapped = 0, i;
- 	u32 nr_irqs;
-@@ -218,7 +224,7 @@ static int __init plic_init(struct device_node *node,
- 		struct of_phandle_args parent;
- 		struct plic_handler *handler;
- 		irq_hw_number_t hwirq;
--		int cpu;
-+		int cpu, parent_irq;
- 
- 		if (of_irq_parse_one(node, i, &parent)) {
- 			pr_err("failed to parse parent for context %d.\n", i);
-@@ -229,6 +235,13 @@ static int __init plic_init(struct device_node *node,
- 		if (parent.args[0] == -1)
- 			continue;
- 
-+		if (irq_find_host(parent.np)) {
-+			parent_irq = irq_of_parse_and_map(node, i);
-+			if (parent_irq)
-+				irq_set_chained_handler(parent_irq,
-+							plic_handle_irq);
-+		}
-+
- 		cpu = plic_find_hart_id(parent.np);
- 		if (cpu < 0) {
- 			pr_warn("failed to parse hart ID for context %d.\n", i);
-@@ -248,7 +261,7 @@ static int __init plic_init(struct device_node *node,
- 
- 	pr_info("mapped %d interrupts to %d (out of %d) handlers.\n",
- 		nr_irqs, nr_mapped, nr_handlers);
--	set_handle_irq(plic_handle_irq);
-+
- 	return 0;
- 
- out_iounmap:
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index caf40ad0bbc6..ca7268a38cef 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -100,6 +100,7 @@ enum cpuhp_state {
- 	CPUHP_AP_IRQ_ARMADA_XP_STARTING,
- 	CPUHP_AP_IRQ_BCM2836_STARTING,
- 	CPUHP_AP_IRQ_MIPS_GIC_STARTING,
-+	CPUHP_AP_IRQ_RISCV_STARTING,
- 	CPUHP_AP_ARM_MVEBU_COHERENCY,
- 	CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
- 	CPUHP_AP_PERF_X86_STARTING,
+ #ifdef CONFIG_SMP
+ 	case INTERRUPT_CAUSE_SOFTWARE:
+ 		/*
 -- 
 2.17.1
 
