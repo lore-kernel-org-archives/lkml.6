@@ -2,96 +2,123 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92297C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB12C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C3F7206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:25:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fc7VwYw2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C3F7206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D56B320843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:25:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56B320843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbeIDTvS (ORCPT
+        id S1727688AbeIDTvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:51:18 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:40790 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbeIDTvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:51:17 -0400
-Received: by mail-oi0-f51.google.com with SMTP id l202-v6so7459696oig.7;
-        Tue, 04 Sep 2018 08:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Ws9pxqv6QPzhTuWpIFcH5zHXu80OyCeK9HqxA+9OUnc=;
-        b=Fc7VwYw2zOlQH+/lKdZDdo7+ZSTuL9G29BByBN0nQBmY4AsB0U0KRPmXVmgssD6Z2W
-         CR6lWJYUNFkqTLN092RwPm100FmUo/5LmI5MEF+Hzsag0yu+mftZgn2+NC0urv+vCPx3
-         iesaJDcicUSfULAgQ2wIEVOgAyN7pDPe6euo1OgwScksks/EP+KaMKXp8mLR9pHh7C5A
-         0HUoHXixA7APzizCGITvH/U+z4nZA1MoLOmi0a2s6apGvT6KKuaspzO43hx/8OfmSqIQ
-         z6/YpNs9yChYak0fapoN0WQF6XM2dKBsg+sKfngDaYeclkdySu0OtzXurFi/SyM3OdpF
-         MVAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Ws9pxqv6QPzhTuWpIFcH5zHXu80OyCeK9HqxA+9OUnc=;
-        b=QzDWMA0A2AKifFFYGruVbfHqfDLLX5LCiaLDDiY0zO2QXtQEw/ljUtFnUW6zRO0OP/
-         sic/FQLW7KM/u3jYKsm3pSiBnUeeeRd1adyfeKDxAbN1TMzJ1kQe1PyA+oF3Yy5IiuZ6
-         nbOn4MMUKKztyKyBf65cFgrXYrGdx/i9tvKYfl3UkQxK98EwTuvSM+wuDyawYHKKx3WQ
-         SVsKqrodxAFP0DpOj2m91/XqeM31omkiNrCBHvGRyJxAXk4rSYws5bUKIlHKqPbC6bJC
-         ci3VX0ZmXxpdM//j6fKzKORYhhyWGur1Bl8/5z+OG+7VgdBvOR2tVD9yvmP80KfZmU10
-         Kk5g==
-X-Gm-Message-State: APzg51BY5zNWlnXghMQ7+UTWQbO+1flNKhSuN32V7WYcOwVRqMlAlLXH
-        A3o3LrBYYbyDsNE1dyStR1B4+KaEfzEtO0jn+4o=
-X-Google-Smtp-Source: ANB0VdbTRJ838D3t+MLOkmGj7ZCTl5P8K1vT6b+j+6h47UUWZhEHHYu9QtenuxtWGLUhsP3TsSmRXM6DLIHWFlUQGVI=
-X-Received: by 2002:aca:4b0d:: with SMTP id y13-v6mr26811065oia.198.1536074742610;
- Tue, 04 Sep 2018 08:25:42 -0700 (PDT)
+        Tue, 4 Sep 2018 15:51:31 -0400
+Received: from mga09.intel.com ([134.134.136.24]:50258 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726304AbeIDTvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:51:31 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 08:25:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
+   d="scan'208";a="71513523"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.138])
+  by orsmga006.jf.intel.com with ESMTP; 04 Sep 2018 08:25:54 -0700
+Date:   Tue, 4 Sep 2018 23:38:30 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     kbuild-all@01.org, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH] net: qca_spi: Fix race condition in spi transfers
+Message-ID: <20180904153830.GW17047@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:2b4d:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 08:25:42 -0700 (PDT)
-In-Reply-To: <CAOMZO5Bvj=kB8m7DcX2vSLr3e0_uW-CnURtwM71YJ=NWT+DCgQ@mail.gmail.com>
-References: <b2ea002f-4fe8-0738-b346-69ed138cecd0@prevas.dk>
- <b2505963-0fdc-81d2-6b8a-315a31eb922e@prevas.dk> <AM6PR04MB5158CB868A4E2AD5AFC5B476E3090@AM6PR04MB5158.eurprd04.prod.outlook.com>
- <CAOMZO5Bvj=kB8m7DcX2vSLr3e0_uW-CnURtwM71YJ=NWT+DCgQ@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 4 Sep 2018 12:25:42 -0300
-Message-ID: <CAOMZO5BEadx1FfqqMHK16s5B3Ob6UaGwgL+fqg5wHP_WHDVcPw@mail.gmail.com>
-Subject: Re: reboot on wandboard fails with v4.14.67 (bisected to 2059e527a6)
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     stable <stable@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535719981-20812-1-git-send-email-stefan.wahren@i2se.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus and Greg,
+Hi Stefan,
 
-On Wed, Aug 29, 2018 at 10:57 AM, Fabio Estevam <festevam@gmail.com> wrote:
+I love your patch! Perhaps something to improve:
 
-> Thanks for reporting.
->
-> Commit 157bcc06094c3 ("ARM: imx_v6_v7_defconfig: Select ULPI support")
-> was meant to be applied for 4.18 only.
->
-> I think we should revert it from earlier stable versions.
+[auto build test WARNING on net-next/master]
+[also build test WARNING on v4.19-rc2 next-20180831]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Yes, the simplest fix is indeed to revert this commit from the older
-stable trees.
+url:    https://github.com/0day-ci/linux/commits/Stefan-Wahren/net-qca_spi-Fix-race-condition-in-spi-transfers/20180903-112513
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+:::::: branch date: 4 hours ago
+:::::: commit date: 4 hours ago
 
-I have sent the revert patches for 4.4, 4.9, 4.14 and 4.17 stable trees.
+>> drivers/net/ethernet/qualcomm/qca_7k.c:78:27: sparse: cast to restricted __be16
+>> drivers/net/ethernet/qualcomm/qca_7k.c:78:27: sparse: cast to restricted __be16
+>> drivers/net/ethernet/qualcomm/qca_7k.c:78:27: sparse: cast to restricted __be16
+>> drivers/net/ethernet/qualcomm/qca_7k.c:78:27: sparse: cast to restricted __be16
 
-Thanks
+# https://github.com/0day-ci/linux/commit/5fb0b49d203c5085fd770521b6c18d0becda9086
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 5fb0b49d203c5085fd770521b6c18d0becda9086
+vim +78 drivers/net/ethernet/qualcomm/qca_7k.c
+
+291ab06e Stefan Wahren 2014-09-26  42  
+291ab06e Stefan Wahren 2014-09-26  43  int
+291ab06e Stefan Wahren 2014-09-26  44  qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result)
+291ab06e Stefan Wahren 2014-09-26  45  {
+291ab06e Stefan Wahren 2014-09-26  46  	__be16 tx_data;
+5fb0b49d Stefan Wahren 2018-08-31  47  	struct spi_transfer transfer[2];
+5fb0b49d Stefan Wahren 2018-08-31  48  	struct spi_message msg;
+291ab06e Stefan Wahren 2014-09-26  49  	int ret;
+291ab06e Stefan Wahren 2014-09-26  50  
+5fb0b49d Stefan Wahren 2018-08-31  51  	memset(transfer, 0, sizeof(transfer));
+5fb0b49d Stefan Wahren 2018-08-31  52  
+5fb0b49d Stefan Wahren 2018-08-31  53  	spi_message_init(&msg);
+5fb0b49d Stefan Wahren 2018-08-31  54  
+291ab06e Stefan Wahren 2014-09-26  55  	tx_data = cpu_to_be16(QCA7K_SPI_READ | QCA7K_SPI_INTERNAL | reg);
+5fb0b49d Stefan Wahren 2018-08-31  56  	*result = 0;
+5fb0b49d Stefan Wahren 2018-08-31  57  
+5fb0b49d Stefan Wahren 2018-08-31  58  	transfer[0].tx_buf = &tx_data;
+5fb0b49d Stefan Wahren 2018-08-31  59  	transfer[0].len = QCASPI_CMD_LEN;
+5fb0b49d Stefan Wahren 2018-08-31  60  	transfer[1].rx_buf = result;
+5fb0b49d Stefan Wahren 2018-08-31  61  	transfer[1].len = QCASPI_CMD_LEN;
+5fb0b49d Stefan Wahren 2018-08-31  62  
+5fb0b49d Stefan Wahren 2018-08-31  63  	spi_message_add_tail(&transfer[0], &msg);
+291ab06e Stefan Wahren 2014-09-26  64  
+291ab06e Stefan Wahren 2014-09-26  65  	if (qca->legacy_mode) {
+5fb0b49d Stefan Wahren 2018-08-31  66  		spi_sync(qca->spi_dev, &msg);
+5fb0b49d Stefan Wahren 2018-08-31  67  		spi_message_init(&msg);
+291ab06e Stefan Wahren 2014-09-26  68  	}
+5fb0b49d Stefan Wahren 2018-08-31  69  	spi_message_add_tail(&transfer[1], &msg);
+5fb0b49d Stefan Wahren 2018-08-31  70  	ret = spi_sync(qca->spi_dev, &msg);
+291ab06e Stefan Wahren 2014-09-26  71  
+291ab06e Stefan Wahren 2014-09-26  72  	if (!ret)
+5fb0b49d Stefan Wahren 2018-08-31  73  		ret = msg.status;
+291ab06e Stefan Wahren 2014-09-26  74  
+5fb0b49d Stefan Wahren 2018-08-31  75  	if (ret) {
+291ab06e Stefan Wahren 2014-09-26  76  		qcaspi_spi_error(qca);
+5fb0b49d Stefan Wahren 2018-08-31  77  	} else {
+5fb0b49d Stefan Wahren 2018-08-31 @78  		*result = be16_to_cpu(*result);
+5fb0b49d Stefan Wahren 2018-08-31  79  	}
+291ab06e Stefan Wahren 2014-09-26  80  
+291ab06e Stefan Wahren 2014-09-26  81  	return ret;
+291ab06e Stefan Wahren 2014-09-26  82  }
+291ab06e Stefan Wahren 2014-09-26  83  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
