@@ -2,104 +2,118 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289E5C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B43C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7732082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:01:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DO/M2nXG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7732082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FE6620659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:02:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE6620659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeIDW1i (ORCPT
+        id S1727822AbeIDW2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:27:38 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41087 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeIDW1i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:27:38 -0400
-Received: by mail-qk1-f193.google.com with SMTP id h138-v6so3034384qke.8;
-        Tue, 04 Sep 2018 11:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9IOhWTi7JFHbldu1zWeCwqC+ZGa8HoB2dYRwFq6ob+Q=;
-        b=DO/M2nXG6419KGN3It/WTOIvhY+uJubq2xxrFMrkN9Dsh3D+XDy5JoXl8s3VTMR8nr
-         Hs9cmaCqm1VrqVOa+59TlZvryv9c3VGZq7aJ6Qo7juiXDWi4y6orbyy4KOFyFzRaWhvX
-         BZvNoZM0qrrlYgYnMnAu9ovqlLXrwg2necfX/ISxwKB0GoStqMJmVZ8pkPemzwdklkKK
-         QhXV3ZlFyrUcNxW3oo+V7go9LXEReonig+ZS6ve1CUqxueDWw4O5gUlxvgAVJnTTaJgP
-         G3BUVBpay2w9oG4Rxcuwu/lnjyN7UNpG7pfGu1TaOYWD6drEJMz75Ssx4vRmR5gv1YX0
-         ACTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9IOhWTi7JFHbldu1zWeCwqC+ZGa8HoB2dYRwFq6ob+Q=;
-        b=pkq2RT3VxOc058/dDsQFGWn9oZuSZPt4CoNqepVTWE/fxQoI9wb3CH5S2XkfSUkK20
-         +FrW/DB1EhfxMJqK0wzUq07ryPsrGVngzIH1anU+ScBT8RFWjcCTWqj2zDtDfVn7Lx/b
-         FYi9J0+dVgBRUXI1nmNQOhqP0BnjIj9X/s1nXmHoJgZeelVs0GxlzlOmPYUMK8cKqIuj
-         VG0OW767qid1ak2MEJOgOK+QV4ieRHRBM2IyrQyrV/rUddd5EJKa3VlESFZuXkr8YkIF
-         IZgr4Z+S7Rhl4eKSjlpL/YuXU8juBcr8tyoHiyWy18z3WLgcC4HCx+3e9JNJhQKe7MZ2
-         I4VQ==
-X-Gm-Message-State: APzg51AxijkMsoJmzWCn5BaiXjXmCRo34zmiIP0QyvC637Zp5+aPB6Vv
-        yzxnQKtEx57I02b//KaTjXOJYyqJkHLvg8tx51U=
-X-Google-Smtp-Source: ANB0VdbMPFe3GnoeHeI8LXy2dAxr8FkUUfm+m01qlfTIiovIG8CT/OX7cL9SPPvmbyCoNk5lcFpMDgTjiIyT/kGWKg8=
-X-Received: by 2002:a37:17aa:: with SMTP id 42-v6mr29624978qkx.64.1536084086326;
- Tue, 04 Sep 2018 11:01:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com> <CAHp75VcjKkJR4_H-acbVm3BwA4tVR8gUtkg9STqOK2UG20Tvgg@mail.gmail.com>
- <20180904174914.GA5690@linux.intel.com>
-In-Reply-To: <20180904174914.GA5690@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 4 Sep 2018 21:01:15 +0300
-Message-ID: <CAHp75VeC0n82thqKKywfiTwd7_fngrc5Zf_1dMzmNdjgafgMvA@mail.gmail.com>
-Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
- EPC pages
-To:     sean.j.christopherson@intel.com
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        serge.ayoun@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Tue, 4 Sep 2018 18:28:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47520 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726304AbeIDW2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 18:28:10 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AC2B3DFF3;
+        Tue,  4 Sep 2018 18:01:57 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-111.ams2.redhat.com [10.36.116.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F011D63F25;
+        Tue,  4 Sep 2018 18:01:55 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: [PATCH 4.19 regression fix] printk: For early boot messages check loglevel when flushing the buffer
+Date:   Tue,  4 Sep 2018 20:01:54 +0200
+Message-Id: <20180904180154.845-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 18:01:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 04 Sep 2018 18:01:57 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 a> +/**
+Commit 375899cddcbb ("printk: make sure to print log on console."), moved
+the checking of the loglevel of messages from flush time to the actual
+log time.
 
-> > > +       va = ioremap_cache(addr, size);
-> > > +       if (!va)
-> > > +               return -ENOMEM;
-> >
-> > I'm not sure this is a right API. Do we operate with memory? Does it
-> > have I/O side effects?
-> > If no, memremap() would be better to use.
->
-> Preserving __iomem is desirable.  There aren't side effects per se,
-> but direct non-enclave accesses to the EPC get abort page semantics so
-> the kernel shouldn't be directly dereferencing a pointer to the EPC.
-> Though by that argument, sgx_epc_bank.va, sgx_epc_addr's return and
-> all ENCLS helpers should be tagged __iomem.
+This introduces one problem, some early boot messages are printed before
+parse_early_param() gets called and thus before kernel commandline options
+such as quiet, loglevel and ignore_loglevel are parsed.
 
-Why?
-Does it related to *any* I/O?
+This causes e.g. the following messages to get printed on x86 systems,
+despite the presence of the "quiet" option:
 
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000057fff] usable
+...
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x0000000874ffffff] usable
+
+This commit fixes this by setting a new LOG_CHK_LEVEL on early boot
+messages and doing the loglevel check for these while flushing as before.
+
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Maninder Singh <maninder1.s@samsung.com>
+Fixes: 375899cddcbb ("printk: make sure to print log on console.")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ kernel/printk/printk.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index fd6f8ed28e01..c5ffd46239a0 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -355,6 +355,7 @@ enum log_flags {
+ 	LOG_NEWLINE	= 2,	/* text ended with a newline */
+ 	LOG_PREFIX	= 4,	/* text started with a prefix */
+ 	LOG_CONT	= 8,	/* text is a fragment of a continuation line */
++	LOG_CHK_LEVEL	= 16,	/* check log level during flush */
+ };
+ 
+ struct printk_log {
+@@ -1881,7 +1882,10 @@ int vprintk_store(int facility, int level,
+ 	if (dict)
+ 		lflags |= LOG_PREFIX|LOG_NEWLINE;
+ 
+-	if (suppress_message_printing(level))
++	/* During early boot loglevel is not setup yet, check it later */
++	if (early_boot_irqs_disabled)
++		lflags |= LOG_CHK_LEVEL;
++	else if (suppress_message_printing(level))
+ 		lflags |= LOG_NOCONS;
+ 
+ 	return log_output(facility, level, lflags,
+@@ -2368,7 +2372,9 @@ void console_unlock(void)
+ 			break;
+ 
+ 		msg = log_from_idx(console_idx);
+-		if (msg->flags & LOG_NOCONS) {
++		if ((msg->flags & LOG_NOCONS) ||
++		    ((msg->flags & LOG_CHK_LEVEL) &&
++				suppress_message_printing(msg->level))) {
+ 			/*
+ 			 * Skip record if !ignore_loglevel, and
+ 			 * record has level above the console loglevel.
 -- 
-With Best Regards,
-Andy Shevchenko
+2.19.0.rc0
+
