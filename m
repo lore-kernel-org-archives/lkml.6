@@ -2,84 +2,90 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABACC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A14C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5100320843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OUJE5yDE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5100320843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 995252086A
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 995252086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbeIDIHO (ORCPT
+        id S1726815AbeIDIH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 04:07:14 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38885 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbeIDIHO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 04:07:14 -0400
-Received: by mail-it0-f68.google.com with SMTP id p129-v6so3113382ite.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Sep 2018 20:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GDotbDmjgK1ChKMiVVgSyzpMcHf9vdJ+z5CczE5yK1k=;
-        b=OUJE5yDEWrTAt1GjegYVlZjPpUHiUUG4lJqHVB6So56Tlx0SGnqGKlOVnbBYgvMEMr
-         5915xhY6r8TJYIoOONH8S535q4jUyTFIvnOOTegXK4takqRvP4Jg+3gW7Et4Kp+ZTJum
-         3ggL3YMq+CboptHIVxlVieJXjBCNc+FfrQyr0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GDotbDmjgK1ChKMiVVgSyzpMcHf9vdJ+z5CczE5yK1k=;
-        b=HpVJsCObowHs2dyPyi2LHpvVnIgpRqdCXjr6IgL+dxAf97DZg2UcT0YyoLow14iT62
-         BNO5Ay8H3qc7u6ozN5eR2X24UMKsVMNn8TYLrhwo6POvKviVRJ+PrNeRKOQPtZai0zZQ
-         pR+bqQGIXBxskGn89HX245LoBWRaxqIRpu8cIXqyWJXisDqJtzcxoCi4tOt8C6ur4oN3
-         Xugi4Eal2S7/pp6/WeJZVmcbPwkuhHWdgAQbyWdyCofBDiBJ+Cf4E9ZqxXliUSW2cUtg
-         /dMLzxlsB9fE+S/sr8gYE3PsNDTHp5JpJJ6DwGOwCQe8kfxXgpl9x6PGkajNHhZwQllr
-         8QvA==
-X-Gm-Message-State: APzg51ARvmHRzhpsXRNgTzrdG1jO2qAtG0RBbKNEKmKPu3Riki/+pr8Q
-        B6rddQV9T4Td6DgOuoNfTrDbBH50713sQ597evK/Eg==
-X-Google-Smtp-Source: ANB0VdYDxEg0Jw5rkKwQEhvY8u5KaOmQl5dOFip5naYG/Iru86UCYxFL82V8sApN/OY78v1RXRB7FX4mYwIXnDE7j7U=
-X-Received: by 2002:a24:3046:: with SMTP id q67-v6mr7020387itq.9.1536032646982;
- Mon, 03 Sep 2018 20:44:06 -0700 (PDT)
+        Tue, 4 Sep 2018 04:07:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57588 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726090AbeIDIH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 04:07:28 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2152440241C4;
+        Tue,  4 Sep 2018 03:44:20 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A1A3A9E66;
+        Tue,  4 Sep 2018 03:44:17 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 11:44:14 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 1/3] x86/boot: Add bit fields into xloadflags for 5-level
+ kernel checking
+Message-ID: <20180904034414.GI1740@192.168.1.3>
+References: <20180829141624.13985-1-bhe@redhat.com>
+ <20180829141624.13985-2-bhe@redhat.com>
+ <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
 MIME-Version: 1.0
-References: <cover.1536015544.git.luto@kernel.org>
-In-Reply-To: <cover.1536015544.git.luto@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Sep 2018 20:43:56 -0700
-Message-ID: <CA+55aFz1BMeJ9P0MAG3BfmpX0gj3urVpaSy388j6TkkqhkPDMg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] x86/pti: Get rid of entry trampolines and add some docs
-To:     Andrew Lutomirski <luto@kernel.org>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 04 Sep 2018 03:44:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 04 Sep 2018 03:44:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 3:59 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> Changes from v1: Get rid of the rsp_scratch macro
+Hi hpa,
 
-I can't see anything wrong with this.
+Thanks for looking into this. 
 
-            Linus
+On 09/03/18 at 07:41pm, H. Peter Anvin wrote:
+> I don't understand why there is any reason not to always enter the target
+> kernel in 4-level mode.  There certainly is no point whatsoever in having two
+> xloadflags: the only thing that could possibly matter is whether or not the
+> kernel in question *can* be entered in 5-level mode should that ever be necessary.
+
+This patchset is only used to fix kexec/kdump issues. We never stop
+kernel booting in 4-level mode from firmware as 1st kernel. However,
+there are issues when jump from the 1st kernel which is in 5-level mode
+to 2nd kernel. The reason is:
+
+1) in arch/x86/kernel/relocate_kernel_64.S, we set X86_CR4_LA57 into cr4
+if the 1st kernel is in 5-level mode. Then in
+arch/x86/boot/compressed/head_64.S, paging_prepare() is called to decide
+if 5-level mode will be enabled, and prepare the trampoline. If
+kexec/kdump kernel is expected to be in 4-level, e.g with 'nolv5'
+specified, it still can handle well. But for the old kernel w/o these
+ 5-level codes, it will ignore the fact that X86_CR4_LA57 has been set
+in CR4 and proceed anyway, then #GP is triggered. That's why XLF_5LEVEL
+is used to mark. 
+
+2) For kexec_load interface, we put kernel/initrd at top of system RAM
+in kexec_tools utility. If the 1st kernel is in 5-level mode, the
+kexec-ed kernel has "CONFIG_X86_5LEVEL=n", we have to detect this and
+limit the kernel to be loaded under 64TB, since kexec-ed kernel will
+definitely run in 4-level mode. Putting kernel above 64TB will fail
+kexec-ed kernel booting. That's why *XLF_5LEVEL_ENABLED* is needed.
+
+Thanks
+Baoquan
