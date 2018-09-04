@@ -2,123 +2,112 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59488C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5CCC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CAD520661
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:24:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CAD520661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A412E20661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:29:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lAXh4x7f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A412E20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeIDMsg (ORCPT
+        id S1726956AbeIDMxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 08:48:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41304 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726154AbeIDMsg (ORCPT
+        Tue, 4 Sep 2018 08:53:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39181 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeIDMxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 08:48:36 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w848MepL142149
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Sep 2018 04:24:32 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m9nxk1ex6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 04:24:32 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Tue, 4 Sep 2018 09:24:29 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Sep 2018 09:24:26 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w848OPL036896968
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Sep 2018 08:24:25 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 06823A4055;
-        Tue,  4 Sep 2018 11:24:19 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20DB5A4057;
-        Tue,  4 Sep 2018 11:24:18 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Tue,  4 Sep 2018 11:24:17 +0100 (BST)
-Date:   Tue, 4 Sep 2018 01:24:24 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
- <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+        Tue, 4 Sep 2018 08:53:18 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i190-v6so1302857pgc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 01:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=z8nWTJNILynVkAeC7fI6bICyWJWJeQY9XY30zNEy66Y=;
+        b=lAXh4x7f0rGyBH7IzqL7RrCUtzrp2bRKUei8Ml6ZquD4smHV52qc84L5U2V6zeDRuT
+         CXY0hHDxWJAXS3sR7BfwSlG0gxGyfpuJpT/Ehx234p0zUaZ9VxngFDj9Z+Jh0+sWiJsx
+         pzF4xfjoRCF7630/0/bjqEL3L8porjd/D+SyBqc29J9neiYNsPQt84mdfl2Ob/3K84kt
+         pGodug97aNOJRP61AxNX++It2eR6IN2nqbce2el2XnoHLwrVdQXiF79iNYw8Rxh1fqMv
+         oFm3ChyL7xJANeosbMUD4pU10YsyCdenXi1oz9Eu+WnHRUnexhG4ITDgP7KGz60Ybr0t
+         Jtdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=z8nWTJNILynVkAeC7fI6bICyWJWJeQY9XY30zNEy66Y=;
+        b=BTw1gKHhdvGsk45H0mmS/DN49+RIghmhTWKeSVb2trWJdTZ3UdTGbW3ql4Lue6B48a
+         t2oJb7uBbKAV0PXFbyYAVp3s7/LVHm13J/IrxN2INqMyig+WkWnXLbkIYaeYPFtB0wtO
+         sDF8Yv6VnV4oCvMiIAoPmu1vcsHE0jKBlo05om0iZ81PyWdNXg5R79uABF88blF6G5e1
+         /ixnQppYjyxTeOHbwFkpxfsMCSRR9X2K38StyYuOtV8RtbeTavhMOOkwNUPDRzHH4CFa
+         qfH/4RHX+U/wfnGbDd4wZI3ZwprCTksr5a9wrXn3kYM4ZKLaDUYz7j/h5j4MUVaW9XJ4
+         1ixw==
+X-Gm-Message-State: APzg51CfEy2WCDZwyadGXZgo02siTIgIzoM58NGpYIM6niaTZaEV1YwK
+        3/iOdbiegzMfWDfLK1lDEHzSjaqqAhrE+5Xv8R0Dvw==
+X-Google-Smtp-Source: ANB0VdZQ9/P8Dv6XuuLickkwO7zR/FgYTyi+E8SrEfodlCzPKosLnmvmSXysHseRw71qtTvpK10Iwvd/iwBat2KlHpQ=
+X-Received: by 2002:a62:2a48:: with SMTP id q69-v6mr33604341pfq.86.1536049753229;
+ Tue, 04 Sep 2018 01:29:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18090408-4275-0000-0000-000002B4E1D3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090408-4276-0000-0000-000037BDF432
-Message-Id: <20180904082424.GA2090@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=917 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809040088
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 4 Sep 2018 01:28:52
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+bQzLe3TBvAah681Mso++swqUt7RhdFLxX5R+WKqUSgNg@mail.gmail.com>
+References: <001a1148578c10e4700568e814eb@google.com> <CACT4Y+bL_+3ZJLE_1KzGNrz4hi=Si-KKsKLCd09TMD1Ux2jpgg@mail.gmail.com>
+ <20180404193504.GA7715@bombadil.infradead.org> <20180405032200.GC22358@thunk.org>
+ <20180405032454.GD9301@bombadil.infradead.org> <CACT4Y+bQzLe3TBvAah681Mso++swqUt7RhdFLxX5R+WKqUSgNg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 4 Sep 2018 10:28:52 +0200
+Message-ID: <CACT4Y+YtQb3XmxGDn7Y3mkxj08a5iPbFPtpXiHzaY3H5UQZbyQ@mail.gmail.com>
+Subject: Re: WARNING in up_write
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        syzbot <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: linux-kernel@vger.kernel.org (open list)
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 4a2e8ca..b1715b8 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1758,9 +1758,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
->  static __always_inline
->  unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
->  {
-> -	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
-> -		return sd->smt_gain / sd->span_weight;
-> -
->  	return SCHED_CAPACITY_SCALE;
+On Thu, Apr 5, 2018 at 10:22 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Thu, Apr 5, 2018 at 5:24 AM, Matthew Wilcox <willy@infradead.org> wrote:
+>> On Wed, Apr 04, 2018 at 11:22:00PM -0400, Theodore Y. Ts'o wrote:
+>>> On Wed, Apr 04, 2018 at 12:35:04PM -0700, Matthew Wilcox wrote:
+>>> > On Wed, Apr 04, 2018 at 09:24:05PM +0200, Dmitry Vyukov wrote:
+>>> > > On Tue, Apr 3, 2018 at 4:01 AM, syzbot
+>>> > > <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com> wrote:
+>>> > > > DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
+>>> > > > WARNING: CPU: 1 PID: 4441 at kernel/locking/rwsem.c:133 up_write+0x1cc/0x210
+>>> > > > kernel/locking/rwsem.c:133
+>>> > > > Kernel panic - not syncing: panic_on_warn set ...
+>>> >
+>>> > Message-Id: <1522852646-2196-1-git-send-email-longman@redhat.com>
+>>> >
+>>>
+>>> We were way ahead of syzbot in this case.  :-)
+>>
+>> Not really ... syzbot caught it Monday evening ;-)
+>>
+>> Date: Mon, 02 Apr 2018 19:01:01 -0700
+>> From: syzbot <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com>
+>> To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+>>         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+>> Subject: WARNING in up_write
+>
+> :)
+>
+> #syz fix: locking/rwsem: Add up_write_non_owner() for percpu_up_write()
 
-Without this change, the capacity_orig of an SMT would have been based
-on the number of threads.
-For example on SMT2, capacity_orig would have been 589 and
-for SMT 8, capacity_orig would have been 148.
+The title was later changed to:
 
-However after this change, capacity_orig of each SMT thread would be
-1024. For example SMT 8 core capacity_orig would now be 8192.
-
-smt_gain was suppose to make a multi threaded core was slightly more
-powerful than a single threaded core. I suspect if that sometimes hurt
-us when doing load balance between 2 cores i.e at MC or DIE sched
-domain. Even with 2 threads running on a core, the core might look
-lightly loaded 2048/8192. Hence might dissuade movement to a idle core.
-
-I always wonder why arch_scale_cpu_capacity() is called with NULL
-sched_domain, in scale_rt_capacity(). This way capacity might actually
-be more than the capacity_orig. I am always under an impression that
-capacity_orig > capacity.  Or am I misunderstanding that?
-
--- 
-Thanks and Regards
-Srikar Dronamraju
-
+#syz fix: locking/rwsem: Add a new RWSEM_ANONYMOUSLY_OWNED flag
