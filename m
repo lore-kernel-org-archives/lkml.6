@@ -2,119 +2,150 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA172C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF37C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5742077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 893772077C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:35:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TSDvyygH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5742077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s3ijgWQo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893772077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbeIDTAT (ORCPT
+        id S1727443AbeIDTAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:00:19 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34501 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbeIDTAT (ORCPT
+        Tue, 4 Sep 2018 15:00:36 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:60762 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDTAf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:00:19 -0400
-Received: by mail-io0-f194.google.com with SMTP id c22-v6so3166251iob.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 07:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mAfXPWJj1UTwCM4kFsE7kUy0wMknaAdrxlndYEeLnPk=;
-        b=TSDvyygHh+jexW0OmUbbsQt6pgpDvhqjj/UQp8wPwG6vJBWxZBYC8oVsrkaUtQyIDe
-         7UIx2y/ad0XHS6Jk8/3+pPx7B9eX3XWa4G5BV5Mks1cJpO/BDnY/TNJ+iRqlQqjq6hdM
-         8zUyw7D80c8lZ6Y/6khuesIOSTVAtn6AwQTcM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mAfXPWJj1UTwCM4kFsE7kUy0wMknaAdrxlndYEeLnPk=;
-        b=BTC7zhgOkF6oatrXgyl02+Vt9nmcilQ6JLkxNacpOAQZRiDK0KzOcT+lRXuih/BLdX
-         i8AHXMnlTRNBcEZVckzmh91BcLVwxg5chG3gCR3x2e/iEUZH37WGYRCetTqf0Y4FBCBp
-         bZyhhYjO8zvgDjNBYmxsbus+7/rLBFt2k9eFn/03U3unSjdf1rP8akGzmsILZ5TlviAy
-         gIe6yTN4HOcjcvqa5BUdBc7cZohHkN4acCO+b2r3v9hpepcA8tiyp81iJkK8/EtHeZzc
-         EozdrknCwSXWUv25qVMnS7ZO/DG8D8zUEij/CiKxnGVvFcXDqdtrU90+pM5Ac54TQaFB
-         6l/Q==
-X-Gm-Message-State: APzg51DqfjucYt+sgzEbwsBZFsuBbydeWgeDKV3fLEJwP3WV0ZwYp5wy
-        7oIo6HQfbETPxSE7HVSdb24NyI7WnxxibwVwrMB5mw==
-X-Google-Smtp-Source: ANB0VdYXNypffk8EUZUwODbWkg5NsNaPb/hoD2huEof0Vrh3qTIWmgGr4o4co0F28yxy26kg2xKqtNHjoh3wTaMDyj4=
-X-Received: by 2002:a6b:3a0b:: with SMTP id h11-v6mr22305117ioa.278.1536071697446;
- Tue, 04 Sep 2018 07:34:57 -0700 (PDT)
+        Tue, 4 Sep 2018 15:00:35 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84EYoeh026872;
+        Tue, 4 Sep 2018 09:34:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536071690;
+        bh=cSu/BF+dGPzNAB9MeKiQMlZYuyxDIlv71Df8cozMGYI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=s3ijgWQoz1CVvutgAibOf0acmlRtSE3QHkCGK0AzS1BU24ho2HnU2ncb9RtusjRlK
+         b63Jst7ISUA63SZa6zOZ478BdBr1Axc/pta2veDI1/hvBAVwl8qME49ogymDlexg9e
+         9yHar/60Dlc7VN8B17jUWpOuaH0eNWqnwSKCqELA=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EYovs007340;
+        Tue, 4 Sep 2018 09:34:50 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 4 Sep
+ 2018 09:34:49 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 4 Sep 2018 09:34:49 -0500
+Received: from [172.22.182.166] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EYnQI022127;
+        Tue, 4 Sep 2018 09:34:49 -0500
+Subject: Re: [rfc] leds: add TI LMU backlight driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <jacek.anaszewski@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>, <sre@kernel.org>,
+        <nekit1000@gmail.com>, <mpartap@gmx.net>, <merlijn@wizzup.org>
+References: <20180829212032.GB15786@amd>
+ <a0906253-44e3-5a01-73ca-67c7cb124eb0@ti.com> <20180830201825.GA1936@amd>
+ <ec7c9624-c1c3-df35-3593-704ac1dc9a4d@ti.com> <20180831213030.GA23447@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <d96eab23-dbd9-71a6-551e-2bc99ce4a57c@ti.com>
+Date:   Tue, 4 Sep 2018 09:34:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:1bd8:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 07:34:56 -0700 (PDT)
-In-Reply-To: <20180902073058.17053-1-andreas@kemnade.info>
-References: <20180902073058.17053-1-andreas@kemnade.info>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 4 Sep 2018 16:34:56 +0200
-Message-ID: <CAPDyKFpHPre_turpYtpB+N+LHR+EMW2p2GJ92J1zu8h6p5W=LQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: omap_hsmmc: fix wakeirq handling on removal
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Kishon <kishon@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180831213030.GA23447@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 September 2018 at 09:30, Andreas Kemnade <andreas@kemnade.info> wrote:
-> after unbinding mmc I get things like this:
-> [  185.294067] mmc1: card 0001 removed
-> [  185.305206] omap_hsmmc 480b4000.mmc: wake IRQ with no resume: -13
->
-> The wakeirq stays in /proc-interrupts
->
-> rebinding shows this:
-> [  289.795959] genirq: Flags mismatch irq 112. 0000200a (480b4000.mmc:wakeup) vs. 0000200a (480b4000.mmc:wakeup)
-> [  289.808959] omap_hsmmc 480b4000.mmc: Unable to request wake IRQ
-> [  289.815338] omap_hsmmc 480b4000.mmc: no SDIO IRQ support, falling back to polling
->
-> That bug seems to be introduced by switching from devm_request_irq()
-> to generic wakeirq handling.
->
-> So let us cleanup at removal.
->
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> Fixes: 5b83b2234be6 ("mmc: omap_hsmmc: Change wake-up interrupt to use generic wakeirq")
+Pavel
 
-Applied for fixes, and added a stable tag, thanks!
+On 08/31/2018 04:30 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> Aha. I did not realize that was for same hardware... I should have
+>>> cc-ed you, I guess.
+>>
+>> No worries Jacek cc'd me.
+> 
+> Good.
+> 
+>>>> I do not like this driver.
+>>>> I don't like that it smashes numerous devices into some structure with varying register maps.
+>>>>
+>>>
+>>> Can you elaborate? The chips are similar enough that single driver
+>>> makes sense, and we certainly want to maintain one driver, not 6
+>>> drivers differing only in .. what exactly?
+>>
+>> Well I think it is justified to have independent drivers as each device has different features from
+>> this basic LED driver.  If we are just looking for basic support then yes this driver is fine.
+> 
+>> But here is where a single driver will start getting messy and support difficult
+>>
+>> LM3533 has ALS and an ADC for an ALS analog sensor
+>> LM3631 has no ALS functionality
+>> LM3632 has strobe functionality and no ramp support
+>> LM3633 has indicator support coupled with the hvled support
+>> LM3695 does not even appear to be available publicly
+>> LM3697 is the only device that that this driver could be used for as is.
+> 
+> Ok, so ... yes, I'm really interested in basic support. But drivers
+> seem to have a lot in common, voltage limits, for example. 
+> 
+>> In addition if I wanted to only support a single device I have to pull in the full data
+>> file that defines all the other devices.  That is pretty bad to increase the size of the kernel
+>> image to have support for devices that are not even on the target product.  The ti-lmu data file
+>> alone is ~15k, the ti-lmu code does not even build with this patch (So this is a nack on the patch as it is.)
+>> but commenting out the offending code gives me at least ~23k more data on top
+>> of the ti-lmu MFD framework which is ~33k.  That is ~71k of code just to support 1 LED device
+>> that is 3x what we have now.  That is not good for IoT devices.
+> 
+>> The LM3697 is 22k without ramp support.
+> 
+> Well, I don't think object file size is huge problem. First,
+> "distribution" kernel with support for 6 different chips will be ~71k,
+> while your proposal will result in ~136k. Second, yes, we could put
+> ifdefs into ti-lmu data file to make it smaller.
+> 
+> Anyway, clean source code and easy maintainance is more important.
 
-Kind regards
-Uffe
+I am going to reply here and snip the rest of the chain.
 
-> ---
->  drivers/mmc/host/omap_hsmmc.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-> index 071693ebfe18..68760d4a5d3d 100644
-> --- a/drivers/mmc/host/omap_hsmmc.c
-> +++ b/drivers/mmc/host/omap_hsmmc.c
-> @@ -2177,6 +2177,7 @@ static int omap_hsmmc_remove(struct platform_device *pdev)
->         dma_release_channel(host->tx_chan);
->         dma_release_channel(host->rx_chan);
->
-> +       dev_pm_clear_wake_irq(host->dev);
->         pm_runtime_dont_use_autosuspend(host->dev);
->         pm_runtime_put_sync(host->dev);
->         pm_runtime_disable(host->dev);
-> --
-> 2.11.0
->
+My proposal is to create a ti-lmu-led-common file that contains all the common
+code.  We can have LED drivers use that common code to perform the common tasks.
+This can then be extended to other devices past, present or future that have the
+same feature set.
+
+Then the register maps and LED registration can be contained in each LED driver and any additional features
+can be supported in the LED driver.  The common code will retrieve any device settings from
+the firmware that it is interested in.
+
+I can throw some code together and RFC the code.  This way we get the common core for the
+chips and not the bloat or messy source with a single driver.
+
+And yes I can put this together and support it if it is needed.  I just need to go get the EVMs
+so I can test it.
+
+Thoughts?
+
+<snip>-- 
+------------------
+Dan Murphy
