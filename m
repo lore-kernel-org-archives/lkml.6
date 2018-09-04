@@ -3,92 +3,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA9C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42994C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3E9B2087A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:41:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E9B2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 04FE620867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 08:41:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04FE620867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeIDNFT (ORCPT
+        id S1727142AbeIDNFn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 09:05:19 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36761 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeIDNFT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 09:05:19 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f4-v6so2595866edq.3;
-        Tue, 04 Sep 2018 01:41:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RVKJMr6rtf5AgyWtRMxYRYEwyfRMPAbLQ/iTzJHrukI=;
-        b=sO5wILISq7EtJ6OrAlQbdkft5ttnFJXcdycmKtnYRLliTUGidTiDnnd9EdeDDTGutW
-         OPIuZXeOKNQFmwaaLnxpVOXpHCsEHOyyDOwh7KocN+fvFJIbtkppay39FEcRJlRH/QKE
-         JfbaO+86ANSHofOcexZYnEKC7XhUAE8m8YSYx90tXEq09kNbShNX5eiIobCq0tH3gRAf
-         6Nf8/BbZUWq63k4ytoARX5kRRg7H4mFWpU0ZIZln+EQ7GxbHLc9yRo6oU4OSqEGJvPJd
-         Yl7GYNMUt0dmPnoXS3Tp48TDIYrDp3nyYErjnMBBynFbJltJ/O6qMmPu5mreD/J0U+is
-         9EiQ==
-X-Gm-Message-State: APzg51BSuQNOjVWWNWmPp9IA1pFTjuuIiPBX6qnNJ3WMS8ZE7vL8f0je
-        WeWOWDWcPxU3ss1WBfPV65A2ycPxYhU=
-X-Google-Smtp-Source: ANB0Vdaah/5JRi30dzfuRscRtXwtv51Jpm2XwBd3Axt8ofDlGcx1XOUC3Q4nkS5MZ0N6leLvJw/uPA==
-X-Received: by 2002:a50:9ac5:: with SMTP id p63-v6mr35775081edb.112.1536050471240;
-        Tue, 04 Sep 2018 01:41:11 -0700 (PDT)
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com. [74.125.82.46])
-        by smtp.gmail.com with ESMTPSA id i3-v6sm12057400eda.84.2018.09.04.01.41.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 01:41:09 -0700 (PDT)
-Received: by mail-wm0-f46.google.com with SMTP id y139-v6so3437890wmc.2;
-        Tue, 04 Sep 2018 01:41:09 -0700 (PDT)
-X-Received: by 2002:a1c:6646:: with SMTP id a67-v6mr1774573wmc.157.1536050469625;
- Tue, 04 Sep 2018 01:41:09 -0700 (PDT)
+        Tue, 4 Sep 2018 09:05:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40676 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725992AbeIDNFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 09:05:43 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD86787A72;
+        Tue,  4 Sep 2018 08:41:34 +0000 (UTC)
+Received: from [10.36.116.210] (ovpn-116-210.ams2.redhat.com [10.36.116.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0D45A2156889;
+        Tue,  4 Sep 2018 08:41:29 +0000 (UTC)
+Subject: Re: [RFC 01/13] iommu: Introduce bind_guest_stage API
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Cc:     "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        "christoffer.dall@arm.com" <christoffer.dall@arm.com>
+References: <1535026656-8450-1-git-send-email-eric.auger@redhat.com>
+ <1535026656-8450-2-git-send-email-eric.auger@redhat.com>
+ <22c01a4d-c74a-7279-d4ae-39e29a3bc942@redhat.com>
+ <b7909f1b-57ce-f4db-d916-140a63283232@arm.com>
+ <4309832b-27ed-597a-b5a1-f439fbea9843@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912EFB76@SHSMSX101.ccr.corp.intel.com>
+ <220e4c2a-d31c-d8fb-2d77-d902d2f13bb2@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912EFCD8@SHSMSX101.ccr.corp.intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <8da25040-42fe-5ce8-2647-ee6b8d795bc9@redhat.com>
+Date:   Tue, 4 Sep 2018 10:41:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-3-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-3-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 4 Sep 2018 16:40:56 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65y1W=52SAFFqyCOnHd80nx+oPHUDeysHWBy7o8_g=eeQ@mail.gmail.com>
-Message-ID: <CAGb2v65y1W=52SAFFqyCOnHd80nx+oPHUDeysHWBy7o8_g=eeQ@mail.gmail.com>
-Subject: Re: [PATCH 02/27] arm64: allwinner: h6: add system controller device
- tree node
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912EFCD8@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 04 Sep 2018 08:41:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 04 Sep 2018 08:41:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> From: Icenowy Zheng <icenowy@aosc.io>
->
-> As we have already binding for the H6 system controller, add its node
-> to the device tree.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> [fixed compatible string]
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Hi Kevin,
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+On 09/04/2018 10:34 AM, Tian, Kevin wrote:
+>> From: Auger Eric
+>> Sent: Tuesday, September 4, 2018 4:11 PM
+>>
+>> Hi Kevin,
+>> On 09/04/2018 09:57 AM, Tian, Kevin wrote:
+>>>> From: Auger Eric
+>>>> Sent: Friday, August 31, 2018 9:52 PM
+>>>>
+>>>> Hi Jean-Philippe,
+>>>>
+>>>> On 08/31/2018 03:11 PM, Jean-Philippe Brucker wrote:
+>>>>> Hi Eric,
+>>>>>
+>>>>> On 23/08/18 16:25, Auger Eric wrote:
+>>>>>>> +int iommu_bind_guest_stage(struct iommu_domain *domain,
+>> struct
+>>>> device *dev,
+>>>>>>> +			   struct iommu_guest_stage_config *cfg)
+>>>>>
+>>>>> About the name change from iommu_bind_pasid_table: is the intent to
+>>>>> reuse this API for SMMUv2, which supports nested but not PASID?
+>> Seems
+>>>>> like a good idea but "iommu_bind_table" may be better since "stage" is
+>>>>> only used by Arm.
+>>>>
+>>>> At the moment I don't target SMUv2 but just SMMUv3. My focus was on
+>>>> nested stage enablement without enabling the multi-CD feature (PASID),
+>>>> whish is not supported by the QEMU vSMMUv3. Afterwards I realized
+>> that
+>>>> basically we are pointing to a CD or PASID table and that's about the
+>>>> same. I don't have a strong opinion on the name,
+>> iommu_bind_guest_table
+>>>> or iommu_bind_pasid_table would be fine with me. Indeed "stage" is
+>> ARM
+>>>> vocable (level for Intel?)
+>>>
+>>> Intel uses first level/second level.
+>>>
+>>> iommu_bind_table is a bit confusing. what should people take table as?
+>>> there is PASID table. there is also page table linked in each stage/level.
+>> and
+>>> maybe other tables in vendor-specific definition.
+>>>
+>>> to me iommu_bind_pasid_table is still clearer. anyway in other places
+>>> we've used pasid explicitly in vfio/iommu APIs, then it should be general
+>>> enough to represent various implementations.
+>>
+>> Fine for me.
+>>
+>> However I I would suggest to rename the original iommu_sva_invalidate
+>> into something that is SVA unrelated. iommu_tlb_invalidate is not OK as
+>> this API also is used to invalidate context caches - which are not
+>> iotlbs -. What about iommu_cache_invalidate?
+>>
+>> At least we must clarify that this API can be used for something else
+>> than SVA enablement.
+>>
+> 
+> Agree. using SVA is limiting.
+> 
+> I also agree that iommu_cache_invalidate is better, though I don't think
+> you want to pass guest context cache invalidation to host. that information
+> is fully under host control. :-)
+
+I think the confusion comes from the different terminology used in VTD
+and ARM SMMU spec.
+
+Your PASID table ~ ARM SMMU Context Descriptor (CD) table
+Your Root Entry/Context Entry ~ ARM SMMU Stream Table Entry (STE)
+
+So I meant guesr invalidates its Context Descriptor cache. He "owns"
+those. Host owns the STE.
+
+Thanks
+
+Eric
+
+> 
+> Thanks
+> Kevin
+> 
