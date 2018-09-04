@@ -2,443 +2,237 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7A7C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F13FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 699902086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:11:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 699902086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C0FB20869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 07:12:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="acAVek8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0FB20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=riseup.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeIDLfU (ORCPT
+        id S1727066AbeIDLgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:35:20 -0400
-Received: from mga11.intel.com ([192.55.52.93]:31829 "EHLO mga11.intel.com"
+        Tue, 4 Sep 2018 07:36:21 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:39676 "EHLO mx1.riseup.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbeIDLfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:35:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 00:11:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="254307895"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 04 Sep 2018 00:11:23 -0700
-Received: from [10.125.251.238] (abudanko-mobl.ccr.corp.intel.com [10.125.251.238])
-        by linux.intel.com (Postfix) with ESMTP id 3DA015803E2;
-        Tue,  4 Sep 2018 00:11:20 -0700 (PDT)
-Subject: [PATCH v5 2/2]: perf record: enable asynchronous trace writing
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <7b3a635a-1789-65b9-31f4-fef5406bc3d5@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <1950a4f0-babf-2dc9-6ff0-3c94d554f1d8@linux.intel.com>
-Date:   Tue, 4 Sep 2018 10:11:19 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725990AbeIDLgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:36:21 -0400
+Received: from cotinga.riseup.net (cotinga-pn.riseup.net [10.0.1.164])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id B2D281A0408;
+        Tue,  4 Sep 2018 00:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1536045153; bh=+2NHFRzh/IDWF8DM0D5KrZn3lR3yd+icDsOBf3ytjG4=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=acAVek8cRDgmJY6/a9XY/RTk8NJn8oZHEdL+nbtykUg2sY4aHCEjIuBAyqYuozm9t
+         T2nKzaX/kwyTkTm1fWZtb1lkfIRvUaSNBqMWKdCA5dukzaYz8jxhTqRA9QUSeQQsVC
+         jsjl54lx9oS2I9zy17Q77nKQNYFktcyQeVKddYNI=
+X-Riseup-User-ID: B19FC935D435E56854701FF91190886DBFEF1152A940AEC6CB8135DA1714FCED
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by cotinga.riseup.net with ESMTPSA id 6A08567E15;
+        Tue,  4 Sep 2018 00:12:31 -0700 (PDT)
+From:   Francisco Jerez <currojerez@riseup.net>
+To:     Eero Tamminen <eero.t.tamminen@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        lenb@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc:     mgorman@techsingularity.net, ggherdovich@suse.cz,
+        peterz@infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
+In-Reply-To: <1244c5d6-460e-0e0b-b7bf-a46e73327383@intel.com>
+References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com> <1244c5d6-460e-0e0b-b7bf-a46e73327383@intel.com>
+Date:   Mon, 03 Sep 2018 23:53:23 -0700
+Message-ID: <8736upda8s.fsf@riseup.net>
 MIME-Version: 1.0
-In-Reply-To: <7b3a635a-1789-65b9-31f4-fef5406bc3d5@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="==-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--==-=-=
+Content-Type: multipart/mixed; boundary="=-=-="
 
-record__aio_sync() allocates index of free map->data buffer for 
-a cpu buffer or blocks till completion of any started operation 
-and then proceeds.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Trace file offset is calculated and updated linearly prior
-enqueuing aio write at record__pushfn().
+Eero Tamminen <eero.t.tamminen@intel.com> writes:
 
-record__mmap_read_sync() implements a barrier for all incomplete
-aio write requests per-cpu per aio data.
+> Hi,
+>
+> On 31.08.2018 20:28, Srinivas Pandruvada wrote:
+> ...
+>> As per testing Eero Tamminen, the results are comparable to the patchset
+>> https://patchwork.kernel.org/patch/10312259/
+>> But he has to watch results for several days to check trend.
+>
+> It's close, but there is some gap compared to Francisco's version.
+>
+> (Because of the large variance on TDP limited devices, and factors=20
+> causing extra perf differences e.g. between boots, it's hard to give=20
+> exact number without having trends from several days / weeks.  I would=20
+> also need new version of Fransisco's patch set that applies to latest=20
+> kernel like yours does.)
+>
+>
+>> Since here boost is getting limited to turbo and non turbo, we need some
+>> ways to adjust the fractions corresponding to max non turbo as well. It
+>> is much easier to use the actual P-state limits for boost instead of
+>> fractions. So here P-state io boost limit is applied on top of the
+>> P-state limit calculated via current algorithm by removing current
+>> io_wait boost calculation using fractions.
+>>=20
+>> Since we prefer to use common algorithm for all processor platforms, this
+>> change was tested on other client and sever platforms as well. All resul=
+ts
+>> were within the margin of errors. Results:
+>> https://bugzilla.kernel.org/attachment.cgi?id=3D278149
+>
+> Good.
+>
+> Francisco, how well the listed PTS tests cover latency bound cases you=20
+> were concerned about?  [1]
+>
+>
+> 	- Eero
+>
+> [1] Fransisco was concerned that the patch:
+> * trade-off might regress latency bound cases (which I haven't tested, I=
+=20
+> tested only 3D throughput), and
+> * that it addressed only other of the sources of energy inefficiencies=20
+> he had identified (which could explain slightly better 3D results from=20
+> his more complex patch set).
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- Changes in v5:
- - data loss metrics decreased from 25% to 2x in trialed configuration;
- - avoided nanosleep() prior calling aio_suspend();
- - switched to per cpu multi record__aio_sync() aio
- - record_mmap_read_sync() now does global barrier just before 
-   switching trace file or collection stop;
- - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
- Changes in v4:
- - converted void *bf to struct perf_mmap *md in signatures
- - written comment in perf_mmap__push() just before perf_mmap__get();
- - written comment in record__mmap_read_sync() on possible restarting 
-   of aio_write() operation and releasing perf_mmap object after all;
- - added perf_mmap__put() for the cases of failed aio_write();
- Changes in v3:
- - written comments about nanosleep(0.5ms) call prior aio_suspend()
-   to cope with intrusiveness of its implementation in glibc;
- - written comments about rationale behind coping profiling data 
-   into mmap->data buffer;
----
- tools/perf/builtin-record.c | 175 +++++++++++++++++++++++++++++++++++++++++++-
- tools/perf/util/mmap.c      |  57 +++++++++++----
- tools/perf/util/mmap.h      |   4 +-
- 3 files changed, 216 insertions(+), 20 deletions(-)
+This patch causes a number of statistically significant regressions
+(with significance of 1%) on the two systems I've tested it on.  On my
+CHV N3050:
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 8eb093f8d4d5..505399faa6a0 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -121,6 +121,84 @@ static int record__write(struct record *rec, void *bf, size_t size)
- 	return 0;
- }
- 
-+static int record__aio_write(struct aiocb *cblock, int trace_fd,
-+		void *buf, size_t size, off_t off)
-+{
-+	cblock->aio_fildes = trace_fd;
-+	cblock->aio_buf    = buf;
-+	cblock->aio_nbytes = size;
-+	cblock->aio_offset = off;
-+	cblock->aio_sigevent.sigev_notify = SIGEV_NONE;
-+
-+	if (aio_write(cblock) == -1) {
-+		cblock->aio_fildes = -1;
-+		pr_err("failed to queue perf data, error: %m\n");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int record__aio_sync(struct perf_mmap *md)
-+{
-+	void *rem_buf;
-+	off_t rem_off;
-+	size_t rem_size;
-+	ssize_t aio_ret, written;
-+	int i, aio_errno, do_suspend, idx = -1;
-+	struct aiocb **cblocks = md->cblocks;
-+	struct timespec timeout = { 0, 1000 * 1000  * 1 }; // 1ms
-+
-+	for (i = 0; i < md->nr_cblocks; ++i)
-+		if (cblocks[i]->aio_fildes == -1)
-+			return i;
-+
-+	do {
-+		do_suspend = 0;
-+		if (aio_suspend((const struct aiocb**)cblocks, md->nr_cblocks, &timeout)) {
-+			if (!(errno == EAGAIN || errno == EINTR))
-+				pr_err("failed to sync perf data, error: %m\n");
-+			do_suspend = 1;
-+			continue;
-+		}
-+		for (i = 0; i < md->nr_cblocks; ++i) {
-+			aio_errno = aio_error(cblocks[i]);
-+			if (aio_errno == EINPROGRESS)
-+				continue;
-+			written = aio_ret = aio_return(cblocks[i]);
-+			if (aio_ret < 0) {
-+				if (aio_errno != EINTR)
-+					pr_err("failed to write perf data, error: %m\n");
-+				written = 0;
-+			}
-+			rem_size = cblocks[i]->aio_nbytes - written;
-+			if (rem_size == 0) {
-+				cblocks[i]->aio_fildes = -1;
-+				/* md->refcount is incremented in perf_mmap__push() for
-+				 * every enqueued aio write request so decrement it because
-+				 * the request is now complete.
-+				 */
-+				perf_mmap__put(md);
-+				if (idx == -1)
-+					idx = i;
-+			} else {
-+				/* aio write request may require restart with the
-+				 * reminder if the kernel didn't write whole
-+				 * chunk at once.
-+				 */
-+				rem_off = cblocks[i]->aio_offset + written;
-+				rem_buf = (void*)(cblocks[i]->aio_buf + written);
-+				record__aio_write(cblocks[i], cblocks[i]->aio_fildes,
-+						rem_buf, rem_size, rem_off);
-+			}
-+		}
-+		if (idx == -1)
-+			do_suspend = 1;
-+	} while (do_suspend);
-+
-+	return idx;
-+}
-+
- static int process_synthesized_event(struct perf_tool *tool,
- 				     union perf_event *event,
- 				     struct perf_sample *sample __maybe_unused,
-@@ -130,12 +208,28 @@ static int process_synthesized_event(struct perf_tool *tool,
- 	return record__write(rec, event, event->header.size);
- }
- 
--static int record__pushfn(void *to, void *bf, size_t size)
-+static int record__pushfn(void *to, struct aiocb *cblock, void *data, size_t size)
- {
-+	off_t off;
- 	struct record *rec = to;
-+	int ret, trace_fd = rec->session->data->file.fd;
- 
- 	rec->samples++;
--	return record__write(rec, bf, size);
-+
-+	off =
-+	lseek(trace_fd, 0, SEEK_CUR);
-+	lseek(trace_fd, off + size, SEEK_SET);
-+
-+	ret = record__aio_write(cblock, trace_fd, data, size, off);
-+	if (!ret) {
-+		rec->bytes_written += size;
-+		if (switch_output_size(rec))
-+			trigger_hit(&switch_output_trigger);
-+	} else {
-+		lseek(trace_fd, off, SEEK_SET);
-+	}
-+
-+	return ret;
- }
- 
- static volatile int done;
-@@ -511,6 +605,70 @@ static struct perf_event_header finished_round_event = {
- 	.type = PERF_RECORD_FINISHED_ROUND,
- };
- 
-+static void record__aio_complete(struct perf_mmap *md, int i)
-+{
-+	int aio_errno;
-+	void *rem_buf;
-+	off_t rem_off;
-+	size_t rem_size;
-+	ssize_t aio_ret, written;
-+	struct aiocb *cblock = md->cblocks[i];
-+	struct timespec timeout = { 0, 1000 * 1000  * 1 }; // 1ms
-+
-+	if (cblock->aio_fildes == -1)
-+		return;
-+
-+	do {
-+		if (aio_suspend((const struct aiocb**)&cblock, 1, &timeout)) {
-+			if (!(errno == EAGAIN || errno == EINTR))
-+				pr_err("failed to sync perf data, error: %m\n");
-+			continue;
-+		}
-+		aio_errno = aio_error(cblock);
-+		if (aio_errno == EINPROGRESS)
-+			continue;
-+		written = aio_ret = aio_return(cblock);
-+		if (aio_ret < 0) {
-+			if (!(aio_errno == EINTR))
-+				pr_err("failed to write perf data, error: %m\n");
-+			written = 0;
-+		}
-+		rem_size = cblock->aio_nbytes - written;
-+		if (rem_size == 0) {
-+			cblock->aio_fildes = -1;
-+			/* md->refcount is incremented in perf_mmap__push() for
-+			 * every enqueued aio write request so decrement it because
-+			 * the request is now complete.
-+			 */
-+			perf_mmap__put(md);
-+			return;
-+		} else {
-+			/* aio write request may require restart with the
-+			 * reminder if the kernel didn't write whole
-+			 * chunk at once.
-+			 */
-+			rem_off = cblock->aio_offset + written;
-+			rem_buf = (void*)(cblock->aio_buf + written);
-+			record__aio_write(cblock, cblock->aio_fildes,
-+					rem_buf, rem_size, rem_off);
-+		}
-+	} while (1);
-+}
-+
-+static void record__mmap_read_sync(struct record *rec)
-+{
-+	int i, j;
-+	struct perf_evlist *evlist = rec->evlist;
-+	struct perf_mmap *maps = evlist->mmap;
-+
-+	for (i = 0; i < evlist->nr_mmaps; i++) {
-+		struct perf_mmap *map = &maps[i];
-+		if (map->base)
-+			for (j = 0; j < map->nr_cblocks; ++j)
-+				record__aio_complete(map, j);
-+	}
-+}
-+
- static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
- 				    bool overwrite)
- {
-@@ -533,7 +691,13 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 		struct auxtrace_mmap *mm = &maps[i].auxtrace_mmap;
- 
- 		if (maps[i].base) {
--			if (perf_mmap__push(&maps[i], rec, record__pushfn) != 0) {
-+			/* Call record__aio_sync() to allocate free
-+			 * map->data buffer or wait till one of the
-+			 * buffers becomes available after previous
-+			 * aio write request.
-+			 */
-+			if (perf_mmap__push(&maps[i], rec, record__aio_sync(&maps[i]),
-+				record__pushfn) != 0) {
- 				rc = -1;
- 				goto out;
- 			}
-@@ -1055,6 +1219,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 			perf_evlist__toggle_bkw_mmap(rec->evlist, BKW_MMAP_DATA_PENDING);
- 
- 		if (record__mmap_read_all(rec) < 0) {
-+			record__mmap_read_sync(rec);
- 			trigger_error(&auxtrace_snapshot_trigger);
- 			trigger_error(&switch_output_trigger);
- 			err = -1;
-@@ -1066,6 +1231,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 			if (!trigger_is_error(&auxtrace_snapshot_trigger))
- 				record__read_auxtrace_snapshot(rec);
- 			if (trigger_is_error(&auxtrace_snapshot_trigger)) {
-+				record__mmap_read_sync(rec);
- 				pr_err("AUX area tracing snapshot failed\n");
- 				err = -1;
- 				goto out_child;
-@@ -1084,6 +1250,8 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 			 */
- 			if (rec->evlist->bkw_mmap_state == BKW_MMAP_RUNNING)
- 				continue;
-+
-+			record__mmap_read_sync(rec);
- 			trigger_ready(&switch_output_trigger);
- 
- 			/*
-@@ -1137,6 +1305,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 			disabled = true;
- 		}
- 	}
-+	record__mmap_read_sync(rec);
- 	trigger_off(&auxtrace_snapshot_trigger);
- 	trigger_off(&switch_output_trigger);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index ea728db8f460..60a3138ccd58 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -327,12 +327,12 @@ int perf_mmap__read_init(struct perf_mmap *map)
- 	return __perf_mmap__read_init(map);
- }
- 
--int perf_mmap__push(struct perf_mmap *md, void *to,
--		    int push(void *to, void *buf, size_t size))
-+int perf_mmap__push(struct perf_mmap *md, void *to, int idx,
-+		    int push(void *to, struct aiocb *cblock, void *data, size_t size))
- {
- 	u64 head = perf_mmap__read_head(md);
- 	unsigned char *data = md->base + page_size;
--	unsigned long size;
-+	unsigned long size, size0 = 0;
- 	void *buf;
- 	int rc = 0;
- 
-@@ -340,31 +340,58 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
- 	if (rc < 0)
- 		return (rc == -EAGAIN) ? 0 : -1;
- 
-+	/* md->base data is copied into md->data[idx] buffer to
-+	 * release space in the kernel buffer as fast as possible,
-+	 * thru perf_mmap__consume() below.
-+	 *
-+	 * That lets the kernel to proceed with storing more
-+	 * profiling data into the kernel buffer earlier than other
-+	 * per-cpu kernel buffers are handled.
-+	 *
-+	 * Coping can be done in two steps in case the chunk of
-+	 * profiling data crosses the upper bound of the kernel buffer.
-+	 * In this case we first move part of data from md->start
-+	 * till the upper bound and then the reminder from the
-+	 * beginning of the kernel buffer till the end of
-+	 * the data chunk.
-+	 */
-+
- 	size = md->end - md->start;
- 
- 	if ((md->start & md->mask) + size != (md->end & md->mask)) {
- 		buf = &data[md->start & md->mask];
--		size = md->mask + 1 - (md->start & md->mask);
--		md->start += size;
--
--		if (push(to, buf, size) < 0) {
--			rc = -1;
--			goto out;
--		}
-+		size0 = md->mask + 1 - (md->start & md->mask);
-+		md->start += size0;
-+		memcpy(md->data[idx], buf, size0);
- 	}
- 
- 	buf = &data[md->start & md->mask];
- 	size = md->end - md->start;
- 	md->start += size;
-+	memcpy(md->data[idx] + size0, buf, size);
- 
--	if (push(to, buf, size) < 0) {
--		rc = -1;
--		goto out;
--	}
-+	/* Increment md->refcount to guard md->data[idx] buffer
-+	 * from premature deallocation because md object can be
-+	 * released earlier than aio write request started
-+	 * on mmap->data[idx] is complete.
-+	 *
-+	 * perf_mmap__put() is done at record__aio_sync() or
-+	 * record__aio_complete() after started request completion.
-+	 */
-+
-+	perf_mmap__get(md);
- 
- 	md->prev = head;
- 	perf_mmap__consume(md);
--out:
-+
-+	rc = push(to, md->cblocks[idx], md->data[idx], size0 + size);
-+	if (rc) {
-+		/* Decrement md->refcount back if aio write
-+		 * operation failed to start.
-+		 */
-+		perf_mmap__put(md);
-+	}
-+
- 	return rc;
- }
- 
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 4a9bb0ecae4f..9a106c075172 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -95,8 +95,8 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
- 
- union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- 
--int perf_mmap__push(struct perf_mmap *md, void *to,
--		    int push(void *to, void *buf, size_t size));
-+int perf_mmap__push(struct perf_mmap *md, void *to, int aio_idx,
-+		    int push(void *to, struct aiocb *cblock, void *data, size_t size));
- 
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
+| phoronix/fs-mark/test=3D0:                                               =
+        XXX =C2=B17.25% x34 -> XXX =C2=B17.00% x39  d=3D-36.85% =C2=B15.91%=
+  p=3D0.00%
+| phoronix/sqlite:                                                         =
+      XXX =C2=B11.86% x34 -> XXX =C2=B11.88% x39  d=3D-21.73% =C2=B11.66%  =
+p=3D0.00%
+| warsow/benchsow:                                                         =
+      XXX =C2=B11.25% x34 -> XXX =C2=B11.95% x39  d=3D-10.83% =C2=B11.53%  =
+p=3D0.00%
+| phoronix/iozone/record-size=3D4Kb/file-size=3D2GB/test=3DRead Performance=
+:           XXX =C2=B11.70% x31 -> XXX =C2=B11.02% x34  d=3D-7.39% =C2=B11.=
+36%   p=3D0.00%
+| phoronix/gtkperf/gtk-test=3DGtkComboBox:                                 =
+        XXX =C2=B11.15% x13 -> XXX =C2=B11.59% x14   d=3D-5.37% =C2=B11.35%=
+  p=3D0.00%
+| lightsmark:                                                              =
+      XXX =C2=B11.45% x34 -> XXX =C2=B10.97% x41   d=3D-4.66% =C2=B11.19%  =
+p=3D0.00%
+| jxrendermark/rendering-test=3DTransformed Blit Bilinear/rendering-size=3D=
+128x128:  XXX =C2=B11.04% x31 -> XXX =C2=B11.04% x39   d=3D-4.58% =C2=B11.0=
+1%  p=3D0.00%
+| jxrendermark/rendering-test=3DLinear Gradient Blend/rendering-size=3D128x=
+128:      XXX =C2=B10.12% x31 -> XXX =C2=B10.19% x39   d=3D-3.60% =C2=B10.1=
+6%  p=3D0.00%
+| dbench/client-count=3D1:                                                 =
+        XXX =C2=B10.50% x34 -> XXX =C2=B10.50% x39   d=3D-2.51% =C2=B10.49%=
+  p=3D0.00%
 
+On my BXT J3455:
+
+| fs-mark/test=3D0:                                                        =
+        XXX =C2=B13.04% x6 ->   XXX =C2=B13.05% x9  d=3D-15.96% =C2=B12.76%=
+  p=3D0.00%
+| sqlite:                                                                  =
+      XXX =C2=B12.54% x6 ->   XXX =C2=B12.72% x9  d=3D-12.42% =C2=B12.44%  =
+p=3D0.00%
+| dbench/client-count=3D1:                                                 =
+        XXX =C2=B10.42% x6 ->   XXX =C2=B10.36% x9   d=3D-6.52% =C2=B10.37%=
+  p=3D0.00%
+| dbench/client-count=3D2:                                                 =
+        XXX =C2=B10.26% x6 ->   XXX =C2=B10.33% x9   d=3D-5.22% =C2=B10.29%=
+  p=3D0.00%
+| dbench/client-count=3D3:                                                 =
+        XXX =C2=B10.34% x6 ->   XXX =C2=B10.53% x9   d=3D-2.92% =C2=B10.45%=
+  p=3D0.00%
+| x11perf/test=3D500px Compositing From Pixmap To Window:                  =
+        XXX =C2=B12.29% x16 ->  XXX =C2=B12.11% x19  d=3D-2.69% =C2=B12.16%=
+  p=3D0.09%
+| lightsmark:                                                              =
+      XXX =C2=B10.44% x6 ->   XXX =C2=B10.33% x9   d=3D-1.76% =C2=B10.37%  =
+p=3D0.00%
+| j2dbench/rendering-test=3DVector Graphics Rendering:                     =
+        XXX =C2=B11.18% x16 ->  XXX =C2=B11.82% x19  d=3D-1.71% =C2=B11.54%=
+  p=3D0.26%
+| gtkperf/gtk-test=3DGtkComboBox:                                          =
+        XXX =C2=B10.37% x6 ->   XXX =C2=B10.45% x9   d=3D-0.95% =C2=B10.42%=
+  p=3D0.08%
+| jxrendermark/rendering-test=3DTransformed Blit Bilinear/rendering-size=3D=
+128x128:  XXX =C2=B10.21% x3 ->   XXX =C2=B10.23% x6   d=3D-0.87% =C2=B10.2=
+2%  p=3D0.08%
+
+This is not surprising given that the patch is making a hard trade-off
+between latency and energy efficiency without considering whether the
+workload is IO- or latency-bound, which is the reason why the series I
+submitted earlier [1] to address this problem implemented an IO
+utilization statistic in order to determine whether the workload is
+IO-bound, in which case the latency trade-off wouldn't impact
+performance negatively.
+
+Aside from that the improvement in graphics throughput seems like a
+small fraction of the series [1] while TDP-bound.  E.g. with this patch
+on my BXT J3455:
+
+| unigine/heaven:           XXX =C2=B10.21% x3 -> XXX =C2=B10.19% x6  d=3D1=
+.18% =C2=B10.19%  p=3D0.01%
+| unigine/valley:           XXX =C2=B10.52% x3 -> XXX =C2=B10.28% x6  d=3D1=
+.56% =C2=B10.37%  p=3D0.06%
+| gfxbench/gl_manhattan31:  XXX =C2=B10.12% x3 -> XXX =C2=B10.21% x6  d=3D1=
+.64% =C2=B10.19%  p=3D0.00%
+| gfxbench/gl_trex:         XXX =C2=B10.56% x3 -> XXX =C2=B10.36% x6  d=3D7=
+.07% =C2=B10.44%  p=3D0.00%
+
+vs. my series on the same system:
+
+| gfxbench/gl_manhattan31:  XXX =C2=B10.37% x3 -> XXX =C2=B10.08% x3  d=3D7=
+.30% =C2=B10.27%  p=3D0.00%
+| unigine/heaven:           XXX =C2=B10.47% x3 -> XXX =C2=B10.40% x3  d=3D7=
+.99% =C2=B10.45%  p=3D0.00%
+| unigine/valley:           XXX =C2=B10.35% x3 -> XXX =C2=B10.50% x3  d=3D8=
+.24% =C2=B10.45%  p=3D0.00%
+| gfxbench/gl_trex:         XXX =C2=B10.15% x3 -> XXX =C2=B10.26% x3  d=3D9=
+.12% =C2=B10.23%  p=3D0.00%
+
+That's not surprising either considering that this patch is only
+addressing one of the two reasons the current non-HWP intel_pstate
+governor behaves inefficiently (see [1] for more details on the other
+reason).  And even that is only partially addressed since the heuristic
+implemented in this patch in order to decide the degree of IOWAIT
+boosting to apply can and will frequently trigger in heavily GPU-bound
+cases, which will cause the task to IOWAIT on the GPU frequently,
+causing the P-state controller to waste shared TDP for no benefit.
+
+[1] https://lists.freedesktop.org/archives/intel-gfx/2018-March/160532.html
+
+--=-=-=--
+
+--==-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEAREIAB0WIQST8OekYz69PM20/4aDmTidfVK/WwUCW44r4wAKCRCDmTidfVK/
+W0yGAQCQyGymyLUIesu+T+7DMPBz3B1NYxrkOkr6WciPqeXIewD+PSPgfGfwQuy1
+JFVU+fTAitT6jPBDsZ9Xnn9tSbzlMo4=
+=cLSp
+-----END PGP SIGNATURE-----
+--==-=-=--
