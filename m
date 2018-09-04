@@ -2,148 +2,104 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBB9C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA14DC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25A16206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:10:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A16206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B76C206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:12:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VcfowLRR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B76C206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbeIDIdv (ORCPT
+        id S1726864AbeIDIfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 04:33:51 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:58720 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbeIDIdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 04:33:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id A092F2041E3;
-        Tue,  4 Sep 2018 06:10:37 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id X3LmNCg0pF9B; Tue,  4 Sep 2018 06:10:31 +0200 (CEST)
-Received: from [192.168.16.56] (unknown [195.69.32.11])
-        by smtp.infotech.no (Postfix) with ESMTPA id EBB25204179;
-        Tue,  4 Sep 2018 06:10:30 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: Recent removal of bsg read/write support
-To:     Dror Levin <drorl@infinidat.com>, torvalds@linux-foundation.org
-Cc:     richard.weinberger@gmail.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        hch@infradead.org, axboe@kernel.dk
-References: <CAOuWhkaGjX8Q_xghkFVTqzZkDrUv-sdH=VbS7hvnqFWrT+3eOQ@mail.gmail.com>
- <CAFLxGvxX8QW4wUJKommXVMpGBj7G_H3=SOwQGjGuyPZZrhCzKw@mail.gmail.com>
- <CA+55aFyLC8PhjZ+iV7MucSZ1aGKMT=S9=EkEAQ6T1=ZRqD-xLA@mail.gmail.com>
- <CAOuWhkbNuesaVYar6ML-qFw7RAfkPsaOYUXT4Ypfiu5=Nt1kWw@mail.gmail.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <c3674988-25fe-0a4d-4ce0-ec8aa9a241b4@interlog.com>
-Date:   Tue, 4 Sep 2018 06:10:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 04:35:15 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36328 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbeIDIfO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 04:35:14 -0400
+Received: by mail-pl1-f196.google.com with SMTP id e11-v6so986694plb.3;
+        Mon, 03 Sep 2018 21:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=8x2RgOxNUid/HmCMV/8mEDffJPA4KMaiIyr2BkIcWEk=;
+        b=VcfowLRRsa7OQB4GvUWGLCg8Yr6P3JxoI8TgiqEf8CGHEGNh05tBXvOxXQEXSOLeC/
+         qJClJlVz09C2UHbASdGgSnsfgxyzkKO7lzvv+EFYYSoPAvOKfXKfn0RNYrOmYHx1E4jt
+         rTm4znnCg4cSYhrLBuHIplY4LJ55m1swLtrS9qlybX61wVNlCxWqKi9tBPt778CeLlN2
+         am5GpOshvQRgvoyWQ+s1wCWyD+PnHjaOHOwYv80LGbx4in3M1RspUiulFeL15nMzLfWn
+         0raI0riK5FCWMbL3N7EUBjA94wzYr3x/KQ2z5FlBeC2sAUUcwDERY2lTnjavJ6dxvdWM
+         7Bcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=8x2RgOxNUid/HmCMV/8mEDffJPA4KMaiIyr2BkIcWEk=;
+        b=hnqzrFaC8VDgOEoUo8/mYUJeytRPMPos5vBR388qdrjeJ0il2MD8NYoVH6fiXKiuXh
+         GmhIH6S/eoYhXqmVZ++cnMci2WlsVTjhd3YRIFpLXApk/TNM7oK8Spugm8ZB3U5hmPFO
+         lIr4qohYLLvOOSkGpuABp7HYlLRFar0zHcEX26Es0I82kPcxoGdqlfyHwgk4DMHpj+Ww
+         y2K+dRg4oYEsUDTfo34gp3DPQ9PmUA1+T7+NUAAP7JgsBiwc4b2T2xwRtXUcU9F59apW
+         8XHyk0C7Cyu1WZElcahYIlkTNcfqhmp2c2qLxIhax0KyJIOyGutlB3P9lVelI0aXLsVD
+         vuHw==
+X-Gm-Message-State: APzg51B9wTDpt2WG+NtGbLMDbdTdO39n8jrn4VJ8TWdq0USrBXEV7FmZ
+        kGQ/G3VqLsrih5h9DOqQi+5uob7B
+X-Google-Smtp-Source: ANB0VdaKxeD6ilp2MsmXahTh9xxEQ0wZimhSk9uIWILu1oOxFGjOJBfSv03nSRoYaXDWorITLeAzNQ==
+X-Received: by 2002:a17:902:42a3:: with SMTP id h32-v6mr32138347pld.105.1536034322543;
+        Mon, 03 Sep 2018 21:12:02 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.16.199])
+        by smtp.gmail.com with ESMTPSA id q62-v6sm30352120pfi.185.2018.09.03.21.12.00
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 03 Sep 2018 21:12:01 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 09:45:05 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     willy@infradead.org, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, sean@poorly.run,
+        airlied@linux.ie, corbet@lwn.net
+Cc:     dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Document/gpu: Use new vm_fault_t type
+Message-ID: <20180904041505.GA2712@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <CAOuWhkbNuesaVYar6ML-qFw7RAfkPsaOYUXT4Ypfiu5=Nt1kWw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-03 10:34 AM, Dror Levin wrote:
-> On Sun, Sep 2, 2018 at 8:55 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> On Sun, Sep 2, 2018 at 4:44 AM Richard Weinberger
->> <richard.weinberger@gmail.com> wrote:
->>>
->>> CC'ing relevant people. Otherwise your mail might get lost.
->>
->> Indeed.
-> 
-> Sorry for that.
-> 
->>> On Sun, Sep 2, 2018 at 1:37 PM Dror Levin <drorl@infinidat.com> wrote:
->>>>
->>>> We have an internal tool that uses the bsg read/write interface to
->>>> issue SCSI commands as part of a test suite for a storage device.
->>>>
->>>> After recently reading on LWN that this interface is to be removed we
->>>> tried porting our code to use sg instead. However, that raises new
->>>> issues - mainly getting ENOMEM over iSCSI for unknown reasons.
->>
->> Is there any chance that you can make more data available?
-> 
-> Sure, I can try.
-> 
-> We use writev() to send up to SG_MAX_QUEUE tasks at a time. Occasionally not
-> all tasks are written at which point we wait for tasks to return before
-> sending more, but then writev() fails with ENOMEM and we see this in the syslog:
-> 
-> Sep  1 20:58:14 gdc-qa-io-017 kernel: sd 441:0:0:5: [sg73]
-> sg_common_write: start_req err=-12
-> 
-> Failing tasks are reads of 128KiB.
-> 
->> I'd rather fix the sg interface (which while also broken garbage, we
->> can't get rid of) than re-surrect the bsg interface.
->>
->> That said, the removed bsg code looks a hell of a lot prettier than
->> the nasty sg interface code does, although it also lacks ansolutely
->> _any_ kind of security checking.
-> 
-> For us the bsg interface also has several advantages over sg:
-> 1. The device name is its HCTL which is nicer than an arbitrary integer.
-> 2. write() supports writing more than one sg_io_v4 struct so we don't have
->     to resort to writev().
-> 3. Queue size is the device's queue depth and not SG_MAX_QUEUE which is 16.
-> 
->>>> Because of this we would like to continue using the bsg interface,
->>>> even if some changes are required to meet security concerns.
->>
->> I wonder if we could at least try to unify the bsg/sg code - possibly
->> by making sg use the prettier bsg code (but definitely have to add all
->> the security measures).
->>
->> And dammit, the SCSI people need to get their heads out of their
->> arses. This whole "stream random commands over read/write" needs to go
->> the f*ck away.
->>
->> Could we perhaps extend the SG_IO interace to have an async mode?
->> Instead of "read/write", have "SG_IOSUBMIT" and "SG_IORECEIVE" and
->> have the SG_IO ioctl just be a shorthand of "both".
-> 
-> Just my two cents - having an interface other than read/write won't allow
-> users to treat this fd as a regular file with epoll() and read(). This is
-> a major bonus for this interface - an sg/bsg device can be used just like
-> a socket or pipe in any reactor (we use boost asio for example).
+We have introduce new return type vm_fault_t for
+fault handler. Update the document for the same.
 
-The advantage of having two ioctls is that they can both pass (meta-)data
-bidirectionally. That is hard to do with standard read() and write() calls.
-The command tag is the piece if meta-data that goes against the flow:
-returned from SG_IOSUBMIT, optionally given to SG_IORECEIVE (which might have
-a 'cancel command' flag).
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+v2: Revert spaces added in v1
 
-The sg v1, v2 and v3 interfaces could keep their write()/read() interfaces
-for backward compatibility (to Linux 1.0.0, March 1994 for sg v1). New, clean
-submit and receive paths could be added to the sg driver for the v3 and
-v4 twin ioctl interface. Previously the sg v4 interface was only supported
-by the bsg driver. One advantage of sg v4 over v3 is support for bidi
-commands. Not sure if epoll/poll works with an ioctl, if not we could add a
-"dummy" read() call that notionally returned SCSI status. The SG_IORECEIVE
-ioctl would still be needed to "clean up" the command, and optionally
-transfer the data-in buffer.
+ Documentation/gpu/drm-mm.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tony Battersby has also requested twin ioctls saying that it is extremely
-tedious ploughing through logs full of SG_IO calls and that clearly
-separating submits from receives would make things somewhat better.
-
-Doug Gilbert
+diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
+index 21b6b72..c3ae888 100644
+--- a/Documentation/gpu/drm-mm.rst
++++ b/Documentation/gpu/drm-mm.rst
+@@ -297,7 +297,7 @@ made up of several fields, the more interesting ones being:
+ 	struct vm_operations_struct {
+ 		void (*open)(struct vm_area_struct * area);
+ 		void (*close)(struct vm_area_struct * area);
+-		int (*fault)(struct vm_fault *vmf);
++		vm_fault_t (*fault)(struct vm_fault *vmf);
+ 	};
+ 
+ 
+-- 
+1.9.1
 
