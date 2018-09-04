@@ -2,100 +2,192 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6AFC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD30C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42222077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E752082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:33:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qeL5Aazx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42222077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KHGnGNcH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E752082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeIDW5y (ORCPT
+        id S1727814AbeIDW7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:57:54 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36730 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeIDW5y (ORCPT
+        Tue, 4 Sep 2018 18:59:33 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:36292 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeIDW7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:57:54 -0400
-Received: by mail-wm0-f68.google.com with SMTP id j192-v6so5285396wmj.1;
-        Tue, 04 Sep 2018 11:31:35 -0700 (PDT)
+        Tue, 4 Sep 2018 18:59:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mttFuPMlNFcuoEx3wWq0n6xfpraMik+75IFyKG0dmaM=;
-        b=qeL5AazxSZK+UlYTyarzShel9M3lKyoRnbHClgL73qitPG5YMYPwwQ8Mvk0ZDkF9Zk
-         TOJ+iKZyCNQR6Ze7kQvmEOD6qQswSSd/cNoSClPJldWuSkp5HgVyo6Htxq/aI8UNNbJo
-         EenKxc+HxIIyTQ2KIBRJC5pp+buymtx9mAYZe+V9oCWsPYn1m5f56S6A00f66c8zHWgE
-         sXpoL8ecHyArEeAOQ9l75XIdw88y/q5JZlUfeDljvT28XHP5OWwheM5gWMwq38b41NkX
-         RmJT3J+2LmNMPBC1Y+w5T77Nk40/VZ1m1bOBxei4GQd0xwmMQk17vZKS3GY6WZpQ9FMG
-         dCzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mttFuPMlNFcuoEx3wWq0n6xfpraMik+75IFyKG0dmaM=;
-        b=fitx2mT9mSBt6cSXMO2JOFVnH8dNp1uYZjUqGOi03RwC9WXYVJ3YrRJshpYPjTUlmU
-         Sqf0J0zKj2Gm8bsNDX7Zphuw0HH1xo6Lgz1huq78LjU3Ghr1bVm7+BX9aCj+DM3Gg6EI
-         tg3dQvZAIOyhtYmP+5s0EorULIEj5Z3glnIk/zoOcjaKzXpy+pJvwoluMnXOk6QXJ/Yh
-         BryKbj3xtFD1AjqgIjoaa5BQrbAuCtLnnF0Bo1LDmMqsK5Zp7c89KKKOVt8zqET3Y8F9
-         be00g+/rAhvrCZoZ7wpP0xDIINgYAHJHXC9aYZZ1TV2rq/0RJpVo/DmvhCDhdDw9X+xn
-         yrHQ==
-X-Gm-Message-State: APzg51CYaZ26s7zFomlQyIQYuowQ/HE73i2ErpCy0nZqHAKfZHI6XFxG
-        v0nbYJmGP9u3KW7KclAMfBo=
-X-Google-Smtp-Source: ANB0VdakWdKoWWp4q/2fB7eoD93H+INgWKDbWK87lCz76+MH+N37iMbTnxz5v6ERx2Ct2UQUVWnROg==
-X-Received: by 2002:a1c:40d5:: with SMTP id n204-v6mr8800306wma.44.1536085894657;
-        Tue, 04 Sep 2018 11:31:34 -0700 (PDT)
-Received: from localhost.localdomain ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm29575741wmd.29.2018.09.04.11.31.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 11:31:33 -0700 (PDT)
-From:   Christian Hewitt <christianshewitt@gmail.com>
-Cc:     christianshewitt@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM64: dts: meson-gx: increase default shared CMA pool size
-Date:   Tue,  4 Sep 2018 22:30:43 +0400
-Message-Id: <1536085844-29328-1-git-send-email-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1536085993; x=1567621993;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ucW5k6C/PhoFXrbovMzEVwO+GZdl53x4m/9wxAEoeNk=;
+  b=KHGnGNcHbzyrSP3f+v8mI0rxcjrsrmc9jNuFSJ/mXX9CSIKjMdVX89uP
+   mY98UII1Rg6KHWGIx9UodX5LN3E5R9S2niHBvN6dAGoBcz+wVJxZ+9Kk8
+   lXjQ5T4p3BaM6BSr+e8ROQpIjuBQXW18Lii927/Oeae5F38UeI0847p3v
+   4=;
+X-IronPort-AV: E=Sophos;i="5.53,330,1531785600"; 
+   d="scan'208";a="756928245"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-87a10be6.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 04 Sep 2018 18:24:15 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2c-87a10be6.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w84INErn086096
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 4 Sep 2018 18:23:14 GMT
+Received: from EX13D05UWB004.ant.amazon.com (10.43.161.208) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 4 Sep 2018 18:23:14 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
+ EX13D05UWB004.ant.amazon.com (10.43.161.208) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 4 Sep 2018 18:23:13 +0000
+Received: from localhost (10.55.160.44) by mail-relay.amazon.com
+ (10.43.60.129) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Tue, 4 Sep 2018 18:23:12 +0000
+Date:   Tue, 4 Sep 2018 11:23:12 -0700
+From:   Eduardo Valentin <eduval@amazon.com>
+To:     Eduardo Valentin <eduval@amazon.com>
+CC:     Andi Kleen <ak@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Jia Zhang" <qianyue.zj@alibaba-inc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 1/1] perf/x86/intel: make error messages less confusing
+Message-ID: <20180904182312.GA11911@u40b0340c692b58f6553c.ant.amazon.com>
+References: <20180823150732.11249-1-eduval@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180823150732.11249-1-eduval@amazon.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Devices using the new V4L2 mem2mem vdec require a larger CMA pool. As
-nearly all GX* devices are video/media focused and will use it, set a
-larger (256MB) default value.
+Hello,
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 23, 2018 at 08:07:32AM -0700, Eduardo Valentin wrote:
+> On a system with X86_FEATURE_ARCH_PERFMON disabled
+> and with a model not known by family PMU drivers,
+> user gets a kernel message log like the following:
+> [ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
+> 
+> The "unsupported .. CPU" part may be confusing for some
+> users leading to wrong understanding that the kernel
+> does not support the CPU model.
+> 
+> This patch rewords the messages on the failure path to:
+> [ 0.667154] Performance Events: CPU does not support PMU: no PMU driver, software events only.
+> 
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index b8dc4db..ef43922 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -44,7 +44,7 @@
- 		linux,cma {
- 			compatible = "shared-dma-pool";
- 			reusable;
--			size = <0x0 0xbc00000>;
-+			size = <0x0 0x10000000>;
- 			alignment = <0x0 0x400000>;
- 			linux,cma-default;
- 		};
+
+Gentle ping on this patch, any further comments?
+
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Eduardo Valentin <eduval@amazon.com>
+> Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Eduardo Valentin <eduval@amazon.com>
+> ---
+> 
+> Changes from V1->V2:
+> - As per initial review, the propose messaging was even
+> more confusing. Simplified it by only saying that
+> the CPU does not support PMU.
+> 
+> 
+>  arch/x86/events/intel/core.c | 15 +++++++++++----
+>  arch/x86/events/intel/p4.c   |  5 +----
+>  arch/x86/events/intel/p6.c   |  1 -
+>  3 files changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 035c37481f57..2ddb97f03f4a 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -3889,15 +3889,22 @@ __init int intel_pmu_init(void)
+>  	char *name;
+>  
+>  	if (!cpu_has(&boot_cpu_data, X86_FEATURE_ARCH_PERFMON)) {
+> +		int ret = -ENODEV;
+> +
+>  		switch (boot_cpu_data.x86) {
+>  		case 0x6:
+> -			return p6_pmu_init();
+> +			ret = p6_pmu_init();
+> +			break;
+>  		case 0xb:
+> -			return knc_pmu_init();
+> +			ret = knc_pmu_init();
+> +			break;
+>  		case 0xf:
+> -			return p4_pmu_init();
+> +			ret = p4_pmu_init();
+> +			break;
+>  		}
+> -		return -ENODEV;
+> +		if (ret)
+> +			pr_cont("CPU does not support PMU: ");
+> +		return ret;
+>  	}
+>  
+>  	/*
+> diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
+> index d32c0eed38ca..fb5e8576d9ac 100644
+> --- a/arch/x86/events/intel/p4.c
+> +++ b/arch/x86/events/intel/p4.c
+> @@ -1345,11 +1345,8 @@ __init int p4_pmu_init(void)
+>  	BUILD_BUG_ON(ARCH_P4_MAX_CCCR > INTEL_PMC_MAX_GENERIC);
+>  
+>  	rdmsr(MSR_IA32_MISC_ENABLE, low, high);
+> -	if (!(low & (1 << 7))) {
+> -		pr_cont("unsupported Netburst CPU model %d ",
+> -			boot_cpu_data.x86_model);
+> +	if (!(low & (1 << 7)))
+>  		return -ENODEV;
+> -	}
+>  
+>  	memcpy(hw_cache_event_ids, p4_hw_cache_event_ids,
+>  		sizeof(hw_cache_event_ids));
+> diff --git a/arch/x86/events/intel/p6.c b/arch/x86/events/intel/p6.c
+> index 408879b0c0d4..e8e03e68b22f 100644
+> --- a/arch/x86/events/intel/p6.c
+> +++ b/arch/x86/events/intel/p6.c
+> @@ -269,7 +269,6 @@ __init int p6_pmu_init(void)
+>  		break;
+>  
+>  	default:
+> -		pr_cont("unsupported p6 CPU model %d ", boot_cpu_data.x86_model);
+>  		return -ENODEV;
+>  	}
+>  
+> -- 
+> 2.18.0
+> 
+
 -- 
-2.7.4
-
+All the best,
+Eduardo Valentin
