@@ -2,116 +2,105 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882EBC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2884DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFE02075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB77C20659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:12:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tt18FY3S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFE02075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IAN7WsvD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB77C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeIDVeo (ORCPT
+        id S1727624AbeIDVi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:34:44 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40432 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbeIDVeo (ORCPT
+        Tue, 4 Sep 2018 17:38:26 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36898 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbeIDVi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:34:44 -0400
-Received: by mail-yw1-f67.google.com with SMTP id z143-v6so1537746ywa.7;
-        Tue, 04 Sep 2018 10:08:44 -0700 (PDT)
+        Tue, 4 Sep 2018 17:38:26 -0400
+Received: by mail-io0-f196.google.com with SMTP id v14-v6so3640355iob.4;
+        Tue, 04 Sep 2018 10:12:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QARToPw0cAxFn21aaaLHHfl+w0FXVhEnq2K2QJGTU6w=;
-        b=Tt18FY3SEzSUBkEtl/lyjvGVBT7n6dFmibY8Ulqr2aTbN5U1pzVHRcjND8H7AzYCoq
-         5Q+D4Wo0gxVjcougWfgLaukVZRwLVcEX5pbNT5gb80FtsLkyiboBVWgLEaH/OEAvTHsp
-         h7mB1WmFqryudN0wPZsjh+hOllIdclNmYDVy33cmV9XrbuMtHBXfmT3flxi9u9WgV9ft
-         2ZLzHjvOKAfEz5zG84kQhxcbrcQlYlFY/AJJujHbuTLn8fRNTTZR+yk7UgKb9CwAS4Yv
-         OB7sGdGlz3MJMFgQdFVoKchy7dmRHBY1lq3TMbGAsUeb/KYy37ERooZRdBIJyH01QjTg
-         KEiA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LNzBG5pGV6EojKq7EBEUw6ktl2I8dAwisfYUZ5sCKXM=;
+        b=IAN7WsvD0VpuKaxWpKRTVKczB+PlCaGAtezELT8O2ol7r9WpspiRldt7nBOSywqJrj
+         kfG98rk8hBWw2td0YyHKhF47SL3pHOS7H+ehfKe39QONtK2XbSZONY5txBltFMoEBPYU
+         D497vekDYC++LOuhggKBc7BQt97++StuGgRpE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QARToPw0cAxFn21aaaLHHfl+w0FXVhEnq2K2QJGTU6w=;
-        b=pI1oqsnWs+uFRQNzRD8UeVz5nDnMYpFHiZ+LQsZQtUrb5EeZNzGfLXwgtLTDVQCn9h
-         2CgE/blR/YNlkOuvcDmjAaBMhisrkKTbdOD2CVGrIr9BcElA3PzLt4yAm4Y+GEHfMpIa
-         IVmaQeNDi7DOVUyF6A7nBxSY1t60BReySsJIV8GdEWv6CsgCzJNeyknws89xD/cqCvWJ
-         yqB9UoOBAujvPD2P2XgWAjQ4Lc15shrhxJg0lLe0cU6QZnqVsZ4rvxJf9kwVXA7baAO/
-         BKzno7YmC6vQfwmAgRJjNBRSUy2pd+gbqzl4lX+dTuPH5Cx3uybJrx4yXAbS+QTP68jV
-         Sd2Q==
-X-Gm-Message-State: APzg51CYw2nbhfeTtk3cJUXPnbQdIdNxQBVXTVQ5eGTs9TQyFPzmPN0A
-        Q3xLPQIlU3OT5yET/Dk96VO2tTF9
-X-Google-Smtp-Source: ANB0VdYaQc9tJF7RuP3Qc73SU6erZGqpher8acJU5q4otqU58SCMvNzyfJH49NHf+UIZ7o0wgCsBBQ==
-X-Received: by 2002:a81:8245:: with SMTP id s66-v6mr19296937ywf.472.1536080923297;
-        Tue, 04 Sep 2018 10:08:43 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c0a3:10e0::3ed7? ([2620:10d:c091:200::63dd])
-        by smtp.gmail.com with ESMTPSA id m1-v6sm7616218ywf.96.2018.09.04.10.08.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 10:08:42 -0700 (PDT)
-From:   Jes Sorensen <jes.sorensen@gmail.com>
-X-Google-Original-From: Jes Sorensen <Jes.Sorensen@gmail.com>
-Subject: Re: [PATCH] rtl8xxxu: Add rtl8188ctv support
-To:     Aleksei Mamlin <mamlinav@gmail.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180830140541.31964-1-mamlinav@gmail.com>
- <20180904081619.7353B606AC@smtp.codeaurora.org>
- <53022e37-e9dc-1cf8-ec3c-4df668f3c045@gmail.com>
- <20180904192338.e9be91d4be447e33acefed5a@gmail.com>
-Message-ID: <3be649f2-3f55-c11c-f31e-02ba68ed4103@gmail.com>
-Date:   Tue, 4 Sep 2018 13:08:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LNzBG5pGV6EojKq7EBEUw6ktl2I8dAwisfYUZ5sCKXM=;
+        b=WSJtgijqhGJ0nDuQz1obAAEBOvizFXJq+fT1QTgXkjbYu0YSX7biNh9UeYp8ZtQti4
+         kWuGZNQC/o8LfNOGMFMb+rfPItzL6jGpaWhIR9WP+j0oNuQMHT8Apixht+yBbadQRKg5
+         KksfcA2o+r5xNkOP4xQApHWXNzythDp0VA0uOGpXnboS5lN6QRPLXSmE3OEOLlT4bK+T
+         +xFiE/kvJJgCPM/SYUMorENSe3mwXkp2rArErM2/y4LCpsEkoOyVWoO9Eg/S01eWNEbA
+         jnXeUmkRuj0I3C5it868vSoVibXfRfJkAhwSYU5IXMIBhS+KYcAd/fu7sSb9FirTQrpP
+         cuQg==
+X-Gm-Message-State: APzg51AHoK2fop5vgwa2DY5GoIAY0siDpGgnUeVzSX3N3Yjc9fqzRiQi
+        BrH+R7iQJETtLmmaGcUsElAMTcYCzFWLIDWUlew=
+X-Google-Smtp-Source: ANB0VdZ0npQIzp+4HcZRW3vD/eicn6J86lDayGQfMRjoBEJrWHaLJulbo/gyolwsPgs/wqPsL8cDryznkyRF9Sjdptg=
+X-Received: by 2002:a6b:97c6:: with SMTP id z189-v6mr23752116iod.120.1536081144698;
+ Tue, 04 Sep 2018 10:12:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180904192338.e9be91d4be447e33acefed5a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180903165719.499675257@linuxfoundation.org> <64889a4a-c095-3db8-b496-631acbafcf9a@applied-asynchrony.com>
+In-Reply-To: <64889a4a-c095-3db8-b496-631acbafcf9a@applied-asynchrony.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 4 Sep 2018 10:12:13 -0700
+Message-ID: <CA+55aFyDZR4SGotsxUA7ahCGCDr+PGnn=_13e_0_W2SnoQbM5w@mail.gmail.com>
+Subject: Re: [PATCH 4.18 000/123] 4.18.6-stable review
+To:     holger@applied-asynchrony.com
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 12:23 PM, Aleksei Mamlin wrote:
-> On Tue, 4 Sep 2018 11:36:50 -0400
-> Jes Sorensen <jes.sorensen@gmail.com> wrote:
-> 
->> On 09/04/2018 04:16 AM, Kalle Valo wrote:
->>> Aleksei Mamlin <mamlinav@gmail.com> wrote:
->>>
->>>> The Realtek rtl8188ctv (0x0bda:0x018a) is a highly integrated single-chip
->>>> WLAN USB2.0 network interface controller.
->>>>
->>>> Currently rtl8188ctv is supported by rtlwifi driver.
->>>> It is similar to the rtl8188cus(0x0bda:0x818a) and uses the same config.
->>>>
->>>> Signed-off-by: Aleksei Mamlin <mamlinav@gmail.com>
->>>
->>> Patch applied to wireless-drivers-next.git, thanks.
->>>
->>> 514502c3a70b rtl8xxxu: Add rtl8188ctv support
->>
->> Looks good to me too - assume it's been tested?
->>
-> 
-> Yes, tested on my ARM tablet. It successfully connected to my home router
-> using wpa_supplicant. There is dmesg output:
+On Mon, Sep 3, 2018 at 11:39 AM Holger Hoffst=C3=A4tte
+<holger@applied-asynchrony.com> wrote:
+>
+> Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x76/0xc0
+> Sep  3 20:19:38 ragnarok kernel:  tlb_table_flush.part.13+0xe/0x30
+> Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x54/0xc0
+> ..a few hundred times..
+> Sep  3 20:19:38 ragnarok kernel:  tlb_table_flush.part.13+0xe/0x30
+> Sep  3 20:19:38 ragnarok kernel:  tlb_flush_mmu_tlbonly+0x54/0xc0
+> Sep  3 20:19:38 ragnarok kernel:  arch_tlb_finish_mmu+0x3a/0x70
+> Sep  3 20:19:38 ragnarok kernel:  tlb_finish_mmu+0x1f/0x30
 
-Awesome, glad to hear it's working!
+Yeah, so what seems to have happened is that commit db7ddef30112 ("mm:
+move tlb_table_flush to tlb_flush_mmu_free") wasn't applied to the
+stable tree (because it wasn't an obvious dependency).
 
-Jes
+And without that, the backport of d86564a2f085 ("mm/tlb, x86/mm:
+Support invalidating TLB caches for RCU_TABLE_FREE") ends up with
+recursion from tlb_flush_mmu_tlbonly() calling tlb_table_flush(),
+which in turn calls tlb_table_invalidate(), which calls back to
+tlb_flush_mmu_tlbonly().
 
+So you have endless recursion - at least until you run out of stack.
+Then, if you have VMAP_STACK enabled (x86-64 without KASAN), you get a
+nice clean kernel stack overflow message like you did.
+
+Or if you have KASAN enabled and no VMAP stack, you just end up with
+random hangs and huge memory corruption as the recursion stomps all
+over your memory.
+
+          Linus
