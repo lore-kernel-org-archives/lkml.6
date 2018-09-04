@@ -2,120 +2,142 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB5AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30533C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2150420867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:04:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2150420867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D1A5120645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:05:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tb+qSzyx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A5120645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeIDUab (ORCPT
+        id S1727637AbeIDUbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:30:31 -0400
-Received: from mga09.intel.com ([134.134.136.24]:55129 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbeIDUaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:30:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 09:04:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="88878046"
-Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
-  by orsmga002.jf.intel.com with ESMTP; 04 Sep 2018 09:04:44 -0700
-Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
- <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+        Tue, 4 Sep 2018 16:31:07 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42538 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbeIDUbH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 16:31:07 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g13-v6so2757585qki.9;
+        Tue, 04 Sep 2018 09:05:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uLU3lGxnz2rK+Q9Y8ng5fb8dv1R8pDi4V7PCZ74rhUo=;
+        b=Tb+qSzyxCB2x9KzxSjc9TcRaLKpIfjXwp9I8FWfqx8IEfmbsG7APJWPRFQYvQJxn+c
+         VPKAe+K3aEDbjh45FnRYfXDjITLsGm0Q1NtGKRlhqCgTMamlR47igUoA8NCA2NcLdutt
+         CG7ZytWjaK73hE0xe2RcrC0Q1CTzLJ3zIUt88HAGJaIlgHBMfYmGAA2e0DZo/tC92Z+K
+         jggPuPJI5RV5C1CwggXCHFRB7GjzxSSlbuIX4fcAhd6SjEy9ccFfUnI4NMLYz6LaGGbv
+         O7XhW/ZiQ/6P/sv0zk5kchtC1JPL3tvd9Mpd7HPLez0LBCnuG91akVN1gRyUOrppDkx5
+         BbkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uLU3lGxnz2rK+Q9Y8ng5fb8dv1R8pDi4V7PCZ74rhUo=;
+        b=BegK6Mx2npQWtUvHgWhJVsEi0BP6yWMYers7zUaJxB5jD9iP9GyElOiPK9ht32Uokm
+         QCNsgg+tD1GCLQXmWE1wgeaUdykpJAyzFtB01yFgOrlxTVTZy4mdS6TGyi/4eFjAPUA6
+         jcj0Kl4xX0ztEXz/Zp9kEx9o5Ru/UrFUpIK4SAUUuDQ4N67LTFK3yxEh2CUC7m0adOUP
+         1gHxwsKVH0SZc0+DuykAeVyYimoZernOJGtCCeVJMwa04DQNKjqOXzSPsHa3+ZWo/m7J
+         32PZ3YEHZk2aPfNUPO2HlQKzOW6WOXOHxbD92uWO/wIsmaN3zp+ihkGnJmmmROK6US44
+         v1ww==
+X-Gm-Message-State: APzg51AVVXvBSEVLZShBE/9uCj7dVtOpY3YtI6GIL3joAeQ8w5zYqi67
+        jUeNm2hr3OqbixXabduY2eaFZZKDvTDIGcptKfc=
+X-Google-Smtp-Source: ANB0VdYR0BuD9TSgV4yAJ8aKaCBRTsUtqPRdfhxFg/xyMnZ2KZvVeXfP5glZeLJ3HP9WoAqOnjXxoedb1hvNbX45wcA=
+X-Received: by 2002:a37:4c0e:: with SMTP id z14-v6mr29191691qka.233.1536077120575;
+ Tue, 04 Sep 2018 09:05:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Sep 2018 19:05:09 +0300
+Message-ID: <CAHp75VfKdb6fj6EqghEuQazVqGUNJ=FLk+ka+5PyX795-1T-MA@mail.gmail.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
         Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
         sean.j.christopherson@intel.com, nhorman@redhat.com,
         npmccallum@redhat.com, linux-sgx@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, suresh.b.siddha@intel.com,
+        serge.ayoun@intel.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
-Date:   Tue, 4 Sep 2018 09:04:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/2018 06:16 AM, Andy Shevchenko wrote:
->> +       EBLOCK  = 0x9,
->> +       EPA     = 0xA,
->> +       EWB     = 0xB,
->> +       ETRACK  = 0xC,
->> +       EAUG    = 0xD,
->> +       EMODPR  = 0xE,
->> +       EMODT   = 0xF,
->> +};
-> Hmm... This E prefix confuses me with (system wide) error codes. Has
-> it been discussed before? If so, can you point on the conclusion why
-> the current format is good?
+On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> Add a function to perform ENCLS(EINIT), which initializes an enclave,
+> which can be used by a driver for running enclaves and VMMs.
+>
+> Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
+> than normal MSRs, so we use a per-cpu cache to track the last known value
+> of the MSRs to avoid unnecessarily writing the MSRs with the current value.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Making them SGX_EWHATEVER isn't a horrible idea.
+> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4]);
 
+This [4] doesn't make any sense in a C when used in function call
+parameter list.
 
+> +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs for each
+> + * CPU. The entries are initialized when they are first used by sgx_einit().
+> + */
+> +struct sgx_lepubkeyhash {
+> +       u64 msrs[4];
+
+4 is MAGIC.
+
+> +       u64 pm_cnt;
+> +};
+
+> +int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
+> +             struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
+
+Same two comments about [4].
+
+> +{
+
+> +       cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
+
+> +       if (!cache) {
+
+How often it's being expected to happen?
+
+> +               cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
+> +               if (!cache)
+> +                       return -ENOMEM;
+> +       }
+
+> +       for (i = 0; i < 4; i++) {
+
+Same MAGIC?
+
+> +       }
+
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
