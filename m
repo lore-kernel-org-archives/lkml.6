@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BFAC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12BAC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE3C2077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:54:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE3C2077C
+	by mail.kernel.org (Postfix) with ESMTP id AFF3520659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:55:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF3520659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbeIEAUy (ORCPT
+        id S1728114AbeIEAUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 20:20:54 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40747 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbeIEAUy (ORCPT
+        Tue, 4 Sep 2018 20:20:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35642 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbeIEAUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 20:20:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n2-v6so5213219wrw.7;
-        Tue, 04 Sep 2018 12:54:16 -0700 (PDT)
+        Tue, 4 Sep 2018 20:20:52 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o18-v6so5483206wmc.0;
+        Tue, 04 Sep 2018 12:54:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=C3e50uBehofTAxCwaV0Z48xO6oU67mNuEtETp9lv5WA=;
-        b=emZUzlIObL/auzmWXwEy5c/1UHLiaiIlJQXqc0hrywV/gS/WMM4wXwV14XXwhfvu3s
-         jmdHH4BtPtgK/uKqgVTaVRvD/e/9o2qB7Qs087lDiD6m94pS6hth9QHI7SghFNQzamZ3
-         CmTonHYtIy1L40pbvbVMAoGIoWmq50/gX3H4C6g7d75t4HCqA9Q9dFwKqz8L13MiXnxT
-         vEGWByuU9cP+TTVnQwfUW+NhzNxj1Z43FnXleIwGl3q44qaV+1pWQWLFmzZI2gthy0ml
-         VtW31dI7/RnFydSmFk0qXZFb/Eb7IFKqg/L08tqq3Y10KJiDgwfIk+qlVyFZr7vpHAiZ
-         /Dtw==
-X-Gm-Message-State: APzg51DtIJMCmwNrCu8QjdCrcNGDygwLk6sD0PXxYle2x4kibHWtnPRh
-        V5XSlZM+pvxT4pchmhME+jtkz1LBf3RTSA==
-X-Google-Smtp-Source: ANB0VdYAbqiQriRh/9M+J87CUYDXPfoqV2bdRzSBsDrju82MjDlKZ6nzPjjVM2IENsmMXzX5r9EfOQ==
-X-Received: by 2002:adf:a708:: with SMTP id c8-v6mr14142800wrd.56.1536090855655;
-        Tue, 04 Sep 2018 12:54:15 -0700 (PDT)
+        bh=Vgt87KYeAjeIkoBgyI5+YB6DhGbFDAp74UmjVTyrJkE=;
+        b=Kym8ovVIPdUP2v769U6MtAfwpAbuw9ZtH5YEHLnwuGmdJiMGfrJNlXgBjmXOOrW1AF
+         jZ/FpwQFocuVLCcl+Yx/+cpKFwfWt6jkyifHDjILM/1+AqlMwqM41/cwQSnII7UpS4rE
+         kkOaYYn2ECl08ZuV3cf+lSn0PMeRXRy1Eh1kIfonawz+XYYSm+FBi3VpBh4N39ATfklG
+         JqDL8UH0f9sOu+amVXoegzOoGu7oNYWr7WFmoDIe7eeUne9z+3fAoxf7iVlfscSi4M2/
+         h22s1+6YfhQMEDhM64wpFEVdCGgUJZEbiB82OEXB4zUaXBIERFXSklL5BvAXMg+Q5V4p
+         9DsA==
+X-Gm-Message-State: APzg51CKh9/rg1UdVFMaodHfMi6V8bbFPT2oa2R6z2mH1vNs06zxUkFU
+        FhuVPLHbl1TugW1G7Z1XsnptvfYDagHGzA==
+X-Google-Smtp-Source: ANB0Vdbf246MaZBLp9RfDLYUWS3fM5S4uwp1o6xws8bvroH8HtunxK0ToZbwr4iKcqXUuGEaOYCTUQ==
+X-Received: by 2002:a1c:d702:: with SMTP id o2-v6mr8884305wmg.115.1536090852712;
+        Tue, 04 Sep 2018 12:54:12 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8070:8895:9700:f474:3704:f9a0:fc57])
-        by smtp.gmail.com with ESMTPSA id 144-v6sm99440wma.19.2018.09.04.12.54.14
+        by smtp.gmail.com with ESMTPSA id 144-v6sm99440wma.19.2018.09.04.12.54.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 12:54:15 -0700 (PDT)
+        Tue, 04 Sep 2018 12:54:12 -0700 (PDT)
 From:   Christian Brauner <christian@brauner.io>
 To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
@@ -53,9 +53,9 @@ Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
         ktkhai@virtuozzo.com, lucien.xin@gmail.com,
         jakub.kicinski@netronome.com, jbenc@redhat.com,
         nicolas.dichtel@6wind.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH net-next v2 5/9] rtnetlink: move type calculation out of loop
-Date:   Tue,  4 Sep 2018 21:53:51 +0200
-Message-Id: <20180904195355.4695-6-christian@brauner.io>
+Subject: [PATCH net-next v2 3/9] ipv4: enable IFA_TARGET_NETNSID for RTM_GETADDR
+Date:   Tue,  4 Sep 2018 21:53:49 +0200
+Message-Id: <20180904195355.4695-4-christian@brauner.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180904195355.4695-1-christian@brauner.io>
 References: <20180904195355.4695-1-christian@brauner.io>
@@ -64,40 +64,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't see how the type - which is one of
-RTM_{GETADDR,GETROUTE,GETNETCONF} - can change. So do the message type
-calculation once before entering the for loop.
+- Backwards Compatibility:
+  If userspace wants to determine whether ipv4 RTM_GETADDR requests
+  support the new IFA_TARGET_NETNSID property it should verify that the
+  reply includes the IFA_TARGET_NETNSID property. If it does not
+  userspace should assume that IFA_TARGET_NETNSID is not supported for
+  ipv4 RTM_GETADDR requests on this kernel.
+- From what I gather from current userspace tools that make use of
+  RTM_GETADDR requests some of them pass down struct ifinfomsg when they
+  should actually pass down struct ifaddrmsg. To not break existing
+  tools that pass down the wrong struct we will do the same as for
+  RTM_GETLINK | NLM_F_DUMP requests and not error out when the
+  nlmsg_parse() fails.
+
+- Security:
+  Callers must have CAP_NET_ADMIN in the owning user namespace of the
+  target network namespace.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
 v1->v2:
-- unchanged
+- rename from IFA_IF_NETNSID to IFA_TARGET_NETNSID
 
 v0->v1:
 - unchanged
 ---
- net/core/rtnetlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/devinet.c | 38 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 30645d9a9801..b36dab7507a0 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3265,13 +3265,13 @@ static int rtnl_dump_all(struct sk_buff *skb, struct netlink_callback *cb)
+diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
+index ea4bd8a52422..5cb849300b81 100644
+--- a/net/ipv4/devinet.c
++++ b/net/ipv4/devinet.c
+@@ -100,6 +100,7 @@ static const struct nla_policy ifa_ipv4_policy[IFA_MAX+1] = {
+ 	[IFA_CACHEINFO]		= { .len = sizeof(struct ifa_cacheinfo) },
+ 	[IFA_FLAGS]		= { .type = NLA_U32 },
+ 	[IFA_RT_PRIORITY]	= { .type = NLA_U32 },
++	[IFA_TARGET_NETNSID]	= { .type = NLA_S32 },
+ };
+ 
+ #define IN4_ADDR_HSIZE_SHIFT	8
+@@ -1584,7 +1585,8 @@ static int put_cacheinfo(struct sk_buff *skb, unsigned long cstamp,
+ }
+ 
+ static int inet_fill_ifaddr(struct sk_buff *skb, struct in_ifaddr *ifa,
+-			    u32 portid, u32 seq, int event, unsigned int flags)
++			    u32 portid, u32 seq, int event, unsigned int flags,
++			    int netnsid)
  {
- 	int idx;
- 	int s_idx = cb->family;
-+	int type = cb->nlh->nlmsg_type - RTM_BASE;
+ 	struct ifaddrmsg *ifm;
+ 	struct nlmsghdr  *nlh;
+@@ -1601,6 +1603,9 @@ static int inet_fill_ifaddr(struct sk_buff *skb, struct in_ifaddr *ifa,
+ 	ifm->ifa_scope = ifa->ifa_scope;
+ 	ifm->ifa_index = ifa->ifa_dev->dev->ifindex;
  
- 	if (s_idx == 0)
- 		s_idx = 1;
++	if (netnsid >= 0 && nla_put_s32(skb, IFA_TARGET_NETNSID, netnsid))
++		goto nla_put_failure;
++
+ 	if (!(ifm->ifa_flags & IFA_F_PERMANENT)) {
+ 		preferred = ifa->ifa_preferred_lft;
+ 		valid = ifa->ifa_valid_lft;
+@@ -1648,6 +1653,9 @@ static int inet_fill_ifaddr(struct sk_buff *skb, struct in_ifaddr *ifa,
+ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
+ {
+ 	struct net *net = sock_net(skb->sk);
++	struct nlattr *tb[IFA_MAX+1];
++	struct net *tgt_net = net;
++	int netnsid = -1;
+ 	int h, s_h;
+ 	int idx, s_idx;
+ 	int ip_idx, s_ip_idx;
+@@ -1660,12 +1668,23 @@ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
+ 	s_idx = idx = cb->args[1];
+ 	s_ip_idx = ip_idx = cb->args[2];
  
- 	for (idx = 1; idx <= RTNL_FAMILY_MAX; idx++) {
- 		struct rtnl_link **tab;
--		int type = cb->nlh->nlmsg_type-RTM_BASE;
- 		struct rtnl_link *link;
- 		rtnl_dumpit_func dumpit;
++	if (nlmsg_parse(cb->nlh, sizeof(struct ifaddrmsg), tb, IFA_MAX,
++			ifa_ipv4_policy, NULL) >= 0) {
++		if (tb[IFA_TARGET_NETNSID]) {
++			netnsid = nla_get_s32(tb[IFA_TARGET_NETNSID]);
++
++			tgt_net = rtnl_get_net_ns_capable(skb->sk, netnsid);
++			if (IS_ERR(tgt_net))
++				return PTR_ERR(tgt_net);
++		}
++	}
++
+ 	for (h = s_h; h < NETDEV_HASHENTRIES; h++, s_idx = 0) {
+ 		idx = 0;
+-		head = &net->dev_index_head[h];
++		head = &tgt_net->dev_index_head[h];
+ 		rcu_read_lock();
+-		cb->seq = atomic_read(&net->ipv4.dev_addr_genid) ^
+-			  net->dev_base_seq;
++		cb->seq = atomic_read(&tgt_net->ipv4.dev_addr_genid) ^
++			  tgt_net->dev_base_seq;
+ 		hlist_for_each_entry_rcu(dev, head, index_hlist) {
+ 			if (idx < s_idx)
+ 				goto cont;
+@@ -1680,9 +1699,10 @@ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
+ 				if (ip_idx < s_ip_idx)
+ 					continue;
+ 				if (inet_fill_ifaddr(skb, ifa,
+-					     NETLINK_CB(cb->skb).portid,
+-					     cb->nlh->nlmsg_seq,
+-					     RTM_NEWADDR, NLM_F_MULTI) < 0) {
++						     NETLINK_CB(cb->skb).portid,
++						     cb->nlh->nlmsg_seq,
++						     RTM_NEWADDR, NLM_F_MULTI,
++						     netnsid) < 0) {
+ 					rcu_read_unlock();
+ 					goto done;
+ 				}
+@@ -1698,6 +1718,8 @@ static int inet_dump_ifaddr(struct sk_buff *skb, struct netlink_callback *cb)
+ 	cb->args[0] = h;
+ 	cb->args[1] = idx;
+ 	cb->args[2] = ip_idx;
++	if (netnsid >= 0)
++		put_net(tgt_net);
  
+ 	return skb->len;
+ }
+@@ -1715,7 +1737,7 @@ static void rtmsg_ifa(int event, struct in_ifaddr *ifa, struct nlmsghdr *nlh,
+ 	if (!skb)
+ 		goto errout;
+ 
+-	err = inet_fill_ifaddr(skb, ifa, portid, seq, event, 0);
++	err = inet_fill_ifaddr(skb, ifa, portid, seq, event, 0, -1);
+ 	if (err < 0) {
+ 		/* -EMSGSIZE implies BUG in inet_nlmsg_size() */
+ 		WARN_ON(err == -EMSGSIZE);
 -- 
 2.17.1
 
