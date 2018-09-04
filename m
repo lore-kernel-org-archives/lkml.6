@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92EBC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6F7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB0720843
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB0720843
+	by mail.kernel.org (Postfix) with ESMTP id 9014320645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:59:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9014320645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbeIDUYx (ORCPT
+        id S1727959AbeIDUYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:24:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51036 "EHLO mx1.suse.de"
+        Tue, 4 Sep 2018 16:24:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50958 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727781AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727803AbeIDUYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Sep 2018 16:24:51 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ACDFCB0B1;
-        Tue,  4 Sep 2018 15:59:02 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 05E5FB0B7;
+        Tue,  4 Sep 2018 15:59:03 +0000 (UTC)
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Eric Anholt <eric@anholt.net>,
         Stefan Wahren <stefan.wahren@i2se.com>,
         linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 22/29] staging: bcm2835-audio: Use standard error print helpers
-Date:   Tue,  4 Sep 2018 17:58:51 +0200
-Message-Id: <20180904155858.8001-23-tiwai@suse.de>
+Subject: [PATCH 28/29] staging: bcm2835-audio: Simplify kctl creation helpers
+Date:   Tue,  4 Sep 2018 17:58:57 +0200
+Message-Id: <20180904155858.8001-29-tiwai@suse.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
@@ -42,241 +42,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For making the whole code more consistent, replace the home-made debug
-print macros with the standard dev_err() & co.
+Just a minor code refactoring and adding some const prefix.
 
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- .../vc04_services/bcm2835-audio/bcm2835-pcm.c |  4 +-
- .../bcm2835-audio/bcm2835-vchiq.c             | 52 ++++++++-----------
- .../vc04_services/bcm2835-audio/bcm2835.c     |  2 +-
- .../vc04_services/bcm2835-audio/bcm2835.h     | 43 +--------------
- 4 files changed, 27 insertions(+), 74 deletions(-)
+ .../vc04_services/bcm2835-audio/bcm2835-ctl.c | 69 +++++++------------
+ 1 file changed, 25 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-index 38969b5dfb57..d2373e4a4d53 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-@@ -101,8 +101,8 @@ static int snd_bcm2835_playback_open_generic(
- 		goto out;
- 	}
- 	if (idx >= MAX_SUBSTREAMS) {
--		audio_error
--			("substream(%d) device doesn't exist max(%d) substreams allowed\n",
-+		dev_err(chip->dev,
-+			"substream(%d) device doesn't exist max(%d) substreams allowed\n",
- 			idx, MAX_SUBSTREAMS);
- 		err = -ENODEV;
- 		goto out;
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-index d7e2718e050f..7fff5c63e33f 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-@@ -26,20 +26,8 @@
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+index e17b72f21a9d..a6ec72a5f0be 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+@@ -97,40 +97,34 @@ static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
  
- /* ---- Private Constants and Types ------------------------------------------ */
+ static DECLARE_TLV_DB_SCALE(snd_bcm2835_db_scale, CTRL_VOL_MIN, 1, 1);
  
--/* Logging macros (for remapping to other logging mechanisms, i.e., printf) */
--#ifdef AUDIO_DEBUG_ENABLE
--#define LOG_ERR(fmt, arg...)   pr_err("%s:%d " fmt, __func__, __LINE__, ##arg)
--#define LOG_WARN(fmt, arg...)  pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
--#define LOG_INFO(fmt, arg...)  pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
--#define LOG_DBG(fmt, arg...)   pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
--#else
--#define LOG_ERR(fmt, arg...)   pr_err("%s:%d " fmt, __func__, __LINE__, ##arg)
--#define LOG_WARN(fmt, arg...)	 no_printk(fmt, ##arg)
--#define LOG_INFO(fmt, arg...)	 no_printk(fmt, ##arg)
--#define LOG_DBG(fmt, arg...)	 no_printk(fmt, ##arg)
--#endif
--
- struct bcm2835_audio_instance {
-+	struct device *dev;
- 	VCHI_SERVICE_HANDLE_T vchi_handle;
- 	struct completion msg_avail_comp;
- 	struct mutex vchi_mutex;
-@@ -76,7 +64,8 @@ static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *instance
- 	status = vchi_queue_kernel_message(instance->vchi_handle,
- 					   m, sizeof(*m));
- 	if (status) {
--		LOG_ERR("vchi message queue failed: %d, msg=%d\n",
-+		dev_err(instance->dev,
-+			"vchi message queue failed: %d, msg=%d\n",
- 			status, m->type);
- 		return -EIO;
- 	}
-@@ -84,10 +73,12 @@ static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *instance
- 	if (wait) {
- 		if (!wait_for_completion_timeout(&instance->msg_avail_comp,
- 						 msecs_to_jiffies(10 * 1000))) {
--			LOG_ERR("vchi message timeout, msg=%d\n", m->type);
-+			dev_err(instance->dev,
-+				"vchi message timeout, msg=%d\n", m->type);
- 			return -ETIMEDOUT;
- 		} else if (instance->result) {
--			LOG_ERR("vchi message response error:%d, msg=%d\n",
-+			dev_err(instance->dev,
-+				"vchi message response error:%d, msg=%d\n",
- 				instance->result, m->type);
- 			return -EIO;
- 		}
-@@ -140,12 +131,12 @@ static void audio_vchi_callback(void *param,
- 	} else if (m.type == VC_AUDIO_MSG_TYPE_COMPLETE) {
- 		if (m.u.complete.cookie1 != BCM2835_AUDIO_WRITE_COOKIE1 ||
- 		    m.u.complete.cookie2 != BCM2835_AUDIO_WRITE_COOKIE2)
--			LOG_ERR("invalid cookie\n");
-+			dev_err(instance->dev, "invalid cookie\n");
- 		else
- 			bcm2835_playback_fifo(instance->alsa_stream,
- 					      m.u.complete.count);
- 	} else {
--		LOG_ERR("unexpected callback type=%d\n", m.type);
-+		dev_err(instance->dev, "unexpected callback type=%d\n", m.type);
- 	}
+-static struct snd_kcontrol_new snd_bcm2835_ctl[] = {
++static const struct snd_kcontrol_new snd_bcm2835_ctl[] = {
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+ 		.name = "PCM Playback Volume",
+-		.index = 0,
+ 		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE | SNDRV_CTL_ELEM_ACCESS_TLV_READ,
+ 		.private_value = PCM_PLAYBACK_VOLUME,
+ 		.info = snd_bcm2835_ctl_info,
+ 		.get = snd_bcm2835_ctl_get,
+ 		.put = snd_bcm2835_ctl_put,
+-		.count = 1,
+ 		.tlv = {.p = snd_bcm2835_db_scale}
+ 	},
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+ 		.name = "PCM Playback Switch",
+-		.index = 0,
+ 		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
+ 		.private_value = PCM_PLAYBACK_MUTE,
+ 		.info = snd_bcm2835_ctl_info,
+ 		.get = snd_bcm2835_ctl_get,
+ 		.put = snd_bcm2835_ctl_put,
+-		.count = 1,
+ 	},
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+ 		.name = "PCM Playback Route",
+-		.index = 0,
+ 		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
+ 		.private_value = PCM_PLAYBACK_DEVICE,
+ 		.info = snd_bcm2835_ctl_info,
+ 		.get = snd_bcm2835_ctl_get,
+ 		.put = snd_bcm2835_ctl_put,
+-		.count = 1,
+ 	},
+ };
+ 
+@@ -196,7 +190,7 @@ static int snd_bcm2835_spdif_mask_get(struct snd_kcontrol *kcontrol,
+ 	return 0;
  }
  
-@@ -173,8 +164,9 @@ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
- 				   &instance->vchi_handle);
+-static struct snd_kcontrol_new snd_bcm2835_spdif[] = {
++static const struct snd_kcontrol_new snd_bcm2835_spdif[] = {
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_PCM,
+ 		.name = SNDRV_CTL_NAME_IEC958("", PLAYBACK, DEFAULT),
+@@ -213,28 +207,32 @@ static struct snd_kcontrol_new snd_bcm2835_spdif[] = {
+ 	},
+ };
  
- 	if (status) {
--		LOG_ERR("%s: failed to open VCHI service connection (status=%d)\n",
--			__func__, status);
-+		dev_err(instance->dev,
-+			"failed to open VCHI service connection (status=%d)\n",
-+			status);
- 		kfree(instance);
- 		return -EPERM;
- 	}
-@@ -195,30 +187,30 @@ static void vc_vchi_audio_deinit(struct bcm2835_audio_instance *instance)
- 	/* Close all VCHI service connections */
- 	status = vchi_service_close(instance->vchi_handle);
- 	if (status) {
--		LOG_DBG("%s: failed to close VCHI service connection (status=%d)\n",
--			__func__, status);
-+		dev_err(instance->dev,
-+			"failed to close VCHI service connection (status=%d)\n",
-+			status);
- 	}
- 
- 	mutex_unlock(&instance->vchi_mutex);
- }
- 
--int bcm2835_new_vchi_ctx(struct bcm2835_vchi_ctx *vchi_ctx)
-+int bcm2835_new_vchi_ctx(struct device *dev, struct bcm2835_vchi_ctx *vchi_ctx)
+-int snd_bcm2835_new_ctl(struct bcm2835_chip *chip)
++static int create_ctls(struct bcm2835_chip *chip, size_t size,
++		       const struct snd_kcontrol_new *kctls)
  {
- 	int ret;
+-	int err;
+-	unsigned int idx;
++	int i, err;
  
- 	/* Initialize and create a VCHI connection */
- 	ret = vchi_initialise(&vchi_ctx->vchi_instance);
- 	if (ret) {
--		LOG_ERR("%s: failed to initialise VCHI instance (ret=%d)\n",
--			__func__, ret);
--
-+		dev_err(dev, "failed to initialise VCHI instance (ret=%d)\n",
-+			ret);
- 		return -EIO;
+-	strcpy(chip->card->mixername, "Broadcom Mixer");
+-	for (idx = 0; idx < ARRAY_SIZE(snd_bcm2835_ctl); idx++) {
+-		err = snd_ctl_add(chip->card,
+-				  snd_ctl_new1(&snd_bcm2835_ctl[idx], chip));
+-		if (err < 0)
+-			return err;
+-	}
+-	for (idx = 0; idx < ARRAY_SIZE(snd_bcm2835_spdif); idx++) {
+-		err = snd_ctl_add(chip->card,
+-				  snd_ctl_new1(&snd_bcm2835_spdif[idx], chip));
++	for (i = 0; i < size; i++) {
++		err = snd_ctl_add(chip->card, snd_ctl_new1(&kctls[i], chip));
+ 		if (err < 0)
+ 			return err;
  	}
+ 	return 0;
+ }
  
- 	ret = vchi_connect(NULL, 0, vchi_ctx->vchi_instance);
- 	if (ret) {
--		LOG_ERR("%s: failed to connect VCHI instance (ret=%d)\n",
--			__func__, ret);
-+		dev_dbg(dev, "failed to connect VCHI instance (ret=%d)\n",
-+			ret);
+-static struct snd_kcontrol_new snd_bcm2835_headphones_ctl[] = {
++int snd_bcm2835_new_ctl(struct bcm2835_chip *chip)
++{
++	int err;
++
++	strcpy(chip->card->mixername, "Broadcom Mixer");
++	err = create_ctls(chip, ARRAY_SIZE(snd_bcm2835_ctl), snd_bcm2835_ctl);
++	if (err < 0)
++		return err;
++	return create_ctls(chip, ARRAY_SIZE(snd_bcm2835_spdif),
++			   snd_bcm2835_spdif);
++}
++
++static const struct snd_kcontrol_new snd_bcm2835_headphones_ctl[] = {
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+ 		.name = "Headphone Playback Volume",
+@@ -263,21 +261,12 @@ static struct snd_kcontrol_new snd_bcm2835_headphones_ctl[] = {
  
- 		kfree(vchi_ctx->vchi_instance);
- 		vchi_ctx->vchi_instance = NULL;
-@@ -248,6 +240,7 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
- 	if (!instance)
- 		return -ENOMEM;
- 	mutex_init(&instance->vchi_mutex);
-+	instance->dev = alsa_stream->chip->dev;
- 	instance->alsa_stream = alsa_stream;
- 	alsa_stream->instance = instance;
+ int snd_bcm2835_new_headphones_ctl(struct bcm2835_chip *chip)
+ {
+-	int err;
+-	unsigned int idx;
+-
+ 	strcpy(chip->card->mixername, "Broadcom Mixer");
+-	for (idx = 0; idx < ARRAY_SIZE(snd_bcm2835_headphones_ctl); idx++) {
+-		err = snd_ctl_add(chip->card,
+-				  snd_ctl_new1(&snd_bcm2835_headphones_ctl[idx],
+-					       chip));
+-		if (err)
+-			return err;
+-	}
+-	return 0;
++	return create_ctls(chip, ARRAY_SIZE(snd_bcm2835_headphones_ctl),
++			   snd_bcm2835_headphones_ctl);
+ }
  
-@@ -394,7 +387,8 @@ int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
- 	}
+-static struct snd_kcontrol_new snd_bcm2835_hdmi[] = {
++static const struct snd_kcontrol_new snd_bcm2835_hdmi[] = {
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+ 		.name = "HDMI Playback Volume",
+@@ -306,16 +295,8 @@ static struct snd_kcontrol_new snd_bcm2835_hdmi[] = {
  
- 	if (status) {
--		LOG_ERR("failed on %d bytes transfer (status=%d)\n",
-+		dev_err(instance->dev,
-+			"failed on %d bytes transfer (status=%d)\n",
- 			size, status);
- 		err = -EIO;
- 	}
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-index 55e7fbc3ec44..8a87c33b1ea9 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-@@ -73,7 +73,7 @@ static int bcm2835_devm_add_vchi_ctx(struct device *dev)
+ int snd_bcm2835_new_hdmi_ctl(struct bcm2835_chip *chip)
+ {
+-	int err;
+-	unsigned int idx;
+-
+ 	strcpy(chip->card->mixername, "Broadcom Mixer");
+-	for (idx = 0; idx < ARRAY_SIZE(snd_bcm2835_hdmi); idx++) {
+-		err = snd_ctl_add(chip->card,
+-				  snd_ctl_new1(&snd_bcm2835_hdmi[idx], chip));
+-		if (err)
+-			return err;
+-	}
+-	return 0;
++	return create_ctls(chip, ARRAY_SIZE(snd_bcm2835_hdmi),
++			   snd_bcm2835_hdmi);
+ }
  
- 	memset(vchi_ctx, 0, sizeof(*vchi_ctx));
- 
--	ret = bcm2835_new_vchi_ctx(vchi_ctx);
-+	ret = bcm2835_new_vchi_ctx(dev, vchi_ctx);
- 	if (ret) {
- 		devres_free(vchi_ctx);
- 		return ret;
-diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-index a3c181613374..319c3e5dfbe4 100644
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-@@ -17,47 +17,6 @@
- 
- #include "interface/vchi/vchi.h"
- 
--/*
-- * #define AUDIO_DEBUG_ENABLE
-- * #define AUDIO_VERBOSE_DEBUG_ENABLE
-- */
--
--/* Debug macros */
--
--#ifdef AUDIO_DEBUG_ENABLE
--#ifdef AUDIO_VERBOSE_DEBUG_ENABLE
--
--#define audio_debug(fmt, arg...) \
--	pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
--
--#define audio_info(fmt, arg...) \
--	pr_info("%s:%d " fmt, __func__, __LINE__, ##arg)
--
--#else
--
--#define audio_debug(fmt, arg...)
--
--#define audio_info(fmt, arg...)
--
--#endif /* AUDIO_VERBOSE_DEBUG_ENABLE */
--
--#else
--
--#define audio_debug(fmt, arg...)
--
--#define audio_info(fmt, arg...)
--
--#endif /* AUDIO_DEBUG_ENABLE */
--
--#define audio_error(fmt, arg...) \
--	pr_err("%s:%d " fmt, __func__, __LINE__, ##arg)
--
--#define audio_warning(fmt, arg...) \
--	pr_warn("%s:%d " fmt, __func__, __LINE__, ##arg)
--
--#define audio_alert(fmt, arg...) \
--	pr_alert("%s:%d " fmt, __func__, __LINE__, ##arg)
--
- #define MAX_SUBSTREAMS   (8)
- #define AVAIL_SUBSTREAMS_MASK  (0xff)
- 
-@@ -141,7 +100,7 @@ int snd_bcm2835_new_simple_pcm(struct bcm2835_chip *chip,
- int snd_bcm2835_new_hdmi_ctl(struct bcm2835_chip *chip);
- int snd_bcm2835_new_headphones_ctl(struct bcm2835_chip *chip);
- 
--int bcm2835_new_vchi_ctx(struct bcm2835_vchi_ctx *vchi_ctx);
-+int bcm2835_new_vchi_ctx(struct device *dev, struct bcm2835_vchi_ctx *vchi_ctx);
- void bcm2835_free_vchi_ctx(struct bcm2835_vchi_ctx *vchi_ctx);
- 
- int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream);
 -- 
 2.18.0
 
