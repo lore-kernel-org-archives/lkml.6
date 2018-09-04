@@ -6,70 +6,68 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC63C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A0FC4321E
 	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4062F20867
+	by mail.kernel.org (Postfix) with ESMTP id 786BF2086A
 	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 10:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="NHZV9x4H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4062F20867
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="qc/ZbqVs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786BF2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeIDPCt (ORCPT
+        id S1727361AbeIDPCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 11:02:49 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43811 "EHLO
+        Tue, 4 Sep 2018 11:02:51 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42294 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeIDPCt (ORCPT
+        with ESMTP id S1727126AbeIDPCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 11:02:49 -0400
-Received: by mail-ed1-f66.google.com with SMTP id z27-v6so2830786edb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:38:17 -0700 (PDT)
+        Tue, 4 Sep 2018 11:02:50 -0400
+Received: by mail-ed1-f66.google.com with SMTP id l5so2837577edw.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 03:38:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nkPWbB/x39SeFKAOOwNX9ozIb3TYZsz2f/YKTTP2pnQ=;
-        b=NHZV9x4HYh4ZF53rpOdDBQAtFepPYQwLmWSbBOFM4vxX2gs5GlQoJzlTwVL9/0+QH0
-         5LUEOH0YcmPJ6kqmdLhEkaA2vYi6NaJIYvjcsnKZGaeR80TlYgZF76z3MgRtkG1GDDvE
-         A8eQcXgOahLpYDB0Ar5kjWZ1FAZNDcAjFUkNU2wnVwjIPOLJmF8Ckj90MkrMw9gUrRD+
-         EaoylFwHoOcULITWJxthuZgxO0AFE6jW7o9As/GOxOenMECc98WWhUeYzEWpkj4Lbldi
-         CVP3IoGX5g+YP4q1FkpNUJdkyS4V7yEJ0xUtXzC4qW2j15/Wvpcuw0neVzu7GxySC3qS
-         MC1A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=J3K6HHHkVtwTQ7S8qBANmx7kdcYrXaaoxA/0xWXmuSo=;
+        b=qc/ZbqVsVMoSsenMKrQV0HBtFKlsrlQIWC9nzaZi2A6wt235I7ixjX+Q6iphZbkduq
+         4tIjOBGdTRRXfFSPeKcZM6z7FcGvieSD8inNTOfCaB4gtdeAjeJieRr3urVY210Nf7Sn
+         HuFUtfMTEstVTaW6xAy89ktooll/vA05iFrJ6s8EZ3FylhccwruCKIYdcxCSanxCHk3F
+         A6+tBad5ZPk9Hk9MJ+/xYyAeafFzw/tZ+vnV1oLI9zvHIVDqB0cTr4j5tU0S74t98N6g
+         tmcXDUNwffH1gHr0IL4oXSakqxY5EjYlpB0g7lneGUsB2nPTtEKJfpJFaRxBvQnIId6J
+         T0gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nkPWbB/x39SeFKAOOwNX9ozIb3TYZsz2f/YKTTP2pnQ=;
-        b=AxMojQRaEjMNAhhaAuzgG9GSCfCDEHGXmdVlQYygI304vhiV51SZF7N/x2qY+l54n2
-         vRIpOo01d2P/G+pf32XBPT494bF+G6Y4A9r1vphrPCb+qhw7XjGYCdX1KKJVRzJ74rMx
-         IBiulCOFVqUe3f0XHVIGFsUZLjzzpvpcJr1yIx5KOL7pAdpDPwTJZKVsl4VUC+J8GRaE
-         75emlbMrLMj5B99VKgOQgknc0FvOzpcOzObSpYcHKhvx7nWWFJY/KSfvmqLqWiD8EHVS
-         b9+puNo2XoOuFLWED1njwcupzB8scLyKMQ+Fx0EArFJ3X6yWRtgJiXu0SD/UdfvNrzQx
-         ot8w==
-X-Gm-Message-State: APzg51B7bJAFQDGpBOZQVZGnaBbL8Px4+R4YGz7qsQZ5g+akdCQACgXu
-        7UaAOOs2gaEFunf52/L9ZPNvxrH0zjwAXQ==
-X-Google-Smtp-Source: ANB0VdaL9FOYj9TJyGUqMEp9KT/jdzh1IcOOneVJFcR/YdojLlMZxEwEqzIDXCpSj0S4i8DGw/mUgw==
-X-Received: by 2002:a50:fa8b:: with SMTP id w11-v6mr13257908edr.59.1536057497063;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=J3K6HHHkVtwTQ7S8qBANmx7kdcYrXaaoxA/0xWXmuSo=;
+        b=ImcrE/c805zDpdQ8gYxkKT1ib00zvhh3SWOI8rUWYTvnxCsRPvUWFWJUlsup7UximN
+         MhMTsgCson2Srgcjl09NfJBb2G9qMLEB9MvoXBZ5OWe+ap+CSPtMQpbH49IVmIhDErS6
+         7AKrvZMqWVVTuP+X/eI/M4PiF/Thd1VkfHAhn1EyIK3Bc2ZWKt6dmiyqfWTPVSkZJCQB
+         Zjz+TMnQDHuHfg1VmRcOvUNTfSp7ktNBKEPF6gMH+vMlVEruNgYEuNh2mkHOveU5THJm
+         HfKpuCjEM+pkuPjvnluDzyK6TBo+QFO0X3b1WSpwz9F0diCLMN8IscwALMSqFY5wN3uW
+         lktg==
+X-Gm-Message-State: APzg51CpnzQPqVkPoz3NjhhlihkDNsUdsUXeLfklG5Ht248CfM7qrYVk
+        ua928GVpAw3jy+UBt/w6iLkzxA==
+X-Google-Smtp-Source: ANB0VdaPp1cZjhEWOzRMkVQXop5XLw24xW3ppemc2RTstsjSFp3TFnRzASExfNkT3L2c1rGCPYII8Q==
+X-Received: by 2002:a50:a542:: with SMTP id z2-v6mr34616776edb.77.1536057497909;
         Tue, 04 Sep 2018 03:38:17 -0700 (PDT)
 Received: from titan.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id b44-v6sm11803477edd.93.2018.09.04.03.38.16
+        by smtp.gmail.com with ESMTPSA id b44-v6sm11803477edd.93.2018.09.04.03.38.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Sep 2018 03:38:16 -0700 (PDT)
+        Tue, 04 Sep 2018 03:38:17 -0700 (PDT)
 From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To:     Matias Bjorling <mb@lightnvm.io>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Javier Gonzales <javier@cnexlabs.com>,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH V2] lightnvm: pblk: add tracing for chunk resets
-Date:   Tue,  4 Sep 2018 12:38:05 +0200
-Message-Id: <1536057487-17267-1-git-send-email-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH V3] lightnvm: pblk: fix mapping issue on failed writes
+Date:   Tue,  4 Sep 2018 12:38:06 +0200
+Message-Id: <1536057487-17267-2-git-send-email-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1536057487-17267-1-git-send-email-hans.ml.holmberg@owltronix.com>
+References: <1536057487-17267-1-git-send-email-hans.ml.holmberg@owltronix.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,125 +75,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Trace state of chunk resets.
+On 1.2-devices, the mapping-out of remaning sectors in the
+failed-write's block can result in an infinite loop,
+stalling the write pipeline, fix this.
+
+Fixes: 6a3abf5beef6 ("lightnvm: pblk: rework write error recovery path")
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-
 ---
 
-You already picked up the first version of this patch Matias,
-but here's a V2 adressing the review comment from Javier that came
-after that.
-
 Changes in V2:
-	Moved the synchronous PBLK_CHUNK_RESET_START trace to
-	pblk_blk_erase_sync (as Javier suggested)
+	Moved the helper function pblk_next_ppa_in_blk to lightnvm core
+	Renamed variable done->last in the helper function.
 
- drivers/lightnvm/pblk-core.c  | 12 ++++++++++++
- drivers/lightnvm/pblk-trace.h | 31 +++++++++++++++++++++++++++++++
- drivers/lightnvm/pblk.h       |  6 ++++++
- 3 files changed, 49 insertions(+)
+Changes in V3:
+	Renamed the helper function to nvm_next_ppa_in_chk and changed
+	the first parameter to type nvm_tgt_dev
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 73f117bc99a9..951f81a1b273 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -90,9 +90,15 @@ static void __pblk_end_io_erase(struct pblk *pblk, struct nvm_rq *rqd)
- 	atomic_dec(&line->left_seblks);
+ drivers/lightnvm/pblk-write.c | 12 +-----------
+ include/linux/lightnvm.h      | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 5e6df65d392c..9e8bf2076beb 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -106,8 +106,6 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
+ /* Map remaining sectors in chunk, starting from ppa */
+ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+ {
+-	struct nvm_tgt_dev *dev = pblk->dev;
+-	struct nvm_geo *geo = &dev->geo;
+ 	struct pblk_line *line;
+ 	struct ppa_addr map_ppa = *ppa;
+ 	u64 paddr;
+@@ -125,15 +123,7 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+ 		if (!test_and_set_bit(paddr, line->invalid_bitmap))
+ 			le32_add_cpu(line->vsc, -1);
  
- 	if (rqd->error) {
-+		trace_pblk_chunk_reset(pblk_disk_name(pblk),
-+				&rqd->ppa_addr, PBLK_CHUNK_RESET_FAILED);
-+
- 		chunk->state = NVM_CHK_ST_OFFLINE;
- 		pblk_mark_bb(pblk, line, rqd->ppa_addr);
- 	} else {
-+		trace_pblk_chunk_reset(pblk_disk_name(pblk),
-+				&rqd->ppa_addr, PBLK_CHUNK_RESET_DONE);
-+
- 		chunk->state = NVM_CHK_ST_FREE;
+-		if (geo->version == NVM_OCSSD_SPEC_12) {
+-			map_ppa.ppa++;
+-			if (map_ppa.g.pg == geo->num_pg)
+-				done = 1;
+-		} else {
+-			map_ppa.m.sec++;
+-			if (map_ppa.m.sec == geo->clba)
+-				done = 1;
+-		}
++		done = nvm_next_ppa_in_chk(pblk->dev, &map_ppa);
  	}
  
-@@ -923,6 +929,9 @@ static int pblk_blk_erase_sync(struct pblk *pblk, struct ppa_addr ppa)
- 	struct nvm_rq rqd = {NULL};
- 	int ret;
+ 	line->w_err_gc->has_write_err = 1;
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index 09f65c6c6676..36a84180c1e8 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -593,6 +593,42 @@ static inline u32 nvm_ppa64_to_ppa32(struct nvm_dev *dev,
+ 	return ppa32;
+ }
  
-+	trace_pblk_chunk_reset(pblk_disk_name(pblk), &ppa,
-+				PBLK_CHUNK_RESET_START);
++static inline int nvm_next_ppa_in_chk(struct nvm_tgt_dev *dev,
++				      struct ppa_addr *ppa)
++{
++	struct nvm_geo *geo = &dev->geo;
++	int last = 0;
 +
- 	pblk_setup_e_rq(pblk, &rqd, ppa);
++	if (geo->version == NVM_OCSSD_SPEC_12) {
++		int sec = ppa->g.sec;
++
++		sec++;
++		if (sec == geo->ws_min) {
++			int pg = ppa->g.pg;
++
++			sec = 0;
++			pg++;
++			if (pg == geo->num_pg) {
++				int pl = ppa->g.pl;
++
++				pg = 0;
++				pl++;
++				if (pl == geo->num_pln)
++					last = 1;
++
++				ppa->g.pl = pl;
++			}
++			ppa->g.pg = pg;
++		}
++		ppa->g.sec = sec;
++	} else {
++		ppa->m.sec++;
++		if (ppa->m.sec == geo->clba)
++			last = 1;
++	}
++
++	return last;
++}
  
- 	/* The write thread schedules erases so that it minimizes disturbances
-@@ -1736,6 +1745,9 @@ int pblk_blk_erase_async(struct pblk *pblk, struct ppa_addr ppa)
- 	rqd->end_io = pblk_end_io_erase;
- 	rqd->private = pblk;
- 
-+	trace_pblk_chunk_reset(pblk_disk_name(pblk),
-+				&ppa, PBLK_CHUNK_RESET_START);
-+
- 	/* The write thread schedules erases so that it minimizes disturbances
- 	 * with writes. Thus, there is no need to take the LUN semaphore.
- 	 */
-diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
-index c171d0450c07..679e5c458ca6 100644
---- a/drivers/lightnvm/pblk-trace.h
-+++ b/drivers/lightnvm/pblk-trace.h
-@@ -31,6 +31,37 @@ struct ppa_addr;
- 	{ PBLK_STATE_RECOVERING,	"RECOVERING",	},	\
- 	{ PBLK_STATE_STOPPED,		"STOPPED"	})
- 
-+#define show_chunk_erase_state(state) __print_symbolic(state,	\
-+	{ PBLK_CHUNK_RESET_START,	"START",	},	\
-+	{ PBLK_CHUNK_RESET_DONE,	"OK",		},	\
-+	{ PBLK_CHUNK_RESET_FAILED,	"FAILED"	})
-+
-+
-+TRACE_EVENT(pblk_chunk_reset,
-+
-+	TP_PROTO(const char *name, struct ppa_addr *ppa, int state),
-+
-+	TP_ARGS(name, ppa, state),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(u64, ppa)
-+		__field(int, state);
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name, name);
-+		__entry->ppa = ppa->ppa;
-+		__entry->state = state;
-+	),
-+
-+	TP_printk("dev=%s grp=%llu pu=%llu chk=%llu state=%s", __get_str(name),
-+			(u64)(((struct ppa_addr *)(&__entry->ppa))->m.grp),
-+			(u64)(((struct ppa_addr *)(&__entry->ppa))->m.pu),
-+			(u64)(((struct ppa_addr *)(&__entry->ppa))->m.chk),
-+			show_chunk_erase_state((int)__entry->state))
-+
-+);
- 
- TRACE_EVENT(pblk_chunk_state,
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index ae705fb52cf7..f0fcd963ab3a 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -79,6 +79,12 @@ enum {
- 	PBLK_BLK_ST_CLOSED =	0x2,
- };
- 
-+enum {
-+	PBLK_CHUNK_RESET_START,
-+	PBLK_CHUNK_RESET_DONE,
-+	PBLK_CHUNK_RESET_FAILED,
-+};
-+
- struct pblk_sec_meta {
- 	u64 reserved;
- 	__le64 lba;
+ typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bio *);
+ typedef sector_t (nvm_tgt_capacity_fn)(void *);
 -- 
 2.7.4
 
