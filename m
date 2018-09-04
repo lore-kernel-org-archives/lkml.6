@@ -2,95 +2,111 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA972C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472ADC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7076420867
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7076420867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 085B820867
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:53:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085B820867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeIDTRr (ORCPT
+        id S1727515AbeIDTSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:17:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:41307 "EHLO mga14.intel.com"
+        Tue, 4 Sep 2018 15:18:40 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47902 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbeIDTRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:17:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 07:52:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="77873416"
-Received: from unknown (HELO [143.183.136.146]) ([143.183.136.146])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Sep 2018 07:52:21 -0700
-Message-ID: <1536072478.12366.2.camel@intel.com>
-Subject: Re: [RFC PATCH v3 00/24] Control Flow Enforcement: Shadow Stack
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Balbir Singh <bsingharora@gmail.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Tue, 04 Sep 2018 07:47:58 -0700
-In-Reply-To: <20180902081350.GF28695@350D>
-References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
-         <20180902081350.GF28695@350D>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726004AbeIDTSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 15:18:40 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id lag7W8aBTt8Z; Tue,  4 Sep 2018 16:52:55 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC9A500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:a500:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4550E1EC060B;
+        Tue,  4 Sep 2018 16:52:55 +0200 (CEST)
+Date:   Tue, 4 Sep 2018 16:52:55 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        helgaas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v5 07/16] x86/pci: add Hygon PCI vendor and northbridge
+ support
+Message-ID: <20180904145255.GI32615@zn.tnic>
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <ecd62b5b5e8f406598f2354892929caa87cf7deb.1535459013.git.puwen@hygon.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ecd62b5b5e8f406598f2354892929caa87cf7deb.1535459013.git.puwen@hygon.cn>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-09-02 at 18:13 +1000, Balbir Singh wrote:
-> On Thu, Aug 30, 2018 at 07:38:40AM -0700, Yu-cheng Yu wrote:
-> > 
-> > The previous version of CET patches can be found in the following
-> > link.
-> > 
-> >   https://lkml.org/lkml/2018/7/10/1031
-> > 
-> > Summary of changes from v2:
-> > 
-> >   Move Shadow Stack page fault handling logic to arch/x86.
-> >   Update can_follow_write_pte/pmd; move logic to arch/x86.
-> >   Fix problems in WRUSS in-line assembly.
-> >   Fix issues in ELF parser.
-> >   Split out IBT/PTRACE patches to a second set.
-> >   Other small fixes.
-> > 
-> Quick question -- is there a simulator or some other way you've
-> been testing this? Just curious, if it's possible to run these
-> patches or just a review and internal hardware/simulator where
-> they are run and posted
+On Wed, Aug 29, 2018 at 08:44:18PM +0800, Pu Wen wrote:
+> As Hygon register its PCI Vendor ID as a new one "0x1d94", so add a new
+> definition PCI_VENDOR_ID_HYGON in include/linux/pci_ids.h.
 > 
-> Balbir Singh.
+> Also Hygon PCI Device ID(0x1450/0x1463/0x1464) for Host bridge is added
+> to amd_nb.c. And it need to define new arrays for Hygon:
+> hygon_root_ids[], hygon_nb_misc_ids[], hygon_nb_link_ids[].
+> 
+> To enable Hygon north bridge support, add new variable root_ids, and
+> assign its value based on whether CPU vendor is AMD or Hygon. Modify
+> the CONFIG_AMD_NB to depends on either AMD or Hygon.
+> 
+> Add Hygon support in amd_postcore_init(), early_root_info_init().
 
-Currently only for review.
+This whole commit message needs to not say *what* the patch does.
 
-Yu-cheng
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci_ids.h
+> Signed-off-by: Pu Wen <puwen@hygon.cn>
+> ---
+>  arch/x86/Kconfig         |  2 +-
+>  arch/x86/kernel/amd_nb.c | 51 ++++++++++++++++++++++++++++++++++++++++++------
+>  arch/x86/pci/amd_bus.c   |  6 ++++--
+>  include/linux/pci_ids.h  |  2 ++
+>  4 files changed, 52 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index c5ff296..733f1ec 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2818,7 +2818,7 @@ endif # X86_32
+>  
+>  config AMD_NB
+>  	def_bool y
+> -	depends on CPU_SUP_AMD && PCI
+> +	depends on (CPU_SUP_AMD || CPU_SUP_HYGON) && PCI
+>  
+>  source "drivers/pcmcia/Kconfig"
+>  
+> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+> index b481b95..d9867b2 100644
+> --- a/arch/x86/kernel/amd_nb.c
+> +++ b/arch/x86/kernel/amd_nb.c
+> @@ -20,6 +20,10 @@
+>  #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
+>  #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
+>  
+> +#define PCI_DEVICE_ID_HYGON_18H_ROOT     0x1450
+> +#define PCI_DEVICE_ID_HYGON_18H_DF_F3    0x1463
+> +#define PCI_DEVICE_ID_HYGON_18H_DF_F4    0x1464
+
+Why are you adding those if you can use the AMD f17h ones? They're the same.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
