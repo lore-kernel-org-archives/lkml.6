@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5800FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC770C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8722075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C8722075E
+	by mail.kernel.org (Postfix) with ESMTP id 6CC632075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 22:14:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC632075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeIEClS (ORCPT
+        id S1727580AbeIEClW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 22:41:18 -0400
+        Tue, 4 Sep 2018 22:41:22 -0400
 Received: from mga09.intel.com ([134.134.136.24]:33782 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeIEClR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 22:41:17 -0400
+        id S1727553AbeIEClV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 22:41:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 15:14:10 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 15:14:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
-   d="scan'208";a="70343596"
+   d="scan'208";a="70343616"
 Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by orsmga007.jf.intel.com with ESMTP; 04 Sep 2018 15:14:10 -0700
+  by orsmga007.jf.intel.com with ESMTP; 04 Sep 2018 15:14:14 -0700
 From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
         x86@kernel.org
@@ -43,9 +43,9 @@ Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
         Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V3 1/5] efi: Make efi_rts_work accessible to efi page fault handler
-Date:   Tue,  4 Sep 2018 15:12:25 -0700
-Message-Id: <1536099149-12564-2-git-send-email-sai.praneeth.prakhya@intel.com>
+Subject: [PATCH V3 5/5] x86/efi: Introduce EFI_WARN_ON_ILLEGAL_ACCESS
+Date:   Tue,  4 Sep 2018 15:12:29 -0700
+Message-Id: <1536099149-12564-6-git-send-email-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536099149-12564-1-git-send-email-sai.praneeth.prakhya@intel.com>
 References: <1536099149-12564-1-git-send-email-sai.praneeth.prakhya@intel.com>
@@ -56,13 +56,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-After the kernel has booted, if the firmware accesses *any* efi regions
-other than EFI_RUNTIME_SERVICES_<CODE/DATA>, the efi page fault handler
-would freeze efi_rts_wq and schedules a new process. To do this, the efi
-page fault handler needs efi_rts_work. Hence, make it accessible.
+There may exist some buggy UEFI firmware implementations that might
+access efi regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even
+after the kernel has assumed control of the platform. This violates UEFI
+specification.
 
-There will be no race conditions in accessing this structure, because,
-all the calls to efi runtime services are already serialized.
+If selected, this debug option will print a warning message if the UEFI
+firmware tries to access any memory region which it shouldn't. Along
+with the warning, the efi page fault handler will also try to recover
+from the page fault triggered by the firmware so that the machine
+doesn't hang.
 
 Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
 Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
@@ -76,147 +79,37 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/runtime-wrappers.c | 53 ++++++---------------------------
- include/linux/efi.h                     | 36 ++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 44 deletions(-)
+ arch/x86/Kconfig | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index aa66cbf23512..b18b2d864c2c 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -45,39 +45,7 @@
- #define __efi_call_virt(f, args...) \
- 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index f1dbb4ee19d7..7dc270c17d0b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1957,6 +1957,23 @@ config EFI_MIXED
  
--/* efi_runtime_service() function identifiers */
--enum efi_rts_ids {
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
--};
--
--/*
-- * efi_runtime_work:	Details of EFI Runtime Service work
-- * @arg<1-5>:		EFI Runtime Service function arguments
-- * @status:		Status of executing EFI Runtime Service
-- * @efi_rts_id:		EFI Runtime Service function identifier
-- * @efi_rts_comp:	Struct used for handling completions
-- */
--struct efi_runtime_work {
--	void *arg1;
--	void *arg2;
--	void *arg3;
--	void *arg4;
--	void *arg5;
--	efi_status_t status;
--	struct work_struct work;
--	enum efi_rts_ids efi_rts_id;
--	struct completion efi_rts_comp;
--};
-+struct efi_runtime_work efi_rts_work;
+ 	   If unsure, say N.
  
- /*
-  * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
-@@ -91,7 +59,6 @@ struct efi_runtime_work {
-  */
- #define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
- ({									\
--	struct efi_runtime_work efi_rts_work;				\
- 	efi_rts_work.status = EFI_ABORTED;				\
- 									\
- 	init_completion(&efi_rts_work.efi_rts_comp);			\
-@@ -184,18 +151,16 @@ static DEFINE_SEMAPHORE(efi_runtime_lock);
-  */
- static void efi_call_rts(struct work_struct *work)
- {
--	struct efi_runtime_work *efi_rts_work;
- 	void *arg1, *arg2, *arg3, *arg4, *arg5;
- 	efi_status_t status = EFI_NOT_FOUND;
- 
--	efi_rts_work = container_of(work, struct efi_runtime_work, work);
--	arg1 = efi_rts_work->arg1;
--	arg2 = efi_rts_work->arg2;
--	arg3 = efi_rts_work->arg3;
--	arg4 = efi_rts_work->arg4;
--	arg5 = efi_rts_work->arg5;
-+	arg1 = efi_rts_work.arg1;
-+	arg2 = efi_rts_work.arg2;
-+	arg3 = efi_rts_work.arg3;
-+	arg4 = efi_rts_work.arg4;
-+	arg5 = efi_rts_work.arg5;
- 
--	switch (efi_rts_work->efi_rts_id) {
-+	switch (efi_rts_work.efi_rts_id) {
- 	case GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
-@@ -253,8 +218,8 @@ static void efi_call_rts(struct work_struct *work)
- 		 */
- 		pr_err("Requested executing invalid EFI Runtime Service.\n");
- 	}
--	efi_rts_work->status = status;
--	complete(&efi_rts_work->efi_rts_comp);
-+	efi_rts_work.status = status;
-+	complete(&efi_rts_work.efi_rts_comp);
- }
- 
- static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 401e4b254e30..855992b15269 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1659,7 +1659,43 @@ struct linux_efi_tpm_eventlog {
- 
- extern int efi_tpm_eventlog_init(void);
- 
-+/* efi_runtime_service() function identifiers */
-+enum efi_rts_ids {
-+	GET_TIME,
-+	SET_TIME,
-+	GET_WAKEUP_TIME,
-+	SET_WAKEUP_TIME,
-+	GET_VARIABLE,
-+	GET_NEXT_VARIABLE,
-+	SET_VARIABLE,
-+	QUERY_VARIABLE_INFO,
-+	GET_NEXT_HIGH_MONO_COUNT,
-+	UPDATE_CAPSULE,
-+	QUERY_CAPSULE_CAPS,
-+};
++config EFI_WARN_ON_ILLEGAL_ACCESS
++	bool "Warn about illegal memory accesses by firmware" if EXPERT
++	depends on EFI
++	help
++	  Enable this debug feature so that the kernel can detect illegal
++	  memory accesses by firmware and issue a warning. Also,
++	  1. If the illegally accessed region is any region other than
++	     EFI_RUNTIME_SERVICES_<CODE/DATA>, then the kernel freezes
++	     efi_rts_wq and schedules a new process. Also, it disables EFI
++	     Runtime Services, so that it will never again call buggy firmware.
++	  2. If the illegal access is by efi_reset_system(), then the
++	     platform is rebooted through BIOS.
++	  Please see the UEFI specification for details on the expectations
++	  of memory usage.
 +
-+/*
-+ * efi_runtime_work:	Details of EFI Runtime Service work
-+ * @arg<1-5>:		EFI Runtime Service function arguments
-+ * @status:		Status of executing EFI Runtime Service
-+ * @efi_rts_id:		EFI Runtime Service function identifier
-+ * @efi_rts_comp:	Struct used for handling completions
-+ */
-+struct efi_runtime_work {
-+	void *arg1;
-+	void *arg2;
-+	void *arg3;
-+	void *arg4;
-+	void *arg5;
-+	efi_status_t status;
-+	struct work_struct work;
-+	enum efi_rts_ids efi_rts_id;
-+	struct completion efi_rts_comp;
-+};
++	  If unsure, say N.
 +
- /* Workqueue to queue EFI Runtime Services */
- extern struct workqueue_struct *efi_rts_wq;
- 
-+extern struct efi_runtime_work efi_rts_work;
-+
- #endif /* _LINUX_EFI_H */
+ config SECCOMP
+ 	def_bool y
+ 	prompt "Enable seccomp to safely compute untrusted bytecode"
 -- 
 2.7.4
 
