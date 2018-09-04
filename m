@@ -2,109 +2,96 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D7DC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A2EC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D23F2086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D23F2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prnet.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C1A62075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:46:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1A62075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeIDLHy (ORCPT
+        id S1727602AbeIDLKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 07:07:54 -0400
-Received: from extserverfr1.prnet.org ([188.165.208.21]:58210 "EHLO
-        extserverfr1.prnet.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbeIDLHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 07:07:54 -0400
-X-Greylist: delayed 1481 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Sep 2018 07:07:54 EDT
-Received: from extserver.intern.prnet.org (extserver.prnet.org [192.168.11.1])
-        by extserverfr1.prnet.org (8.14.9/8.14.9) with ESMTP id w846JYJJ003539
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Sep 2018 08:19:34 +0200
-Received: from [IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28] ([IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28])
-        (authenticated bits=0)
-        by extserver.intern.prnet.org (8.14.9/8.14.9) with ESMTP id w846JY5n003744
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO)
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Sep 2018 08:19:34 +0200
-To:     linux-kernel@vger.kernel.org
-From:   David Arendt <admin@prnet.org>
-Subject: kernel 4.18.5 Realtek 8111G network adapter stops responding under
- high system load
-Message-ID: <d05d87f5-1458-f5ce-c644-566ff78e9fc1@prnet.org>
-Date:   Tue, 4 Sep 2018 08:19:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 4 Sep 2018 07:10:05 -0400
+Received: from mga06.intel.com ([134.134.136.31]:59635 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727250AbeIDLKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 07:10:05 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 23:46:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
+   d="scan'208";a="68187362"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga008.fm.intel.com with ESMTP; 03 Sep 2018 23:46:06 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 454292069E; Tue,  4 Sep 2018 09:46:05 +0300 (EEST)
+Date:   Tue, 4 Sep 2018 09:46:05 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     "Qiu, Tian Shu" <tian.shu.qiu@intel.com>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Bing Bu Cao <bingbu.cao@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Zheng, Jian Xu" <jian.xu.zheng@intel.com>,
+        "Zhi, Yong" <yong.zhi@intel.com>,
+        "Cao, Bingbu" <bingbu.cao@intel.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async
+ notifier complete
+Message-ID: <20180904064605.6prcawieb4ooxtyl@paasikivi.fi.intel.com>
+References: <20180831152045.9957-1-javierm@redhat.com>
+ <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
+ <c1e54228-a21a-b4a2-1083-c75b2dda797c@redhat.com>
+ <b15b236e-e0a7-8b2f-1e1f-196c9dc04f4d@linux.intel.com>
+ <44eb94a8-3712-155b-b3ab-35538f5b6b38@redhat.com>
+ <F4B393EC1A37C8418714AECDAAEF72A93C9A39FC@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F4B393EC1A37C8418714AECDAAEF72A93C9A39FC@shsmsx102.ccr.corp.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Javier, Tian Shu,
 
-When using kernel 4.18.5 the Realtek 8111G network adapter stops
-responding under high system load.
+On Tue, Sep 04, 2018 at 05:01:56AM +0000, Qiu, Tian Shu wrote:
+> Hi,
+> 
+> Raise my point.
+> The case here is that we have multiple sensors connected to CIO2. The sensors work independently. So failure on one sensor should not block the function of the other.
+> That is, we should not rely on that all sensors are ready before allowing user to operate on the ready cameras.
+> Sometimes due to hardware issues or incompleteness, we did met the case that one sensor is not probing properly. And in this case, the current implementation blocks us using the working one.
+> What I can think now to solve this are:
+> 1. Register multiple media devices. One for each sensor path. This will increase media device count.
+> 2. Use .bound callback to create the link and register the subdev node for each sensor. Leave .complete empty.
+>      Not sure if this breaks the rule of media framework. And also have not found an API to register one single subdev node.
 
-Dmesg is showing no errors.
+I'd prefer to keep the driver as-is.
 
-Sometimes an ifconfig enp3s0 down followed by an ifconfig enp3s0 up is
-enough for the network adapter to restart responding. Sometimes a reboot
-is necessary.
+Even if the media device is only created once all the sub-devices are
+around, the devices are still created one by one so there's no way to
+prevent the user space seeing a partially registered media device complex.
 
-When copying r8169.c from 4.17.14 to the 4.18.5 kernel, networking works
-perfectly stable on 4.18.5 so the problem seems r8169.c related.
+In general that doesn't happen as the sensors are typically registered
+early during system boot.
 
-Here the output from lshw:
+Javier is right in asking a way for the user to know whether everything is
+fully initialised. That should be added but I don't think it is in any way
+specific to the cio2 driver.
 
-        *-pci:2
-             description: PCI bridge
-             product: 8 Series/C220 Series Chipset Family PCI Express
-Root Port #3
-             vendor: Intel Corporation
-             physical id: 1c.2
-             bus info: pci@0000:00:1c.2
-             version: d5
-             width: 32 bits
-             clock: 33MHz
-             capabilities: pci pciexpress msi pm normal_decode
-bus_master cap_list
-             configuration: driver=pcieport
-             resources: irq:18 ioport:d000(size=4096)
-memory:f7300000-f73fffff ioport:f2100000(size=1048576)
-           *-network
-                description: Ethernet interface
-                product: RTL8111/8168/8411 PCI Express Gigabit Ethernet
-Controller
-                vendor: Realtek Semiconductor Co., Ltd.
-                physical id: 0
-                bus info: pci@0000:03:00.0
-                logical name: enp3s0
-                version: 0c
-                serial: <hidden>
-                size: 1Gbit/s
-                capacity: 1Gbit/s
-                width: 64 bits
-                clock: 33MHz
-                capabilities: pm msi pciexpress msix vpd bus_master
-cap_list ethernet physical tp mii 10bt 10bt-fd 100bt 100bt-fd 1000bt
-1000bt-fd autonegotiation
-                configuration: autonegotiation=on broadcast=yes
-driver=r8169 driverversion=2.3LK-NAPI duplex=full
-firmware=rtl8168g-2_0.0.1 02/06/13 latency=0 link=yes multicast=yes
-port=MII speed=1Gbit/s
-                resources: irq:18 ioport:d000(size=256)
-memory:f7300000-f7300fff memory:f2100000-f2103fff
+-- 
+Kind regards,
 
-Thanks in advance for looking into this,
-
-David Arendt
-
-
+Sakari Ailus
+sakari.ailus@linux.intel.com
