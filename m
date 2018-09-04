@@ -2,889 +2,260 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD7CC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA92C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9812E206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:39:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lsitec-org-br.20150623.gappssmtp.com header.i=@lsitec-org-br.20150623.gappssmtp.com header.b="m+W/tiKb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9812E206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lsitec.org.br
+	by mail.kernel.org (Postfix) with ESMTP id D10C0206BA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10C0206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeIDUFc (ORCPT
+        id S1726708AbeIDUKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 16:05:32 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46307 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeIDUFc (ORCPT
+        Tue, 4 Sep 2018 16:10:03 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35940 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbeIDUKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 16:05:32 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k14-v6so3597163edr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 08:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lsitec-org-br.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=pstoBsNRVHX7cl+GV/0nEnb9hT2VyCYUcoOkDcSDwfM=;
-        b=m+W/tiKbsDVYq9YRB4GMc9G9D7aJ57yPO7SMymLPhH4VAsCKjjxe5OK8q7m6axeVTm
-         XJpBOnjHh5g7QGJEag2Lp1HxXtbgR3lA/VVuX0ZfVvawlAG7BT1WKO1RCHDQfyCDDtRY
-         JRVs5RYZyg9vBtue49smqyrtIv4n0BK/11VkBBBRBD5sgVZKfDKfhFCVAvQDdl6q0q1q
-         1S8opInsnW746ulaUsbhiVpxQva5/fK27buvqQapElwm5deYIv+aod2YlooYBg7Cn4kD
-         Pn22qReoB3O2Lk6QJc3lYXPnmLke8FwgBRl84AD7fUAuumOFWNFpW6DzZ9J5iYoyWeR8
-         VvmQ==
+        Tue, 4 Sep 2018 16:10:03 -0400
+Received: by mail-yw1-f65.google.com with SMTP id w202-v6so1434487yww.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 08:44:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=pstoBsNRVHX7cl+GV/0nEnb9hT2VyCYUcoOkDcSDwfM=;
-        b=FIytqfA1RqeGu67L+GN2vLqqQ/aqMkwnFhB1IB/6Ous2v8SeqwWBbuZaZT45JgV0Pr
-         4nqI+vjjmQCwQmvNAWd0dScoZrjYdzyXy1N4uiahSHfeQC7bpPuNmssTisNb64phLiHS
-         6L8tu0DZyPWqw3BZMXwgwwTxYMHCe5x6wSIDazljujJztxFG11ratjP2EZG7erLD+5ka
-         adVcozasEhv7hds3o5wL/p0vOQ12xgNIjI3M/gpRoODAaXnc84Rz0RFqVkEVnZmQUdvj
-         meFgRyVPOR5iskGRft29If/dgHoUOQ/kQVnyCemCgvURqeSesLxnk4W/+gdz0Cx6dyxX
-         Qh+Q==
-X-Gm-Message-State: APzg51DdYAHEqMS4AmI83ZA/LRWPdqyjtlqR9V3ZPvWA9e0QRSwX7Yqp
-        KoMZfatqIHmZSQYd0hAWn5l1VaDpI4a4Uv1D/YqWlQ==
-X-Google-Smtp-Source: ANB0VdbV9Aapo5y05duiHVd8OzGXujKbhkX6hePi4wCRdJreNkdJb3uBpBGSxXjJLtaQe4gEUzIleHj9mQVOiTE0h6Q=
-X-Received: by 2002:a50:bdc5:: with SMTP id z5-v6mr36161975edh.46.1536075589383;
- Tue, 04 Sep 2018 08:39:49 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:906:2443:0:0:0:0 with HTTP; Tue, 4 Sep 2018 08:39:48
- -0700 (PDT)
-From:   Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date:   Tue, 4 Sep 2018 12:39:48 -0300
-Message-ID: <CADHB5bARkELSG8HnpYNYOrwohUaXzLUJH0wfPfa-3FJZkqTCUw@mail.gmail.com>
-Subject: [PATCH v2 03/03] clk: actions: Add Actions Semi S500 SoC clock support
-To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= 
-        <guilherme.simoes@lsitec.org.br>,
-        Jon maddog Hall <jon.maddog.hall@gmail.com>,
-        mkzuffo@lsi.usp.br,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
-        support@cubietech.com, catalin.marinas@arm.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        will.deacon@arm.com, thomas liau <thomas.liau@actions-semi.com>,
-        darren@cubietech.com, robh+dt@kernel.org,
-        jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
-        Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KtHWMX+XASDDF6hviKVt78sVblGkBa70upHpsYA6L0w=;
+        b=O5yM6XBRkvghgX5tOrtt1ytXHgkIiAId+MIGQMe+9OfM+eDcoyph9KwFPSWkkIU3u+
+         BcandExbVxm/kmAQG/F9O1y0+wwwQGwuPplqXHgAMaMxyZOzcjKlSX36As0HAwftYBor
+         eplWNo3YwwYKywTeoBOXAn1iprt59ACEu5LW56A8kF9DVdKHLJsSeZ8QhsT2ap1xGyNx
+         TrvV6yoquuptTqMCGevYgyEd3VYrJinOBLrypeU8sTI0GTbARgjN4Gf49OtKHNgAVTMw
+         sZfDm74Vrnw0mY9QPFvLUEy3SIW7NAUvgqdbL4KZ8XP3sEoLoCd34AQwtXmF47gKi48Z
+         8DEw==
+X-Gm-Message-State: APzg51AeuPYun8UEqOG317FsGDo708Q/tD1k/vy4USr9t2HMx9/pBz76
+        qGlKMf5O8d0ycK8TEk853XFEdg==
+X-Google-Smtp-Source: ANB0VdZnll9LpyPqyHpBhBlhq2q7mx4IuqGvZ1li2zzeAM0ZTNs7dPBhqJ07gjAquemFm72hzqabgg==
+X-Received: by 2002:a0d:df83:: with SMTP id i125-v6mr18485014ywe.151.1536075862257;
+        Tue, 04 Sep 2018 08:44:22 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-161.dyn6.twc.com. [2606:a000:1100:db::161])
+        by smtp.gmail.com with ESMTPSA id h68-v6sm8976958ywc.7.2018.09.04.08.44.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Sep 2018 08:44:21 -0700 (PDT)
+Message-ID: <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+Subject: Re: POSIX violation by writeback error
+From:   Jeff Layton <jlayton@redhat.com>
+To:     =?UTF-8?Q?=E7=84=A6=E6=99=93=E5=86=AC?= <milestonejxd@gmail.com>
+Cc:     R.E.Wolff@bitwizard.nl, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Sep 2018 11:44:20 -0400
+In-Reply-To: <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+         <20180904075347.GH11854@BitWizard.nl>
+         <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
+         <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
+         <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Basic clock support for S500 SoC was implemented using the Actions
-Semi Owl clock driver.
-This patch also adds custom delay support to Actions Semi OWL pll clock driver.
-The default delay (50us) is not enough for Actions Semi Owl S500 SoC.
-It needs up to 150us.
-A new field called "delay" was added to "struct owl_pll_hw". The rest
-of the code was updated accordingly.
-Old macros "OWL_PLL_HW", "OWL_PLL" and "OWL_PLL_NO_PARENT" were kept,
-but updated with an extra argument to set a custom "delay".
-S700 and S900 code was updated with a default 50us delay.
-Tested on a Lemaker Guitar board.
+On Tue, 2018-09-04 at 22:56 +0800, 焦晓冬 wrote:
+> On Tue, Sep 4, 2018 at 7:09 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > 
+> > On Tue, 2018-09-04 at 16:58 +0800, Trol wrote:
+> > > On Tue, Sep 4, 2018 at 3:53 PM Rogier Wolff <R.E.Wolff@bitwizard.nl> wrote:
+> > > 
+> > > ...
+> > > > > 
+> > > > > Jlayton's patch is simple but wonderful idea towards correct error
+> > > > > reporting. It seems one crucial thing is still here to be fixed. Does
+> > > > > anyone have some idea?
+> > > > > 
+> > > > > The crucial thing may be that a read() after a successful
+> > > > > open()-write()-close() may return old data.
+> > > > > 
+> > > > > That may happen where an async writeback error occurs after close()
+> > > > > and the inode/mapping get evicted before read().
+> > > > 
+> > > > Suppose I have 1Gb of RAM. Suppose I open a file, write 0.5Gb to it
+> > > > and then close it. Then I repeat this 9 times.
+> > > > 
+> > > > Now, when writing those files to storage fails, there is 5Gb of data
+> > > > to remember and only 1Gb of RAM.
+> > > > 
+> > > > I can choose any part of that 5Gb and try to read it.
+> > > > 
+> > > > Please make a suggestion about where we should store that data?
+> > > 
+> > > That is certainly not possible to be done. But at least, shall we report
+> > > error on read()? Silently returning wrong data may cause further damage,
+> > > such as removing wrong files since it was marked as garbage in the old file.
+> > > 
+> > 
+> > Is the data wrong though? You tried to write and then that failed.
+> > Eventually we want to be able to get at the data that's actually in the
+> > file -- what is that point?
+> 
+> The point is silently data corruption is dangerous. I would prefer getting an
+> error back to receive wrong data.
+> 
 
-Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Well, _you_ might like that, but there are whole piles of applications
+that may fall over completely in this situation. Legacy usage matters
+here.
 
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-index dc38c85a4833..3debd758a918 100644
---- a/drivers/clk/actions/Kconfig
-+++ b/drivers/clk/actions/Kconfig
-@@ -8,6 +8,11 @@ if CLK_ACTIONS
+> A practical and concrete example may be,
+> A disk cleaner program that first searches for garbage files that won't be used
+> anymore and save the list in a file (open()-write()-close()) and wait for the
+> user to confirm the list of files to be removed.  A writeback error occurs
+> and the related page/inode/address_space gets evicted while the user is
+> taking a long thought about it. Finally, the user hits enter and the
+> cleaner begin
+> to open() read() the list again. But what gets removed is the old list
+> of files that
+> was generated several months ago...
+> 
+> Another example may be,
+> An email editor and a busy mail sender. A well written mail to my boss is
+> composed by this email editor and is saved in a file (open()-write()-close()).
+> The mail sender gets notified with the path of the mail file to queue it and
+> send it later. A writeback error occurs and the related
+> page/inode/address_space gets evicted while the mail is still waiting in the
+> queue of the mail sender. Finally, the mail file is open() read() by the sender,
+> but what is sent is the mail to my girlfriend that was composed yesterday...
+> 
+> In both cases, the files are not meant to be persisted onto the disk.
+> So, fsync()
+> is not likely to be called.
+> 
 
- # SoC Drivers
+So at what point are you going to give up on keeping the data? The
+fundamental problem here is an open-ended commitment. We (justifiably)
+avoid those in kernel development because it might leave the system
+without a way out of a resource crunch.
 
-+config CLK_OWL_S500
-+    bool "Support for the Actions Semi OWL S500 clocks"
-+    depends on ARCH_ACTIONS || COMPILE_TEST
-+    default ARCH_ACTIONS
-+
- config CLK_OWL_S700
-     bool "Support for the Actions Semi OWL S700 clocks"
-     depends on (ARM64 && ARCH_ACTIONS) || COMPILE_TEST
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 78c17d56f991..97ab285c2821 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -9,5 +9,6 @@ clk-owl-y            += owl-composite.o
- clk-owl-y            += owl-pll.o
+> > 
+> > If I get an error back on a read, why should I think that it has
+> > anything at all to do with writes that previously failed? It may even
+> > have been written by a completely separate process that I had nothing at
+> > all to do with.
+> > 
+> > > As I can see, that is all about error reporting.
+> > > 
+> > > As for suggestion, maybe the error flag of inode/mapping, or the entire inode
+> > > should not be evicted if there was an error. That hopefully won't take much
+> > > memory. On extreme conditions, where too much error inode requires staying
+> > > in memory, maybe we should panic rather then spread the error.
+> > > 
+> > > > 
+> > > > In the easy case, where the data easily fits in RAM, you COULD write a
+> > > > solution. But when the hardware fails, the SYSTEM will not be able to
+> > > > follow the posix rules.
+> > > 
+> > > Nope, we are able to follow the rules. The above is one way that follows the
+> > > POSIX rules.
+> > > 
+> > 
+> > This is something we discussed at LSF this year.
+> > 
+> > We could attempt to keep dirty data around for a little while, at least
+> > long enough to ensure that reads reflect earlier writes until the errors
+> > can be scraped out by fsync. That would sort of redefine fsync from
+> > being "ensure that my writes are flushed" to "synchronize my cache with
+> > the current state of the file".
+> > 
+> > The problem of course is that applications are not required to do fsync
+> > at all. At what point do we give up on it, and toss out the pages that
+> > can't be cleaned?
+> > 
+> > We could allow for a tunable that does a kernel panic if writebacks fail
+> > and the errors are never fetched via fsync, and we run out of memory. I
+> > don't think that is something most users would want though.
+> > 
+> > Another thought: maybe we could OOM kill any process that has the file
+> > open and then toss out the page data in that situation?
+> > 
+> > I'm wide open to (good) ideas here.
+> 
+> As I said above, silently data corruption is dangerous and maybe we really
+> should report errors to user space even in desperate cases.
+> 
+> One possible approach may be:
+> 
+> - When a writeback error occurs, mark the page clean and remember the error
+> in the inode/address_space of the file.
+> I think that is what the kernel is doing currently.
+> 
 
- # SoC support
-+obj-$(CONFIG_CLK_OWL_S500)    += owl-s500.o
- obj-$(CONFIG_CLK_OWL_S700)    += owl-s700.o
- obj-$(CONFIG_CLK_OWL_S900)    += owl-s900.o
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-index 058e06d7099f..02437bdedf4d 100644
---- a/drivers/clk/actions/owl-pll.c
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -179,7 +179,7 @@ static int owl_pll_set_rate(struct clk_hw *hw,
-unsigned long rate,
+Yes.
 
-     regmap_write(common->regmap, pll_hw->reg, reg);
+> - If the following read() could be served by a page in memory, just returns the
+> data. If the following read() could not be served by a page in memory and the
+> inode/address_space has a writeback error mark, returns EIO.
+> If there is a writeback error on the file, and the request data could
+> not be served
+> by a page in memory, it means we are reading a (partically) corrupted
+> (out-of-data)
+> file. Receiving an EIO is expected.
+> 
 
--    udelay(PLL_STABILITY_WAIT_US);
-+    udelay(pll_hw->delay);
+No, an error on read is not expected there. Consider this:
 
-     return 0;
- }
-diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
-index 0aae30abd5dc..f465475a333f 100644
---- a/drivers/clk/actions/owl-pll.h
-+++ b/drivers/clk/actions/owl-pll.h
-@@ -26,7 +26,8 @@ struct owl_pll_hw {
-     u8            shift;
-     u8            width;
-     u8            min_mul;
--    u8            max_mul;
-+    u8            max_mul;
-+    u32         delay;
-     const struct clk_pll_table *table;
- };
+Suppose the backend filesystem (maybe an NFSv3 export) is really r/o,
+but was mounted r/w. An application queues up a bunch of writes that of
+course can't be written back (they get EROFS or something when they're
+flushed back to the server), but that application never calls fsync.
 
-@@ -36,7 +37,7 @@ struct owl_pll {
- };
+A completely unrelated application is running as a user that can open
+the file for read, but not r/w. It then goes to open and read the file
+and then gets EIO back or maybe even EROFS.
 
- #define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,            \
--           _width, _min_mul, _max_mul, _table)            \
-+           _width, _min_mul, _max_mul, _delay, _table)        \
-     {                                \
-         .reg        = _reg,                    \
-         .bfreq        = _bfreq,                \
-@@ -45,15 +46,16 @@ struct owl_pll {
-         .width        = _width,                \
-         .min_mul    = _min_mul,                \
-         .max_mul    = _max_mul,                \
-+        .delay      = _delay,               \
-         .table        = _table,                \
-     }
+Why should that application (which did zero writes) have any reason to
+think that the error was due to prior writeback failure by a completely
+separate process? Does EROFS make sense when you're attempting to do a
+read anyway?
 
- #define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
--        _shift, _width, _min_mul, _max_mul, _table, _flags)    \
-+        _shift, _width, _min_mul, _max_mul, _delay, _table, _flags)    \
-     struct owl_pll _struct = {                    \
-         .pll_hw    = OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,    \
-                      _width, _min_mul,            \
--                     _max_mul, _table),            \
-+                     _max_mul, _delay, _table),        \
-         .common = {                        \
-             .regmap = NULL,                    \
-             .hw.init = CLK_HW_INIT(_name,            \
-@@ -64,11 +66,11 @@ struct owl_pll {
-     }
+Moreover, what is that application's remedy in this case? It just wants
+to read the file, but may not be able to even open it for write to issue
+an fsync to "clear" the error. How do we get things moving again so it
+can do what it wants?
 
- #define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,    \
--        _shift, _width, _min_mul, _max_mul, _table, _flags)    \
-+        _shift, _width, _min_mul, _max_mul, _delay, _table, _flags)    \
-     struct owl_pll _struct = {                    \
-         .pll_hw    = OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,    \
-                      _width, _min_mul,            \
--                     _max_mul, _table),            \
-+                     _max_mul, _delay, _table),        \
-         .common = {                        \
-             .regmap = NULL,                    \
-             .hw.init = CLK_HW_INIT_NO_PARENT(_name,        \
-@@ -78,7 +80,6 @@ struct owl_pll {
-     }
+I think your suggestion would open the floodgates for local DoS attacks.
 
- #define mul_mask(m)        ((1 << ((m)->width)) - 1)
--#define PLL_STABILITY_WAIT_US    (50)
+> - We refuse to evict inodes/address_spaces that is writeback error marked. If
+> the number of writeback error marked inodes reaches a limit, we shall
+> just refuse
+> to open new files (or refuse to open new files for writing) .
+> That would NOT take as much memory as retaining the pages themselves as
+> it is per file/inode rather than per byte of the file. Limiting the
+> number of writeback
+> error marked inodes is just like limiting the number of open files
+> we're currently
+> doing
+> 
 
- static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
- {
-diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
-new file mode 100644
-index 000000000000..d3aff386c200
---- /dev/null
-+++ b/drivers/clk/actions/owl-s500.c
-@@ -0,0 +1,524 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL S500 SoC clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+//
-+// Copyright (c) 2018 LSI-TEC - Caninos Loucos
-+// Author: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include "owl-common.h"
-+#include "owl-composite.h"
-+#include "owl-divider.h"
-+#include "owl-factor.h"
-+#include "owl-fixed-factor.h"
-+#include "owl-gate.h"
-+#include "owl-mux.h"
-+#include "owl-pll.h"
-+
-+#include <dt-bindings/clock/actions,s500-cmu.h>
-+
-+#define CMU_COREPLL                    (0x0000)
-+#define CMU_DEVPLL                     (0x0004)
-+#define CMU_DDRPLL                     (0x0008)
-+#define CMU_NANDPLL                 (0x000C)
-+#define CMU_DISPLAYPLL                 (0x0010)
-+#define CMU_AUDIOPLL                 (0x0014)
-+#define CMU_TVOUTPLL                 (0x0018)
-+#define CMU_BUSCLK                     (0x001C)
-+#define CMU_SENSORCLK                 (0x0020)
-+#define CMU_LCDCLK                     (0x0024)
-+#define CMU_DSICLK                     (0x0028)
-+#define CMU_CSICLK                     (0x002C)
-+#define CMU_DECLK                     (0x0030)
-+#define CMU_BISPCLK                 (0x0034)
-+#define CMU_BUSCLK1                 (0x0038)
-+#define CMU_VDECLK                     (0x0040)
-+#define CMU_VCECLK                     (0x0044)
-+#define CMU_NANDCCLK                 (0x004C)
-+#define CMU_SD0CLK                     (0x0050)
-+#define CMU_SD1CLK                     (0x0054)
-+#define CMU_SD2CLK                     (0x0058)
-+#define CMU_UART0CLK                 (0x005C)
-+#define CMU_UART1CLK                 (0x0060)
-+#define CMU_UART2CLK                 (0x0064)
-+#define CMU_PWM4CLK                  (0x0068)
-+#define CMU_PWM5CLK                 (0x006C)
-+#define CMU_PWM0CLK                 (0x0070)
-+#define CMU_PWM1CLK                 (0x0074)
-+#define CMU_PWM2CLK                 (0x0078)
-+#define CMU_PWM3CLK                 (0x007C)
-+#define CMU_USBPLL                     (0x0080)
-+#define CMU_ETHERNETPLL             (0x0084)
-+#define CMU_CVBSPLL                 (0x0088)
-+#define CMU_LENSCLK                 (0x008C)
-+#define CMU_GPU3DCLK                 (0x0090)
-+#define CMU_CORECTL                 (0x009C)
-+#define CMU_DEVCLKEN0                 (0x00A0)
-+#define CMU_DEVCLKEN1                 (0x00A4)
-+#define CMU_DEVRST0                 (0x00A8)
-+#define CMU_DEVRST1                 (0x00AC)
-+#define CMU_UART3CLK                 (0x00B0)
-+#define CMU_UART4CLK                 (0x00B4)
-+#define CMU_UART5CLK                 (0x00B8)
-+#define CMU_UART6CLK                 (0x00BC)
-+#define CMU_SSCLK                     (0x00C0)
-+#define CMU_DIGITALDEBUG             (0x00D0)
-+#define CMU_ANALOGDEBUG             (0x00D4)
-+#define CMU_COREPLLDEBUG             (0x00D8)
-+#define CMU_DEVPLLDEBUG             (0x00DC)
-+#define CMU_DDRPLLDEBUG             (0x00E0)
-+#define CMU_NANDPLLDEBUG             (0x00E4)
-+#define CMU_DISPLAYPLLDEBUG         (0x00E8)
-+#define CMU_TVOUTPLLDEBUG             (0x00EC)
-+#define CMU_DEEPCOLORPLLDEBUG         (0x00F4)
-+#define CMU_AUDIOPLL_ETHPLLDEBUG     (0x00F8)
-+#define CMU_CVBSPLLDEBUG             (0x00FC)
-+
-+#define OWL_S500_COREPLL_DELAY        (150)
-+#define OWL_S500_DDRPLL_DELAY        (63)
-+#define OWL_S500_DEVPLL_DELAY        (28)
-+#define OWL_S500_NANDPLL_DELAY        (44)
-+#define OWL_S500_DISPLAYPLL_DELAY    (57)
-+#define OWL_S500_ETHERNETPLL_DELAY    (25)
-+#define OWL_S500_AUDIOPLL_DELAY        (100)
-+
-+static struct clk_pll_table clk_audio_pll_table[] = {
-+    { 0, 45158400 }, { 1, 49152000 },
-+    { 0, 0 },
-+};
-+
-+static OWL_PLL_NO_PARENT(ethernet_pll_clk, "ethernet_pll_clk",
-CMU_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, OWL_S500_ETHERNETPLL_DELAY,
-NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL,
-12000000, 9, 0, 8, 4, 134, OWL_S500_COREPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL,
-12000000, 8, 0, 8, 1, 67, OWL_S500_DDRPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL,
-6000000, 8, 0, 7, 2, 86, OWL_S500_NANDPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk",
-CMU_DISPLAYPLL, 6000000, 8, 0, 8, 2, 126, OWL_S500_DISPLAYPLL_DELAY,
-NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL,
-6000000, 8, 0, 7, 8, 126, OWL_S500_DEVPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk",
-CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, OWL_S500_AUDIOPLL_DELAY,
-clk_audio_pll_table, CLK_IGNORE_UNUSED);
-+
-+static const char *dev_clk_mux_p[] = { "hosc", "dev_pll_clk" };
-+static const char *bisp_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
-+static const char *sensor_clk_mux_p[] = { "hosc", "bisp_clk" };
-+static const char *sd_clk_mux_p[] = { "dev_clk", "nand_pll_clk" };
-+static const char *pwm_clk_mux_p[] = { "losc", "hosc" };
-+static const char *ahbprediv_clk_mux_p[] = { "dev_clk",
-"display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
-+static const char *uart_clk_mux_p[] = { "hosc", "dev_pll_clk" };
-+static const char *de_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
-+static const char *i2s_clk_mux_p[] = { "audio_pll_clk" };
-+static const char *hde_clk_mux_p[] = { "dev_clk", "display_pll_clk",
-"nand_pll_clk", "ddr_pll_clk" };
-+static const char *nand_clk_mux_p[] = { "nand_pll_clk",
-"display_pll_clk", "dev_clk", "ddr_pll_clk" };
-+
-+static struct clk_factor_table sd_factor_table[] = {
-+    /* bit0 ~ 4 */
-+    { 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
-+    { 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
-+    { 8, 1, 9 }, { 9, 1, 10 }, { 10, 1, 11 }, { 11, 1, 12 },
-+    { 12, 1, 13 }, { 13, 1, 14 }, { 14, 1, 15 }, { 15, 1, 16 },
-+    { 16, 1, 17 }, { 17, 1, 18 }, { 18, 1, 19 }, { 19, 1, 20 },
-+    { 20, 1, 21 }, { 21, 1, 22 }, { 22, 1, 23 }, { 23, 1, 24 },
-+    { 24, 1, 25 }, { 25, 1, 26 }, { 26, 1, 27 }, { 27, 1, 28 },
-+    { 28, 1, 29 }, { 29, 1, 30 }, { 30, 1, 31 }, { 31, 1, 32 },
-+
-+    /* bit8: /128 */
-+    { 256, 1, 1 * 128 }, { 257, 1, 2 * 128 }, { 258, 1, 3 * 128 }, {
-259, 1, 4 * 128 },
-+    { 260, 1, 5 * 128 }, { 261, 1, 6 * 128 }, { 262, 1, 7 * 128 }, {
-263, 1, 8 * 128 },
-+    { 264, 1, 9 * 128 }, { 265, 1, 10 * 128 }, { 266, 1, 11 * 128 },
-{ 267, 1, 12 * 128 },
-+    { 268, 1, 13 * 128 }, { 269, 1, 14 * 128 }, { 270, 1, 15 * 128 },
-{ 271, 1, 16 * 128 },
-+    { 272, 1, 17 * 128 }, { 273, 1, 18 * 128 }, { 274, 1, 19 * 128 },
-{ 275, 1, 20 * 128 },
-+    { 276, 1, 21 * 128 }, { 277, 1, 22 * 128 }, { 278, 1, 23 * 128 },
-{ 279, 1, 24 * 128 },
-+    { 280, 1, 25 * 128 }, { 281, 1, 26 * 128 }, { 282, 1, 27 * 128 },
-{ 283, 1, 28 * 128 },
-+    { 284, 1, 29 * 128 }, { 285, 1, 30 * 128 }, { 286, 1, 31 * 128 },
-{ 287, 1, 32 * 128 },
-+
-+    { 0, 0, 0 },
-+};
-+
-+static struct clk_factor_table bisp_factor_table[] = {
-+    { 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
-+    { 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
-+    { 0, 0, 0 },
-+};
-+
-+static struct clk_factor_table ahb_factor_table[] = {
-+    { 1, 1, 2 }, { 2, 1, 3 },
-+    { 0, 0, 0 },
-+};
-+
-+static struct clk_div_table rmii_ref_div_table[] = {
-+    { 0, 4 }, { 1, 10 },
-+    { 0, 0 },
-+};
-+
-+static struct clk_div_table i2s_div_table[] = {
-+    { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
-+    { 4, 6 }, { 5, 8 }, { 6, 12 }, { 7, 16 },
-+    { 8, 24 },
-+    { 0, 0 },
-+};
-+
-+static struct clk_div_table nand_div_table[] = {
-+    { 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 6 },
-+    { 4, 8 }, { 5, 10 }, { 6, 12 }, { 7, 14 },
-+    { 8, 16 }, { 9, 18 }, { 10, 20 }, { 11, 22 },
-+    { 0, 0 },
-+};
-+
-+static OWL_MUX(dev_clk, "dev_clk", dev_clk_mux_p, CMU_DEVPLL, 12, 1,
-CLK_SET_RATE_PARENT);
-+
-+static OWL_COMP_FACTOR(vce_clk, "vce_clk", hde_clk_mux_p,
-+        OWL_MUX_HW(CMU_VCECLK, 4, 2),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 26, 0),
-+        OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, bisp_factor_table),
-+        0);
-+
-+static OWL_COMP_FACTOR(vde_clk, "vde_clk", hde_clk_mux_p,
-+        OWL_MUX_HW(CMU_VDECLK, 4, 2),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 25, 0),
-+        OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, bisp_factor_table),
-+        0);
-+
-+static OWL_COMP_FACTOR(bisp_clk, "bisp_clk", bisp_clk_mux_p,
-+        OWL_MUX_HW(CMU_BISPCLK, 4, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
-+        OWL_FACTOR_HW(CMU_BISPCLK, 0, 3, 0, bisp_factor_table),
-+        0);
-+
-+static OWL_COMP_FACTOR(sensor0_clk, "sensor0_clk", sensor_clk_mux_p,
-+        OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
-+        OWL_FACTOR_HW(CMU_SENSORCLK, 0, 3, 0, bisp_factor_table),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_FACTOR(sensor1_clk, "sensor1_clk", sensor_clk_mux_p,
-+        OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
-+        OWL_FACTOR_HW(CMU_SENSORCLK, 8, 3, 0, bisp_factor_table),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_FACTOR(sd0_clk, "sd0_clk", sd_clk_mux_p,
-+        OWL_MUX_HW(CMU_SD0CLK, 9, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 5, 0),
-+        OWL_FACTOR_HW(CMU_SD0CLK, 0, 9, 0, sd_factor_table),
-+        0);
-+
-+static OWL_COMP_FACTOR(sd1_clk, "sd1_clk", sd_clk_mux_p,
-+        OWL_MUX_HW(CMU_SD1CLK, 9, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 6, 0),
-+        OWL_FACTOR_HW(CMU_SD1CLK, 0, 9, 0, sd_factor_table),
-+        0);
-+
-+static OWL_COMP_FACTOR(sd2_clk, "sd2_clk", sd_clk_mux_p,
-+        OWL_MUX_HW(CMU_SD2CLK, 9, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 7, 0),
-+        OWL_FACTOR_HW(CMU_SD2CLK, 0, 9, 0, sd_factor_table),
-+        0);
-+
-+static OWL_COMP_DIV(pwm0_clk, "pwm0_clk", pwm_clk_mux_p,
-+        OWL_MUX_HW(CMU_PWM0CLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 23, 0),
-+        OWL_DIVIDER_HW(CMU_PWM0CLK, 0, 10, 0, NULL),
-+        0);
-+
-+static OWL_COMP_DIV(pwm1_clk, "pwm1_clk", pwm_clk_mux_p,
-+        OWL_MUX_HW(CMU_PWM1CLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 24, 0),
-+        OWL_DIVIDER_HW(CMU_PWM1CLK, 0, 10, 0, NULL),
-+        0);
-+
-+static OWL_COMP_DIV(pwm2_clk, "pwm2_clk", pwm_clk_mux_p,
-+        OWL_MUX_HW(CMU_PWM2CLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 25, 0),
-+        OWL_DIVIDER_HW(CMU_PWM2CLK, 0, 10, 0, NULL),
-+        0);
-+
-+static OWL_COMP_DIV(pwm3_clk, "pwm3_clk", pwm_clk_mux_p,
-+        OWL_MUX_HW(CMU_PWM3CLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 26, 0),
-+        OWL_DIVIDER_HW(CMU_PWM3CLK, 0, 10, 0, NULL),
-+        0);
-+
-+static OWL_COMP_DIV(pwm4_clk, "pwm4_clk", pwm_clk_mux_p,
-+        OWL_MUX_HW(CMU_PWM4CLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 11, 0),
-+        OWL_DIVIDER_HW(CMU_PWM4CLK, 0, 10, 0, NULL),
-+        0);
-+
-+static OWL_COMP_DIV(pwm5_clk, "pwm5_clk", pwm_clk_mux_p,
-+        OWL_MUX_HW(CMU_PWM5CLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 0, 0),
-+        OWL_DIVIDER_HW(CMU_PWM5CLK, 0, 10, 0, NULL),
-+        0);
-+
-+static OWL_COMP_PASS(de_clk, "de_clk", de_clk_mux_p,
-+        OWL_MUX_HW(CMU_DECLK, 12, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 8, 0),
-+        0);
-+
-+static OWL_MUX(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
-CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
-+
-+static OWL_DIVIDER(h_clk, "h_clk", "ahbprevdiv_clk", CMU_BUSCLK1, 12,
-2, NULL, 0, 0);
-+
-+static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk",
-CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
-+
-+static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2,
-ahb_factor_table, 0, 0);
-+
-+static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 3,
-bisp_factor_table, 0, 0);
-+static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 3,
-bisp_factor_table, 0, 0);
-+
-+static OWL_COMP_FIXED_FACTOR(i2c0_clk, "i2c0_clk", "ethernet_pll_clk",
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 14, 0),
-+        1, 5, 0);
-+
-+static OWL_COMP_FIXED_FACTOR(i2c1_clk, "i2c1_clk", "ethernet_pll_clk",
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 15, 0),
-+        1, 5, 0);
-+
-+static OWL_COMP_FIXED_FACTOR(i2c2_clk, "i2c2_clk", "ethernet_pll_clk",
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 30, 0),
-+        1, 5, 0);
-+
-+static OWL_COMP_FIXED_FACTOR(i2c3_clk, "i2c3_clk", "ethernet_pll_clk",
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 31, 0),
-+        1, 5, 0);
-+
-+static OWL_GATE(spi0_clk, "spi0_clk", "ahb_clk", CMU_DEVCLKEN1, 10,
-0, CLK_IGNORE_UNUSED);
-+static OWL_GATE(spi1_clk, "spi1_clk", "ahb_clk", CMU_DEVCLKEN1, 11,
-0, CLK_IGNORE_UNUSED);
-+static OWL_GATE(spi2_clk, "spi2_clk", "ahb_clk", CMU_DEVCLKEN1, 12,
-0, CLK_IGNORE_UNUSED);
-+static OWL_GATE(spi3_clk, "spi3_clk", "ahb_clk", CMU_DEVCLKEN1, 13,
-0, CLK_IGNORE_UNUSED);
-+static OWL_GATE(timer_clk, "timer_clk", "hosc", CMU_DEVCLKEN1, 27, 0, 0);
-+static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
-+
-+static OWL_COMP_DIV(uart0_clk, "uart0_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART0CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 6, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(uart1_clk, "uart1_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART1CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 7, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(uart2_clk, "uart2_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART2CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 8, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(uart3_clk, "uart3_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART3CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 19, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(uart4_clk, "uart4_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART4CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 20, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(uart5_clk, "uart5_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART5CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 21, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(uart6_clk, "uart6_clk", uart_clk_mux_p,
-+        OWL_MUX_HW(CMU_UART6CLK, 16, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN1, 18, 0),
-+        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
-+        CLK_IGNORE_UNUSED);
-+
-+static OWL_COMP_DIV(i2srx_clk, "i2srx_clk", i2s_clk_mux_p,
-+        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 21, 0),
-+        OWL_DIVIDER_HW(CMU_AUDIOPLL, 20, 4, 0, i2s_div_table),
-+        0);
-+
-+static OWL_COMP_DIV(i2stx_clk, "i2stx_clk", i2s_clk_mux_p,
-+        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 20, 0),
-+        OWL_DIVIDER_HW(CMU_AUDIOPLL, 16, 4, 0, i2s_div_table),
-+        0);
-+
-+static OWL_COMP_DIV(hdmia_clk, "hdmia_clk", i2s_clk_mux_p,
-+        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 22, 0),
-+        OWL_DIVIDER_HW(CMU_AUDIOPLL, 24, 4, 0, i2s_div_table),
-+        0);
-+
-+static OWL_COMP_DIV(spdif_clk, "spdif_clk", i2s_clk_mux_p,
-+        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 23, 0),
-+        OWL_DIVIDER_HW(CMU_AUDIOPLL, 28, 4, 0, i2s_div_table),
-+        0);
-+
-+static OWL_COMP_DIV(nand_clk, "nand_clk", nand_clk_mux_p,
-+        OWL_MUX_HW(CMU_NANDCCLK, 8, 2),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 4, 0),
-+        OWL_DIVIDER_HW(CMU_NANDCCLK, 0, 3, 0, nand_div_table),
-+        CLK_SET_RATE_PARENT);
-+
-+static OWL_COMP_DIV(ecc_clk, "ecc_clk", nand_clk_mux_p,
-+        OWL_MUX_HW(CMU_NANDCCLK, 8, 2),
-+        OWL_GATE_HW(CMU_DEVCLKEN0, 4, 0),
-+        OWL_DIVIDER_HW(CMU_NANDCCLK, 4, 3, 0, nand_div_table),
-+        CLK_SET_RATE_PARENT);
-+
-+static struct owl_clk_common *s500_clks[] =
-+{
-+    &ethernet_pll_clk.common,
-+    &core_pll_clk.common,
-+    &ddr_pll_clk.common,
-+    &dev_pll_clk.common,
-+    &nand_pll_clk.common,
-+    &audio_pll_clk.common,
-+    &display_pll_clk.common,
-+    &dev_clk.common,
-+    &timer_clk.common,
-+    &i2c0_clk.common,
-+    &i2c1_clk.common,
-+    &i2c2_clk.common,
-+    &i2c3_clk.common,
-+    &uart0_clk.common,
-+    &uart1_clk.common,
-+    &uart2_clk.common,
-+    &uart3_clk.common,
-+    &uart4_clk.common,
-+    &uart5_clk.common,
-+    &uart6_clk.common,
-+    &pwm0_clk.common,
-+    &pwm1_clk.common,
-+    &pwm2_clk.common,
-+    &pwm3_clk.common,
-+    &pwm4_clk.common,
-+    &pwm5_clk.common,
-+    &sensor0_clk.common,
-+    &sensor1_clk.common,
-+    &sd0_clk.common,
-+    &sd1_clk.common,
-+    &sd2_clk.common,
-+    &bisp_clk.common,
-+    &ahb_clk.common,
-+    &ahbprediv_clk.common,
-+    &h_clk.common,
-+    &spi0_clk.common,
-+    &spi1_clk.common,
-+    &spi2_clk.common,
-+    &spi3_clk.common,
-+    &rmii_ref_clk.common,
-+    &de_clk.common,
-+    &de1_clk.common,
-+    &de2_clk.common,
-+    &i2srx_clk.common,
-+    &i2stx_clk.common,
-+    &hdmia_clk.common,
-+    &hdmi_clk.common,
-+    &vce_clk.common,
-+    &vde_clk.common,
-+    &spdif_clk.common,
-+    &nand_clk.common,
-+    &ecc_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data s500_hw_clks = {
-+    .hws =
-+    {
-+        [CLK_ETHERNET_PLL]    = &ethernet_pll_clk.common.hw,
-+        [CLK_CORE_PLL]        = &core_pll_clk.common.hw,
-+        [CLK_DDR_PLL]        = &ddr_pll_clk.common.hw,
-+        [CLK_NAND_PLL]        = &nand_pll_clk.common.hw,
-+        [CLK_DISPLAY_PLL]    = &display_pll_clk.common.hw,
-+        [CLK_DEV_PLL]        = &dev_pll_clk.common.hw,
-+        [CLK_AUDIO_PLL]        = &audio_pll_clk.common.hw,
-+        [CLK_TIMER]            = &timer_clk.common.hw,
-+        [CLK_DEV]            = &dev_clk.common.hw,
-+        [CLK_DE]            = &de_clk.common.hw,
-+        [CLK_DE1]            = &de1_clk.common.hw,
-+        [CLK_DE2]            = &de2_clk.common.hw,
-+        [CLK_I2C0]            = &i2c0_clk.common.hw,
-+        [CLK_I2C1]            = &i2c1_clk.common.hw,
-+        [CLK_I2C2]            = &i2c2_clk.common.hw,
-+        [CLK_I2C3]            = &i2c3_clk.common.hw,
-+        [CLK_I2SRX]            = &i2srx_clk.common.hw,
-+        [CLK_I2STX]            = &i2stx_clk.common.hw,
-+        [CLK_UART0]            = &uart0_clk.common.hw,
-+        [CLK_UART1]            = &uart1_clk.common.hw,
-+        [CLK_UART2]            = &uart2_clk.common.hw,
-+        [CLK_UART3]            = &uart3_clk.common.hw,
-+        [CLK_UART4]            = &uart4_clk.common.hw,
-+        [CLK_UART5]            = &uart5_clk.common.hw,
-+        [CLK_UART6]            = &uart6_clk.common.hw,
-+        [CLK_PWM0]            = &pwm0_clk.common.hw,
-+        [CLK_PWM1]            = &pwm1_clk.common.hw,
-+        [CLK_PWM2]            = &pwm2_clk.common.hw,
-+        [CLK_PWM3]            = &pwm3_clk.common.hw,
-+        [CLK_PWM4]            = &pwm4_clk.common.hw,
-+        [CLK_PWM5]            = &pwm5_clk.common.hw,
-+        [CLK_SENSOR0]        = &sensor0_clk.common.hw,
-+        [CLK_SENSOR1]        = &sensor1_clk.common.hw,
-+        [CLK_SD0]            = &sd0_clk.common.hw,
-+        [CLK_SD1]            = &sd1_clk.common.hw,
-+        [CLK_SD2]            = &sd2_clk.common.hw,
-+        [CLK_BISP]            = &bisp_clk.common.hw,
-+        [CLK_SPI0]            = &spi0_clk.common.hw,
-+        [CLK_SPI1]            = &spi1_clk.common.hw,
-+        [CLK_SPI2]            = &spi2_clk.common.hw,
-+        [CLK_SPI3]            = &spi3_clk.common.hw,
-+        [CLK_AHB]            = &ahb_clk.common.hw,
-+        [CLK_H]                = &h_clk.common.hw,
-+        [CLK_AHBPREDIV]        = &ahbprediv_clk.common.hw,
-+        [CLK_RMII_REF]        = &rmii_ref_clk.common.hw,
-+        [CLK_HDMI_AUDIO]    = &hdmia_clk.common.hw,
-+        [CLK_HDMI]            = &hdmi_clk.common.hw,
-+        [CLK_VDE]            = &vde_clk.common.hw,
-+        [CLK_VCE]            = &vce_clk.common.hw,
-+        [CLK_SPDIF]            = &spdif_clk.common.hw,
-+        [CLK_NAND]            = &nand_clk.common.hw,
-+        [CLK_ECC]            = &ecc_clk.common.hw,
-+    },
-+    .num = CLK_NR_CLKS,
-+};
-+
-+static const struct owl_clk_desc s500_clk_desc =
-+{
-+    .clks        = s500_clks,
-+    .num_clks   = ARRAY_SIZE(s500_clks),
-+    .hw_clks    = &s500_hw_clks,
-+};
-+
-+static int s500_clk_probe(struct platform_device *pdev)
-+{
-+    const struct owl_clk_desc *desc;
-+
-+    desc = &s500_clk_desc;
-+    owl_clk_regmap_init(pdev, desc);
-+
-+    return owl_clk_probe(&pdev->dev, desc->hw_clks);
-+}
-+
-+static const struct of_device_id s500_clk_of_match[] = {
-+    { .compatible = "actions,s500-cmu", },
-+    { /* sentinel */ }
-+};
-+
-+static struct platform_driver s500_clk_driver = {
-+    .probe = s500_clk_probe,
-+    .driver = {
-+        .name = "s500-cmu",
-+        .of_match_table = s500_clk_of_match,
-+    },
-+};
-+
-+static int __init s500_clk_init(void)
-+{
-+    return platform_driver_register(&s500_clk_driver);
-+}
-+core_initcall(s500_clk_init);
-diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
-index 5e9531392ee5..a869ccfd074d 100644
---- a/drivers/clk/actions/owl-s700.c
-+++ b/drivers/clk/actions/owl-s700.c
-@@ -69,6 +69,8 @@
- #define CMU_CVBSPLL        (0x00B8)
- #define CMU_SSTSCLK        (0x00C0)
+This was one of the suggestions at LSF this year.
 
-+#define OWL_S700_DEFPLL_DELAY    (50) // Default PLL delay in us.
-+
- static struct clk_pll_table clk_audio_pll_table[] = {
-     {0, 45158400}, {1, 49152000},
-     {0, 0},
-@@ -84,14 +86,14 @@ static struct clk_pll_table clk_cvbs_pll_table[] = {
- };
+That said, we can't just refuse to evict those inodes, as we may
+eventually need the memory. We may have to settle for prioritizing
+inodes that can be cleaned for eviction, and only evict the ones that
+can't when we have no other choice.
 
- /* pll clocks */
--static OWL_PLL_NO_PARENT(clk_core_pll,   "core_pll", CMU_COREPLL,
-12000000, 9, 0, 8,  4, 174, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_dev_pll,    "dev_pll", CMU_DEVPLL,
-6000000, 8, 0, 8, 8, 126, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_ddr_pll,    "ddr_pll", CMU_DDRPLL,
-6000000, 8, 0, 8,  2,  180, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_nand_pll,   "nand_pll", CMU_NANDPLL,
-6000000, 8, 0, 8,  2, 86, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_display_pll, "display_pll",
-CMU_DISPLAYPLL, 6000000, 8, 0, 8, 2, 140, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_cvbs_pll, "cvbs_pll", CMU_CVBSPLL, 0, 8,
-0, 8, 27, 43, clk_cvbs_pll_table, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_audio_pll,  "audio_pll", CMU_AUDIOPLL,
-0, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(clk_ethernet_pll, "ethernet_pll",
-CMU_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_core_pll,   "core_pll", CMU_COREPLL,
-12000000, 9, 0, 8,  4, 174, OWL_S700_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_dev_pll,    "dev_pll", CMU_DEVPLL,
-6000000, 8, 0, 8, 8, 126, OWL_S700_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_ddr_pll,    "ddr_pll", CMU_DDRPLL,
-6000000, 8, 0, 8,  2,  180, OWL_S700_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_nand_pll,   "nand_pll", CMU_NANDPLL,
-6000000, 8, 0, 8,  2, 86, OWL_S700_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_display_pll, "display_pll",
-CMU_DISPLAYPLL, 6000000, 8, 0, 8, 2, 140, OWL_S700_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_cvbs_pll, "cvbs_pll", CMU_CVBSPLL, 0, 8,
-0, 8, 27, 43, OWL_S700_DEFPLL_DELAY, clk_cvbs_pll_table,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_audio_pll,  "audio_pll", CMU_AUDIOPLL,
-0, 4, 0, 1, 0, 0, OWL_S700_DEFPLL_DELAY, clk_audio_pll_table,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(clk_ethernet_pll, "ethernet_pll",
-CMU_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, OWL_S700_DEFPLL_DELAY,
-NULL, CLK_IGNORE_UNUSED);
+Denying new opens is also a potentially helpful for someone wanting to
+do a local DoS attack.
 
- static const char *cpu_clk_mux_p[] = {"losc", "hosc", "core_pll",
-"noc1_clk_div"};
- static const char *dev_clk_p[] = { "hosc", "dev_pll"};
-diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
-index 7f60ed6afe63..bdee9b022f0d 100644
---- a/drivers/clk/actions/owl-s900.c
-+++ b/drivers/clk/actions/owl-s900.c
-@@ -69,6 +69,8 @@
- #define CMU_PWM4CLK        (0x00C8)
- #define CMU_PWM5CLK        (0x00CC)
+> - Finally, after the system reboots, programs could see (partially)
+> corrupted (out-of-data) files. Since user space programs didn't mean to
+> persist these files (didn't call fsync()), that is fairly reasonable.
 
-+#define OWL_S900_DEFPLL_DELAY    (50) // Default PLL delay in us.
-+
- static struct clk_pll_table clk_audio_pll_table[] = {
-     { 0, 45158400 }, { 1, 49152000 },
-     { 0, 0 },
-@@ -80,14 +82,14 @@ static struct clk_pll_table clk_edp_pll_table[] = {
- };
+-- 
+Jeff Layton <jlayton@redhat.com>
 
- /* pll clocks */
--static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL,
-24000000, 9, 0, 8, 5, 107, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL,
-6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL,
-24000000, 8, 0, 8, 5, 45, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL,
-6000000, 8, 0, 8, 4, 100, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk",
-CMU_DISPLAYPLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(assist_pll_clk, "assist_pll_clk",
-CMU_ASSISTPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
--static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk",
-CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, clk_audio_pll_table,
-CLK_IGNORE_UNUSED);
--static OWL_PLL(edp_pll_clk, "edp_pll_clk", "edp24M_clk", CMU_EDPCLK,
-0, 9, 0, 2, 0, 0, clk_edp_pll_table, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL,
-24000000, 9, 0, 8, 5, 107, OWL_S900_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL,
-6000000, 8, 0, 8, 20, 180, OWL_S900_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL,
-24000000, 8, 0, 8, 5, 45, OWL_S900_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL,
-6000000, 8, 0, 8, 4, 100, OWL_S900_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk",
-CMU_DISPLAYPLL, 6000000, 8, 0, 8, 20, 180, OWL_S900_DEFPLL_DELAY,
-NULL, CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(assist_pll_clk, "assist_pll_clk",
-CMU_ASSISTPLL, 500000000, 0, 0, 0, 0, 0, OWL_S900_DEFPLL_DELAY, NULL,
-CLK_IGNORE_UNUSED);
-+static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk",
-CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, OWL_S900_DEFPLL_DELAY,
-clk_audio_pll_table, CLK_IGNORE_UNUSED);
-+static OWL_PLL(edp_pll_clk, "edp_pll_clk", "edp24M_clk", CMU_EDPCLK,
-0, 9, 0, 2, 0, 0, OWL_S900_DEFPLL_DELAY, clk_edp_pll_table,
-CLK_IGNORE_UNUSED);
-
- static const char *cpu_clk_mux_p[] = { "losc", "hosc", "core_pll_clk", };
- static const char *dev_clk_p[] = { "hosc", "dev_pll_clk", };
