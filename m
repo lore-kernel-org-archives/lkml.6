@@ -2,93 +2,111 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5173C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4583EC43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ECA2206BA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8CC92075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 14:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Euzsso2q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ECA2206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MPvackgX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8CC92075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeIDSmp (ORCPT
+        id S1727490AbeIDSpz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 14:42:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49580 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727136AbeIDSmp (ORCPT
+        Tue, 4 Sep 2018 14:45:55 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:32846 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbeIDSpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 14:42:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=X3s6ZZAWkRG494coXvB1HdqsHsZRoEADTyeE6lXMh9I=; b=Euzsso2qSbBlHbc2FsW7smmZ4
-        hFWYo1oqrZYzr3bDqmZdCYHNNhtrSbAZIL9OSUoQAyCr14veypaYW0bWmP/KSYMwdVNSL1PvMk35w
-        TtNoncKLy0sDhu3mKnUdvFUgVvrUtJHtbR5p3v9ezbuDgy2X/dt17igKSMV+SJNZnzFPGUCKIvrfe
-        fhwKVwwDlrhgo8rhQpssksSSzW8maVhvDIqZREwX69zUR/71939tAwYjcQSDv6t1DpnjBe14AoR7h
-        qyjJeRx2H0Kf7jzaKXs7qr7JooHS+Jpuh3XiBNx89xSKy9KC8anzgi5bUW6qg4M33UZJNUL/HqZf9
-        wXBoWWhwA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxC90-0000ib-CS; Tue, 04 Sep 2018 14:17:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DDD50202AFE0C; Tue,  4 Sep 2018 16:17:24 +0200 (CEST)
-Date:   Tue, 4 Sep 2018 16:17:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Stephane Eranian <eranian@google.com>,
-        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [RFC] perf tool improvement requests
-Message-ID: <20180904141724.GJ24124@hirez.programming.kicks-ass.net>
-References: <CABPqkBT0kEMOnTw1-E1kezCvtWNSws7dp2qzCWKVmjGPOEga8Q@mail.gmail.com>
- <20180904071049.GY24124@hirez.programming.kicks-ass.net>
- <20180904134218.GA5364@kernel.org>
+        Tue, 4 Sep 2018 14:45:55 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w84EKJDX047230;
+        Tue, 4 Sep 2018 09:20:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536070819;
+        bh=azXH0lrlVGhdqlgwiFDyYe7Dj+v4E5lzM+mQz1GRr/Q=;
+        h=From:To:CC:Subject:Date;
+        b=MPvackgXrceMMQqZTv+boWcV8OemRB4evkCK+jscYY10Q2cavh5Rx47OiL9/Wz8om
+         qBgjGlB1Pvbt/7OLDb8LM7Vj1Ai7QUqUWQAb7K8A2uZUXtuMzHFQoURObjrFpOKDKV
+         UW68BAdcqil7u4VPjb0TMdQyoGnhSOKNlE78DTK0=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EKJpV027825;
+        Tue, 4 Sep 2018 09:20:19 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 4 Sep
+ 2018 09:20:19 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 4 Sep 2018 09:20:19 -0500
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w84EKJUU031608;
+        Tue, 4 Sep 2018 09:20:19 -0500
+Received: from localhost (uda0226330.dhcp.ti.com [172.22.184.106])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w84EKIx03644;
+        Tue, 4 Sep 2018 09:20:18 -0500 (CDT)
+From:   "Andrew F. Davis" <afd@ti.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
+Subject: [PATCH v2 1/2] ARM: dts: imx6: RDU2: Use new CODEC reset pin name
+Date:   Tue, 4 Sep 2018 09:20:17 -0500
+Message-ID: <20180904142018.4267-1-afd@ti.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904134218.GA5364@kernel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 10:42:18AM -0300, Arnaldo Carvalho de Melo wrote:
-> 	Then I need to get the DW_AT_location stuff parsed in pahole, so
-> that with those offsets (second column, ending with :) with hits (first
-> column, there its local period, but we can ask for some specific metric
-> [1]), I'll be able to figure out what DW_TAG_variable or
-> DW_TAG_formal_parameter is living there at that time, get the offset
-> from the decoded instruction, say that xor, 0x138 offset from the type
-> for %r15 at that offset (85) from kmem_cache_alloc, right?
+The correct DT property for specifying a GPIO used for reset
+is "reset-gpios", the driver now accepts this name use this here.
 
-I'm not sure how the DWARF location stuff works; it could be it already
-includes the offset and decoding the instruction is not needed.
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
 
-But yes, that's the basic idea; get DWARF to tell you what variable is
-used at a certain IP.
+Changes from v1:
+ - Remove "fix" from commit message
 
-> In a first milestone we'd have something like:
-> 
-> 	perf annotate --hits function | pahole --annotate -C task_struct
-> 
-> 	perf annotate --hits | pahole --annotate
+ arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Not sure keeping it two proglets makes sense, but whatever :-)
+diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+index 7fff3717cf7c..a0f5cfda0055 100644
+--- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+@@ -384,7 +384,7 @@
+ 		AVDD-supply = <&reg_3p3v>;
+ 		IOVDD-supply = <&reg_3p3v>;
+ 		DVDD-supply = <&vgen4_reg>;
+-		gpio-reset = <&gpio1 2 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
+ 	};
+ 
+ 	accel@1c {
+@@ -572,7 +572,7 @@
+ 		AVDD-supply = <&reg_3p3v>;
+ 		IOVDD-supply = <&reg_3p3v>;
+ 		DVDD-supply = <&vgen4_reg>;
+-		gpio-reset = <&gpio1 0 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
+ 	};
+ 
+ 	touchscreen@20 {
+-- 
+2.18.0
 
-The alternative I suppose is making perf do the IP->struct::member
-mapping and freed that to pahole, which then only uses it to annotate
-the output.
-
-Or, munge the entirety of pahole into perf..
