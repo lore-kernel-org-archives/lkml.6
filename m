@@ -2,147 +2,124 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5C8C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A942075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A942075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 87D2A2073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 19:26:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2DXDg5T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D2A2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbeIDXwU (ORCPT
+        id S1727962AbeIDXwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 19:52:20 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49419 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbeIDXwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 19:52:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 12:25:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,330,1531810800"; 
-   d="scan'208";a="230173938"
-Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
-  by orsmga004.jf.intel.com with ESMTP; 04 Sep 2018 12:25:49 -0700
-Subject: Re: [PATCH 1/2] mm: Move page struct poisoning from CONFIG_DEBUG_VM
- to CONFIG_DEBUG_VM_PGFLAGS
-To:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20180904181550.4416.50701.stgit@localhost.localdomain>
- <20180904183339.4416.44582.stgit@localhost.localdomain>
-Cc:     alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
-        mhocko@suse.com, akpm@linux-foundation.org, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <fe84cdb4-7be7-8ad8-58ca-681f46e2e55c@intel.com>
-Date:   Tue, 4 Sep 2018 12:25:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Sep 2018 19:52:44 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:38125 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbeIDXwo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 19:52:44 -0400
+Received: by mail-qt0-f194.google.com with SMTP id x7-v6so5358481qtk.5;
+        Tue, 04 Sep 2018 12:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1LCHG8zDXa81XkeCOcwjYV4vkKpWYX7U3uWMHLhR2f0=;
+        b=H2DXDg5TPHY57GwH07jg5PqnXRf0vesd16Hy3swzZLAC5ae8gQsbBMbxKFWkW7S3RX
+         PMfbYcOMI1FjR8AR6MsW0eAA/fXn9hePl5r9y9nCAo6V74u8JoEBAu6zsqiaF5BDtPEr
+         o4twue7J/lfSrZ31NZq+6dhX4eH8MJbvunbSxGnquUc2euC5B0eYiRech0GM9nlTI5px
+         QhjFHAXd3/qumguLRyt/YGZMimo+uebEWsRTRDBtiHt5gNrTeYlv3Fv0Y9o0cdW7wjPs
+         +A3xDXGRmkeg64AWbD2jN6aIH/H2m3CwO+02DshIaQ8Srji15aYYDR/w+eo6gOa4kOgm
+         eIeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1LCHG8zDXa81XkeCOcwjYV4vkKpWYX7U3uWMHLhR2f0=;
+        b=qtpWlEjGc0Qnzj6D+/dpCCe/1V1385f3xVGPpeW2sKdXYkU5IOgwBsGn/D/FXtut7U
+         MnX13l8xa3aZcm/CY6wmJryzylbiIO4vGDHFzyW756PfNne7ZqLhGMtSiN6WRxXttnQH
+         VPEjrrkFdrJeoS3ud903b944KyqP2rFyfa7aJeg8vXvFCVUSOabVuPHhVauPsOASBjyk
+         D09vDKPKg2qNCSPUSBIhLBBm6Lk9Cw4SQqV7ZZqjjLGNigR1W3TCW3Ty4kuPhuqu7KSW
+         nx/Kb34oK8LxBkZ+tmqCvTqSDnUTnvBx0knTSpXpg3r935FTTWU4zwPxbIiLFyV/j3El
+         PhNg==
+X-Gm-Message-State: APzg51Af/uO2TOX2KzV/DLZFgCaCNcVad8t9TOY01dsoQjr7OW+OC67B
+        KRzoZEREZ6+99/sYBCaajyk49sMZc6fymXiR+HM=
+X-Google-Smtp-Source: ANB0VdZ7FvJeCKJVFAjrhlE/xEiVF9YgY+mvFqx73/vW6zC7eiQIvwqbEGcbEcz0pFRezxlBuYDazDNhWGL1dfQnGyI=
+X-Received: by 2002:aed:2b83:: with SMTP id e3-v6mr30527852qtd.246.1536089172725;
+ Tue, 04 Sep 2018 12:26:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180904183339.4416.44582.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180904200434.10442-1-afonsobordado@az8.co> <20180904200434.10442-3-afonsobordado@az8.co>
+In-Reply-To: <20180904200434.10442-3-afonsobordado@az8.co>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Sep 2018 22:26:01 +0300
+Message-ID: <CAHp75Vdptz=mj+FaAwKP1NCZPknZ2T4TCCu99Egzh37wbtQJmQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] iio: fxas21002c: add ODR/Scale support
+To:     afonsobordado@az8.co
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 11:33 AM, Alexander Duyck wrote:
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1444,7 +1444,7 @@ void * __init memblock_virt_alloc_try_nid_raw(
->  
->  	ptr = memblock_virt_alloc_internal(size, align,
->  					   min_addr, max_addr, nid);
-> -#ifdef CONFIG_DEBUG_VM
-> +#ifdef CONFIG_DEBUG_VM_PGFLAGS
->  	if (ptr && size > 0)
->  		memset(ptr, PAGE_POISON_PATTERN, size);
->  #endif
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 10b07eea9a6e..0fd9ad5021b0 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -696,7 +696,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
->  		goto out;
->  	}
->  
-> -#ifdef CONFIG_DEBUG_VM
-> +#ifdef CONFIG_DEBUG_VM_PGFLAGS
->  	/*
->  	 * Poison uninitialized struct pages in order to catch invalid flags
->  	 * combinations.
+On Tue, Sep 4, 2018 at 10:07 PM Afonso Bordado <afonsobordado@az8.co> wrote:
+>
+> This patch adds support for reading/writing ODR/Scale
+>
+> We don't support the scale boost modes.
 
-I think this is the wrong way to do this.  It keeps the setting and
-checking still rather tenuously connected.  If you were to leave it this
-way, it needs commenting.  It's also rather odd that we're memsetting
-the entire 'struct page' for a config option that's supposedly dealing
-with page->flags.  That deserves _some_ addressing in a comment or
-changelog.
+> @@ -44,7 +44,10 @@
+>  #define FXAS21002C_REG_F_EVENT         0x0A
+>  #define FXAS21002C_REG_INT_SRC_FLAG    0x0B
+>  #define FXAS21002C_REG_WHO_AM_I        0x0C
+> +
+>  #define FXAS21002C_REG_CTRL_REG0       0x0D
+> +#define FXAS21002C_SCALE_MASK          GENMASK(1, 0)
+> +
+>  #define FXAS21002C_REG_RT_CFG          0x0E
+>  #define FXAS21002C_REG_RT_SRC          0x0F
+>  #define FXAS21002C_REG_RT_THS          0x10
 
-How about:
+This hunk doesn't belong to this patch.
 
-#ifdef CONFIG_DEBUG_VM_PGFLAGS
-#define VM_BUG_ON_PGFLAGS(cond, page) VM_BUG_ON_PAGE(cond, page)
-+static inline void poison_struct_pages(struct page *pages, int nr)
-+{
-+	memset(pages, PAGE_POISON_PATTERN, size * sizeof(...));
-+}
-#else
-#define VM_BUG_ON_PGFLAGS(cond, page) BUILD_BUG_ON_INVALID(cond)
-static inline void poison_struct_pages(struct page *pages, int nr) {}
-#endif
+> +static const int fxas21002c_anglevel_scale_avail[4][2] = {
+> +       [FXAS21002C_SCALE_62MDPS] = { 0, IIO_DEGREE_TO_RAD(62500) },
+> +       [FXAS21002C_SCALE_31MDPS] = { 0, IIO_DEGREE_TO_RAD(31250) },
+> +       [FXAS21002C_SCALE_15MDPS] = { 0, IIO_DEGREE_TO_RAD(15625) },
+> +       [FXAS21002C_SCALE_7MDPS]  = { 0, IIO_DEGREE_TO_RAD(7812) },
 
-That puts the setting and checking in one spot, and also removes a
-couple of #ifdefs from .c files.
+This is just set of powers of two. No table needed.
+
+> +};
+
+> +static const int fxas21002c_sample_freq_avail[7][2] = {
+> +       [FXAS21002C_ODR_800]  = { 800, 0 },
+> +       [FXAS21002C_ODR_400]  = { 400, 0 },
+> +       [FXAS21002C_ODR_200]  = { 200, 0 },
+> +       [FXAS21002C_ODR_100]  = { 100, 0 },
+> +       [FXAS21002C_ODR_50]   = { 50, 0 },
+> +       [FXAS21002C_ODR_25]   = { 25, 0 },
+> +       [FXAS21002C_ODR_12_5] = { 12, 500000 },
+
+Ditto.
+
+> +};
+
+
+--
+With Best Regards,
+Andy Shevchenko
