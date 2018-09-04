@@ -2,116 +2,93 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D42C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F117C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59292077C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59292077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B93C2086C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 09:12:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B93C2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeIDNed (ORCPT
+        id S1727363AbeIDNhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 09:34:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:39288 "EHLO foss.arm.com"
+        Tue, 4 Sep 2018 09:37:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:60994 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbeIDNed (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 09:34:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DE921596;
-        Tue,  4 Sep 2018 02:10:20 -0700 (PDT)
-Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EDE0B3F614;
-        Tue,  4 Sep 2018 02:10:18 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     stable@vger.kernel.org
-Cc:     suzuki.poulose@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com
-Subject: [stable PATCH 2/2] arm64: Handle mismatched cache type
-Date:   Tue,  4 Sep 2018 10:10:10 +0100
-Message-Id: <1536052210-11625-2-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536052210-11625-1-git-send-email-suzuki.poulose@arm.com>
-References: <1536052210-11625-1-git-send-email-suzuki.poulose@arm.com>
+        id S1726263AbeIDNhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 09:37:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 02:12:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
+   d="scan'208";a="87447444"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga001.jf.intel.com with ESMTP; 04 Sep 2018 02:12:55 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 4 Sep 2018 02:12:55 -0700
+Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.240]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.143]) with mapi id 14.03.0319.002;
+ Tue, 4 Sep 2018 17:12:53 +0800
+From:   "Yang, Bin" <bin.yang@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 1/5] x86/mm: avoid redundant checking if pgprot has
+ no change
+Thread-Topic: [PATCH v3 1/5] x86/mm: avoid redundant checking if pgprot has
+ no change
+Thread-Index: AQHUOOyjY4j6eKGfo0i2H1+4H4FSu6TeqiKAgACX8wCAAA1xAIAAFyQA
+Date:   Tue, 4 Sep 2018 09:12:52 +0000
+Message-ID: <2db43c762164cada1b85ffd63262b5247fd2e3dc.camel@intel.com>
+References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>
+         <1534814186-37067-2-git-send-email-bin.yang@intel.com>
+         <alpine.DEB.2.21.1809032127550.1462@nanos.tec.linutronix.de>
+         <76cf0aca5a2f8e9b94fd0631274a3d4ad825d077.camel@intel.com>
+         <alpine.DEB.2.21.1809040947040.1462@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809040947040.1462@nanos.tec.linutronix.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.4.160]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <036461DE681F0C40ADA761B9EC2D2361@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 314d53d297980676011e6fd83dac60db4a01dc70 upstream
-
-Track mismatches in the cache type register (CTR_EL0), other
-than the D/I min line sizes and trap user accesses if there are any.
-
-Fixes: be68a8aaf925 ("arm64: cpufeature: Fix CTR_EL0 field definitions")
-Cc: <stable@vger.kernel.org> # v4.9
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/cpucaps.h |  3 ++-
- arch/arm64/kernel/cpu_errata.c   | 17 ++++++++++++++---
- 2 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index 7010779a..8c7c4b2 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -37,7 +37,8 @@
- #define ARM64_UNMAP_KERNEL_AT_EL0		16
- #define ARM64_HARDEN_BRANCH_PREDICTOR		17
- #define ARM64_SSBD				18
-+#define ARM64_MISMATCHED_CACHE_TYPE		19
- 
--#define ARM64_NCAPS				19
-+#define ARM64_NCAPS				20
- 
- #endif /* __ASM_CPUCAPS_H */
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index fe604bb..930e74d 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -32,11 +32,15 @@ is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
- }
- 
- static bool
--has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
--				int scope)
-+has_mismatched_cache_type(const struct arm64_cpu_capabilities *entry,
-+			  int scope)
- {
- 	u64 mask = CTR_CACHE_MINLINE_MASK;
- 
-+	/* Skip matching the min line sizes for cache type check */
-+	if (entry->capability == ARM64_MISMATCHED_CACHE_TYPE)
-+		mask ^= arm64_ftr_reg_ctrel0.strict_mask;
-+
- 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
- 	return (read_cpuid_cachetype() & mask) !=
- 	       (arm64_ftr_reg_ctrel0.sys_val & mask);
-@@ -449,7 +453,14 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 	{
- 		.desc = "Mismatched cache line size",
- 		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
--		.matches = has_mismatched_cache_line_size,
-+		.matches = has_mismatched_cache_type,
-+		.def_scope = SCOPE_LOCAL_CPU,
-+		.enable = cpu_enable_trap_ctr_access,
-+	},
-+	{
-+		.desc = "Mismatched cache type",
-+		.capability = ARM64_MISMATCHED_CACHE_TYPE,
-+		.matches = has_mismatched_cache_type,
- 		.def_scope = SCOPE_LOCAL_CPU,
- 		.enable = cpu_enable_trap_ctr_access,
- 	},
--- 
-2.7.4
-
+T24gVHVlLCAyMDE4LTA5LTA0IGF0IDA5OjQ5ICswMjAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
+DQo+IE9uIFR1ZSwgNCBTZXAgMjAxOCwgWWFuZywgQmluIHdyb3RlOg0KPiA+IE9uIE1vbiwgMjAx
+OC0wOS0wMyBhdCAyMzo1NyArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+ID4gDQo+
+ID4gPiBUaGUgbGFzdCBwYXRjaCB3aGljaCBkb2VzIHRoZSBvdmVybGFwIGNoZWNrIGlzIGVxdWFs
+bHkgYnJva2VuOg0KPiA+IA0KPiA+IFNvcnJ5IHRoYXQgSSBkaWQgbm90IHVuZGVyc3RhbmQgdGhl
+IGJyb2tlbiBvZiBsYXN0IHBhdGNoLg0KPiANCj4gSSBtZWFudCA0LzUgc29ycnkuIFRoYXQncyB0
+aGUgb25lIHdoaWNoIGludHJvZHVjZXMgdGhlIG92ZXJsYXAgY2hlY2sgYW5kDQo+IGRvZXMgdGhp
+czoNCj4gDQo+ID4gPiArICAgICAgIC8qDQo+ID4gPiArICAgICAgICAqIEVuc3VyZSB0aGF0IHRo
+ZSByZXF1ZXN0ZWQgcGdwcm90IGRvZXMgbm90IHZpb2xhdGUgc3RhdGljIHByb3RlY3Rpb24NCj4g
+PiA+ICsgICAgICAgICogcmVxdWlyZW1lbnRzLg0KPiA+ID4gKyAgICAgICAgKi8NCj4gPiA+ICsg
+ICAgICAgbmV3X3Byb3QgPSBzdGF0aWNfcHJvdGVjdGlvbnMocmVxX3Byb3QsIGFkZHJlc3MsDQo+
+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG51bXBhZ2VzIDw8IFBB
+R0VfU0hJRlQsIHBmbik7DQo+ID4gPiANCj4gPiA+IEl0IGV4cGFuZHMgbmV3X3Byb3QgdG8gdGhl
+IHdob2xlIHJhbmdlIGV2ZW4gaWYgdGhlIHByb3RlY3Rpb25zIG9ubHkNCj4gPiA+IG92ZXJsYXAu
+IFRoYXQgc2hvdWxkIG5vdCBoYXBwZW4gaW4gcHJhY3RpY2UsIGJ1dCB3ZSBoYXZlIG5vIGNoZWNr
+cyBmb3IgdGhhdA0KPiA+ID4gYXQgYWxsLg0KPiA+IA0KPiA+IEJlbG93IGNvZGUgaW4gcGF0Y2gg
+IzMgc2hvdWxkIGNvdmVyIHRoaXMgY2hlY2suIEl0IHdpbGwgZG91YmxlIGNoZWNrDQo+ID4gbmV3
+X3Byb3QgaW4gd2hvbGUgbGFyZ2UgcGFnZSByYW5nZS4NCj4gDQo+IFdoaWNoIGlzIGV4YWN0bHkg
+d2hhdCBpcyB3cm9uZy4gUmVhZCBhZ2FpbiB3aGF0IEkgd3JvdGUuDQo+IA0KPiBUaGFua3MsDQo+
+IA0KPiAJdGdseA0K
