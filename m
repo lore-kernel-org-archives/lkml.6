@@ -2,154 +2,227 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710E3C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D05C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 146B520652
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146B520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id 48BD920645
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 15:02:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sWqHkMDx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48BD920645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeIDT1q (ORCPT
+        id S1727503AbeIDT2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 15:27:46 -0400
-Received: from mail.netline.ch ([148.251.143.178]:39716 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbeIDT1q (ORCPT
+        Tue, 4 Sep 2018 15:28:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34009 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbeIDT2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 15:27:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id BF45E2A6049;
-        Tue,  4 Sep 2018 17:02:14 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id UjSA1bCL47W9; Tue,  4 Sep 2018 17:02:13 +0200 (CEST)
-Received: from thor (67.124.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.124.67])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 3B9D82A6042;
-        Tue,  4 Sep 2018 17:02:13 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1fxCqK-0001Ab-63; Tue, 04 Sep 2018 17:02:12 +0200
-Subject: Re: [PATCH 3/5] drm: fix drm_mode_addfb() on big endian machines.
-To:     Ilia Mirkin <imirkin@alum.mit.edu>
-Cc:     David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180903105756.24912-1-kraxel@redhat.com>
- <20180903105756.24912-4-kraxel@redhat.com>
- <20180903164558.GL21634@phenom.ffwll.local>
- <CAKb7Uvh-UB6pR1r-D5sX0HwWwTExVzjxcdeAKNAmRWdqh=hKGw@mail.gmail.com>
- <8e8f8cf3-c4d4-6bfd-4e53-536d4d0c79ff@daenzer.net>
- <CAKb7UvicP594ASs4QutRH4oW1XZ2gTA5Fa=w8FPQzzKaSzDQuw@mail.gmail.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <4262e9d1-75c9-1be3-08bd-1ef842a13f2f@daenzer.net>
-Date:   Tue, 4 Sep 2018 17:02:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 4 Sep 2018 15:28:22 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f6-v6so1775387plo.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 08:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wZkKJggxwRiRWZ0+lIs7COwR3K4bYNSIpUOs6RwQyRk=;
+        b=sWqHkMDxM13KJcGbUFvufEQsWekypInUlTbhuLPyUCKhntwKbhDP5C2KqMuLFMmDmU
+         DB2DI2eQMQ3sUXCdTeea5VWFgKKYtoDeIA8Qk2jmCkt2h9H7koUT0rgsqA5uVVdG6pxz
+         uSNhlWikK2h3RWBbkejMwLBrG1qHq26WnaZNiO6h1q+FoaKV3zuEYdB8KgAUUPx4dGOK
+         mbEulBJUZxVmr1kLqckhq8BEHYMPoiCgitA/cnOGetzN+Px5JUKrl/0bq7xGrSJBo6Gw
+         jjxmlrC2LtnNdTQjS+YLn1N7PC0vmAHKOlbbfxdpsYeATfH1BU2n/EAQL6Y0XHDKkIh+
+         rypA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wZkKJggxwRiRWZ0+lIs7COwR3K4bYNSIpUOs6RwQyRk=;
+        b=jGj34LKD3x72pPJhFl4cDjJU9XtTjLsK1AoNtEwjDFFZ54D7EULbtUt1vtfOnCe84g
+         n1vqNSh9XL29Gejck4NkBhvjvKwmuffANDp1UN/YFibpqGyXGDgZQLFz09ytqBmgXok3
+         kseVW3wP2hu2cU7pCRu2VBRUtsa9n7jNSWI+rJyNZSdJ0VkcZ+NeA18a3uGKtnrKXVs0
+         TJa/fmMBlFBkiPY+CbIF2mw02C0jkllgWyAByifHFca9Xc7FuRq9mxg05D4QBSxzE8CP
+         cRg0Z2eTGfeU/P5mjAEkkBafqf2wCm3oIiilKJqwpQThlTgrhXwZerCoWpFgYvnWW8ay
+         7aGQ==
+X-Gm-Message-State: APzg51AyvNqVkVdtGQpjhD69t5eZ9mgfC1jIXk9PZcfhNKy5VHvAN/n2
+        eg1dvPqPdgjp9QvjEjqageok5COT7lo4SzSF2uqU0A==
+X-Google-Smtp-Source: ANB0Vdb0q2FvR1LtVY20924rgW3hGrv+oQg0LnFiTCUjt0jLBhj2JLFtaAOm46O/aQ3zdG4wbAEvU84bj2gadDZy9tg=
+X-Received: by 2002:a17:902:aa49:: with SMTP id c9-v6mr9788294plr.195.1536073373238;
+ Tue, 04 Sep 2018 08:02:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAKb7UvicP594ASs4QutRH4oW1XZ2gTA5Fa=w8FPQzzKaSzDQuw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Tue, 4 Sep 2018 08:02:32
+ -0700 (PDT)
+In-Reply-To: <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+References: <000000000000c178e305749daba4@google.com> <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+ <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov> <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com> <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 4 Sep 2018 17:02:32 +0200
+Message-ID: <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        "russell@coker.com.au" <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-04 3:05 p.m., Ilia Mirkin wrote:
-> On Tue, Sep 4, 2018 at 4:00 AM, Michel Dänzer <michel@daenzer.net> wrote:
->> On 2018-09-03 7:07 p.m., Ilia Mirkin wrote:
->>> On Mon, Sep 3, 2018 at 12:45 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->>>> On Mon, Sep 03, 2018 at 12:57:54PM +0200, Gerd Hoffmann wrote:
->>>>> Userspace on big endian machhines typically expects the ADDFB ioctl
->>>>> returns a big endian framebuffer.  drm_mode_addfb() will call
->>>>> drm_mode_addfb2() unconditionally with little endian DRM_FORMAT_*
->>>>> values though, which is wrong.  This patch fixes that.
+On Tue, Sep 4, 2018 at 2:57 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>>>>>> <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hello,
+>>>>>>>>
+>>>>>>>> syzbot found the following crash on:
+>>>>>>>>
+>>>>>>>> HEAD commit:    817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
+>>>>>>>> git tree:       net-next
+>>>>>>>> console output:
+>>>>>>>> https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
+>>>>>>>> kernel config:
+>>>>>>>> https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+>>>>>>>> dashboard link:
+>>>>>>>> https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
+>>>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>>>>>>
+>>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>>>>>
+>>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the
+>>>>>>>> commit:
+>>>>>>>> Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> Hi John, Tyler,
+>>>>>>>
+>>>>>>> I've switched syzbot from selinux to apparmor as we discussed on lss:
+>>>>>>>
+>>>>>>>
+>>>>>>> https://github.com/google/syzkaller/commit/2c6cb254ae6c06f61e3aba21bb89ffb05b5db946
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Sorry, does this mean that you are no longer testing selinux via
+>>>>>> syzbot?
+>>>>>>     That seems unfortunate.  SELinux is default-enabled and used in
+>>>>>> Fedora, RHEL and all derivatives (e.g. CentOS), and mandatory in
+>>>>>> Android
+>>>>>> (and seemingly getting some use in ChromeOS now as well, at least for
+>>>>>> the Android container and possibly wider), so it seems unwise to drop
+>>>>>> it
+>>>>>> from your testing altogether.  I was under the impression that you
+>>>>>> were
+>>>>>> just going to add apparmor to your testing matrix, not drop selinux
+>>>>>> altogether.
 >>>>>
->>>>> Drivers (both kernel and xorg) have quirks in place to deal with the
->>>>> broken drm_mode_addfb() behavior.  Because of this we can't just change
->>>>> drm_mode_addfb() behavior for everybody without breaking things.  So add
->>>>> a new driver feature flag DRIVER_PREFER_HOST_BYTE_ORDER, so drivers can
->>>>> opt-in.
 >>>>>
->>>>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
->>>>> ---
->>>>>  include/drm/drm_drv.h             |  1 +
->>>>>  drivers/gpu/drm/drm_framebuffer.c | 11 +++++++++++
->>>>>  2 files changed, 12 insertions(+)
 >>>>>
->>>>> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
->>>>> index 46a8009784..9cf12596cd 100644
->>>>> --- a/include/drm/drm_drv.h
->>>>> +++ b/include/drm/drm_drv.h
->>>>> @@ -57,6 +57,7 @@ struct drm_printer;
->>>>>  #define DRIVER_KMS_LEGACY_CONTEXT    0x20000
->>>>>  #define DRIVER_SYNCOBJ                  0x40000
->>>>>  #define DRIVER_PREFER_XBGR_30BPP        0x80000
->>>>> +#define DRIVER_PREFER_HOST_BYTE_ORDER   0x100000
+>>>>> It is also important to note that testing with SELinux enabled but no
+>>>>> policy loaded is not going to be very helpful (last we talked that is
+>>>>> what syzbot is/was doing).  While syzbot did uncover some issues
+>>>>> relating to the enabled-no-policy case, those are much less
+>>>>> interesting and less relevant than the loaded-policy case.
 >>>>
->>>> Hm, not a huge fan of using driver_flags for random little quirks. I think
->>>> a boolean in sturct drm_mode_config would be much better. Bonus if you
->>>> also move the 30bpp hack over to that. Something like
->>>> mode_config.quirk_addfb_host_byte_order and
->>>> mode_config.quirk_addfb_prefer_xbgr_30bpp or whatever. That has the upside
->>>> of giving us a really nice place to put a huge comment about what this is
->>>> supposed to do.
 >>>>
->>>> I think otherwise this looks overall rather reasonable. I think the only
->>>> other driver that ever cared about big endian was radeon/amdgpu. Would be
->>>> good to get at least an ack from amd folks, or a "meh, stopped caring".
+>>>>
+>>>> I had thought that they had switched over to at least loading a policy
+>>>> but
+>>>> possibly left it in permissive mode because the base distribution didn't
+>>>> properly support SELinux out of the box.  But I may be mistaken.
+>>>> Regardless, the right solution is to migrate to testing with a policy
+>>>> loaded not to stop testing altogether.
+>>>>
+>>>> Optimally, they'd test on at least one distribution/OS where SELinux is
+>>>> in
+>>>> fact supported out of the box, e.g. CentOS, Android, and/or ChromeOS.
 >>>
->>> and nouveau.
 >>>
->>> I do believe that ADDFB should be made to always prefer host byte
->>> order -- this is how all of the existing implementations work in
->>> practice. However e.g. nouveau wants DRM_FORMAT_XRGB8888. But it still
->>> treats it as host byte order. This will become more important in a
->>> world where ADDFB2 is more common.
 >>>
->>> So, I think that this change should be applied, drivers (I suspect
->>> just nouveau and radeon) fixed up to consume the "new" formats, [...]
+>>> Or Fedora, of course.
 >>
->> As explained before, that would break radeon userspace on big endian hosts.
-> 
-> We last discussed this about a year ago, so I hope you'll forgive my
-> lapse in memory...
-> 
-> There's userspace that uses ADDFB2 with DRM_FORMAT_XRGB8888 but
-> expects it to be host-endian?
+>>
+>> Hi,
+>>
+>> Yes, we switched from selinux to apparmor. The thing is that we
+>> effectively did not test selinux lately, so it's more like just
+>> enabling apparmor rather than disabling selinux.
+>>
+>> The story goes as follows.
+>> We enabled selinux, but did not have policy and selinux wasn't enabled.
+>> Then Paul (I think) pointer that out. After some debugging I figured
+>> out that our debian wheezy actually has a policy, it's just that
+>> selinux utilities were not installed, so init could not load the
+>> policy.
+>> I installed the tools, and we started loading policy.
+>> But then it turned out that wheezy policy does not allows mounting
+>> cgroup2 fs and maybe some others even in non-enforcing mode. As far as
+>> I understand that's because the policy does not have definition for
+>> the fs, and so loading bails out with an error.
+>> We need cgroup2 both for testing and for better sandboxing (no other
+>> way to restrict e.g. memory consumption). Moreover, we did not test
+>> any actual interesting interactions with selinux (there must be some?
+>> but I don't know what are they).
+>> So I had to uninstall the tool and policy is not loaded again.
+>> I investigated building a newer debian image with debootstrap (which
+>> should have newer policy I guess). But they don't work, some cryptic
+>> errors in init. Other people reported the same.
+>> So that's we are. I don't have any ideas left...
+>
+>
+> So why not ask for help from the SELinux community? I've cc'd the selinux
+> list and a couple of folks involved in Debian selinux.  I see a couple of
+> options but I don't know your constraints for syzbot:
+>
+> 1) Run an instance of syzbot on a distro that supports SELinux enabled out
+> of the box like Fedora. Then you don't have to fight with SELinux and can
+> just focus on syzbot, while still testing SELinux enabled and enforcing.
+>
+> 2) Report the problems you are having with enabling SELinux on newer Debian
+> to the selinux list and/or the Debian selinux package maintainers so that
+> someone can help you resolve them.
+>
+> 3) Back-port the cgroup2 policy definitions to your wheezy policy, rebuild
+> it, and install that.  We could help provide guidance on that. I think
+> you'll need to rebuild the base policy on wheezy; in distributions with
+> modern SELinux userspace, one could do it just by adding a CIL module
+> locally.
 
-ADDFB, not ADDFB2. The latter probably didn't even exist yet when this
-was made to work. :)
+Thanks, Stephen!
+
+I would like to understand first if failing mount(2) for unknown fs is
+selinux bug or not. Because if it is and it is fixed, then it would
+resolve the problem without actually doing anything (well, at least on
+our side :)).
 
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+> As for exercising SELinux, you'll exercise SELinux just by enabling it and
+> loading a policy, since it will perform permission checking on all object
+> accesses.   But you can get more extensive coverage by running the
+> selinux-testsuite.  We only test that on Fedora and RHEL however, so getting
+> it to work on Debian might take some effort.
+
+That's good.
+I just thought that there is some potential in making the policy
+interact more with what the fuzzer does. With respect to fs accesses,
+it works within own temp directory, and I guess the policy is actually
+all the same for everything it does in that directory. There also may
+be something related to extended attributes, context changes, etc?
