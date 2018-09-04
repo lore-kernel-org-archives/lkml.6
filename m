@@ -2,88 +2,102 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B45C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED22C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E9F20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:05:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E9F20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C8F020869
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 06:06:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8F020869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbeIDK3A (ORCPT
+        id S1727389AbeIDKab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 06:29:00 -0400
-Received: from mga03.intel.com ([134.134.136.65]:62723 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbeIDK3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 06:29:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2018 23:05:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,328,1531810800"; 
-   d="scan'208";a="260477015"
-Received: from sgjhaver-mobl2.amr.corp.intel.com ([10.249.254.175])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Sep 2018 23:05:20 -0700
-Message-ID: <339ef1c283fefd657d7a4b9ba2db067d52d9f7ef.camel@intel.com>
-Subject: Re: [PATCH] iwlwifi: mvm:  fix spelling mistake "Recieved" ->
- "Received"
-From:   Luciano Coelho <luciano.coelho@intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Sep 2018 09:05:19 +0300
-In-Reply-To: <20180826223117.12892-1-colin.king@canonical.com>
-References: <20180826223117.12892-1-colin.king@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Sep 2018 06:30:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47562 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726094AbeIDKaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 06:30:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 23BED402315A;
+        Tue,  4 Sep 2018 06:06:54 +0000 (UTC)
+Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 522B22166BA1;
+        Tue,  4 Sep 2018 06:06:52 +0000 (UTC)
+Date:   Tue, 4 Sep 2018 14:06:49 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "H. Peter Anvin" <hpa@zytor.com>, kirill.shutemov@linux.intel.com
+Cc:     x86@kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org
+Subject: Re: [PATCH 1/3] x86/boot: Add bit fields into xloadflags for 5-level
+ kernel checking
+Message-ID: <20180904060649.GK1740@192.168.1.3>
+References: <20180829141624.13985-1-bhe@redhat.com>
+ <20180829141624.13985-2-bhe@redhat.com>
+ <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
+ <20180904034414.GI1740@192.168.1.3>
+ <4546fc39-4982-4c91-c812-0df1e9bc9e20@zytor.com>
+ <20180904052036.GJ1740@192.168.1.3>
+ <c4f65956-ad99-84ee-d4bf-044a6f0c5010@zytor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4f65956-ad99-84ee-d4bf-044a6f0c5010@zytor.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 04 Sep 2018 06:06:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 04 Sep 2018 06:06:54 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-08-26 at 23:31 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 09/03/18 at 10:46pm, H. Peter Anvin wrote:
+> On 09/03/18 22:20, Baoquan He wrote:
+> > On 09/03/18 at 09:13pm, H. Peter Anvin wrote:
+> >> On 09/03/18 20:44, Baoquan He wrote:
+> >>>
+> >>> 1) in arch/x86/kernel/relocate_kernel_64.S, we set X86_CR4_LA57 into cr4
+> >>> if the 1st kernel is in 5-level mode. Then in
+> >>> arch/x86/boot/compressed/head_64.S, paging_prepare() is called to decide
+> >>> if 5-level mode will be enabled, and prepare the trampoline. If
+> >>> kexec/kdump kernel is expected to be in 4-level, e.g with 'nolv5'
+> >>> specified, it still can handle well. But for the old kernel w/o these
+> >>>  5-level codes, it will ignore the fact that X86_CR4_LA57 has been set
+> >>> in CR4 and proceed anyway, then #GP is triggered. That's why XLF_5LEVEL
+> >>> is used to mark. 
+> >>>
+> >>
+> >> That's what I'm saying, don't do that.  Always jump into the second kernel in
+> >> 4-level mode, i.e. X86_CR4_LA57 unset.  That's the only sane thing.
+> > 
+> > Well, this might not be suggested. Kexec has been a formal feature in
+> > our distro, our customers usually use it to reboot high end servers
+> > because those machines may take one hour to boot up from firmware. And
+> > 5-level may be also supported very soon, if people want to do a fast
+> > reboot from the current kernel in 5-level, and expect to see it's in
+> > 5-level too in the 2nd kernel, this always kexec jumping to the 2nd
+> > kernel in 4-level mode might be unaccepted.
+> > 
 > 
-> Trivial fix to spelling mistake in debug message.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-> index b15b0d84bb7e..5f32d3131d62 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-> @@ -3320,7 +3320,7 @@ static bool iwl_mvm_rx_aux_roc(struct iwl_notif_wait_data *notif_wait,
->  	resp = (void *)pkt->data;
->  
->  	IWL_DEBUG_TE(mvm,
-> -		     "Aux ROC: Recieved response from ucode: status=%d uid=%d\n",
-> +		     "Aux ROC: Received response from ucode: status=%d uid=%d\n",
->  		     resp->status, resp->event_unique_id);
->  
->  	te_data->uid = le32_to_cpu(resp->event_unique_id);
+> That makes no sense.  I'm talking about *entering* the kernel; the second
+> kernel should switch to 5-level mode as necessary.
 
-Thanks! Again I pushed this to our internal tree and it will reach the
-mainline following our normal process.
+OK, I didn't get your point. I forget what difficulty was met so that
+Kirill need to take this way. In that way, we will never have chance to
+put kernel above 64TB even from 5-level kernel to jump to 5-level
+kernel.
 
---
-Cheers,
-Luca.
+Hi Kirill,
+
+Could you help to explain why the current implementation is decided?
+
+Thanks
+Baoquan
 
