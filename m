@@ -3,83 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0695C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32441C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7507520869
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:43:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7507520869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id C986C20659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 04:51:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C986C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeIDJFc (ORCPT
+        id S1727296AbeIDJO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 05:05:32 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:45008 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbeIDJFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:05:32 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 2B14DFFA31;
-        Tue,  4 Sep 2018 04:42:08 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 06/11] dt-bindings: display: Add compatible for A64 HDMI
-Date:   Tue,  4 Sep 2018 12:40:48 +0800
-Message-Id: <20180904044053.15425-7-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
+        Tue, 4 Sep 2018 05:14:28 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51150 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726093AbeIDJO1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:14:27 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C293512139FE2;
+        Mon,  3 Sep 2018 21:51:07 -0700 (PDT)
+Date:   Mon, 03 Sep 2018 21:51:07 -0700 (PDT)
+Message-Id: <20180903.215107.929144059014660952.davem@davemloft.net>
+To:     ivan@de.ibm.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chunkeey@gmail.com
+Subject: Re: [PATCH v2] net/ibm/emac: wrong emac_calc_base call was used by
+ typo
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180903072628.19986-1-ivan@de.ibm.com>
+References: <20180903072628.19986-1-ivan@de.ibm.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 03 Sep 2018 21:51:08 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+From: Ivan Mikhaylov <ivan@de.ibm.com>
+Date: Mon, 3 Sep 2018 10:26:28 +0300
 
-The HDMI controller on Allwinner A64 is similar on the one on
-H3/H5/A83T (although the PHY is different with A83T).
+> __emac_calc_base_mr1 was used instead of __emac4_calc_base_mr1
+> by copy-paste mistake for emac4syn.
+> 
+> Fixes: 45d6e545505fd32edb812f085be7de45b6a5c0af ("net/ibm/emac: add 8192 rx/tx fifo size")
+> Signed-off-by: Ivan Mikhaylov <ivan@de.ibm.com>
 
-Add A64 compatible and append A83T compatible as fallback.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-[Icenowy: refactor commit log]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes for v4:
-- none
-Changes for v3.1:
-- Refactor commit log to make it more clear.
-Changes for v3:
-- collect Rob r-w-b tag
-Changes for v2:
-- Add fallback compatible
-
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 7b79c5e3dffc..fdb8fb29033f 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -78,6 +78,7 @@ Required properties:
- 
-   - compatible: value must be one of:
-     * "allwinner,sun8i-a83t-dw-hdmi"
-+    * "allwinner,sun50i-a64-dw-hdmi", "allwinner,sun8i-a83t-dw-hdmi"
-   - reg: base address and size of memory-mapped region
-   - reg-io-width: See dw_hdmi.txt. Shall be 1.
-   - interrupts: HDMI interrupt number
--- 
-2.18.0
-
+Applied.
