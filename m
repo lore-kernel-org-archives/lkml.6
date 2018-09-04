@@ -2,90 +2,166 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A14C43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD91C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 995252086A
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:44:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 995252086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 508862086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 03:51:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gXlWnFBP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KKb/fCXA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508862086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeIDIH2 (ORCPT
+        id S1726281AbeIDIOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 04:07:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726090AbeIDIH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 04:07:28 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 4 Sep 2018 04:14:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39502 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbeIDIOK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 04:14:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B016660708; Tue,  4 Sep 2018 03:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536033061;
+        bh=WNxFlAjiXtNw0S3ADpsV0WUgw3N9yMarJU/lCZLCnu4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gXlWnFBP2dVGejmKebbj+5B8h8OGs9OkxlPaEGeCoVetGUNOVDNdVQflbSuTj20CX
+         2eHcoLpUCqSRqkdUi7gjbsksGcU7a7CYBKeJqAFwYEBiUG5e04RFJIuPYKsRuvbD/f
+         6Jki2IUV7HI5xQVPWo27/DGSDTz6R/t2a63qmYD0=
+Received: from controller.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2152440241C4;
-        Tue,  4 Sep 2018 03:44:20 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A1A3A9E66;
-        Tue,  4 Sep 2018 03:44:17 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 11:44:14 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     tglx@linutronix.de, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 1/3] x86/boot: Add bit fields into xloadflags for 5-level
- kernel checking
-Message-ID: <20180904034414.GI1740@192.168.1.3>
-References: <20180829141624.13985-1-bhe@redhat.com>
- <20180829141624.13985-2-bhe@redhat.com>
- <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 04 Sep 2018 03:44:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 04 Sep 2018 03:44:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        (Authenticated sender: wufan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F9D1603D2;
+        Tue,  4 Sep 2018 03:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536033060;
+        bh=WNxFlAjiXtNw0S3ADpsV0WUgw3N9yMarJU/lCZLCnu4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KKb/fCXAHSMZrYYTaxxH03RmEUXsyIisqby77ofqXPvjsDtxTHm/AALr4eC3OKPny
+         lL4/zgJkXFLgnmIAX0RfL8KvOTMOvtpguh2cho8YHSvCrzVGsM29D06zpnfpVdA8P+
+         V3micJlAcAvTNacRQc2HtN+obYXlSVQ+K+mFSrkQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F9D1603D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
+From:   Fan Wu <wufan@codeaurora.org>
+To:     mchehab@kernel.org
+Cc:     bp@alien8.de, james.morse@arm.com, baicar.tyler@gmail.com,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, john.garry@huawei.com,
+        toshi.kani@hpe.com, tanxiaofei@huawei.com, wanghuiqiang@huawei.com,
+        shiju.jose@huawei.com, Fan Wu <wufan@codeaurora.org>
+Subject: [PATCH v3] EDAC, ghes: use CPER module handles to locate DIMMs
+Date:   Tue,  4 Sep 2018 03:50:55 +0000
+Message-Id: <1536033055-25522-1-git-send-email-wufan@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi hpa,
+For platforms whose firmwares provide valid module handles
+(SMBIOS type 17) in error records, this patch uses the module
+handles to locate corresponding DIMMs and enables per-DIMM
+error counter update.
 
-Thanks for looking into this. 
+Signed-off-by: Fan Wu <wufan@codeaurora.org>
+Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
+Tested-by: Toshi Kani <toshi.kani@hpe.com>
+Reviewed-by: Borislav Petkov <bp@alien8.de>
+Reviewed-by: James Morse <james.morse@arm.com>
+Reviewed-by: tanxiaofei <tanxiaofei@huawei.com>
+---
 
-On 09/03/18 at 07:41pm, H. Peter Anvin wrote:
-> I don't understand why there is any reason not to always enter the target
-> kernel in 4-level mode.  There certainly is no point whatsoever in having two
-> xloadflags: the only thing that could possibly matter is whether or not the
-> kernel in question *can* be entered in 5-level mode should that ever be necessary.
+Changes from v2:
+* Fixed coding style glitch
+* Added Tested-by/Reviewed-by
 
-This patchset is only used to fix kexec/kdump issues. We never stop
-kernel booting in 4-level mode from firmware as 1st kernel. However,
-there are issues when jump from the 1st kernel which is in 5-level mode
-to 2nd kernel. The reason is:
+Changes from v1:
+*  Changed the new function name to get_dimm_smbios_index
+*  Removed unnecessary checks inside get_dimm_smbios_index
+*  Reverted the change of the DMI handle print
+*  Updated commit message
 
-1) in arch/x86/kernel/relocate_kernel_64.S, we set X86_CR4_LA57 into cr4
-if the 1st kernel is in 5-level mode. Then in
-arch/x86/boot/compressed/head_64.S, paging_prepare() is called to decide
-if 5-level mode will be enabled, and prepare the trampoline. If
-kexec/kdump kernel is expected to be in 4-level, e.g with 'nolv5'
-specified, it still can handle well. But for the old kernel w/o these
- 5-level codes, it will ignore the fact that X86_CR4_LA57 has been set
-in CR4 and proceed anyway, then #GP is triggered. That's why XLF_5LEVEL
-is used to mark. 
+---
+ drivers/edac/ghes_edac.c | 23 +++++++++++++++++++++++
+ include/linux/edac.h     |  2 ++
+ 2 files changed, 25 insertions(+)
 
-2) For kexec_load interface, we put kernel/initrd at top of system RAM
-in kexec_tools utility. If the 1st kernel is in 5-level mode, the
-kexec-ed kernel has "CONFIG_X86_5LEVEL=n", we have to detect this and
-limit the kernel to be loaded under 64TB, since kexec-ed kernel will
-definitely run in 4-level mode. Putting kernel above 64TB will fail
-kexec-ed kernel booting. That's why *XLF_5LEVEL_ENABLED* is needed.
+diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+index 473aeec..ba46160 100644
+--- a/drivers/edac/ghes_edac.c
++++ b/drivers/edac/ghes_edac.c
+@@ -81,6 +81,18 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
+ 		(*num_dimm)++;
+ }
+ 
++static int get_dimm_smbios_index(u16 handle)
++{
++	int i;
++	struct mem_ctl_info *mci = ghes_pvt->mci;
++
++	for (i = 0; i < mci->tot_dimms; i++) {
++		if (mci->dimms[i]->smbios_handle == handle)
++			return i;
++	}
++	return -1;
++}
++
+ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+ {
+ 	struct ghes_edac_dimm_fill *dimm_fill = arg;
+@@ -177,6 +189,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+ 				entry->total_width, entry->data_width);
+ 		}
+ 
++		dimm->smbios_handle = entry->handle;
++
+ 		dimm_fill->count++;
+ 	}
+ }
+@@ -327,12 +341,21 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+ 		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
+ 	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
+ 		const char *bank = NULL, *device = NULL;
++		int index = -1;
++
+ 		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
+ 		if (bank != NULL && device != NULL)
+ 			p += sprintf(p, "DIMM location:%s %s ", bank, device);
+ 		else
+ 			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
+ 				     mem_err->mem_dev_handle);
++
++		index = get_dimm_smbios_index(mem_err->mem_dev_handle);
++		if (index >= 0) {
++			e->top_layer = index;
++			e->enable_per_layer_report = true;
++		}
++
+ 	}
+ 	if (p > e->location)
+ 		*(p - 1) = '\0';
+diff --git a/include/linux/edac.h b/include/linux/edac.h
+index bffb978..a45ce1f 100644
+--- a/include/linux/edac.h
++++ b/include/linux/edac.h
+@@ -451,6 +451,8 @@ struct dimm_info {
+ 	u32 nr_pages;			/* number of pages on this dimm */
+ 
+ 	unsigned csrow, cschannel;	/* Points to the old API data */
++
++	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
+ };
+ 
+ /**
+-- 
+2.7.4
 
-Thanks
-Baoquan
