@@ -2,152 +2,595 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342BAC43334
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900EEC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4C520659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 17:59:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EC9D20659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 18:00:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oLrjWxw4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4C520659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r1motLsq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC9D20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeIDWZc (ORCPT
+        id S1727739AbeIDW0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 18:25:32 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:41569 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeIDWZc (ORCPT
+        Tue, 4 Sep 2018 18:26:23 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:43831 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeIDW0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 18:25:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1536083962; x=1567619962;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=FuBkKc7mLWWwFvCg5TBYpHiVRZl1zlicDiwT1uEST2k=;
-  b=oLrjWxw4aXBnJPJCqMdLJOdc0feaMtsWIBaun97wacbqCtQS8EOffcxv
-   oFEuZCIYygN3CYeBZxApGSLnay3FtzwQ3diQlD/9Ih1SZvpjOkpzNtlSG
-   2Oln+0qm1BGAGpU3bhBzwamJUZHb8tj4uIHPX7Of+IORQeUp5mvpoMDQw
-   mtb5Zg1gBHrFzaNc3QYDtQRTgxZxzC1/RSUQz/jSDa0RaZMNPWu3YYjkn
-   83ylOEEDUwBPRaYOqBd3rQJiOHBnXOUkiO/nYwvhFltoOVTu75CQ0Qg0B
-   EONs8W69sSBQx8ooaXAcuIEUvY9sAjX2jq9wqeHEu1WHmE2whwvvSP7D8
-   g==;
-X-IronPort-AV: E=Sophos;i="5.53,329,1531756800"; 
-   d="scan'208";a="90583680"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 05 Sep 2018 01:59:21 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 04 Sep 2018 10:46:06 -0700
-Received: from use204589.ad.shared (HELO [10.86.59.178]) ([10.86.59.178])
-  by uls-op-cesaip02.wdc.com with ESMTP; 04 Sep 2018 10:59:21 -0700
-Subject: Re: [PATCH v2 1/3] RISC-V: Add logical CPU indexing for RISC-V
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "damein@vger.kernel.org" <damein@vger.kernel.org>
-References: <1535445370-19004-1-git-send-email-atish.patra@wdc.com>
- <1535445370-19004-2-git-send-email-atish.patra@wdc.com>
- <20180831060352.GA19292@infradead.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <5930c4f2-b091-6f20-ef6d-2358a370482d@wdc.com>
-Date:   Tue, 4 Sep 2018 10:59:20 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 4 Sep 2018 18:26:23 -0400
+Received: by mail-qt0-f195.google.com with SMTP id g53-v6so4991226qtg.10;
+        Tue, 04 Sep 2018 11:00:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gna2h/HntSjC5GakDtgQKiFAXA9aYxP5rmtvA6OmiPU=;
+        b=r1motLsq2Czve3l2wbDrfQGdqSWH/B7JgbhRXf9z/rvVyevrJ/+WheWlctb5UMWKQV
+         36NrgNXSJL/isAvnNTgxyRzdcEo0QJK1uhu4za4d/cR0Vjq/oEAxQonC18nT1TUAflp3
+         8mkjwDCqr7AuAA1lYSLPZE0V3DTPylWHcoS14M3iBHi+J/2GO4GXFcgu/+3XqYJQ6Fyk
+         yXdf+UZGXdCotHf5Vm9J5er5T0nzwD6GoFTXHUYfvsNJE/lID5KNgXgzCZFr5tp2XgZv
+         V7W2+nzqLYdrqw56VdI8VXKzb3P3eiTieflepLGAu70gPMzjo7H0qBH3XNEGH5mTb/5f
+         kogA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gna2h/HntSjC5GakDtgQKiFAXA9aYxP5rmtvA6OmiPU=;
+        b=Y1c6DVBS/GoiTaRlnqJBM+x69O2kIpzyb/INdy/3glgqjStV2+nVC7+yvFJSffB/cG
+         h47TGAOCqHt0baCfE17V5BPsEFP2PQTgeQ477wBKfVaswQzBObG8w1KhoxfNYqwnyo+i
+         ztcvfHDewN4iR6zOMKXB/VZTN6M+YgpuJV2Onu+03cRWaZ+nOcfc+83AI9VYVvkjw+F5
+         v+tbZB1Bh87ccSgOzsCn9vfCoN6DfkfjGc/alYifM0qGg64CxfMBGOUrTBrHdfun/MU3
+         u/UYmc8K29dgsjG+qeMVKxCCVJESUoXzO/hEp+weFpBtTWy57ENiFNmOd3WG3ERj93wu
+         p5bA==
+X-Gm-Message-State: APzg51B4o3NMwDw3kh2aJiZit3BC93OXzwS06sdQ23+6hsxsI5h5LDXC
+        iHtxmFNxxM0SGrwsLptDZMneuTOmhC9vErvcVjYX+hW/pr/TOA==
+X-Google-Smtp-Source: ANB0VdYvNA3/byt/W4hLjCueH+zh2x+9hKbR8/eZFxaso/eoUue79sIuF4vk5ykY2LtzT7yBINjzNXSXNgNtCLtz6SU=
+X-Received: by 2002:aed:2b83:: with SMTP id e3-v6mr30224420qtd.246.1536084010048;
+ Tue, 04 Sep 2018 11:00:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180831060352.GA19292@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com> <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 4 Sep 2018 20:59:58 +0300
+Message-ID: <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
+Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        suresh.b.siddha@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>, ebiggers@google.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/18 11:03 PM, Christoph Hellwig wrote:
-> On Tue, Aug 28, 2018 at 01:36:08AM -0700, Atish Patra wrote:
->> Currently, both linux cpu id and hardware cpu id are same.
->> This is not recommended as it will lead to discontinuous cpu
->> indexing in Linux. Moreover, kdump kernel will run from CPU0
->> which would be absent if we follow existing scheme.
->>
->> Implement a logical mapping between Linux cpu id and hardware
->> cpuid to decouple these two. Always mark the boot processor as
->> cpu0 and all other cpus get the logical cpu id based on their
->> booting order.
->>
->> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->> ---
->>   arch/riscv/include/asm/smp.h | 18 +++++++++++++++++-
->>   arch/riscv/kernel/setup.c    |  2 ++
->>   arch/riscv/kernel/smp.c      | 19 +++++++++++++++++++
->>   3 files changed, 38 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
->> index 36016845..a5c257b3 100644
->> --- a/arch/riscv/include/asm/smp.h
->> +++ b/arch/riscv/include/asm/smp.h
->> @@ -22,6 +22,13 @@
->>   #include <linux/cpumask.h>
->>   #include <linux/irqreturn.h>
->>   
->> +#define INVALID_HARTID -1
->> +/*
->> + * Mapping between linux logical cpu index and hartid.
->> + */
->> +extern unsigned long __cpu_logical_map[NR_CPUS];
->> +#define cpu_logical_map(cpu)    __cpu_logical_map[cpu]
-> 
-> How about naming this cpuid_to_hardid_map to make things a little
-> more obvious?  
+On Mon, Aug 27, 2018 at 9:58 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the enclave is disallowed to access the memory
+> inside the enclave by the CPU access control.
+>
+> SGX driver provides a ioctl API for loading and initializing enclaves.
+> Address range for enclaves is reserved with mmap() and they are
+> destroyed with munmap(). Enclave construction, measurement and
+> initialization is done with the provided the ioctl API.
 
-Sure.
-Also shouldn't this be signed given your INVALID_HARTID
-> definition above.
-> 
+> +/*
+> + * This file is provided under a dual BSD/GPLv2 license.  When using or
+> + * redistributing this file, you may do so under either license.
+> + *
+> + * GPL LICENSE SUMMARY
+> + *
+> + * Copyright(c) 2016-2017 Intel Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of version 2 of the GNU General Public License as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful, but
+> + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> + * General Public License for more details.
+> + *
+> + * Contact Information:
+> + * Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> + * Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+> + *
+> + * BSD LICENSE
+> + *
+> + * Copyright(c) 2016-2017 Intel Corporation.
+> + *
+> + * Redistribution and use in source and binary forms, with or without
+> + * modification, are permitted provided that the following conditions
+> + * are met:
+> + *
+> + *   * Redistributions of source code must retain the above copyright
+> + *     notice, this list of conditions and the following disclaimer.
+> + *   * Redistributions in binary form must reproduce the above copyright
+> + *     notice, this list of conditions and the following disclaimer in
+> + *     the documentation and/or other materials provided with the
+> + *     distribution.
+> + *   * Neither the name of Intel Corporation nor the names of its
+> + *     contributors may be used to endorse or promote products derived
+> + *     from this software without specific prior written permission.
+> + *
+> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+> + * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+> + * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+> + * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+> + * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+> + * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+> + * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+> + * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+> + * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+> + * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+> + * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+> + *
 
-I don't know what I was thinking after adding INVALID_HARTID. I will fix 
-this.
+Can't we just put one line with SPDX identifier?
 
->> +static inline int riscv_hartid_to_cpuid(int hartid) { return 0 ; }
->> +static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
->> +				       struct cpumask *out) {
->> +	cpumask_set_cpu(cpu_logical_map(0), out);
->> +}
-> 
-> Please use normal coding style even for stubs:
-> 
-> static inline int riscv_hartid_to_cpuid(int hartid)
-> {
-> 	return 0;
-> }
-> 
-> static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
-> 			struct cpumask *out)
-> {
-> 	cpumask_set_cpu(cpu_logical_map(0), out);
-> }
-> 
->> +unsigned long __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HARTID };
-> 
-> Please break the line into the usual format:
-> 
+> + * Authors:
 
+> + *
 
-> unsigned long __cpu_logical_map[NR_CPUS] = {
-> 	[0 ... NR_CPUS-1]	= INVALID_HARTID,
-> };
-> 
-ok.
+Redundant line.
 
-Regards,
-Atish
+> + * Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> + * Suresh Siddha <suresh.b.siddha@intel.com>
+> + */
+
+> +/**
+
+> + * struct sgx_enclave_add_page - parameter structure for the
+> + *                               %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
+
+I don't think multi-line would work nice for short description line.
+
+> + * @addr:      address within the ELRANGE
+> + * @src:       address for the page data
+> + * @secinfo:   address for the SECINFO data
+> + * @mrmask:    bitmask for the measured 256 byte chunks
+> + */
+
+> +config INTEL_SGX
+> +       tristate "Intel(R) SGX Driver"
+
+Spell SGX fully here.
+
+> +       default n
+
+Drop this.
+
+> +++ b/drivers/platform/x86/intel_sgx/Makefile
+> @@ -0,0 +1,13 @@
+> +#
+> +# Intel SGX
+> +#
+
+No SPDX?  (Same, btw, for Kconfig)
+
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+
+Should be /* */ in headers AFAIR.
+
+Btw, shouldn't be this file rather under include/linux/platform_data/x86/ ?
+
+> +#define sgx_pr_ratelimited(level, encl, fmt, ...)                      \
+> +       pr_ ## level ## _ratelimited("[%d:0x%p] " fmt,                  \
+> +                                    pid_nr((encl)->tgid),              \
+> +                                    (void *)(encl)->base, ##__VA_ARGS__)
+> +#define sgx_dbg(encl, fmt, ...) \
+> +       sgx_pr_ratelimited(debug, encl, fmt, ##__VA_ARGS__)
+> +#define sgx_info(encl, fmt, ...) \
+> +       sgx_pr_ratelimited(info, encl, fmt, ##__VA_ARGS__)
+> +#define sgx_warn(encl, fmt, ...) \
+> +       sgx_pr_ratelimited(warn, encl, fmt, ##__VA_ARGS__)
+> +#define sgx_err(encl, fmt, ...) \
+> +       sgx_pr_ratelimited(err, encl, fmt, ##__VA_ARGS__)
+> +#define sgx_crit(encl, fmt, ...) \
+> +       sgx_pr_ratelimited(crit, encl, fmt, ##__VA_ARGS__)
+
+Rate limited versions do not guarantee all info to be printed (as far
+as I heard).
+If you are going to use them everywhere it would be nice to see that
+RL versions are in use.
+So, please, add suffix _rl at least to your helper macros.
+
+> +#define SGX_ENCL_PAGE_PCMD_OFFSET(encl_page, encl)             \
+> +({                                                             \
+> +       unsigned long ret;                                      \
+> +       ret = SGX_ENCL_PAGE_BACKING_INDEX(encl_page, encl);     \
+
+> +       ((ret & 31) * 128);                                     \
+
+What these magic numbers are about?
+
+> +})
+
+> +#define SGX_INVD(ret, encl, fmt, ...)          \
+> +do {                                           \
+> +       if (WARN(ret, "sgx: " fmt, ##__VA_ARGS__))      \
+> +               sgx_invalidate(encl, true);     \
+> +} while (0)
+
+Perhaps INVD -> INV as I can see as a pattern in kernel.
+
+> +#include <asm/mman.h>
+
+linux/* first
+
+> +#include <linux/delay.h>
+> +#include <linux/file.h>
+> +#include <linux/hashtable.h>
+> +#include <linux/highmem.h>
+> +#include <linux/ratelimit.h>
+> +#include <linux/sched/signal.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/slab.h>
+> +#include <linux/suspend.h>
+
+> +                       if ((entry->desc & SGX_ENCL_PAGE_LOADED) &&
+> +                           (entry->desc & SGX_ENCL_PAGE_TCS) &&
+> +                           !sgx_encl_find(encl->mm, addr, &vma))
+
+> +               if ((entry->desc & SGX_ENCL_PAGE_LOADED) &&
+> +                   !(entry->desc & SGX_ENCL_PAGE_RECLAIMED)) {
+> +                       if (!__sgx_free_page(entry->epc_page))
+> +                               entry->desc &= ~SGX_ENCL_PAGE_LOADED;
+
+> +static int sgx_measure(struct sgx_epc_page *secs_page,
+> +                      struct sgx_epc_page *epc_page,
+> +                      u16 mrmask)
+> +{
+
+> +       int ret = 0;
+
+I would rather expect this to be closer to where it's used.
+
+> +       void *secs;
+> +       void *epc;
+> +       int i;
+> +       int j;
+> +
+> +       if (!mrmask)
+> +               return ret;
+
+return 0; ?
+
+> +
+> +       secs = sgx_epc_addr(secs_page);
+> +       epc = sgx_epc_addr(epc_page);
+> +
+
+... ret = 0;
+
+Actually, it's not needed, since you are always call __eextend() at
+least once (see above check for !mrmask).
+
+> +       for (i = 0, j = 1; i < 0x1000 && !ret; i += 0x100, j <<= 1) {
+> +               if (!(j & mrmask))
+> +                       continue;
+> +
+> +               ret = __eextend(secs, (void *)((unsigned long)epc + i));
+> +       }
+
+Can we rewrite this like
+
+unsigned long tmp = mrmask;
+
+for_each_set_bit(j, ...) {
+ ret = ...(... + j * 0x100));
+ if (ret)
+  break;
+}
+
+?
+
+> +       struct sgx_encl *encl;
+
+> +       encl = container_of(work, struct sgx_encl, add_page_work);
+
+Could this assignment be directly in definition block?
+
+> +       } while (!kref_put(&encl->refcount, sgx_encl_release) && !is_empty);
+
+isn't it the same as  !(... || ...) ?
+
+> +}
+
+> +static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
+> +{
+> +       u32 size_max = PAGE_SIZE;
+> +       u32 size;
+> +       int i;
+> +
+
+> +       for (i = 2; i < 64; i++) {
+> +               if (!((1 << i) & xfrm))
+> +                       continue;
+
+DECLARE_BITMAP(tmp, 64);
+
+tmp = bitmap_from_u64(tmp, xfrm & ~3);
+for_each_set_bit(i, tmp) {
+ ...
+}
+
+> +
+> +               size = SGX_SSA_GPRS_SIZE + sgx_xsave_size_tbl[i];
+> +               if (miscselect & SGX_MISC_EXINFO)
+> +                       size += SGX_SSA_MISC_EXINFO_SIZE;
+
+> +               if (size > size_max)
+> +                       size_max = size;
+
+size_max = max(size_max, size);
+
+> +       }
+> +
+
+> +       return (size_max + PAGE_SIZE - 1) >> PAGE_SHIFT;
+
+snd_sgbuf_aligned_pages() is the same. Perhaps time to create a helper
+here and in the future it can be moved to some generic one?
+
+Ooops, it's actually PFN_UP().
+
+> +}
+> +
+> +static int sgx_validate_secs(const struct sgx_secs *secs,
+> +                            unsigned long ssaframesize)
+> +{
+> +       int i;
+> +
+> +       if (secs->size < (2 * PAGE_SIZE) ||
+
+> +           (secs->size & (secs->size - 1)) != 0)
+
+is_power_of_2()
+
+> +               return -EINVAL;
+> +
+> +       if (secs->base & (secs->size - 1))
+> +               return -EINVAL;
+> +
+> +       if (secs->attributes & SGX_ATTR_RESERVED_MASK ||
+> +           secs->miscselect & sgx_misc_reserved)
+> +               return -EINVAL;
+
+> +       if ((secs->xfrm & 0x3) != 0x3 || (secs->xfrm & ~sgx_xfrm_mask))
+> +               return -EINVAL;
+
+Some magic is here
+
+> +
+> +       /* Check that BNDREGS and BNDCSR are equal. */
+
+> +       if (((secs->xfrm >> 3) & 1) != ((secs->xfrm >> 4) & 1))
+
+Perhaps
+
+(!!(... & BIT(3)) ^ !!(... & BIT(4))) ?
+
+...and actually define those magic bits?
+
+> +               return -EINVAL;
+> +
+> +       if (!secs->ssa_frame_size || ssaframesize > secs->ssa_frame_size)
+> +               return -EINVAL;
+> +
+
+> +       for (i = 0; i < SGX_SECS_RESERVED1_SIZE; i++)
+> +               if (secs->reserved1[i])
+> +                       return -EINVAL;
+> +
+> +       for (i = 0; i < SGX_SECS_RESERVED2_SIZE; i++)
+> +               if (secs->reserved2[i])
+> +                       return -EINVAL;
+> +
+> +       for (i = 0; i < SGX_SECS_RESERVED3_SIZE; i++)
+> +               if (secs->reserved3[i])
+> +                       return -EINVAL;
+> +
+> +       for (i = 0; i < SGX_SECS_RESERVED4_SIZE; i++)
+> +               if (secs->reserved4[i])
+> +                       return -EINVAL;
+
+Can you use memchr_inv() in all above cases?
+
+> +       return 0;
+> +}
+> +
+
+> +       struct sgx_encl *encl =
+> +               container_of(mn, struct sgx_encl, mmu_notifier);
+
+One line?
+
+> +       backing = shmem_file_setup("[dev/sgx]", secs->size + PAGE_SIZE,
+> +                                  VM_NORESERVE);
+> +       if (IS_ERR(backing))
+
+> +               return (void *)backing;
+
+ERR_CAST() please.
+
+> +       pcmd = shmem_file_setup("[dev/sgx]", (secs->size + PAGE_SIZE) >> 5,
+> +                               VM_NORESERVE);
+> +       if (IS_ERR(pcmd)) {
+> +               fput(backing);
+
+> +               return (void *)pcmd;
+
+Ditto.
+
+> +       }
+
+> +int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+> +{
+> +       struct vm_area_struct *vma;
+> +       struct sgx_pageinfo pginfo;
+> +       struct sgx_secinfo secinfo;
+> +       struct sgx_epc_page *secs_epc;
+> +       long ret;
+> +
+> +       secs_epc = sgx_alloc_page(&encl->secs.impl, 0);
+> +       if (IS_ERR(secs_epc)) {
+
+> +               ret = PTR_ERR(secs_epc);
+> +               return ret;
+
+One line.
+
+> +       }
+
+> +       pginfo.addr = 0;
+> +       pginfo.contents = (unsigned long)secs;
+> +       pginfo.metadata = (unsigned long)&secinfo;
+> +       pginfo.secs = 0;
+> +       memset(&secinfo, 0, sizeof(secinfo));
+
++ blank line here.
+
+> +       ret = __ecreate((void *)&pginfo, sgx_epc_addr(secs_epc));
+
+> +
+
+- blank line here.
+
+> +       if (ret) {
+> +               sgx_dbg(encl, "ECREATE returned %ld\n", ret);
+> +               return ret;
+> +       }
+
+> +       down_read(&current->mm->mmap_sem);
+> +       ret = sgx_encl_find(current->mm, secs->base, &vma);
+
+> +       if (ret != -ENOENT) {
+
+> +               if (!ret)
+> +                       ret = -EINVAL;
+
+> +               return ret;
+
+return ret ? ret : -EINVAL;
+
+> +       }
+
+> +}
+
+> +       for (i = 0; i < SGX_SECINFO_RESERVED_SIZE; i++)
+> +               if (secinfo->reserved[i])
+> +                       return -EINVAL;
+
+memchr_inv() ?
+
+> +       if (offset & (PAGE_SIZE - 1))
+> +               return false;
+
+~PAGE_MASK ?
+
+> +       if ((tcs->fs_limit & 0xFFF) != 0xFFF)
+> +               return -EINVAL;
+> +
+> +       if ((tcs->gs_limit & 0xFFF) != 0xFFF)
+> +               return -EINVAL;
+
+Are they ~PAGE_MASK as well? Please define properly.
+
+> +       if (sgx_validate_secinfo(secinfo))
+> +               return -EINVAL;
+
++ blank line
+
+> +       if (page_type == SGX_SECINFO_TCS) {
+> +               ret = sgx_validate_tcs(encl, data);
+> +               if (ret)
+> +                       return ret;
+> +       }
+
++ blank line
+
+> +       ret = sgx_encl_grow(encl);
+> +       if (ret)
+> +               return ret;
+
++ blank line
+
+> +       mutex_lock(&encl->lock);
+> +       if (encl->flags & (SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD)) {
+> +               mutex_unlock(&encl->lock);
+> +               return -EINVAL;
+> +       }
+
++ blank line
+
+> +       encl_page = sgx_encl_alloc_page(encl, addr);
+> +       if (IS_ERR(encl_page)) {
+> +               mutex_unlock(&encl->lock);
+> +               return PTR_ERR(encl_page);
+> +       }
+
++ blank line
+
+> +       ret = __sgx_encl_add_page(encl, encl_page, data, secinfo, mrmask);
+> +       if (ret)
+> +               sgx_encl_free_page(encl_page);
+
++ blank line
+
+> +       mutex_unlock(&encl->lock);
+
+> +       u64 mrsigner[4];
+
+Magic 4.
+
+> +       for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
+> +               for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
+> +                       ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
+> +                                       mrsigner);
+
+> +                       if (ret == SGX_UNMASKED_EVENT)
+> +                               continue;
+
+> +                       else
+> +                               break;
+
+Seems redundant
+
+> +               }
+
+> +       while (!list_empty(&encl->va_pages)) {
+> +               va_page = list_first_entry(&encl->va_pages, struct sgx_va_page,
+> +                                          list);
+
+list_for_each_entry_safe() ?
+
+> +               list_del(&va_page->list);
+> +               sgx_free_page(va_page->epc_page);
+> +               kfree(va_page);
+> +       }
+
+--
+With Best Regards,
+Andy Shevchenko
