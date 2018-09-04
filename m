@@ -2,145 +2,133 @@ Return-Path: <SRS0=7C3F=LS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B09EC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36109C43334
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A636020652
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A636020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DA14520843
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Sep 2018 16:52:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA14520843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbeIDVQS (ORCPT
+        id S1727574AbeIDVSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Sep 2018 17:16:18 -0400
-Received: from mga02.intel.com ([134.134.136.20]:3525 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726410AbeIDVQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Sep 2018 17:16:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 09:50:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,329,1531810800"; 
-   d="scan'208";a="260629698"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.255.229.157]) ([10.255.229.157])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Sep 2018 09:50:20 -0700
-Subject: Re: [PATCH V2 0/6] perf/core and x86/intel_rdt: Fix lack of
- coordination with perf
-To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        vikas.shivappa@linux.intel.com
-Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1534450299.git.reinette.chatre@intel.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <7e94d3e1-26db-48c2-f525-eb36bed79d0c@intel.com>
-Date:   Tue, 4 Sep 2018 09:50:19 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 4 Sep 2018 17:18:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726167AbeIDVSA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Sep 2018 17:18:00 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w84GndAv002729
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Sep 2018 12:52:03 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m9uw46adb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 12:52:02 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 4 Sep 2018 12:52:01 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Sep 2018 12:51:57 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w84Gpu552949514
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Sep 2018 16:51:56 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6EA5B2064;
+        Tue,  4 Sep 2018 12:50:44 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B914DB2066;
+        Tue,  4 Sep 2018 12:50:44 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  4 Sep 2018 12:50:44 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0C34516C1C02; Tue,  4 Sep 2018 09:52:00 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 09:52:00 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: Re: [PATCH] srcu: fix kernel-doc missing notation
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <b3068192-4690-284f-3062-0a2fb7bb32b7@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <cover.1534450299.git.reinette.chatre@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3068192-4690-284f-3062-0a2fb7bb32b7@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18090416-2213-0000-0000-000002E7E9EB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009670; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01083492; UDB=6.00559153; IPR=6.00863491;
+ MB=3.00023109; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-04 16:51:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090416-2214-0000-0000-00005B70B755
+Message-Id: <20180904165200.GF4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-04_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809040170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Maintainers,
+On Mon, Sep 03, 2018 at 12:45:45PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix kernel-doc warnings for missing parameter descriptions:
+> 
+> ../include/linux/srcu.h:175: warning: Function parameter or member 'p' not described in 'srcu_dereference_notrace'
+> ../include/linux/srcu.h:175: warning: Function parameter or member 'sp' not described in 'srcu_dereference_notrace'
+> 
+> Fixes: 0b764a6e4e19d ("srcu: Add notrace variant of srcu_dereference")
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-This series is still needed to complete the initial cache pseudo-locking
-implementation and still applies cleanly to both x86/cache of tip.git as
-well as v4.19-rc2.
+Queued, thank you Randy!
 
-At this time users are unable to measure the success of their cache
-pseudo-locked regions and either need to manually apply this series or
-revert the commit that disables the current measurement mechanisms
-"4a7a54a55e7237386cacc73f173e74329773ac93 x86/intel_rdt: Disable PMU
-access".
+							Thanx, Paul
 
-Is there perhaps an opportunity to include this series into v4.19?
-Patches 2-6 from this series fixes code that does not exist in earlier
-kernels. Patch 1 was suggested by Peter and is a fix to perf.
-
-Your consideration would be greatly appreciated.
-
-Thank you
-
-Reinette
-
-On 8/16/2018 1:16 PM, Reinette Chatre wrote:
-> Dear Maintainers,
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  include/linux/srcu.h |    3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> This is the second attempt at fixing the lack of coordination between the
-> pseudo-locking measurement code and perf. Thank you very much for your
-> feedback on the first version. The entire solution, including the cover
-> letter, has been reworked based on your feedback, while submitted as a V2,
-> none of the patches from V1 remained.
+> --- lnx-419-rc2.orig/include/linux/srcu.h
+> +++ lnx-419-rc2/include/linux/srcu.h
+> @@ -171,6 +171,9 @@ static inline int srcu_read_lock_held(co
 > 
-> Changes since V1:
-> - Use in-kernel interface to perf.
-> - Do not write directly to PMU registers.
-> - Do not introduce another PMU owner. perf maintains role as performing
->   resource arbitration for PMU.
-> - User space is able to use perf and resctrl at the same time.
-> - event_base_rdpmc is accessed and used only within an interrupts
->   disabled section.
-> - Internals of events are never accessed directly, inline function used.
-> - Due to "pinned" usage the scheduling of event may have failed.  Error
->   state is checked in recommended way and have a credible error
->   handling.
-> - use X86_CONFIG
+>  /**
+>   * srcu_dereference_notrace - no tracing and no lockdep calls from here
+> + * @p: the pointer to fetch and protect for later dereferencing
+> + * @sp: pointer to the srcu_struct, which is used to check that we
+> + *	really are in an SRCU read-side critical section.
+>   */
+>  #define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
 > 
-> This code is based on the x86/cache branch of tip.git
 > 
-> The success of Cache Pseudo-Locking, as measured by how many cache lines
-> from a physical memory region has been locked to cache, can be measured
-> via the use of hardware performance events. Specifically, the number of
-> cache hits and misses reading a memory region after it has been
-> pseudo-locked to cache. This measurement is triggered via the resctrl
-> debugfs interface.
-> 
-> The current solution accesses performance counters and their configuration
-> registers directly without coordination with other performance event users
-> (perf).
-> Two of the issues that exist with the current solution:
-> - By writing to the performance monitoring registers directly a new owner
->   for these resources is introduced. The perf infrastructure already exist
->   to perform resource arbitration and the in-kernel infrastructure should
->   be used to do so.
-> - The current lack of coordination with perf will have consequences any time
->   two users, for example perf and cache pseudo-locking, attempt to do any
->   kind of measurement at the same time.
-> 
-> In this series the measurement of Cache Pseudo-Lock regions is moved to use
-> the in-kernel interface to perf. During the rework of the measurement
-> function the L2 and L3 cache measurements are separated to avoid the
-> additional code needed to decide on which measurement causing unrelated
-> cache hits and misses.
-> 
-> Your feedback on this work will be greatly appreciated.
-> 
-> Reinette
-> 
-> Reinette Chatre (6):
->   perf/core: Add sanity check to deal with pinned event failure
->   x86/intel_rdt: Remove local register variables
->   x86/intel_rdt: Create required perf event attributes
->   x86/intel_rdt: Add helper to obtain performance counter index
->   x86/intel_rdt: Use perf infrastructure for measurements
->   x86/intel_rdt: Re-enable pseudo-lock measurements
-> 
->  Documentation/x86/intel_rdt_ui.txt          |  22 +-
->  arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 419 ++++++++++++++------
->  kernel/events/core.c                        |   6 +
->  3 files changed, 310 insertions(+), 137 deletions(-)
 > 
 
