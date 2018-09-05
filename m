@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953F6C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA84AC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAE920867
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 629222077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYNelwM8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAE920867
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mdkrv2KM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629222077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbeIFCiD (ORCPT
+        id S1728406AbeIFCiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:38:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52430 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 22:38:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeIFCiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:38:02 -0400
+        id S1728389AbeIFCiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:38:06 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6752C2083D;
-        Wed,  5 Sep 2018 22:05:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5F2C20652;
+        Wed,  5 Sep 2018 22:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536185151;
-        bh=HVkKYsAfHCEqg1f+8iWerqb7tKfM3M5QBHrMvjChbl0=;
+        s=default; t=1536185154;
+        bh=yjdjdpNxb89Nyrv0jmX4CWa9+202tJP1jdNRZ8WTDD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sYNelwM8mAcWUjbuoV7xHNOLd+JR9WIKZetLD3axhgbwVstrhUeKhPP4OY5vUTjYj
-         GvVH+JOisxEeSnJxDxGfXx4JsHMp9FL1RWgErC9pAmCQqsPzqo69mi4Cu9qxReMf3Z
-         nzn5nfTvYrwUpas5PT3b+glsOnqGekIXYPXmgFE0=
+        b=Mdkrv2KMCsMyqiBvxysCvZAX+US41XM97rJVgiOn2usP3zqqhHmg8aN0obUJeUyNN
+         k9APMAkQlh/mUWzlGsaVIFg+keXHu7Qbw/VDkNzBsEDOMWQL5AQyHOYRLP+cG2tkTN
+         W5hemQTdREZbrleJsEzAuRDRDunZ++n/xFQw5hxM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 22/77] perf augmented_syscalls: Update the header comments
-Date:   Wed,  5 Sep 2018 19:03:45 -0300
-Message-Id: <20180905220440.20256-23-acme@kernel.org>
+Subject: [PATCH 23/77] perf trace augmented_syscalls: Rename augmented_*_syscall__enter to just *_syscall
+Date:   Wed,  5 Sep 2018 19:03:46 -0300
+Message-Id: <20180905220440.20256-24-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180905220440.20256-1-acme@kernel.org>
 References: <20180905220440.20256-1-acme@kernel.org>
@@ -58,52 +58,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Reflecting the fact that it now augments more than syscalls:sys_enter_SYSCALL
-tracepoints that have filename strings as args. Also mention how the
-extra data is handled by the by now modified 'perf trace' beautifiers,
-that will use special "augmented" beautifiers when extra data is found
-after the expected syscall enter/exit tracepoints.
+As we'll also hook into the syscalls:sys_exit_SYSCALL for which there
+are enter hooks.
+
+This way we'll be able to iterate the ELF file for the eBPF program,
+find the syscalls that have hooks and filter them out from the general
+raw_syscalls:sys_{enter,exit} tracepoint for not-yet-augmented (the ones
+with pointer arguments not yet being attached to the usual syscalls
+tracepoint payload) and non augmentable syscalls (syscalls without
+pointer arguments).
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ybskanehmdilj5fs7080nz1g@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-cl1xyghwb1usp500354mv37h@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_syscalls.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ tools/perf/examples/bpf/augmented_syscalls.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index be06d2c9e8c9..bfa28eaf27b3 100644
+index bfa28eaf27b3..253b3ccbd17d 100644
 --- a/tools/perf/examples/bpf/augmented_syscalls.c
 +++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Augment the openat syscall with the contents of the filename pointer argument.
-+ * Augment syscalls with the contents of the pointer arguments.
-  *
-  * Test it with:
-  *
-@@ -10,12 +10,10 @@
-  * the last one should be the one for '/etc/passwd'.
-  *
-  * This matches what is marshalled into the raw_syscall:sys_enter payload
-- * expected by the 'perf trace' beautifiers, and can be used by them unmodified,
-- * which will be done as that feature is implemented in the next csets, for now
-- * it will appear in a dump done by the default tracepoint handler in 'perf trace',
-- * that uses bpf_output__fprintf() to just dump those contents, as done with
-- * the bpf-output event associated with the __bpf_output__ map declared in
-- * tools/perf/include/bpf/stdio.h.
-+ * expected by the 'perf trace' beautifiers, and can be used by them, that will
-+ * check if perf_sample->raw_data is more than what is expected for each
-+ * syscalls:sys_{enter,exit}_SYSCALL tracepoint, uing the extra data as the
-+ * contents of pointer arguments.
-  */
+@@ -32,7 +32,7 @@ struct augmented_filename {
+ 	char	value[256];
+ };
  
- #include <stdio.h>
+-#define augmented_filename_syscall_enter(syscall)						\
++#define augmented_filename_syscall(syscall)							\
+ struct augmented_enter_##syscall##_args {			 				\
+ 	struct syscall_enter_##syscall##_args	args;				 		\
+ 	struct augmented_filename		filename;				 	\
+@@ -60,7 +60,7 @@ struct syscall_enter_openat_args {
+ 	long		   mode;
+ };
+ 
+-augmented_filename_syscall_enter(openat);
++augmented_filename_syscall(openat);
+ 
+ struct syscall_enter_open_args {
+ 	unsigned long long common_tp_fields;
+@@ -70,7 +70,7 @@ struct syscall_enter_open_args {
+ 	long		   mode;
+ };
+ 
+-augmented_filename_syscall_enter(open);
++augmented_filename_syscall(open);
+ 
+ struct syscall_enter_inotify_add_watch_args {
+ 	unsigned long long common_tp_fields;
+@@ -80,7 +80,7 @@ struct syscall_enter_inotify_add_watch_args {
+ 	long		   mask;
+ };
+ 
+-augmented_filename_syscall_enter(inotify_add_watch);
++augmented_filename_syscall(inotify_add_watch);
+ 
+ struct statbuf;
+ 
+@@ -91,13 +91,13 @@ struct syscall_enter_newstat_args {
+ 	struct stat	   *statbuf;
+ };
+ 
+-augmented_filename_syscall_enter(newstat);
++augmented_filename_syscall(newstat);
+ 
+ #ifndef _K_SS_MAXSIZE
+ #define _K_SS_MAXSIZE 128
+ #endif
+ 
+-#define augmented_sockaddr_syscall_enter(syscall)						\
++#define augmented_sockaddr_syscall(syscall)						\
+ struct augmented_enter_##syscall##_args {			 				\
+ 	struct syscall_enter_##syscall##_args	args;				 		\
+ 	struct sockaddr_storage			addr;						\
+@@ -128,7 +128,7 @@ struct syscall_enter_bind_args {
+ 	unsigned long	   addrlen;
+ };
+ 
+-augmented_sockaddr_syscall_enter(bind);
++augmented_sockaddr_syscall(bind);
+ 
+ struct syscall_enter_connect_args {
+ 	unsigned long long common_tp_fields;
+@@ -138,7 +138,7 @@ struct syscall_enter_connect_args {
+ 	unsigned long	   addrlen;
+ };
+ 
+-augmented_sockaddr_syscall_enter(connect);
++augmented_sockaddr_syscall(connect);
+ 
+ struct syscall_enter_sendto_args {
+ 	unsigned long long common_tp_fields;
+@@ -151,6 +151,6 @@ struct syscall_enter_sendto_args {
+ 	long		   addr_len;
+ };
+ 
+-augmented_sockaddr_syscall_enter(sendto);
++augmented_sockaddr_syscall(sendto);
+ 
+ license(GPL);
 -- 
 2.14.4
 
