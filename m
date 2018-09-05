@@ -2,79 +2,125 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B91CC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B442C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A012073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:52:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1L4BEoJq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A012073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id BA8692073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:54:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8692073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeIEMVp (ORCPT
+        id S1727713AbeIEMX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:21:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57914 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbeIEMVp (ORCPT
+        Wed, 5 Sep 2018 08:23:28 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:37695 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbeIEMX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:21:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qhzfZW+9aQS7VMMF3q18FnhsfKlwAziHfmHjOfyfhig=; b=1L4BEoJqpWnsC8cyD4/tuBq3y
-        Tb6+F0YLqA7C2vXHSo0V2F8+rxPc1z974m/CBnNDmJeiCpsjSsDKlJt2hUbMloUUWM8mNwqJSX+iN
-        GC+zIJmE+UD+rOlI2nRoV4R7qyIsdo1sLWo3RhACxwaSnAtHz9gELNO+2s57AlVTk8zFyZDvJADDI
-        wd27sGW3YmpzXD2JQoZIq6ktTjmPACuo8WnGUp5KNtQCghZhjQcYPNIehq8eRqdAXdOQjpCveF4FA
-        mjJmFF0zQHljf8dD+OghOZzok1g16R4LVsYOm15fL9Q3BzguJujRqRAFKqCJtG8vy9AAeNJls0C7p
-        tvQDYh1bw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxScE-0003iQ-2e; Wed, 05 Sep 2018 07:52:42 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5587C20191BFF; Wed,  5 Sep 2018 09:52:38 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 09:52:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 2/3] x86/speculation: apply IBPB more strictly to
- avoid cross-process data leak
-Message-ID: <20180905075238.GN24124@hirez.programming.kicks-ass.net>
-References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
- <alpine.LRH.2.00.1809041641170.14475@gjva.wvxbf.pm>
+        Wed, 5 Sep 2018 08:23:28 -0400
+Received: by mail-ua1-f68.google.com with SMTP id y10-v6so5068302uao.4;
+        Wed, 05 Sep 2018 00:54:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ad/qRrnN4bLcopeN3HdSw1TMV2koQ9WNay3tso3QlhU=;
+        b=r13MSDlQY0WY8e64BbA24lmv/TyGnHtOtyfFvHqbN3HSz/Un1jnP/Onpq0rCvbia1Q
+         bJJMizR2Pa0RFC0qDouLQ5OoKTVg/0lDSDorSLPRF5dYyW+jxk89GXpabwywss9C3wAC
+         fLDKcAtcHDKMkBNtO4Z/QotyIdG/SJ/9JzjeozWiXC1HzgpGGkt9Vc4tmVqTVriA1fxW
+         muOTUSUoSaalgy/YHioYxRJcMP+oB4l9Jauj8Jj85iBcQiiZfS0nkiaDUx35GbHqkSYF
+         +KxR6QMBeiUN2p+EJwHF4G4EGwIZ+p/nCvXBz8I05CuhmfeBYbFod0LsP2rAQqMnkVpa
+         R8hg==
+X-Gm-Message-State: APzg51CC9y3rOlWgnSvSUzncgW2bUzkaWZ4nAAikUmG99DOOUOCtslXK
+        XzhfvhAdS+pfEj+7jcyr8aAsKTWcV/1imYfqisw=
+X-Google-Smtp-Source: ANB0VdbAsD3h0aj8HvD1SpZQlJH9QVI9XTox2Bmva4EHL91FNE1tbNZPJc/Fy7VD20Yy/ip0An/cRQVyyrIJddZ0l6M=
+X-Received: by 2002:a67:33cc:: with SMTP id z195-v6mr12319765vsz.40.1536134070170;
+ Wed, 05 Sep 2018 00:54:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.00.1809041641170.14475@gjva.wvxbf.pm>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180808090944.861-1-simon.k.r.goldschmidt@gmail.com>
+ <f27a5e90-9783-761e-a87b-9b8a2d46d2a4@denx.de> <CAAh8qsyHxMjwBtBa5pYejkOxwFRbbFbt+myC4ynQQonK8MAo-w@mail.gmail.com>
+ <ba66504e-c002-7dc6-daed-633fee896131@denx.de>
+In-Reply-To: <ba66504e-c002-7dc6-daed-633fee896131@denx.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 5 Sep 2018 09:54:18 +0200
+Message-ID: <CAMuHMdUMaggMHmPWRh081UD8AFgq58Rfsdz22xpt9fHUTyx92g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: socfpga: use stdout-path for chosen node
+To:     Marek Vasut <marex@denx.de>
+Cc:     simon.k.r.goldschmidt@gmail.com, Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 04:42:02PM +0200, Jiri Kosina wrote:
->  		if (tsk && tsk->mm &&
->  		    tsk->mm->context.ctx_id != last_ctx_id &&
-> -		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-> +		    ___ptrace_may_access(current, tsk, PTRACE_MODE_IBPB))
->  			indirect_branch_prediction_barrier();
+On Wed, Aug 8, 2018 at 2:11 PM Marek Vasut <marex@denx.de> wrote:
+> On 08/08/2018 02:02 PM, Simon Goldschmidt wrote:
+> > On Wed, Aug 8, 2018 at 1:32 PM Marek Vasut <marex@denx.de> wrote:
+> >> On 08/08/2018 11:09 AM, Simon Goldschmidt wrote:
+> >>> Use stdout-path dts property for kernel console.
+> >>>
+> >>> There were two socfpga boards left not using stdout-path:
+> >>> socrates and vining. Make sure they match the other boards.
+> >>>
+> >>> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+> >>> ---
+> >>>  arch/arm/boot/dts/socfpga_cyclone5_socrates.dts    | 3 ++-
+> >>>  arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts | 3 ++-
+> >>>  2 files changed, 4 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+> >>> index 53bf99eef66d..6f5255a7d192 100644
+> >>> --- a/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+> >>> +++ b/arch/arm/boot/dts/socfpga_cyclone5_socrates.dts
+> >>> @@ -22,7 +22,8 @@
+> >>>       compatible = "ebv,socrates", "altr,socfpga-cyclone5", "altr,socfpga";
+> >>>
+> >>>       chosen {
+> >>> -             bootargs = "console=ttyS0,115200";
+> >>> +             bootargs = "earlyprintk";
+> >>> +             stdout-path = "serial0:115200n8";
+> >>>       };
+> >>>
+> >>>       memory@0 {
+> >>> diff --git a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+> >>> index f50b19447de6..e61efe16e79c 100644
+> >>> --- a/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+> >>> +++ b/arch/arm/boot/dts/socfpga_cyclone5_vining_fpga.dts
+> >>> @@ -54,7 +54,8 @@
+> >>>       compatible = "samtec,vining", "altr,socfpga-cyclone5", "altr,socfpga";
+> >>>
+> >>>       chosen {
+> >>> -             bootargs = "console=ttyS0,115200";
+> >>> +             bootargs = "earlyprintk";
+> >>
+> >> Why this earlyprintk ?
+> >
+> > The reason is Dinh added that to all socfpga boards in his commit [1]
+> > and I wanted the remaining two boards to be the same.
+>
+> Isn't earlyprintk mostly a debugging aid ?
 
-See how the new (first) argument is 'current' and you could've just used
-the old __ptrace_may_access().
+Indeed.
+
+And the modern way is "earlycon", not "earlyprintk".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
