@@ -2,104 +2,152 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4600EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27485C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C9020645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C9020645
+	by mail.kernel.org (Postfix) with ESMTP id B6D5F206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:04:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tiO/CbhX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D5F206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbeIFAe2 (ORCPT
+        id S1727853AbeIFAgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 20:34:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35758 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727254AbeIFAe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 20:34:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D0E65AE46;
-        Wed,  5 Sep 2018 20:02:41 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 22:02:40 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-cc:     Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
- be applied on arbitrary tasks
-In-Reply-To: <20180905184018.GC11625@redhat.com>
-Message-ID: <nycvar.YFH.7.76.1809052159330.15880@cbobk.fhfr.pm>
-References: <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm> <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com> <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm> <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
- <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm> <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com> <nycvar.YFH.7.76.1809050725390.15880@cbobk.fhfr.pm> <20180905155823.GL27886@tassilo.jf.intel.com> <20180905180459.GB11625@redhat.com>
- <nycvar.YFH.7.76.1809052026470.15880@cbobk.fhfr.pm> <20180905184018.GC11625@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 5 Sep 2018 20:36:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727254AbeIFAgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 20:36:23 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC05E20645;
+        Wed,  5 Sep 2018 20:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536177878;
+        bh=P74U6QIhg99RFvTYbBMMcUoedxLyNQ0gctbk8iD6zY8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tiO/CbhXqbyrosSaZM7IwjtThu+x4zK80qt3SQyrpSu9Hg99iDHBIdD7UVqrllkxH
+         hqS8K5v2af6fveIESI39i9Uy+BEKEQxdNRVs6YGGPYIk8gJRnLlEAstGDkmgb7S3fJ
+         KURl0nrm6MhuAx1pKpEcBpw/E+8Wv+0jSYBAIShI=
+Date:   Wed, 5 Sep 2018 15:04:34 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, rgummal@xilinx.com
+Subject: Re: [PATCH v2] PCI/AER: Enable SERR# forwarding in non ACPI flow
+Message-ID: <20180905200434.GP107892@bhelgaas-glaptop.roam.corp.google.com>
+References: <1533826657-24552-1-git-send-email-bharat.kumar.gogada@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533826657-24552-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018, Andrea Arcangeli wrote:
+On Thu, Aug 09, 2018 at 08:27:37PM +0530, Bharat Kumar Gogada wrote:
+> As per Figure 6-3 in PCIe r4.0, sec 6.2.6, ERR_ messages
+> will be forwarded from the secondary interface to the primary interface,
+> if the SERR# Enable bit in the Bridge Control register is set.
+> Currently PCI_BRIDGE_CTL_SERR is being enabled only in
+> ACPI flow.
+> This patch enables PCI_BRIDGE_CTL_SERR for Type-1 PCI device.
 
-> [ 1838.621010] Kernel panic - not syncing: Watchdog detected hard LOCKUP on cpu 6
-> [ 1838.629070] CPU: 6 PID: 0 Comm: swapper/6 Not tainted 3.10.0-327.62.4.el7.x86_64 #1
-> [ 1838.637610] Hardware name: Dell Inc. PowerEdge R430/0CN7X8, BIOS 2.4.2 01/09/2017
-> [ 1838.645954] Call Trace:
-> [ 1838.648680]  <NMI>  [<ffffffff8163a05d>] dump_stack+0x19/0x1b
-> [ 1838.655113]  [<ffffffff816338d0>] panic+0xd8/0x1e7
-> [ 1838.660460]  [<ffffffff8111e960>] ? restart_watchdog_hrtimer+0x50/0x50
-> [ 1838.667742]  [<ffffffff8111ea22>] watchdog_overflow_callback+0xc2/0xd0
-> [ 1838.675024]  [<ffffffff81162211>] __perf_event_overflow+0xa1/0x250
-> [ 1838.681920]  [<ffffffff81162ce4>] perf_event_overflow+0x14/0x20
-> [ 1838.688526]  [<ffffffff810337c8>] intel_pmu_handle_irq+0x1e8/0x470
-> [ 1838.695423]  [<ffffffff812f83cc>] ? ioremap_page_range+0x24c/0x330
-> [ 1838.702320]  [<ffffffff811a9031>] ? unmap_kernel_range_noflush+0x11/0x20
-> [ 1838.709797]  [<ffffffff813997f4>] ? ghes_copy_tofrom_phys+0x124/0x210
-> [ 1838.716984]  [<ffffffff81399980>] ? ghes_read_estatus+0xa0/0x190
-> [ 1838.723687]  [<ffffffff816444bb>] perf_event_nmi_handler+0x2b/0x50
-> [ 1838.730582]  [<ffffffff81643c09>] nmi_handle.isra.0+0x69/0xb0
-> [ 1838.736992]  [<ffffffff81643db9>] do_nmi+0x169/0x340
-> [ 1838.742532]  [<ffffffff81642ff9>] end_repeat_nmi+0x1e/0x7e
-> [ 1838.748653]  [<ffffffff81641bbd>] ? _raw_spin_lock_irqsave+0x3d/0x60
-> [ 1838.755742]  [<ffffffff81641bbd>] ? _raw_spin_lock_irqsave+0x3d/0x60
-> [ 1838.762831]  [<ffffffff81641bbd>] ? _raw_spin_lock_irqsave+0x3d/0x60
-> [ 1838.769917]  <<EOE>>  [<ffffffff816391e5>] avc_compute_av+0x126/0x1b5
-> [ 1838.777125]  [<ffffffff810b842e>] ? walk_tg_tree_from+0xbe/0x110
-> [ 1838.783828]  [<ffffffff8128b9c4>] avc_has_perm_noaudit+0xc4/0x110
-> [ 1838.790628]  [<ffffffff8128f1fb>] cred_has_capability+0x6b/0x120
-> [ 1838.797331]  [<ffffffff810db71c>] ? ktime_get+0x4c/0xd0
-> [ 1838.803160]  [<ffffffff810e167b>] ? clockevents_program_event+0x6b/0xf0
-> [ 1838.810532]  [<ffffffff8128f2de>] selinux_capable+0x2e/0x40
-> [ 1838.816748]  [<ffffffff81288f65>] security_capable_noaudit+0x15/0x20
-> [ 1838.823829]  [<ffffffff8108b975>] has_ns_capability_noaudit+0x15/0x20
-> [ 1838.831014]  [<ffffffff8108bc55>] ptrace_has_cap+0x35/0x40
-> [ 1838.837126]  [<ffffffff8108c717>] ___ptrace_may_access+0xa7/0x1e0
-> [ 1838.843925]  [<ffffffff8163f0ae>] __schedule+0x26e/0xa00
-> [ 1838.849855]  [<ffffffff81640949>] schedule_preempt_disabled+0x29/0x70
-> [ 1838.857041]  [<ffffffff810d9324>] cpu_startup_entry+0x184/0x290
-> [ 1838.863637]  [<ffffffff8104891a>] start_secondary+0x1da/0x250
+I agree this is a problem.  We should not depend on how firmware set
+PCI_BRIDGE_CTL_SERR.
 
-So yeah, current Linus' tree needs the same treatment -- we have to avoid 
-calling out to ptrace_has_cap() in PTRACE_MODE_NOACCESS_CHK cases.
+I would prefer to set it in the pci_configure_device() path so we
+always do it the same way for every device, independent of whether AER
+is enabled.
 
-I have updated the patch for v4. Thanks again,
+Some platform firmware must already enable PCI_BRIDGE_CTL_SERR, even
+though it can't know whether the OS will support AER, so it should be
+safe for the OS to enable it unconditionally.
 
--- 
-Jiri Kosina
-SUSE Labs
+The code in program_hpp_type0() that sets PCI_BRIDGE_CTL_SERR is based
+on 40abb96c51bb ("[PATCH] pciehp: Fix programming hotplug
+parameters") [1], but I think it is incorrect.
 
+ACPI v6.0, sec 6.2.9.1, (_HPX PCI Setting Record) says:
+
+  If the hot plug device includes bridge(s) in the hierarchy, the
+  above settings apply to the primary side (command register) of the
+  hot plugged bridge(s). The settings for the secondary side of the
+  bridge(s) (Bridge Control Register) are assumed to be provided by
+  the bridge driver.
+
+Sec 6.2.8 (for the old _HPP method) doesn't contain that text, but it
+has the same description of the contents:
+
+  Enable SERR    When set to 1, indicates that action must be
+		 performed to enable SERR in the command register.
+
+Both sections talk about enabling SERR in the *command* register (not
+the bridge control register) and the _HPX section is explicit about
+the fact that "Enable SERR" does not apply to the bridge control
+register.
+
+So I think pci_configure_device() should unconditionally set
+PCI_BRIDGE_CTL_SERR for all bridge devices.  And we should remove the
+corresponding code from program_hpp_type0().
+
+[1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=40abb96c51bb
+
+> Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+> ---
+>  drivers/pci/pcie/aer.c |   23 +++++++++++++++++++++++
+>  1 files changed, 23 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index a2e8838..4fb0d24 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -343,6 +343,20 @@ int pci_enable_pcie_error_reporting(struct pci_dev *dev)
+>  	if (!dev->aer_cap)
+>  		return -EIO;
+>  
+> +	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+> +		u16 control;
+> +
+> +		/*
+> +		 * A Type-1 PCI bridge will not forward ERR_ messages coming
+> +		 * from an endpoint if SERR# forwarding is not enabled.
+> +		 */
+> +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
+> +		if (!(control & PCI_BRIDGE_CTL_SERR)) {
+> +			control |= PCI_BRIDGE_CTL_SERR;
+> +			pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
+> +		}
+> +	}
+> +
+>  	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL, PCI_EXP_AER_FLAGS);
+>  }
+>  EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
+> @@ -352,6 +366,15 @@ int pci_disable_pcie_error_reporting(struct pci_dev *dev)
+>  	if (pcie_aer_get_firmware_first(dev))
+>  		return -EIO;
+>  
+> +	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+> +		u16 control;
+> +
+> +		/* Clear SERR Forwarding */
+> +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
+> +		control &= ~PCI_BRIDGE_CTL_SERR;
+> +		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
+> +	}
+> +
+>  	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
+>  					  PCI_EXP_AER_FLAGS);
+>  }
+> -- 
+> 1.7.1
+> 
