@@ -2,279 +2,160 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2F1C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3091BC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA7A2206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:14:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA7A2206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DADD9206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:16:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADD9206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbeIESok (ORCPT
+        id S1727604AbeIESqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:44:40 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:40822 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeIESok (ORCPT
+        Wed, 5 Sep 2018 14:46:43 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:6576 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIESqn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:44:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id C95B9C0708;
-        Wed,  5 Sep 2018 14:14:14 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id TEgskNvEnQlb; Wed,  5 Sep 2018 14:14:14 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 5578BC0F52;
-        Wed,  5 Sep 2018 14:13:52 +0000 (UTC)
-Subject: Re: [PATCH v6] selftests: add headers_install to lib.mk
-To:     Anders Roxell <anders.roxell@linaro.org>,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        bamv2005@gmail.com, brgl@bgdev.pl, pbonzini@redhat.com,
-        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
-        aarcange@redhat.com
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180809080402.24469-1-anders.roxell@linaro.org>
- <20180904104721.27535-1-anders.roxell@linaro.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <c191d6a8-9f15-6c1c-1a6a-2b2ce7924288@kernel.org>
-Date:   Wed, 5 Sep 2018 08:13:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 14:46:43 -0400
+X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
+   d="scan'208";a="20112975"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 05 Sep 2018 07:16:19 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch03.mchp-main.com
+ (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Wed, 5 Sep 2018
+ 07:16:18 -0700
+Date:   Wed, 5 Sep 2018 16:14:54 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Richard Genoud <richard.genoud@gmail.com>
+CC:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <alexandre.belloni@bootlin.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <jslaby@suse.com>, Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH v3 2/2] tty/serial: atmel: add ISO7816 support
+Message-ID: <20180905141454.xh2ovvpoth6s76ne@M43218.corp.atmel.com>
+Mail-Followup-To: Richard Genoud <richard.genoud@gmail.com>,
+        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, alexandre.belloni@bootlin.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, jslaby@suse.com,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <20180807130049.5957-1-ludovic.desroches@microchip.com>
+ <20180807130049.5957-3-ludovic.desroches@microchip.com>
+ <d66c4318-1d31-5c4e-3952-6b69a010b028@sorico.fr>
+ <20180809113035.kftvdalca7zsf4ly@M43218.corp.atmel.com>
+ <20180905124341.5n4gadgd5luza7fd@M43218.corp.atmel.com>
+ <211528d5-81b6-46f2-4191-66023d928ae3@sorico.fr>
 MIME-Version: 1.0
-In-Reply-To: <20180904104721.27535-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <211528d5-81b6-46f2-4191-66023d928ae3@sorico.fr>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 04:47 AM, Anders Roxell wrote:
-> If the kernel headers aren't installed we can't build all the tests.
-> Add a new make target rule 'khdr' in the file lib.mk to generate the
-> kernel headers and that gets include for every test-dir Makefile that
-> includes lib.mk If the testdir in turn have its own sub-dirs the
-> top_srcdir needs to be set to the linux-rootdir to be able to generate
-> the kernel headers.
+On Wed, Sep 05, 2018 at 03:53:02PM +0200, Richard Genoud wrote:
+> [added Nicolas back in the thread, he was removed somehow]
 > 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
-> ---
+> Hi Ludovic !
 > 
-> I sent this (v5) a month ago and wondered if it got lost. Resending
-> unchanged.
-> 
-> Cheers,
-> Anders
-> 
->  Makefile                                           | 14 +-------------
->  scripts/subarch.include                            | 13 +++++++++++++
->  tools/testing/selftests/android/Makefile           |  2 +-
->  tools/testing/selftests/android/ion/Makefile       |  2 ++
->  tools/testing/selftests/futex/functional/Makefile  |  1 +
->  tools/testing/selftests/gpio/Makefile              |  7 ++-----
->  tools/testing/selftests/kvm/Makefile               |  7 ++-----
->  tools/testing/selftests/lib.mk                     | 12 ++++++++++++
->  tools/testing/selftests/net/Makefile               |  1 +
->  .../selftests/networking/timestamping/Makefile     |  1 +
->  tools/testing/selftests/vm/Makefile                |  4 ----
->  11 files changed, 36 insertions(+), 28 deletions(-)
->  create mode 100644 scripts/subarch.include
-> 
-> diff --git a/Makefile b/Makefile
-> index 19948e556941..9c781e77fa24 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -299,19 +299,7 @@ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
->  KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
->  export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
->  
-> -# SUBARCH tells the usermode build what the underlying arch is.  That is set
-> -# first, and if a usermode build is happening, the "ARCH=um" on the command
-> -# line overrides the setting of ARCH below.  If a native build is happening,
-> -# then ARCH is assigned, getting whatever value it gets normally, and
-> -# SUBARCH is subsequently ignored.
-> -
-> -SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-> -				  -e s/sun4u/sparc64/ \
-> -				  -e s/arm.*/arm/ -e s/sa110/arm/ \
-> -				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-> -				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-> -				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
-> -				  -e s/riscv.*/riscv/)
-> +include scripts/subarch.include
->  
->  # Cross compiling and selecting different set of gcc/bin-utils
->  # ---------------------------------------------------------------------------
-> diff --git a/scripts/subarch.include b/scripts/subarch.include
-> new file mode 100644
-> index 000000000000..650682821126
-> --- /dev/null
-> +++ b/scripts/subarch.include
-> @@ -0,0 +1,13 @@
-> +# SUBARCH tells the usermode build what the underlying arch is.  That is set
-> +# first, and if a usermode build is happening, the "ARCH=um" on the command
-> +# line overrides the setting of ARCH below.  If a native build is happening,
-> +# then ARCH is assigned, getting whatever value it gets normally, and
-> +# SUBARCH is subsequently ignored.
-> +
-> +SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-> +				  -e s/sun4u/sparc64/ \
-> +				  -e s/arm.*/arm/ -e s/sa110/arm/ \
-> +				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-> +				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-> +				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
-> +				  -e s/riscv.*/riscv/)
-> diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/selftests/android/Makefile
-> index 72c25a3cb658..d9a725478375 100644
-> --- a/tools/testing/selftests/android/Makefile
-> +++ b/tools/testing/selftests/android/Makefile
-> @@ -6,7 +6,7 @@ TEST_PROGS := run.sh
->  
->  include ../lib.mk
->  
-> -all:
-> +all: khdr
->  	@for DIR in $(SUBDIRS); do		\
->  		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
->  		mkdir $$BUILD_TARGET  -p;	\
-> diff --git a/tools/testing/selftests/android/ion/Makefile b/tools/testing/selftests/android/ion/Makefile
-> index e03695287f76..88cfe88e466f 100644
-> --- a/tools/testing/selftests/android/ion/Makefile
-> +++ b/tools/testing/selftests/android/ion/Makefile
-> @@ -10,6 +10,8 @@ $(TEST_GEN_FILES): ipcsocket.c ionutils.c
->  
->  TEST_PROGS := ion_test.sh
->  
-> +KSFT_KHDR_INSTALL := 1
-> +top_srcdir = ../../../../..
->  include ../../lib.mk
->  
->  $(OUTPUT)/ionapp_export: ionapp_export.c ipcsocket.c ionutils.c
-> diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-> index ff8feca49746..ad1eeb14fda7 100644
-> --- a/tools/testing/selftests/futex/functional/Makefile
-> +++ b/tools/testing/selftests/futex/functional/Makefile
-> @@ -18,6 +18,7 @@ TEST_GEN_FILES := \
->  
->  TEST_PROGS := run.sh
->  
-> +top_srcdir = ../../../../..
->  include ../../lib.mk
->  
->  $(TEST_GEN_FILES): $(HEADERS)
-> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-> index 1bbb47565c55..4665cdbf1a8d 100644
-> --- a/tools/testing/selftests/gpio/Makefile
-> +++ b/tools/testing/selftests/gpio/Makefile
-> @@ -21,11 +21,8 @@ endef
->  CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
->  LDLIBS += -lmount -I/usr/include/libmount
->  
-> -$(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
-> +$(BINARIES):| khdr
-> +$(BINARIES): ../../../gpio/gpio-utils.o
->  
->  ../../../gpio/gpio-utils.o:
->  	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
-> -
-> -../../../../usr/include/linux/gpio.h:
-> -	make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
-> -
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-> index 03b0f551bedf..87d1a8488af8 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -37,9 +37,6 @@ $(LIBKVM_OBJ): $(OUTPUT)/%.o: %.c
->  $(OUTPUT)/libkvm.a: $(LIBKVM_OBJ)
->  	$(AR) crs $@ $^
->  
-> -$(LINUX_HDR_PATH):
-> -	make -C $(top_srcdir) headers_install
-> -
-> -all: $(STATIC_LIBS) $(LINUX_HDR_PATH)
-> +all: $(STATIC_LIBS)
->  $(TEST_GEN_PROGS): $(STATIC_LIBS)
-> -$(TEST_GEN_PROGS) $(LIBKVM_OBJ): | $(LINUX_HDR_PATH)
-> +$(STATIC_LIBS):| khdr
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index 17ab36605a8e..0a8e75886224 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -16,8 +16,20 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
->  TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
->  TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
->  
-> +top_srcdir ?= ../../../..
-> +include $(top_srcdir)/scripts/subarch.include
-> +ARCH		?= $(SUBARCH)
-> +
->  all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
->  
-> +.PHONY: khdr
-> +khdr:
-> +	make ARCH=$(ARCH) -C $(top_srcdir) headers_install
-> +
-> +ifdef KSFT_KHDR_INSTALL
-> +$(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES):| khdr
-> +endif
-> +
->  .ONESHELL:
->  define RUN_TEST_PRINT_RESULT
->  	TEST_HDR_MSG="selftests: "`basename $$PWD`:" $$BASENAME_TEST";	\
-> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-> index cccdb2295567..256d82d5fa87 100644
-> --- a/tools/testing/selftests/net/Makefile
-> +++ b/tools/testing/selftests/net/Makefile
-> @@ -15,6 +15,7 @@ TEST_GEN_FILES += udpgso udpgso_bench_tx udpgso_bench_rx ip_defrag
->  TEST_GEN_PROGS = reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
->  TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict tls
->  
-> +KSFT_KHDR_INSTALL := 1
->  include ../lib.mk
->  
->  $(OUTPUT)/reuseport_bpf_numa: LDFLAGS += -lnuma
-> diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
-> index a728040edbe1..14cfcf006936 100644
-> --- a/tools/testing/selftests/networking/timestamping/Makefile
-> +++ b/tools/testing/selftests/networking/timestamping/Makefile
-> @@ -5,6 +5,7 @@ TEST_PROGS := hwtstamp_config rxtimestamp timestamping txtimestamp
->  
->  all: $(TEST_PROGS)
->  
-> +top_srcdir = ../../../../..
->  include ../../lib.mk
->  
->  clean:
-> diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-> index 9881876d2aa0..e94b7b14bcb2 100644
-> --- a/tools/testing/selftests/vm/Makefile
-> +++ b/tools/testing/selftests/vm/Makefile
-> @@ -26,10 +26,6 @@ TEST_PROGS := run_vmtests
->  
->  include ../lib.mk
->  
-> -$(OUTPUT)/userfaultfd: ../../../../usr/include/linux/kernel.h
->  $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
->  
->  $(OUTPUT)/mlock-random-test: LDLIBS += -lcap
-> -
-> -../../../../usr/include/linux/kernel.h:
-> -	make -C ../../../.. headers_install
-> 
+> On 05/09/2018 14:43, Ludovic Desroches wrote:
+> > Hi Richard,
+> > 
+> > On Thu, Aug 09, 2018 at 01:30:35PM +0200, Ludovic Desroches wrote:
+> >> Hi Richard,
+> >>
+> >> On Thu, Aug 09, 2018 at 10:47:17AM +0200, Richard Genoud wrote:
+> >>> Hi !
+> >>>
+> >>> On 07/08/2018 15:00, Ludovic Desroches wrote:
+> >>>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >>>>
+> >>>> When mode is set in atmel_config_iso7816() we backup last RS232 mode
+> >>>> for coming back to this mode if requested.
+> >>>> Also allow setup of T=0 and T=1 parameter and basic support in set_termios
+> >>>> function as well.
+> >>>>
+> >>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >>>> [ludovic.desroches@microchip.com: rebase, add check on fidi ratio, checkpatch fixes]
+> >>>> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> >>>> ---
+> >>>>  drivers/tty/serial/atmel_serial.c | 211 +++++++++++++++++++++++++++++++++++---
+> >>>>  drivers/tty/serial/atmel_serial.h |   6 +-
+> >>>>  2 files changed, 201 insertions(+), 16 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+> >>>> index 8e4428725848..4a7ec44b0ace 100644
+> >>>> --- a/drivers/tty/serial/atmel_serial.c
+> >>>> +++ b/drivers/tty/serial/atmel_serial.c
+> >>
+> >> [...]
+> >>
+> >>>>  #if defined(CONFIG_OF)
+> >>>> +static struct atmel_uart_pdata at91rm9200_pdata = {
+> >>>> +	.fidi_min = 1,
+> >>>> +	.fidi_max = 2047,
+> >>>> +};
+> >>>> +
+> >>>> +static struct atmel_uart_pdata at91sam9260_pdata = {
+> >>>> +	.fidi_min = 1,
+> >>>> +	.fidi_max = 2047,
+> >>>> +};
+> >>>> +
+> >>>> +static struct atmel_uart_pdata sama5d3_pdata = {
+> >>>> +	.fidi_min = 3,
+> >>>> +	.fidi_max = 65535,
+> >>> Are you sure this is for sama5d3 ?
+> >>> From the datasheets I have, 65535 is for sama5d4/sama5d2
+> >>
+> >> I checked it and I missed it. What a pity... In fact, it's a bit more
+> >> tricky since the min value for d3 is 3 and no longer 1.
+> >>
+> >>> And also, you'll have to s/atmel,at91sam9260-usart/atmel,sama5d2-usart/g
+> >>> in sama5d{2,4}.dtsi
+> >>>
+> >>
+> >> Yes, I planed to send it later but I can add those patches within this
+> >> set of patches. 
+> >>
+> >>> But I wonder if it could be detected via ATMEL_US_VERSION instead ?
+> >>>
+> >>
+> >> I have not checked, I tend to prefer the compatible string for this kind
+> >> of thing. But as we already use the version number, I can investigate
+> >> this solution if it's the one you prefer.
+> >>
+> > 
+> > ping about this question still in suspend in order to prepare a new version.
+> Well, if we use the compatible string for this, we will have to add :
+> - atmel,sama5d2-usart
+> - atmel,sama5d3-usart
+> - (maybe others ?)
+> to the already existing :
+> - atmel,at91sam9260-usart
+> - atmel,at91rm9200-usart
+> just for setting different limits on the fidi register.
+> IMHO, it seems a bit overkill. Moreover, the ATMEL_US_VERSION has
+> already been read, so...
+> But if you think adding compatible strings is a better/cleaner solution, just convince me ! :)
 
-I queued this up in linux-kselftest next to be included in my next
-pull request.
+I won't try to convince you since we already use the ATMEL_US_VERSION.
+IMHO we should use the compatible string from the beginning but we
+didn't have the necessary DT experience at this time to figure out it
+was probably better than relying on the version number which can be not
+incrimented by error.
 
-thanks,
--- Shuah
+I'll check the values of the ATMEL_US_VERSION and use it if everything
+is okay.
+
+Regards
+
+Ludovic
