@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD91C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC5DC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960632075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960632075E
+	by mail.kernel.org (Postfix) with ESMTP id 84492206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84492206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbeIENqP (ORCPT
+        id S1728245AbeIENqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:46:15 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39661 "EHLO mail.bootlin.com"
+        Wed, 5 Sep 2018 09:46:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39642 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbeIENqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:46:14 -0400
+        id S1726071AbeIENqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 09:46:17 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A73EB2079D; Wed,  5 Sep 2018 11:16:56 +0200 (CEST)
+        id 9E748208A4; Wed,  5 Sep 2018 11:16:57 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 707A52079D;
-        Wed,  5 Sep 2018 11:16:46 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5DE8F207B4;
+        Wed,  5 Sep 2018 11:16:47 +0200 (CEST)
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>
@@ -41,9 +41,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Krzysztof Witos <kwitos@cadence.com>,
         Rafal Ciepiela <rafalc@cadence.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 08/10] drm/bridge: cdns: Separate DSI and D-PHY configuration
-Date:   Wed,  5 Sep 2018 11:16:39 +0200
-Message-Id: <10b1a1deb248353f33b3a6fe0b59f7db3736939e.1536138624.git-series.maxime.ripard@bootlin.com>
+Subject: [PATCH 09/10] phy: Add Cadence D-PHY support
+Date:   Wed,  5 Sep 2018 11:16:40 +0200
+Message-Id: <d50a5f0750647dcc09ef52411641b628161b362e.1536138624.git-series.maxime.ripard@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
 References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
@@ -54,177 +54,581 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current configuration of the DSI bridge and its associated D-PHY is
-intertwined. In order to ease the future conversion to the phy framework
-for the D-PHY part, let's split the configuration in two.
+Cadence has designed a D-PHY that can be used by the, currently in tree,
+DSI bridge (DRM), CSI Transceiver and CSI Receiver (v4l2) drivers.
+
+Only the DSI driver has an ad-hoc driver for that phy at the moment, while
+the v4l2 drivers are completely missing any phy support. In order to make
+that phy support available to all these drivers, without having to
+duplicate that code three times, let's create a generic phy framework
+driver.
 
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/bridge/cdns-dsi.c | 87 +++++++++++++++++++++++---------
- 1 file changed, 64 insertions(+), 23 deletions(-)
+ drivers/phy/Kconfig             |   1 +-
+ drivers/phy/Makefile            |   1 +-
+ drivers/phy/cadence/Kconfig     |  13 +-
+ drivers/phy/cadence/Makefile    |   1 +-
+ drivers/phy/cadence/cdns-dphy.c | 499 +++++++++++++++++++++++++++++++++-
+ 5 files changed, 515 insertions(+)
+ create mode 100644 drivers/phy/cadence/Kconfig
+ create mode 100644 drivers/phy/cadence/Makefile
+ create mode 100644 drivers/phy/cadence/cdns-dphy.c
 
-diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
-index 6474e6d999b7..bb9a71ad3d91 100644
---- a/drivers/gpu/drm/bridge/cdns-dsi.c
-+++ b/drivers/gpu/drm/bridge/cdns-dsi.c
-@@ -545,6 +545,11 @@ bridge_to_cdns_dsi_input(struct drm_bridge *bridge)
- 	return container_of(bridge, struct cdns_dsi_input, bridge);
- }
- 
-+static unsigned int mode_to_dpi_hfp(const struct drm_display_mode *mode)
-+{
-+	return mode->crtc_hsync_start - mode->crtc_hdisplay;
-+}
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 06bd22bd1f4a..a65427fc3fbd 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -51,6 +51,7 @@ config PHY_XGENE
+ source "drivers/phy/allwinner/Kconfig"
+ source "drivers/phy/amlogic/Kconfig"
+ source "drivers/phy/broadcom/Kconfig"
++source "drivers/phy/cadence/Kconfig"
+ source "drivers/phy/hisilicon/Kconfig"
+ source "drivers/phy/lantiq/Kconfig"
+ source "drivers/phy/marvell/Kconfig"
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 71c29d2b9af7..9db9c33dcd3f 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+ obj-y					+= broadcom/	\
++					   cadence/	\
+ 					   hisilicon/	\
+ 					   marvell/	\
+ 					   motorola/	\
+diff --git a/drivers/phy/cadence/Kconfig b/drivers/phy/cadence/Kconfig
+new file mode 100644
+index 000000000000..fbad4466dd1d
+--- /dev/null
++++ b/drivers/phy/cadence/Kconfig
+@@ -0,0 +1,13 @@
++#
++# Phy drivers for Cadence IPs
++#
 +
- static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
- 				     struct cdns_dphy_cfg *cfg,
- 				     unsigned int dpi_htotal,
-@@ -730,14 +735,12 @@ static unsigned int dpi_to_dsi_timing(unsigned int dpi_timing,
- 
- static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
- 			     const struct drm_display_mode *mode,
--			     struct cdns_dsi_cfg *dsi_cfg,
--			     struct cdns_dphy_cfg *dphy_cfg)
-+			     struct cdns_dsi_cfg *dsi_cfg)
- {
--	unsigned long dsi_htotal = 0, dsi_hss_hsa_hse_hbp = 0;
- 	struct cdns_dsi_output *output = &dsi->output;
--	unsigned int dsi_hfp_ext = 0, dpi_hfp, tmp;
-+	unsigned int tmp;
- 	bool sync_pulse = false;
--	int bpp, nlanes, ret;
-+	int bpp, nlanes;
- 
- 	memset(dsi_cfg, 0, sizeof(*dsi_cfg));
- 
-@@ -751,44 +754,84 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
- 		(sync_pulse ? mode->crtc_hsync_end : mode->crtc_hsync_start);
- 
- 	dsi_cfg->hbp = dpi_to_dsi_timing(tmp, bpp, DSI_HBP_FRAME_OVERHEAD);
--	dsi_htotal += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
--	dsi_hss_hsa_hse_hbp += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
- 
- 	if (sync_pulse) {
- 		tmp = mode->crtc_hsync_end - mode->crtc_hsync_start;
- 
- 		dsi_cfg->hsa = dpi_to_dsi_timing(tmp, bpp,
- 						 DSI_HSA_FRAME_OVERHEAD);
--		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
--		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
- 	}
- 
- 	dsi_cfg->hact = dpi_to_dsi_timing(mode->crtc_hdisplay,
- 					  bpp, 0);
--	dsi_htotal += dsi_cfg->hact;
-+	dsi_cfg->hfp = dpi_to_dsi_timing(mode_to_dpi_hfp(mode), bpp,
-+					 DSI_HFP_FRAME_OVERHEAD);
++config PHY_CADENCE_DPHY
++	tristate "Cadence D-PHY Support"
++	depends on HAS_IOMEM && OF
++	select GENERIC_PHY
++	select GENERIC_PHY_MIPI_DPHY
++	help
++	  Choose this option if you have a Cadence D-PHY in your
++	  system. If M is selected, the module will be called
++	  cdns-csi.
+diff --git a/drivers/phy/cadence/Makefile b/drivers/phy/cadence/Makefile
+new file mode 100644
+index 000000000000..d7ada8d9d11b
+--- /dev/null
++++ b/drivers/phy/cadence/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_PHY_CADENCE_DPHY)	+= cdns-dphy.o
+diff --git a/drivers/phy/cadence/cdns-dphy.c b/drivers/phy/cadence/cdns-dphy.c
+new file mode 100644
+index 000000000000..4d7f72f7e78d
+--- /dev/null
++++ b/drivers/phy/cadence/cdns-dphy.c
+@@ -0,0 +1,499 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright: 2017-2018 Cadence Design Systems, Inc.
++ */
++
++#include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++
++#include <linux/phy/phy.h>
++#include <linux/phy/phy-mipi-dphy.h>
++
++#define REG_WAKEUP_TIME_NS		800
++#define DPHY_PLL_RATE_HZ		108000000
++
++/* DPHY registers */
++#define DPHY_PMA_CMN(reg)		(reg)
++#define DPHY_PMA_LCLK(reg)		(0x100 + (reg))
++#define DPHY_PMA_LDATA(lane, reg)	(0x200 + ((lane) * 0x100) + (reg))
++#define DPHY_PMA_RCLK(reg)		(0x600 + (reg))
++#define DPHY_PMA_RDATA(lane, reg)	(0x700 + ((lane) * 0x100) + (reg))
++#define DPHY_PCS(reg)			(0xb00 + (reg))
++
++#define DPHY_CMN_SSM			DPHY_PMA_CMN(0x20)
++#define DPHY_CMN_SSM_EN			BIT(0)
++#define DPHY_CMN_TX_MODE_EN		BIT(9)
++
++#define DPHY_CMN_PWM			DPHY_PMA_CMN(0x40)
++#define DPHY_CMN_PWM_DIV(x)		((x) << 20)
++#define DPHY_CMN_PWM_LOW(x)		((x) << 10)
++#define DPHY_CMN_PWM_HIGH(x)		(x)
++
++#define DPHY_CMN_FBDIV			DPHY_PMA_CMN(0x4c)
++#define DPHY_CMN_FBDIV_VAL(low, high)	(((high) << 11) | ((low) << 22))
++#define DPHY_CMN_FBDIV_FROM_REG		(BIT(10) | BIT(21))
++
++#define DPHY_CMN_OPIPDIV		DPHY_PMA_CMN(0x50)
++#define DPHY_CMN_IPDIV_FROM_REG		BIT(0)
++#define DPHY_CMN_IPDIV(x)		((x) << 1)
++#define DPHY_CMN_OPDIV_FROM_REG		BIT(6)
++#define DPHY_CMN_OPDIV(x)		((x) << 7)
++
++#define DPHY_PSM_CFG			DPHY_PCS(0x4)
++#define DPHY_PSM_CFG_FROM_REG		BIT(0)
++#define DPHY_PSM_CLK_DIV(x)		((x) << 1)
++
++#define DSI_HBP_FRAME_OVERHEAD		12
++#define DSI_HSA_FRAME_OVERHEAD		14
++#define DSI_HFP_FRAME_OVERHEAD		6
++#define DSI_HSS_VSS_VSE_FRAME_OVERHEAD	4
++#define DSI_BLANKING_FRAME_OVERHEAD	6
++#define DSI_NULL_FRAME_OVERHEAD		6
++#define DSI_EOT_PKT_SIZE		4
++
++struct cdns_dphy_cfg {
++	u8 pll_ipdiv;
++	u8 pll_opdiv;
++	u16 pll_fbdiv;
++	unsigned long lane_bps;
++	unsigned int nlanes;
++};
++
++enum cdns_dphy_clk_lane_cfg {
++	DPHY_CLK_CFG_LEFT_DRIVES_ALL = 0,
++	DPHY_CLK_CFG_LEFT_DRIVES_RIGHT = 1,
++	DPHY_CLK_CFG_LEFT_DRIVES_LEFT = 2,
++	DPHY_CLK_CFG_RIGHT_DRIVES_ALL = 3,
++};
++
++struct cdns_dphy;
++struct cdns_dphy_ops {
++	int (*probe)(struct cdns_dphy *dphy);
++	void (*remove)(struct cdns_dphy *dphy);
++	void (*set_psm_div)(struct cdns_dphy *dphy, u8 div);
++	void (*set_clk_lane_cfg)(struct cdns_dphy *dphy,
++				 enum cdns_dphy_clk_lane_cfg cfg);
++	void (*set_pll_cfg)(struct cdns_dphy *dphy,
++			    const struct cdns_dphy_cfg *cfg);
++	unsigned long (*get_wakeup_time_ns)(struct cdns_dphy *dphy);
++};
++
++struct cdns_dphy {
++	struct cdns_dphy_cfg cfg;
++	void __iomem *regs;
++	struct clk *psm_clk;
++	struct clk *pll_ref_clk;
++	const struct cdns_dphy_ops *ops;
++	struct phy *phy;
++};
++
++static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
++				     struct cdns_dphy_cfg *cfg,
++				     struct phy_configure_opts_mipi_dphy *opts,
++				     unsigned int *dsi_hfp_ext)
++{
++	u64 dlane_bps, dlane_bps_max, fbdiv, fbdiv_max, adj_dsi_htotal;
++	unsigned long pll_ref_hz = clk_get_rate(dphy->pll_ref_clk);
++	unsigned long dpi_htotal = opts->timings.hactive +
++		opts->timings.hfront_porch + opts->timings.hback_porch +
++		opts->timings.hsync_len;
++	unsigned long dsi_htotal = opts->timings.hactive +
++		opts->timings.hfront_porch + DSI_HFP_FRAME_OVERHEAD +
++		opts->timings.hback_porch + DSI_HBP_FRAME_OVERHEAD;
++
++	if (opts->modes & MIPI_DPHY_MODE_VIDEO_SYNC_PULSE)
++		dsi_htotal += opts->timings.hsync_len + DSI_HSA_FRAME_OVERHEAD;
++
++	memset(cfg, 0, sizeof(*cfg));
++
++	if (pll_ref_hz < 9600000 || pll_ref_hz >= 150000000)
++		return -EINVAL;
++	else if (pll_ref_hz < 19200000)
++		cfg->pll_ipdiv = 1;
++	else if (pll_ref_hz < 38400000)
++		cfg->pll_ipdiv = 2;
++	else if (pll_ref_hz < 76800000)
++		cfg->pll_ipdiv = 4;
++	else
++		cfg->pll_ipdiv = 8;
++
++	/*
++	 * Make sure DSI htotal is aligned on a lane boundary when calculating
++	 * the expected data rate. This is done by extending HFP in case of
++	 * misalignment.
++	 */
++	adj_dsi_htotal = dsi_htotal;
++	if (dsi_htotal % opts->lanes)
++		adj_dsi_htotal += opts->lanes - (dsi_htotal % opts->lanes);
++
++	dlane_bps = (u64)opts->timings.pixelclock * adj_dsi_htotal;
++
++	/* data rate in bytes/sec is not an integer, refuse the mode. */
++	if (do_div(dlane_bps, opts->lanes * dpi_htotal))
++		return -EINVAL;
++
++	/* data rate was in bytes/sec, convert to bits/sec. */
++	dlane_bps *= 8;
++
++	if (dlane_bps > 2500000000UL || dlane_bps < 160000000UL)
++		return -EINVAL;
++	else if (dlane_bps >= 1250000000)
++		cfg->pll_opdiv = 1;
++	else if (dlane_bps >= 630000000)
++		cfg->pll_opdiv = 2;
++	else if (dlane_bps >= 320000000)
++		cfg->pll_opdiv = 4;
++	else if (dlane_bps >= 160000000)
++		cfg->pll_opdiv = 8;
++
++	/*
++	 * Allow a deviation of 0.2% on the per-lane data rate to try to
++	 * recover a potential mismatch between DPI and PPI clks.
++	 */
++	dlane_bps_max = dlane_bps + DIV_ROUND_DOWN_ULL(dlane_bps, 500);
++	fbdiv_max = DIV_ROUND_DOWN_ULL(dlane_bps_max * 2 *
++				       cfg->pll_opdiv * cfg->pll_ipdiv,
++				       pll_ref_hz);
++	fbdiv = DIV_ROUND_UP_ULL(dlane_bps * 2 * cfg->pll_opdiv *
++				 cfg->pll_ipdiv,
++				 pll_ref_hz);
++
++	/*
++	 * Iterate over all acceptable fbdiv and try to find an adjusted DSI
++	 * htotal length providing an exact match.
++	 *
++	 * Note that we could do something even trickier by relying on the fact
++	 * that a new line is not necessarily aligned on a lane boundary, so,
++	 * by making adj_dsi_htotal non aligned on a dsi_lanes we can improve a
++	 * bit the precision. With this, the step would be
++	 *
++	 *	pll_ref_hz / (2 * opdiv * ipdiv * nlanes)
++	 *
++	 * instead of
++	 *
++	 *	pll_ref_hz / (2 * opdiv * ipdiv)
++	 *
++	 * The drawback of this approach is that we would need to make sure the
++	 * number or lines is a multiple of the realignment periodicity which is
++	 * a function of the number of lanes and the original misalignment. For
++	 * example, for NLANES = 4 and HTOTAL % NLANES = 3, it takes 4 lines
++	 * to realign on a lane:
++	 * LINE 0: expected number of bytes, starts emitting first byte of
++	 *	   LINE 1 on LANE 3
++	 * LINE 1: expected number of bytes, starts emitting first 2 bytes of
++	 *	   LINE 2 on LANES 2 and 3
++	 * LINE 2: expected number of bytes, starts emitting first 3 bytes of
++	 *	   of LINE 3 on LANES 1, 2 and 3
++	 * LINE 3: one byte less, now things are realigned on LANE 0 for LINE 4
++	 *
++	 * I figured this extra complexity was not worth the benefit, but if
++	 * someone really has unfixable mismatch, that would be something to
++	 * investigate.
++	 */
++	for (; fbdiv <= fbdiv_max; fbdiv++) {
++		u32 rem;
++
++		adj_dsi_htotal = (u64)fbdiv * pll_ref_hz * opts->lanes *
++				 dpi_htotal;
++
++		/*
++		 * Do the division in 2 steps to avoid an overflow on the
++		 * divider.
++		 */
++		rem = do_div(adj_dsi_htotal, opts->timings.pixelclock);
++		if (rem)
++			continue;
++
++		rem = do_div(adj_dsi_htotal,
++			     cfg->pll_opdiv * cfg->pll_ipdiv * 2 * 8);
++		if (rem)
++			continue;
++
++		cfg->pll_fbdiv = fbdiv;
++		*dsi_hfp_ext = adj_dsi_htotal - dsi_htotal;
++		break;
++	}
++
++	/* No match, let's just reject the display mode. */
++	if (!cfg->pll_fbdiv)
++		return -EINVAL;
++
++	dlane_bps = DIV_ROUND_DOWN_ULL((u64)opts->timings.pixelclock * adj_dsi_htotal * 8,
++				       opts->lanes * dpi_htotal);
++	cfg->lane_bps = dlane_bps;
 +
 +	return 0;
 +}
- 
--	dpi_hfp = mode->crtc_hsync_start - mode->crtc_hdisplay;
--	dsi_cfg->hfp = dpi_to_dsi_timing(dpi_hfp, bpp, DSI_HFP_FRAME_OVERHEAD);
-+static int cdns_dphy_validate(struct cdns_dsi *dsi,
-+			      struct cdns_dsi_cfg *dsi_cfg,
-+			      struct cdns_dphy_cfg *dphy_cfg,
-+			      const struct drm_display_mode *mode)
++
++static int cdns_dphy_setup_psm(struct cdns_dphy *dphy)
 +{
-+	struct cdns_dsi_output *output = &dsi->output;
-+	unsigned long dsi_htotal;
++	unsigned long psm_clk_hz = clk_get_rate(dphy->psm_clk);
++	unsigned long psm_div;
++
++	if (!psm_clk_hz || psm_clk_hz > 100000000)
++		return -EINVAL;
++
++	psm_div = DIV_ROUND_CLOSEST(psm_clk_hz, 1000000);
++	if (dphy->ops->set_psm_div)
++		dphy->ops->set_psm_div(dphy, psm_div);
++
++	return 0;
++}
++
++static void cdns_dphy_set_clk_lane_cfg(struct cdns_dphy *dphy,
++				       enum cdns_dphy_clk_lane_cfg cfg)
++{
++	if (dphy->ops->set_clk_lane_cfg)
++		dphy->ops->set_clk_lane_cfg(dphy, cfg);
++}
++
++static void cdns_dphy_set_pll_cfg(struct cdns_dphy *dphy,
++				  const struct cdns_dphy_cfg *cfg)
++{
++	if (dphy->ops->set_pll_cfg)
++		dphy->ops->set_pll_cfg(dphy, cfg);
++}
++
++static unsigned long cdns_dphy_get_wakeup_time_ns(struct cdns_dphy *dphy)
++{
++	return dphy->ops->get_wakeup_time_ns(dphy);
++}
++
++static unsigned long cdns_dphy_ref_get_wakeup_time_ns(struct cdns_dphy *dphy)
++{
++	/* Default wakeup time is 800 ns (in a simulated environment). */
++	return 800;
++}
++
++static void cdns_dphy_ref_set_pll_cfg(struct cdns_dphy *dphy,
++				      const struct cdns_dphy_cfg *cfg)
++{
++	u32 fbdiv_low, fbdiv_high;
++
++	fbdiv_low = (cfg->pll_fbdiv / 4) - 2;
++	fbdiv_high = cfg->pll_fbdiv - fbdiv_low - 2;
++
++	writel(DPHY_CMN_IPDIV_FROM_REG | DPHY_CMN_OPDIV_FROM_REG |
++	       DPHY_CMN_IPDIV(cfg->pll_ipdiv) |
++	       DPHY_CMN_OPDIV(cfg->pll_opdiv),
++	       dphy->regs + DPHY_CMN_OPIPDIV);
++	writel(DPHY_CMN_FBDIV_FROM_REG |
++	       DPHY_CMN_FBDIV_VAL(fbdiv_low, fbdiv_high),
++	       dphy->regs + DPHY_CMN_FBDIV);
++	writel(DPHY_CMN_PWM_HIGH(6) | DPHY_CMN_PWM_LOW(0x101) |
++	       DPHY_CMN_PWM_DIV(0x8),
++	       dphy->regs + DPHY_CMN_PWM);
++}
++
++static void cdns_dphy_ref_set_psm_div(struct cdns_dphy *dphy, u8 div)
++{
++	writel(DPHY_PSM_CFG_FROM_REG | DPHY_PSM_CLK_DIV(div),
++	       dphy->regs + DPHY_PSM_CFG);
++}
++
++/*
++ * This is the reference implementation of DPHY hooks. Specific integration of
++ * this IP may have to re-implement some of them depending on how they decided
++ * to wire things in the SoC.
++ */
++static const struct cdns_dphy_ops ref_dphy_ops = {
++	.get_wakeup_time_ns = cdns_dphy_ref_get_wakeup_time_ns,
++	.set_pll_cfg = cdns_dphy_ref_set_pll_cfg,
++	.set_psm_div = cdns_dphy_ref_set_psm_div,
++};
++
++static int cdns_dphy_config_from_opts(struct phy *phy,
++				      struct phy_configure_opts_mipi_dphy *opts,
++				      struct cdns_dphy_cfg *cfg)
++{
++	struct cdns_dphy *dphy = phy_get_drvdata(phy);
 +	unsigned int dsi_hfp_ext = 0;
-+
 +	int ret;
 +
-+	dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-+	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-+		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
++	ret = phy_mipi_dphy_config_validate(opts);
++	if (ret)
++		return ret;
 +
-+	dsi_htotal += dsi_cfg->hact;
- 	dsi_htotal += dsi_cfg->hfp + DSI_HFP_FRAME_OVERHEAD;
- 
- 	ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
--					mode->crtc_htotal, bpp,
-+					mode->crtc_htotal,
-+					mipi_dsi_pixel_format_to_bpp(output->dev->format),
- 					mode->crtc_clock * 1000,
--					dsi_htotal, nlanes,
-+					dsi_htotal,
-+					output->dev->lanes,
- 					&dsi_hfp_ext);
- 	if (ret)
- 		return ret;
- 
- 	dsi_cfg->hfp += dsi_hfp_ext;
--	dsi_htotal += dsi_hfp_ext;
--	dsi_cfg->htotal = dsi_htotal;
-+	dsi_cfg->htotal = dsi_htotal + dsi_hfp_ext;
++	ret = cdns_dsi_get_dphy_pll_cfg(dphy, cfg,
++					opts, &dsi_hfp_ext);
++	if (ret)
++		return ret;
++
++	opts->timings.hfront_porch += dsi_hfp_ext;
++	opts->timings.hsync_len += dsi_hfp_ext;
++	opts->wakeup = cdns_dphy_get_wakeup_time_ns(dphy);
 +
 +	return 0;
 +}
 +
-+static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
-+			       const struct drm_display_mode *mode,
-+			       struct cdns_dsi_cfg *dsi_cfg,
-+			       struct cdns_dphy_cfg *dphy_cfg)
++static int cdns_dphy_init(struct phy *phy)
 +{
-+	struct cdns_dsi_output *output = &dsi->output;
-+	unsigned long dsi_hss_hsa_hse_hbp;
-+	unsigned int nlanes = output->dev->lanes;
++	struct cdns_dphy *dphy = phy_get_drvdata(phy);
++
++	clk_prepare_enable(dphy->psm_clk);
++	clk_prepare_enable(dphy->pll_ref_clk);
++
++	return 0;
++}
++
++static int cdns_dphy_validate(struct phy *phy, enum phy_mode mode,
++			      union phy_configure_opts *opts)
++{
++	struct cdns_dphy_cfg cfg = { 0 };
++
++	if (mode != PHY_MODE_MIPI_DPHY)
++		return -EINVAL;
++
++	return cdns_dphy_config_from_opts(phy, &opts->mipi_dphy, &cfg);
++}
++
++static int cdns_dphy_configure(struct phy *phy, enum phy_mode mode,
++				union phy_configure_opts *opts)
++{
++	struct cdns_dphy *dphy = phy_get_drvdata(phy);
++	struct cdns_dphy_cfg cfg = { 0 };
 +	int ret;
 +
-+	ret = cdns_dsi_mode2cfg(dsi, mode, dsi_cfg);
++	if (mode != PHY_MODE_MIPI_DPHY)
++		return -EINVAL;
++
++	ret = cdns_dphy_config_from_opts(phy, &opts->mipi_dphy, &cfg);
 +	if (ret)
 +		return ret;
 +
-+	ret = cdns_dphy_validate(dsi, dsi_cfg, dphy_cfg, mode);
++	/*
++	 * Configure the internal PSM clk divider so that the DPHY has a
++	 * 1MHz clk (or something close).
++	 */
++	ret = cdns_dphy_setup_psm(dphy);
 +	if (ret)
 +		return ret;
 +
-+	dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
-+	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-+		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
- 
- 	/*
- 	 * Make sure DPI(HFP) > DSI(HSS+HSA+HSE+HBP) to guarantee that the FIFO
- 	 * is empty before we start a receiving a new line on the DPI
- 	 * interface.
- 	 */
--	if ((u64)dphy_cfg->lane_bps * dpi_hfp * nlanes <
-+	if ((u64)dphy_cfg->lane_bps * mode_to_dpi_hfp(mode) * nlanes <
- 	    (u64)dsi_hss_hsa_hse_hbp * mode->crtc_clock * 1000)
- 		return -EINVAL;
- 
-@@ -819,7 +862,7 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
- 	struct cdns_dsi_output *output = &dsi->output;
- 	struct cdns_dphy_cfg dphy_cfg;
- 	struct cdns_dsi_cfg dsi_cfg;
--	int bpp, nlanes, ret;
-+	int bpp, ret;
- 
- 	/*
- 	 * VFP_DSI should be less than VFP_DPI and VFP_DSI should be at
-@@ -837,11 +880,9 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
- 	if ((mode->hdisplay * bpp) % 32)
- 		return MODE_H_ILLEGAL;
- 
--	nlanes = output->dev->lanes;
--
--	ret = cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg);
-+	ret = cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg);
- 	if (ret)
--		return MODE_CLOCK_RANGE;
-+		return MODE_BAD;
- 
- 	return MODE_OK;
- }
-@@ -967,7 +1008,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
- 	bpp = mipi_dsi_pixel_format_to_bpp(output->dev->format);
- 	nlanes = output->dev->lanes;
- 
--	WARN_ON_ONCE(cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg));
-+	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg));
- 
- 	cdns_dsi_hs_init(dsi, &dphy_cfg);
- 	cdns_dsi_init_link(dsi);
++	/*
++	 * Configure attach clk lanes to data lanes: the DPHY has 2 clk lanes
++	 * and 8 data lanes, each clk lane can be attache different set of
++	 * data lanes. The 2 groups are named 'left' and 'right', so here we
++	 * just say that we want the 'left' clk lane to drive the 'left' data
++	 * lanes.
++	 */
++	cdns_dphy_set_clk_lane_cfg(dphy, DPHY_CLK_CFG_LEFT_DRIVES_LEFT);
++
++	/*
++	 * Configure the DPHY PLL that will be used to generate the TX byte
++	 * clk.
++	 */
++	cdns_dphy_set_pll_cfg(dphy, &cfg);
++
++	return 0;
++}
++
++static int cdns_dphy_power_on(struct phy *phy)
++{
++	struct cdns_dphy *dphy = phy_get_drvdata(phy);
++
++	/* Start TX state machine. */
++	writel(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN, dphy->regs + DPHY_CMN_SSM);
++
++	return 0;
++}
++
++static int cdns_dphy_exit(struct phy *phy)
++{
++	struct cdns_dphy *dphy = phy_get_drvdata(phy);
++
++	clk_disable_unprepare(dphy->pll_ref_clk);
++	clk_disable_unprepare(dphy->psm_clk);
++
++	return 0;
++}
++
++static struct phy_ops cdns_dphy_ops = {
++	.configure	= cdns_dphy_configure,
++	.validate	= cdns_dphy_validate,
++	.power_on	= cdns_dphy_power_on,
++	.init		= cdns_dphy_init,
++	.exit		= cdns_dphy_exit,
++};
++
++static int cdns_dphy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *phy_provider;
++	struct cdns_dphy *dphy;
++	struct resource *res;
++	int ret;
++
++	dphy = devm_kzalloc(&pdev->dev, sizeof(*dphy), GFP_KERNEL);
++	if (!dphy)
++		return -ENOMEM;
++	dev_set_drvdata(&pdev->dev, dphy);
++
++	dphy->ops = of_device_get_match_data(&pdev->dev);
++	if (!dphy->ops)
++		return -EINVAL;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	dphy->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(dphy->regs))
++		return PTR_ERR(dphy->regs);
++
++	dphy->psm_clk = devm_clk_get(&pdev->dev, "psm");
++	if (IS_ERR(dphy->psm_clk))
++		return PTR_ERR(dphy->psm_clk);
++
++	dphy->pll_ref_clk = devm_clk_get(&pdev->dev, "pll_ref");
++	if (IS_ERR(dphy->pll_ref_clk))
++		return PTR_ERR(dphy->pll_ref_clk);
++
++	if (dphy->ops->probe) {
++		ret = dphy->ops->probe(dphy);
++		if (ret)
++			return ret;
++	}
++
++	dphy->phy = devm_phy_create(&pdev->dev, NULL, &cdns_dphy_ops);
++	if (IS_ERR(dphy->phy)) {
++		dev_err(&pdev->dev, "failed to create PHY\n");
++		return PTR_ERR(dphy->phy);
++	}
++
++	phy_set_drvdata(dphy->phy, dphy);
++	phy_provider = devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
++
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static int cdns_dphy_remove(struct platform_device *pdev)
++{
++	struct cdns_dphy *dphy = dev_get_drvdata(&pdev->dev);
++
++	if (dphy->ops->remove)
++		dphy->ops->remove(dphy);
++
++	return 0;
++}
++
++static const struct of_device_id cdns_dphy_of_match[] = {
++	{ .compatible = "cdns,dphy", .data = &ref_dphy_ops },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, cdns_dphy_of_match);
++
++static struct platform_driver cdns_dphy_platform_driver = {
++	.probe		= cdns_dphy_probe,
++	.remove		= cdns_dphy_remove,
++	.driver		= {
++		.name		= "cdns-mipi-dphy",
++		.of_match_table	= cdns_dphy_of_match,
++	},
++};
++module_platform_driver(cdns_dphy_platform_driver);
++
++MODULE_AUTHOR("Maxime Ripard <maxime.ripard@bootlin>");
++MODULE_DESCRIPTION("Cadence MIPI D-PHY Driver");
++MODULE_LICENSE("GPL");
 -- 
 git-series 0.9.1
