@@ -2,160 +2,140 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3091BC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C40C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DADD9206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:16:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADD9206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id D30AF206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:20:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30AF206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=whitequark.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbeIESqn (ORCPT
+        id S1727530AbeIESvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:46:43 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:6576 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeIESqn (ORCPT
+        Wed, 5 Sep 2018 14:51:12 -0400
+Received: from uruz.whitequark.org ([188.166.218.19]:50816 "EHLO
+        uruz.whitequark.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbeIESvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:46:43 -0400
-X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
-   d="scan'208";a="20112975"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 05 Sep 2018 07:16:19 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch03.mchp-main.com
- (10.10.76.49) with Microsoft SMTP Server id 14.3.352.0; Wed, 5 Sep 2018
- 07:16:18 -0700
-Date:   Wed, 5 Sep 2018 16:14:54 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Richard Genoud <richard.genoud@gmail.com>
-CC:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <alexandre.belloni@bootlin.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <jslaby@suse.com>, Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH v3 2/2] tty/serial: atmel: add ISO7816 support
-Message-ID: <20180905141454.xh2ovvpoth6s76ne@M43218.corp.atmel.com>
-Mail-Followup-To: Richard Genoud <richard.genoud@gmail.com>,
-        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, alexandre.belloni@bootlin.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, jslaby@suse.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20180807130049.5957-1-ludovic.desroches@microchip.com>
- <20180807130049.5957-3-ludovic.desroches@microchip.com>
- <d66c4318-1d31-5c4e-3952-6b69a010b028@sorico.fr>
- <20180809113035.kftvdalca7zsf4ly@M43218.corp.atmel.com>
- <20180905124341.5n4gadgd5luza7fd@M43218.corp.atmel.com>
- <211528d5-81b6-46f2-4191-66023d928ae3@sorico.fr>
+        Wed, 5 Sep 2018 14:51:11 -0400
+X-Greylist: delayed 436 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 14:51:09 EDT
+Received: by uruz.whitequark.org (Postfix, from userid 1002)
+        id 87707207FE; Wed,  5 Sep 2018 14:13:29 +0000 (UTC)
+To:     Mario.Limonciello@dell.com
+Subject: Re: USB type-C altmode support for UCSI
+X-PHP-Originating-Script: 0:rcube.php
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <211528d5-81b6-46f2-4191-66023d928ae3@sorico.fr>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 05 Sep 2018 14:13:29 +0000
+From:   whitequark <whitequark@whitequark.org>
+Cc:     heikki.krogerus@linux.intel.com, mika.westerberg@linux.intel.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
+References: <1e8398f2c1790890f40b69f12e2934e3@whitequark.org>
+ <20180903140623.GD15112@kuha.fi.intel.com>
+ <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
+ <20180905132429.GB25121@kuha.fi.intel.com>
+ <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
+Message-ID: <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
+X-Sender: whitequark@whitequark.org
+User-Agent: Roundcube Webmail/1.2.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 03:53:02PM +0200, Richard Genoud wrote:
-> [added Nicolas back in the thread, he was removed somehow]
+On 2018-09-05 13:50, Mario.Limonciello@dell.com wrote:
+>> > (There's also an UCSI bug where no notifications appear when connecting
+>> > a device, only when disconnecting and only once, but it can be worked
+>> > around by reloading the module, so it isn't critical. Not sure what's up
+>> > with that either.)
+>> 
+>> This is indeed a separate issue, and you are the second person that
+>> reports it. Either the (EC) firmware on those laptops is not
+>> generating the connection event as is should for some reason, or the
+>> EC driver in Linux kernel fails to deliver the event to the UCSI
+>> driver. I don't have XPS 13 that I could use to reproduce the issue
+>> unfortunately.
+>> 
+>> Mario! Can you help with this?
+>> 
+
+First, thanks everyone for spending time on this! I really appreciate 
+it.
+
 > 
-> Hi Ludovic !
+> I need to know which system this was and which BIOS FW package to try
+> to reproduce
+> if I can pass this to the right people, 9360/9370?  Current FW?
+
+Here is all relevant system info, taken from dmidecode:
+
+System Information
+         Manufacturer: Dell Inc.
+         Product Name: XPS 13 9360
+         Version: Not Specified
+         Serial Number: J5NCSF2
+         UUID: 4C4C4544-0035-4E10-8043-CAC04F534632
+
+BIOS Information
+         Vendor: Dell Inc.
+         Version: 2.9.0
+         Release Date: 07/09/2018
+
+> Is this happening with all type-C devices?  Or just Thunderbolt?  Or
+> (worse) just that TBT device?
+
+Unfortunately this is the only TBT and (native) USB-C device I own.
+Non-Apple TBT3 to TBT2 adapters are very expensive, and I wanted to
+avoid that by getting this Apple adapter.
+
+> > This laptop doesn't support SET_NEW_CAM command so I can't do anything
+> > laptop-side. I can probably modify adapter firmware if I know what to
+> > change, but I'm not sure why this doesn't work in the first place.
 > 
-> On 05/09/2018 14:43, Ludovic Desroches wrote:
-> > Hi Richard,
-> > 
-> > On Thu, Aug 09, 2018 at 01:30:35PM +0200, Ludovic Desroches wrote:
-> >> Hi Richard,
-> >>
-> >> On Thu, Aug 09, 2018 at 10:47:17AM +0200, Richard Genoud wrote:
-> >>> Hi !
-> >>>
-> >>> On 07/08/2018 15:00, Ludovic Desroches wrote:
-> >>>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
-> >>>>
-> >>>> When mode is set in atmel_config_iso7816() we backup last RS232 mode
-> >>>> for coming back to this mode if requested.
-> >>>> Also allow setup of T=0 and T=1 parameter and basic support in set_termios
-> >>>> function as well.
-> >>>>
-> >>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> >>>> [ludovic.desroches@microchip.com: rebase, add check on fidi ratio, checkpatch fixes]
-> >>>> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> >>>> ---
-> >>>>  drivers/tty/serial/atmel_serial.c | 211 +++++++++++++++++++++++++++++++++++---
-> >>>>  drivers/tty/serial/atmel_serial.h |   6 +-
-> >>>>  2 files changed, 201 insertions(+), 16 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-> >>>> index 8e4428725848..4a7ec44b0ace 100644
-> >>>> --- a/drivers/tty/serial/atmel_serial.c
-> >>>> +++ b/drivers/tty/serial/atmel_serial.c
-> >>
-> >> [...]
-> >>
-> >>>>  #if defined(CONFIG_OF)
-> >>>> +static struct atmel_uart_pdata at91rm9200_pdata = {
-> >>>> +	.fidi_min = 1,
-> >>>> +	.fidi_max = 2047,
-> >>>> +};
-> >>>> +
-> >>>> +static struct atmel_uart_pdata at91sam9260_pdata = {
-> >>>> +	.fidi_min = 1,
-> >>>> +	.fidi_max = 2047,
-> >>>> +};
-> >>>> +
-> >>>> +static struct atmel_uart_pdata sama5d3_pdata = {
-> >>>> +	.fidi_min = 3,
-> >>>> +	.fidi_max = 65535,
-> >>> Are you sure this is for sama5d3 ?
-> >>> From the datasheets I have, 65535 is for sama5d4/sama5d2
-> >>
-> >> I checked it and I missed it. What a pity... In fact, it's a bit more
-> >> tricky since the min value for d3 is 3 and no longer 1.
-> >>
-> >>> And also, you'll have to s/atmel,at91sam9260-usart/atmel,sama5d2-usart/g
-> >>> in sama5d{2,4}.dtsi
-> >>>
-> >>
-> >> Yes, I planed to send it later but I can add those patches within this
-> >> set of patches. 
-> >>
-> >>> But I wonder if it could be detected via ATMEL_US_VERSION instead ?
-> >>>
-> >>
-> >> I have not checked, I tend to prefer the compatible string for this kind
-> >> of thing. But as we already use the version number, I can investigate
-> >> this solution if it's the one you prefer.
-> >>
-> > 
-> > ping about this question still in suspend in order to prepare a new version.
-> Well, if we use the compatible string for this, we will have to add :
-> - atmel,sama5d2-usart
-> - atmel,sama5d3-usart
-> - (maybe others ?)
-> to the already existing :
-> - atmel,at91sam9260-usart
-> - atmel,at91rm9200-usart
-> just for setting different limits on the fidi register.
-> IMHO, it seems a bit overkill. Moreover, the ATMEL_US_VERSION has
-> already been read, so...
-> But if you think adding compatible strings is a better/cleaner solution, just convince me ! :)
+> I don't really see any problems with USB Type-C here. The PD
+> controller seems to take the steps that it should take when a device
+> is plugged to the connector: It checks the identity, SVIDs and their
+> modes, etc. I don't know based on that sniffer output has the
+> Thunderbolt alternate mode been entered or not, but I would imagine
+> the PD controller does not try to enter any modes unless the
+> Thunderbolt controller explicitly tells it to do so.
 
-I won't try to convince you since we already use the ATMEL_US_VERSION.
-IMHO we should use the compatible string from the beginning but we
-didn't have the necessary DT experience at this time to figure out it
-was probably better than relying on the version number which can be not
-incrimented by error.
+The Thunderbolt altmode is not entered, there are no attempts to do so.
 
-I'll check the values of the ATMEL_US_VERSION and use it if everything
-is okay.
+> Some Dell XPS systems do not support that TBT2<->TBT3 adapter. I think 
+> I
+> tried this on XPS 15 9550 and XPS 13 9365 and in both cases it is
+> rejected. I think it has something to do with the PD controller
+> firmware. Same goes if you Plug TB16 dock and to that dock then connect
+> the adapter + device.
 
-Regards
+This is my understanding as well, however I'd like to fix this issue.
+ From looking at the BIOS image I can see that the 9360 uses a TPS65982
+USB PD controller. The adapter uses a TPS65983A (confusingly remarked
+by Apple as CD3215B). I've seen reports on the web that there is some
+inherent incompatibility between TPS65982 and TPS65983, however TI is
+for some reason extremely secretive about TPS65983 and I wasn't able
+to get anything definitive about it.
 
-Ludovic
+Anyway, I've reverse engineered a nontrivial part of the TI TPS6598x
+firmware and register layout, however my understanding of Thunderbolt
+and USB PD is not sufficient to proceed.
+
+Mario, do you think you could get in touch with the people at Dell who
+work with USB PD and ask if:
+
+   (a) the adapter advertising an altmode with SVID:0x8087 VDO:0x00010001
+       is the problem here, and
+   (b) whether configuring the register 0x52 Intel VID Configuration in
+       the adapter's USB PD controller to set TBTModeDataTXSOP=0x0000
+       would help.
+
+-- 
+whitequark
