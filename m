@@ -2,372 +2,785 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 475E1C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF1AC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D55AB2077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D55AB2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E63E2075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:43:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E63E2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeIEUMB (ORCPT
+        id S1727530AbeIEUO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:12:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54496 "EHLO mail.bootlin.com"
+        Wed, 5 Sep 2018 16:14:26 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:47102 "EHLO leonov.paulk.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727100AbeIEUMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:12:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EB56920787; Wed,  5 Sep 2018 17:41:14 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 346B020734;
-        Wed,  5 Sep 2018 17:41:14 +0200 (CEST)
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
+        id S1726046AbeIEUO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 16:14:26 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 586FFBFDA9;
+        Wed,  5 Sep 2018 17:43:40 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id ED7E7C0F51; Wed,  5 Sep 2018 17:43:38 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id E9B47BFFE3;
+        Wed,  5 Sep 2018 17:42:59 +0200 (CEST)
+Message-ID: <ec9629a5843c386a22c092788831c79d4ff19218.camel@paulk.fr>
+Subject: Re: [PATCH v8 1/8] media: v4l: Add definitions for MPEG2 slice
+ format and metadata
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v7 02/10] docs: driver-api: Add I3C documentation
-Date:   Wed,  5 Sep 2018 17:41:00 +0200
-Message-Id: <20180905154108.20770-3-boris.brezillon@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180905154108.20770-1-boris.brezillon@bootlin.com>
-References: <20180905154108.20770-1-boris.brezillon@bootlin.com>
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-sunxi@googlegroups.com
+Date:   Wed, 05 Sep 2018 17:42:53 +0200
+In-Reply-To: <d85861e6-c3ff-d3c2-e42b-88d6181fd5cf@xs4all.nl>
+References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
+         <20180828073424.30247-2-paul.kocialkowski@bootlin.com>
+         <d85861e6-c3ff-d3c2-e42b-88d6181fd5cf@xs4all.nl>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-KKtmpGhZ1gmJYvnYEFWj"
+X-Mailer: Evolution 3.28.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the I3C documentation describing the protocol, the master driver API
-and the device driver API.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
----
-Changes in v6:
-- Fix typos reported by Randy
-- Add Randy's R-b
+--=-KKtmpGhZ1gmJYvnYEFWj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v5:
-- Remove useless conf.py file
-- Add SPDX headers
+Hi Hans,
 
-Changes in v2:
-- Moved out of patch "i3c: Add core I3C infrastructure"
-- Add link to the I3C spec
-- Move rst files in Documentation/driver-api/i3c/
----
- Documentation/driver-api/i3c/device-driver-api.rst |   9 +
- Documentation/driver-api/i3c/index.rst             |  11 ++
- Documentation/driver-api/i3c/master-driver-api.rst |  10 +
- Documentation/driver-api/i3c/protocol.rst          | 203 +++++++++++++++++++++
- Documentation/driver-api/index.rst                 |   1 +
- 5 files changed, 234 insertions(+)
- create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
- create mode 100644 Documentation/driver-api/i3c/index.rst
- create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
- create mode 100644 Documentation/driver-api/i3c/protocol.rst
+Le lundi 03 septembre 2018 =C3=A0 10:32 +0200, Hans Verkuil a =C3=A9crit :
+> This looks very nice. I have two more comments, but they can be added
+> using a follow-up patch (unless you need a v9 anyway):
 
-diff --git a/Documentation/driver-api/i3c/device-driver-api.rst b/Documentation/driver-api/i3c/device-driver-api.rst
-new file mode 100644
-index 000000000000..85bc3381cd3e
---- /dev/null
-+++ b/Documentation/driver-api/i3c/device-driver-api.rst
-@@ -0,0 +1,9 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=====================
-+I3C device driver API
-+=====================
-+
-+.. kernel-doc:: include/linux/i3c/device.h
-+
-+.. kernel-doc:: drivers/i3c/device.c
-diff --git a/Documentation/driver-api/i3c/index.rst b/Documentation/driver-api/i3c/index.rst
-new file mode 100644
-index 000000000000..783d6dad054b
---- /dev/null
-+++ b/Documentation/driver-api/i3c/index.rst
-@@ -0,0 +1,11 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=============
-+I3C subsystem
-+=============
-+
-+.. toctree::
-+
-+   protocol
-+   device-driver-api
-+   master-driver-api
-diff --git a/Documentation/driver-api/i3c/master-driver-api.rst b/Documentation/driver-api/i3c/master-driver-api.rst
-new file mode 100644
-index 000000000000..bb19264aa239
---- /dev/null
-+++ b/Documentation/driver-api/i3c/master-driver-api.rst
-@@ -0,0 +1,10 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+================================
-+I3C master controller driver API
-+================================
-+
-+.. kernel-doc:: drivers/i3c/master.c
-+
-+.. kernel-doc:: include/linux/i3c/master.h
-+
-diff --git a/Documentation/driver-api/i3c/protocol.rst b/Documentation/driver-api/i3c/protocol.rst
-new file mode 100644
-index 000000000000..dae3b6d32c6b
---- /dev/null
-+++ b/Documentation/driver-api/i3c/protocol.rst
-@@ -0,0 +1,203 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============
-+I3C protocol
-+============
-+
-+Disclaimer
-+==========
-+
-+This chapter will focus on aspects that matter to software developers. For
-+everything hardware related (like how things are transmitted on the bus, how
-+collisions are prevented, ...) please have a look at the I3C specification.
-+
-+This document is just a brief introduction to the I3C protocol and the concepts
-+it brings to the table. If you need more information, please refer to the MIPI
-+I3C specification (can be downloaded here
-+http://resources.mipi.org/mipi-i3c-v1-download).
-+
-+Introduction
-+============
-+
-+The I3C (pronounced 'eye-three-see') is a MIPI standardized protocol designed
-+to overcome I2C limitations (limited speed, external signals needed for
-+interrupts, no automatic detection of the devices connected to the bus, ...)
-+while remaining power-efficient.
-+
-+I3C Bus
-+=======
-+
-+An I3C bus is made of several I3C devices and possibly some I2C devices as
-+well, but let's focus on I3C devices for now.
-+
-+An I3C device on the I3C bus can have one of the following roles:
-+
-+* Master: the device is driving the bus. It's the one in charge of initiating
-+  transactions or deciding who is allowed to talk on the bus (slave generated
-+  events are possible in I3C, see below).
-+* Slave: the device acts as a slave, and is not able to send frames to another
-+  slave on the bus. The device can still send events to the master on
-+  its own initiative if the master allowed it.
-+
-+I3C is a multi-master protocol, so there might be several masters on a bus,
-+though only one device can act as a master at a given time. In order to gain
-+bus ownership, a master has to follow a specific procedure.
-+
-+Each device on the I3C bus has to be assigned a dynamic address to be able to
-+communicate. Until this is done, the device should only respond to a limited
-+set of commands. If it has a static address (also called legacy I2C address),
-+the device can reply to I2C transfers.
-+
-+In addition to these per-device addresses, the protocol defines a broadcast
-+address in order to address all devices on the bus.
-+
-+Once a dynamic address has been assigned to a device, this address will be used
-+for any direct communication with the device. Note that even after being
-+assigned a dynamic address, the device should still process broadcast messages.
-+
-+I3C Device discovery
-+====================
-+
-+The I3C protocol defines a mechanism to automatically discover devices present
-+on the bus, their capabilities and the functionalities they provide. In this
-+regard I3C is closer to a discoverable bus like USB than it is to I2C or SPI.
-+
-+The discovery mechanism is called DAA (Dynamic Address Assignment), because it
-+not only discovers devices but also assigns them a dynamic address.
-+
-+During DAA, each I3C device reports 3 important things:
-+
-+* BCR: Bus Characteristic Register. This 8-bit register describes the device bus
-+  related capabilities
-+* DCR: Device Characteristic Register. This 8-bit register describes the
-+  functionalities provided by the device
-+* Provisional ID: A 48-bit unique identifier. On a given bus there should be no
-+  Provisional ID collision, otherwise the discovery mechanism may fail.
-+
-+I3C slave events
-+================
-+
-+The I3C protocol allows slaves to generate events on their own, and thus allows
-+them to take temporary control of the bus.
-+
-+This mechanism is called IBI for In Band Interrupts, and as stated in the name,
-+it allows devices to generate interrupts without requiring an external signal.
-+
-+During DAA, each device on the bus has been assigned an address, and this
-+address will serve as a priority identifier to determine who wins if 2 different
-+devices are generating an interrupt at the same moment on the bus (the lower the
-+dynamic address the higher the priority).
-+
-+Masters are allowed to inhibit interrupts if they want to. This inhibition
-+request can be broadcast (applies to all devices) or sent to a specific
-+device.
-+
-+I3C Hot-Join
-+============
-+
-+The Hot-Join mechanism is similar to USB hotplug. This mechanism allows
-+slaves to join the bus after it has been initialized by the master.
-+
-+This covers the following use cases:
-+
-+* the device is not powered when the bus is probed
-+* the device is hotplugged on the bus through an extension board
-+
-+This mechanism is relying on slave events to inform the master that a new
-+device joined the bus and is waiting for a dynamic address.
-+
-+The master is then free to address the request as it wishes: ignore it or
-+assign a dynamic address to the slave.
-+
-+I3C transfer types
-+==================
-+
-+If you omit SMBus (which is just a standardization on how to access registers
-+exposed by I2C devices), I2C has only one transfer type.
-+
-+I3C defines 3 different classes of transfer in addition to I2C transfers which
-+are here for backward compatibility with I2C devices.
-+
-+I3C CCC commands
-+----------------
-+
-+CCC (Common Command Code) commands are meant to be used for anything that is
-+related to bus management and all features that are common to a set of devices.
-+
-+CCC commands contain an 8-bit CCC ID describing the command that is executed.
-+The MSB of this ID specifies whether this is a broadcast command (bit7 = 0) or a
-+unicast one (bit7 = 1).
-+
-+The command ID can be followed by a payload. Depending on the command, this
-+payload is either sent by the master sending the command (write CCC command),
-+or sent by the slave receiving the command (read CCC command). Of course, read
-+accesses only apply to unicast commands.
-+Note that, when sending a CCC command to a specific device, the device address
-+is passed in the first byte of the payload.
-+
-+The payload length is not explicitly passed on the bus, and should be extracted
-+from the CCC ID.
-+
-+Note that vendors can use a dedicated range of CCC IDs for their own commands
-+(0x61-0x7f and 0xe0-0xef).
-+
-+I3C Private SDR transfers
-+-------------------------
-+
-+Private SDR (Single Data Rate) transfers should be used for anything that is
-+device specific and does not require high transfer speed.
-+
-+It is the equivalent of I2C transfers but in the I3C world. Each transfer is
-+passed the device address (dynamic address assigned during DAA), a payload
-+and a direction.
-+
-+The only difference with I2C is that the transfer is much faster (typical clock
-+frequency is 12.5MHz).
-+
-+I3C HDR commands
-+----------------
-+
-+HDR commands should be used for anything that is device specific and requires
-+high transfer speed.
-+
-+The first thing attached to an HDR command is the HDR mode. There are currently
-+3 different modes defined by the I3C specification (refer to the specification
-+for more details):
-+
-+* HDR-DDR: Double Data Rate mode
-+* HDR-TSP: Ternary Symbol Pure. Only usable on busses with no I2C devices
-+* HDR-TSL: Ternary Symbol Legacy. Usable on busses with I2C devices
-+
-+When sending an HDR command, the whole bus has to enter HDR mode, which is done
-+using a broadcast CCC command.
-+Once the bus has entered a specific HDR mode, the master sends the HDR command.
-+An HDR command is made of:
-+
-+* one 16-bits command word in big endian
-+* N 16-bits data words in big endian
-+
-+Those words may be wrapped with specific preambles/post-ambles which depend on
-+the chosen HDR mode and are detailed here (see the specification for more
-+details).
-+
-+The 16-bits command word is made of:
-+
-+* bit[15]: direction bit, read is 1, write is 0
-+* bit[14:8]: command code. Identifies the command being executed, the amount of
-+  data words and their meaning
-+* bit[7:1]: I3C address of the device this command is addressed to
-+* bit[0]: reserved/parity-bit
-+
-+Backward compatibility with I2C devices
-+=======================================
-+
-+The I3C protocol has been designed to be backward compatible with I2C devices.
-+This backward compatibility allows one to connect a mix of I2C and I3C devices
-+on the same bus, though, in order to be really efficient, I2C devices should
-+be equipped with 50 ns spike filters.
-+
-+I2C devices can't be discovered like I3C ones and have to be statically
-+declared. In order to let the master know what these devices are capable of
-+(both in terms of bus related limitations and functionalities), the software
-+has to provide some information, which is done through the LVR (Legacy I2C
-+Virtual Register).
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 6d9f2f9fe20e..cc6a33f232ea 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -32,6 +32,7 @@ available subsections can be seen below.
-    pci
-    spi
-    i2c
-+   i3c/index
-    hsi
-    edac
-    scsi
--- 
-2.14.1
+I suppose I'll send a v9 to keep things in order here.
+
+And thanks for the review!
+
+> On 08/28/2018 09:34 AM, Paul Kocialkowski wrote:
+> > Stateless video decoding engines require both the MPEG slices and
+> > associated metadata from the video stream in order to decode
+> > frames.
+> >=20
+> > This introduces definitions for a new pixel format, describing
+> > buffers
+> > with MPEG2 slice data, as well as a control structure for passing
+> > the
+> > frame metadata to drivers.
+> >=20
+> > This is based on work from both Florent Revest and Hugues Fruchet.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../media/uapi/v4l/extended-controls.rst      | 177
+> > ++++++++++++++++++
+> >  .../media/uapi/v4l/pixfmt-compressed.rst      |  14 ++
+> >  .../media/uapi/v4l/vidioc-queryctrl.rst       |  14 +-
+> >  .../media/videodev2.h.rst.exceptions          |   2 +
+> >  drivers/media/v4l2-core/v4l2-ctrls.c          |  63 +++++++
+> >  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
+> >  include/media/v4l2-ctrls.h                    |  18 +-
+> >  include/uapi/linux/v4l2-controls.h            |  65 +++++++
+> >  include/uapi/linux/videodev2.h                |   5 +
+> >  9 files changed, 350 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/Documentation/media/uapi/v4l/extended-controls.rst
+> > b/Documentation/media/uapi/v4l/extended-controls.rst
+> > index 9f7312bf3365..a9252225b63e 100644
+> > --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> > +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> > @@ -1497,6 +1497,183 @@ enum
+> > v4l2_mpeg_video_h264_hierarchical_coding_type -
+> > =20
+> > =20
+> > =20
+> > +.. _v4l2-mpeg-mpeg2:
+> > +
+> > +``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS (struct)``
+> > +    Specifies the slice parameters (as extracted from the
+> > bitstream) for the
+> > +    associated MPEG-2 slice data. This includes the necessary
+> > parameters for
+> > +    configuring a stateless hardware decoding pipeline for MPEG-2.
+> > +    The bitstream parameters are defined according to the ISO/IEC
+> > 13818-2 and
+> > +    ITU-T Rec. H.262 specifications.
+>=20
+> You need to use references to the specs in the biblio.rst file.
+> ISO/IEC 13818-2
+> is there already. As far as I can see ISO/IEC 13818-2 =3D=3D ITU-T Rec.
+> H.262, so
+> it's only one spec, not two.
+
+Alright, I had missed that. Will do!
+
+> > +
+> > +.. c:type:: v4l2_ctrl_mpeg2_slice_params
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_ctrl_mpeg2_slice_params
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u32
+> > +      - ``bit_size``
+> > +      - Size (in bits) of the current slice data.
+> > +    * - __u32
+> > +      - ``data_bit_offset``
+> > +      - Offset (in bits) to the video data in the current slice
+> > data.
+> > +    * - struct :c:type:`v4l2_mpeg2_sequence`
+> > +      - ``sequence``
+> > +      - Structure with MPEG-2 sequence metadata, merging relevant
+> > fields from
+> > +	the sequence header and sequence extension parts of the
+> > bitstream.
+> > +    * - struct :c:type:`v4l2_mpeg2_picture`
+> > +      - ``picture``
+> > +      - Structure with MPEG-2 picture metadata, merging relevant
+> > fields from
+> > +	the picture header and picture coding extension parts of the
+> > bitstream.
+> > +    * - __u8
+> > +      - ``quantiser_scale_code``
+> > +      - Code used to determine the quantization scale to use for
+> > the IDCT.
+> > +    * - __u8
+> > +      - ``backward_ref_index``
+> > +      - Index for the V4L2 buffer to use as backward reference,
+> > used with
+> > +	B-coded and P-coded frames.
+> > +    * - __u8
+> > +      - ``forward_ref_index``
+> > +      - Index for the V4L2 buffer to use as forward reference,
+> > used with
+> > +	P-coded frames.
+> > +
+> > +.. c:type:: v4l2_mpeg2_sequence
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_mpeg2_sequence
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u16
+> > +      - ``horizontal_size``
+> > +      - The width of the displayable part of the frame's luminance
+> > component.
+> > +    * - __u16
+> > +      - ``vertical_size``
+> > +      - The height of the displayable part of the frame's
+> > luminance component.
+> > +    * - __u32
+> > +      - ``vbv_buffer_size``
+> > +      - Used to calculate the required size of the video buffering
+> > verifier,
+> > +	defined (in bits) as: 16 * 1024 * vbv_buffer_size.
+> > +    * - __u8
+> > +      - ``profile_and_level_indication``
+> > +      - The current profile and level indication as extracted from
+> > the
+> > +	bitstream.
+> > +    * - __u8
+> > +      - ``progressive_sequence``
+> > +      - Indication that all the frames for the sequence are
+> > progressive instead
+> > +	of interlaced.
+> > +    * - __u8
+> > +      - ``chroma_format``
+> > +      - The chrominance sub-sampling format (1: 4:2:0, 2: 4:2:2,
+> > 3: 4:4:4).
+> > +
+> > +.. c:type:: v4l2_mpeg2_picture
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_mpeg2_picture
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u8
+> > +      - ``picture_coding_type``
+> > +      - Picture coding type for the frame covered by the current
+> > slice
+> > +	(V4L2_MPEG2_PICTURE_CODING_TYPE_I,
+> > V4L2_MPEG2_PICTURE_CODING_TYPE_P or
+> > +	V4L2_MPEG2_PICTURE_CODING_TYPE_B).
+> > +    * - __u8
+> > +      - ``f_code[2][2]``
+> > +      - Motion vector codes.
+> > +    * - __u8
+> > +      - ``intra_dc_precision``
+> > +      - Precision of Discrete Cosine transform (0: 8 bits
+> > precision,
+> > +	1: 9 bits precision, 2: 10 bits precision, 3: 11 bits
+> > precision).
+> > +    * - __u8
+> > +      - ``picture_structure``
+> > +      - Picture structure (1: interlaced top field, 2: interlaced
+> > bottom field,
+> > +	3: progressive frame).
+> > +    * - __u8
+> > +      - ``top_field_first``
+> > +      - If set to 1 and interlaced stream, top field is output
+> > first.
+> > +    * - __u8
+> > +      - ``frame_pred_frame_dct``
+> > +      - If set to 1, only frame-DCT and frame prediction are used.
+> > +    * - __u8
+> > +      - ``concealment_motion_vectors``
+> > +      -  If set to 1, motion vectors are coded for intra
+> > macroblocks.
+> > +    * - __u8
+> > +      - ``q_scale_type``
+> > +      - This flag affects the inverse quantization process.
+> > +    * - __u8
+> > +      - ``intra_vlc_format``
+> > +      - This flag affects the decoding of transform coefficient
+> > data.
+> > +    * - __u8
+> > +      - ``alternate_scan``
+> > +      - This flag affects the decoding of transform coefficient
+> > data.
+> > +    * - __u8
+> > +      - ``repeat_first_field``
+> > +      - This flag affects the decoding process of progressive
+> > frames.
+> > +    * - __u8
+> > +      - ``progressive_frame``
+> > +      - Indicates whether the current frame is progressive.
+> > +
+> > +``V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION (struct)``
+> > +    Specifies quantization matrices (as extracted from the
+> > bitstream) for the
+> > +    associated MPEG-2 slice data.
+> > +
+> > +.. c:type:: v4l2_ctrl_mpeg2_quantization
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_ctrl_mpeg2_quantization
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u8
+> > +      - ``load_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the
+> > ``intra_quantiser_matrix`` data.
+> > +    * - __u8
+> > +      - ``load_non_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the
+> > ``non_intra_quantiser_matrix``
+> > +	data.
+> > +    * - __u8
+> > +      - ``load_chroma_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the
+> > +	``chroma_intra_quantiser_matrix`` data, only relevant for non-
+> > 4:2:0 YUV
+> > +	formats.
+> > +    * - __u8
+> > +      - ``load_chroma_non_intra_quantiser_matrix``
+> > +      - One bit to indicate whether to load the
+> > +	``chroma_non_intra_quantiser_matrix`` data, only relevant for
+> > non-4:2:0
+> > +	YUV formats.
+> > +    * - __u8
+> > +      - ``intra_quantiser_matrix[64]``
+> > +      - The quantization matrix coefficients for intra-coded
+> > frames, in zigzag
+> > +	scanning order. It is relevant for both luma and chroma
+> > components,
+> > +	although it can be superseded by the chroma-specific matrix for
+> > +	non-4:2:0 YUV formats.
+> > +    * - __u8
+> > +      - ``non_intra_quantiser_matrix[64]``
+> > +      - The quantization matrix coefficients for non-intra-coded
+> > frames, in
+> > +	zigzag scanning order. It is relevant for both luma and chroma
+> > +	components, although it can be superseded by the chroma-
+> > specific matrix
+> > +	for non-4:2:0 YUV formats.
+> > +    * - __u8
+> > +      - ``chroma_intra_quantiser_matrix[64]``
+> > +      - The quantization matrix coefficients for the chominance
+> > component of
+> > +	intra-coded frames, in zigzag scanning order. Only relevant for
+> > +	non-4:2:0 YUV formats.
+> > +    * - __u8
+> > +      - ``chroma_non_intra_quantiser_matrix[64]``
+> > +      - The quantization matrix coefficients for the chrominance
+> > component of
+> > +	non-intra-coded frames, in zigzag scanning order. Only relevant
+> > for
+> > +	non-4:2:0 YUV formats.
+> > =20
+> >  MFC 5.1 MPEG Controls
+> >  ---------------------
+> > diff --git a/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> > b/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> > index d382e7a5c38e..a86b59f770dd 100644
+> > --- a/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> > +++ b/Documentation/media/uapi/v4l/pixfmt-compressed.rst
+> > @@ -60,6 +60,20 @@ Compressed Formats
+> >        - ``V4L2_PIX_FMT_MPEG2``
+> >        - 'MPG2'
+> >        - MPEG2 video elementary stream.
+> > +    * .. _V4L2-PIX-FMT-MPEG2-SLICE:
+> > +
+> > +      - ``V4L2_PIX_FMT_MPEG2_SLICE``
+> > +      - 'MG2S'
+> > +      - MPEG-2 parsed slice data, as extracted from the MPEG-2
+> > bitstream.
+> > +	This format is adapted for stateless video decoders that
+> > implement a
+> > +	MPEG-2 pipeline (using the Memory to Memory and Media Request
+> > APIs).
+>=20
+> Use references to the corresponding sections in the spec so the
+> reader can just
+> click on the link.
+
+Sure thing!
+
+Cheers,
+
+Paul
+
+> Regards,
+>=20
+> 	Hans
+>=20
+> > +	Metadata associated with the frame to decode is required to be
+> > passed
+> > +	through the ``V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS`` control
+> > and
+> > +	quantization matrices can optionally be specified through the
+> > +	``V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION`` control.
+> > +	See the :ref:`associated Codec Control IDs <v4l2-mpeg-mpeg2>`.
+> > +	Buffers associated with this pixel format must contain the
+> > appropriate
+> > +	number of macroblocks to decode a full corresponding frame.
+> >      * .. _V4L2-PIX-FMT-MPEG4:
+> > =20
+> >        - ``V4L2_PIX_FMT_MPEG4``
+> > diff --git a/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
+> > b/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
+> > index 5bd26e8c9a1a..258f5813f281 100644
+> > --- a/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
+> > +++ b/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
+> > @@ -424,8 +424,18 @@ See also the examples in :ref:`control`.
+> >        - any
+> >        - An unsigned 32-bit valued control ranging from minimum to
+> > maximum
+> >  	inclusive. The step value indicates the increment between
+> > values.
+> > -
+> > -
+> > +    * - ``V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS``
+> > +      - n/a
+> > +      - n/a
+> > +      - n/a
+> > +      - A struct :c:type:`v4l2_ctrl_mpeg2_slice_params`,
+> > containing MPEG-2
+> > +	slice parameters for stateless video decoders.
+> > +    * - ``V4L2_CTRL_TYPE_MPEG2_QUANTIZATION``
+> > +      - n/a
+> > +      - n/a
+> > +      - n/a
+> > +      - A struct :c:type:`v4l2_ctrl_mpeg2_quantization`,
+> > containing MPEG-2
+> > +	quantization matrices for stateless video decoders.
+> > =20
+> >  .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
+> > =20
+> > diff --git a/Documentation/media/videodev2.h.rst.exceptions
+> > b/Documentation/media/videodev2.h.rst.exceptions
+> > index 99256a2c003e..30ba0d6f546f 100644
+> > --- a/Documentation/media/videodev2.h.rst.exceptions
+> > +++ b/Documentation/media/videodev2.h.rst.exceptions
+> > @@ -129,6 +129,8 @@ replace symbol V4L2_CTRL_TYPE_STRING
+> > :c:type:`v4l2_ctrl_type`
+> >  replace symbol V4L2_CTRL_TYPE_U16 :c:type:`v4l2_ctrl_type`
+> >  replace symbol V4L2_CTRL_TYPE_U32 :c:type:`v4l2_ctrl_type`
+> >  replace symbol V4L2_CTRL_TYPE_U8 :c:type:`v4l2_ctrl_type`
+> > +replace symbol V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS
+> > :c:type:`v4l2_ctrl_type`
+> > +replace symbol V4L2_CTRL_TYPE_MPEG2_QUANTIZATION
+> > :c:type:`v4l2_ctrl_type`
+> > =20
+> >  # V4L2 capability defines
+> >  replace define V4L2_CAP_VIDEO_CAPTURE device-capabilities
+> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > index ccaf3068de6d..bcf520e0f61c 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > @@ -844,6 +844,8 @@ const char *v4l2_ctrl_get_name(u32 id)
+> >  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return
+> > "Vertical MV Search Range";
+> >  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return
+> > "Repeat Sequence Header";
+> >  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return
+> > "Force Key Frame";
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS:		ret
+> > urn "MPEG-2 Slice Parameters";
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION:		ret
+> > urn "MPEG-2 Quantization Matrices";
+> > =20
+> >  	/* VPX controls */
+> >  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		ret
+> > urn "VPX Number of Partitions";
+> > @@ -1292,6 +1294,12 @@ void v4l2_ctrl_fill(u32 id, const char
+> > **name, enum v4l2_ctrl_type *type,
+> >  	case V4L2_CID_RDS_TX_ALT_FREQS:
+> >  		*type =3D V4L2_CTRL_TYPE_U32;
+> >  		break;
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS:
+> > +		*type =3D V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS;
+> > +		break;
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION:
+> > +		*type =3D V4L2_CTRL_TYPE_MPEG2_QUANTIZATION;
+> > +		break;
+> >  	default:
+> >  		*type =3D V4L2_CTRL_TYPE_INTEGER;
+> >  		break;
+> > @@ -1550,6 +1558,7 @@ static void std_log(const struct v4l2_ctrl
+> > *ctrl)
+> >  static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
+> >  			union v4l2_ctrl_ptr ptr)
+> >  {
+> > +	struct v4l2_ctrl_mpeg2_slice_params *p_mpeg2_slice_params;
+> >  	size_t len;
+> >  	u64 offset;
+> >  	s64 val;
+> > @@ -1612,6 +1621,54 @@ static int std_validate(const struct
+> > v4l2_ctrl *ctrl, u32 idx,
+> >  			return -ERANGE;
+> >  		return 0;
+> > =20
+> > +	case V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS:
+> > +		p_mpeg2_slice_params =3D ptr.p;
+> > +
+> > +		switch (p_mpeg2_slice_params->sequence.chroma_format) {
+> > +		case 1: /* 4:2:0 */
+> > +		case 2: /* 4:2:2 */
+> > +		case 3: /* 4:4:4 */
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		switch (p_mpeg2_slice_params-
+> > >picture.intra_dc_precision) {
+> > +		case 0: /* 8 bits */
+> > +		case 1: /* 9 bits */
+> > +		case 11: /* 11 bits */
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		switch (p_mpeg2_slice_params-
+> > >picture.picture_structure) {
+> > +		case 1: /* interlaced top field */
+> > +		case 2: /* interlaced bottom field */
+> > +		case 3: /* progressive */
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		switch (p_mpeg2_slice_params-
+> > >picture.picture_coding_type) {
+> > +		case V4L2_MPEG2_PICTURE_CODING_TYPE_I:
+> > +		case V4L2_MPEG2_PICTURE_CODING_TYPE_P:
+> > +		case V4L2_MPEG2_PICTURE_CODING_TYPE_B:
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		if (p_mpeg2_slice_params->backward_ref_index >=3D
+> > VIDEO_MAX_FRAME ||
+> > +		    p_mpeg2_slice_params->forward_ref_index >=3D
+> > VIDEO_MAX_FRAME)
+> > +			return -EINVAL;
+> > +
+> > +		return 0;
+> > +
+> > +	case V4L2_CTRL_TYPE_MPEG2_QUANTIZATION:
+> > +		return 0;
+> > +
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > @@ -2186,6 +2243,12 @@ static struct v4l2_ctrl
+> > *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
+> >  	case V4L2_CTRL_TYPE_U32:
+> >  		elem_size =3D sizeof(u32);
+> >  		break;
+> > +	case V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS:
+> > +		elem_size =3D sizeof(struct
+> > v4l2_ctrl_mpeg2_slice_params);
+> > +		break;
+> > +	case V4L2_CTRL_TYPE_MPEG2_QUANTIZATION:
+> > +		elem_size =3D sizeof(struct
+> > v4l2_ctrl_mpeg2_quantization);
+> > +		break;
+> >  	default:
+> >  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+> >  			elem_size =3D sizeof(s32);
+> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > index 87dba0b9c0a7..1a8feaf6c3f7 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > @@ -1309,6 +1309,7 @@ static void v4l_fill_fmtdesc(struct
+> > v4l2_fmtdesc *fmt)
+> >  		case V4L2_PIX_FMT_H263:		descr =3D "H.263";
+> > break;
+> >  		case V4L2_PIX_FMT_MPEG1:	descr =3D "MPEG-1 ES"; break;
+> >  		case V4L2_PIX_FMT_MPEG2:	descr =3D "MPEG-2 ES"; break;
+> > +		case V4L2_PIX_FMT_MPEG2_SLICE:	descr =3D "MPEG-2
+> > Parsed Slice Data"; break;
+> >  		case V4L2_PIX_FMT_MPEG4:	descr =3D "MPEG-4 part 2 ES";
+> > break;
+> >  		case V4L2_PIX_FMT_XVID:		descr =3D "Xvid";
+> > break;
+> >  		case V4L2_PIX_FMT_VC1_ANNEX_G:	descr =3D "VC-1
+> > (SMPTE 412M Annex G)"; break;
+> > diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-
+> > ctrls.h
+> > index 53ca4df0c353..0dae03dd5b06 100644
+> > --- a/include/media/v4l2-ctrls.h
+> > +++ b/include/media/v4l2-ctrls.h
+> > @@ -35,13 +35,15 @@ struct poll_table_struct;
+> > =20
+> >  /**
+> >   * union v4l2_ctrl_ptr - A pointer to a control value.
+> > - * @p_s32:	Pointer to a 32-bit signed value.
+> > - * @p_s64:	Pointer to a 64-bit signed value.
+> > - * @p_u8:	Pointer to a 8-bit unsigned value.
+> > - * @p_u16:	Pointer to a 16-bit unsigned value.
+> > - * @p_u32:	Pointer to a 32-bit unsigned value.
+> > - * @p_char:	Pointer to a string.
+> > - * @p:		Pointer to a compound value.
+> > + * @p_s32:			Pointer to a 32-bit signed value.
+> > + * @p_s64:			Pointer to a 64-bit signed value.
+> > + * @p_u8:			Pointer to a 8-bit unsigned value.
+> > + * @p_u16:			Pointer to a 16-bit unsigned value.
+> > + * @p_u32:			Pointer to a 32-bit unsigned value.
+> > + * @p_char:			Pointer to a string.
+> > + * @p_mpeg2_slice_params:	Pointer to a MPEG2 slice parameters
+> > structure.
+> > + * @p_mpeg2_quantization:	Pointer to a MPEG2 quantization data
+> > structure.
+> > + * @p:				Pointer to a compound value.
+> >   */
+> >  union v4l2_ctrl_ptr {
+> >  	s32 *p_s32;
+> > @@ -50,6 +52,8 @@ union v4l2_ctrl_ptr {
+> >  	u16 *p_u16;
+> >  	u32 *p_u32;
+> >  	char *p_char;
+> > +	struct v4l2_ctrl_mpeg2_slice_params *p_mpeg2_slice_params;
+> > +	struct v4l2_ctrl_mpeg2_quantization *p_mpeg2_quantization;
+> >  	void *p;
+> >  };
+> > =20
+> > diff --git a/include/uapi/linux/v4l2-controls.h
+> > b/include/uapi/linux/v4l2-controls.h
+> > index e4ee10ee917d..51b095898f4b 100644
+> > --- a/include/uapi/linux/v4l2-controls.h
+> > +++ b/include/uapi/linux/v4l2-controls.h
+> > @@ -402,6 +402,9 @@ enum v4l2_mpeg_video_multi_slice_mode {
+> >  #define V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE		(V4L2_C
+> > ID_MPEG_BASE+228)
+> >  #define V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME		(V4L2_C
+> > ID_MPEG_BASE+229)
+> > =20
+> > +#define V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS		(V4L2_C
+> > ID_MPEG_BASE+250)
+> > +#define V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION		(V4L2_C
+> > ID_MPEG_BASE+251)
+> > +
+> >  #define V4L2_CID_MPEG_VIDEO_H263_I_FRAME_QP		(V4L2_C
+> > ID_MPEG_BASE+300)
+> >  #define V4L2_CID_MPEG_VIDEO_H263_P_FRAME_QP		(V4L2_C
+> > ID_MPEG_BASE+301)
+> >  #define V4L2_CID_MPEG_VIDEO_H263_B_FRAME_QP		(V4L2_C
+> > ID_MPEG_BASE+302)
+> > @@ -1092,4 +1095,66 @@ enum v4l2_detect_md_mode {
+> >  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_
+> > BASE + 3)
+> >  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETEC
+> > T_CLASS_BASE + 4)
+> > =20
+> > +#define V4L2_MPEG2_PICTURE_CODING_TYPE_I	1
+> > +#define V4L2_MPEG2_PICTURE_CODING_TYPE_P	2
+> > +#define V4L2_MPEG2_PICTURE_CODING_TYPE_B	3
+> > +#define V4L2_MPEG2_PICTURE_CODING_TYPE_D	4
+> > +
+> > +struct v4l2_mpeg2_sequence {
+> > +	/* ISO/IEC 13818-2, ITU-T Rec. H.262: Sequence header */
+> > +	__u16	horizontal_size;
+> > +	__u16	vertical_size;
+> > +	__u32	vbv_buffer_size;
+> > +
+> > +	/* ISO/IEC 13818-2, ITU-T Rec. H.262: Sequence extension */
+> > +	__u8	profile_and_level_indication;
+> > +	__u8	progressive_sequence;
+> > +	__u8	chroma_format;
+> > +};
+> > +
+> > +struct v4l2_mpeg2_picture {
+> > +	/* ISO/IEC 13818-2, ITU-T Rec. H.262: Picture header */
+> > +	__u8	picture_coding_type;
+> > +
+> > +	/* ISO/IEC 13818-2, ITU-T Rec. H.262: Picture coding extension
+> > */
+> > +	__u8	f_code[2][2];
+> > +	__u8	intra_dc_precision;
+> > +	__u8	picture_structure;
+> > +	__u8	top_field_first;
+> > +	__u8	frame_pred_frame_dct;
+> > +	__u8	concealment_motion_vectors;
+> > +	__u8	q_scale_type;
+> > +	__u8	intra_vlc_format;
+> > +	__u8	alternate_scan;
+> > +	__u8	repeat_first_field;
+> > +	__u8	progressive_frame;
+> > +};
+> > +
+> > +struct v4l2_ctrl_mpeg2_slice_params {
+> > +	__u32	bit_size;
+> > +	__u32	data_bit_offset;
+> > +
+> > +	struct v4l2_mpeg2_sequence sequence;
+> > +	struct v4l2_mpeg2_picture picture;
+> > +
+> > +	/* ISO/IEC 13818-2, ITU-T Rec. H.262: Slice */
+> > +	__u8	quantiser_scale_code;
+> > +
+> > +	__u8	backward_ref_index;
+> > +	__u8	forward_ref_index;
+> > +};
+> > +
+> > +struct v4l2_ctrl_mpeg2_quantization {
+> > +	/* ISO/IEC 13818-2, ITU-T Rec. H.262: Quant matrix extension */
+> > +	__u8	load_intra_quantiser_matrix;
+> > +	__u8	load_non_intra_quantiser_matrix;
+> > +	__u8	load_chroma_intra_quantiser_matrix;
+> > +	__u8	load_chroma_non_intra_quantiser_matrix;
+> > +
+> > +	__u8	intra_quantiser_matrix[64];
+> > +	__u8	non_intra_quantiser_matrix[64];
+> > +	__u8	chroma_intra_quantiser_matrix[64];
+> > +	__u8	chroma_non_intra_quantiser_matrix[64];
+> > +};
+> > +
+> >  #endif
+> > diff --git a/include/uapi/linux/videodev2.h
+> > b/include/uapi/linux/videodev2.h
+> > index 490fc9964d97..ad7064fcccea 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -635,6 +635,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /*
+> > H263          */
+> >  #define V4L2_PIX_FMT_MPEG1    v4l2_fourcc('M', 'P', 'G', '1') /*
+> > MPEG-1 ES     */
+> >  #define V4L2_PIX_FMT_MPEG2    v4l2_fourcc('M', 'P', 'G', '2') /*
+> > MPEG-2 ES     */
+> > +#define V4L2_PIX_FMT_MPEG2_SLICE v4l2_fourcc('M', 'G', '2', 'S')
+> > /* MPEG-2 parsed slice data */
+> >  #define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /*
+> > MPEG-4 part 2 ES */
+> >  #define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /*
+> > Xvid           */
+> >  #define V4L2_PIX_FMT_VC1_ANNEX_G v4l2_fourcc('V', 'C', '1', 'G')
+> > /* SMPTE 421M Annex G compliant stream */
+> > @@ -1601,6 +1602,8 @@ struct v4l2_ext_control {
+> >  		__u8 __user *p_u8;
+> >  		__u16 __user *p_u16;
+> >  		__u32 __user *p_u32;
+> > +		struct v4l2_ctrl_mpeg2_slice_params __user
+> > *p_mpeg2_slice_params;
+> > +		struct v4l2_ctrl_mpeg2_quantization __user
+> > *p_mpeg2_quantization;
+> >  		void __user *ptr;
+> >  	};
+> >  } __attribute__ ((packed));
+> > @@ -1646,6 +1649,8 @@ enum v4l2_ctrl_type {
+> >  	V4L2_CTRL_TYPE_U8	     =3D 0x0100,
+> >  	V4L2_CTRL_TYPE_U16	     =3D 0x0101,
+> >  	V4L2_CTRL_TYPE_U32	     =3D 0x0102,
+> > +	V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS =3D 0x0103,
+> > +	V4L2_CTRL_TYPE_MPEG2_QUANTIZATION =3D 0x0104,
+> >  };
+> > =20
+> >  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
+> >=20
+>=20
+>=20
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-KKtmpGhZ1gmJYvnYEFWj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluP+X0ACgkQhP3B6o/u
+lQzNAg/+O1VXlOFSP3dK/0eEY0aGJ7Bl6C8Tf1HJ6G0bzR2wcMC4rS6Z3ePf/Exw
+6aInL2O0G7sMC9af2jw7SN5mUBQSVGfxoge9Cd5IqkbQRK/YQBiIqev/BznRARvN
+EHiQNPRiU/K8VBv0Qk09uQg4tQhNPmPonmaRm+2a5o1PUoqs5xHrArMjnpNRNRrj
+LTIwVrQX1Y1DR4XD39QSvejDrphih7FKMwMfvRMHAsGpOYyJqTlQ2FDNnmNUhC8p
+FSL+DA28XKSGEDcIuDf+Z7Rt3uoVpC0DCae3siyUEmpR6h2rIYLlcPD16zh57UA6
+MVTRsT3MwdFpjHJJKgG+D6sIlqQjih+bu3Vwjl0Oq5W1dcFy+phQsCWE++COQoLo
+7c/UNwImYhINOk/brU+KvXzEe9+ue4blTeNcXNZSzrywoCPMJsaQYBo8iXin+zz8
+1QwdU1Gy7WinFSUtOAsHcguG8DYCXuUtQhOhl5fh1P0hTvUhhDI0UM8+ZZuOpKoj
+5UoXnc7k8l/KiGwx64VK7xMlXL2RlgCtZq4uhhCt2wvJeZ0PGjB2xmFkVYGeIRf7
+cXRXX5/obEouc+fDfmp8w5PWMUo48pBgxqilDwEFjms/oc/02Ml8zqOn4CFuULIg
+ouE1MOYyP5re7PNWf9nyxFQq8qPIInsGq53fXmPjtirSKRnc7hc=
+=Ufc/
+-----END PGP SIGNATURE-----
+
+--=-KKtmpGhZ1gmJYvnYEFWj--
 
