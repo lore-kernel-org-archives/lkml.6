@@ -2,251 +2,86 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846C8C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA37C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7A020659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:22:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7A020659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C7BB20659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:22:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7BB20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeIEKum (ORCPT
+        id S1727645AbeIEKur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:50:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:13441 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726272AbeIEKul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:50:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2018 23:21:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,332,1531810800"; 
-   d="scan'208";a="68480541"
-Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.116])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Sep 2018 23:21:58 -0700
-Date:   Wed, 5 Sep 2018 14:28:05 +0800
-From:   Yu Chen <yu.c.chen@intel.com>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Wed, 5 Sep 2018 06:50:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32822 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726272AbeIEKur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 06:50:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7AD28AF05;
+        Wed,  5 Sep 2018 06:22:09 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 08:22:06 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     "Schaufler, Casey" <casey.schaufler@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        "Bityutskiy, Artem" <artem.bityutskiy@intel.com>
-Subject: Re: [PATCH][RFC] x86/intel_rdt: Do not display size for non-CAT
- resource
-Message-ID: <20180905062805.GA29120@chenyu-desktop>
-References: <20180904174614.26682-1-yu.c.chen@intel.com>
- <8cf4c10f-68fe-04a5-029c-9cb22db413ff@intel.com>
- <8cd8165b-c2e6-7ffc-1ef8-a7b497fab99e@intel.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+ be applied on arbitrary tasks
+In-Reply-To: <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com>
+Message-ID: <nycvar.YFH.7.76.1809050725390.15880@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm> <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm> <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com> <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
+ <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com> <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm> <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cd8165b-c2e6-7ffc-1ef8-a7b497fab99e@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Reinette,
-Thanks for looking at this.
-On Tue, Sep 04, 2018 at 03:36:01PM -0700, Reinette Chatre wrote:
-> Hi Chen Yu,
-> 
-> On 9/4/2018 1:24 PM, Reinette Chatre wrote:
-> > On 9/4/2018 10:46 AM, Chen Yu wrote:
-> >> On a platform with MB resource enabled, a divided-by-zero
-> >> exception is triggered when accessing 'size':
-> >>
-> >> [  151.193447] divide error: 0000 [#1] SMP PTI
-> >> [  151.197743] CPU: 93 PID: 1929 Comm: cat Not tainted 4.19.0-rc2-debug-rdt+ #25
-> >> [  151.205070] Hardware name: Dell Inc. PowerEdge R640/0CRT1G, BIOS 1.3.7 02/08/2018
-> >> [  151.212783] RIP: 0010:rdtgroup_cbm_to_size+0x7e/0xa0
-> >> [  151.237172] RSP: 0018:ffffb3454f90bd88 EFLAGS: 00010246
-> >> [  151.242538] RAX: 00000000023c0000 RBX: 0000000000000000 RCX: 0000000000000003
-> >> [  151.249878] RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
-> >> [  151.257213] RBP: ffff96ff0089e000 R08: 0000000000000000 R09: 0000000000aaaaaa
-> >> [  151.264544] R10: ffffb3454f90bd8c R11: 00000000ffffffff R12: ffffffffb5028910
-> >> [  151.271887] R13: ffffffffb5028910 R14: 0000000000000064 R15: ffff96ff0089e000
-> >> [  151.279217] FS:  00007f95a623a500(0000) GS:ffff97170f9c0000(0000) knlGS:0000000000000000
-> >> [  151.287532] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [  151.293432] CR2: 00007f95a6217000 CR3: 00000023f696c003 CR4: 00000000007606e0
-> >> [  151.300766] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >> [  151.308094] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >> [  151.315426] PKRU: 55555554
-> >> [  151.318212] Call Trace:
-> >> [  151.320732]  rdtgroup_size_show+0x11a/0x1d0
-> >> [  151.325039]  seq_read+0xd8/0x3b0
-> >> [  151.328363]  __vfs_read+0x36/0x170
-> >> [  151.331857]  vfs_read+0x89/0x130
-> >> [  151.335179]  ksys_read+0x52/0xc0
-> >> [  151.338500]  do_syscall_64+0x5b/0x180
-> >> [  151.342261]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>
-> >> This is because for MB resource, the r->cache.cbm_len is zero, thus
-> >> calculating size in rdtgroup_cbm_to_size() will trigger the exception.
-> >>
-> >> Fix this issue by not exposing 'size' for non-CAT resources.
-> >>
-> >> Fixes: d9b48c86eb38 ("x86/intel_rdt: Display resource groups'
-> >> allocations in bytes")
-> >> Cc: Reinette Chatre <reinette.chatre@intel.com>
-> >> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> >> Cc: Tony Luck <tony.luck@intel.com>
-> >> Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> >> ---
-> >>  arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> >> index b799c00bef09..53fd07b2f61a 100644
-> >> --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> >> +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> >> @@ -1329,7 +1329,7 @@ static struct rftype res_common_files[] = {
-> >>  		.mode		= 0444,
-> >>  		.kf_ops		= &rdtgroup_kf_single_ops,
-> >>  		.seq_show	= rdtgroup_size_show,
-> >> -		.fflags		= RF_CTRL_BASE,
-> >> +		.fflags		= RF_CTRL_INFO | RFTYPE_RES_CACHE,
-> >>  	},
-> >>  
-> >>  };
-> >>
-> > 
-> > Thank you very much for catching this.
-> > 
-> > I think we need to change the fix a bit because from that I can tell the
-> > above would cause the "size" file to be relocated to the system wide
-> > "info" directory 
-Okay. Just curious, if changing like this, will it be moved to resctrl/info/L3/size or
-resctrl/info/size?
->> while we would like to have this file remain associated
-> > with the resource group - but just not apply to a MB resource.
-> > 
-> > A similar fix may also be needed for the resource group's "mode" file
-> > that was also recently introduced.
-> > 
-> > I am taking a closer look now.
-> 
-> The "size" file is intended to be associated with a resource group and
-> to list the size in bytes of the cache allocations. It does not
-> currently accommodate the memory bandwidth allocations as you
-> discovered. A system may have multiple resources to be managed via RDT,
-> it could include cache as well as memory, and to thus not expose the
-> "size" file if memory bandwidth allocation is supported is not ideal
-> since the user would not be able to see this information for the cache
-> resources.
-> 
-> So, instead of not exposing the "size" file when memory bandwidth
-> allocation is in use I think that we could just include the memory
-> bandwidth allocation information in the existing file. This would be in
-> the currently active bandwidth granularity that would essentially
-> duplicate the schemata information.
-> 
-I might understand incorrectly, but in this way, the size in resctrl top
-dir will display all the domain ranges within all the resources, say, the
-size for MB, L3 will be displayed in one file, right? Will the 'size' be
-displayed under each resource dir in info dir?
-> While looking further at how the new files (size and mode) will behave
-> when a MBA resource is present I think I discovered a few more issues:
-> - the "exclusive" mode should not apply to a MBA resource
-> - it should not be possible to pseudo-lock a MBA resource
-> 
-> I attempt to address the above issues with the change below. Could you
-> please try it out with what you are currently testing?
-This patch works.
-Tested-by: Chen Yu <yu.c.chen@intel.com>
-> I do not have
-> access to a system with a MBA resource - could you please let me know
-> what system you are testing on so I can try out more tests?
-> 
-I'm using SKYLAKE-X, of cpu stepping 4, so l3cat might be disabled
-due to errorta.
+On Tue, 4 Sep 2018, Tim Chen wrote:
 
-BTW, may I know the scope of CBM? It seems that in this patch all
-the other resource than MBA could leverage CBM to calculate their
-resource size. What if other resources are added in the future?
+> I think STIBP should be an opt in option as it will have significant
+> impact on performance.  The attack from neighbor thread is pretty
+> difficult to pull off considering you have to know what the sibling
+> thread is running and its address allocation.
 
-Best,
-Yu
-> Thanks!
-> 
-> Reinette
-> 
-> 
-> -->8----
-> diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-> b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-> index af358ca05160..434dd93f915a 100644
-> --- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-> +++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-> @@ -200,6 +200,12 @@ static int parse_line(char *line, struct
-> rdt_resource *r,
->         struct rdt_domain *d;
->         unsigned long dom_id;
-> 
-> +       if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
-> +           r->rid == RDT_RESOURCE_MBA) {
-> +               rdt_last_cmd_puts("Cannot pseudo-lock MBA resource\n");
-> +               return -EINVAL;
-> +       }
-> +
->  next:
->         if (!line || line[0] == '\0')
->                 return 0;
-> diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> index b799c00bef09..2bc4a01536bc 100644
-> --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> @@ -1027,6 +1027,8 @@ static bool rdtgroup_mode_test_exclusive(struct
-> rdtgroup *rdtgrp)
->         struct rdt_domain *d;
-> 
->         for_each_alloc_enabled_rdt_resource(r) {
-> +               if (r->rid == RDT_RESOURCE_MBA)
-> +                       continue;
->                 list_for_each_entry(d, &r->domains, list) {
->                         if (rdtgroup_cbm_overlaps(r, d, d->ctrl_val[closid],
->                                                   rdtgrp->closid, false))
-> @@ -1156,7 +1158,7 @@ static int rdtgroup_size_show(struct
-> kernfs_open_file *of,
->         struct rdt_domain *d;
->         unsigned int size;
->         bool sep = false;
-> -       u32 cbm;
-> +       u32 ctrl;
-> 
->         rdtgrp = rdtgroup_kn_lock_live(of->kn);
->         if (!rdtgrp) {
-> @@ -1181,8 +1183,13 @@ static int rdtgroup_size_show(struct
-> kernfs_open_file *of,
->                         if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
->                                 size = 0;
->                         } else {
-> -                               cbm = d->ctrl_val[rdtgrp->closid];
-> -                               size = rdtgroup_cbm_to_size(r, d, cbm);
-> +                               ctrl = (!is_mba_sc(r) ?
-> +
-> d->ctrl_val[rdtgrp->closid] :
-> +
-> d->mbps_val[rdtgrp->closid]);
-> +                               if (r->rid == RDT_RESOURCE_MBA)
-> +                                       size = ctrl;
-> +                               else
-> +                                       size = rdtgroup_cbm_to_size(r,
-> d, ctrl);
->                         }
->                         seq_printf(s, "%d=%u", d->id, size);
->                         sep = true;
-> 
+In many scenarios the attacker can just easily taskset itself to the 
+correct sibling.
+
+> We could also use a security module to opt in the STIBP policy.
+
+I am a bit afraid that we are offloading to sysadmins decisions that are 
+very hard for them to make, as they require deep understanding of both the 
+technical details of the security issue in the CPU, and the mitigation.
+
+I surely understand that Intel is doing what they could to minimize the 
+performance effect, but achieving that by making it a rocket science to 
+configure it properly doesn't feel right.
+
+So, after giving it a bit more thought, I still believe "I want spectre V2 
+protection" vs. "I do not care about spectre V2 on my system 
+(=nospectre_v2)" are the sane options we should provide; so I'll respin v4 
+of my patchset, including the ptrace check in switch_mm() (statically 
+patched out on !IBPB-capable systems), and we can then later see whether 
+the LSM implementation, once it exists, should be used instead.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
