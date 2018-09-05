@@ -6,44 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C03C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0C9C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1C502075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C502075C
+	by mail.kernel.org (Postfix) with ESMTP id E02742075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:03:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02742075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbeIELaj (ORCPT
+        id S1727773AbeIELcX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:30:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33506 "EHLO mail.bootlin.com"
+        Wed, 5 Sep 2018 07:32:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33537 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbeIELaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:30:39 -0400
+        id S1726242AbeIELcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:32:23 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 76AE920756; Wed,  5 Sep 2018 09:01:54 +0200 (CEST)
+        id E814820756; Wed,  5 Sep 2018 09:03:36 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4A179203DC;
-        Wed,  5 Sep 2018 09:01:54 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 09:01:53 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id BA306203DC;
+        Wed,  5 Sep 2018 09:03:36 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 09:03:35 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to
- MMC module clocks
-Message-ID: <20180905070153.a5ba6razlhdwdjde@flea>
-References: <20180820134013.16527-1-icenowy@aosc.io>
- <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 1/4] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+Message-ID: <20180905070335.dclhpxjld4vdkdu4@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="64gjh43w4wb2y7ri"
+        protocol="application/pgp-signature"; boundary="bycakrqk56pgt6ts"
 Content-Disposition: inline
-In-Reply-To: <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
-11;rgb: 00000/2b2b/3636
+In-Reply-To: <20180904163609.10171-1-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,34 +58,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---64gjh43w4wb2y7ri
+--bycakrqk56pgt6ts
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 27, 2018 at 01:23:54PM -0700, Stephen Boyd wrote:
-> Quoting Icenowy Zheng (2018-08-20 06:40:13)
-> > On the H6, the MMC module clocks are fixed in the new timing mode,
-> > i.e. they do not have a bit to select the mode. These clocks have
-> > a 2x divider somewhere between the clock and the MMC module.
-> >=20
-> > To be consistent with other SoCs supporting the new timing mode,
-> > we model the 2x divider as a fixed post-divider on the MMC module
-> > clocks.
-> >=20
-> > This patch adds the post-dividers to the MMC clocks, following the
-> > approach on A64.
-> >=20
-> > Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+On Tue, Sep 04, 2018 at 10:06:06PM +0530, Jagan Teki wrote:
+> Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
+> as default.
 >=20
-> This commit doesn't exist. Did you mean:
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v4, v3:
+> - none
+> Changes for v2:
+> - Enable for MACH_SUN8I
 >=20
-> 524353ea48
+>  drivers/clk/sunxi-ng/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 >=20
-> instead?
+> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+> index 826674d090fd..e20182aa9748 100644
+> --- a/drivers/clk/sunxi-ng/Kconfig
+> +++ b/drivers/clk/sunxi-ng/Kconfig
+> @@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
+> =20
+>  config SUN8I_DE2_CCU
+>  	bool "Support for the Allwinner SoCs DE2 CCU"
+> +	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+> +	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
 
-I changed it. Please also use 12-characters commit IDs, as recommended
-in the kernel documentation.
+I don't see why there's a dependency on the DRM driver. I'm pretty
+sure this would even break simplefb.
 
 Maxime
 
@@ -87,24 +98,24 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---64gjh43w4wb2y7ri
+--bycakrqk56pgt6ts
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPf2AACgkQ0rTAlCFN
-r3SZCQ//U7fTlRzK3nbV79CQPigCtjxAfJk46/xpkxQ36wz9RcAKfOkxvqJ8u22V
-tAsQQoaLgkdSpwyIaLyaVX7Z9r0fiNOX7e8hJGZC+UqwZ3I/Tllk2l16p0AmRySM
-sUeM7z6e84gETwv3YcZyVUFQXSd/gsXDhZ6jO2tP8OmprFvxciIJjRuN7Paqct0F
-GQcBzgRt7Xle5eSkFqxV8WAbaETaUETtMOENzNskhE+pTD1slPHrim+bhSFYza6P
-58OoFztk4s/XCqd78kzW7y7j8/IleWH5CSu4LAnWC6Oo19t0Dxn1agYzHTEa20dj
-qA7l0bSmrRbnY/1hqQLbYToBvNavQqmcFZbk0Ge5wSRYhIqo8T9S3Bs8UM043u9/
-y5o6YODtIeNvk+/X3uh2bhi5DXbKF+1FzAaKPHHAgsR7an7LJpfSP0wnWkew/moz
-EGwJJ6wiEWUM7AcO92XoLgaMl6WjaKV90uDqHxGfKjcDPpvw/P8vTny8iNMUPoCV
-Bcj0hsT7gS4Me+zCFUbcJ1Hc762lZz1zM6Iq6Vu3h1YYW9SlDaBJcIG178/fO501
-HXV8JCu/eF0kCit11x/V4g6Ys1nAnlfH6WsRGoUWxJi0sTjEm1BF82kjQ5T2YBik
-+GAUwMzXwSsU5kEhVeuS6qyE9HfB6EjQ/Evy3Xe7upmaLZ+3t7Q=
-=ZDFf
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPf8YACgkQ0rTAlCFN
+r3QCxQ/+JSXH10zk0Celm/3OhcS17+7Xpamod/rUV7NMEBkQxm2DeiogB9UMm5AZ
+atNXiuONom4uoG+PGu67eHIO2BX4O++V4GlFioEbb02PuhPAKeWRx2luLkaK/RQH
+Al8hsIoEQA+VonKJkjPQc2knzqSYYDdWpS3BP6ISYyHT6zb0tNxghVmtFHlFMkxE
+EcY95zd4ZFqoILUIAoqYXnhsrrE/ENvADw+vuLa+2cDAOee281Lrzjjzj7wwpjv1
+CPNwSE3uDn72n7wsxM/Pkvgnsk709l17C61qi9zaCOU6MODnr6v07J8P8W5PSWOe
+pUNHR35oHTsSbhjK7rjQB7DkZozoz+eRKVznwV28w4lxRroF6cR5B6HrW3go3d1t
+XSYahmVmGQQTjm6pEnLtPvhJV7OiLFSxwY/NkirU58AUBek8A5jXimvDB0gRu7Ej
+FEFqWAV/f1MTAItHcl6wtKy1vNICyYpSFml4N0fBRtPMoGWovNjwuXJsviZ0hN9L
+zUgkkbIYb5DYAqUw990FQCP5OnzInz/LIfbg8tu4GnLDuD/TQzfz2SoGAV4l1mdI
+UqAv29C0ueFPUMWcCs95ivQ3kk/2mN5EpAswg/0/+Gt3MlteJ4elXXVB9imO1VmZ
+4Z2lN4LdwIvKFmeUTtZEsmG7trVcrBd+g+gUef83vG8IbClKvVI=
+=zIK+
 -----END PGP SIGNATURE-----
 
---64gjh43w4wb2y7ri--
+--bycakrqk56pgt6ts--
