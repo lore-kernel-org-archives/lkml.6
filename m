@@ -5,52 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C2FC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3941C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A708F2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:38:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A708F2073D
+	by mail.kernel.org (Postfix) with ESMTP id 885D82073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:38:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885D82073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbeIFAJj (ORCPT
+        id S1728245AbeIFAJl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 20:09:39 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:44632 "EHLO
+        Wed, 5 Sep 2018 20:09:41 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45538 "EHLO
         mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728161AbeIFAJi (ORCPT
+        with ESMTP id S1728161AbeIFAJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 20:09:38 -0400
-Received: by mail-oi0-f65.google.com with SMTP id l82-v6so15896617oih.11;
-        Wed, 05 Sep 2018 12:38:00 -0700 (PDT)
+        Wed, 5 Sep 2018 20:09:40 -0400
+Received: by mail-oi0-f65.google.com with SMTP id t68-v6so15895841oie.12;
+        Wed, 05 Sep 2018 12:38:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GgCElFhdjQyThXth4aH8s7Qmwk29mwNME1dnAGCxWmw=;
-        b=HgVs64jow0hvpvmgicYmIMzRHhtfR74JrySKD05KW4MZXxN1URHw9cdLyWlfpn+95j
-         QYOj1XRpz8FDEzjAew+sayRTJRpLkPMrU6oRuvn9t9U057yR0b8U2VkG5GJtTGmG8Lzr
-         5R1JSLDPks6P1CDU+GibzdzS6JB5s9Nv8wHqBIVscA6mMH9n8Xi6/JFuzQSpevuK4htX
-         U7xZeG/jxEBnH5ApJw2A+y3/K5u/yZyD3wCgvVBXZIops4qWb29krwN+kngiIBmfZgXx
-         R7q6W/lez939kRMWQPKj9dM7y5F5IahfLsE80QmXA9LALd5+6cbAEeEt9yjt5iaYWl2j
-         aP+Q==
-X-Gm-Message-State: APzg51Af6OvC9+Dg9Qa9I+5E/wEiDB6qSVmjp4uNxv4wXOfNm9hTewzI
-        8hMlrue7xK2QedoQXlEA8G9TFVc=
-X-Google-Smtp-Source: ANB0VdaJ4lyns0aVhNeLdPoxbSHllUF+Gpbvzj+80JhE9l5Kw7PvApCPW7qgsJVEvHFF0G1m+kGUHw==
-X-Received: by 2002:aca:3507:: with SMTP id c7-v6mr34041839oia.46.1536176279859;
-        Wed, 05 Sep 2018 12:37:59 -0700 (PDT)
+        bh=/iIXmhGiLNPb+oyB0fqAq/cBY95BW9PeH5qSGmIxXL0=;
+        b=YNiwLuyQ4RsQYQzjOJXMBpis6UedyGBVq2QEPiHNc/SQC/2D9dgfCyiXaL0+Ogg8Er
+         aLbSEa+cVG3eXaoeRsYQ+WJH3j4sx/Qu3eMdyxGbzpahKGMsV7QpYZDEeaZShZAqOVyT
+         wCHgUQBmSn6rLDFE+e0cUqiIhtWFWWkzJfaErhhsgC4sIEj3BLZWnBS9Uu/ou4qbfeO/
+         Lz2lUZyDbM/Ie4t2Hk+nq/SoQsOqq8M3EKrAwyY6PutUptoOx57+lw4ZPuFwUT13H1bU
+         WtVhotDflt6VMFXN2gjQh1ZpjZBT8pJYD2bQeFnnYY6vBqzBsJb1CKno2vWOq2Oh9L6B
+         7Yiw==
+X-Gm-Message-State: APzg51AEUsc6tUTO7sexfg2HbT7nTZJefwlAho9TunEw8V9M6V5rnEXQ
+        GqmtZFqfNPAedj7MMWrUeU2HjFE=
+X-Google-Smtp-Source: ANB0VdZKS1V7q7u2y82Cq4cJ/EcgQdvInIUa9iTr/T3xeLQwHWzjclwzJ6AsJ0r9pzC1SDtWYxMzHw==
+X-Received: by 2002:aca:af11:: with SMTP id y17-v6mr29485854oie.274.1536176282314;
+        Wed, 05 Sep 2018 12:38:02 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id u21-v6sm2296053oie.22.2018.09.05.12.37.59
+        by smtp.googlemail.com with ESMTPSA id u21-v6sm2296053oie.22.2018.09.05.12.38.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 12:37:59 -0700 (PDT)
+        Wed, 05 Sep 2018 12:38:01 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH 17/21] clk: mvebu: use for_each_of_cpu_node iterator
-Date:   Wed,  5 Sep 2018 14:37:34 -0500
-Message-Id: <20180905193738.19325-18-robh@kernel.org>
+Cc:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
+Subject: [PATCH 19/21] iommu: fsl_pamu: use for_each_of_cpu_node iterator
+Date:   Wed,  5 Sep 2018 14:37:36 -0500
+Message-Id: <20180905193738.19325-20-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180905193738.19325-1-robh@kernel.org>
 References: <20180905193738.19325-1-robh@kernel.org>
@@ -63,38 +62,28 @@ Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
 has the side effect of defaulting to iterating using "cpu" node names in
 preference to the deprecated (for FDT) device_type == "cpu".
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
 Please ack and I will take via the DT tree. This is dependent on the
 first 2 patches.
 
- drivers/clk/mvebu/clk-cpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/fsl_pamu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 072aa38374ce..3045067448fb 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -183,7 +183,7 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 		pr_warn("%s: pmu-dfs base register not set, dynamic frequency scaling not available\n",
- 			__func__);
+diff --git a/drivers/iommu/fsl_pamu.c b/drivers/iommu/fsl_pamu.c
+index 8540625796a1..1b955aea44dd 100644
+--- a/drivers/iommu/fsl_pamu.c
++++ b/drivers/iommu/fsl_pamu.c
+@@ -543,7 +543,7 @@ u32 get_stash_id(u32 stash_dest_hint, u32 vcpu)
+ 		return ~(u32)0;
+ 	}
 
--	for_each_node_by_type(dn, "cpu")
-+	for_each_of_cpu_node(dn)
- 		ncpus++;
-
- 	cpuclk = kcalloc(ncpus, sizeof(*cpuclk), GFP_KERNEL);
-@@ -194,7 +194,7 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 	if (WARN_ON(!clks))
- 		goto clks_out;
-
--	for_each_node_by_type(dn, "cpu") {
-+	for_each_of_cpu_node(dn) {
- 		struct clk_init_data init;
- 		struct clk *clk;
- 		char *clk_name = kzalloc(5, GFP_KERNEL);
+-	for_each_node_by_type(node, "cpu") {
++	for_each_of_cpu_node(node) {
+ 		prop = of_get_property(node, "reg", &len);
+ 		for (i = 0; i < len / sizeof(u32); i++) {
+ 			if (be32_to_cpup(&prop[i]) == vcpu) {
 --
 2.17.1
