@@ -2,213 +2,114 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CF2C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA15CC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C705120839
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 802F12073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QC9O9Yt+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C705120839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="V1l2xtaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 802F12073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbeIFC04 (ORCPT
+        id S1727953AbeIFC1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:26:56 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34895 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727824AbeIFC04 (ORCPT
+        Wed, 5 Sep 2018 22:27:01 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38496 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727876AbeIFC1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:26:56 -0400
-Received: by mail-io0-f195.google.com with SMTP id w11-v6so7272775iob.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:54:48 -0700 (PDT)
+        Wed, 5 Sep 2018 22:27:00 -0400
+Received: by mail-pl1-f195.google.com with SMTP id u11-v6so3925714plq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OzSGOPfK5Nz7DruLUyX9lOE5Oj01I9xouOuLccHJTe4=;
-        b=QC9O9Yt+VS94TqPVKIN5P/IXpZvzckvOnuJ7El2cXaGBJUcm3ThBI9pCgnHa2p+PJb
-         ehN4FU3+UnxnQaO+wgZcP774uCFEijy0yjEZ6Gs389FzZ3BZZHxXvkhMApBagn1tkAkF
-         5w8B0Zbk1/X380ES7GVrch3YAxdk+ioAQlRiT1MCjftHd6t5sIjDs8wMnWgj+7Dl6+xa
-         Apngj6kqrqEDGgGRf+pLIWK+aaLoofHLf3umNDY9HwoIcz/1CMx8zRQKl/lNrNRNJVcn
-         ZfAanYWxaKvaHH2w2VadZyETq1o16/MkmQOoK8jj6q2kuiWWWcAl1JzkQGKqYzTqajC7
-         mA+Q==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ocwCp4FTzJDaRvo3IIMSA5yMnq81kmSCGZhFLQ1qCZw=;
+        b=V1l2xtaW4ynjmj7WysNZwhxI77CkmBspA11GzK44YS06e6TDUMqcx1Vn4xZDhoO7JZ
+         B6E3qj5wTVPPBDTv7bRMp/BgNPZhzvwWiT37qoVwAZVmyNko/9ueuRKxdV91Gy6tcway
+         ZUwFPvLEQBWQtZSRDqTns60j4GDiUjgpMygPwMWQLzHH/Eo21T0AgIrDY03sHGQIsm1x
+         QREDSxdRjG7ZZxzmclSEzX2UWWJaHbw/tZ975Lpb5SSBUHqCnlbHkMdbEzSaOfPFBzgB
+         oDdkWhS1HZO/slhSz0YZRmHCrkq95biL4M3r/IVUdPsuLI19GodZWQje0QL6ulBgZyCb
+         bWcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OzSGOPfK5Nz7DruLUyX9lOE5Oj01I9xouOuLccHJTe4=;
-        b=AgK7rKWqinKHehxnLkqZotXyOH1qq9hOrdvkchTz1GrcEbxZqo0IRicvBDuZKu0F+6
-         jmPo0uks69ai52U/QJogn2DBaAs/lfsoYR18mon0MXmxNM6JHCkeFQs+7aNON00KRZPl
-         U0NwPFOlRMHrb9Ze33kmU5bmsC6zdpYW6axg/j98LzRr113jAMFRDU9Nb2H9Z93mgXYD
-         MyqnuXtCldAcR+NFxa8LOTwJPtHLe4+ErwL9cRWeYDHj9muIkeGfOsNsnCEU0YuFzzEA
-         vJv0d8bhIvAw7es65LKYLzCXHZOBXoBPBwpkfcLCPE5tO2Asm4S2imR/C85BFy8tKPDZ
-         d9eg==
-X-Gm-Message-State: APzg51CVoVQch1Q6NyUH+4g+C/NoKE/rZaPOmvNNEuyrl/QOwnoC8tBv
-        JMzowfGmKitf+Q64bX4bX9tx5q7/oo2jpgoc8VE=
-X-Google-Smtp-Source: ANB0VdaYu4In1Uh+ODXuHnN/RnI2XMro+x8VyGyKHAWR6Zq89WaQMMjYlkOzbpFANDdldiT6xWJNwzmhtvdg3HatoUw=
-X-Received: by 2002:a6b:5911:: with SMTP id n17-v6mr28175103iob.68.1536184487494;
- Wed, 05 Sep 2018 14:54:47 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ocwCp4FTzJDaRvo3IIMSA5yMnq81kmSCGZhFLQ1qCZw=;
+        b=q7N9DANtKtzRrqF4oXV/15P/GMbiP9KjeUYymnNP2uctDg3CcbHtA7980MePUD56Ox
+         Lqlgv+igORhURsA72rXjZQBXhzL15VZVjJ25DK5YV0FLGvdyNq7NNEdx0SC97Gvi2v9q
+         oaO3YlEsg3g56HpjreBOdZz/sySx2w0zRIEOYsPLm2Unc9FBepY7+fQc4OUGRBe6nP4v
+         dDgDTCsIF1WSlMmGm+ngMaZJ5j6Yn5BQXyo+d+gpjg41yFznRiBBpkuzt7z+GWkHO/uj
+         RGGDcj/3jP9r7vEaA8PLSBytb37Tfk2EvKsqz/iyCn+MrpfS1dKtpSzuZcND7RN15/h5
+         FwQg==
+X-Gm-Message-State: APzg51AXMXqBg3JnowIoXWJZXl/Y3H3wJNb4udTXDqM7QQYAF1RYxwzE
+        7yJc+/nI+aw9dWnyIUrgwuxmJA==
+X-Google-Smtp-Source: ANB0VdYqzxE5XGW7pyrrHaE543+ZfTZsJ+0Nsi6oeEe6WYH4hOxlwvoIlu/7IK4T8Bpu93vWkSlRGQ==
+X-Received: by 2002:a17:902:145:: with SMTP id 63-v6mr33137659plb.329.1536184492011;
+        Wed, 05 Sep 2018 14:54:52 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm4685921pfo.135.2018.09.05.14.54.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Sep 2018 14:54:51 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fxflC-0007BY-M0; Wed, 05 Sep 2018 15:54:50 -0600
+Date:   Wed, 5 Sep 2018 15:54:50 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     oulijun@huawei.com, xavier.huwei@huawei.com, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] infiniband: hw: hns: Fix a sleep-in-atomic-context bug
+ in hns_roce_set_hem()
+Message-ID: <20180905215450.GA27596@ziepe.ca>
+References: <20180901113948.28967-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-References: <20180905211041.3286.19083.stgit@localhost.localdomain>
- <20180905211328.3286.71674.stgit@localhost.localdomain> <cd1fc4c6-cc86-8bf7-6aa0-b722c56057e3@microsoft.com>
- <CAKgT0UcC2=Nrk+TDkidxjidnJzvhUPyYRD1uZ09BBWLcmcaOug@mail.gmail.com> <985fe87b-b8f4-de58-ea2a-970cbe51b72d@microsoft.com>
-In-Reply-To: <985fe87b-b8f4-de58-ea2a-970cbe51b72d@microsoft.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Wed, 5 Sep 2018 14:54:35 -0700
-Message-ID: <CAKgT0Ud12tMA_LcJ6_yAD4aMObHWCHqKPbwrEdNGcWsiKuVLYg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm: Move page struct poisoning to CONFIG_DEBUG_VM_PAGE_INIT_POISON
-To:     Pavel.Tatashin@microsoft.com
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180901113948.28967-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 2:38 PM Pasha Tatashin
-<Pavel.Tatashin@microsoft.com> wrote:
->
->
->
-> On 9/5/18 5:29 PM, Alexander Duyck wrote:
-> > On Wed, Sep 5, 2018 at 2:22 PM Pasha Tatashin
-> > <Pavel.Tatashin@microsoft.com> wrote:
-> >>
-> >>
-> >>
-> >> On 9/5/18 5:13 PM, Alexander Duyck wrote:
-> >>> From: Alexander Duyck <alexander.h.duyck@intel.com>
-> >>>
-> >>> On systems with a large amount of memory it can take a significant amount
-> >>> of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-> >>> value. I have seen it take over 2 minutes to initialize a system with
-> >>> over 12GB of RAM.
-> >>>
-> >>> In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-> >>> the boot time returned to something much more reasonable as the
-> >>> arch_add_memory call completed in milliseconds versus seconds. However in
-> >>> doing that I had to disable all of the other VM debugging on the system.
-> >>>
-> >>> Instead of keeping the value in CONFIG_DEBUG_VM I am adding a new CONFIG
-> >>> value called CONFIG_DEBUG_VM_PAGE_INIT_POISON that will control the page
-> >>> poisoning independent of the CONFIG_DEBUG_VM option.
-> >>>
-> >>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-> >>> ---
-> >>>  include/linux/page-flags.h |    8 ++++++++
-> >>>  lib/Kconfig.debug          |   14 ++++++++++++++
-> >>>  mm/memblock.c              |    5 ++---
-> >>>  mm/sparse.c                |    4 +---
-> >>>  4 files changed, 25 insertions(+), 6 deletions(-)
-> >>>
-> >>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> >>> index 74bee8cecf4c..0e95ca63375a 100644
-> >>> --- a/include/linux/page-flags.h
-> >>> +++ b/include/linux/page-flags.h
-> >>> @@ -13,6 +13,7 @@
-> >>>  #include <linux/mm_types.h>
-> >>>  #include <generated/bounds.h>
-> >>>  #endif /* !__GENERATING_BOUNDS_H */
-> >>> +#include <linux/string.h>
-> >>>
-> >>>  /*
-> >>>   * Various page->flags bits:
-> >>> @@ -162,6 +163,13 @@ static inline int PagePoisoned(const struct page *page)
-> >>>       return page->flags == PAGE_POISON_PATTERN;
-> >>>  }
-> >>>
-> >>> +static inline void page_init_poison(struct page *page, size_t size)
-> >>> +{
-> >>> +#ifdef CONFIG_DEBUG_VM_PAGE_INIT_POISON
-> >>> +     memset(page, PAGE_POISON_PATTERN, size);
-> >>> +#endif
-> >>> +}
-> >>> +
-> >>>  /*
-> >>>   * Page flags policies wrt compound pages
-> >>>   *
-> >>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> >>> index 613316724c6a..3b1277c52fed 100644
-> >>> --- a/lib/Kconfig.debug
-> >>> +++ b/lib/Kconfig.debug
-> >>> @@ -637,6 +637,20 @@ config DEBUG_VM_PGFLAGS
-> >>>
-> >>>         If unsure, say N.
-> >>>
-> >>> +config DEBUG_VM_PAGE_INIT_POISON
-> >>> +     bool "Enable early page metadata poisoning"
-> >>> +     default y
-> >>> +     depends on DEBUG_VM
-> >>> +     help
-> >>> +       Seed the page metadata with a poison pattern to improve the
-> >>> +       likelihood of detecting attempts to access the page prior to
-> >>> +       initialization by the memory subsystem.
-> >>> +
-> >>> +       This initialization can result in a longer boot time for systems
-> >>> +       with a large amount of memory.
-> >>
-> >> What happens when DEBUG_VM_PGFLAGS = y and
-> >> DEBUG_VM_PAGE_INIT_POISON = n ?
-> >>
-> >> We are testing for pattern that was not set?
-> >>
-> >> I think DEBUG_VM_PAGE_INIT_POISON must depend on DEBUG_VM_PGFLAGS instead.
-> >>
-> >> Looks good otherwise.
-> >>
-> >> Thank you,
-> >> Pavel
-> >
-> > The problem is that I then end up in the same situation I had in the
-> > last patch where you have to have DEBUG_VM_PGFLAGS on in order to do
-> > the seeding with poison.
->
-> OK
->
-> >
-> > I can wrap the bit of code in PagePoisoned to just always return false
-> > if we didn't set the pattern. I figure there is value to be had for
-> > running DEBUG_VM_PGFLAGS regardless of the poison check, or
-> > DEBUG_VM_PAGE_INIT_POISON without the PGFLAGS check. That is why I
-> > wanted to leave them independent.
->
-> How about:
->
-> Remove "depends on DEBUG_VM", but make DEBUG_VM_PGFLAGS to depend on
-> both DEBUG_VM and DEBUG_VM_PAGE_INIT_POISON?
->
-> DEBUG_VM_PGFLAGS is already extremely slow, so having this extra
-> dependency is OK.
->
-> Thank you,
-> Pavel
+On Sat, Sep 01, 2018 at 07:39:48PM +0800, Jia-Ju Bai wrote:
+> The driver may sleep with holding a spinlock.
+> 
+> The function call paths (from bottom to top) in Linux-4.16 are:
+> 
+> drivers/infiniband/hw/hns/hns_roce_hem.c, 345: 
+> 	msleep in hns_roce_set_hem
+> drivers/infiniband/hw/hns/hns_roce_hem.c, 330: 
+> 	_raw_spin_lock_irqsave in hns_roce_set_hem
+> 
+> To fix this bug, msleep() is replaced with mdelay().
+> 
+> This bug is found by my static analysis tool DSAC.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_hem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Why create the extra dependency though? In the case of DEBUG_VM I am
-doing it so that we can retain the original behavior where enabling
-DEBUG_VM should enable the poisoning. I want to avoid this just
-getting disabled by default and want to try to stick to the original
-behavior as closely as possible unless we want to go in and explicitly
-turn it off.
+This was already fixed here:
 
-From what I can tell the original code prior to your changes didn't
-bother checking for the poison value when testing the page flags. The
-poison value only applies prior to the page being initialized, so the
-value add for having it is only so much. It makes more sense to me to
-have these as two separate config options where enabling both would
-give you the maximum benefit, but you could test with either one or
-the other if you so desired.
+commit 73b4e1f4c04e76b19fca296d09b97555bfb35202
+Author: Lijun Ou <oulijun@huawei.com>
+Date:   Wed Jul 25 15:29:38 2018 +0800
 
-- Alex
+    RDMA/hns: Use delay instead of usleep
+    
+    In order to avoid using usleep function in lock function, we use delay
+    function instead of it.  Besides, it also use brackets for standardized
+    the computed order.
+    
+    Signed-off-by: Lijun Ou <oulijun@huawei.com>
+    Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
