@@ -2,105 +2,99 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE73C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC41C4321E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A20320857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 274F92075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZFRcdQy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A20320857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sqLr+Scq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274F92075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeIESQp (ORCPT
+        id S1727787AbeIESQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:16:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727686AbeIESQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:16:45 -0400
-Received: from mail-wm0-f45.google.com (mail-wm0-f45.google.com [74.125.82.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8695020857;
-        Wed,  5 Sep 2018 13:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536155186;
-        bh=iSuzQyl/6gmEtEttbIVROOZFt5p3dtvgWKo4PFkt3/A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lZFRcdQyHREFhiKzMKxH4ny3SNKl1XYRX7VTrWdQMcrycBgUqZUHEC+0e2W0FueJO
-         jh9JqXkD5XKS2F9UI5Y9tCd38a2nvj/Bi+pVgq0CNU4wTbG0mIIBI+4/dCVRneVg7d
-         sMWSr8Vr8wVj5dvrSKAZ46TxsTsxNM0YdcJ6+Y6s=
-Received: by mail-wm0-f45.google.com with SMTP id o18-v6so7851618wmc.0;
-        Wed, 05 Sep 2018 06:46:26 -0700 (PDT)
-X-Gm-Message-State: APzg51BOp1go6iduLB9sQwhxrrm1N2O+T3I5cm99jHRCIn4WSbjzqVdv
-        2FGatwrAptOpI6MTrGn0HgbQZdYhnUp4rOcViJg=
-X-Google-Smtp-Source: ANB0VdZXgiwOGRDLJ1aRziom77iKDWCWLGIi+koPUFTlFQTSFqRu7yMSDq1baiLR3Vl5gusdWI64xBxmNiZoCPi/lm0=
-X-Received: by 2002:a1c:9c56:: with SMTP id f83-v6mr264226wme.135.1536155185081;
- Wed, 05 Sep 2018 06:46:25 -0700 (PDT)
+        Wed, 5 Sep 2018 14:16:46 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57084 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727729AbeIESQq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 14:16:46 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7EDD284;
+        Wed,  5 Sep 2018 15:46:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536155186;
+        bh=73asuGuOXoGPsFX51dOnZg9kNMDSRB0pzgq/YQb5z6I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sqLr+ScqdIrFZs4zTViW84AsDwL13PD966QwvVbpZRyImLIE33tljP8m5zzby1RbH
+         EJRCMZLEvMPsuju14+3Xg2PQngWIvmAgztZ6OGcBKSaIKe7FH/zxl141gK5d10B8f9
+         QtJEizNdmqV2wQ4lOfRQvpX5Vns3D0/yjZcukS2o=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH 01/10] phy: Add MIPI D-PHY mode
+Date:   Wed, 05 Sep 2018 16:46:33 +0300
+Message-ID: <2567966.N4s79vZLWV@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <00e3d5da1ca3c03ba60350c1cf78ab44693ff493.1536138624.git-series.maxime.ripard@bootlin.com>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com> <00e3d5da1ca3c03ba60350c1cf78ab44693ff493.1536138624.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-References: <CGME20180905123053eucas1p196633ed9d661f79ed1c2e06a14a2b964@eucas1p1.samsung.com>
- <20180905123043.22604-1-m.szyprowski@samsung.com>
-In-Reply-To: <20180905123043.22604-1-m.szyprowski@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 5 Sep 2018 15:46:13 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeQh1_36RnjpfByszi4V6t+GmKNUeWh0QFn+JLovVSfeg@mail.gmail.com>
-Message-ID: <CAJKOXPeQh1_36RnjpfByszi4V6t+GmKNUeWh0QFn+JLovVSfeg@mail.gmail.com>
-Subject: Re: [PATCH] mfd: max8997: Disable interrupt handling for
- suspend/resume cycle
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, myungjoo.ham@samsung.com,
-        lee.jones@linaro.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018 at 14:32, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Disable IRQs during suspend/resume cycle to ensure handling of wakeup
-> interrupts (i.e. RTC wake alarm) after max8997_resume(). This way it can
-> be properly handled when I2C bus is finally available. This pattern is
-> also used in other MAX PMIC MFD drivers.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Maxime,
+
+Thank you for the patch.
+
+On Wednesday, 5 September 2018 12:16:32 EEST Maxime Ripard wrote:
+> MIPI D-PHY is a MIPI standard meant mostly for display and cameras in
+> embedded systems. Add a mode for it.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
->  drivers/mfd/max8997.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
-> index d1495d76bf2c..5a50ea976c70 100644
-> --- a/drivers/mfd/max8997.c
-> +++ b/drivers/mfd/max8997.c
-> @@ -464,6 +464,7 @@ static int max8997_suspend(struct device *dev)
->
->         if (device_may_wakeup(dev))
->                 irq_set_irq_wake(max8997->irq, 1);
-> +       disable_irq(max8997->irq);
->         return 0;
->  }
->
-> @@ -474,6 +475,7 @@ static int max8997_resume(struct device *dev)
->
->         if (device_may_wakeup(dev))
->                 irq_set_irq_wake(max8997->irq, 0);
-> +       enable_irq(max8997->irq);
->         return max8997_irq_resume(max8997);
+>  include/linux/phy/phy.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 9713aebdd348..9cba7fe16c23 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -40,6 +40,7 @@ enum phy_mode {
+>  	PHY_MODE_10GKR,
+>  	PHY_MODE_UFS_HS_A,
+>  	PHY_MODE_UFS_HS_B,
+> +	PHY_MODE_MIPI_DPHY,
+>  };
+> 
+>  /**
 
-Looks good except that here and in some existing drivers we do not
-resume in reverse order of suspend. How about making it like in
-drivers/mfd/max77843.c? It should not differ from functional point of
-view, just logically it makes sense.
+-- 
+Regards,
 
-Best regards,
-Krzysztof
+Laurent Pinchart
+
+
+
