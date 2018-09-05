@@ -2,128 +2,97 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC029C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5EAC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3702077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BB72077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:49:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GmjexAbF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3702077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4dMb7PG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0BB72077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbeIFCz1 (ORCPT
+        id S1727672AbeIFDVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:55:27 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:36317 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbeIFCz1 (ORCPT
+        Wed, 5 Sep 2018 23:21:45 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33605 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbeIFDVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:55:27 -0400
-Received: by mail-yb1-f194.google.com with SMTP id d34-v6so3355346yba.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 15:23:11 -0700 (PDT)
+        Wed, 5 Sep 2018 23:21:45 -0400
+Received: by mail-lf1-f68.google.com with SMTP id m26-v6so7409977lfb.0;
+        Wed, 05 Sep 2018 15:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8vnAH5qkzbH07z69lEci9DyJ1rUdDPuAng5c7CscdgA=;
-        b=GmjexAbFnGal589O945hJZGSkvf3rMAySDyPR5le02p0aAYF34QEK544CgTplYwhEV
-         jGsiuuiE8cNk2yJKy4PTolZVDddgBG2ot/MVC5CyumXLzGqmIsLyyRT+kBXro6vuJYyp
-         jYEzSZysW1+wuy6QCpcVU+SgzbndWe3qFBKA4=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ogDL5QpWO9MSGJ4HlS1fXf0iuqQSw46hxcEpO0mErqo=;
+        b=m4dMb7PGOmQRzASkvu92qEfV6/ExTngkeqtqyhOitAtC6E7fDm0kS9KWeyW8b734WY
+         rUuzeT6tAsU2pts7cO5HyqeQrdCpcEx/UAM9DNeUPtkV8A+i5ts9qlFLTQTWaFwvvpry
+         ym7Y+8Yvra+I0uoAJMwBjCWB+m1rdT4YBPYExqHYztSeHBb6RiqKM9WaSjmSt4jQp0mS
+         IhgajxVGtJ0R7CTNYSsPWO7EjUh81cTkZzcMKdwEkMXrN+/dF7QFUaZCPfWrCaSNfbN+
+         GqB/cVkrGSxzQDrmu75bm7PHOu7+BjKzt8asVZteCEho8ytS9p1EvSky1AuQV1lnwnji
+         HiWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8vnAH5qkzbH07z69lEci9DyJ1rUdDPuAng5c7CscdgA=;
-        b=IcRXiOzU88Hf5Gx0O04buhKaQf+WTJbDtT5dOH7EtONiIHk3TfXSojwUNrx1o4jO5G
-         AqyuxwFop7zEFknKvdJcX/QlzJajhb/pc4e3uLbbu/3K8kMDCwPE7SQhEqQEa5pslIp/
-         Us3jJr4yl/n/Ewtp1yyGdTyLGsNHErR+z6f43tXroVlX4tfKjUaN8uvIKEvc7GG55R57
-         Qafk6ApjtJtyfcFKhXkJ2F7Xjikjns3YLgZLLo8oEGFJ7Vzp1iW/uQk3hIU6vzj3E3iS
-         R+QLuf2odgsRf95w6S6Ncve/0AofenENzuF7CeilZBif13TDUR3lCesdo/0RPR2ls+hc
-         bvHg==
-X-Gm-Message-State: APzg51A7E+kCdCxYDCXWsomSUlTGMB2IiWb1nMz0mg0dMppLy9BkQSuI
-        77OB3uFVdcSNWQpZpajXETkWAt7qvUM=
-X-Google-Smtp-Source: ANB0Vdad4KHlFkSRj+SEO4gg99ZFO/C864Y5lSdC3cskNYT3/DtbsDt0CrSI56z8Dp4uwd3NJ9j1IQ==
-X-Received: by 2002:a25:6dd4:: with SMTP id i203-v6mr20094222ybc.438.1536186190562;
-        Wed, 05 Sep 2018 15:23:10 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id w80-v6sm2480617ywd.55.2018.09.05.15.23.09
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ogDL5QpWO9MSGJ4HlS1fXf0iuqQSw46hxcEpO0mErqo=;
+        b=pBwnjuTcR/pCvubZrA1v7Y2XcKK+nWSDHiSTaR8oHA+51Z3+BjhYaE/5IYp8fy+qAk
+         mFxZev5XuoV6LRrvDJcwF0DxoFKc+mCgq7EBwMae5msAs8LwBfRKuonqJVD/dGM5KhHQ
+         tnRpJTFGcRVzy4Jllq9z1917WhLNepaayQAVA+ECuP26gPdOGd0BKnULcOwIFfZ7Yt7i
+         Bk5yIgJ80Nz9tRDjyv0t1turCkwOPHnmyNvtUJM+tY79xx+w19SLZwdxcJipk7y0ncro
+         cIabAIgnIYX8hdxhWqRQk1DT0lumLPkMZ8F9kyLEriVISXPlAjDSTVbEVjwt8EUG/WZ3
+         B8ow==
+X-Gm-Message-State: APzg51Akh+pqKZwHR9X8JmRhhiXM9DIuq5ojyfuH4Ur4nO/plEmXQ4rO
+        OxkOtPoqbwVKFvx5VN2oKe9zrDIwbmM=
+X-Google-Smtp-Source: ANB0VdZcTO075R4pdi8MN5NTXjhkVq6KSmpdKCdTFV1CP4ASMz6b8cpTntqapvXhGRWFwJzVq9uTJg==
+X-Received: by 2002:a19:c016:: with SMTP id q22-v6mr24457468lff.8.1536187762228;
+        Wed, 05 Sep 2018 15:49:22 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
+        by smtp.gmail.com with ESMTPSA id f14-v6sm514980lfm.29.2018.09.05.15.49.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 15:23:09 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id k5-v6so3338443ybo.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 15:23:09 -0700 (PDT)
-X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr22528809ybz.410.1536186188732;
- Wed, 05 Sep 2018 15:23:08 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 15:23:08 -0700 (PDT)
-In-Reply-To: <20180905203443.32289-1-igor.stoppa@huawei.com>
-References: <20180905203443.32289-1-igor.stoppa@huawei.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 5 Sep 2018 15:23:08 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+e2n6pUW+40ZNm5qifd8dVEEryN-Qfqe7ok-KZHP1Hyw@mail.gmail.com>
-Message-ID: <CAGXu5j+e2n6pUW+40ZNm5qifd8dVEEryN-Qfqe7ok-KZHP1Hyw@mail.gmail.com>
+        Wed, 05 Sep 2018 15:49:21 -0700 (PDT)
 Subject: Re: [PATCH] seccomp: remove unnecessary unlikely()
-To:     Igor Stoppa <igor.stoppa@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180905203443.32289-1-igor.stoppa@huawei.com>
+ <CAGXu5j+e2n6pUW+40ZNm5qifd8dVEEryN-Qfqe7ok-KZHP1Hyw@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <2192189d-b8bb-3233-c9f3-14cbeeddaf34@gmail.com>
+Date:   Thu, 6 Sep 2018 01:49:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5j+e2n6pUW+40ZNm5qifd8dVEEryN-Qfqe7ok-KZHP1Hyw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 1:34 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
-> WARN_ON() already contains an unlikely(), so it's not necessary to wrap it
-> into another.
->
-> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
-
-Should I take this, or is it part of your series going somewhere else?
-
--Kees
-
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  kernel/seccomp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index fd023ac24e10..5a2a9af4663e 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -195,7 +195,7 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
->                         READ_ONCE(current->seccomp.filter);
->
->         /* Ensure unexpected behavior doesn't result in failing open. */
-> -       if (unlikely(WARN_ON(f == NULL)))
-> +       if (WARN_ON(f == NULL))
->                 return SECCOMP_RET_KILL_PROCESS;
->
->         if (!sd) {
-> @@ -297,7 +297,7 @@ static inline pid_t seccomp_can_sync_threads(void)
->                 /* Return the first thread that cannot be synchronized. */
->                 failed = task_pid_vnr(thread);
->                 /* If the pid cannot be resolved, then return -ESRCH */
-> -               if (unlikely(WARN_ON(failed == 0)))
-> +               if (WARN_ON(failed == 0))
->                         failed = -ESRCH;
->                 return failed;
->         }
-> --
-> 2.17.1
->
 
 
+On 06/09/18 01:23, Kees Cook wrote:
 
--- 
-Kees Cook
-Pixel Security
+> Should I take this, or is it part of your series going somewhere else?
+
+It turned out it doesn't really work to have a generic series against 20 
+trees :-/
+
+I'm submitting them individually to each subsystem.
+So this one is just for security.
+
+--
+thanks, igor
