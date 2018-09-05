@@ -2,118 +2,232 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE637C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132B0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9CEC2077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:40:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="daCGVfNJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9CEC2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id B499420861
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:41:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B499420861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeIEULC (ORCPT
+        id S1727657AbeIEUMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:11:02 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37417 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeIEULB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:11:01 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a20-v6so6452834edd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 08:40:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L6EE5fUlPK5SBTrx6M5v9wCfQOcr9x9ywR/r0hbrtCs=;
-        b=daCGVfNJZH9FsIHnf9gEkd6uhay4hdoPL8BuFl/G+mxWqjoopnu6jJCeUHtU9L5xmK
-         RT01QrquKUXsXYY0AJ+OhM2R6F8+jRDWeuzYVBXr6/PXiIFPnm8Y4633kMVBdI10UKqs
-         OZYfXDW5vPOVhAJGNSpC7P0+rE9fuHIIc2gHY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L6EE5fUlPK5SBTrx6M5v9wCfQOcr9x9ywR/r0hbrtCs=;
-        b=J9CxVL/3cEwuy1LW4BXcMlmQ07f8q1OT0Z4WjgC4vpZ3BegIYD7sK2ZzRTEYm0QX3/
-         JgKJ6PY7W+Q+9IlL48iNilyvAbSedEbnJEtFU5jHB6iYfvMp1ElMa38ciu3b3Rgdm9ZB
-         Sn4kJlx9Gl/GUFOd2bkchw2vuwTi7l7CzL6C/Lt7PD8PuNvqOSmRR1N/vrw3SOX6rRMv
-         dFDcUkZXCKN8jqTbxuVpOtmKIH8PUsrFaVYBk5Rq7AWOe4OVqm18iZZVfd/X+6Pn/QR3
-         cilM/cm6QrPPtunJXj+cRhtqw1e1o7JoOoNNUi0/7AaCcupTmBs3sN5o6mmKLpeBcdq8
-         ACgg==
-X-Gm-Message-State: APzg51DuMTAA7VYz++ErVfDrHQ2W8jhlbfzwd0EAzxACucHnmzahyGtR
-        l7P35pPcjhwOZKm+y8rhXmuBY/DrjzKW7w==
-X-Google-Smtp-Source: ANB0VdYavHfIlPMVLJJyZuINoR0OiazM6TFim9JghCIhj1mNZeufhhwEz7vDdeIZa9fkVcGHKA3aQA==
-X-Received: by 2002:a50:b764:: with SMTP id g91-v6mr44612889ede.187.1536162016538;
-        Wed, 05 Sep 2018 08:40:16 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d3-v6sm1303404edi.80.2018.09.05.08.40.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 08:40:15 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Shuah Khan <shuahkhan@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wed, 5 Sep 2018 16:12:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54451 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbeIEUL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 16:11:59 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 78C7D20741; Wed,  5 Sep 2018 17:41:13 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B040120734;
+        Wed,  5 Sep 2018 17:41:12 +0200 (CEST)
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fbdev@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH] staging/fbtft: Update TODO and mailing lists
-Date:   Wed,  5 Sep 2018 17:40:09 +0200
-Message-Id: <20180905154009.20295-1-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.19.0.rc1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>,
+        Mike Shettel <mshettel@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH v7 00/10] Add the I3C subsystem
+Date:   Wed,  5 Sep 2018 17:40:58 +0200
+Message-Id: <20180905154108.20770-1-boris.brezillon@bootlin.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Motivated by the ksummit-discuss discussion.
+This patch series is adding a new subsystem to support I3C devices.
 
-Cc: Shuah Khan <shuahkhan@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-fbdev@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
----
- MAINTAINERS                | 2 ++
- drivers/staging/fbtft/TODO | 4 ++++
- 2 files changed, 6 insertions(+)
+This is just adding basic features of the protocol, and new features
+will be added afterwards.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 029baa270a11..3d50315dbe90 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5624,6 +5624,8 @@ F:	lib/fault-inject.c
- 
- FBTFT Framebuffer drivers
- M:	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-+L:	dri-devel@lists.freedesktop.org
-+L:	linux-fbdev@vger.kernel.org
- S:	Maintained
- F:	drivers/staging/fbtft/
- 
-diff --git a/drivers/staging/fbtft/TODO b/drivers/staging/fbtft/TODO
-index 7e64c7e438f0..a9f4802bb6be 100644
---- a/drivers/staging/fbtft/TODO
-+++ b/drivers/staging/fbtft/TODO
-@@ -2,3 +2,7 @@
-   GPIO descriptor API in <linux/gpio/consumer.h> and look up GPIO
-   lines from device tree, ACPI or board files, board files should
-   use <linux/gpio/machine.h>
-+
-+* convert all these over to drm_simple_display_pipe and submit for inclusion
-+  into the DRM subsystem under drivers/gpu/drm - fbdev doesn't take any new
-+  drivers anymore.
+There are a few design choices that are worth mentioning because they
+impact the way I3C device drivers can interact with their devices:
+
+- all functions used to send I3C/I2C frames must be called in
+  non-atomic context. Mainly done this way to ease implementation, but
+  this is still open to discussion. Please let me know if you think it's
+  worth considering an asynchronous model here
+- the I3C bus and I3C master controller are now tightly coupled even
+  though they're still allocated separately. There's now a 1:1
+  relationship between these objects, and the I3C master is no longer
+  represented under the I3C bus object.
+  Arnd, let me know if you had something different in mind, and I'll
+  rework the implementation accordingly.
+
+- I2C backward compatibility has been designed to be transparent to I2C
+  drivers and the I2C subsystem. The I3C master just registers an I2C
+  adapter which creates a new I2C bus. I'd say that, from a
+  representation PoV it's not ideal because what should appear as a
+  single I3C bus exposing I3C and I2C devices here appears as 2
+  different busses connected to each other through the parenting (the
+  I3C master is the parent of the I2C and I3C busses).
+  On the other hand, I don't see a better solution if we want something
+  that is not invasive.
+
+Missing features (will be added in separate patch series after initial
+support has been accepted/merged):
+- support for HDR modes (has been removed because of lack of real users)
+- no support for multi-master and the associated concepts (mastership
+  handover, support for secondary masters, ...)
+- I2C devices can only be described using DT because this is the only
+  use case I have. However, the framework can easily be extended with
+  ACPI and board info support
+- I3C slave framework. This has been completely omitted, but shouldn't
+  have a huge impact on the I3C framework because I3C slaves don't see
+  the whole bus, it's only about handling master requests and generating
+  IBIs. Some of the struct, constant and enum definitions could be
+  shared, but most of the I3C slave framework logic will be different
+
+Note that this patchset is available on the linux-i3c repo[1].
+
+Main changes between v6 and v7:
+- I3C bus/master representations have been reworked to match what other
+  subsystems are doing (master implicitly represented by the bus
+  object)
+- I3C dev registration has been fixed
+- I3C bus mode selection has been fixed
+- Calls to readsl/writesl() in the Cadence I3C master driver have been
+  fixed
+
+Main changes between v5 and v6:
+- Introduce {i3c,i2c}_dev_desc structures to better match how I3C
+  master controllers (reservation of one HW slot for each device
+  attached to the bus). With this solution, the resource migration
+  that happens when a device lose its dynamic address and is
+  re-assigned a different address is simplified on the driver side,
+  because most of it is now handled in the core (reserve a new dev
+  slot, reserve IBI resources and free all resources attached to the
+  old slot)
+- Add I3C error codes (M0 to M2) so that the core and device drivers
+  can have fine grained information on what caused an EIO error.
+
+Only minor things happened between v3 and v5 (you can go check the
+changelog in each patch for more details).
+
+Main changes between v2 and v3 are:
+- Reworked the DT bindings as suggested by Rob
+- Reworked the bus initialization step as suggested by Vitor
+- Added a driver for an I3C GPIO expander
+
+Main changes between the initial RFC and this v2 are:
+- Add a generic infrastructure to support IBIs. It's worth mentioning
+  that I tried exposing IBIs as a regular IRQs, but after several
+  attempts and a discussion with Mark Zyngier, it appeared that it was
+  not really fitting in the Linux IRQ model (the fact that you have
+  payload attached to IBIs, the fact that most of the time an IBI will
+  generate a transfer on the bus which has to be done in an atomic
+  context, ...)
+  The counterpart of this decision is the latency induced by the
+  workqueue approach, but since I don't have real use cases, I don't
+  know if this can be a problem or not. 
+- Add helpers to support Hot Join
+- Add support for IBIs and Hot Join in Cadence I3C master driver
+- Address several issues in how I was using the device model
+
+Thanks,
+
+Boris
+
+[1]https://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git/log/?h=i3c/next
+
+Boris Brezillon (10):
+  i3c: Add core I3C infrastructure
+  docs: driver-api: Add I3C documentation
+  i3c: Add sysfs ABI spec
+  dt-bindings: i3c: Document core bindings
+  dt-bindings: i3c: Add macros to help fill I3C/I2C device's reg
+    property
+  MAINTAINERS: Add myself as the I3C subsystem maintainer
+  i3c: master: Add driver for Cadence IP
+  dt-bindings: i3c: Document Cadence I3C master bindings
+  gpio: Add a driver for Cadence I3C GPIO expander
+  dt-bindings: gpio: Add bindings for Cadence I3C gpio expander
+
+ Documentation/ABI/testing/sysfs-bus-i3c            |  146 ++
+ .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     |   39 +
+ .../devicetree/bindings/i3c/cdns,i3c-master.txt    |   44 +
+ Documentation/devicetree/bindings/i3c/i3c.txt      |  140 ++
+ Documentation/driver-api/i3c/device-driver-api.rst |    9 +
+ Documentation/driver-api/i3c/index.rst             |   11 +
+ Documentation/driver-api/i3c/master-driver-api.rst |   10 +
+ Documentation/driver-api/i3c/protocol.rst          |  203 ++
+ Documentation/driver-api/index.rst                 |    1 +
+ MAINTAINERS                                        |   12 +
+ drivers/Kconfig                                    |    2 +
+ drivers/Makefile                                   |    2 +-
+ drivers/gpio/Kconfig                               |   11 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-cdns-i3c.c                       |  411 ++++
+ drivers/i3c/Kconfig                                |   24 +
+ drivers/i3c/Makefile                               |    4 +
+ drivers/i3c/core.c                                 |  623 ++++++
+ drivers/i3c/device.c                               |  233 +++
+ drivers/i3c/internals.h                            |   36 +
+ drivers/i3c/master.c                               | 2074 ++++++++++++++++++++
+ drivers/i3c/master/Kconfig                         |    6 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/i3c-master-cdns.c               | 1668 ++++++++++++++++
+ include/dt-bindings/i3c/i3c.h                      |   28 +
+ include/linux/i3c/ccc.h                            |  385 ++++
+ include/linux/i3c/device.h                         |  331 ++++
+ include/linux/i3c/master.h                         |  653 ++++++
+ include/linux/mod_devicetable.h                    |   17 +
+ 29 files changed, 7124 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+ create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/index.rst
+ create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/protocol.rst
+ create mode 100644 drivers/gpio/gpio-cdns-i3c.c
+ create mode 100644 drivers/i3c/Kconfig
+ create mode 100644 drivers/i3c/Makefile
+ create mode 100644 drivers/i3c/core.c
+ create mode 100644 drivers/i3c/device.c
+ create mode 100644 drivers/i3c/internals.h
+ create mode 100644 drivers/i3c/master.c
+ create mode 100644 drivers/i3c/master/Kconfig
+ create mode 100644 drivers/i3c/master/Makefile
+ create mode 100644 drivers/i3c/master/i3c-master-cdns.c
+ create mode 100644 include/dt-bindings/i3c/i3c.h
+ create mode 100644 include/linux/i3c/ccc.h
+ create mode 100644 include/linux/i3c/device.h
+ create mode 100644 include/linux/i3c/master.h
+
 -- 
-2.19.0.rc1
+2.14.1
 
