@@ -2,144 +2,103 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF908C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFF32077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:18:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFF32077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 134EF2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:20:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gvEF+Z8q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134EF2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeIEUtI (ORCPT
+        id S1727604AbeIEUvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:49:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38678 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726046AbeIEUtI (ORCPT
+        Wed, 5 Sep 2018 16:51:48 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:37392 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeIEUvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:49:08 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85GFhws071509
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 12:18:13 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2maj3wshrs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 12:18:13 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Wed, 5 Sep 2018 17:18:10 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Sep 2018 17:18:02 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85GI1CT42991710
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Sep 2018 16:18:01 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 436414203F;
-        Wed,  5 Sep 2018 19:17:56 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5F3ED42045;
-        Wed,  5 Sep 2018 19:17:54 +0100 (BST)
-Received: from [9.145.21.228] (unknown [9.145.21.228])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Sep 2018 19:17:54 +0100 (BST)
-Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
-To:     Christopher Lameter <cl@linux.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
-        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
-        dave@stgolabs.net, dave.dice@oracle.com,
-        Dhaval Giani <dhaval.giani@oracle.com>, ktkhai@virtuozzo.com,
-        Pavel.Tatashin@microsoft.com, paulmck@linux.vnet.ibm.com,
-        shady.issa@oracle.com, tariqt@mellanox.com, tglx@linutronix.de,
-        tim.c.chen@intel.com, vbabka@suse.cz, longman@redhat.com,
-        yang.shi@linux.alibaba.com, shy828301@gmail.com,
-        Huang Ying <ying.huang@intel.com>, subhra.mazumdar@oracle.com,
-        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
-        ashwinch@google.com, sqazi@google.com,
-        Shakeel Butt <shakeelb@google.com>, walken@google.com,
-        rientjes@google.com, junaids@google.com,
-        Neha Agarwal <nehaagarwal@google.com>
-References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
- <01000165aa490dc9-64abf872-afd1-4a81-a46d-a50d0131de93-000000@email.amazonses.com>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Wed, 5 Sep 2018 18:17:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 16:51:47 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w85GKP3H069880;
+        Wed, 5 Sep 2018 11:20:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536164425;
+        bh=UB8LIRggqceEEc01/qLVfGoEan/Q7wVVD+0QlLlyg5M=;
+        h=From:To:CC:Subject:Date;
+        b=gvEF+Z8qvo74gHLsahuNGAmBRBX+FxlvFJnsD+jMbgr3Qhuxm3SiFjF4C5aQ4oSNP
+         RkkQZ/Ikg4iexrCwxMjTQqfSJVvVaZsrt0ke9djXjGDY8dQKWDYsSRntAdQQG5cXoR
+         rowJI+1VzN+wfly09dKgvt8V49tsnx0m25bICcZ0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85GKP6D025472;
+        Wed, 5 Sep 2018 11:20:25 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 5 Sep
+ 2018 11:20:25 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 5 Sep 2018 11:20:25 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85GKPdZ029050;
+        Wed, 5 Sep 2018 11:20:25 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Nishanth Menon <nm@ti.com>
+Subject: [PATCH 0/3] arm64: dts: ti: am654: Enable additional nodes
+Date:   Wed, 5 Sep 2018 11:20:21 -0500
+Message-ID: <20180905162024.28243-1-nm@ti.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <01000165aa490dc9-64abf872-afd1-4a81-a46d-a50d0131de93-000000@email.amazonses.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18090516-0012-0000-0000-000002A43CA6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090516-0013-0000-0000-000020D85FC8
-Message-Id: <839e2703-1588-0873-00a7-d04810f403cf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=934 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809050166
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Series based on: v4.19-rc1 + https://patchwork.kernel.org/patch/10588769/
+For v4.20
 
-On 05/09/2018 17:10, Christopher Lameter wrote:
-> On Tue, 4 Sep 2018, Daniel Jordan wrote:
-> 
->>  - Promoting huge page usage:  With memory sizes becoming ever larger, huge
->> pages are becoming more and more important to reduce TLB misses and the
->> overhead of memory management itself--that is, to make the system scalable
->> with the memory size.  But there are still some remaining gaps that prevent
->> huge pages from being deployed in some situations, such as huge page
->> allocation latency and memory fragmentation.
-> 
-> You forgot the major issue that huge pages in the page cache are not
-> supported and thus we have performance issues with fast NVME drives that
-> are now able to do 3Gbytes per sec that are only possible to reach with
-> directio and huge pages.
-> 
-> IMHO the huge page issue is just the reflection of a certain hardware
-> manufacturer inflicting pain for over a decade on its poor users by not
-> supporting larger base page sizes than 4k. No such workarounds needed on
-> platforms that support large sizes. Things just zoom along without
-> contortions necessary to deal with huge pages etc.
-> 
-> Can we come up with a 2M base page VM or something? We have possible
-> memory sizes of a couple TB now. That should give us a million or so 2M
-> pages to work with.
-> 
->>  - Reducing the number of users of mmap_sem:  This semaphore is frequently
->> used throughout the kernel.  In order to facilitate scaling this longstanding
->> bottleneck, these uses should be documented and unnecessary users should be
->> fixed.
-> 
-> 
-> Large page sizes also reduce contention there.
+Boot log: https://pastebin.ubuntu.com/p/c5XGVp85bs/ (MMC is pending).
+Boot log integrated with:
+	https://patchwork.kernel.org/patch/10577731/ (uart Kconfig update)
+	https://patchwork.kernel.org/patch/10577723/ (message manager Kconfig update)
+	https://patchwork.kernel.org/patch/10577729/ (TISCI - in linux-next)
+        https://patchwork.kernel.org/patch/10577727/ (TISCI - in linux-next)
+	https://patchwork.kernel.org/patch/10577721/ (TISCI Clk Kconfig update)
 
-That's true for the page fault path, but for process's actions manipulating the
-memory process's layout (mmap,munmap,madvise,mprotect) the impact is minimal
-unless the code has to manipulate the page tables.
+Nishanth Menon (3):
+  arm64: dts: ti: am654: Add uart nodes
+  arm64: dts: ti: am654: Add secure proxy instance for main domain
+  arm64: dts: ti: k3-am6: Add Device Management Security Controller
+    support
 
->> If you haven't already done so, please let us know if you are interested in
->> attending, or have suggestions for other attendees.
-> 
-> Certainly interested in attending but this overlaps supercomputing 2018 in
-> Dallas Texas...
-> 
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi       | 41 +++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi        | 18 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi     | 46 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am65.dtsi            | 10 ++++++
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts |  5 +++
+ 5 files changed, 120 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+
+-- 
+2.15.1
 
