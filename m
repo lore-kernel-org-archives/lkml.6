@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA01C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CC0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B901F2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:22:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B901F2075E
+	by mail.kernel.org (Postfix) with ESMTP id B3E022075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E022075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbeIELu5 (ORCPT
+        id S1727795AbeIELvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:50:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35000 "EHLO mail.bootlin.com"
+        Wed, 5 Sep 2018 07:51:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35051 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbeIELu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:50:57 -0400
+        id S1726215AbeIELvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:51:16 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8FCFA20787; Wed,  5 Sep 2018 09:22:06 +0200 (CEST)
+        id 27680206F6; Wed,  5 Sep 2018 09:22:26 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 62583206F6;
-        Wed,  5 Sep 2018 09:22:06 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 09:22:05 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id C7743203DC;
+        Wed,  5 Sep 2018 09:22:25 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 09:22:24 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Icenowy Zheng <icenowy@aosc.io>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
@@ -36,16 +36,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 09/11] dt-bindings: sun4i-drm: add HDMI VCC supply
- property for sun8i-dw-hdmi
-Message-ID: <20180905072205.63qmmqr45323xllc@flea>
+Subject: Re: [PATCH v4 10/11] drm/sun4i: Add support for HDMI voltage
+ regulator
+Message-ID: <20180905072224.w5u3djfxxxc2h2pc@flea>
 References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-10-icenowy@aosc.io>
+ <20180904044053.15425-11-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rlpbalzc2vivwqzf"
+        protocol="application/pgp-signature"; boundary="jh5uyav6levo23sj"
 Content-Disposition: inline
-In-Reply-To: <20180904044053.15425-10-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-11-icenowy@aosc.io>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -53,17 +53,22 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---rlpbalzc2vivwqzf
+--jh5uyav6levo23sj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 04, 2018 at 12:40:51PM +0800, Icenowy Zheng wrote:
-> Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
-> pin, which is the VCC of HDMI part.
+On Tue, Sep 04, 2018 at 12:40:52PM +0800, Icenowy Zheng wrote:
+> From: Jernej Skrabec <jernej.skrabec@siol.net>
 >=20
-> Add a supply property to specify HVCC's regulator in the device tree.
+> Some boards have HDMI VCC pin connected to voltage regulator which may
+> not be turned on by default.
 >=20
+> Add support for such boards by adding voltage regulator handling code to
+> HDMI driver.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> [Icenowy: change supply name to "hvcc"]
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
 Applied, thanks!
@@ -74,24 +79,24 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---rlpbalzc2vivwqzf
+--jh5uyav6levo23sj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPhBwACgkQ0rTAlCFN
-r3SXZg/6A3RU2hgIonPIwzbtmVglv3hKt4gvJyi4jPNZ/ktv1ZaQMjVOzqs3so09
-rs100I6BzKjPjiDdt6MKm9KVxZqjkhvIEVCLFPudCig/ODGCrsJOs+A5TpAByaQH
-dUP8HdGDed0kS+vqnZCm8hQLXi4gERU1tx0JK3vXMvjZtggMZsNmM3Vi8np5n9PN
-kiPvHwZwQcUC8tdvOiJAl/TukRmAINfpMvc15iUIGPBVyArF60FuUHz0kb8Z5O/C
-LwX/Unj19pBaZIkvUBxP6Ind6ywOgy9Z/uFeVBObHQ6hMYFW1VcmnYL6K9lwWGwR
-yUcy3gwV6QmUjsLGN+ao58b8zpVO5JBtNs/cqsuZFa1HBjFX40Ua8xOocOvtyJ4h
-zcN4fUvxT37D8OvbFSAY+A8eb2pengRr9rLKesT4BT5B41C9PKpwnWS8SQQvr6uO
-3oCse3a9GvIJFA1JUJziQNG9ckLkoBqRaW+gWuF3RRkW5UyrW8UgL6dsJWVBfzr4
-S1ZwTN+ypuKhcctIBwDCa4WwXVGB2JLyOuAocC6QJ8EXaYD+Xk9XZ0YtyrjkD87G
-QXo5/rUvsPB6bhiBodQyfnLokzkbAKqpCXjDr4zWbabij+PNeB6fe+7hXRkNvuT4
-MlP1oOhFa5ikKsc4kHnbsl2CsRyyzq2v0mX1s+CdYBSpz3/+/pE=
-=i6OQ
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPhDAACgkQ0rTAlCFN
+r3SAphAAkQnu9/go2wPG5qcaPI6CaF4TraMiZmed7/ZDF+8JsUiLDlDziZiuLqBe
+MIaz29JnuvszsZt4QxubKMMoPfD7g30SpzEPvIakjwtB+AIt9TkNs/rDNJ0NDQ+L
+EhefjBTc+JF6M+TwVbAAjTYqUStnBMhT3DXUBdparzvIGGrNxHpju4xYz1hbDQbt
+63P7CFsd2ZMJdbTti630FYTR0r1cm8UCpgVSpzN865EkQD2daiTKwFyTPAbUUteA
+8X+2DDzy6gnbigpPE9uX3c8V4YZM0se0pouImTyjaveinAfc4tJk7cE6j3c6lIxA
+xdiqZKWpjuXG/iG4RsJIg/OVYEMSm3Vru4dKqO6l056HXt9oVzegg0vWKMDsG7Cx
+vT3aCSIDbYyxFofUzVr3dUH3fgMnpz4ci/Y0gjtbrV2dzzvWUcZHkDzL9D8TpVbU
+XGenjyNx3IyggIeaXG+cYCqJjtZxhAZGJBstEJalrXAVtcqD+tEEiyxiCe20609A
+Y7hWWBjG58CPVT157rjQYf6hFEb8tsvoYE5ytNZdMW5MzE/ik7XcEJidDMmOfb+z
+q2I45XaolgnRnnbqxR5bZt6RoIeT7J8vIIeafhNq47iAvxlPCWwc8gQ3ZZaZVNNN
+mp8rEG0kC/b77gyEP/Q68xpZndqMj+jUGy9oKMgmSx5kWV7phBM=
+=HHVn
 -----END PGP SIGNATURE-----
 
---rlpbalzc2vivwqzf--
+--jh5uyav6levo23sj--
