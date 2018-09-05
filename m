@@ -2,102 +2,100 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC00C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E10CC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4356420867
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58E4720857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:48:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D7KNYzAm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4356420867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NVpaiFsl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E4720857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeIESSl (ORCPT
+        id S1727711AbeIESTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:18:41 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57122 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbeIESSl (ORCPT
+        Wed, 5 Sep 2018 14:19:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53586 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbeIESTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:18:41 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 36D2284;
-        Wed,  5 Sep 2018 15:48:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536155301;
-        bh=/MBxFADd6uHKDbrMWgVJoWSKtkYV16WyCy8p4B7hz9o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D7KNYzAmdLdIsDdQoBD3+qp/LBzNAtfeoXiSp/2FPR2TufiQ2veHCb6lQy1Tvn5HR
-         CmJoyz7fy0u7QPODa7W9c5kyDCbd0k2nsC9TqZfEyU+LawzfrlEafrR02sYfe5mSSM
-         HU2ZXU8yqNGq9WXCc+XeS0OhhJbXlV6X39c3/eKA=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 09/10] phy: Add Cadence D-PHY support
-Date:   Wed, 05 Sep 2018 16:48:27 +0300
-Message-ID: <1838745.9zNmGlpGXc@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <d50a5f0750647dcc09ef52411641b628161b362e.1536138624.git-series.maxime.ripard@bootlin.com>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com> <d50a5f0750647dcc09ef52411641b628161b362e.1536138624.git-series.maxime.ripard@bootlin.com>
+        Wed, 5 Sep 2018 14:19:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nq3whnuyc/5ddYT5jnRz2IJm5G9gTDF2Hs9MFMBcZWM=; b=NVpaiFslpmIqpgc+j4BiDaqV3
+        NJ0Am+qORGcM9d/RDIa36otu2ykpPa4bDNDvRLC30sgAXq89Bgruw4/UOsa7jhd+Hz2s0RmmWeeAl
+        5xlyAznwNwZaFnYqTvRBAWp0zZJ1Taxbq1lbsYCrcEUDLjIyWHXlo5UHb3QgDt5OHwIvbgPDfUeHP
+        eKAlqCIAD/TZBH3jnakVB5ebGLU9SAPcJKq86rnw4MPtIbLlznzYE6IqyNBu91H1Etc2FnPBgc17D
+        oixfaWHPWTpqk/Jr1qW0b94gYQoCxbCo0buwkqWaGda3N9gp8eU3lf8pdnmrhAR1uAM7HXbf0AC8y
+        FpiGwmSfw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxYAr-0007WU-A3; Wed, 05 Sep 2018 13:48:49 +0000
+Date:   Wed, 5 Sep 2018 06:48:48 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm/hugetlb: make hugetlb_lock irq safe
+Message-ID: <20180905134848.GB3729@bombadil.infradead.org>
+References: <20180905112341.21355-1-aneesh.kumar@linux.ibm.com>
+ <20180905130440.GA3729@bombadil.infradead.org>
+ <d76771e6-1664-5d38-a5a0-e98f1120494c@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d76771e6-1664-5d38-a5a0-e98f1120494c@linux.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
-Thank you for the patch.
-
-On Wednesday, 5 September 2018 12:16:40 EEST Maxime Ripard wrote:
-> Cadence has designed a D-PHY that can be used by the, currently in tree,
-> DSI bridge (DRM), CSI Transceiver and CSI Receiver (v4l2) drivers.
+On Wed, Sep 05, 2018 at 06:56:19PM +0530, Aneesh Kumar K.V wrote:
+> On 09/05/2018 06:34 PM, Matthew Wilcox wrote:
+> > On Wed, Sep 05, 2018 at 04:53:41PM +0530, Aneesh Kumar K.V wrote:
+> > >   inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+> > 
+> > How do you go from "can be taken in softirq context" problem report to
+> > "must disable hard interrupts" solution?  Please explain why spin_lock_bh()
+> > is not a sufficient fix.
+> > 
+> > >   swapper/68/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
+> > >   0000000052a030a7 (hugetlb_lock){+.?.}, at: free_huge_page+0x9c/0x340
+> > >   {SOFTIRQ-ON-W} state was registered at:
+> > >     lock_acquire+0xd4/0x230
+> > >     _raw_spin_lock+0x44/0x70
+> > >     set_max_huge_pages+0x4c/0x360
+> > >     hugetlb_sysctl_handler_common+0x108/0x160
+> > >     proc_sys_call_handler+0x134/0x190
+> > >     __vfs_write+0x3c/0x1f0
+> > >     vfs_write+0xd8/0x220
+> > 
+> > Also, this only seems to trigger here.  Is it possible we _already_
+> > have softirqs disabled through every other code path, and it's just this
+> > one sysctl handler that needs to disable softirqs?  Rather than every
+> > lock access?
 > 
-> Only the DSI driver has an ad-hoc driver for that phy at the moment, while
-> the v4l2 drivers are completely missing any phy support. In order to make
-> that phy support available to all these drivers, without having to
-> duplicate that code three times, let's create a generic phy framework
-> driver.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  drivers/phy/Kconfig             |   1 +-
->  drivers/phy/Makefile            |   1 +-
->  drivers/phy/cadence/Kconfig     |  13 +-
->  drivers/phy/cadence/Makefile    |   1 +-
->  drivers/phy/cadence/cdns-dphy.c | 499 +++++++++++++++++++++++++++++++++-
+> Are you asking whether I looked at moving that put_page to a worker thread?
 
-Should the DT bindings be split from Documentation/devicetree/bindings/
-display/bridge/cdns,dsi.txt ?
+No.  I'm asking "why not disable softirqs in the sysctl handler".  Or
+perhaps equivalently, just replace spin_lock() with spin_lock_bh() in
+set_max_huge_pages().
 
->  5 files changed, 515 insertions(+)
->  create mode 100644 drivers/phy/cadence/Kconfig
->  create mode 100644 drivers/phy/cadence/Makefile
->  create mode 100644 drivers/phy/cadence/cdns-dphy.c
+> I didn't. The reason I looked at current patch is to enable the usage of
+> put_page() from irq context. We do allow that for non hugetlb pages. So was
+> not sure adding that additional restriction for hugetlb
+> is really needed. Further the conversion to irqsave/irqrestore was
+> straightforward.
 
-[snip]
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
+straightforward, sure.  but is it the right thing to do?  do we want to
+be able to put_page() a hugetlb page from hardirq context?
 
