@@ -2,128 +2,132 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 463CEC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF894C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D96162073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:38:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5113E2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:51:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HzYmmhqB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96162073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W9stpubB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5113E2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbeIFEKa (ORCPT
+        id S1725933AbeIFEX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 00:10:30 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41064 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbeIFEK3 (ORCPT
+        Thu, 6 Sep 2018 00:23:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33854 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbeIFEX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 00:10:29 -0400
-Received: by mail-vk0-f68.google.com with SMTP id j14-v6so3370730vke.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 16:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=o9r/p6hfkSx+S1Dtvatv8LNTyNf3Rj1AxnsmDSWsH6E=;
-        b=HzYmmhqB8Ks6+XXp0unH+wXsM0G1Kvo2EfyVW+iZY3Eq8ppCZC17WazdJf4nSZZnUO
-         ZrFuLL5ZlUSjQK6ZVtHkeo/4DoobbCNamp3bsFv/nXLzNEWzEMMlOKFwEWdoeCNK1YKf
-         us27EyKkSu2pwoptQ06uneZGldLYqVMKpriU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o9r/p6hfkSx+S1Dtvatv8LNTyNf3Rj1AxnsmDSWsH6E=;
-        b=N3OtBLtfnd2/RaHBTHsdlejPVXUVcEzsxIX11VOxXpETEb7UhcDq/o1wcyK7iGQUHF
-         DpC8Tzqb0T7hsoOQCi0WM7kiG37lSDrqmdQAfL1/EFYm7kA5k833ba81WQkDH/5653Zg
-         G1j08AqBo2ZJCi33982RHoTui+Bj5tvf58RyjT4xxJWveAmW+6LCNiNza0XdNdnju60v
-         4pGTZ34+ZD5yp8uthaM7r86GJk8Q4wNxjxNzBXuVxE+6H6IYc2wyjm7aX/SB/eIo7VmC
-         GhhqNuIVZ1TopmNMlLnghBBZf/ByjwZINHGXGNk10eWoI1znV5u+OXikYzap/bChFGng
-         xi5Q==
-X-Gm-Message-State: APzg51BY0QO/AyoPCGGCOAboZp5fcoGKBjRDrq+C/vfjfHXPkrTQDwfv
-        3kYgaWLQWteVX3IsZlVEkf62Uw==
-X-Google-Smtp-Source: ANB0VdatWIUQrnLT2hZNJAZrc7PmNofHy7Ff3Rl+c2BVZxeKFbfssmpmDa3n+1PMj8FcC+njiUAL9g==
-X-Received: by 2002:a1f:11c4:: with SMTP id 187-v6mr26812vkr.150.1536190679075;
-        Wed, 05 Sep 2018 16:37:59 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id v14-v6sm1009041uav.2.2018.09.05.16.37.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 16:37:58 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 16:37:57 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        girishm@codeaurora.org, dkota@codeaurora.org, evgreen@chromium.org,
-        swboyd@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, David Brown <david.brown@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] soc: qcom: geni: Don't ignore clk_round_rate()
- errors in geni_se_clk_tbl_get()
-Message-ID: <20180905233757.GB22824@google.com>
-References: <20180830183612.169572-1-dianders@chromium.org>
+        Thu, 6 Sep 2018 00:23:58 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w85NmZ9c134193;
+        Wed, 5 Sep 2018 23:51:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=G6Wj43q2rIoVttU6gcAfm8BfcqI4XTJSVomeiw97jY8=;
+ b=W9stpubBtwdwqIyfskg3MmwgxBhE3zsHKwsE5l+CZkJDgZ2DE6zCKMR+TAfs1xpzDQ78
+ /N1N+/Uc9H0HQzy7P+vjxBho0gY8f4g/PEFwZQMH/KRo9iAzPc86o9PPTlHvGpKMthLH
+ 2A1tNZh0CIpboizk1+hbB+tIfyC40qgEyp2XQCujxE4rPpuebwnqzsKBCmHyPHBmB7TF
+ Fw5oIvbNhLxUonrOmqeJAqXtRvUhWl8K1jC9+3eFmO25BeNmpgTntu44aHadIO3eLYK2
+ t8RiKp5sJmGN5X4CMMAo7eiayXSyjLHVXhHy4I6czj3gTfJEQVF0lbuPBDllDyF3aj1R TA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2m7jqppyms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Sep 2018 23:51:08 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w85Np2Ql028172
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Sep 2018 23:51:02 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w85Np1qL028279;
+        Wed, 5 Sep 2018 23:51:01 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Sep 2018 16:51:01 -0700
+Subject: Re: [RFC PATCH] mm/hugetlb: make hugetlb_lock irq safe
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20180905112341.21355-1-aneesh.kumar@linux.ibm.com>
+ <20180905130440.GA3729@bombadil.infradead.org>
+ <d76771e6-1664-5d38-a5a0-e98f1120494c@linux.ibm.com>
+ <20180905134848.GB3729@bombadil.infradead.org>
+ <20180905125846.eb0a9ed907b293c1b4c23c23@linux-foundation.org>
+ <78b08258-14c8-0e90-97c7-d647a11acb30@oracle.com>
+ <20180905150008.59d477c1f78f966a8f9c3cc8@linux-foundation.org>
+ <20180905230737.GA14977@bombadil.infradead.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <c03c8851-ce18-56c6-3f37-47f585d70b19@oracle.com>
+Date:   Wed, 5 Sep 2018 16:51:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180905230737.GA14977@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180830183612.169572-1-dianders@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809050226
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 11:36:11AM -0700, Douglas Anderson wrote:
-> The function clk_round_rate() is defined to return a "long", not an
-> "unsigned long".  That's because it might return a negative error
-> code.  Change the call in geni_se_clk_tbl_get() to check for errors.
+On 09/05/2018 04:07 PM, Matthew Wilcox wrote:
+> On Wed, Sep 05, 2018 at 03:00:08PM -0700, Andrew Morton wrote:
+>> On Wed, 5 Sep 2018 14:35:11 -0700 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>>
+>>>>                                            so perhaps we could put some
+>>>> stopgap workaround into that site and add a runtime warning into the
+>>>> put_page() code somewhere to detect puttage of huge pages from hardirq
+>>>> and softirq contexts.
+>>>
+>>> I think we would add the warning/etc at free_huge_page.  The issue would
+>>> only apply to hugetlb pages, not THP.
+>>>
+>>> But, the more I think about it the more I think Aneesh's patch to do
+>>> spin_lock/unlock_irqsave is the right way to go.  Currently, we only
+>>> know of one place where a put_page of hugetlb pages is done from softirq
+>>> context.  So, we could take the spin_lock/unlock_bh as Matthew suggested.
+>>> When the powerpc iommu code was added, I doubt this was taken into account.
+>>> I would be afraid of someone adding put_page from hardirq context.
+>>
+>> Me too.  If we're going to do this, surely we should make hugepages
+>> behave in the same fashion as PAGE_SIZE pages.
 > 
-> NOTE: overall the idea that we should iterate over clk_round_rate() to
-> try to reconstruct a table already present in the clock driver is
-> questionable.  Specifically:
-> - This method relies on "clk_round_rate()" rounding up.
-> - This method only works if the table is sorted and has no duplicates.
-> ...this patch doesn't try to fix those problems, it just makes the
-> error handling more correct.
-> 
-> Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
->  drivers/soc/qcom/qcom-geni-se.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-> index feed3db21c10..1b19b8428c4a 100644
-> --- a/drivers/soc/qcom/qcom-geni-se.c
-> +++ b/drivers/soc/qcom/qcom-geni-se.c
-> @@ -513,7 +513,7 @@ EXPORT_SYMBOL(geni_se_resources_on);
->   */
->  int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
->  {
-> -	unsigned long freq = 0;
-> +	long freq = 0;
+> But these aren't vanilla hugepages, they're specifically hugetlbfs pages.
+> I don't believe there's any problem with calling put_page() on a normally
+> allocated huge page or THP.
 
-nit: Since you are already touching this you could also remove the
-pointless initialization, 'freq' is always assigned before it is used.
+Right
+The powerpc iommu code (at least) treated hugetlbfs pages as any other page
+(huge, THP or base) and called put_page from softirq context.
 
->  	int i;
->  
->  	if (se->clk_perf_tbl) {
-> @@ -529,7 +529,7 @@ int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
->  
->  	for (i = 0; i < MAX_CLK_PERF_LEVEL; i++) {
->  		freq = clk_round_rate(se->clk, freq + 1);
-> -		if (!freq || freq == se->clk_perf_tbl[i - 1])
-> +		if (freq <= 0 || freq == se->clk_perf_tbl[i - 1])
->  			break;
->  		se->clk_perf_tbl[i] = freq;
->  	}
+It seems there are at least two ways to address this:
+1) Prohibit this behavior for hugetlbfs pages
+2) Try to make hugetlbfs pages behave like other pages WRT put_page
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Aneesh's patch went further than allowing put_page of hugetlbfs pages
+from softirq context.  It allowed them from hardirq context as well:
+admittedly at a cost of disabling irqs.
+
+This issue has probably existed since the addition of powerpc iommu code.
+IMO, we should make hugetlbfs pages behave more like other pages in this
+case.
+
+BTW, free_huge_page called by put_page for hugetlbfs pages may also take
+a subpool specific lock via spin_lock().  See hugepage_subpool_put_pages.
+So, this would also need to take irq context into account.
+-- 
+Mike Kravetz
