@@ -2,74 +2,116 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED368C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17343C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0B52073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:55:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0B52073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C060E2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C060E2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeIEKXp (ORCPT
+        id S1727591AbeIEKZT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:23:45 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39515 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbeIEKXp (ORCPT
+        Wed, 5 Sep 2018 06:25:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726416AbeIEKZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:23:45 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fxQmW-0000s9-Ci; Wed, 05 Sep 2018 07:55:12 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fxQmV-0003sm-Vy; Wed, 05 Sep 2018 07:55:11 +0200
-Date:   Wed, 5 Sep 2018 07:55:11 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V2 2/2] tty: serial: imx: add pinctrl sleep/default mode
- switch for suspend
-Message-ID: <20180905055511.ba46b2onz7skb7ln@pengutronix.de>
-References: <1536110667-23530-1-git-send-email-Anson.Huang@nxp.com>
- <1536110667-23530-2-git-send-email-Anson.Huang@nxp.com>
+        Wed, 5 Sep 2018 06:25:18 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w855spGU049965
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 01:56:47 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ma89aakf8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 01:56:47 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Wed, 5 Sep 2018 06:56:45 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Sep 2018 06:56:44 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w855uh1328442746
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Sep 2018 05:56:43 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3D595204E;
+        Wed,  5 Sep 2018 08:56:35 +0100 (BST)
+Received: from mschwideX1 (unknown [9.145.36.24])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 977615204F;
+        Wed,  5 Sep 2018 08:56:35 +0100 (BST)
+Date:   Wed, 5 Sep 2018 07:56:41 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Harald Freudenberger <freude@linux.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [GIT PULL] s390 patches for the 4.19 merge window #2
+In-Reply-To: <CAGXu5jJVvWbKnRR_XyBH5yWLzNAEPzuguppBfxXaU4x+tE0M2g@mail.gmail.com>
+References: <20180824094225.68b2adc6@mschwideX1>
+        <CAGXu5jJVvWbKnRR_XyBH5yWLzNAEPzuguppBfxXaU4x+tE0M2g@mail.gmail.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1536110667-23530-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-TM-AS-GCONF: 00
+x-cbid: 18090505-0028-0000-0000-000002F4781A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090505-0029-0000-0000-000023ADF502
+Message-Id: <20180905075641.5c9e5421@mschwideX1>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=901 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809050063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 09:24:27AM +0800, Anson Huang wrote:
-> On some i.MX SoCs' low power mode, such as i.MX7D's LPSR(low power
-> state retention), UART iomux settings will be lost, need to add
-> pinctrl sleep/default mode switch during suspend/resume to make
-> sure UART iomux settings are correct after resume.
+On Tue, 4 Sep 2018 17:16:31 -0700
+Kees Cook <keescook@chromium.org> wrote:
+
+> On Fri, Aug 24, 2018 at 12:42 AM, Martin Schwidefsky
+> <schwidefsky@de.ibm.com> wrote:
+> > Harald Freudenberger (5):
+> >       s390/zcrypt: hex string mask improvements for apmask and aqmask.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> This (and an earlier 2017 commit) adds VLAs, which are being
+> removed[1] from the kernel:
+> 
+> drivers/s390/crypto/ap_bus.c:980:3: warning: ISO C90 forbids variable
+> length array ‘clrm’ [-Wvla]
+> drivers/s390/crypto/ap_bus.c:981:3: warning: ISO C90 forbids variable
+> length array ‘setm’ [-Wvla]
+> drivers/s390/crypto/ap_bus.c:995:3: warning: ISO C90 forbids variable
+> length array ‘setm’ [-Wvla]
+> 
+> static int process_mask_arg(const char *str,
+>                             unsigned long *bitmap, int bits,
+>                             struct mutex *lock)
+> ...
+>                 DECLARE_BITMAP(clrm, bits);
+>                 DECLARE_BITMAP(setm, bits);
+> 
+> Can someone please adjust this to make these fixed size again?
 
-Acked-by: Uwe Kleine-K�nig <u.kleine-koenig@pengutronix.de>
+Oops, sorry about that. We will provide a solution for this.
 
-Best regards
-Uwe
 -- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
