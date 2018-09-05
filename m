@@ -2,136 +2,125 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0BFC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1B5C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6B5F2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED8252073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfBcCA7Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B5F2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="uKNMms6J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED8252073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeIFAuZ (ORCPT
+        id S1727983AbeIFAva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 20:50:25 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38657 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbeIFAuZ (ORCPT
+        Wed, 5 Sep 2018 20:51:30 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36310 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeIFAva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 20:50:25 -0400
-Received: by mail-it0-f66.google.com with SMTP id p129-v6so11189227ite.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 13:18:36 -0700 (PDT)
+        Wed, 5 Sep 2018 20:51:30 -0400
+Received: by mail-it0-f46.google.com with SMTP id u13-v6so11211708iti.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 13:19:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wtGzftbrx8VqSJw5GgJxp/l4xWPRbYE69E+0izJXeXI=;
-        b=XfBcCA7QcSC+XgOEl1/KObH0kBVFJN9Ju6XzLCiSeLseGjiE6jTFIdnm8BXOBWVSe1
-         Etre6QRU5CqwbQiTNESu+WMKb7lXZuboDs2CnHi3m8mtF7OShDpidZnLVzBwdqzcYLOs
-         XHWOP6h5nH0S054eq8ep/TxeVkGTLxZMLDMzCABwVJ2lsWyNCD3rErw8nxNq+cPH8fH9
-         LJnw410U/oYN3ikP+8tYRNwY1doupyYHunqVf+awgK5urqw1uE0GM+Q4WSplK53ROgfm
-         MKAGdqa9ExrAvXuuXFgJ+gODryJ54HSsfcTG4mJGL4rC0lidhyA7s2bOjNmr9xnSswWk
-         QF7g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=I2A46jX71yroumZdLirx89tBYPtjvNrtZpAe6pwPsIw=;
+        b=uKNMms6JWhE33FlQRWls0EgRXlbMKZhk+/WMR/5xDPUIs3rNAH1Dg6VPV4/QVRI2L+
+         O7pqwoyEFNLl94EjrLN9REKWPvRmxJluaPTaQLa3FAaLVzjwkbn0uHQ05e/M0SLc2uNS
+         VSxTXl/bMVlVmzm2/etVXutbedoT/+a3HZFFtCykXIrTkr6EzVP7jszwJT5gZeFWKve1
+         JHZYvmhLRw+IaSqhrKGQ8xrpvZckCLRi17rGwY+3+YMSe2oG1scJOpahwqtnkotLaGq1
+         iIKjLaR+Oa8DpqCVSFDqk2RLlEHoLZ2I4ZgQtzt+p301HQGeNOlJH3RoUlmTsjgaZIeQ
+         0XZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wtGzftbrx8VqSJw5GgJxp/l4xWPRbYE69E+0izJXeXI=;
-        b=NfmoattsFxfqnHnJHsebW0Uv/gJxDQ3GsXcsyrGIg1IO+YRxtSzO0TOghihshQzd8n
-         R0JzKe7DLXJjkK+Vnv+4gHs9lzyVDX0h3kyLi9ybXRZLcUALs0mHkZUYwWy50L37E4hr
-         hHbiGai0XGF8oaF9d4CAr0iKnrJEJ3pAEQ86/movsiFyLec7gFtqYsQCDHQS3CyEJtS2
-         z1KkFoxfMSpY0UUrpovSKA/mIY/4spsIoO5piZPkcjhwgoW+5YCgldowWzrjbSftwhUw
-         2XeFtn/n4ff/macSQT4XlBEbSulvuQNd0d0ix0DN29+w7gK0myqf1WfWQvsnH6D6XSWk
-         NtEg==
-X-Gm-Message-State: APzg51B+II3rwhx8Kf/WE3gS6ZoOT+/lvJQF5h6BnASa4tJghVUmZdA0
-        jZgziLWZmKmOjooTZ4q8DyeguEnLcqsbHL9wmVE=
-X-Google-Smtp-Source: ANB0VdZDf9C5GHKLAJjfxTaYulyk7LcWlGLek3IVl5B/xF2gJN5k5Tt3kwxaafKn7wWDZGmOefbQrwBcTBXK1jeGwa4=
-X-Received: by 2002:a02:b38c:: with SMTP id p12-v6mr8190829jan.79.1536178716343;
- Wed, 05 Sep 2018 13:18:36 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I2A46jX71yroumZdLirx89tBYPtjvNrtZpAe6pwPsIw=;
+        b=WxW0u1VsN/fOAvMZeBRQ3PqSdDDK839CwlEAHng7Zh0SjwYRn/aFKZOY8nFxGrYwey
+         +8OTFa2n7ZnNtYYc6Lj39+ND5hhHdNZyW1kldkdQ9hbu0s/Lasoc8Vq0N0o7VImlhB8G
+         8jW4s/OujNS+Z6PYzsKuDnzOX4mibjUGEktJ+MDLplwzOAXXjNGu2gaRYbkLssJ+pNvD
+         xISGKJWqnl3AiPtRbJ2egdKxGwGqqWWAq/9KkIJbcW1ozLj1/WdIU60T2omMxKsEXUpl
+         v1em4JQveq8A7C0rRzFQpmML+QekdHqOCka5PdFQbNL7tGDcF9VZusjiXAvwL+7Cx0Yy
+         5zOw==
+X-Gm-Message-State: APzg51CjKs9qrfuYCp+a4STPnACCygqTdGsiUwB40b6Itbx2XQi9fXsE
+        t9VKFXuhBQCfthrn0sjTKCjwpQ==
+X-Google-Smtp-Source: ANB0VdYpQiJ1z0uHxCVA4YQQAwT2AjnQSnTCoyZas6qbncRw9k/nmT+11SVvxsfYRoD8/xbrkZ1qCg==
+X-Received: by 2002:a24:4c90:: with SMTP id a138-v6mr48194itb.138.1536178782002;
+        Wed, 05 Sep 2018 13:19:42 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id e129-v6sm1371708ite.35.2018.09.05.13.19.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 13:19:40 -0700 (PDT)
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+ <20180830185352.3369-8-logang@deltatee.com>
+ <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
+ <20180901082812.GB670@lst.de>
+ <5f79c012-c6e1-56bb-62fd-0689181fb2c9@deltatee.com>
+ <59b28977-8f2a-6228-2050-03fae6bdbedd@kernel.dk>
+ <1b4283da-44df-4a02-3167-e295243cef78@deltatee.com>
+ <09258b9b-3aed-9890-b31a-bd70a133966c@kernel.dk>
+ <20180905195647.GA1626@lst.de>
+ <bcc1b3cf-2fd9-fa61-9cfb-b0e4d84e5d94@kernel.dk>
+ <20180905201152.GA1893@lst.de>
+ <eb42fb94-9da6-955b-8524-0a0f5ac4bd19@deltatee.com>
+ <2a3394bd-5f13-4818-43f4-dfc61f501e05@kernel.dk>
+ <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
+Date:   Wed, 5 Sep 2018 14:19:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180904181550.4416.50701.stgit@localhost.localdomain>
- <20180904183345.4416.76515.stgit@localhost.localdomain> <20180905062428.GV14951@dhcp22.suse.cz>
-In-Reply-To: <20180905062428.GV14951@dhcp22.suse.cz>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Wed, 5 Sep 2018 13:18:24 -0700
-Message-ID: <CAKgT0UeT1dL0VNMo1RSDkjABYBGLKjMsz5LsE_ML-EV+w2OURg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Create non-atomic version of SetPageReserved for
- init use
-To:     mhocko@kernel.org
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        pavel.tatashin@microsoft.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 11:24 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Tue 04-09-18 11:33:45, Alexander Duyck wrote:
-> > From: Alexander Duyck <alexander.h.duyck@intel.com>
-> >
-> > It doesn't make much sense to use the atomic SetPageReserved at init time
-> > when we are using memset to clear the memory and manipulating the page
-> > flags via simple "&=" and "|=" operations in __init_single_page.
-> >
-> > This patch adds a non-atomic version __SetPageReserved that can be used
-> > during page init and shows about a 10% improvement in initialization times
-> > on the systems I have available for testing.
->
-> I agree with Dave about a comment is due. I am also quite surprised that
-> this leads to such a large improvement. Could you be more specific about
-> your test and machines you were testing on?
+On 9/5/18 2:18 PM, Logan Gunthorpe wrote:
+> 
+> 
+> On 05/09/18 02:14 PM, Jens Axboe wrote:
+>> But if the caller must absolutely know where the bio will end up, then
+>> it seems super redundant. So I'd vote for killing this check, it buys
+>> us absolutely nothing and isn't even exhaustive in its current form.
+> 
+> 
+> Ok, I'll remove it for v6.
 
-So my test case has been just initializing 4 3TB blocks of persistent
-memory with a few trace_printk values added to track total time in
-move_pfn_range_to_zone.
+Since the drivers needs to know it's doing it right, it might not
+hurt to add a sanity check helper for that. Just have the driver
+call it, and don't add it in the normal IO submission path.
 
-What I have been seeing is that the time needed for the call drops on
-average from 35-36 seconds down to around 31-32.
+-- 
+Jens Axboe
 
-> Other than that the patch makes sense to me.
->
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
->
-> With the above addressed, feel free to add
-> Acked-by: Michal Hocko <mhocko@suse.com>
->
-> Thanks!
-
-As far as adding a comment are we just talking about why it is
-reserved, or do we need a description of the __SetPageReserved versus
-SetPageReserved. For now I was looking at adding a comment like:
-@@ -5517,8 +5517,13 @@ void __meminit memmap_init_zone(unsigned long
-size, int nid, unsigned long zone,
- not_early:
-                page = pfn_to_page(pfn);
-                __init_single_page(page, pfn, zone, nid);
-+
-+               /*
-+                * Mark page reserved as it will need to wait for onlining
-+                * phase for it to be fully associated with a zone.
-+                */
-                if (context == MEMMAP_HOTPLUG)
--                       SetPageReserved(page);
-+                       __SetPageReserved(page);
-
-                /*
-                 * Mark the block movable so that blocks are reserved for
-
-Any thoughts on this?
-
-Thanks.
-
-- Alex
