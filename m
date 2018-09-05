@@ -2,122 +2,114 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8680BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC753C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B0C20658
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:45:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B0C20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 25EE920658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:46:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="Ul6KwiIL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EE920658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeIEPPb (ORCPT
+        id S1727713AbeIEPQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:15:31 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53183 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeIEPPb (ORCPT
+        Wed, 5 Sep 2018 11:16:36 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:15207 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbeIEPQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:15:31 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y139-v6so7408717wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 03:45:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tOd4GvYrnhdUj6fEO4RnJiJRvggt3OirbLP9E2UErwc=;
-        b=OcD2wDAVZzX6JQHy3P0++bl7AO+jMF9OzA+nt254YiQaFoMQx8PcMsL/33DUQEqD2Q
-         Drt7jG9EgDC4jg+CPWggEssoj00IXBT6cyU91V0ChAT7KKos6mHSCnz6vGgTPGA0tBhf
-         2p9Y45oeoHg8KPvRQFvL4MoXAADXdnvbTCjVi1rKFnPh7Z0ROk0Yc8gaAIIQj1rSmJRC
-         x6H1HHizmBDp/AbXSm1kaqzh7JmAu0NDnWQiSKfDiNkoqfTQxX8T8YJIpR3yfncn31N7
-         nN+4Clc+yoQgliirkw6xVZDddQa1ovwIQZfI/Qr7qzdoS49zxagnZsZAOmyNjXfvLZli
-         c71g==
-X-Gm-Message-State: APzg51AzE1Ydaons78xwZhkUWsl4t3x1+CdA95turKnrXywa4g8vFWzW
-        /QhykNMa9kowo6KpHOwdgRM16Q==
-X-Google-Smtp-Source: ANB0VdZ9ufvWerfiWLipMcVLQEp6A27VV0UGBehGY2HuAH6ff9NSj2lR4ecJTcM47t2jsSlez63WBQ==
-X-Received: by 2002:a1c:3906:: with SMTP id g6-v6mr9157wma.50.1536144350492;
-        Wed, 05 Sep 2018 03:45:50 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.227.30])
-        by smtp.gmail.com with ESMTPSA id 127-v6sm1635959wmb.30.2018.09.05.03.45.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 03:45:48 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 12:45:45 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20180905104545.GB20267@localhost.localdomain>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-3-patrick.bellasi@arm.com>
+        Wed, 5 Sep 2018 11:16:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536144414;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=lD/QF+OltCAkjExq/G0OCx963mHS5ZNz5g/y9D66RNQ=;
+        b=Ul6KwiILbXiFXOKfk7yy3MobO8r/orz/ad7YOhYgmuCzJsSjEWuI7vRze/H27RJsEB
+        T/Ud0gt7uWfmL2iAKcY71ecDjncl+WpHdrxZ9jYN4jqcVu/kb9+3HuhLSo/iZfiwgQ5a
+        FUHA1H2iAgj1B4y/d1OFwozwxt4LayCfnx+HP056+ylbTJIOCHOAN0zax9v2334eE6zN
+        1phfuIdxFxHRdNLl/35L4fTluSXzjg2JgbqMI2TD1lD5h2v4PNzWQtQdptgpTwNVJOxp
+        aktqPxn8suzbwKsvdpqNzx5JSFmYOBi3jILRt7k5RqCN8EF0vS/JpJbPrrxy3jGLyGeR
+        X4/Q==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc0/lb4QMstw0mqi/C51hpW50R4vli8caicjAbM"
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.0 AUTH)
+        with ESMTPSA id L0862bu85Aeg4nP
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 5 Sep 2018 12:40:42 +0200 (CEST)
+From:   Olaf Hering <olaf@aepfle.de>
+To:     xen-devel@lists.xenproject.org
+Cc:     Olaf Hering <olaf@aepfle.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
+Date:   Wed,  5 Sep 2018 12:40:39 +0200
+Message-Id: <20180905104039.13512-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828135324.21976-3-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
 
-On 28/08/18 14:53, Patrick Bellasi wrote:
+BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+RIP: e030:device_offline+0x9/0xb0
+Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+Call Trace:
+ handle_vcpu_hotplug_event+0xb5/0xc0
+ xenwatch_thread+0x80/0x140
+ ? wait_woken+0x80/0x80
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x40/0x40
+ ret_from_fork+0x3a/0x50
 
-[...]
+Fix this crash by checking the return value of get_cpu_device().
 
->  static inline int __setscheduler_uclamp(struct task_struct *p,
->  					const struct sched_attr *attr)
->  {
-> -	if (attr->sched_util_min > attr->sched_util_max)
-> -		return -EINVAL;
-> -	if (attr->sched_util_max > SCHED_CAPACITY_SCALE)
-> -		return -EINVAL;
-> +	int group_id[UCLAMP_CNT] = { UCLAMP_NOT_VALID };
-> +	int lower_bound, upper_bound;
-> +	struct uclamp_se *uc_se;
-> +	int result = 0;
->  
-> -	p->uclamp[UCLAMP_MIN] = attr->sched_util_min;
-> -	p->uclamp[UCLAMP_MAX] = attr->sched_util_max;
-> +	mutex_lock(&uclamp_mutex);
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
+ drivers/xen/cpu_hotplug.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-This is going to get called from an rcu_read_lock() section, which is a
-no-go for using mutexes:
-
- sys_sched_setattr ->
-   rcu_read_lock()
-   ...
-   sched_setattr() ->
-     __sched_setscheduler() ->
-       ...
-       __setscheduler_uclamp() ->
-         ...
-	 mutex_lock()
-
-Guess you could fix the issue by getting the task struct after find_
-process_by_pid() in sys_sched_attr() and then calling sched_setattr()
-after rcu_read_lock() (putting the task struct at the end). Peter
-actually suggested this mod to solve a different issue.
-
-Best,
-
-- Juri
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index d4265c8ebb22..182be49f5a0b 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -19,9 +19,13 @@ static void enable_hotplug_cpu(int cpu)
+ 
+ static void disable_hotplug_cpu(int cpu)
+ {
++	struct device *dev;
++
+ 	if (cpu_online(cpu)) {
+ 		lock_device_hotplug();
+-		device_offline(get_cpu_device(cpu));
++		dev = get_cpu_device(cpu);
++		if (dev)
++			device_offline(dev);
+ 		unlock_device_hotplug();
+ 	}
+ 	if (cpu_present(cpu))
