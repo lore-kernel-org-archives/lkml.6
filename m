@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698A8C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F8FC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B8102075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B8102075C
+	by mail.kernel.org (Postfix) with ESMTP id 9CF332075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:34:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF332075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbeIETFE (ORCPT
+        id S1727679AbeIETFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 5 Sep 2018 15:05:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:59168 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.101.70]:59164 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbeIETFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726046AbeIETFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Sep 2018 15:05:04 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B402715B2;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2E9B1596;
         Wed,  5 Sep 2018 07:34:36 -0700 (PDT)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 859673F77D;
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 743BE3F739;
         Wed,  5 Sep 2018 07:34:36 -0700 (PDT)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id E74D41AE358D; Wed,  5 Sep 2018 15:34:50 +0100 (BST)
+        id DA2221AE2F82; Wed,  5 Sep 2018 15:34:50 +0100 (BST)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
@@ -37,9 +37,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
         akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         oleg@redhat.com, steve.mcintyre@arm.com, dave.martin@arm.com,
         Will Deacon <will.deacon@arm.com>
-Subject: [RESEND PATCH 2/2] arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
-Date:   Wed,  5 Sep 2018 15:34:43 +0100
-Message-Id: <1536158083-30166-3-git-send-email-will.deacon@arm.com>
+Subject: [RESEND PATCH 1/2] signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+Date:   Wed,  5 Sep 2018 15:34:42 +0100
+Message-Id: <1536158083-30166-2-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1536158083-30166-1-git-send-email-will.deacon@arm.com>
 References: <1536158083-30166-1-git-send-email-will.deacon@arm.com>
@@ -48,8 +48,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/arm/ defines a SIGMINSTKSZ of 2k, so we should use the same value
-for compat tasks.
+The sigaltstack(2) system call fails with -ENOMEM if the new alternative
+signal stack is found to be smaller than SIGMINSTKSZ. On architectures
+such as arm64, where the native value for SIGMINSTKSZ is larger than
+the compat value, this can result in an unexpected error being reported
+to a compat task. See, for example:
+
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
+
+This patch fixes the problem by extending do_sigaltstack to take the
+minimum signal stack size as an additional parameter, allowing the
+native and compat system call entry code to pass in their respective
+values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
+been defined by the architecture.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Dominik Brodowski <linux@dominikbrodowski.net>
@@ -57,25 +68,80 @@ Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Oleg Nesterov <oleg@redhat.com>
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
 Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/compat.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/compat.h |  3 +++
+ kernel/signal.c        | 14 +++++++++-----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/compat.h b/arch/arm64/include/asm/compat.h
-index 1a037b94eba1..cee28a05ee98 100644
---- a/arch/arm64/include/asm/compat.h
-+++ b/arch/arm64/include/asm/compat.h
-@@ -159,6 +159,7 @@ static inline compat_uptr_t ptr_to_compat(void __user *uptr)
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 1a3c4f37e908..de0c13bdcd2c 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -103,6 +103,9 @@ typedef struct compat_sigaltstack {
+ 	compat_size_t			ss_size;
+ } compat_stack_t;
+ #endif
++#ifndef COMPAT_MINSIGSTKSZ
++#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
++#endif
+ 
+ #define compat_jiffies_to_clock_t(x)	\
+ 		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 5843c541fda9..e4aad0e90882 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3460,7 +3460,8 @@ int do_sigaction(int sig, struct k_sigaction *act, struct k_sigaction *oact)
  }
  
- #define compat_user_stack_pointer() (user_stack_pointer(task_pt_regs(current)))
-+#define COMPAT_MINSIGSTKSZ	2048
- 
- static inline void __user *arch_compat_alloc_user_space(long len)
+ static int
+-do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
++do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
++		size_t min_ss_size)
  {
+ 	struct task_struct *t = current;
+ 
+@@ -3490,7 +3491,7 @@ do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
+ 			ss_size = 0;
+ 			ss_sp = NULL;
+ 		} else {
+-			if (unlikely(ss_size < MINSIGSTKSZ))
++			if (unlikely(ss_size < min_ss_size))
+ 				return -ENOMEM;
+ 		}
+ 
+@@ -3508,7 +3509,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_t __user *,uss, stack_t __user *,uoss)
+ 	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+ 	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
+-			      current_user_stack_pointer());
++			      current_user_stack_pointer(),
++			      MINSIGSTKSZ);
+ 	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
+ 		err = -EFAULT;
+ 	return err;
+@@ -3519,7 +3521,8 @@ int restore_altstack(const stack_t __user *uss)
+ 	stack_t new;
+ 	if (copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+-	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
++	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
++			     MINSIGSTKSZ);
+ 	/* squash all but EFAULT for now */
+ 	return 0;
+ }
+@@ -3553,7 +3556,8 @@ static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
+ 		uss.ss_size = uss32.ss_size;
+ 	}
+ 	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
+-			     compat_user_stack_pointer());
++			     compat_user_stack_pointer(),
++			     COMPAT_MINSIGSTKSZ);
+ 	if (ret >= 0 && uoss_ptr)  {
+ 		compat_stack_t old;
+ 		memset(&old, 0, sizeof(old));
 -- 
 2.1.4
 
