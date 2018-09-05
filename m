@@ -2,107 +2,114 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9FBC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E3EC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F2C42077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA97120857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:36:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0k1/q/m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F2C42077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRyiHNqQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA97120857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeIETGi (ORCPT
+        id S1727675AbeIETHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:06:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41881 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeIETGi (ORCPT
+        Wed, 5 Sep 2018 15:07:21 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34638 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbeIETHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:06:38 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s15-v6so3537195pgv.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 07:36:09 -0700 (PDT)
+        Wed, 5 Sep 2018 15:07:21 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u1-v6so6285950eds.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 07:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=P91aXxxB9n/3j5Inu+NxoRI5BxGOsBBTIg+ibZpLtCw=;
-        b=Z0k1/q/mN8neN6Up/kTutq8qRndBnjJJCiXj9e5MlSN8tWKpnqdO8nG6x0X9qh6CKG
-         8uSMYFWWftHS/FsoJl2r9Y7nlXGGvkT0PZnTLx6tpJBp4AqClAcNBAAY+cuDPZec3xeY
-         NH3swv6K9r8dYThS+WBFw0DlleW/lajqZObZYpwMyBTCrhcmHovS5IlLX0pwHCLfO1RN
-         RbikKM7bni74mCr/KbzVDvhXmyCtb4QGP+PQ3gtnhrrOsi+vEVAI0EP4Fa74xncC7Jru
-         zHRoi7V3JJDziJ58ux+jG6+5QtAXnEEMmLIvNYhQIEWz4Mw+TSna06kCb5DYJzhQtFUt
-         xOWw==
+        h=from:to:cc:subject:date:message-id;
+        bh=gjwy2eS0+FgR3QMwCu5mspdsFjXZq/i7p6gkYNRpF4Q=;
+        b=KRyiHNqQaZlf7xyP7XuK/2QRZ0zyYaUiR34i5VWOLd6fZLXGia8kNpbhm/7Utfq5ub
+         iyXIuxBKUQU4iOr4eAtmDQ2d0Qj/ag0KTdYYp0OaAJ8w5CF1+WOuqPD3zV9lUtZFs9HU
+         6igtzu6xhKZEC8tqearG3MAqmj+ow9LUlsdU5isz17BZkJ+J9HmlXXA/x+Yde0wvYfHR
+         59D+8XBw/CyfGACruc3wDxwiNTgYJgIW5W9hqwPT1j3GDZTkexWTr1odStWPkV0CBnD9
+         HhcyFT5b6KgO2QQjFAm9bNGMIS5rs9O7hu/pjkrjbudh1pQEUXv2403lFXddQp4LlZ/1
+         SdMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=P91aXxxB9n/3j5Inu+NxoRI5BxGOsBBTIg+ibZpLtCw=;
-        b=GXnwfEoWyd9RwRfzH77B4Gqgz3hQi9OdVBZqPFnqlmG1RCjVnirOAtiRzatUF9Z9AM
-         lOj6awXIQYdJySE9QN2BZ2a7gY1ydIJ+1b0irmly05QI5H5Nnw19/bZTweqN0HfelAhs
-         vn9yAxULYhVO8agIZeq9N9XQBy7dmX/29oZ5Rp6ZG1qFugh7vdjCu2aYyxPEBEbufYRL
-         kVf9rDS5ILf8G16+UxEiuD14kDhBOl8xthUIdqzVgo2GDxpmRU8r8zNQuNFsc7dc1Rlq
-         xGLWwHvrVLUX9bXZVe5nY8HM0+XpV6OIv9mQrAtLT3IWF5VxPXmnzmT6RBIHojjbOAF2
-         D8yA==
-X-Gm-Message-State: APzg51BMgdeBeYLFoQPmr7HAyA1VP/n6jq4ziuGUS0B0lwXqmn4F7NLU
-        J/GCjUvoGJXhC+1j+0DwaFs=
-X-Google-Smtp-Source: ANB0VdZBb+CfR4tv15a9Rzqe8zDh7fK4NY7vxaC4NF1k53ZPHg3oi2kdfscRPEimzy2wMtnNIeOHTw==
-X-Received: by 2002:aa7:86cb:: with SMTP id h11-v6mr40393038pfo.58.1536158169474;
-        Wed, 05 Sep 2018 07:36:09 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id k126-v6sm6193172pgk.26.2018.09.05.07.36.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gjwy2eS0+FgR3QMwCu5mspdsFjXZq/i7p6gkYNRpF4Q=;
+        b=gLBFW2xCQuHF5haf0YTPIkbJhGCFNiMyKrBzMmo5jQXXX0EMmLPh0iyGeStPGZKzlt
+         IyO6AefvsSPWu1M7oeAxNY6iWbtAA4wQtKJqG4M0kxzBRiqhrcsAGZ6NaFKfc2HqvW4v
+         YH02pNssJEEpe1BcM5sQ1F/+2WUJwUR+tVTqeJm5kzyFIM9qnIV74B9EnetOKRMVDcVt
+         0kag3HGibLSZacsZp4RUMMYkRORldSVMVXmvj2PV1U2ZFa4SlXbGgGS9u2/aEeDjQWdM
+         rwNrpjp30U5LszxOdCTf6ylLxKS+8d45ZQKs+wZTYcejxwBBA59BLdlQL9RG3Ad5PS8M
+         SgUA==
+X-Gm-Message-State: APzg51A6CvatORAYkbd6ON73PgcFkgZ4byiIkVdqHQXq4tmSI28teJsN
+        lFmLdmrKDI1h5fgdBx/a4fA=
+X-Google-Smtp-Source: ANB0VdbVOjIBkGYT6Xx0fnJSQvAkOSR/fVyUmxqN8I9sVQu/7VGXoaUtw8f6vPEqRZX109Spaxs/JA==
+X-Received: by 2002:a50:b7af:: with SMTP id h44-v6mr37796857ede.297.1536158211670;
+        Wed, 05 Sep 2018 07:36:51 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id u53-v6sm1556413edm.51.2018.09.05.07.36.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 07:36:08 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH -next] RISC-V: Request newstat syscalls
-Date:   Wed,  5 Sep 2018 07:36:06 -0700
-Message-Id: <1536158166-3397-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        Wed, 05 Sep 2018 07:36:50 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org (open list)
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v2 0/8] gpio-addr-flash: Support for device-tree and cleanup
+Date:   Wed,  5 Sep 2018 16:36:35 +0200
+Message-Id: <20180905143643.9871-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 82b355d161c9 ("y2038: Remove newstat family from default
-syscall set"), riscv images fail to boot with the following error.
+This patch series does the following:
 
-/sbin/init: error while loading shared libraries: libc.so.6:
-	cannot stat shared object: Error 38
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x00007f00
+1) Fix bug regarding ioremap size
+2) Cleanup code to use new APIs
+3) Simplify numerical operations
+4) Add support for device-tree devices
 
-Explicitly request newstat syscalls to fix the problem.
+Thanks!
 
-Fixes: 82b355d161c9 ("y2038: Remove newstat family from default syscall set")
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-I would suggest to merge this patch with the offending patch.
+Changelog v2:
 
- arch/riscv/include/asm/unistd.h | 1 +
- 1 file changed, 1 insertion(+)
+From Boris Brezillon:
+-Add Fixes and cc:stable
 
-diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
-index 0caea01d5cca..eff7aa9aa163 100644
---- a/arch/riscv/include/asm/unistd.h
-+++ b/arch/riscv/include/asm/unistd.h
-@@ -16,6 +16,7 @@
-  * be included multiple times.  See uapi/asm/syscalls.h for more info.
-  */
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_SYS_CLONE
- #include <uapi/asm/unistd.h>
- #include <uapi/asm/syscalls.h>
+From kbuild:
+- Fix warnings
+
+- Rebase
+
+Ricardo Ribalda Delgado (8):
+  mtd: maps: gpio-addr-flash: Replace custom printk
+  mtd: maps: gpio-addr-flash: Fix ioremapped size
+  mtd: maps: gpio-addr-flash: Use devm_* functions
+  mtd: maps: gpio-addr-flash: Use order insted of size
+  mtd: maps: gpio-addr-flash: Replace array with an integer
+  mtd: maps: gpio-addr-flash: Split allocation in two
+  mtd: maps: gpio-addr-flash: Add support for device-tree devices
+  dt-binding: mtd: Document gpio-addr-flash
+
+ .../bindings/mtd/gpio-addr-flash.txt          |  46 +++
+ drivers/mtd/maps/gpio-addr-flash.c            | 276 ++++++++++++------
+ 2 files changed, 236 insertions(+), 86 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mtd/gpio-addr-flash.txt
+
 -- 
-2.7.4
+2.18.0
 
