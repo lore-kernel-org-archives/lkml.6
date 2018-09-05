@@ -2,109 +2,89 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60FAC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F150EC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E9B2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:30:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E9B2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D02B206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:31:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JXG371kH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D02B206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeIEVBU (ORCPT
+        id S1727651AbeIEVCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 17:01:20 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727623AbeIEVBN (ORCPT
+        Wed, 5 Sep 2018 17:02:16 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50994 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeIEVCP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 17:01:13 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85GP0lM002633
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 12:30:16 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2majbp147g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 12:30:16 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
-        Wed, 5 Sep 2018 10:30:16 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Sep 2018 10:30:14 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85GUCO820971582
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Sep 2018 09:30:13 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B068F7805E;
-        Wed,  5 Sep 2018 10:30:12 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B47C67805C;
-        Wed,  5 Sep 2018 10:30:10 -0600 (MDT)
-Received: from [192.168.42.231] (unknown [9.80.226.106])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Sep 2018 10:30:10 -0600 (MDT)
-Subject: Re: [regression/bisected] 4.19 cycle boot time IO stalls
-From:   James Bottomley <jejb@linux.vnet.ibm.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Mike Galbraith <efault@gmx.de>,
+        Wed, 5 Sep 2018 17:02:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w85GSrUm148774;
+        Wed, 5 Sep 2018 16:31:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=Ffc9c8opSgwLpNSCeb1cbN8AV5Y9wcEm0UD8sfFRgEw=;
+ b=JXG371kHG8h7NftVEHYO62I7ZAuMyl5FnsNz7zEANvqc+g5DjDL1VJVTRkObw5k5tARV
+ ncr5dF4mMtNu5vSAYJejYFXI0exW61MxlcZlv7UkpzW7bz+YoWydTPPBd4Ze/lC4Z/hO
+ PEwPJ/ttD0otgSokdPIBBYdekW24h+gAsczuU1iVqRmXqPZ2Tqd5gsvYiXUWrag1zBJc
+ t5Gsia8if574U3M8A/8nYcXZ1R8xAkjIMGuFBFoayjm4Lpu6agdC6znC2yUgfOrb3FEd
+ J7t3XQNT4TOjz0bUvSCOypeZ4uuL0VcpSyJu8u630iKEFHNZtG9MNDKLJ5UQkH0rF6yD kw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2m7j6tn725-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Sep 2018 16:31:12 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w85GVBQT028283
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Sep 2018 16:31:11 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w85GVA5F032699;
+        Wed, 5 Sep 2018 16:31:10 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Sep 2018 09:31:10 -0700
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Mike Galbraith <efault@gmx.de>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 05 Sep 2018 17:30:07 +0100
-In-Reply-To: <yq15zzj3o99.fsf@oracle.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Subject: Re: [regression/bisected] 4.19 cycle boot time IO stalls
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
 References: <1536137722.4813.66.camel@gmx.de>
-         <178d6adc-2a79-99dc-daa8-fb0ed9f0afd1@kernel.dk>
-         <yq15zzj3o99.fsf@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18090516-0004-0000-0000-0000148485B3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01083963; UDB=6.00559437; IPR=6.00863964;
- MB=3.00023129; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-05 16:30:15
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090516-0005-0000-0000-000088B5728B
-Message-Id: <1536165007.3627.13.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809050167
+        <178d6adc-2a79-99dc-daa8-fb0ed9f0afd1@kernel.dk>
+        <yq15zzj3o99.fsf@oracle.com>
+Date:   Wed, 05 Sep 2018 12:31:07 -0400
+In-Reply-To: <yq15zzj3o99.fsf@oracle.com> (Martin K. Petersen's message of
+        "Wed, 05 Sep 2018 12:25:22 -0400")
+Message-ID: <yq11sa73nzo.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=666
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809050168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-05 at 12:25 -0400, Martin K. Petersen wrote:
-> Jens,
-> 
-> > I bet it's the host busy change from Ming, which I already
-> > reported as being the culprit for another test failure I had. For
-> > some reason it's not merged yet, nudge nudge Martin.
-> 
-> I reverted the two offending changes last week. James just hasn't
-> sent Linus a pull request yet...
 
-Yes, I did, just before packing up my board and kit and saying goodbye
-to the carefree days of summer on the beach:
+> I reverted the two offending changes last week. James just hasn't sent
+> Linus a pull request yet...
 
-https://marc.info/?l=linux-scsi&m=153613531415018&w=2
+Actually, he did earlier today.
 
-I'm actually at heathrow now and should be home tomorrow, so things
-should be back to normal next week.
-
-James
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
