@@ -2,194 +2,298 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EB9C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151BEC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 449E82073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:44:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GnDHyN64"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449E82073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A484A2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:59:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A484A2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeIEHL4 (ORCPT
+        id S1726487AbeIEHZ6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 03:11:56 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38799 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbeIEHL4 (ORCPT
+        Wed, 5 Sep 2018 03:25:58 -0400
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:53064 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725908AbeIEHZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 03:11:56 -0400
-Received: by mail-oi0-f68.google.com with SMTP id x197-v6so10824640oix.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 19:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=yj65X8yHMePEK1pjQXEf71vUUfZKI0OOItdWh4xAtB4=;
-        b=GnDHyN64cVpVV/dgdmll6JU24IQi/b6vksZ+z/zselAy/+/nGVacaJoC5u/BBVuza0
-         ZQbg99eQJxEaz3kVuADFAS+cYOkRWSUHY7AeLmroMP9+GhxZtM2zHhvx81SxcdCsh/+v
-         Hh1kicRsUTDYi+wBDdUFhhfzLwNusFeD2JLW4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=yj65X8yHMePEK1pjQXEf71vUUfZKI0OOItdWh4xAtB4=;
-        b=d2mImbScntVvwrrq5l3jAC8budlTbYmPycZ6S9TYh6IFyP6R9C/MPcKwJyg+EwtuWq
-         aAiH1APUDHcoZf9O516fD8JGOrqHvi86ZAYyPmFVQf9jVaD+u1M2EbLopGHVz7TeY925
-         JAepZ+4NVGgdpSlfqsa9mZfB5N4GOl8h3vpaGBEXjKKi7zqp7SszeQpaLaExu68K1b//
-         sm4d9EGz12o3Rv/z556lpMMW3KWPR6UJdvj6F4kMOevYTLvwp16jC21S+A6TcmBg9i5I
-         okBgS2Ynx3qgu6o4rnQj+fppwnSNc1TWgdQMUGtHNLt2gRYAIHH5lmXDYtTJIHpq0gM/
-         mOjw==
-X-Gm-Message-State: APzg51C1sdSdjvF5D1XFvnDtpSQZv0qJ2fhqHIMjF6S9L43/6bTVwRlo
-        706OSp05cL1u/jOcZLYgWJ9abVABT/AUfFQ/fVKdIQ==
-X-Google-Smtp-Source: ANB0VdYFtx3nbnVHbwUdZ+tdr1qgBk7P2HqMg9M5cRHAuvZVj5OvXVcgp+J74P1UNS0WU+DinFNLIAWDR7UzY/sgmkk=
-X-Received: by 2002:aca:5dc5:: with SMTP id r188-v6mr29011126oib.320.1536115439920;
- Tue, 04 Sep 2018 19:43:59 -0700 (PDT)
+        Wed, 5 Sep 2018 03:25:58 -0400
+X-ASG-Debug-ID: 1536116274-093b7e636b126900001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id U8Fb2bYYR6ttDRBv (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 05 Sep 2018 10:57:54 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 5 Sep 2018 10:57:59 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Wed, 5 Sep 2018 10:57:59 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     Ran Wang <ran.wang_1@nxp.com>, Leo Li <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] soc: fsl: add RCPM driver
+Thread-Topic: [PATCH 3/3] soc: fsl: add RCPM driver
+X-ASG-Orig-Subj: Re: [PATCH 3/3] soc: fsl: add RCPM driver
+Thread-Index: AQHUQN6q4zr6XBl1OE6inyBTrUDhTQ==
+Date:   Wed, 5 Sep 2018 02:57:58 +0000
+Message-ID: <be39f5ea8c9046b0bf1f6bbfe935fae4@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <20180831035219.31619-1-ran.wang_1@nxp.com>
+ <20180831035219.31619-3-ran.wang_1@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.85]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a9d:3ec8:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 19:43:59 -0700 (PDT)
-In-Reply-To: <ff34b0fd-dd56-f239-94a9-d84673f6869a@gmail.com>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
- <e7642c73ac1c20b97990a887f76f2f51c41f930b.1536027873.git.baolin.wang@linaro.org>
- <ff34b0fd-dd56-f239-94a9-d84673f6869a@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 5 Sep 2018 10:43:59 +0800
-Message-ID: <CAMz4kuJJUXe-z5s5cRQG19Yj4RE3uVqOCdWNpOX3f+wvW+WbrQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] leds: sc27xx: Add pattern_set/clear interfaces for
- LED controller
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1536116274
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0100
+X-Barracuda-Spam-Score: 0.51
+X-Barracuda-Spam-Status: No, SCORE=0.51 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_RULE7568M, ISO2022JP_CHARSET
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.56899
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        -0.00 ISO2022JP_CHARSET      ISO-2022-JP message
+        0.50 BSF_RULE7568M          Custom Rule 7568M
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+Please change your comments style.
 
-On 5 September 2018 at 04:19, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
+On 2018/8/31 11:56, Ran Wang wrote:
+> The NXP's QorIQ Processors based on ARM Core have RCPM module (Run
+> Control and Power Management), which performs all device-level
+> tasks associated with power management such as wakeup source control.
 >
-> On 09/04/2018 01:01 PM, Baolin Wang wrote:
->> This patch implements the 'pattern_set'and 'pattern_clear'
->> interfaces to support SC27XX LED breathing mode.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes from v7:
->>  - Add its own ABI documentation file.
->>
->> Changes from v6:
->>  - None.
->>
->> Changes from v5:
->>  - None.
->>
->> Changes from v4:
->>  - None.
->>
->> Changes from v3:
->>  - None.
->>
->> Changes from v2:
->>  - None.
->>
->> Changes from v1:
->>  - Remove pattern_get interface.
->> ---
->>  .../ABI/testing/sysfs-class-led-driver-sc27xx      |   11 +++
->>  drivers/leds/leds-sc27xx-bltc.c                    |   94 ++++++++++++++++++++
->>  2 files changed, 105 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->> new file mode 100644
->> index 0000000..ecef3ba
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->> @@ -0,0 +1,11 @@
->> +What:                /sys/class/leds/<led>/hw_pattern
->> +Date:                September 2018
->> +KernelVersion:       4.20
->> +Description:
->> +             Specify a hardware pattern for the SC27XX LED. For the SC27XX
->> +             LED controller, it only supports 4 hardware patterns to configure
+> This driver depends on FSL platform PM driver framework which help to
+> isolate user and PM service provider (such as RCPM driver).
 >
-> If I understand it correctly then the four components: low, rise, high,
-> and fall time make a single pattern. So calling it "4 hardware patterns"
-> can be misleading. Below you're using "stage" notion - it would be good
-> to use it consequently on the whole span of this document.
+> Signed-off-by: Chenhui Zhao <chenhui.zhao@nxp.com>
+> Signed-off-by: Ying Zhang <ying.zhang22455@nxp.com>
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> ---
+>  drivers/soc/fsl/Kconfig   |    6 ++
+>  drivers/soc/fsl/Makefile  |    1 +
+>  drivers/soc/fsl/ls-rcpm.c |  153 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 160 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/soc/fsl/ls-rcpm.c
+>
+> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
+> index 6517412..882330d 100644
+> --- a/drivers/soc/fsl/Kconfig
+> +++ b/drivers/soc/fsl/Kconfig
+> @@ -30,3 +30,9 @@ config FSL_PLAT_PM
+>  	  have to know the implement details of wakeup function it require.
+>  	  Besides, it is also easy for service side to upgrade its logic when
+>  	  design changed and remain user side unchanged.
+> +
+> +config LS_RCPM
+> +	bool "Freescale RCPM support"
+> +	depends on (FSL_PLAT_PM)
+> +	help
+> +	  This feature is to enable specified wakeup source for system sleep.
+> diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
+> index 8f9db23..43ff71a 100644
+> --- a/drivers/soc/fsl/Makefile
+> +++ b/drivers/soc/fsl/Makefile
+> @@ -7,3 +7,4 @@ obj-$(CONFIG_QUICC_ENGINE)		+= qe/
+>  obj-$(CONFIG_CPM)			+= qe/
+>  obj-$(CONFIG_FSL_GUTS)			+= guts.o
+>  obj-$(CONFIG_FSL_PLAT_PM)	+= plat_pm.o
+> +obj-$(CONFIG_LS_RCPM)		+= ls-rcpm.o
+> diff --git a/drivers/soc/fsl/ls-rcpm.c b/drivers/soc/fsl/ls-rcpm.c
+> new file mode 100644
+> index 0000000..b0feb88
+> --- /dev/null
+> +++ b/drivers/soc/fsl/ls-rcpm.c
+> @@ -0,0 +1,153 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// plat_pm.c - Freescale Layerscape RCPM driver
+> +//
+> +// Copyright 2018 NXP
+> +//
+> +// Author: Ran Wang <ran.wang_1@nxp.com>,
+> +
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <soc/fsl/plat_pm.h>
+> +
+> +#define MAX_COMPATIBLE_NUM	10
+> +
+> +struct rcpm_t {
+> +	struct device *dev;
+> +	void __iomem *ippdexpcr_addr;
+> +	bool big_endian;	/* Big/Little endian of RCPM module */
+> +};
+> +
+> +// rcpm_handle - Configure RCPM reg according to wake up source request
+> +// @user_dev: pointer to user's device struct
+> +// @flag: to enable(true) or disable(false) wakeup source
+> +// @handle_priv: pointer to struct rcpm_t instance
+> +//
+> +// Return 0 on success other negative errno
+> +static int rcpm_handle(struct device *user_dev, bool flag, void *handle_priv)
+> +{
+> +	struct rcpm_t *rcpm;
+> +	bool big_endian;
+> +	const char  *dev_compatible_array[MAX_COMPATIBLE_NUM];
+> +	void __iomem *ippdexpcr_addr;
+> +	u32 ippdexpcr;
+> +	u32 set_bit;
+> +	int ret, num, i;
+> +
+> +	rcpm = handle_priv;
+> +	big_endian = rcpm->big_endian;
+> +	ippdexpcr_addr = rcpm->ippdexpcr_addr;
+> +
+> +	num = device_property_read_string_array(user_dev, "compatible",
+> +			dev_compatible_array, MAX_COMPATIBLE_NUM);
+> +	if (num < 0)
+> +		return num;
+> +
+> +	for (i = 0; i < num; i++) {
+> +		if (!device_property_present(rcpm->dev,
+> +					dev_compatible_array[i]))
+> +			continue;
+> +		else {
+Remove this else.
+> +			ret = device_property_read_u32(rcpm->dev,
+> +					dev_compatible_array[i], &set_bit);
+> +			if (ret)
+> +				return ret;
+> +
+> +			if (!device_property_present(rcpm->dev,
+> +						dev_compatible_array[i]))
+This has been checked. Continue ? or return ENODEV？
+> +				return -ENODEV;
+> +			else {
+Remove this else.
+> +				ret = device_property_read_u32(rcpm->dev,
+> +						dev_compatible_array[i], &set_bit);
+> +				if (ret)
+> +					return ret;
+> +
+> +				if (big_endian)
+> +					ippdexpcr = ioread32be(ippdexpcr_addr);
+> +				else
+> +					ippdexpcr = ioread32(ippdexpcr_addr);
+> +
+> +				if (flag)
+> +					ippdexpcr |= set_bit;
+> +				else
+> +					ippdexpcr &= ~set_bit;
+> +
+> +				if (big_endian) {
+> +					iowrite32be(ippdexpcr, ippdexpcr_addr);
+> +					ippdexpcr = ioread32be(ippdexpcr_addr);
+> +				} else
+if (x) {
+...
+...
+}  else {
 
-Sure. I will modify the documentation to avoid misleading words.
+}
+> +					iowrite32(ippdexpcr, ippdexpcr_addr);
+> +
+> +				return 0;
+> +			}
+> +		}
+> +	}
+> +
+> +	return -ENODEV;
+> +}
+> +
+> +static int ls_rcpm_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *r;
+> +	struct rcpm_t *rcpm;
+> +
+> +	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!r)
+> +		return -ENODEV;
+> +
+> +	rcpm = kmalloc(sizeof(*rcpm), GFP_KERNEL);
+kzalloc is better.
+> +	if (!rcpm)
+> +		return -ENOMEM;
+> +
+> +	rcpm->big_endian = device_property_read_bool(&pdev->dev, "big-endian");
+> +
+> +	rcpm->ippdexpcr_addr = devm_ioremap_resource(&pdev->dev, r);
+> +	if (IS_ERR(rcpm->ippdexpcr_addr))
+> +		return PTR_ERR(rcpm->ippdexpcr_addr);
+> +
+> +	rcpm->dev = &pdev->dev;
+> +	platform_set_drvdata(pdev, rcpm);
+> +
+> +	return register_fsl_platform_wakeup_source(rcpm_handle, rcpm);
+> +}
+> +
+> +static int ls_rcpm_remove(struct platform_device *pdev)
+> +{
+> +	struct rcpm_t	*rcpm;
+Not need a table.
 
->
->> +             the low time, rise time, high time and fall time for the breathing
->> +             mode, and each stage duration unit is 125ms. So the format of
->> +             the hardware pattern values should be:
->
-> I'd be more precise here:
->
-> Min stage duration: ???
-> Max stage duration: ???
-> Stage duration step: 125 ms
+Cheers,
+-Dongsheng
 
-OK.
-
->
->> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
->> +             duration_3 brightness_4 duration_4".
->
-> Looking at sc27xx_led_pattern_set() it doesn't seem like you would
-> use brightnesses other then brightness_1. I assume that the low
-> brightness is fixed to 0 and the high brightness is the brightness_1.
-> If yes, than we don't need brightnesses in this pattern definition,
-> since the current brightness will suffice.
->
-> You'd need to alter the hw_pattern description to say that the
-> brightness currently set is to be used as a high brightness, and the
-> hw_pattern for this driver consists only of the four delta_t components.
-
-Sorry for confusing here. For SC27XX LED, the 4 stages use one same
-brightness. To be compatible with the hardware pattern format, so we
-force to set one brightness for each stage. I will add some comments
-to explain the LED expects the same brightness for each stage instead
-of using the current brightness file which is not used for our
-breathing mode.
-
->
-> This is clear example of what I had on mind when having doubts
-> about using tuples for pattern_set.
->
-> Alternatively, if we want to enforce tuples format for hw_pattern,
-> and if we want to be consistent - we'd need to require defining target
-> brightness for each stage properly, i.e.
->
-> echo "100 500 100 500 0 500 0 500" > pattern
->
-> Which would mean:
->
-> 1. Rise from brightness 0 to 100 for 500 ms.
-> 2. Keep brightness 100 for 500 ms.
-> 3. Fall from brightness 100 to 0 for 500 ms.
-> 4. Keep brightness 0 for 500 ms.
->
-> --
-> Best regards,
-> Jacek Anaszewski
+> +
+> +	rcpm = platform_get_drvdata(pdev);
+> +	deregister_fsl_platform_wakeup_source(rcpm);
+> +	kfree(rcpm);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id ls_rcpm_of_match[] = {
+> +	{ .compatible = "fsl,qoriq-rcpm-2.1", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, ls_rcpm_of_match);
+> +
+> +static struct platform_driver ls_rcpm_driver = {
+> +	.driver = {
+> +		.name = "ls-rcpm",
+> +		.of_match_table = ls_rcpm_of_match,
+> +	},
+> +	.probe = ls_rcpm_probe,
+> +	.remove = ls_rcpm_remove,
+> +};
+> +
+> +static int __init ls_rcpm_init(void)
+> +{
+> +	return platform_driver_register(&ls_rcpm_driver);
+> +}
+> +subsys_initcall(ls_rcpm_init);
+> +
+> +static void __exit ls_rcpm_exit(void)
+> +{
+> +	platform_driver_unregister(&ls_rcpm_driver);
+> +}
+> +module_exit(ls_rcpm_exit);
 
 
-
--- 
-Baolin Wang
-Best Regards
