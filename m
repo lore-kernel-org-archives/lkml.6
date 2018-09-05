@@ -2,126 +2,119 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D832EC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D27C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B74A2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:56:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B74A2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E83C52077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:57:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UWsHU2/A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83C52077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeIEMZP (ORCPT
+        id S1727806AbeIEM0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:25:15 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36597 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726372AbeIEMZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:25:15 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 04D6D208BE; Wed,  5 Sep 2018 09:56:16 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 13DEF208AE;
-        Wed,  5 Sep 2018 09:56:02 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 09:56:01 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 1/3] dt-bindings: change the A64 HDMI PHY binding to R40
-Message-ID: <20180905075601.32kzkd3is2gpa3ft@flea>
-References: <20180903133434.58188-1-icenowy@aosc.io>
- <20180903133434.58188-2-icenowy@aosc.io>
- <20180905071435.lgsogpzmh5nw6bcy@flea>
- <3D28A45F-D67D-4388-9FB7-2A2763955398@aosc.io>
+        Wed, 5 Sep 2018 08:26:54 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36648 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727494AbeIEM0x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 08:26:53 -0400
+Received: by mail-it0-f65.google.com with SMTP id u13-v6so8351807iti.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 00:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=v11/Z7Ne63G0BjDigZ5+ybxykhE2gXlU/DhHQEscZgo=;
+        b=UWsHU2/Aq9syyqXHpD4uQVI3kFWO48RmgCw3zoXdGu8H8KSqnmP6bzpl2tAr4LvF+N
+         qypT7/B4cx/c70NLD76wd69HL/6Y9C+QUZqxok0S7GfRRpqCJEaTzHOR6XYyb4QVu1mh
+         WLDjyXg+zPEWRoU9UoxyURIGIPRm53HAidaKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=v11/Z7Ne63G0BjDigZ5+ybxykhE2gXlU/DhHQEscZgo=;
+        b=UVECOJsEHky+w0mTs4fQPt6XZ2lYMB1sCCXhhiOqnrH/dFWOJGHqX7kD1CHGzBINgF
+         wBazKpCv5r9Kb42JVc7xvI7nF3XQk8iLiv8QEIDU1MGJ+V34vglYXaNZdvuOKupKB3QQ
+         ZB3KB9wr3qs3h9Vh5fwJ7CoPqi33UoDHQ+xbZeX6tdA8OzpLa8GoWta/PfJ7Q5uEvZ2J
+         ofc9rAPxbd8Xjl2Yr1yUMAgtSSohY4YewL7T5LThpvjrazWTfZmtv/4sBvzBUjy5iT1N
+         tSd2S2MSCImIocMG5zUKufsc1Md6hNuRS97iYpBubSwhBq217MLrFMHiOuuvEG7pma99
+         eKlQ==
+X-Gm-Message-State: APzg51B5+AThm2m1HStWuCnUgtvffTaumzR4tqkUPJfQMIv5Kmzgd7LX
+        XU3/bXSNvNhpaU12X/o3fbFzg/ODnbCOptSts+5+QQ==
+X-Google-Smtp-Source: ANB0VdaUv3aotp4z9n83mZqFSQRoUokHMW7vevWJAmEpBGRk4X3w35KEr5xG3S4BN0n1SUATxHkpWcvxyh8R+KE1dvo=
+X-Received: by 2002:a24:21d6:: with SMTP id e205-v6mr3313521ita.52.1536134274651;
+ Wed, 05 Sep 2018 00:57:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4jstdn7l5m4f2ddx"
-Content-Disposition: inline
-In-Reply-To: <3D28A45F-D67D-4388-9FB7-2A2763955398@aosc.io>
-User-Agent: NeoMutt/20180716
+Received: by 2002:a02:978e:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 00:57:54 -0700 (PDT)
+In-Reply-To: <20180905075136.chumwosx76o2n66l@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-12-icenowy@aosc.io>
+ <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com> <20180905075136.chumwosx76o2n66l@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 5 Sep 2018 13:27:54 +0530
+Message-ID: <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable
+ HDMI output on A64 boards w/ HDMI
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 5, 2018 at 1:21 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
+>> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> > From: Jagan Teki <jagan@amarulasolutions.com>
+>> >
+>> > Enable all necessary device tree nodes and add connector node to device
+>> > trees for all supported A64 boards with HDMI.
+>> >
+>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> > [Icenowy: squash all board patches altogether and change supply name]
+>> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > ---
+>> > Changes in v4:
+>> > - Rebase some device trees.
+>> > Changes in v3,1:
+>> > - Squash all enablement patches altogether.
+>> > - Change supply name to match DT binding & driver change.
+>> > Changes for v3:
+>> > - Enable all pipeline components
+>> > Changes for v2:
+>> > - none
+>> >
+>> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+>> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+>> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+>> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+>> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+>> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+>> >  6 files changed, 204 insertions(+)
+>>
+>> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
+>> A64-Olinuxino, NPI-A64
+>>
+>> Pine64 boards look unable by saying
+>> [drm] Cannot find any crtc or sizes
+>>
+>> May be someone can confirm, it.
+>
+> Then we should drop the pine64 additions until someone figures it out,
+> as it has been already discussed.
 
---4jstdn7l5m4f2ddx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 05, 2018 at 03:46:41PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2018=E5=B9=B49=E6=9C=885=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=883=
-:14:35, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
-> >On Mon, Sep 03, 2018 at 09:34:32PM +0800, Icenowy Zheng wrote:
-> >> By experiment, the A64 HDMi PHY doesn't support the PLL-VIDEO mux
-> >> introduced in R40, although it has two PLL-VIDEOs.
-> >>=20
-> >> Change the A64 HDMI PHY binding to R40 one.
-> >>=20
-> >> This binding is introduced in v4.19, which is still in RC stage, so
-> >we
-> >> have change to fix it.
-> >>=20
-> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >
-> >That doesn't make much sense. The A64 doesn't have any particular
-> >reason to behave like the R40, and the R40 can definitely use a
-> >different compatible if it has a different behaviour. But I don't see
-> >*why* the A64 not behaving like the R40 is a justification to remove
-> >the A64 compatible. Especially when the R40 was released later.
-> >
-> >Add a new compatible, and leave the A64 compatible alone.
->=20
-> But the behavior of A64 compatible will change from double
-> PLL to single PLL, because the A64 HDMI PHY is proven
-> to have no double PLL.
->=20
-> Should I then change the A64 compatible behavior and import R40
-> compatible at the same time?
-
-I don't see why you should do both at the same time. Fix the A64, and
-add the support for the R40, those are two orthogonal changes.
-
-> In addition maybe I can just drop A64 compatible, and let A64
-> use H3 one.
-
-No, that break the backward compatibility.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4jstdn7l5m4f2ddx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPjBAACgkQ0rTAlCFN
-r3TsdQ/9H0JdBXgyUmIS5JgJqON/ZI+gQPZsi9ZSnJZgU12peHAi94J/1qaSCjqU
-NYl/7lMHshTCsF8V8JIVkPBxrBCSo9n/4azyE07OMXXtL65MkvhXY1LEYoRQLyrc
-N0yKqLSDrV/Yp+e8+RawO9tNzwoHAy0AK+vGErq5Y+7c8WqTvh8fxgMHvaKlB8lq
-68vgmD7+wtD2wd3HhLcrxvg7Dbfz2pSHU4lW8K8IVb+B+zFjcL/mWuFyp2qXl6jr
-VSQHtFBo25vNIdgbv3LuzG+qu0c+D85Oq249kwucFAk/Rlv4+8Y9ayxiwSjA4nl+
-oNpmEKHdKEsVmZzxLqcpGlGxlIz+Q/XkdsH0N5L41/+ZtWgAAEv8rGi2cmGs/N8C
-nB/QeLwSsnDgXI3rFIvZWY3BJRTjO9VIQo+NhugC+PQYaSweVzLXxNS2Zgzm+e89
-jBG+Q6Wc2Oq4UTRBhpx0bytyeemQAUAYlUcczPMn8Rjf+vYEz0FlDMfFWJ5frg6l
-9Bo3fOBeOQ8H+ccnoznOwBqFi+91OuNk9ETahZYfEzM4FRzfS1CMpE7g24PVEt54
-2aRojZim/gv0C+l4YXF6yHiqQ1qaiClyKiIGj2YXByT9DOXKcr3XnnrA++zmaDXD
-5TR4IDqCGR9Fd7KKTCzyNhHxlujaJ+Gw67/T3fj5PmfNin82s0A=
-=VpVl
------END PGP SIGNATURE-----
-
---4jstdn7l5m4f2ddx--
+That is fine, but If anyone have pine64 can confirm this.
