@@ -2,94 +2,143 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F086C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33A1C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC76920857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC76920857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BBEA20658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:07:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PrTBJPwX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBEA20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbeIEQeC (ORCPT
+        id S1727628AbeIEQh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:34:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40960 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726361AbeIEQeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:34:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E4630AC1F;
-        Wed,  5 Sep 2018 12:04:03 +0000 (UTC)
-Subject: Re: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
-To:     Olaf Hering <olaf@aepfle.de>
-Cc:     xen-devel@lists.xenproject.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180905104039.13512-1-olaf@aepfle.de>
- <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
- <20180905135019.56b303da.olaf@aepfle.de>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <92e9c7f0-598d-b20c-4847-320e01f6ec06@suse.com>
-Date:   Wed, 5 Sep 2018 14:04:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Wed, 5 Sep 2018 12:37:27 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:39796 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbeIEQh1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:37:27 -0400
+Received: by mail-it0-f54.google.com with SMTP id h1-v6so9090904itj.4;
+        Wed, 05 Sep 2018 05:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7bDjpvrSNuhLRJI2yTRLoh7JGOR7phmxUtq+NJvtg8E=;
+        b=PrTBJPwXUv4DoqHzgpTa/leI6x2eRnfjt2y/kThjFjrynmUSE7SQitmpeeR9/jloEE
+         F7WpgIM5h3v6vCzBQipTwtu1LQfkS4QkmNu4BpnUN4cTpZIgfkCxQNJVriKGSdT9QuEm
+         PN+ud7ma/k2HcqQf2FY35YcxRq73o9cIsfl6SlyxG1vDcECuwGlm6+zxFqf96yXdVctq
+         yli0xtbYdNuzot/W444mRze/wYV8eK7WTx+rMHEypeLU68WmeGwLOKt3iXK1Zg6kKcV/
+         /yRMaoulnCuhnjFaLl24lc4bDBEuRrQ7zS5ThRGFNLDqNUOZME0Ze7HTi07r6ntmfhsd
+         hkNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7bDjpvrSNuhLRJI2yTRLoh7JGOR7phmxUtq+NJvtg8E=;
+        b=KGz85DiOLESf0i+6t3ZRtIqztIeeq3xa4PwQsgph6xze6VmJA5l8gfduAslX7ksoo/
+         0g/L8pSZxeo8RU1d8HeqwLQHrprcedzORUn25VYk7eADYnCu9O3FeSBw5XOEGY+Xu+06
+         oLItiyfz5A++zZxuw2VAHA/DOKXHzH80cBcvnmBolxzp13J6mdbxLL7mqotRcMym3fou
+         NDf3HqmQ3b3rdbJutvylWmvzQjgqJHn91urVRe+RcI9UrMX+Ddg1eKhsGqHUcviEwPPZ
+         ycKoMBhl/DwGygehF8CHpqe4eY+Kfw6TrJJT3QuyiV+VhImj3rDXQ1QjhffNPQ+KrS4q
+         3eoQ==
+X-Gm-Message-State: APzg51DODTJmCuKnN8wd0QheY/hh+h0da1zbBW60Mf/gDjloVBGr8pON
+        7KhmgB0NRSNf54KZbjmUTc8Xy+el
+X-Google-Smtp-Source: ANB0Vda3Ld1CQFSxF30X0NxgXQc6esY9rPh45sOOtAz6HIzMaoMqObV+pxDIqsU/agv9SYGzfY8JOw==
+X-Received: by 2002:a24:bd8f:: with SMTP id x137-v6mr63595ite.8.1536149248767;
+        Wed, 05 Sep 2018 05:07:28 -0700 (PDT)
+Received: from [191.9.206.254] (rrcs-70-62-41-24.central.biz.rr.com. [70.62.41.24])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm1040844itb.0.2018.09.05.05.07.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 05:07:27 -0700 (PDT)
+Subject: Re: POSIX violation by writeback error
+To:     =?UTF-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        R.E.Wolff@bitwizard.nl
+Cc:     martin@lichtvoll.de, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+ <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+ <20180905070847.GC24519@BitWizard.nl> <3805399.0d8HT3LL4o@merkaba>
+ <20180905080444.GD24519@BitWizard.nl>
+ <CAJDTihya-DxyjzPJfh0LX+qOs2jvwr5TakcmRr8_U7h3pdw6cg@mail.gmail.com>
+From:   "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
+Message-ID: <1b02ddae-35ae-8ff7-760f-bc9bafee4541@gmail.com>
+Date:   Wed, 5 Sep 2018 08:07:25 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180905135019.56b303da.olaf@aepfle.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAJDTihya-DxyjzPJfh0LX+qOs2jvwr5TakcmRr8_U7h3pdw6cg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/18 13:50, Olaf Hering wrote:
-> Am Wed, 5 Sep 2018 12:55:58 +0200
-> schrieb Juergen Gross <jgross@suse.com>:
+On 2018-09-05 04:37, 焦晓冬 wrote:
+> On Wed, Sep 5, 2018 at 4:04 PM Rogier Wolff <R.E.Wolff@bitwizard.nl> wrote:
+>>
+>> On Wed, Sep 05, 2018 at 09:39:58AM +0200, Martin Steigerwald wrote:
+>>> Rogier Wolff - 05.09.18, 09:08:
+>>>> So when a mail queuer puts mail the mailq files and the mail processor
+>>>> can get them out of there intact, nobody is going to notice.  (I know
+>>>> mail queuers should call fsync and report errors when that fails, but
+>>>> there are bound to be applications where calling fsync is not
+>>>> appropriate (*))
+>>>
+>>> AFAIK at least Postfix MDA only reports mail as being accepted over SMTP
+>>> once fsync() on the mail file completed successfully. And I´d expect
+>>> every sensible MDA to do this. I don´t know how Dovecot MDA which I
+>>> currently use for sieve support does this tough.
+>>
 > 
->> the last cpu
+> Is every implementation of mail editor really going to call fsync()? Why
+> they are going to call fsync(), when fsync() is meant to persist the file
+> on disk which is apparently unnecessary if the delivering to SMTP task
+> won't start again after reboot?
+Not mail clients, the actual servers.  If they implement the SMTP 
+standard correctly, they _have_ to call fsync() before they return that 
+an email was accepted for delivery or relaying, because SMTP requires 
+that a successful return means that the system can actually attempt 
+delivery, which is not guaranteed if they haven't verified that it's 
+actually written out to persistent storage.
 > 
-> Which one is the "last" one? I mean, if cpu#0 never can be offlined than perhaps the code should check for just that and return early. But if cpu#0 could be disabled while some other cpu is the remaining cpu, some other check is needed I think.
-
-num_online_cpus() == 1
-
-
-Juergen
+>> Yes. That's why I added the remark that mailers will call fsync and know
+>> about it on the write side. I encountered a situation in the last few
+>> days that when a developer runs into this while developing, would have
+>> caused him to write:
+>>    /* Calling this fsync causes unacceptable performance */
+>>    // fsync (fd);
+>>
+>> I know of an application somewhere that does realtime-gathering of
+>> call-records (number X called Y for Z seconds). They come in from a
+>> variety of sources, get de-duplicated standardized and written to
+>> files. Then different output modules push the data to the different
+>> consumers within the company. Billing among them.
+>>
+>> Now getting old data there would be pretty bad. And calling fsync
+>> all the time might have performance issues....
+>>
+>> That's the situation where "old data is really bad".
+>>
+>> But when apt-get upgrade replaces your /bin/sh and gets a write error
+>> returning error on subsequent reads is really bad.
+> 
+> At this point, the /bin/sh may be partially old and partially new. Execute
+> this corrupted bin is also dangerous though.
+But the system may still be usable in that state, while returning an 
+error there guarantees it isn't.  This is, in general, not the best 
+example though, because no sane package manager directly overwrites 
+_anything_, they all do some variation on replace-by-rename and call 
+fsync _before_ renaming, so this situation is not realistically going to 
+happen on any real system.
