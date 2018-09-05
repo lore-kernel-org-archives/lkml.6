@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FCAC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DF7C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BB720645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:35:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7BB720645
+	by mail.kernel.org (Postfix) with ESMTP id 4AE1A2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE1A2073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeIFAHX (ORCPT
+        id S1727861AbeIFAIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 20:07:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57408 "EHLO mx1.redhat.com"
+        Wed, 5 Sep 2018 20:08:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37700 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727254AbeIFAHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 20:07:22 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1727397AbeIFAIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 20:08:46 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C30F5D668;
-        Wed,  5 Sep 2018 19:35:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C5403086258;
+        Wed,  5 Sep 2018 19:37:09 +0000 (UTC)
 Received: from t450s.home (ovpn-116-77.phx2.redhat.com [10.3.116.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1BF1617009;
-        Wed,  5 Sep 2018 19:35:41 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 13:35:40 -0600
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D15C600C5;
+        Wed,  5 Sep 2018 19:37:04 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 13:37:03 -0600
 From:   Alex Williamson <alex.williamson@redhat.com>
 To:     Lu Baolu <baolu.lu@linux.intel.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
@@ -41,86 +41,53 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
         tiwei.bie@intel.com, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [RFC PATCH v2 02/10] iommu/vt-d: Add multiple domains per
- device query
-Message-ID: <20180905133540.5d7a7ea3@t450s.home>
-In-Reply-To: <20180830040922.30426-3-baolu.lu@linux.intel.com>
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 03/10] iommu/amd: Add default branch in
+ amd_iommu_capable()
+Message-ID: <20180905133703.331c0c17@t450s.home>
+In-Reply-To: <20180830040922.30426-4-baolu.lu@linux.intel.com>
 References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
-        <20180830040922.30426-3-baolu.lu@linux.intel.com>
+        <20180830040922.30426-4-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 05 Sep 2018 19:35:45 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 05 Sep 2018 19:37:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018 12:09:14 +0800
+On Thu, 30 Aug 2018 12:09:15 +0800
 Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-> Add the response to IOMMU_CAP_AUX_DOMAIN capability query
-> through iommu_capable(). Return true if IOMMUs support the
-> scalable mode, return false otherwise.
+> Otherwise, there will be a build warning:
 > 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Liu Yi L <yi.l.liu@intel.com>
+> drivers/iommu/amd_iommu.c:3083:2: warning: enumeration value
+> 'IOMMU_CAP_AUX_DOMAIN' not handled in switch [-Wswitch]
+> 
+> There is no functional change.
+> 
 > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  drivers/iommu/intel-iommu.c | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
+>  drivers/iommu/amd_iommu.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 3e49d4029058..891ae70e7bf2 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5193,12 +5193,39 @@ static phys_addr_t intel_iommu_iova_to_phys(struct iommu_domain *domain,
->  	return phys;
->  }
->  
-> +static inline bool scalable_mode_support(void)
-> +{
-> +	struct dmar_drhd_unit *drhd;
-> +	struct intel_iommu *iommu;
-> +	bool ret = true;
-> +
-> +	rcu_read_lock();
-> +	for_each_active_iommu(iommu, drhd) {
-> +		if (!sm_supported(iommu)) {
-> +			ret = false;
-> +			break;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return ret;
-> +}
-> +
->  static bool intel_iommu_capable(enum iommu_cap cap)
->  {
-> -	if (cap == IOMMU_CAP_CACHE_COHERENCY)
-> +	switch (cap) {
-> +	case IOMMU_CAP_CACHE_COHERENCY:
->  		return domain_update_iommu_snooping(NULL) == 1;
-> -	if (cap == IOMMU_CAP_INTR_REMAP)
-> +	case IOMMU_CAP_INTR_REMAP:
->  		return irq_remapping_enabled == 1;
-> +	case IOMMU_CAP_AUX_DOMAIN:
-> +		return scalable_mode_support();
-> +	case IOMMU_CAP_NOEXEC:
-> +	/* PASSTHROUGH */
+> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> index 4e04fff23977..237ae6db4cfd 100644
+> --- a/drivers/iommu/amd_iommu.c
+> +++ b/drivers/iommu/amd_iommu.c
+> @@ -3077,6 +3077,8 @@ static bool amd_iommu_capable(enum iommu_cap cap)
+>  		return (irq_remapping_enabled == 1);
+>  	case IOMMU_CAP_NOEXEC:
+>  		return false;
 > +	default:
-> +		pr_info("Unsupported capability query %d\n", cap);
 > +		break;
+>  	}
+>  
+>  	return false;
 
-Please don't do this, there's no reason to be noisy about a query of a
-capability that VT-d doesn't know about.  We implement capabilities
-exactly so that relevant drivers can expose a feature and others can
-happily (and quietly) ignore them.  Thanks,
+Seems like a bug fix that doesn't need to be part of this RFC, send it
+separately.  Thanks,
 
 Alex
