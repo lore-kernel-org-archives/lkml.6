@@ -2,114 +2,133 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC753C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B286C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25EE920658
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:46:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="Ul6KwiIL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EE920658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+	by mail.kernel.org (Postfix) with ESMTP id 27E4620658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:47:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E4620658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727713AbeIEPQg (ORCPT
+        id S1727762AbeIEPRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:16:36 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:15207 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbeIEPQg (ORCPT
+        Wed, 5 Sep 2018 11:17:04 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60830 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726035AbeIEPRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:16:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536144414;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=lD/QF+OltCAkjExq/G0OCx963mHS5ZNz5g/y9D66RNQ=;
-        b=Ul6KwiILbXiFXOKfk7yy3MobO8r/orz/ad7YOhYgmuCzJsSjEWuI7vRze/H27RJsEB
-        T/Ud0gt7uWfmL2iAKcY71ecDjncl+WpHdrxZ9jYN4jqcVu/kb9+3HuhLSo/iZfiwgQ5a
-        FUHA1H2iAgj1B4y/d1OFwozwxt4LayCfnx+HP056+ylbTJIOCHOAN0zax9v2334eE6zN
-        1phfuIdxFxHRdNLl/35L4fTluSXzjg2JgbqMI2TD1lD5h2v4PNzWQtQdptgpTwNVJOxp
-        aktqPxn8suzbwKsvdpqNzx5JSFmYOBi3jILRt7k5RqCN8EF0vS/JpJbPrrxy3jGLyGeR
-        X4/Q==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc0/lb4QMstw0mqi/C51hpW50R4vli8caicjAbM"
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.0 AUTH)
-        with ESMTPSA id L0862bu85Aeg4nP
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 5 Sep 2018 12:40:42 +0200 (CEST)
-From:   Olaf Hering <olaf@aepfle.de>
-To:     xen-devel@lists.xenproject.org
-Cc:     Olaf Hering <olaf@aepfle.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
-Date:   Wed,  5 Sep 2018 12:40:39 +0200
-Message-Id: <20180905104039.13512-1-olaf@aepfle.de>
-X-Mailer: git-send-email 2.16.4
+        Wed, 5 Sep 2018 11:17:03 -0400
+X-UUID: 36d9d93a93c840dab043e0cbaba552ea-20180905
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 908757454; Wed, 05 Sep 2018 18:47:16 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 5 Sep 2018 18:47:15 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 5 Sep 2018 18:47:14 +0800
+Message-ID: <1536144434.4618.1.camel@mtksdaap41>
+Subject: Re: [PATCH v2 03/13] drm/mediatek: adjust EDGE to match clock and
+ data
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Wed, 5 Sep 2018 18:47:14 +0800
+In-Reply-To: <20180905083146.14727-4-bibby.hsieh@mediatek.com>
+References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
+         <20180905083146.14727-4-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
+Hi, Bibby:
 
-BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
-Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
-RIP: e030:device_offline+0x9/0xb0
-Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
-RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
-R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
-R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
-FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
-CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
-Call Trace:
- handle_vcpu_hotplug_event+0xb5/0xc0
- xenwatch_thread+0x80/0x140
- ? wait_woken+0x80/0x80
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x40/0x40
- ret_from_fork+0x3a/0x50
+On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> The default timing of DPI data and clock is not match.
+> We could adjust this bit to make them match.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 
-Fix this crash by checking the return value of get_cpu_device().
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- drivers/xen/cpu_hotplug.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dpi.c      | 8 ++++++++
+>  drivers/gpu/drm/mediatek/mtk_dpi_regs.h | 1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> index 3db959fed493..df27107b1f0b 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> @@ -120,6 +120,7 @@ struct mtk_dpi_yc_limit {
+>  
+>  struct mtk_dpi_conf {
+>  	const u32 reg_h_fre_con;
+> +	bool edge_sel_en;
+>  };
+>  
+>  static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
+> @@ -350,6 +351,12 @@ static void mtk_dpi_config_2n_h_fre(struct mtk_dpi *dpi)
+>  	mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, H_FRE_2N, H_FRE_2N);
+>  }
+>  
+> +static void mtk_dpi_config_disable_edge(struct mtk_dpi *dpi)
+> +{
+> +	if (dpi->conf->edge_sel_en)
+> +		mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, 0, EDGE_SEL_EN);
+> +}
+> +
+>  static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
+>  					enum mtk_dpi_out_color_format format)
+>  {
+> @@ -535,6 +542,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+>  	mtk_dpi_config_yc_map(dpi, dpi->yc_map);
+>  	mtk_dpi_config_color_format(dpi, dpi->color_format);
+>  	mtk_dpi_config_2n_h_fre(dpi);
+> +	mtk_dpi_config_disable_edge(dpi);
+>  	mtk_dpi_sw_reset(dpi, false);
+>  
+>  	return 0;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
+> index 040444d7718d..d9db8c4cacd7 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
+> @@ -223,5 +223,6 @@
+>  #define ESAV_CODE2			(0xFFF << 0)
+>  #define ESAV_CODE3_MSB			BIT(16)
+>  
+> +#define EDGE_SEL_EN			BIT(5)
+>  #define H_FRE_2N			BIT(25)
+>  #endif /* __MTK_DPI_REGS_H */
 
-diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
-index d4265c8ebb22..182be49f5a0b 100644
---- a/drivers/xen/cpu_hotplug.c
-+++ b/drivers/xen/cpu_hotplug.c
-@@ -19,9 +19,13 @@ static void enable_hotplug_cpu(int cpu)
- 
- static void disable_hotplug_cpu(int cpu)
- {
-+	struct device *dev;
-+
- 	if (cpu_online(cpu)) {
- 		lock_device_hotplug();
--		device_offline(get_cpu_device(cpu));
-+		dev = get_cpu_device(cpu);
-+		if (dev)
-+			device_offline(dev);
- 		unlock_device_hotplug();
- 	}
- 	if (cpu_present(cpu))
+
