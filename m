@@ -2,117 +2,78 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EE0C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759A2C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B6E42075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:28:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Eehfu6WE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B6E42075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id E85F72075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85F72075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.cmu.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbeIEV7J (ORCPT
+        id S1727756AbeIEWAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 17:59:09 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34154 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbeIEV7J (ORCPT
+        Wed, 5 Sep 2018 18:00:11 -0400
+Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:60296 "EHLO
+        hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727397AbeIEWAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 17:59:09 -0400
-Received: by mail-qk1-f195.google.com with SMTP id d15-v6so5435908qkc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 10:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=WtednLBCYi/JKtzhl8JcGANt2+iJhfuTfwmB5akQbPM=;
-        b=Eehfu6WE0Y/Jw/s10H7OokSVBu5obrFGq3eN5QbqvygveRSK44PuOOpaSC4QXGQ2ag
-         icwCeii/W1bvsImsTRRF2wMMDg1dvZ1n0tiHm/UVGXNlL4aP9kEN8pmuamf56Xwd5n/h
-         giZrFZ+QWwmGdscDQ1i8kzlg9ehyzWxIyzi+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=WtednLBCYi/JKtzhl8JcGANt2+iJhfuTfwmB5akQbPM=;
-        b=nymzdrHR1iEKQR+FSmDXFOGkB93y4VCxtsr+uKyz5fwPZqw611pPEHg266DFo6IHKY
-         HKjMeAY3WXwhU7ylLf/EX/Fmu1k32U9IpgNzD91s4K9UMsDraWlCZ6Nqr+e5HiLUlly4
-         fvc0PS1m62JawaBEXTpgY/uZq9MmfMXfurum1Vq+GicD/QxgKF3XcBM2VwmnZ0bg5OZ7
-         Hr+ZSRMgg5HGy/5s0TFUBOLbq2ze5BsmjM4oS93dIjMbO5mhFdYFbpEyLQMylHRpSebZ
-         dwL41iIZXSVqbL6HJrjR4VW0noei25Caofj0tHAQotJRDITjsAU3yZmRuXOq2uLTBdqb
-         CTwA==
-X-Gm-Message-State: APzg51C0OWZ+lWbrrzsPx4bE+RMpEHO07mnxB+Kt5uy2rqGTP7FnBEm8
-        QBQWa1/h1V0hVvwhFWET0kgSHQ==
-X-Google-Smtp-Source: ANB0Vdadz23UAkF8zCZHJCkN35LrxU0iyJTPiace5ilMGgDGkcR/r9buIJADxfclK+yEbFd3qws1XQ==
-X-Received: by 2002:a37:2821:: with SMTP id o33-v6mr33429936qkh.83.1536168479544;
-        Wed, 05 Sep 2018 10:27:59 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm1522275qtj.93.2018.09.05.10.27.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 10:27:58 -0700 (PDT)
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Grant Likely <grant.likely@secretlab.ca>,
-        Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Alexander Graf <agraf@suse.de>
-References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
- <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
- <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com>
- <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
- <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
- <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
- <CAOesGMgLHx3+j1bWEsMWsN-yjGNZyLOpAjLg0Jut8gG=ADE25g@mail.gmail.com>
- <CAKv+Gu_x=bS4xJcD_LuEnnN=Lx4Jc87uK8J_ACdA9EeUqtM3Yg@mail.gmail.com>
- <CACxGe6uK+N5XUqZhH7gAQXoq+QXMvFPHF_i4WqivrufTU=0cog@mail.gmail.com>
- <bf917897-1697-a6c4-7f77-8dfa74dddc8a@broadcom.com>
- <CAKv+Gu8FK9K0G-GJygdpkwqKYzjvpDDj8TyGTC2u0SRxK3ez_w@mail.gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <1f8095f1-1f0c-0791-31c4-c7b986c4ce1f@broadcom.com>
-Date:   Wed, 5 Sep 2018 10:27:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 18:00:11 -0400
+Received: from [127.0.0.1] (helo=cs.cmu.edu)
+        by hurricane.elijah.cs.cmu.edu with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <jaharkes@cs.cmu.edu>)
+        id 1fxbbv-000053-Oz; Wed, 05 Sep 2018 13:28:59 -0400
+Date:   Wed, 5 Sep 2018 13:28:58 -0400
+From:   Jan Harkes <jaharkes@cs.cmu.edu>
+To:     Yann Droneaud <ydroneaud@opteya.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] UAPI: coda: Don't use internal kernel structs in
+ UAPI
+Message-ID: <20180905172858.pv2vafetjzzk5jxs@cs.cmu.edu>
+Mail-Followup-To: Yann Droneaud <ydroneaud@opteya.com>,
+        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <153616286704.23468.584491117180383924.stgit@warthog.procyon.org.uk>
+ <153616291029.23468.16421004714304578585.stgit@warthog.procyon.org.uk>
+ <1c57005277ac723ebb670a1dc847a205f0529d53.camel@opteya.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8FK9K0G-GJygdpkwqKYzjvpDDj8TyGTC2u0SRxK3ez_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <1c57005277ac723ebb670a1dc847a205f0529d53.camel@opteya.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 05, 2018 at 07:12:37PM +0200, Yann Droneaud wrote:
+> Le mercredi 05 septembre 2018 � 16:55 +0100, David Howells a �crit :
+> > The size and layout of internal kernel structures may not be relied
+> > upon outside of the kernel and may even change in a containerised
+> > environment if a container image is frozen and shifted to another
+> > machine.
+> > 
+> > Excise these from Coda's upc_req struct.
+...
+> 
+> This structure should not have been exposed to userspace in the first
+> place: it's unusable by userspace as it is. It was incorrect to have it
+> outside of #ifdef __KERNEL__ before commit 607ca46e97a1b ... 
+...
+> So the structure can be moved back to <linux/coda_psdev.h>.
 
+I found a year old patch that clearly fell through the cracks that
+fixes this exact thing.
 
-On 18-09-05 02:40 AM, Ard Biesheuvel wrote:
-> On 4 September 2018 at 19:19, Scott Branden <scott.branden@broadcom.com> wrote:
->> Rather than introduce EFI_ARMSTUB_DTB_LOADER, why not have
->> the efistub use CONFIG_OF to determine whether it supports dtb= or not?
->>
->> That way ACPI-only distros disable devicetree support entirely.
->>
-> Unfortunately, CONFIG_OF cannot be disabled on arm64 even on ACPI-only builds.
-OF shouldn't be automatically selected in the arm64/Kconfig.  It should 
-have a config
-parmaeter like other archs as mips and arm.  I can submit a patch so it 
-functions the
-same way as other archs so it is not always selected.  It will be good 
-to add a USE_OF
-config options like the other archs (or simply remove the select from 
-the Kconfig and choose OF directly in the defconfig.
-This will have the added benefit of doing away with OF support when its 
-not needed on an ARM64 platform.  ACPI is already not automatically 
-selected for all ARM64 platforms, nor should devicetree.
+    https://lkml.org/lkml/2017/8/6/186
 
+Jan
