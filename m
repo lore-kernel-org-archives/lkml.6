@@ -2,124 +2,91 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8806FC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4BDC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB192077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:12:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB192077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=systec-electronic.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B2AF20659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:15:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2AF20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbeIEKlX (ORCPT
+        id S1727366AbeIEKoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:41:23 -0400
-Received: from webbox1416.server-home.net ([77.236.96.61]:39503 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726272AbeIEKlX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:41:23 -0400
-X-Greylist: delayed 439 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 06:41:23 EDT
-Received: from imapserver.systec-electronic.com (unknown [212.185.67.146])
-        by webbox1416.server-home.net (Postfix) with ESMTPA id CF62927A6B3;
-        Wed,  5 Sep 2018 08:05:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by imapserver.systec-electronic.com (Postfix) with ESMTP id 9F04A1A1B50;
-        Wed,  5 Sep 2018 08:05:31 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at imapserver.systec-electronic.com
-Received: from imapserver.systec-electronic.com ([127.0.0.1])
-        by localhost (imapserver.systec-electronic.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fAX3J75soR6O; Wed,  5 Sep 2018 08:05:29 +0200 (CEST)
-Received: from ws-140106.localnet (ws-140106.systec.local [192.168.10.92])
-        by imapserver.systec-electronic.com (Postfix) with ESMTPA id 97DCB1A1B4F;
-        Wed,  5 Sep 2018 08:05:29 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@systec-electronic.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-Date:   Wed, 05 Sep 2018 08:05:29 +0200
-Message-ID: <2109885.PdqaXYh4EC@ws-140106>
-In-Reply-To: <20180904181629.20712-3-keescook@chromium.org>
-References: <20180904181629.20712-1-keescook@chromium.org> <20180904181629.20712-3-keescook@chromium.org>
+        Wed, 5 Sep 2018 06:44:15 -0400
+Received: from mout.gmx.net ([212.227.15.15]:39183 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbeIEKoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 06:44:15 -0400
+Received: from [172.20.10.8] ([117.136.79.147]) by mail.gmx.com (mrgmx003
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MY86C-1gS76X21lQ-00UuMK; Wed, 05
+ Sep 2018 08:13:54 +0200
+Subject: Re: [Jfs-discussion] [PATCH v2 4/5] jfs: cache NULL when both
+ default_acl and acl are NULL
+To:     Dave Kleikamp <dave.kleikamp@oracle.com>, jack@suse.com,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com,
+        martin@omnibond.com
+Cc:     jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org
+References: <20180831143352.22970-1-cgxu519@gmx.com>
+ <20180831143352.22970-4-cgxu519@gmx.com>
+ <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
+From:   cgxu519 <cgxu519@gmx.com>
+Message-ID: <c231d198-7a4e-63a0-0a7d-9211ab0abfe9@gmx.com>
+Date:   Wed, 5 Sep 2018 14:13:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:CKkOdU/kXl6Dlyt8tOOKEzmcIy1XHYN5v6ZrVElc533kjQH9BUJ
+ Wz6xClp3xpbkmJwG/YPB7w6pLK1KLMADMGcfhbd7Ch8iMBMvL+7fm2Dj5QplIXOt28962Xd
+ 9IDgEAflBkNB2Ufzd3in9eTc9lWWVAu9DgatgMp9t4Ly3Ynmk0FGue4+5w5GX8FMGR2qhJV
+ KNUA9VntVpmVr+aYpZobg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:eEZibdoP5Wg=:aBtZFF2wZlvq+zPZoaJLeF
+ qVNZrmxznGQB/DY7euSxRXr5FR4PZFw5SwRpOoy9RJirMyRCn9VbSKhMrNEqegyKSgoY+V1TH
+ nsjuN5zyrf7a4JqX3i23bxo71PewtOt0g9ZLvlAqr4FWNEkyR038KnZ0LJruCw33a3aaR1EL8
+ njj+ePnhjgPxbngQ2/xcqQiux1DF1OgtxhmX2PMiNPVn8YKnC32BWzqT8y8PBRrElf4QyMqII
+ UnihJy2Rv9dzwIWjL6g0poiM//enzC6IIv2Xg9+W7wY5K9IajlxHbs9dPAi0x8QewL1jYUp7U
+ fRB054HvI1YgJQM1qdXc3iXBZGSEd00F7O3EVctydBeqgJoC3l6XpxlHkzwalGUMr8e9BC36c
+ YSpnJn0pRm2U2tdXvb/LnuZEMEfO7ii5HCQ9x7qOOZlr7EarLKXwZQLNX/Bg7zPQzndt3Too3
+ 3TmTZR4mlDqHehDjHBFl5CyJCDALF4MZzdf7r38r45PshmCwI2pXkWcJEIyrUj+Z/yyJyhL4l
+ SPx6a9qWhAjf7BL9ItUG3Yq0/iaZaBoz33mroSBak92tKEztMr5+c1ghsb6Cxz89agTdQAGS1
+ mIcn3keZeTmfbg2jvhlIcTf9OHpU8k5PJ90pwTpuTVFyM5kz7/pBgKHAZJG0+aMr7YhlTsRVj
+ Ki7OYN+r6aZMU/DXeRrIXnR318yLFvOMAhhVjKau1P3q7DBer8Zq1JIyjzHYbWYWj8G9vJRKp
+ ycyfDPagTSpOL4kMIhDNKmYmT8DDeFUC1SBXBgYwOUr1RSHUKDjGO71KoR7w893RqKrkuY7nI
+ 4tyCy0F
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, September 4, 2018, 8:16:29 PM CEST Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> caps the skcipher request size similar to other limits and adds a sanity
-> check at registration. Looking at instrumented tcrypt output, the largest
-> is for lrw:
-> 
-> 	crypt: testing lrw(aes)
-> 	crypto_skcipher_set_reqsize: 8
-> 	crypto_skcipher_set_reqsize: 88
-> 	crypto_skcipher_set_reqsize: 472
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  include/crypto/internal/skcipher.h | 3 +++
->  include/crypto/skcipher.h          | 4 +++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
-> index d2926ecae2ac..6da811c0747e 100644
-> --- a/include/crypto/internal/skcipher.h
-> +++ b/include/crypto/internal/skcipher.h
-> @@ -130,6 +130,9 @@ static inline struct crypto_skcipher *crypto_spawn_skcipher(
->  static inline int crypto_skcipher_set_reqsize(
->  	struct crypto_skcipher *skcipher, unsigned int reqsize)
->  {
-> +	if (WARN_ON(reqsize > SKCIPHER_MAX_REQSIZE))
-> +		return -EINVAL;
-> +
->  	skcipher->reqsize = reqsize;
->  
->  	return 0;
-> diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-> index 2f327f090c3e..c48e194438cf 100644
-> --- a/include/crypto/skcipher.h
-> +++ b/include/crypto/skcipher.h
-> @@ -139,9 +139,11 @@ struct skcipher_alg {
->  	struct crypto_alg base;
->  };
->  
-> +#define SKCIPHER_MAX_REQSIZE	472
-> +
->  #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
->  	char __##name##_desc[sizeof(struct skcipher_request) + \
-> -		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
-> +		SKCIPHER_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
->  	struct skcipher_request *name = (void *)__##name##_desc
 
-Now tfm could be removed from the macro arguments, no?
+On 09/04/2018 04:34 AM, Dave Kleikamp wrote:
+> Are you pushing these as a series, or would you like this patch pushed
+> through the jfs tree?
+I'd hope maintainers pick individual patch to their tree.
 
-Best regards,
-Alexander
+Thanks,
+Chengguang
 
-
-
+>
+> On 8/31/18 9:33 AM, Chengguang Xu wrote:
+>> default_acl and acl of newly created inode will be initiated
+>> as ACL_NOT_CACHED in vfs function inode_init_always() and later
+>> will be updated by calling xxx_init_acl() in specific filesystems.
+>> Howerver, when default_acl and acl are NULL then they keep the value
+>> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+>> in this case.
+>>
+>> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+> Acked-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+>
