@@ -2,144 +2,95 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56155C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DF1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE1620861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C84262077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:27:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="eaRE4f1l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE1620861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="WAnDlvGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84262077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeIETzP (ORCPT
+        id S1727508AbeIET6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:55:15 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36555 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeIETzP (ORCPT
+        Wed, 5 Sep 2018 15:58:04 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:10225 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeIET6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:55:15 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f4-v6so6410824edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 08:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GMKU+EQ6NRL4FG/KWbBi5V5KZLsTBvKTdBtcZBX0qRQ=;
-        b=eaRE4f1lHSCIKWkkN3WG1wXqPqr6A9L4rpRvdSbQvO8tTcEcp3+XbTFe+7OWqZDZiF
-         y0ptAv28PJ62xc7XUEIQ49/GQ334rtn4NObLZkeawEtSPtxVmMg/3LUwVnmnMgp3B/8u
-         tszG8Qs5Y8rN3ylH/HHwcm8nePPbUPQ5b0usw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GMKU+EQ6NRL4FG/KWbBi5V5KZLsTBvKTdBtcZBX0qRQ=;
-        b=iQ8kaWifRFB9lTfw+dRfAn7uDWHXV5TkBUu2xe/pZGh159SpH+4SlYGW33cL2aYTF/
-         NETODl72B+VKoMrcMLS2Mhauy/Si5naT3u5RR7O3JvpgRfQpDwqAwCT6E/2h89119VO1
-         dDoYrZDnl5XYDg9cu9buWxp8Mx7Uow98CuiKxbX0CwsQMa0flFIrRJY71G5zJETw442g
-         HcEvLwZwg1AZ09+AUNu1HOEgRCVtlGW2bWZbWgIa6w5ZNvdJk+iL5T4KAK6tL3dNgb/O
-         lDyIlPorne8fP3Yv9qdS/x0+aGqrDuUvdZ42P3gSCOyZu11ONuHZuB7bsG1pD5R1xv9B
-         MxAg==
-X-Gm-Message-State: APzg51AFsoO5et7poa0X2tU+GSCDQU6FLKRkUddwI9guwx93ANvjvnKL
-        3/L0y3/nC1F5/GgIDJBeqhddGA==
-X-Google-Smtp-Source: ANB0VdYx9xtJgxb7i8gHCOu7b4dh24w0ma+/GSUvJpICR0L/NSRuG5/HPsVKlaDv6IxRpoN1e9SV6w==
-X-Received: by 2002:a50:a7e2:: with SMTP id i89-v6mr42364739edc.176.1536161073548;
-        Wed, 05 Sep 2018 08:24:33 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id d56-v6sm1226501edb.7.2018.09.05.08.24.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 08:24:32 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 17:24:18 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Akira Yokosawa <akiyks@gmail.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-Message-ID: <20180905152418.GA8874@andrea>
-References: <20180904081144.GA4137@andrea>
- <Pine.LNX.4.44L0.1809041503470.17060-100000@netrider.rowland.org>
- <20180905072151.GA3185@andrea>
- <50f0a7a7-0521-f833-34c3-132ce57dd777@gmail.com>
- <20180905150042.GA8820@andrea>
- <e8dbdd89-ff65-31ea-8d04-7e84b64a98b0@gmail.com>
+        Wed, 5 Sep 2018 15:58:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536161239;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=B4I7GRZ9OWj/kvtF1WqWGQiStfhLiyn/x1p8g5+/jR8=;
+        b=WAnDlvGfekNLWZaYKoqKcqkQbPYO0Gy70hzTWUc9/WpmXSfpERcwTJI+DcV8Nn6uMU
+        Xgbn4ZMngHb+cn9ohbgCleOWJVhTfwEQPzhvJTWo92xkC6Yg4uQOEPv/9QOlEjuSOF0D
+        MDgXyR6ekLtZ1tlzQ9NokQMsEFP2FMWGssXTjU1LK/2pfzrb6ntfi9iY/ycHnfdmWgoU
+        1WDDAZxVA4UMmgbPyb7Z5U7I/rJvc1yauR6GH3kMambQQli3biU3/QC0GPvlsWF1coUc
+        lmVeBf4nwGHzBh+ypi8AyNocCt6BwR0JzUT6Z7/1qd6kfmRQA3yohGAw7TtJXghJp/01
+        8npQ==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivsAQtyRsdRVZ54BGpAypu4eYvjwzPAqxRcXNDW+"
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.0 AUTH)
+        with ESMTPSA id L0862bu85FRI6R5
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 5 Sep 2018 17:27:18 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 17:27:14 +0200
+From:   Olaf Hering <olaf@aepfle.de>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     xen-devel@lists.xenproject.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
+Message-ID: <20180905172714.301ee3ca.olaf@aepfle.de>
+In-Reply-To: <237d1597-6085-dffb-fb12-1965db0ee68b@suse.com>
+References: <20180905104039.13512-1-olaf@aepfle.de>
+        <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
+        <20180905164719.52e02256.olaf@aepfle.de>
+        <237d1597-6085-dffb-fb12-1965db0ee68b@suse.com>
+X-Mailer: Claws Mail 3.16.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8dbdd89-ff65-31ea-8d04-7e84b64a98b0@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ boundary="Sig_/TI5y0ZfQwVAwJKF68k8B/3J"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >>>> Do you have any concrete suggestions (i.e., some actual text) for 
-> >>>> improvements to the patch description?  Earlier in your message you 
-> >>>> mentioned that Will's comment:
-> >>>>
-> >>>> 	LKMM offers stronger guarantees that can portably be relied upon
-> >>>> 	in the codebase.
-> >>>>
-> >>>> would make a good addition.  Suitably edited, it could be added to the
-> >>>> description.  I can think of a few other things myself, but I'd like to 
-> >>>> hear your thoughts.  Anything else?
-> >>>
-> >>> Yes: I do sometimes have the impression that your "rules" for trimming
-> >>> text in emails/replies are too aggressive...
-> >>
-> >> Andrea, by saying "Yes:", do you mean you have something else to be added?
-> > 
-> > Indeed (examples in the trimmed text).
+--Sig_/TI5y0ZfQwVAwJKF68k8B/3J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-"examples" of "concrete suggestions" (pros or cons) to amend the log.
+Am Wed, 5 Sep 2018 17:14:48 +0200
+schrieb Juergen Gross <jgross@suse.com>:
 
+> I'm not sure this WARN triggers because it is cpu#0. Are you sure
+> the tested cpu in that WARN was 0? After all the test is just running
+> on cpu#0 and I don't think it can be offline already.
 
-> 
-> So, you mean just amending commit log does not work for you?
+If I leave cpu#0 alone, no WARN is triggered.
+I resend with test cpu_is_hotpluggable.
 
-I can't really answer this...; let's see the revisited log first.
+Olaf
 
-  Andrea
+--Sig_/TI5y0ZfQwVAwJKF68k8B/3J
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
 
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> > 
-> > 
-> >> I don't think you do, but want to make sure.
-> >>
-> >> I'm a bit surprised to see all you wanted was the amendment of the
-> >> commit log...
-> > 
-> > Well, I said that it was my only current constructive argument...
-> 
-> This thread is getting quite hard for me to follow...
-> 
->    Akira
-> 
-> > 
-> >   Andrea
-> > 
-> > 
-> >>
-> >>   Akira
-> >>
-> >>>
-> >>>   Andrea
-> >>>
-> >>>
-> >>>>
-> >>>> Alan
-> >>>>
-> >>
-> 
+iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCW4/10gAKCRBdQqD6ppg2
+fufQAKD4WbQYJa6/l2vfOvl8CTRfmE7miwCg2mhDS0UzOsyptvX7Rg1m3w3HChA=
+=SfAQ
+-----END PGP SIGNATURE-----
+
+--Sig_/TI5y0ZfQwVAwJKF68k8B/3J--
