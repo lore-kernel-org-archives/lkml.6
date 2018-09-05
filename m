@@ -2,116 +2,109 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6DEC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239AAC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68E9120659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:24:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E9120659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C00992073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:30:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GlXXF0yM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00992073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeIEKxI (ORCPT
+        id S1727672AbeIEK7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:53:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33454 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726272AbeIEKxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:53:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D93E5ABBE;
-        Wed,  5 Sep 2018 06:24:29 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 08:24:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
-        akpm@linux-foundation.org, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 2/2] mm: Create non-atomic version of SetPageReserved for
- init use
-Message-ID: <20180905062428.GV14951@dhcp22.suse.cz>
-References: <20180904181550.4416.50701.stgit@localhost.localdomain>
- <20180904183345.4416.76515.stgit@localhost.localdomain>
+        Wed, 5 Sep 2018 06:59:09 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36894 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeIEK7J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 06:59:09 -0400
+Received: by mail-it0-f67.google.com with SMTP id h20-v6so8098622itf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 23:30:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gUIXVqQ+e4p6svaItZ15QZA4cIxJQnxxDRm2cI5KcUQ=;
+        b=GlXXF0yMPl7RuiQipGfa6vZBgyM/0HkdD8WwNvD93j2j5x0eB8MxGbDZlNALiQKap4
+         IflqkcT+CxnB84Dw04eYSEhAYl3pNYynpuwyBiNHAEzYdfXG8QKii8G46K/p6q3AgefN
+         S0FlUzP2dHztyTRLLFEb1wLnObUPSxseRakpM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gUIXVqQ+e4p6svaItZ15QZA4cIxJQnxxDRm2cI5KcUQ=;
+        b=Ry5leNtOM0qvKQpWoaCxgDkrvSVXoN5UiPIGz8Dp2cwAlFICZIXSfem2gnbIQThdK1
+         phOkMHKv5lgZbt2rzu3aG7zos9v0AXHvjczQE76af6/re5flGHP2YMQ27DAKIpUtzHmY
+         aCK+iJdIAbr2aMIIlPEjjatVYaf9BwT0n4dIb9tpCDFFtsB2GvnW2qaGvIiOASv1wIBt
+         Nnzs1SIsBvM/iNn1YYUrUXpkyYHPAsH4oc3tao0cc+RhLBVcK0PqgCpaajcvfXtSah9t
+         06YH2M9wCpdVFO+TS1zfCJ/Maw5fYLI8LT6jjZZpRo9K05rVOKFlcSCJmQ1wnSeA1xv5
+         OdnA==
+X-Gm-Message-State: APzg51C0n2PvMPDJMu+57ljTmOO2BRRPDb//kTlR+jIWqUdb7Cx/iNNw
+        hGohK0r7Dsu+KkZjUAl7DvHoOdf+TYewtdWp0YH6oQ==
+X-Google-Smtp-Source: ANB0VdY0LooYnm6U2Va66Updxx34h2Cnr4Uj+3J6StE75TL322Wexciud81Nw+BHosv9aSY2etuNeg88FBn+/PWdCWM=
+X-Received: by 2002:a24:b919:: with SMTP id w25-v6mr2698734ite.101.1536129030355;
+ Tue, 04 Sep 2018 23:30:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904183345.4416.76515.stgit@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:4f9a:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 23:30:29 -0700 (PDT)
+In-Reply-To: <20180904125402.GR28861@localhost>
+References: <20180827082153.22537-1-johan@kernel.org> <20180827082153.22537-5-johan@kernel.org>
+ <CAPDyKFot-Nx=R83vxS=WQp2kSFmMiQ7wfOK4m6hbPt0MB3Z25A@mail.gmail.com> <20180904125402.GR28861@localhost>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 5 Sep 2018 08:30:29 +0200
+Message-ID: <CAPDyKFo1vwg43Nzaco4-vfmDp9RShdh4wcyM5UrdFzd89qaNcA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] mmc: meson-mx-sdio: fix OF child-node lookup
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-09-18 11:33:45, Alexander Duyck wrote:
-> From: Alexander Duyck <alexander.h.duyck@intel.com>
-> 
-> It doesn't make much sense to use the atomic SetPageReserved at init time
-> when we are using memset to clear the memory and manipulating the page
-> flags via simple "&=" and "|=" operations in __init_single_page.
-> 
-> This patch adds a non-atomic version __SetPageReserved that can be used
-> during page init and shows about a 10% improvement in initialization times
-> on the systems I have available for testing.
+On 4 September 2018 at 14:54, Johan Hovold <johan@kernel.org> wrote:
+> On Mon, Aug 27, 2018 at 04:44:44PM +0200, Ulf Hansson wrote:
+>> On 27 August 2018 at 10:21, Johan Hovold <johan@kernel.org> wrote:
+>> > Use the new of_get_compatible_child() helper to lookup the slot child
+>> > node instead of using of_find_compatible_node(), which searches the
+>> > entire tree from a given start node and thus can return an unrelated
+>> > (i.e. non-child) node.
+>> >
+>> > This also addresses a potential use-after-free (e.g. after probe
+>> > deferral) as the tree-wide helper drops a reference to its first
+>> > argument (i.e. the node of the device being probed).
+>> >
+>> > While at it, also fix up the related slot-node reference leak.
+>> >
+>> > Fixes: ed80a13bb4c4 ("mmc: meson-mx-sdio: Add a driver for the Amlogic Meson8 and Meson8b SoCs")
+>> > Cc: stable <stable@vger.kernel.org>     # 4.15
+>> > Cc: Carlo Caione <carlo@endlessm.com>
+>> > Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>> > Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> > Signed-off-by: Johan Hovold <johan@kernel.org>
+>>
+>> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Thanks for the ack. Rob's gotten the helper into -rc2, so feel free to
+> pick this one up directly to whichever mmc branch you prefer. I've been
+> able to trigger crashes after probe deferrals due to the use-after-free,
+> but this seems unlikely to be exploitable.
 
-I agree with Dave about a comment is due. I am also quite surprised that
-this leads to such a large improvement. Could you be more specific about
-your test and machines you were testing on?
+Applied for fixes, thanks!
 
-Other than that the patch makes sense to me.
-
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-
-With the above addressed, feel free to add
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
-
-> ---
->  include/linux/page-flags.h |    1 +
->  mm/page_alloc.c            |    4 ++--
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 74bee8cecf4c..57ec3fef7e9f 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -292,6 +292,7 @@ static inline int PagePoisoned(const struct page *page)
->  
->  PAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
->  	__CLEARPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
-> +	__SETPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
->  PAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
->  	__CLEARPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
->  	__SETPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 05e983f42316..9c7d6e971630 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1231,7 +1231,7 @@ void __meminit reserve_bootmem_region(phys_addr_t start, phys_addr_t end)
->  			/* Avoid false-positive PageTail() */
->  			INIT_LIST_HEAD(&page->lru);
->  
-> -			SetPageReserved(page);
-> +			__SetPageReserved(page);
->  		}
->  	}
->  }
-> @@ -5518,7 +5518,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  		page = pfn_to_page(pfn);
->  		__init_single_page(page, pfn, zone, nid);
->  		if (context == MEMMAP_HOTPLUG)
-> -			SetPageReserved(page);
-> +			__SetPageReserved(page);
->  
->  		/*
->  		 * Mark the block movable so that blocks are reserved for
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+Kind regards
+Uffe
