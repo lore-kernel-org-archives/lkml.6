@@ -6,96 +6,131 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F72C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F018C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC874204FD
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23130204FD
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="qrOr/Q0k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC874204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="RAeP6UL5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23130204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeIEKA3 (ORCPT
+        id S1727645AbeIEKCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:00:29 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:56546 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbeIEKA3 (ORCPT
+        Wed, 5 Sep 2018 06:02:07 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:35242 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727580AbeIEKCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:00:29 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 8BCB85C07CF;
-        Wed,  5 Sep 2018 07:32:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1536125520;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nPBdn7SskhJdkC5bpp9RkFnTg+yDGFGeFL5tNhAq3UE=;
-        b=qrOr/Q0k+AOz0JIa5LF1KLrHAxF/Lt34UUhL4MEhYW30pPSc4hW4l43z5Tycp6uiz9REy4
-        Fh4/OoPbUNZDVPtpAN27RJleCeYsr4/cr6VsQKX++SDmSDrML4e9RoV0zJwCgcCPdvA+r/
-        AHXbBOodErRaDX4mnW2HS5AnOozD7V0=
+        Wed, 5 Sep 2018 06:02:07 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id DBB3924E0691;
+        Tue,  4 Sep 2018 22:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536125619; bh=c7EtLAb92J0LGi/FBVcTkCghg+Xo9oymN8ajVVX02Zg=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=RAeP6UL5Z4gN9opBwTMXiWS0NGlctxQoxkhD2x4XITBbRCm0ltCB7y0RiGBVlxULY
+         0+ndtZO81JghT5a79dmLTMoiE97nNej54xNGA2r3S6x2q3/XNgzbnPf+9CJV66Imqu
+         NluLEilSnM/AXf0qOG05OlMPO8hJezmIpJ+HQmt0JAEAqfKG7q/kclH791kfeohFQk
+         NzGhB2urzAH7RYMT/fb1XW1dBm/LuKpoDRQN5FyUx3iRVU9Vwjxkx883gAcVBN8QK5
+         fHnZ/rggtkXgw3Lwd8GZrskDfVdshsOY+4rFFpKCRPPwCFzyOj81MCnSTF40fOIoUS
+         I0D3VUlxJrBAg==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BFE573D6D;
+        Tue,  4 Sep 2018 22:33:39 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue, 4
+ Sep 2018 22:33:39 -0700
+From:   Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/8] usb: dwc3: Correct the logic for checking TRB
+ full in __dwc3_prepare_one_trb()
+Thread-Topic: [PATCH v2 1/8] usb: dwc3: Correct the logic for checking TRB
+ full in __dwc3_prepare_one_trb()
+Thread-Index: AQHUNiVe6PVhPxbQeEm3tnXrG8X9Mg==
+Date:   Wed, 5 Sep 2018 05:33:39 +0000
+Message-ID: <30102591E157244384E984126FC3CB4F544AB897@us01wembx1.internal.synopsys.com>
+References: <1534508695-12642-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <1534508695-12642-2-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.13.184.20]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 04 Sep 2018 22:32:00 -0700
-From:   Stefan Agner <stefan@agner.ch>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: core: fix NULL pointer dereference
-In-Reply-To: <20180829152209.GA29831@embeddedor.com>
-References: <20180829152209.GA29831@embeddedor.com>
-Message-ID: <1b6f1722c86df1cdef59c14bfd485f0b@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.08.2018 08:22, Gustavo A. R. Silva wrote:
-> There is a NULL pointer dereference in case memory resources
-> for *parse* are not successfully allocated.
-> 
-> Fix this by adding a new goto label and make the execution
-> path jump to it in case vzalloc() fails.
-> 
-> Addresses-Coverity-ID: 1473081 ("Dereference after null check")
-> Fixes: b2dd9f2e5a8a ("HID: core: fix memory leak on probe")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
---
-Stefan
-
-> ---
->  drivers/hid/hid-core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 4548dae..5bec924 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1000,7 +1000,7 @@ int hid_open_report(struct hid_device *device)
->  	parser = vzalloc(sizeof(struct hid_parser));
->  	if (!parser) {
->  		ret = -ENOMEM;
-> -		goto err;
-> +		goto alloc_err;
->  	}
->  
->  	parser->device = device;
-> @@ -1049,6 +1049,7 @@ int hid_open_report(struct hid_device *device)
->  	hid_err(device, "item fetching failed at offset %d\n", (int)(end - start));
->  err:
->  	kfree(parser->collection_stack);
-> +alloc_err:
->  	vfree(parser);
->  	hid_close_report(device);
->  	return ret;
+Hi Anurag,=0A=
+=0A=
+On 8/17/2018 5:25 AM, Anurag Kumar Vulisha wrote:=0A=
+> Availability of TRB's are calculated using dwc3_calc_trbs_left(), which=
+=0A=
+> determines available TRB's based on the HWO bit set in a TRB.=0A=
+>=0A=
+> __dwc3_prepare_one_trb() is called with a TRB which needs to be prepared=
+=0A=
+> for transfer. This __dwc3_prepare_one_trb() calls dwc3_calc_trbs_left()=
+=0A=
+> to determine total available TRBs and set IOC bit if the total available=
+=0A=
+> TRBs are zero. Since the present working TRB(which is passed as an=0A=
+> argument to __dwc3_prepare_one_trb() )  doesn't have HWO bit already set,=
+=0A=
+> there are chances where dwc3_calc_trbs_left() wrongly calculates this=0A=
+> present working TRB as free(since the HWO bit is not yet set). This could=
+=0A=
+> be a problem. This patch correct this issue by setting HWO bit before=0A=
+> calling dwc3_calc_trbs_left()=0A=
+>=0A=
+> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>=0A=
+> ---=0A=
+>  Changes in v2:=0A=
+> 	1. Changed the commit message=0A=
+> ---=0A=
+>  drivers/usb/dwc3/gadget.c | 4 ++--=0A=
+>  1 file changed, 2 insertions(+), 2 deletions(-)=0A=
+>=0A=
+> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c=0A=
+> index 69bf137..f73d219 100644=0A=
+> --- a/drivers/usb/dwc3/gadget.c=0A=
+> +++ b/drivers/usb/dwc3/gadget.c=0A=
+> @@ -990,6 +990,8 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *de=
+p, struct dwc3_trb *trb,=0A=
+>  			trb->ctrl |=3D DWC3_TRB_CTRL_ISP_IMI;=0A=
+>  	}=0A=
+>  =0A=
+> +	trb->ctrl |=3D DWC3_TRB_CTRL_HWO;=0A=
+> +=0A=
+>  	if ((!no_interrupt && !chain) ||=0A=
+>  			(dwc3_calc_trbs_left(dep) =3D=3D 0))=0A=
+>  		trb->ctrl |=3D DWC3_TRB_CTRL_IOC;=0A=
+> @@ -1000,8 +1002,6 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *=
+dep, struct dwc3_trb *trb,=0A=
+>  	if (usb_endpoint_xfer_bulk(dep->endpoint.desc) && dep->stream_capable)=
+=0A=
+>  		trb->ctrl |=3D DWC3_TRB_CTRL_SID_SOFN(stream_id);=0A=
+>  =0A=
+> -	trb->ctrl |=3D DWC3_TRB_CTRL_HWO;=0A=
+> -=0A=
+>  	trace_dwc3_prepare_trb(dep, trb);=0A=
+>  }=0A=
+>  =0A=
+How do you reproduce this issue? We should not set HWO before setting=0A=
+other trb->ctrl bits. Can you provide a driver tracepoint? If there's an=0A=
+issue with the check if ((!no_interrupt && !chain) ||=0A=
+dwc3_calc_trbs_left =3D=3D 0), then we may need to fix the check there.=0A=
+=0A=
+BR,=0A=
+Thinh=0A=
