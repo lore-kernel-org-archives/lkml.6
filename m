@@ -2,112 +2,121 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CACC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30469C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC8B20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:12:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4Le+RI6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC8B20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E906E20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:12:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E906E20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbeIEQmc (ORCPT
+        id S1727364AbeIEQmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:42:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 12:42:37 -0400
+Received: from mga02.intel.com ([134.134.136.20]:3703 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeIEQmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:42:32 -0400
-Received: from mail-qt0-f178.google.com (mail-qt0-f178.google.com [209.85.216.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B9C020867;
-        Wed,  5 Sep 2018 12:12:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536149553;
-        bh=WwSoqj5+IRTFPOjeLkjXBsnP0rGG9fbJPRXQHb/LuwQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=A4Le+RI6RJ4cSnJQnFxZDP2/SJE1yGjDHMSO7x0QYEQub7yq3lSQ3x9Q8QQZT0Cyk
-         zAJ8VXDS0550F9vVJt3uxZwCX5jGwQdmEdXSccN/HQJTVwFf11nrayFjD9nDKctUXm
-         tZVW2UvzQ/QMdHatV8YqInj/EhoG02+QI7VFFfN4=
-Received: by mail-qt0-f178.google.com with SMTP id t5-v6so7715511qtn.3;
-        Wed, 05 Sep 2018 05:12:33 -0700 (PDT)
-X-Gm-Message-State: APzg51CAooq9+FTg9CDzZ3k5iDCVx3m9aEOx0at9JL36CLi6rIzYMQ1J
-        a4oofZ0hFDhwkaHsr+ua9pkQm8esDURKK5xreQ==
-X-Google-Smtp-Source: ANB0VdZyCQCHozr3l+Ih62SjWSGM1w3pmSH4ijeumQXSr0+bJyL/7kRNDKbG5FeHjJ+PXtn16jAaDhVD1YJiNz5iZVI=
-X-Received: by 2002:aed:2da7:: with SMTP id i36-v6mr34321052qtd.164.1536149552422;
- Wed, 05 Sep 2018 05:12:32 -0700 (PDT)
+        id S1726497AbeIEQmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:42:36 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 05:12:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
+   d="scan'208";a="260908556"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Sep 2018 05:09:54 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 86F2FE1; Wed,  5 Sep 2018 15:09:53 +0300 (EEST)
+Date:   Wed, 5 Sep 2018 15:09:53 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, tglx@linutronix.de,
+        mingo@kernel.org, hpa@zytor.com, thgarnie@google.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
+ paging mode
+Message-ID: <20180905120953.mc2rr6zr2cisqx3u@black.fi.intel.com>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <20180829021754.21850-2-bhe@redhat.com>
+ <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+ <20180830152512.GE14702@192.168.1.2>
+ <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
+ <20180903074718.GD1740@192.168.1.3>
+ <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
+ <20180903145213.GG1740@192.168.1.3>
+ <20180904081314.gdhm55qchhl5irmv@kshutemo-mobl1>
+ <20180905081531.GN1740@192.168.1.3>
 MIME-Version: 1.0
-References: <20180830190523.31474-1-robh@kernel.org> <20180830190523.31474-4-robh@kernel.org>
- <35247ddc-303b-89d0-53b5-231c1a293721@gmail.com> <9c873e57-84c8-75af-1d44-60e7cd41282d@ilande.co.uk>
-In-Reply-To: <9c873e57-84c8-75af-1d44-60e7cd41282d@ilande.co.uk>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 5 Sep 2018 07:12:20 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ5qZpdA2QugzEg8dJSyddZkK3ABfJO4RG0-bbM4kaWaw@mail.gmail.com>
-Message-ID: <CAL_JsqJ5qZpdA2QugzEg8dJSyddZkK3ABfJO4RG0-bbM4kaWaw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] of: make default address and size cells sizes private
-To:     mark.cave-ayland@ilande.co.uk
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905081531.GN1740@192.168.1.3>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 11:59 PM Mark Cave-Ayland
-<mark.cave-ayland@ilande.co.uk> wrote:
->
-> On 05/09/18 02:55, Frank Rowand wrote:
->
-> > On 08/30/18 12:05, Rob Herring wrote:
-> >> Only some old OpenFirmware implementations rely on default sizes. Any
-> >> FDT and modern implementation should have explicit properties. Make th=
-e
-> >> OF_ROOT_NODE_*_CELLS_DEFAULT defines private so we don't get any outsi=
-de
-> >> users.
-> >>
-> >> This also gets us one step closer to removing the asm/prom.h dependenc=
-y on
-> >> Sparc.
->
-> Just for the record: you say "any FDT and modern implementation should
-> have explicit properties", however the default values of these
-> properties when missing are clearly defined in the IEEE-1275
-> specification (Annex A):
+On Wed, Sep 05, 2018 at 08:15:31AM +0000, Baoquan He wrote:
+> On 09/04/18 at 11:13am, Kirill A. Shutemov wrote:
+> > On Mon, Sep 03, 2018 at 10:52:13PM +0800, Baoquan He wrote:
+> > > On 09/03/18 at 01:26pm, Kirill A. Shutemov wrote:
+> > > > > > But there's corner case when struct page is unreasonably large and
+> > > > > > vmemmap_size will be way to large. We probably have to report an error if
+> > > > > > we cannot fit vmemmap properly into virtual memory layout.
+> > > > > 
+> > > > > Hmm, sizeof(struct page) can't exceed one whole page surely, otherwise
+> > > > > system bootup can't go over vmemmap initlization. Except of this, we may
+> > > > > need think about the virtual memory layout which vmemmap can be allowed
+> > > > > to occupy.
+> > > > > 
+> > > > > If KASAN enabled, KASLR disabled,
+> > > > > 4-level 1TB + 1TB hole (2TB)
+> > > > > 5-level 512TB + 2034TB hole (2.5PB)
+> > > > > 
+> > > > > If KASAN disabled, KASLR enabled,
+> > > > > 4-level 1TB + 1TB hole + 16TB  (18TB)
+> > > > > 5-level 512TB + 2034TB hole + 8PB (10.5PB)
+> > > > > 
+> > > > > So, as you can see, if add check in memory KASLR code, we should only
+> > > > > consider KASLR enabled case. We possibly don't need to worry about
+> > > > > 5-level case since the size 10.5PB is even bigger than the maximum
+> > > > > physical RAM mapping size. For 4-level, 18TB align to multiples of 2, it
+> > > > > will be 32 times of the current 1TB, then we usually assume 64 as the
+> > > > > default value of sizeof(struct page), then 64*32 == 1024. So we can add
+> 						~~~64*32 = 2048
+> 				Sorry, I made mistake here.
+> > > > > check like this, what do you think? Or any other idea?
+> > > > 
+> > > > Looks reasonable to me.
+> > > > 
+> > > > But I would have the BUILD_BUG_ON() in generic code. If you struct page is
+> > > > more than 1/4 of PAGE_SIZE something is horribly broken.
+> > > 
+> > > Just the 1/4 of PAGE_SIZE is based on analysis of KASLR case. If
+> > > non-KASLR case, it may not be that value.
+> > 
+> > Even if it technically possible to have struct page larger than
+> > PAGE_SIZE/4, it's just insane.
+> > 
+> > > Not sure if it's OK to put it in generic code, and haven't thought of a
+> > > good place, maybe in setup_arch(), just at the beginning?
+> > 
+> > I don't see an obvious place too. Maybe free_area_init_nodes()?
+> 
+> OK, you mean a more generic place, I only considered generic place in
+> x86. The thing is not all ARCH-es set PAGE_SIZE as 4KB, e.g power and
+> arm64 can have PAGE_SIZE of 64KB. For them, PAGE_SIZE/4, namely 16KB,
+> is hardly reached. So my thought is either taking PAGE_SIZE/4 in x86
+> arch only, or using SZ_1K in free_area_init_nodes() as you suggested.
+> What do you think?
 
-The spec may define defaults, but best practice is to be explicit. For
-FDT, dtc doesn't allow defaults (and never has). No arch added in the
-last 10 years has relied on the defaults.
+BUILD_BUG_ON() on min(SZ_1K, PAGE_SIZE/4)?
 
-> "#address-cells"
-> Standard property name to define the package=E2=80=99s address format.
-> ...
-> In a package with a "decode-unit" method, a missing "#address-cells"
-> property signifies that the number of
-> address cells is two.
-
-So only Sparc is compliant as the default for everyone else is 1.
-
-> "#size-cells"
-> Standard property name to define the package=E2=80=99s address size forma=
-t.
-> ...
-> A missing "#size-cells" property signifies the default value of one.
->
-> I can't speak for FDT but it isn't completely unreasonable for a guest
-> parsing a DT without these properties to assume these default values.
-
-I'm not removing the defaults. Just not allowing for code outside of
-drivers/of/ to use the defaults.
-
-Rob
+-- 
+ Kirill A. Shutemov
