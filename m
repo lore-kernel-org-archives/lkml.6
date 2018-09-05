@@ -2,91 +2,75 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969FAC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB16C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C68920861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C68920861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A2B8320861
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B8320861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbeIEQ6y (ORCPT
+        id S1727858AbeIEQ6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:58:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:57350 "EHLO foss.arm.com"
+        Wed, 5 Sep 2018 12:58:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727808AbeIEQ6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:58:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A51D615B2;
-        Wed,  5 Sep 2018 05:28:51 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 75E873F5BC;
-        Wed,  5 Sep 2018 05:28:51 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id DCF1E1AE3546; Wed,  5 Sep 2018 13:29:05 +0100 (BST)
-Date:   Wed, 5 Sep 2018 13:29:05 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-Cc:     catalin.marinas@arm.com, james.morse@arm.com,
-        julien.thierry@arm.com, dave.martin@arm.com,
-        suzuki.poulose@arm.com, sudeep.holla@arm.com, adobriyan@gmail.com,
-        lorenzo.pieralisi@arm.com, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: don't account for cpu offline time with irqsoff
- tracer
-Message-ID: <20180905122905.GI20186@arm.com>
-References: <1536135583-6607-1-git-send-email-zhizhouzhang@asrmicro.com>
+        id S1727627AbeIEQ6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:58:41 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D4262088F;
+        Wed,  5 Sep 2018 12:28:39 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.91)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1fxWvG-0002HM-B9; Wed, 05 Sep 2018 08:28:38 -0400
+Message-Id: <20180905122838.246205324@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 05 Sep 2018 08:28:16 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Kacur <jkacur@redhat.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        tom.zanussi@linux.intel.com
+Subject: [PATCH RT 22/22] Linux 4.14.63-rt41-rc1
+References: <20180905122754.443196118@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536135583-6607-1-git-send-email-zhizhouzhang@asrmicro.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 04:19:43PM +0800, Zhizhou Zhang wrote:
-> This is no need to account for cpu offline time with irqsoff tracer.
-> We can trigger a large irqsoff latency with below commands:
-> 
-> $ echo irqsoff > /sys/kernel/debug/tracing/current_tracer
-> $ echo 0 > /sys/kernel/debug/tracing/options/function-trace
-> $ echo 1 > /sys/kernel/debug/tracing/tracing_on
-> $ echo 0 > /sys/devices/system/cpu/cpu1/online
-> $ # wait a while ...
-> $ echo 1 > /sys/devices/system/cpu/cpu1/online
-> $ cat /sys/kernel/debug/tracing/trace
-> 
-> Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-> ---
->  arch/arm64/kernel/smp.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index 25fcd22..faed8f6 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -346,6 +346,7 @@ void cpu_die(void)
->  	idle_task_exit();
->  
->  	local_daif_mask();
-> +	stop_critical_timings();
->  
->  	/* Tell __cpu_die() that this CPU is now safe to dispose of */
->  	(void)cpu_report_death();
-> -- 
-> 1.9.1
+4.14.63-rt41-rc1 stable review patch.
+If anyone has any objections, please let me know.
 
-Hmm, so there are only a handful of other callers of stop_critical_timings()
-which suggests that we probably shouldn't be calling this from deep in the
-arch code. Do other architectures have the same problem? If not, how do they
-avoid it?
+------------------
 
-Will
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+
+---
+ localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/localversion-rt b/localversion-rt
+index 2af6c89aee6d..ad263cec032a 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt40
++-rt41-rc1
+-- 
+2.18.0
+
+
