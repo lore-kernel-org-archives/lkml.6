@@ -2,89 +2,106 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A11AC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80D9C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D6A2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:40:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOlXIkkZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D6A2075C
+	by mail.kernel.org (Postfix) with ESMTP id 8C64B2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C64B2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbeIESK3 (ORCPT
+        id S1727724AbeIESK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:10:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726071AbeIESK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:10:29 -0400
-Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com [74.125.82.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FD842075C;
-        Wed,  5 Sep 2018 13:40:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536154811;
-        bh=6D84v5A8dxPl3LZhy6vmVLz/hJHhVaWVCikCnWxHsTo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gOlXIkkZIJ9Qf8vBFc4dv/2OLhS6+5Lbtl6DvEwXe0mSv4f2o196HMUZ5zpDqx0he
-         vyLKI9tIJQ53e6ROwU4MP+7Pd3+tMCaohNe5ftrRsDlzEudIRCv9rDnHzTkMkeeW8G
-         eF02pj5iZJIgVGOUco8XFlTjHvj6JHeDSbY5lA5A=
-Received: by mail-wm0-f48.google.com with SMTP id t25-v6so7764728wmi.3;
-        Wed, 05 Sep 2018 06:40:11 -0700 (PDT)
-X-Gm-Message-State: APzg51CaAx+CW5VHoQmTCU4S8dYvBtfAwjQwHPqYECH4pauE6XS9RVO2
-        RiOtuzgZMiy7F1llSKc/oVmXnN62imhPVpMyS+Y=
-X-Google-Smtp-Source: ANB0Vdaw0q1cfJXO5vResh/q0XEEEM6uWKgU/5JCTZzS6AA8sp/tbp3yui5yVCYivQ3d5hv7o8/SyA6e5qmLokaINXk=
-X-Received: by 2002:a1c:3e8e:: with SMTP id l136-v6mr293475wma.72.1536154809987;
- Wed, 05 Sep 2018 06:40:09 -0700 (PDT)
+        Wed, 5 Sep 2018 14:10:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57194 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726071AbeIESK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 14:10:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0C68AE7D;
+        Wed,  5 Sep 2018 13:40:39 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 15:40:38 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     David Rientjes <rientjes@google.com>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
+ should_reclaim_retry().
+Message-ID: <20180905134038.GE14951@dhcp22.suse.cz>
+References: <cb2d635c-c14d-c2cc-868a-d4c447364f0d@i-love.sakura.ne.jp>
+ <alpine.DEB.2.21.1808231544001.150774@chino.kir.corp.google.com>
+ <201808240031.w7O0V5hT019529@www262.sakura.ne.jp>
+ <195a512f-aecc-f8cf-f409-6c42ee924a8c@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-References: <CGME20180905115422eucas1p2150fd04724ec667bd8798023a73f1127@eucas1p2.samsung.com>
- <20180905115407.10595-1-m.szyprowski@samsung.com>
-In-Reply-To: <20180905115407.10595-1-m.szyprowski@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 5 Sep 2018 15:39:58 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeKsJDHJbiUnKyaXtjZgPtLxsS3BtncMSN6BxWD09uvHQ@mail.gmail.com>
-Message-ID: <CAJKOXPeKsJDHJbiUnKyaXtjZgPtLxsS3BtncMSN6BxWD09uvHQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mfd: max8997: Enale irq-wakeup unconditionally
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, myungjoo.ham@samsung.com,
-        lee.jones@linaro.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <195a512f-aecc-f8cf-f409-6c42ee924a8c@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018 at 13:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> IRQ wake up support for MAX8997 driver was initially configured by
-> respective property in pdata. However, after the driver conversion to
-> device-tree, setting it was left as 'todo'. Nowadays most of other PMIC MFD
-> drivers initialized from device-tree assume that they can be an irq wakeup
-> source, so enable it also for MAX8997. This fixes support for wakeup from
-> MAX8997 RTC alarm.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> changelog:
-> v2:
-> - removed pdata->wakeup entry as suggested by Krzysztof Kozlowski
-> ---
->  drivers/mfd/max8997.c       | 8 +-------
->  include/linux/mfd/max8997.h | 1 -
->  2 files changed, 1 insertion(+), 8 deletions(-)
+On Wed 05-09-18 22:20:58, Tetsuo Handa wrote:
+> On 2018/08/24 9:31, Tetsuo Handa wrote:
+> > For now, I don't think we need to add af5679fbc669f31f to the list for
+> > CVE-2016-10723, for af5679fbc669f31f might cause premature next OOM victim
+> > selection (especially with CONFIG_PREEMPT=y kernels) due to
+> > 
+> >    __alloc_pages_may_oom():               oom_reap_task():
+> > 
+> >      mutex_trylock(&oom_lock) succeeds.
+> >      get_page_from_freelist() fails.
+> >      Preempted to other process.
+> >                                             oom_reap_task_mm() succeeds.
+> >                                             Sets MMF_OOM_SKIP.
+> >      Returned from preemption.
+> >      Finds that MMF_OOM_SKIP was already set.
+> >      Selects next OOM victim and kills it.
+> >      mutex_unlock(&oom_lock) is called.
+> > 
+> > race window like described as
+> > 
+> >     Tetsuo was arguing that at least MMF_OOM_SKIP should be set under the lock
+> >     to prevent from races when the page allocator didn't manage to get the
+> >     freed (reaped) memory in __alloc_pages_may_oom but it sees the flag later
+> >     on and move on to another victim.  Although this is possible in principle
+> >     let's wait for it to actually happen in real life before we make the
+> >     locking more complex again.
+> > 
+> > in that commit.
+> > 
+> 
+> Yes, that race window is real. We can needlessly select next OOM victim.
+> I think that af5679fbc669f31f was too optimistic.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Changelog said 
 
-Best regards,
-Krzysztof
+"Although this is possible in principle let's wait for it to actually
+happen in real life before we make the locking more complex again."
+
+So what is the real life workload that hits it? The log you have pasted
+below doesn't tell much.
+
+> [  278.147280] Out of memory: Kill process 9943 (a.out) score 919 or sacrifice child
+> [  278.148927] Killed process 9943 (a.out) total-vm:4267252kB, anon-rss:3430056kB, file-rss:0kB, shmem-rss:0kB
+> [  278.151586] vmtoolsd invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
+[...]
+> [  278.331527] Out of memory: Kill process 8790 (firewalld) score 5 or sacrifice child
+> [  278.333267] Killed process 8790 (firewalld) total-vm:358012kB, anon-rss:21928kB, file-rss:0kB, shmem-rss:0kB
+> [  278.336430] oom_reaper: reaped process 8790 (firewalld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+
+-- 
+Michal Hocko
+SUSE Labs
