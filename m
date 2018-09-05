@@ -4,64 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E616AC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C3FC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A72A2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6262075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:09:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="pIkbxfdb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A72A2075C
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="czTy4VOu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE6262075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeIELiH (ORCPT
+        id S1727862AbeIELi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:38:07 -0400
-Received: from mail-cys01nam02on0084.outbound.protection.outlook.com ([104.47.37.84]:28997
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Wed, 5 Sep 2018 07:38:27 -0400
+Received: from mail-eopbgr700060.outbound.protection.outlook.com ([40.107.70.60]:42720
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726242AbeIELiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:38:07 -0400
+        id S1727534AbeIELi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:38:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PqT/IxzpTrWR0ieXYACCPeG7ann+N+vKXcGmYs0Ao/M=;
- b=pIkbxfdbxUCyrlQgjjRT30q2mAUjoxdB/OJ/e3GKcP6Mu6HMd4WYB1dTHdGamKvbzrVDE1yr8h/nraExW4KriMwgzygOV0qNDg5vPsPmhCkiRLko2DixO3looCJx1q5slvuxFWLV71yglJ4/62YD1+E5s+0GqYmb1SWCUoqcOT0=
-Received: from CY4PR02CA0030.namprd02.prod.outlook.com (2603:10b6:903:117::16)
- by BLUPR02MB503.namprd02.prod.outlook.com (2a01:111:e400:88c::24) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=8DNE50jDmzWP3ifVbPemY8Yd2UHCztxf5TBZA1Ju4Gg=;
+ b=czTy4VOuCA73kLGXyQhBQnKIbkocVMJzezX0yoZasS05OC1VRttuQ0Fv390LA5DKWNdNKPgRvhCvV0jyoPWdpWs0sOCsJrjHuQP7zPa/GxBNFcmjo0V0XZCe/nLzdgo4ACRjIL82ljLdle5P1QhVVxeYWqFjsjvFi62mfhJCrw0=
+Received: from MWHPR0201CA0091.namprd02.prod.outlook.com
+ (2603:10b6:301:75::32) by DM5PR02MB2684.namprd02.prod.outlook.com
+ (2603:10b6:3:106::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.17; Wed, 5 Sep
- 2018 07:09:16 +0000
-Received: from CY1NAM02FT024.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by CY4PR02CA0030.outlook.office365.com
- (2603:10b6:903:117::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1101.14 via Frontend
- Transport; Wed, 5 Sep 2018 07:09:16 +0000
+ 2018 07:09:37 +0000
+Received: from SN1NAM02FT003.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::200) by MWHPR0201CA0091.outlook.office365.com
+ (2603:10b6:301:75::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1101.13 via Frontend
+ Transport; Wed, 5 Sep 2018 07:09:36 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT024.mail.protection.outlook.com (10.152.74.210) with Microsoft SMTP
+ SN1NAM02FT003.mail.protection.outlook.com (10.152.73.29) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1101.10
- via Frontend Transport; Wed, 5 Sep 2018 07:09:15 +0000
+ via Frontend Transport; Wed, 5 Sep 2018 07:09:35 +0000
 Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <nava.manne@xilinx.com>)
-        id 1fxRwB-0000AX-3V; Wed, 05 Sep 2018 00:09:15 -0700
+        id 1fxRwV-0000B3-IL; Wed, 05 Sep 2018 00:09:35 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <nava.manne@xilinx.com>)
-        id 1fxRw6-0000al-08; Wed, 05 Sep 2018 00:09:10 -0700
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w85797EM024257;
-        Wed, 5 Sep 2018 00:09:08 -0700
+        id 1fxRwQ-0000dZ-F2; Wed, 05 Sep 2018 00:09:30 -0700
+Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8579MBx024323;
+        Wed, 5 Sep 2018 00:09:22 -0700
 Received: from [172.23.37.94] (helo=xhdappanad40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <nava.manne@xilinx.com>)
-        id 1fxRw3-0000Zf-D7; Wed, 05 Sep 2018 00:09:07 -0700
+        id 1fxRwH-0000Zf-UW; Wed, 05 Sep 2018 00:09:22 -0700
 From:   Nava kishore Manne <nava.manne@xilinx.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <michal.simek@xilinx.com>, <p.zabel@pengutronix.de>,
@@ -69,87 +73,219 @@ To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v3 0/3] Add reset driver support for ZynqMP
-Date:   Wed, 5 Sep 2018 12:38:59 +0530
-Message-ID: <1536131342-28041-1-git-send-email-nava.manne@xilinx.com>
+Subject: [RFC PATCH v3 3/3] reset: reset-zynqmp: Adding support for Xilinx zynqmp reset controller.
+Date:   Wed, 5 Sep 2018 12:39:02 +0530
+Message-ID: <1536131342-28041-4-git-send-email-nava.manne@xilinx.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536131342-28041-1-git-send-email-nava.manne@xilinx.com>
+References: <1536131342-28041-1-git-send-email-nava.manne@xilinx.com>
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39860400002)(2980300002)(438002)(199004)(189003)(36756003)(48376002)(356003)(50466002)(50226002)(81166006)(110136005)(9786002)(47776003)(8936002)(2906002)(51416003)(7696005)(316002)(81156014)(16586007)(478600001)(305945005)(966005)(8676002)(5660300001)(6666003)(36386004)(217873002)(106466001)(426003)(6306002)(486006)(476003)(126002)(2201001)(2616005)(106002)(6346003)(63266004)(26005)(77096007)(336012)(186003)(107986001)(921003)(2101003)(83996005)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR02MB503;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT024;1:F1kY3i1BAkqTexZzavNoW78ywpqZHn4eSJZ0sgSUYpERsq78KfGyCk7SBR0ALSNqEafHLZfSSThyELwmDongVpt6Eej3qlBfb/nX7oePnx9/8KAlQ1kXuHn0jWr/HFoc
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39850400004)(396003)(136003)(2980300002)(438002)(189003)(199004)(2906002)(305945005)(51416003)(106002)(36756003)(356003)(76176011)(7696005)(478600001)(50226002)(16586007)(316002)(48376002)(36386004)(50466002)(9786002)(6666003)(486006)(186003)(8936002)(26005)(77096007)(2616005)(11346002)(336012)(426003)(110136005)(81156014)(81166006)(5660300001)(126002)(2201001)(446003)(106466001)(476003)(8676002)(63266004)(47776003)(217873002)(107986001)(921003)(2101003)(83996005)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB2684;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT003;1:+bwfL/JpQooh43O7WSq005JUU0EyBz03RJsEaL+XdndrFESG86eGtC/gF/ILuopXp9ZP+HTWPKTFt4V168F4+94+Psiaj257F50hhwC4mHRQqR30S7iIZvjnAKYTMo/A
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 00b0b7f1-f648-442b-8fed-08d612fe7db0
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BLUPR02MB503;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB503;3:qCuGmV0LaoviJBBykrPch2Le13/fHo1AQLpzFgstXQaiDcZyK5pUUDThamh/s/a3ub35c6gizeYf4gkYMA0cnjLn/kJPzcw0Qv/+XE8NYie3Vtd4eEAF9XNC1/WakMu8UoCAy63ODecr0xmQYzh7Fp8UniLMBcR0QdbUhv3yiK2zTWsJ6tzPCCEMAIqJVBVLzFaZvHmm2bjcZ5dO32Yzxye80w8+D4XTQumIEpPo+C7v42/BqgW04+Z7hvDm9hhDPJ9ZgU/EziCg+u2C0bg31lJotuKQbG1mMOQWCnFOC9cDrSdmVw31ClWvuxfqN1xdo3lCYlzHt6BfAlKtU+4YnJC1IM0Ams80NFRHC3gCFkk=;25:c9tzDhJP/wIWPoF+bfn/3fN1fPVQzvtNKhzJ8qmfRW2nmN0Fa3KgRvaGhSJptaykCVeBWlzCge3VoZv8c+TU+btDTJdWOyMuyo1eZjwHZmFxBoCz4tnSMFwjAqdbguW9UA4SrEZWQ3pqEgTYtJ+UqG/PHYcYm9Bnoy3DEqNja7MQjsRFmZI0hwD/mGrLwODqcD6PW9V7q/OxgaDBnJX4ZM05M+bpo+CgSt3rMaGgZB56PEVSu4rBuca1yllpQVbi0wPF633DXJNjGwBU9IarZrXOzTnmGPmV/vKzfe4UD0OrI1jWiKrxED1UrnhajwGSRCBZc5ZW8IWpsQZCK1uTvA==
-X-MS-TrafficTypeDiagnostic: BLUPR02MB503:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB503;31:gkzH8NsW22JIBveir/RRAyQpC5f+3NUUgqO0tfnTcYSyi+XD/KLo0RgOKLwYyj7pLLdamA8hr5YTxOUfuCBMLi0L9+D0msnUQID81AODZ7Y1OUizK17w8QrPnRMViIbSZAi6H8HV/FMtVxxA5LYQYR7dNWzBKg7iQ932vJs2ZJBnlfM97/FUsSnymYfZhxpzIDJ9tfmfSweHjLnE0plIMeZ1YXVoefwCR0JJoA5PLog=;20:MA3CUBNtjzS7751ANejn0kUIf27igaQS2N4A6WPRssHI1w46cOlljSOVanpSRZ4IiPMKkv5Gd5qvVFm3Sf0IFYEcNpBZc4lJrQmUevKLO9/86m/J8Orc8XR8o1xPpqCFQC6YZKqU+x8vb/iIRn+mmYOAJ/Yby2mdbWDsj5rCt52g7wH0KYZit68mvV4Sc8no8lTzPmyrz6IaBRb3hpY/PdqaXIL/pSTE9FBOjsvrc0J2LT326dm81T7Y044x5KQp0ij+mS3B4DAZc3SagV4Qcm5ZAw/T4LrREYj8w0g3yHXlcZhqvT2fDf8IctkD4BROaa0ES0tvBBlkEUfvKTutBg5Dr0eXkbpBt7zg1500cmYnF2cfRGQ2FW1NRybIHx5i+pwJ9hBWL2wBD5jZXf02XRZimNIPs4Okge/WwjkUKl8WVr6b8UytN1+56WVaKjgLLAVQ9sUCiUWoH4Yh6qygZR0i4r9xfYFjxN3T/McOVyADZyHj8E++EI5lCj+VtOUG
+X-MS-Office365-Filtering-Correlation-Id: 3f97bc42-6ee5-4df8-1acc-08d612fe89ca
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:DM5PR02MB2684;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR02MB2684;3:8W/RHa7Zt9GOTR7+PAl5X+R4sBvFGG/F3QGNsAZsKe1UFq5m825uyyjdaHczrUtWbFHbUOjXTJlIJPwnYxtLa7qmejb96AvhcB8Va8ofVn9HBF75sM5xfaIW10Dyy/suWMyRqLT2QwlkbVEbdTTBAEpGK1lsOx2WRYCAIl1Yc7AHTCoKVMFVFfK3MYpgcfZWVjOdfDcDTND63xFpm8upxPHOBBKn0qf5sYGgpUuhKbxou/6bbnaoASqA4eAta6mDiwEFF/z83+0KVYoaAKyxsVzETA4vCyt8KoxbEV57pF8whPVuhQH238LFNHl5ZYmWVAZSklltIZrlACm4sO/mgd5PFM7XtagUqRXx1YmvSnw=;25:81MxaZS0B6I7nkWWH+MeB+YvNKvf45oA3veOr/Ra5DF67rGImFNUL3tZ5I6+Ii6Ov8iIXSrZXfktG+mTwHh0tU0dWYd5QA4v5INgZY5cbPnRz2LO7x4g5o2Y+ARJH0SefMgE7RVSyezaNf6NKEW2G1HJ96/cr1I09eZdmAuH8tNyQdGlWZa8kvtX1LcD/qfvjwNKPJQtAuHmQakpHAYdUvIPe2oj53XI+6RkrsuGpqm7I4v5+g8S5AGET3NlDoys5vOQxcxnHgr7IGoav+V1TPMt60uL6S83nTP+FZPicS4j6eOQIjyhlrfqlcilTfABVd2PRDjwlTvUz8dTBLpAZA==
+X-MS-TrafficTypeDiagnostic: DM5PR02MB2684:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR02MB2684;31:MAbfaASftobW7QOlRqJ1OnrSl531ccYN0rpRON4IsA8jwMATuRzsYe8ZbTyO/DmsuN13t+LsO1hS5/D//oKIl8EXtLcqVZIoxddyKDCIyi0MhbTLDgHk/NCyeCIKae0EZGvR5Lj1PJBMpI3HHy3X2PGsxhgJuxIYDQbA1taMDTNREu9TERbH79zX3GjB554fT1dBUO/n2exhS9vNUQYepJhcY7MF9yKW96+R6Q6NxhE=;20:qWvurroLd01Y/1W3/ilxjHjTHx27715kGkJ6xTHrTF8k4HH4+HVv1NoDr9WTqXDClUIu4LSK5CNjwLBaA2mfB2C0LfUx6gBysYphmIcZGzHQOi3mxCWfhfZaNrI/sdYVzafNY9MYj2R1cJvGNtZv4iPCgHAHkq3B3bwrplu7BZq2A4oI1U9kAl7zWWmjP0MTCT844jQyeciyDhF58oUv60ncQ4GQKhXEJlQEXNiECt7gKv/9zTkTFG5o69oTpx+IJmC2IsQfo7AXP/ffE1SDfTcNYwYVlNwA4iwQFv1DpXeXNjDYgh29U5rAWlrc6oTpnMRe50IuIa/9jmtL3vfJ44jkV7+a4FMTlxgKytXErOokYbHf6Wt9fBSO94yCq9dgzSULUGclqKBq+lKVz/WngkWTD+MhXJAbzfvbq9Zr6QMUVmfQV9bGTxTtzza2n055MOU4e2DMImvt8GWztrEffETOweRYWkduiOffiHpLnhGbm48rQ6jxdCfVvDpvt6X/
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BLUPR02MB50357C7524FBCA1F117E728C2020@BLUPR02MB503.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam-PRVS: <DM5PR02MB2684518087F846B401B20991C2020@DM5PR02MB2684.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93004095)(3231344)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699016);SRVR:BLUPR02MB503;BCL:0;PCL:0;RULEID:;SRVR:BLUPR02MB503;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB503;4:236Ma5jfbL9aOGzIn+9gDfNfP7na2wzDs0uKnss08ngpfffNPqEZtzhCuOmBZ3KntNPbjP+uX0Jgi9J2pK+jOQyRN4jLu/yxFRFlWDTXU3incW5Vhn50k0V79hCjZzbb3t22qXpymslv2hNkY99EGCTJTxC07xPLZmI8JBGF6epHSDUgTPaUSwfd8UU3m8Zt12h9+Kb+dA2AuB/Els6EMgr7PSjw32i+kMhCSUbtWZ6x9T5IWplChjV9HJjrl9B9T6309WSn6iHx9Wiwdbomaw==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:DM5PR02MB2684;BCL:0;PCL:0;RULEID:;SRVR:DM5PR02MB2684;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR02MB2684;4:fxWX/AhCeHV+0eSG4XT5sxdbaU8zK1IJxUNXjmHDoOSk0iUhfKhA4gXnBG53NUkCancF/f2luU05NzvOtn3rvEqqHxNIo2qd6G2Jzd6GSlHAeGJmqpvJTxpRycEc32tCUeW9qDpZg5Xd/RVFvqpKEjPTZoPqWWRPfuh79o51ah07msn2WOld3AYismD5CcpmBDlVHpvszdKR8BrNVkXmU7kC4xt49qENRwaipDhLAX2Pi/enpJUWVRldJdMll3fAPJu8qvlw2kiwJQCar5wuD1duSxkRzq5CuCqN7+jzBDkc4Au/evl3/Lwn3PBq76xB
 X-Forefront-PRVS: 078693968A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR02MB503;23:xTOGzhRQYbyJhvUXyjNHDxx9QBEUz4lv+0gSjxXP83?=
- =?us-ascii?Q?kBZ3mShNvr5B6BazrNyEbWQEoxE3NC2wDhPYxVNiVeNhxB5WJ97V0Me8vx+8?=
- =?us-ascii?Q?jxEw22HX3JXu7ek74X9hGFSOyPRuJIu5MiYPZbze7iTqCJF2tsehwkKK/aFQ?=
- =?us-ascii?Q?l2VjVSn7o2rsV+QD2IOX8p7/mnFdzEmtoOEqRmoGabBC3ocJz9rWqUOYQ84m?=
- =?us-ascii?Q?9MPHISOohP52uUZaibj1p9sgr2csSeBRQS1fv//Ny8Atx4mv7Y8sdWgNj5hC?=
- =?us-ascii?Q?/jfrIB3uIWt+Ub2mBua4TsuVNpcWahPJsVdNbmDyNYsY3WIEF4Eok9Ubmy26?=
- =?us-ascii?Q?VjX4VmPmdI1dwoT80K7hWgfKYDwW6skMm+rLIQ5zpP5JNKolmHotUk8aLUse?=
- =?us-ascii?Q?FT7P0ZSXfCf2Zq8qZl77RGss85Znh+lYhLMTA/jsb4Y6s5lNAnyuBhkVSp1A?=
- =?us-ascii?Q?1KuhVDNAqk9WlfDp2tTzYZoYQVDrOiKnsd7h6UUZYnaVBLFPjZZssyTiowod?=
- =?us-ascii?Q?EhhSycQ14UJi5sqB/1TPGinnoaH37sGQOFi2GJ01UrcpnLa1Ni/NlRogOt3p?=
- =?us-ascii?Q?PHDSLrbGQABAHMu9w0zjhMia32+ldgbr5rqrMYzhfm/wh+Jlx7LBmlKvG/ve?=
- =?us-ascii?Q?HE7YcyLszV+wQS9lD8DLVXSw5TDRicnBO+h7kiVdFAkKI+bG20mugzhoy63X?=
- =?us-ascii?Q?HGci+gGBn4J7TCAXjnA9r8+nV1OubHBqQnyceuglDkqkagMD1sHT+K+x54hM?=
- =?us-ascii?Q?YMUjgQgf9XF0hq7IIYjWZzIgy5zuTxVLXGbqvzB5FFNdQTepnoYDO3clllji?=
- =?us-ascii?Q?0kVLLh08RgEjZlwgv/Yx/83gLhFL9cCZwLqdQf6GKjy2I8l3aRhg5m7GaYjN?=
- =?us-ascii?Q?fofZRZs/EiQgDr/zx8JOxFPLUktVAl7pGT4uobxgJ3mi74pvBMJL1cmRX+mC?=
- =?us-ascii?Q?BClWo8yjQILcjS/yHNX15HLQ+8bkZQLmd0ndRBNPURhZhMb1H22ZACJQi+JF?=
- =?us-ascii?Q?nfWyjRSewhbIYRJVhUm1ZSaHr+0T1cpArjqsQPaU8xbD5xtp9ru5b17H6YaC?=
- =?us-ascii?Q?YDrkbmB3mQnow/56ul3J3rLR45dzT/2efOFcqWI1anpYAiE/nDG6P+xDvq3H?=
- =?us-ascii?Q?4HiGMGYErq4KBDy2PON1OhxfwVe7SqKLGA5LiQpZwNZQmYb6usmg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: jWeKKI1HWiIPPfnzgiZRLv7uT0ihs06pO0lv556OhqgDIlzswiF+pEESAaFKFhQ9123YgIzYwIR9Qb36krLmQ0g8ECsmdOiO6bM/hltn/alPUmx5U2/jJIxuAmVgns3hoH5CAdM00pgPc1XeSG3ymeSaHmDseo6coveb9kEEc23SRW3MKRtu9axflpglZNa41mBTgWstXkJqqBKoTo8EI8XkHN6KaZj2aMbxwRKWDSXSHuxFEoX4P0VkYko09w1WDSRRZupwWSKbkH3sWjX5I/v5AwaCMR38aWzihHo3s6WBN9GODGMS6IU+ONjRum/jDwkdclZq1XIah9jt7GTU1J3nV/b94LdYsbox+SYPMcs=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB503;6:yItgtbJT19fzE6EiuWN/L6NdkkcvrJFpkWA0+mPmZFtuFwwCU4GFHQenr3FYQpiAYW1R4xMQ+7W/4FtzCS0UYNozsiYbNfpt2Jj3vp7pwI8up21QM5PopSgJowXnb5i4gQsZnXqxJQ4vR3ywyWkCoRO40LFnnXl82GyT25lpKKWw5PHSPkfFqtCy3hFPiS6mSivIHwfPCIQTeTrB4Wu9TLAjCIyotSkeRolGknVnc0LiVPHGebfwBH8c/J121/ydRB72p32EB5xODpXEgfcRAqfjvX+ix5EhOFaXy0gLhPr+nQGamlWboTjRPZR3NGHrVGWjH0njDJLTKYsMeYLIbTMV9iIgde8piAHFySM/3QY8IGxwXG75zF5icFrpcd8zDOTyFuFTI4t0f3aMUZRh62okqVfLqzoTQztkP6WxMUX6HjhR6prKknioAsC8TBGWfF2Xp2ApHLkt8j6RnRKNIw==;5:NWv9tXnNyO4Pa8+wM1dvr7eVFU88CHGcEdIGJe/kvXzr0IpQCe06fzqxHRNuEBn3rctxk540uQFgjWJ7w2M2sffGn39I0kmaVPnjPMjLAXLIVczt2tkKm6n17ln2VvmcBCsIm07cgKGEpiEgZRPShppzutb1vk0dgqoVAe3nrno=;7:5p9XQR5Dobtoeq44ULVngCUSyoV/VpElvTMkS32P4NHIGmNzCZVRARo5R3Oc2n+4QB37PGR7x4j+P6YtJhn8XxAhozbSlx0nfy5Go2iJ72+QFdQ07ZhwlQ1wyoD/acTBSCH6Av0pMBrAr+MZ+OD7zNP3IHXA1/ye0wPBnoEsRprSKW5eY21bEuBzzPiknkduSCkkwliN+xpg2K0MJpzJZnegmaVvf75PBGvJrdBu5X/MDfjtvpe96PDSS+KhWwGe
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR02MB2684;23:srbR8bvAKLjALzU0Xh24QL4XXlqvPGDtDkPH0zF71?=
+ =?us-ascii?Q?7dZb1qNpAwwUan9u+r8SbPUZSJpNDBs5bzUAgNX95QqNUuSxDBcLoBgw8AMO?=
+ =?us-ascii?Q?hRny2KgKJrB/HNLZoxAOzxiiFFu845cFkHc+zYEnNLzYtyxAqlKJMVFzEFfs?=
+ =?us-ascii?Q?5kvXPX1lQkLVyM77YWKP130OoHXmHcsaie/LrSWoKPoDDmcrGvCkObuVMaE6?=
+ =?us-ascii?Q?hxXQ/QyzgllCyKpwfb8tYaOjvJAPzs9iP4KuoXeh/nAA/mHV9n9Hvmuv9tRu?=
+ =?us-ascii?Q?ER2mHrWUvkhEIXBNTXAo4OTTV9iUoJu3oqAZm9jA0EjeUbhNixzAhqcbO/nm?=
+ =?us-ascii?Q?KaU+KSj7HXTIGhDoWFKmnopkLxA0JLyFYlNdJ6CQBht9OhZ+ONF/s+ItFLe3?=
+ =?us-ascii?Q?PrpOp4hP4vrAYmUIxM+8Y5FAmGbng/xCsYTIBB68f01/959kzLygPrTi1EsS?=
+ =?us-ascii?Q?TMgqMbL/fprrNflO77OCdDqXkalGv/vuwFrI0XHwg7Mk9jn3cyzuPfwszbj2?=
+ =?us-ascii?Q?Kcoc6jlCjidKDqxlxe1P6XphbKcWSPoMtuw7dJhmVgAH2JsKJSzS4h6yLO2N?=
+ =?us-ascii?Q?vaz7DT00wKu8SqQMRsaglJINklULlhI/+cikvR600DJT6AG93hxqYytqxpU0?=
+ =?us-ascii?Q?RMo7uw3K/ja83MB3UKE6NpE8b1DHa3RZgbilOKD3hCTTvrlsU8v6CPRG57zm?=
+ =?us-ascii?Q?gQGY3Nu7Gn1z+F/Iayon7nHhH8Wy0Vjj2wY3NhExadrkS/4XEeKQX6m5EczP?=
+ =?us-ascii?Q?EWITaKmjzMFnFGmpbDJhHFvac84a/PCoMnvUS1DCJzeQT1ecldarJizu1iGU?=
+ =?us-ascii?Q?iikjpd4Ts0404pHh2zQglUOuG3YYrGYiM5uX5/luUQclOOw/6Ja0CY9FT1ul?=
+ =?us-ascii?Q?JZeu72Ac9wYkly/eeRRiuY8Ib8cC6jwSL+EBj0qE+YOtM6yh9I4T3D3HQK22?=
+ =?us-ascii?Q?+zGQ7GwwfEXAV7Qt4RKZMOCOtPY/C69RGPO8Howt9raqz5ddOZtp5p+Zbzoo?=
+ =?us-ascii?Q?wcEMOdbxgZKd/qdLbOsM4pEqwq1QizdjDActkQed5aiVqdcAwdP1ZfXSmPWb?=
+ =?us-ascii?Q?7LLNKXzUAY5lYix56/eJhOt9oz3l847aB+3gaKX/WGSy1UPYoZrKmc9ybIIs?=
+ =?us-ascii?Q?YAEwZV/qhT9cBE0p+4xqbVF4qZJXy1rbJapLkDvWC/4WX8X+gSOVA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: hBdE4x45Vu7IN9vd/CtCuRbn25FyxWpXgtQWhkTQ8bzpS0V2PYY/ze2iMly/6XeK+3qleDwxdwUXtBmLKXyvVyZw8KQk5GYrOHz1hcU/SJjrZ/2q8oQHXjs9oGPTBaVh5PORFk8zYCeI/UaKj/Ll8oK+luyB9gQEy2PL42PCeHL5f8cmSj16zVqZO/chBb8nuYGnQmt8WkjY4o0+26tpzcTRUy6j5v5ngyMlSpAkd6Rv+2+5fprlpH10zN9MnSqWmxfJRa9RiNmrsdop+5MeBEdVWHB0T/J8NQjnoZN8nbCvGDPvqjL+karUweR73VUl8oHCpGoTH63clNAcy5xUfg6bDhO6aVX3rqCTRgUnKMU=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR02MB2684;6:MJDJfQarTSt0WfbtorjN/BtsHkJqzzGDkgC78Xie7qTcS0fQ/WF4s3xJkYh+Q54DoyLnjwFaAG5EU6POC5GDAihIXyF5At+elk5JyiAq3PhhsBRFhg0IILO12iqqCNtb2gjUwduMXYG36J7y37GSkCxnIHCjy4V0HaL3M0wH6C+lMXLBjbWDX5gfXPVPHJRgoDnTa3p9sVkEyTiRBgm/LSNsR89TNiLQEXKM5UKzEU0nATi9bDCLiNQMSr19DVuQuT4A/ay1kRH8gRDypPlnra4O3EVdjIMW5nsD0lebHIkzclC9dAJm7Pn1p9oywQtbPlDbYJFzgpJppA9EEl+mbtwywdkVbuv/0B1CUEhLOJOse3fmgnBLpG8gm9JiY5XlN8oa1lp/H6xaqPFv7EmLI2Se5PuPGSHVRfMJyxchpdRlyhU/fhyyxGsFr4RqGSmJjfPhYAfP2hpuGGV8l7FobQ==;5:7MOA1krh5QwqU5YtyFfn9emuXx1yWUN08egXbup3R6e5f2+7JVmuPiziBzfHSU3SOTQO15WHKpolcWu+j64wuENT+0O1hW0GNK9/kMURT8ii2Nn0lMBC9POGtn5OPclmFos0MlPKkG8RBwiE6/rX/APeVEVgSe8eN7guy46wo2M=;7:A3/4Zu9FHWUETX2gHuLqjsFt2/yhHtlw9jplzcNmAZUraxywrkb8tUvgXQLA9ZOWcJMZs67p0v2rtgLAd3X+B7YjvY6ci2pptjKuuzDHTccsZrXT8ac9Cn9KB+qoyuXnh2PsAB47PrqnoydX7LJuUA1RWFgim5VVKX07E79K8Fqeqntxtwh9h5CCICcbEBsCEKU279G5wbwMEXXy4sd3zqPdK0b7WOEzu7ERbZBOolanrFirH4/Ck57fB2it/Oss
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 07:09:15.5626
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 07:09:35.8939
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00b0b7f1-f648-442b-8fed-08d612fe7db0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f97bc42-6ee5-4df8-1acc-08d612fe89ca
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR02MB503
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2684
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches are created On top of the
-below series of patches.
-https://lkml.org/lkml/2018/8/3/687 
+Add a reset controller driver for Xilinx Zynq UltraScale+ MPSoC.
+The zynqmp reset-controller has the ability to reset lines
+connected to different blocks and peripheral in the Soc.
 
-Nava kishore Manne (3):
-  firmware: xilinx: Add reset API's
-  dt-bindings: reset: Add bindings for ZynqMP reset driver
-  reset: reset-zynqmp: Adding support for Xilinx zynqmp reset
-    controller.
+Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+---
+Changes for v3:
+		-None.
+Changes for v2:
+		-Moved eemi_ops into a priv struct as suggested
+		 by philipp.
 
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 142 +++++++++++++++++++++
- drivers/firmware/xilinx/zynqmp.c                   |  40 ++++++
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-zynqmp.c                       | 115 +++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h               | 136 ++++++++++++++++++++
- 5 files changed, 434 insertions(+)
+ drivers/reset/Makefile       |   1 +
+ drivers/reset/reset-zynqmp.c | 115 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 116 insertions(+)
  create mode 100644 drivers/reset/reset-zynqmp.c
 
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index c1261dc..27e4a33 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -21,4 +21,5 @@ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+ obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
++obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
+ 
+diff --git a/drivers/reset/reset-zynqmp.c b/drivers/reset/reset-zynqmp.c
+new file mode 100644
+index 0000000..f908492
+--- /dev/null
++++ b/drivers/reset/reset-zynqmp.c
+@@ -0,0 +1,115 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2018 Xilinx, Inc.
++ *
++ */
++
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/firmware/xlnx-zynqmp.h>
++
++#define ZYNQMP_NR_RESETS (ZYNQMP_PM_RESET_END - ZYNQMP_PM_RESET_START - 2)
++#define ZYNQMP_RESET_ID (ZYNQMP_PM_RESET_START + 1)
++
++struct zynqmp_reset_data {
++	struct reset_controller_dev rcdev;
++	const struct zynqmp_eemi_ops *eemi_ops;
++};
++
++static inline struct zynqmp_reset_data *
++to_zynqmp_reset_data(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct zynqmp_reset_data, rcdev);
++}
++
++static int zynqmp_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct zynqmp_reset_data *priv = to_zynqmp_reset_data(rcdev);
++
++	return priv->eemi_ops->reset_assert(ZYNQMP_RESET_ID + id,
++					    PM_RESET_ACTION_ASSERT);
++}
++
++static int zynqmp_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct zynqmp_reset_data *priv = to_zynqmp_reset_data(rcdev);
++
++	return priv->eemi_ops->reset_assert(ZYNQMP_RESET_ID + id,
++					    PM_RESET_ACTION_RELEASE);
++}
++
++static int zynqmp_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct zynqmp_reset_data *priv = to_zynqmp_reset_data(rcdev);
++	int val, err;
++
++	err = priv->eemi_ops->reset_get_status(ZYNQMP_RESET_ID + id, &val);
++	if (!err)
++		return -EINVAL;
++
++	return val;
++}
++
++static int zynqmp_reset_reset(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct zynqmp_reset_data *priv = to_zynqmp_reset_data(rcdev);
++
++	return priv->eemi_ops->reset_assert(ZYNQMP_RESET_ID + id,
++					    PM_RESET_ACTION_PULSE);
++}
++
++static struct reset_control_ops zynqmp_reset_ops = {
++	.reset = zynqmp_reset_reset,
++	.assert = zynqmp_reset_assert,
++	.deassert = zynqmp_reset_deassert,
++	.status = zynqmp_reset_status,
++};
++
++static int zynqmp_reset_probe(struct platform_device *pdev)
++{
++	struct zynqmp_reset_data *priv;
++
++	priv = devm_kzalloc(&pdev->dev,
++			    sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++
++	priv->eemi_ops = zynqmp_pm_get_eemi_ops();
++	if (!priv->eemi_ops)
++		return -ENXIO;
++
++	priv->rcdev.ops = &zynqmp_reset_ops;
++	priv->rcdev.owner = THIS_MODULE;
++	priv->rcdev.of_node = pdev->dev.of_node;
++	priv->rcdev.nr_resets = ZYNQMP_NR_RESETS;
++
++	return devm_reset_controller_register(&pdev->dev, &priv->rcdev);
++}
++
++static const struct of_device_id zynqmp_reset_dt_ids[] = {
++	{ .compatible = "xlnx,zynqmp-reset", },
++	{ },
++};
++
++static struct platform_driver zynqmp_reset_driver = {
++	.probe	= zynqmp_reset_probe,
++	.driver = {
++		.name		= KBUILD_MODNAME,
++		.of_match_table	= zynqmp_reset_dt_ids,
++	},
++};
++
++static int __init zynqmp_reset_init(void)
++{
++	return platform_driver_register(&zynqmp_reset_driver);
++}
++
++arch_initcall(zynqmp_reset_init);
 -- 
 2.7.4
 
