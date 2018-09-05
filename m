@@ -2,141 +2,114 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1004EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6308C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE64720857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:39:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE64720857
+	by mail.kernel.org (Postfix) with ESMTP id 6BD3F2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD3F2077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeIEWKZ (ORCPT
+        id S1727752AbeIEWK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 18:10:25 -0400
-Received: from mga09.intel.com ([134.134.136.24]:37774 "EHLO mga09.intel.com"
+        Wed, 5 Sep 2018 18:10:58 -0400
+Received: from mga05.intel.com ([192.55.52.43]:24442 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeIEWKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 18:10:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726497AbeIEWK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 18:10:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 10:39:12 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 10:39:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="78228466"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Sep 2018 10:37:37 -0700
-Received: from [10.252.23.215] (unknown [10.252.23.215])
-        by linux.intel.com (Postfix) with ESMTP id EEA9E5801AB;
-        Wed,  5 Sep 2018 10:37:34 -0700 (PDT)
-Subject: Re: [PATCH v7 0/2]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
- <20180905112851.GA29759@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <34e2f944-f5f3-094a-5997-899cea92d206@linux.intel.com>
-Date:   Wed, 5 Sep 2018 20:37:32 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+   d="scan'208";a="83312554"
+Received: from gsharm2-mobl1.amr.corp.intel.com (HELO localhost) ([10.249.37.218])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Sep 2018 10:39:41 -0700
+Date:   Wed, 5 Sep 2018 20:39:40 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Huang, Kai" <kai.huang@intel.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180905173940.GG11368@linux.intel.com>
+References: <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+ <20180831121645.GA18075@linux.intel.com>
+ <20180831181509.GB21555@linux.intel.com>
+ <20180903191926.GC13497@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541970F@PGSMSX112.gar.corp.intel.com>
+ <20180904145451.GA5233@linux.intel.com>
+ <20180904153021.GB8344@linux.intel.com>
+ <20180904163546.GA5421@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180905112851.GA29759@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904163546.GA5421@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 05.09.2018 14:28, Jiri Olsa wrote:
-> On Wed, Sep 05, 2018 at 10:16:42AM +0300, Alexey Budankov wrote:
->>
->> Currently in record mode the tool implements trace writing serially. 
->> The algorithm loops over mapped per-cpu data buffers and stores 
->> ready data chunks into a trace file using write() system call.
->>
->> At some circumstances the kernel may lack free space in a buffer 
->> because the other buffer's half is not yet written to disk due to 
->> some other buffer's data writing by the tool at the moment.
->>
->> Thus serial trace writing implementation may cause the kernel 
->> to loose profiling data and that is what observed when profiling 
->> highly parallel CPU bound workloads on machines with big number 
->> of cores.
->>
->> Experiment with profiling matrix multiplication code executing 128 
->> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
->> demonstrates data loss metrics value of 98%:
->>
->> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
->>     --call-graph dwarf,1024 --user-regs=IP,SP,BP \
->>     --switch-events -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
->>     matrix.gcc
->>
->> Data loss metrics is the ratio lost_time/elapsed_time where 
->> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
->> records and elapsed_time is the elapsed application run time 
->> under profiling.
->>
->> Applying asynchronous trace streaming thru Posix AIO API
->> (http://man7.org/linux/man-pages/man7/aio.7.html) 
->> lowers data loss metrics value providing 2x improvement -
->> lowering 98% loss to almost 0%.
->>
->> ---
->>  Alexey Budankov (2):
->>         perf util: map data buffer for preserving collected data
->> 	perf record: enable asynchronous trace writing
->>  
->>  tools/perf/builtin-record.c | 197 +++++++++++++++++++++++++++++++++++++++++++-
->>  tools/perf/perf.h           |   1 +
->>  tools/perf/util/evlist.c    |   7 +-
->>  tools/perf/util/evlist.h    |   3 +-
->>  tools/perf/util/mmap.c      | 110 +++++++++++++++++++++----
->>  tools/perf/util/mmap.h      |  10 ++-
->>  6 files changed, 302 insertions(+), 26 deletions(-)
->>
->> ---
->>  Changes in v7:
->>  - implemented handling record.aio setting from perfconfig file
+On Tue, Sep 04, 2018 at 09:35:46AM -0700, Sean Christopherson wrote:
+> On Tue, Sep 04, 2018 at 06:30:21PM +0300, Jarkko Sakkinen wrote:
+> > On Tue, Sep 04, 2018 at 07:54:51AM -0700, Sean Christopherson wrote:
+> > > I don't see any value in trying to rule out specific causes of
+> > > INVALID_TOKEN, but we should only retry EINIT if ret==INVALID_TOKEN
+> > > and RDMSR(HASH0) != sgx_lepubkeyhash[0].  Only the first MSR needs to
+> > > be checked for validity as they're a package deal, i.e. they'll all be
+> > > valid or all be reset.  There shouldn't be a limit on retry attempts,
+> > > e.g. the MSRs could theoretically be reset between WRMSR and EINIT.
+> > 
+> > Why is doing rdmsrs necessary? With the INVALID_TOKEN error we know we
+> > are out-of-sync i.e. have been sleeping and then one just needs to do
+> > wrmsrs.
 > 
-> can't apply this version on Arnaldo's perf/core...
+> As Kai mentioned, INVALID_TOKEN is returned for other reasons, e.g. a
+> production enclave trying to use a debug token or reserved bits set in
+> the token.  And in the KVM case, the hash and token are provided by
+> the guest, so it's entirely possible the enclave/token is not signed
+> with the key specified in the hash.  RDMSR is relatively inexpensive
+> compared to the overall cost of EINIT.  Though of course EINIT failure
+> isn't exactly a fast path, so I'm ok if you want to opt for simplicity
+> and retry on INVALID_TOKEN without checking the MSRs, just make sure
+> to add a comment indicating we're intentionally not checking the MSRs.
 
-my git remote -v
+Great!
 
-origin	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (fetch)
-origin	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (push)
-
-branch is perf/core, according to MAINTAINERS content.
-
-What is Arnaldo's perf/core? This one?
-
-git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux
-
-and branch is perf/core?
-
+> > I think one retry should be enough given that VMM traps EINIT. One retry
+> > is needed to take care of the guest itself (or host if we are running on
+> > bare metal) having been in a sleep state.
 > 
-> [jolsa@krava linux-perf]$ git am /tmp/ab/
-> Applying: perf util: map data buffer for preserving collected data
-> error: patch failed: tools/perf/util/mmap.c:166
-> error: tools/perf/util/mmap.c: patch does not apply
-> 
-> thanks,
-> jirka
-> 
+> Assuming we do RDMSR(hash0), that should be sufficient to prevent
+> infinite retry and it protects against the MSRs being lost between
+> WRMSR and EINIT during retry.  That being said, I'm ok retrying only
+> once, especially if you want to omit the RDMSR.  Disabling preemption
+> should prevent the kernel from suspending between WRMSR and EINIT,
+> I'm just being paranoid.
+
+But they are in the same preempt-disabled-region already?
+
+/Jarkko
