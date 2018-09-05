@@ -2,108 +2,142 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E08C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 899F2C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC26E206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:11:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xq1DyZ6q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC26E206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 343C9206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343C9206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbeIENlD (ORCPT
+        id S1727981AbeIENm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:41:03 -0400
-Received: from mail-io0-f177.google.com ([209.85.223.177]:36635 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeIENlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:41:02 -0400
-Received: by mail-io0-f177.google.com with SMTP id q5-v6so5386881iop.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1ODv8hk1dFKeFgmpydpsBgEkNER0NAuijChGnsK5t8U=;
-        b=Xq1DyZ6qXF0N/sHoXyXzUj2WtRRQkxwmmD5BC4RS31XwmTc+JAe6YIk3CTOVNLfaG7
-         63RqdsYjPa7OcPLR9FnxeyMCF6ih0g86lvcnqWmBpHqDFk8rcSAsCkxvj1zqf3ufDobE
-         Rpy7PfssBGgVmCA6JzzLhRR2fjadlxPzLzmfg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1ODv8hk1dFKeFgmpydpsBgEkNER0NAuijChGnsK5t8U=;
-        b=Y3QRCOPz73t3np+T34qtcZLVMR4I3FV7Q63BtyoqgM7LbPb0hG1lApaJAobA2xMCNA
-         XGWlCN/InXIwok6WAtQu6YOvNfYL7lujoGN1sRV9Y5fRUno8m3KuptifzbKkHkBvuYzM
-         xqafXzkwrYRI8ikApndVLM8mgLSmsNjBXmkrNhJrCB5/wC9KWsHG51TrihhFYiVDS2dP
-         y+TMmOyq2qzS6Spz7++5U0b+hv39pmPg2kAhDRBWogaCvq7n4F3F2s2UkNmUljVeU8/+
-         FYCdrtjRc8P8ZY8ouIwBb/1ogUR4BAmX7a2yiiF54qHE64yPUFbHp2QLl5Dw2vmjKybE
-         GoIA==
-X-Gm-Message-State: APzg51BXH/s9c2zhXiP63ZExmsb4neuFIhzXY6RAuICI5PcRPdlSj33q
-        bz8x6KRKY6Qb0paGG0hfqflPof2t1TsGaQLNAizF8++Q
-X-Google-Smtp-Source: ANB0VdYdgsnnMEqRocx0r9preJsVUfPxR7M9oPW7IURWGy2bZHqygTqAGaPuZyl0CH3tOO3zcgb0fYvbfUi3mDP2Qrg=
-X-Received: by 2002:a6b:e51a:: with SMTP id y26-v6mr24069728ioc.42.1536138706476;
- Wed, 05 Sep 2018 02:11:46 -0700 (PDT)
+        Wed, 5 Sep 2018 09:42:56 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:54096 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726272AbeIENm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 09:42:56 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id NyJjGhX7WFYN; Wed,  5 Sep 2018 11:13:21 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCBB900329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b900:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1460F1EC01AF;
+        Wed,  5 Sep 2018 11:13:21 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 11:13:09 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v5 09/16] x86/bugs: add lfence mitigation to spectre v2
+ and no meltdown for Hygon
+Message-ID: <20180905091309.GB2237@zn.tnic>
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <bf6e0e5403ae96715606366b3b5f817cbdab0dc3.1535459013.git.puwen@hygon.cn>
 MIME-Version: 1.0
-References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
- <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
- <20180904082424.GA2090@linux.vnet.ibm.com> <20180904093626.GA23936@linaro.org>
- <20180904103742.GC61288@linux.vnet.ibm.com> <CAKfTPtBVLWgtRJpP0nTOVpkwJse6BwrGa28o4qat0T3kOvEAfw@mail.gmail.com>
- <20180905085029.GA57420@linux.vnet.ibm.com>
-In-Reply-To: <20180905085029.GA57420@linux.vnet.ibm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 5 Sep 2018 11:11:35 +0200
-Message-ID: <CAKfTPtCzznnkR-DDw5DkHYef0nLtB+Yt9UHYMMaJdKD043H7XA@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bf6e0e5403ae96715606366b3b5f817cbdab0dc3.1535459013.git.puwen@hygon.cn>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018 at 10:50, Srikar Dronamraju
-<srikar@linux.vnet.ibm.com> wrote:
->
-> * Vincent Guittot <vincent.guittot@linaro.org> [2018-09-05 09:36:42]:
->
-> > >
-> > > I dont know of any systems that have come with single threaded and
-> > > multithreaded. However some user can still offline few threads in a core
-> > > while leaving other cores untouched. I dont really know why somebody
-> > > would want to do it.  For example, some customer was toying with SMT 3
-> > > mode in a SMT 8 power8 box.
-> >
-> > In this case, it means that we have the same core capacity whatever
-> > the number of CPUs
-> > and a core with SMT 3 will be set with the same compute capacity as
-> > the core with SMT 8.
-> > Does it still make sense ?
-> >
->
-> To me it make sense atleast from  a power 8 perspective, because SMT 1 >
-> SMT 2 > SMT 4 > SMT8. So if one core is configured for SMT 2 and other
-> core is configured for SMT4; all threads being busy, the  individual
-> threads running on SMT2 core will complete more work than SMT 4 core
-> threads.
+On Wed, Aug 29, 2018 at 08:44:41PM +0800, Pu Wen wrote:
+> To share codes between AMD and Hygon to mitigate Spectre V2 Retpoline
+> vulnerability, rename macros SPECTRE_V2_RETPOLINE_MINIMAL_AMD to
+> SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE, and SPECTRE_V2_CMD_RETPOLINE_AMD
+> to SPECTRE_V2_CMD_RETPOLINE_LFENCE.
+> 
+> As Hygon processors are not affected by meltdown vulnerability as AMD's,
+> so add exception in array cpu_no_meltdown[] for Hygon.
+> 
+> Signed-off-by: Pu Wen <puwen@hygon.cn>
+> ---
+>  arch/x86/include/asm/nospec-branch.h |  4 ++--
+>  arch/x86/kernel/cpu/bugs.c           | 28 +++++++++++++++-------------
+>  arch/x86/kernel/cpu/common.c         |  1 +
+>  3 files changed, 18 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index fd2a8c1..6763f9b 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -211,9 +211,9 @@
+>  enum spectre_v2_mitigation {
+>  	SPECTRE_V2_NONE,
+>  	SPECTRE_V2_RETPOLINE_MINIMAL,
+> -	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+> +	SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE,
+>  	SPECTRE_V2_RETPOLINE_GENERIC,
+> -	SPECTRE_V2_RETPOLINE_AMD,
+> +	SPECTRE_V2_RETPOLINE_LFENCE,
+>  	SPECTRE_V2_IBRS_ENHANCED,
+>  };
+>  
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 4c2313d..15be045 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -132,15 +132,15 @@ enum spectre_v2_mitigation_cmd {
+>  	SPECTRE_V2_CMD_FORCE,
+>  	SPECTRE_V2_CMD_RETPOLINE,
+>  	SPECTRE_V2_CMD_RETPOLINE_GENERIC,
+> -	SPECTRE_V2_CMD_RETPOLINE_AMD,
+> +	SPECTRE_V2_CMD_RETPOLINE_LFENCE,
+>  };
+>  
+>  static const char *spectre_v2_strings[] = {
+>  	[SPECTRE_V2_NONE]			= "Vulnerable",
+>  	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
+> -	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+> +	[SPECTRE_V2_RETPOLINE_MINIMAL_LFENCE]	= "Vulnerable: Minimal LFENCE ASM retpoline",
+>  	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+> -	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
+> +	[SPECTRE_V2_RETPOLINE_LFENCE]		= "Mitigation: Full LFENCE retpoline",
+>  	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
+>  };
 
-I agree for individual thread capacity but at core group level, the
-core SMT 1 will have the same capacity as core group SMT 8 so load
-balance will try to balance evenly the tasks between the 2 cores
-whereas core SMT 8 > core SMT1 , isn't it ?
+This is user-visible and with all the back'n'forth and backporting
+and the whole security fiasco, I don't want to have another source of
+confusion. You'll have to live with it saying "AMD" in dmesg.
 
->
-> --
-> Thanks and Regards
-> Srikar Dronamraju
->
+> @@ -272,7 +272,7 @@ static const struct {
+>  	{ "off",               SPECTRE_V2_CMD_NONE,              false },
+>  	{ "on",                SPECTRE_V2_CMD_FORCE,             true },
+>  	{ "retpoline",         SPECTRE_V2_CMD_RETPOLINE,         false },
+> -	{ "retpoline,amd",     SPECTRE_V2_CMD_RETPOLINE_AMD,     false },
+> +	{ "retpoline,lfence",     SPECTRE_V2_CMD_RETPOLINE_LFENCE,     false },
+>  	{ "retpoline,generic", SPECTRE_V2_CMD_RETPOLINE_GENERIC, false },
+>  	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
+>  };
+
+This even more so. Those are command line strings which we're still
+communicating to people, even. So no, it needs to remain "retpoline,amd"
+on Hygon.
+
+And then to not confuse people staring at the code either, we can drop
+this change too:
+
+-     SPECTRE_V2_CMD_RETPOLINE_AMD,
++     SPECTRE_V2_CMD_RETPOLINE_LFENCE,
+
+Which leaves this patch only with the addition of the vendor tests. The
+other stuff you can drop.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
