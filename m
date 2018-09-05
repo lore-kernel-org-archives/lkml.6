@@ -2,112 +2,116 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B70C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9A9C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 224E220652
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4E7E2086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:18:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="PNHyHqZe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224E220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pt8z5qjg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4E7E2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbeIFCtO (ORCPT
+        id S1727804AbeIFCuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:49:14 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39962 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727657AbeIFCtO (ORCPT
+        Wed, 5 Sep 2018 22:50:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34746 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727657AbeIFCub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:49:14 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x26-v6so7329316lfi.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 15:16:58 -0700 (PDT)
+        Wed, 5 Sep 2018 22:50:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d19-v6so4127772pgv.1;
+        Wed, 05 Sep 2018 15:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l3fI59WR7PWgzaQfSCKN9f+n0hr/keKYaE4QcnZO81k=;
-        b=PNHyHqZeRy0RZD+YrTnU5QEWkYN5uCe1kRVD974YYslv9DpAZeFqoP8VAJ1MTlenmA
-         3dKE+yeALkncpra7LTrpl2MQI3m1uunQJEe2oEKW2Yv+x1KYHC2/UKKC8/xaTu7B7JJc
-         a33vrTK9o4lnhUXLZnZR9p/M1h5EXzTjcmqq2JLRnjiw1n12eKoBTZM7o/T5apgqnPmK
-         WHJM+yWFAwtyR6XvbyH5Zo0cyFpmcLOYfePB9mFWP1gXH9DGJLxvuXDZ8XLOX+QflCkv
-         kOslk+dBPK5DQ7iQ1VMowyKMZseNWjQ39lM58So4wOAmb4/p2s0Ty71TLS7FEcy0dc5U
-         TLhg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ex08hm4w9nAx3zvUGW9GbVESQYtyOd1a270dkRQLd/g=;
+        b=Pt8z5qjgnJWUL3E0RZxB7aBaRkZigpA9QyX/IDYQwO7uoX/Q4gUDlcKvKJytvWTDR6
+         YSvPJKwqQY02sICaZc1QFTCajPVKxieP04AcSgaSbW8L8nSLxTE/GnO4PrYJQIuo43RZ
+         NK4H/MaIa5Z5MG+tx1ZvKPrSTnKmFzA7XlzMUmnwBx2IyNPayiPz672KY8PCWFdT4FWQ
+         Wq0b+Ybtmux1Qer/FcUbovykmxpTgqriYE/0ClvGLNy31rM2uGL/obyPyVswxu7gkfPn
+         SzhxDYZvinWUOG+Iyv+++oIAKyvxXljhlmn1/nK5eOWNYrIKHB3OO8OFTu7vh095rbZ7
+         iR5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l3fI59WR7PWgzaQfSCKN9f+n0hr/keKYaE4QcnZO81k=;
-        b=KtqE43vzXG5AUElaoA4hzfdTtUli5Pi62055gOOgz6CeDyi+TYnV0ETuMTOxwGLyg1
-         U/Q2fk52h9CxUvhpAtg6ZDLz4AN/piwGK6Y/OC1Eni6nfaos5zYOGbD3n37/rIHOMz59
-         UtqiJ4PLQwlXJTxjn3+umyWXwgnKhsR5/nlGLElg4IYu74o7JK9g99r0fqqoIeIuWowB
-         T9UhuR3pnsro7YbLu1SoFdW9BEyuaKv8rNMBhzqhdE4MphmQhS7Thw+VBE8eEteWJY0F
-         ldVbsSr/utMqbki9kogM9FL8Z47Xrk7tKVsSRYA6+B2hDA8pIE9/SMBW4NyDXgM//LQu
-         MbrA==
-X-Gm-Message-State: APzg51B8ggRoX5TDVroFwdJrmoMILmTQvNCew1nIqRqjRm/6EFvZish9
-        QVR1fy86QTmr9dajdAVG078/Oi9tNpm+ekd0evTp
-X-Google-Smtp-Source: ANB0VdaznKEuJT745EgkOwA7KzzGb3831jnndOfMrAfxFYrevv5hCR7kWkGT9fhu4rxHrn4U3rSQn4ZGGyBSrzrPjYY=
-X-Received: by 2002:ac2:4308:: with SMTP id l8-v6mr25956831lfh.35.1536185817626;
- Wed, 05 Sep 2018 15:16:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ex08hm4w9nAx3zvUGW9GbVESQYtyOd1a270dkRQLd/g=;
+        b=QjUA//RwGFzfSfOdIGhhalr4kHD+gPjbn9Cep1lUShEZQj9Uf+dw4vj8Q9TkYWCtJn
+         ULPCQQYQsK0bUl2vvAsaYjC2N16Xu018eF/a0nfTNnHB6f/SwF3JMin4sWKHVP44g9Q1
+         SvlYW1vCsDsHXavCd1eo7mKxD2jNY99ACHCj0kPonbcX7UbmeY/EPxGMGX2zbGJKQIbz
+         D8J9y23G/EV74L8NkQaLjNatIlgU7cUqAe9VPh3arJNKBCpPQUj4T5FWCoTg6GHcGdUY
+         09Tm9B63HOk63bbm85QC0WBfAGizkNpt8E0EgKU0XAkLwo3wsxbiqMFsm6vCPTQIKW/7
+         Ab4A==
+X-Gm-Message-State: APzg51AJTV/Oviwz7c9joCuOEy9xnCVt8Si4y2cqgZb+2uRAVbCgljoi
+        o1IgvkYHYSd2zqf2HVK+ZwE=
+X-Google-Smtp-Source: ANB0VdYBW+mott4pXn1WZCvW4hRqlFln8Mlgo1yvVREA3HV7KrCkWC+T4aA9mH/a7mMC6Y3RKwestQ==
+X-Received: by 2002:a62:ca0d:: with SMTP id n13-v6mr43077400pfg.69.1536185896499;
+        Wed, 05 Sep 2018 15:18:16 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
+        by smtp.gmail.com with ESMTPSA id d19-v6sm4319360pfe.42.2018.09.05.15.18.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Sep 2018 15:18:15 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 08:18:02 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        nios2-dev@lists.rocketboards.org
+Subject: Re: [PATCH 3/3] mm: optimise pte dirty/accessed bit setting by
+ demand based pte insertion
+Message-ID: <20180906081802.210984d7@roar.ozlabs.ibm.com>
+In-Reply-To: <20180905142951.GA15680@roeck-us.net>
+References: <20180828112034.30875-1-npiggin@gmail.com>
+        <20180828112034.30875-4-npiggin@gmail.com>
+        <20180905142951.GA15680@roeck-us.net>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180806211932.198488-1-jannh@google.com> <CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
- <CAG48ez1VMp=NXWb2eSEZsnszs-g5NVUhCVLXrjnMcHZYBJus8w@mail.gmail.com>
-In-Reply-To: <CAG48ez1VMp=NXWb2eSEZsnszs-g5NVUhCVLXrjnMcHZYBJus8w@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Sep 2018 18:16:46 -0400
-Message-ID: <CAHC9VhRrSYxsqQ==8anCKT+BEjBgD3wppMyeyGec_DMbowq=Tg@mail.gmail.com>
-Subject: Re: [PATCH] selinux: refactor mls_context_to_sid() and make it stricter
-To:     jannh@google.com
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 11:47 AM Jann Horn <jannh@google.com> wrote:
-> On Thu, Aug 9, 2018 at 3:56 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
+On Wed, 5 Sep 2018 07:29:51 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-...
+> Hi,
+>=20
+> On Tue, Aug 28, 2018 at 09:20:34PM +1000, Nicholas Piggin wrote:
+> > Similarly to the previous patch, this tries to optimise dirty/accessed
+> > bits in ptes to avoid access costs of hardware setting them.
+> >  =20
+>=20
+> This patch results in silent nios2 boot failures, silent meaning that
+> the boot stalls.
+>=20
+> ...
+> Unpacking initramfs...
+> Freeing initrd memory: 2168K
+> workingset: timestamp_bits=3D30 max_order=3D15 bucket_order=3D0
+> jffs2: version 2.2. (NAND) =C2=A9 2001-2006 Red Hat, Inc.
+> random: fast init done
+> random: crng init done
+>=20
+> [no further activity until the qemu session is aborted]
+>=20
+> Reverting the patch fixes the problem. Bisect log is attached.
 
-> > In the case where we have a MLS policy loaded (pol->mls_enabled != 0)
-> > and scontext is empty (scontext[0] = '\0'), we could end up returning
-> > 0 couldn't we?  It seems like we might want a quick check for this
-> > before we parse the low/high portions of the field into the rangep
-> > array.
->
-> I don't think so. In the first loop iteration, `sensitivity` will be
-> an empty string, and so the hashtab_search() should return NULL,
-> leading to -EINVAL. Am I missing something?
+Thanks for bisecting it, I'll try to reproduce. Just qemu with no
+obscure options? Interesting that it's hit nios2 but apparently not
+other archs (yet).
 
-Looking at this again, no, I think you've got it right.  My guess is
-that I just mistook the NULL sensitivity check at the top of the loop
-as getting triggered in this case, which isn't the case here.  Sorry
-for the noise.
-
-> > As an aside, I believe my other comments on this patch still stand.
-> > It's a nice improvement but I think there are some other small things
-> > that need to be addressed.
->
-> Is there anything I need to fix apart from the overly verbose comment
-> and the unnecessary curly braces?
-
-Nope.  I wouldn't even bother with that brace/comment changes, those
-were minor nits and only worth changing if you needed to respin the
-patch for some other reason.
-
-Consider the patch merged, thanks!
-
---
-paul moore
-www.paul-moore.com
+Thanks,
+Nick
