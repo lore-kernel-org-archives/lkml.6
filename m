@@ -2,150 +2,122 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88038C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8680BC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E2C20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:44:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="THJ/k7C1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E2C20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 37B0C20658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:45:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B0C20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeIEPOR (ORCPT
+        id S1727671AbeIEPPb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:14:17 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34768 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbeIEPOQ (ORCPT
+        Wed, 5 Sep 2018 11:15:31 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53183 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIEPPb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:14:16 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f8-v6so5837222ljk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 03:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=U2oIWdZjVzk+oXHsd9NQlAbfvEsy2pnn/uamumTKWi4=;
-        b=THJ/k7C1D4vYz+T8MQgSN5AueeVpMjLVsUNTTDvuaOkgrivBwyh31IjXjM8Th7ABBn
-         f1ObtemHZpuUp4RlczvKz9Jx08c5EcN1Nkr2g3ouT0kxn+FVm+Jigots2i6ukU97aFm0
-         qEjREi2iPJsif8/kRGdHGrSAoq7mofI9kMOFI=
+        Wed, 5 Sep 2018 11:15:31 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y139-v6so7408717wmc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 03:45:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=U2oIWdZjVzk+oXHsd9NQlAbfvEsy2pnn/uamumTKWi4=;
-        b=NTamOC2j7oH5VIcxQc6zqEOg3H4CZgwDyW03M7X/i1QMqtP9apiztLpN1EqSTmBvci
-         IHDyZRqLk5NqJ1ctP1T2MN+YrVImeVEvOPsVcIs/Q5G750GP5mwoqZPPFrbUiGloP+3k
-         Og0MRbp2V02/4PZNAdbgciJMEgSLdJwKMYBy1gOhJJtuPc6qbnFsUimCGoHCebJGeCpj
-         foXQWjmEFE0TED3LQNhUYkjTYY/GvOVXLjp7Q3Jn6v8iVdYJo+QiUzz4cNiSu6EaZO7V
-         TvnZKgqLmH1amTeJPn/jLzPwxDKJAAO9puZC82kGwPQ8zAI5YzECL2BvuPPUyMw63j+S
-         u0Ng==
-X-Gm-Message-State: APzg51A9ODFKCzCj/2pmS0UJJyWtNrHhl3ljQfW6XVRSYEJu7bvEEhwY
-        20jmSOfjmsExhBh2sM5L0Lqjm5PqbGRP6/qJgAq/gg==
-X-Google-Smtp-Source: ANB0VdYCkfZti5lbvU1CpvWhxNUf+I5NCImMVhGXV2Y2ghIxUyHWkR85kNTNCpLmq7ECnqUop2Wite0gXVI/SC6EcNI=
-X-Received: by 2002:a2e:8257:: with SMTP id j23-v6mr22679073ljh.49.1536144275680;
- Wed, 05 Sep 2018 03:44:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tOd4GvYrnhdUj6fEO4RnJiJRvggt3OirbLP9E2UErwc=;
+        b=OcD2wDAVZzX6JQHy3P0++bl7AO+jMF9OzA+nt254YiQaFoMQx8PcMsL/33DUQEqD2Q
+         Drt7jG9EgDC4jg+CPWggEssoj00IXBT6cyU91V0ChAT7KKos6mHSCnz6vGgTPGA0tBhf
+         2p9Y45oeoHg8KPvRQFvL4MoXAADXdnvbTCjVi1rKFnPh7Z0ROk0Yc8gaAIIQj1rSmJRC
+         x6H1HHizmBDp/AbXSm1kaqzh7JmAu0NDnWQiSKfDiNkoqfTQxX8T8YJIpR3yfncn31N7
+         nN+4Clc+yoQgliirkw6xVZDddQa1ovwIQZfI/Qr7qzdoS49zxagnZsZAOmyNjXfvLZli
+         c71g==
+X-Gm-Message-State: APzg51AzE1Ydaons78xwZhkUWsl4t3x1+CdA95turKnrXywa4g8vFWzW
+        /QhykNMa9kowo6KpHOwdgRM16Q==
+X-Google-Smtp-Source: ANB0VdZ9ufvWerfiWLipMcVLQEp6A27VV0UGBehGY2HuAH6ff9NSj2lR4ecJTcM47t2jsSlez63WBQ==
+X-Received: by 2002:a1c:3906:: with SMTP id g6-v6mr9157wma.50.1536144350492;
+        Wed, 05 Sep 2018 03:45:50 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.227.30])
+        by smtp.gmail.com with ESMTPSA id 127-v6sm1635959wmb.30.2018.09.05.03.45.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Sep 2018 03:45:48 -0700 (PDT)
+Date:   Wed, 5 Sep 2018 12:45:45 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20180905104545.GB20267@localhost.localdomain>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-3-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-Received: by 2002:a19:9a94:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 03:44:34 -0700 (PDT)
-In-Reply-To: <20180904193246.GB17846@kroah.com>
-References: <20180903165655.003605184@linuxfoundation.org> <CA+G9fYtAu2Hs5vpT0+P03LRfa_cvwresMT48HgH0HsHQEaEujQ@mail.gmail.com>
- <20180904193246.GB17846@kroah.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 5 Sep 2018 16:14:34 +0530
-Message-ID: <CA+G9fYtrS8kR_9uaw+wO+S98vG4Z319bGL6LaGjWzFpRQgOh4g@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/165] 4.14.68-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828135324.21976-3-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I have pushed out a -rc2 to hopefully fix this problem.
+Hi,
 
-4.14.68-rc2 results looks good.
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+On 28/08/18 14:53, Patrick Bellasi wrote:
 
-Summary
-------------------------------------------------------------------------
+[...]
 
-kernel: 4.14.68-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: e2d662d77f7aace50c2647cb7439acc9a97b1b70
-git describe: v4.14.67-167-ge2d662d77f7a
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.67-167-ge2d662d77f7a
+>  static inline int __setscheduler_uclamp(struct task_struct *p,
+>  					const struct sched_attr *attr)
+>  {
+> -	if (attr->sched_util_min > attr->sched_util_max)
+> -		return -EINVAL;
+> -	if (attr->sched_util_max > SCHED_CAPACITY_SCALE)
+> -		return -EINVAL;
+> +	int group_id[UCLAMP_CNT] = { UCLAMP_NOT_VALID };
+> +	int lower_bound, upper_bound;
+> +	struct uclamp_se *uc_se;
+> +	int result = 0;
+>  
+> -	p->uclamp[UCLAMP_MIN] = attr->sched_util_min;
+> -	p->uclamp[UCLAMP_MAX] = attr->sched_util_max;
+> +	mutex_lock(&uclamp_mutex);
 
+This is going to get called from an rcu_read_lock() section, which is a
+no-go for using mutexes:
 
-No regressions (compared to build v4.14.67)
+ sys_sched_setattr ->
+   rcu_read_lock()
+   ...
+   sched_setattr() ->
+     __sched_setscheduler() ->
+       ...
+       __setscheduler_uclamp() ->
+         ...
+	 mutex_lock()
 
+Guess you could fix the issue by getting the task struct after find_
+process_by_pid() in sys_sched_attr() and then calling sched_setattr()
+after rcu_read_lock() (putting the task struct at the end). Peter
+actually suggested this mod to solve a different issue.
 
-Ran 21181 total tests in the following environments and test suites.
+Best,
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-fcntl-locktests-tests
-* ltp-math-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
-
->
-> thanks,
->
-> greg k-h
+- Juri
