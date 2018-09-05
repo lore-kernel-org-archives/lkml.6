@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FBBC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA05C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F3E2077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:44:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F3E2077C
+	by mail.kernel.org (Postfix) with ESMTP id AC47C206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:49:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC47C206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeIEUPD (ORCPT
+        id S1727611AbeIEUUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:15:03 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:47136 "EHLO leonov.paulk.fr"
+        Wed, 5 Sep 2018 16:20:42 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:47206 "EHLO leonov.paulk.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbeIEUPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:15:03 -0400
+        id S1726335AbeIEUUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 16:20:41 -0400
+X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 16:20:41 EDT
 Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 49CC1C0291;
-        Wed,  5 Sep 2018 17:44:17 +0200 (CEST)
+        by leonov.paulk.fr (Postfix) with ESMTPS id 62070C0293;
+        Wed,  5 Sep 2018 17:49:54 +0200 (CEST)
 Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id A98EBC0F58; Wed,  5 Sep 2018 17:44:15 +0200 (CEST)
+        id A51EDC0F7F; Wed,  5 Sep 2018 17:49:52 +0200 (CEST)
 Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 9218AC0772;
-        Wed,  5 Sep 2018 17:43:55 +0200 (CEST)
-Message-ID: <147d5b518dbcdcff7874526b2a2c9442fae6e0e8.camel@paulk.fr>
-Subject: Re: [linux-sunxi] [PATCH v8 3/8] dt-bindings: media: Document
- bindings for the Cedrus VPU driver
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 15511C0F7A;
+        Wed,  5 Sep 2018 17:49:33 +0200 (CEST)
+Message-ID: <383bf546272ac7edca5a5f502fce4cafa88a3321.camel@paulk.fr>
+Subject: Re: [PATCH v8 4/8] media: platform: Add Cedrus VPU decoder driver
 From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+To:     Ezequiel Garcia <ezequiel@collabora.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -47,20 +47,19 @@ Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Randy Li <ayaka@soulik.info>,
         Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
         Tomasz Figa <tfiga@chromium.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         linux-sunxi@googlegroups.com
-Date:   Wed, 05 Sep 2018 17:43:54 +0200
-In-Reply-To: <20180828144727.GB25644@Red>
+Date:   Wed, 05 Sep 2018 17:49:31 +0200
+In-Reply-To: <f15e355ece0b250a252347ec22f1433dd786bb5b.camel@collabora.com>
 References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
-         <20180828073424.30247-4-paul.kocialkowski@bootlin.com>
-         <20180828144727.GB25644@Red>
+         <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
+         <f15e355ece0b250a252347ec22f1433dd786bb5b.camel@collabora.com>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-hIHydUUELpGpazyQv9Km"
+        protocol="application/pgp-signature"; boundary="=-KFmJeFVy/fWfX39GUA0U"
 X-Mailer: Evolution 3.28.5 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,28 +68,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-hIHydUUELpGpazyQv9Km
+--=-KFmJeFVy/fWfX39GUA0U
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-Le mardi 28 ao=C3=BBt 2018 =C3=A0 16:47 +0200, Corentin Labbe a =C3=A9crit =
-:
-> On Tue, Aug 28, 2018 at 09:34:19AM +0200, Paul Kocialkowski wrote:
-> > This adds a device-tree binding document that specifies the
-> > properties
-> > used by the Cedurs VPU driver, as well as examples.
+Le mardi 28 ao=C3=BBt 2018 =C3=A0 22:08 -0300, Ezequiel Garcia a =C3=A9crit=
+ :
+> On Tue, 2018-08-28 at 09:34 +0200, Paul Kocialkowski wrote:
+> > +static const struct v4l2_m2m_ops cedrus_m2m_ops =3D {
+> > +	.device_run	=3D cedrus_device_run,
+> > +	.job_abort	=3D cedrus_job_abort,
+> > +};
+> > +
 >=20
-> typo Cedurs=3D>Cedrus
+> I think you can get rid of this .job_abort. It should
+> simplify your .device_run quite a bit.
+>=20
+> .job_abort is optional now since
+> 5525b8314389a0c558d15464e86f438974b94e32.
 
-Thanks, will be fixed in the next iteration.
+Alright, I will probably do that for the next revision, since it seems
+that there is no particular downside to removing it.
 
-Cheers,
+Thanks,
 
 Paul
 
-> Regards
+> Regards,
+> Ezequiel
+
 --=20
 Developer of free digital technology and hardware support.
 
@@ -98,27 +106,27 @@ Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
 
---=-hIHydUUELpGpazyQv9Km
+--=-KFmJeFVy/fWfX39GUA0U
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluP+boACgkQhP3B6o/u
-lQzegA/+OCVPUy6X5scef1qw+eWYwnMXxcslOME6qOH8YBIV/ngUlSxDHYp12EIP
-B8lD04FQ3soDCR7W2vKqLqt4R5k+AIu6im92xEZOWRyqP/uyHtCk1FtaN9m0fK/s
-GXwmuXMZhxOcosCaArFSdOgedYrznH4UJ7kEQDMfHvtG3Ric2A1pUzN8HTeOIl2p
-CtygPYXnXfb6tjWOOJwAZ4doQBC+48g9ocDo2nEWDMJKPA6mwUoQl216gXqygN3A
-OYt34JNDW3qMfm9wHrXLsMEQZGAiYi1szrh2/WKJxTB2XIURK7suTWfDaWOGGRns
-ZPX5QvEnCVImMwa7/7TOWbelbhnZUmAJIVhoPoaEaORwMLNVwNDbAanQhLfS/8Jd
-SaXJpAdZQXJeEoAH/ez88VOkOHA+okd0aWCEnwyH9fC9KUnmSIBICHHqZ89Yq4eb
-kcA+JkdDKene/IOux4HluUqznVYPhTL49yh+QvKS5Y7eRqlLbWZjQQlNsNki8UMt
-JCTFbNvTkWgnCY6SkZiDIyG0+IYf4hzB8k5ahqzFQv70OWq95hBYrQdeEVly9O72
-Yfn+v1+CaTBuXz22zZZERlIVLRow2uVjdMqV7xhEY9eH2JH2Hgj7N1jKHd0P1JGa
-JWbH0/I0Qspw0x+kBT0CQaoFagy+XtXr71QnKvxK3s8aybVoDGM=
-=72Rb
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluP+wsACgkQhP3B6o/u
+lQwr5RAAhwkjVt4DncAUciQMMQNfX7Fl3XQ0nmjsszYqQCr1FVFtXRwMuU8+hkPF
+WlMFw1yVWTz3dfh/KZfP+5V568FO4L+NkDvPvCp6hkhh3RbjRnuGrzzOFcpcdNYT
+VsJzUJyPOXeQnh4bpHy1PVRiw1b2jHXF9q4kLn1p1fpGABvn6aJZ7lKRtsGnyFwx
+2Q4TGfFcenNrTdV9ftdw4CZg7wxThOvS5gUz8FNud4BccX6vDqns8guITvRHFHTR
+6vi+8FtvB4Sq/yYnv3Mw8Q700uD5GNgjDSjfp3KzvCOfipYdZmQTcI4cNfSifZbi
+R0RdwThMZmmKikZ8k1H5OJ1mOfzvA1YB21siQireV4yFTWf1R/S90yRz0Wpf9OaR
+SAG1NSGpj7pQp5daZcQpGCN3SfjXG/sOlie5GptOx3g7QilEWXMyLQUdrej50oG9
+7weQUjQOJsUb9aXiOA2wg4VXR3kqGlR6sVcZLaa1uat57JcedA9e3CgTdMaNaPCD
+VLHPOa7vCfuvsCw8hzgNIshIfdJni6t0KoiTcy3z4FFBsVqt3zobEtNx50qulMt8
+0p+TzGI50OtvrFibLWJjYG+D8Ujkg3AI7SzDk20KQhj28MLQ2/gAtDu8acK32b5e
+QMqyCzfkSsGyhCS2EBMg1lxXiV1cYhAPfw3jIpH7rCEa9Ud11Q8=
+=wYAK
 -----END PGP SIGNATURE-----
 
---=-hIHydUUELpGpazyQv9Km--
+--=-KFmJeFVy/fWfX39GUA0U--
 
