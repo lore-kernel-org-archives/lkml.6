@@ -5,119 +5,113 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A7BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0BBC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D780C2087E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:53:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D780C2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DE51820861
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE51820861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ilande.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeIEJVk (ORCPT
+        id S1727591AbeIEJ11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 05:21:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34491 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727542AbeIEJVk (ORCPT
+        Wed, 5 Sep 2018 05:27:27 -0400
+Received: from chuckie.co.uk ([82.165.15.123]:57533 "EHLO
+        s16892447.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727555AbeIEJ11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 05:21:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id u1-v6so5007393eds.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 21:53:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KAxx++B/J6mewqxzBId9AUHVd42GBcdAZFvqJPr/DGA=;
-        b=VGsvEABeZ0BZlCsT2TyyG/YojOD/wrSvzYAKGnAghcJrHK22vV1vjf7GTDxBemcIIC
-         7r752k2g1WWDVG3oj8pcYYQ8xxSt33M6M/QoSxuE/FQXQxLV+MBVRq80GnU9UAjGnDCV
-         BQL7AdbGPbUwtv/z5wbWNG3YORz+iuon4KjIfndSY2LvCjIkyVz7PYGIUpBCnPIpwsld
-         yIBY3Ty3nwmAaj7xGooGcKz1ImkRX0LfB1bawuVvzT27atWBAbD2EQv0A+27iRK/d/yN
-         MZY0mCmz5ycDsRQemmThmc7kkJ2raBtPtUm7CBuiHY+Qu+SF3GvYID3PGewFlkJREJaV
-         pmfg==
-X-Gm-Message-State: APzg51DeGJoOlPciA2LOK0P1841dpqmhCAKM9FJ3j3aFXItQa/K1ZeG7
-        JUSdfsnH5cF1LIkJfrIspuwhnQ==
-X-Google-Smtp-Source: ANB0Vdajh9jUVKJjW0WdRKAWheGaMA8FpQmBHbMM6ohihwzinIwzEJClepjCygsja2BvKNlus9uJpw==
-X-Received: by 2002:a50:b5a5:: with SMTP id a34-v6mr38812912ede.88.1536123197471;
-        Tue, 04 Sep 2018 21:53:17 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id g20-v6sm491485edm.36.2018.09.04.21.53.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 21:53:16 -0700 (PDT)
-Subject: Re: [PATCH 4.19 regression fix] printk: For early boot messages check
- loglevel when flushing the buffer
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Maninder Singh <maninder1.s@samsung.com>
-References: <20180904180154.845-1-hdegoede@redhat.com>
- <20180905023522.GA1444@jagdpanzerIV>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <93901f2b-91ad-a910-7031-0040b827a3af@redhat.com>
-Date:   Wed, 5 Sep 2018 06:53:15 +0200
+        Wed, 5 Sep 2018 05:27:27 -0400
+X-Greylist: delayed 1284 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 05:27:26 EDT
+Received: from host86-138-87-37.range86-138.btcentralplus.com ([86.138.87.37] helo=[192.168.1.65])
+        by s16892447.onlinehome-server.info with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <mark.cave-ayland@ilande.co.uk>)
+        id 1fxPZj-0007q3-BT; Wed, 05 Sep 2018 05:37:56 +0100
+To:     Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+References: <20180830190523.31474-1-robh@kernel.org>
+ <20180830190523.31474-4-robh@kernel.org>
+ <35247ddc-303b-89d0-53b5-231c1a293721@gmail.com>
+From:   Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mark.cave-ayland@ilande.co.uk; keydata=
+ xsBNBFQJuzwBCADAYvxrwUh1p/PvUlNFwKosVtVHHplgWi5p29t58QlOUkceZG0DBYSNqk93
+ 3JzBTbtd4JfFcSupo6MNNOrCzdCbCjZ64ik8ycaUOSzK2tKbeQLEXzXoaDL1Y7vuVO7nL9bG
+ E5Ru3wkhCFc7SkoypIoAUqz8EtiB6T89/D9TDEyjdXUacc53R5gu8wEWiMg5MQQuGwzbQy9n
+ PFI+mXC7AaEUqBVc2lBQVpAYXkN0EyqNNT12UfDLdxaxaFpUAE2pCa2LTyo5vn5hEW+i3VdN
+ PkmjyPvL6DdY03fvC01PyY8zaw+UI94QqjlrDisHpUH40IUPpC/NB0LwzL2aQOMkzT2NABEB
+ AAHNME1hcmsgQ2F2ZS1BeWxhbmQgPG1hcmsuY2F2ZS1heWxhbmRAaWxhbmRlLmNvLnVrPsLA
+ eAQTAQIAIgUCVAm7PAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQW8LFb64PMh9f
+ NAgAuc3ObOEY8NbZko72AGrg2tWKdybcMVITxmcor4hb9155o/OWcA4IDbeATR6cfiDL/oxU
+ mcmtXVgPqOwtW3NYAKr5g/FrZZ3uluQ2mtNYAyTFeALy8YF7N3yhs7LOcpbFP7tEbkSzoXNG
+ z8iYMiYtKwttt40WaheWuRs0ZOLbs6yoczZBDhna3Nj0LA3GpeJKlaV03O4umjKJgACP1c/q
+ T2Pkg+FCBHHFP454+waqojHp4OCBo6HyK+8I4wJRa9Z0EFqXIu8lTDYoggeX0Xd6bWeCFHK3
+ DhD0/Xi/kegSW33unsp8oVcM4kcFxTkpBgj39dB4KwAUznhTJR0zUHf63M7ATQRUCbs8AQgA
+ y7kyevA4bpetM/EjtuqQX4U05MBhEz/2SFkX6IaGtTG2NNw5wbcAfhOIuNNBYbw6ExuaJ3um
+ 2uLseHnudmvN4VSJ5Hfbd8rhqoMmmO71szgT/ZD9MEe2KHzBdmhmhxJdp+zQNivy215j6H27
+ 14mbC2dia7ktwP1rxPIX1OOfQwPuqlkmYPuVwZP19S4EYnCELOrnJ0m56tZLn5Zj+1jZX9Co
+ YbNLMa28qsktYJ4oU4jtn6V79H+/zpERZAHmH40IRXdR3hA+Ye7iC/ZpWzT2VSDlPbGY9Yja
+ Sp7w2347L5G+LLbAfaVoejHlfy/msPeehUcuKjAdBLoEhSPYzzdvEQARAQABwsBfBBgBAgAJ
+ BQJUCbs8AhsMAAoJEFvCxW+uDzIfabYIAJXmBepHJpvCPiMNEQJNJ2ZSzSjhic84LTMWMbJ+
+ opQgr5cb8SPQyyb508fc8b4uD8ejlF/cdbbBNktp3BXsHlO5BrmcABgxSP8HYYNsX0n9kERv
+ NMToU0oiBuAaX7O/0K9+BW+3+PGMwiu5ml0cwDqljxfVN0dUBZnQ8kZpLsY+WDrIHmQWjtH+
+ Ir6VauZs5Gp25XLrL6bh/SL8aK0BX6y79m5nhfKI1/6qtzHAjtMAjqy8ChPvOqVVVqmGUzFg
+ KPsrrIoklWcYHXPyMLj9afispPVR8e0tMKvxzFBWzrWX1mzljbBlnV2n8BIwVXWNbgwpHSsj
+ imgcU9TTGC5qd9g=
+Message-ID: <9c873e57-84c8-75af-1d44-60e7cd41282d@ilande.co.uk>
+Date:   Wed, 5 Sep 2018 05:37:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180905023522.GA1444@jagdpanzerIV>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <35247ddc-303b-89d0-53b5-231c1a293721@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 86.138.87.37
+X-SA-Exim-Mail-From: mark.cave-ayland@ilande.co.uk
+Subject: Re: [PATCH 3/3] of: make default address and size cells sizes private
+X-SA-Exim-Version: 4.2.1 (built Sun, 08 Jan 2012 02:45:44 +0000)
+X-SA-Exim-Scanned: Yes (on s16892447.onlinehome-server.info)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 05/09/18 02:55, Frank Rowand wrote:
 
-On 05-09-18 04:35, Sergey Senozhatsky wrote:
-> Hi,
-> 
-> On (09/04/18 20:01), Hans de Goede wrote:
->> Commit 375899cddcbb ("printk: make sure to print log on console."), moved
->> the checking of the loglevel of messages from flush time to the actual
->> log time.
+> On 08/30/18 12:05, Rob Herring wrote:
+>> Only some old OpenFirmware implementations rely on default sizes. Any
+>> FDT and modern implementation should have explicit properties. Make the
+>> OF_ROOT_NODE_*_CELLS_DEFAULT defines private so we don't get any outside
+>> users.
 >>
->> This introduces one problem, some early boot messages are printed before
->> parse_early_param() gets called and thus before kernel commandline options
->> such as quiet, loglevel and ignore_loglevel are parsed.
-> 
-> Do you use earlycon?
+>> This also gets us one step closer to removing the asm/prom.h dependency on
+>> Sparc.
 
-No, I'm seeing this with the regular/normal console stuff.
+Just for the record: you say "any FDT and modern implementation should
+have explicit properties", however the default values of these
+properties when missing are clearly defined in the IEEE-1275
+specification (Annex A):
 
->> This causes e.g. the following messages to get printed on x86 systems,
->> despite the presence of the "quiet" option:
->>
->> [    0.000000] BIOS-provided physical RAM map:
->> [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000057fff] usable
->> ...
->> [    0.000000] BIOS-e820: [mem 0x0000000100000000-0x0000000874ffffff] usable
->>
->> This commit fixes this by setting a new LOG_CHK_LEVEL on early boot
->> messages and doing the loglevel check for these while flushing as before.
->>
-> 
-> Hmm, OK, chances are we need to re-think 375899cddcbb. It might be
-> the case that we sort of broke CON_PRINTBUFFER handling.
-> 
-> 	console_loglevel = CONSOLE_LOGLEVEL_MOTORMOUTH
-> 	register CON_PRINTBUFFER console
-> 		-> no debug output
-> 
-> So I think that when console_unlock() re-flushes already seen logbuf
-> messages to a newly registered exclusive [CON_PRINTBUFFER] console we
-> probably need to look at the current console_loglevel in console_unlock()
-> loop.
+"#address-cells"
+Standard property name to define the package’s address format.
+...
+In a package with a "decode-unit" method, a missing "#address-cells"
+property signifies that the number of
+address cells is two.
 
-So if it breaks quiet and the above use-case maybe we should revert
-375899cddcbb for now?
+"#size-cells"
+Standard property name to define the package’s address size format.
+...
+A missing "#size-cells" property signifies the default value of one.
 
-Regards,
+I can't speak for FDT but it isn't completely unreasonable for a guest
+parsing a DT without these properties to assume these default values.
 
-Hans
+
+ATB,
+
+Mark.
