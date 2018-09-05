@@ -2,78 +2,130 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083DCC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32083C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB372073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nu+3NcQI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB372073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D12432073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12432073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeIEMU1 (ORCPT
+        id S1727834AbeIEMUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:20:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50394 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeIEMU1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:20:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=spSW9CKH/pSMgZh28Hnk8qV1dn+fO84v+Oblx+8OxH8=; b=Nu+3NcQIiTfY1q4mUzAPJq2W2
-        gSAySAZwI5cYJ4DqjBhjobjWHaEkOGWyil5zjctOaxSOIOHbRiFNlrMQFBm6g+1Eq5bAYpicPX/Iz
-        kNZEoPxHPJHjPHqo3yGtPx7NdeZK0DYAo42ZndQWI8SN3wey41AwnFwh8VLCdOGNNuxdIxIZkaPQr
-        k3nIhc8CYk0RL5XeJICvcHmBAQ7JjJMakA4ArvdIzr6XVW4Bv1mU1mJ+7lzfLmxgqv8X3tQ/+ewie
-        wg/hT8yUldInZ669t+4peyrINqw+pHxsF7l/eco0o+XnoAMSMn2c/NPATM+zi/hXV3EYgBoYzCUeB
-        9G91xG8cg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxSb0-0003B9-J6; Wed, 05 Sep 2018 07:51:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C49D420191BFE; Wed,  5 Sep 2018 09:51:24 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 09:51:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
- be applied on arbitrary tasks
-Message-ID: <20180905075124.GM24124@hirez.programming.kicks-ass.net>
-References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
- <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
+        Wed, 5 Sep 2018 08:20:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36344 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbeIEMUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 08:20:45 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 171F920795; Wed,  5 Sep 2018 09:51:47 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D46B9206DE;
+        Wed,  5 Sep 2018 09:51:36 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 09:51:36 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64:
+ Enable HDMI output on A64 boards w/ HDMI
+Message-ID: <20180905075136.chumwosx76o2n66l@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-12-icenowy@aosc.io>
+ <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gtusaa4loc5rodye"
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 04:40:57PM +0200, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
-> 
-> Current ptrace_may_access() implementation assumes that the 'source' task is
-> always the caller (current).
 
-Note that now you 'fixed' the new user, this is still true. Which makes
-me think you do not in fact need this patch, right?
+--gtusaa4loc5rodye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
+> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> > From: Jagan Teki <jagan@amarulasolutions.com>
+> >
+> > Enable all necessary device tree nodes and add connector node to device
+> > trees for all supported A64 boards with HDMI.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > [Icenowy: squash all board patches altogether and change supply name]
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > ---
+> > Changes in v4:
+> > - Rebase some device trees.
+> > Changes in v3,1:
+> > - Squash all enablement patches altogether.
+> > - Change supply name to match DT binding & driver change.
+> > Changes for v3:
+> > - Enable all pipeline components
+> > Changes for v2:
+> > - none
+> >
+> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+> >  6 files changed, 204 insertions(+)
+>=20
+> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
+> A64-Olinuxino, NPI-A64
+>=20
+> Pine64 boards look unable by saying
+> [drm] Cannot find any crtc or sizes
+>=20
+> May be someone can confirm, it.
+
+Then we should drop the pine64 additions until someone figures it out,
+as it has been already discussed.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--gtusaa4loc5rodye
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPiwcACgkQ0rTAlCFN
+r3SElg//XDj99sAXXwkPKmW6hF9CnEGV/SAmzw8P/sbjvHMQmXH1sDS4KC8F3BAk
+AQvA8rQI/Scm4lS9A+6obtT+a4XXWb2icKYeee73wb68goVhPS3lbftl0EzW3IrB
+sCgDhiDKlNmacwMG5qM663UgfsnusbfqEae+KTHdpyskHgz5RUPve/SmzsAPtFhV
+aK42v/glNWGogb+U39CI9B1Ox9UYiwm1JKOWkCfDHV/uRwpRtan7XmmSKJLZadOq
+MJXinDRuO6w4UO6eCkvL6m9Nf8npKF5lrjGOMBInISysAfDD/Tgb8gquvr2dq2G/
+iDjXzVH+brqrjl8CNSUpwNleAmQ/pP4NN9zyQfP+g7d7EioIEGa2GRttxTYhoUuO
+lkDI77d/zidEjW7Sr4OCRqNSfWdb3RNvHBrtevqaSLbUGwiwcudPLUkVTQnarsQr
+q4Hr92d+gaZu/jyH4vw4C9U3LNv5QdUw7ITtaUjkiUD83f23LpsFwQvDhsgJh0j9
+vDCISwBDG8rb22PajSCgqUl7EtXon5O5PuwAiwDw/mmU2ZCREapcfbZw4rRRMLBN
+K4612S/5sxzw1DA8BZL+rG/LdaJIMwhvIdq8P3Xi0YakGvG68+fpK7Jj0cTGMxQD
+MaWCa/lW1SHaCBH6wgqt89v9p0h6zlGT08P5PIzZMcfXGRezVqk=
+=uU07
+-----END PGP SIGNATURE-----
+
+--gtusaa4loc5rodye--
