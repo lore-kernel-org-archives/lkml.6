@@ -2,93 +2,119 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A95C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56ABC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C476D205F4
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C47205F4
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DLU1nz2K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C476D205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CzYbztGi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C47205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbeIEOKO (ORCPT
+        id S1727870AbeIEOOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 10:10:14 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51040 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeIEOKN (ORCPT
+        Wed, 5 Sep 2018 10:14:53 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:51400 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeIEOOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:10:13 -0400
-Received: by mail-it0-f65.google.com with SMTP id j81-v6so9035199ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:40:50 -0700 (PDT)
+        Wed, 5 Sep 2018 10:14:53 -0400
+Received: by mail-it0-f44.google.com with SMTP id e14-v6so9035809itf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=rYq0Ns5WGGJalVHH4oW3meuf2mv7nKvVF0ltZc7tpuE=;
-        b=DLU1nz2KNHACnqki/243K3MQtLEnxwD1tCrRyCpZQiUFrSD8STWJvMHYd4r9dw3xUP
-         PnTrZvbFogUyRJlE/jLp+Yx4VPhVoN/NX/XisA4euim40F6OfP7CWQSwLgsqARTT+YNX
-         U3txHwUHNwrO1+GKqASrMvD1W70R4GGFa0jJg=
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=PfPGwGLvJnysUc8C5bXebeQdV7w+CDfwfnVO5I1prEQ=;
+        b=CzYbztGi4xq3zgkOAlTEelqqdkBZclSW2S0br8QSxRHHcBPgQyyMurP5NiNPz9iiA7
+         XQqQNBdmyAFhBq94e0QRlfr8TpGI1T9NKgyShwcXvIFUXgChPxB+5cB6te+vcc1WOzHH
+         O8cW8MNjEJ2nYoMZ7ao9G4JK/XpLv5jJKeIls=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=rYq0Ns5WGGJalVHH4oW3meuf2mv7nKvVF0ltZc7tpuE=;
-        b=Nqk1sXiQsngn3yR5mfexEQeADMOxb5AkYLVMEtWno1xLWsmjadA02HuMRZRGkeaxTq
-         SpfAIAA5ytu86Pc+LnO44V1Azf9SJUkpa9r4f6VNLKWo8Q5VnTvcmbYtkAcVdRoh8CpI
-         113n7QpnKEDgWnGv6B2aHa8X1uKRzjEAB/eW3IdizWo5EO72D49nYPipgLZDsHCD6H6c
-         hFFm3g6/XRCFhiISqpDqa14V8Fnf5Li1LUxbVXZVTL4XyKUNHtzcy5UeiVhnEKLoejJF
-         H+GVfmPvtM7UyA1xRewSVOGBqAPhwWe6j/FJ/86N4IobMedUZBFXFWd7Km9HBFLboAEy
-         C9bA==
-X-Gm-Message-State: APzg51DdKy+yIfJHzG5UEO7mXBlfPhSARumAOemOZQ0wSNezEN0NfnYc
-        EPiHo41K5m4RWfVCdAu8i8Xth0u6R7alk/Bm97r4WQ==
-X-Google-Smtp-Source: ANB0VdY4J/wRQqANXuNWPmqaF4t+S3Dz+XcxMz51TaOT1AE6y3nk5aCYjrsQ7jLTuz4PBLNG+uhPMgZgSxyF2OvPVqw=
-X-Received: by 2002:a24:99c3:: with SMTP id a186-v6mr11035314ite.128.1536140449789;
- Wed, 05 Sep 2018 02:40:49 -0700 (PDT)
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=PfPGwGLvJnysUc8C5bXebeQdV7w+CDfwfnVO5I1prEQ=;
+        b=PiKUNeuEktWDva4GIflV7IyHTn2c/VrfOyyTaWJhlxilC8dWhUS5B1h6v+TLdKDfqy
+         ynlmueCbWtv2SyBvkxrig3c2tMYezAY8ApAdrSxnAc1Og2HRruI6ie2Dzb/XpqWySjQ0
+         Zs7qKt6+BlPRvtKN6nR6YEzr1EnHFL53DJSyJRTdaoS0d4VmC57suyCLEJJkXZveB6ba
+         yeHPoTzlrU7qDdghHJBaYt+R6N37ZxLNVAlX58ANMT4FBPHCypd1kxW80LZUq2iTiMO3
+         roa+RXjVXz/r4ZIy/C4/PZ+LTo31/tVhH8B/HIk4PUwH65XHeT3qecHzrxIDEnKmV1+c
+         +Onw==
+X-Gm-Message-State: APzg51BH3Q4dzrFsDpX83gn7esZ1vycv4VDN/vwio12c1os0DsNU/34S
+        XPsFzGVaABBqlDbelV8fPR+H/HyE5O5m6udbxTdVUA==
+X-Google-Smtp-Source: ANB0Vdb3K5Imx1ahECffasgKAhmpQ08Le0Mu1uIMRHio/8EU0OtnLwqneu+fREEisfROb876Ww4qKu40jr/KNgcx+x8=
+X-Received: by 2002:a24:8203:: with SMTP id t3-v6mr2995821itd.150.1536140727799;
+ Wed, 05 Sep 2018 02:45:27 -0700 (PDT)
+From:   Kashyap Desai <kashyap.desai@broadcom.com>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+ <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+ <615d78004495aebc53807156d04d988c@mail.gmail.com> <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
+ <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
+ <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com> <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
+ <66256272c020be186becdd7a3f049302@mail.gmail.com> <alpine.DEB.2.21.1809031719460.1383@nanos.tec.linutronix.de>
+ <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com> <f436fa6a-b865-fadb-4f77-44309ff84405@163.com>
+In-Reply-To: <f436fa6a-b865-fadb-4f77-44309ff84405@163.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:1c06:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 02:40:49 -0700 (PDT)
-In-Reply-To: <bf917897-1697-a6c4-7f77-8dfa74dddc8a@broadcom.com>
-References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
- <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
- <fb07b89d-d427-5e59-9f17-b12df26284ec@broadcom.com> <CAKv+Gu-R7eX=aj=O2-gpzmp0K4t0T4s536UiqJZs0WuxRjkYwQ@mail.gmail.com>
- <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
- <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
- <CAOesGMgLHx3+j1bWEsMWsN-yjGNZyLOpAjLg0Jut8gG=ADE25g@mail.gmail.com>
- <CAKv+Gu_x=bS4xJcD_LuEnnN=Lx4Jc87uK8J_ACdA9EeUqtM3Yg@mail.gmail.com>
- <CACxGe6uK+N5XUqZhH7gAQXoq+QXMvFPHF_i4WqivrufTU=0cog@mail.gmail.com> <bf917897-1697-a6c4-7f77-8dfa74dddc8a@broadcom.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 5 Sep 2018 11:40:49 +0200
-Message-ID: <CAKv+Gu8FK9K0G-GJygdpkwqKYzjvpDDj8TyGTC2u0SRxK3ez_w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Grant Likely <grant.likely@secretlab.ca>,
-        Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UAiSubfsBGBaHbgI3aj7TAe+rdbUBJEp+nAJfSXIOAX62R1ABhljzHgIazpE8Asv00cwBl1+FOAMPYBbsocaohNA=
+Date:   Wed, 5 Sep 2018 15:15:20 +0530
+Message-ID: <c0f779f1d5ef131c39f9397f97d453e8@mail.gmail.com>
+Subject: RE: Affinity managed interrupts vs non-managed interrupts
+To:     Dou Liyang <dou_liyang@163.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Alexander Graf <agraf@suse.de>
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 September 2018 at 19:19, Scott Branden <scott.branden@broadcom.com> wrote:
+> Hi Thomas, Kashyap,
 >
-> Rather than introduce EFI_ARMSTUB_DTB_LOADER, why not have
-> the efistub use CONFIG_OF to determine whether it supports dtb= or not?
+> At 09/04/2018 06:29 PM, Kashyap Desai wrote:
+> >>> I am using " for-4.19/block " and this particular patch "a0c9259
+> >>> irq/matrix: Spread interrupts on allocation" is included.
+> >>
 >
-> That way ACPI-only distros disable devicetree support entirely.
+> IMO, this patch is just used for non-managed interrupts.
 >
+> >> So if all 16 have their effective affinity set to CPU0 then that's
+> > strange
+>
+> But, all these 16 are managed interrupts, and will be assigned vectors
+> by assign_managed_vector():
+> {
+>      cpumask_and(vector_searchmask, vector_searchmask, affmsk);
+>      cpu = cpumask_first(vector_searchmask);
+>
+>      ...
+>      vector = irq_matrix_alloc_managed(vector_matrix, cpu);
+>      ...
+> }
+>
+> Where we always used the *first* cpu in the vector_searchmask(0-71), not
+> the suitable one. So I guess this situation happened.
+>
+> Shall we also spread the managed interrupts on allocation?
 
-Unfortunately, CONFIG_OF cannot be disabled on arm64 even on ACPI-only builds.
+
+Hi Dou,
+
+I tried your proposed patch. Using patch, It is not assigning effective irq
+to CPU = 0 , but it pick *one* cpu from 0-71 range.
+Eventually, effective cpu is always *one* logical cpu. Behavior is
+different, but impact is still same.
