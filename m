@@ -2,269 +2,97 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AFAC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD32C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16812073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:56:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16812073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 828562073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:57:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="xpfIJvB1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828562073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeIFC2y (ORCPT
+        id S1727850AbeIFC36 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:28:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727703AbeIFC2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:28:53 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EAF9A402242D;
-        Wed,  5 Sep 2018 21:56:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 178692027EA0;
-        Wed,  5 Sep 2018 21:56:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 22/22] KEYS: asym_tpm: Add support for the sign operation
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 22:56:42 +0100
-Message-ID: <153618460258.7946.14928570863758355701.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Wed, 5 Sep 2018 22:29:58 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46529 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbeIFC35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:29:57 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 203-v6so7525151ljj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=OVVNnHzewIHfcfDovqBjdmGc4nqgMW6z7CFEk3SaGXw=;
+        b=xpfIJvB1J+VyNXl7dnEM9oARfCh3uOdqFCzOVPme2AWVLZBC4bHlkalwwyL0RINlWb
+         WzR1pFzHXe7WHpdCIgIU2/PrtkBAsy0O/UX1rAPIDml0NTsVFdbgzY3Sqyrbhbv0GbsV
+         T5sXto8tSbxVUjvOmuykBOZdiLCMmmR46tyAr8iaqMPg15/CjkR4dA9P6wAt1IxsqLFl
+         O0ahS1PQmv1Tm87u5P0aELxchK3krso3rx37UbaD12+QNowgCPNmkE04S3AU3Q5n2w5Z
+         y7ynnI0i6tsm4kBIjVH2VqbjIDCmQK5Esm8gUmoqBtk2inf5V7J4KXOVokjkoRZk4G2C
+         mWNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=OVVNnHzewIHfcfDovqBjdmGc4nqgMW6z7CFEk3SaGXw=;
+        b=e7WFGMPNH4/VyvG8tc/uUUSnOVYMjIaHteQ+BPpl+p027qiuPs26yXQEi4NDG87/sX
+         shGHCKTkqSVY3NCqc0Mj5jCTaYjciOnWzMOQPEBUOUmzfETBRIz+QZPMWJj8TLkLV6u7
+         H8Pbz9Ky+dt0ryGxQbdbKCO7ypkAP4uMr31rpeBlOeb7j7/NrZm6JQJH/8DHZP+6y2Mr
+         UU+cdcRpcwywn8BnlVsNArC161B01hMueFY0xJsFOjMcAntucLnQ8Df+Ww9YOl3Amz65
+         njhNVZN1ns3JukOcqsfobuOdS0iNLY21743tKT7f6Zw9cF4rDcufAGcsivyvGp/5r5Ho
+         DBjg==
+X-Gm-Message-State: APzg51BAxxzd3GM4AEeu2x2uuasJEpzwWfuygocPV6eL5nDSEMap1MMe
+        YSWbldQmL/S8D+BETFpMOANr1etjLw3UBX2iAgYjYg==
+X-Google-Smtp-Source: ANB0VdZRd3bLhTxzKRO6hORPGfXD9SVMJmnyPQRTBpegp31YtJ9DEIFLnvEzNqC4bmc1KD3FYErE6MHKlTebGM2ez8o=
+X-Received: by 2002:a2e:8188:: with SMTP id e8-v6mr24271487ljg.138.1536184667102;
+ Wed, 05 Sep 2018 14:57:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 05 Sep 2018 21:56:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 05 Sep 2018 21:56:43 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Received: by 2002:a19:d984:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 14:57:46 -0700 (PDT)
+X-Originating-IP: [2620:10d:c090:200::5:31c9]
+In-Reply-To: <20180905190750.4566-1-grant.likely@arm.com>
+References: <20180905190750.4566-1-grant.likely@arm.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Wed, 5 Sep 2018 14:57:46 -0700
+Message-ID: <CAOesGMjzEKsa1rx-kHemcSyT2PudLeCd7OrogrVdn99efTXg8g@mail.gmail.com>
+Subject: Re: [PATCH] efi_stub: update documentation on dtb= parameter
+To:     Grant Likely <grant.likely@arm.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Kenzior <denkenz@gmail.com>
+On Wed, Sep 5, 2018 at 12:07 PM, Grant Likely <grant.likely@arm.com> wrote:
+> The dtb= parameter is no longer the primary mechanism for providing a
+> devicetree to the kernel. Now either firmware or the boot selector (ex.
+> Grub) should provide the devicetree and dtb= should only be used for
+> debug or when using firmware that doesn't understand DT.
+> Update the EFI stub documentation to reflect the current usage.
+>
+> Signed-off-by: Grant Likely <grant.likely@arm.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
 
-The sign operation can operate in a non-hashed mode by running the RSA
-sign operation directly on the input.  This assumes that the input is
-less than key_size_in_bytes - 11.  Since the TPM performs its own PKCS1
-padding, it isn't possible to support 'raw' mode, only 'pkcs1'.
+Acked-by: Olof Johansson <olof@lixom.net>
 
-Alternatively, a hashed version is also possible.  In this variant the
-input is hashed (by userspace) via the selected hash function first.
-Then this implementation takes care of converting the hash to ASN.1
-format and the sign operation is performed on the result.  This is
-similar to the implementation inside crypto/rsa-pkcs1pad.c.
 
-ASN1 templates were copied from crypto/rsa-pkcs1pad.c.  There seems to
-be no easy way to expose that functionality, but likely the templates
-should be shared somehow.
-
-The sign operation is implemented via TPM_Sign operation on the TPM.
-It is assumed that the TPM wrapped key provided uses
-TPM_SS_RSASSAPKCS1v15_DER signature scheme.  This allows the TPM_Sign
-operation to work on data up to key_len_in_bytes - 11 bytes long.
-
-In theory, we could also use TPM_Unbind instead of TPM_Sign, but we would
-have to manually pkcs1 pad the digest first.
-
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- crypto/asymmetric_keys/asym_tpm.c |  156 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+), 1 deletion(-)
-
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index a5a5f913a74f..5d4c270463f6 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -435,7 +435,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
- 
- 	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
- 			      KEYCTL_SUPPORTS_DECRYPT |
--			      KEYCTL_SUPPORTS_VERIFY;
-+			      KEYCTL_SUPPORTS_VERIFY |
-+			      KEYCTL_SUPPORTS_SIGN;
- 
- 	ret = 0;
- error_free_tfm:
-@@ -556,6 +557,156 @@ static int tpm_key_decrypt(struct tpm_key *tk,
- 	return r;
- }
- 
-+/*
-+ * Hash algorithm OIDs plus ASN.1 DER wrappings [RFC4880 sec 5.2.2].
-+ */
-+static const u8 digest_info_md5[] = {
-+	0x30, 0x20, 0x30, 0x0c, 0x06, 0x08,
-+	0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x02, 0x05, /* OID */
-+	0x05, 0x00, 0x04, 0x10
-+};
-+
-+static const u8 digest_info_sha1[] = {
-+	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
-+	0x2b, 0x0e, 0x03, 0x02, 0x1a,
-+	0x05, 0x00, 0x04, 0x14
-+};
-+
-+static const u8 digest_info_rmd160[] = {
-+	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
-+	0x2b, 0x24, 0x03, 0x02, 0x01,
-+	0x05, 0x00, 0x04, 0x14
-+};
-+
-+static const u8 digest_info_sha224[] = {
-+	0x30, 0x2d, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04,
-+	0x05, 0x00, 0x04, 0x1c
-+};
-+
-+static const u8 digest_info_sha256[] = {
-+	0x30, 0x31, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01,
-+	0x05, 0x00, 0x04, 0x20
-+};
-+
-+static const u8 digest_info_sha384[] = {
-+	0x30, 0x41, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02,
-+	0x05, 0x00, 0x04, 0x30
-+};
-+
-+static const u8 digest_info_sha512[] = {
-+	0x30, 0x51, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03,
-+	0x05, 0x00, 0x04, 0x40
-+};
-+
-+static const struct asn1_template {
-+	const char	*name;
-+	const u8	*data;
-+	size_t		size;
-+} asn1_templates[] = {
-+#define _(X) { #X, digest_info_##X, sizeof(digest_info_##X) }
-+	_(md5),
-+	_(sha1),
-+	_(rmd160),
-+	_(sha256),
-+	_(sha384),
-+	_(sha512),
-+	_(sha224),
-+	{ NULL }
-+#undef _
-+};
-+
-+static const struct asn1_template *lookup_asn1(const char *name)
-+{
-+	const struct asn1_template *p;
-+
-+	for (p = asn1_templates; p->name; p++)
-+		if (strcmp(name, p->name) == 0)
-+			return p;
-+	return NULL;
-+}
-+
-+/*
-+ * Sign operation is performed with the private key in the TPM.
-+ */
-+static int tpm_key_sign(struct tpm_key *tk,
-+			struct kernel_pkey_params *params,
-+			const void *in, void *out)
-+{
-+	struct tpm_buf *tb;
-+	uint32_t keyhandle;
-+	uint8_t srkauth[SHA1_DIGEST_SIZE];
-+	uint8_t keyauth[SHA1_DIGEST_SIZE];
-+	void *asn1_wrapped = NULL;
-+	uint32_t in_len = params->in_len;
-+	int r;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (strcmp(params->encoding, "pkcs1"))
-+		return -ENOPKG;
-+
-+	if (params->hash_algo) {
-+		const struct asn1_template *asn1 =
-+						lookup_asn1(params->hash_algo);
-+
-+		if (!asn1)
-+			return -ENOPKG;
-+
-+		/* request enough space for the ASN.1 template + input hash */
-+		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
-+		if (!asn1_wrapped)
-+			return -ENOMEM;
-+
-+		/* Copy ASN.1 template, then the input */
-+		memcpy(asn1_wrapped, asn1->data, asn1->size);
-+		memcpy(asn1_wrapped + asn1->size, in, in_len);
-+
-+		in = asn1_wrapped;
-+		in_len += asn1->size;
-+	}
-+
-+	if (in_len > tk->key_len / 8 - 11) {
-+		r = -EOVERFLOW;
-+		goto error_free_asn1_wrapped;
-+	}
-+
-+	r = -ENOMEM;
-+	tb = kzalloc(sizeof(*tb), GFP_KERNEL);
-+	if (!tb)
-+		goto error_free_asn1_wrapped;
-+
-+	/* TODO: Handle a non-all zero SRK authorization */
-+	memset(srkauth, 0, sizeof(srkauth));
-+
-+	r = tpm_loadkey2(tb, SRKHANDLE, srkauth,
-+			 tk->blob, tk->blob_len, &keyhandle);
-+	if (r < 0) {
-+		pr_devel("loadkey2 failed (%d)\n", r);
-+		goto error_free_tb;
-+	}
-+
-+	/* TODO: Handle a non-all zero key authorization */
-+	memset(keyauth, 0, sizeof(keyauth));
-+
-+	r = tpm_sign(tb, keyhandle, keyauth, in, in_len, out, params->out_len);
-+	if (r < 0)
-+		pr_devel("tpm_sign failed (%d)\n", r);
-+
-+	if (tpm_flushspecific(tb, keyhandle) < 0)
-+		pr_devel("flushspecific failed (%d)\n", r);
-+
-+error_free_tb:
-+	kzfree(tb);
-+error_free_asn1_wrapped:
-+	kfree(asn1_wrapped);
-+	pr_devel("<==%s() = %d\n", __func__, r);
-+	return r;
-+}
-+
- /*
-  * Do encryption, decryption and signing ops.
-  */
-@@ -573,6 +724,9 @@ static int tpm_key_eds_op(struct kernel_pkey_params *params,
- 	case kernel_pkey_decrypt:
- 		ret = tpm_key_decrypt(tk, params, in, out);
- 		break;
-+	case kernel_pkey_sign:
-+		ret = tpm_key_sign(tk, params, in, out);
-+		break;
- 	default:
- 		BUG();
- 	}
-
+-Olof
