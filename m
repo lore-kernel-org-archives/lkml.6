@@ -2,109 +2,108 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328D5C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E08C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDA97206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC26E206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:11:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ns/QWa1W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA97206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xq1DyZ6q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC26E206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeIENi5 (ORCPT
+        id S1727965AbeIENlD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:38:57 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55404 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeIENi5 (ORCPT
+        Wed, 5 Sep 2018 09:41:03 -0400
+Received: from mail-io0-f177.google.com ([209.85.223.177]:36635 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbeIENlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:38:57 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8598ooN186591;
-        Wed, 5 Sep 2018 09:09:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=dOZIlZYOlUxpSQ0fB5cLwlffwsuwqAggFvA8ftpXZMs=;
- b=ns/QWa1WocEzRY6sL36nUpEbhi7O24lUUpSS3eKYZMOWB3jYdhJBVm4AQRyAi0Ivr44W
- 0DxdilND66u52ZNLVv0uDuaWi95HM0U81UvZWkeFS8wuKXsezf4qWSsxMoDfhcYqczJx
- +DNptL67u/Rm5tWtM/n4ppVJTwrghM2LkSMPCqsvZ2Opk9+KQaMb3IuH8ZpwNGCC3gQ5
- 6IurjPpAvnZXWmu4idU5Wpz4r5iCrNgfFmKeDtCyAfztSmKZMaM/AEA5tvn8xd3QRdjm
- a2liXK84O2mrkkbYaA6kaUxws6A8NzS9eNDISMA9DW2CLNBGVgcl+nijm6nVCESLPzqr AQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2m7jqpjjv9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Sep 2018 09:09:37 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8599ZqO028001
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Sep 2018 09:09:36 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8599Y5F032593;
-        Wed, 5 Sep 2018 09:09:35 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Sep 2018 02:09:34 -0700
-Date:   Wed, 5 Sep 2018 12:09:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Martijn Coenen <maco@android.com>
-Cc:     gregkh@linuxfoundation.org, tkjos@google.com, arve@android.com,
-        amit.pundir@linaro.org, devel@driverdev.osuosl.org,
-        smoreland@google.com, linux-kernel@vger.kernel.org,
-        robenea@google.com, maco@google.com, john.stultz@linaro.org,
-        peskal@google.com
-Subject: Re: [PATCH] ANDROID: binder: Add BINDER_GET_NODE_INFO_FOR_REF ioctl.
-Message-ID: <20180905090925.474dugeix3ssykcz@mwanda>
-References: <20180905073346.157318-1-maco@android.com>
+        Wed, 5 Sep 2018 09:41:02 -0400
+Received: by mail-io0-f177.google.com with SMTP id q5-v6so5386881iop.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1ODv8hk1dFKeFgmpydpsBgEkNER0NAuijChGnsK5t8U=;
+        b=Xq1DyZ6qXF0N/sHoXyXzUj2WtRRQkxwmmD5BC4RS31XwmTc+JAe6YIk3CTOVNLfaG7
+         63RqdsYjPa7OcPLR9FnxeyMCF6ih0g86lvcnqWmBpHqDFk8rcSAsCkxvj1zqf3ufDobE
+         Rpy7PfssBGgVmCA6JzzLhRR2fjadlxPzLzmfg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ODv8hk1dFKeFgmpydpsBgEkNER0NAuijChGnsK5t8U=;
+        b=Y3QRCOPz73t3np+T34qtcZLVMR4I3FV7Q63BtyoqgM7LbPb0hG1lApaJAobA2xMCNA
+         XGWlCN/InXIwok6WAtQu6YOvNfYL7lujoGN1sRV9Y5fRUno8m3KuptifzbKkHkBvuYzM
+         xqafXzkwrYRI8ikApndVLM8mgLSmsNjBXmkrNhJrCB5/wC9KWsHG51TrihhFYiVDS2dP
+         y+TMmOyq2qzS6Spz7++5U0b+hv39pmPg2kAhDRBWogaCvq7n4F3F2s2UkNmUljVeU8/+
+         FYCdrtjRc8P8ZY8ouIwBb/1ogUR4BAmX7a2yiiF54qHE64yPUFbHp2QLl5Dw2vmjKybE
+         GoIA==
+X-Gm-Message-State: APzg51BXH/s9c2zhXiP63ZExmsb4neuFIhzXY6RAuICI5PcRPdlSj33q
+        bz8x6KRKY6Qb0paGG0hfqflPof2t1TsGaQLNAizF8++Q
+X-Google-Smtp-Source: ANB0VdYdgsnnMEqRocx0r9preJsVUfPxR7M9oPW7IURWGy2bZHqygTqAGaPuZyl0CH3tOO3zcgb0fYvbfUi3mDP2Qrg=
+X-Received: by 2002:a6b:e51a:: with SMTP id y26-v6mr24069728ioc.42.1536138706476;
+ Wed, 05 Sep 2018 02:11:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905073346.157318-1-maco@android.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809050098
+References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
+ <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+ <20180904082424.GA2090@linux.vnet.ibm.com> <20180904093626.GA23936@linaro.org>
+ <20180904103742.GC61288@linux.vnet.ibm.com> <CAKfTPtBVLWgtRJpP0nTOVpkwJse6BwrGa28o4qat0T3kOvEAfw@mail.gmail.com>
+ <20180905085029.GA57420@linux.vnet.ibm.com>
+In-Reply-To: <20180905085029.GA57420@linux.vnet.ibm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 5 Sep 2018 11:11:35 +0200
+Message-ID: <CAKfTPtCzznnkR-DDw5DkHYef0nLtB+Yt9UHYMMaJdKD043H7XA@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 09:33:46AM +0200, Martijn Coenen wrote:
-> diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
-> index bfaec6903b8bc..a54a680ff2936 100644
-> --- a/include/uapi/linux/android/binder.h
-> +++ b/include/uapi/linux/android/binder.h
-> @@ -200,6 +200,13 @@ struct binder_node_debug_info {
->  	__u32            has_weak_ref;
->  };
->  
-> +struct binder_node_info_for_ref {
-> +	__u32            handle;
-> +	__u32            strong_count;
-> +	__u32            weak_count;
-> +	__u64            reserved;
-> +};
+On Wed, 5 Sep 2018 at 10:50, Srikar Dronamraju
+<srikar@linux.vnet.ibm.com> wrote:
+>
+> * Vincent Guittot <vincent.guittot@linaro.org> [2018-09-05 09:36:42]:
+>
+> > >
+> > > I dont know of any systems that have come with single threaded and
+> > > multithreaded. However some user can still offline few threads in a core
+> > > while leaving other cores untouched. I dont really know why somebody
+> > > would want to do it.  For example, some customer was toying with SMT 3
+> > > mode in a SMT 8 power8 box.
+> >
+> > In this case, it means that we have the same core capacity whatever
+> > the number of CPUs
+> > and a core with SMT 3 will be set with the same compute capacity as
+> > the core with SMT 8.
+> > Does it still make sense ?
+> >
+>
+> To me it make sense atleast from  a power 8 perspective, because SMT 1 >
+> SMT 2 > SMT 4 > SMT8. So if one core is configured for SMT 2 and other
+> core is configured for SMT4; all threads being busy, the  individual
+> threads running on SMT2 core will complete more work than SMT 4 core
+> threads.
 
-What's the reserved for?  On 64 bit systems there is a 4 byte struct
-hole between weak_count and reserved.  Why not just make reserved a
-__u32 and get rid of the hole?  (Not rhetorical, I have no idea).
+I agree for individual thread capacity but at core group level, the
+core SMT 1 will have the same capacity as core group SMT 8 so load
+balance will try to balance evenly the tasks between the 2 cores
+whereas core SMT 8 > core SMT1 , isn't it ?
 
-Btw, people sometimes complain about that we don't check that user input
-is zeroed in ioctls.  Like for example maybe they're passing random data
-in the the strong_count field and then later we decide that actually
-that field should mean something but we can't make it mean anything
-because we've been letting the user put whatever they want there.  These
-are just random thoughts in my head, not necessarily important.
-
-regards,
-dan carpenter
-
+>
+> --
+> Thanks and Regards
+> Srikar Dronamraju
+>
