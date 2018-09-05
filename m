@@ -2,64 +2,78 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FEDDC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1927BC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398F22073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:59:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 398F22073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id B6BD62073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:01:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6BD62073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeIFDcU (ORCPT
+        id S1727703AbeIFDdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 23:32:20 -0400
-Received: from gate.crashing.org ([63.228.1.57]:57993 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727611AbeIFDcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 23:32:20 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w85MraJR023368;
-        Wed, 5 Sep 2018 17:53:39 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id w85MrXZH023366;
-        Wed, 5 Sep 2018 17:53:33 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Wed, 5 Sep 2018 17:53:33 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Dirk Gouders <dirk@gouders.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 07/11] kbuild: use 'include' directive to load auto.conf from top Makefile
-Message-ID: <20180905225333.GA23155@gate.crashing.org>
-References: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com> <1532072796-7947-8-git-send-email-yamada.masahiro@socionext.com> <20180903093945.GA1195@zn.tnic> <CAK7LNAQOd-QA6E7189q4K-p_9ReRtE88UbhtuXS9600nOQTgaA@mail.gmail.com> <20180903100021.GD10249@zn.tnic>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180903100021.GD10249@zn.tnic>
-User-Agent: Mutt/1.4.2.3i
+        Wed, 5 Sep 2018 23:33:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:60554 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727604AbeIFDdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 23:33:43 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fxgnP-0008At-MV; Thu, 06 Sep 2018 01:01:11 +0200
+Date:   Thu, 6 Sep 2018 01:01:09 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc:     Christopher Lameter <cl@linux.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
+        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
+        dave@stgolabs.net, dave.dice@oracle.com,
+        Dhaval Giani <dhaval.giani@oracle.com>, ktkhai@virtuozzo.com,
+        Pavel.Tatashin@microsoft.com, paulmck@linux.vnet.ibm.com,
+        shady.issa@oracle.com, tariqt@mellanox.com, tim.c.chen@intel.com,
+        vbabka@suse.cz, longman@redhat.com, yang.shi@linux.alibaba.com,
+        shy828301@gmail.com, Huang Ying <ying.huang@intel.com>,
+        subhra.mazumdar@oracle.com,
+        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
+        ashwinch@google.com, sqazi@google.com,
+        Shakeel Butt <shakeelb@google.com>, walken@google.com,
+        rientjes@google.com, junaids@google.com,
+        Neha Agarwal <nehaagarwal@google.com>
+Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
+In-Reply-To: <839e2703-1588-0873-00a7-d04810f403cf@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.21.1809060059390.1416@nanos.tec.linutronix.de>
+References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com> <01000165aa490dc9-64abf872-afd1-4a81-a46d-a50d0131de93-000000@email.amazonses.com> <839e2703-1588-0873-00a7-d04810f403cf@linux.vnet.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 12:00:21PM +0200, Borislav Petkov wrote:
-> On Mon, Sep 03, 2018 at 06:54:12PM +0900, Masahiro Yamada wrote:
-> > You are right - I missed this usecase,
-> > but I still want to excuse "it is rare enough".
+On Wed, 5 Sep 2018, Laurent Dufour wrote:
+> On 05/09/2018 17:10, Christopher Lameter wrote:
+> > Large page sizes also reduce contention there.
 > 
-> Isn't there a Makefile way to check file existence before including it?
+> That's true for the page fault path, but for process's actions manipulating the
+> memory process's layout (mmap,munmap,madvise,mprotect) the impact is minimal
+> unless the code has to manipulate the page tables.
 
-Sure there is, you can use $(wildcard ) .
+And how exactly are you going to do any of those operations _without_
+manipulating the page tables?
 
+Thanks,
 
-Segher
+	tglx
