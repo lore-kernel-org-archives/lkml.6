@@ -6,151 +6,298 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116A8C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CEDC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD66320867
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD66320867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id EE8D020861
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8D020861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeIETvN (ORCPT
+        id S1727626AbeIETvg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:51:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38838 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbeIETvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:51:13 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEBDC20861;
-        Wed,  5 Sep 2018 15:20:32 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 11:20:31 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH] lockdep: Have assert functions test for actual
- interrupts disabled
-Message-ID: <20180905112031.540aa81b@gandalf.local.home>
-In-Reply-To: <20180806214107.110626d0@gandalf.local.home>
-References: <20180806214107.110626d0@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 5 Sep 2018 15:51:36 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34995 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbeIETvf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 15:51:35 -0400
+Received: by mail-ed1-f68.google.com with SMTP id y20-v6so6422408edq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 08:20:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4WthY2xSy2gW4DvE6ulaz5vxL3SXAaP7FH4Dtu0T3jQ=;
+        b=Vl/Hfip4iW7zSeWhILDAWzZKC//DpwAPqU7rq6m9WuWEpKJI1r5nKAyLqJgNib3Chv
+         /MMsi7AHB5K3LgRlkMkyz+X+nHmKy2QjkfPuEzabw7iFu1ZNW+i0uYeo6LHAson9x/X+
+         v6pdGEYNk51mg1IGmRzYM1iAaNVcGoDhWfg5QWBPfFPWQXnr/2+PLdo0MziCz6H0fz9R
+         bvoxxJY6VCRklhZrJ0zpsA7fk8Bd5frZY/K7BlcBmzHnXWh8HCaG6YImpU+Lp7UfspX6
+         X9Qp68446+kHUEkc2kqXkp0U7lZpglWSXcYPw+yddi/OFgW7PRTodI9mdLoybzU2DroZ
+         AA7A==
+X-Gm-Message-State: APzg51DqcuHz4PLMfSoRA/ck1uBvxSNkXM7Pv+3Y6MHnj+YR7c94iunM
+        h1lViqNpMD5pnFaGXALeqFzQ4A==
+X-Google-Smtp-Source: ANB0VdYkuYsKSy6p/Q9mpLfjXByqWsoo4x6OCIW5JvcJ6ycKGdxySGZXEgFHX+UDA2ThN0Tc3Eks+g==
+X-Received: by 2002:a50:ad5a:: with SMTP id z26-v6mr41747576edc.142.1536160854537;
+        Wed, 05 Sep 2018 08:20:54 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 30-v6sm1220271edt.24.2018.09.05.08.20.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 08:20:53 -0700 (PDT)
+Subject: Re: [PATCH 4.19 regression fix] printk: For early boot messages check
+ loglevel when flushing the buffer
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Maninder Singh <maninder1.s@samsung.com>
+References: <20180904180154.845-1-hdegoede@redhat.com>
+ <20180905023522.GA1444@jagdpanzerIV>
+ <93901f2b-91ad-a910-7031-0040b827a3af@redhat.com>
+ <20180905053609.GA19936@jagdpanzerIV> <20180905083326.GC19936@jagdpanzerIV>
+ <20180905110207.rxy3upplgkjbk5oi@pathway.suse.cz>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <eeada499-1624-6a6c-783a-d017301bbd86@redhat.com>
+Date:   Wed, 5 Sep 2018 17:20:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180905110207.rxy3upplgkjbk5oi@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+HI,
 
-Peter, you OK with this patch? I'm currently triggering a bug (in rc2)
-where this patch is telling me that lockdep is getting it wrong. It
-would be good to have this upstream such that we know if it is really a
-bug in the code itself, or if lockdep didn't keep up properly.
-
--- Steve
-
-
-On Mon, 6 Aug 2018 21:41:07 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On 05-09-18 13:02, Petr Mladek wrote:
+> On Wed 2018-09-05 17:33:26, Sergey Senozhatsky wrote:
+>> On (09/05/18 14:36), Sergey Senozhatsky wrote:
+>>>
+>>> Just a demonstration of the idea. It does not look very good, tho.
+>>> I'd rather have just one suppress_message_printing() in printk code.
+>>>
+>>> // This is not a proposed patch, hence the 80-cols violation.
+>>>
+>>> ---
+>>>
+>>> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+>>> index c036f128cdc3..231ac18423e1 100644
+>>> --- a/kernel/printk/printk.c
+>>> +++ b/kernel/printk/printk.c
+>>> @@ -2416,7 +2416,7 @@ void console_unlock(void)
+>>>   			break;
+>>>   
+>>>   		msg = log_from_idx(console_idx);
+>>> -		if (msg->flags & LOG_NOCONS) {
+>>> +		if (msg->flags & LOG_NOCONS || (exclusive_console && suppress_message_printing(msg->level))) {
+>>>   			/*
+>>>   			 * Skip record if !ignore_loglevel, and
+>>>   			 * record has level above the console loglevel.
+>>
+>> D'oh... Sorry about that, but, believe it or not, this is completely
+>> not what I had in my mind. What I had, was something like this:
+>>
+>> ---
+>>
+>> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+>> index c036f128cdc3..dadb8c11b0d6 100644
+>> --- a/kernel/printk/printk.c
+>> +++ b/kernel/printk/printk.c
+>> @@ -2416,6 +2416,11 @@ void console_unlock(void)
+>>   			break;
+>>   
+>>   		msg = log_from_idx(console_idx);
+>> +
+>> +		if (exclusive_console &&
+>> +				!suppress_message_printing(msg->level))
+>> +			msg->flags &= ~LOG_NOCONS;
 > 
-> While working on irqs disabled tracepoints, I triggered the following
-> warning:
+> Hmm, this does not help with consoles without CON_PRINTBUFFER
+> flag. Note that the first registered console prints all messages
+> even without this flag.
 > 
->  ------------[ cut here ]------------
->  IRQs not disabled as expected
->  WARNING: CPU: 0 PID: 0 at kernel/softirq.c:144 __local_bh_enable+0x9b/0xe0
->  Modules linked in:
->  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.18.0-rc6-test+ #1099
->  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
->  RIP: 0010:__local_bh_enable+0x9b/0xe0
->  Code: 5b d2 30 00 8b 85 98 08 00 00 85 c0 74 bf 80 3d ff eb 06 02 00 75 b6 48 c7 c7 80 89 46 8c c6 05 ef eb 06 02 01 e8 15 4e ff ff <0f> 0b eb 9f 48 8b 7c 24 10 e8 67 5f 09 00 eb b2 48 8b 6c 24 10 48 
->  RSP: 0018:ffff8800d3e07f50 EFLAGS: 00010082
->  RAX: 0000000000000000 RBX: 0000000000000100 RCX: 0000000000000000
->  RDX: 0000000000000102 RSI: dffffc0000000000 RDI: ffffffff8e57dc00
->  RBP: ffffffff8cc1f980 R08: fffffbfff199f449 R09: fffffbfff199f448
->  R10: ffff8800d3e2643f R11: ffffed001a7c4c88 R12: 0000000000000007
->  R13: 0000000000000008 R14: 0000000000000007 R15: 0000000000000000
->  FS:  0000000000000000(0000) GS:ffff8800d3e00000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000000000000 CR3: 00000000cac14001 CR4: 00000000001606f0
->  Call Trace:
->   <IRQ>
->   __do_softirq+0x4a0/0x55a
->   irq_exit+0x128/0x130
->   reschedule_interrupt+0xf/0x20
->   </IRQ>
->  RIP: 0010:cpuidle_enter_state+0xcc/0x430
->  Code: 63 55 ff 48 89 04 24 0f 1f 44 00 00 31 ff e8 7b 8d 55 ff 80 7c 24 10 00 0f 85 fb 02 00 00 e8 eb a8 69 ff fb 66 0f 1f 44 00 00 <4c> 8b 3c 24 4c 2b 7c 24 08 48 ba cf f7 53 e3 a5 9b c4 20 48 8d 7b 
->  RSP: 0018:ffffffff8cc07d18 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff02
->  RAX: 0000000000025140 RBX: ffff8800d3e34f00 RCX: ffffffff8b1cec2e
->  RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8cd4a868
->  RBP: ffffffff8cf1b660 R08: ffffed001a7c43db R09: 0000000000000000
->  R10: ffff8800d3e2643f R11: ffffed001a7c4c88 R12: ffffffff8cf1b7f8
->  R13: 0000000000000004 R14: ffffffff8cf1b7e0 R15: ffffffff8cf1b820
->   ? __srcu_read_unlock+0x1e/0x40
->   ? cpuidle_enter_state+0xc5/0x430
->   do_idle+0x28f/0x300
->   ? arch_cpu_idle_exit+0x40/0x40
->   ? schedule_idle+0x39/0x50
->   cpu_startup_entry+0xc2/0xd0
->   ? cpu_in_idle+0x20/0x20
->   ? preempt_count_sub+0xaa/0x100
->   ? preempt_count_add+0xaf/0xd0
->   start_kernel+0x640/0x67d
->   ? thread_stack_cache_init+0x6/0x6
->   ? load_ucode_intel_bsp+0x5f/0xa5
->   ? load_ucode_intel_bsp+0x5f/0xa5
->   ? init_intel_microcode+0xb0/0xb0
->   ? load_ucode_bsp+0xbb/0x156
->   secondary_startup_64+0xa5/0xb0
->  irq event stamp: 9229434
->  hardirqs last  enabled at (9229434): [<ffffffff8b004453>] trace_hardirqs_on_thunk+0x1a/0x1c
->  hardirqs last disabled at (9229433): [<ffffffff8b00446f>] trace_hardirqs_off_thunk+0x1a/0x1c
->  softirqs last  enabled at (9229416): [<ffffffff8b10d35c>] irq_enter+0x7c/0x80
->  softirqs last disabled at (9229417): [<ffffffff8b10d488>] irq_exit+0x128/0x130
->  ---[ end trace 35ba8f92a3c06fd6 ]---
->  ------------[ cut here ]------------
+> Also there is "debug" earlyparam where we need the opposite. I mean
+> that we want to show messages that were suppressed by default.
 > 
-> When investigating, I found that interrupts were actually disabled, but
-> the bug was that lockdep was confused. As the asserts for expecting
-> interrupts disabled is now done by lockdep state tracking, it would be
-> nice to know if the bug is the interrupts not being disabled or lockdep
-> just thinking that they are disabled. Add a check within the WARN_ON()
-> to do the actual irqs_disabled() check (which only gets done when
-> lockdep thinks there's an error), and show that lockdep is broken if it
-> does not match up with the real state of interrupts.
+> I played with another solution, see the patch below. It defines
+> which messages have a valid NOCONS flag according to the msg_seq
+> number. IMHO, it is a bit more straightforward but it is still
+> a hack. I am not super happy about it.
 > 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ----
-> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> index a8113357ceeb..c50c80eea41d 100644
-> --- a/include/linux/lockdep.h
-> +++ b/include/linux/lockdep.h
-> @@ -601,12 +601,16 @@ do {									\
->  #define lockdep_assert_irqs_enabled()	do {				\
->  		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
->  			  !current->hardirqs_enabled,			\
-> -			  "IRQs not enabled as expected\n");		\
-> +			  irqs_disabled() ?				\
-> +			  "IRQs not enabled as expected\n" :		\
-> +			  "IRQs enabled but lockdep reports they are disabled\n"); \
->  	} while (0)
->  
->  #define lockdep_assert_irqs_disabled()	do {				\
->  		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
->  			  current->hardirqs_enabled,			\
-> +			  irqs_disabled() ?				\
-> +			  "IRQs disabled but lockdep reports they are enabled\n" : \
->  			  "IRQs not disabled as expected\n");		\
->  	} while (0)
->  
+> 
+> Hmm, I seriously think about reverting the commit 375899cddcbb
+> ("printk: make sure to print log on console.") and solving it
+> another way.
+> 
+> For example, the commit was primary about locations that
+> wanted to make some messages always visible or always
+> suppressed. We could create LOG_FORCE_NOCONS and
+> LOG_FORCE_CONS for these two special cases.
+> 
+> 
+> 
+> Possible solution:
 
+So do you want me to give this solution a try or was this mainly for
+discussion purposes?   If you've a fix which you think you are
+happy with and plan to merge I would be happy to try it.
+
+Regards,
+
+Hans
+
+
+
+> 
+> 
+>  From c0fb2d83ca3ca0bab5e1de5a6e29a1b96756a530 Mon Sep 17 00:00:00 2001
+> From: Petr Mladek <pmladek@suse.com>
+> Date: Wed, 5 Sep 2018 12:57:18 +0200
+> Subject: [RFC PATCH] printk: Possible solution for loglevel manipulation by
+>   earlyparams
+> 
+> Early params that manipulate console_loglevel should invalidate
+> LOG_NOCONS flag for all the existing messages.
+> ---
+>   include/linux/console.h |  2 ++
+>   init/main.c             |  6 +++---
+>   kernel/printk/printk.c  | 27 +++++++++++++++++++++++----
+>   3 files changed, 28 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/console.h b/include/linux/console.h
+> index ec9bdb3d7bab..3d3f7ab8f82e 100644
+> --- a/include/linux/console.h
+> +++ b/include/linux/console.h
+> @@ -195,6 +195,8 @@ extern bool console_suspend_enabled;
+>   extern void suspend_console(void);
+>   extern void resume_console(void);
+>   
+> +extern void console_set_default_loglevel(int loglevel);
+> +
+>   int mda_console_init(void);
+>   void prom_con_init(void);
+>   
+> diff --git a/init/main.c b/init/main.c
+> index 18f8f0140fa0..936466209494 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -213,13 +213,13 @@ EXPORT_SYMBOL(loops_per_jiffy);
+>   
+>   static int __init debug_kernel(char *str)
+>   {
+> -	console_loglevel = CONSOLE_LOGLEVEL_DEBUG;
+> +	console_set_default_loglevel(CONSOLE_LOGLEVEL_DEBUG);
+>   	return 0;
+>   }
+>   
+>   static int __init quiet_kernel(char *str)
+>   {
+> -	console_loglevel = CONSOLE_LOGLEVEL_QUIET;
+> +	console_set_default_loglevel(CONSOLE_LOGLEVEL_QUIET);
+>   	return 0;
+>   }
+>   
+> @@ -236,7 +236,7 @@ static int __init loglevel(char *str)
+>   	 * are quite hard to debug
+>   	 */
+>   	if (get_option(&str, &newlevel)) {
+> -		console_loglevel = newlevel;
+> +		console_set_default_loglevel(newlevel);
+>   		return 0;
+>   	}
+>   
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 924e37fb1620..b5a0074302e9 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -430,6 +430,9 @@ static u32 console_idx;
+>   static u64 clear_seq;
+>   static u32 clear_idx;
+>   
+> +/* Invalidate nocons flag setting before early param are proceed */
+> +static u64 console_valid_nocons_seq;
+> +
+>   #define PREFIX_MAX		32
+>   #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
+>   
+> @@ -1148,11 +1151,19 @@ module_param(ignore_loglevel, bool, S_IRUGO | S_IWUSR);
+>   MODULE_PARM_DESC(ignore_loglevel,
+>   		 "ignore loglevel setting (prints all kernel messages to the console)");
+>   
+> -static bool suppress_message_printing(int level)
+> +static bool nocons_loglevel(int level)
+>   {
+>   	return (level >= console_loglevel && !ignore_loglevel);
+>   }
+>   
+> +static bool nocons_msg(struct printk_log *msg)
+> +{
+> +	if (console_seq >= console_valid_nocons_seq)
+> +		return msg->flags & LOG_NOCONS;
+> +
+> +	return nocons_loglevel(msg->level);
+> +}
+> +
+>   #ifdef CONFIG_BOOT_PRINTK_DELAY
+>   
+>   static int boot_delay; /* msecs delay after each printk during bootup */
+> @@ -1182,7 +1193,7 @@ static void boot_delay_msec(int level)
+>   	unsigned long timeout;
+>   
+>   	if ((boot_delay == 0 || system_state >= SYSTEM_RUNNING)
+> -		|| suppress_message_printing(level)) {
+> +		|| nocons_loglevel(level)) {
+>   		return;
+>   	}
+>   
+> @@ -1882,7 +1893,7 @@ int vprintk_store(int facility, int level,
+>   	if (dict)
+>   		lflags |= LOG_PREFIX|LOG_NEWLINE;
+>   
+> -	if (suppress_message_printing(level))
+> +	if (nocons_loglevel(level))
+>   		lflags |= LOG_NOCONS;
+>   
+>   	return log_output(facility, level, lflags,
+> @@ -2031,6 +2042,7 @@ static void console_lock_spinning_enable(void) { }
+>   static int console_lock_spinning_disable_and_check(void) { return 0; }
+>   static void call_console_drivers(const char *ext_text, size_t ext_len,
+>   				 const char *text, size_t len) {}
+> +static bool nocons_msg(struct printk_log *msg) { return false; }
+>   static size_t msg_print_text(const struct printk_log *msg,
+>   			     bool syslog, char *buf, size_t size) { return 0; }
+>   
+> @@ -2197,6 +2209,13 @@ void resume_console(void)
+>   	console_unlock();
+>   }
+>   
+> +void console_set_default_loglevel(int loglevel)
+> +{
+> +	console_loglevel = loglevel;
+> +	/* Invalidate nocons flag for earlier messages. */
+> +	console_valid_nocons_seq = log_next_seq;
+> +}
+> +
+>   /**
+>    * console_cpu_notify - print deferred console messages after CPU hotplug
+>    * @cpu: unused
+> @@ -2369,7 +2388,7 @@ void console_unlock(void)
+>   			break;
+>   
+>   		msg = log_from_idx(console_idx);
+> -		if (msg->flags & LOG_NOCONS) {
+> +		if (nocons_msg(msg)) {
+>   			/*
+>   			 * Skip record if !ignore_loglevel, and
+>   			 * record has level above the console loglevel.
+> 
