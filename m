@@ -2,173 +2,100 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA0BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F358FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504F82075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:22:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504F82075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BBFC2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:22:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=orpaltech.com header.i=@orpaltech.com header.b="jg0jusuS";
+	dkim=pass (1024-bit key) header.d=orpaltech.com header.i=@orpaltech.com header.b="jg0jusuS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BBFC2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=orpaltech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbeIEOwG (ORCPT
+        id S1727987AbeIEOwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 10:52:06 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25279 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727749AbeIEOwF (ORCPT
+        Wed, 5 Sep 2018 10:52:31 -0400
+Received: from fallback18.mail.ru ([185.5.136.250]:44512 "EHLO
+        fallback18.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbeIEOwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:52:05 -0400
-X-UUID: 26ae8d84daab439f9f30996df325ebd1-20180905
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1535252480; Wed, 05 Sep 2018 18:22:25 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 5 Sep 2018 18:22:24 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 5 Sep 2018 18:22:24 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Sean Wang <sean.wang@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 3/5] arm: dts: mt7623: add iommu/smi device nodes
-Date:   Wed, 5 Sep 2018 18:22:19 +0800
-Message-ID: <2d9d216adb779bac6f5515b39cfeaed8b4b61878.1536141302.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
-References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
+        Wed, 5 Sep 2018 10:52:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=orpaltech.com; s=mailru;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=Xv5BBv6gaX2hjK1QbH9ItQWr2NnTtkgzhjkX5dUnGTI=;
+        b=jg0jusuSFuiBHQh6vdHkVpAVsFYka8+s4lCLFnHrJpUGP8jYIpQ6L5eBP6xalLyJQlaQlOCXS1+LOCuFCoY3TRU3apeQobPo6QLOSTZ9Ju6kPwrxJoNFb9BdJH96KAfc608WTYIH5iJk8t8Z+9ARgbzefk+eH6UsugXX/xB12wo=;
+Received: from [10.161.25.38] (port=51546 helo=smtp61.i.mail.ru)
+        by fallback18.m.smailru.net with esmtp (envelope-from <ssuloev@orpaltech.com>)
+        id 1fxUxZ-00062B-Ic; Wed, 05 Sep 2018 13:22:54 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=orpaltech.com; s=mailru;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=Xv5BBv6gaX2hjK1QbH9ItQWr2NnTtkgzhjkX5dUnGTI=;
+        b=jg0jusuSFuiBHQh6vdHkVpAVsFYka8+s4lCLFnHrJpUGP8jYIpQ6L5eBP6xalLyJQlaQlOCXS1+LOCuFCoY3TRU3apeQobPo6QLOSTZ9Ju6kPwrxJoNFb9BdJH96KAfc608WTYIH5iJk8t8Z+9ARgbzefk+eH6UsugXX/xB12wo=;
+Received: by smtp61.i.mail.ru with esmtpa (envelope-from <ssuloev@orpaltech.com>)
+        id 1fxUxI-0006uc-4A; Wed, 05 Sep 2018 13:22:36 +0300
+Subject: Re: [PATCH v4 02/11] clk: sunxi-ng: a64: Add max. rate constraint to
+ video PLLs
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Cc:     devicetree@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-3-icenowy@aosc.io>
+ <20180905071645.ibhcuq5coc6gl6k3@flea>
+From:   Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <5b78f888-c226-8b8d-1064-2e135c82f48e@orpaltech.com>
+Date:   Wed, 5 Sep 2018 13:22:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20180905071645.ibhcuq5coc6gl6k3@flea>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-7FA49CB5: 0D63561A33F958A54D7709F6AE7F20786A82CD453AE9C1BFD15701184EE561D18941B15DA834481FA18204E546F3947C1D471462564A2E19F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8BF80095D1E57F4578A471835C12D1D977C4224003CC8364767815B9869FA544D8090A508E0FED62991661749BA6B97735A5FD2DD08EB4836C2E03817F3C3E88BC8594870E79453796D76C6ED7039589DEBA3038C0950A5D36581343779C53C132BD4B6F7A4D31EC0B7815B9869FA544D8EC76A7562686271E6BA297DBC24807EA089D37D7C0E48F6C8AA50765F7900637DA2E6490C6839349F9AD81059B01093075ECD9A6C639B01B4E70A05D1297E1BBC6867C52282FAC85D9B7C4F32B44FF57DE7CCDD3542A186E00306258E7E6ABB4E4A6367B16DE6309
+X-Mailru-Sender: 30DC591EDC29363BFF304760EF2ED1FC8021C9E54B8C0887291C1C8FD1A2BFAE63F6532D673E2E2ABDDFED8717BCEDBE6706E619398572495361B2F6A2304D8A26FDF3AD049A4BDB574D8F419471B628AE208404248635DF
+X-Mras: OK
+X-7FA49CB5: 0D63561A33F958A5EDE0FC7A9834CC99BEE136D6845440C81C92F6B4D3E9C8EF8941B15DA834481FA18204E546F3947C1D471462564A2E19F6B57BC7E64490618DEB871D839B7333395957E7521B51C2545D4CF71C94A83E9FA2833FD35BB23D27C277FBC8AE2E8BAE9A1BBD95851C5BA471835C12D1D977C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F9A3D58A9A349F5073B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: A5480F10D64C9005EA165EA48716E38024B4F97BBBE38227E33268901D33A7C5CC546DEB668B2B435FC78D3D9DFD682EC77752E0C033A69E3DF03E4AFE169B847187F6D0DA2124709F6F601AB1435FA63CDA0F3B3F5B9367
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add iommu/smi device nodes for MT7623.
+Hi,
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- arch/arm/boot/dts/mt7623.dtsi | 59 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+On 09/05/2018 10:16 AM, Maxime Ripard wrote:
+> On Tue, Sep 04, 2018 at 12:40:44PM +0800, Icenowy Zheng wrote:
+>> Video PLLs on A64 can be set to higher rate that it is actually
+>> supported by HW.
+>>
+>> Limit maximum rate to 1008 MHz. This is the maximum allowed rate by BSP
+>> clock driver. Interestengly, user manual specifies maximum frequency to
+>> be 600 MHz. Historically, this data was wrong in some user manuals for
+>> other SoCs, so more faith is put in BSP clock driver.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Applied, thanks!
+> Maxime
+>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+what source tree this patch is supposed to apply for ?
+I can't find  the SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX declaration 
+in 4.19
 
-diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-index b7ccf8b..a46987b 100644
---- a/arch/arm/boot/dts/mt7623.dtsi
-+++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -13,6 +13,7 @@
- #include <dt-bindings/power/mt2701-power.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/phy/phy.h>
-+#include <dt-bindings/memory/mt2701-larb-port.h>
- #include <dt-bindings/reset/mt2701-resets.h>
- #include <dt-bindings/thermal/thermal.h>
- 
-@@ -286,6 +287,17 @@
- 		clock-names = "system-clk", "rtc-clk";
- 	};
- 
-+	smi_common: smi@1000c000 {
-+		compatible = "mediatek,mt7623-smi-common",
-+			     "mediatek,mt2701-smi-common";
-+		reg = <0 0x1000c000 0 0x1000>;
-+		clocks = <&infracfg CLK_INFRA_SMI>,
-+			 <&mmsys CLK_MM_SMI_COMMON>,
-+			 <&infracfg CLK_INFRA_SMI>;
-+		clock-names = "apb", "smi", "async";
-+		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
-+	};
-+
- 	pwrap: pwrap@1000d000 {
- 		compatible = "mediatek,mt7623-pwrap",
- 			     "mediatek,mt2701-pwrap";
-@@ -317,6 +329,17 @@
- 		reg = <0 0x10200100 0 0x1c>;
- 	};
- 
-+	iommu: mmsys_iommu@10205000 {
-+		compatible = "mediatek,mt7623-m4u",
-+			     "mediatek,mt2701-m4u";
-+		reg = <0 0x10205000 0 0x1000>;
-+		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&infracfg CLK_INFRA_M4U>;
-+		clock-names = "bclk";
-+		mediatek,larbs = <&larb0 &larb1 &larb2>;
-+		#iommu-cells = <1>;
-+	};
-+
- 	efuse: efuse@10206000 {
- 		compatible = "mediatek,mt7623-efuse",
- 			     "mediatek,mt8173-efuse";
-@@ -709,6 +732,18 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	larb0: larb@14010000 {
-+		compatible = "mediatek,mt7623-smi-larb",
-+			     "mediatek,mt2701-smi-larb";
-+		reg = <0 0x14010000 0 0x1000>;
-+		mediatek,smi = <&smi_common>;
-+		mediatek,larb-id = <0>;
-+		clocks = <&mmsys CLK_MM_SMI_LARB0>,
-+			 <&mmsys CLK_MM_SMI_LARB0>;
-+		clock-names = "apb", "smi";
-+		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
-+	};
-+
- 	imgsys: syscon@15000000 {
- 		compatible = "mediatek,mt7623-imgsys",
- 			     "mediatek,mt2701-imgsys",
-@@ -717,6 +752,18 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	larb2: larb@15001000 {
-+		compatible = "mediatek,mt7623-smi-larb",
-+			     "mediatek,mt2701-smi-larb";
-+		reg = <0 0x15001000 0 0x1000>;
-+		mediatek,smi = <&smi_common>;
-+		mediatek,larb-id = <2>;
-+		clocks = <&imgsys CLK_IMG_SMI_COMM>,
-+			 <&imgsys CLK_IMG_SMI_COMM>;
-+		clock-names = "apb", "smi";
-+		power-domains = <&scpsys MT2701_POWER_DOMAIN_ISP>;
-+	};
-+
- 	vdecsys: syscon@16000000 {
- 		compatible = "mediatek,mt7623-vdecsys",
- 			     "mediatek,mt2701-vdecsys",
-@@ -725,6 +772,18 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	larb1: larb@16010000 {
-+		compatible = "mediatek,mt7623-smi-larb",
-+			     "mediatek,mt2701-smi-larb";
-+		reg = <0 0x16010000 0 0x1000>;
-+		mediatek,smi = <&smi_common>;
-+		mediatek,larb-id = <1>;
-+		clocks = <&vdecsys CLK_VDEC_CKGEN>,
-+			 <&vdecsys CLK_VDEC_LARB>;
-+		clock-names = "apb", "smi";
-+		power-domains = <&scpsys MT2701_POWER_DOMAIN_VDEC>;
-+	};
-+
- 	hifsys: syscon@1a000000 {
- 		compatible = "mediatek,mt7623-hifsys",
- 			     "mediatek,mt2701-hifsys",
--- 
-1.9.1
-
+Thank you
+Sergey
