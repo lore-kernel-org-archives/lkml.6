@@ -2,102 +2,115 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C37C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F25CC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D4C2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:00:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dlO6izT4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2D4C2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B45D42073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:00:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45D42073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbeIEM3d (ORCPT
+        id S1727821AbeIEM3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:29:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58004 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbeIEM3d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:29:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Bccg/sqRmHoYryjYvfS8XDjyIJWrKKmY7wopmwauC3M=; b=dlO6izT4Gi+2NiVHVie8fGGP2
-        fUxqSV/qj9zDBP9UJHwu5bHjPRJkruvFWfX0xleb9uAJAjEj2G5mz8MwUQeXBM3vAgsGNu6CIJPCU
-        VPV/0NnRyKsiaQS5ba/f4IbjVkHrAj74CTQ+D02SX6XUIGcD5wp+6QlphYmtHNGOfjhitn/b+ahVA
-        d5474rJT6xA4cJU/PhM3VJpWG8TVfKAUVwOiiHD8C0VUwNnAwp2UNHUAI+cq6kYBiU9moFHUGGk7x
-        coyyQT1dw7oADON3XCUToyOURk6BMt5trGXK00PiMxk+S2TCz1A1b2v1YLWvzkKMH5zqN2GIPkLM2
-        Rcpv7oqYQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxSji-0003ky-0t; Wed, 05 Sep 2018 08:00:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D8D4C20191BFF; Wed,  5 Sep 2018 10:00:24 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 10:00:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
- be applied on arbitrary tasks
-Message-ID: <20180905080024.GP24124@hirez.programming.kicks-ass.net>
-References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
- <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
- <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
- <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 5 Sep 2018 08:29:40 -0400
+Received: from nautica.notk.org ([91.121.71.147]:36893 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeIEM3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 08:29:39 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 433EEC009; Wed,  5 Sep 2018 10:00:38 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Cc:     Gertjan Halkes <gertjan@google.com>,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dominique Martinet <dominique.martinet@cea.fr>
+Subject: [PATCH] 9p: readdir: do not trust pdu content for stat item size
+Date:   Wed,  5 Sep 2018 10:00:32 +0200
+Message-Id: <1536134432-11997-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 07:35:29PM +0200, Jiri Kosina wrote:
-> On Tue, 4 Sep 2018, Tim Chen wrote:
-> 
-> > > Current ptrace_may_access() implementation assumes that the 'source' task is
-> > > always the caller (current).
-> > > 
-> > > Expose ___ptrace_may_access() that can be used to apply the check on arbitrary
-> > > tasks.
-> > 
-> > Casey recently has proposed putting the decision making of whether to
-> > do IBPB in the security module.
-> > 
-> > https://lwn.net/ml/kernel-hardening/20180815235355.14908-4-casey.schaufler@intel.com/
-> > 
-> > That will have the advantage of giving the administrator a more flexibility
-> > of when to turn on IBPB.  The policy is very similar to what you have proposed here
-> > but I think the security module is a more appropriate place for the security policy.
-> 
-> Yeah, well, honestly, I have a bit hard time buying the "generic 
-> sidechannel prevention security module" idea, given how completely 
-> different in nature all the mitigations have been so far. I don't see that 
-> trying to abstract this somehow provides more clarity.
-> 
-> So if this should be done in LSM, it'd probably have to be written by 
-> someone else than me :) who actually understands how the "sidechannel LSM" 
-> idea works.
+From: Gertjan Halkes <gertjan@google.com>
 
-Yeah, I'm not convinced on LSM either. Lets just do these here patches
-first and then Casey can try and convince us later.
+v9fs_dir_readdir() could deadloop if a struct was sent with a size set
+to -2
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=88021
+Signed-off-by: Gertjan Halkes <gertjan@google.com>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+---
+
+This patch has been sitting in bugzilla for three years, I'll take it
+for the next merge window after some testing.
+Thanks Gertjan!
+
+ fs/9p/vfs_dir.c   | 8 +++-----
+ net/9p/protocol.c | 3 ++-
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index 48db9a9f13f9..cb6c4031af55 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -105,7 +105,6 @@ static int v9fs_dir_readdir(struct file *file, struct dir_context *ctx)
+ 	int err = 0;
+ 	struct p9_fid *fid;
+ 	int buflen;
+-	int reclen = 0;
+ 	struct p9_rdir *rdir;
+ 	struct kvec kvec;
+ 
+@@ -138,11 +137,10 @@ static int v9fs_dir_readdir(struct file *file, struct dir_context *ctx)
+ 		while (rdir->head < rdir->tail) {
+ 			err = p9stat_read(fid->clnt, rdir->buf + rdir->head,
+ 					  rdir->tail - rdir->head, &st);
+-			if (err) {
++			if (err <= 0) {
+ 				p9_debug(P9_DEBUG_VFS, "returned %d\n", err);
+ 				return -EIO;
+ 			}
+-			reclen = st.size+2;
+ 
+ 			over = !dir_emit(ctx, st.name, strlen(st.name),
+ 					 v9fs_qid2ino(&st.qid), dt_type(&st));
+@@ -150,8 +148,8 @@ static int v9fs_dir_readdir(struct file *file, struct dir_context *ctx)
+ 			if (over)
+ 				return 0;
+ 
+-			rdir->head += reclen;
+-			ctx->pos += reclen;
++			rdir->head += err;
++			ctx->pos += err;
+ 		}
+ 	}
+ }
+diff --git a/net/9p/protocol.c b/net/9p/protocol.c
+index ee32bbf12675..b4d80c533f89 100644
+--- a/net/9p/protocol.c
++++ b/net/9p/protocol.c
+@@ -571,9 +571,10 @@ int p9stat_read(struct p9_client *clnt, char *buf, int len, struct p9_wstat *st)
+ 	if (ret) {
+ 		p9_debug(P9_DEBUG_9P, "<<< p9stat_read failed: %d\n", ret);
+ 		trace_9p_protocol_dump(clnt, &fake_pdu);
++		return ret;
+ 	}
+ 
+-	return ret;
++	return fake_pdu.offset;
+ }
+ EXPORT_SYMBOL(p9stat_read);
+ 
+-- 
+2.17.1
+
