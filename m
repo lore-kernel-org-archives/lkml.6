@@ -2,84 +2,139 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UPPERCASE_75_100,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E583C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA99C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0EA20658
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:07:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F0EA20658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=BitWizard.nl
+	by mail.kernel.org (Postfix) with ESMTP id 0D87220658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:08:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D87220658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeIEQho (ORCPT
+        id S1727691AbeIEQiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:37:44 -0400
-Received: from cust-95-128-94-82.breedbanddelft.nl ([95.128.94.82]:50784 "EHLO
-        cust-95-128-94-82.breedbanddelft.nl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727311AbeIEQhn (ORCPT
+        Wed, 5 Sep 2018 12:38:23 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:33432 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726361AbeIEQiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:37:43 -0400
-Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
-        id 15BF013F6ED; Wed,  5 Sep 2018 14:07:46 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 14:07:46 +0200
-From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        bfields@fieldses.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: POSIX violation by writeback error
-Message-ID: <20180905120745.GP17123@BitWizard.nl>
-References: <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
- <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
- <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
- <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
- <20180904161203.GD17478@fieldses.org>
- <20180904162348.GN17123@BitWizard.nl>
- <20180904185411.GA22166@fieldses.org>
- <a9d586a8c520e52bad2396b93f8d5cb8a9fd2071.camel@redhat.com>
- <CAJDTihxE07BuXMBmShXuj=TbJCK1mq3ZMFMxP1-T=xjhPF5ySw@mail.gmail.com>
- <09ba078797a1327713e5c2d3111641246451c06e.camel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09ba078797a1327713e5c2d3111641246451c06e.camel@redhat.com>
-Organization: BitWizard B.V.
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 5 Sep 2018 12:38:23 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1720013|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03295;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CmtHaCX_1536149292;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CmtHaCX_1536149292)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Wed, 05 Sep 2018 20:08:12 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de
+Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
+        green.hu@gmail.com
+Subject: [PATCH V3 02/26] csky: defconfig
+Date:   Wed,  5 Sep 2018 20:07:41 +0800
+Message-Id: <dc7a52f2c2571a85c87e163d49cecddd3c2f2430.1536138304.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1536138304.git.ren_guo@c-sky.com>
+References: <cover.1536138304.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1536138304.git.ren_guo@c-sky.com>
+References: <cover.1536138304.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 06:55:15AM -0400, Jeff Layton wrote:
-> There is no requirement for a filesystem to flush data on close().
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+---
+ arch/csky/configs/defconfig | 76 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 arch/csky/configs/defconfig
 
-And you can't start doing things like that. In some weird cases, you
-might have an application open-write-close files at a much higher rate
-than what a harddisk can handle. And this has worked for years because
-the kernel caches stuff from inodes and data-blocks. If you suddenly
-write stuff to harddisk at 10ms for each seek between inode area and
-data-area... You end up limited to about 50 of these open-write-close
-cycles per second.
-
-My home system is now able make/write/close about 100000 files per
-second.
-
-assurancetourix:~/testfiles> time ../a.out 100000 000
-0.103u 0.999s 0:01.10 99.0%     0+0k 0+800000io 0pf+0w
-
-(The test program was accessing arguments beyond the end-of-arguments,
-An extra argument for this one time program was easier than
-open/fix/recompile).
-
-	Roger. 
-
+diff --git a/arch/csky/configs/defconfig b/arch/csky/configs/defconfig
+new file mode 100644
+index 0000000..c6a5a40
+--- /dev/null
++++ b/arch/csky/configs/defconfig
+@@ -0,0 +1,76 @@
++# CONFIG_LOCALVERSION_AUTO is not set
++CONFIG_DEFAULT_HOSTNAME="csky"
++# CONFIG_SWAP is not set
++CONFIG_SYSVIPC=y
++CONFIG_POSIX_MQUEUE=y
++CONFIG_USELIB=y
++CONFIG_AUDIT=y
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BSD_PROCESS_ACCT=y
++CONFIG_BSD_PROCESS_ACCT_V3=y
++CONFIG_RELAY=y
++CONFIG_SYSCTL_SYSCALL=y
++CONFIG_KALLSYMS_ALL=y
++CONFIG_USERFAULTFD=y
++CONFIG_EMBEDDED=y
++CONFIG_PROFILING=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_BLK_DEV_INTEGRITY=y
++CONFIG_DEFAULT_DEADLINE=y
++CONFIG_CPU_CK807=y
++CONFIG_CPU_HAS_FPU=y
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_BLK_DEV_RAM=y
++CONFIG_BLK_DEV_RAM_SIZE=65536
++CONFIG_VT_HW_CONSOLE_BINDING=y
++CONFIG_SERIAL_NONSTANDARD=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_TTY_PRINTK=y
++# CONFIG_VGA_CONSOLE is not set
++CONFIG_CSKY_MPTIMER=y
++CONFIG_GX6605S_TIMER=y
++CONFIG_PM_DEVFREQ=y
++CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
++CONFIG_DEVFREQ_GOV_PERFORMANCE=y
++CONFIG_DEVFREQ_GOV_POWERSAVE=y
++CONFIG_DEVFREQ_GOV_USERSPACE=y
++CONFIG_GENERIC_PHY=y
++CONFIG_EXT2_FS=y
++CONFIG_EXT2_FS_XATTR=y
++CONFIG_EXT2_FS_POSIX_ACL=y
++CONFIG_EXT2_FS_SECURITY=y
++CONFIG_EXT3_FS=y
++CONFIG_EXT3_FS_POSIX_ACL=y
++CONFIG_EXT3_FS_SECURITY=y
++CONFIG_FANOTIFY=y
++CONFIG_QUOTA=y
++CONFIG_FSCACHE=m
++CONFIG_FSCACHE_STATS=y
++CONFIG_CACHEFILES=m
++CONFIG_MSDOS_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_FAT_DEFAULT_UTF8=y
++CONFIG_NTFS_FS=y
++CONFIG_PROC_KCORE=y
++CONFIG_PROC_CHILDREN=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_CONFIGFS_FS=y
++CONFIG_CRAMFS=y
++CONFIG_ROMFS_FS=y
++CONFIG_NFS_FS=y
++CONFIG_PRINTK_TIME=y
++CONFIG_DEBUG_INFO=y
++CONFIG_UNUSED_SYMBOLS=y
++CONFIG_DEBUG_FS=y
++CONFIG_MAGIC_SYSRQ=y
 -- 
-** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
-**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
-*-- BitWizard writes Linux device drivers for any device you may have! --*
-The plan was simple, like my brother-in-law Phil. But unlike
-Phil, this plan just might work.
+2.7.4
+
