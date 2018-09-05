@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7495BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E9EC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE0C2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:00:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE0C2075E
+	by mail.kernel.org (Postfix) with ESMTP id 456602075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456602075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeIEUb0 (ORCPT
+        id S1728036AbeIEUbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:31:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40332 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727592AbeIEUbZ (ORCPT
+        Wed, 5 Sep 2018 16:31:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58604 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727364AbeIEUbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:31:25 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85FuhuF083493
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 12:00:35 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2maghme2jy-1
+        Wed, 5 Sep 2018 16:31:31 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85FtUY7013409
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 12:00:41 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2maj5w0hs1-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 12:00:33 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 12:00:35 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Wed, 5 Sep 2018 17:00:29 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 5 Sep 2018 17:00:34 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Sep 2018 17:00:24 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85G0Nw441484310
+        Wed, 5 Sep 2018 17:00:30 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85G0TCw38862914
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Sep 2018 16:00:24 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A25FA406E;
-        Wed,  5 Sep 2018 19:00:16 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B656A406B;
-        Wed,  5 Sep 2018 19:00:14 +0100 (BST)
+        Wed, 5 Sep 2018 16:00:29 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA7D511C04C;
+        Wed,  5 Sep 2018 19:00:21 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC10211C050;
+        Wed,  5 Sep 2018 19:00:19 +0100 (BST)
 Received: from rapoport-lnx (unknown [9.148.8.92])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  5 Sep 2018 19:00:14 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 05 Sep 2018 19:00:21 +0300
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  5 Sep 2018 19:00:19 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 05 Sep 2018 19:00:26 +0300
 From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -66,22 +66,21 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [RFC PATCH 13/29] memblock: replace __alloc_bootmem_nopanic with memblock_alloc_from_nopanic
-Date:   Wed,  5 Sep 2018 18:59:28 +0300
+Subject: [RFC PATCH 15/29] memblock: replace alloc_bootmem_pages_node with memblock_alloc_node
+Date:   Wed,  5 Sep 2018 18:59:30 +0300
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18090516-0020-0000-0000-000002C1B2EF
+x-cbid: 18090516-0008-0000-0000-0000026CBA34
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090516-0021-0000-0000-0000210EE25E
-Message-Id: <1536163184-26356-14-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18090516-0009-0000-0000-000021D4D859
+Message-Id: <1536163184-26356-16-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_09:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=698 adultscore=0 classifier=spam adjust=0 reason=mlx
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=747 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1809050164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -90,47 +89,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- arch/arc/kernel/unwind.c       | 4 ++--
- arch/x86/kernel/setup_percpu.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/ia64/mm/init.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arc/kernel/unwind.c b/arch/arc/kernel/unwind.c
-index 183391d..2a01dd1 100644
---- a/arch/arc/kernel/unwind.c
-+++ b/arch/arc/kernel/unwind.c
-@@ -181,8 +181,8 @@ static void init_unwind_hdr(struct unwind_table *table,
-  */
- static void *__init unw_hdr_alloc_early(unsigned long sz)
- {
--	return __alloc_bootmem_nopanic(sz, sizeof(unsigned int),
--				       MAX_DMA_ADDRESS);
-+	return memblock_alloc_from_nopanic(sz, sizeof(unsigned int),
-+					   MAX_DMA_ADDRESS);
- }
+diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
+index 3b85c3e..ffcc358 100644
+--- a/arch/ia64/mm/init.c
++++ b/arch/ia64/mm/init.c
+@@ -447,19 +447,19 @@ int __init create_mem_map_page_table(u64 start, u64 end, void *arg)
+ 	for (address = start_page; address < end_page; address += PAGE_SIZE) {
+ 		pgd = pgd_offset_k(address);
+ 		if (pgd_none(*pgd))
+-			pgd_populate(&init_mm, pgd, alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE));
++			pgd_populate(&init_mm, pgd, memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node));
+ 		pud = pud_offset(pgd, address);
  
- static void *unw_hdr_alloc(unsigned long sz)
-diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
-index 67d48e26..041663a 100644
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@ -106,7 +106,7 @@ static void * __init pcpu_alloc_bootmem(unsigned int cpu, unsigned long size,
- 	void *ptr;
+ 		if (pud_none(*pud))
+-			pud_populate(&init_mm, pud, alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE));
++			pud_populate(&init_mm, pud, memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node));
+ 		pmd = pmd_offset(pud, address);
  
- 	if (!node_online(node) || !NODE_DATA(node)) {
--		ptr = __alloc_bootmem_nopanic(size, align, goal);
-+		ptr = memblock_alloc_from_nopanic(size, align, goal);
- 		pr_info("cpu %d has no node %d or node-local memory\n",
- 			cpu, node);
- 		pr_debug("per cpu data for cpu%d %lu bytes at %016lx\n",
-@@ -121,7 +121,7 @@ static void * __init pcpu_alloc_bootmem(unsigned int cpu, unsigned long size,
+ 		if (pmd_none(*pmd))
+-			pmd_populate_kernel(&init_mm, pmd, alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE));
++			pmd_populate_kernel(&init_mm, pmd, memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node));
+ 		pte = pte_offset_kernel(pmd, address);
+ 
+ 		if (pte_none(*pte))
+-			set_pte(pte, pfn_pte(__pa(alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE)) >> PAGE_SHIFT,
++			set_pte(pte, pfn_pte(__pa(memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node))) >> PAGE_SHIFT,
+ 					     PAGE_KERNEL));
  	}
- 	return ptr;
- #else
--	return __alloc_bootmem_nopanic(size, align, goal);
-+	return memblock_alloc_from_nopanic(size, align, goal);
- #endif
- }
- 
+ 	return 0;
 -- 
 2.7.4
 
