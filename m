@@ -2,97 +2,82 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE658C4321E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6EAC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FD2B20890
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:28:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD2B20890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id E42BD20890
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:28:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42BD20890
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbeIEQ6m (ORCPT
+        id S1727953AbeIEQ6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:58:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 12:58:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:57320 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727808AbeIEQ6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:58:41 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC25020881;
-        Wed,  5 Sep 2018 12:28:38 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fxWvF-0002GG-PG; Wed, 05 Sep 2018 08:28:37 -0400
-Message-Id: <20180905122837.674583106@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 05 Sep 2018 08:28:14 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org,
-        Mike Galbraith <efault@gmx.de>
-Subject: [PATCH RT 20/22] sched: Allow pinned user tasks to be awakened to the CPU they pinned
-References: <20180905122754.443196118@goodmis.org>
+        id S1727808AbeIEQ6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:58:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E9217A9;
+        Wed,  5 Sep 2018 05:28:43 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 50C033F5BC;
+        Wed,  5 Sep 2018 05:28:43 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B7DAF1AE3546; Wed,  5 Sep 2018 13:28:57 +0100 (BST)
+Date:   Wed, 5 Sep 2018 13:28:57 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        npiggin@gmail.com, linux-mm@kvack.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        aneesh.kumar@linux.vnet.ibm.com
+Subject: Re: [PATCH v2 0/5] Extend and consolidate mmu_gather into new file
+Message-ID: <20180905122857.GH20186@arm.com>
+References: <1536061533-16188-1-git-send-email-will.deacon@arm.com>
+ <20180904125501.642e1004825350aca476a653@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904125501.642e1004825350aca476a653@linux-foundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14.63-rt41-rc1 stable review patch.
-If anyone has any objections, please let me know.
+On Tue, Sep 04, 2018 at 12:55:01PM -0700, Andrew Morton wrote:
+> On Tue,  4 Sep 2018 12:45:28 +0100 Will Deacon <will.deacon@arm.com> wrote:
+> 
+> > This series builds on the core changes I previously posted here:
+> > 
+> >   rfc:	http://lists.infradead.org/pipermail/linux-arm-kernel/2018-August/597821.html
+> >   v1:	http://lists.infradead.org/pipermail/linux-arm-kernel/2018-August/598919.html
+> > 
+> > The main changes are:
+> > 
+> >   * Move the mmu_gather bits out of memory.c and into their own file
+> >     (looped in the mm people for this)
+> > 
+> >   * Add a MAINTAINERS entry for the new file, and all tlb.h headers.
+> >     If any mm developers would like to be included here as well, please
+> >     just ask.
+> > 
+> > I'd like to queue these patches on their own branch in the arm64 git so
+> > that others can develop on top of them for the next merge window. Peter
+> > and Nick have both expressed an interest in that, and I already have a
+> > bunch of arm64 optimisations on top which I posted previously.
+> 
+> All looks good to me - please proceed that way.  Please also add me to
+> the MAINTAINERS record so I get more emails.
 
-------------------
+Cheers, Andrew. I'll add you to the MAINTAINERS entry and get this lot into
+-next once the kbuild robot is happy that I've got all the header files
+right.
 
-From: Mike Galbraith <efault@gmx.de>
-
-[ Upstream commit cd4d35ef89948221f7cd1751cee453943967364c ]
-
-Since commit 7af443ee16976 ("sched/core: Require cpu_active() in
-select_task_rq(), for user tasks") select_fallback_rq() will BUG() if
-the CPU to which a task has pinned itself and pinned becomes
-!cpu_active() while it slept.
-The task will continue running on the to-be-removed CPU and will remove
-itself from the CPU during takedown_cpu() (while cpuhp_pin_lock will be
-acquired) and move to another CPU based on its mask after the
-migrate_disable() section has been left.
-
-Cc: stable-rt@vger.kernel.org
-Signed-off-by: Mike Galbraith <efault@gmx.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a5ce37b90fca..6e6bd5262f23 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -980,7 +980,7 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
- 	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
- 		return false;
- 
--	if (is_per_cpu_kthread(p))
-+	if (is_per_cpu_kthread(p) || __migrate_disabled(p))
- 		return cpu_online(cpu);
- 
- 	return cpu_active(cpu);
--- 
-2.18.0
-
-
+Will
