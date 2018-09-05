@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D671C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D568C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ECB82083D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA8B12086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoNZSg3Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECB82083D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0sxXHO8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA8B12086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbeIFCjm (ORCPT
+        id S1728905AbeIFCjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:39:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54560 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 22:39:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbeIFCjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:39:40 -0400
+        id S1727593AbeIFCjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:39:43 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2114F2077C;
-        Wed,  5 Sep 2018 22:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAFC220652;
+        Wed,  5 Sep 2018 22:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536185248;
-        bh=r7sbqwk/uPZZkUf6y70h2HcZsTPOQxC6uszFFJLHeqE=;
+        s=default; t=1536185251;
+        bh=yXzM0ZYB/v8n7Zlw57xXXvb63giXgT/LBWfkJlfuRE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EoNZSg3QzKi/IX8/XAbeunussijy5sLkBQKxe8YB9eeaJbfSTKBjoEgjNJ4pHAyZ5
-         9HW6QBIgcO7v3q+bj/dMBw8qXVTzjeI+RokBiGLkXPIS2RwC29EuEtanbJMUelZldn
-         Ok3+j9ObQlqJRyt3cmGVP+CFBVUlMVoSr8Iulwlo=
+        b=T0sxXHO86fbYEpxIXsNWNVp+47sqWPvhENu2PMvwyPysn1hi/pzWVmVXuItCHJEBc
+         IJj50N7zA2kQ3FcIMZaYqB7Qf4xskeqQ8SrDcXPXNefkjFMAhPxlYKO2i8Tau5CvZF
+         H/TajCg9NvocvpEz/YpDSRGjnp2EArFeU//Osltc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 57/77] perf stat: Move 'null_run' to 'struct perf_stat_config'
-Date:   Wed,  5 Sep 2018 19:04:20 -0300
-Message-Id: <20180905220440.20256-58-acme@kernel.org>
+Subject: [PATCH 58/77] perf stat: Move 'print_free_counters_hint' to 'struct perf_stat_config'
+Date:   Wed,  5 Sep 2018 19:04:21 -0300
+Message-Id: <20180905220440.20256-59-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180905220440.20256-1-acme@kernel.org>
 References: <20180905220440.20256-1-acme@kernel.org>
@@ -59,8 +59,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Move the static 'null_run' variable to 'struct perf_stat_config', so
-that it can be passed around and used outside the 'perf stat' command.
+Move the 'print_free_counters_hint' variable to 'struct perf_stat_config',
+so that it can be passed around and used outside the 'perf stat' command.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -68,64 +68,55 @@ Cc: Andi Kleen <andi@firstfloor.org>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-33-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180830063252.23729-34-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 7 +++----
+ tools/perf/builtin-stat.c | 5 ++---
  tools/perf/util/stat.h    | 1 +
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 381549a989b4..844c755564e3 100644
+index 844c755564e3..8748bb5e5403 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -148,7 +148,6 @@ typedef int (*aggr_get_id_t)(struct cpu_map *m, int cpu);
- #define METRIC_ONLY_LEN 20
+@@ -170,7 +170,6 @@ static bool			append_file;
+ static bool			interval_count;
+ static const char		*output_name;
+ static int			output_fd;
+-static int			print_free_counters_hint;
+ static int			print_mixed_hw_group_error;
+ static u64			*walltime_run;
+ static bool			ru_display			= false;
+@@ -1051,7 +1050,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 			config->csv_sep);
  
- static volatile pid_t		child_pid			= -1;
--static bool			null_run			=  false;
- static int			detailed_run			=  0;
- static bool			transaction_run;
- static bool			topdown_run			= false;
-@@ -1676,7 +1675,7 @@ static void print_footer(struct perf_stat_config *config)
- 	FILE *output = config->output;
- 	int n;
+ 		if (counter->supported) {
+-			print_free_counters_hint = 1;
++			config->print_free_counters_hint = 1;
+ 			if (is_mixed_hw_group(counter))
+ 				print_mixed_hw_group_error = 1;
+ 		}
+@@ -1707,7 +1706,7 @@ static void print_footer(struct perf_stat_config *config)
+ 	}
+ 	fprintf(output, "\n\n");
  
--	if (!null_run)
-+	if (!config->null_run)
- 		fprintf(output, "\n");
- 
- 	if (config->run_count == 1) {
-@@ -1894,7 +1893,7 @@ static const struct option stat_options[] = {
- 		    "repeat command and print average + stddev (max: 100, forever: 0)"),
- 	OPT_BOOLEAN(0, "table", &walltime_run_table,
- 		    "display details about each run (only with -r option)"),
--	OPT_BOOLEAN('n', "null", &null_run,
-+	OPT_BOOLEAN('n', "null", &stat_config.null_run,
- 		    "null run - dont start any counters"),
- 	OPT_INCR('d', "detailed", &detailed_run,
- 		    "detailed run - start a lot of events"),
-@@ -2309,7 +2308,7 @@ static int add_default_attributes(void)
- 	struct parse_events_error errinfo;
- 
- 	/* Set attrs if no event is selected and !null_run: */
--	if (null_run)
-+	if (stat_config.null_run)
- 		return 0;
- 
- 	if (transaction_run) {
+-	if (print_free_counters_hint &&
++	if (config->print_free_counters_hint &&
+ 	    sysctl__read_int("kernel/nmi_watchdog", &n) >= 0 &&
+ 	    n > 0)
+ 		fprintf(output,
 diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 35550e3efd81..c198926c0e27 100644
+index c198926c0e27..8cad17363e90 100644
 --- a/tools/perf/util/stat.h
 +++ b/tools/perf/util/stat.h
-@@ -94,6 +94,7 @@ struct perf_stat_config {
- 	bool			 csv_output;
- 	bool			 interval_clear;
- 	bool			 metric_only;
-+	bool			 null_run;
- 	FILE			*output;
- 	unsigned int		 interval;
- 	unsigned int		 timeout;
+@@ -103,6 +103,7 @@ struct perf_stat_config {
+ 	unsigned int		 metric_only_len;
+ 	int			 times;
+ 	int			 run_count;
++	int			 print_free_counters_hint;
+ 	struct runtime_stat	*stats;
+ 	int			 stats_num;
+ 	const char		*csv_sep;
 -- 
 2.14.4
 
