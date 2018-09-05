@@ -6,127 +6,75 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA05C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E145C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC47C206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:49:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC47C206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5254B2075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:50:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5254B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mba.ocn.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeIEUUm (ORCPT
+        id S1727637AbeIEUV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:20:42 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:47206 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbeIEUUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:20:41 -0400
-X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 16:20:41 EDT
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 62070C0293;
-        Wed,  5 Sep 2018 17:49:54 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id A51EDC0F7F; Wed,  5 Sep 2018 17:49:52 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 15511C0F7A;
-        Wed,  5 Sep 2018 17:49:33 +0200 (CEST)
-Message-ID: <383bf546272ac7edca5a5f502fce4cafa88a3321.camel@paulk.fr>
-Subject: Re: [PATCH v8 4/8] media: platform: Add Cedrus VPU decoder driver
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-sunxi@googlegroups.com
-Date:   Wed, 05 Sep 2018 17:49:31 +0200
-In-Reply-To: <f15e355ece0b250a252347ec22f1433dd786bb5b.camel@collabora.com>
-References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
-         <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
-         <f15e355ece0b250a252347ec22f1433dd786bb5b.camel@collabora.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-KFmJeFVy/fWfX39GUA0U"
-X-Mailer: Evolution 3.28.5 
+        Wed, 5 Sep 2018 16:21:26 -0400
+Received: from mfdf0181.ocn.ad.jp ([153.128.50.75]:50843 "EHLO
+        mfdf0181.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbeIEUV0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 16:21:26 -0400
+X-Greylist: delayed 814 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 16:21:25 EDT
+Received: from mogw0633.ocn.ad.jp (mogw0633.ocn.ad.jp [153.149.228.34])
+        by mfdf0181.ocn.ad.jp (Postfix) with ESMTP id D7B9F501D57
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Sep 2018 00:37:07 +0900 (JST)
+Received: from mf-smf-ucb022c1 (mf-smf-ucb022c1.ocn.ad.jp [153.153.66.139])
+        by mogw0633.ocn.ad.jp (Postfix) with ESMTP id 283D0E8023E;
+        Thu,  6 Sep 2018 00:37:06 +0900 (JST)
+Received: from ntt.pod01.mv-mta-ucb027 ([153.149.142.101])
+        by mf-smf-ucb022c1 with ESMTP
+        id xZrPfBvBHeuR1xZrefi78h; Thu, 06 Sep 2018 00:37:06 +0900
+Received: from smtp.ocn.ne.jp ([153.149.227.167])
+        by ntt.pod01.mv-mta-ucb027 with 
+        id Xrd51y0043dLKTM01rd5gw; Wed, 05 Sep 2018 15:37:06 +0000
+Received: from localhost (p935071-ipngn2102funabasi.chiba.ocn.ne.jp [180.56.175.71])
+        by smtp.ocn.ne.jp (Postfix) with ESMTPA;
+        Thu,  6 Sep 2018 00:37:05 +0900 (JST)
+Date:   Thu, 06 Sep 2018 00:37:01 +0900 (JST)
+Message-Id: <20180906.003701.1191480642819924726.anemo@mba.ocn.ne.jp>
+To:     dingxiang@cmss.chinamobile.com
+Cc:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] mips: txx9: fix resource leak after register fail
+From:   Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+In-Reply-To: <1536146539-26131-1-git-send-email-dingxiang@cmss.chinamobile.com>
+References: <1536146539-26131-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Fingerprint: 6ACA 1623 39BD 9A94 9B1A  B746 CA77 FE94 2874 D52F
+X-Pgp-Public-Key: http://wwwkeys.pgp.net:11371/pks/lookup?op=get&search=0x2874D52F
+X-Mailer: Mew version 6.7 on Emacs 24.5 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed,  5 Sep 2018 19:22:19 +0800, Ding Xiang <dingxiang@cmss.chinamobile.com> wrote:
+> the memory allocated and ioremap address need free after
+> device_register return error.
+...
+>  exit_put:
+>  	put_device(&dev->dev);
+> -	return;
+> +exit_free:
+> +	iounmap(dev->base);
+> +	kfree(dev);
 
---=-KFmJeFVy/fWfX39GUA0U
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This change will break exit_put error path.
+I think kfree will be called from txx9_device_release by put_device.
 
-Hi,
+Please refer James's comment on previous trial:
+<https://www.linux-mips.org/cgi-bin/mesg.cgi?a=linux-mips&i=20180305221833.GJ4197%40saruman>
 
-Le mardi 28 ao=C3=BBt 2018 =C3=A0 22:08 -0300, Ezequiel Garcia a =C3=A9crit=
- :
-> On Tue, 2018-08-28 at 09:34 +0200, Paul Kocialkowski wrote:
-> > +static const struct v4l2_m2m_ops cedrus_m2m_ops =3D {
-> > +	.device_run	=3D cedrus_device_run,
-> > +	.job_abort	=3D cedrus_job_abort,
-> > +};
-> > +
->=20
-> I think you can get rid of this .job_abort. It should
-> simplify your .device_run quite a bit.
->=20
-> .job_abort is optional now since
-> 5525b8314389a0c558d15464e86f438974b94e32.
-
-Alright, I will probably do that for the next revision, since it seems
-that there is no particular downside to removing it.
-
-Thanks,
-
-Paul
-
-> Regards,
-> Ezequiel
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-KFmJeFVy/fWfX39GUA0U
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluP+wsACgkQhP3B6o/u
-lQwr5RAAhwkjVt4DncAUciQMMQNfX7Fl3XQ0nmjsszYqQCr1FVFtXRwMuU8+hkPF
-WlMFw1yVWTz3dfh/KZfP+5V568FO4L+NkDvPvCp6hkhh3RbjRnuGrzzOFcpcdNYT
-VsJzUJyPOXeQnh4bpHy1PVRiw1b2jHXF9q4kLn1p1fpGABvn6aJZ7lKRtsGnyFwx
-2Q4TGfFcenNrTdV9ftdw4CZg7wxThOvS5gUz8FNud4BccX6vDqns8guITvRHFHTR
-6vi+8FtvB4Sq/yYnv3Mw8Q700uD5GNgjDSjfp3KzvCOfipYdZmQTcI4cNfSifZbi
-R0RdwThMZmmKikZ8k1H5OJ1mOfzvA1YB21siQireV4yFTWf1R/S90yRz0Wpf9OaR
-SAG1NSGpj7pQp5daZcQpGCN3SfjXG/sOlie5GptOx3g7QilEWXMyLQUdrej50oG9
-7weQUjQOJsUb9aXiOA2wg4VXR3kqGlR6sVcZLaa1uat57JcedA9e3CgTdMaNaPCD
-VLHPOa7vCfuvsCw8hzgNIshIfdJni6t0KoiTcy3z4FFBsVqt3zobEtNx50qulMt8
-0p+TzGI50OtvrFibLWJjYG+D8Ujkg3AI7SzDk20KQhj28MLQ2/gAtDu8acK32b5e
-QMqyCzfkSsGyhCS2EBMg1lxXiV1cYhAPfw3jIpH7rCEa9Ud11Q8=
-=wYAK
------END PGP SIGNATURE-----
-
---=-KFmJeFVy/fWfX39GUA0U--
-
+---
+Atsushi Nemoto
