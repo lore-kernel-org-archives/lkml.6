@@ -2,114 +2,91 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8DAC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FE9C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C90120857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C90120857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D19EE2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D19EE2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbeIENTq (ORCPT
+        id S1728007AbeIENTx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:19:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53814 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726401AbeIENTq (ORCPT
+        Wed, 5 Sep 2018 09:19:53 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:65511 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726401AbeIENTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:19:46 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w858hfdE137712
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 04:50:34 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2maa0mwafr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 04:50:34 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 5 Sep 2018 09:50:33 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Sep 2018 09:50:31 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w858oUkW43647068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Sep 2018 08:50:30 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D3D9A405D;
-        Wed,  5 Sep 2018 11:50:23 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 83336A4057;
-        Wed,  5 Sep 2018 11:50:22 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Wed,  5 Sep 2018 11:50:22 +0100 (BST)
-Date:   Wed, 5 Sep 2018 01:50:29 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
- <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
- <20180904082424.GA2090@linux.vnet.ibm.com>
- <20180904093626.GA23936@linaro.org>
- <20180904103742.GC61288@linux.vnet.ibm.com>
- <CAKfTPtBVLWgtRJpP0nTOVpkwJse6BwrGa28o4qat0T3kOvEAfw@mail.gmail.com>
+        Wed, 5 Sep 2018 09:19:53 -0400
+X-UUID: 70f6b2a713e54af287959e973471d185-20180905
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1548811753; Wed, 05 Sep 2018 16:50:37 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs08n2.mediatek.inc
+ (172.21.101.56) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 5 Sep
+ 2018 16:50:34 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 5 Sep 2018 16:50:33 +0800
+Message-ID: <1536137433.31406.17.camel@mhfsdcap03>
+Subject: Re: [PATCH] PCI: mediatek: Fix unchecked return value
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-pci@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Wed, 5 Sep 2018 16:50:33 +0800
+In-Reply-To: <20180720150158.GA10922@embeddedor.com>
+References: <20180720150158.GA10922@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBVLWgtRJpP0nTOVpkwJse6BwrGa28o4qat0T3kOvEAfw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18090508-0008-0000-0000-0000026C8535
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090508-0009-0000-0000-000021D4A0A5
-Message-Id: <20180905085029.GA57420@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=745 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809050094
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Vincent Guittot <vincent.guittot@linaro.org> [2018-09-05 09:36:42]:
-
-> >
-> > I dont know of any systems that have come with single threaded and
-> > multithreaded. However some user can still offline few threads in a core
-> > while leaving other cores untouched. I dont really know why somebody
-> > would want to do it.  For example, some customer was toying with SMT 3
-> > mode in a SMT 8 power8 box.
+On Fri, 2018-07-20 at 10:01 -0500, Gustavo A. R. Silva wrote:
+> Check return value of devm_pci_remap_iospace.
 > 
-> In this case, it means that we have the same core capacity whatever
-> the number of CPUs
-> and a core with SMT 3 will be set with the same compute capacity as
-> the core with SMT 8.
-> Does it still make sense ?
+> Notice that, currently, all instances of devm_pci_remap_iospace
+> are being checked.
+> 
+> Addresses-Coverity-ID: 1471965 ("Unchecked return value")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 
-To me it make sense atleast from  a power 8 perspective, because SMT 1 >
-SMT 2 > SMT 4 > SMT8. So if one core is configured for SMT 2 and other
-core is configured for SMT4; all threads being busy, the  individual
-threads running on SMT2 core will complete more work than SMT 4 core
-threads.
+Hi, Gustavo, thanks for your help.
 
--- 
-Thanks and Regards
-Srikar Dronamraju
+Acked-by: Honghui Zhang <honghui.zhang@mediatek.com>
+
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 861dda6..1477939 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -1109,7 +1109,9 @@ static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
+>  	if (err < 0)
+>  		return err;
+>  
+> -	devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+> +	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+> +	if (err)
+> +		return err;
+>  
+>  	return 0;
+>  }
+
 
