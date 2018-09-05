@@ -2,72 +2,187 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD760C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF989C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 813182075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:30:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813182075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 5463E2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5463E2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeIEPAD (ORCPT
+        id S1727760AbeIEPCO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:00:03 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:57128 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbeIEPAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:00:03 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id VrylD6egNp9y; Wed,  5 Sep 2018 12:30:09 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCBB900329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b900:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8B36A1EC02AE;
-        Wed,  5 Sep 2018 12:30:09 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 12:30:09 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Pu Wen <puwen@hygon.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v5 11/16] x86/kvm: enable Hygon support to KVM
- infrastructure
-Message-ID: <20180905103009.GF2237@zn.tnic>
-References: <cover.1535459012.git.puwen@hygon.cn>
- <37fd42bcf50eccfc3aad18051492144056e2f0fb.1535459013.git.puwen@hygon.cn>
+        Wed, 5 Sep 2018 11:02:14 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:13150 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726090AbeIEPCO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 11:02:14 -0400
+X-UUID: 18fa4df3d1494bb98c1e0ddec6b4957a-20180905
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1438648276; Wed, 05 Sep 2018 18:32:34 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 5 Sep 2018 18:32:32 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 5 Sep 2018 18:32:32 +0800
+Message-ID: <1536143551.4618.0.camel@mtksdaap41>
+Subject: Re: [PATCH v2 02/13] drm/mediatek: move hardware register to node
+ data
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Wed, 5 Sep 2018 18:32:31 +0800
+In-Reply-To: <20180905083146.14727-3-bibby.hsieh@mediatek.com>
+References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
+         <20180905083146.14727-3-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <37fd42bcf50eccfc3aad18051492144056e2f0fb.1535459013.git.puwen@hygon.cn>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 08:45:05PM +0800, Pu Wen wrote:
-> Hygon Dhyana CPU has the SVM feature as AMD family 17h does.
-> Add Hygon support in the KVM infrastructure.
+Hi, Bibby:
+
+One more inline comment.
+
+On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
 > 
-> Signed-off-by: Pu Wen <puwen@hygon.cn>
+> The address of register DPI_H_FRE_CON is different in different IC.
+> Using of_node data to find this address.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 > ---
->  arch/x86/include/asm/kvm_emulate.h |  4 ++++
->  arch/x86/include/asm/virtext.h     |  5 +++--
->  arch/x86/kvm/emulate.c             | 11 ++++++++++-
->  3 files changed, 17 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/mediatek/mtk_dpi.c      | 29 +++++++++++++++++++++++------
+>  drivers/gpu/drm/mediatek/mtk_dpi_regs.h |  1 -
+>  2 files changed, 23 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> index d9373e67d328..3db959fed493 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> @@ -72,6 +72,7 @@ struct mtk_dpi {
+>  	struct clk *tvd_clk;
+>  	int irq;
+>  	struct drm_display_mode mode;
+> +	const struct mtk_dpi_conf *conf;
+>  	enum mtk_dpi_out_color_format color_format;
+>  	enum mtk_dpi_out_yc_map yc_map;
+>  	enum mtk_dpi_out_bit_num bit_num;
+> @@ -117,6 +118,10 @@ struct mtk_dpi_yc_limit {
+>  	u16 c_bottom;
+>  };
+>  
+> +struct mtk_dpi_conf {
+> +	const u32 reg_h_fre_con;
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Remove 'const'.
 
--- 
-Regards/Gruss,
-    Boris.
+Regards,
+CK
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> +};
+> +
+>  static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
+>  {
+>  	u32 tmp = readl(dpi->regs + offset) & ~mask;
+> @@ -342,7 +347,7 @@ static void mtk_dpi_config_swap_input(struct mtk_dpi *dpi, bool enable)
+>  
+>  static void mtk_dpi_config_2n_h_fre(struct mtk_dpi *dpi)
+>  {
+> -	mtk_dpi_mask(dpi, DPI_H_FRE_CON, H_FRE_2N, H_FRE_2N);
+> +	mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, H_FRE_2N, H_FRE_2N);
+>  }
+>  
+>  static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
+> @@ -668,6 +673,18 @@ static const struct component_ops mtk_dpi_component_ops = {
+>  	.unbind = mtk_dpi_unbind,
+>  };
+>  
+> +static const struct mtk_dpi_conf mt8173_conf = {
+> +	.reg_h_fre_con = 0xe0,
+> +};
+> +
+> +static const struct of_device_id mtk_dpi_of_ids[] = {
+> +	{ .compatible = "mediatek,mt8173-dpi",
+> +	  .data = &mt8173_conf,
+> +	},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, mtk_dpi_of_ids);
+> +
+>  static int mtk_dpi_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -675,13 +692,18 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+>  	struct resource *mem;
+>  	struct device_node *bridge_node;
+>  	int comp_id;
+> +	const struct of_device_id *match;
+>  	int ret;
+>  
+> +	match = of_match_node(mtk_dpi_of_ids, dev->of_node);
+> +	if (!match)
+> +		return -ENODEV;
+>  	dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
+>  	if (!dpi)
+>  		return -ENOMEM;
+>  
+>  	dpi->dev = dev;
+> +	dpi->conf = (struct mtk_dpi_conf *)match->data;
+>  
+>  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	dpi->regs = devm_ioremap_resource(dev, mem);
+> @@ -760,11 +782,6 @@ static int mtk_dpi_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id mtk_dpi_of_ids[] = {
+> -	{ .compatible = "mediatek,mt8173-dpi", },
+> -	{}
+> -};
+> -
+>  struct platform_driver mtk_dpi_driver = {
+>  	.probe = mtk_dpi_probe,
+>  	.remove = mtk_dpi_remove,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
+> index 4b6ad4751a31..040444d7718d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
+> @@ -223,6 +223,5 @@
+>  #define ESAV_CODE2			(0xFFF << 0)
+>  #define ESAV_CODE3_MSB			BIT(16)
+>  
+> -#define DPI_H_FRE_CON		0xE0
+>  #define H_FRE_2N			BIT(25)
+>  #endif /* __MTK_DPI_REGS_H */
+
+
