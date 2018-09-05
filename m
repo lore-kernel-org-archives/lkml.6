@@ -2,131 +2,108 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F6AC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831CAC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF9B20659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:31:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxiN7csp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF9B20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E75F20659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:34:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E75F20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeIFCDz (ORCPT
+        id S1727687AbeIFCGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:03:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37270 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 22:06:25 -0400
+Received: from mga01.intel.com ([192.55.52.88]:33479 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeIFCDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:03:54 -0400
-Received: from mail-wm0-f52.google.com (mail-wm0-f52.google.com [74.125.82.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C0FE2083D
-        for <linux-kernel@vger.kernel.org>; Wed,  5 Sep 2018 21:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536183110;
-        bh=LzfNpR4eMoKy28v1gN3arblecNY/tzLOmmFtnXcdPzs=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=VxiN7csp4udW8UYcdtXJXY8W4N1LnWS+VxqbfU5EkPCz31jMAvrT00nCQwqlwyyBN
-         VmtB+Ae7AGQ3pC0qOtWwB2c3aAo8co9wDMw+pxat8c/DqHp/Ygj8aosdQMneIoQMdZ
-         4heJdmr4f0XI2hDt+xDKiMHzpA82OXRuXePKXDtg=
-Received: by mail-wm0-f52.google.com with SMTP id 207-v6so9096724wme.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:31:50 -0700 (PDT)
-X-Gm-Message-State: APzg51CWViBBN7Y1btVxHN1Q4DWx4T46SmfU44ivMNNSZSWD1AV+MSN4
-        4T10/M3CJjjCuH1PhSrvnWghSD/hfykPuhKxwUavIg==
-X-Google-Smtp-Source: ANB0VdZWEOimacuK2QkDoAObEJk5RAl/4J1c88XsLNKbs4l57X3ogf4VZhGQ0Tpz+4h4OJmqnnvIdPzlWs81/nYCOk4=
-X-Received: by 2002:a1c:3413:: with SMTP id b19-v6mr171641wma.21.1536183108849;
- Wed, 05 Sep 2018 14:31:48 -0700 (PDT)
+        id S1727518AbeIFCGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:06:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 14:34:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
+   d="scan'208";a="78272467"
+Received: from ray.jf.intel.com (HELO [10.54.74.170]) ([10.54.74.170])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Sep 2018 14:34:20 -0700
+Subject: Re: [PATCH v2 1/2] mm: Move page struct poisoning to
+ CONFIG_DEBUG_VM_PAGE_INIT_POISON
+To:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20180905211041.3286.19083.stgit@localhost.localdomain>
+ <20180905211328.3286.71674.stgit@localhost.localdomain>
+Cc:     alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
+        mhocko@suse.com, akpm@linux-foundation.org, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <185e6fb5-f247-bba2-e082-c3097e78fc04@intel.com>
+Date:   Wed, 5 Sep 2018 14:34:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a1c:7810:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 14:31:28 -0700 (PDT)
-In-Reply-To: <20180904070455.GX24124@hirez.programming.kicks-ass.net>
-References: <cover.1536015544.git.luto@kernel.org> <8c7c6e483612c3e4e10ca89495dc160b1aa66878.1536015544.git.luto@kernel.org>
- <20180904070455.GX24124@hirez.programming.kicks-ass.net>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 5 Sep 2018 14:31:28 -0700
-X-Gmail-Original-Message-ID: <CALCETrUZm3KsonYVd5sn=LhoGZ2ciO7xT_Fz=jD_HZ04tB9o=Q@mail.gmail.com>
-Message-ID: <CALCETrUZm3KsonYVd5sn=LhoGZ2ciO7xT_Fz=jD_HZ04tB9o=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] x86/pti/64: Remove the SYSCALL64 entry trampoline
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180905211328.3286.71674.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 12:04 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Mon, Sep 03, 2018 at 03:59:44PM -0700, Andy Lutomirski wrote:
->> The SYSCALL64 trampoline has a couple of nice properties:
->>
->>  - The usual sequence of SWAPGS followed by two GS-relative accesses to
->>    set up RSP is somewhat slow because the GS-relative accesses need
->>    to wait for SWAPGS to finish.  The trampoline approach allows
->>    RIP-relative accesses to set up RSP, which avoids the stall.
->>
->>  - The trampoline avoids any percpu access before CR3 is set up,
->>    which means that no percpu memory needs to be mapped in the user
->>    page tables.  This prevents using Meltdown to read any percpu memory
->>    outside the cpu_entry_area and prevents using timing leaks
->>    to directly locate the percpu areas.
->>
->> The downsides of using a trampoline may outweigh the upsides, however.
->> It adds an extra non-contiguous I$ cache line to system calls, and it
->> forces an indirect jump to transfer control back to the normal kernel
->> text after CR3 is set up.  The latter is because x86 lacks a 64-bit
->> direct jump instruction that could jump from the trampoline to the entry
->> text.  With retpolines enabled, the indirect jump is extremely slow.
->>
->> This patch changes the code to map the percpu TSS into the user page
->> tables to allow the non-trampoline SYSCALL64 path to work under PTI.
->> This does not add a new direct information leak, since the TSS is
->> readable by Meltdown from the cpu_entry_area alias regardless.  It
->> does allow a timing attack to locate the percpu area, but KASLR is
->> more or less a lost cause against local attack on CPUs vulnerable to
->> Meltdown regardless.  As far as I'm concerned, on current hardware,
->> KASLR is only useful to mitigate remote attacks that try to attack
->> the kernel without first gaining RCE against a vulnerable user
->> process.
->>
->> On Skylake, with CONFIG_RETPOLINE=y and KPTI on, this reduces
->> syscall overhead from ~237ns to ~228ns.
->>
->> There is a possible alternative approach: we could instead move the
->> trampoline within 2G of the entry text and make a separate copy for
->> each CPU.  Then we could use a direct jump to rejoin the normal
->> entry path.
->
-> Can we have a few words on why this solution and not this alternative? I
-> mean, you raise the possibility, but then surely you chose not to
-> implement that. Might as well share that with us.
+On 09/05/2018 02:13 PM, Alexander Duyck wrote:
+> Instead of keeping the value in CONFIG_DEBUG_VM I am adding a new CONFIG
+> value called CONFIG_DEBUG_VM_PAGE_INIT_POISON that will control the page
+> poisoning independent of the CONFIG_DEBUG_VM option.
 
-I can give some pros and cons.  With the other approach:
+I guess this is a reasonable compromise.
 
- - We avoid a pipeline stall.
- - We execute from an extra page and read from another extra page
-during the syscall.  (The latter is because we need to use a relative
-addressing mode to find sp1 -- it's the same *cacheline* we'd use
-anyway, but we're accessing it using an alias, so it's an extra TLB
-entry.)
- - We use more memory.  This would be one page per CPU for a simple
-implementation and 64-ish bytes per CPU or one page per node for a
-more complex implementation.
- - More code complexity.
-
-I'm not convinced this is a good tradeoff.
+If folks see odd 'struct page' corruption, they'll have to know to go
+turn this on and reboot, though.
