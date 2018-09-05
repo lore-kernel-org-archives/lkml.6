@@ -2,314 +2,162 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F280C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA7FC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2DF82075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9557A2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:46:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="soNsk45r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2DF82075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V85dY8S/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9557A2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbeIESQV (ORCPT
+        id S1727726AbeIESQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:16:21 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57058 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeIESQU (ORCPT
+        Wed, 5 Sep 2018 14:16:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39936 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbeIESQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:16:20 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3194884;
-        Wed,  5 Sep 2018 15:45:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536155159;
-        bh=zNtiViidA4HMSm8KX4y/8iXT+TKbi0B1VlaG9hASk70=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=soNsk45rnSvvFYQmV5HlSo64QcKQTSBcNMkQT0gV92qhJHrIP/kcoPtSMaF0fPqbi
-         dQ78xUlcL7q7O4JGnqYpTxdl9ONenc5aR0oUhVyZPC9V97x8YdmOcphUDZvq04L1e7
-         O+QvwWR+J3/9VTWdeNJJEwobSaky9RMJR58xwh9A=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 04/10] phy: dphy: Add configuration helpers
-Date:   Wed, 05 Sep 2018 16:46:05 +0300
-Message-ID: <3617916.Vq2Smf1hnZ@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <aa491b814100a670ad16b646765005efbdae05d9.1536138624.git-series.maxime.ripard@bootlin.com>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com> <aa491b814100a670ad16b646765005efbdae05d9.1536138624.git-series.maxime.ripard@bootlin.com>
+        Wed, 5 Sep 2018 14:16:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w85Dhogc021314;
+        Wed, 5 Sep 2018 13:45:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Y8BZ7qJrSY6KxtM7fmIk5EMu0he6EaDUd9lgAhChdoA=;
+ b=V85dY8S/PzSbJCgbZ/rlMhjhtBli4Y4BXql9rCeqm/0dNKEHmOw5sellWp5TxJ/3TUli
+ +Z6mi8JX+Lmb+E8StW6F+uWt5kHjIyU/8j5kqRJOrRGb6oXAiKV4N2POk2k3qUMJUNjc
+ LSyZD5f9VOqbPre1FeReUWGzyjR86sU8b4y2/z5KC4jbMThbGXuoF9f4ADwG34h5E6mS
+ DFN8v2D3IYrLB/xoqS33P1MBj9bT0oF1dCC0SOjU3To+yzloOtrukSwwOA1VKfh+AtA9
+ j/KJg9kktUkslT65/eVxcv6X2K+Qs4shoLA5kipXgnUl7N5Lwny2X2wESRizT6K3/9Iq rg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2m7jqpm1yk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Sep 2018 13:45:47 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w85DjkDH026347
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Sep 2018 13:45:46 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w85Djj7r009771;
+        Wed, 5 Sep 2018 13:45:46 GMT
+Received: from [10.152.33.198] (/10.152.33.198)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Sep 2018 13:45:45 +0000
+Subject: Re: [RFC PATCH 1/2] pipe: introduce busy wait for pipe
+To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, dhaval.giani@oracle.com
+References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
+ <20180830202458.32579-2-subhra.mazumdar@oracle.com>
+ <db00b844-055e-2024-2334-8e4b0e0ac5c5@oracle.com>
+ <575e7d13-98e2-b5bf-e241-3f72a28b8c8a@oracle.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <5c6ca51b-9128-a6f3-a74c-67abb53a37ae@oracle.com>
+Date:   Wed, 5 Sep 2018 09:45:36 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <575e7d13-98e2-b5bf-e241-3f72a28b8c8a@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809050145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+On 9/4/2018 8:50 PM, Subhra Mazumdar wrote:
+> On 08/31/2018 09:09 AM, Steven Sistare wrote:
+>> On 8/30/2018 4:24 PM, subhra mazumdar wrote:
+>>> Introduce pipe_ll_usec field for pipes that indicates the amount of micro
+>>> seconds a thread should spin if pipe is empty or full before sleeping. This
+>>> is similar to network sockets. Workloads like hackbench in pipe mode
+>>> benefits significantly from this by avoiding the sleep and wakeup overhead.
+>>> Other similar usecases can benefit. pipe_wait_flag is used to signal any
+>>> thread busy waiting. pipe_busy_loop_timeout checks if spin time is over.
+>>>
+>>> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+>>> ---
+>>>   include/linux/pipe_fs_i.h | 19 +++++++++++++++++++
+>>>   1 file changed, 19 insertions(+)
+>>>
+>>> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+>>> index e7497c9..fdfd2a2 100644
+>>> --- a/include/linux/pipe_fs_i.h
+>>> +++ b/include/linux/pipe_fs_i.h
+>>> @@ -1,6 +1,8 @@
+>>>   #ifndef _LINUX_PIPE_FS_I_H
+>>>   #define _LINUX_PIPE_FS_I_H
+>>>   +#include <linux/sched/clock.h>
+>>> +
+>>>   #define PIPE_DEF_BUFFERS    16
+>>>     #define PIPE_BUF_FLAG_LRU    0x01    /* page is on the LRU */
+>>> @@ -54,6 +56,8 @@ struct pipe_inode_info {
+>>>       unsigned int waiting_writers;
+>>>       unsigned int r_counter;
+>>>       unsigned int w_counter;
+>>> +    unsigned int pipe_ll_usec;
+>>> +    unsigned long pipe_wait_flag;
+>>>       struct page *tmp_page;
+>>>       struct fasync_struct *fasync_readers;
+>>>       struct fasync_struct *fasync_writers;
+>>> @@ -157,6 +161,21 @@ static inline int pipe_buf_steal(struct pipe_inode_info *pipe,
+>>>       return buf->ops->steal(pipe, buf);
+>>>   }
+>>>   +static inline unsigned long pipe_busy_loop_current_time(void)
+>>> +{
+>>> +    return (unsigned long)(local_clock() >> 10);
+>> Why ">> 10" ? local_lock() has nanosec units, and you compare to the tunable
+>> pipe_llc_sec which has microsec units.  Should be ">> 3".  Better yet, redefine
+>> the tunable to have nanosec units.  I suspect you will need very large values
+>> of the tunable to show similar results.
+> It's 2^10. I don't think using nanosec units is necessary. It is unlikely
+> data will be read or written in nano seconds. sk_busy_loop_timeout for
+> sockets uses micro seconds too.
 
-Thank you for the patch.
+Ah, you are using 2^10 as an approximation of 1000.  OK.
 
-On Wednesday, 5 September 2018 12:16:35 EEST Maxime Ripard wrote:
-> The MIPI D-PHY spec defines default values and boundaries for most of the
-> parameters it defines. Introduce helpers to help drivers get meaningful
-> values based on their current parameters, and validate the boundaries of
-> these parameters if needed.
+- Steve
+
+>>
+>> Also, since this type of optimization consumes CPU extra cycles that could
+>> be used by other tasks, show the overall CPU utilization before and after
+>> the optimization, such as by using "time hackbench ...".
+> OK.
 > 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  drivers/phy/Kconfig               |   8 ++-
->  drivers/phy/Makefile              |   1 +-
->  drivers/phy/phy-core-mipi-dphy.c  | 160 +++++++++++++++++++++++++++++++-
->  include/linux/phy/phy-mipi-dphy.h |   6 +-
->  4 files changed, 175 insertions(+)
->  create mode 100644 drivers/phy/phy-core-mipi-dphy.c
+> Thanks,
+> Subhra
+>>
+>> - Steve
+>>
+>>> +}
+>>> +
+>>> +static inline bool pipe_busy_loop_timeout(struct pipe_inode_info *pipe,
+>>> +                      unsigned long start_time)
+>>> +{
+>>> +    unsigned long bp_usec = READ_ONCE(pipe->pipe_ll_usec);
+>>> +    unsigned long end_time = start_time + bp_usec;
+>>> +    unsigned long now = pipe_busy_loop_current_time();
+>>> +
+>>> +    return time_after(now, end_time);
+>>> +}
+>>> +
+>>>   /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
+>>>      memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
+>>>   #define PIPE_SIZE        PAGE_SIZE
+>>>
 > 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 5c8d452e35e2..06bd22bd1f4a 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -15,6 +15,14 @@ config GENERIC_PHY
->  	  phy users can obtain reference to the PHY. All the users of this
->  	  framework should select this config.
-> 
-> +config GENERIC_PHY_MIPI_DPHY
-> +	bool "MIPI D-PHY support"
-> +	help
-> +	  Generic MIPI D-PHY support.
-> +
-> +	  Provides a number of helpers a core functions for MIPI D-PHY
-> +	  drivers to us.
-
-Do we really need to make this user-selectable ?
-
->  config PHY_LPC18XX_USB_OTG
->  	tristate "NXP LPC18xx/43xx SoC USB OTG PHY driver"
->  	depends on OF && (ARCH_LPC18XX || COMPILE_TEST)
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index 84e3bd9c5665..71c29d2b9af7 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -4,6 +4,7 @@
->  #
-> 
->  obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
-> +obj-$(CONFIG_GENERIC_PHY_MIPI_DPHY)	+= phy-core-mipi-dphy.o
->  obj-$(CONFIG_PHY_LPC18XX_USB_OTG)	+= phy-lpc18xx-usb-otg.o
->  obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
->  obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
-> diff --git a/drivers/phy/phy-core-mipi-dphy.c
-> b/drivers/phy/phy-core-mipi-dphy.c new file mode 100644
-> index 000000000000..6c1ddc7734a2
-> --- /dev/null
-> +++ b/drivers/phy/phy-core-mipi-dphy.c
-> @@ -0,0 +1,160 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2013 NVIDIA Corporation
-> + * Copyright (C) 2018 Cadence Design Systems Inc.
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/export.h>
-> +#include <linux/kernel.h>
-> +#include <linux/time64.h>
-> +
-> +#include <linux/phy/phy.h>
-> +#include <linux/phy/phy-mipi-dphy.h>
-> +
-> +/*
-> + * Default D-PHY timings based on MIPI D-PHY specification. Derived from
-> the
-> + * valid ranges specified in Section 6.9, Table 14, Page 40 of the D-PHY
-> + * specification (v1.2) with minor adjustments.
-
-Could you list those adjustments ?
-
-> + */
-> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
-> +				     unsigned int bpp,
-> +				     unsigned int lanes,
-> +				     struct phy_configure_opts_mipi_dphy *cfg)
-> +{
-> +	unsigned long hs_clk_rate;
-> +	unsigned long ui;
-> +
-> +	if (!cfg)
-> +		return -EINVAL;
-
-Should we really expect cfg to be NULL ?
-
-> +	hs_clk_rate = pixel_clock * bpp / lanes;
-> +	ui = DIV_ROUND_UP(NSEC_PER_SEC, hs_clk_rate);
-> +
-> +	cfg->clk_miss = 0;
-> +	cfg->clk_post = 70 + 52 * ui;
-> +	cfg->clk_pre = 8;
-> +	cfg->clk_prepare = 65;
-> +	cfg->clk_settle = 95;
-> +	cfg->clk_term_en = 0;
-> +	cfg->clk_trail = 80;
-> +	cfg->clk_zero = 260;
-> +	cfg->d_term_en = 0;
-> +	cfg->eot = 0;
-> +	cfg->hs_exit = 120;
-> +	cfg->hs_prepare = 65 + 5 * ui;
-> +	cfg->hs_zero = 145 + 5 * ui;
-> +	cfg->hs_settle = 85 + 6 * ui;
-> +	cfg->hs_skip = 40;
-> +
-> +	/*
-> +	 * The MIPI D-PHY specification (Section 6.9, v1.2, Table 14, Page 40)
-> +	 * contains this formula as:
-> +	 *
-> +	 *     T_HS-TRAIL = max(n * 8 * ui, 60 + n * 4 * ui)
-> +	 *
-> +	 * where n = 1 for forward-direction HS mode and n = 4 for reverse-
-> +	 * direction HS mode. There's only one setting and this function does
-> +	 * not parameterize on anything other that ui, so this code will
-> +	 * assumes that reverse-direction HS mode is supported and uses n = 4.
-> +	 */
-> +	cfg->hs_trail = max(4 * 8 * ui, 60 + 4 * 4 * ui);
-> +
-> +	cfg->init = 100000;
-> +	cfg->lpx = 60;
-> +	cfg->ta_get = 5 * cfg->lpx;
-> +	cfg->ta_go = 4 * cfg->lpx;
-> +	cfg->ta_sure = 2 * cfg->lpx;
-> +	cfg->wakeup = 1000000;
-> +
-> +	cfg->hs_clk_rate = hs_clk_rate;
-> +	cfg->lanes = lanes;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(phy_mipi_dphy_get_default_config);
-> +
-> +/*
-> + * Validate D-PHY configuration according to MIPI D-PHY specification
-> + * (v1.2, Section Section 6.9 "Global Operation Timing Parameters").
-> + */
-> +int phy_mipi_dphy_config_validate(struct phy_configure_opts_mipi_dphy *cfg)
-> +{
-> +	unsigned long ui;
-> +
-> +	if (!cfg)
-> +		return -EINVAL;
-
-Same here.
-
-> +	ui = DIV_ROUND_UP(NSEC_PER_SEC, cfg->hs_clk_rate);
-> +
-> +	if (cfg->clk_miss > 60)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_post < (60 + 52 * ui))
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_pre < 8)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_prepare < 38 || cfg->clk_prepare > 95)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_settle < 95 || cfg->clk_settle > 300)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_term_en > 38)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_trail < 60)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_prepare + cfg->clk_zero < 300)
-> +		return -EINVAL;
-> +
-> +	if (cfg->d_term_en > 35 + 4 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->eot > 105 + 12 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_exit < 100)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_prepare < 40 + 4 * ui ||
-> +	    cfg->hs_prepare > 85 + 6 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_prepare + cfg->hs_zero < 145 + 10 * ui)
-> +		return -EINVAL;
-> +
-> +	if ((cfg->hs_settle < 85 + 6 * ui) ||
-> +	    (cfg->hs_settle > 145 + 10 * ui))
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_skip < 40 || cfg->hs_skip > 55 + 4 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_trail < max(8 * ui, 60 + 4 * ui))
-> +		return -EINVAL;
-> +
-> +	if (cfg->init < 100000)
-> +		return -EINVAL;
-> +
-> +	if (cfg->lpx < 50)
-> +		return -EINVAL;
-> +
-> +	if (cfg->ta_get != 5 * cfg->lpx)
-> +		return -EINVAL;
-> +
-> +	if (cfg->ta_go != 4 * cfg->lpx)
-> +		return -EINVAL;
-> +
-> +	if (cfg->ta_sure < cfg->lpx || cfg->ta_sure > 2 * cfg->lpx)
-> +		return -EINVAL;
-> +
-> +	if (cfg->wakeup < 1000000)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(phy_mipi_dphy_config_validate);
-> diff --git a/include/linux/phy/phy-mipi-dphy.h
-> b/include/linux/phy/phy-mipi-dphy.h index 792724145290..7656d057198f 100644
-> --- a/include/linux/phy/phy-mipi-dphy.h
-> +++ b/include/linux/phy/phy-mipi-dphy.h
-> @@ -238,4 +238,10 @@ struct phy_configure_opts_mipi_dphy {
->  /* TODO: Add other modes (burst, commands, etc) */
->  #define MIPI_DPHY_MODE_VIDEO_SYNC_PULSE		BIT(0)
-> 
-> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
-> +				     unsigned int bpp,
-> +				     unsigned int lanes,
-> +				     struct phy_configure_opts_mipi_dphy *cfg);
-> +int phy_mipi_dphy_config_validate(struct phy_configure_opts_mipi_dphy
-> *cfg);
-> +
->  #endif /* __PHY_MIPI_DPHY_H_ */
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
