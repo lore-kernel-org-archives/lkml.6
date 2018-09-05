@@ -2,121 +2,100 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30469C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64718C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E906E20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:12:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E906E20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F2AD320658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:14:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJcAxyst"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AD320658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeIEQmh (ORCPT
+        id S1727508AbeIEQou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:42:37 -0400
-Received: from mga02.intel.com ([134.134.136.20]:3703 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeIEQmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:42:36 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 05:12:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
-   d="scan'208";a="260908556"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Sep 2018 05:09:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 86F2FE1; Wed,  5 Sep 2018 15:09:53 +0300 (EEST)
-Date:   Wed, 5 Sep 2018 15:09:53 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, tglx@linutronix.de,
-        mingo@kernel.org, hpa@zytor.com, thgarnie@google.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
- paging mode
-Message-ID: <20180905120953.mc2rr6zr2cisqx3u@black.fi.intel.com>
-References: <20180829021754.21850-1-bhe@redhat.com>
- <20180829021754.21850-2-bhe@redhat.com>
- <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
- <20180830152512.GE14702@192.168.1.2>
- <20180902205242.kcpt6wsatacahswp@kshutemo-mobl1>
- <20180903074718.GD1740@192.168.1.3>
- <20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1>
- <20180903145213.GG1740@192.168.1.3>
- <20180904081314.gdhm55qchhl5irmv@kshutemo-mobl1>
- <20180905081531.GN1740@192.168.1.3>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905081531.GN1740@192.168.1.3>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+        Wed, 5 Sep 2018 12:44:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43984 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeIEQot (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:44:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v66-v6so3340396pgb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 05:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ehyFcQbHsOydXpAFh0pOBu5S1X+h/HyGlFJ52nDgPu0=;
+        b=BJcAxystfSoUDCyvc/u8XKv9QSxGylDx90mjlI+GSfnMH4Jf/BQk/VKAqLygnl6bh5
+         TQ97CxyV1458dEP7M3Bc8X5yN9ZANFHBaQjC21ZmQGU/SKyM/PUuHfEqDtBcDhWtuA42
+         gidaN2jmgFzOCd1JnUw7tz5Bx1pUGnq2iCxqVka/ozQvRYO1N+LLsmp8lBMJkFbHOm0/
+         J5lPKm2xAajbO1BnyBaIer8img4IyUgZVmM/0X/6rV0fvDie+f98dX3JvUXrhvPRLAEB
+         sVzvpGBnpw2asALAHTVbtPVatvZd4/6ktcyDKcPfUrstixjXR8W+msh4B3ZboOueM7P+
+         QW+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ehyFcQbHsOydXpAFh0pOBu5S1X+h/HyGlFJ52nDgPu0=;
+        b=fBpknWmShG/TIWUBqtdnKvNPlJ3A+b8HAXg2EG14WBmAbVpwmecZRJPj2yi3bUS5++
+         nSPTvW8qmLY/2PszZt1gc280qu6LETV0k3PemjFVyU9YgB0921Hul06TS6lOrTykN5EF
+         ASPA5C71nhWAEAc0ZBYzw9q3UYamh15gkfgT8mVcHN+Ok/sEPV29nOKDcmiiK/Rut3Aq
+         veiDLsDtFh1XCctekNMexrtPQAOv73y4oIaCLpOy0J+64PY10ez8jM6J4yBNGY33UCKX
+         pZvwn2mEBhbDe5RBc/sTQriXLtWNlXSVtmFlonRRqJYz4MMdDUyxfUSpP5wXkImBJBIq
+         u4bg==
+X-Gm-Message-State: APzg51AfTUQ1oiQnF01FP82HqU/4piHR5/i8Ma4ixToGzCR2AmF5Pisn
+        UbM/ib9oU558Y7e2Hy1CEFfMc3Kv
+X-Google-Smtp-Source: ANB0VdaGlJvwLQjTGuVzZyd9NZkmQMV9MBR/UVyniGMuGJONuzgR2ED2hKDEJpH5iwJz0suMIdoX8Q==
+X-Received: by 2002:a63:1551:: with SMTP id 17-v6mr7633839pgv.383.1536149690622;
+        Wed, 05 Sep 2018 05:14:50 -0700 (PDT)
+Received: from roar.local0.net (59-102-81-67.tpgi.com.au. [59.102.81.67])
+        by smtp.gmail.com with ESMTPSA id w5-v6sm2496227pfn.44.2018.09.05.05.14.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 05:14:50 -0700 (PDT)
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nicholas Piggin <npiggin@gmail.com>, Jiri Slaby <jslaby@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Matteo Croce <mcroce@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org (op)
+Subject: [PATCH 0/3] tty: hvc: latency break regression fixes
+Date:   Wed,  5 Sep 2018 22:14:36 +1000
+Message-Id: <20180905121439.23809-1-npiggin@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 08:15:31AM +0000, Baoquan He wrote:
-> On 09/04/18 at 11:13am, Kirill A. Shutemov wrote:
-> > On Mon, Sep 03, 2018 at 10:52:13PM +0800, Baoquan He wrote:
-> > > On 09/03/18 at 01:26pm, Kirill A. Shutemov wrote:
-> > > > > > But there's corner case when struct page is unreasonably large and
-> > > > > > vmemmap_size will be way to large. We probably have to report an error if
-> > > > > > we cannot fit vmemmap properly into virtual memory layout.
-> > > > > 
-> > > > > Hmm, sizeof(struct page) can't exceed one whole page surely, otherwise
-> > > > > system bootup can't go over vmemmap initlization. Except of this, we may
-> > > > > need think about the virtual memory layout which vmemmap can be allowed
-> > > > > to occupy.
-> > > > > 
-> > > > > If KASAN enabled, KASLR disabled,
-> > > > > 4-level 1TB + 1TB hole (2TB)
-> > > > > 5-level 512TB + 2034TB hole (2.5PB)
-> > > > > 
-> > > > > If KASAN disabled, KASLR enabled,
-> > > > > 4-level 1TB + 1TB hole + 16TB  (18TB)
-> > > > > 5-level 512TB + 2034TB hole + 8PB (10.5PB)
-> > > > > 
-> > > > > So, as you can see, if add check in memory KASLR code, we should only
-> > > > > consider KASLR enabled case. We possibly don't need to worry about
-> > > > > 5-level case since the size 10.5PB is even bigger than the maximum
-> > > > > physical RAM mapping size. For 4-level, 18TB align to multiples of 2, it
-> > > > > will be 32 times of the current 1TB, then we usually assume 64 as the
-> > > > > default value of sizeof(struct page), then 64*32 == 1024. So we can add
-> 						~~~64*32 = 2048
-> 				Sorry, I made mistake here.
-> > > > > check like this, what do you think? Or any other idea?
-> > > > 
-> > > > Looks reasonable to me.
-> > > > 
-> > > > But I would have the BUILD_BUG_ON() in generic code. If you struct page is
-> > > > more than 1/4 of PAGE_SIZE something is horribly broken.
-> > > 
-> > > Just the 1/4 of PAGE_SIZE is based on analysis of KASLR case. If
-> > > non-KASLR case, it may not be that value.
-> > 
-> > Even if it technically possible to have struct page larger than
-> > PAGE_SIZE/4, it's just insane.
-> > 
-> > > Not sure if it's OK to put it in generic code, and haven't thought of a
-> > > good place, maybe in setup_arch(), just at the beginning?
-> > 
-> > I don't see an obvious place too. Maybe free_area_init_nodes()?
-> 
-> OK, you mean a more generic place, I only considered generic place in
-> x86. The thing is not all ARCH-es set PAGE_SIZE as 4KB, e.g power and
-> arm64 can have PAGE_SIZE of 64KB. For them, PAGE_SIZE/4, namely 16KB,
-> is hardly reached. So my thought is either taking PAGE_SIZE/4 in x86
-> arch only, or using SZ_1K in free_area_init_nodes() as you suggested.
-> What do you think?
+Hi Greg,
 
-BUILD_BUG_ON() on min(SZ_1K, PAGE_SIZE/4)?
+Here are fixes for a few regressions that came in with my
+carelessness with the irq latency work for the hvc subsystem.
+These were independently reported in 2 configurations, and I
+confirmed with another.
+
+I think those went upstream via Michael's tree, but he's away
+at the moment so if you would be able to consider them for
+the tty tree that would be appreciated.
+
+Thanks,
+Nick
+
+Nicholas Piggin (3):
+  tty: hvc: hvc_poll() fix read loop hang
+  tty: hvc: hvc_poll() fix read loop batching
+  tty: hvc: hvc_write() fix break condition
+
+ drivers/tty/hvc/hvc_console.c | 38 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
 -- 
- Kirill A. Shutemov
+2.18.0
+
