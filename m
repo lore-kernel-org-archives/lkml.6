@@ -2,118 +2,75 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B92AC4321E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6088C43143
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C260F20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:31:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C260F20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3ABB420857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:31:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rQnD/GAQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABB420857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbeIERBJ (ORCPT
+        id S1728170AbeIERBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:01:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 13:01:12 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:53290 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbeIEQ6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:58:38 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FB782086B;
-        Wed,  5 Sep 2018 12:28:36 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fxWvD-00028e-Al; Wed, 05 Sep 2018 08:28:35 -0400
-Message-Id: <20180905122835.224064505@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 05 Sep 2018 08:28:00 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com
-Subject: [PATCH RT 06/22] PM / s2idle: Make s2idle_wait_head swait based
-References: <20180905122754.443196118@goodmis.org>
+        id S1727650AbeIERBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:01:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=p5qBI66sU/PlIlrGvwVtJXuuRtG8YSAoOgnqo8Ja9vE=;
+        b=rQnD/GAQ+SWbliFQWkqN18Q/2hDUZ5QfWhRNl9CQOPbOvx4lJhsEMbfD66Vi2zGGZM72t7Bhg/CuFBhVfNnLFl7cKexR6AsXUSIPULxSNx7xTSkj0TShTmdaQKgnb9Rui1akhuU1bEUOatyVIT4x+FsyF/b/wyDjIzvZFBiVOZs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fxWxZ-00072O-7n; Wed, 05 Sep 2018 14:31:01 +0200
+Date:   Wed, 5 Sep 2018 14:31:01 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Moritz Fischer <moritz.fischer@ettus.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Alex Williams <alex.williams@ni.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/PATCH] net: nixge: Add PHYLINK support
+Message-ID: <20180905123101.GA26739@lunn.ch>
+References: <20180905001535.19168-1-mdf@kernel.org>
+ <fa4fca9c-5950-8ec1-5746-91e51085cecf@gmail.com>
+ <CAAtXAHdZxgvb7=DG0B2irB4wJ+taJaOYbxhGjNtjWvaAQP8_nA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAtXAHdZxgvb7=DG0B2irB4wJ+taJaOYbxhGjNtjWvaAQP8_nA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14.63-rt41-rc1 stable review patch.
-If anyone has any objections, please let me know.
+> Let me check, it seems there is a register that indicates whether the MAC can
+> do either 1G or 10G. I might be able to use that for some of the above, but
+> there is not really much in terms of writable registers there.
 
-------------------
+Can the MAC do 10 or 100? At the moment, you don't have anything
+stopping the PHY anto-neg'ing 10Half. If the MAC does not fully
+implement standard Ethernet, you need to tell the PHY driver about
+this. That is what the validate call is about. phylink and phylib
+knows what the PHY supports. It passes that list to the validate
+call. You need to then remove all the modes the MAC does not support.
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> It's like a DMA engine with a bit of MDIO on the side. Let me see if
+> I can make it look less weird with that. If not I'll go with a
+> comment explaining that there isn't much to do for the MLO_AN_PHY
+> case and the MLO_FIXED cases?
 
-[ Upstream commit 93f141324d4860a1294e6899923c01ec5411d70b ]
+You again need to configure the MAC to the selected speed, duplex,
+etc. If the link is down, you want to disable the MAC. You need this
+for both MLO_AN_PHY and MLO_FIXED, because both specify speeds,
+duplex, etc.
 
-s2idle_wait_head is used during s2idle with interrupts disabled even on
-RT. There is no "custom" wake up function so swait could be used instead
-which is also lower weight compared to the wait_queue.
-Make s2idle_wait_head a swait_queue_head.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/power/suspend.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 999236413460..b89605fe0e88 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -27,6 +27,7 @@
- #include <linux/export.h>
- #include <linux/suspend.h>
- #include <linux/syscore_ops.h>
-+#include <linux/swait.h>
- #include <linux/ftrace.h>
- #include <trace/events/power.h>
- #include <linux/compiler.h>
-@@ -57,7 +58,7 @@ EXPORT_SYMBOL_GPL(pm_suspend_global_flags);
- 
- static const struct platform_suspend_ops *suspend_ops;
- static const struct platform_s2idle_ops *s2idle_ops;
--static DECLARE_WAIT_QUEUE_HEAD(s2idle_wait_head);
-+static DECLARE_SWAIT_QUEUE_HEAD(s2idle_wait_head);
- 
- enum s2idle_states __read_mostly s2idle_state;
- static DEFINE_RAW_SPINLOCK(s2idle_lock);
-@@ -91,8 +92,8 @@ static void s2idle_enter(void)
- 	/* Push all the CPUs into the idle loop. */
- 	wake_up_all_idle_cpus();
- 	/* Make the current CPU wait so it can enter the idle loop too. */
--	wait_event(s2idle_wait_head,
--		   s2idle_state == S2IDLE_STATE_WAKE);
-+	swait_event(s2idle_wait_head,
-+		    s2idle_state == S2IDLE_STATE_WAKE);
- 
- 	cpuidle_pause();
- 	put_online_cpus();
-@@ -159,7 +160,7 @@ void s2idle_wake(void)
- 	raw_spin_lock_irqsave(&s2idle_lock, flags);
- 	if (s2idle_state > S2IDLE_STATE_NONE) {
- 		s2idle_state = S2IDLE_STATE_WAKE;
--		wake_up(&s2idle_wait_head);
-+		swake_up(&s2idle_wait_head);
- 	}
- 	raw_spin_unlock_irqrestore(&s2idle_lock, flags);
- }
--- 
-2.18.0
-
-
+	Andrew
