@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94401C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E2AC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 438D02087C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F4482086A
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:58:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Quijgqu6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438D02087C
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="opXuiTiU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4482086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728439AbeIEO1t (ORCPT
+        id S1728456AbeIEO1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 10:27:49 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34341 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728094AbeIEO1r (ORCPT
+        Wed, 5 Sep 2018 10:27:50 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39721 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728412AbeIEO1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:27:47 -0400
-Received: by mail-wm0-f65.google.com with SMTP id j25-v6so13530115wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:58:18 -0700 (PDT)
+        Wed, 5 Sep 2018 10:27:50 -0400
+Received: by mail-wr1-f67.google.com with SMTP id o37-v6so6963328wrf.6
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:58:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xbD+J6a0tMgk2zQN6erD8m4XuFwf23lXrCsSj/OMCpo=;
-        b=Quijgqu6LsCyqrF+TYT+95ciTxKfYuaH2X0+4Vkli6R8Ctv9FVr7xe82qw89NWjMUY
-         irLCseX7NMUdhxD9D+M5EebuK3+GbywbEXDqZuyj6dQsiAQzx7dISOeFin/oSjxqIa4F
-         FOaelEJ6jMe/M8EMwyKa0R/MznLoL+VpTMus63m9M/wKVkmZOj6oHg+tx4WnXN1EOmJy
-         HACmst39FtmMeYoCj+p5riLg1o2cHXnKelT/w0W9a/N0LaYx1Roq30f+Zm9aNp1soMfE
-         b9p9x41nSP2qPpnJqxpFh2QhOVsh1U0iXvsPS1H/neQPvBGhNN2ZjCQaArR5zpr1RWZo
-         3NlA==
+        bh=kwAPsVdWBm1Q091WBwR60/dHAFNq7NCMXizN9CJmyiI=;
+        b=opXuiTiUAMx8qBbfTm8KMECCTPBqzD69mtGO5GL7MNFYB2YTruGUAK+pkiS6jtVDXc
+         qKDv6TSXvYiMtLA6ckqMbf1pfSquBQtriLdWhG8Wn0jb2zjJ+MWaftxBYR20BBOxXWXF
+         4+/hubyGjI7hXp0M7vqi8WEd2XgBcodu59UaClCVagQUlHB+nRa2F/DwOPPu+XSmgPKf
+         qvwNkFAuLg1n3hCJp0+mpz6IbQgBtvL+2Vi2RCIQ2X63wMjDKKokq5qNcsPPUayBJNpe
+         A/tf+O6QJOa31+BNViKMjpWWefZV2msJ7wKFSLtkFLfBTmgHCHasI9t8X4zM7WkS/ETY
+         W5GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xbD+J6a0tMgk2zQN6erD8m4XuFwf23lXrCsSj/OMCpo=;
-        b=nXmAKy2jwHxoxFn0pkG7rb/nHMQYcnK6NWelyN2husf9gt5e85D/LfUN5R31ancrX8
-         HUsGjCQzEVPJ5+oKtJ9f0mlCGhdIfvg5jekjFRfxMsX4wmuaH6pSBVEXMHlNoyTtI/r6
-         dhcJUluOi8GlV/tUyB0vN0o16zE+ayk+SjNh4sz92HJmLpEQ4PgJ9e76ngPfiq3R2Rf+
-         M2SG/lKc9QSTX2jDiXovf13eiheXny2xRSvJp2e9nyb4L6RyEPgDjnQLN/BD7vXvKyou
-         thnt07p0MZhWZ19R5QophFLr3oyj7HpK8mJXUNaOfRevk8QznO2GC2soabUoPosXrwQV
-         dfnA==
-X-Gm-Message-State: APzg51DHisZVb4ueRjte2Sl4yreyF++7OI5c0FbA9tJL+wVjAtBhFbWQ
-        nloVKsllQEntSSH6aWwoKCimbg==
-X-Google-Smtp-Source: ANB0VdaXjuYzIRv51LPrh1B7E5DE8e61xA3hEQUwOfK+qryXe1JRsUOrhugZ39llPxLhTy1Tt5q4oA==
-X-Received: by 2002:a1c:7c18:: with SMTP id x24-v6mr10398920wmc.33.1536141497929;
-        Wed, 05 Sep 2018 02:58:17 -0700 (PDT)
+        bh=kwAPsVdWBm1Q091WBwR60/dHAFNq7NCMXizN9CJmyiI=;
+        b=JQYvrFOy7fNkV2L4uIIV8KIaZds0TnMlAU2LNyxgZ16DTP8o83h2QS0MR4Farx7iQ5
+         09QsRt8vpjP2Kw/eRfVrsTWA3wAo9xYtMQXsgmd/ZJ5rfGKVXY6qBXNhjId2sWpZZbUq
+         sTGBZ8aQNe6p2syPd6yWXetkMYeCZXgjKjGlmo9aHRokytjIDjKruSZ7gMGVxt8FW77U
+         +f6dueh2WtAzldUWFGxu4VI/lwyeEcMYsiOqFjxLdBkJw068kMtgdtu1g3bWn/oKGk/g
+         db1pOH8ygz6iDF4TkKpLnnd36civPM/DI1PzPKszpzxrBnM40kzgeB6KOLo8L0DBnjnC
+         vyLA==
+X-Gm-Message-State: APzg51DNS0MmbI8szIUslidM4ybr1qXJgPBBHlQVf4VpQqnagi2xESXD
+        DBsflSzEtIJYnZhvoQg/N6AhPg==
+X-Google-Smtp-Source: ANB0VdbhU8Ql4CzCyiSXtntJhQ+b74SR9EunOHLxRbT5sNI3JftvDfWLK2qcMx1U+mqpFg/e4Q2sWQ==
+X-Received: by 2002:adf:93c2:: with SMTP id 60-v6mr24483331wrp.81.1536141500559;
+        Wed, 05 Sep 2018 02:58:20 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-33-235.w90-86.abo.wanadoo.fr. [90.86.152.235])
-        by smtp.gmail.com with ESMTPSA id l12-v6sm2127815wrv.29.2018.09.05.02.58.16
+        by smtp.gmail.com with ESMTPSA id l12-v6sm2127815wrv.29.2018.09.05.02.58.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 02:58:17 -0700 (PDT)
+        Wed, 05 Sep 2018 02:58:20 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Joachim Eastwood <manabian@gmail.com>,
@@ -74,9 +74,9 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 11/13] nvmem: add support for cell lookups from machine code
-Date:   Wed,  5 Sep 2018 11:57:36 +0200
-Message-Id: <20180905095738.26406-12-brgl@bgdev.pl>
+Subject: [PATCH 13/13] nvmem: use SPDX license identifiers
+Date:   Wed,  5 Sep 2018 11:57:38 +0200
+Message-Id: <20180905095738.26406-14-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180905095738.26406-1-brgl@bgdev.pl>
 References: <20180905095738.26406-1-brgl@bgdev.pl>
@@ -87,273 +87,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a way for machine code users to associate devices with nvmem cells.
+Use SPDX license identiefiers to core nvmem files and remove GPL 2.0
+license boilerplate.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c          | 142 +++++++++++++++++++++++++++-------
- include/linux/nvmem-machine.h |  15 ++++
- 2 files changed, 130 insertions(+), 27 deletions(-)
+ drivers/nvmem/core.c           | 10 +---------
+ include/linux/nvmem-consumer.h |  5 +----
+ include/linux/nvmem-provider.h |  5 +----
+ 3 files changed, 3 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index da7a9d5beb33..d7c609109cfd 100644
+index d7c609109cfd..9a4eaedaa5ea 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -62,6 +62,9 @@ static DEFINE_IDA(nvmem_ida);
- static DEFINE_MUTEX(nvmem_cell_mutex);
- static LIST_HEAD(nvmem_cell_tables);
- 
-+static DEFINE_MUTEX(nvmem_lookup_mutex);
-+static LIST_HEAD(nvmem_lookup_list);
-+
- static BLOCKING_NOTIFIER_HEAD(nvmem_notifier);
- 
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
-@@ -285,6 +288,18 @@ static struct nvmem_device *of_nvmem_find(struct device_node *nvmem_np)
- 	return to_nvmem_device(d);
- }
- 
-+static struct nvmem_device *nvmem_find(const char *name)
-+{
-+	struct device *d;
-+
-+	d = bus_find_device_by_name(&nvmem_bus_type, NULL, name);
-+
-+	if (!d)
-+		return NULL;
-+
-+	return to_nvmem_device(d);
-+}
-+
- static void nvmem_cell_drop(struct nvmem_cell *cell)
- {
- 	mutex_lock(&nvmem_mutex);
-@@ -421,6 +436,21 @@ nvmem_find_cell_by_index(struct nvmem_device *nvmem, int index)
- 	return cell;
- }
- 
-+static struct nvmem_cell *
-+nvmem_find_cell_by_name(struct nvmem_device *nvmem, const char *cell_id)
-+{
-+	struct nvmem_cell *cell = NULL;
-+
-+	mutex_lock(&nvmem_mutex);
-+	list_for_each_entry(cell, &nvmem->cells, node) {
-+		if (strcmp(cell_id, cell->name) == 0)
-+			break;
-+	}
-+	mutex_unlock(&nvmem_mutex);
-+
-+	return cell;
-+}
-+
- static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
- {
- 	struct device_node *parent, *child;
-@@ -691,22 +721,16 @@ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
- }
- EXPORT_SYMBOL(devm_nvmem_unregister);
- 
--static struct nvmem_device *__nvmem_device_get(struct device_node *np)
-+static struct nvmem_device *
-+__nvmem_device_get(struct device_node *np, const char *name)
- {
- 	struct nvmem_device *nvmem = NULL;
- 
--	if (!np)
--		return ERR_PTR(-EINVAL);
--
- 	mutex_lock(&nvmem_mutex);
--
--	nvmem = of_nvmem_find(np);
--	if (!nvmem) {
--		mutex_unlock(&nvmem_mutex);
--		return ERR_PTR(-EPROBE_DEFER);
--	}
--
-+	nvmem = np ? of_nvmem_find(np) : nvmem_find(name);
- 	mutex_unlock(&nvmem_mutex);
-+	if (!nvmem)
-+		return ERR_PTR(-EPROBE_DEFER);
- 
- 	if (!try_module_get(nvmem->owner)) {
- 		dev_err(&nvmem->dev,
-@@ -726,18 +750,6 @@ static void __nvmem_device_put(struct nvmem_device *nvmem)
- 	kref_put(&nvmem->refcnt, nvmem_device_release);
- }
- 
--static struct nvmem_device *nvmem_find(const char *name)
--{
--	struct device *d;
--
--	d = bus_find_device_by_name(&nvmem_bus_type, NULL, name);
--
--	if (!d)
--		return NULL;
--
--	return to_nvmem_device(d);
--}
--
- #if IS_ENABLED(CONFIG_OF)
- /**
-  * of_nvmem_device_get() - Get nvmem device from a given id
-@@ -760,7 +772,7 @@ struct nvmem_device *of_nvmem_device_get(struct device_node *np, const char *id)
- 	if (!nvmem_np)
- 		return ERR_PTR(-EINVAL);
- 
--	return __nvmem_device_get(nvmem_np);
-+	return __nvmem_device_get(nvmem_np, NULL);
- }
- EXPORT_SYMBOL_GPL(of_nvmem_device_get);
- #endif
-@@ -897,7 +909,7 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
- 	if (!nvmem_np)
- 		return ERR_PTR(-EINVAL);
- 
--	nvmem = __nvmem_device_get(nvmem_np);
-+	nvmem = __nvmem_device_get(nvmem_np, NULL);
- 	of_node_put(nvmem_np);
- 	if (IS_ERR(nvmem))
- 		return ERR_CAST(nvmem);
-@@ -913,6 +925,43 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
- EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
- #endif
- 
-+static struct nvmem_cell *
-+nvmem_cell_get_from_lookup(struct device *dev, const char *cell_id)
-+{
-+	struct nvmem_cell *cell = ERR_PTR(-ENOENT);
-+	struct nvmem_cell_lookup *lookup;
-+	struct nvmem_device *nvmem;
-+	const char *dev_id;
-+
-+	if (!dev)
-+		return ERR_PTR(-EINVAL);
-+
-+	dev_id = dev_name(dev);
-+
-+	mutex_lock(&nvmem_lookup_mutex);
-+
-+	list_for_each_entry(lookup, &nvmem_lookup_list, node) {
-+		if ((strcmp(lookup->dev_id, dev_id) == 0) &&
-+		    (strcmp(lookup->cell_id, cell_id) == 0)) {
-+			/* This is the right entry. */
-+			nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
-+			if (!nvmem) {
-+				/* Provider may not be registered yet. */
-+				cell = ERR_PTR(-EPROBE_DEFER);
-+				goto out;
-+			}
-+
-+			cell = nvmem_find_cell_by_name(nvmem, cell_id);
-+			if (!cell)
-+				goto out;
-+		}
-+	}
-+
-+out:
-+	mutex_unlock(&nvmem_lookup_mutex);
-+	return cell;
-+}
-+
- /**
-  * nvmem_cell_get() - Get nvmem cell of device form a given cell name
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * nvmem framework core.
   *
-@@ -925,10 +974,14 @@ EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
+  * Copyright (C) 2015 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+  * Copyright (C) 2013 Maxime Ripard <maxime.ripard@free-electrons.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
   */
- struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *cell_id)
- {
--	if (!dev->of_node)
-+	if (dev->of_node)
-+		return of_nvmem_cell_get(dev->of_node, cell_id);
-+
-+	/* Only allow empty cell_id for DT systems. */
-+	if (!cell_id)
- 		return ERR_PTR(-EINVAL);
  
--	return of_nvmem_cell_get(dev->of_node, cell_id);
-+	return nvmem_cell_get_from_lookup(dev, cell_id);
- }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
- 
-@@ -1300,6 +1353,41 @@ void nvmem_del_cell_table(struct nvmem_cell_table *table)
- }
- EXPORT_SYMBOL_GPL(nvmem_del_cell_table);
- 
-+/**
-+ * nvmem_add_cell_lookups() - register a list of cell lookup entries
-+ *
-+ * @entries: array of cell lookup entries
-+ * @nentries: number of cell lookup entries in the array
-+ */
-+void nvmem_add_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries)
-+{
-+	int i;
-+
-+	mutex_lock(&nvmem_lookup_mutex);
-+	for (i = 0; i < nentries; i++)
-+		list_add_tail(&entries[i].node, &nvmem_lookup_list);
-+	mutex_unlock(&nvmem_lookup_mutex);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_add_cell_lookups);
-+
-+/**
-+ * nvmem_del_cell_lookups() - remove a list of previously added cell lookup
-+ *                            entries
-+ *
-+ * @entries: array of cell lookup entries
-+ * @nentries: number of cell lookup entries in the array
-+ */
-+void nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries)
-+{
-+	int i;
-+
-+	mutex_lock(&nvmem_lookup_mutex);
-+	for (i = 0; i < nentries; i++)
-+		list_del(&entries[i].node);
-+	mutex_unlock(&nvmem_lookup_mutex);
-+}
-+EXPORT_SYMBOL_GPL(nvmem_del_cell_lookups);
-+
- /**
-  * nvmem_dev_name() - Get the name of a given nvmem device.
+ #include <linux/device.h>
+diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
+index 8a6405febc32..e417e28d6aa2 100644
+--- a/include/linux/nvmem-consumer.h
++++ b/include/linux/nvmem-consumer.h
+@@ -1,12 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * nvmem framework consumer.
   *
-diff --git a/include/linux/nvmem-machine.h b/include/linux/nvmem-machine.h
-index 1e199dfaacab..79421bbf9d13 100644
---- a/include/linux/nvmem-machine.h
-+++ b/include/linux/nvmem-machine.h
-@@ -26,16 +26,31 @@ struct nvmem_cell_table {
- 	struct list_head	node;
- };
+  * Copyright (C) 2015 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+  * Copyright (C) 2013 Maxime Ripard <maxime.ripard@free-electrons.com>
+- *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
  
-+struct nvmem_cell_lookup {
-+	const char		*nvmem_name;
-+	const char		*dev_id;
-+	const char		*cell_id;
-+	struct list_head	node;
-+};
-+
- #if IS_ENABLED(CONFIG_NVMEM)
+ #ifndef _LINUX_NVMEM_CONSUMER_H
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index 07ab1ea73520..02ac0dcb2001 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -1,12 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * nvmem framework provider.
+  *
+  * Copyright (C) 2015 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+  * Copyright (C) 2013 Maxime Ripard <maxime.ripard@free-electrons.com>
+- *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
  
- void nvmem_add_cell_table(struct nvmem_cell_table *table);
- void nvmem_del_cell_table(struct nvmem_cell_table *table);
- 
-+void nvmem_add_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries);
-+void nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries);
-+
- #else /* CONFIG_NVMEM */
- 
- static inline void nvmem_add_cell_table(struct nvmem_cell_table *table) {}
- static inline void nvmem_del_cell_table(struct nvmem_cell_table *table) {}
- 
-+static inline void
-+nvmem_add_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries) {}
-+static inline void
-+nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries) {}
-+
- #endif /* CONFIG_NVMEM */
- 
- #endif  /* ifndef _LINUX_NVMEM_MACHINE_H */
+ #ifndef _LINUX_NVMEM_PROVIDER_H
 -- 
 2.18.0
 
