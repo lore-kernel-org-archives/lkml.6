@@ -2,132 +2,128 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81497C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4CEC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E48F20873
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:35:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E48F20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3123B2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:35:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="djjKsngD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3123B2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbeIFCHq (ORCPT
+        id S1727757AbeIFCHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:07:46 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32654 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeIFCHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:07:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 14:35:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="78272709"
-Received: from ray.jf.intel.com (HELO [10.54.74.170]) ([10.54.74.170])
-  by FMSMGA003.fm.intel.com with ESMTP; 05 Sep 2018 14:35:41 -0700
-Subject: Re: [PATCH] x86/pkeys: Explicitly treat PK #PF on kernel address as a
- bad area
-To:     Andy Lutomirski <luto@kernel.org>
-References: <20180807172920.8766-1-sean.j.christopherson@intel.com>
- <20180904195030.GA6269@linux.intel.com>
- <CALCETrU-HXfr_eAfeS1t7JH+-gOh0ZfAoGxjcOckxEX1fN_YDA@mail.gmail.com>
- <8a62de3e-defa-6681-c853-cd5140c5f0b5@intel.com>
- <CALCETrUKJ2qYVZRhDQEbVRPkgtj9VEdxc83ON9nAK-S52s7qmg@mail.gmail.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Jann Horn <jannh@google.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6529a46e-ae83-5ff2-0152-1d5783f271c3@intel.com>
-Date:   Wed, 5 Sep 2018 14:35:41 -0700
+        Wed, 5 Sep 2018 22:07:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58706 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeIFCHr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:07:47 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w85LYVwW188869;
+        Wed, 5 Sep 2018 21:35:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=1rUCE0mEqyDFADgBoEFF0Bqcz+tx6BkVwbHbd9H0oCw=;
+ b=djjKsngDjR/eTIRKveV+I/81rDulqz1HtoC7Ls30DPzAQ+cB01r2QPKtofYHzGwDrDyf
+ TgS8xrmtGETAhioB90xAXdZztIP04mtDzySB/tcrDeK2u+RaYgQlZYVXTw9Ea87q9uoI
+ Yblr6W9oiBg9gyZKRWvWA3EfPPvMvFpE2LOw/aAZS41z4CYzaFTGMuak/anNoJ73uIw7
+ ID5mLHUuxcC+rRXuTce45QgJ2ThE75eHlNuQMT1nNvNyAwZlIR+fVpSD434wzxfSBKwu
+ jc2OIfhwjCQJnEZWXAaYO8LEXm+aPLsp4don9Euv5bpGRKgsOxCK6sclBhUJF08e/jns pQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2m7kdqpdne-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Sep 2018 21:35:20 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w85LZE4j015700
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Sep 2018 21:35:14 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w85LZDBw023253;
+        Wed, 5 Sep 2018 21:35:13 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Sep 2018 14:35:13 -0700
+Subject: Re: [RFC PATCH] mm/hugetlb: make hugetlb_lock irq safe
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20180905112341.21355-1-aneesh.kumar@linux.ibm.com>
+ <20180905130440.GA3729@bombadil.infradead.org>
+ <d76771e6-1664-5d38-a5a0-e98f1120494c@linux.ibm.com>
+ <20180905134848.GB3729@bombadil.infradead.org>
+ <20180905125846.eb0a9ed907b293c1b4c23c23@linux-foundation.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <78b08258-14c8-0e90-97c7-d647a11acb30@oracle.com>
+Date:   Wed, 5 Sep 2018 14:35:11 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CALCETrUKJ2qYVZRhDQEbVRPkgtj9VEdxc83ON9nAK-S52s7qmg@mail.gmail.com>
+In-Reply-To: <20180905125846.eb0a9ed907b293c1b4c23c23@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=785
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809050204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 02:27 PM, Andy Lutomirski wrote:
-> Also, I doubt it matters right here, but !X86_PF_USER isn't quite the
-> same thing as "originating from kernel code" -- it can also be user
-> code that does a CPL0 access due to exception delivery or access to a
-> descriptor table.  Which you saw plenty of times while debugging
-> PTI... :)  I doubt any of those should be spurious, though.
+On 09/05/2018 12:58 PM, Andrew Morton wrote:
+> On Wed, 5 Sep 2018 06:48:48 -0700 Matthew Wilcox <willy@infradead.org> wrote:
+> 
+>>> I didn't. The reason I looked at current patch is to enable the usage of
+>>> put_page() from irq context. We do allow that for non hugetlb pages. So was
+>>> not sure adding that additional restriction for hugetlb
+>>> is really needed. Further the conversion to irqsave/irqrestore was
+>>> straightforward.
+>>
+>> straightforward, sure.  but is it the right thing to do?  do we want to
+>> be able to put_page() a hugetlb page from hardirq context?
+> 
+> Calling put_page() against a huge page from hardirq seems like the
+> right thing to do - even if it's rare now, it will presumably become
+> more common as the hugepage virus spreads further across the kernel. 
+> And the present asymmetry is quite a wart.
+> 
+> That being said, arch/powerpc/mm/mmu_context_iommu.c:mm_iommu_free() is
+> the only known site which does this (yes?)
 
-Yeah, you're talking about "implicit supervisor access".  Right?
+IIUC, the powerpc iommu code 'remaps' user allocated hugetlb pages.  It is
+these pages that are of issue at put_page time.  I'll admit that code is new
+to me and I may not fully understand.  However, if this is accurate then it
+makes it really difficult to track down any other similar usage patterns.
+I can not find a reference to PageHuge in the powerpc iommu code.
 
-I definitely saw those during KAISER/KPTI development.  But, it's
-probably worth noting that the code that we have that _looks_ for these:
+>                                            so perhaps we could put some
+> stopgap workaround into that site and add a runtime warning into the
+> put_page() code somewhere to detect puttage of huge pages from hardirq
+> and softirq contexts.
 
->         /*
->          * It's safe to allow irq's after cr2 has been saved and the
->          * vmalloc fault has been handled.
->          *
->          * User-mode registers count as a user access even for any
->          * potential system fault or CPU buglet:
->          */
->         if (user_mode(regs)) {
->                 local_irq_enable();
->                 error_code |= X86_PF_USER;
->                 flags |= FAULT_FLAG_USER;
+I think we would add the warning/etc at free_huge_page.  The issue would
+only apply to hugetlb pages, not THP.
 
-is in the user address space handling portion of the code.  So, it's
-really not useful for any of the _known_ implicit supervisor-mode
-accesses.  I think it can only get triggered in the case of hardware or
-software bugs.
+But, the more I think about it the more I think Aneesh's patch to do
+spin_lock/unlock_irqsave is the right way to go.  Currently, we only
+know of one place where a put_page of hugetlb pages is done from softirq
+context.  So, we could take the spin_lock/unlock_bh as Matthew suggested.
+When the powerpc iommu code was added, I doubt this was taken into account.
+I would be afraid of someone adding put_page from hardirq context.
+
+-- 
+Mike Kravetz
+
+> And attention will need to be paid to -stable backporting.  How long
+> has mm_iommu_free() existed, and been doing this?
