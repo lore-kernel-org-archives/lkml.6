@@ -2,132 +2,149 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF894C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC168C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5113E2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:51:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W9stpubB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5113E2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EA742083E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 23:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA742083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbeIFEX7 (ORCPT
+        id S1726059AbeIFE0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 00:23:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33854 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbeIFEX6 (ORCPT
+        Thu, 6 Sep 2018 00:26:03 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41204 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbeIFE0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 00:23:58 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w85NmZ9c134193;
-        Wed, 5 Sep 2018 23:51:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=G6Wj43q2rIoVttU6gcAfm8BfcqI4XTJSVomeiw97jY8=;
- b=W9stpubBtwdwqIyfskg3MmwgxBhE3zsHKwsE5l+CZkJDgZ2DE6zCKMR+TAfs1xpzDQ78
- /N1N+/Uc9H0HQzy7P+vjxBho0gY8f4g/PEFwZQMH/KRo9iAzPc86o9PPTlHvGpKMthLH
- 2A1tNZh0CIpboizk1+hbB+tIfyC40qgEyp2XQCujxE4rPpuebwnqzsKBCmHyPHBmB7TF
- Fw5oIvbNhLxUonrOmqeJAqXtRvUhWl8K1jC9+3eFmO25BeNmpgTntu44aHadIO3eLYK2
- t8RiKp5sJmGN5X4CMMAo7eiayXSyjLHVXhHy4I6czj3gTfJEQVF0lbuPBDllDyF3aj1R TA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2m7jqppyms-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Sep 2018 23:51:08 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w85Np2Ql028172
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Sep 2018 23:51:02 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w85Np1qL028279;
-        Wed, 5 Sep 2018 23:51:01 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Sep 2018 16:51:01 -0700
-Subject: Re: [RFC PATCH] mm/hugetlb: make hugetlb_lock irq safe
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20180905112341.21355-1-aneesh.kumar@linux.ibm.com>
- <20180905130440.GA3729@bombadil.infradead.org>
- <d76771e6-1664-5d38-a5a0-e98f1120494c@linux.ibm.com>
- <20180905134848.GB3729@bombadil.infradead.org>
- <20180905125846.eb0a9ed907b293c1b4c23c23@linux-foundation.org>
- <78b08258-14c8-0e90-97c7-d647a11acb30@oracle.com>
- <20180905150008.59d477c1f78f966a8f9c3cc8@linux-foundation.org>
- <20180905230737.GA14977@bombadil.infradead.org>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <c03c8851-ce18-56c6-3f37-47f585d70b19@oracle.com>
-Date:   Wed, 5 Sep 2018 16:51:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180905230737.GA14977@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809050226
+        Thu, 6 Sep 2018 00:26:02 -0400
+Received: by mail-oi0-f66.google.com with SMTP id k12-v6so17090391oiw.8;
+        Wed, 05 Sep 2018 16:53:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OyvN1cpM7RnrgXuUADJuSHYQfVp0emDNRAOJvT0826M=;
+        b=nWEJ58tZ7OcS0KuR7fsSR/BIruQxZmRfTLQTzKZ1dZ3sfXCOb0qaBdKB2cb7q+vesV
+         tsovDJrxHXwxKFTThdK/HULRslaYm9f8f2m3iF2g7WKq7ZfViGW9en4X1OkjrVbLGvwJ
+         HaEm2LZ2K9SbODIs8QjitLV7977zEvFv4tBn6FLMgnqag9qMNLIZiuTho9TIWkJRRe16
+         VSWTo9pAxatn7kl3zcJirXzGo59XboLzZREeioLpV7pZi02Mzr/sS9szv8I4RX4ZOIPT
+         ClDp8R8NMltQh6FajBHSjhMMEjUAbcCYj/+yuZzbuV+Dooj2J1wIeS+a+fHhW+DUKllV
+         5xcg==
+X-Gm-Message-State: APzg51Dl1zo8eDPWbE66VxSfHzjQulv521PMbObsGVWwRK3I+I4PO+fM
+        nlGGL2fO4rlOVjFaVXbEt6BJLQU=
+X-Google-Smtp-Source: ANB0Vdbrs88ccsQdrBIRLBtLdSR97TqWwYDgS5lwH0uZpOeHileUmLg6NL7k2yURyLmt0IsbFGmK6Q==
+X-Received: by 2002:aca:6541:: with SMTP id j1-v6mr100231oiw.157.1536191609819;
+        Wed, 05 Sep 2018 16:53:29 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id h186-v6sm3860624oib.55.2018.09.05.16.53.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 16:53:29 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-kbuild@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-mips@linux-mips.org,
+        nios2-dev@lists.rocketboards.org, linuxppc-dev@lists.ozlabs.org,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH v2 0/9] Devicetree build consolidation
+Date:   Wed,  5 Sep 2018 18:53:18 -0500
+Message-Id: <20180905235327.5996-1-robh@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 04:07 PM, Matthew Wilcox wrote:
-> On Wed, Sep 05, 2018 at 03:00:08PM -0700, Andrew Morton wrote:
->> On Wed, 5 Sep 2018 14:35:11 -0700 Mike Kravetz <mike.kravetz@oracle.com> wrote:
->>
->>>>                                            so perhaps we could put some
->>>> stopgap workaround into that site and add a runtime warning into the
->>>> put_page() code somewhere to detect puttage of huge pages from hardirq
->>>> and softirq contexts.
->>>
->>> I think we would add the warning/etc at free_huge_page.  The issue would
->>> only apply to hugetlb pages, not THP.
->>>
->>> But, the more I think about it the more I think Aneesh's patch to do
->>> spin_lock/unlock_irqsave is the right way to go.  Currently, we only
->>> know of one place where a put_page of hugetlb pages is done from softirq
->>> context.  So, we could take the spin_lock/unlock_bh as Matthew suggested.
->>> When the powerpc iommu code was added, I doubt this was taken into account.
->>> I would be afraid of someone adding put_page from hardirq context.
->>
->> Me too.  If we're going to do this, surely we should make hugepages
->> behave in the same fashion as PAGE_SIZE pages.
-> 
-> But these aren't vanilla hugepages, they're specifically hugetlbfs pages.
-> I don't believe there's any problem with calling put_page() on a normally
-> allocated huge page or THP.
+This series addresses a couple of issues I have with building dts files.
 
-Right
-The powerpc iommu code (at least) treated hugetlbfs pages as any other page
-(huge, THP or base) and called put_page from softirq context.
+First, the ability to build all the dts files in the tree. This has been
+supported on most arches for some time with powerpc being the main
+exception. The reason powerpc wasn't supported was it needed a change
+in the location built dtb files are put.
 
-It seems there are at least two ways to address this:
-1) Prohibit this behavior for hugetlbfs pages
-2) Try to make hugetlbfs pages behave like other pages WRT put_page
+Secondly, it's a pain to acquire all the cross-compilers needed to build
+dtbs for each arch. There's no reason to build with the cross compiler and
+the host compiler is perfectly fine as we only need the pre-processor.
 
-Aneesh's patch went further than allowing put_page of hugetlbfs pages
-from softirq context.  It allowed them from hardirq context as well:
-admittedly at a cost of disabling irqs.
+I started addressing just those 2 problems, but kept finding small
+differences such as target dependencies and dtbs_install support across
+architectures. Instead of trying to align all these, I've consolidated the
+build targets moving them out of the arch makefiles.
 
-This issue has probably existed since the addition of powerpc iommu code.
-IMO, we should make hugetlbfs pages behave more like other pages in this
-case.
+I'd like to take the series via the DT tree.
 
-BTW, free_huge_page called by put_page for hugetlbfs pages may also take
-a subpool specific lock via spin_lock().  See hugepage_subpool_put_pages.
-So, this would also need to take irq context into account.
--- 
-Mike Kravetz
+Rob
+
+v2:
+ - Fix $arch/boot/dts path check for out of tree builds
+ - Fix dtc dependency for building built-in dtbs
+ - Fix microblaze built-in dtb building
+ - Add dtbs target for microblaze
+
+Rob Herring (9):
+  powerpc: build .dtb files in dts directory
+  nios2: build .dtb files in dts directory
+  nios2: use common rules to build built-in dtb
+  nios2: fix building all dtbs
+  c6x: use common built-in dtb support
+  kbuild: consolidate Devicetree dtb build rules
+  powerpc: enable building all dtbs
+  c6x: enable building all dtbs
+  microblaze: enable building all dtbs
+
+ Makefile                           | 32 +++++++++++++++++++
+ arch/arc/Makefile                  |  6 ----
+ arch/arm/Makefile                  | 20 +-----------
+ arch/arm64/Makefile                | 17 +----------
+ arch/c6x/Makefile                  |  2 --
+ arch/c6x/boot/dts/Makefile         | 17 +++++------
+ arch/c6x/boot/dts/linked_dtb.S     |  2 --
+ arch/c6x/include/asm/sections.h    |  1 -
+ arch/c6x/kernel/setup.c            |  4 +--
+ arch/c6x/kernel/vmlinux.lds.S      | 10 ------
+ arch/h8300/Makefile                | 11 +------
+ arch/microblaze/Makefile           |  4 +--
+ arch/microblaze/boot/dts/Makefile  |  4 +++
+ arch/mips/Makefile                 | 15 +--------
+ arch/nds32/Makefile                |  2 +-
+ arch/nios2/Makefile                | 11 +------
+ arch/nios2/boot/Makefile           | 22 --------------
+ arch/nios2/boot/dts/Makefile       |  6 ++++
+ arch/nios2/boot/linked_dtb.S       | 19 ------------
+ arch/powerpc/Makefile              |  3 --
+ arch/powerpc/boot/Makefile         | 49 ++++++++++++++----------------
+ arch/powerpc/boot/dts/Makefile     |  6 ++++
+ arch/powerpc/boot/dts/fsl/Makefile |  4 +++
+ arch/xtensa/Makefile               | 12 +-------
+ scripts/Makefile.lib               |  2 +-
+ 25 files changed, 93 insertions(+), 188 deletions(-)
+ delete mode 100644 arch/c6x/boot/dts/linked_dtb.S
+ create mode 100644 arch/nios2/boot/dts/Makefile
+ delete mode 100644 arch/nios2/boot/linked_dtb.S
+ create mode 100644 arch/powerpc/boot/dts/Makefile
+ create mode 100644 arch/powerpc/boot/dts/fsl/Makefile
+
+--
+2.17.1
