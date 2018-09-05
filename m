@@ -2,154 +2,87 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DBAC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED5DC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8981A20870
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:25:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pIPCR5zO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HAw5tfTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8981A20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 85FB920861
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:28:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FB920861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeIEPzW (ORCPT
+        id S1726909AbeIEP6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:55:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54780 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbeIEPzU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:55:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7C3926081A; Wed,  5 Sep 2018 11:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536146732;
-        bh=r4wET2phV7PBOYKGIZGI3mCMwfu3Myseg3F8erW5388=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pIPCR5zOMwCVUlVOMfxMuJSerj/GINu4y3WiluM6lWjf1vMzMh6x0Q/XRmeVgJniO
-         QzCbhU3A4c+cjR257jWD80WA2daYXYrhlREA/oJWqDuIdYEW/JauvqBuf1XRxnn5tr
-         hx2eQbBNcU+Q3Qt6VcoSz7nXvxXMfgRBslF40ujU=
-Received: from [10.79.41.39] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 73A3A602AE;
-        Wed,  5 Sep 2018 11:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536146731;
-        bh=r4wET2phV7PBOYKGIZGI3mCMwfu3Myseg3F8erW5388=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HAw5tfTc/18jqb2/ejEKXOdMSqwlAXyuBxYPHi2n3wJ8MGQEgOxBhI2d2c59jeeul
-         hlh98ajryG5HAfV9MRXuBF4OHXHKEQoHMSZYBwxFr+WzODVgwBoQRHWMgkSRDPc1lH
-         1s7cBvP/nyx7wctiy0b/HSH6uEqZA7HzY3yBfVIQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 73A3A602AE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 0/5] Qcom smmu-500 TLB invalidation errata for sdm845
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, joro@8bytes.org,
-        Andy Gross <andy.gross@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Brown <david.brown@linaro.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180814105528.20592-1-vivek.gautam@codeaurora.org>
- <20180814114009.GF28664@arm.com>
- <ad4e9f85-ff57-ad26-fb25-7b4c08683a52@codeaurora.org>
- <3f74124c-b09f-a92d-117d-a747d33a4561@codeaurora.org>
- <CAF6AEGsuAXXtUbeteQk5ssZEqk8XLViDZH5PfxQjn6sg8+B08A@mail.gmail.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <3ac669af-a68e-874f-4c3e-91a2e9f676af@codeaurora.org>
-Date:   Wed, 5 Sep 2018 16:55:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 11:58:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55557 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725868AbeIEP6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 11:58:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 04:28:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
+   d="scan'208";a="83207174"
+Received: from kfitzx-mobl.ger.corp.intel.com (HELO localhost) ([10.252.37.75])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Sep 2018 04:28:49 -0700
+Date:   Wed, 5 Sep 2018 14:28:47 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Peter Huewe <peterhuewe@gmx.de>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] tpm: Make SECURITYFS a weak dependency
+Message-ID: <20180905112847.GC9696@linux.intel.com>
+References: <20180903195151.7576-1-peterhuewe@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <CAF6AEGsuAXXtUbeteQk5ssZEqk8XLViDZH5PfxQjn6sg8+B08A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903195151.7576-1-peterhuewe@gmx.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 03, 2018 at 09:51:51PM +0200, Peter Huewe wrote:
+> While having SECURITYFS enabled for the tpm subsystem is beneficial in
+> most cases, it is not strictly necessary to have it enabled at all.
+> Especially on platforms without any boot firmware integration of the TPM
+> (e.g. raspberry pi) it does not add any value for the tpm subsystem,
+> as there is no eventlog present.
+> 
+> By turning it from 'select' to 'imply' it still gets selected per
+> default, but enables users who want to save some kb of ram by turning
+> SECURITYFS off.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> ---
+>  drivers/char/tpm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index 18c81cbe4704..536e55d3919f 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -5,7 +5,7 @@
+>  menuconfig TCG_TPM
+>  	tristate "TPM Hardware Support"
+>  	depends on HAS_IOMEM
+> -	select SECURITYFS
+> +	imply SECURITYFS
+>  	select CRYPTO
+>  	select CRYPTO_HASH_INFO
+>  	---help---
+> -- 
+> 2.16.4
+> 
 
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-On 9/5/2018 3:34 PM, Rob Clark wrote:
-> On Wed, Sep 5, 2018 at 5:22 AM Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>
->> On 8/14/2018 5:54 PM, Vivek Gautam wrote:
->>> Hi Will,
->>>
->>>
->>> On 8/14/2018 5:10 PM, Will Deacon wrote:
->>>> Hi Vivek,
->>>>
->>>> On Tue, Aug 14, 2018 at 04:25:23PM +0530, Vivek Gautam wrote:
->>>>> Qcom's implementation of arm,mmu-500 on sdm845 has a
->>>>> functional/performance
->>>>> errata [1] because of which the TCU cache look ups are stalled during
->>>>> invalidation cycle. This is mitigated by serializing all the
->>>>> invalidation
->>>>> requests coming to the smmu.
->>>> How does this implementation differ from the one supported by
->>>> qcom_iommu.c?
->>>> I notice you're adding firmware hooks here, which we avoided by
->>>> having the
->>>> extra driver. Please help me understand which devices exist, how they
->>>> differ, and which drivers are intended to support them!
->>> IIRC, the qcom_iommu driver was intended to support the static context
->>> bank - SID
->>> mapping, and is very specific to the smmu-v2 version present on
->>> msm8916 soc.
->>> However, this is the qcom's mmu-500 implementation specific errata.
->>> qcom_iommu
->>> will not be able to support mmu-500 configurations.
->>> Rob Clark can add more.
->>> Let you know what you suggest.
->> Rob, can you please comment about how qcom-smmu driver has different
->> implementation
->> from arm-smmu driver?
-> sorry, I missed this thread earlier.  But yeah, as you mentioned, the
-> purpose for qcom_iommu.c was to deal with the static context/SID
-> mapping.
->
-> (I guess it is all just software, and we could make qcom_iommu.c
-> support dynamic mapping as well, but I think then it starts to
-> duplicate most of arm_smmu.c, so that doesn't seem like the right
-> direction)
-
-Thanks Rob for the response. I will wait for Will's response on how would he
-like this support be implemented.
-
-Best regards
-Vivek
->
-> BR,
-> -R
->
->> Will, in case we would want to use arm-smmu driver, what would you
->> suggest for
->> having the firmware hooks?
->> Thanks.
->>
->> Best regards
->> Vivek
-
+/Jarkko
