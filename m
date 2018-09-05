@@ -2,137 +2,712 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C6AC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31D9C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A342075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36A342075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 89AE02075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:17:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89AE02075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbeIENqR (ORCPT
+        id S1728262AbeIENq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Sep 2018 09:46:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39638 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728139AbeIENqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Sep 2018 09:46:17 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42571 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbeIENqQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:46:16 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z11-v6so5346872lff.9
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:16:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NelYs/EqT/Fx+7sSuhyYfF4NmzW8l7r/BtC6f9jADw8=;
-        b=uCeqx5fU2hhFP1xQCy4ovUEsApLuuvexCZH9Jc7PrpelOBhmwK4MowYpeT5Z1BpPjw
-         /014zCQjdZXhz67trWTlzTQWNZY+14XIZBxL0XCKhAY3Vc+6MIXFGNLJXl8HlPCAtank
-         1jB3ZT208P9FJAlAkEXOyxHnCK6hQq1RYhO8afuuO3XOFq+gibVD9WiFm3DVQ1GTsEMp
-         IXNlzZewYXkn0+A+JvBCHQqhm0SmyE2jMInOm8GxQwE+4aXSKI9XKmAjhDc5np3AE+mz
-         0/0FwPvTslOrXfJOZUub+i9P3HVpx5rzp2DBUi9+6wp11X+RK4NDdpA+ApqjCRP/7B53
-         YLMw==
-X-Gm-Message-State: APzg51AeEPhwmRtL4AFexgS3pV2bN2OM9+EC+4jDEMD6lU4uVo2DwLlN
-        mXy/h4uC4dXDmEyY5QepkSHwFyYy8wUf7PbJFeFH1Q==
-X-Google-Smtp-Source: ANB0VdZdJsNkJ/XWAUeTW4OT+2v7uXv7lGAYzq+Aa480ylZGzpYxElyu/295zqKWG9lF1Wz9jUvKJm3uDp/Kb2h7zKc=
-X-Received: by 2002:a19:57c5:: with SMTP id l188-v6mr24362974lfb.109.1536139017061;
- Wed, 05 Sep 2018 02:16:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
- <20180829003539.668e514c@roar.ozlabs.ibm.com> <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
- <20180831134943.7f516fed@roar.ozlabs.ibm.com> <CAGnkfhy9okKAfZVkbO3YWPVmWgVm2LFzR-8=S73OfJ3bK_1FxQ@mail.gmail.com>
- <20180905135359.26992d29@roar.ozlabs.ibm.com>
-In-Reply-To: <20180905135359.26992d29@roar.ozlabs.ibm.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Wed, 5 Sep 2018 09:16:20 +0000
-Message-ID: <CAGnkfhxbGAy8iW9cnb+c_tm0TRQ6VFVZ3NBg5gUG-b7QKwZivA@mail.gmail.com>
-Subject: Re: VirtIO console hangs
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 37077208AF; Wed,  5 Sep 2018 11:16:57 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EF066207AB;
+        Wed,  5 Sep 2018 11:16:46 +0200 (CEST)
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH 10/10] drm/bridge: cdns: Convert to phy framework
+Date:   Wed,  5 Sep 2018 11:16:41 +0200
+Message-Id: <e4bdf06013336761c10a56b3793bdec7f868a622.1536138624.git-series.maxime.ripard@bootlin.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+In-Reply-To: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 3:54 AM Nicholas Piggin <npiggin@gmail.com> wrote:
->
-> On Fri, 31 Aug 2018 15:17:44 +0000
-> Matteo Croce <mcroce@redhat.com> wrote:
->
-> > On Fri, Aug 31, 2018 at 3:49 AM Nicholas Piggin <npiggin@gmail.com> wrote:
-> > >
-> > > On Tue, 28 Aug 2018 15:00:14 +0000
-> > > Matteo Croce <mcroce@redhat.com> wrote:
-> > >
-> > > > On Tue, Aug 28, 2018 at 2:35 PM Nicholas Piggin <npiggin@gmail.com> wrote:
-> > > > >
-> > > > > On Tue, 28 Aug 2018 12:54:08 +0000
-> > > > > Matteo Croce <mcroce@redhat.com> wrote:
-> > > > >
-> > > > > > With kernel 4.19.0-rc1 virtio_console hangs very often.
-> > > > > > I can always trigger the bug by pasting some characters in the
-> > > > > > terminal window, the console will stop receiving keypresses, but I can
-> > > > > > still see output from the console.
-> > > > > > Stangely, logging in the VM via SSH and sending lot of data to hvc0,
-> > > > > > like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
-> > > > > >
-> > > > > > I did a git bisect and I've found that this is the offending commit,
-> > > > > > reverting it fixes it.
-> > > > > >
-> > > > > > Cheers,
-> > > > > >
-> > > > > > commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
-> > > > > > Author: Nicholas Piggin <npiggin@gmail.com>
-> > > > > > Date:   Tue May 1 00:55:54 2018 +1000
-> > > > > >
-> > > > > >     tty: hvc: hvc_poll() break hv read loop
-> > > > >
-> > > > > Thanks for the report. I can't immediately see what the problem
-> > > > > is. Can you try get a stack trace of where it is stuck?
-> > > > >
-> > > >
-> > > > I tried but didn't get one.
-> > > >
-> > > > > Perhaps try this patch if you have time (it's a bit of a shot
-> > > > > in the dark).
-> > > > >
-> > > >
-> > > > Yes it seems to fix. Thanks!
-> > >
-> > > Okay sorry for the delay, I can reproduce it here and found a better
-> > > fix, if I could trouble you to test again.
-> > >
-> > > [PATCH] tty: hvc: hvc_poll() fix read loop hang
-> > >
-> >
-> > Hi Nicholas,
-> >
-> > the patch works, but now pasting text inside the terminal is extremely
-> > slow, it feels worse than a 9600 baud serial line.
-> >
-> > Btw, I had to apply the patch by hand as it was corrupted, some lines
-> > were collapsed into one.
->
-> Not sure why that happened, I seem to be able to send myself
-> uncorrupted patches...
->
-> Can you try this patch for performance? Hopefully it applies.
+Now that we have everything we need in the phy framework to allow to tune
+the phy parameters, let's convert the Cadence DSI bridge to that API
+instead of creating a ad-hoc driver for its phy.
 
-Hi Nicholas,
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ drivers/gpu/drm/bridge/cdns-dsi.c | 466 +------------------------------
+ 1 file changed, 28 insertions(+), 438 deletions(-)
 
-This one works really well, as in kernel 4.17.
-Feel free to add me in Tested-by or Reported-by (or both).
-
-Cheers,
---
-Matteo Croce
-per aspera ad upstream
+diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
+index bb9a71ad3d91..aaf3ce68e78c 100644
+--- a/drivers/gpu/drm/bridge/cdns-dsi.c
++++ b/drivers/gpu/drm/bridge/cdns-dsi.c
+@@ -21,6 +21,9 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ 
++#include <linux/phy/phy.h>
++#include <linux/phy/phy-mipi-dphy.h>
++
+ #define IP_CONF				0x0
+ #define SP_HS_FIFO_DEPTH(x)		(((x) & GENMASK(30, 26)) >> 26)
+ #define SP_LP_FIFO_DEPTH(x)		(((x) & GENMASK(25, 21)) >> 21)
+@@ -419,44 +422,11 @@
+ #define DSI_NULL_FRAME_OVERHEAD		6
+ #define DSI_EOT_PKT_SIZE		4
+ 
+-#define REG_WAKEUP_TIME_NS		800
+-#define DPHY_PLL_RATE_HZ		108000000
+-
+-/* DPHY registers */
+-#define DPHY_PMA_CMN(reg)		(reg)
+-#define DPHY_PMA_LCLK(reg)		(0x100 + (reg))
+-#define DPHY_PMA_LDATA(lane, reg)	(0x200 + ((lane) * 0x100) + (reg))
+-#define DPHY_PMA_RCLK(reg)		(0x600 + (reg))
+-#define DPHY_PMA_RDATA(lane, reg)	(0x700 + ((lane) * 0x100) + (reg))
+-#define DPHY_PCS(reg)			(0xb00 + (reg))
+-
+-#define DPHY_CMN_SSM			DPHY_PMA_CMN(0x20)
+-#define DPHY_CMN_SSM_EN			BIT(0)
+-#define DPHY_CMN_TX_MODE_EN		BIT(9)
+-
+-#define DPHY_CMN_PWM			DPHY_PMA_CMN(0x40)
+-#define DPHY_CMN_PWM_DIV(x)		((x) << 20)
+-#define DPHY_CMN_PWM_LOW(x)		((x) << 10)
+-#define DPHY_CMN_PWM_HIGH(x)		(x)
+-
+-#define DPHY_CMN_FBDIV			DPHY_PMA_CMN(0x4c)
+-#define DPHY_CMN_FBDIV_VAL(low, high)	(((high) << 11) | ((low) << 22))
+-#define DPHY_CMN_FBDIV_FROM_REG		(BIT(10) | BIT(21))
+-
+-#define DPHY_CMN_OPIPDIV		DPHY_PMA_CMN(0x50)
+-#define DPHY_CMN_IPDIV_FROM_REG		BIT(0)
+-#define DPHY_CMN_IPDIV(x)		((x) << 1)
+-#define DPHY_CMN_OPDIV_FROM_REG		BIT(6)
+-#define DPHY_CMN_OPDIV(x)		((x) << 7)
+-
+-#define DPHY_PSM_CFG			DPHY_PCS(0x4)
+-#define DPHY_PSM_CFG_FROM_REG		BIT(0)
+-#define DPHY_PSM_CLK_DIV(x)		((x) << 1)
+-
+ struct cdns_dsi_output {
+ 	struct mipi_dsi_device *dev;
+ 	struct drm_panel *panel;
+ 	struct drm_bridge *bridge;
++	union phy_configure_opts phy_opts;
+ };
+ 
+ enum cdns_dsi_input_id {
+@@ -465,14 +435,6 @@ enum cdns_dsi_input_id {
+ 	CDNS_DSC_INPUT,
+ };
+ 
+-struct cdns_dphy_cfg {
+-	u8 pll_ipdiv;
+-	u8 pll_opdiv;
+-	u16 pll_fbdiv;
+-	unsigned long lane_bps;
+-	unsigned int nlanes;
+-};
+-
+ struct cdns_dsi_cfg {
+ 	unsigned int hfp;
+ 	unsigned int hsa;
+@@ -481,34 +443,6 @@ struct cdns_dsi_cfg {
+ 	unsigned int htotal;
+ };
+ 
+-struct cdns_dphy;
+-
+-enum cdns_dphy_clk_lane_cfg {
+-	DPHY_CLK_CFG_LEFT_DRIVES_ALL = 0,
+-	DPHY_CLK_CFG_LEFT_DRIVES_RIGHT = 1,
+-	DPHY_CLK_CFG_LEFT_DRIVES_LEFT = 2,
+-	DPHY_CLK_CFG_RIGHT_DRIVES_ALL = 3,
+-};
+-
+-struct cdns_dphy_ops {
+-	int (*probe)(struct cdns_dphy *dphy);
+-	void (*remove)(struct cdns_dphy *dphy);
+-	void (*set_psm_div)(struct cdns_dphy *dphy, u8 div);
+-	void (*set_clk_lane_cfg)(struct cdns_dphy *dphy,
+-				 enum cdns_dphy_clk_lane_cfg cfg);
+-	void (*set_pll_cfg)(struct cdns_dphy *dphy,
+-			    const struct cdns_dphy_cfg *cfg);
+-	unsigned long (*get_wakeup_time_ns)(struct cdns_dphy *dphy);
+-};
+-
+-struct cdns_dphy {
+-	struct cdns_dphy_cfg cfg;
+-	void __iomem *regs;
+-	struct clk *psm_clk;
+-	struct clk *pll_ref_clk;
+-	const struct cdns_dphy_ops *ops;
+-};
+-
+ struct cdns_dsi_input {
+ 	enum cdns_dsi_input_id id;
+ 	struct drm_bridge bridge;
+@@ -526,7 +460,7 @@ struct cdns_dsi {
+ 	struct reset_control *dsi_p_rst;
+ 	struct clk *dsi_sys_clk;
+ 	bool link_initialized;
+-	struct cdns_dphy *dphy;
++	struct phy *dphy;
+ };
+ 
+ static inline struct cdns_dsi *input_to_dsi(struct cdns_dsi_input *input)
+@@ -550,175 +484,6 @@ static unsigned int mode_to_dpi_hfp(const struct drm_display_mode *mode)
+ 	return mode->crtc_hsync_start - mode->crtc_hdisplay;
+ }
+ 
+-static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
+-				     struct cdns_dphy_cfg *cfg,
+-				     unsigned int dpi_htotal,
+-				     unsigned int dpi_bpp,
+-				     unsigned int dpi_hz,
+-				     unsigned int dsi_htotal,
+-				     unsigned int dsi_nlanes,
+-				     unsigned int *dsi_hfp_ext)
+-{
+-	u64 dlane_bps, dlane_bps_max, fbdiv, fbdiv_max, adj_dsi_htotal;
+-	unsigned long pll_ref_hz = clk_get_rate(dphy->pll_ref_clk);
+-
+-	memset(cfg, 0, sizeof(*cfg));
+-
+-	cfg->nlanes = dsi_nlanes;
+-
+-	if (pll_ref_hz < 9600000 || pll_ref_hz >= 150000000)
+-		return -EINVAL;
+-	else if (pll_ref_hz < 19200000)
+-		cfg->pll_ipdiv = 1;
+-	else if (pll_ref_hz < 38400000)
+-		cfg->pll_ipdiv = 2;
+-	else if (pll_ref_hz < 76800000)
+-		cfg->pll_ipdiv = 4;
+-	else
+-		cfg->pll_ipdiv = 8;
+-
+-	/*
+-	 * Make sure DSI htotal is aligned on a lane boundary when calculating
+-	 * the expected data rate. This is done by extending HFP in case of
+-	 * misalignment.
+-	 */
+-	adj_dsi_htotal = dsi_htotal;
+-	if (dsi_htotal % dsi_nlanes)
+-		adj_dsi_htotal += dsi_nlanes - (dsi_htotal % dsi_nlanes);
+-
+-	dlane_bps = (u64)dpi_hz * adj_dsi_htotal;
+-
+-	/* data rate in bytes/sec is not an integer, refuse the mode. */
+-	if (do_div(dlane_bps, dsi_nlanes * dpi_htotal))
+-		return -EINVAL;
+-
+-	/* data rate was in bytes/sec, convert to bits/sec. */
+-	dlane_bps *= 8;
+-
+-	if (dlane_bps > 2500000000UL || dlane_bps < 160000000UL)
+-		return -EINVAL;
+-	else if (dlane_bps >= 1250000000)
+-		cfg->pll_opdiv = 1;
+-	else if (dlane_bps >= 630000000)
+-		cfg->pll_opdiv = 2;
+-	else if (dlane_bps >= 320000000)
+-		cfg->pll_opdiv = 4;
+-	else if (dlane_bps >= 160000000)
+-		cfg->pll_opdiv = 8;
+-
+-	/*
+-	 * Allow a deviation of 0.2% on the per-lane data rate to try to
+-	 * recover a potential mismatch between DPI and PPI clks.
+-	 */
+-	dlane_bps_max = dlane_bps + DIV_ROUND_DOWN_ULL(dlane_bps, 500);
+-	fbdiv_max = DIV_ROUND_DOWN_ULL(dlane_bps_max * 2 *
+-				       cfg->pll_opdiv * cfg->pll_ipdiv,
+-				       pll_ref_hz);
+-	fbdiv = DIV_ROUND_UP_ULL(dlane_bps * 2 * cfg->pll_opdiv *
+-				 cfg->pll_ipdiv,
+-				 pll_ref_hz);
+-
+-	/*
+-	 * Iterate over all acceptable fbdiv and try to find an adjusted DSI
+-	 * htotal length providing an exact match.
+-	 *
+-	 * Note that we could do something even trickier by relying on the fact
+-	 * that a new line is not necessarily aligned on a lane boundary, so,
+-	 * by making adj_dsi_htotal non aligned on a dsi_lanes we can improve a
+-	 * bit the precision. With this, the step would be
+-	 *
+-	 *	pll_ref_hz / (2 * opdiv * ipdiv * nlanes)
+-	 *
+-	 * instead of
+-	 *
+-	 *	pll_ref_hz / (2 * opdiv * ipdiv)
+-	 *
+-	 * The drawback of this approach is that we would need to make sure the
+-	 * number or lines is a multiple of the realignment periodicity which is
+-	 * a function of the number of lanes and the original misalignment. For
+-	 * example, for NLANES = 4 and HTOTAL % NLANES = 3, it takes 4 lines
+-	 * to realign on a lane:
+-	 * LINE 0: expected number of bytes, starts emitting first byte of
+-	 *	   LINE 1 on LANE 3
+-	 * LINE 1: expected number of bytes, starts emitting first 2 bytes of
+-	 *	   LINE 2 on LANES 2 and 3
+-	 * LINE 2: expected number of bytes, starts emitting first 3 bytes of
+-	 *	   of LINE 3 on LANES 1, 2 and 3
+-	 * LINE 3: one byte less, now things are realigned on LANE 0 for LINE 4
+-	 *
+-	 * I figured this extra complexity was not worth the benefit, but if
+-	 * someone really has unfixable mismatch, that would be something to
+-	 * investigate.
+-	 */
+-	for (; fbdiv <= fbdiv_max; fbdiv++) {
+-		u32 rem;
+-
+-		adj_dsi_htotal = (u64)fbdiv * pll_ref_hz * dsi_nlanes *
+-				 dpi_htotal;
+-
+-		/*
+-		 * Do the division in 2 steps to avoid an overflow on the
+-		 * divider.
+-		 */
+-		rem = do_div(adj_dsi_htotal, dpi_hz);
+-		if (rem)
+-			continue;
+-
+-		rem = do_div(adj_dsi_htotal,
+-			     cfg->pll_opdiv * cfg->pll_ipdiv * 2 * 8);
+-		if (rem)
+-			continue;
+-
+-		cfg->pll_fbdiv = fbdiv;
+-		*dsi_hfp_ext = adj_dsi_htotal - dsi_htotal;
+-		break;
+-	}
+-
+-	/* No match, let's just reject the display mode. */
+-	if (!cfg->pll_fbdiv)
+-		return -EINVAL;
+-
+-	dlane_bps = DIV_ROUND_DOWN_ULL((u64)dpi_hz * adj_dsi_htotal * 8,
+-				       dsi_nlanes * dpi_htotal);
+-	cfg->lane_bps = dlane_bps;
+-
+-	return 0;
+-}
+-
+-static int cdns_dphy_setup_psm(struct cdns_dphy *dphy)
+-{
+-	unsigned long psm_clk_hz = clk_get_rate(dphy->psm_clk);
+-	unsigned long psm_div;
+-
+-	if (!psm_clk_hz || psm_clk_hz > 100000000)
+-		return -EINVAL;
+-
+-	psm_div = DIV_ROUND_CLOSEST(psm_clk_hz, 1000000);
+-	if (dphy->ops->set_psm_div)
+-		dphy->ops->set_psm_div(dphy, psm_div);
+-
+-	return 0;
+-}
+-
+-static void cdns_dphy_set_clk_lane_cfg(struct cdns_dphy *dphy,
+-				       enum cdns_dphy_clk_lane_cfg cfg)
+-{
+-	if (dphy->ops->set_clk_lane_cfg)
+-		dphy->ops->set_clk_lane_cfg(dphy, cfg);
+-}
+-
+-static void cdns_dphy_set_pll_cfg(struct cdns_dphy *dphy,
+-				  const struct cdns_dphy_cfg *cfg)
+-{
+-	if (dphy->ops->set_pll_cfg)
+-		dphy->ops->set_pll_cfg(dphy, cfg);
+-}
+-
+-static unsigned long cdns_dphy_get_wakeup_time_ns(struct cdns_dphy *dphy)
+-{
+-	return dphy->ops->get_wakeup_time_ns(dphy);
+-}
+-
+ static unsigned int dpi_to_dsi_timing(unsigned int dpi_timing,
+ 				      unsigned int dpi_bpp,
+ 				      unsigned int dsi_pkt_overhead)
+@@ -770,46 +535,12 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+ 	return 0;
+ }
+ 
+-static int cdns_dphy_validate(struct cdns_dsi *dsi,
+-			      struct cdns_dsi_cfg *dsi_cfg,
+-			      struct cdns_dphy_cfg *dphy_cfg,
+-			      const struct drm_display_mode *mode)
+-{
+-	struct cdns_dsi_output *output = &dsi->output;
+-	unsigned long dsi_htotal;
+-	unsigned int dsi_hfp_ext = 0;
+-
+-	int ret;
+-
+-	dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+-	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+-		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+-
+-	dsi_htotal += dsi_cfg->hact;
+-	dsi_htotal += dsi_cfg->hfp + DSI_HFP_FRAME_OVERHEAD;
+-
+-	ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
+-					mode->crtc_htotal,
+-					mipi_dsi_pixel_format_to_bpp(output->dev->format),
+-					mode->crtc_clock * 1000,
+-					dsi_htotal,
+-					output->dev->lanes,
+-					&dsi_hfp_ext);
+-	if (ret)
+-		return ret;
+-
+-	dsi_cfg->hfp += dsi_hfp_ext;
+-	dsi_cfg->htotal = dsi_htotal + dsi_hfp_ext;
+-
+-	return 0;
+-}
+-
+ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
+ 			       const struct drm_display_mode *mode,
+-			       struct cdns_dsi_cfg *dsi_cfg,
+-			       struct cdns_dphy_cfg *dphy_cfg)
++			       struct cdns_dsi_cfg *dsi_cfg)
+ {
+ 	struct cdns_dsi_output *output = &dsi->output;
++	struct phy_configure_opts_mipi_dphy *phy_cfg = &output->phy_opts.mipi_dphy;
+ 	unsigned long dsi_hss_hsa_hse_hbp;
+ 	unsigned int nlanes = output->dev->lanes;
+ 	int ret;
+@@ -818,7 +549,12 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = cdns_dphy_validate(dsi, dsi_cfg, dphy_cfg, mode);
++	phy_mipi_dphy_get_default_config(mode->crtc_clock * 1000,
++					 mipi_dsi_pixel_format_to_bpp(output->dev->format),
++					 nlanes,
++					 &output->phy_opts.mipi_dphy);
++	drm_display_mode_to_videomode(mode, &phy_cfg->timings);
++	ret = phy_validate(dsi->dphy, PHY_MODE_MIPI_DPHY, &output->phy_opts);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -831,7 +567,7 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
+ 	 * is empty before we start a receiving a new line on the DPI
+ 	 * interface.
+ 	 */
+-	if ((u64)dphy_cfg->lane_bps * mode_to_dpi_hfp(mode) * nlanes <
++	if ((u64)phy_cfg->hs_clk_rate * mode_to_dpi_hfp(mode) * nlanes <
+ 	    (u64)dsi_hss_hsa_hse_hbp * mode->crtc_clock * 1000)
+ 		return -EINVAL;
+ 
+@@ -860,7 +596,6 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+ 	struct cdns_dsi_input *input = bridge_to_cdns_dsi_input(bridge);
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+ 	struct cdns_dsi_output *output = &dsi->output;
+-	struct cdns_dphy_cfg dphy_cfg;
+ 	struct cdns_dsi_cfg dsi_cfg;
+ 	int bpp, ret;
+ 
+@@ -880,7 +615,7 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+ 	if ((mode->hdisplay * bpp) % 32)
+ 		return MODE_H_ILLEGAL;
+ 
+-	ret = cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg);
++	ret = cdns_dsi_check_conf(dsi, mode, &dsi_cfg);
+ 	if (ret)
+ 		return MODE_BAD;
+ 
+@@ -903,9 +638,9 @@ static void cdns_dsi_bridge_disable(struct drm_bridge *bridge)
+ 	pm_runtime_put(dsi->base.dev);
+ }
+ 
+-static void cdns_dsi_hs_init(struct cdns_dsi *dsi,
+-			     const struct cdns_dphy_cfg *dphy_cfg)
++static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
+ {
++	struct cdns_dsi_output *output = &dsi->output;
+ 	u32 status;
+ 
+ 	/*
+@@ -916,30 +651,9 @@ static void cdns_dsi_hs_init(struct cdns_dsi *dsi,
+ 	       DPHY_CMN_PDN | DPHY_PLL_PDN,
+ 	       dsi->regs + MCTL_DPHY_CFG0);
+ 
+-	/*
+-	 * Configure the internal PSM clk divider so that the DPHY has a
+-	 * 1MHz clk (or something close).
+-	 */
+-	WARN_ON_ONCE(cdns_dphy_setup_psm(dsi->dphy));
+-
+-	/*
+-	 * Configure attach clk lanes to data lanes: the DPHY has 2 clk lanes
+-	 * and 8 data lanes, each clk lane can be attache different set of
+-	 * data lanes. The 2 groups are named 'left' and 'right', so here we
+-	 * just say that we want the 'left' clk lane to drive the 'left' data
+-	 * lanes.
+-	 */
+-	cdns_dphy_set_clk_lane_cfg(dsi->dphy, DPHY_CLK_CFG_LEFT_DRIVES_LEFT);
+-
+-	/*
+-	 * Configure the DPHY PLL that will be used to generate the TX byte
+-	 * clk.
+-	 */
+-	cdns_dphy_set_pll_cfg(dsi->dphy, dphy_cfg);
+-
+-	/* Start TX state machine. */
+-	writel(DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+-	       dsi->dphy->regs + DPHY_CMN_SSM);
++	phy_init(dsi->dphy);
++	phy_configure(dsi->dphy, PHY_MODE_MIPI_DPHY, &output->phy_opts);
++	phy_power_on(dsi->dphy);
+ 
+ 	/* Activate the PLL and wait until it's locked. */
+ 	writel(PLL_LOCKED, dsi->regs + MCTL_MAIN_STS_CLR);
+@@ -949,7 +663,7 @@ static void cdns_dsi_hs_init(struct cdns_dsi *dsi,
+ 					status & PLL_LOCKED, 100, 100));
+ 	/* De-assert data and clock reset lines. */
+ 	writel(DPHY_CMN_PSO | DPHY_ALL_D_PDN | DPHY_C_PDN | DPHY_CMN_PDN |
+-	       DPHY_D_RSTB(dphy_cfg->nlanes) | DPHY_C_RSTB,
++	       DPHY_D_RSTB(output->dev->lanes) | DPHY_C_RSTB,
+ 	       dsi->regs + MCTL_DPHY_CFG0);
+ }
+ 
+@@ -995,7 +709,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+ 	struct cdns_dsi *dsi = input_to_dsi(input);
+ 	struct cdns_dsi_output *output = &dsi->output;
+ 	struct drm_display_mode *mode;
+-	struct cdns_dphy_cfg dphy_cfg;
++	struct phy_configure_opts_mipi_dphy *phy_cfg = &output->phy_opts.mipi_dphy;
+ 	unsigned long tx_byte_period;
+ 	struct cdns_dsi_cfg dsi_cfg;
+ 	u32 tmp, reg_wakeup, div;
+@@ -1008,9 +722,9 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+ 	bpp = mipi_dsi_pixel_format_to_bpp(output->dev->format);
+ 	nlanes = output->dev->lanes;
+ 
+-	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg));
++	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg));
+ 
+-	cdns_dsi_hs_init(dsi, &dphy_cfg);
++	cdns_dsi_hs_init(dsi);
+ 	cdns_dsi_init_link(dsi);
+ 
+ 	writel(HBP_LEN(dsi_cfg.hbp) | HSA_LEN(dsi_cfg.hsa),
+@@ -1046,9 +760,8 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+ 		tmp -= DIV_ROUND_UP(DSI_EOT_PKT_SIZE, nlanes);
+ 
+ 	tx_byte_period = DIV_ROUND_DOWN_ULL((u64)NSEC_PER_SEC * 8,
+-					    dphy_cfg.lane_bps);
+-	reg_wakeup = cdns_dphy_get_wakeup_time_ns(dsi->dphy) /
+-		     tx_byte_period;
++					    phy_cfg->hs_clk_rate);
++	reg_wakeup = (phy_cfg->hs_prepare + phy_cfg->hs_zero) / tx_byte_period;
+ 	writel(REG_WAKEUP_TIME(reg_wakeup) | REG_LINE_DURATION(tmp),
+ 	       dsi->regs + VID_DPHY_TIME);
+ 
+@@ -1362,8 +1075,6 @@ static int __maybe_unused cdns_dsi_resume(struct device *dev)
+ 	reset_control_deassert(dsi->dsi_p_rst);
+ 	clk_prepare_enable(dsi->dsi_p_clk);
+ 	clk_prepare_enable(dsi->dsi_sys_clk);
+-	clk_prepare_enable(dsi->dphy->psm_clk);
+-	clk_prepare_enable(dsi->dphy->pll_ref_clk);
+ 
+ 	return 0;
+ }
+@@ -1372,8 +1083,6 @@ static int __maybe_unused cdns_dsi_suspend(struct device *dev)
+ {
+ 	struct cdns_dsi *dsi = dev_get_drvdata(dev);
+ 
+-	clk_disable_unprepare(dsi->dphy->pll_ref_clk);
+-	clk_disable_unprepare(dsi->dphy->psm_clk);
+ 	clk_disable_unprepare(dsi->dsi_sys_clk);
+ 	clk_disable_unprepare(dsi->dsi_p_clk);
+ 	reset_control_assert(dsi->dsi_p_rst);
+@@ -1384,121 +1093,6 @@ static int __maybe_unused cdns_dsi_suspend(struct device *dev)
+ static UNIVERSAL_DEV_PM_OPS(cdns_dsi_pm_ops, cdns_dsi_suspend, cdns_dsi_resume,
+ 			    NULL);
+ 
+-static unsigned long cdns_dphy_ref_get_wakeup_time_ns(struct cdns_dphy *dphy)
+-{
+-	/* Default wakeup time is 800 ns (in a simulated environment). */
+-	return 800;
+-}
+-
+-static void cdns_dphy_ref_set_pll_cfg(struct cdns_dphy *dphy,
+-				      const struct cdns_dphy_cfg *cfg)
+-{
+-	u32 fbdiv_low, fbdiv_high;
+-
+-	fbdiv_low = (cfg->pll_fbdiv / 4) - 2;
+-	fbdiv_high = cfg->pll_fbdiv - fbdiv_low - 2;
+-
+-	writel(DPHY_CMN_IPDIV_FROM_REG | DPHY_CMN_OPDIV_FROM_REG |
+-	       DPHY_CMN_IPDIV(cfg->pll_ipdiv) |
+-	       DPHY_CMN_OPDIV(cfg->pll_opdiv),
+-	       dphy->regs + DPHY_CMN_OPIPDIV);
+-	writel(DPHY_CMN_FBDIV_FROM_REG |
+-	       DPHY_CMN_FBDIV_VAL(fbdiv_low, fbdiv_high),
+-	       dphy->regs + DPHY_CMN_FBDIV);
+-	writel(DPHY_CMN_PWM_HIGH(6) | DPHY_CMN_PWM_LOW(0x101) |
+-	       DPHY_CMN_PWM_DIV(0x8),
+-	       dphy->regs + DPHY_CMN_PWM);
+-}
+-
+-static void cdns_dphy_ref_set_psm_div(struct cdns_dphy *dphy, u8 div)
+-{
+-	writel(DPHY_PSM_CFG_FROM_REG | DPHY_PSM_CLK_DIV(div),
+-	       dphy->regs + DPHY_PSM_CFG);
+-}
+-
+-/*
+- * This is the reference implementation of DPHY hooks. Specific integration of
+- * this IP may have to re-implement some of them depending on how they decided
+- * to wire things in the SoC.
+- */
+-static const struct cdns_dphy_ops ref_dphy_ops = {
+-	.get_wakeup_time_ns = cdns_dphy_ref_get_wakeup_time_ns,
+-	.set_pll_cfg = cdns_dphy_ref_set_pll_cfg,
+-	.set_psm_div = cdns_dphy_ref_set_psm_div,
+-};
+-
+-static const struct of_device_id cdns_dphy_of_match[] = {
+-	{ .compatible = "cdns,dphy", .data = &ref_dphy_ops },
+-	{ /* sentinel */ },
+-};
+-
+-static struct cdns_dphy *cdns_dphy_probe(struct platform_device *pdev)
+-{
+-	const struct of_device_id *match;
+-	struct cdns_dphy *dphy;
+-	struct of_phandle_args args;
+-	struct resource res;
+-	int ret;
+-
+-	ret = of_parse_phandle_with_args(pdev->dev.of_node, "phys",
+-					 "#phy-cells", 0, &args);
+-	if (ret)
+-		return ERR_PTR(-ENOENT);
+-
+-	match = of_match_node(cdns_dphy_of_match, args.np);
+-	if (!match || !match->data)
+-		return ERR_PTR(-EINVAL);
+-
+-	dphy = devm_kzalloc(&pdev->dev, sizeof(*dphy), GFP_KERNEL);
+-	if (!dphy)
+-		return ERR_PTR(-ENOMEM);
+-
+-	dphy->ops = match->data;
+-
+-	ret = of_address_to_resource(args.np, 0, &res);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	dphy->regs = devm_ioremap_resource(&pdev->dev, &res);
+-	if (IS_ERR(dphy->regs))
+-		return ERR_CAST(dphy->regs);
+-
+-	dphy->psm_clk = of_clk_get_by_name(args.np, "psm");
+-	if (IS_ERR(dphy->psm_clk))
+-		return ERR_CAST(dphy->psm_clk);
+-
+-	dphy->pll_ref_clk = of_clk_get_by_name(args.np, "pll_ref");
+-	if (IS_ERR(dphy->pll_ref_clk)) {
+-		ret = PTR_ERR(dphy->pll_ref_clk);
+-		goto err_put_psm_clk;
+-	}
+-
+-	if (dphy->ops->probe) {
+-		ret = dphy->ops->probe(dphy);
+-		if (ret)
+-			goto err_put_pll_ref_clk;
+-	}
+-
+-	return dphy;
+-
+-err_put_pll_ref_clk:
+-	clk_put(dphy->pll_ref_clk);
+-
+-err_put_psm_clk:
+-	clk_put(dphy->psm_clk);
+-
+-	return ERR_PTR(ret);
+-}
+-
+-static void cdns_dphy_remove(struct cdns_dphy *dphy)
+-{
+-	if (dphy->ops->remove)
+-		dphy->ops->remove(dphy);
+-
+-	clk_put(dphy->pll_ref_clk);
+-	clk_put(dphy->psm_clk);
+-}
+-
+ static int cdns_dsi_drm_probe(struct platform_device *pdev)
+ {
+ 	struct cdns_dsi *dsi;
+@@ -1537,13 +1131,13 @@ static int cdns_dsi_drm_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return irq;
+ 
+-	dsi->dphy = cdns_dphy_probe(pdev);
++	dsi->dphy = devm_phy_get(&pdev->dev, "dphy");
+ 	if (IS_ERR(dsi->dphy))
+ 		return PTR_ERR(dsi->dphy);
+ 
+ 	ret = clk_prepare_enable(dsi->dsi_p_clk);
+ 	if (ret)
+-		goto err_remove_dphy;
++		return ret;
+ 
+ 	val = readl(dsi->regs + ID_REG);
+ 	if (REV_VENDOR_ID(val) != 0xcad) {
+@@ -1601,9 +1195,6 @@ static int cdns_dsi_drm_probe(struct platform_device *pdev)
+ err_disable_pclk:
+ 	clk_disable_unprepare(dsi->dsi_p_clk);
+ 
+-err_remove_dphy:
+-	cdns_dphy_remove(dsi->dphy);
+-
+ 	return ret;
+ }
+ 
+@@ -1613,7 +1204,6 @@ static int cdns_dsi_drm_remove(struct platform_device *pdev)
+ 
+ 	mipi_dsi_host_unregister(&dsi->base);
+ 	pm_runtime_disable(&pdev->dev);
+-	cdns_dphy_remove(dsi->dphy);
+ 
+ 	return 0;
+ }
+-- 
+git-series 0.9.1
