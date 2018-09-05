@@ -2,116 +2,129 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0BBC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE48C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE51820861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE51820861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ilande.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 8142320857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:21:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Q/hMYvLs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8142320857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeIEJ11 (ORCPT
+        id S1727611AbeIEJt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 05:27:27 -0400
-Received: from chuckie.co.uk ([82.165.15.123]:57533 "EHLO
-        s16892447.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727555AbeIEJ11 (ORCPT
+        Wed, 5 Sep 2018 05:49:58 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:56230 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727587AbeIEJt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 05:27:27 -0400
-X-Greylist: delayed 1284 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 05:27:26 EDT
-Received: from host86-138-87-37.range86-138.btcentralplus.com ([86.138.87.37] helo=[192.168.1.65])
-        by s16892447.onlinehome-server.info with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <mark.cave-ayland@ilande.co.uk>)
-        id 1fxPZj-0007q3-BT; Wed, 05 Sep 2018 05:37:56 +0100
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
-References: <20180830190523.31474-1-robh@kernel.org>
- <20180830190523.31474-4-robh@kernel.org>
- <35247ddc-303b-89d0-53b5-231c1a293721@gmail.com>
-From:   Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mark.cave-ayland@ilande.co.uk; keydata=
- xsBNBFQJuzwBCADAYvxrwUh1p/PvUlNFwKosVtVHHplgWi5p29t58QlOUkceZG0DBYSNqk93
- 3JzBTbtd4JfFcSupo6MNNOrCzdCbCjZ64ik8ycaUOSzK2tKbeQLEXzXoaDL1Y7vuVO7nL9bG
- E5Ru3wkhCFc7SkoypIoAUqz8EtiB6T89/D9TDEyjdXUacc53R5gu8wEWiMg5MQQuGwzbQy9n
- PFI+mXC7AaEUqBVc2lBQVpAYXkN0EyqNNT12UfDLdxaxaFpUAE2pCa2LTyo5vn5hEW+i3VdN
- PkmjyPvL6DdY03fvC01PyY8zaw+UI94QqjlrDisHpUH40IUPpC/NB0LwzL2aQOMkzT2NABEB
- AAHNME1hcmsgQ2F2ZS1BeWxhbmQgPG1hcmsuY2F2ZS1heWxhbmRAaWxhbmRlLmNvLnVrPsLA
- eAQTAQIAIgUCVAm7PAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQW8LFb64PMh9f
- NAgAuc3ObOEY8NbZko72AGrg2tWKdybcMVITxmcor4hb9155o/OWcA4IDbeATR6cfiDL/oxU
- mcmtXVgPqOwtW3NYAKr5g/FrZZ3uluQ2mtNYAyTFeALy8YF7N3yhs7LOcpbFP7tEbkSzoXNG
- z8iYMiYtKwttt40WaheWuRs0ZOLbs6yoczZBDhna3Nj0LA3GpeJKlaV03O4umjKJgACP1c/q
- T2Pkg+FCBHHFP454+waqojHp4OCBo6HyK+8I4wJRa9Z0EFqXIu8lTDYoggeX0Xd6bWeCFHK3
- DhD0/Xi/kegSW33unsp8oVcM4kcFxTkpBgj39dB4KwAUznhTJR0zUHf63M7ATQRUCbs8AQgA
- y7kyevA4bpetM/EjtuqQX4U05MBhEz/2SFkX6IaGtTG2NNw5wbcAfhOIuNNBYbw6ExuaJ3um
- 2uLseHnudmvN4VSJ5Hfbd8rhqoMmmO71szgT/ZD9MEe2KHzBdmhmhxJdp+zQNivy215j6H27
- 14mbC2dia7ktwP1rxPIX1OOfQwPuqlkmYPuVwZP19S4EYnCELOrnJ0m56tZLn5Zj+1jZX9Co
- YbNLMa28qsktYJ4oU4jtn6V79H+/zpERZAHmH40IRXdR3hA+Ye7iC/ZpWzT2VSDlPbGY9Yja
- Sp7w2347L5G+LLbAfaVoejHlfy/msPeehUcuKjAdBLoEhSPYzzdvEQARAQABwsBfBBgBAgAJ
- BQJUCbs8AhsMAAoJEFvCxW+uDzIfabYIAJXmBepHJpvCPiMNEQJNJ2ZSzSjhic84LTMWMbJ+
- opQgr5cb8SPQyyb508fc8b4uD8ejlF/cdbbBNktp3BXsHlO5BrmcABgxSP8HYYNsX0n9kERv
- NMToU0oiBuAaX7O/0K9+BW+3+PGMwiu5ml0cwDqljxfVN0dUBZnQ8kZpLsY+WDrIHmQWjtH+
- Ir6VauZs5Gp25XLrL6bh/SL8aK0BX6y79m5nhfKI1/6qtzHAjtMAjqy8ChPvOqVVVqmGUzFg
- KPsrrIoklWcYHXPyMLj9afispPVR8e0tMKvxzFBWzrWX1mzljbBlnV2n8BIwVXWNbgwpHSsj
- imgcU9TTGC5qd9g=
-Message-ID: <9c873e57-84c8-75af-1d44-60e7cd41282d@ilande.co.uk>
-Date:   Wed, 5 Sep 2018 05:37:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <35247ddc-303b-89d0-53b5-231c1a293721@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 86.138.87.37
-X-SA-Exim-Mail-From: mark.cave-ayland@ilande.co.uk
-Subject: Re: [PATCH 3/3] of: make default address and size cells sizes private
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Jan 2012 02:45:44 +0000)
-X-SA-Exim-Scanned: Yes (on s16892447.onlinehome-server.info)
+        Wed, 5 Sep 2018 05:49:57 -0400
+Received: from trochilidae.hsd1.wa.comcast.net (unknown [IPv6:2601:602:8700:fb00:81ae:bc59:4e6c:42ca])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id EF5F05C07CF;
+        Wed,  5 Sep 2018 07:21:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1536124889;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=vjaoQ5opbOITH9IdH/Wkvz05L0MiLlzWybBQa43v3fE=;
+        b=Q/hMYvLs2Ucdh/y10e/tjHcBmBH10qDj0rn3h1s8f4t4UPdKxeXA8ihZQeHwsInSoETbCi
+        mIFHPb3C7grqjzXKK/ZLJbQ6r4/qrea1e6vcJ/BiU8phxudW1+jc3ULW761csu8P4S7mwa
+        eUF+9E5hGvFJkbZ35fvBPgRQrMsTXGw=
+From:   Stefan Agner <stefan@agner.ch>
+To:     linus.walleij@linaro.org, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        p.zabel@pengutronix.de
+Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, sean@poorly.run,
+        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
+Date:   Tue,  4 Sep 2018 22:21:08 -0700
+Message-Id: <20180905052113.21262-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/18 02:55, Frank Rowand wrote:
+The DRM bus flags convey additional information on pixel data on
+the bus. All current available bus flags might be of interest for
+a bridge. Remove the sampling_edge field and use bus_flags.
 
-> On 08/30/18 12:05, Rob Herring wrote:
->> Only some old OpenFirmware implementations rely on default sizes. Any
->> FDT and modern implementation should have explicit properties. Make the
->> OF_ROOT_NODE_*_CELLS_DEFAULT defines private so we don't get any outside
->> users.
->>
->> This also gets us one step closer to removing the asm/prom.h dependency on
->> Sparc.
+In the case at hand a dumb VGA bridge needs a specific data enable
+polarity (DRM_BUS_FLAG_DE_LOW).
 
-Just for the record: you say "any FDT and modern implementation should
-have explicit properties", however the default values of these
-properties when missing are clearly defined in the IEEE-1275
-specification (Annex A):
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/gpu/drm/bridge/dumb-vga-dac.c |  6 +++---
+ include/drm/drm_bridge.h              | 11 +++++------
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-"#address-cells"
-Standard property name to define the package’s address format.
-...
-In a package with a "decode-unit" method, a missing "#address-cells"
-property signifies that the number of
-address cells is two.
+diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+index 9b706789a341..7a5c24967115 100644
+--- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
++++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+@@ -234,7 +234,7 @@ static int dumb_vga_remove(struct platform_device *pdev)
+  */
+ static const struct drm_bridge_timings default_dac_timings = {
+ 	/* Timing specifications, datasheet page 7 */
+-	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
++	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
+ 	.setup_time_ps = 500,
+ 	.hold_time_ps = 1500,
+ };
+@@ -245,7 +245,7 @@ static const struct drm_bridge_timings default_dac_timings = {
+  */
+ static const struct drm_bridge_timings ti_ths8134_dac_timings = {
+ 	/* From timing diagram, datasheet page 9 */
+-	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
++	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
+ 	/* From datasheet, page 12 */
+ 	.setup_time_ps = 3000,
+ 	/* I guess this means latched input */
+@@ -258,7 +258,7 @@ static const struct drm_bridge_timings ti_ths8134_dac_timings = {
+  */
+ static const struct drm_bridge_timings ti_ths8135_dac_timings = {
+ 	/* From timing diagram, datasheet page 14 */
+-	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
++	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
+ 	/* From datasheet, page 16 */
+ 	.setup_time_ps = 2000,
+ 	.hold_time_ps = 500,
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index bd850747ce54..85d4b51eae19 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -244,14 +244,13 @@ struct drm_bridge_funcs {
+  */
+ struct drm_bridge_timings {
+ 	/**
+-	 * @sampling_edge:
++	 * @bus_flags:
+ 	 *
+-	 * Tells whether the bridge samples the digital input signal
+-	 * from the display engine on the positive or negative edge of the
+-	 * clock, this should reuse the DRM_BUS_FLAG_PIXDATA_[POS|NEG]EDGE
+-	 * bitwise flags from the DRM connector (bit 2 and 3 valid).
++	 * Tells what additional settings for the pixel data on the bus
++	 * this bridge requires (like pixel signal polarity). See also
++	 * &drm_display_info->bus_flags.
+ 	 */
+-	u32 sampling_edge;
++	u32 bus_flags;
+ 	/**
+ 	 * @setup_time_ps:
+ 	 *
+-- 
+2.18.0
 
-"#size-cells"
-Standard property name to define the package’s address size format.
-...
-A missing "#size-cells" property signifies the default value of one.
-
-I can't speak for FDT but it isn't completely unreasonable for a guest
-parsing a DT without these properties to assume these default values.
-
-
-ATB,
-
-Mark.
