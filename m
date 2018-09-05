@@ -2,94 +2,102 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4DDC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C404C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E03292064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:04:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03292064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=BitWizard.nl
+	by mail.kernel.org (Postfix) with ESMTP id E5BC82064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:05:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BC82064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeIEMdq (ORCPT
+        id S1727792AbeIEMeb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:33:46 -0400
-Received: from cust-95-128-94-82.breedbanddelft.nl ([95.128.94.82]:45756 "EHLO
-        cust-95-128-94-82.breedbanddelft.nl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725865AbeIEMdq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:33:46 -0400
-Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
-        id 3B23013FC8F; Wed,  5 Sep 2018 10:04:45 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 10:04:45 +0200
-From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
-To:     Martin Steigerwald <martin@lichtvoll.de>
-Cc:     Jeff Layton <jlayton@redhat.com>,
-        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: POSIX violation by writeback error
-Message-ID: <20180905080444.GD24519@BitWizard.nl>
-References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
- <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
- <20180905070847.GC24519@BitWizard.nl>
- <3805399.0d8HT3LL4o@merkaba>
+        Wed, 5 Sep 2018 08:34:31 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:57350 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeIEMeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 08:34:31 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 714C0FFAF3;
+        Wed,  5 Sep 2018 08:05:24 +0000 (UTC)
+Date:   Wed, 05 Sep 2018 16:05:18 +0800
+In-Reply-To: <20180905075601.32kzkd3is2gpa3ft@flea>
+References: <20180903133434.58188-1-icenowy@aosc.io> <20180903133434.58188-2-icenowy@aosc.io> <20180905071435.lgsogpzmh5nw6bcy@flea> <3D28A45F-D67D-4388-9FB7-2A2763955398@aosc.io> <20180905075601.32kzkd3is2gpa3ft@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3805399.0d8HT3LL4o@merkaba>
-Organization: BitWizard B.V.
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 1/3] dt-bindings: change the A64 HDMI PHY binding to R40
+To:     linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC:     devicetree@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <1CE38B34-005F-4E49-B9B5-48EDFA56EFE5@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 09:39:58AM +0200, Martin Steigerwald wrote:
-> Rogier Wolff - 05.09.18, 09:08:
-> > So when a mail queuer puts mail the mailq files and the mail processor
-> > can get them out of there intact, nobody is going to notice.  (I know
-> > mail queuers should call fsync and report errors when that fails, but
-> > there are bound to be applications where calling fsync is not
-> > appropriate (*))
-> 
-> AFAIK at least Postfix MDA only reports mail as being accepted over SMTP 
-> once fsync() on the mail file completed successfully. And I�d expect 
-> every sensible MDA to do this. I don�t know how Dovecot MDA which I 
-> currently use for sieve support does this tough.
 
-Yes. That's why I added the remark that mailers will call fsync and know
-about it on the write side. I encountered a situation in the last few
-days that when a developer runs into this while developing, would have
-caused him to write: 
-  /* Calling this fsync causes unacceptable performance */
-  // fsync (fd); 
 
-I know of an application somewhere that does realtime-gathering of
-call-records (number X called Y for Z seconds). They come in from a
-variety of sources, get de-duplicated standardized and written to
-files. Then different output modules push the data to the different
-consumers within the company. Billing among them. 
+于 2018年9月5日 GMT+08:00 下午3:56:01, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Wed, Sep 05, 2018 at 03:46:41PM +0800, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2018年9月5日 GMT+08:00 下午3:14:35, Maxime Ripard
+><maxime.ripard@bootlin.com> 写到:
+>> >On Mon, Sep 03, 2018 at 09:34:32PM +0800, Icenowy Zheng wrote:
+>> >> By experiment, the A64 HDMi PHY doesn't support the PLL-VIDEO mux
+>> >> introduced in R40, although it has two PLL-VIDEOs.
+>> >> 
+>> >> Change the A64 HDMI PHY binding to R40 one.
+>> >> 
+>> >> This binding is introduced in v4.19, which is still in RC stage,
+>so
+>> >we
+>> >> have change to fix it.
+>> >> 
+>> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >
+>> >That doesn't make much sense. The A64 doesn't have any particular
+>> >reason to behave like the R40, and the R40 can definitely use a
+>> >different compatible if it has a different behaviour. But I don't
+>see
+>> >*why* the A64 not behaving like the R40 is a justification to remove
+>> >the A64 compatible. Especially when the R40 was released later.
+>> >
+>> >Add a new compatible, and leave the A64 compatible alone.
+>> 
+>> But the behavior of A64 compatible will change from double
+>> PLL to single PLL, because the A64 HDMI PHY is proven
+>> to have no double PLL.
+>> 
+>> Should I then change the A64 compatible behavior and import R40
+>> compatible at the same time?
+>
+>I don't see why you should do both at the same time. Fix the A64, and
+>add the support for the R40, those are two orthogonal changes.
 
-Now getting old data there would be pretty bad. And calling fsync
-all the time might have performance issues.... 
+Then how to deal with double PLL support? Make them temporarily
+dead during 4.19?
 
-That's the situation where "old data is really bad". 
+>
+>> In addition maybe I can just drop A64 compatible, and let A64
+>> use H3 one.
+>
+>No, that break the backward compatibility.
 
-But when apt-get upgrade replaces your /bin/sh and gets a write error
-returning error on subsequent reads is really bad. 
+As I said A64 compatible is just introduced in 4.19-rc.
 
-It is more difficult than you think. 
+So if we finish before 4.19.0 we break nothing.
 
-	Roger. 
-
--- 
-** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
-**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
-*-- BitWizard writes Linux device drivers for any device you may have! --*
-The plan was simple, like my brother-in-law Phil. But unlike
-Phil, this plan just might work.
+>
+>Maxime
