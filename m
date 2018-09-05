@@ -2,188 +2,144 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E25A5C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125CDC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981D820861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:49:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981D820861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
+	by mail.kernel.org (Postfix) with ESMTP id 9D44F20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:51:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CKVAu6JR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cCrUmpVu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D44F20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbeIERTe (ORCPT
+        id S1727577AbeIERVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:19:34 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45545 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeIERTd (ORCPT
+        Wed, 5 Sep 2018 13:21:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37088 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbeIERVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:19:33 -0400
-Received: by mail-qk1-f193.google.com with SMTP id z125-v6so4715866qkb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 05:49:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version;
-        bh=5d6tBCZe+v1BChJG0A7VaeeAlKaxmCgxR0Dc4RiKkiE=;
-        b=J6qaGSuR81BQK5ez/MqDVgSgx4ShET4xKfquYtsUOi7TFeoxozs/WEXLWXTFqImGd5
-         uLLc5OIgKv8UeWbmjw7HGB0NsUbtIc4SH1MNsvZSEtlukbT9hhW3iitpjqAuq2WI+ccD
-         fZA8chm6u++uPnw94slmc/KD0XqN5NgLnq12QVV+C+Q6JM0FggTB7uFTAub8LiefcBmi
-         kMOlXpkLalMLr69hdu4fkA+xM8Q6ecn4VdKbTE7PqZGtu2Ic8My6xG0yTa1LbwX7+MEB
-         YfRfrWcYgZTQLcedxv8iANbVRGUMzpcmnoFMXccgOpVwgl2+GSgehBUXLAkuSBywlAQo
-         Qq+w==
-X-Gm-Message-State: APzg51DvoF5kXiTadFN3GcH8djmXMknbsfKeR3M4ivBemvcVIQlgEws4
-        j9tnCWNko1cbFHbyA2pl0rrXKw==
-X-Google-Smtp-Source: ANB0VdYxZv1o/7mZAA9cmtHi4MTA/mmm2axR1KIRyBQvBvwMZL8Rn0xGFBqRKtjua7rTQ1IEu96qkw==
-X-Received: by 2002:a37:30d5:: with SMTP id w204-v6mr31794475qkw.317.1536151764065;
-        Wed, 05 Sep 2018 05:49:24 -0700 (PDT)
-Received: from [192.168.1.153] (pool-108-53-39-217.nwrknj.fios.verizon.net. [108.53.39.217])
-        by smtp.gmail.com with ESMTPSA id r187-v6sm138395qke.24.2018.09.05.05.49.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 05:49:22 -0700 (PDT)
-From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
-To:     "Peter Xu" <peterx@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        linux-kernel@vger.kernel.org,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Michal Hocko" <mhocko@suse.com>,
-        "Huang Ying" <ying.huang@intel.com>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>,
-        "=?utf-8?b?SsOpcsO0bWU=?= Glisse" <jglisse@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        "Konstantin Khlebnikov" <khlebnikov@yandex-team.ru>,
-        "Souptick Joarder" <jrdr.linux@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: hugepage: mark splitted page dirty when needed
-Date:   Wed, 05 Sep 2018 08:49:20 -0400
-X-Mailer: MailMate (1.11.3r5517)
-Message-ID: <BB56C67D-BDA0-4C14-B787-77504EC989C6@cs.rutgers.edu>
-In-Reply-To: <20180905073037.GA23021@xz-x1>
-References: <20180904075510.22338-1-peterx@redhat.com>
- <20180904080115.o2zj4mlo7yzjdqfl@kshutemo-mobl1>
- <D3B32B41-61D5-47B3-B1FC-77B0F71ADA47@cs.rutgers.edu>
- <20180905073037.GA23021@xz-x1>
+        Wed, 5 Sep 2018 13:21:30 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 05E61607DC; Wed,  5 Sep 2018 12:51:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536151881;
+        bh=Osy4Z+zNR5oPKgMubZYUo+PCgiLFm4Yzh7FsrxpmFlY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CKVAu6JRUpDXgeC51L23iyRmSHNK82dB5obW2hvEGbCthmSuIOPt8db7q3ffUab6b
+         70L6opdsWtIYZvtpOAdguYWxRa67oPp2UttcktcalK8XhyZ1SfmPVAvdB+2KP4xz+n
+         S7P/mX+HuuPgVe3T6O/z0IQNPgsEXNJGEImwi5m8=
+Received: from [10.204.78.89] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: neeraju@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3CF1E60388;
+        Wed,  5 Sep 2018 12:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536151880;
+        bh=Osy4Z+zNR5oPKgMubZYUo+PCgiLFm4Yzh7FsrxpmFlY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cCrUmpVunoFRiQjhDKVC2UQN1Qv/kCWvJ6AeBOpFcrfaSbuyMwt6DUmnqr7ipz8np
+         f6G0r2EBIUpZtO+bxfwzt2DLg/sJjY5tAV81g8YbH8qqPuWtTuiZ0ULEBW4GEpHP+i
+         5iUlUAClKjupyn2v0816jbfsXEjpa6TtxmdLgdKI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CF1E60388
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
+Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in
+ takedown_cpu()
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     josh@joshtriplett.org, peterz@infradead.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dzickus@redhat.com,
+        brendan.jackman@arm.com, malat@debian.org,
+        linux-kernel@vger.kernel.org, sramana@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
+ <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de>
+From:   Neeraj Upadhyay <neeraju@codeaurora.org>
+Message-ID: <5b0e528f-e597-9598-3ff6-b9e08ddb8165@codeaurora.org>
+Date:   Wed, 5 Sep 2018 18:21:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed;
- boundary="=_MailMate_D3C5FC59-31AD-45DB-B1FA-4368F04176A4_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
 
---=_MailMate_D3C5FC59-31AD-45DB-B1FA-4368F04176A4_=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On 5 Sep 2018, at 3:30, Peter Xu wrote:
-
-> On Tue, Sep 04, 2018 at 10:00:28AM -0400, Zi Yan wrote:
->> On 4 Sep 2018, at 4:01, Kirill A. Shutemov wrote:
+On 09/05/2018 05:53 PM, Thomas Gleixner wrote:
+> On Wed, 5 Sep 2018, Thomas Gleixner wrote:
+>> On Tue, 4 Sep 2018, Neeraj Upadhyay wrote:
+>>>   	ret = cpuhp_down_callbacks(cpu, st, target);
+>>>   	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
+>>> -		cpuhp_reset_state(st, prev_state);
+>>> +		/*
+>>> +		 * As st->last is not set, cpuhp_reset_state() increments
+>>> +		 * st->state, which results in CPUHP_AP_SMPBOOT_THREADS being
+>>> +		 * skipped during rollback. So, don't use it here.
+>>> +		 */
+>>> +		st->rollback = true;
+>>> +		st->target = prev_state;
+>>> +		st->bringup = !st->bringup;
+>> No, this is just papering over the actual problem.
 >>
->>> On Tue, Sep 04, 2018 at 03:55:10PM +0800, Peter Xu wrote:
->>>> When splitting a huge page, we should set all small pages as dirty i=
-f
->>>> the original huge page has the dirty bit set before.  Otherwise we'l=
-l
->>>> lose the original dirty bit.
->>>
->>> We don't lose it. It got transfered to struct page flag:
->>>
->>> 	if (pmd_dirty(old_pmd))
->>> 		SetPageDirty(page);
->>>
+>> The state inconsistency happens in take_cpu_down() when it returns with a
+>> failure from __cpu_disable() because that returns with state = TEARDOWN_CPU
+>> and st->state is then incremented in undo_cpu_down().
 >>
->> Plus, when split_huge_page_to_list() splits a THP, its subroutine __sp=
-lit_huge_page()
->> propagates the dirty bit in the head page flag to all subpages in __sp=
-lit_huge_page_tail().
+>> That's the real issue and we need to analyze the whole cpu_down rollback
+>> logic first.
+> And looking closer this is a general issue. Just that the TEARDOWN state
+> makes it simple to observe. It's universaly broken, when the first teardown
+> callback fails because, st->state is only decremented _AFTER_ the callback
+> returns success, but undo_cpu_down() increments unconditionally.
 >
-> Hi, Kirill, Zi,
+> Patch below.
 >
-> Thanks for your responses!
+> Thanks,
 >
-> Though in my test the huge page seems to be splitted not by
-> split_huge_page_to_list() but by explicit calls to
-> change_protection().  The stack looks like this (again, this is a
-> customized kernel, and I added an explicit dump_stack() there):
->
->   kernel:  dump_stack+0x5c/0x7b
->   kernel:  __split_huge_pmd+0x192/0xdc0
->   kernel:  ? update_load_avg+0x8b/0x550
->   kernel:  ? update_load_avg+0x8b/0x550
->   kernel:  ? account_entity_enqueue+0xc5/0xf0
->   kernel:  ? enqueue_entity+0x112/0x650
->   kernel:  change_protection+0x3a2/0xab0
->   kernel:  mwriteprotect_range+0xdd/0x110
->   kernel:  userfaultfd_ioctl+0x50b/0x1210
->   kernel:  ? do_futex+0x2cf/0xb20
->   kernel:  ? tty_write+0x1d2/0x2f0
->   kernel:  ? do_vfs_ioctl+0x9f/0x610
->   kernel:  do_vfs_ioctl+0x9f/0x610
->   kernel:  ? __x64_sys_futex+0x88/0x180
->   kernel:  ksys_ioctl+0x70/0x80
->   kernel:  __x64_sys_ioctl+0x16/0x20
->   kernel:  do_syscall_64+0x55/0x150
->   kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> At the very time the userspace is sending an UFFDIO_WRITEPROTECT ioctl
-> to kernel space, which is handled by mwriteprotect_range().  In case
-> you'd like to refer to the kernel, it's basically this one from
-> Andrea's (with very trivial changes):
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git userfau=
-lt
->
-> So... do we have two paths to split the huge pages separately?
->
-> Another (possibly very naive) question is: could any of you hint me
-> how the page dirty bit is finally applied to the PTEs?  These two
-> dirty flags confused me for a few days already (the SetPageDirty() one
-> which sets the page dirty flag, and the pte_mkdirty() which sets that
-> onto the real PTEs).
+> 	tglx
+As per my understanding, there are 2 problems here; one is fixed with 
+your patch, and other is cpuhp_reset_state() is used during rollback 
+from non-AP to AP state, which seem to result in 2 increments of 
+st->state (one increment done by cpuhp_reset_state() and another by 
+cpu_thread_fun()) .
+> ----
+> --- a/kernel/cpu.c
+> +++ b/kernel/cpu.c
+> @@ -916,7 +916,8 @@ static int cpuhp_down_callbacks(unsigned
+>   		ret = cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
+>   		if (ret) {
+>   			st->target = prev_state;
+> -			undo_cpu_down(cpu, st);
+> +			if (st->state < prev_state)
+> +				undo_cpu_down(cpu, st);
+>   			break;
+>   		}
+>   	}
+> @@ -969,7 +970,7 @@ static int __ref _cpu_down(unsigned int
+>   	 * to do the further cleanups.
+>   	 */
+>   	ret = cpuhp_down_callbacks(cpu, st, target);
+> -	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
+> +	if (ret && st->state == CPUHP_TEARDOWN_CPU && st->state < prev_state) {
+>   		cpuhp_reset_state(st, prev_state);
+>   		__cpuhp_kick_ap(st);
+>   	}
 
-change_protection() only causes splitting a PMD entry into multiple PTEs
-but not the physical compound page, so my answer does not apply to your c=
-ase.
-It is unclear how the dirty bit makes your QEMU get a SIGBUS. I think you=
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+member of the Code Aurora Forum, hosted by The Linux Foundation
 
-need to describe your problem with more details.
-
-AFAIK, the PageDirty bit will not apply back to any PTEs. So for your cas=
-e,
-when reporting a page=E2=80=99s dirty bit information, some function in t=
-he kernel only checks
-the PTE=E2=80=99s dirty bit but not the dirty bit in the struct page flag=
-s, which
-might provide a wrong answer.
-
-
-=E2=80=94
-Best Regards,
-Yan Zi
-
---=_MailMate_D3C5FC59-31AD-45DB-B1FA-4368F04176A4_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAluP0NAWHHppLnlhbkBj
-cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzE3uB/9vuqJDd3TOOk0HS/YAJqr/HaIL
-u6LpAR+Kf1PvMoSlMgLsmhuoOu4U5uOyfD0ecFesX8UuR7kcVhqXfTDYPGiQTrhk
-HpSFj/v9Y0mLFS6fYJuyhkFtrpR9fvsIuNqgdc/SLzUZgqcndj3glZHBg0BKa2pj
-ZtHdln0J5m+H6GlJL68lIe4fITyuPVEkz/NW6TM0VXZIAvIRMn0krcmbgrunTayD
-m8j5GYXy6HqCoXpBbvTDU/3/HRq4idVKRztY+B1gXfULPgqd5LNsTN7GlROqEM31
-YUQfLO7sCWZ8QTNENg58N/xAhdbRwXpCX5xI/qOWM9v3sW/DTNG9ukRAueWV
-=aUEN
------END PGP SIGNATURE-----
-
---=_MailMate_D3C5FC59-31AD-45DB-B1FA-4368F04176A4_=--
