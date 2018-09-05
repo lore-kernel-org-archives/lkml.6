@@ -2,110 +2,57 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB7CC4321E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07D1C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C871A206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:32:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C871A206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 71B082075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:33:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B082075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeIFBES (ORCPT
+        id S1727986AbeIFBFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:04:18 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54040 "EHLO ale.deltatee.com"
+        Wed, 5 Sep 2018 21:05:07 -0400
+Received: from muru.com ([72.249.23.125]:55340 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbeIFBES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:04:18 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fxeT9-0005h5-6D; Wed, 05 Sep 2018 14:32:08 -0600
-To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180830185352.3369-1-logang@deltatee.com>
- <20180830185352.3369-8-logang@deltatee.com>
- <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
- <20180901082812.GB670@lst.de>
- <5f79c012-c6e1-56bb-62fd-0689181fb2c9@deltatee.com>
- <59b28977-8f2a-6228-2050-03fae6bdbedd@kernel.dk>
- <1b4283da-44df-4a02-3167-e295243cef78@deltatee.com>
- <09258b9b-3aed-9890-b31a-bd70a133966c@kernel.dk>
- <20180905195647.GA1626@lst.de>
- <bcc1b3cf-2fd9-fa61-9cfb-b0e4d84e5d94@kernel.dk>
- <20180905201152.GA1893@lst.de>
- <eb42fb94-9da6-955b-8524-0a0f5ac4bd19@deltatee.com>
- <2a3394bd-5f13-4818-43f4-dfc61f501e05@kernel.dk>
- <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com>
- <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <f9e660cd-b597-bb6e-56a2-82fe71cb3649@deltatee.com>
-Date:   Wed, 5 Sep 2018 14:32:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727848AbeIFBFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 21:05:07 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id DE9FC80C5;
+        Wed,  5 Sep 2018 20:37:16 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 13:33:13 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Nishanth Menon <nm@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Vignesh R <vigneshr@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 0/3] arm64: dts: ti: am654: Enable additional nodes
+Message-ID: <20180905203313.GE5662@atomide.com>
+References: <20180905162024.28243-1-nm@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, axboe@kernel.dk
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
- check support for requests
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905162024.28243-1-nm@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Nishanth Menon <nm@ti.com> [180905 16:24]:
+> Nishanth Menon (3):
+>   arm64: dts: ti: am654: Add uart nodes
+>   arm64: dts: ti: am654: Add secure proxy instance for main domain
+>   arm64: dts: ti: k3-am6: Add Device Management Security Controller
+>     support
 
+All look good to me:
 
-On 05/09/18 02:19 PM, Jens Axboe wrote:
-> On 9/5/18 2:18 PM, Logan Gunthorpe wrote:
->>
->>
->> On 05/09/18 02:14 PM, Jens Axboe wrote:
->>> But if the caller must absolutely know where the bio will end up, then
->>> it seems super redundant. So I'd vote for killing this check, it buys
->>> us absolutely nothing and isn't even exhaustive in its current form.
->>
->>
->> Ok, I'll remove it for v6.
-> 
-> Since the drivers needs to know it's doing it right, it might not
-> hurt to add a sanity check helper for that. Just have the driver
-> call it, and don't add it in the normal IO submission path.
-
-I'm not sure I really see the value in that. It's the same principle in
-asking the driver to do the WARN: if the developer knew enough to use
-the special helper, they probably knew well enough to do the rest correctly.
-
-I guess one other thing to point out is that, on x86, if a driver
-submits P2P pages to a PCI device that doesn't have kernel support,
-everything will likely just work. Even though the driver isn't doing any
-of the work correctly and the requests are not being mapped with
-pci_p2pdma_map() functions. Such code on other arches would likely
-break. So developers may be lulled into thinking they're doing the
-correct thing when in fact they are not and the WARN in the common code
-would prevent that.
-
-Logan
+Acked-by: Tony Lindgren <tony@atomide.com>
