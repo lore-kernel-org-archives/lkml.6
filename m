@@ -2,313 +2,101 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B17C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE42C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064FC2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:20:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064FC2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F2EAC2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:20:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EAC2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeIELt0 (ORCPT
+        id S1727868AbeIELtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:49:26 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32902 "EHLO mga17.intel.com"
+        Wed, 5 Sep 2018 07:49:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34760 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbeIELt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:49:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 00:20:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,332,1531810800"; 
-   d="scan'208";a="83145403"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Sep 2018 00:19:59 -0700
-Received: from [10.125.251.242] (abudanko-mobl.ccr.corp.intel.com [10.125.251.242])
-        by linux.intel.com (Postfix) with ESMTP id 85E5D580268;
-        Wed,  5 Sep 2018 00:19:57 -0700 (PDT)
-Subject: [PATCH v7 1/2]: perf util: map data buffer for preserving collected
- data
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <cf6cd6ca-12dd-9ee8-8e18-ee02f289c45e@linux.intel.com>
-Date:   Wed, 5 Sep 2018 10:19:56 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725865AbeIELtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:49:43 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B8FCB20766; Wed,  5 Sep 2018 09:20:52 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8492E206DE;
+        Wed,  5 Sep 2018 09:20:52 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 09:20:51 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 03/11] dt-bindings: display: Add compatible for A64
+ DE2 display pipeline
+Message-ID: <20180905072051.ac7nfa4f65gcqaf7@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-4-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="77l3kc73q5njcdnm"
+Content-Disposition: inline
+In-Reply-To: <20180904044053.15425-4-icenowy@aosc.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-The map->data buffers are used to preserve map->base profiling data 
-for writing to disk. AIO map->cblocks are used to queue corresponding 
-map->data buffers for asynchronous writing. map->cblocks objects are 
-located in the last page of every map->data buffer.
+--77l3kc73q5njcdnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- Changes in v7:
-  - implemented handling record.aio setting from perfconfig file
- Changes in v6:
-  - adjusted setting of priorities for cblocks;
- Changes in v5:
-  - reshaped layout of data structures;
-  - implemented --aio option;
- Changes in v4:
-  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
- Changes in v2:
-  - converted zalloc() to calloc() for allocation of mmap_aio array,
-  - cleared typo and adjusted fallback branch code;
----
- tools/perf/builtin-record.c | 15 ++++++++++++-
- tools/perf/perf.h           |  1 +
- tools/perf/util/evlist.c    |  7 +++---
- tools/perf/util/evlist.h    |  3 ++-
- tools/perf/util/mmap.c      | 53 +++++++++++++++++++++++++++++++++++++++++++++
- tools/perf/util/mmap.h      |  6 ++++-
- 6 files changed, 79 insertions(+), 6 deletions(-)
+On Tue, Sep 04, 2018 at 12:40:45PM +0800, Icenowy Zheng wrote:
+> From: Jagan Teki <jagan@amarulasolutions.com>
+>=20
+> Allwinner A64 has a DE2 display pipeline. The TCONs are similar to the
+> ones in A83T, but the mixers are new (similar to the later R40 SoC).
+>=20
+> This patch adds dt-binding documentation for A64 DE2 display pipeline.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> [Icenowy: Refactor and also cover TCON1]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 22ebeb92ac51..f17a6f9cb1ba 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -326,7 +326,8 @@ static int record__mmap_evlist(struct record *rec,
- 
- 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
- 				 opts->auxtrace_mmap_pages,
--				 opts->auxtrace_snapshot_mode) < 0) {
-+				 opts->auxtrace_snapshot_mode,
-+				 opts->nr_cblocks) < 0) {
- 		if (errno == EPERM) {
- 			pr_err("Permission error mapping pages.\n"
- 			       "Consider increasing "
-@@ -1287,6 +1288,8 @@ static int perf_record_config(const char *var, const char *value, void *cb)
- 		var = "call-graph.record-mode";
- 		return perf_default_config(var, value, cb);
- 	}
-+	if (!strcmp(var, "record.aio"))
-+		rec->opts.nr_cblocks = strtol(value, NULL, 0);
- 
- 	return 0;
- }
-@@ -1519,6 +1522,7 @@ static struct record record = {
- 			.default_per_cpu = true,
- 		},
- 		.proc_map_timeout     = 500,
-+		.nr_cblocks	      = 2
- 	},
- 	.tool = {
- 		.sample		= process_sample_event,
-@@ -1678,6 +1682,8 @@ static struct option __record_options[] = {
- 			  "signal"),
- 	OPT_BOOLEAN(0, "dry-run", &dry_run,
- 		    "Parse options then exit"),
-+	OPT_INTEGER(0, "aio", &record.opts.nr_cblocks,
-+		    "asynchronous trace write operations (min: 1, max: 32, default: 2)"),
- 	OPT_END()
- };
- 
-@@ -1870,6 +1876,13 @@ int cmd_record(int argc, const char **argv)
- 		goto out;
- 	}
- 
-+	if (!(1 <= rec->opts.nr_cblocks && rec->opts.nr_cblocks <= 32))
-+		rec->opts.nr_cblocks = 2;
-+
-+	if (verbose > 0)
-+		pr_info("AIO trace writes: %d\n", rec->opts.nr_cblocks);
-+
-+
- 	err = __cmd_record(&record, argc, argv);
- out:
- 	perf_evlist__delete(rec->evlist);
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 21bf7f5a3cf5..0a1ae2ae567a 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -82,6 +82,7 @@ struct record_opts {
- 	bool         use_clockid;
- 	clockid_t    clockid;
- 	unsigned int proc_map_timeout;
-+	int	     nr_cblocks;
- };
- 
- struct option;
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e7a4b31a84fb..08be79650a85 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1018,7 +1018,8 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
-  */
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite)
-+			 bool auxtrace_overwrite,
-+			 int nr_cblocks)
- {
- 	struct perf_evsel *evsel;
- 	const struct cpu_map *cpus = evlist->cpus;
-@@ -1028,7 +1029,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	 * Its value is decided by evsel's write_backward.
- 	 * So &mp should not be passed through const pointer.
- 	 */
--	struct mmap_params mp;
-+	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
- 
- 	if (!evlist->mmap)
- 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-@@ -1060,7 +1061,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
- {
--	return perf_evlist__mmap_ex(evlist, pages, 0, false);
-+	return perf_evlist__mmap_ex(evlist, pages, 0, false, 2);
- }
- 
- int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index dc66436add98..a94d3c613254 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -162,7 +162,8 @@ unsigned long perf_event_mlock_kb_in_pages(void);
- 
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite);
-+			 bool auxtrace_overwrite,
-+			 int nr_cblocks);
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
- void perf_evlist__munmap(struct perf_evlist *evlist);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index fc832676a798..384d17cd1379 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -155,6 +155,14 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- 
- void perf_mmap__munmap(struct perf_mmap *map)
- {
-+	int i;
-+	if (map->data) {
-+		for (i = 0; i < map->nr_cblocks; ++i)
-+			zfree(&(map->data[i]));
-+		zfree(&(map->data));
-+	}
-+	if (map->cblocks)
-+		zfree(&(map->cblocks));
- 	if (map->base != NULL) {
- 		munmap(map->base, perf_mmap__mmap_len(map));
- 		map->base = NULL;
-@@ -166,6 +174,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
- 
- int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
- {
-+	int i;
- 	/*
- 	 * The last one will be done at perf_mmap__consume(), so that we
- 	 * make sure we don't prevent tools from consuming every last event in
-@@ -190,6 +199,50 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
- 		map->base = NULL;
- 		return -1;
- 	}
-+	map->nr_cblocks = mp->nr_cblocks;
-+	map->cblocks = calloc(map->nr_cblocks, sizeof(struct aiocb*));
-+	if (!map->cblocks) {
-+		pr_debug2("failed to allocate perf event data buffers, error %d\n",
-+				errno);
-+		return -1;
-+	}
-+	map->data = calloc(map->nr_cblocks, sizeof(void*));
-+	if (map->data) {
-+		int delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
-+		for (i = 0; i < map->nr_cblocks; ++i) {
-+			map->data[i] = malloc(perf_mmap__mmap_len(map));
-+			if (map->data[i]) {
-+				int prio;
-+				unsigned char *data = map->data[i];
-+				map->cblocks[i] = (struct aiocb *)&data[map->mask + 1];
-+				memset(map->cblocks[i], 0, sizeof(struct aiocb));
-+				/* Use cblock.aio_fildes value different from -1
-+				 * to denote started aio write operation on the
-+				 * cblock so it requires explicit record__aio_sync()
-+				 * call prior the cblock may be reused again.
-+				 */
-+				map->cblocks[i]->aio_fildes = -1;
-+				/* Allocate cblocks with decreasing priority to
-+				 * have faster aio_write() calls because queued
-+				 * requests are kept in separate per-prio queues
-+				 * and adding a new request iterates thru shorter
-+				 * per-prio list.
-+				 */
-+				prio = delta_max - i;
-+				if (prio < 0)
-+					prio = 0;
-+				map->cblocks[i]->aio_reqprio = prio;
-+			} else {
-+				pr_debug2("failed to allocate perf event data buffer, error %d\n",
-+						errno);
-+				return -1;
-+			}
-+		}
-+	} else {
-+		pr_debug2("failed to alloc perf event data buffers, error %d\n",
-+				errno);
-+		return -1;
-+	}
- 	map->fd = fd;
- 
- 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index d82294db1295..4a9bb0ecae4f 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -6,6 +6,7 @@
- #include <linux/types.h>
- #include <asm/barrier.h>
- #include <stdbool.h>
-+#include <aio.h>
- #include "auxtrace.h"
- #include "event.h"
- 
-@@ -25,6 +26,9 @@ struct perf_mmap {
- 	bool		 overwrite;
- 	struct auxtrace_mmap auxtrace_mmap;
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
-+	void 		 **data;
-+	struct aiocb	 **cblocks;
-+	int 		 nr_cblocks;
- };
- 
- /*
-@@ -56,7 +60,7 @@ enum bkw_mmap_state {
- };
- 
- struct mmap_params {
--	int			    prot, mask;
-+	int			    prot, mask, nr_cblocks;
- 	struct auxtrace_mmap_params auxtrace_mp;
- };
- 
+Applied, thanks!
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--77l3kc73q5njcdnm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPg9IACgkQ0rTAlCFN
+r3Sagg/9G1DUgxGja5yNzn7SLh5g9IwVFLOHdtsfx1EYCGhYnh6yLMa+W4wU9OqK
+d9VoyRBU99RYbLFpj7ngYfdVHZ8Zh5ybr51WzLq2Jk51YkG1kt3cxC4GIJClUnMn
+auNj8fiFcCtIisaEcUatbD8Bv0QK4GWHdMM95U/p5D/0SUKHxeowvYxZvQ9OjOEm
+aVci6TVa85IWb2vn8oDcZLjRHVUnghYtS1UpkOfjcckpuk54+1dcy7FySRKOQ/Js
+jzTKEhbp5VqfYU/ErViab+ITJKh+IdIc2ebYBOKmt0CfUjCrUPIiBs2Qq1Lu3cKA
+7NHj+Y8Ayc99gi8C2QGyZnliC3SRsKzSuO6ThoADKzZHXRieXAZJYPJ9nrNeXe+o
+441fWgqaes+WZC4Ahxm/IBxAnk1IUhWDt2TpLsNfdMqcqv1TsS6UwC4MsSoqzJpz
+e7cPMP7IX1uhAjM3TGYsllqnQghmZ8dZgt84Ih4taQto7f9gG64fHoCpdl16u2BL
+gb5KEQWRqJBaOMMKuz+gPclfona4iEmEmwZKHS1iBPXDoGGBc3Nt2kMa2dMJhESt
+cGnHUXCw7nX2RlIGUfLHvcblKlKm+hRI3T50ajp/jsZcLH2JVV7LXLbCwM2QnJkD
+EKivM1K0dIP5QyIh9PdaJEGd891Ky+jdNowvVGTlM1lI3fqd7uQ=
+=1Ecl
+-----END PGP SIGNATURE-----
+
+--77l3kc73q5njcdnm--
