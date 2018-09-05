@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E40C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A25C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1214B20659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:40:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1214B20659
+	by mail.kernel.org (Postfix) with ESMTP id 157E120867
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:40:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157E120867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeIEQKX (ORCPT
+        id S1727616AbeIEQK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:10:23 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:40662 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726046AbeIEQKV (ORCPT
+        Wed, 5 Sep 2018 12:10:26 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:21453 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725868AbeIEQKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:10:21 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w85BYIgO004475;
-        Wed, 5 Sep 2018 13:40:25 +0200
+        Wed, 5 Sep 2018 12:10:23 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w85BYk7u013470;
+        Wed, 5 Sep 2018 13:40:26 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2m7g7wxh5x-1
+        by mx08-00178001.pphosted.com with ESMTP id 2m7fw6xycd-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 05 Sep 2018 13:40:25 +0200
+        Wed, 05 Sep 2018 13:40:26 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C5A4A31;
-        Wed,  5 Sep 2018 11:40:24 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A364E2B7E;
-        Wed,  5 Sep 2018 11:40:24 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 5 Sep 2018
- 13:40:24 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9E34834;
+        Wed,  5 Sep 2018 11:40:25 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7D3582B82;
+        Wed,  5 Sep 2018 11:40:25 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 5 Sep 2018
+ 13:40:25 +0200
 Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 5 Sep 2018 13:40:24 +0200
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 5 Sep 2018 13:40:25 +0200
 From:   Amelie Delaunay <amelie.delaunay@st.com>
 To:     Minas Harutyunyan <hminas@synopsys.com>,
         Felipe Balbi <balbi@kernel.org>,
@@ -49,9 +49,9 @@ CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Fabrice Gasnier <fabrice.gasnier@st.com>,
         Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 2/4] usb: dwc2: fix a race with external vbus supply
-Date:   Wed, 5 Sep 2018 13:40:03 +0200
-Message-ID: <1536147605-26279-3-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH 3/4] usb: dwc2: fix call to vbus supply exit routine, call it unlocked
+Date:   Wed, 5 Sep 2018 13:40:04 +0200
+Message-ID: <1536147605-26279-4-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536147605-26279-1-git-send-email-amelie.delaunay@st.com>
 References: <1536147605-26279-1-git-send-email-amelie.delaunay@st.com>
@@ -67,10 +67,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-There's a race with root hub resume, when using external vbus supply.
-Root hub gets resumed, but runtime pm autosuspend runs as external vbus
-supply isn't enabled. So, host never exit from power down properly.
-Initialize vbus external supply before, rater that after hub resume.
+dwc2_vbus_supply_exit() may call regulator_disable(). It shouldn't be
+called with interrupts disabled as it might sleep.
+This is seen with DEBUG_ATOMIC_SLEEP=y.
 
 Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external
 vbus supply")
@@ -78,44 +77,23 @@ vbus supply")
 Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 ---
- drivers/usb/dwc2/hcd.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/usb/dwc2/hcd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
-index c205cfa..bb72517 100644
+index bb72517..e8a480e 100644
 --- a/drivers/usb/dwc2/hcd.c
 +++ b/drivers/usb/dwc2/hcd.c
-@@ -4387,6 +4387,7 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
- 	struct dwc2_hsotg *hsotg = dwc2_hcd_to_hsotg(hcd);
- 	struct usb_bus *bus = hcd_to_bus(hcd);
- 	unsigned long flags;
-+	int ret;
+@@ -4484,7 +4484,9 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)
+ 		hprt0 |= HPRT0_SUSP;
+ 		hprt0 &= ~HPRT0_PWR;
+ 		dwc2_writel(hsotg, hprt0, HPRT0);
++		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 		dwc2_vbus_supply_exit(hsotg);
++		spin_lock_irqsave(&hsotg->lock, flags);
+ 	}
  
- 	dev_dbg(hsotg->dev, "DWC OTG HCD START\n");
- 
-@@ -4402,6 +4403,13 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
- 
- 	dwc2_hcd_reinit(hsotg);
- 
-+	/* enable external vbus supply before resuming root hub */
-+	spin_unlock_irqrestore(&hsotg->lock, flags);
-+	ret = dwc2_vbus_supply_init(hsotg);
-+	if (ret)
-+		return ret;
-+	spin_lock_irqsave(&hsotg->lock, flags);
-+
- 	/* Initialize and connect root hub if one is not already attached */
- 	if (bus->root_hub) {
- 		dev_dbg(hsotg->dev, "DWC OTG HCD Has Root Hub\n");
-@@ -4411,7 +4419,7 @@ static int _dwc2_hcd_start(struct usb_hcd *hcd)
- 
- 	spin_unlock_irqrestore(&hsotg->lock, flags);
- 
--	return dwc2_vbus_supply_init(hsotg);
-+	return 0;
- }
- 
- /*
+ 	/* Enter partial_power_down */
 -- 
 2.7.4
 
