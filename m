@@ -2,123 +2,96 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0680FC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B90C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADC8E20658
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:15:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UG0Pg1D6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC8E20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E84F20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:23:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E84F20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeIEQpD (ORCPT
+        id S1726544AbeIEQxF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:45:03 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44299 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbeIEQpD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:45:03 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ba4-v6so3211703plb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 05:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+gydDs/fd0WfSZF/djiR8zUnuMeG1y3hOzS6hqPIHh8=;
-        b=UG0Pg1D6A1+hHrEwwiwtlv3nXfMCUjP/d7cxUgs3MIoZonDe32/oxWsTAP/9HTxfXg
-         wp3/QAFx7jkwGbcy3xGdc0c1sq8w2/hWAE55grX6puMUSgJQq2Q1J9ple5cERELMe6Vy
-         OS0aybTPy/CNIanrTjdXXFs14VsJjyStIf1q5kjVuOCPCJ6mF3deC2nvG4P7IaFP0a6P
-         RvbNu+14VUqN5e4xqomwYLeahjasmD2FxhrLIU6O7gpypGQQ4uCZ4tftcB2oqn3jTdqr
-         tdFYqtsEYIjk9zKLZkZJJ0AOtpKq3sm1CGea3d1aG2GCJS2jvopkMCLmGpKiEQ+vo9Yi
-         He7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+gydDs/fd0WfSZF/djiR8zUnuMeG1y3hOzS6hqPIHh8=;
-        b=rpYA67jcf9ot+UAApZqWiLZbs2ahvSswETJfaNBVxLN15TTlVxjm9KKT6K8xLRgM9u
-         +fJZ27mUKOKCTeZXA0M1O4m3YbTyya8eIUsctNuyo+4lv0RqxBITPCony3mZeJ9s2iMT
-         8oc2+Ik2W3sl2XYh6zB4En4D1orAo0LMs2cHzOZkHk4z+R6MneShrUPJlxQfg798BrsQ
-         u5CF6Ky6D2mP/lE9wWz7GYj9LVpHNF7cdS5MA4syn5KVVRREXpYh4BeudjvNm2sEUNpG
-         Ly+BAIT/P+gkXJ9d/fBhKR11q/iwThMfwUqJl/L8w0cTVoSeFcYZkPMRSn9dAloEKlYM
-         vdBw==
-X-Gm-Message-State: APzg51BF4mDSFcogHXjtRG3DHft7eyPX6x+Frk41aWo1uuPwepwuP6uU
-        8G4SMxzdbQBUrfvVzXIJL3I=
-X-Google-Smtp-Source: ANB0VdaHYShp8lGBrOR9QLJXCjKnjv42131P7JonTqQREE461ZS7rLwWFrDaLxMST8/pI1EaS1XqrQ==
-X-Received: by 2002:a17:902:2e01:: with SMTP id q1-v6mr38604056plb.40.1536149703647;
-        Wed, 05 Sep 2018 05:15:03 -0700 (PDT)
-Received: from roar.local0.net (59-102-81-67.tpgi.com.au. [59.102.81.67])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm2496227pfn.44.2018.09.05.05.14.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 05:15:03 -0700 (PDT)
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>, Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Matteo Croce <mcroce@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org (op)
-Subject: [PATCH 3/3] tty: hvc: hvc_write() fix break condition
-Date:   Wed,  5 Sep 2018 22:14:39 +1000
-Message-Id: <20180905121439.23809-4-npiggin@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180905121439.23809-1-npiggin@gmail.com>
-References: <20180905121439.23809-1-npiggin@gmail.com>
+        Wed, 5 Sep 2018 12:53:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbeIEQxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:53:04 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFBE620659;
+        Wed,  5 Sep 2018 12:23:02 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 08:23:01 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] sched/debug: use symbolic names for task state
+ constants
+Message-ID: <20180905082301.131e1967@gandalf.local.home>
+In-Reply-To: <20180905112524.GU24082@hirez.programming.kicks-ass.net>
+References: <20180905093636.24068-1-u.kleine-koenig@pengutronix.de>
+        <20180905112524.GU24082@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 550ddadcc758 ("tty: hvc: hvc_write() may sleep") broke the
-termination condition in case the driver stops accepting characters.
-This can result in unnecessary polling of the busy driver.
+On Wed, 5 Sep 2018 13:25:24 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Restore it by testing the hvc_push return code.
+> On Wed, Sep 05, 2018 at 11:36:36AM +0200, Uwe Kleine-König wrote:
+> > include/trace/events/sched.h includes <linux/sched.h> (via
+> > <linux/sched/numa_balancing.h>) and so knows about the TASK_* constants
+> > used to interpret .prev_state. So instead of duplicating the magic
+> > numbers make use of the defined macros to ease understanding the
+> > mapping from state bits to letters which isn't completely intuitive for
+> > an outsider.
+> > 
+> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > ---
+> >  include/trace/events/sched.h | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> > index 0be866c91f62..f07b270d4fc4 100644
+> > --- a/include/trace/events/sched.h
+> > +++ b/include/trace/events/sched.h
+> > @@ -159,9 +159,14 @@ TRACE_EVENT(sched_switch,
+> >  
+> >  		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+> >  		  __print_flags(__entry->prev_state & (TASK_REPORT_MAX - 1), "|",
+> > -				{ 0x01, "S" }, { 0x02, "D" }, { 0x04, "T" },
+> > -				{ 0x08, "t" }, { 0x10, "X" }, { 0x20, "Z" },
+> > -				{ 0x40, "P" }, { 0x80, "I" }) :
+> > +				{ TASK_INTERRUPTIBLE, "S" },
+> > +				{ TASK_UNINTERRUPTIBLE, "D" },
+> > +				{ __TASK_STOPPED, "T" },
+> > +				{ __TASK_TRACED, "t" },
+> > +				{ EXIT_DEAD, "X" },
+> > +				{ EXIT_ZOMBIE, "Z" },
+> > +				{ TASK_PARKED, "P" },
+> > +				{ TASK_DEAD, "I" }) :
+> >  		  "R",  
+> 
+> Steve, does this work?
 
-Fixes: 550ddadcc758 ("tty: hvc: hvc_write() may sleep")
-Tested-by: Matteo Croce <mcroce@redhat.com>
-Tested-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
----
- drivers/tty/hvc/hvc_console.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+As long as the text is preprocessor macros (which they appear to be),
+then yeah, this shouldn't cause any harm. If they were enums, then it
+would require a little more work.
 
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index bacf9b73ec98..c09a38fb0d66 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -522,6 +522,8 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
- 		return -EIO;
- 
- 	while (count > 0) {
-+		int ret;
-+
- 		spin_lock_irqsave(&hp->lock, flags);
- 
- 		rsize = hp->outbuf_size - hp->n_outbuf;
-@@ -537,10 +539,13 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
- 		}
- 
- 		if (hp->n_outbuf > 0)
--			hvc_push(hp);
-+			ret = hvc_push(hp);
- 
- 		spin_unlock_irqrestore(&hp->lock, flags);
- 
-+		if (!ret)
-+			break;
-+
- 		if (count) {
- 			if (hp->n_outbuf > 0)
- 				hvc_flush(hp);
--- 
-2.18.0
+-- Steve
 
