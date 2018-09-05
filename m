@@ -2,160 +2,139 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A59C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4DFC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C5B206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93D4A20839
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:10:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Oj/+RqFn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81C5B206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="ba0ht2RO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D4A20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbeIEXlu (ORCPT
+        id S1727796AbeIEXmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 19:41:50 -0400
-Received: from mail-eopbgr20062.outbound.protection.outlook.com ([40.107.2.62]:7360
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        Wed, 5 Sep 2018 19:42:21 -0400
+Received: from mail-by2nam01on0041.outbound.protection.outlook.com ([104.47.34.41]:29935
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726544AbeIEXlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 19:41:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
+        id S1727755AbeIEXmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 19:42:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oHQTdXQFIXZQJNvJPoP8YZu74qbLRrq/PeIYygvt1KQ=;
- b=Oj/+RqFnTvyY4nHLoeEpnRepHbO/AjKB5Zqyc/Y79HQaE2Ckk5Y5lGsG793ohPQBHZI7hOZjYbchOkSVS2NMw9XQk/2Gndh8zeqGC97oLmeuCc3wL+3Ql12ptfi9tWjwq2Mro5Z3niLmUZ0uzYwbXpgYElbp/kgUjX05AHpZvVc=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Grant.Likely@arm.com; 
-Received: from tiffany.arm.com (217.140.96.140) by
- AM5PR0801MB1746.eurprd08.prod.outlook.com (2603:10a6:203:3b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.16; Wed, 5 Sep
- 2018 19:08:22 +0000
-From:   Grant Likely <grant.likely@arm.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     olof@lixom.net, scott.branden@broadcom.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
-        leif.lindholm@linaro.org, agraf@suse.de,
-        Grant Likely <grant.likely@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH] efi_stub: update documentation on dtb= parameter
-Date:   Wed,  5 Sep 2018 20:07:50 +0100
-Message-Id: <20180905190750.4566-1-grant.likely@arm.com>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [217.140.96.140]
-X-ClientProxiedBy: AM5PR04CA0001.eurprd04.prod.outlook.com
- (2603:10a6:206:1::14) To AM5PR0801MB1746.eurprd08.prod.outlook.com
- (2603:10a6:203:3b::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0370c700-a457-43cc-87bf-08d61362f340
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1746;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1746;3:HC+NMsryCqVktYvve5VA33FgvjQNfqVNoF0r8WhIHMgwJ3ae+FxIOwEwnJJiSGnvQ55v5fomiLgTQB9KC1d76lbcbR2ZF48GytUGqh7HfIvEHBiANOLwOZmx+zAcXcV5b0nwh1yr/75GLLZNk/UccSK93UDitFcoX+s8aiaqTg/DcUMX5Al3bEMsjjMhcaOhvEP8s28dDvdRO8XQA93QO+oU0bWN6jI6jbGye16LiI64O1K+G9z5RTC3zjHEwzjA;25:Fabbhh1U+bmg2tTqIlipci2n467EfeG5z+t699Iym/3+kL3z1cEj2rdOt27afLTtehKbYNKdTY++wtrnk4Uc4y4+rfQZdBhwgqreIAAfvJk1cO+Pth9Rcd1E4/hSxd7K/j/RFVX9eoSnEgTCw8xjP8AQwZLJD+gQXEaT7+j/5IMXOEWtFKB1bCiW08JsRdcjUxg+RGBQty5PINu/9L/OlH50RRwhpGjVh7Uq/XbR2Ith4bJ2S9HY3jEjobfpKegCiptIOZLTvOQXCw4ztk3mOmyYOQTP2SrH9xlbnhq2Fcn85M0Dcx3saeCPjoLjvBv/AbVBvBgnT/DqTCSHo1+v+A==;31:MNCSRC/s4YTXLZwO7cvoH0R1huGio45g3PY6AXaRiqqwhm3OQzIvsfm0fT7AoGc+T8ZraRF6jZcho1dIoBWa05FdfXII//Po+M+mPnlCSmk4SUjj45/kVCB4mv63xIlBMjy6oW3epzZMyTHlCt5OoWL3u+Ol7VHh6RwSSxpkRm0xGchfln4KQBQyAl0SqvWiZcmpBZqB5jnXHKc2928aCL2pgFDUTW2wIU91w/MAHpo=
-X-MS-TrafficTypeDiagnostic: AM5PR0801MB1746:
-Content-Transfer-Encoding: quoted-printable
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1746;20:P7oStKk8lGny9VMpZdVy7ot0f1ChCabR2XBjrtM3Xf6ICYk43s97kLXJjbWt9WKjQCekP9q8nsq06OojhbF7Pj3mR9QaBuxnjp4j1QWgVEdGi6K62dPJGLQ7GzqKcS4PRbESFH4hi7rv/La8pDzT3x2UT0vV5d85oSWF08wBjo/YFsKXOm4ZzgusuiYQPWSasb8I307AkCTw5VAsDkjKUhQeuZOhB032DJcqxWR9IrgkByrqPqeyePoi4jlTIqlrYGTMNUq/ZeYErMBRAJ7L7DTVfmXB6MP0ooSoKGZr99amIFS9BarAsqEL18hvnGoGD6xJjtvhsgAKvqzS7KVLnks35XDhn4t/5+WNFfXwWwtJKvafKNwJnxPmtonBAZU3Gc2ZXLsyTH9WRcTzUUkeB4vHATfQV1Jke0hyayRLsQIfPcFYTgCs4f+FdQvICRa3j6qm54684MsYCXvTa1ohheR5V+DzmBWpcTRzpBKFywPor7WC90JR+1zxehOjcUi7;4:sgCuqApXXPBSCKEEXDhCQibfNnGfJy2zKYDc3qjjmEfGyNQLYRRcjOjiwckFoqblrUUr0ojSdgnqia3uz1RLOz1UgDqHZ4NHvUhdCxMSIMoCvwUA/0Rd+AVncpsxPIHjCR1HQb8rLUvZvpPCVpG/TRQDHfCz2c0bOBKhBYbOf8xwHGeTWuZacsN4URH3XQyJS3E+O0Nb+9KDCpuaS8Zg+xXmrJ1gvenOtXyCusLsTdMxfab8514CM6Q3im236ssiootJ/dkrazU9DEb/5t1KQVeVDnaH6/ygE3t1ElJ1MWLcFEfgUgTcLGiog1cmT/81ZnNH/HdVlGir4AV0PxoU7WX9r7Pw6k4jLjjYwoSBluE=
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB1746C4BE4427583CA8C5BF3095020@AM5PR0801MB1746.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(103651359005742);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699016);SRVR:AM5PR0801MB1746;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1746;
-X-Forefront-PRVS: 078693968A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(136003)(376002)(346002)(189003)(199004)(40434004)(44832011)(5660300001)(486006)(575784001)(6486002)(6666003)(7416002)(1857600001)(14444005)(5024004)(105586002)(68736007)(106356001)(186003)(305945005)(47776003)(7736002)(86362001)(54906003)(956004)(2616005)(476003)(16526019)(316002)(72206003)(53416004)(26005)(2906002)(50466002)(81156014)(81166006)(53936002)(15650500001)(386003)(97736004)(48376002)(8676002)(51416003)(50226002)(6116002)(36756003)(52116002)(66066001)(1076002)(4326008)(25786009)(3846002)(478600001)(8936002)(7696005)(8746002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0801MB1746;H:tiffany.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: arm.com does not designate
+ bh=Q8UYRaUw52fYO/CH05q7/shcUPfsH389zxE6z8DdJTY=;
+ b=ba0ht2ROoeRGGAJPmphNKo0L98HGPGKwEeT+BRzMPAPAPOeQOVHxjBobyoINwraeyR8agEeUM2zA6g/RTAnJbkzdPUD5GG6A/nBO3uo81+VPMuwDczVj1t1HeJXysBukh8NIRG85QWD9eqGDt9qdbBD2MiYaYXWB67Oj8nVSq1k=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB3925.namprd05.prod.outlook.com (52.135.195.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.12; Wed, 5 Sep 2018 19:10:46 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::911b:395c:ce8a:38c3]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::911b:395c:ce8a:38c3%3]) with mapi id 15.20.1101.016; Wed, 5 Sep 2018
+ 19:10:46 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Thread-Topic: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Thread-Index: AQHUQuMbzkVQDn+XA0OpXaFEC8rBZ6TiDnqAgAABqICAAAJhAA==
+Date:   Wed, 5 Sep 2018 19:10:46 +0000
+Message-ID: <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
+References: <20180902173224.30606-1-namit@vmware.com>
+ <20180905185617.GC24082@hirez.programming.kicks-ass.net>
+ <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+In-Reply-To: <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB3925;20:L2qcDPqgCDnz7v5a3iNVsDXzSPZ7OObpINWiR4dFTWLZpU8whBo3RbvSVDuk4AncRQxQQDOyWNTzYaZlMMWtbFyqzAmV68lag0+zUFl2QborkNAldXbHrb8+y+6ATl8Vvm//h6C/KmjIrIqBjwnU8Ruc0LfN9aSjpfcDZNZqkE4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1e2ef9fd-3157-4dc8-d1b3-08d6136348dc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB3925;
+x-ms-traffictypediagnostic: BYAPR05MB3925:
+bcl:    0
+x-microsoft-antispam-prvs: <BYAPR05MB39254CE9F287873402A024D7D0020@BYAPR05MB3925.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(61668805478150)(192374486261705);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BYAPR05MB3925;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB3925;
+x-forefront-prvs: 078693968A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(136003)(376002)(199004)(189003)(316002)(6116002)(6916009)(102836004)(5250100002)(6506007)(6246003)(54906003)(66066001)(8676002)(105586002)(3846002)(26005)(305945005)(2900100001)(478600001)(2906002)(7736002)(256004)(99286004)(106356001)(4326008)(33656002)(76176011)(68736007)(25786009)(14444005)(53936002)(186003)(5660300001)(11346002)(8936002)(6486002)(36756003)(446003)(486006)(82746002)(14454004)(97736004)(476003)(2616005)(83716003)(229853002)(81156014)(6436002)(6512007)(86362001)(7416002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB3925;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0801MB1746;23:Pk+cNiFdF0rZkRg5+2SraWEDaw+5riBAz3lcHlu?=
- =?us-ascii?Q?uAhb8z3IC63769wOqpfABC7qUHQe53ngP0+T9q+1r/OzdjjDLsraPff5Zwju?=
- =?us-ascii?Q?tGrT95ckZ19kURgvdjKc2K5fIfzcHcG8Qyvqd/WJ9D+cR5WR1Rrk0ZE/LTwA?=
- =?us-ascii?Q?VxluxwDHBgmxhfpHnIR3O19lQc6wO0ODpaa3F3dpSawgyo3pG5OGxt7yYMtt?=
- =?us-ascii?Q?LoFx6esVvFybgxLjBO1Ft9ecmk3ufJnZf+G45L2u+VgoeJ4DcKVyXa/+2EDH?=
- =?us-ascii?Q?Szk/FBhWGzRYcf2L8XwOBo7+aBzeDVmby/VhLIGkdAVOh00sBSahgMWhgTNw?=
- =?us-ascii?Q?jRdeAs/GWLHg3vj8p0qNVbGls9seHzyxoyfmH86a9BnHUPVmCJQUu6xARsKu?=
- =?us-ascii?Q?wtaW7q907MtEjaNWj383vMSyGROYRTFGCz2LgzPnIoopuaQirA/S5OrHXlfQ?=
- =?us-ascii?Q?E2kUJAARzP2GcQPebcsU4anWhG84DU+dIKGx3D6YoAWo9bvaRFDn1VZCMqKR?=
- =?us-ascii?Q?CVkThWL9OIx8UcKNyKKdBRipG2k5yfSk2Q6URycAL8drVfywkUmQ3me1MPCq?=
- =?us-ascii?Q?K+bYmcOWCKxRHx9rjDdA8e3tUV1uajcl1/QcLfHFGuoGHUQi7VzXuzzZs9cf?=
- =?us-ascii?Q?1TYi32yr7qMxPX4sI0s3icvGxytHG8ldj4KAMIVXT1hb6/bKDIapD/JuUI6A?=
- =?us-ascii?Q?o9kaPz2J4Xyqw4gILj/uojQ1g/2+dvGDzqBcz8uuWpFdG7axIW/4hpmMhc34?=
- =?us-ascii?Q?ZtQ1YsUQih/3f/7ciwbgl9yXRrCwF6kbOX4wbMT5IHdmOZonNGkUZMuwzaai?=
- =?us-ascii?Q?mtClsBz9Ud32LPw5HqviOlzEv3b3QUTHdL4l+fpytB1Ws8q9ue4wxNfkb1WC?=
- =?us-ascii?Q?rY3fK4pm8oxRNMJ59QrcJODXjgu67Ojdo74BVAuTVu1tnpOmf0LMrd/Gx9Mo?=
- =?us-ascii?Q?N6cwwaFq+xkjw/9bTPByVFXlDOOHJ7NCPT9rSTcHwzxnV4DUlut7x90uryFc?=
- =?us-ascii?Q?RnX/U8m+Tb3tTt7TeeMNwUD67WEWcO9DtUZOQp9/f4QxMnnortHuLa2sBidN?=
- =?us-ascii?Q?QSy58MNdCXWVsEOnNMfvdmjA8qqJfaRr+M38yTewnHG0/2lC6fvfCh8PPTsy?=
- =?us-ascii?Q?7i8xXSCnhnSBo7CPcFzC1ve88z+Dbh1z6JxeQXwRQHJ+tvJjYCQREp5takos?=
- =?us-ascii?Q?Xod/LazrPso+FpFcJaEIf04sJP0rwXxKwiBhtr6NBvKrBJRdCjh/GjAh07ws?=
- =?us-ascii?Q?z+xFz+hIdnCu0tMqPqPzTPK+ZH+Tw257QH2dHUjnhQcfaKTS5ksh3wFOWkpc?=
- =?us-ascii?Q?ai+2zXIOJnZ1NC3/Yd0R5eIXIYI50A51BjpbHMPcNUCex?=
-X-Microsoft-Antispam-Message-Info: /NxM8jHkVIMFdZ9uJNZ6NqU4/ixJxyPh1FTQvJLRiJlUb/eDmf85NxXhRAx+yGcy08d5r1ktAGl/4iTgIYV2J85+NDsjv/Jvy5YgRNG+uvORlK2dK8/srE/FQOrNAY+UiqFPV1MWdevPb3O1K8F/TsUdtDGFJkGyLvAs/NYMedLzz8bIhf4cxDv0qGj87OHmigmU+02s/8DU+WYI5HhMSa7s+zEXwVWeFVv8aLVBVz+bnHWjO5lWiow7tVg3kJ7HhY523QnqXgeaxRjI6Jm6LLqpFGvlPOQ+IIRwervI/pobidmfaTbImTwbH+YMiVpmKTG15ntPCspoL8YKxumWW3XZ9I6fao1cD1dJ8ZFR65E=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1746;6:gyWJ3jh4ZJuAMmShETniJHAQnEsXT2xXDkxtAaIs7rhSQSCXS/OqDRG5UyjQ+d72UUv40pbd2blCDab6wTAJaJKYL6ox+WJygoKUAk1Bjl700AZwXStOiTr5q1+Yii3JCalsjKAeA15Yc9ruYs+h48TjEN7sSLFMbTNChwHdFIra68ewItRBccAUNQGPv6kzCLGu76MnRREqcO+LgaWSLNC91n8pX0kvQEheYwkkMKlZXympkRk+9gIPm6C4nRt/N07d8sqtCUWe3qGdLt4SnB6Cbqs+7JZJGJlqyn+OQ2u7358p3oExXGh1RGetr/mm8og2Kx8dTjkjwDaYqWQ1t8e5mr5fh/MwlwyajIysZGAep0BXka3MpHllUXovHdSzZpkGMUhms/FAB/DxiVGXBYGvBQbEOaj+nzWrXKf9kN2jwL8n0IbYOfVc2WSpuiqMMooxrdK89HLOBJwQtZO6iw==;5:0XNZMJYyPtkRgq7LJAc7yj0F5Qma5DyQQHSlaufxOeHw9gN7vp0BZZMIdJz23p0HjHf0vi3ZMBqg1jkMQYwPcRHS9WGxeJoPNwYoGVI67ZImSd63IiorFeEVeHUYhumX/dhohh9IPA3UzetDNFTHs8fD4p8o/R17ot865BBbeX4=;7:yG390Zkyg6RkgDQ2aXfBDff8mVp0jEeOuCmW0O/ttmoLp96fYlXcaB4mI3AbLy60MLxo7dqJIVOYwjEKyFxh4vIX1pdZak4EhzCk6s8I0hSZi6HsutEmHMcTON2XK5HbpRIa+PJ569RZTYdneXrvCmGQwMjGQwEciQWkdrkT/YGa0cNmOardy2UxtkYKp0Iba6ZaSWlbWoh3uAFeJEhbPifrkmizJWtFmxlLrW+6FpPQDeLcwXT6hVr0mFPTsClq
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 19:08:22.0037
+x-microsoft-antispam-message-info: aHYEnvEfPYYiGdYW+Gc8cC35OMs98/5C9aahkgJsyrGt4BdfNTeVMn3eY30WNt75NsC/2rDyrnkfctmbctSwNVKcHk1f5/fTgADqBb1XgGeCAi4vArZE/L6mamvgldeLbjfPIVYYyAVvQ34b3Tov+1K3U5ulPH+2AUWCQlKz815fGDcmtjSM6udWPxn3Nim6GetAWdzvkV/jkRuiZQFgt56BQ48OV7pmh7XMBnN2MFYVgja69zJ5ShJtcxg7sGA5w+RGqUHVtnnFRdxVhnHejIomzyFAm6rSjxowo083jgllgvnYrbWj/43OPm+ba+IEy80TKydsp9qper+er9WoVvfMnlJVDYarwQbM6OQy+ZQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C6D032E7CC8E8F479471B6AA24CFAC2E@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e2ef9fd-3157-4dc8-d1b3-08d6136348dc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2018 19:10:46.2437
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0370c700-a457-43cc-87bf-08d61362f340
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1746
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB3925
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dtb=3D parameter is no longer the primary mechanism for providing a
-devicetree to the kernel. Now either firmware or the boot selector (ex.
-Grub) should provide the devicetree and dtb=3D should only be used for
-debug or when using firmware that doesn't understand DT.
-Update the EFI stub documentation to reflect the current usage.
+at 12:02 PM, Nadav Amit <namit@vmware.com> wrote:
 
-Signed-off-by: Grant Likely <grant.likely@arm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/efi-stub.txt | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+> at 11:56 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+>> On Sun, Sep 02, 2018 at 10:32:18AM -0700, Nadav Amit wrote:
+>>> This patch-set addresses some issues that were raised in a recent
+>>> correspondence and might affect the security and the correctness of cod=
+e
+>>> patching. (Note that patching performance is not addressed by this
+>>> patch-set).
+>>>=20
+>>> The main issue that the patches deal with is the fact that the fixmap
+>>> PTEs that are used for patching are available for access from other
+>>> cores and might be exploited. They are not even flushed from the TLB in
+>>> remote cores, so the risk is even higher. Address this issue by
+>>> introducing a temporary mm that is only used during patching.
+>>> Unfortunately, due to init ordering, fixmap is still used during
+>>> boot-time patching. Future patches can eliminate the need for it.
+>>=20
+>> Remind me; why are we doing it like this instead of fixing fixmap?
+>> Because while this fixes the text_poke crud, it does leave fixmap
+>> broken.
+>=20
+> Do you have other fixmap mappings in mind that are modified after boot?
 
-diff --git a/Documentation/efi-stub.txt b/Documentation/efi-stub.txt
-index 41df801f9a50..833edb0d0bc4 100644
---- a/Documentation/efi-stub.txt
-+++ b/Documentation/efi-stub.txt
-@@ -83,7 +83,18 @@ is passed to bzImage.efi.
- The "dtb=3D" option
- -----------------
+Oh.. I misunderstood you. You mean: why not to make the fixmap mappings tha=
+t
+are used for text_poke() as private ones.
 
--For the ARM and arm64 architectures, we also need to be able to provide a
--device tree to the kernel. This is done with the "dtb=3D" command line opt=
-ion,
--and is processed in the same manner as the "initrd=3D" option that is
-+For the ARM and arm64 architectures, a device tree must be provided to
-+the kernel. Normally firmware shall supply the device tree via the
-+EFI CONFIGURATION TABLE. However, the "dtb=3D" command line option can
-+be used to override the firmware supplied device tree, or to supply
-+one when firmware is unable to.
-+
-+Please note: Firmware adds runtime configuration information to the
-+device tree before booting the kernel. If dtb=3D is used to override
-+the device tree, then any runtime data provided by firmware will be
-+lost. The dtb=3D option should only be used either as a debug tool, or
-+as a last resort when a device tree is not provided in the EFI
-+CONFIGURATION TABLE.
-+
-+"dtb=3D" is processed in the same manner as the "initrd=3D" option that is
- described above.
---
-2.11.0
+Well, the main reason is that it can require synchronizations of the
+different page-tables whenever a module is loaded/unloaded. The fixmap
+region shares a PGD and PUD with the modules area in x86-64.
 
-IMPORTANT NOTICE: The contents of this email and any attachments are confid=
-ential and may also be privileged. If you are not the intended recipient, p=
-lease notify the sender immediately and do not disclose the contents to any=
- other person, use it for any purpose, or store or copy the information in =
-any medium. Thank you.
+In contrast, the proposed solution uses a different PGD, so no
+synchronization between page-tables is needed when modules are loaded.
+Remember that module memory is allocated even when BPF programs are
+installed, which can be rather common scenario.
+
