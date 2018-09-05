@@ -2,170 +2,159 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E250BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E75C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708202077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 001B620838
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:29:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Edp2Yx32"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708202077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gC+gvKgD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 001B620838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbeIEFtD (ORCPT
+        id S1726202AbeIEF4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 01:49:03 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46378 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbeIEFtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 01:49:03 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 203-v6so4731644ljj.13
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 18:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0w0PjKyGuT0pxnDu9U9lAoyBrmVujLcu5sAacOGphIY=;
-        b=Edp2Yx32i8Dj0Uw0fhmjvqTlY3OnfFWpZaLOzlx3VDlkOjLNsNpvx1QE9MjF0UIavn
-         atcEJhTNeusX3IOoFv5IFKxaTCTvhxHO3Mklf9cBlMcLW5awjMfru2i7slcwt3iG7Bww
-         HlL0rPv1lBqWWppzl9fUlQAuWjjEbvNHvSJGOIi9qyJ4Q/Gi22UomX5CkFODDQ89liQM
-         6Q5BHR69HPClJXiSsaTupBbfcRt+xGsSHSkTHUNg5AmPs3nOQZ+GMWNb3i8gAkGRIh52
-         N+rsMT14nwc44CVQsYGkn4XpN48C2sYq06ptwkAI8b96QXmDUMNwp8CTSvqIqcEtzirM
-         e0DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0w0PjKyGuT0pxnDu9U9lAoyBrmVujLcu5sAacOGphIY=;
-        b=pnn9h0LZ/U5qQKj7kLZPKwoR/9YHIXLKVUwTeVk+1hmByHXkxpnra61utddFghHelh
-         HQI2b0DpWJjLrvKZ+0H8LLnKnKrbrkOaZ9UEDvgkDYwqrbpGi4/QwiXU33a2aczov7tl
-         RyAuswCTLTLs1wQtvTvtRT/dalRUjgAnVxMBv2jOWXB6tIg3ne96c+FvPutieyjyur1r
-         r2wmHkRWJQFn6NdKE4A2cPDaV0lxCBQG+VKBi8aN/KdrfTjv7uder+UZAX4FfgiHnD0k
-         a3pbRF2h3tOzxKRQoFsjKpb+bonQEou9pr850eXmEE70G3nud6Cb0+En/teDYUC9BQ7v
-         Q7fw==
-X-Gm-Message-State: APzg51CLixRRqlyXTX0/nhK7yL4j1R09MkskFSpKAXLCqVkQhwFLnE1h
-        SfICOhVRkVVby3QbSObuEF1A2UXJJoorhXnZCmL6
-X-Google-Smtp-Source: ANB0VdbrJelyLeelrzXz5cXc6sdhRXhwpCp2amjuWHqaIBKY8qWIzOqcsAGj3D7QRv5iPh76vzca/rjsHVwPCrp66Lo=
-X-Received: by 2002:a2e:7c12:: with SMTP id x18-v6mr9315565ljc.71.1536110480066;
- Tue, 04 Sep 2018 18:21:20 -0700 (PDT)
+        Wed, 5 Sep 2018 01:56:47 -0400
+Received: from mail-eopbgr60050.outbound.protection.outlook.com ([40.107.6.50]:49819
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725853AbeIEF4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 01:56:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lY+6bDfldr3BE4Ymk5zMVcUn98bet3LrQuiVMaN5Bxc=;
+ b=gC+gvKgD7fMl0gGyVmy32mC3V5LvvdLk6CTvR/NXMvesarSlUkR4QoxkWL2q45OBDBBXLO4/WYjSjdaOTgQDWGEhz7KsUvecuXTC/D5b+ezWpwqrx+TQ9EWJBLajYcW/jiqQIcbHG3oihx6HBSAwdcAKrGPqOZ0UIRDw8Y/zkJw=
+Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
+ VI1PR0402MB3918.eurprd04.prod.outlook.com (2603:10a6:803:22::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.14; Wed, 5 Sep
+ 2018 01:28:58 +0000
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        u.kleine-koenig@pengutronix.de
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/2] tty: serial: imx: add lock for registers save/restore
+Date:   Wed,  5 Sep 2018 09:24:26 +0800
+Message-Id: <1536110667-23530-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <000000000000c178e305749daba4@google.com> <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
- <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov> <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
- <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
- <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov> <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
- <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
- <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
-In-Reply-To: <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 4 Sep 2018 21:21:08 -0400
-Message-ID: <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
-Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dvyukov@google.com,
-        syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com,
-        tyhicks@canonical.com, john.johansen@canonical.com,
-        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs@googlegroups.com, jeffv@google.com,
-        selinux@tycho.nsa.gov, russell@coker.com.au, bigon@debian.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK0PR01CA0006.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:92::18) To VI1PR0402MB3918.eurprd04.prod.outlook.com
+ (2603:10a6:803:22::31)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 864655fa-3283-476e-a292-08d612cef533
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3918;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0402MB3918;3:2ZC+fmd08zyn5L0qVT3D5v4sNV2ZDx/ISRNdN8292vVi09yEhgvZq9ska8ZJ5jHpz5gaBtSX5hTvl7vfnf9en+78tdN3RAPpEUrYjS0U9bBRMnUOP4HwfnEJQJ/v3giSAWvfWHCrwBPN+TrdAqVZDWNJJc8fQjKJPlIiE18b4TlShEzQ/9lq2zfi0FtIa67QGtUSxKtVjYqd7tl6BLDCPbE0jCZazsrGOG9fx3aLUB2NBFv3nx2Q7o3qiDW+SXXD;25:JQVh9fEyWqKI/me8FomuAUmA4WXXBGU7Fnb9F4OD/GoeNz5EIrscsHWR8UrJj/R2kZD6/F+s5fwwuHiEhryYjF/lXO61kny0c0Y1tWStL2YZAiDvCLdlp6Db0h0lbChPNoSUvXbMJ2Zzc1Ma81F0OAZ92MdFfPJohRBGUuvas59+CGKoEUGne4HxbGw3uQm77Jyjc+7d4cjptUxrr7e3mdkmOa0vpBPt6wFmb17GO+nKGmybq0Cg0AbH5x8DYKIKZgFGeuyUhEV3NxFqD4KatN45+N1BRKhoMxJ7IAxB6y6UhRojSAOTELHE2XIbX87hVVaJCbXc8nB3cEfd1xsVwA==;31:pRPHBkSVLZCoHLjOztl5P86H4rtskpMVmlkZ0g+fBHBJGE60z8oZWrgi5XRa6cU9gdYDLzByj5y0HcKeQszUtrqhjVpqhswgZI+TfneDtNECiaJLPuzxdNcTWCm2TlHfi6vjFtxIUYLbLa8uuXc0sopjWlhc1jTSAdt0OcG2eKv4XFF8/pKrcC2pPvUECuozGiSD8OzCj3R88wiTNvav/ZN8p5N56EIqDVi2sUC7t+8=
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3918:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0402MB3918;20:oQ5BeF+5e6b/dPZwEYaH19GlGSJym53Qkh9l3Ca8Msip2xZuRkyx9kGnd2yLOO8X3HeKMq61KFILy3kZL24haAJZhbszmNbyletO6NRcYxlh/QxaFbrCfAijuQDwdB83IxhMhH1gpDGrVDWiHLUTavjxDm9a1M7vQIsPrRC00fWLDPcozFawjOOtLV0wSaEPT2yEUq2mibODBdjg1cHRsLLSO9LHm5WizAPezTtGP7o6S+AcDEkjJbqXBXNl3MRijuz3dOHhFPCqTFr+G4B9gd0pMFg692hcKWqhPVKfcQlDQaJM4YUuo+51lKrbKU1lHiuhYHJoE5oxbOPKNdVBxw1VSb/mSWcHWGmrIyACEG8RDzdG/GaUFqiYEPBA2h8wlvpI6TfLdUfGLZszUihfNUjhcHS+eJSGfcuqLZ3ttjFJM95rAG+rtJdIZFXCZ21adVJzjIcrdPpJ8upVrpknLvA3Mw8AzQ+uS6wRW6VakMe0GCE+zWfxDX2jdLJw/mVp;4:spX23IfTkJJVqn1LS/l/AoueguA+6s3cBlaCR7qlXwWhkPLwfluloNl74x3IqoKjU+eCnP6B+JvY/EnEYDGtTw6TEKaFxMIvA88WjwFlwDMvYpYmMescDTXCTKC0WDixK6LJRY8GTA4yi9xFk5VNZYYMhm0S/TjncB7I335tqJ3h1nHjAccubbmkul32SBNit5LfOLrp15V4Xulz9d0c3bc78CaCv9ulWmIxeLMOUKEh3eQG/8TZpyciuHMTs6yhANIEnqsXvZXwNdmbOwJX3BFgz8a/xYlsyZvrqBCyt7whXtf1biTYjyxc2zHD7wja
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB39183CA7B718CBD93051B610F5020@VI1PR0402MB3918.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3002001)(3231342)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:VI1PR0402MB3918;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3918;
+X-Forefront-PRVS: 078693968A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(366004)(376002)(346002)(189003)(199004)(66066001)(106356001)(47776003)(105586002)(50466002)(48376002)(8676002)(7736002)(81156014)(36756003)(6666003)(5660300001)(68736007)(50226002)(2906002)(8936002)(81166006)(476003)(956004)(2616005)(16526019)(186003)(14444005)(486006)(316002)(52116002)(305945005)(26005)(6506007)(386003)(6512007)(6486002)(16586007)(4326008)(25786009)(53936002)(51416003)(3846002)(6116002)(97736004)(478600001)(575784001)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3918;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0402MB3918;23:3zPR0oMr6i2osqhglypKBMGGWlGnHPhZB43gUAp?=
+ =?us-ascii?Q?8jNr2S+7g24AUfp2Up55IHf5N6PtjcDhuxDbuBzDWA/fIW9k3QUSCdnsmJ2B?=
+ =?us-ascii?Q?XXUcYF8DmHNjpAOWfnr58jRU0pYh4NCuDHNEOEQBiImqe9FzjTuveLEMuhai?=
+ =?us-ascii?Q?zXBtpKYvz2tCo0PipVFjp1UwQ32wjqbYRt7nIOATYeJYyLs1o9d13/vyYkvK?=
+ =?us-ascii?Q?qAP1390fGyBxj8lYNepNz6IgK1N/HFyzGCW0FrHayhkETlF/jirnpW7zzIwK?=
+ =?us-ascii?Q?L4YC8i1RvNXFNwYaG/FlApI58jjfI2Xlgow7G7IFnyPL4CWyUUd289KrB54z?=
+ =?us-ascii?Q?+R2HBPniSIHAlMfcP/qOYQ7TW6BDVqZyZvRCClzM41iz5DSzZ/nMiRZaIsbC?=
+ =?us-ascii?Q?t2kkVKAOM1JjMg7qxTgb8ZdimjiEUgCRHXK0BupEvIJMv9BCJsR8JdNQ1xYP?=
+ =?us-ascii?Q?bxdU7v3G8UChuiydpfvqDRJgo7z8Tg2N05fxBqC8us4jvrRMBhTlfFoZK0yV?=
+ =?us-ascii?Q?hu+sHY5O1hsg/X2z9xhlEsEuSxzS8ktt9eakO25b8JLBxEHNXakUazd3Zi4D?=
+ =?us-ascii?Q?gkue6QSkThusXdgr/iUiDkkrF8D/3+gR9+Bw/swF1rAlxmXkLAafZ0TYdv+d?=
+ =?us-ascii?Q?ep2taMVZvVb3+zsdYmmAn4UOcRmyRSMMKTFSfHAR3y8HEBgxw1/tmrZ8DqJ6?=
+ =?us-ascii?Q?6Qob7YX6l3j1OV6T9wWsERAaCsU1e5MVTRLyePybIyLuKduUOPfQ6S7Oqc7Q?=
+ =?us-ascii?Q?z4GEiFrBWV6PXIv5WjZXe8jvgkAWriwDpV80TCuGWe7VtsvQ27DRV6zeBhy0?=
+ =?us-ascii?Q?iSWoYhKUf0uLvft30ywoZO6EwXXn7cQaqydAlMxGYC7ct+bCjfmuUdHGWHi8?=
+ =?us-ascii?Q?lFGHlQ2m/6+RoH7EgbHTRb1/TcHXsXfcULuqbwpjhg55LblbF7CyF1Sz6HHa?=
+ =?us-ascii?Q?uuUxXYxj18fRPQLVnbPPGLc1hA50RWZOgKsRtVRyXv2LiC92K34vXx8/psz2?=
+ =?us-ascii?Q?n2B+lfBVZfkst4iLU7DnwNuVX2R1ck46R35XQLYjmcubeJ/57JCbYaS0qlp5?=
+ =?us-ascii?Q?BqnZQ62UmZ6VjtFlPdFYTs7IMM2Qmd1ZtGqf1ElYKjR9WBRLQlgSzrkdIKs+?=
+ =?us-ascii?Q?w6Kh0/itjlC1Tc00GW0UP5ZOWlvfzzg6w?=
+X-Microsoft-Antispam-Message-Info: IpmadSubEpeBC4/TeTvfhhU7RrYFijfRYUam9DmPI+8PjKD1I9/JnRH+jTXRCGcyc+62NBjmlKjfhGTDwwYkITuITB5ZbC9qqqUmzxEfmV+wDOdYCZsyV5yJGbz2o2Zle+/1/2WNoTnVgeLvJ9tEqfHh0YjVjt+1pFkhUCErAFbpBRzpqg59kFi3IH1+l3AojggG2WFR315G5zHHKLtRt2IxkYO1UMyDHaB+uXHUfuJCkQd1OgejbtdZwEPQPb6TZY7G8eJrT91Q1Q3pKL4+6/HgOnxqvHIiC8zg/8mJQcOlVW1Qu/0gIUxELcNUU0Qs0JNOIkTgfQ5bYvsC1HYdl81YXK0wjKTCAXzPiCCcWIs=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0402MB3918;6:rk8ytoSTmYZL9i2vvRUBONW7+eSdva/pl9ZJehY4xWclLJjX4gq44yuazlySLLyYm65SLqlv9slmrutoYAKjuxxNIQRiHDdlYs+htREx76dcqilui1z5XLHnNMPyRacFW24xwCfDLQvjo6EipnddAwfIE7BvjsMMRIBDsXhrsKMxk00fIw5rOevJVMim7lfqpMuht2hSxqu2EjcF9IDyJtydzSOwpuK65HtwAzm/+ZtyPwlWJ7kRuc9cCSxQ6s5lUb99yznfgSkwhwadC5GMJVFJlwTy2AaRxUYyNjzYhJ/ALT4RkJvsD4xe22XKv+VsU35TPPrDRoIIOQc+jyMe5dP7nTmzTYosCF2i5bioqNVvdukY4eHYkhF+w1e3mGtz2O1CkpfI8NsnCfZdCXcXYxQHzfpd+bCfkyTi6Opn59r0k3/Hfr4QiKTfqadwimqNa938hO7G9AORkx0tw1Y0tg==;5:ObIR8Yg44d/Acv5CWDZYFX9VnydnUkokPkzLHz9eBg2TfTQZoPOiAo6wmAsJf7L/I6dQV8DydVsOtviSjTjNWZPU37Qqv+6TiwVJARorpEE679uh57CerhvaHDfyDEcKdug9ztRRLXB++64oCIMpsxe5uMmypXmh2T9xtE85wZ8=;7:CKdPVF7dslUJwwLri188DuM+tE6zL9P4S7R0NDeHoSdFMppCzHT+v8TKEyf3o9IoU5Mz0rFEHm/mvxmNb40/BW6xkssDBMU5lIx0HPD5th5e6EIsklYjoqJJTxQ76Sp0Zim4epQTJHXyiNqoCCRdJOy1seXdhnotx8YUzJldvL98qccDeDdQoGlH6jYHbYSyEk05d2gW6wfwQRaromMrVDw70Nt0uVn6MzrCGSDq7dtsJ8jvJRsC6wv3cesjonMa
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 01:28:58.4223 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 864655fa-3283-476e-a292-08d612cef533
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3918
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 1:00 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 09/04/2018 11:38 AM, Dmitry Vyukov wrote:
-> > On Tue, Sep 4, 2018 at 5:28 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> >>>> So why not ask for help from the SELinux community? I've cc'd the selinux
-> >>>> list and a couple of folks involved in Debian selinux.  I see a couple of
-> >>>> options but I don't know your constraints for syzbot:
-> >>>>
-> >>>> 1) Run an instance of syzbot on a distro that supports SELinux enabled
-> >>>> out
-> >>>> of the box like Fedora. Then you don't have to fight with SELinux and can
-> >>>> just focus on syzbot, while still testing SELinux enabled and enforcing.
-> >>>>
-> >>>> 2) Report the problems you are having with enabling SELinux on newer
-> >>>> Debian
-> >>>> to the selinux list and/or the Debian selinux package maintainers so that
-> >>>> someone can help you resolve them.
-> >>>>
-> >>>> 3) Back-port the cgroup2 policy definitions to your wheezy policy,
-> >>>> rebuild
-> >>>> it, and install that.  We could help provide guidance on that. I think
-> >>>> you'll need to rebuild the base policy on wheezy; in distributions with
-> >>>> modern SELinux userspace, one could do it just by adding a CIL module
-> >>>> locally.
-> >>>
-> >>>
-> >>> Thanks, Stephen!
-> >>>
-> >>> I would like to understand first if failing mount(2) for unknown fs is
-> >>> selinux bug or not. Because if it is and it is fixed, then it would
-> >>> resolve the problem without actually doing anything (well, at least on
-> >>> our side :)).
-> >>
-> >>
-> >> Yes, I think that's a selinux kernel regression, previously reported here:
-> >> https://lkml.org/lkml/2017/10/6/658
-> >>
-> >> Unfortunately I don't think it has been fixed upstream.  Generally people
-> >> using SELinux with a newer kernel are also using a newer policy. That said,
-> >> I agree it is a regression and ought to be fixed.
-> >
-> >
-> > How hard is it to fix it? We are on upstream head, so once it's in we
-> > are ready to go.
-> > Using multiple images is somewhat problematic (besides the fact that I
-> > don't know how to build a fedora image) because syzbot does not
-> > capture what image was used, and in the docs we just provide the
-> > single image, so people will start complaining that bugs don't
-> > reproduce but they are just using a wrong image.
->
-> I'll take a look and see if I can provide a trivial fix.
+In noirq suspend/resume stage with no_console_suspend enabled,
+imx_uart_console_write() may be called to print out log_buf
+message by printk(), so there will be race condition between
+imx_uart_console_write() and imx_uart_save/restore_context(),
+need to add lock to protect the registers save/restore operations.
 
-As a FYI, Stephen provided a patch and it has been merged into the
-selinux/next tree.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/tty/serial/imx.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-* git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-* https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-
-  Author: Stephen Smalley <sds@tycho.nsa.gov>
-  Date:   Tue Sep 4 16:51:36 2018 -0400
-
-   selinux: fix mounting of cgroup2 under older policies
-
-   commit 901ef845fa2469c ("selinux: allow per-file labeling for cgroupfs")
-   broke mounting of cgroup2 under older SELinux policies which lacked
-   a genfscon rule for cgroup2.  This prevents mounting of cgroup2 even
-   when SELinux is permissive.
-
-   Change the handling when there is no genfscon rule in policy to
-   just mark the inode unlabeled and not return an error to the caller.
-   This permits mounting and access if allowed by policy, e.g. to
-   unconfined domains.
-
-   I also considered changing the behavior of security_genfs_sid() to
-   never return -ENOENT, but the current behavior is relied upon by
-   other callers to perform caller-specific handling.
-
-   Fixes: 901ef845fa2469c ("selinux: allow per-file labeling for cgroupfs")
-   CC: <stable@vger.kernel.org>
-   Reported-by: Dmitry Vyukov <dvyukov@google.com>
-   Reported-by: Waiman Long <longman@redhat.com>
-   Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-   Tested-by: Waiman Long <longman@redhat.com>
-   Signed-off-by: Paul Moore <paul@paul-moore.com>
-
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 239c0fa..c15332d 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -2376,8 +2376,13 @@ static int imx_uart_remove(struct platform_device *pdev)
+ 
+ static void imx_uart_restore_context(struct imx_port *sport)
+ {
+-	if (!sport->context_saved)
++	unsigned long flags;
++
++	spin_lock_irqsave(&sport->port.lock, flags);
++	if (!sport->context_saved) {
++		spin_unlock_irqrestore(&sport->port.lock, flags);
+ 		return;
++	}
+ 
+ 	imx_uart_writel(sport, sport->saved_reg[4], UFCR);
+ 	imx_uart_writel(sport, sport->saved_reg[5], UESC);
+@@ -2390,11 +2395,15 @@ static void imx_uart_restore_context(struct imx_port *sport)
+ 	imx_uart_writel(sport, sport->saved_reg[2], UCR3);
+ 	imx_uart_writel(sport, sport->saved_reg[3], UCR4);
+ 	sport->context_saved = false;
++	spin_unlock_irqrestore(&sport->port.lock, flags);
+ }
+ 
+ static void imx_uart_save_context(struct imx_port *sport)
+ {
++	unsigned long flags;
++
+ 	/* Save necessary regs */
++	spin_lock_irqsave(&sport->port.lock, flags);
+ 	sport->saved_reg[0] = imx_uart_readl(sport, UCR1);
+ 	sport->saved_reg[1] = imx_uart_readl(sport, UCR2);
+ 	sport->saved_reg[2] = imx_uart_readl(sport, UCR3);
+@@ -2406,6 +2415,7 @@ static void imx_uart_save_context(struct imx_port *sport)
+ 	sport->saved_reg[8] = imx_uart_readl(sport, UBMR);
+ 	sport->saved_reg[9] = imx_uart_readl(sport, IMX21_UTS);
+ 	sport->context_saved = true;
++	spin_unlock_irqrestore(&sport->port.lock, flags);
+ }
+ 
+ static void imx_uart_enable_wakeup(struct imx_port *sport, bool on)
 -- 
-paul moore
-www.paul-moore.com
+2.7.4
+
