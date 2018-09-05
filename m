@@ -2,87 +2,92 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A645C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FF6C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FA22077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+d+j8Mb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FA22077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CA0A2075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA0A2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeIEOGN (ORCPT
+        id S1728071AbeIEOGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 10:06:13 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37408 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbeIEOGN (ORCPT
+        Wed, 5 Sep 2018 10:06:16 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60993 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeIEOGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:06:13 -0400
-Received: by mail-it0-f68.google.com with SMTP id h20-v6so8629390itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 02:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9UqD1vzaTMww2Vd9w7y1sx05M2N303KeFe9xwg9OxMw=;
-        b=d+d+j8MbtgTEKntaV/ILYkB89Ahd7qnL3Kc/zuUQufc028h1hDC453AsJGuAb3UUZU
-         YsCqldzJfu4V1/6i4W6TAE6mnUbcxhl1pvEOwQfjYi+Zg+4UqhRGDIhtotxjK2eec2d2
-         zzQMaMl1N6a+gSS8vfiuW1klLpnnut2KWSKmE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9UqD1vzaTMww2Vd9w7y1sx05M2N303KeFe9xwg9OxMw=;
-        b=VT0Got6gkXGS20fV5xibazjQHYbXUlsxRAzHyvgrhoIweZB4p08JczhZhTfe7Ggyoz
-         L34FHSCv0WTh+Y+ccTfUh0cUeJHvv/MOhEz46UXnF2eHRrfCI1+pejy3tiurp0rNDHFv
-         RKwqmG/SMTP+iB9g2tphRozX5fSaeZ2purS9Op7NZ1A44cLTBW8K8eST0CjUad6Ezu8j
-         bLxc+m+IA+20ZKSXQjwxROqUOf85NdOgT8jqXNzL0vNzbreNQgi3vzNp72VwREFokVVb
-         HZbWGP66QMx5GbB5n6ZZBoJzAZkyBc5C9XWoA88AhA/FsXklC3BcJpAvXS7rsQxI14S5
-         1CQA==
-X-Gm-Message-State: APzg51CBN9ZbXUoAliq976yX5CF75ttSHKypIQiFScdqmBBNtHygwhgG
-        dqVVzcSfohEOi6z+5N7CDwbs+k5jYv5plBmbGDz0og==
-X-Google-Smtp-Source: ANB0Vdbqb+UYjnOiq1l2gzeMXdrjbsBcQ1wB6CZfAgU8HarRayto02epCgnZaOWMd1/XHslfyTVrovfhIJIw9IJ5CAo=
-X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr26143992jab.87.1536140210579;
- Wed, 05 Sep 2018 02:36:50 -0700 (PDT)
+        Wed, 5 Sep 2018 10:06:14 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fxUEv-0006Jw-Q4; Wed, 05 Sep 2018 11:36:45 +0200
+Received: from ukl by dude.hi.pengutronix.de with local (Exim 4.91)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fxUEv-0007JH-Fg; Wed, 05 Sep 2018 11:36:45 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH] sched/debug: use symbolic names for task state constants
+Date:   Wed,  5 Sep 2018 11:36:36 +0200
+Message-Id: <20180905093636.24068-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-References: <20180830144151.13417-1-marek.behun@nic.cz> <20180830164743.63c6e27d@nic.cz>
-In-Reply-To: <20180830164743.63c6e27d@nic.cz>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 5 Sep 2018 11:36:39 +0200
-Message-ID: <CACRpkda8iVV6-J14L95cioJEL2eGSra9uNbPL19F6N7ijnjZiA@mail.gmail.com>
-Subject: Re: [PATCH mfd+gpio] Request (Linus Walleij + Lee Jones)
-To:     marek.behun@nic.cz
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 4:48 PM Marek Behun <marek.behun@nic.cz> wrote:
+include/trace/events/sched.h includes <linux/sched.h> (via
+<linux/sched/numa_balancing.h>) and so knows about the TASK_* constants
+used to interpret .prev_state. So instead of duplicating the magic
+numbers make use of the defined macros to ease understanding the
+mapping from state bits to letters which isn't completely intuitive for
+an outsider.
 
-> Hi Linus and Lee,
-> these two patches touch two different subsystems (mfd + gpio) and
-> should be applyied one after another (the gpio part is dependant on the
-> mfd part).
-> The patches are based on mfd-next-4.19. I can send another copy based
-> on gpio/devel.
-> Could you two, Linus and Lee, work together on applying these patches?
-> I don't know how this is usually solved...
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ include/trace/events/sched.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-If they need to go into the same merge window this is usually solved
-by me ACKing the GPIO patches and Lee applying all of it to
-the MFD tree then providing an immutable git branch to me if
-I need the same changes in my tree.
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 0be866c91f62..f07b270d4fc4 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -159,9 +159,14 @@ TRACE_EVENT(sched_switch,
+ 
+ 		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+ 		  __print_flags(__entry->prev_state & (TASK_REPORT_MAX - 1), "|",
+-				{ 0x01, "S" }, { 0x02, "D" }, { 0x04, "T" },
+-				{ 0x08, "t" }, { 0x10, "X" }, { 0x20, "Z" },
+-				{ 0x40, "P" }, { 0x80, "I" }) :
++				{ TASK_INTERRUPTIBLE, "S" },
++				{ TASK_UNINTERRUPTIBLE, "D" },
++				{ __TASK_STOPPED, "T" },
++				{ __TASK_TRACED, "t" },
++				{ EXIT_DEAD, "X" },
++				{ EXIT_ZOMBIE, "Z" },
++				{ TASK_PARKED, "P" },
++				{ TASK_DEAD, "I" }) :
+ 		  "R",
+ 
+ 		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+-- 
+2.18.0
 
-Yours,
-Linus Walleij
