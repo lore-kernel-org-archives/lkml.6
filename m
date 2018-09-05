@@ -2,201 +2,282 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F06C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79089C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09C832077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:18:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KCX8rHaH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C832077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 1890520857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:19:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1890520857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbeIEPsA (ORCPT
+        id S1727703AbeIEPsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:48:00 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52288 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbeIEPr7 (ORCPT
+        Wed, 5 Sep 2018 11:48:50 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:51124 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbeIEPsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:47:59 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w85BHkwL117898;
-        Wed, 5 Sep 2018 06:17:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536146266;
-        bh=DVEufoPFXoh+RaEiKBcVe+3CEBbJ1YoIgnRL/SGs6FA=;
-        h=From:To:CC:Subject:Date;
-        b=KCX8rHaHN8nZa2Teeo3vo/iWdMbbAHEAJYwr44+OKSFID710WRe7ZwTn0X69BmGzm
-         L4k4flrfBtIEwqH6/zTUD4j+fNEOeZ0TEpfvzogRmQsPUKPb3qZyGxdnfIXwsSWXvE
-         2qc+GcUEKBia3NwCc3jyKB4sR8EqnsfdAm6i7yLA=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85BHkTY002965;
-        Wed, 5 Sep 2018 06:17:46 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 5 Sep
- 2018 06:17:46 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 5 Sep 2018 06:17:46 -0500
-Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85BHgRC018099;
-        Wed, 5 Sep 2018 06:17:42 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>
-CC:     Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-kernel@vger.kernel.org>, <nsekhar@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Vignesh R <vigneshr@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v3] arm64: dts: ti: k3-am65: Change #address-cells and #size-cells of interconnect to 2
-Date:   Wed, 5 Sep 2018 16:47:38 +0530
-Message-ID: <20180905111738.8280-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 5 Sep 2018 11:48:50 -0400
+Received: by mail-it0-f72.google.com with SMTP id n194-v6so7348549itn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 04:19:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=kecolx3nQEkGDeNfrinQucCpnwrU6GNmdJ//pUNjHHE=;
+        b=DXS+648YTbCbP9c/Ib0BHIJcfv9M6nrnZj+GfMEfEQPqOKeTrlulhpEyt7dbmyV+UZ
+         kBh+q8+JRYIcEVZUKC1OoyOYrxtpIqahAbzEW97dE5VJSaptUi8v6bF6lU7/u89eLhq+
+         Fqii336HqvFBBhCGF9tj7jWiT5gaQjWriX3JS7XIwFInB+i5F3lrpeAvE1bi3AtMAtz1
+         iLtG5wfTitRvrJE/Qq5LiYRqTW060Xlb7AYSCQaJhJtQUQVHwnjIgd3lLqO1AGA83c6m
+         6oZ88td74rRk3PdO+H2BNqzTt9y/ukus0xZLkZvf5vPqilN8TZ5O8O6npUtbqzdXwbZp
+         OoBg==
+X-Gm-Message-State: APzg51CMgAIdmYXCHQdaAIMKjUGmTvPihDUQQJirQ2oE6w8raD9a9QMk
+        aSE5QZ9LfcZ38ewOqIWF3Q+XjcRfyLnqSlfjADhtJKutaL2g
+X-Google-Smtp-Source: ANB0Vdbk1JJtNQW3EuxEJVdTxPo9ObysTVcd6KAzotpcISytYAYc0aRYUbsMROdk9O+2LMREwarJD58yeQ2k8Qhh8NswKfmBioBx
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a02:40c9:: with SMTP id n192-v6mr14239010jaa.33.1536146343044;
+ Wed, 05 Sep 2018 04:19:03 -0700 (PDT)
+Date:   Wed, 05 Sep 2018 04:19:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000019b8ee05751df11d@google.com>
+Subject: INFO: task hung in vfat_lookup
+From:   syzbot <syzbot+72000baa7858f1703b04@syzkaller.appspotmail.com>
+To:     hirofumi@mail.parknet.co.jp, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AM65 has two PCIe controllers and each PCIe controller has '2' address
-spaces one within the 4GB address space of the SoC and the other above
-the 4GB address space of the SoC (cbass_main) in addition to the
-register space. The size of the address space above the 4GB SoC address
-space is 4GB. These address ranges will be used by CPU/DMA to access
-the PCIe address space. In order to represent the address space above
-the 4GB SoC address space and to represent the size of this address
-space as 4GB, change address-cells and size-cells of interconnect to 2.
+Hello,
 
-Since OSPI has similar need in MCU Domain Memory Map, change
-address-cells and size-cells of cbass_mcu interconnect also to 2.
+syzbot found the following crash on:
 
-Fixes: ea47eed33a3fe3d919 ("arm64: dts: ti: Add Support for AM654 SoC")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Vignesh R <vigneshr@ti.com>
+HEAD commit:    420f51f4ab6b Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11296c92400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+dashboard link: https://syzkaller.appspot.com/bug?extid=72000baa7858f1703b04
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+72000baa7858f1703b04@syzkaller.appspotmail.com
+
+INFO: task syz-executor0:4634 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc1+ #217
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor0   D21248  4634      1 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3575
+  __mutex_lock_common kernel/locking/mutex.c:1003 [inline]
+  __mutex_lock+0xbf9/0x1700 kernel/locking/mutex.c:1073
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+  vfat_lookup+0xf1/0x640 fs/fat/namei_vfat.c:709
+  __lookup_slow+0x2b5/0x540 fs/namei.c:1671
+  lookup_slow+0x57/0x80 fs/namei.c:1688
+  walk_component+0x94a/0x2630 fs/namei.c:1810
+  link_path_walk.part.40+0xa6e/0x1540 fs/namei.c:2141
+  link_path_walk fs/namei.c:2072 [inline]
+  path_openat+0x268/0x5340 fs/namei.c:3533
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x584/0x720 fs/open.c:1063
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4551a0
+Code: 44 24 10 48 8b 4c 24 08 48 8b 54 24 70 48 39 d0 0f 85 69 01 00 00 48  
+8b 9c 24 10 01 00 00 48 89 1c 24 48 89 54 24 08 48 89 4c <24> 10 48 89 44  
+24 18 e8 74 6d 00 00 0f b6 44 24 20 84 c0 0f 84 3c
+RSP: 002b:00007ffd57125ec0 EFLAGS: 00000206 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004551a0
+RDX: 0000000000000000 RSI: 0000000000090800 RDI: 00000000004c1e40
+RBP: 00000000000001b6 R08: 0000000000000001 R09: 0000000001523940
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
+R13: 0000000000051351 R14: 000000000000003a R15: badc0ffeebadface
+INFO: task syz-executor0:8851 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc1+ #217
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor0   D23808  8851   4634 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  d_wait_lookup fs/dcache.c:2428 [inline]
+  d_alloc_parallel+0x1456/0x1eb0 fs/dcache.c:2510
+  __lookup_slow+0x1e6/0x540 fs/namei.c:1654
+  lookup_slow+0x57/0x80 fs/namei.c:1688
+  walk_component+0x94a/0x2630 fs/namei.c:1810
+  link_path_walk.part.40+0xa6e/0x1540 fs/namei.c:2141
+  link_path_walk fs/namei.c:2072 [inline]
+  path_openat+0x268/0x5340 fs/namei.c:3533
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x584/0x720 fs/open.c:1063
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x410dd1
+Code: 00 00 00 00 00 00 00 48 c7 84 24 90 00 00 00 00 00 00 00 48 8d 05 0f  
+5e 04 00 48 89 44 24 78 48 8d 44 24 50 48 89 84 24 80 00 <00> 00 48 8d 84  
+24 a8 00 00 00 48 89 84 24 88 00 00 00 0f b6 84 24
+RSP: 002b:00007f0a65bafbb0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f0a65bb06d4 RCX: 0000000000410dd1
+RDX: 00007f0a65bafbe2 RSI: 0000000000000002 RDI: 00007f0a65bafbd0
+RBP: 0000000000930140 R08: 0000000000000000 R09: 0000000000000012
+R10: 0000000000000007 R11: 0000000000000293 R12: 00000000ffffffff
+R13: 00000000004d72c0 R14: 00000000004ca44c R15: 0000000000000001
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/792:
+  #0: 00000000d6534971 (rcu_read_lock){....}, at:  
+debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4436
+1 lock held by rsyslogd/4498:
+2 locks held by getty/4588:
+  #0: 000000001a00424d (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 0000000064c91a05 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4589:
+  #0: 0000000044cc0e87 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 0000000031085714 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4590:
+  #0: 00000000a90082dc (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000dcf02824 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4591:
+  #0: 000000003298bfed (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 0000000065469fb5 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4592:
+  #0: 00000000c527c2cb (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 000000006b71748e (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4593:
+  #0: 000000007d73fabd (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000e3e6d879 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4594:
+  #0: 00000000c6a3fd33 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 000000003e69bf2b (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by syz-executor0/4634:
+  #0: 00000000cc4e26bc (&sb->s_type->i_mutex_key#22){++++}, at:  
+inode_lock_shared include/linux/fs.h:748 [inline]
+  #0: 00000000cc4e26bc (&sb->s_type->i_mutex_key#22){++++}, at:  
+lookup_slow+0x49/0x80 fs/namei.c:1687
+  #1: 00000000a76b47cf (&sbi->s_lock){+.+.}, at: vfat_lookup+0xf1/0x640  
+fs/fat/namei_vfat.c:709
+2 locks held by syz-executor0/8846:
+1 lock held by syz-executor0/8851:
+  #0: 00000000cc4e26bc (&sb->s_type->i_mutex_key#22){++++}, at:  
+inode_lock_shared include/linux/fs.h:748 [inline]
+  #0: 00000000cc4e26bc (&sb->s_type->i_mutex_key#22){++++}, at:  
+lookup_slow+0x49/0x80 fs/namei.c:1687
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 792 Comm: khungtaskd Not tainted 4.19.0-rc1+ #217
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.3+0x48/0x88 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
+  watchdog+0xb39/0x1040 kernel/hung_task.c:265
+  kthread+0x35a/0x420 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+Sending NMI from CPU 1 to CPUs 0:
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.030  
+msecs
+NMI backtrace for cpu 0
+CPU: 0 PID: 8846 Comm: syz-executor0 Not tainted 4.19.0-rc1+ #217
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:find_get_entry+0x304/0xc90 mm/filemap.c:1424
+Code: c2 3b 0d 9b 81 e8 4c 90 c4 ff 48 b8 00 00 00 00 00 fc ff df 48 03 85  
+d0 fc ff ff 48 8d 78 08 48 c7 00 00 00 00 00 48 83 e7 f8 <48> c7 40 48 00  
+00 00 00 48 29 f8 8d 48 50 31 c0 c1 e9 03 f3 48 ab
+RSP: 0018:ffff8801824de488 EFLAGS: 00000286
+RAX: ffffed003049bc9f RBX: 0000000000000001 RCX: 1ffff1003b35b50e
+RDX: 1ffffffff10237b5 RSI: 0000000000000003 RDI: ffffed003049bca0
+RBP: ffff8801824de7c0 R08: 1ffff1003049bc72 R09: ffffed003b6046de
+R10: 0000000000000003 R11: 0000000000000002 R12: ffffea00070312c0
+R13: ffff8801824de798 R14: 0000000000000000 R15: dffffc0000000000
+FS:  00007f0a65bd1700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 000000018732e000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  pagecache_get_page+0x11e/0xe40 mm/filemap.c:1541
+  find_or_create_page include/linux/pagemap.h:322 [inline]
+  grow_dev_page fs/buffer.c:948 [inline]
+  grow_buffers fs/buffer.c:1017 [inline]
+  __getblk_slow fs/buffer.c:1044 [inline]
+  __getblk_gfp+0x3bb/0xb10 fs/buffer.c:1321
+  __bread_gfp+0x2d/0x310 fs/buffer.c:1355
+  sb_bread include/linux/buffer_head.h:307 [inline]
+  fat__get_entry+0x59c/0xa30 fs/fat/dir.c:101
+  fat_get_entry fs/fat/dir.c:129 [inline]
+  fat_search_long+0x33b/0x15d0 fs/fat/dir.c:477
+  vfat_find+0x16d/0x1a0 fs/fat/namei_vfat.c:697
+  vfat_lookup+0x107/0x640 fs/fat/namei_vfat.c:711
+  __lookup_slow+0x2b5/0x540 fs/namei.c:1671
+  lookup_slow+0x57/0x80 fs/namei.c:1688
+  walk_component+0x94a/0x2630 fs/namei.c:1810
+  link_path_walk.part.40+0xa6e/0x1540 fs/namei.c:2141
+  link_path_walk fs/namei.c:2072 [inline]
+  path_openat+0x268/0x5340 fs/namei.c:3533
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x584/0x720 fs/open.c:1063
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x410dd1
+Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 b4 17 00 00 c3 48  
+83 ec 08 e8 8a fa ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 d3 fa ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007f0a65bd0bb0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f0a65bd16d4 RCX: 0000000000410dd1
+RDX: 00007f0a65bd0be2 RSI: 0000000000000002 RDI: 00007f0a65bd0bd0
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000012
+R10: 0000000000000007 R11: 0000000000000293 R12: 00000000ffffffff
+R13: 00000000004d72c0 R14: 00000000004ca44c R15: 0000000000000000
+
+
 ---
-Changes from v2:
-Added Fixes tag.
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes from v1:
-Changed address-cells and size-cells of cbass_mcu to "2" since OSPI has
-a region of size 4GB above the 4GB space.
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 10 +++---
- arch/arm64/boot/dts/ti/k3-am65.dtsi      | 44 ++++++++++++------------
- 2 files changed, 27 insertions(+), 27 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 2409344df4fa..faace3805c01 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -8,13 +8,13 @@
- &cbass_main {
- 	gic500: interrupt-controller@1800000 {
- 		compatible = "arm,gic-v3";
--		#address-cells = <1>;
--		#size-cells = <1>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
- 		ranges;
- 		#interrupt-cells = <3>;
- 		interrupt-controller;
--		reg = <0x01800000 0x10000>,	/* GICD */
--		      <0x01880000 0x90000>;	/* GICR */
-+		reg = <0x00 0x01800000 0x00 0x10000>,	/* GICD */
-+		      <0x00 0x01880000 0x00 0x90000>;	/* GICR */
- 		/*
- 		 * vcpumntirq:
- 		 * virtual CPU interface maintenance interrupt
-@@ -23,7 +23,7 @@
- 
- 		gic_its: gic-its@18200000 {
- 			compatible = "arm,gic-v3-its";
--			reg = <0x01820000 0x10000>;
-+			reg = <0x00 0x01820000 0x00 0x10000>;
- 			msi-controller;
- 			#msi-cells = <1>;
- 		};
-diff --git a/arch/arm64/boot/dts/ti/k3-am65.dtsi b/arch/arm64/boot/dts/ti/k3-am65.dtsi
-index cede1fa0983c..ded364d20835 100644
---- a/arch/arm64/boot/dts/ti/k3-am65.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65.dtsi
-@@ -46,38 +46,38 @@
- 
- 	cbass_main: interconnect@100000 {
- 		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges = <0x00100000 0x00 0x00100000 0x00020000>, /* ctrl mmr */
--			 <0x00600000 0x00 0x00600000 0x00001100>, /* GPIO */
--			 <0x00900000 0x00 0x00900000 0x00012000>, /* serdes */
--			 <0x01000000 0x00 0x01000000 0x0af02400>, /* Most peripherals */
--			 <0x30800000 0x00 0x30800000 0x0bc00000>, /* MAIN NAVSS */
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctrl mmr */
-+			 <0x00 0x00600000 0x00 0x00600000 0x00 0x00001100>, /* GPIO */
-+			 <0x00 0x00900000 0x00 0x00900000 0x00 0x00012000>, /* serdes */
-+			 <0x00 0x01000000 0x00 0x01000000 0x00 0x0af02400>, /* Most peripherals */
-+			 <0x00 0x30800000 0x00 0x30800000 0x00 0x0bc00000>, /* MAIN NAVSS */
- 			 /* MCUSS Range */
--			 <0x28380000 0x00 0x28380000 0x03880000>,
--			 <0x40200000 0x00 0x40200000 0x00900100>,
--			 <0x42040000 0x00 0x42040000 0x03ac2400>,
--			 <0x45100000 0x00 0x45100000 0x00c24000>,
--			 <0x46000000 0x00 0x46000000 0x00200000>,
--			 <0x47000000 0x00 0x47000000 0x00068400>;
-+			 <0x00 0x28380000 0x00 0x28380000 0x00 0x03880000>,
-+			 <0x00 0x40200000 0x00 0x40200000 0x00 0x00900100>,
-+			 <0x00 0x42040000 0x00 0x42040000 0x00 0x03ac2400>,
-+			 <0x00 0x45100000 0x00 0x45100000 0x00 0x00c24000>,
-+			 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>,
-+			 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>;
- 
- 		cbass_mcu: interconnect@28380000 {
- 			compatible = "simple-bus";
--			#address-cells = <1>;
--			#size-cells = <1>;
--			ranges = <0x28380000 0x28380000 0x03880000>, /* MCU NAVSS*/
--				 <0x40200000 0x40200000 0x00900100>, /* First peripheral window */
--				 <0x42040000 0x42040000 0x03ac2400>, /* WKUP */
--				 <0x45100000 0x45100000 0x00c24000>, /* MMRs, remaining NAVSS */
--				 <0x46000000 0x46000000 0x00200000>, /* CPSW */
--				 <0x47000000 0x47000000 0x00068400>; /* OSPI space 1 */
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x00 0x28380000 0x00 0x28380000 0x00 0x03880000>, /* MCU NAVSS*/
-+				 <0x00 0x40200000 0x00 0x40200000 0x00 0x00900100>, /* First peripheral window */
-+				 <0x00 0x42040000 0x00 0x42040000 0x00 0x03ac2400>, /* WKUP */
-+				 <0x00 0x45100000 0x00 0x45100000 0x00 0x00c24000>, /* MMRs, remaining NAVSS */
-+				 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>, /* CPSW */
-+				 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>; /* OSPI space 1 */
- 
- 			cbass_wakeup: interconnect@42040000 {
- 				compatible = "simple-bus";
- 				#address-cells = <1>;
- 				#size-cells = <1>;
- 				/* WKUP  Basic peripherals */
--				ranges = <0x42040000 0x42040000 0x03ac2400>;
-+				ranges = <0x42040000 0x00 0x42040000 0x03ac2400>;
- 			};
- 		};
- 	};
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
