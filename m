@@ -4,122 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A88C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952ECC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 237042073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AB702075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KK0Tb6Ia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237042073D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccQ5BnJX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB702075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbeIFBYK (ORCPT
+        id S1727850AbeIFBYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:24:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43774 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbeIFBYJ (ORCPT
+        Wed, 5 Sep 2018 21:24:39 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33790 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbeIFBYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:24:09 -0400
-Received: by mail-lf1-f66.google.com with SMTP id h64-v6so7178656lfi.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 13:52:14 -0700 (PDT)
+        Wed, 5 Sep 2018 21:24:39 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 8-v6so16411705oip.0;
+        Wed, 05 Sep 2018 13:52:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aicMK5C5D2SvUUEKHEW1kmfcWOpCYDrAlSXyHY0cfgw=;
-        b=KK0Tb6IaIoJr9spg3wVI4hej2wOuPO62csrN+YXvRu/nHrYyS+dkVe7wra6bxQn8Rn
-         FTcgwcZ7G/N/QHxH2v9n5H/5OMiJjWkn79va0JQsGLvlGeVxnm9/SiWAJPkuYSpDv6US
-         OvY+yPLx/uwR7mh4q7vuPxJOQiYzcOdRMLEAtf7pgrvSaUbWYbg4AHA4lPw1dt524JBx
-         uax5zwltWdQPNfy5W88Tiy3UxyHIEh6bpPLEVBupCBTn6Ny8ShIgK6dnzHhVZvXGEdSw
-         9vk83s5SQ3WbL6+1E+dhcXO8bEeZNJhzVlombXoCY1eLLUEjQjvkVUbeYXPJGU85txNO
-         UzDw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=goEgowbwRPN0WOmpOkCghM4dNcTtbY0ALdvHSsB8exY=;
+        b=ccQ5BnJXxhrM1+pg7B4zCpUPjwBXqRtPpTk7byMwlDV8zUPyzy6bGtv3Q6uyAq5ocE
+         PGfAElKD5BNwaTTwxvsf6vbapnrto8RTQ/F6Ou4m6riwUVdx7SBLF45GANoDAVLMIt0x
+         +o5xFcR9tdDvPQRiKbAAbFRyigYNVAov+pII9zDZEEtrBYiYyxu0bcD64c4HH2o6pbNz
+         7Mf4gN4nMVXkm0/kSTVF3ESgBKk1EK0vWBFyULLW0tGT+tACg0OUcDvxWdKxtT6zPMBi
+         AtPoPjU29sQipRZ/DiJGQr1cgeMLsv3DcTd9C5mDvfXD9X+3KG6zwgLl0nqrBc3YL6rZ
+         M0DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aicMK5C5D2SvUUEKHEW1kmfcWOpCYDrAlSXyHY0cfgw=;
-        b=dUBRJrzrcFuL39uKvgkN9jpW54+Dz6n4EntRlJo25ui9SUOq/m7LoaBpYHnqXwGSBY
-         NSLCu5p9cpCGAgIMyohulVcyuSrPAgR3Je4Yo1nJ8kfHY9H/XAhnbjrcYAqFSi1GistY
-         vkDd2tFZZ5+4Iwd/hBzMiGXra0w6DWsrHEOPwwxMEefl31mPd0D6dcXu8OPIzRjbaUWq
-         2UCQjFcOYj16aGLqgIV0Lur4QeuwhThLptZMbg0OICu71wpGK1Lp8a8bzUbn5a7DL04j
-         D11hRm6ey9vDGl3e2tZskm1/KqR8onBx1ZMN3jUALiCAb2jcX/9bb6KoHY8y/+22HkLV
-         Wx+Q==
-X-Gm-Message-State: APzg51BdEBAiqAKgl7yy8RaUu8GWRFLbXlywzF/6DgQ5k/lUj86itCwk
-        wxG1HOMRNjbQ5aO2QB711LvAujIWTSk=
-X-Google-Smtp-Source: ANB0VdYf8ePGLUyiaCBQ2Dbg4LeYHUOTawdnVoY1LBOlA9BHwWxAhWQESZd54hc979UFbjyvmKIT2w==
-X-Received: by 2002:a19:8f10:: with SMTP id r16-v6mr25973982lfd.1.1536180733200;
-        Wed, 05 Sep 2018 13:52:13 -0700 (PDT)
-Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm467137lfg.75.2018.09.05.13.52.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 13:52:12 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] mtd: rawnand: ams-delta: Cleanups and optimizations
-Date:   Wed, 05 Sep 2018 22:53:27 +0200
-Message-ID: <1855340.fVHtouTg44@z50>
-In-Reply-To: <20180905084757.432e7c19@xps13>
-References: <20180813223448.21316-1-jmkrzyszt@gmail.com> <20180820213904.13475-1-jmkrzyszt@gmail.com> <20180905084757.432e7c19@xps13>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=goEgowbwRPN0WOmpOkCghM4dNcTtbY0ALdvHSsB8exY=;
+        b=rl/Ac4VI0RkHSKyrxGxb/uIaxTsB3eRa/s79DhCu78bDGQnRl/6VXW/b/UIiubrG5w
+         +2Dv775d73FXaMAC5ybcdhm8lnN2oi9WTAvdtwQCgBkCvZ8KDNSiQx0SoL/W1+6j0lyG
+         fKkyRsSHmkXeLmPasKCWrwNBXVTtUbqvJkiwaqGiUb1bgmzQP7Xr6ZD2Mw+P8fiFSxcL
+         eJLPSxXI19preEihGOuDYzLUW7lWGtxQgYHBAUfaug8j/9OqoMVIjGCmVDeFTARKIjFu
+         G6lr8/L7WQ5XkxyR8nUabnbajxKhPNy6nqBF3OX4urubIpHaMgbk4II7LNBxvar7kDcZ
+         +zlA==
+X-Gm-Message-State: APzg51C65OAt2ZNJQF0C3evhx6QNIUwyRoUnKo+it5F1ttwo5TYSTOlZ
+        bt+QtCNbwZ/yFfyQtoWflczKrZbQcDhVJhVj7E0=
+X-Google-Smtp-Source: ANB0Vdb3Ywcqp/XbfCVwm7IMlDggr/GOO0iSliZn2VhGJrlN325MJsR9c6OGIwGjOHv1kcZIUIpOnU/BxpQXHWxBZ/Q=
+X-Received: by 2002:a54:4d9d:: with SMTP id y29-v6mr32868295oix.273.1536180764451;
+ Wed, 05 Sep 2018 13:52:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <1532341959-3478-1-git-send-email-pengbo.mu@nxp.com>
+ <1532341959-3478-3-git-send-email-pengbo.mu@nxp.com> <20180724232018.GA16709@rob-hp-laptop>
+In-Reply-To: <20180724232018.GA16709@rob-hp-laptop>
+From:   Yang Li <pku.leo@gmail.com>
+Date:   Wed, 5 Sep 2018 15:52:33 -0500
+Message-ID: <CADRPPNQQE1ESJ5WkMxySstxpaQir-w5XOdiwDe3qTTQ_cim5Xw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] arm64: dts: dwc3: description of incr burst type
+To:     Rob Herring <robh@kernel.org>
+Cc:     pengbo.mu@nxp.com, Felipe Balbi <balbi@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        lkml <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Ran Wang <ran.wang_1@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel, Tony,
+On Tue, Jul 24, 2018 at 6:23 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Jul 23, 2018 at 06:32:38PM +0800, Pengbo Mu wrote:
+> > Add description of 'snps,incr-burst-type-adjustment' to binding
+> > so that configuring devicetree.
+> >
+> > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> > Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/usb/dwc3.txt | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-On Wednesday, September 5, 2018 8:47:57 AM CEST Miquel Raynal wrote:
-> Hi Janusz,
-> 
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote on Mon, 20 Aug 2018
-> 23:39:01 +0200:
-> 
-> > This series consist of possibly ready to apply patches extracted from
-> > a former one titled "mtd: rawnand:  ams-delta: Use GPIO API for data I/O".
-> > Remaining patches implementing conversion of data I/O to GPIO have been
-> > postponed until gpiolib is optimized to ensure sufficient performance.
-> > 
-> > 
-> > Janusz Krzysztofik (3):
-> >       mtd: rawnand: ams-delta: show parent device in sysfs
-> >       mtd: rawnand: ams-delta: Use private structure
-> >       mtd: rawnand: ams-delta: Set port direction when needed
-> 
-> Patch 2/3 does not apply on nand/next. Indeed the driver does not look
-> the same as in the diff.
+Hi Felipe,
 
-That's because I built it on top of my former series from the mid of July, 
-containing "[PATCH v2 2/3 v4] mtd: rawnand: ams-delta: use GPIO lookup table". 
-It was acked by you, Miquel, and supposed to be merged via linux-omap tree.
+What do you think about this patch?  The patch title prefix should be
+updated from "arm64: dts: dwc3" to "dt-bindings: usb: dwc3" though.
 
-> I don't see any changes on my side that could
-> explain this so perhaps you could rebase on top of 4.19-rc2 (or
-> nand/next, as you wish) and resend the series?
-
-As far as I can see, Tony hasn't applied that series yet, so maybe I can still 
-move that patch out of there and insert it into this series in front of the 
-other 3 patches and resend. That would however make patch 3/3 of that old 
-series depend on this one.
-
-Tony, what do you think?
-
-Thanks,
-Janusz
-
-
-
+Regards,
+Leo
