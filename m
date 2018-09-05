@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52127C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4497CC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16AE92075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16AE92075E
+	by mail.kernel.org (Postfix) with ESMTP id F2AA0206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AA0206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbeIENBZ (ORCPT
+        id S1728113AbeIENBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:01:25 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:51718 "EHLO
+        Wed, 5 Sep 2018 09:01:45 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:58517 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727965AbeIENBX (ORCPT
+        with ESMTP id S1728030AbeIENBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:01:23 -0400
-X-UUID: 4ffcfc83c597436ebbbddd67e6430b04-20180905
+        Wed, 5 Sep 2018 09:01:25 -0400
+X-UUID: c7cb7a315c1a488482d0d6fe497dc84e-20180905
 Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1530014982; Wed, 05 Sep 2018 16:32:11 +0800
+        with ESMTP id 355128849; Wed, 05 Sep 2018 16:32:15 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 5 Sep 2018 16:31:48 +0800
+ 15.0.1210.3; Wed, 5 Sep 2018 16:31:49 +0800
 Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 5 Sep 2018 16:31:48 +0800
+ Transport; Wed, 5 Sep 2018 16:31:49 +0800
 From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
 To:     David Airlie <airlied@linux.ie>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -50,11 +50,10 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         CK Hu <ck.hu@mediatek.com>, Mao Huang <littlecvr@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Subject: [PATCH v2 06/13] drm/mediatek: add dpi driver for mt2701 and mt7623
-Date:   Wed, 5 Sep 2018 16:31:39 +0800
-Message-ID: <20180905083146.14727-7-bibby.hsieh@mediatek.com>
+        Sascha Hauer <kernel@pengutronix.de>
+Subject: [PATCH v2 12/13] drm/mediatek: add a error return value when clock driver has been prepared
+Date:   Wed, 5 Sep 2018 16:31:45 +0800
+Message-ID: <20180905083146.14727-13-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
 References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
@@ -66,80 +65,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: chunhui dai <chunhui.dai@mediatek.com>
+DRM driver get the comp->clk by of_clk_get(), we only
+assign NULL to comp->clk when error happened, but do
+not return the error number.
 
-This patch adds dpi dirver suppot for both mt2701 and mt7623.
-And also support other (existing or future) chips that use
-the same binding and driver.
-
-Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c     | 25 ++++++++++++++++++++++---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c |  2 ++
- 2 files changed, 24 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index ed2c153c70a2..1af25765ab5f 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -641,9 +641,7 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
- 	}
- 	drm_encoder_helper_add(&dpi->encoder, &mtk_dpi_encoder_helper_funcs);
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index ff974d82a4a6..54ca794db3e9 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -294,7 +294,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+ 	comp->irq = of_irq_get(node, 0);
+ 	comp->clk = of_clk_get(node, 0);
+ 	if (IS_ERR(comp->clk))
+-		comp->clk = NULL;
++		return PTR_ERR(comp->clk);
  
--	/* Currently DPI0 is fixed to be driven by OVL1 */
--	dpi->encoder.possible_crtcs = BIT(1);
--
-+	dpi->encoder.possible_crtcs = BIT(0) | BIT(1);
- 	ret = drm_bridge_attach(&dpi->encoder, dpi->bridge, NULL);
- 	if (ret) {
- 		dev_err(dev, "Failed to attach bridge: %d\n", ret);
-@@ -691,12 +689,33 @@ static unsigned int mt8173_calculate_factor(int clock)
- 		return 3 << 1;
- }
- 
-+static unsigned int mt2701_calculate_factor(int clock)
-+{
-+	if (clock <= 64000)
-+		return 16;
-+	else if (clock <= 128000)
-+		return 8;
-+	else if (clock <= 256000)
-+		return 4;
-+	else
-+		return 2;
-+}
-+
- static const struct mtk_dpi_conf mt8173_conf = {
- 	.cal_factor = mt8173_calculate_factor,
- 	.reg_h_fre_con = 0xe0,
- };
- 
-+static const struct mtk_dpi_conf mt2701_conf = {
-+	.cal_factor = mt2701_calculate_factor,
-+	.reg_h_fre_con = 0xb0,
-+	.edge_sel_en = true,
-+};
-+
- static const struct of_device_id mtk_dpi_of_ids[] = {
-+	{ .compatible = "mediatek,mt2701-dpi",
-+	  .data = &mt2701_conf,
-+	},
- 	{ .compatible = "mediatek,mt8173-dpi",
- 	  .data = &mt8173_conf,
- 	},
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 39721119713b..d961112fa2f5 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -424,6 +424,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
- 	  .data = (void *)MTK_DSI },
- 	{ .compatible = "mediatek,mt8173-dsi",
- 	  .data = (void *)MTK_DSI },
-+	{ .compatible = "mediatek,mt2701-dpi",
-+	  .data = (void *)MTK_DPI },
- 	{ .compatible = "mediatek,mt8173-dpi",
- 	  .data = (void *)MTK_DPI },
- 	{ .compatible = "mediatek,mt2701-disp-mutex",
+ 	/* Only DMA capable components need the LARB property */
+ 	comp->larb_dev = NULL;
 -- 
 2.12.5.2.gbdf23ab
 
