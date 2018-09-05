@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45819C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0101FC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE9D2083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE9562083D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:05:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZfPJrRT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE9D2083E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOp0ast1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9562083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeIFChP (ORCPT
+        id S1728002AbeIFChS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:37:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51218 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 22:37:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeIFChP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:37:15 -0400
+        id S1727518AbeIFChR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:37:17 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A51BB2077C;
-        Wed,  5 Sep 2018 22:05:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F7E82083D;
+        Wed,  5 Sep 2018 22:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536185103;
-        bh=8gbwI/bMLMwtGsCTJbnIcwxH8ENwTnUi38GFkqyTEsQ=;
+        s=default; t=1536185106;
+        bh=BeklGlUxecL8vM/mmOFme74Dze9Ydnr1A8gIJvEI5dw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KZfPJrRTUprngxVX4U3VeiByP09mw1DKi9IUJ1InU+oXlNat1c4rxzVTbzi6RxbJS
-         LQEI82b/4CBwvSUo3wlSGwblWOR8jvXuCSOQuSvPP+zKuOVnS9po1vDL62SF/PSA3S
-         H3LA2ZrttxCZIk8fp2WosX+FlP1RFLW38azmZbbg=
+        b=MOp0ast15L5E/HrcvY+JDIjHC508W+ae9vY0h96oArbTrPZqdFgX5Xdm4H3+hNG0R
+         mJGnLacfcbRQHhludgdJBELNeJNtmTCbHk/BTIRJdmI/CI1JeVLTNMHi9epKVjrBF9
+         vXsLEbix/paNLZWRl6j7vQVk95E9zhfEgCVcKLY0=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 04/77] perf trace: Extract the comm/tid printing for syscall enter
-Date:   Wed,  5 Sep 2018 19:03:27 -0300
-Message-Id: <20180905220440.20256-5-acme@kernel.org>
+Subject: [PATCH 05/77] perf trace: Show comm/tid for augmented_syscalls
+Date:   Wed,  5 Sep 2018 19:03:28 -0300
+Message-Id: <20180905220440.20256-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180905220440.20256-1-acme@kernel.org>
 References: <20180905220440.20256-1-acme@kernel.org>
@@ -58,54 +58,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Will be used with augmented syscalls, where we haven't transitioned
-completely to combining sys_enter_FOO with sys_exit_FOO, so we'll go
-as far as having it similar to the end result, strace like, as possible.
+To get us a bit more like the sys_enter + sys_exit combo:
+
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
+     0.000 (         ): openat(dfd: CWD, filename: 0x31b6dda8, flags: CLOEXEC)
+     0.009 ( 0.009 ms): cat/3619 openat(dfd: CWD, filename: 0x31b6dda8, flags: CLOEXEC) = 3
+     0.051 (         ): openat(dfd: CWD, filename: 0x31d75ce0, flags: CLOEXEC)
+     0.054 ( 0.010 ms): cat/3619 openat(dfd: CWD, filename: 0x31d75ce0, flags: CLOEXEC) = 3
+     0.539 (         ): openat(dfd: CWD, filename: 0xca71506b)
+     0.543 ( 0.115 ms): cat/3619 openat(dfd: CWD, filename: 0xca71506b) = 3
+  #
+
+After:
+
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
+     0.000 (         ): cat/4919 openat(dfd: CWD, filename: 0xc8358da8, flags: CLOEXEC)
+     0.007 ( 0.005 ms): cat/4919 openat(dfd: CWD, filename: 0xc8358da8, flags: CLOEXEC) = 3
+     0.032 (         ): cat/4919 openat(dfd: CWD, filename: 0xc8560ce0, flags: CLOEXEC)
+     0.033 ( 0.006 ms): cat/4919 openat(dfd: CWD, filename: 0xc8560ce0, flags: CLOEXEC) = 3
+     0.301 (         ): cat/4919 openat(dfd: CWD, filename: 0x91fa306b)
+     0.304 ( 0.004 ms): cat/4919 openat(dfd: CWD, filename: 0x91fa306b) = 3
+  #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-canomaoiybkswwnhj69u9ae4@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-6w8ytyo5y655a1hsyfpfily6@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ tools/perf/builtin-trace.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index bcf882afd6d0..92488edd00eb 100644
+index 92488edd00eb..e46ac9009172 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -1144,11 +1144,9 @@ static void sig_handler(int sig)
- 	interrupted = sig == SIGINT;
- }
+@@ -2069,6 +2069,7 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
+ 			struct thread *thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
  
--static size_t trace__fprintf_entry_head(struct trace *trace, struct thread *thread,
--					u64 duration, bool duration_calculated, u64 tstamp, FILE *fp)
-+static size_t trace__fprintf_comm_tid(struct trace *trace, struct thread *thread, FILE *fp)
- {
--	size_t printed = trace__fprintf_tstamp(trace, tstamp, fp);
--	printed += fprintf_duration(duration, duration_calculated, fp);
-+	size_t printed = 0;
- 
- 	if (trace->multiple_threads) {
- 		if (trace->show_comm)
-@@ -1159,6 +1157,14 @@ static size_t trace__fprintf_entry_head(struct trace *trace, struct thread *thre
- 	return printed;
- }
- 
-+static size_t trace__fprintf_entry_head(struct trace *trace, struct thread *thread,
-+					u64 duration, bool duration_calculated, u64 tstamp, FILE *fp)
-+{
-+	size_t printed = trace__fprintf_tstamp(trace, tstamp, fp);
-+	printed += fprintf_duration(duration, duration_calculated, fp);
-+	return printed + trace__fprintf_comm_tid(trace, thread, fp);
-+}
-+
- static int trace__process_event(struct trace *trace, struct machine *machine,
- 				union perf_event *event, struct perf_sample *sample)
- {
+ 			if (thread) {
++				trace__fprintf_comm_tid(trace, thread, trace->output);
+ 				fprintf(trace->output, "%s(", sc->name);
+ 				trace__fprintf_sys_enter(trace, evsel, sample);
+ 				fputc(')', trace->output);
 -- 
 2.14.4
 
