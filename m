@@ -2,182 +2,138 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607A3C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D07C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A79412064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:37:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A08D12064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:37:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="IXcnuG+U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A79412064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYrYsW3i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A08D12064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbeIENGR (ORCPT
+        id S1727990AbeIENGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:06:17 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:41684 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727100AbeIENGR (ORCPT
+        Wed, 5 Sep 2018 09:06:50 -0400
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:39155 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbeIENGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:06:17 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 606BE24E0F33;
-        Wed,  5 Sep 2018 01:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536136629; bh=QjTKifEaDupr5m7A2b1QDO8t6pxxdbnahqgqXSK1zTA=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=IXcnuG+Um1vX7K2eWjEJGn2I+3cs/BkXeRDXOO8TSw90uC4l/unvwMllnXW2MNkf2
-         cn4+s0xwJ+bZbN7gnt2378g75PQoZ/25YH2eCFmldWO/JOnEGXiW3eLZXVnkZ8HnEU
-         vc3mOfU+lOPDBIeOMR9OH844s6War6z2SCdh6erkwMhI6yfvQamAyko/aIExQ5JRxt
-         hBVpG4BmZcCSqmgW+xqOO6F8ymxN2RylCu2WHUSGcoXuU5mOnhulW6Fc5LZeKkwb9n
-         103+xCSHql15DPo6kR9vt7WVVY0hjh0YRMqMcPLBixY27rwlL0KgJc/L0f0ZcnnVPg
-         kGidKMOwh0eyg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 165C13A38;
-        Wed,  5 Sep 2018 01:37:09 -0700 (PDT)
-Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 5 Sep 2018 01:37:07 -0700
-Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
- by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed,
- 5 Sep 2018 12:37:05 +0400
-From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-CC:     Grigor Tovmasyan <Grigor.Tovmasyan@synopsys.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] usb: dwc2: power off during shutdown
-Thread-Topic: [PATCH RFC] usb: dwc2: power off during shutdown
-Thread-Index: AQHUQdnrerw4ENQnyUeZCj/DHLE7ag==
-Date:   Wed, 5 Sep 2018 08:37:03 +0000
-Message-ID: <410670D7E743164D87FA6160E7907A56013A761B2B@am04wembxa.internal.synopsys.com>
-References: <1535795683-3788-1-git-send-email-stefan.wahren@i2se.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.57]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 5 Sep 2018 09:06:50 -0400
+Received: by mail-oi0-f50.google.com with SMTP id c190-v6so12091485oig.6;
+        Wed, 05 Sep 2018 01:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zxlSGjdux2i6IgUjBbfJPsPiifmkQHS2tdUKZHgz66M=;
+        b=hYrYsW3idi2dmHoVOQgsZyDIfa+QxYnJusxvzVmHS7QbnV7AEVFn0maaJOZdWCzE4T
+         3rXfeeOkQlUQ6p1QdFBFwXYv8UvXME3GSw301pZngVrVy+u5ldixFLQmLjUlqdJ+1aPo
+         WHlGlDb/+sDTOL37rg3ryDBsEsZ6WXk7Hd69koIl914V7sRUwmff7FkYtK9PYqygrm9N
+         Vdal297SRaXZwoASpL7Gt+dQglPtIxv3puQ2xWX+k1HFpSluqbHFqJAjEFpo0ls73H4B
+         /E9E4cfyqXHBb/7NoP+FyxYyzi1KabbxHW9BGykBJZyQjNxBhq7rKJLUChPWRGRO18yn
+         vptA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zxlSGjdux2i6IgUjBbfJPsPiifmkQHS2tdUKZHgz66M=;
+        b=MlsTMmzetP07HI/UCFiOxhmHWPxGJAQGTYNfNwfEPmMd0b/NkKqD5fD4v3s5vr9AYT
+         Q949re3ltOdiakPQGs9JANKbhZbZ8Zedv5iOt7UG46XUSJuyFTilHgha/vl5AqkOs+kg
+         KleVB2LydMRKZfMMuYnU7fc07EsK8OxozlSzbpHE8PnwXcw71awRgPp77uniC/qUoMSe
+         ELEaxRcYGynU7QL7uHIsIYtP3HHpAXhWWFaJeWKr/6ILVMqMMEM+8ByqBnmoxcFXYCE/
+         k0L7z1XaLdPZrzVk9RXAq/XlcTQSdxXk8RRXDdwZzBvq0mGj9yzp/H8kVc23k7VkVNf2
+         fpjQ==
+X-Gm-Message-State: APzg51B8WGLPh28v+NJG2m8GBWNI2KQh/FoqyfTIhyCed/jANdN00Kq1
+        3PL/sPgu10B77oHhNYWLcLADIxmLlGQWdl2mp0c+SLPNuLZHUQ==
+X-Google-Smtp-Source: ANB0VdZxaSFiSQF5yRlTN73dOJosvI6bT0K3+HBdXy/Fm7qTwLXb0I5YqCfvkEm+JUJsscGs4SrNK74dvNaOc+v8TsQ=
+X-Received: by 2002:aca:aa06:: with SMTP id t6-v6mr30251522oie.152.1536136661732;
+ Wed, 05 Sep 2018 01:37:41 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+ <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+ <20180905070847.GC24519@BitWizard.nl> <3805399.0d8HT3LL4o@merkaba> <20180905080444.GD24519@BitWizard.nl>
+In-Reply-To: <20180905080444.GD24519@BitWizard.nl>
+From:   =?UTF-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
+Date:   Wed, 5 Sep 2018 16:37:30 +0800
+Message-ID: <CAJDTihya-DxyjzPJfh0LX+qOs2jvwr5TakcmRr8_U7h3pdw6cg@mail.gmail.com>
+Subject: Re: POSIX violation by writeback error
+To:     R.E.Wolff@bitwizard.nl
+Cc:     martin@lichtvoll.de, jlayton@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,=0A=
-=0A=
-On 9/1/2018 1:55 PM, Stefan Wahren wrote:=0A=
-> Currently USB consumes a lot of power after shutting down a Raspberry Pi =
-3=0A=
-> (example setup with Ethernet and a keyboard connected). So power off=0A=
-> USB on shutdown.=0A=
-> =0A=
-> Measured on Raspberry Pi 3B with 4.19rc1/multi_v7_defconfig (HDMI, Ethern=
-et=0A=
-> and a keyboard connected)=0A=
-> =0A=
-> Before patch: 2.450 W=0A=
-> After patch:  2.090 W=0A=
-> =0A=
-=0A=
-Could you please elaborate. Power measurements done after shutdown? Why =0A=
-your setup continue consume power after shutdown? Maybe its =0A=
-sleep/hibernation mode?=0A=
-=0A=
-dwc2 core in your platform which type of power optimization supports: =0A=
-partial power down, hibernation or extended hibernation? Please provide =0A=
-me GHWCFG4 register value of your core.=0A=
-=0A=
-Thanks,=0A=
-Minas=0A=
-=0A=
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>=0A=
-> ---=0A=
->   drivers/usb/dwc2/platform.c | 31 +++++++++++--------------------=0A=
->   1 file changed, 11 insertions(+), 20 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c=0A=
-> index 9a53a58..eeba40a 100644=0A=
-> --- a/drivers/usb/dwc2/platform.c=0A=
-> +++ b/drivers/usb/dwc2/platform.c=0A=
-> @@ -304,17 +304,11 @@ static int dwc2_lowlevel_hw_init(struct dwc2_hsotg =
-*hsotg)=0A=
->   }=0A=
->   =0A=
->   /**=0A=
-> - * dwc2_driver_remove() - Called when the DWC_otg core is unregistered w=
-ith the=0A=
-> - * DWC_otg driver=0A=
-> + * dwc2_driver_shutdown() - Called on device shutdown=0A=
->    *=0A=
->    * @dev: Platform device=0A=
-> - *=0A=
-> - * This routine is called, for example, when the rmmod command is execut=
-ed. The=0A=
-> - * device may or may not be electrically present. If it is present, the =
-driver=0A=
-> - * stops device processing. Any resources used on behalf of this device =
-are=0A=
-> - * freed.=0A=
->    */=0A=
-> -static int dwc2_driver_remove(struct platform_device *dev)=0A=
-> +static void dwc2_driver_shutdown(struct platform_device *dev)=0A=
->   {=0A=
->   	struct dwc2_hsotg *hsotg =3D platform_get_drvdata(dev);=0A=
->   =0A=
-> @@ -329,27 +323,24 @@ static int dwc2_driver_remove(struct platform_devic=
-e *dev)=0A=
->   =0A=
->   	reset_control_assert(hsotg->reset);=0A=
->   	reset_control_assert(hsotg->reset_ecc);=0A=
-> -=0A=
-> -	return 0;=0A=
->   }=0A=
->   =0A=
->   /**=0A=
-> - * dwc2_driver_shutdown() - Called on device shutdown=0A=
-> + * dwc2_driver_remove() - Called when the DWC_otg core is unregistered w=
-ith the=0A=
-> + * DWC_otg driver=0A=
->    *=0A=
->    * @dev: Platform device=0A=
->    *=0A=
-> - * In specific conditions (involving usb hubs) dwc2 devices can create a=
-=0A=
-> - * lot of interrupts, even to the point of overwhelming devices running=
-=0A=
-> - * at low frequencies. Some devices need to do special clock handling=0A=
-> - * at shutdown-time which may bring the system clock below the threshold=
-=0A=
-> - * of being able to handle the dwc2 interrupts. Disabling dwc2-irqs=0A=
-> - * prevents reboots/poweroffs from getting stuck in such cases.=0A=
-> + * This routine is called, for example, when the rmmod command is execut=
-ed. The=0A=
-> + * device may or may not be electrically present. If it is present, the =
-driver=0A=
-> + * stops device processing. Any resources used on behalf of this device =
-are=0A=
-> + * freed.=0A=
->    */=0A=
-> -static void dwc2_driver_shutdown(struct platform_device *dev)=0A=
-> +static int dwc2_driver_remove(struct platform_device *dev)=0A=
->   {=0A=
-> -	struct dwc2_hsotg *hsotg =3D platform_get_drvdata(dev);=0A=
-> +	dwc2_driver_shutdown(dev);=0A=
->   =0A=
-> -	disable_irq(hsotg->irq);=0A=
-> +	return 0;=0A=
->   }=0A=
->   =0A=
->   /**=0A=
-> =0A=
-=0A=
+On Wed, Sep 5, 2018 at 4:04 PM Rogier Wolff <R.E.Wolff@bitwizard.nl> wrote:
+>
+> On Wed, Sep 05, 2018 at 09:39:58AM +0200, Martin Steigerwald wrote:
+> > Rogier Wolff - 05.09.18, 09:08:
+> > > So when a mail queuer puts mail the mailq files and the mail processo=
+r
+> > > can get them out of there intact, nobody is going to notice.  (I know
+> > > mail queuers should call fsync and report errors when that fails, but
+> > > there are bound to be applications where calling fsync is not
+> > > appropriate (*))
+> >
+> > AFAIK at least Postfix MDA only reports mail as being accepted over SMT=
+P
+> > once fsync() on the mail file completed successfully. And I=C2=B4d expe=
+ct
+> > every sensible MDA to do this. I don=C2=B4t know how Dovecot MDA which =
+I
+> > currently use for sieve support does this tough.
+>
+
+Is every implementation of mail editor really going to call fsync()? Why
+they are going to call fsync(), when fsync() is meant to persist the file
+on disk which is apparently unnecessary if the delivering to SMTP task
+won't start again after reboot?
+
+> Yes. That's why I added the remark that mailers will call fsync and know
+> about it on the write side. I encountered a situation in the last few
+> days that when a developer runs into this while developing, would have
+> caused him to write:
+>   /* Calling this fsync causes unacceptable performance */
+>   // fsync (fd);
+>
+> I know of an application somewhere that does realtime-gathering of
+> call-records (number X called Y for Z seconds). They come in from a
+> variety of sources, get de-duplicated standardized and written to
+> files. Then different output modules push the data to the different
+> consumers within the company. Billing among them.
+>
+> Now getting old data there would be pretty bad. And calling fsync
+> all the time might have performance issues....
+>
+> That's the situation where "old data is really bad".
+>
+> But when apt-get upgrade replaces your /bin/sh and gets a write error
+> returning error on subsequent reads is really bad.
+
+At this point, the /bin/sh may be partially old and partially new. Execute
+this corrupted bin is also dangerous though.
+
+>
+> It is more difficult than you think.
+>
+>         Roger.
+>
+> --
+> ** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 *=
+*
+> **    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    *=
+*
+> *-- BitWizard writes Linux device drivers for any device you may have! --=
+*
+> The plan was simple, like my brother-in-law Phil. But unlike
+> Phil, this plan just might work.
