@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C93C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060F3C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871A220869
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71BBF20869
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:08:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aggzTuBs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871A220869
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YY2UQXAT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BBF20869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeIEIhC (ORCPT
+        id S1727518AbeIEIgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 04:37:02 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51510 "EHLO
+        Wed, 5 Sep 2018 04:36:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51494 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbeIEIgz (ORCPT
+        with ESMTP id S1727458AbeIEIgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Sep 2018 04:36:55 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w854490n098524;
-        Wed, 5 Sep 2018 04:08:24 GMT
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8543o56098194;
+        Wed, 5 Sep 2018 04:08:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=0e4R5fAVDIOCtUeEMvENS7DgjIEM/YPoh2JCKca3R18=;
- b=aggzTuBsIn1WjGGpmJGsYYrBgKH2DCFTBPfcOTXozUuHrnRW9N3TtCCgk2STus1Mpgy/
- xyuukHmd0ahgCVNePaw01ZxO/0TXTUvVJz75KpsNIrEnPfLBvukmpKAmGhZx5BuqCk0N
- qbbSL9/y222DAUgN/dE41lZ5zLHzrBE/KmgvcQTijSis1rEcEytG0JiCK9Grg1T/dTDQ
- l4A3WjOAwWEOuu9S68qZxZEwD8OL1TjMNkacMuEb80ttdTtsk28FOPMhf14ZWdiJOWQx
- q0iR+QQP0xfQORfSFtisEB89nQRI/CdNlre5PcRZaWbEOOKUW8TyCM0mGkfQKtD4Asz3 fA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2m7kdqgyy1-1
+ bh=DsoUMftrvrNywB0A1gGu1vEtvft51ipnnkBtqUoIt/4=;
+ b=YY2UQXATMRmia4CFyvHuuyS6W8RmjkewXUl264jISPYK42ptw8FeOP/wHxDtjM45vrvz
+ U3QfVgJyMcpL7gjJhHgWqU8fQ+WEelXvl7iLuqBp+MmrsE/X1YLEFhOchkE+CsbqTO2k
+ V6YX29FeQ/5Cq6+qVM579gOnPAE9GT6sFpSEqunN7CafPJb4QYkG8jMtv0QoGgyA50kV
+ 075JuCNtOdV3x94K3dm7CFDmJcIZNyIWlDOBTosFRLCJ2hv1NFalHWyA1UN+Ltgkkv/i
+ 6qmMcloolC6vDtBQ0JVywfOwnKnYKh+9SRmksClVkKyVxb1fmAvyU627WtOU7ATJWwb9 tw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2m7kdqgyxu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Sep 2018 04:08:24 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8548NeD023623
+        Wed, 05 Sep 2018 04:08:23 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8548H3V022457
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Sep 2018 04:08:23 GMT
+        Wed, 5 Sep 2018 04:08:17 GMT
 Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8548Nxi026205;
-        Wed, 5 Sep 2018 04:08:23 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8548Hgx032218;
+        Wed, 5 Sep 2018 04:08:17 GMT
 Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Sep 2018 04:08:22 +0000
+        with ESMTP ; Wed, 05 Sep 2018 04:08:16 +0000
 From:   Jianchao Wang <jianchao.w.wang@oracle.com>
 To:     axboe@kernel.dk, ming.lei@redhat.com, bart.vanassche@wdc.com,
         sagi@grimberg.me, keith.busch@intel.com, jthumshirn@suse.de,
         jsmart2021@gmail.com
 Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org
-Subject: [PATCH 3/3] nvme-pci: use queue close instead of queue freeze
-Date:   Wed,  5 Sep 2018 12:09:46 +0800
-Message-Id: <1536120586-3378-4-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH 1/3] blk-core: migrate preempt-only mode to queue_gate
+Date:   Wed,  5 Sep 2018 12:09:44 +0800
+Message-Id: <1536120586-3378-2-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
 References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
@@ -73,130 +73,211 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nvme_dev_disable freezes queues to prevent new IO. nvme_reset_work
-will unfreeze and wait to drain the queues. However, if IO timeout
-at the moment, no body could do recovery as nvme_reset_work is
-waiting. We will encounter IO hang.
-
-To avoid this scenario, use queue close to prevent new IO which
-doesn't need to drain the queues. And just use queue freeze to
-try to wait for in-flight IO for shutdown case.
+This patch introduce queue_gate into request_queue which is
+dedicated to entering conditions control in blk_queue_enter.
+Helper blk_queue_gate_allow is in charge of checking entering
+conditions. If not allowed, go to wait on wq_freeze_wq. This is
+a preparation for the next light-weight queue close feature.
+And also the preempt-only mode is migrated from the queue_flags
+to queue_gate in this patch.
 
 Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- drivers/nvme/host/core.c | 22 ++++++++++++++++++++++
- drivers/nvme/host/nvme.h |  3 +++
- drivers/nvme/host/pci.c  | 27 ++++++++++++++-------------
- 3 files changed, 39 insertions(+), 13 deletions(-)
+ block/blk-core.c        | 65 +++++++++++++++++++++++++++++--------------------
+ block/blk-mq-debugfs.c  |  1 -
+ block/blk.h             |  4 +++
+ drivers/scsi/scsi_lib.c | 10 --------
+ include/linux/blkdev.h  |  4 +--
+ 5 files changed, 44 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index dd8ec1d..ce5b35b 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3602,6 +3602,28 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
+diff --git a/block/blk-core.c b/block/blk-core.c
+index dee56c2..d1bdded 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -420,22 +420,31 @@ void blk_sync_queue(struct request_queue *q)
  }
- EXPORT_SYMBOL_GPL(nvme_kill_queues);
+ EXPORT_SYMBOL(blk_sync_queue);
  
-+void nvme_close_queues(struct nvme_ctrl *ctrl)
-+{
-+	struct nvme_ns *ns;
-+
-+	down_read(&ctrl->namespaces_rwsem);
-+	list_for_each_entry(ns, &ctrl->namespaces, list)
-+		blk_set_queue_closed(ns->queue);
-+	up_read(&ctrl->namespaces_rwsem);
-+}
-+EXPORT_SYMBOL_GPL(nvme_close_queues);
-+
-+void nvme_open_queues(struct nvme_ctrl *ctrl)
-+{
-+	struct nvme_ns *ns;
-+
-+	down_read(&ctrl->namespaces_rwsem);
-+	list_for_each_entry(ns, &ctrl->namespaces, list)
-+		blk_clear_queue_closed(ns->queue);
-+	up_read(&ctrl->namespaces_rwsem);
-+}
-+EXPORT_SYMBOL_GPL(nvme_open_queues);
-+
- void nvme_unfreeze(struct nvme_ctrl *ctrl)
+-/**
+- * blk_set_preempt_only - set QUEUE_FLAG_PREEMPT_ONLY
+- * @q: request queue pointer
+- *
+- * Returns the previous value of the PREEMPT_ONLY flag - 0 if the flag was not
+- * set and 1 if the flag was already set.
++/*
++ * When blk_set_preempt_only returns:
++ *  - only preempt bio could enter the queue
++ *  - there is no non-preempt bios in the queue
+  */
+ int blk_set_preempt_only(struct request_queue *q)
  {
- 	struct nvme_ns *ns;
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index bb4a200..fcd44cb 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -437,6 +437,9 @@ void nvme_wait_freeze(struct nvme_ctrl *ctrl);
- void nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout);
- void nvme_start_freeze(struct nvme_ctrl *ctrl);
- 
-+void nvme_close_queues(struct nvme_ctrl *ctrl);
-+void nvme_open_queues(struct nvme_ctrl *ctrl);
+-	return blk_queue_flag_test_and_set(QUEUE_FLAG_PREEMPT_ONLY, q);
++	if (test_and_set_bit(BLK_QUEUE_GATE_PREEMPT_ONLY, &q->queue_gate))
++		return 1;
 +
- #define NVME_QID_ANY -1
- struct request *nvme_alloc_request(struct request_queue *q,
- 		struct nvme_command *cmd, blk_mq_req_flags_t flags, int qid);
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index d668682..c0ccd04 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2145,23 +2145,25 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
++	synchronize_rcu();
++	/*
++	 * After this, the non-preempt bios either get q_usage_counter
++	 * and enter, or go to wait.
++	 * Next, let's drain the entered ones.
++	 */
++	blk_mq_freeze_queue(q);
++	blk_mq_unfreeze_queue(q);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(blk_set_preempt_only);
  
- 	mutex_lock(&dev->shutdown_lock);
-+	nvme_close_queues(&dev->ctrl);
- 	if (pci_is_enabled(pdev)) {
- 		u32 csts = readl(dev->bar + NVME_REG_CSTS);
+ void blk_clear_preempt_only(struct request_queue *q)
+ {
+-	blk_queue_flag_clear(QUEUE_FLAG_PREEMPT_ONLY, q);
++	clear_bit(BLK_QUEUE_GATE_PREEMPT_ONLY, &q->queue_gate);
+ 	wake_up_all(&q->mq_freeze_wq);
+ }
+ EXPORT_SYMBOL_GPL(blk_clear_preempt_only);
+@@ -910,6 +919,19 @@ struct request_queue *blk_alloc_queue(gfp_t gfp_mask)
+ }
+ EXPORT_SYMBOL(blk_alloc_queue);
  
--		if (dev->ctrl.state == NVME_CTRL_LIVE ||
--		    dev->ctrl.state == NVME_CTRL_RESETTING)
--			nvme_start_freeze(&dev->ctrl);
- 		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
- 			pdev->error_state  != pci_channel_io_normal);
--	}
++static inline bool blk_queue_gate_allow(struct request_queue *q,
++		blk_mq_req_flags_t flags)
++{
++	if (!q->queue_gate)
++		return true;
++
++	if (test_bit(BLK_QUEUE_GATE_PREEMPT_ONLY, &q->queue_gate) &&
++		!(flags & BLK_MQ_REQ_PREEMPT))
++		return false;
++
++	return true;
++}
++
+ /**
+  * blk_queue_enter() - try to increase q->q_usage_counter
+  * @q: request queue pointer
+@@ -917,29 +939,20 @@ EXPORT_SYMBOL(blk_alloc_queue);
+  */
+ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
+ {
+-	const bool preempt = flags & BLK_MQ_REQ_PREEMPT;
+-
+ 	while (true) {
+-		bool success = false;
  
--	/*
--	 * Give the controller a chance to complete all entered requests if
--	 * doing a safe shutdown.
--	 */
--	if (!dead) {
--		if (shutdown)
--			nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
-+		if (dev->ctrl.state == NVME_CTRL_LIVE ||
-+		    dev->ctrl.state == NVME_CTRL_RESETTING) {
-+			/*
-+			 * Give the controller a chance to complete all entered
-+			 * requests if doing a safe shutdown.
-+			 */
-+			if (!dead && shutdown) {
-+				nvme_start_freeze(&dev->ctrl);
-+				nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
-+				nvme_unfreeze(&dev->ctrl);
-+			}
+ 		rcu_read_lock();
+-		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
+-			/*
+-			 * The code that sets the PREEMPT_ONLY flag is
+-			 * responsible for ensuring that that flag is globally
+-			 * visible before the queue is unfrozen.
+-			 */
+-			if (preempt || !blk_queue_preempt_only(q)) {
+-				success = true;
+-			} else {
+-				percpu_ref_put(&q->q_usage_counter);
+-			}
++		if (unlikely(READ_ONCE(q->queue_gate))) {
++			if (!blk_queue_gate_allow(q, flags))
++				goto wait;
+ 		}
+-		rcu_read_unlock();
+ 
+-		if (success)
++		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
++			rcu_read_unlock();
+ 			return 0;
+-
 +		}
- 	}
++wait:
++		rcu_read_unlock();
+ 		if (flags & BLK_MQ_REQ_NOWAIT)
+ 			return -EBUSY;
  
- 	nvme_stop_queues(&dev->ctrl);
-@@ -2328,11 +2330,9 @@ static void nvme_reset_work(struct work_struct *work)
- 		new_state = NVME_CTRL_ADMIN_ONLY;
- 	} else {
- 		nvme_start_queues(&dev->ctrl);
--		nvme_wait_freeze(&dev->ctrl);
- 		/* hit this only when allocate tagset fails */
- 		if (nvme_dev_add(dev))
- 			new_state = NVME_CTRL_ADMIN_ONLY;
--		nvme_unfreeze(&dev->ctrl);
- 	}
+@@ -954,7 +967,7 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
+ 
+ 		wait_event(q->mq_freeze_wq,
+ 			   (atomic_read(&q->mq_freeze_depth) == 0 &&
+-			    (preempt || !blk_queue_preempt_only(q))) ||
++			    blk_queue_gate_allow(q, flags)) ||
+ 			   blk_queue_dying(q));
+ 		if (blk_queue_dying(q))
+ 			return -ENODEV;
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index cb1e6cf..4174951 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -132,7 +132,6 @@ static const char *const blk_queue_flag_name[] = {
+ 	QUEUE_FLAG_NAME(REGISTERED),
+ 	QUEUE_FLAG_NAME(SCSI_PASSTHROUGH),
+ 	QUEUE_FLAG_NAME(QUIESCED),
+-	QUEUE_FLAG_NAME(PREEMPT_ONLY),
+ };
+ #undef QUEUE_FLAG_NAME
+ 
+diff --git a/block/blk.h b/block/blk.h
+index 9db4e38..cdef4c1 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -19,6 +19,10 @@
+ extern struct dentry *blk_debugfs_root;
+ #endif
+ 
++enum blk_queue_gate_flag_t {
++	BLK_QUEUE_GATE_PREEMPT_ONLY,
++};
++
+ struct blk_flush_queue {
+ 	unsigned int		flush_queue_delayed:1;
+ 	unsigned int		flush_pending_idx:1;
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 0adfb3b..491d8bf 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -3059,16 +3059,6 @@ scsi_device_quiesce(struct scsi_device *sdev)
+ 
+ 	blk_set_preempt_only(q);
+ 
+-	blk_mq_freeze_queue(q);
+-	/*
+-	 * Ensure that the effect of blk_set_preempt_only() will be visible
+-	 * for percpu_ref_tryget() callers that occur after the queue
+-	 * unfreeze even if the queue was already frozen before this function
+-	 * was called. See also https://lwn.net/Articles/573497/.
+-	 */
+-	synchronize_rcu();
+-	blk_mq_unfreeze_queue(q);
+-
+ 	mutex_lock(&sdev->state_mutex);
+ 	err = scsi_device_set_state(sdev, SDEV_QUIESCE);
+ 	if (err == 0)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index d6869e0..4a33814 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -504,6 +504,7 @@ struct request_queue {
+ 	 * various queue flags, see QUEUE_* below
+ 	 */
+ 	unsigned long		queue_flags;
++	unsigned long		queue_gate;
  
  	/*
-@@ -2345,6 +2345,7 @@ static void nvme_reset_work(struct work_struct *work)
- 		goto out;
- 	}
+ 	 * ida allocated id for this queue.  Used to index queues from
+@@ -698,7 +699,6 @@ struct request_queue {
+ #define QUEUE_FLAG_REGISTERED  26	/* queue has been registered to a disk */
+ #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
+ #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
+-#define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
  
-+	nvme_open_queues(&dev->ctrl);
- 	nvme_start_ctrl(&dev->ctrl);
- 	return;
+ #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+ 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
+@@ -736,8 +736,6 @@ bool blk_queue_flag_test_and_clear(unsigned int flag, struct request_queue *q);
+ 	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
+ 			     REQ_FAILFAST_DRIVER))
+ #define blk_queue_quiesced(q)	test_bit(QUEUE_FLAG_QUIESCED, &(q)->queue_flags)
+-#define blk_queue_preempt_only(q)				\
+-	test_bit(QUEUE_FLAG_PREEMPT_ONLY, &(q)->queue_flags)
+ #define blk_queue_fua(q)	test_bit(QUEUE_FLAG_FUA, &(q)->queue_flags)
  
+ extern int blk_set_preempt_only(struct request_queue *q);
 -- 
 2.7.4
 
