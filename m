@@ -2,137 +2,184 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060B6C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7196FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93EEB20839
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B28482073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:51:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCU55c+0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93EEB20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="JRWWLFWg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28482073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbeIFAUq (ORCPT
+        id S1727801AbeIFAXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 20:20:46 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37054 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727254AbeIFAUp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 20:20:45 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n11-v6so8912607wmc.2;
-        Wed, 05 Sep 2018 12:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=js9WsRxl0n3G/PA9K5oX4oD1Km2MP7WrSMeaaOfIOnk=;
-        b=KCU55c+0E8RjO8g+M4YpuYRUa6+E8/Z3Sr9+Wo7qSk+YB0Dh9t2ozDOO3dYZPvlqG+
-         6i+He3zZxU+6lNSM4u72iOEvSaF4wcJFzr6mXrUbB/FgYiFhuPc7Ibj4v6FB9YAPZ71h
-         cJhDbzWTKvky7nCR+Se0rWLube3O/SfBmAL2FLW+YGJ6rr7MLwowTNm4BsmjMZHtK6z/
-         GI8p5mcJCHY15xkYM9KJG3hKBfDexPce2FYOfdui0dgzWKF5+Ry7wAGuL5tDLmsUg4Im
-         lnGWaqnGwEtbJCb1iDo/k1R4gQZFTt1mrQ3cF/mNG88Tueai4hixaqjQwLm6CS/OJrTz
-         ws7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=js9WsRxl0n3G/PA9K5oX4oD1Km2MP7WrSMeaaOfIOnk=;
-        b=dnsoDwLXfkGgTxvlv2WUGDuNE/vAl6scC/tSN3IOLhhbT2F+dDx0xRlZjqPbCJtHes
-         eiU5RMGVqbZblpgSAojl9643D45GxR94gK5+nkTpPKyhu6d3eTdV4b/0JQPdENVNGJUg
-         lgjWAXRAG1JABWhdRdCGQmossTTu0UdciB32takh0L6LZ00QiOCfE+ZKF/fkq9xy+lGj
-         FVXU/1Tz0S3zZutm3DDDRbKe7KeEUDjfQY00jEphB0ujHY9UPhDpdNyTNztZzYqOnsrl
-         OQUAUR/kpgbA9f6AZaOYE6w34X+8LzA7Vb5wxLzMvnOZd+IZFMspxWjhxhoxsOQZNPSJ
-         hW/A==
-X-Gm-Message-State: APzg51BLCCb4MJCxGNI2etFWHMdAHcTH/5FNVQdhvwxXvRyGaXC+UbN/
-        WEN5HM6ZzEIHC2oU24qRTMY=
-X-Google-Smtp-Source: ANB0VdZtmadJaTlZe0BRosFDrwa7yYKCmAqnf8QDovzH6PZ9Ab8bqtl+Vc6LxjfMdygT6xr5au2fPQ==
-X-Received: by 2002:a1c:70b:: with SMTP id 11-v6mr1176754wmh.151.1536176943314;
-        Wed, 05 Sep 2018 12:49:03 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:4006:df00:b45a:4246:cb70:58f7])
-        by smtp.gmail.com with ESMTPSA id i125-v6sm4334199wmd.23.2018.09.05.12.49.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 12:49:02 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 21:49:01 +0200
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        efriedma@codeaurora.org, Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>
-Subject: Re: [PATCH 07/12] Compiler Attributes: remove unneeded sparse
- (__CHECKER__) tests
-Message-ID: <20180905194900.oln7qsifgcyuozrq@ltop.local>
-References: <20180903203316.16183-1-miguel.ojeda.sandonis@gmail.com>
- <20180903203316.16183-8-miguel.ojeda.sandonis@gmail.com>
- <20180905182038.muv535vfugm72spk@ltop.local>
- <20180905193035.GB3420@localhost>
- <CA+55aFxWcAqzuYOn1OPnRy5g5Uj69mQvxDK9Tn5HqecA-f3eiQ@mail.gmail.com>
+        Wed, 5 Sep 2018 20:23:22 -0400
+Received: from mail-eopbgr700135.outbound.protection.outlook.com ([40.107.70.135]:45072
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727254AbeIFAXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 20:23:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1qivKMJ5WawISycIShd1CWk878/GMCR7LQbLSS7tk0E=;
+ b=JRWWLFWgMStaf/PJb+hVqBYQIsGSvUjVidBx8xXh6fcDu4h50FADllGXTSvb7A3RXlVZn9Zuwk5a9I+08l90D0e2JNR+Q9hYdDqGx0PV06QNed06yyE9oBiu+Wml0uymmITn7IA0lmZPF9o6ADFtlR1gGJQlqUi14LEimhJzIZI=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0793.namprd21.prod.outlook.com (10.175.112.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.6; Wed, 5 Sep 2018 19:51:34 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::88e6:fdc:1d8e:71f5]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::88e6:fdc:1d8e:71f5%4]) with mapi id 15.20.1143.000; Wed, 5 Sep 2018
+ 19:51:34 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Aaron Lu <aaron.lu@intel.com>,
+        "alex.kogan@oracle.com" <alex.kogan@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+        "brouer@redhat.com" <brouer@redhat.com>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "dave.dice@oracle.com" <dave.dice@oracle.com>,
+        Dhaval Giani <dhaval.giani@oracle.com>,
+        "ktkhai@virtuozzo.com" <ktkhai@virtuozzo.com>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>,
+        "shady.issa@oracle.com" <shady.issa@oracle.com>,
+        "tariqt@mellanox.com" <tariqt@mellanox.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
+        "shy828301@gmail.com" <shy828301@gmail.com>,
+        Huang Ying <ying.huang@intel.com>,
+        "subhra.mazumdar@oracle.com" <subhra.mazumdar@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        "jwadams@google.com" <jwadams@google.com>,
+        "ashwinch@google.com" <ashwinch@google.com>,
+        "sqazi@google.com" <sqazi@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "walken@google.com" <walken@google.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "junaids@google.com" <junaids@google.com>,
+        Neha Agarwal <nehaagarwal@google.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>
+Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
+Thread-Topic: Plumbers 2018 - Performance and Scalability Microconference
+Thread-Index: AQHURJZKR5vprwHkVkauwM8hk1CepaThPQQAgADdfwA=
+Date:   Wed, 5 Sep 2018 19:51:34 +0000
+Message-ID: <846ac52b-1839-4aa1-3154-1925c159bf4c@microsoft.com>
+References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
+ <20180905063845.GA23342@rapoport-lnx>
+In-Reply-To: <20180905063845.GA23342@rapoport-lnx>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.117.57.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0793;6:9C4TrKQOqbAAbAxZ6Z/vuuYXtzufHNIL1bVLKDqYyjTSpwAdVDV5glLea3JYLZUiGOcuFmXe7qT+7OOOdZRJQtsGUuStYU/KCK40siMLZ1SVTAF6svJ09B8Wq7u5297iZQEEoD3nvmzsR8X3XSnTQU7RVL1J6kl4MXMWBfMsiAvkUhTC2gSG8kv80ZqnpsLE5bqGICrgXRGqb+NdU8kmfe3wbd3gZK4jIIerF2W7MyurH2BA74e8VEaOpy9ZcYiE5OGf/NgMZOPPunLVovNsCvxY5JFMFN+hiFf+H9PAyedX0M8QMgf8QDwlSNqiKn+Vm1G3NoOv5znfdVcCKs4vlU2kVuMoPjg5biPu9+dV8P279NKHKTAEMbJIKuaNSjtzbT2jXu3BOCIjs9NhSAI17+zW+cMIn5vD2H/xxJZDFjsEhS00HU/+LVkQEW+m6WCeFTRwdeWMWUdMj/SxUp5BuQ==;5:4Sm+cuEaA4JozzDewp1GnmUkInpT9S7TEmrsML2ciCQodbO2BWKmQhFh/81PWWKhQCFxc4ESq11PyFjbUeM1xaz9wvKY9VuK2iN4deGz5NWUIu75Cwy9ukD6U8Rcktji0ogzWveBuGeIWwp5nXprfCpRHQwWTmd+J/wiEXli/kU=;7:RIDORkodpm6HGUXsBgScWeXdzCEprAxTLw5O4cMckb9N/F+X9UMqgNpj0MeIZ/HZG90Nx50UaeTvBvc3x2l9TKX8Cto1VRKnuNTUvqO7X0Z9+wYAGaLY6baISpky3icyoth6Vg4mydeRInNogvHBFMbQTC+rZb6phV3lOZXuI0+Myq3ei0FiKIcRjL3a5CVHxJ9mEpveKJjjWHyxhWMePjTM9+8dhURC9n93+VH4E1WTtYVds+r6c2xAsBsQy+27
+x-ms-office365-filtering-correlation-id: fd9dabd8-2a6d-4579-5fc7-08d61368fbf0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0793;
+x-ms-traffictypediagnostic: DM5PR21MB0793:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-prvs: <DM5PR21MB07938CFCA3FB1C5507325B4D9D020@DM5PR21MB0793.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(278428928389397);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699049)(76991033);SRVR:DM5PR21MB0793;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0793;
+x-forefront-prvs: 078693968A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(396003)(366004)(136003)(346002)(199004)(189003)(2900100001)(36756003)(7736002)(31696002)(305945005)(7406005)(86362001)(86612001)(256004)(14444005)(76176011)(966005)(14454004)(31686004)(5250100002)(72206003)(105586002)(99286004)(106356001)(10090500001)(22452003)(478600001)(110136005)(54906003)(316002)(10290500003)(7416002)(68736007)(4326008)(229853002)(81156014)(81166006)(8936002)(66066001)(2906002)(25786009)(5660300001)(486006)(6246003)(6436002)(446003)(11346002)(6486002)(476003)(2616005)(53936002)(6512007)(39060400002)(6306002)(102836004)(6116002)(186003)(8676002)(97736004)(53546011)(6506007)(26005)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0793;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: FSXdB4ySJ70lsHUtHa/nfhoOi4c/SWDMXpHlFMH7vaF61ePN1DZ6IUqP1YR5KvD/aVp1FUHZQdp0B1BFDJQu12oeANpPxACYrkHsIlDPXOXG5JWgC2Ty/8Y18InXAFqA67+ESxO95FMFPL2OAbVmk0b9disz+Evoi3wUGYBX9T2ceB48loDT5TwIkExLSb1jLAhF0BaF8fvOblu2He7yZUz+NESoP/Hf+Z+MsOcExIUqHqNUE7PnkofNyBW5f0yCuY1rOXV1uw+vdfv5YnJz2dPldvS/o6KUixnl05I14RFQ/Yi1KUeu/baG3izTRjq9LjYTUDyG5EcvGnQvC7jxF/NdjgjXpR+RaBYB/yAmTUQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F73FBD97B54F4C4FB21EF65E7C1052EA@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxWcAqzuYOn1OPnRy5g5Uj69mQvxDK9Tn5HqecA-f3eiQ@mail.gmail.com>
-User-Agent: NeoMutt/20180622
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd9dabd8-2a6d-4579-5fc7-08d61368fbf0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2018 19:51:34.1520
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0793
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 12:40:26PM -0700, Linus Torvalds wrote:
-> On Wed, Sep 5, 2018 at 12:30 PM Josh Triplett <josh@joshtriplett.org> wrote:
-> >
-> > Unlike GCC, I don't think it's at all unreasonable to assume a
-> > *relatively* recent version of Sparse.
-> 
-> Yeah, sparse is small and easy to build and installs in your own
-> ~/bin/ directory by default.
-> 
-> Anybody who can build the kernel can trivially fetch and build sparse
-> in seconds.  It literally builds from scratch in 2.5s for me.
-> 
-> I don't think you even need any development packages that you don't
-> already need for the kernel. Just a C compiler and libc, basically.
-> 
-> Sure, some parts of sparse can use things like libxml and llvm and
-> even gtk, but that's for functionality that the "check kernel with
-> sparse" doesn't even need, and the makefile will automatically disable
-> them if you don't have it installed.
-> 
-> So if people are having trouble, just point them to the sparse repo,
-> and tell them that
-> 
->     git clone ...
->     cd sparse
->     make -j8
->     make install
-> 
-> fixes the issue in 30 seconds.
-> 
-> Although maybe I'm misstating just how easy sparse is to build and
-> install, and people have had problems?
-> 
-
-I never heard of anyone having a problem to build sparse but I
-guess that a lot of people just use their distro's version.
-
-That said, I'm of course, all for encouraging people to upgrad
-to a recent version.
-
-
--- Luc
+DQoNCk9uIDkvNS8xOCAyOjM4IEFNLCBNaWtlIFJhcG9wb3J0IHdyb3RlOg0KPiBPbiBUdWUsIFNl
+cCAwNCwgMjAxOCBhdCAwNToyODoxM1BNIC0wNDAwLCBEYW5pZWwgSm9yZGFuIHdyb3RlOg0KPj4g
+UGF2ZWwgVGF0YXNoaW4sIFlpbmcgSHVhbmcsIGFuZCBJIGFyZSBleGNpdGVkIHRvIGJlIG9yZ2Fu
+aXppbmcgYSBwZXJmb3JtYW5jZSBhbmQgc2NhbGFiaWxpdHkgbWljcm9jb25mZXJlbmNlIHRoaXMg
+eWVhciBhdCBQbHVtYmVyc1sqXSwgd2hpY2ggaXMgaGFwcGVuaW5nIGluIFZhbmNvdXZlciB0aGlz
+IHllYXIuICBUaGUgbWljcm9jb25mZXJlbmNlIGlzIHNjaGVkdWxlZCBmb3IgdGhlIG1vcm5pbmcg
+b2YgdGhlIHNlY29uZCBkYXkgKFdlZCwgTm92IDE0KS4NCj4+DQo+PiBXZSBoYXZlIGEgcHJlbGlt
+aW5hcnkgYWdlbmRhIGFuZCBhIGxpc3Qgb2YgY29uZmlybWVkIGFuZCBpbnRlcmVzdGVkIGF0dGVu
+ZGVlcyAoY2MnZWQpLCBhbmQgYXJlIHNlZWtpbmcgbW9yZSBvZiBib3RoIQ0KPj4NCj4+IFNvbWUg
+b2YgdGhlIGl0ZW1zIG9uIHRoZSBhZ2VuZGEgYXMgaXQgc3RhbmRzIG5vdyBhcmU6DQo+Pg0KPj4g
+IC0gUHJvbW90aW5nIGh1Z2UgcGFnZSB1c2FnZTogIFdpdGggbWVtb3J5IHNpemVzIGJlY29taW5n
+IGV2ZXIgbGFyZ2VyLCBodWdlIHBhZ2VzIGFyZSBiZWNvbWluZyBtb3JlIGFuZCBtb3JlIGltcG9y
+dGFudCB0byByZWR1Y2UgVExCIG1pc3NlcyBhbmQgdGhlIG92ZXJoZWFkIG9mIG1lbW9yeSBtYW5h
+Z2VtZW50IGl0c2VsZi0tdGhhdCBpcywgdG8gbWFrZSB0aGUgc3lzdGVtIHNjYWxhYmxlIHdpdGgg
+dGhlIG1lbW9yeSBzaXplLiAgQnV0IHRoZXJlIGFyZSBzdGlsbCBzb21lIHJlbWFpbmluZyBnYXBz
+IHRoYXQgcHJldmVudCBodWdlIHBhZ2VzIGZyb20gYmVpbmcgZGVwbG95ZWQgaW4gc29tZSBzaXR1
+YXRpb25zLCBzdWNoIGFzIGh1Z2UgcGFnZSBhbGxvY2F0aW9uIGxhdGVuY3kgYW5kIG1lbW9yeSBm
+cmFnbWVudGF0aW9uLg0KPj4NCj4+ICAtIFJlZHVjaW5nIHRoZSBudW1iZXIgb2YgdXNlcnMgb2Yg
+bW1hcF9zZW06ICBUaGlzIHNlbWFwaG9yZSBpcyBmcmVxdWVudGx5IHVzZWQgdGhyb3VnaG91dCB0
+aGUga2VybmVsLiAgSW4gb3JkZXIgdG8gZmFjaWxpdGF0ZSBzY2FsaW5nIHRoaXMgbG9uZ3N0YW5k
+aW5nIGJvdHRsZW5lY2ssIHRoZXNlIHVzZXMgc2hvdWxkIGJlIGRvY3VtZW50ZWQgYW5kIHVubmVj
+ZXNzYXJ5IHVzZXJzIHNob3VsZCBiZSBmaXhlZC4NCj4+DQo+PiAgLSBQYXJhbGxlbGl6aW5nIGNw
+dS1pbnRlbnNpdmUga2VybmVsIHdvcms6ICBSZXNvbHZlIHByb2JsZW1zIG9mIHBhc3QgYXBwcm9h
+Y2hlcyBpbmNsdWRpbmcgZXh0cmEgdGhyZWFkcyBpbnRlcmZlcmluZyB3aXRoIG90aGVyIHByb2Nl
+c3NlcywgcGxheWluZyB3ZWxsIHdpdGggcG93ZXIgbWFuYWdlbWVudCwgYW5kIHByb3BlciBjZ3Jv
+dXAgYWNjb3VudGluZyBmb3IgdGhlIGV4dHJhIHRocmVhZHMuICBCb251cyB0b3BpYzogcHJvcGVy
+IGFjY291bnRpbmcgb2Ygd29ya3F1ZXVlIHRocmVhZHMgcnVubmluZyBvbiBiZWhhbGYgb2YgY2dy
+b3Vwcy4NCj4+DQo+PiAgLSBQcmVzZXJ2aW5nIHVzZXJsYW5kIGR1cmluZyBrZXhlYyB3aXRoIGEg
+aGliZXJuYXRpb24tbGlrZSBtZWNoYW5pc20uDQo+IA0KPiBKdXN0IHNvbWUgY3JhenkgaWRlYTog
+aGF2ZSB5b3UgY29uc2lkZXJlZCB1c2luZyBjaGVja3BvaW50LXJlc3RvcmUgYXMgYQ0KPiByZXBs
+YWNlbWVudCBvciBhbiBhZGRpdGlvbiB0byBoaWJlcm5hdGlvbj8NCg0KSGkgTWlrZSwNCg0KWWVz
+LCB0aGlzIGlzIG9uZSB3YXkgSSB3YXMgdGhpbmtpbmcgYWJvdXQsIGFuZCB1c2Uga2VybmVsIHRv
+IHBhc3MgdGhlDQphcHBsaWNhdGlvbiBzdG9yZWQgc3RhdGUgdG8gbmV3IGtlcm5lbCBpbiBwbWVt
+LiBUaGUgb25seSBwcm9ibGVtIGlzIHRoYXQNCndlIHdhc3RlIG1lbW9yeTogd2hlbiB0aGVyZSBp
+cyBub3QgZW5vdWdoIHN5c3RlbSBtZW1vcnkgdG8gY29weSBhbmQgcGFzcw0KYXBwbGljYXRpb24g
+c3RhdGUgdG8gbmV3IGtlcm5lbCB0aGlzIHNjaGVtZSB3b24ndCB3b3JrLiBUaGluayBhYm91dCBE
+Qg0KdGhhdCBvY2N1cGllcyA4MCUgb2Ygc3lzdGVtIG1lbW9yeSBhbmQgd2Ugd2FudCB0byBjaGVj
+a3BvaW50L3Jlc3RvcmUgaXQuDQoNClNvLCB3ZSBuZWVkIHRvIGhhdmUgYW5vdGhlciB3YXksIHdo
+ZXJlIHRoZSBwcmVzZXJ2ZWQgbWVtb3J5IGlzIHRoZQ0KbWVtb3J5IHRoYXQgaXMgYWN0dWFsbHkg
+dXNlZCBieSB0aGUgYXBwbGljYXRpb25zLCBub3QgY29waWVkLiBPbmUgZWFzeQ0Kd2F5IGlzIHRv
+IGdpdmUgZWFjaCBhcHBsaWNhdGlvbiB0aGF0IGhhcyBhIGxhcmdlIHN0YXRlIHRoYXQgaXMgZXhw
+ZW5zaXZlDQp0byByZWNyZWF0ZSBhIHBlcnNpc3RlbnQgbWVtb3J5IGRldmljZSBhbmQgbGV0IGFw
+cGxpY2F0aW9ucyB0byBrZWVwIGl0cw0Kc3RhdGUgb24gdGhhdCBkZXZpY2UgKHNheSAvZGV2L3Bt
+ZW1OKS4gVGhlIG9ubHkgcHJvYmxlbSBpcyB0aGF0IG1lbW9yeQ0Kb24gdGhhdCBkZXZpY2UgbXVz
+dCBiZSBhY2Nlc3NpYmxlIGp1c3QgYXMgZmFzdCBhcyByZWd1bGFyIG1lbW9yeSB3aXRob3V0DQph
+bnkgZmlsZSBzeXN0ZW0gb3ZlcmhlYWQgYW5kIGhvcGVmdWxseSB3aXRob3V0IG5lZWQgZm9yIERB
+WC4NCg0KSSBqdXN0IHdhbnQgdG8gZ2V0IHNvbWUgaWRlYXMgb2Ygd2hhdCBwZW9wbGUgYXJlIHRo
+aW5raW5nIGFib3V0IHRoaXMsDQphbmQgd2hhdCB3b3VsZCBiZSB0aGUgYmVzdCB3YXkgdG8gYWNo
+aWV2ZSBpdC4NCg0KUGF2ZWwNCg0KDQo+ICANCj4+IFRoZXNlIGNlbnRlciBhcm91bmQgb3VyIGlu
+dGVyZXN0cywgYnV0IGhhdmluZyBsb3RzIG9mIHRvcGljcyB0byBjaG9vc2UgZnJvbSBlbnN1cmVz
+IHdlIGNvdmVyIHdoYXQncyBtb3N0IGltcG9ydGFudCB0byB0aGUgY29tbXVuaXR5LCBzbyB3ZSB3
+b3VsZCBsaWtlIHRvIGhlYXIgYWJvdXQgYWRkaXRpb25hbCB0b3BpY3MgYW5kIGV4dGVuc2lvbnMg
+dG8gdGhvc2UgbGlzdGVkIGhlcmUuICBUaGlzIGluY2x1ZGVzLCBidXQgaXMgY2VydGFpbmx5IG5v
+dCBsaW1pdGVkIHRvLCB3b3JrIGluIHByb2dyZXNzIHRoYXQgd291bGQgYmVuZWZpdCBmcm9tIGlu
+LXBlcnNvbiBkaXNjdXNzaW9uLCByZWFsLXdvcmxkIHBlcmZvcm1hbmNlIHByb2JsZW1zLCBhbmQg
+ZXhwZXJpbWVudGFsIGFuZCBhY2FkZW1pYyB3b3JrLg0KPj4NCj4+IElmIHlvdSBoYXZlbid0IGFs
+cmVhZHkgZG9uZSBzbywgcGxlYXNlIGxldCB1cyBrbm93IGlmIHlvdSBhcmUgaW50ZXJlc3RlZCBp
+biBhdHRlbmRpbmcsIG9yIGhhdmUgc3VnZ2VzdGlvbnMgZm9yIG90aGVyIGF0dGVuZGVlcy4NCj4+
+DQo+PiBUaGFua3MsDQo+PiBEYW5pZWwNCj4+DQo+PiBbKl0gaHR0cHM6Ly9ibG9nLmxpbnV4cGx1
+bWJlcnNjb25mLm9yZy8yMDE4L3BlcmZvcm1hbmNlLW1jLw0KPj4NCj4g
