@@ -6,124 +6,151 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18414C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116A8C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07E620861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:19:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07E620861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id BD66320867
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:20:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD66320867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeIETuc (ORCPT
+        id S1727593AbeIETvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:50:32 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44137 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeIETuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:50:32 -0400
-Received: by mail-ua1-f67.google.com with SMTP id m11-v6so6081531uao.11;
-        Wed, 05 Sep 2018 08:19:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A5ShTxmYlAi3VGjNLkpVICEssMioNtljehLiWA3JiRg=;
-        b=Z46M0+4+DO5OOtRm7IsY00AgGdCyA4xWZ0hAhUVTcVHaMuY1QjL4YaY6T9rMxT3oUz
-         Hhe/oikJhlNuDg/j05GPuU7r0E4MJCKhF45IF5pKDhKsNTXaNEf+JUesYLd9HxRuLOR/
-         l2t3tCDG3nbQrffebPh3RSrlAlOxzSeRvvZyDG6uibQcmedG+2m7xJGx2dJl+eA9NOlP
-         brSclUR6zpj0/EEZpSlME6qQMWCuMT1HJrNRd70ZW6tOYANiyUTwSgRLGTFIbjAIhYwL
-         w7/W/wCqUFNYQK2ZUxbBixup18vEwMKvLn186uzVo7lESpyj0XbN6bIQCsQ/ArJn/HuK
-         39Ug==
-X-Gm-Message-State: APzg51Ccy1wR6rpPHG5Ebr17DLqietaCnMsLoHGRGkhgZnKOfgI+csHk
-        LIXYYDC1yvwx6/dN894nadM55l7egPLf3WzUgh8=
-X-Google-Smtp-Source: ANB0VdY+Vf/ur6bcD0KSo4NEsOV/rpOLL2QBw4qYtDaliuknYQpgvCk5Xbs/fjufZu6n9Z77o3GGPCE/fRLfwPvD3IU=
-X-Received: by 2002:a67:4c93:: with SMTP id h19-v6mr5090535vsg.36.1536160791874;
- Wed, 05 Sep 2018 08:19:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
- <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de> <20180905145353.GA14069@e107155-lin>
-In-Reply-To: <20180905145353.GA14069@e107155-lin>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Sep 2018 17:19:40 +0200
-Message-ID: <CAMuHMdUEVt0JW6XV9zOx53Rv3C9Za-5hjg=J6TpWgUxHWcctjQ@mail.gmail.com>
-Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in takedown_cpu()
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Wed, 5 Sep 2018 15:51:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726366AbeIETvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 15:51:13 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEBDC20861;
+        Wed,  5 Sep 2018 15:20:32 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 11:20:31 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, dzickus@redhat.com,
-        Brendan Jackman <brendan.jackman@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        sramana@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH] lockdep: Have assert functions test for actual
+ interrupts disabled
+Message-ID: <20180905112031.540aa81b@gandalf.local.home>
+In-Reply-To: <20180806214107.110626d0@gandalf.local.home>
+References: <20180806214107.110626d0@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudeep,
 
-Thanks for the CC!
+Peter, you OK with this patch? I'm currently triggering a bug (in rc2)
+where this patch is telling me that lockdep is getting it wrong. It
+would be good to have this upstream such that we know if it is really a
+bug in the code itself, or if lockdep didn't keep up properly.
 
-On Wed, Sep 5, 2018 at 4:54 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On Wed, Sep 05, 2018 at 02:23:46PM +0200, Thomas Gleixner wrote:
-> > On Wed, 5 Sep 2018, Thomas Gleixner wrote:
-> > > On Tue, 4 Sep 2018, Neeraj Upadhyay wrote:
-> > > >   ret = cpuhp_down_callbacks(cpu, st, target);
-> > > >   if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
-> > > > -         cpuhp_reset_state(st, prev_state);
-> > > > +         /*
-> > > > +          * As st->last is not set, cpuhp_reset_state() increments
-> > > > +          * st->state, which results in CPUHP_AP_SMPBOOT_THREADS being
-> > > > +          * skipped during rollback. So, don't use it here.
-> > > > +          */
-> > > > +         st->rollback = true;
-> > > > +         st->target = prev_state;
-> > > > +         st->bringup = !st->bringup;
-> > >
-> > > No, this is just papering over the actual problem.
-> > >
-> > > The state inconsistency happens in take_cpu_down() when it returns with a
-> > > failure from __cpu_disable() because that returns with state = TEARDOWN_CPU
-> > > and st->state is then incremented in undo_cpu_down().
-> > >
-> > > That's the real issue and we need to analyze the whole cpu_down rollback
-> > > logic first.
-> >
-> > And looking closer this is a general issue. Just that the TEARDOWN state
-> > makes it simple to observe. It's universaly broken, when the first teardown
-> > callback fails because, st->state is only decremented _AFTER_ the callback
-> > returns success, but undo_cpu_down() increments unconditionally.
-> >
-> > Patch below.
->
-> This patch fixes the issue reported @[1]. Lorenzo did some debugging and
-> I wanted to have a look at it at some point but this discussion drew my
-> attention and sounded very similar[2]. So I did a quick test with this
-> patch and it fixes the issue.
-
-> [1] https://lore.kernel.org/lkml/CAMuHMdVg868LgL5xTg5Dp5rReKxoo+8fRy+ETJiMxGWZCp+hWw@mail.gmail.com/
-> [2] https://lore.kernel.org/lkml/20180823131505.GA31558@red-moon/
-
-Thomas' patch fixes the issue for me:
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+-- Steve
 
 
-Gr{oetje,eeting}s,
+On Mon, 6 Aug 2018 21:41:07 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-                        Geert
+> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> 
+> While working on irqs disabled tracepoints, I triggered the following
+> warning:
+> 
+>  ------------[ cut here ]------------
+>  IRQs not disabled as expected
+>  WARNING: CPU: 0 PID: 0 at kernel/softirq.c:144 __local_bh_enable+0x9b/0xe0
+>  Modules linked in:
+>  CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.18.0-rc6-test+ #1099
+>  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+>  RIP: 0010:__local_bh_enable+0x9b/0xe0
+>  Code: 5b d2 30 00 8b 85 98 08 00 00 85 c0 74 bf 80 3d ff eb 06 02 00 75 b6 48 c7 c7 80 89 46 8c c6 05 ef eb 06 02 01 e8 15 4e ff ff <0f> 0b eb 9f 48 8b 7c 24 10 e8 67 5f 09 00 eb b2 48 8b 6c 24 10 48 
+>  RSP: 0018:ffff8800d3e07f50 EFLAGS: 00010082
+>  RAX: 0000000000000000 RBX: 0000000000000100 RCX: 0000000000000000
+>  RDX: 0000000000000102 RSI: dffffc0000000000 RDI: ffffffff8e57dc00
+>  RBP: ffffffff8cc1f980 R08: fffffbfff199f449 R09: fffffbfff199f448
+>  R10: ffff8800d3e2643f R11: ffffed001a7c4c88 R12: 0000000000000007
+>  R13: 0000000000000008 R14: 0000000000000007 R15: 0000000000000000
+>  FS:  0000000000000000(0000) GS:ffff8800d3e00000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 0000000000000000 CR3: 00000000cac14001 CR4: 00000000001606f0
+>  Call Trace:
+>   <IRQ>
+>   __do_softirq+0x4a0/0x55a
+>   irq_exit+0x128/0x130
+>   reschedule_interrupt+0xf/0x20
+>   </IRQ>
+>  RIP: 0010:cpuidle_enter_state+0xcc/0x430
+>  Code: 63 55 ff 48 89 04 24 0f 1f 44 00 00 31 ff e8 7b 8d 55 ff 80 7c 24 10 00 0f 85 fb 02 00 00 e8 eb a8 69 ff fb 66 0f 1f 44 00 00 <4c> 8b 3c 24 4c 2b 7c 24 08 48 ba cf f7 53 e3 a5 9b c4 20 48 8d 7b 
+>  RSP: 0018:ffffffff8cc07d18 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff02
+>  RAX: 0000000000025140 RBX: ffff8800d3e34f00 RCX: ffffffff8b1cec2e
+>  RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8cd4a868
+>  RBP: ffffffff8cf1b660 R08: ffffed001a7c43db R09: 0000000000000000
+>  R10: ffff8800d3e2643f R11: ffffed001a7c4c88 R12: ffffffff8cf1b7f8
+>  R13: 0000000000000004 R14: ffffffff8cf1b7e0 R15: ffffffff8cf1b820
+>   ? __srcu_read_unlock+0x1e/0x40
+>   ? cpuidle_enter_state+0xc5/0x430
+>   do_idle+0x28f/0x300
+>   ? arch_cpu_idle_exit+0x40/0x40
+>   ? schedule_idle+0x39/0x50
+>   cpu_startup_entry+0xc2/0xd0
+>   ? cpu_in_idle+0x20/0x20
+>   ? preempt_count_sub+0xaa/0x100
+>   ? preempt_count_add+0xaf/0xd0
+>   start_kernel+0x640/0x67d
+>   ? thread_stack_cache_init+0x6/0x6
+>   ? load_ucode_intel_bsp+0x5f/0xa5
+>   ? load_ucode_intel_bsp+0x5f/0xa5
+>   ? init_intel_microcode+0xb0/0xb0
+>   ? load_ucode_bsp+0xbb/0x156
+>   secondary_startup_64+0xa5/0xb0
+>  irq event stamp: 9229434
+>  hardirqs last  enabled at (9229434): [<ffffffff8b004453>] trace_hardirqs_on_thunk+0x1a/0x1c
+>  hardirqs last disabled at (9229433): [<ffffffff8b00446f>] trace_hardirqs_off_thunk+0x1a/0x1c
+>  softirqs last  enabled at (9229416): [<ffffffff8b10d35c>] irq_enter+0x7c/0x80
+>  softirqs last disabled at (9229417): [<ffffffff8b10d488>] irq_exit+0x128/0x130
+>  ---[ end trace 35ba8f92a3c06fd6 ]---
+>  ------------[ cut here ]------------
+> 
+> When investigating, I found that interrupts were actually disabled, but
+> the bug was that lockdep was confused. As the asserts for expecting
+> interrupts disabled is now done by lockdep state tracking, it would be
+> nice to know if the bug is the interrupts not being disabled or lockdep
+> just thinking that they are disabled. Add a check within the WARN_ON()
+> to do the actual irqs_disabled() check (which only gets done when
+> lockdep thinks there's an error), and show that lockdep is broken if it
+> does not match up with the real state of interrupts.
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ----
+> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+> index a8113357ceeb..c50c80eea41d 100644
+> --- a/include/linux/lockdep.h
+> +++ b/include/linux/lockdep.h
+> @@ -601,12 +601,16 @@ do {									\
+>  #define lockdep_assert_irqs_enabled()	do {				\
+>  		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
+>  			  !current->hardirqs_enabled,			\
+> -			  "IRQs not enabled as expected\n");		\
+> +			  irqs_disabled() ?				\
+> +			  "IRQs not enabled as expected\n" :		\
+> +			  "IRQs enabled but lockdep reports they are disabled\n"); \
+>  	} while (0)
+>  
+>  #define lockdep_assert_irqs_disabled()	do {				\
+>  		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
+>  			  current->hardirqs_enabled,			\
+> +			  irqs_disabled() ?				\
+> +			  "IRQs disabled but lockdep reports they are enabled\n" : \
+>  			  "IRQs not disabled as expected\n");		\
+>  	} while (0)
+>  
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
