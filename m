@@ -2,441 +2,131 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 252D3C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5165CC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFFF020861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42DFC2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:47:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TmwlEw4r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFF020861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="rCgt5CGE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DFC2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeIETRF (ORCPT
+        id S1727792AbeIETR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:17:05 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33412 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeIETRF (ORCPT
+        Wed, 5 Sep 2018 15:17:59 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.24]:30195 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727568AbeIETR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:17:05 -0400
-Received: by mail-ed1-f67.google.com with SMTP id d8-v6so6329801edv.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 07:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5nYv1V/AS/0Gtx0sLgkUKmnNDcek9LAGYIp/bXyOEOs=;
-        b=TmwlEw4r96P+mzNAfPGKdiUuwgg2fwOb+jfJH7yluq730SgDstuhgvQ2Aw8bEY34YD
-         Ts+ygfyb7Oubzj4+Yua6G77j0XXS9JB7f7ab3iXatix3sk9P2tFjR7WBg9mOY+kruUSu
-         NrhwPlW/t3DD4/KVTktINQ4YfAKSPOwRfNba8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=5nYv1V/AS/0Gtx0sLgkUKmnNDcek9LAGYIp/bXyOEOs=;
-        b=rjxCfYmi/+H0tcJvw+RmNL8CMLv9Opp1qBeWCEEe2tG76K5c+SouS0k93DP2YSvTb5
-         lU2YGM08r5vp2py7kQsATuVE7IvdJzZoGW7STVudVqw8jIbLLFG5Iz8Shm0xqQyNAoOH
-         Dt3xaDeJHycVV7pNnRxo7nRKHRUEkPXPtTkGbWFAWxEoOYTOjEMnROlTPjmRadsOdzl9
-         kc1PtTiQXn8wbTn4Wdm5BeYhoC6f1WITKKjGdZKTII+EmMCZlKgDgfWsuBTfhUufXfxi
-         8dK72xjSsno6lQeRqTzz8qwippgfMpatCw+h5mggwQrR4URk4ZrEJbX9TEwM7glnJ8n0
-         xhlw==
-X-Gm-Message-State: APzg51ARKPk8ahDXEki7vL/kIINhz9oYWWY2FF9NMyBfSlZsqmOPGyid
-        Xi7Mo38Gj/ybhBinbvmeIWQ9Iw==
-X-Google-Smtp-Source: ANB0VdYzLGtJ0OulL31oUOI0PqSTtG+YcdmgJd70ebgETdAdvO/tJrCaJhyJDUkVu5fo4y3hC/SoMQ==
-X-Received: by 2002:a50:e718:: with SMTP id a24-v6mr42689656edn.278.1536158791731;
-        Wed, 05 Sep 2018 07:46:31 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id r44-v6sm2752213edd.87.2018.09.05.07.46.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 07:46:30 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 16:46:29 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Peter Wu <peter@lekensteyn.nl>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH] bochs: convert to drm_fb_helper_fbdev_setup/teardown
-Message-ID: <20180905144628.GG4929@phenom.ffwll.local>
-Mail-Followup-To: Peter Wu <peter@lekensteyn.nl>,
-        Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org
-References: <20180905144127.5690-1-peter@lekensteyn.nl>
+        Wed, 5 Sep 2018 15:17:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536158846;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=FTv0CyngqFs6Z+czb9UeIYUqDRo38KSm3DteWX8Kh5M=;
+        b=rCgt5CGERmJI7udzJrNdyeTPg/ZX1Mi0A+werfHGILxWQR/BdxJ8ZpxAtHbmYn+I+d
+        KbFmhl3Jhkicf10uVPYst0zMAMq/Ole3zEb7wlj4mq4ri1rK8XMLGtdrKuWhMyD/5GdD
+        3cVNVo5F2lWZeKS7mnf8j28RmrGP93dVkdCiYV7rL17NwaML+UrGSuSlT1KpbPF/ed+7
+        0oYRXKrYyFoD6MoLXAN2n5I+4SCAaOi1f72gU0jP23iyWIEKwlCUVp3AbL/VAML3HVZr
+        2FF8Wjlph9R7yTKEilavB4ElodSYo4UQbOVYaTycV+z6gYL7BQQUZD3lY7y02dV7NICk
+        qA/A==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivsAQtyRsdRVZ54BGpAypu4eYvjwzPAqxRcXNDW+"
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.0 AUTH)
+        with ESMTPSA id L0862bu85ElP6FA
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 5 Sep 2018 16:47:25 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 16:47:19 +0200
+From:   Olaf Hering <olaf@aepfle.de>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     xen-devel@lists.xenproject.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
+Message-ID: <20180905164719.52e02256.olaf@aepfle.de>
+In-Reply-To: <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
+References: <20180905104039.13512-1-olaf@aepfle.de>
+        <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
+X-Mailer: Claws Mail 3.16.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905144127.5690-1-peter@lekensteyn.nl>
-X-Operating-System: Linux phenom 4.17.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ boundary="Sig_/LzNz=jnL/Kgv5MAft0yD6Bu"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 04:41:27PM +0200, Peter Wu wrote:
-> Currently unloading bochs_drm (after unbinding the vtconsole) results in
-> a warning about a leaked connector:
-> 
->     [drm:drm_mode_config_cleanup] *ERROR* connector Virtual-3 leaked!
-> 
-> While investigating a potential fix I noticed that a lot of open-coded
-> functionality is already implemented elsewhere, so start converting it:
-> bochs_fbdev_init -> drm_fb_helper_fbdev_setup: trivial (similar impl).
-> bochs_fbdev_fini -> drm_fb_helper_fbdev_teardown: requires unembedding
-> "struct drm_framebuffer" from "struct bochs_framebuffer".
-> 
-> Unembedding drm_framebuffer is made easy using drm_gem_fbdev_fb_create
-> which can replace bochs_fbdev_destroy and custom routines in bochs_mm.c.
-> For this to work, the GEM object is moved into "drm_framebuffer". After
-> that, "bochs_framebuffer" is no longer needed and therefore removed.
-> 
-> Remove the unused "size" and "initialized" fields from fb, the latter is
-> not necessary as drm_fb_helper_fbdev_teardown can be called even if
-> bochsfb_create fails. This theory was tested by returning early and
-> late (just before drm_gem_fbdev_fb_create). Both scenarios fail
-> gracefully although the latter seems to leak the object from
-> bochsfb_create_object (not a regression).
-> 
-> Guess on the reason for the encoder leak: drm_framebuffer_cleanup was
-> previously used, but did not destroy much. drm_fb_helper_fbdev_teardown
-> is now used and calls drm_framebuffer_remove which does a bit more work.
-> 
-> Tested with 'echo 0 > /sys/class/vtconsole/vtcon1/bind; rmmod bochs_drm'
-> and also with Xorg + fbdev (startx -> xterm). The latter triggered a
-> warning in ttm_bo_vm_open that existed before, see
-> https://lkml.kernel.org/r/1464000533-13140-4-git-send-email-mstaudt@suse.de
+--Sig_/LzNz=jnL/Kgv5MAft0yD6Bu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You can probably get rid of this one if you're refactoring even more. The
-generic fb_probe implementation (already merged) plus gem-shmem support
-for it (still in flight) from Noralf should be able to pull that off. That
-gives you the fb_mmap implementation, but with 100% generic code instead
-of a driver specific hack like Max did.
-> 
-> Signed-off-by: Peter Wu <peter@lekensteyn.nl>
+Am Wed, 5 Sep 2018 12:55:58 +0200
+schrieb Juergen Gross <jgross@suse.com>:
 
-lgtm. Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Instead of trying to fight the symptoms, I think avoiding to offline
+> the last cpu would make more sense.
 
-I'll leave merging to Gerd.
--Daniel
+Well, apparently the fix is to leave cpu#0 online because of a backtrace li=
+ke that:
 
-> ---
->  drivers/gpu/drm/bochs/bochs.h       | 19 ++-----
->  drivers/gpu/drm/bochs/bochs_fbdev.c | 79 +++++++----------------------
->  drivers/gpu/drm/bochs/bochs_kms.c   |  7 +--
->  drivers/gpu/drm/bochs/bochs_mm.c    | 74 ---------------------------
->  4 files changed, 22 insertions(+), 157 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-> index 375bf92cd04f..8514a84fbdbe 100644
-> --- a/drivers/gpu/drm/bochs/bochs.h
-> +++ b/drivers/gpu/drm/bochs/bochs.h
-> @@ -51,11 +51,6 @@ enum bochs_types {
->  	BOCHS_UNKNOWN,
->  };
->  
-> -struct bochs_framebuffer {
-> -	struct drm_framebuffer base;
-> -	struct drm_gem_object *obj;
-> -};
-> -
->  struct bochs_device {
->  	/* hw */
->  	void __iomem   *mmio;
-> @@ -88,15 +83,11 @@ struct bochs_device {
->  
->  	/* fbdev */
->  	struct {
-> -		struct bochs_framebuffer gfb;
-> +		struct drm_framebuffer *fb;
->  		struct drm_fb_helper helper;
-> -		int size;
-> -		bool initialized;
->  	} fb;
->  };
->  
-> -#define to_bochs_framebuffer(x) container_of(x, struct bochs_framebuffer, base)
-> -
->  struct bochs_bo {
->  	struct ttm_buffer_object bo;
->  	struct ttm_placement placement;
-> @@ -148,15 +139,9 @@ int bochs_dumb_create(struct drm_file *file, struct drm_device *dev,
->  int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
->  			   uint32_t handle, uint64_t *offset);
->  
-> -int bochs_framebuffer_init(struct drm_device *dev,
-> -			   struct bochs_framebuffer *gfb,
-> -			   const struct drm_mode_fb_cmd2 *mode_cmd,
-> -			   struct drm_gem_object *obj);
->  int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr);
->  int bochs_bo_unpin(struct bochs_bo *bo);
->  
-> -extern const struct drm_mode_config_funcs bochs_mode_funcs;
-> -
->  /* bochs_kms.c */
->  int bochs_kms_init(struct bochs_device *bochs);
->  void bochs_kms_fini(struct bochs_device *bochs);
-> @@ -164,3 +149,5 @@ void bochs_kms_fini(struct bochs_device *bochs);
->  /* bochs_fbdev.c */
->  int bochs_fbdev_init(struct bochs_device *bochs);
->  void bochs_fbdev_fini(struct bochs_device *bochs);
-> +
-> +extern const struct drm_mode_config_funcs bochs_mode_funcs;
-> diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
-> index 14eb8d0d5a00..8f4d6c052f7b 100644
-> --- a/drivers/gpu/drm/bochs/bochs_fbdev.c
-> +++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
-> @@ -6,6 +6,7 @@
->   */
->  
->  #include "bochs.h"
-> +#include <drm/drm_gem_framebuffer_helper.h>
->  
->  /* ---------------------------------------------------------------------- */
->  
-> @@ -13,9 +14,7 @@ static int bochsfb_mmap(struct fb_info *info,
->  			struct vm_area_struct *vma)
->  {
->  	struct drm_fb_helper *fb_helper = info->par;
-> -	struct bochs_device *bochs =
-> -		container_of(fb_helper, struct bochs_device, fb.helper);
-> -	struct bochs_bo *bo = gem_to_bochs_bo(bochs->fb.gfb.obj);
-> +	struct bochs_bo *bo = gem_to_bochs_bo(fb_helper->fb->obj[0]);
->  
->  	return ttm_fbdev_mmap(vma, &bo->bo);
->  }
-> @@ -101,19 +100,20 @@ static int bochsfb_create(struct drm_fb_helper *helper,
->  
->  	/* init fb device */
->  	info = drm_fb_helper_alloc_fbi(helper);
-> -	if (IS_ERR(info))
-> +	if (IS_ERR(info)) {
-> +		DRM_ERROR("Failed to allocate fbi: %ld\n", PTR_ERR(info));
->  		return PTR_ERR(info);
-> +	}
->  
->  	info->par = &bochs->fb.helper;
->  
-> -	ret = bochs_framebuffer_init(bochs->dev, &bochs->fb.gfb, &mode_cmd, gobj);
-> -	if (ret)
-> -		return ret;
-> -
-> -	bochs->fb.size = size;
-> +	fb = drm_gem_fbdev_fb_create(bochs->dev, sizes, 0, gobj, NULL);
-> +	if (IS_ERR(fb)) {
-> +		DRM_ERROR("Failed to create framebuffer: %ld\n", PTR_ERR(fb));
-> +		return PTR_ERR(fb);
-> +	}
->  
->  	/* setup helper */
-> -	fb = &bochs->fb.gfb.base;
->  	bochs->fb.helper.fb = fb;
->  
->  	strcpy(info->fix.id, "bochsdrmfb");
-> @@ -130,27 +130,6 @@ static int bochsfb_create(struct drm_fb_helper *helper,
->  	drm_vma_offset_remove(&bo->bo.bdev->vma_manager, &bo->bo.vma_node);
->  	info->fix.smem_start = 0;
->  	info->fix.smem_len = size;
-> -
-> -	bochs->fb.initialized = true;
-> -	return 0;
-> -}
-> -
-> -static int bochs_fbdev_destroy(struct bochs_device *bochs)
-> -{
-> -	struct bochs_framebuffer *gfb = &bochs->fb.gfb;
-> -
-> -	DRM_DEBUG_DRIVER("\n");
-> -
-> -	drm_fb_helper_unregister_fbi(&bochs->fb.helper);
-> -
-> -	if (gfb->obj) {
-> -		drm_gem_object_unreference_unlocked(gfb->obj);
-> -		gfb->obj = NULL;
-> -	}
-> -
-> -	drm_framebuffer_unregister_private(&gfb->base);
-> -	drm_framebuffer_cleanup(&gfb->base);
-> -
->  	return 0;
->  }
->  
-> @@ -158,41 +137,17 @@ static const struct drm_fb_helper_funcs bochs_fb_helper_funcs = {
->  	.fb_probe = bochsfb_create,
->  };
->  
-> +const struct drm_mode_config_funcs bochs_mode_funcs = {
-> +	.fb_create = drm_gem_fb_create,
-> +};
-> +
->  int bochs_fbdev_init(struct bochs_device *bochs)
->  {
-> -	int ret;
-> -
-> -	drm_fb_helper_prepare(bochs->dev, &bochs->fb.helper,
-> -			      &bochs_fb_helper_funcs);
-> -
-> -	ret = drm_fb_helper_init(bochs->dev, &bochs->fb.helper, 1);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = drm_fb_helper_single_add_all_connectors(&bochs->fb.helper);
-> -	if (ret)
-> -		goto fini;
-> -
-> -	drm_helper_disable_unused_functions(bochs->dev);
-> -
-> -	ret = drm_fb_helper_initial_config(&bochs->fb.helper, 32);
-> -	if (ret)
-> -		goto fini;
-> -
-> -	return 0;
-> -
-> -fini:
-> -	drm_fb_helper_fini(&bochs->fb.helper);
-> -	return ret;
-> +	return drm_fb_helper_fbdev_setup(bochs->dev, &bochs->fb.helper,
-> +					 &bochs_fb_helper_funcs, 32, 1);
->  }
->  
->  void bochs_fbdev_fini(struct bochs_device *bochs)
->  {
-> -	if (bochs->fb.initialized)
-> -		bochs_fbdev_destroy(bochs);
-> -
-> -	if (bochs->fb.helper.fbdev)
-> -		drm_fb_helper_fini(&bochs->fb.helper);
-> -
-> -	bochs->fb.initialized = false;
-> +	drm_fb_helper_fbdev_teardown(bochs->dev);
->  }
-> diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-> index 233980a78591..c7e575511d2f 100644
-> --- a/drivers/gpu/drm/bochs/bochs_kms.c
-> +++ b/drivers/gpu/drm/bochs/bochs_kms.c
-> @@ -35,14 +35,12 @@ static int bochs_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
->  {
->  	struct bochs_device *bochs =
->  		container_of(crtc, struct bochs_device, crtc);
-> -	struct bochs_framebuffer *bochs_fb;
->  	struct bochs_bo *bo;
->  	u64 gpu_addr = 0;
->  	int ret;
->  
->  	if (old_fb) {
-> -		bochs_fb = to_bochs_framebuffer(old_fb);
-> -		bo = gem_to_bochs_bo(bochs_fb->obj);
-> +		bo = gem_to_bochs_bo(old_fb->obj[0]);
->  		ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
->  		if (ret) {
->  			DRM_ERROR("failed to reserve old_fb bo\n");
-> @@ -55,8 +53,7 @@ static int bochs_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
->  	if (WARN_ON(crtc->primary->fb == NULL))
->  		return -EINVAL;
->  
-> -	bochs_fb = to_bochs_framebuffer(crtc->primary->fb);
-> -	bo = gem_to_bochs_bo(bochs_fb->obj);
-> +	bo = gem_to_bochs_bo(crtc->primary->fb->obj[0]);
->  	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
-> index 39cd08416773..cdbc3ca3ec51 100644
-> --- a/drivers/gpu/drm/bochs/bochs_mm.c
-> +++ b/drivers/gpu/drm/bochs/bochs_mm.c
-> @@ -457,77 +457,3 @@ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
->  	drm_gem_object_unreference_unlocked(obj);
->  	return 0;
->  }
-> -
-> -/* ---------------------------------------------------------------------- */
-> -
-> -static void bochs_user_framebuffer_destroy(struct drm_framebuffer *fb)
-> -{
-> -	struct bochs_framebuffer *bochs_fb = to_bochs_framebuffer(fb);
-> -
-> -	drm_gem_object_unreference_unlocked(bochs_fb->obj);
-> -	drm_framebuffer_cleanup(fb);
-> -	kfree(fb);
-> -}
-> -
-> -static const struct drm_framebuffer_funcs bochs_fb_funcs = {
-> -	.destroy = bochs_user_framebuffer_destroy,
-> -};
-> -
-> -int bochs_framebuffer_init(struct drm_device *dev,
-> -			   struct bochs_framebuffer *gfb,
-> -			   const struct drm_mode_fb_cmd2 *mode_cmd,
-> -			   struct drm_gem_object *obj)
-> -{
-> -	int ret;
-> -
-> -	drm_helper_mode_fill_fb_struct(dev, &gfb->base, mode_cmd);
-> -	gfb->obj = obj;
-> -	ret = drm_framebuffer_init(dev, &gfb->base, &bochs_fb_funcs);
-> -	if (ret) {
-> -		DRM_ERROR("drm_framebuffer_init failed: %d\n", ret);
-> -		return ret;
-> -	}
-> -	return 0;
-> -}
-> -
-> -static struct drm_framebuffer *
-> -bochs_user_framebuffer_create(struct drm_device *dev,
-> -			      struct drm_file *filp,
-> -			      const struct drm_mode_fb_cmd2 *mode_cmd)
-> -{
-> -	struct drm_gem_object *obj;
-> -	struct bochs_framebuffer *bochs_fb;
-> -	int ret;
-> -
-> -	DRM_DEBUG_DRIVER("%dx%d, format %c%c%c%c\n",
-> -	       mode_cmd->width, mode_cmd->height,
-> -	       (mode_cmd->pixel_format)       & 0xff,
-> -	       (mode_cmd->pixel_format >> 8)  & 0xff,
-> -	       (mode_cmd->pixel_format >> 16) & 0xff,
-> -	       (mode_cmd->pixel_format >> 24) & 0xff);
-> -
-> -	if (mode_cmd->pixel_format != DRM_FORMAT_XRGB8888)
-> -		return ERR_PTR(-ENOENT);
-> -
-> -	obj = drm_gem_object_lookup(filp, mode_cmd->handles[0]);
-> -	if (obj == NULL)
-> -		return ERR_PTR(-ENOENT);
-> -
-> -	bochs_fb = kzalloc(sizeof(*bochs_fb), GFP_KERNEL);
-> -	if (!bochs_fb) {
-> -		drm_gem_object_unreference_unlocked(obj);
-> -		return ERR_PTR(-ENOMEM);
-> -	}
-> -
-> -	ret = bochs_framebuffer_init(dev, bochs_fb, mode_cmd, obj);
-> -	if (ret) {
-> -		drm_gem_object_unreference_unlocked(obj);
-> -		kfree(bochs_fb);
-> -		return ERR_PTR(ret);
-> -	}
-> -	return &bochs_fb->base;
-> -}
-> -
-> -const struct drm_mode_config_funcs bochs_mode_funcs = {
-> -	.fb_create = bochs_user_framebuffer_create,
-> -};
-> -- 
-> 2.18.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+WARNING: CPU: 0 PID: 83 at kernel/sched/cpudeadline.c:159 cpudl_clear+0xa5/=
+0xb0
+Workqueue: events cpuset_hotplug_workfn
+RIP: e030:cpudl_clear+0xa5/0xb0
+Code: 8b 43 48 c7 44 28 0c ff ff ff ff e8 d5 fd ff ff 48 8d 43 08 f0 4c 0f =
+ab 20 4c 89 ee 48 89 df 5b 5d 41 5c 41 5d e9 0b 3b 79 00 <0f> 0b e9 76 ff f=
+f ff 0f 1f 40 00 66 66 66 66 90 41 56 49 89 d6 41
+RSP: e02b:ffffc900411cbc40 EFLAGS: 00010086
+RAX: ffffffff810d09a0 RBX: ffff880106f1a100 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff880106f1a100
+RBP: 0000000000000000 R08: 0000000000000000 R09: ffff8801068989b0
+R10: ffff8801068989d0 R11: 0000000000000008 R12: 0000000000000000
+R13: ffff8801f3800200 R14: 0000000000000001 R15: ffff8801f3823240
+FS:  00007fd40d7f08c0(0000) GS:ffff8801f3800000(0000) knlGS:0000000000000000
+CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055eff60fe098 CR3: 00000001edf24000 CR4: 0000000000002660
+Call Trace:
+ rq_offline_dl+0x36/0x80
+ set_rq_offline+0x31/0x60
+ rq_attach_root+0x98/0xc0
+ cpu_attach_domain+0x107/0x320
+ partition_sched_domains+0x117/0x347
+ ? cpus_read_lock+0x2d/0x50
+ rebuild_sched_domains_locked+0xe4/0x4e0
+ ? __switch_to_asm+0x40/0x70
+ ? xen_mc_flush+0x102/0x210
+ rebuild_sched_domains+0x16/0x30
+ cpuset_hotplug_workfn+0x45e/0xef0
+ ? _raw_spin_unlock_irq+0x22/0x40
+ ? finish_task_switch+0x75/0x250
+ process_one_work+0x1fd/0x3e0
+ worker_thread+0x2d/0x3d0
+ ? rescuer_thread+0x340/0x340
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x40/0x40
+ ret_from_fork+0x3a/0x50
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Initially I did not spot it because the kernel was booted with 'quiet'.
+
+Olaf
+
+--Sig_/LzNz=jnL/Kgv5MAft0yD6Bu
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCW4/seAAKCRBdQqD6ppg2
+firCAKCurqB2wJM0WzkYjLbfuoLzrMzuCwCgxQbHlvePNXf47mnN3+/vAXBwqwc=
+=cZSD
+-----END PGP SIGNATURE-----
+
+--Sig_/LzNz=jnL/Kgv5MAft0yD6Bu--
