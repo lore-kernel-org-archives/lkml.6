@@ -2,91 +2,109 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972D7C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C03C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 464412075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464412075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A1C502075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C502075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeIELaL (ORCPT
+        id S1727763AbeIELaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:30:11 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:41836 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbeIELaL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:30:11 -0400
-Received: by mail-qt0-f194.google.com with SMTP id t39-v6so6917382qtc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 00:01:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1NEovcPTWttorgGlT8gLCpICBwUsroL+wL0GnDFE9eU=;
-        b=tFogPCntOFYJlKX35vM+UgeL1wSGtv3mZWYLrSc0z9+VzUPrEHBt29q9Fd1cJsoPgZ
-         xHaJegfL4g5bfta8qM0e7sstgKy0+hW5BuFAu2WI608GMWFtUYtBxIbgLh+i6KvSevpo
-         5C8WmFPSgTAf75zuDPvO3LQ9bhumZihD/6HtPTcX8HUTatW1gV/+jIzF6hf2p5Rf4WZs
-         /7qU3jiPtVlZ7snhQJEOZARxngJTgd6EKKZaFQzBu333xcKvK3YKkgovQpk5n43El2dt
-         fBh5pZHqy11GpGmh4ocx/E1btqpIO01fFPJwvGsOkM59P+T8apXgQBv2aobija2vrAEl
-         gd/g==
-X-Gm-Message-State: APzg51BdnQ1NnRkZ89AcePjok4RDDEDna4pSYcaE15mu7jPHBc0ZuZl4
-        +VmVXi8H21zbcHd+Ppoi3HGcQUkXEu3i3HBVI4S+bg==
-X-Google-Smtp-Source: ANB0VdYKkLBEQ6fhf97Q/YCn6dtPk/tRLgPFf91YZ0z5EqAntksYR7FwQwPu0Fvu5pHQ9OWlv6H8qd/g1ZUIg521xbE=
-X-Received: by 2002:ac8:3423:: with SMTP id u32-v6mr33170656qtb.237.1536130886670;
- Wed, 05 Sep 2018 00:01:26 -0700 (PDT)
+        Wed, 5 Sep 2018 07:30:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33506 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbeIELaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:30:39 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 76AE920756; Wed,  5 Sep 2018 09:01:54 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4A179203DC;
+        Wed,  5 Sep 2018 09:01:54 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 09:01:53 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to
+ MMC module clocks
+Message-ID: <20180905070153.a5ba6razlhdwdjde@flea>
+References: <20180820134013.16527-1-icenowy@aosc.io>
+ <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20180904133115.5111-1-benjamin.tissoires@redhat.com>
- <20180904133115.5111-2-benjamin.tissoires@redhat.com> <nycvar.YFH.7.76.1809042130260.15880@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1809042130260.15880@cbobk.fhfr.pm>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Wed, 5 Sep 2018 09:01:15 +0200
-Message-ID: <CAO-hwJ+MN=BR_ZS4_GpZitqu2WR+kYSJ3MikQrt8qHFheAbqrQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] HID: multitouch: fix Elan panels with 2 input modes declaration
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "3.8+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="64gjh43w4wb2y7ri"
+Content-Disposition: inline
+In-Reply-To: <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
+11;rgb: 00000/2b2b/3636
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 9:31 PM Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Tue, 4 Sep 2018, Benjamin Tissoires wrote:
->
-> > When implementing commit 7f81c8db5489 ("HID: multitouch: simplify
-> > the settings of the various features"), I wrongly removed a test
-> > that made sure we never try to set the second InputMode feature
-> > to something else than 0.
-> >
-> > This broke badly some recent Elan panels that now forget to send the
-> > click button in some area of the touchpad.
-> >
-> > Fixes 7f81c8db5489
->
-> Please make sure that the 'Fixes:' tag is always in proper format. There
-> are tools depending on that :)
 
-Oops, thanks for fixing it. Lazy me :)
+--64gjh43w4wb2y7ri
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
-Benjamin
+On Mon, Aug 27, 2018 at 01:23:54PM -0700, Stephen Boyd wrote:
+> Quoting Icenowy Zheng (2018-08-20 06:40:13)
+> > On the H6, the MMC module clocks are fixed in the new timing mode,
+> > i.e. they do not have a bit to select the mode. These clocks have
+> > a 2x divider somewhere between the clock and the MMC module.
+> >=20
+> > To be consistent with other SoCs supporting the new timing mode,
+> > we model the 2x divider as a fixed post-divider on the MMC module
+> > clocks.
+> >=20
+> > This patch adds the post-dividers to the MMC clocks, following the
+> > approach on A64.
+> >=20
+> > Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+>=20
+> This commit doesn't exist. Did you mean:
+>=20
+> 524353ea48
+>=20
+> instead?
 
->
-> I'll fix that up manually.
->
-> Thanks!
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
+I changed it. Please also use 12-characters commit IDs, as recommended
+in the kernel documentation.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--64gjh43w4wb2y7ri
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPf2AACgkQ0rTAlCFN
+r3SZCQ//U7fTlRzK3nbV79CQPigCtjxAfJk46/xpkxQ36wz9RcAKfOkxvqJ8u22V
+tAsQQoaLgkdSpwyIaLyaVX7Z9r0fiNOX7e8hJGZC+UqwZ3I/Tllk2l16p0AmRySM
+sUeM7z6e84gETwv3YcZyVUFQXSd/gsXDhZ6jO2tP8OmprFvxciIJjRuN7Paqct0F
+GQcBzgRt7Xle5eSkFqxV8WAbaETaUETtMOENzNskhE+pTD1slPHrim+bhSFYza6P
+58OoFztk4s/XCqd78kzW7y7j8/IleWH5CSu4LAnWC6Oo19t0Dxn1agYzHTEa20dj
+qA7l0bSmrRbnY/1hqQLbYToBvNavQqmcFZbk0Ge5wSRYhIqo8T9S3Bs8UM043u9/
+y5o6YODtIeNvk+/X3uh2bhi5DXbKF+1FzAaKPHHAgsR7an7LJpfSP0wnWkew/moz
+EGwJJ6wiEWUM7AcO92XoLgaMl6WjaKV90uDqHxGfKjcDPpvw/P8vTny8iNMUPoCV
+Bcj0hsT7gS4Me+zCFUbcJ1Hc762lZz1zM6Iq6Vu3h1YYW9SlDaBJcIG178/fO501
+HXV8JCu/eF0kCit11x/V4g6Ys1nAnlfH6WsRGoUWxJi0sTjEm1BF82kjQ5T2YBik
++GAUwMzXwSsU5kEhVeuS6qyE9HfB6EjQ/Evy3Xe7upmaLZ+3t7Q=
+=ZDFf
+-----END PGP SIGNATURE-----
+
+--64gjh43w4wb2y7ri--
