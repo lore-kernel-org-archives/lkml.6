@@ -6,112 +6,116 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1045C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4057C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4F0206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71197206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AOuonb5G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4F0206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bWkRpIye"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71197206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbeIEEoF (ORCPT
+        id S1726088AbeIEEr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 00:44:05 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:34279 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbeIEEoF (ORCPT
+        Wed, 5 Sep 2018 00:47:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40844 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbeIEEr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 00:44:05 -0400
-Received: by mail-yb1-f193.google.com with SMTP id t10-v6so2026440ybb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 17:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HNQ+hFa1cZOB534eJi2M+lqLNmiq2pfJR2e3g/EqOuE=;
-        b=AOuonb5GQtHmK5uE1QQNuKe9WwM9b0O6H6pQ4g6H0YZjHNWeCzUCw9j5BBG4kPClzU
-         DJO3TohSgbYP8dIS+IbnmtmufEE8wRTS3fkwtB/hh3si7oGgG595OLu3MQvbIM36OEka
-         K6f4EhPyeucBzZyGJJ0XDK8zxZEgcmAxiCbuM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HNQ+hFa1cZOB534eJi2M+lqLNmiq2pfJR2e3g/EqOuE=;
-        b=tQb91XoOWv3nZDTqRI9KYb3t0wpyM3RI+e89GRxe0j5/rnHEcEF/9/t4zeTuuXMPth
-         cNXPZk8WRTtEvBtBesQ6pBK83V4UDNolQllSh6oXJa1GiJNFFkr6sGz6VTLJhp9/Se2Q
-         UMaO5j9+Kxl3hTv3lMQBzr6WTYShTdwrnPxSMuvoW2TaRrr6CJUkwhZslh1lRvOdk6GB
-         HbBuyL4RHwT2dUu2Jg2eFB9up2OE8FkOOKHDtMnoJs5lJbxZWYn+qPnHUJmeAcueJE+u
-         LTDAZd6Ipx+MpFTRGRT8zK21NuzgS5v/FCuEhQbnkOKl44R5TVetbExx8xOreiV5AVCu
-         a6Tg==
-X-Gm-Message-State: APzg51AQgwbFEv5chBe5K7v1jTGPxzGsgCgcMtl0llDgIrENiYFKnEdP
-        PTFRF6EbPXTGa4H0Qa9QyiWauZQiLm0=
-X-Google-Smtp-Source: ANB0VdaI5egDQ/p6MzyFbG9FnmvpqmoWLMgPvNUztqGehJmDs5ynBvilLGdDfV12cz8IKhMuWhidDA==
-X-Received: by 2002:a5b:652:: with SMTP id o18-v6mr19669482ybq.441.1536106595009;
-        Tue, 04 Sep 2018 17:16:35 -0700 (PDT)
-Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
-        by smtp.gmail.com with ESMTPSA id t2-v6sm232790ywd.99.2018.09.04.17.16.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 17:16:33 -0700 (PDT)
-Received: by mail-yw1-f53.google.com with SMTP id x83-v6so1980369ywd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 17:16:32 -0700 (PDT)
-X-Received: by 2002:a81:6cd2:: with SMTP id h201-v6mr19312680ywc.397.1536106592457;
- Tue, 04 Sep 2018 17:16:32 -0700 (PDT)
+        Wed, 5 Sep 2018 00:47:57 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w850IhRW142516;
+        Wed, 5 Sep 2018 00:19:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=zETsxMgmNx/pNcrNmXJfFYb5H053QfEH1iv5O+mkN1c=;
+ b=bWkRpIyeVgFrwmVSK/mCsq1kl2LklnnrA5ibHZIPf79ObDHWL+fVIUxPovR1+OnNO4Yv
+ zhwaMQJzuVba/upB7v17py7ICbzhmpEKq9TLaMUkTatdf0ofWJ7U9mGw80GdHsAN48HC
+ Dge0veVBFDnoD+s/wA9hB/01ZidnDQ8rTmc48+GlquXou4KdUAXx8eIfy/40NewxRP7i
+ NgJuSBfhGnL3M9LYlLmjkpa1wGEGlmZI1sZqhZ7nT5lJFgAqYi9L7gQQdnvh/GI7Zh32
+ kaizlWdnw6MiJ5BYOcuE8QKBg7PVR6qdoCG66a4aa6zkEmoEcR5noiqvf500yTjdskFF MQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2m7kdqg83y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Sep 2018 00:19:59 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w850Jqf8007584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Sep 2018 00:19:52 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w850JpUJ016823;
+        Wed, 5 Sep 2018 00:19:52 GMT
+Received: from [10.132.91.175] (/10.132.91.175)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Sep 2018 17:19:51 -0700
+Subject: Re: [RFC PATCH 2/2] pipe: use pipe busy wait
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        dhaval.giani@oracle.com, steven.sistare@oracle.com
+References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
+ <20180830202458.32579-3-subhra.mazumdar@oracle.com>
+ <alpine.DEB.2.21.1809042351220.1416@nanos.tec.linutronix.de>
+From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <e5f02d36-590d-e15c-01a5-60f1f890fbb2@oracle.com>
+Date:   Tue, 4 Sep 2018 17:20:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 17:16:31 -0700 (PDT)
-In-Reply-To: <20180824094225.68b2adc6@mschwideX1>
-References: <20180824094225.68b2adc6@mschwideX1>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 4 Sep 2018 17:16:31 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJVvWbKnRR_XyBH5yWLzNAEPzuguppBfxXaU4x+tE0M2g@mail.gmail.com>
-Message-ID: <CAGXu5jJVvWbKnRR_XyBH5yWLzNAEPzuguppBfxXaU4x+tE0M2g@mail.gmail.com>
-Subject: Re: [GIT PULL] s390 patches for the 4.19 merge window #2
-To:     Harald Freudenberger <freude@linux.ibm.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <alpine.DEB.2.21.1809042351220.1416@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=994
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809050002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 12:42 AM, Martin Schwidefsky
-<schwidefsky@de.ibm.com> wrote:
-> Harald Freudenberger (5):
->       s390/zcrypt: hex string mask improvements for apmask and aqmask.
 
-This (and an earlier 2017 commit) adds VLAs, which are being
-removed[1] from the kernel:
 
-drivers/s390/crypto/ap_bus.c:980:3: warning: ISO C90 forbids variable
-length array =E2=80=98clrm=E2=80=99 [-Wvla]
-drivers/s390/crypto/ap_bus.c:981:3: warning: ISO C90 forbids variable
-length array =E2=80=98setm=E2=80=99 [-Wvla]
-drivers/s390/crypto/ap_bus.c:995:3: warning: ISO C90 forbids variable
-length array =E2=80=98setm=E2=80=99 [-Wvla]
+On 09/04/2018 02:54 PM, Thomas Gleixner wrote:
+> On Thu, 30 Aug 2018, subhra mazumdar wrote:
+>>   
+>> +void pipe_busy_wait(struct pipe_inode_info *pipe)
+>> +{
+>> +	unsigned long wait_flag = pipe->pipe_wait_flag;
+>> +	unsigned long start_time = pipe_busy_loop_current_time();
+>> +
+>> +	pipe_unlock(pipe);
+>> +	preempt_disable();
+>> +	for (;;) {
+>> +		if (pipe->pipe_wait_flag > wait_flag) {
+>> +			preempt_enable();
+>> +			pipe_lock(pipe);
+>> +			return;
+>> +		}
+>> +		if (pipe_busy_loop_timeout(pipe, start_time))
+>> +			break;
+>> +		cpu_relax();
+>> +	}
+>> +	preempt_enable();
+> You are not really serious about busy looping with preemption disabled?
+>
+> That's just wrong. Why do you want to block others from getting on the CPU
+> if there is nothing in the pipe?
+>
+> There is no point in doing so, really. If the wait loop is preempted
+> because there is more important work to do, then it will come back and
+> either see new data, or leave due to wait time reached.
+Makes sense. I will remove it.
 
-static int process_mask_arg(const char *str,
-                            unsigned long *bitmap, int bits,
-                            struct mutex *lock)
-...
-                DECLARE_BITMAP(clrm, bits);
-                DECLARE_BITMAP(setm, bits);
+Thanks,
+Subhra
+>
+> Thanks,
+>
+> 	tglx
+>
 
-Can someone please adjust this to make these fixed size again?
-
-Thanks!
-
--Kees
-
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=3DqPXydAa=
-cU1RqZWA@mail.gmail.com
-
---=20
-Kees Cook
-Pixel Security
