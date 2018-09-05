@@ -2,187 +2,207 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A87C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F712075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:44:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t/Gu8jjN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F712075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id D14162075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:45:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14162075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbeIEMNq (ORCPT
+        id S1727755AbeIEMN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:13:46 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52882 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeIEMNp (ORCPT
+        Wed, 5 Sep 2018 08:13:57 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:60260 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeIEMN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:13:45 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 41E8C994;
-        Wed,  5 Sep 2018 09:44:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536133487;
-        bh=6212t6QYD5SdOwQEG/oMgUDisjxFgUOFgMeFh1Tam6U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t/Gu8jjNJsWD11ab121+iteMuNh+L2blN8umXDnKHKkkJ8FZ1u1X9xBzV1QQ/vE6d
-         zGq4tpGR6Bpqs/NTCC6k8xjYTGA3JPDtCH6onaR9FFiMdgDTMGako/y0myfwsGz2Hf
-         2EZPpcB5REhbwxY8hyQtODhVhhNWUbqrN1Dd8ldc=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     linus.walleij@linaro.org, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        p.zabel@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, architt@codeaurora.org,
-        a.hajda@samsung.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, sean@poorly.run,
-        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
-Date:   Wed, 05 Sep 2018 10:44:53 +0300
-Message-ID: <1569297.pdEFdpi3HS@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <4035252.QuWadVx7pr@avalon>
-References: <20180905052113.21262-1-stefan@agner.ch> <4035252.QuWadVx7pr@avalon>
+        Wed, 5 Sep 2018 08:13:56 -0400
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.51 with ESMTP; 5 Sep 2018 16:44:58 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Received: from unknown (HELO ?10.159.80.93?) (10.159.80.93)
+        by 156.147.1.125 with ESMTP; 5 Sep 2018 16:44:56 +0900
+X-Original-SENDERIP: 10.159.80.93
+X-Original-MAILFROM: kyeongdon.kim@lge.com
+Subject: Re: Re: [PATCH v2] arm64: kasan: add interceptors for strcmp/strncmp
+ functions
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, glider@google.com,
+        dvyukov@google.com, Jason@zx2c4.com, robh@kernel.org,
+        ard.biesheuvel@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org
+References: <1535014606-176525-1-git-send-email-kyeongdon.kim@lge.com>
+ <12d4e435-e229-b4af-4286-a53fa77cb09d@virtuozzo.com>
+From:   Kyeongdon Kim <kyeongdon.kim@lge.com>
+Message-ID: <0bde837e-2804-c6d6-4bda-8b166bdcfc6b@lge.com>
+Date:   Wed, 5 Sep 2018 16:44:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <12d4e435-e229-b4af-4286-a53fa77cb09d@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
 
-On Wednesday, 5 September 2018 10:06:28 EEST Laurent Pinchart wrote:
-> On Wednesday, 5 September 2018 08:21:08 EEST Stefan Agner wrote:
-> > The DRM bus flags convey additional information on pixel data on
-> > the bus. All current available bus flags might be of interest for
-> > a bridge. Remove the sampling_edge field and use bus_flags.
-> > 
-> > In the case at hand a dumb VGA bridge needs a specific data enable
-> > polarity (DRM_BUS_FLAG_DE_LOW).
-> > 
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> > 
-> >  drivers/gpu/drm/bridge/dumb-vga-dac.c |  6 +++---
-> >  include/drm/drm_bridge.h              | 11 +++++------
-> >  2 files changed, 8 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> > b/drivers/gpu/drm/bridge/dumb-vga-dac.c index 9b706789a341..7a5c24967115
-> > 100644
-> > --- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> > +++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> > @@ -234,7 +234,7 @@ static int dumb_vga_remove(struct platform_device
-> > *pdev) */
-> > 
-> >  static const struct drm_bridge_timings default_dac_timings = {
-> >  
-> >  	/* Timing specifications, datasheet page 7 */
-> > 
-> > -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> > +	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> > 
-> >  	.setup_time_ps = 500,
-> >  	.hold_time_ps = 1500,
-> >  
-> >  };
-> > 
-> > @@ -245,7 +245,7 @@ static const struct drm_bridge_timings
-> > default_dac_timings = { */
-> > 
-> >  static const struct drm_bridge_timings ti_ths8134_dac_timings = {
-> >  
-> >  	/* From timing diagram, datasheet page 9 */
-> > 
-> > -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> > +	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> > 
-> >  	/* From datasheet, page 12 */
-> >  	.setup_time_ps = 3000,
-> >  	/* I guess this means latched input */
-> > 
-> > @@ -258,7 +258,7 @@ static const struct drm_bridge_timings
-> > ti_ths8134_dac_timings = { */
-> > 
-> >  static const struct drm_bridge_timings ti_ths8135_dac_timings = {
-> >  
-> >  	/* From timing diagram, datasheet page 14 */
-> > 
-> > -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> > +	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> > 
-> >  	/* From datasheet, page 16 */
-> >  	.setup_time_ps = 2000,
-> >  	.hold_time_ps = 500,
-> > 
-> > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> > index bd850747ce54..85d4b51eae19 100644
-> > --- a/include/drm/drm_bridge.h
-> > +++ b/include/drm/drm_bridge.h
-> > @@ -244,14 +244,13 @@ struct drm_bridge_funcs {
-> > 
-> >   */
-> >  
-> >  struct drm_bridge_timings {
-> >  
-> >  	/**
-> > 
-> > -	 * @sampling_edge:
-> > 
-> > +	 * @bus_flags:
-> >  	 *
-> > 
-> > -	 * Tells whether the bridge samples the digital input signal
-> > -	 * from the display engine on the positive or negative edge of the
-> > -	 * clock, this should reuse the DRM_BUS_FLAG_PIXDATA_[POS|NEG]EDGE
-> > -	 * bitwise flags from the DRM connector (bit 2 and 3 valid).
-> > +	 * Tells what additional settings for the pixel data on the bus
-> > +	 * this bridge requires (like pixel signal polarity). See also
-> > +	 * &drm_display_info->bus_flags.
-> > 
-> >  	 */
-> > 
-> > -	u32 sampling_edge;
-> > +	u32 bus_flags;
-> 
-> While I'm not opposed to extending the bridge structure to allow specifying
-> other flags, I think we're losing information here. The sampling_edge field
-> makes it clear that the DRM_BUS_FLAG_PIXDATA_(NEG|POS)EDGE flags specified
-> on which clock edge signals are sampled. bus_flags could be interpreted
-> differently, for instance as specifying on which clock edge signals are
-> output on the other side of the bridge.
-> 
-> We could easily fix this by specifying that the bus_flags field refers to
-> the input side of the bridge. We could also rename the field to
-> input_bus_flags. The rename could be delayed until needed, but that would
-> result in yet another change to all bridge drivers, so we may want to do it
-> now as your patch touches all the drivers already. Other options might also
-> be possible.
 
-And I should of course make sure to wake up before reviewing patches. 
-Obviously only one driver is currently affected by the rename. More will use 
-the flags later though, so the argument could still hold.
+On 2018-09-05 오전 1:24, Andrey Ryabinin wrote:
+>
+>
+> On 09/04/2018 01:10 PM, Andrey Ryabinin wrote:
+> >
+> >
+> > On 09/04/2018 09:59 AM, Kyeongdon Kim wrote:
+> >
+> >>>> +#undef strncmp
+> >>>> +int strncmp(const char *cs, const char *ct, size_t len)
+> >>>> +{
+> >>>> + check_memory_region((unsigned long)cs, len, false, _RET_IP_);
+> >>>> + check_memory_region((unsigned long)ct, len, false, _RET_IP_);
+> >>>
+> >>> This will cause false positives. Both 'cs', and 'ct' could be less 
+> than len bytes.
+> >>>
+> >>> There is no need in these interceptors, just use the C 
+> implementations from lib/string.c
+> >>> like you did in your first patch.
+> >>> The only thing that was wrong in the first patch is that assembly 
+> implementations
+> >>> were compiled out instead of being declared week.
+> >>>
+> >> Well, at first I thought so..
+> >> I would remove diff code in /mm/kasan/kasan.c then use C 
+> implementations in lib/string.c
+> >> w/ assem implementations as weak :
+> >>
+> >> diff --git a/lib/string.c b/lib/string.c
+> >> index 2c0900a..a18b18f 100644
+> >> --- a/lib/string.c
+> >> +++ b/lib/string.c
+> >> @@ -312,7 +312,7 @@ size_t strlcat(char *dest, const char *src, 
+> size_t count)
+> >>  EXPORT_SYMBOL(strlcat);
+> >>  #endif
+> >>
+> >> -#ifndef __HAVE_ARCH_STRCMP
+> >> +#if (defined(CONFIG_ARM64) && defined(CONFIG_KASAN)) || 
+> !defined(__HAVE_ARCH_STRCMP)
+> >
+> > No. What part of "like you did in your first patch" is unclear to you?
+>
+> Just to be absolutely clear, I meant #ifdef out __HAVE_ARCH_* defines 
+> like it has been done in this patch
+> http://lkml.kernel.org/r/<1534233322-106271-1-git-send-email-kyeongdon.kim@lge.com> 
+>
+I understood what you're saying, but I might think the wrong patch.
 
-> >  	/**
-> >  	
-> >  	 * @setup_time_ps:
-> >  	 *
+So, thinking about the other way as below:
+can pick up assem variant or c one, declare them as weak.
+---
+diff --git a/arch/arm64/include/asm/string.h 
+b/arch/arm64/include/asm/string.h
+index dd95d33..53a2ae0 100644
+--- a/arch/arm64/include/asm/string.h
++++ b/arch/arm64/include/asm/string.h
+@@ -22,11 +22,22 @@ extern char *strrchr(const char *, int c);
+  #define __HAVE_ARCH_STRCHR
+  extern char *strchr(const char *, int c);
 
++#ifdef CONFIG_KASAN
++extern int __strcmp(const char *, const char *);
++extern int __strncmp(const char *, const char *, __kernel_size_t);
++
++#ifndef __SANITIZE_ADDRESS__
++#define strcmp(cs, ct) __strcmp(cs, ct)
++#define strncmp(cs, ct, n) __strncmp(cs, ct, n)
++#endif
++
++#else
+  #define __HAVE_ARCH_STRCMP
+  extern int strcmp(const char *, const char *);
+
+  #define __HAVE_ARCH_STRNCMP
+  extern int strncmp(const char *, const char *, __kernel_size_t);
++#endif
+
+  #define __HAVE_ARCH_STRLEN
+  extern __kernel_size_t strlen(const char *);
+diff --git a/arch/arm64/kernel/arm64ksyms.c b/arch/arm64/kernel/arm64ksyms.c
+index d894a20..9aeffd5 100644
+--- a/arch/arm64/kernel/arm64ksyms.c
++++ b/arch/arm64/kernel/arm64ksyms.c
+@@ -50,6 +50,10 @@ EXPORT_SYMBOL(strcmp);
+  EXPORT_SYMBOL(strncmp);
+  EXPORT_SYMBOL(strlen);
+  EXPORT_SYMBOL(strnlen);
++#ifdef CONFIG_KASAN
++EXPORT_SYMBOL(__strcmp);
++EXPORT_SYMBOL(__strncmp);
++#endif
+  EXPORT_SYMBOL(memset);
+  EXPORT_SYMBOL(memcpy);
+  EXPORT_SYMBOL(memmove);
+diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
+index a820ed0..5ef7a57 100644
+--- a/arch/arm64/kernel/image.h
++++ b/arch/arm64/kernel/image.h
+@@ -110,6 +110,8 @@ __efistub___flush_dcache_area    = 
+KALLSYMS_HIDE(__pi___flush_dcache_area);
+  __efistub___memcpy        = KALLSYMS_HIDE(__pi_memcpy);
+  __efistub___memmove        = KALLSYMS_HIDE(__pi_memmove);
+  __efistub___memset        = KALLSYMS_HIDE(__pi_memset);
++__efistub___strcmp        = KALLSYMS_HIDE(__pi_strcmp);
++__efistub___strncmp        = KALLSYMS_HIDE(__pi_strncmp);
+  #endif
+
+  __efistub__text            = KALLSYMS_HIDE(_text);
+diff --git a/arch/arm64/lib/strcmp.S b/arch/arm64/lib/strcmp.S
+index 471fe61..0dffef7 100644
+--- a/arch/arm64/lib/strcmp.S
++++ b/arch/arm64/lib/strcmp.S
+@@ -60,6 +60,8 @@ tmp3        .req    x9
+  zeroones    .req    x10
+  pos        .req    x11
+
++.weak strcmp
++ENTRY(__strcmp)
+  ENTRY(strcmp)
+      eor    tmp1, src1, src2
+      mov    zeroones, #REP8_01
+@@ -232,3 +234,4 @@ CPU_BE(    orr    syndrome, diff, has_nul )
+      sub    result, data1, data2, lsr #56
+      ret
+  ENDPIPROC(strcmp)
++ENDPROC(__strcmp)
+diff --git a/arch/arm64/lib/strncmp.S b/arch/arm64/lib/strncmp.S
+index e267044..b2648c7 100644
+--- a/arch/arm64/lib/strncmp.S
++++ b/arch/arm64/lib/strncmp.S
+@@ -64,6 +64,8 @@ limit_wd    .req    x13
+  mask        .req    x14
+  endloop        .req    x15
+
++.weak strncmp
++ENTRY(__strncmp)
+  ENTRY(strncmp)
+      cbz    limit, .Lret0
+      eor    tmp1, src1, src2
+@@ -308,3 +310,4 @@ CPU_BE( orr    syndrome, diff, has_nul )
+      mov    result, #0
+      ret
+  ENDPIPROC(strncmp)
++ENDPROC(__strncmp)
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Could you review this diff?
