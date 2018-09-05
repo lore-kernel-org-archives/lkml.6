@@ -2,228 +2,113 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7ADC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0EFC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5188F2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:55:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5188F2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 210222077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:57:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="uaikIQf9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210222077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbeIEU0l (ORCPT
+        id S1727599AbeIEU2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:26:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726189AbeIEU0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:26:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 5 Sep 2018 16:28:41 -0400
+Received: from com-out001.mailprotect.be ([83.217.72.83]:58513 "EHLO
+        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbeIEU2l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 16:28:41 -0400
+X-Greylist: delayed 549 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 16:28:39 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:Mime-Version:
+        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:
+        reply-to:sender:bcc; bh=jKFToSCL5M1121VwnDBozoERzIDamHpeEQpDaQw14pg=; b=uaikI
+        Qf9Ky5AKBvriBlj2cZ2hQXTrKjEEnQeoKe1spWboS1yK/1X6zLAk1OcP0LrQCRzs+1JhIIWuP5UPM
+        4rvoEG6nfULPn5t3c9mau0HQY5ttuoEXmVwI2qakp1x9StK4aQ8XSW8J8bBhso5kXTjn6BFFpU1QT
+        N57HU1SEng22+CtsLZiMpeaiIS5MjMTItNhqwEDJlmpRKqYclhlwKjEAGOqGMSfSzadNWtHrHRUdJ
+        X9eOk5AaY1HgkndVQ39gv5TVr5lptqYhyV2qWZn63yM9UhEe+XXIF27RJEvHHAm/SiY0jAH8vW6Ya
+        Cjn8TOO3fgKCGblar/oK4olLac7qw==;
+Received: from smtp-auth.mailprotect.be ([178.208.39.155])
+        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
+        (envelope-from <bvanassche@acm.org>)
+        id 1fxaBI-000DLL-Hx; Wed, 05 Sep 2018 17:57:30 +0200
+Received: from dhcp-100-99-160-133.mtv.corp.google.com (unknown [104.132.0.69])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2138587927;
-        Wed,  5 Sep 2018 15:55:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 350332166BA1;
-        Wed,  5 Sep 2018 15:55:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 11/11] UAPI: Check headers build for C++
-From:   David Howells <dhowells@redhat.com>
-To:     linux-api@vger.kernel.org, linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com
-Date:   Wed, 05 Sep 2018 16:55:50 +0100
-Message-ID: <153616295066.23468.6133013878008690375.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153616286704.23468.584491117180383924.stgit@warthog.procyon.org.uk>
-References: <153616286704.23468.584491117180383924.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id E1CA5C0D57;
+        Wed,  5 Sep 2018 17:57:17 +0200 (CEST)
+Message-ID: <1536163037.11534.6.camel@acm.org>
+Subject: Re: [PATCH 2/3] blk-core: introduce queue close feature
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@kernel.dk,
+        ming.lei@redhat.com, bart.vanassche@wdc.com, sagi@grimberg.me,
+        keith.busch@intel.com, jthumshirn@suse.de, jsmart2021@gmail.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Date:   Wed, 05 Sep 2018 08:57:17 -0700
+In-Reply-To: <1536120586-3378-3-git-send-email-jianchao.w.wang@oracle.com>
+References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
+         <1536120586-3378-3-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 05 Sep 2018 15:55:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 05 Sep 2018 15:55:52 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Originating-IP: 178.208.39.155
+X-SpamExperts-Domain: mailprotect.be
+X-SpamExperts-Username: 178.208.39.128/27
+Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.22)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5vygouLKtfugZlg16fLS/p9602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO3rSb7sx03Eh5+sJdYLDGmxXlQ039JH/dFhkestwxgf01GiTQa0ZkwdhVkSPmKkWJXwD
+ kmcakyAwJJV/QxOAbOcyHjmhAFHpAd4eKxCrReWqkpwAIYW4d4atrzQ2+eCb1vsxEvoEkX/hKeCE
+ eHWc0mXbUclY7rRmqu8rL/UBdRXmz/exxsBWdqFE3ot3yjyqqDVhwj+gksJdo8D95rzzqXOlDoMI
+ 2nZpXoIN7+GeRys33jD2ThWfrUFXorRlAIeFOIpR6wdS52Y/DOhpm+/vY47CRPlNwQ4dZk+/yIr3
+ L/mvTjAM/dumkra9cpsoz17Hk8ZB14E0iQtvqvjtp9rD8IdsUZvaSTd9AMKJoMQYDtGiCWL3lP/u
+ PURcSS5CHqo0kSEAZTZL7Afi0gAil5AH2DYoUDDC0njhC0d9pLy5bk6KiqxzhHUWe8d1H3CjBok2
+ pTRS6qt3S+WlEa+gYibr4KGwFVccsCAZ2dyI5DARqfkZ7rC6qJUauybo1LLY1kzZaShHbcYINulb
+ DyxluDB0JFsPBuLb2yeNi8Q3eJlwzLMkP3RM8BGHiURyfx72pZ/lQBgMoMLqMwiyXvPmgw+DKHHj
+ BLgSt4z9qWdf+kVLYSLPzYNMG62m0sd6aksh73pyAxgjdBxUXi36UrG0xPHINbsSs+3PzZ8VZfdh
+ 209Pt+N03jkDR0BHY1ODOSRa5bPDq39j7hUMtXU2mVHogEgsZlxwRJ/eXhAiot4MY812nNgigqK/
+ gT7mSN5j+WMj7ZiX1BOaHC5n55mAcO/V9SpUSv/jlorFXW3bhC79ikuI4jpG++DuIQUs/5JJj4C/
+ n4CILj0aCto24hh56c4SeXFrhZPtfiQm+nt+VSQWe8IWQJI3JtFZSvjumd171+CiP47OO6KkhN0R
+ q3pS+QLjNwquHp4bcCTHsCYe2wmYCB7xseRF2+K26wUp40e8qDtSmR6ihfdjzQ6YC7Heg3Xf7O1T
+ Od76fJ/Q31fN4cpMzIIZbTRlHTZz/5Oq0YkxJIMh4O7XvqCO25bqmF8LO6Ui9HwD0svkd1cry9mG
+ eszCMQ2iS6FqPAlbDjazCbhs7qBpykynMhJg3JCqbQadeU7yHdsAag6hDnwpq670aoEqrPmvfiYM
+ DqUACfX7+Vt4ujqmsj/5nFBrMyfpYuyanAZpMXssfrUnTS3hafrKhFJT6Xuzq9nsbqv0F9sDP+Bv
+ kt03KheT4TV39MS5H4HvZszNarbzMxqbxy2yyESWY+VgzKgdDXRZRZtQP+zhQFSjlOSknLlw5L4e
+ Cz/3YG7UsxcuYSVruWE=
+X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that all the headers can be included from one file and built for C++,
-thereby catching the use of C++ reserved words and bits of unimplemented
-C++ in the UAPI headers.
+On Wed, 2018-09-05 at 12:09 +-0800, Jianchao Wang wrote:
++AD4 blk queue freeze is often used to prevent new IO from entering
++AD4 request queue. However, becuase we kill the percpu-ref
++AD4 q+AF8-usage+AF8-counter when freeze queue, we have to drain the request
++AD4 queue when unfreeze. This is unnecessary for just preventing new
++AD4 IO. In addition, If there is IO timeout or other issue when unfreeze
++AD4 the queue, the scenario could be very tricky.
++AD4 
++AD4 So we introduce BLK+AF8-QUEUE+AF8-GATE+AF8-CLOSED to implement a light-weight
++AD4 queue close feature base on the queue+AF8-gate to prevent new IO from
++AD4 comming in queue which will not need to drain the queue any more.
 
-Note that certain headers are excluded from the build, including:
+Does the +ACI-queue gate close+ACI feature cause blk+AF8-get+AF8-request() /
+blk+AF8-mq+AF8-get+AF8-request() to block until blk+AF8-clear+AF8-queue+AF8-closed() is called? If
+so, I think we need a better name for this feature. How about calling these
+two operations suspend and resume?
 
- (1) Any header ending in "_32.h", "_64.h" or "_x32.h" as these are
-     expected to be multiarch variant headers.
+Thanks,
 
- (2) Endianness variant headers.
-
- (3) asm-generic/ headers (they're used conditionally by the asm/ headers
-     and shouldn't be used directly).
-
- (4) netfilter_ipv*/ip*t_LOG.h headers.  They emit a warning indicating
-     they're going to be removed soon.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-cc: Michal Marek <michal.lkml@markovi.net>
-cc: linux-kbuild@vger.kernel.org
----
-
- Makefile               |    1 
- scripts/headers-c++.sh |  124 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 125 insertions(+)
- create mode 100755 scripts/headers-c++.sh
-
-diff --git a/Makefile b/Makefile
-index 2b458801ba74..f3c36c2bb4cf 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1183,6 +1183,7 @@ headers_install: __headers
- 	  $(error Headers not exportable for the $(SRCARCH) architecture))
- 	$(Q)$(MAKE) $(hdr-inst)=include/uapi dst=include
- 	$(Q)$(MAKE) $(hdr-inst)=arch/$(SRCARCH)/include/uapi $(hdr-dst)
-+	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/headers-c++.sh check
- 
- PHONY += headers_check_all
- headers_check_all: headers_install_all
-diff --git a/scripts/headers-c++.sh b/scripts/headers-c++.sh
-new file mode 100755
-index 000000000000..7e56913629f8
---- /dev/null
-+++ b/scripts/headers-c++.sh
-@@ -0,0 +1,124 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Run headers_$1 command for all suitable architectures
-+
-+# Stop on error
-+set -e
-+
-+if ! $CC -x c++ -c - -o /dev/null </dev/null 2>/dev/null
-+then
-+    echo "  CHECK   C++ HEADER COMPILATION [SKIPPED]"
-+    exit 0
-+fi
-+
-+echo "  CHECK   C++ HEADER COMPILATION"
-+
-+mkdir -p hdr-check
-+cd hdr-check
-+
-+mkdir -p include/sys
-+mkdir -p include/arpa
-+mkdir -p include/xen/interface
-+echo >include/endian.h
-+echo >include/limits.h
-+echo >include/stdint.h
-+echo >include/stdlib.h
-+echo >include/stdio.h
-+echo >include/string.h
-+echo >include/time.h
-+echo >include/unistd.h
-+echo >include/arpa/inet.h
-+echo >include/sys/ioctl.h
-+echo >include/sys/types.h
-+echo >include/sys/time.h
-+echo >include/sys/socket.h
-+echo >include/xen/interface/xen.h
-+
-+cat >test.h <<EOF
-+#ifdef __cplusplus
-+#define NULL nullptr
-+#define _Bool bool
-+#else
-+#define NULL ((void *)0)
-+#define bool _Bool
-+#endif
-+#include <linux/types.h>
-+#include <linux/socket.h>
-+#include <linux/time.h>
-+
-+typedef __s8			int8_t;
-+typedef __s16			int16_t;
-+typedef __s32			int32_t;
-+typedef __s64			int64_t;
-+typedef __u8			uint8_t;
-+typedef __u16			uint16_t;
-+typedef __u32			uint32_t;
-+typedef __u64			uint64_t;
-+typedef long int		intptr_t;
-+typedef unsigned long int	uintptr_t;
-+typedef unsigned short		u_short;
-+typedef unsigned int		u_int;
-+typedef unsigned long		u_long;
-+typedef char			*caddr_t;
-+
-+typedef __kernel_clockid_t	clockid_t;
-+typedef __kernel_ino_t		ino_t;
-+typedef __kernel_pid_t		pid_t;
-+typedef __kernel_sa_family_t	sa_family_t;
-+typedef __kernel_size_t		size_t;
-+typedef __kernel_uid_t		uid_t;
-+
-+typedef unsigned long		elf_greg_t;
-+typedef elf_greg_t		elf_gregset_t[1];
-+typedef unsigned long long	elf_fpregset_t[1];
-+typedef unsigned long long	elf_fpxregset_t[1];
-+
-+#define INT_MIN ((int)0x80000000)
-+#define INT_MAX ((int)0x7fffffff)
-+
-+extern size_t strlen(const char *);
-+extern void *memset(void *, int, size_t);
-+extern void *memcpy(void *, const void *, size_t);
-+extern __u16 ntohs(__u16);
-+extern __u16 htons(__u16);
-+extern __u32 ntohl(__u32);
-+extern __u32 htonl(__u32);
-+
-+typedef uint32_t		grant_ref_t;
-+typedef uint16_t		domid_t;
-+typedef unsigned long		xen_pfn_t;
-+
-+#define MSG_FIN         0x200
-+
-+typedef int SVGA3dMSPattern;
-+typedef int SVGA3dMSQualityLevel;
-+
-+struct sockaddr
-+{
-+	sa_family_t	sa_family;
-+	char		sa_data[14];
-+};
-+#define sockaddr_storage __kernel_sockaddr_storage
-+
-+#define _LINUX_PATCHKEY_H_INDIRECT
-+
-+EOF
-+
-+find ../usr/include -name '*.h' |
-+    grep -v 'linux/byteorder/big_endian.h' |
-+    grep -v 'linux/byteorder/little_endian.h' |
-+    grep -v '_\(32\|64\|x32\)[.]h$' |
-+    grep -v '/asm-generic/' |
-+    # ip*t_LOG.h are deprecated
-+    grep -v 'linux/netfilter_ipv4/ipt_LOG[.]h' |
-+    grep -v 'linux/netfilter_ipv6/ip6t_LOG[.]h' |
-+    sed -e 's!../usr/include/!#include <!' -e 's!$!>!' >>test.h
-+
-+echo '#include "test.h"' >test.cpp
-+
-+$CC -x c++ -o /dev/null -c test.cpp \
-+    -nostdinc \
-+    -isystem ./include \
-+    -isystem ../usr/include \
-+    -fpermissive \
-+    -D PAGE_SIZE='#PAGE_SIZE_IS_NOT_VALID_OUTSIDE_OF_KERNEL'
-
+Bart.
