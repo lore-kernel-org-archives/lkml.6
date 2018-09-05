@@ -2,208 +2,133 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A65C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A24C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7432077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:50:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB5862077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:51:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4kSnlCD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7432077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="ufgTiH8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5862077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeIEXVp (ORCPT
+        id S1727694AbeIEXWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 19:21:45 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37529 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeIEXVo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 19:21:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so8732742wrr.4;
-        Wed, 05 Sep 2018 11:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KBCNhzZ/1y0IZLrCq0CnyykiG7DxAhHQkX9wokbODak=;
-        b=D4kSnlCDx21MwMNAcDuLvmECDjyGGNo7evGPnx/TRlbhRO2J4MFYGH5XZOBzF1Qq/v
-         Im9Drail4gnjzp/G68NwXc2LjaiOPlqxx6jyWOeKeL9bY7MZ5cmyLn6wAFaDw/SJ+rQf
-         4XYlBR+OlMu2MzfaO/2L0qqhl3pDYMULrwAYS/TAJyejj45z1RDYtJBXhLMxDwJLAXmu
-         a4433BN2vs3cTtFnOvWrizvIrJCSBRUFXIsCwfki71ikFn7HcuN55piK/0PQF3+1/zjV
-         HELLvXz3PFYDxiuGr/j4+n//XpDbkhHIbPTmJ0GuRuqFtT3FseKwDHUZO9CrmECsCp5J
-         HwcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=KBCNhzZ/1y0IZLrCq0CnyykiG7DxAhHQkX9wokbODak=;
-        b=CULp9VYs7vN3JDUe8pfuDANtCpZ4cN1tdLu79nyAkTtrF7EbJ5XIe9pDnOpRErg2xv
-         3rFuvcxtkjjIVzfeLJ869nL7lSmIrGS/VTZ7vG3jZs+UnDDtyQAl9HSJ+T7cg8C1YqpR
-         5rSJEl+lqmXBtss0pGAJOae1cJ52XezSfshgv0Zjll+FJH0XVnB2Bo/zSO+gMjn5Hu6f
-         idjALQg0Ml+j7aTH+QlM5AxTwE0v3mwkvwPZPbLgbgGd80/Lo8NHHCIKbTiHkBdKPj1L
-         AYSnLJ25Lez+XJbPPOyFBbENwkGvxgo7vnhcvlYr5t7lJnta1cNg3hFWyWSOOtc/AEzZ
-         HXLg==
-X-Gm-Message-State: APzg51CpSclKAFf2xWILiC3nHfB9Smhot7kANtILRfE3IxWBgYiLSjf2
-        62YnrsYccMNRdTLXYYx0bcI=
-X-Google-Smtp-Source: ANB0VdbUBgGbYVy8fHq6POCH5mAEnJrUb+trxfS1qH0W7IrraPbDI/cECQfkngA1eABY2UlRu+zP6Q==
-X-Received: by 2002:adf:a4d1:: with SMTP id h17-v6mr26380121wrb.167.1536173416372;
-        Wed, 05 Sep 2018 11:50:16 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id m68-v6sm5140706wmb.10.2018.09.05.11.50.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 11:50:15 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-X-Google-Original-From: Florian Fainelli <fainelli@broadcom.com>
-Subject: Re: [PATCH 4.9 52/66] Revert "perf tests: Decompress kernel module
- before objdump"
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>
-Cc:     stable@vger.kernel.org,
-        Pavlos Parissis <pavlos.parissis@gmail.com>,
-        Lei Chen <chenl.lei@gmail.com>,
-        Maxime Hadjinlian <maxime.hadjinlian@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20180417155648.152933169@linuxfoundation.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=fainelli@broadcom.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <eff5b3dd-5a43-a424-d32d-b9065fd6424c@broadcom.com>
-Date:   Wed, 5 Sep 2018 11:50:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 19:22:41 -0400
+Received: from mail-eopbgr30049.outbound.protection.outlook.com ([40.107.3.49]:10563
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726487AbeIEXWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 19:22:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dVzJDIrwxiVg4BdKeNsDLlm+LWE5porY9ztnA7UF76o=;
+ b=ufgTiH8ce3BaAnbAABvESPZ21Ke0hMY1wSvA7hHXi75E6DY48euCehxq/WxmqHM4QmLO/kmyVv2DoVNkxl7AyDPQrP+e1lCfHbDfjQa0Q0w9mIzNVyF5G6Z1DsprqH3NFa6w5OyUs6tkBmseSdqJLtqQ1tl3t2jyadf2FM/9WEg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+Received: from mlx.ziepe.ca (174.3.196.123) by
+ AM6PR05MB4454.eurprd05.prod.outlook.com (2603:10a6:209:43::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.15; Wed, 5 Sep 2018 18:51:10 +0000
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@mellanox.com>)
+        id 1fxctE-00021k-Sn; Wed, 05 Sep 2018 12:50:56 -0600
+Date:   Wed, 5 Sep 2018 12:50:56 -0600
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Matteo Croce <mcroce@redhat.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        linuxppc-dev@lists.ozlabs.org, op <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] tty: hvc: latency break regression fixes
+Message-ID: <20180905185056.GF421@mellanox.com>
+References: <20180905121439.23809-1-npiggin@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180417155648.152933169@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905121439.23809-1-npiggin@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [174.3.196.123]
+X-ClientProxiedBy: MWHPR12CA0072.namprd12.prod.outlook.com
+ (2603:10b6:300:103::34) To AM6PR05MB4454.eurprd05.prod.outlook.com
+ (2603:10a6:209:43::23)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7f560962-9c26-4348-555d-08d613608c18
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB4454;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR05MB4454;3:vBr+bJLTzLAds0TOhZo7RvuOI8K8JIiux4Fv6pBUjdtwVRWlw2Ejhtjr45QNd6jyR2xmVjqkhSqAn2Bb753Clr2TzDbmMmIahbAuPDhpLjKndYAn5PQynUeQm2AIriHVv9seJ5a/QBn6UZqb6j8ZASVAI5H3q8m9zzociFnzrvhdfkwzX2Gzw2+albn5e0BAgYijtavBNz62FX9ZUV+1Q5WDHoHp5XBR4K8Ye6vBlXP1n6TjnpubXZ2uC48E3NZt;25:LZNPGklCsXTaf0mSJKz5n1cL98DXdajDlvJ9tXdWOoq+UBfUHDhMWaQ7ssaeZiu3ggOJ6yzPO5slLozCf6vIlzaPopBb498gKKc1eLsd+c3TQ02aP4KgtIJmH/+LP5dd0HFBOVizHdoM+4nwVQmkkVCUZgDU03aBmrLg0WV1jpW2bo5G1K18BCaws/sTpbH/H1l58ZIEjDAD3dgef5yh22hQk45YJCWupdmBWJpt60hDJNbJ2cYZxh2Ymzo5ZtgS9HZpJk9Ppei/jE8+/BiBjfHvBu3CfcjAwUAQ4Zt+4TTlK8T0MfnXfjfXUEQo03uhmezLaTV2h3Y2lMRXerGjkQ==;31:nD29BcK9yX5wDfIZ+H8I59JvgyeLfP+27PpE/mTjcXxOV12CF4M0GB/1obXjIvVcKsH7/nHiddTNHKq0lKOvykrSLTYuaimuxk3+2D2aJhiw1CZpqAjZpIKg+r8Xu1hj57seErXHI4Z+ahezY7yqhTG5fGL33iLYFv/Y9FGNDqS4DPYcZ0nlsr+bexrZaByWKrf3Dj2NtZ8Hzj5hZajCc+oX4xLgB1xPmx80uYTC1m8=
+X-MS-TrafficTypeDiagnostic: AM6PR05MB4454:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR05MB4454;20:X62nvMyRxgo3wUtIgWO7auDMnLE5vtHfNB02JWthV5rTnS6oZ1Gp0K8TmsHODqKVeYF5WFkQGI4xd9iHVkbKbPha6k2Co/zB91PpioW8xbBR+Fr8M4dyfkQw6PPfke0tBXXiVEz3ICRL5sclnlpPUC11sD8y84+fn7/JXnuMcpI9QRN+JNWlo3ObeJmyqC2mbZit/PR48D+F/ho+6jIHo0p2PM/GHjiWsWHRyfFuokXuDuLL1rURx+7u96isU0pPKbO0p9gfTdT4xeaL4nQX7BuQichETESVDBwoifY/l4uI3xyCi+GDm1Snh5awz+i90gdxxEwmCIU8Y1P8uuDnsO6McxBQjnWk0Jb4XSmkvJpQWXt/AI2vppdZ+1QTOjE0M46N/j1F3pk0gMxtd3vvUNO89MByNRkKd0MzXkgImRaG51OYQul4NuysE71SnWvCMvomqjU35bfQeZgoGJD9lpg5Dpz6cmOwGfy72ugkpkVc3KB2GMMNOYgQRUtlqfjQ;4:Ro9HKWcdApboD829PeVxK+jXlxohg83vD+9UBjGsMrarxOZ35aivAZsnRzA8oUXY6QB9c5puJZ5rDTcZqncU2HQujbGD12/t0hmUtE816Wm3YQo6dJHZ4KIIkgWvB7OO+EusqHB4NHmi5xxdMpRU7BQyjSWJggYDWXIbKAvNvSCmFQiHH5OTpyWuGxzWHC9oaq2BaJBZrnI3gq8DfVGGaylI0l9RMAP/vUn1c+N7SSvL5xPtCUlFFi0Kgzsv7EutJR7iBVvj+y6orwm+GmPp3w==
+X-Microsoft-Antispam-PRVS: <AM6PR05MB445400CE9F87B87142601617CF020@AM6PR05MB4454.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:AM6PR05MB4454;BCL:0;PCL:0;RULEID:;SRVR:AM6PR05MB4454;
+X-Forefront-PRVS: 078693968A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(136003)(39860400002)(366004)(199004)(189003)(486006)(105586002)(83796002)(2616005)(476003)(57986006)(11346002)(5660300001)(446003)(7736002)(229853002)(305945005)(1411001)(86362001)(26005)(6116002)(16586007)(186003)(68736007)(46656002)(47776003)(58126008)(3846002)(2906002)(1076002)(66066001)(106356001)(97736004)(54906003)(6916009)(316002)(23726003)(39060400002)(478600001)(81156014)(81166006)(4326008)(53936002)(386003)(8676002)(52116002)(9786002)(36756003)(6246003)(9746002)(8936002)(76176011)(122856001)(50466002)(69596002)(33656002)(18370500001)(24400500001)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4454;H:mlx.ziepe.ca;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR05MB4454;23:zKv9ibw8PEKS3Jo9z9jTnXOePoosEwxheoSL62H4F?=
+ =?us-ascii?Q?v6RTqQOkgn9xl1C+GLQ+YYWFyyCJdWnjdEh11xpOb1rYY7v/bdVDLoFXV7Az?=
+ =?us-ascii?Q?Y+uDcC+Mi5VJsfOC7X1kN+762DeYLdS6n2Td6GzZUNuA6FTRUO7b8ya1nkKK?=
+ =?us-ascii?Q?2M+98MKNDVqkWkSMf39E4hyajhsYIdzbTpKqcvVB97EmyGuy489EDpwk7+BQ?=
+ =?us-ascii?Q?YhdhSlVCU6oq80RC4ZDlKp5ojxK+Y3TUxaairvhGa3l1oOC7aSEVb7IiQ9u0?=
+ =?us-ascii?Q?s8sWAQqcT/TkMzBIUBp8ic4cOf9v2GYSrMVFFclSWTPMtiH1qu9gmZy5dt3H?=
+ =?us-ascii?Q?kJzwHmtvznpyqGaxLoz4Dq3Emhc8/8fWUfS1j1RbUalMgS7+gPuwrXC8ghye?=
+ =?us-ascii?Q?eI3nCEcWJqxo/P0J0uXU2QSp9S3mm5WtZZNjvxZYh/tOqVDnoe/qOXe9qmch?=
+ =?us-ascii?Q?VWMEzGC00CsqrQmIq9zMc7MkltsmrkElU7Rip77U0XItAbzjFvAkdeKF9d/s?=
+ =?us-ascii?Q?npNBZdxgTPIEXL5zKAMYUkcmRZ4Qh4aO5vlsXr46haXmsy1ZsfmQ42gAf6Df?=
+ =?us-ascii?Q?tbEOgDoOJmGWE9WO7O2VJFXQCGyYUAOETuFRKRyMXEAgFydfZIYBXOfF6DBp?=
+ =?us-ascii?Q?Ytm+8QnyXOdmiZvktB3prQoBP7kXbN6/wpccimONzdXyURxFHOqLdgPaTNvB?=
+ =?us-ascii?Q?18IWPzjoC0aHb9UJgVqfAu8Akk88u8VqnaHcqHI4aTmRi3WpDmTcZjQwaE9n?=
+ =?us-ascii?Q?18qcNQxCiGX9zjKwbIaGuYtJt6QrLW2sX5dMwnvg5RhLy4uQWwH9LwnLeT0h?=
+ =?us-ascii?Q?A6jeU4yKBPYCTCN1lniwVCnMHOCYjTTQsg8pWZLDCTAgZoxZNrMmMa63lFxp?=
+ =?us-ascii?Q?DjCtY73zCeBGXIG5kqr0zclsc7BusY1xYciBIRwYRaUc7VI0WF3LlLnUAGNK?=
+ =?us-ascii?Q?h0VVzcK70CmvSjhW6rCzqPdf8/+69S5HYv7Fcwep5u/nQL4UyoubJTCRo8L4?=
+ =?us-ascii?Q?Guoegoi1KmUBOJZtsvSAReiFkWvuzqUUHRyWgRp/54qbsmQaAhPJWglBdhKA?=
+ =?us-ascii?Q?J0Y+zY4xhOF/+Wz1DVaraOVbILTxEOViSm/8zBv38VhBiSB7elKikL6LgsF7?=
+ =?us-ascii?Q?i6fQ580Op31ut1+WZvdrw6ENiErDH8KcTThplTgWaO7lwcp385WGfjW9AYVj?=
+ =?us-ascii?Q?oYRr2uagzjTfypnhGYMI04mYcnD2DuWNEgUAc9s21kC4SMkK0LKQDT/NRpSz?=
+ =?us-ascii?Q?jq5I8Al30StnSOSF7uIt1PeHd4LkwbDmmuGCja/0NW6NK1j4EwBnoB+s7m2K?=
+ =?us-ascii?Q?12xm3eiLNulJ+dxCLEgPWYi7ZsMUHvsayTYeVV+GeCgDUPuAlrXHP2mQqGet?=
+ =?us-ascii?Q?DWMJiePCUD92WKlDhpo8Id5BHk=3D?=
+X-Microsoft-Antispam-Message-Info: mJhFvigawm1PC6zvR1Yg6IdtJ0O3HtzKgRDilPEK+i0WNSDdSm5bn8+ahuZop0QJ3/5PjSmphMHQHYGHQU8mvbEPE2nz4hVHr5qivcNGYVU08tWmdhSr/GUf5VS2kZhzT8K7FYppr6Cm0gKCaUlufkgR205Fd9K6mEn2wnwW5I0HWhxdAzhSUm9yScOGz9C1WrE9jgrTouP7DDVL5A4MfvEhp0C8V7CloF9pDgGDNm/fsJA8JYfcYOf3HpAijzv6VpReALobv59E6Dfl7pykaroqt27hRhmZzU1te3VnEGxpGfIQ3J/WkRm5hFKMC5iFFbEe38EqQMH5hxjyv0SR1fPCKJiLH9vk0Yovh2YEpi4=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR05MB4454;6:Ct58meWGVAaqbSijjTd2G7pYUiyxQ0VJZtCQjeVGBJB+R5qwFJKPw2Xj95DUg8HddayFfW12obwg6xJ+fORFQkCBd1tqkQjwNHuKJfc4NqyfjNFP3zkHJYW/N67+zXoVNtpcc/xoKOku1gWXoPDBkWkq5BN5QR+j37iNMUhfi1UbP9CvOp/Y5A+0LECZbbF2K412TJsTz+8QtgpVu/oGAjz+/8sb36yPguJ5V60O6+Throq51C7twPBPZo2OCEUGbipC5v867GrQRFR0nagPnUbiobnp8cqBzfLdhbs4QOJboA4zYrkSyE5Axrjdgh22rT1mV+7d5LaOjBhpWeJVKM8g9ai53Vu05eCG+GpCN6XdU5eoYxKphx+v7vvZwSetF5fFv09t88bxTi8NE7G8mKD6ViEhFBV8fARy8FgQxxP5/ujBzFaed1Lqt64+/P7HtYrAzib79UUHg//GLpsrQQ==;5:GN22+9QzwW81uWG8nFkMW02rLbRUt8488b7vkLJkvI5DKPWAGwOMEgJrthNIYwLRS5Qb8XVf5IFIU13Onahk3QiBD5ubkEfZ9s2xupho9SrL/7R1yZg9eZlO/HxXD5B5JsjF5+WmaSubzhDS0hni0hXf/F/AkyA6YmQwvrSXHQA=;7:epvniJOgooG9zxgGiHVQhr9LVEY9CerBogL2v/M5RELbK8qB5ZVvoUXNTh6sVmriPzsYJi/YsXpe+GOtae+2quaJpW9vXi+F45zrD5bx3SEF0xDNS8P1KlllitP7yDHchUOfybLtMF8lV2kbMQwjX6Se9Tj5myTO9nPjFFdMGz+7Bmg57CzAWkbr/IB4E8y2fVPEoE9QLxG1X5BseBED7uPu0ZBttv4DO81MOgep9J4MLCvTqWO23E91mjvhHmpr
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 18:51:10.7676
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f560962-9c26-4348-555d-08d613608c18
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4454
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 08:59 AM, Greg Kroah-Hartman wrote:
-> 4.9-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Sep 05, 2018 at 10:14:36PM +1000, Nicholas Piggin wrote:
+> Hi Greg,
 > 
-> ------------------
+> Here are fixes for a few regressions that came in with my
+> carelessness with the irq latency work for the hvc subsystem.
+> These were independently reported in 2 configurations, and I
+> confirmed with another.
 > 
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This reverts commit 7525a238be8f46617cdda29d1be5b85ffe3b042d which is
-> commit 94df1040b1e6aacd8dec0ba3c61d7e77cd695f26 upstream.
-> 
-> It breaks the build of perf on 4.9.y, so I'm dropping it.
+> I think those went upstream via Michael's tree, but he's away
+> at the moment so if you would be able to consider them for
+> the tty tree that would be appreciated.
 
-Sorry to hijack this thread, I was not able to find the original email
-when the offending patch was included in 4.1.52. So kernel 4.1.52 also
-has the same problem, can you push a 4.1.53 tag with that patch reverted
-as well?
+Series works for me too, thanks.
 
-Thank you!
+Tested-by: Jason Gunthorpe <jgg@mellanox.com>
 
-> 
-> Reported-by: Pavlos Parissis <pavlos.parissis@gmail.com>
-> Reported-by: Lei Chen <chenl.lei@gmail.com>
-> Reported-by: Maxime Hadjinlian <maxime.hadjinlian@gmail.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: David Ahern <dsahern@gmail.com>
-> Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-> Cc: Wang Nan <wangnan0@huawei.com>
-> Cc: kernel-team@lge.com
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  tools/perf/tests/code-reading.c |   20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
-> 
-> --- a/tools/perf/tests/code-reading.c
-> +++ b/tools/perf/tests/code-reading.c
-> @@ -224,8 +224,6 @@ static int read_object_code(u64 addr, si
->  	unsigned char buf2[BUFSZ];
->  	size_t ret_len;
->  	u64 objdump_addr;
-> -	const char *objdump_name;
-> -	char decomp_name[KMOD_DECOMP_LEN];
->  	int ret;
->  
->  	pr_debug("Reading object code for memory address: %#"PRIx64"\n", addr);
-> @@ -286,25 +284,9 @@ static int read_object_code(u64 addr, si
->  		state->done[state->done_cnt++] = al.map->start;
->  	}
->  
-> -	objdump_name = al.map->dso->long_name;
-> -	if (dso__needs_decompress(al.map->dso)) {
-> -		if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
-> -						 decomp_name,
-> -						 sizeof(decomp_name)) < 0) {
-> -			pr_debug("decompression failed\n");
-> -			return -1;
-> -		}
-> -
-> -		objdump_name = decomp_name;
-> -	}
-> -
->  	/* Read the object code using objdump */
->  	objdump_addr = map__rip_2objdump(al.map, al.addr);
-> -	ret = read_via_objdump(objdump_name, objdump_addr, buf2, len);
-> -
-> -	if (dso__needs_decompress(al.map->dso))
-> -		unlink(objdump_name);
-> -
-> +	ret = read_via_objdump(al.map->dso->long_name, objdump_addr, buf2, len);
->  	if (ret > 0) {
->  		/*
->  		 * The kernel maps are inaccurate - assume objdump is right in
-> 
-> 
-
-
--- 
-Florian
+Jason
