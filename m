@@ -2,317 +2,147 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D73C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E26C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F582075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:22:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F582075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C719C2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:26:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qFVk4HUM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C719C2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeIEHuI convert rfc822-to-8bit (ORCPT
+        id S1727278AbeIEHyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 03:50:08 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43738 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeIEHuI (ORCPT
+        Wed, 5 Sep 2018 03:54:09 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:35430 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeIEHyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 03:50:08 -0400
-Received: by mail-oi0-f66.google.com with SMTP id b15-v6so10898342oib.10;
-        Tue, 04 Sep 2018 20:22:05 -0700 (PDT)
+        Wed, 5 Sep 2018 03:54:09 -0400
+Received: by mail-vk0-f65.google.com with SMTP id w193-v6so2167852vke.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 20:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=M8nr/uMhop05vUG6pEcpRnXCrDzdaJukWW8V3v94SzA=;
+        b=qFVk4HUMiDJSBd7pzdI7hcFkf/cT7xFcLA2hte65MtmvUoGf0P6XrFrwz/zY5KJA9h
+         oBLJhZZMMgmbot2iyTcCqu+wW697Jzei08KDF4VnSk/LMie+t26i0G/1rYliim2ZrVOM
+         OsIo68kJ7/2+RopCsN5rQW/LYgzCxX9u24thUyTXopQRbL7ZoVkdv7/7cMETULdB+K40
+         F/7QdWkCukjCESHf2NuH5Kjrx9I7Qbx2jCl/hi3fPQrIws1kftmwI9vKdDPw4IeqZtL9
+         HwCYGAcySUJMjlM7Bi0/gk0KkHcTn1blOM4czu4NNTCRUBFiujdXXAQN/SFgpF7G77cS
+         qG7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9fgVoKoxTbTBiACKz0/xMs2QuyKTvwQBMxGnvdzug7U=;
-        b=lSEuxfL0QZlvwcKKmeNJLJdEFNrs4EC1nF4oSWnuOr8pXC08uYJzkWJ6DP33xw5K1A
-         Tk/iaTT2bzFsJtl459cBvDiv4NlzxIVC4qZfwjGSnfm6uREofyRYyx231vJf2ntuvViY
-         vjEFNJ4w5uIr3RNHu74cPVefmQBtvwP58IxONovGuKDMUMYHqsL12cAau3YB9T9YEqWx
-         vLfSMfMyuDk/uengULgGsSoFHHI0siz0CqRYZ24wc//IZyK5S6n7++cfixKD6OrAfDw/
-         i4bVQknqsgfki4VeHD0OLXqwJXJII+/haEnKLgYnXiOdiBQ4wJAsIYAqlD1B+mxYfUCy
-         n9jw==
-X-Gm-Message-State: APzg51CcmPLCwu5HDkEm152RohfukG0FKXxaYRMh7ragohvnh8+X8CsY
-        f3VFQoyVWCW1pRoapRx6JH9GMdi0COM=
-X-Google-Smtp-Source: ANB0VdaDNm+NIo5yB75jl7f1CTkkBCRpCAl+IPzFcEmh69smsG3UUWRNWm8oU3igudeNSZ7cUsvMjg==
-X-Received: by 2002:aca:5e42:: with SMTP id s63-v6mr26011332oib.134.1536117725294;
-        Tue, 04 Sep 2018 20:22:05 -0700 (PDT)
-Received: from mail-oi0-f50.google.com (mail-oi0-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id b125-v6sm1718352oia.38.2018.09.04.20.22.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 20:22:04 -0700 (PDT)
-Received: by mail-oi0-f50.google.com with SMTP id k81-v6so10926416oib.9;
-        Tue, 04 Sep 2018 20:22:04 -0700 (PDT)
-X-Received: by 2002:aca:1119:: with SMTP id 25-v6mr26404716oir.297.1536117724506;
- Tue, 04 Sep 2018 20:22:04 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=M8nr/uMhop05vUG6pEcpRnXCrDzdaJukWW8V3v94SzA=;
+        b=J+yfhcH/sSzAmKhLsJo4t7E3sDs0jrXcLMiMN1aZeY7g9fIx8zE5qcH4IfLS0/ORfr
+         0zGULHJLr35OXCsK+HU9Ripiflc6yPMWcUXSAWzip9hSWFgAlY6a+zoEeFNBZDbojVol
+         U2mGHVZq+J3MKnLvOVDbaDYFvZ4JF/tVn+n1YmCK3tgjRrNpwlflGueXb1kME0oHBiWM
+         mEapM/Ml1R0gYBbUUlSI1opnQXt5IFIALn5a7rR4Wtnqnr3sTagaZolunBYw2eDTLTUZ
+         SJ8KSRAiGpxiJHI8TidYITVv0xBJMJHpjbhx54777pD3/2kLb3+NThGV5GXpALTEZvRX
+         gpvQ==
+X-Gm-Message-State: APzg51Cccwq5ShvfBd535npIyivm6HB1yVeoWaAxVL1PAMhWkQrRKZU/
+        K6lMnLIZtUww8DWIv+25ipNvDtg1eCztLIQdk0krOQvt
+X-Google-Smtp-Source: ANB0VdaH/rq3pFcRAk0xmRfXs4oeJ9/udLdSHw03ASBQla11fADX6bEeB4eybtkXd09otIAKLbVrqP6dBS1KKaCgdsI=
+X-Received: by 2002:a1f:8948:: with SMTP id l69-v6mr17944540vkd.132.1536117964889;
+ Tue, 04 Sep 2018 20:26:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180831035219.31619-1-ran.wang_1@nxp.com> <20180831035219.31619-3-ran.wang_1@nxp.com>
- <be39f5ea8c9046b0bf1f6bbfe935fae4@HXTBJIDCEMVIW02.hxtcorp.net>
-In-Reply-To: <be39f5ea8c9046b0bf1f6bbfe935fae4@HXTBJIDCEMVIW02.hxtcorp.net>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 4 Sep 2018 22:21:53 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQN=27+pOSckxvwSuBJoFaz7pT+Z6h07Wu3Liz5ao5kkA@mail.gmail.com>
-Message-ID: <CADRPPNQN=27+pOSckxvwSuBJoFaz7pT+Z6h07Wu3Liz5ao5kkA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] soc: fsl: add RCPM driver
-To:     dongsheng.wang@hxt-semitech.com
-Cc:     Ran Wang <ran.wang_1@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Wed, 5 Sep 2018 11:25:28 +0800
+Message-ID: <CAEbi=3d0JgsT1CXBAyVKkL08w4ySp0_FxzPb1UbgAbZMHoW-rA@mail.gmail.com>
+Subject: [GIT PULL] nds32 updates for v4.19
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 4, 2018 at 9:58 PM Wang, Dongsheng
-<dongsheng.wang@hxt-semitech.com> wrote:
->
-> Please change your comments style.
+Hi Linus,
 
-Although this doesn't get into the Linux kernel coding style
-documentation yet, Linus seems changed his mind to prefer // than /*
-*/ comment style now.  https://lkml.org/lkml/2017/11/25/133   So the
-// style should be acceptable for now.
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
->
-> On 2018/8/31 11:56, Ran Wang wrote:
-> > The NXP's QorIQ Processors based on ARM Core have RCPM module (Run
-> > Control and Power Management), which performs all device-level
-> > tasks associated with power management such as wakeup source control.
-> >
-> > This driver depends on FSL platform PM driver framework which help to
-> > isolate user and PM service provider (such as RCPM driver).
-> >
-> > Signed-off-by: Chenhui Zhao <chenhui.zhao@nxp.com>
-> > Signed-off-by: Ying Zhang <ying.zhang22455@nxp.com>
-> > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> > ---
-> >  drivers/soc/fsl/Kconfig   |    6 ++
-> >  drivers/soc/fsl/Makefile  |    1 +
-> >  drivers/soc/fsl/ls-rcpm.c |  153 +++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 160 insertions(+), 0 deletions(-)
-> >  create mode 100644 drivers/soc/fsl/ls-rcpm.c
-> >
-> > diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
-> > index 6517412..882330d 100644
-> > --- a/drivers/soc/fsl/Kconfig
-> > +++ b/drivers/soc/fsl/Kconfig
-> > @@ -30,3 +30,9 @@ config FSL_PLAT_PM
-> >         have to know the implement details of wakeup function it require.
-> >         Besides, it is also easy for service side to upgrade its logic when
-> >         design changed and remain user side unchanged.
-> > +
-> > +config LS_RCPM
-> > +     bool "Freescale RCPM support"
-> > +     depends on (FSL_PLAT_PM)
-> > +     help
-> > +       This feature is to enable specified wakeup source for system sleep.
-> > diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
-> > index 8f9db23..43ff71a 100644
-> > --- a/drivers/soc/fsl/Makefile
-> > +++ b/drivers/soc/fsl/Makefile
-> > @@ -7,3 +7,4 @@ obj-$(CONFIG_QUICC_ENGINE)            += qe/
-> >  obj-$(CONFIG_CPM)                    += qe/
-> >  obj-$(CONFIG_FSL_GUTS)                       += guts.o
-> >  obj-$(CONFIG_FSL_PLAT_PM)    += plat_pm.o
-> > +obj-$(CONFIG_LS_RCPM)                += ls-rcpm.o
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
-Probably use "_" instead of "-" for alignment.
+are available in the Git repository at:
 
-> > diff --git a/drivers/soc/fsl/ls-rcpm.c b/drivers/soc/fsl/ls-rcpm.c
-> > new file mode 100644
-> > index 0000000..b0feb88
-> > --- /dev/null
-> > +++ b/drivers/soc/fsl/ls-rcpm.c
-> > @@ -0,0 +1,153 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +//
-> > +// plat_pm.c - Freescale Layerscape RCPM driver
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
+tags/nds32-for-linus-4.19-tag1
 
-The file name here is not the same as the real file name.
+for you to fetch changes up to 3350139c0ff3c95724b784f7109987d533cb3ecd:
 
-> > +//
-> > +// Copyright 2018 NXP
-> > +//
-> > +// Author: Ran Wang <ran.wang_1@nxp.com>,
+  nds32: linker script: GCOV kernel may refers data in __exit
+(2018-09-05 10:16:26 +0800)
 
-Where do you need the comma in the end?
+----------------------------------------------------------------
+nds32 patches for 4.19
 
-> > +
-> > +#include <linux/init.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/slab.h>
-> > +#include <soc/fsl/plat_pm.h>
-> > +
-> > +#define MAX_COMPATIBLE_NUM   10
-> > +
-> > +struct rcpm_t {
-> > +     struct device *dev;
-> > +     void __iomem *ippdexpcr_addr;
-> > +     bool big_endian;        /* Big/Little endian of RCPM module */
-> > +};
-> > +
-> > +// rcpm_handle - Configure RCPM reg according to wake up source request
-> > +// @user_dev: pointer to user's device struct
-> > +// @flag: to enable(true) or disable(false) wakeup source
-> > +// @handle_priv: pointer to struct rcpm_t instance
-> > +//
-> > +// Return 0 on success other negative errno
+Here is the nds32 patch set based on 4.19-rc2.
+Contained in here are the bug fixes, building error fixes and ftrace support
+for nds32.
 
-Although Linus preferred this // comment style.  I'm not sure if this
-will be handled correctly by the kernel-doc compiler.
-https://www.kernel.org/doc/html/v4.18/doc-guide/kernel-doc.html
+These are the LTP20170427 testing results.
 
-> > +static int rcpm_handle(struct device *user_dev, bool flag, void *handle_priv)
-> > +{
-> > +     struct rcpm_t *rcpm;
-> > +     bool big_endian;
-> > +     const char  *dev_compatible_array[MAX_COMPATIBLE_NUM];
-> > +     void __iomem *ippdexpcr_addr;
-> > +     u32 ippdexpcr;
-> > +     u32 set_bit;
-> > +     int ret, num, i;
-> > +
-> > +     rcpm = handle_priv;
-> > +     big_endian = rcpm->big_endian;
-> > +     ippdexpcr_addr = rcpm->ippdexpcr_addr;
-> > +
-> > +     num = device_property_read_string_array(user_dev, "compatible",
-> > +                     dev_compatible_array, MAX_COMPATIBLE_NUM);
-> > +     if (num < 0)
-> > +             return num;
-> > +
-> > +     for (i = 0; i < num; i++) {
-> > +             if (!device_property_present(rcpm->dev,
-> > +                                     dev_compatible_array[i]))
-> > +                     continue;
-> > +             else {
-> Remove this else.
-> > +                     ret = device_property_read_u32(rcpm->dev,
-> > +                                     dev_compatible_array[i], &set_bit);
-> > +                     if (ret)
-> > +                             return ret;
-> > +
-> > +                     if (!device_property_present(rcpm->dev,
-> > +                                             dev_compatible_array[i]))
-> This has been checked. Continue ? or return ENODEV？
-> > +                             return -ENODEV;
-> > +                     else {
-> Remove this else.
-> > +                             ret = device_property_read_u32(rcpm->dev,
-> > +                                             dev_compatible_array[i], &set_bit);
-> > +                             if (ret)
-> > +                                     return ret;
-> > +
-> > +                             if (big_endian)
-> > +                                     ippdexpcr = ioread32be(ippdexpcr_addr);
-> > +                             else
-> > +                                     ippdexpcr = ioread32(ippdexpcr_addr);
-> > +
-> > +                             if (flag)
-> > +                                     ippdexpcr |= set_bit;
-> > +                             else
-> > +                                     ippdexpcr &= ~set_bit;
-> > +
-> > +                             if (big_endian) {
-> > +                                     iowrite32be(ippdexpcr, ippdexpcr_addr);
-> > +                                     ippdexpcr = ioread32be(ippdexpcr_addr);
-> > +                             } else
-> if (x) {
-> ....
-> ....
-> }  else {
->
-> }
-> > +                                     iowrite32(ippdexpcr, ippdexpcr_addr);
-> > +
-> > +                             return 0;
-> > +                     }
-> > +             }
-> > +     }
-> > +
-> > +     return -ENODEV;
-> > +}
-> > +
-> > +static int ls_rcpm_probe(struct platform_device *pdev)
-> > +{
-> > +     struct resource *r;
-> > +     struct rcpm_t *rcpm;
-> > +
-> > +     r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +     if (!r)
-> > +             return -ENODEV;
-> > +
-> > +     rcpm = kmalloc(sizeof(*rcpm), GFP_KERNEL);
-> kzalloc is better.
-> > +     if (!rcpm)
-> > +             return -ENOMEM;
-> > +
-> > +     rcpm->big_endian = device_property_read_bool(&pdev->dev, "big-endian");
-> > +
-> > +     rcpm->ippdexpcr_addr = devm_ioremap_resource(&pdev->dev, r);
-> > +     if (IS_ERR(rcpm->ippdexpcr_addr))
-> > +             return PTR_ERR(rcpm->ippdexpcr_addr);
-> > +
-> > +     rcpm->dev = &pdev->dev;
-> > +     platform_set_drvdata(pdev, rcpm);
-> > +
-> > +     return register_fsl_platform_wakeup_source(rcpm_handle, rcpm);
-> > +}
-> > +
-> > +static int ls_rcpm_remove(struct platform_device *pdev)
-> > +{
-> > +     struct rcpm_t   *rcpm;
-> Not need a table.
->
-> Cheers,
-> -Dongsheng
->
-> > +
-> > +     rcpm = platform_get_drvdata(pdev);
-> > +     deregister_fsl_platform_wakeup_source(rcpm);
-> > +     kfree(rcpm);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct of_device_id ls_rcpm_of_match[] = {
-> > +     { .compatible = "fsl,qoriq-rcpm-2.1", },
-> > +     {}
-> > +};
-> > +MODULE_DEVICE_TABLE(of, ls_rcpm_of_match);
-> > +
-> > +static struct platform_driver ls_rcpm_driver = {
-> > +     .driver = {
-> > +             .name = "ls-rcpm",
-> > +             .of_match_table = ls_rcpm_of_match,
-> > +     },
-> > +     .probe = ls_rcpm_probe,
-> > +     .remove = ls_rcpm_remove,
-> > +};
-> > +
-> > +static int __init ls_rcpm_init(void)
-> > +{
-> > +     return platform_driver_register(&ls_rcpm_driver);
-> > +}
-> > +subsys_initcall(ls_rcpm_init);
-> > +
-> > +static void __exit ls_rcpm_exit(void)
-> > +{
-> > +     platform_driver_unregister(&ls_rcpm_driver);
-> > +}
-> > +module_exit(ls_rcpm_exit);
->
->
+Total Tests: 1902
+Total Skipped Tests: 592
+Total Failures: 420
+Kernel Version: 4.19.0-rc2-00018-g2c9d30cc16f0-dirty
+Machine Architecture: nds32
+
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+
+----------------------------------------------------------------
+Greentime Hu (5):
+      nds32: fix logic for module
+      nds32: Only print one page of stack when die to prevent printing
+too much information.
+      nds32: Fix a kernel panic issue because of wrong frame pointer access.
+      nds32: fix build error because of wrong semicolon
+      nds32: linker script: GCOV kernel may refers data in __exit
+
+YueHaibing (1):
+      nds32: add NULL entry to the end of_device_id array
+
+Zong Li (12):
+      nds32: Fix empty call trace
+      nds32: Fix get_user/put_user macro expand pointer problem
+      nds32: Clean up the coding style
+      nds32: Extract the checking and getting pointer to a macro
+      nds32/ftrace: Support static function tracer
+      nds32/ftrace: Support static function graph tracer
+      nds32/ftrace: Add RECORD_MCOUNT support
+      nds32/ftrace: Support dynamic function tracer
+      nds32/ftrace: Support dynamic function graph tracer
+      nds32/stack: Get real return address by using ftrace_graph_ret_addr
+      nds32: Remove the deprecated ABI implementation
+      nds32: Add macro definition for offset of lp register on stack
+
+ arch/nds32/Kconfig               |   4 ++
+ arch/nds32/Makefile              |   4 ++
+ arch/nds32/include/asm/elf.h     |   4 +-
+ arch/nds32/include/asm/ftrace.h  |  46 ++++++++++++++++++++++
+ arch/nds32/include/asm/nds32.h   |   1 +
+ arch/nds32/include/asm/uaccess.h | 229
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------
+ arch/nds32/kernel/Makefile       |   6 +++
+ arch/nds32/kernel/atl2c.c        |   3 +-
+ arch/nds32/kernel/ex-entry.S     |   2 +-
+ arch/nds32/kernel/ex-exit.S      |   4 +-
+ arch/nds32/kernel/ftrace.c       | 309
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/nds32/kernel/module.c       |   4 +-
+ arch/nds32/kernel/stacktrace.c   |   6 ++-
+ arch/nds32/kernel/traps.c        |  42 +++++---------------
+ arch/nds32/kernel/vmlinux.lds.S  |  12 ++++++
+ scripts/recordmcount.pl          |   3 ++
+ 16 files changed, 527 insertions(+), 152 deletions(-)
+ create mode 100644 arch/nds32/include/asm/ftrace.h
+ create mode 100644 arch/nds32/kernel/ftrace.c
