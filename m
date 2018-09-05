@@ -3,103 +3,151 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 488ABC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C38E0C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E677820861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:35:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E677820861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A42020857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A42020857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeIERFD convert rfc822-to-8bit (ORCPT
+        id S1727608AbeIERG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:05:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50250 "EHLO mail.kernel.org"
+        Wed, 5 Sep 2018 13:06:59 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:60673 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbeIERFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:05:02 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1F6A20857;
-        Wed,  5 Sep 2018 12:34:56 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 08:34:55 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com,
-        Bernhard Landauer <oberon@manjaro.org>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
-Subject: Re: [PATCH RT 21/22] Drivers: hv: vmbus: include header for
- get_irq_regs()
-Message-ID: <20180905083455.78cd72d3@gandalf.local.home>
-In-Reply-To: <20180905122837.830614967@goodmis.org>
-References: <20180905122754.443196118@goodmis.org>
-        <20180905122837.830614967@goodmis.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1725868AbeIERG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:06:58 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42539c31mXz9tvSJ;
+        Wed,  5 Sep 2018 14:36:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 4RqngExfOH5P; Wed,  5 Sep 2018 14:36:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42539c2TWmz9tvSC;
+        Wed,  5 Sep 2018 14:36:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7A61C8B82D;
+        Wed,  5 Sep 2018 14:36:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id iXZcZLg9Mf7e; Wed,  5 Sep 2018 14:36:52 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4B2EA8B762;
+        Wed,  5 Sep 2018 14:36:52 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 0EB487159B; Wed,  5 Sep 2018 12:36:51 +0000 (UTC)
+Message-Id: <cover.1535913369.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v1 00/17] ban the use of _PAGE_XXX flags outside platform specific code
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Wed,  5 Sep 2018 12:36:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Today flags like for instance _PAGE_RW or _PAGE_USER are used through
+common parts of code.
+Using those directly in common parts of code have proven to lead to
+mistakes or misbehaviour, because their use is not always as trivial
+as one could think.
 
-[ It appears that quilt doesn't use the right mime for the strange
-  characters in the change log. I'm replying here as it was bounced
-  by the mailing lists ]
+For instance, (flags & _PAGE_USER) == 0 isn't enough to tell
+that a page is a kernel page, because some targets are using
+_PAGE_PRIVILEDGED and not _PAGE_USER, so the test has to be 
+(flags & (_PAGE_USER | _PAGE_PRIVILEDGED)) == _PAGE_PRIVILEDGED
+This has to (bad) consequences:
 
-On Wed, 05 Sep 2018 08:28:15 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+ - All targets must define every bit, even the unsupported ones,
+   leading to a lot of useless #define _PAGE_XXX 0
+ - If someone forgets to take into account all possible _PAGE_XXX bits
+   for the case, we can get unexpected behaviour on some targets.
 
-> 4.14.63-rt41-rc1 stable review patch.
-> If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> [ Upstream commit b9fcc1867cc7921bb8441be327ed58461ed12255 ]
-> 
-> On !RT the header file get_irq_regs() gets pulled in via other header files. On
-> RT it does not and the build fails:
-> 
->     drivers/hv/vmbus_drv.c:975 implicit declaration of function âget_irq_regsâ [-Werror=implicit-function-declaration]
->     drivers/hv/hv.c:115 implicit declaration of function âget_irq_regsâ [-Werror=implicit-function-declaration]
-> 
-> Add the header file for get_irq_regs() in a common header so it used by
-> vmbus_drv.c by hv.c for their get_irq_regs() usage.
-> 
-> Reported-by: Bernhard Landauer <oberon@manjaro.org>
-> Reported-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  drivers/hv/hyperv_vmbus.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> index 49569f8fe038..a3608cd52805 100644
-> --- a/drivers/hv/hyperv_vmbus.h
-> +++ b/drivers/hv/hyperv_vmbus.h
-> @@ -30,6 +30,7 @@
->  #include <linux/atomic.h>
->  #include <linux/hyperv.h>
->  #include <linux/interrupt.h>
-> +#include <linux/irq.h>
->  
->  /*
->   * Timeout for services such as KVP and fcopy.
+This becomes even more complex when we come to using _PAGE_RW.
+Testing (flags & _PAGE_RW) is not enough to test whether a page
+if writable or not, because:
+
+ - Some targets have _PAGE_RO instead, which has to be unset to tell
+   a page is writable
+ - Some targets have _PAGE_R and _PAGE_W, in which case
+   _PAGE_RW = _PAGE_R | _PAGE_W
+ - Even knowing whether a page is readable is not always trivial because:
+   - Some targets requires to check that _PAGE_R is set to ensure page
+   is readable
+   - Some targets requires to check that _PAGE_NA is not set
+   - Some targets requires to check that _PAGE_RO or _PAGE_RW is set
+
+Etc ....
+
+In order to work around all those issues and minimise the risks of errors,
+this serie aims at removing all use of _PAGE_XXX flags from powerpc code
+and always use pte_xxx() and pte_mkxxx() accessors instead. Those accessors
+are then defined in target specific parts of the kernel code.
+
+Christophe Leroy (17):
+  powerpc/32: Add ioremap_wt()
+  powerpc/mm: remove direct use of flags related to cache
+  powerpc/mm: dont't use _PAGE_EXEC in book3s/32
+  powerpc/mm: move some nohash pte helpers in nohash/[32:64]/pgtable.h
+  powerpc/mm: add pte helpers to query and change pte flags
+  powerpc/mm: use pte helpers in generic code
+  powerpc/mm: Split dump_pagelinuxtables flag_array table
+  powerpc/mm: drop unused page flags
+  powerpc/mm: move __P and __S tables in the common pgtable.h
+  powerpc/book3s/32: do not include pte-common.h
+  powerpc/mm: Move pte_user() into nohash/pgtable.h
+  powerpc/mm: Distribute platform specific PAGE and PMD flags and
+    definitions
+  powerpc/nohash/64: do not include pte-common.h
+  powerpc/mm: Allow platforms to redefine some helpers
+  powerpc/mm: Define platform default caches related flags
+  powerpc/mm: Get rid of pte-common.h
+  powerpc/8xx: change name of a few page flags to avoid confusion
+
+ arch/powerpc/include/asm/book3s/32/pgtable.h       | 141 +++++++++++--
+ arch/powerpc/include/asm/book3s/64/pgtable.h       |  60 +++---
+ arch/powerpc/include/asm/io.h                      |   6 +
+ arch/powerpc/include/asm/nohash/32/pgtable.h       |  65 +++++-
+ arch/powerpc/include/asm/nohash/32/pte-40x.h       |  48 +++++
+ arch/powerpc/include/asm/nohash/32/pte-44x.h       |  35 ++++
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h       |  92 ++++++++-
+ arch/powerpc/include/asm/nohash/32/pte-fsl-booke.h |  38 ++++
+ arch/powerpc/include/asm/nohash/64/pgtable.h       |  37 +++-
+ arch/powerpc/include/asm/nohash/pgtable.h          |  96 ++++++---
+ arch/powerpc/include/asm/nohash/pte-book3e.h       |  30 +++
+ arch/powerpc/include/asm/pgtable.h                 |  19 ++
+ arch/powerpc/include/asm/pte-common.h              | 219 ---------------------
+ arch/powerpc/kernel/head_8xx.S                     |   6 +-
+ arch/powerpc/mm/8xx_mmu.c                          |   2 +-
+ arch/powerpc/mm/Makefile                           |   7 +
+ arch/powerpc/mm/dump_linuxpagetables-8xx.c         |  82 ++++++++
+ arch/powerpc/mm/dump_linuxpagetables-book3s64.c    | 115 +++++++++++
+ arch/powerpc/mm/dump_linuxpagetables-generic.c     |  82 ++++++++
+ arch/powerpc/mm/dump_linuxpagetables.c             | 155 +--------------
+ arch/powerpc/mm/dump_linuxpagetables.h             |  19 ++
+ arch/powerpc/mm/mem.c                              |   2 +-
+ arch/powerpc/mm/pgtable.c                          |  25 +--
+ arch/powerpc/mm/pgtable_32.c                       |  45 +++--
+ arch/powerpc/mm/pgtable_64.c                       |  21 +-
+ arch/powerpc/xmon/xmon.c                           |  12 +-
+ 26 files changed, 960 insertions(+), 499 deletions(-)
+ delete mode 100644 arch/powerpc/include/asm/pte-common.h
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables-8xx.c
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables-book3s64.c
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables-generic.c
+ create mode 100644 arch/powerpc/mm/dump_linuxpagetables.h
+
+-- 
+2.13.3
 
