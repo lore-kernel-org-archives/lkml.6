@@ -2,192 +2,137 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5076EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33ED0C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A9C02077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:48:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ee4Lth/I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A9C02077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id DFE742077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE742077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeIETSa (ORCPT
+        id S1727711AbeIETTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:18:30 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:56066 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbeIETSa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:18:30 -0400
-Received: by mail-it0-f66.google.com with SMTP id d10-v6so10230005itj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 07:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=l9pDxMXzKswdZPFz08WyTfA+3C3O2/jU1c8Et0lpuxo=;
-        b=ee4Lth/IEAm8qgztzBcw32ktio8HF0H9eToPDQDwxv83JmMJ6Od3fjCihTgjKqJAWz
-         lHZq3ssWoJqYPuyvKfhBJrJ00bCrkzQVCKAgOUpyOCcNrMz9kZe/TpQkbDcVkpdIqIAo
-         Hg2oNcZk6gKqhAYTZsK7ctxBOxC153lM1P8Tuq2+wRtev8FcicKPoy2gHFn1zXZFcXjm
-         8LCTMceHQfs8wsaiAsHpabUguh2VieGOFaurDcKi7mqQCk9YQAwYozli7rEjU/iy32he
-         53QoqCy+AMgVDU77XE2T6d4vmAgh640oM9XBL3j822R+4XF8d0NTs35/ChIQBdbxuKl2
-         AFWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=l9pDxMXzKswdZPFz08WyTfA+3C3O2/jU1c8Et0lpuxo=;
-        b=KywBlBq4gzv1hDsk0QhwpLagzpOe+q8adB/TqmxZCHDSlIf7JMrVIpr0OEHAP2OWH2
-         6QeO7z6FU3MhXdm3ASYvBBm8rLfSlD6FodlOudkVawE0UJpqUz+7f4U8jvcdpJbcNk8o
-         c20cRK7VRK4l89FN/FC3qJ+OD+dkrUUFdQiym/iSJody2Tb9kYs+Ty+pR/ARB4djNDpP
-         sgYkxcepiNRLRbi21sfPiX7aCsMVSpp2EWmLyPbAmHwgbO6ZnFjO5aWfvE/tcNIE90kh
-         aA5RhhIYKCfwoZlnjsXO2cSaa2Whevg2VBXdj/oFokGi0nqtfhjBHgRwEnZzITf6qJOI
-         bSkg==
-X-Gm-Message-State: APzg51DIzmMd0AENinAaHuwne4Tal79VObizyjbLj7SvrlceRu71eVcM
-        8ztjEGSjs+3Zeiz6V8ITGRa9qaeDR23fTZEjqZL+yA==
-X-Google-Smtp-Source: ANB0VdYaus4C52A6+sI/e7R4vrZfHXiqYdzM7ob/mWuG0q3aeqRrGXap+eJSMYihTOcpHc2ATEZ65j4UJP6iDpJYVvU=
-X-Received: by 2002:a24:41cd:: with SMTP id b74-v6mr631100itd.85.1536158878403;
- Wed, 05 Sep 2018 07:47:58 -0700 (PDT)
+        Wed, 5 Sep 2018 15:19:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52538 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727364AbeIETTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 15:19:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3BA7820734; Wed,  5 Sep 2018 16:49:13 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 44935208B5;
+        Wed,  5 Sep 2018 16:48:53 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 16:48:52 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v4 3/4] drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+Message-ID: <20180905144852.db2galdquxx22kjh@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+ <20180904163609.10171-3-jagan@amarulasolutions.com>
+ <20180905070748.g43lfdqdhmoci6pk@flea>
+ <CAMty3ZBYjq8VBnwSqKhJgag1ARRvnPTVSpYT7SWu=A6pMwKEiA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:238d:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 07:47:57 -0700 (PDT)
-In-Reply-To: <20180905162135.700d2145@bbrezillon>
-References: <20180905095738.26406-1-brgl@bgdev.pl> <20180905095738.26406-12-brgl@bgdev.pl>
- <20180905155741.22b7d0ef@bbrezillon> <CAMRc=Mco7Tbk5P_mgv49f+3j9DKYk5AL6EjPhwF7M=Hb7o5-Mw@mail.gmail.com>
- <20180905162135.700d2145@bbrezillon>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 5 Sep 2018 16:47:57 +0200
-Message-ID: <CAMRc=MfbiwRPP9=0e4P-8zYOPhXvT7kL8=W8C2E27HXuCE2Aew@mail.gmail.com>
-Subject: Re: [PATCH 11/13] nvmem: add support for cell lookups from machine code
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Joachim Eastwood <manabian@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="en7fpj6tbqjjbcyr"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBYjq8VBnwSqKhJgag1ARRvnPTVSpYT7SWu=A6pMwKEiA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-05 16:21 GMT+02:00 Boris Brezillon <boris.brezillon@bootlin.com>:
-> On Wed, 5 Sep 2018 16:00:36 +0200
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
->> 2018-09-05 15:57 GMT+02:00 Boris Brezillon <boris.brezillon@bootlin.com>:
->> > On Wed,  5 Sep 2018 11:57:36 +0200
->> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> >
->> >>
->> >> +struct nvmem_cell_lookup {
->> >> +     const char              *nvmem_name;
->> >> +     const char              *dev_id;
->> >
->> > Shouldn't we have a con_id here?
->> >
->> >> +     const char              *cell_id;
->> >> +     struct list_head        node;
->> >> +};
->>
->> I wanted to stay in line with the current API - nvmem_cell_get() takes
->> as argument a string called cell_id. I wanted to reflect that here.
->
-> Actually, you need both. con_id is the name you would have in your DT
-> in the nvmem-cell-names property, cell_id is the name of the cell
-> you'd find under the nvmem device node.
->
-> Let's take an example:
->
->         mydev {
->                 #nvmem-cell-names = "mac-address", "revision";
->                 #nvmem-cells = <&cell1>, <&cell2>;
->         };
->
->         mynvmemdev {
->                 #size-cells = <1>;
->                 #address-cells = <1>;
->
->                 cell1: foo@0 {
->                         reg = <0x0 0x6>;
->                 };
->
->                 cell2: bar@6 {
->                         reg = <0x6 0x10>;
->                 };
->         };
->
-> this can be described the same way using a consumer lookup table:
->
-> struct nvmem_cell_lookup_entry {
->         const char *con_id;
->         const char *nvmem_name;
->         const char *cell_name;
-> };
->
-> struct nvmem_cell_lookup_table {
->         struct list_head node;
->         const char *dev_id;
->         unsigned int nentries;
->         const struct nvmem_cell_lookup_entry *entries;
-> }
->
-> static const struct nvmem_cell_lookup_entry mydev_nvmem_cells[] = {
->         {
->                 .con_id = "mac-address",
->                 .nvmem_name = "mynvmemdev",
->                 .cell_name = "foo",
->         },
->         {
->                 .con_id = "revision",
->                 .nvmem_name = "mynvmemdev",
->                 .cell_name = "bar",
->         },
-> }
->
-> static const struct nvmem_cell_lookup_table mydev_nvmem_lookup = {
->         .dev_id = "mydev.0",
->         .nentries = ARRAY_SIZE(mydev_nvmem_cells),
->         .entries = mydev_nvmem_cells,
-> };
->
->
-> ...
->
->         nvmem_add_cell_lookups(&mydev_nvmem_lookup);
 
-Ok I get it. Shouldn't we change the argument name of nvmem_cell_get()
-and friends from 'name' to 'con_id' or simply 'id' similarly to what
-other frameworks do to avoid such confusion?
+--en7fpj6tbqjjbcyr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I also don't see a need for splitting the lookup into two structures
-here. Something like:
+On Wed, Sep 05, 2018 at 01:51:25PM +0530, Jagan Teki wrote:
+> On Wed, Sep 5, 2018 at 12:37 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Tue, Sep 04, 2018 at 10:06:08PM +0530, Jagan Teki wrote:
+> >> Allwinner SoC like SUN8I and SUN50I are now using DE2 Mixer
+> >> so enable them as default.
+> >>
+> >> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >> ---
+> >> Changes for v4, v3:
+> >> - none
+> >> Changes for v2:
+> >> - Enable for SUN8I
+> >>
+> >>  drivers/gpu/drm/sun4i/Kconfig | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kco=
+nfig
+> >> index c2c042287c19..cfa8b96273fb 100644
+> >> --- a/drivers/gpu/drm/sun4i/Kconfig
+> >> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> >> @@ -61,7 +61,7 @@ config DRM_SUN8I_DW_HDMI
+> >>
+> >>  config DRM_SUN8I_MIXER
+> >>       tristate "Support for Allwinner Display Engine 2.0 Mixer"
+> >> -     default MACH_SUN8I
+> >> +     default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+> >
+> > I'm not really sure we should put it as a default. We should just
+> > enable it in the defconfig.
+>=20
+> What would be the difference in both cases it would be build as module
+> since DRM_SUN4I=3Dm for ARM64
 
-struct nvmem_cell_lookup {
-        const char *nvmem_name;
-        const char *cell_name;
-        const char *dev_id;
-        const char *con_id;
-};
+We wouldn't force it down the throat to every user by default, even
+though they have no interest in that driver being compiled into their
+kernel.
 
-Would be perfectly fine and would allow to register all lookups for
-given machine with a single call. How often does it happen that a
-single device needs multiple nvmem cells anyway?
+Maxime
 
-Bart
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--en7fpj6tbqjjbcyr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluP7NMACgkQ0rTAlCFN
+r3SA3w//UvUCidVC1bCGgZ1mFpBQJ6Jyw4gvoHRH/oJzrN/PwzJQlMleDRrlIhc3
+JkWwmGyZKZGLISF3Xa/Z1pgQoFrl2HV9jiTUNVKkQ9kxwIebLAM5th72Ksurl1U/
+Y1HuDO9Qk1RGmFogRiJpdmw99Z3pModUUWOM+OxUADd8JP8bTnA4yrvcebAcXV+p
++/x29nNZUmCjrN1YdZSXLDtg3TdxhIA3QFDBETlJuZioM3HIzZ6p6DeSzzBC91IN
+IBGF3TMXU+cVa3JM2PbGYOO0c/W2P1oB6s+PFTw74crfxSqAI28mc+j/gjGm18OS
+fMmk6ENVSt6SB8mp1quKh+peoVZ0hQ/vBmcIwKaTFUTeVE741wBGzpp2rb/gCThx
+N3aXFLiAVpdCnjZNE+ATWAnTFnmlfl4K4Oo2XYeIdaAcyatxQGSgdOypz72C4A+q
+2Sg7rpYKB7h8IOYlkGkrroU/S4641P8swC3+9yxNxY8KK8G1Zed4X3V/+I+JmCG5
+BHmxSaq74KjzBs9BRrwQsy/GBE3FnhpBF/GeSPQVUnRuf1MJzyvDRgpIrMi0L442
+rI6imPJHKlDHvYE3EInLXIsSmFC82YNj0ULlGQLP8hsdgVNQ/umGs5ZAHhPm8f3A
+ZE5ET7x0rpVJlkzioNl8ZaWmM8EXt38/H/xTTMn20XmLdbpvqAQ=
+=Ma1n
+-----END PGP SIGNATURE-----
+
+--en7fpj6tbqjjbcyr--
