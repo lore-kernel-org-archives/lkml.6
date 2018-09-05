@@ -2,216 +2,249 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835B8C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4AFC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E792075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:59:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lL29RMK0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Io5rBUZa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E792075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 80C612075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:59:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C612075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeIEN2b (ORCPT
+        id S1728022AbeIEN3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:28:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44488 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeIEN2a (ORCPT
+        Wed, 5 Sep 2018 09:29:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60098 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbeIEN3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:28:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7F64A607B5; Wed,  5 Sep 2018 08:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536137956;
-        bh=9xwyrnshkOGixIrtkC0iuHyGTi/oQcfwLpnzFO3v4NU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lL29RMK0NbybkFkE/JeUc6MGyt7MMnzEyQmV647yqr/h+NBz89vtBycV5zZ5/7aPS
-         f45/+/yXtSWyZvIWQ8H+uiHl8XK/0V+4wP+o3bPJkg10X1RWpFn0gPV5+pmP+ATqal
-         TrO3LE0TOyBzYzT7SH1yzXiRhxOel6CuInbKLOv0=
-Received: from [10.79.41.39] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F119660558;
-        Wed,  5 Sep 2018 08:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536137954;
-        bh=9xwyrnshkOGixIrtkC0iuHyGTi/oQcfwLpnzFO3v4NU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Io5rBUZaRDmUGLnHHfqyPDBzFzSESjtRBmjn0xZCGYJrpykDB5mNAih3JKkEQePHG
-         T5ergtW6xSeeIZTXUjGZtzq8qyZnlvKdfPHKZuLryS6Bbpc0JSRwDeGTW44rzwZARO
-         17tftD/qWBSBnk9RmkkVc/QZ9u2Deq1gU0DztIsg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F119660558
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 2/2] phy: zynqmp: Add dt bindings for ZynqMP phy
-To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        kishon@ti.com, michal.simek@xilinx.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     v.anuragkumar@gmail.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <1535976844-12494-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <1535976844-12494-3-git-send-email-anurag.kumar.vulisha@xilinx.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <2831a270-a4d1-ba51-e13f-85c029bbe8c0@codeaurora.org>
-Date:   Wed, 5 Sep 2018 14:29:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 09:29:07 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D83C0CF3;
+        Wed,  5 Sep 2018 08:59:52 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 10:59:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.14 000/165] 4.14.68-stable review
+Message-ID: <20180905085950.GA30538@kroah.com>
+References: <20180903165655.003605184@linuxfoundation.org>
+ <CA+G9fYtAu2Hs5vpT0+P03LRfa_cvwresMT48HgH0HsHQEaEujQ@mail.gmail.com>
+ <20180904193246.GB17846@kroah.com>
+ <0a46f0ae-28b3-3c11-5ec9-c60d4ceddfc6@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1535976844-12494-3-git-send-email-anurag.kumar.vulisha@xilinx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a46f0ae-28b3-3c11-5ec9-c60d4ceddfc6@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 04, 2018 at 04:28:44PM -0600, Shuah Khan wrote:
+> On 09/04/2018 01:32 PM, Greg Kroah-Hartman wrote:
+> > On Tue, Sep 04, 2018 at 09:49:43AM +0530, Naresh Kamboju wrote:
+> >> On 3 September 2018 at 22:24, Greg Kroah-Hartman
+> >> <gregkh@linuxfoundation.org> wrote:
+> >>> This is the start of the stable review cycle for the 4.14.68 release.
+> >>> There are 165 patches in this series, all will be posted as a response
+> >>> to this one.  If anyone has any issues with these being applied, please
+> >>> let me know.
+> >>>
+> >>> Responses should be made by Wed Sep  5 16:56:19 UTC 2018.
+> >>> Anything received after that time might be too late.
+> >>>
+> >>> The whole patch series can be found in one patch at:
+> >>>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.68-rc1.gz
+> >>> or in the git tree and branch at:
+> >>>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> >>> and the diffstat can be found below.
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >>
+> >> Running kselftest
+> >> selftests: bpf: test_tunnel.sh reported kernel crash on i386 device
+> >> running 4.14.68-rc1
+> >> and similar issue reported on 4.18.6-rc1.
+> >>
+> >> [   92.244007] low stack detected by irq handler
+> >> [   92.244145] BUG: unable to handle kernel paging request at c4fb1f64
+> >> [   92.244161] IP: __call_rcu.constprop.76+0x27/0x4b0
+> >> [   92.244164] *pde = 35c05063 *pte = 04fb1161
+> >> [   92.244172] Oops: 0003 [#1] SMP
+> >> [   92.244176] Modules linked in: veth x86_pkg_temp_thermal fuse
+> >> [   92.244187] CPU: 2 PID: 19 Comm: ksoftirqd/2 Not tainted 4.14.68-rc1 #1
+> >> [   92.244190] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> >> 2.0b 07/27/2017
+> >> [   92.244192] task: f5db8000 task.stack: f5db4000
+> >> [   92.244198] EIP: __call_rcu.constprop.76+0x27/0x4b0
+> >> [   92.244201] EFLAGS: 00210246 CPU: 2
+> >> [   92.244204] EAX: 00000000 EBX: c4fb17a0 ECX: c5c2d640 EDX: c4fb17a0
+> >> [   92.244206] ESI: c4fb1f60 EDI: c4fb1f60 EBP: f5db5ee4 ESP: f5db5eb0
+> >> [   92.244209]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> >> [   92.244212] CR0: 80050033 CR2: c4fb1f64 CR3: 05dff000 CR4: 003406d0
+> >> [   92.244215] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> >> [   92.244216] DR6: fffe0ff0 DR7: 00000400
+> >> [   92.244218] Call Trace:
+> >> [   92.244228]  ? rcu_process_callbacks+0x200/0xdd0
+> >> [   92.244234]  ? __lock_is_held+0x48/0x80
+> >> [   92.244242]  ? tlb_table_flush.part.118+0x10/0x30
+> >> [   92.244248]  call_rcu_sched+0x14/0x20
+> >> [   92.244252]  tlb_table_flush.part.118+0x1d/0x30
+> >> [   92.244257]  ? rcu_process_callbacks+0x254/0xdd0
+> >> [   92.244264]  ? finish_task_switch+0x87/0x1d0
+> >> [   92.244276]  __do_softirq+0xac/0x426
+> >> [   92.244288]  run_ksoftirqd+0x1f/0x60
+> >> [   92.244295]  smpboot_thread_fn+0x120/0x1d0
+> >> [   92.244300]  kthread+0xfa/0x110
+> >> [   92.244305]  ? sort_range+0x20/0x20
+> >> [   92.244310]  ? kthread_create_on_node+0x20/0x20
+> >> [   92.244316]  ret_from_fork+0x2e/0x38
+> >> [   92.244325] Code: 00 00 00 00 3e 8d 74 26 00 55 89 e5 57 56 53 89
+> >> c6 89 d3 83 ec 28 8b 45 08 f7 c6 03 00 00 00 89 4d ec 89 45 e4 0f 85
+> >> 39 03 00 00 <89> 5e 04 c7 06 00 00 00 00 9c 8f 45 f0 fa e8 66 69 fd ff
+> >> 8b 55
+> >> [   92.244413] EIP: __call_rcu.constprop.76+0x27/0x4b0 SS:ESP: 0068:f5db5eb0
+> >> [   92.244415] CR2: 00000000c4fb1f64
+> >> [   92.244425] ---[ end trace df3b7c276e7f3926 ]---
+> >> [   92.244427] Kernel panic - not syncing: Fatal exception in interrupt
+> >> [   92.432150] CPU: 0 PID: 2388 Comm: named Tainted: G      D
+> >> 4.14.68-rc1 #1
+> >> [   92.439620] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> >> 2.0b 07/27/2017
+> >> [   92.447090] Call Trace:
+> >> [   92.449535]  <IRQ>
+> >> [   92.451547]  dump_stack+0x66/0x92
+> >> [   92.454865]  print_stack_overflow+0x17/0x30
+> >> [   92.459052]  call_on_stack+0x45/0x50
+> >> [   92.462628]  </IRQ>
+> >> [   92.464730] Kernel Offset: 0x3e00000 from 0xc1000000 (relocation
+> >> range: 0xc0000000-0xf7bfdfff)
+> >> [   92.473333] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
+> >> [   92.480458] sched: Unexpected reschedule of offline CPU#3!
+> >> [   92.485943] ------------[ cut here ]------------
+> >> [   92.490563] WARNING: CPU: 2 PID: 19 at
+> >> /srv/oe/build/tmp-rpb-glibc/work-shared/intel-core2-32/kernel-source/arch/x86/kernel/smp.c:128
+> >> native_smp_send_reschedule+0x33/0x40
+> >> [   92.505752] Modules linked in: veth x86_pkg_temp_thermal fuse
+> >> [   92.511490] CPU: 2 PID: 19 Comm: ksoftirqd/2 Tainted: G      D
+> >>    4.14.68-rc1 #1
+> >> [   92.519305] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> >> 2.0b 07/27/2017
+> >> [   92.526779] task: f5db8000 task.stack: f5db4000
+> >> [   92.531303] EIP: native_smp_send_reschedule+0x33/0x40
+> >> [   92.536355] EFLAGS: 00210086 CPU: 2
+> >> [   92.539837] EAX: 0000002e EBX: 00000003 ECX: f61d9900 EDX: f61d2d34
+> >> [   92.546095] ESI: f5d85500 EDI: f5d85500 EBP: f5db5b44 ESP: f5db5b3c
+> >> [   92.552352]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> >> [   92.557744] CR0: 80050033 CR2: c4fb1f64 CR3: 05dff000 CR4: 003406d0
+> >> [   92.563998] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> >> [   92.570256] DR6: fffe0ff0 DR7: 00000400
+> >> [   92.574087] Call Trace:
+> >> [   92.576534]  resched_curr+0x59/0x180
+> >> [   92.580112]  check_preempt_curr+0x8d/0xb0
+> >> [   92.584115]  ttwu_do_wakeup+0x17/0x240
+> >> [   92.587857]  ? activate_task+0x52/0xc0
+> >> [   92.591602]  ttwu_do_activate+0x6c/0x90
+> >> [   92.595433]  try_to_wake_up+0x2ed/0x570
+> >> [   92.599265]  default_wake_function+0x10/0x20
+> >> [   92.603536]  autoremove_wake_function+0x14/0x40
+> >> [   92.608059]  __wake_up_common+0x68/0x110
+> >> [   92.611978]  __wake_up_common_lock+0x57/0x80
+> >> [   92.616243]  __wake_up+0x12/0x20
+> >> [   92.619476]  wake_up_klogd_work_func+0x3c/0x60
+> >> [   92.623920]  irq_work_run_list+0x38/0x60
+> >> [   92.627836]  irq_work_tick+0x31/0x40
+> >> [   92.631408]  update_process_times+0x3a/0x50
+> >> [   92.635586]  tick_sched_handle+0x40/0x60
+> >> [   92.639511]  tick_sched_timer+0x38/0x90
+> >> [   92.643342]  __hrtimer_run_queues+0xe0/0x490
+> >> [   92.647606]  ? tick_sched_do_timer+0x60/0x60
+> >> [   92.651878]  hrtimer_interrupt+0x8f/0x190
+> >> [   92.655884]  smp_apic_timer_interrupt+0x68/0x290
+> >> [   92.660501]  apic_timer_interrupt+0x3a/0x40
+> >> [   92.664678] EIP: panic+0x186/0x1cc
+> >> [   92.668073] EFLAGS: 00200246 CPU: 2
+> >> [   92.671558] EAX: c5ad3108 EBX: 00000000 ECX: f61d2d30 EDX: 00000000
+> >> [   92.677815] ESI: 00000000 EDI: 00000000 EBP: f5db5d8c ESP: f5db5d78
+> >> [   92.684072]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> >> [   92.689465]  ? freeze_processes+0x3b/0xe0
+> >> [   92.693477]  oops_end+0xa3/0xb0
+> >> [   92.696614]  no_context+0xd9/0x200
+> >> [   92.700010]  ? tlb_table_flush.part.118+0x14/0x30
+> >> [   92.704706]  ? find_busiest_group+0x29/0x520
+> >> [   92.708971]  ? tlb_table_flush.part.118+0x14/0x30
+> >> [   92.713668]  __bad_area_nosemaphore+0xa4/0x130
+> >> [   92.718107]  bad_area_nosemaphore+0x12/0x20
+> >> [   92.722284]  __do_page_fault+0xb5/0x4b0
+> >> [   92.726116]  ? __lock_acquire+0x1fe/0x1130
+> >> [   92.730213]  ? tlb_table_flush.part.118+0x14/0x30
+> >> [   92.734910]  ? tlb_table_flush.part.118+0x14/0x30
+> >> [   92.739607]  do_page_fault+0x20/0x240
+> >> [   92.743265]  ? tlb_flush_mmu_free+0x50/0x50
+> >> [   92.747442]  ? tlb_table_flush.part.118+0x10/0x30
+> >> [   92.752138]  ? __do_page_fault+0x4b0/0x4b0
+> >> [   92.756229]  common_exception+0x7c/0x82
+> >> [   92.760061] EIP: __call_rcu.constprop.76+0x27/0x4b0
+> >> [   92.764930] EFLAGS: 00210246 CPU: 2
+> >> [   92.768415] EAX: 00000000 EBX: c4fb17a0 ECX: c5c2d640 EDX: c4fb17a0
+> >> [   92.774671] ESI: c4fb1f60 EDI: c4fb1f60 EBP: f5db5ee4 ESP: f5db5eb0
+> >> [   92.780928]  DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+> >> [   92.786320]  ? tlb_flush_mmu_free+0x50/0x50
+> >> [   92.790497]  ? tlb_flush_mmu_free+0x50/0x50
+> >> [   92.794674]  ? tlb_table_flush.part.118+0x10/0x30
+> >> [   92.799371]  ? tlb_table_flush.part.118+0x10/0x30
+> >> [   92.804069]  ? __init_swait_queue_head+0x3b/0x40
+> >> [   92.808686]  ? __do_page_fault+0x4b0/0x4b0
+> >> [   92.812778]  ? rcu_process_callbacks+0x200/0xdd0
+> >> [   92.817388]  ? __lock_is_held+0x48/0x80
+> >> [   92.821219]  ? tlb_table_flush.part.118+0x10/0x30
+> >> [   92.825916]  call_rcu_sched+0x14/0x20
+> >> [   92.829574]  tlb_table_flush.part.118+0x1d/0x30
+> >> [   92.834098]  ? rcu_process_callbacks+0x254/0xdd0
+> >> [   92.838715]  ? finish_task_switch+0x87/0x1d0
+> >> [   92.842981]  __do_softirq+0xac/0x426
+> >> [   92.846551]  run_ksoftirqd+0x1f/0x60
+> >> [   92.850122]  smpboot_thread_fn+0x120/0x1d0
+> >> [   92.854213]  kthread+0xfa/0x110
+> >> [   92.857359]  ? sort_range+0x20/0x20
+> >> [   92.860840]  ? kthread_create_on_node+0x20/0x20
+> >> [   92.865365]  ret_from_fork+0x2e/0x38
+> >> [   92.868938] Code: 0f a3 05 dc da ce c5 73 17 8b 0d 20 d6 ba c5 ba
+> >> fd 00 00 00 ff 51 58 c9 c3 8d b4 26 00 00 00 00 50 68 e0 cc ac c5 e8
+> >> 0a fa 07 00 <0f> 0b 58 5a c9 c3 8d b4 26 00 00 00 00 3e 8d 74 26 00 8b
+> >> 15 f0
+> >> [   92.887724] ---[ end trace df3b7c276e7f3927 ]---
+> >>
+> >> Details for test full run,
+> >>
+> >> 4.14 run,
+> >> https://lkft.validation.linaro.org/scheduler/job/404796
+> >>
+> >> 4.18.6-rc1 run,
+> >> https://lkft.validation.linaro.org/scheduler/job/404027#L3244
+> > 
+> > I have pushed out a -rc2 to hopefully fix this problem.
+> > 
+> 
+> This does fix the problem. rc1 didn't boot on my test system.
+> 
+> rc2 compiled and booted. No dmesg regressions.
 
+That's great!  Thanks for testing all of these and letting me know.
 
-On 9/3/2018 5:44 PM, Anurag Kumar Vulisha wrote:
-> This patch adds the document describing dt bindings for ZynqMP
-> phy. ZynqMP SOC has a High Speed Processing System Gigabit
-> Transceiver which provides PHY capabilties to USB, SATA,
-> PCIE, Display Port and Ehernet SGMII controllers.
->
-> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-> ---
->   changes in v2:
-> 	1. None
-> ---
->   .../devicetree/bindings/phy/phy-zynqmp.txt         | 104 +++++++++++++++++++++
->   1 file changed, 104 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/phy/phy-zynqmp.txt
->
-> diff --git a/Documentation/devicetree/bindings/phy/phy-zynqmp.txt b/Documentation/devicetree/bindings/phy/phy-zynqmp.txt
-> new file mode 100644
-> index 0000000..2eed553
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-zynqmp.txt
-> @@ -0,0 +1,104 @@
-> +Xilinx ZynqMP PHY binding
-> +
-> +This binding describes a ZynqMP PHY device that is used to control ZynqMP
-> +High Speed Gigabit Transceiver(GT). ZynqMP PS GTR provides four lanes
-> +and are used by USB, SATA, PCIE, Display port and Ethernet SGMMI controllers.
-> +
-> +Phy provider node
-> +=================
-> +
-> +Required properties:
-> +- compatible	: Can be "xlnx,zynqmp-psgtr-v1.1" or "xlnx,zynqmp-psgtr"
-> +		  "xlnx,zynqmp-psgtr-v1.1" has "xlnx,tx_termination_fix" removed
-This is not very clear. You can rather mention this statement for the 
-property.
-e.g. In "xlnx,tx_termination_fix" you can write - this is not required 
-for "xlnx,zynqmp-psgtr-v1.1.
-
-> +
-> +- reg           : Address and length of register sets for each device in
-> +                  "reg-names"
-> +
-> +- reg-names     : The names of the register addresses corresponding to the
-> +		  registers filled in "reg":
-> +			- serdes: SERDES block register set
-> +			- siou: SIOU block register set
-> +
-> +Optional properties:
-> +- xlnx,tx_termination_fix : Include this for fixing functional issue with the
-> +		  TX termination resistance in GT, which can be out of spec for
-> +		  the XCZU9EG silicon version.
-> +
-> +Required nodes	:  A sub-node is required for each lane the controller
-> +		   provides.
-> +
-> +Phy sub-nodes
-> +=============
-> +
-> +Required properties:
-> +lane0:
-> +- #phy-cells	: Should be 4
-> +
-> +lane1:
-> +- #phy-cells	: Should be 4
-> +
-> +lane2:
-> +- #phy-cells	: Should be 4
-> +
-> +lane3:
-> +- #phy-cells	: Should be 4
-> +
-> +Example:
-> +	serdes: zynqmp_phy@fd400000 {
-
-phy is not just the serdes. Also s/zynqmp_phy/phy
-
-This could be:
-                     zynqmp_phy: phy@fd400000
-
-regards
-Vivek
-> +		compatible = "xlnx,zynqmp-psgtr-v1.1";
-> +		status = "okay";
-> +		reg = <0x0 0xfd400000 0x0 0x40000>, <0x0 0xfd3d0000 0x0 0x1000>;
-> +		reg-names = "serdes", "siou";
-> +
-> +		lane0: lane@0 {
-> +			#phy-cells = <4>;
-> +		};
-> +		lane1: lane@1 {
-> +			#phy-cells = <4>;
-> +		};
-> +		lane2: lane@2 {
-> +			#phy-cells = <4>;
-> +		};
-> +		lane3: lane@3 {
-> +			#phy-cells = <4>;
-> +		};
-> +	};
-> +
-> +Specifying phy control of devices
-> +=================================
-> +
-> +Device nodes should specify the configuration required in their "phys"
-> +property, containing a phandle to the phy port node and a device type.
-> +
-> +phys = <PHANDLE CONTROLLER_TYPE CONTROLLER_INSTANCE LANE_NUM LANE_FREQ>;
-> +
-> +PHANDLE                 = &lane0 or &lane1 or &lane2 or &lane3
-> +CONTROLLER_TYPE         = PHY_TYPE_PCIE or PHY_TYPE_SATA or PHY_TYPE_USB
-> +			  or PHY_TYPE_DP or PHY_TYPE_SGMII
-> +CONTROLLER_INSTANCE     = Depends on controller type used, can be any of
-> +				PHY_TYPE_PCIE : 0 or 1 or 2 or 3
-> +				PHY_TYPE_SATA : 0 or 1
-> +				PHY_TYPE_USB  : 0 or 1
-> +				PHY_TYPE_DP   : 0 or 1
-> +				PHY_TYPE_SGMII: 0 or 1 or 2 or 3
-> +LANE_NUM                = Depends on which lane clock is used as ref clk, can be
-> +			  0 or 1 or 2 or 3
-> +LANE_FREQ               = Frequency that controller can operate, can be any of
-> +			  19.2Mhz,20Mhz,24Mhz,26Mhz,27Mhz,28.4Mhz,40Mhz,52Mhz,
-> +			  100Mhz,108Mhz,125Mhz,135Mhz,150Mhz
-> +
-> +Example:
-> +
-> +#include <dt-bindings/phy/phy.h>
-> +
-> +	usb@fe200000 {
-> +		...
-> +		phys	  = <&lane2 PHY_TYPE_USB3 0 2 2600000>;
-> +		...
-> +	};
-> +
-> +	ahci@fd0c0000 {
-> +		...
-> +		phys	  = <&lane3 PHY_TYPE_SATA 1 1 125000000>;
-> +		...
-> +	};
-
+greg k-h
