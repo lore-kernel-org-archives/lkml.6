@@ -2,81 +2,91 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B288CC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972D7C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65CC22075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:57:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CC22075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 464412075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:01:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464412075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeIEL0f (ORCPT
+        id S1727739AbeIELaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:26:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38800 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726272AbeIEL0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:26:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5691BADE2;
-        Wed,  5 Sep 2018 06:57:49 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 08:57:46 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Matan Barak <matanb@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Dimitri Sivanich <sivanich@sgi.com>
-Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
- pages
-Message-ID: <20180905065746.GY14951@dhcp22.suse.cz>
-References: <20180829183906.GF10223@dhcp22.suse.cz>
- <20180829211106.GC3784@redhat.com>
- <20180830105616.GD2656@dhcp22.suse.cz>
- <20180830140825.GA3529@redhat.com>
- <20180830161800.GJ2656@dhcp22.suse.cz>
- <20180830165751.GD3529@redhat.com>
- <e0c0c966-6706-4ca2-4077-e79322756a9b@oracle.com>
- <20180830183944.GE3529@redhat.com>
- <20180903055654.GA14951@dhcp22.suse.cz>
- <20180904140035.GA3526@redhat.com>
+        Wed, 5 Sep 2018 07:30:11 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41836 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbeIELaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:30:11 -0400
+Received: by mail-qt0-f194.google.com with SMTP id t39-v6so6917382qtc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 00:01:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1NEovcPTWttorgGlT8gLCpICBwUsroL+wL0GnDFE9eU=;
+        b=tFogPCntOFYJlKX35vM+UgeL1wSGtv3mZWYLrSc0z9+VzUPrEHBt29q9Fd1cJsoPgZ
+         xHaJegfL4g5bfta8qM0e7sstgKy0+hW5BuFAu2WI608GMWFtUYtBxIbgLh+i6KvSevpo
+         5C8WmFPSgTAf75zuDPvO3LQ9bhumZihD/6HtPTcX8HUTatW1gV/+jIzF6hf2p5Rf4WZs
+         /7qU3jiPtVlZ7snhQJEOZARxngJTgd6EKKZaFQzBu333xcKvK3YKkgovQpk5n43El2dt
+         fBh5pZHqy11GpGmh4ocx/E1btqpIO01fFPJwvGsOkM59P+T8apXgQBv2aobija2vrAEl
+         gd/g==
+X-Gm-Message-State: APzg51BdnQ1NnRkZ89AcePjok4RDDEDna4pSYcaE15mu7jPHBc0ZuZl4
+        +VmVXi8H21zbcHd+Ppoi3HGcQUkXEu3i3HBVI4S+bg==
+X-Google-Smtp-Source: ANB0VdYKkLBEQ6fhf97Q/YCn6dtPk/tRLgPFf91YZ0z5EqAntksYR7FwQwPu0Fvu5pHQ9OWlv6H8qd/g1ZUIg521xbE=
+X-Received: by 2002:ac8:3423:: with SMTP id u32-v6mr33170656qtb.237.1536130886670;
+ Wed, 05 Sep 2018 00:01:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904140035.GA3526@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180904133115.5111-1-benjamin.tissoires@redhat.com>
+ <20180904133115.5111-2-benjamin.tissoires@redhat.com> <nycvar.YFH.7.76.1809042130260.15880@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1809042130260.15880@cbobk.fhfr.pm>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 5 Sep 2018 09:01:15 +0200
+Message-ID: <CAO-hwJ+MN=BR_ZS4_GpZitqu2WR+kYSJ3MikQrt8qHFheAbqrQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] HID: multitouch: fix Elan panels with 2 input modes declaration
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "3.8+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-09-18 10:00:36, Jerome Glisse wrote:
-> On Mon, Sep 03, 2018 at 07:56:54AM +0200, Michal Hocko wrote:
-[...]
-> > And THP migration is still a problem with 4.4 AFAICS. All other cases
-> > simply split the huge page but THP migration keeps it in one piece and
-> > as such it is theoretically broken as you have explained. So I would
-> > stick with what I posted with some more clarifications in the changelog
-> > if you think it is appropriate (suggestions welcome).
-> 
-> Reading code there is no THP migration in 4.4 only huge tlb migration.
+On Tue, Sep 4, 2018 at 9:31 PM Jiri Kosina <jikos@kernel.org> wrote:
+>
+> On Tue, 4 Sep 2018, Benjamin Tissoires wrote:
+>
+> > When implementing commit 7f81c8db5489 ("HID: multitouch: simplify
+> > the settings of the various features"), I wrongly removed a test
+> > that made sure we never try to set the second InputMode feature
+> > to something else than 0.
+> >
+> > This broke badly some recent Elan panels that now forget to send the
+> > click button in some area of the touchpad.
+> >
+> > Fixes 7f81c8db5489
+>
+> Please make sure that the 'Fixes:' tag is always in proper format. There
+> are tools depending on that :)
 
-Meh, you are right. For some reason I misread unmap_and_move_huge_page
-to be also for THP. Sorry for the conusion. My fault!
+Oops, thanks for fixing it. Lazy me :)
 
-Then it would be indeed safer to use your backport.
--- 
-Michal Hocko
-SUSE Labs
+Cheers,
+Benjamin
+
+>
+> I'll fix that up manually.
+>
+> Thanks!
+>
+> --
+> Jiri Kosina
+> SUSE Labs
+>
