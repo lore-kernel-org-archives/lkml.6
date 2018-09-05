@@ -2,135 +2,127 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD76C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70D0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54862077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:02:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54862077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ilande.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 799202075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799202075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeIEUc5 (ORCPT
+        id S1727956AbeIEUbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 16:32:57 -0400
-Received: from chuckie.co.uk ([82.165.15.123]:58604 "EHLO
-        s16892447.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726463AbeIEUc5 (ORCPT
+        Wed, 5 Sep 2018 16:31:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37644 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727145AbeIEUbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 16:32:57 -0400
-Received: from host86-138-87-37.range86-138.btcentralplus.com ([86.138.87.37] helo=[192.168.1.65])
-        by s16892447.onlinehome-server.info with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <mark.cave-ayland@ilande.co.uk>)
-        id 1fxaG0-0001pV-3R; Wed, 05 Sep 2018 17:02:19 +0100
-To:     Rob Herring <robh@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org
-References: <20180830190523.31474-1-robh@kernel.org>
- <20180830190523.31474-4-robh@kernel.org>
- <35247ddc-303b-89d0-53b5-231c1a293721@gmail.com>
- <9c873e57-84c8-75af-1d44-60e7cd41282d@ilande.co.uk>
- <CAL_JsqJ5qZpdA2QugzEg8dJSyddZkK3ABfJO4RG0-bbM4kaWaw@mail.gmail.com>
-From:   Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mark.cave-ayland@ilande.co.uk; keydata=
- xsBNBFQJuzwBCADAYvxrwUh1p/PvUlNFwKosVtVHHplgWi5p29t58QlOUkceZG0DBYSNqk93
- 3JzBTbtd4JfFcSupo6MNNOrCzdCbCjZ64ik8ycaUOSzK2tKbeQLEXzXoaDL1Y7vuVO7nL9bG
- E5Ru3wkhCFc7SkoypIoAUqz8EtiB6T89/D9TDEyjdXUacc53R5gu8wEWiMg5MQQuGwzbQy9n
- PFI+mXC7AaEUqBVc2lBQVpAYXkN0EyqNNT12UfDLdxaxaFpUAE2pCa2LTyo5vn5hEW+i3VdN
- PkmjyPvL6DdY03fvC01PyY8zaw+UI94QqjlrDisHpUH40IUPpC/NB0LwzL2aQOMkzT2NABEB
- AAHNME1hcmsgQ2F2ZS1BeWxhbmQgPG1hcmsuY2F2ZS1heWxhbmRAaWxhbmRlLmNvLnVrPsLA
- eAQTAQIAIgUCVAm7PAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQW8LFb64PMh9f
- NAgAuc3ObOEY8NbZko72AGrg2tWKdybcMVITxmcor4hb9155o/OWcA4IDbeATR6cfiDL/oxU
- mcmtXVgPqOwtW3NYAKr5g/FrZZ3uluQ2mtNYAyTFeALy8YF7N3yhs7LOcpbFP7tEbkSzoXNG
- z8iYMiYtKwttt40WaheWuRs0ZOLbs6yoczZBDhna3Nj0LA3GpeJKlaV03O4umjKJgACP1c/q
- T2Pkg+FCBHHFP454+waqojHp4OCBo6HyK+8I4wJRa9Z0EFqXIu8lTDYoggeX0Xd6bWeCFHK3
- DhD0/Xi/kegSW33unsp8oVcM4kcFxTkpBgj39dB4KwAUznhTJR0zUHf63M7ATQRUCbs8AQgA
- y7kyevA4bpetM/EjtuqQX4U05MBhEz/2SFkX6IaGtTG2NNw5wbcAfhOIuNNBYbw6ExuaJ3um
- 2uLseHnudmvN4VSJ5Hfbd8rhqoMmmO71szgT/ZD9MEe2KHzBdmhmhxJdp+zQNivy215j6H27
- 14mbC2dia7ktwP1rxPIX1OOfQwPuqlkmYPuVwZP19S4EYnCELOrnJ0m56tZLn5Zj+1jZX9Co
- YbNLMa28qsktYJ4oU4jtn6V79H+/zpERZAHmH40IRXdR3hA+Ye7iC/ZpWzT2VSDlPbGY9Yja
- Sp7w2347L5G+LLbAfaVoejHlfy/msPeehUcuKjAdBLoEhSPYzzdvEQARAQABwsBfBBgBAgAJ
- BQJUCbs8AhsMAAoJEFvCxW+uDzIfabYIAJXmBepHJpvCPiMNEQJNJ2ZSzSjhic84LTMWMbJ+
- opQgr5cb8SPQyyb508fc8b4uD8ejlF/cdbbBNktp3BXsHlO5BrmcABgxSP8HYYNsX0n9kERv
- NMToU0oiBuAaX7O/0K9+BW+3+PGMwiu5ml0cwDqljxfVN0dUBZnQ8kZpLsY+WDrIHmQWjtH+
- Ir6VauZs5Gp25XLrL6bh/SL8aK0BX6y79m5nhfKI1/6qtzHAjtMAjqy8ChPvOqVVVqmGUzFg
- KPsrrIoklWcYHXPyMLj9afispPVR8e0tMKvxzFBWzrWX1mzljbBlnV2n8BIwVXWNbgwpHSsj
- imgcU9TTGC5qd9g=
-Message-ID: <b508d80f-71a9-c34a-bbb2-c0ced3f6f399@ilande.co.uk>
-Date:   Wed, 5 Sep 2018 17:01:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ5qZpdA2QugzEg8dJSyddZkK3ABfJO4RG0-bbM4kaWaw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 86.138.87.37
-X-SA-Exim-Mail-From: mark.cave-ayland@ilande.co.uk
-Subject: Re: [PATCH 3/3] of: make default address and size cells sizes private
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Jan 2012 02:45:44 +0000)
-X-SA-Exim-Scanned: Yes (on s16892447.onlinehome-server.info)
+        Wed, 5 Sep 2018 16:31:21 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85Fu6Fb073116
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 12:00:31 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2maggdp9yn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 12:00:30 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 5 Sep 2018 17:00:28 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Sep 2018 17:00:22 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85G0LKi39583876
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Sep 2018 16:00:21 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC5434C052;
+        Wed,  5 Sep 2018 19:00:15 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCFC84C062;
+        Wed,  5 Sep 2018 19:00:13 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  5 Sep 2018 19:00:13 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 05 Sep 2018 19:00:18 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [RFC PATCH 12/29] memblock: replace alloc_bootmem_low with memblock_alloc_low
+Date:   Wed,  5 Sep 2018 18:59:27 +0300
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18090516-4275-0000-0000-000002B5BD18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090516-4276-0000-0000-000037BED7C3
+Message-Id: <1536163184-26356-13-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=553 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809050164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/18 13:12, Rob Herring wrote:
+The alloc_bootmem_low(size) allocates low memory with default alignement
+and can be replcaed by memblock_alloc_low(size, 0)
 
-> On Tue, Sep 4, 2018 at 11:59 PM Mark Cave-Ayland
-> <mark.cave-ayland@ilande.co.uk> wrote:
->>
->> On 05/09/18 02:55, Frank Rowand wrote:
->>
->>> On 08/30/18 12:05, Rob Herring wrote:
->>>> Only some old OpenFirmware implementations rely on default sizes. Any
->>>> FDT and modern implementation should have explicit properties. Make the
->>>> OF_ROOT_NODE_*_CELLS_DEFAULT defines private so we don't get any outside
->>>> users.
->>>>
->>>> This also gets us one step closer to removing the asm/prom.h dependency on
->>>> Sparc.
->>
->> Just for the record: you say "any FDT and modern implementation should
->> have explicit properties", however the default values of these
->> properties when missing are clearly defined in the IEEE-1275
->> specification (Annex A):
-> 
-> The spec may define defaults, but best practice is to be explicit. For
-> FDT, dtc doesn't allow defaults (and never has). No arch added in the
-> last 10 years has relied on the defaults.
-> 
->> "#address-cells"
->> Standard property name to define the package’s address format.
->> ...
->> In a package with a "decode-unit" method, a missing "#address-cells"
->> property signifies that the number of
->> address cells is two.
-> 
-> So only Sparc is compliant as the default for everyone else is 1.
-> 
->> "#size-cells"
->> Standard property name to define the package’s address size format.
->> ...
->> A missing "#size-cells" property signifies the default value of one.
->>
->> I can't speak for FDT but it isn't completely unreasonable for a guest
->> parsing a DT without these properties to assume these default values.
-> 
-> I'm not removing the defaults. Just not allowing for code outside of
-> drivers/of/ to use the defaults.
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ arch/arm64/kernel/setup.c     | 2 +-
+ arch/unicore32/kernel/setup.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Got it - if dtc requires explicit properties, then I agree there should
-be no issues with this patch. Sorry for the noise.
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index 5b4fac4..cf7a7b7 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -213,7 +213,7 @@ static void __init request_standard_resources(void)
+ 	kernel_data.end     = __pa_symbol(_end - 1);
+ 
+ 	for_each_memblock(memory, region) {
+-		res = alloc_bootmem_low(sizeof(*res));
++		res = memblock_alloc_low(sizeof(*res), 0);
+ 		if (memblock_is_nomap(region)) {
+ 			res->name  = "reserved";
+ 			res->flags = IORESOURCE_MEM;
+diff --git a/arch/unicore32/kernel/setup.c b/arch/unicore32/kernel/setup.c
+index c2bffa5..9f163f9 100644
+--- a/arch/unicore32/kernel/setup.c
++++ b/arch/unicore32/kernel/setup.c
+@@ -207,7 +207,7 @@ request_standard_resources(struct meminfo *mi)
+ 		if (mi->bank[i].size == 0)
+ 			continue;
+ 
+-		res = alloc_bootmem_low(sizeof(*res));
++		res = memblock_alloc_low(sizeof(*res), 0);
+ 		res->name  = "System RAM";
+ 		res->start = mi->bank[i].start;
+ 		res->end   = mi->bank[i].start + mi->bank[i].size - 1;
+-- 
+2.7.4
 
-
-ATB,
-
-Mark.
