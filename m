@@ -2,211 +2,139 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C784C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528E2C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C138720838
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:46:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C138720838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D67C120838
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:49:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="spHR4cs4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67C120838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeIEGOX (ORCPT
+        id S1726372AbeIEGRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 02:14:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52153 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725825AbeIEGOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 02:14:23 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C61E3B9A271C1;
-        Wed,  5 Sep 2018 09:46:34 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Wed, 5 Sep 2018
- 09:46:30 +0800
-Subject: Re: [PATCH v3 1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <1534328582-17664-1-git-send-email-thunder.leizhen@huawei.com>
- <1534328582-17664-2-git-send-email-thunder.leizhen@huawei.com>
- <6027cd67-7c76-673c-082f-8dd0b7a575b0@arm.com> <5B7533FD.20903@huawei.com>
- <20180816091805.GB31093@arm.com>
- <ad5bd6c0-20bd-9581-a12a-4464e5ec69f6@arm.com> <5B791622.4040509@huawei.com>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LinuxArm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        John Garry <john.garry@huawei.com>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B8F3575.8000408@huawei.com>
-Date:   Wed, 5 Sep 2018 09:46:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 5 Sep 2018 02:17:36 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36222 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbeIEGRf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 02:17:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d1-v6so2575177pgo.3;
+        Tue, 04 Sep 2018 18:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MUqfIhgvbv/pmYClS49jq5IiiHFV+VYPr5DzS7QTlEQ=;
+        b=spHR4cs4WzvnP7BPfVhaJlnY+LiSwXQZDRZP3D4qoYtdVzOfo6pd+4ZpqugB8n1QO7
+         cNvxfaV7V2ahiLHeAouYr1LU7pzzRPJ5ktgzADYgpA6kONwoETXglCmBTg6maX1/5rhK
+         ul8GsTF9XK7+JoQExwmGY8wWeTB3hPYZyP6bjoEKSJ0O02TeDAsqtzVMDFF6UVqSxiyw
+         bQuXHoLZPnzVEr5NXXhYjCWUE8s+QTZUfWUar3XzqaykGa9eIFMauwh3KtPeu7A2QsMD
+         hDtMXS7scgHVlS0Hs+r18tON2TWxBfwyB9KZSov1qi9BbzpxSh7oOd7kEzA+o5uGQZ9v
+         9FoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MUqfIhgvbv/pmYClS49jq5IiiHFV+VYPr5DzS7QTlEQ=;
+        b=jdTx3xbmPa2uXelAf3BEC9oVoORnNhn3Fwjtk7NX742acXsH6mUd8GCxMyB3dqZE0d
+         jNIASUW4hG22nqjVov2Een3TRTEZSsfsjwpMDWYKXV5DFy94g//9SFe21dkwuJgCC2rl
+         oJxhXiNXfNeQZ+3O8EJwDJd8zFF/MeC0wjRczmKe1aOr+RlzUq8HRfRao7ejhSHUXg0c
+         RNhVjtAIV34Vp6n4oA/TRzN8btHuDhLD+UiKcHQvOAnlD4eWrS6I3MgEIWAc9ICmfwmw
+         HX/JZcGx949p4mP51p/pMt7X9oPowmAvuwl0VERifb0orerxT7DLjrBtVG+MJTioJ/xx
+         P5qw==
+X-Gm-Message-State: APzg51DZfURcYwPKBeZBUJO/ylWycYY1YlZZRSXxexlrfvpM/RXXyeTX
+        Gnr1j6Y9bQfNJPJKe7RHaBkhaIWZ
+X-Google-Smtp-Source: ANB0VdZQltDDS/mu577VO7GFc8mSn7NukomV9hHY/Vsg+fJzQQE9/ViCYy/2E9N8jDQU/xOLXAjOWw==
+X-Received: by 2002:a63:a54f:: with SMTP id r15-v6mr33834237pgu.336.1536112189075;
+        Tue, 04 Sep 2018 18:49:49 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm376407pfi.166.2018.09.04.18.49.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 18:49:48 -0700 (PDT)
+Subject: Re: [PATCH 1/3] of/fdt: Scan the root node properties earlier
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20180830190523.31474-1-robh@kernel.org>
+ <20180830190523.31474-2-robh@kernel.org>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <b86ed9cf-d5fd-09fb-eb82-0143c759f5cf@gmail.com>
+Date:   Tue, 4 Sep 2018 18:49:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <5B791622.4040509@huawei.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180830190523.31474-2-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/30/18 12:05, Rob Herring wrote:
+> Scan the root node properties (#{size,address}-cells) earlier, 
 
+                                                        ^^^^^^^
+                             before mdesc->dt_fixup() is called
 
-On 2018/8/19 15:02, Leizhen (ThunderTown) wrote:
+> so that
+> the dt_root_addr_cells and dt_root_size_cells variables are initialized
+> and can be used.
+                 by mdesc->dt_fixup()
 > 
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/of/fdt.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> On 2018/8/16 17:27, Robin Murphy wrote:
->> On 2018-08-16 10:18 AM, Will Deacon wrote:
->>> On Thu, Aug 16, 2018 at 04:21:17PM +0800, Leizhen (ThunderTown) wrote:
->>>> On 2018/8/15 20:26, Robin Murphy wrote:
->>>>> On 15/08/18 11:23, Zhen Lei wrote:
->>>>>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->>>>>> index 1d64710..3f5c236 100644
->>>>>> --- a/drivers/iommu/arm-smmu-v3.c
->>>>>> +++ b/drivers/iommu/arm-smmu-v3.c
->>>>>> @@ -566,7 +566,7 @@ struct arm_smmu_device {
->>>>>>
->>>>>>        int                gerr_irq;
->>>>>>        int                combined_irq;
->>>>>> -    atomic_t            sync_nr;
->>>>>> +    u32                sync_nr;
->>>>>>
->>>>>>        unsigned long            ias; /* IPA */
->>>>>>        unsigned long            oas; /* PA */
->>>>>> @@ -775,6 +775,11 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
->>>>>>        return 0;
->>>>>>    }
->>>>>>
->>>>>> +static inline void arm_smmu_cmdq_sync_set_msidata(u64 *cmd, u32 msidata)
->>>>>
->>>>> If we *are* going to go down this route then I think it would make sense
->>>>> to move the msiaddr and CMDQ_SYNC_0_CS_MSI logic here as well; i.e.
->>>>> arm_smmu_cmdq_build_cmd() always generates a "normal" SEV-based sync
->>>>> command, then calling this guy would convert it to an MSI-based one.
->>>>> As-is, having bits of mutually-dependent data handled across two
->>>>> separate places just seems too messy and error-prone.
->>>>
->>>> Yes, How about create a new function "arm_smmu_cmdq_build_sync_msi_cmd"?
->>>>
->>>> static inline
->>>> void arm_smmu_cmdq_build_sync_msi_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
->>>> {
->>>>     cmd[0]  = FIELD_PREP(CMDQ_0_OP, ent->opcode);
->>>>     cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_IRQ);
->>>>     cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH);
->>>>     cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
-> 
-> miss:   cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_MSIDATA, ent->sync.msidata);
-> 
->>>>     cmd[1]  = ent->sync.msiaddr & CMDQ_SYNC_1_MSIADDR_MASK;
->>>> }
->>>
->>> None of this seems justified given the numbers from John, so please just do
->>> the simple thing and build the command with the lock held.
-> 
-> In order to observe the optimization effect, I conducted 5 tests for each
-> case. Although the test result is volatility, but we can still get which case
-> is good or bad. It accords with our theoretical analysis.
-> 
-> Test command: fio -numjobs=8 -rw=randread -runtime=30 ... -bs=4k
-> Test Result: IOPS, for example: read : io=86790MB, bw=2892.1MB/s, iops=740586, runt= 30001msec
-> 
-> Case 1: (without these patches)
-> 675480
-> 672055
-> 665275
-> 648610
-> 661146
-> 
-> Case 2: (move arm_smmu_cmdq_build_cmd into lock)
+Moving early_init_dt_scan_root() to inside early_init_dt_verify()
+puts something that has nothing to do with verifying the fdt
+into a function whose purpose is the verify.  It hides the side
+effect of initializing the dt_root_addr_cells and dt_root_size_cells
+variables.
 
-https://lore.kernel.org/patchwork/patch/973121/
-[v2,1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
+I suggest creating a new function early_init_dt_scan_init_pre_dt_fixup(),
+move the chunk of code there instead of to early_init_dt_scan_nodes(),
+and call the new function from setup_machine_fdt(), just before
+calling  mdesc->dt_fixup().  This would be a little bit more code,
+but more clearly showing the intent.
 
-> 688714
-> 697355
-> 632951
-> 700540
-> 678459
-> 
-> Case 3: (base on case 2, replace arm_smmu_cmdq_build_cmd with arm_smmu_cmdq_build_sync_msi_cmd)
+-Frank
 
-https://patchwork.kernel.org/patch/10569675/
-[v4,1/2] iommu/arm-smmu-v3: fix unexpected CMD_SYNC timeout
-
-> 721582
-> 729226
-> 689574
-> 679710
-> 727770
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index 800ad252cf9c..49abe18f1bde 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -1215,6 +1215,10 @@ bool __init early_init_dt_verify(void *params)
+>  	initial_boot_params = params;
+>  	of_fdt_crc32 = crc32_be(~0, initial_boot_params,
+>  				fdt_totalsize(initial_boot_params));
+> +
+> +	/* Initialize {size,address}-cells info */
+> +	of_scan_flat_dt(early_init_dt_scan_root, NULL);
+> +
+>  	return true;
+>  }
+>  
+> @@ -1224,9 +1228,6 @@ void __init early_init_dt_scan_nodes(void)
+>  	/* Retrieve various information from the /chosen node */
+>  	of_scan_flat_dt(early_init_dt_scan_chosen, boot_command_line);
+>  
+> -	/* Initialize {size,address}-cells info */
+> -	of_scan_flat_dt(early_init_dt_scan_root, NULL);
+> -
+>  	/* Setup memory, calling early_init_dt_add_memory_arch */
+>  	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
+>  }
 > 
-> Case 4: (base on case 3, plus patch 2)
-> 734077
-> 742868
-> 738194
-> 682544
-> 740586
-> 
-> Case 2 is better than case 1, I think the main reason is the atomic_inc_return_relaxed(&smmu->sync_nr)
-> has been removed. Case 3 is better than case 2, because the assembly code is reduced, see below.
-
-Hi, Will
-  Have you received this email? Which case do you prefer? Suppose we don't consider patch 2, according
-to the test result, maybe we should choose case3.
-  Because John Garry wants patch 2 to cover the non-MSI branch also, this may take some time. So can
-you decide and apply patch 1 first?
-
-
-> 
-> 
->>
->> Agreed - sorry if my wording was unclear, but that suggestion was only for the possibility of it proving genuinely worthwhile to build the command outside the lock. Since that isn't the case, I definitely prefer the simpler approach too.
-> 
-> Yes, I mean replace arm_smmu_cmdq_build_cmd with arm_smmu_cmdq_build_sync_msi_cmd to build the command inside the lock.
->          spin_lock_irqsave(&smmu->cmdq.lock, flags);
-> +        ent.sync.msidata = ++smmu->sync_nr;
-> +        arm_smmu_cmdq_build_sync_msi_cmd(cmd, &ent);
->          arm_smmu_cmdq_insert_cmd(smmu, cmd);
->          spin_unlock_irqrestore(&smmu->cmdq.lock, flags);
-> 
-> The assembly code showed me that it's very nice.
-> ffff0000085e6928:       94123207        bl      ffff000008a73144 <_raw_spin_lock_irqsave>
-> ffff0000085e692c:       b9410ad5        ldr     w21, [x22,#264]
-> ffff0000085e6930:       d28208c2        mov     x2, #0x1046                     // #4166
-> ffff0000085e6934:       aa0003fa        mov     x26, x0
-> ffff0000085e6938:       110006b5        add     w21, w21, #0x1
-> ffff0000085e693c:       f2a1f802        movk    x2, #0xfc0, lsl #16
-> ffff0000085e6940:       aa1603e0        mov     x0, x22
-> ffff0000085e6944:       910163a1        add     x1, x29, #0x58
-> ffff0000085e6948:       aa158042        orr     x2, x2, x21, lsl #32
-> ffff0000085e694c:       b9010ad5        str     w21, [x22,#264]
-> ffff0000085e6950:       f9002fa2        str     x2, [x29,#88]
-> ffff0000085e6954:       d2994016        mov     x22, #0xca00                    // #51712
-> ffff0000085e6958:       f90033b3        str     x19, [x29,#96]
-> ffff0000085e695c:       97fffd5b        bl      ffff0000085e5ec8 <arm_smmu_cmdq_insert_cmd>
-> ffff0000085e6960:       aa1903e0        mov     x0, x25
-> ffff0000085e6964:       aa1a03e1        mov     x1, x26
-> ffff0000085e6968:       f2a77356        movk    x22, #0x3b9a, lsl #16
-> ffff0000085e696c:       94123145        bl      ffff000008a72e80 <_raw_spin_unlock_irqrestore>
-> 
-> 
->>
->> Robin.
->>
->> .
->>
-> 
-
--- 
-Thanks!
-BestRegards
 
