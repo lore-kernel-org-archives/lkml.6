@@ -2,167 +2,178 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6344DC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81CBC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 070B720861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:26:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070B720861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3161E2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:27:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="mayAGhVQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3161E2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeIER4s (ORCPT
+        id S1727679AbeIER6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:56:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727145AbeIER4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:56:48 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EE13206BA;
-        Wed,  5 Sep 2018 13:26:32 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 09:26:29 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Borislav Petkov <bp@alien8.de>, x86-ml <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, joel@joelfernandes.org
-Subject: [PATCH] tracing: Add back in rcu_irq_enter/exit_irqson() for
- rcuidle tracepoints
-Message-ID: <20180905092629.6ecb003b@gandalf.local.home>
-In-Reply-To: <20180905125941.GE4225@linux.vnet.ibm.com>
-References: <20180901173559.GC26871@zn.tnic>
-        <20180901175442.GO4225@linux.vnet.ibm.com>
-        <20180901184531.72ffb792@vmware.local.home>
-        <20180902041639.GQ4225@linux.vnet.ibm.com>
-        <20180904162611.6a120068@gandalf.local.home>
-        <20180904205321.GQ4225@linux.vnet.ibm.com>
-        <20180905082254.GA2237@zn.tnic>
-        <20180905125941.GE4225@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 5 Sep 2018 13:58:08 -0400
+Received: from mail-bl2nam02on0041.outbound.protection.outlook.com ([104.47.38.41]:37472
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726008AbeIER6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:58:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nhT89BPDW3x5IcioUND9s5ACpf4ggzv7MBDK2/na9+g=;
+ b=mayAGhVQJ0dSvUtR5zw3q4IAxwiB0tx+WJp7na3rAcm7TGJArgNJF7fgksL7/c3cYORetYj/K7K5WgBq4GKetqaAiIOXK4cGY3PD+tS6bNSvOhrSRA9yn2rWwBROXL7YQwM77JqsKob33sexmHA6EyR4dRRj8bLeWMe/vt4aVfw=
+Received: from BYAPR02CA0052.namprd02.prod.outlook.com (2603:10b6:a03:54::29)
+ by BLUPR02MB504.namprd02.prod.outlook.com (2a01:111:e400:88c::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1101.17; Wed, 5 Sep
+ 2018 13:27:44 +0000
+Received: from SN1NAM02FT005.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::206) by BYAPR02CA0052.outlook.office365.com
+ (2603:10b6:a03:54::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1080.16 via Frontend
+ Transport; Wed, 5 Sep 2018 13:27:43 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT005.mail.protection.outlook.com (10.152.72.117) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1101.10
+ via Frontend Transport; Wed, 5 Sep 2018 13:27:43 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1fxXqR-000470-4J; Wed, 05 Sep 2018 06:27:43 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1fxXqM-00063T-0b; Wed, 05 Sep 2018 06:27:38 -0700
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w85DRVbo018879;
+        Wed, 5 Sep 2018 06:27:31 -0700
+Received: from [172.30.17.111]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1fxXqF-000637-31; Wed, 05 Sep 2018 06:27:31 -0700
+Subject: Re: [PATCH] ARM: zynq: Convert to using %pOFn instead of
+ device_node.name
+To:     Rob Herring <robh@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Michal Simek <michal.simek@xilinx.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-3-robh@kernel.org>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <147b3be7-805f-a0af-8da5-04f257d2b919@xilinx.com>
+Date:   Wed, 5 Sep 2018 15:27:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180828015252.28511-3-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(396003)(39850400004)(2980300002)(438002)(199004)(189003)(77096007)(5660300001)(230700001)(64126003)(65826007)(81156014)(47776003)(9786002)(8936002)(6246003)(81166006)(4326008)(36386004)(36756003)(31696002)(8676002)(50466002)(2906002)(54906003)(229853002)(106466001)(44832011)(14444005)(58126008)(110136005)(356003)(63266004)(305945005)(316002)(106002)(426003)(446003)(336012)(478600001)(476003)(65956001)(65806001)(53546011)(26005)(186003)(31686004)(486006)(2616005)(126002)(76176011)(2486003)(23676004)(11346002)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR02MB504;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT005;1:EWdzA6i5ccNvYrsvgBKYC6UmcREFjyUt1/+uOeh3cYUETsGLz4JA0UzelhuU8uuSngY075A6ecM4XNVnNhP7W1679JE11yUHknmMz0OCEa3Lpg7XmzKSKat7tHNyZPdj
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d8639b3b-d4ea-4896-48e0-08d613335c98
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BLUPR02MB504;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB504;3:rQN3A3mAkbLXpITrFovSDVyRsGcu/qroT2VoEKnAprWLDtkSXvCoDd/KPclUvDzgDF4rT7mEwltgf80qfD+fx0NyCDXGo+7XCSMVZc8vm/nYBSxbn+OW0lRb3/+poTAMe17UcynA/pqwkm1qCI4zFS7IXL/T1IIc8dM3XQBKH5UAXzDZLSAZAbkzHKGLYM+MDHqT18kYWVj5rm8AOcCVXPV8ekgIDS3SHwkfa1Z+2457iuLD9dnPs/8gbRE46AnIR6djYPB4Ke8vaRTUJbT41XooHiO/rhEDRP8GWe6L+OCQLD/i+5CfLlDOLFk5ynejH8c//UIR+Oy0cwxITmMfwOm1H2ICRRd3iTJOSyU5Gbk=;25:YYYiBfzZWTg8saSXwXxk/uQLHE/CEHKmI0k3MTQflVhr42TvQJw5h+CD15DUk49iIdW5jTxrVYGM8JOdjWqJyZzeIdXsxzGzyr4Rx8Ar6f4TC1i4o5PG+uQVPJQI2f6LHdDRh0AfY2R7F4BiIpyliUMqSXMddLWh2tEvm0qq5Lm6dJWHCNnGqcH9MfwvA1w2CFjQyqOoe1/KBTvlxf0SRf62p35aXDEdnAD5eztkosguu6xm6jvnKd5qHrfZ9j/WvEYpE9bHUEYkqu3ArEuDDGsaqiJxi7vbAWU7aVXk61p0nqIOaxyWKaJZa12cJFmXDwEZic0ERc+/k3CgUhOrDA==
+X-MS-TrafficTypeDiagnostic: BLUPR02MB504:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB504;31:SHF3sseuYgs2fbdsnTrz4EWkAc7EG9VJGwbbAHZ+oTjG8RndgIYock9D20KxzEXUXZBKD4EuyzeunullaEl0ZQmev4fyOIBi4jCsbqkGwjQqTIPrQWyPqEq8rK2VuwZS2I19cX9qnZn90P/Y2qS4np6xiuWDX04VkBwuyeuclPeQq9cyKHpA8DlfOEGUI1X5PmZ1A2t5/EYQiNWNKhCfkAhuF2VzRw1yKWI9y6vL6NY=;20:Mfc2vLvNQusyGEhd+5JquhtNVH/xxu6KSHr5FsqGi+U+hBeck+kEvafhMbFQ6mKcXNbCmhzdb+5kwW7CVfL74Y12V5b7rIcLZVtwEv69gIPv0vPaPYXqFHXM6anGR7yG/eUx5e+/N+7/iGuzBGa2NhJ8NOwlbJin6rNOubz3WH2/IrErdZe11+EnxH23mpghaRtvLcBAqN7VVyab/feuR8zJntwPvY9veZFenLHZAajRsdmu9tADQdecqfnO73NBnBaLQi+aIWv1YQZIuri6IkXYJ+jBdSnhSQVd3sVM+PRueLTPostA0vwS5zoxLTbFZrvc9vwB2qBm5q6Sq42cf/A+vGNRjqLQqt2pGZF8mxI51AWmuE7tgJayXazbTux6vvffbf9FfdxVMF8WAJWhr83gZZw3ppEjrd6z+kzxhjf7oW6DAVRKqMlzke/ngpjIPFDKl/QQpYiSC9Zddmfik0VEtdoMQFLW2jpyi0Zcb0h2kzKlmyUELq2rK63SxDX8
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BLUPR02MB504E8BDABAB9E6732C543D7C6020@BLUPR02MB504.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(258649278758335)(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93004095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:BLUPR02MB504;BCL:0;PCL:0;RULEID:;SRVR:BLUPR02MB504;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB504;4:hK3Ztqz+qu0p4kEfs+6jgYKwtSWsLCsk8kJIiosDz8yZT+5MAg1BOEvTQTrI+N7t4KqD8hX0WvuZDJy+vzOidVpdvIwYBaDFRQlxc2Ou0ri3uOI17lO1qItoUx9oxp05gqhUB/sDKqH7EGX4jkvhI4kVV3v2S3+sGHv3975qJ9O5KfKv56p1QXA1LFkxXBQcXI8SeBruRdvJiN3wMXN+iO46tVgTnl9eLgR0ZvUSizBZLTrbyAFHRdZwwzULnNcME0qIh7KQjQtcE2lh+C+VR32eb5k8xymC9neQQoBfnRU3UI1ZOdQrvNhOYBIS0mxDW6jqh/JM99xLYPkSJjR+VqpTzJIOajqm/DNLNpp4Uu0=
+X-Forefront-PRVS: 078693968A
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTFVQUjAyTUI1MDQ7MjM6L2s5TUxOZE1RZ0hReHZmbHVYZm11S21WdnYv?=
+ =?utf-8?B?dXdyMTVKMkx0OVI5bGMrRGJHN3hrU1NNbWtCcVRxaGJ3dkhQQzJVUE15QW5H?=
+ =?utf-8?B?M3RpTVQrZHRoVnlVd1VKa1RRVVhPc29TUzNsbHN1MzlQYTFnL29XdmtMYU93?=
+ =?utf-8?B?dWU2eW5BbzZaKzVGMVV0RmZScXA5dW03dkZoZkdjaVBPYU40SjdJditBUmxy?=
+ =?utf-8?B?WWI4NDBZN0ZBZjdRMFVDKzNFMGJJc0NIdEJvQW1Wa3U3dGlxVnUveDh4TVNz?=
+ =?utf-8?B?QVdBSWFIWm9hdnpHOVgvMDV0U0kxa2V2Zk9ha2VIZHhIQ29ZQ2hyNTZDRWxv?=
+ =?utf-8?B?R2djdS9nb2E4TGltWWIweHd4eUpkVCtVVHkwbkg1U0RTUzJRaWlXaExWaHFn?=
+ =?utf-8?B?bTc0N2NmaFNKdjYwNFBnVW9yRDZHK3c2STBaaTZHRnMzSEk3SHVOaXJ2dkxk?=
+ =?utf-8?B?Q21ZSzNKamhWTkMwNm5HSEdFNnM5TDFXYlRFMm4vTkVBWVZRZGFURUhoU0Va?=
+ =?utf-8?B?U3Y0Z2FKckxHWGdjWGl4RVNIdXZTRGlhaGlvci92MDQ1SzlYMnd4R3MrL0ZU?=
+ =?utf-8?B?dE13dS84WXF2RlZqM2NNM01QcnB6SEtBbWVsZW41OGVTMnU1RXZybUIxdjFt?=
+ =?utf-8?B?blk2dyt0RFYvK0htdFFvN0RzbEtzRVhtbnRQdTVuOXJ6WVRsNUJiOGFRZnIx?=
+ =?utf-8?B?bDRMbXdyT2ZLQzRyWHRGYVFQaDlDVXhrRVNxbWdTR0h1OE5TWit1SFVobEN5?=
+ =?utf-8?B?ZEs5Tld2TW5BZFk2dkpZbXBLcmQyakljS21TbnRLSEhGTDhWQ2xaaDNZaS9r?=
+ =?utf-8?B?b3JxeGFyOHhIZVY1QW1oc2dKRUJZRGtxUkR3aVFhWXVkZ2VtUEw3NjZaSUlx?=
+ =?utf-8?B?bXRQbGlKMzNQTGE0MUFNbDg1MHZQb3YyWkRySG42YnQ2WjZFU0NodDB6RzM2?=
+ =?utf-8?B?MlJLdHY0SlF6YVNUaWxtWm0wMjNTTE1WRVgzZHk3Snoyem5CZTRERWxrMW1s?=
+ =?utf-8?B?S3FqRGR4SUswakIvUTQzekdiVy9TUUdiZ3JKcDBrODg4WkhWT2hhV05kTDJx?=
+ =?utf-8?B?WHJ1a1BpaGZNRmxSelRsc1dzZEpTODEvMm8wS3NiNlRpM21NT2cvc2VPRHRo?=
+ =?utf-8?B?NjRvaDZXalJlbnIxM2o2R2ZmbmxEM2lFR3pyMTdFaloySldTZWk1UDd3Wldr?=
+ =?utf-8?B?Rm91YTlPQ2FDR2s3TTdEc1ZOVnV5bEZYTU5DRjhBZHUrRE0wOCtHWCs5K25N?=
+ =?utf-8?B?RlBNWWZmbFV0QXI2QldwaGZNdVB2Y2czN2haNVBqSGdlZ1ZzSDVrY3FrMHdD?=
+ =?utf-8?B?T1JyL25TdGwrNjZrdklQc0lnZjNkTXBOaEFtYWJvVmJKdjVCeWt5VEJwZ2s4?=
+ =?utf-8?B?b1k3SmNpUUw0eFc2a1B5RWRhSUhiZkZBY2RWSnBKL0oxZHpxbDUvUEo0cE9Q?=
+ =?utf-8?B?Uk9wYmtFMkdjTEd0U0RtMWxVemtJSEFKdlBCaWFPeC9XWkd2bzg3MzlObVpw?=
+ =?utf-8?B?U0s1QU5VenFWZDVsVi9mOER6TnI4QUFoQ1VzcGVpQzRUMVpVNjh2NEJjSXBi?=
+ =?utf-8?B?MUZVelJTNEZXSDM3WTBid2FLeTRXYzZCbWgzeEFJTldBTUs1T25RVEhlM3ky?=
+ =?utf-8?B?Vlp3NUJnbHpMUDUxNGhaWlJydjlFQ1UvMUJCM241bzI0ZHZ5alFDUXJIK2xx?=
+ =?utf-8?Q?uycV+7ecMGZnF5t8onHNIbLqJ8J8tIA0wLhMSi?=
+X-Microsoft-Antispam-Message-Info: mfYvGpZri2U3PVOUQiup4aTVOGmV9WX3xH7WEvYV715sF+THjfzj8aZIrXKPrGjbrn6qzSaM3vVOm5/KOhwMhQx9rxN/DoVwfHmSxRma5acPgMkQ84eU9+2JI2d3UwZMHXmo8GPBg6yC9dqNlwIalfgZsBY3ZJpNciPuZLF3T0iMHM8SFoMVwT9GWtfocVvYvepY5HMjZGbIDuwPiJsrgtjPQ5+Lxf4z84MQUAEzKnxPs+tF2U/IVkIGT7QUcLa0dGD35Gp/xfaBx1GaanzAFn+Bl3z/CMtJ8v2OntES9OAIF/tdMzx23vjd9lQOpTg1Yv+gRFbOKX18CrshUt3dDYhjoSV+hfa8E2fOQi3oeSc=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR02MB504;6:jffjs3NkFemQG1ogW0gf4pWp8R8kweL4cutVrED4Nj7p3iIenKKtRbT9A64THt9dZtmlx9M5vFUnwFksdKRx35YQmAjGrlcSloeARe4ClyW+7d8GzmnOQi8KQLpMPTUY6lmbgGHn+vma+2G0cO2712zZiKfx/nPSXr0M8pLa8A4c3JSUBXFtmlPbhQO89/lxjvZ+I65W8q/ICs2YjYeXJLoQL/7/5SbFtenFmso1f+chVhueguKq93Cm/8aB//x+QEcFsjkJRPPxqHokC2CwuFktM80Xdq4C2AxDOJ1ENus226ltOmpQEpZXsN9I45EjGevtiwm5shWKIyFBp+VBwkFN+uAfxKgZ2tacM9SCdDAiZFZkTCzdoFcUso7cc3ZktPvNasn0y12Y2UKMaRHlRUFmPE1L85zvXCmF+uX9T1zObGmgxaiablByoRdamxIHI+ZrMpgIn3UgtDUac0CRZg==;5:YslafmP3zo42Ti04F8fHSRSgravBFUpwMRXMRvoikIsHt6MnfZxLeQEnE/uQ5rsuBDYI0zZ5F2ltTfQdPYZMMhyRcU3n73+mE4W1zWYCfZurjBY8Bky5b601eFYnEmK3vbY/Dy/8jCnifCidb6a+IysRXoaP5CE6mO7D9Jf3ews=;7:6R1eT0fKUA/p5vJUuRFqS6q2rg97PgkiQs3Ms+085+hppbZHoguq1Z3zTd2ig5wsPLdbrNYNVz5gNLdA53GGEvIT2qWLJGuR63aNrGvmFmfGdCQeVsMDb2iSW2fFoj02U+fMGi/EHXnK2OL3y3dVxJYAKSLXxC/PkGRRJQ5VgNhOJGAtClB2/Yl/mQmrh+zxz6j5CLoySH65AdTiovrxXMw/Zch45+GTO9xc8afcDP30vmyO4V3s+UCMxo44bYlf
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 13:27:43.5528
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8639b3b-d4ea-4896-48e0-08d613335c98
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR02MB504
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018 05:59:41 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-
-> On Wed, Sep 05, 2018 at 10:22:54AM +0200, Borislav Petkov wrote:
-> > On Tue, Sep 04, 2018 at 01:53:21PM -0700, Paul E. McKenney wrote:  
-> > > I must defer to Borislav on this one.  Assuming it has the desired
-> > > effect, I am good with it.  
-> > 
-> > It did survive a bunch of reboots (the WARN would fire after boot
-> > finishes, normally) so I guess we can run with it and see how it works
-> > out in the next couple of weeks.
-> > 
-> > Thanks guys!  
+On 28.8.2018 03:52, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 > 
-> Woo-hoo!!!  Thank you for testing this!
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  arch/arm/mach-zynq/slcr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-zynq/slcr.c b/arch/arm/mach-zynq/slcr.c
+> index f0292a30e6f6..10ef99ce1d90 100644
+> --- a/arch/arm/mach-zynq/slcr.c
+> +++ b/arch/arm/mach-zynq/slcr.c
+> @@ -233,7 +233,7 @@ int __init zynq_early_slcr_init(void)
+>  
+>  	register_restart_handler(&zynq_slcr_restart_nb);
+>  
+> -	pr_info("%s mapped to %p\n", np->name, zynq_slcr_base);
+> +	pr_info("%pOFn mapped to %p\n", np, zynq_slcr_base);
+>  
+>  	of_node_put(np);
+>  
 > 
 
-Here's the official patch if you want to add an Ack/review/tested-by:
-
--- Steve
-
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-
-Borislav reported the following splat:
-
- =============================
- WARNING: suspicious RCU usage
- 4.19.0-rc1+ #1 Not tainted
- -----------------------------
- ./include/linux/rcupdate.h:631 rcu_read_lock() used illegally while idle!
- other info that might help us debug this:
-
- RCU used illegally from idle CPU!
- rcu_scheduler_active = 2, debug_locks = 1
- RCU used illegally from extended quiescent state!
- 1 lock held by swapper/0/0:
-  #0: 000000004557ee0e (rcu_read_lock){....}, at: perf_event_output_forward+0x0/0x130
-
- stack backtrace:
- CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0-rc1+ #1
- Hardware name: LENOVO 2320CTO/2320CTO, BIOS G2ET86WW (2.06 ) 11/13/2012
- Call Trace:
-  dump_stack+0x85/0xcb
-  perf_event_output_forward+0xf6/0x130
-  __perf_event_overflow+0x52/0xe0
-  perf_swevent_overflow+0x91/0xb0
-  perf_tp_event+0x11a/0x350
-  ? find_held_lock+0x2d/0x90
-  ? __lock_acquire+0x2ce/0x1350
-  ? __lock_acquire+0x2ce/0x1350
-  ? retint_kernel+0x2d/0x2d
-  ? find_held_lock+0x2d/0x90
-  ? tick_nohz_get_sleep_length+0x83/0xb0
-  ? perf_trace_cpu+0xbb/0xd0
-  ? perf_trace_buf_alloc+0x5a/0xa0
-  perf_trace_cpu+0xbb/0xd0
-  cpuidle_enter_state+0x185/0x340
-  do_idle+0x1eb/0x260
-  cpu_startup_entry+0x5f/0x70
-  start_kernel+0x49b/0x4a6
-  secondary_startup_64+0xa4/0xb0
-
-This is due to the tracepoints moving to SRCU usage which does not require
-RCU to be "watching". But perf uses these tracepoints with RCU and expects
-it to be. Hence, we still need to add in the rcu_irq_enter/exit_irqson()
-calls for "rcuidle" tracepoints. This is a temporary fix until we have SRCU
-working in NMI context, and then perf can be converted to use that instead
-of normal RCU.
-
-Link: http://lkml.kernel.org/r/20180904162611.6a120068@gandalf.local.home
-
-Cc: x86-ml <x86@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Reported-by: Borislav Petkov <bp@alien8.de>
-Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- include/linux/tracepoint.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 7f2e16e76ac4..041f7e56a289 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -158,8 +158,10 @@ extern void syscall_unregfunc(void);
- 		 * For rcuidle callers, use srcu since sched-rcu	\
- 		 * doesn't work from the idle path.			\
- 		 */							\
--		if (rcuidle)						\
-+		if (rcuidle) {						\
- 			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-+			rcu_irq_enter_irqson();				\
-+		}							\
- 									\
- 		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
- 									\
-@@ -171,8 +173,10 @@ extern void syscall_unregfunc(void);
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
- 									\
--		if (rcuidle)						\
-+		if (rcuidle) {						\
-+			rcu_irq_exit_irqson();				\
- 			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-+		}							\
- 									\
- 		preempt_enable_notrace();				\
- 	} while (0)
--- 
-2.13.6
-
+Applied.
+M
