@@ -2,282 +2,94 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060F3C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63016C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BBF20869
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0329C2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 04:13:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YY2UQXAT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BBF20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByX4XZdS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0329C2073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeIEIgz (ORCPT
+        id S1727508AbeIEImK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 04:36:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51494 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeIEIgz (ORCPT
+        Wed, 5 Sep 2018 04:42:10 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43589 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbeIEImJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 04:36:55 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8543o56098194;
-        Wed, 5 Sep 2018 04:08:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=DsoUMftrvrNywB0A1gGu1vEtvft51ipnnkBtqUoIt/4=;
- b=YY2UQXATMRmia4CFyvHuuyS6W8RmjkewXUl264jISPYK42ptw8FeOP/wHxDtjM45vrvz
- U3QfVgJyMcpL7gjJhHgWqU8fQ+WEelXvl7iLuqBp+MmrsE/X1YLEFhOchkE+CsbqTO2k
- V6YX29FeQ/5Cq6+qVM579gOnPAE9GT6sFpSEqunN7CafPJb4QYkG8jMtv0QoGgyA50kV
- 075JuCNtOdV3x94K3dm7CFDmJcIZNyIWlDOBTosFRLCJ2hv1NFalHWyA1UN+Ltgkkv/i
- 6qmMcloolC6vDtBQ0JVywfOwnKnYKh+9SRmksClVkKyVxb1fmAvyU627WtOU7ATJWwb9 tw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2m7kdqgyxu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Sep 2018 04:08:23 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8548H3V022457
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Sep 2018 04:08:17 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8548Hgx032218;
-        Wed, 5 Sep 2018 04:08:17 GMT
-Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Sep 2018 04:08:16 +0000
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk, ming.lei@redhat.com, bart.vanassche@wdc.com,
-        sagi@grimberg.me, keith.busch@intel.com, jthumshirn@suse.de,
-        jsmart2021@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org
-Subject: [PATCH 1/3] blk-core: migrate preempt-only mode to queue_gate
-Date:   Wed,  5 Sep 2018 12:09:44 +0800
-Message-Id: <1536120586-3378-2-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809050042
+        Wed, 5 Sep 2018 04:42:09 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j26-v6so2759176pfi.10;
+        Tue, 04 Sep 2018 21:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GXIXt3ikpZ/xQYtNPxzYw4roewcXKc77FNT+mtyoPb0=;
+        b=ByX4XZdScHZsYpwkQSi8fYO/wwxw7GkSxW+ig0luGBjdixOO4HUCHTssz8W9RqL0gT
+         Cni91UAR5CinFvcSURxEu6NJblmgLVXIZDX7Zw3y8y3vFsZ3xYmdZEsuDloVUZBLa5Gl
+         cpPF6Peq9dttSas+dx/huTviZKcVn3Tvz55HDVJh8piLbzkPITBFtU4K3ACR/rmMPMMF
+         jjCwQJ7wrne094JNd2fd4MSgFLXDAS2gQKrlmO3QjbyKZZnav1hsEeEjospJ586OBFMN
+         dzOzaY8PRiKjR95+qxxf0g6T23mtQ6smSdTn65Q2hEMgKT/nhIEUWGyY3l5cDirn0t6k
+         wl6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GXIXt3ikpZ/xQYtNPxzYw4roewcXKc77FNT+mtyoPb0=;
+        b=dhFJFB2u+r1iTdReDWMz0hRWY8vKeK/Mi4ZCX1Lt+Dcq6eIXkHd9UldA8u8guvekUk
+         c5kkuJvb8CHFySoudyFD4Qy8qj5spI+4HPr9e3ysr/muz1QbBHDQZXN/NOah1ciNSgnw
+         Vu25fIrj552Qm9bbjrTVGzJ/YosU3JMYUxHTo3Ds6U6V/2cvc/laSZPpbwEMCbeGDpEW
+         JtMyuTX5uMv4LltE6jUEPaYryl4jf5pXqkeGq8PMRVyZ+61PPElmPcYFXgRjDpP0W3cp
+         0FFsLVzWQD8sK2fTp4CWMSBDMdjuLSgbVp4rekA0V/lBl0/Vy2F5Bz+uEE/mc1gN/Oi8
+         BzRg==
+X-Gm-Message-State: APzg51D9fZZ25Ghfc3EkpemDS83qtjuVyX4hAIX5P+HXd6TLffCaBw5u
+        8hSIPMQJFtmX+XEKFQVdebwSlueuLEI=
+X-Google-Smtp-Source: ANB0VdZUmSjUcNdFLJ/qk6xksZXM2I6F1ri+RBOIhDCWaXl2H27Z/HzQLNxJco083H0McFzqP9vqZg==
+X-Received: by 2002:a63:1b4e:: with SMTP id b14-v6mr34130840pgm.303.1536120834777;
+        Tue, 04 Sep 2018 21:13:54 -0700 (PDT)
+Received: from localhost (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
+        by smtp.gmail.com with ESMTPSA id 74-v6sm762641pfv.33.2018.09.04.21.13.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Sep 2018 21:13:54 -0700 (PDT)
+From:   Song Qiang <songqiang1304521@gmail.com>
+X-Google-Original-From: Song Qiang <songqiang.1304521@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Song Qiang <songqiang.1304521@gmail.com>
+Subject: [PATCH] input: keyboard: gpio-keys: Fixed a documentation index issue.
+Date:   Wed,  5 Sep 2018 12:13:47 +0800
+Message-Id: <20180905041347.19986-1-songqiang.1304521@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduce queue_gate into request_queue which is
-dedicated to entering conditions control in blk_queue_enter.
-Helper blk_queue_gate_allow is in charge of checking entering
-conditions. If not allowed, go to wait on wq_freeze_wq. This is
-a preparation for the next light-weight queue close feature.
-And also the preempt-only mode is migrated from the queue_flags
-to queue_gate in this patch.
+gpio_keys.c now exists in the drivers/input/keyboard/ rather than
+drivers/input/.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
 ---
- block/blk-core.c        | 65 +++++++++++++++++++++++++++++--------------------
- block/blk-mq-debugfs.c  |  1 -
- block/blk.h             |  4 +++
- drivers/scsi/scsi_lib.c | 10 --------
- include/linux/blkdev.h  |  4 +--
- 5 files changed, 44 insertions(+), 40 deletions(-)
+ Documentation/devicetree/bindings/input/gpio-keys.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index dee56c2..d1bdded 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -420,22 +420,31 @@ void blk_sync_queue(struct request_queue *q)
- }
- EXPORT_SYMBOL(blk_sync_queue);
+diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+index 996ce84352cb..7cccc49b6bea 100644
+--- a/Documentation/devicetree/bindings/input/gpio-keys.txt
++++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+@@ -1,4 +1,4 @@
+-Device-Tree bindings for input/gpio_keys.c keyboard driver
++Device-Tree bindings for input/keyboard/gpio_keys.c keyboard driver
  
--/**
-- * blk_set_preempt_only - set QUEUE_FLAG_PREEMPT_ONLY
-- * @q: request queue pointer
-- *
-- * Returns the previous value of the PREEMPT_ONLY flag - 0 if the flag was not
-- * set and 1 if the flag was already set.
-+/*
-+ * When blk_set_preempt_only returns:
-+ *  - only preempt bio could enter the queue
-+ *  - there is no non-preempt bios in the queue
-  */
- int blk_set_preempt_only(struct request_queue *q)
- {
--	return blk_queue_flag_test_and_set(QUEUE_FLAG_PREEMPT_ONLY, q);
-+	if (test_and_set_bit(BLK_QUEUE_GATE_PREEMPT_ONLY, &q->queue_gate))
-+		return 1;
-+
-+	synchronize_rcu();
-+	/*
-+	 * After this, the non-preempt bios either get q_usage_counter
-+	 * and enter, or go to wait.
-+	 * Next, let's drain the entered ones.
-+	 */
-+	blk_mq_freeze_queue(q);
-+	blk_mq_unfreeze_queue(q);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(blk_set_preempt_only);
- 
- void blk_clear_preempt_only(struct request_queue *q)
- {
--	blk_queue_flag_clear(QUEUE_FLAG_PREEMPT_ONLY, q);
-+	clear_bit(BLK_QUEUE_GATE_PREEMPT_ONLY, &q->queue_gate);
- 	wake_up_all(&q->mq_freeze_wq);
- }
- EXPORT_SYMBOL_GPL(blk_clear_preempt_only);
-@@ -910,6 +919,19 @@ struct request_queue *blk_alloc_queue(gfp_t gfp_mask)
- }
- EXPORT_SYMBOL(blk_alloc_queue);
- 
-+static inline bool blk_queue_gate_allow(struct request_queue *q,
-+		blk_mq_req_flags_t flags)
-+{
-+	if (!q->queue_gate)
-+		return true;
-+
-+	if (test_bit(BLK_QUEUE_GATE_PREEMPT_ONLY, &q->queue_gate) &&
-+		!(flags & BLK_MQ_REQ_PREEMPT))
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * blk_queue_enter() - try to increase q->q_usage_counter
-  * @q: request queue pointer
-@@ -917,29 +939,20 @@ EXPORT_SYMBOL(blk_alloc_queue);
-  */
- int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- {
--	const bool preempt = flags & BLK_MQ_REQ_PREEMPT;
--
- 	while (true) {
--		bool success = false;
- 
- 		rcu_read_lock();
--		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
--			/*
--			 * The code that sets the PREEMPT_ONLY flag is
--			 * responsible for ensuring that that flag is globally
--			 * visible before the queue is unfrozen.
--			 */
--			if (preempt || !blk_queue_preempt_only(q)) {
--				success = true;
--			} else {
--				percpu_ref_put(&q->q_usage_counter);
--			}
-+		if (unlikely(READ_ONCE(q->queue_gate))) {
-+			if (!blk_queue_gate_allow(q, flags))
-+				goto wait;
- 		}
--		rcu_read_unlock();
- 
--		if (success)
-+		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
-+			rcu_read_unlock();
- 			return 0;
--
-+		}
-+wait:
-+		rcu_read_unlock();
- 		if (flags & BLK_MQ_REQ_NOWAIT)
- 			return -EBUSY;
- 
-@@ -954,7 +967,7 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 
- 		wait_event(q->mq_freeze_wq,
- 			   (atomic_read(&q->mq_freeze_depth) == 0 &&
--			    (preempt || !blk_queue_preempt_only(q))) ||
-+			    blk_queue_gate_allow(q, flags)) ||
- 			   blk_queue_dying(q));
- 		if (blk_queue_dying(q))
- 			return -ENODEV;
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index cb1e6cf..4174951 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -132,7 +132,6 @@ static const char *const blk_queue_flag_name[] = {
- 	QUEUE_FLAG_NAME(REGISTERED),
- 	QUEUE_FLAG_NAME(SCSI_PASSTHROUGH),
- 	QUEUE_FLAG_NAME(QUIESCED),
--	QUEUE_FLAG_NAME(PREEMPT_ONLY),
- };
- #undef QUEUE_FLAG_NAME
- 
-diff --git a/block/blk.h b/block/blk.h
-index 9db4e38..cdef4c1 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -19,6 +19,10 @@
- extern struct dentry *blk_debugfs_root;
- #endif
- 
-+enum blk_queue_gate_flag_t {
-+	BLK_QUEUE_GATE_PREEMPT_ONLY,
-+};
-+
- struct blk_flush_queue {
- 	unsigned int		flush_queue_delayed:1;
- 	unsigned int		flush_pending_idx:1;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 0adfb3b..491d8bf 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -3059,16 +3059,6 @@ scsi_device_quiesce(struct scsi_device *sdev)
- 
- 	blk_set_preempt_only(q);
- 
--	blk_mq_freeze_queue(q);
--	/*
--	 * Ensure that the effect of blk_set_preempt_only() will be visible
--	 * for percpu_ref_tryget() callers that occur after the queue
--	 * unfreeze even if the queue was already frozen before this function
--	 * was called. See also https://lwn.net/Articles/573497/.
--	 */
--	synchronize_rcu();
--	blk_mq_unfreeze_queue(q);
--
- 	mutex_lock(&sdev->state_mutex);
- 	err = scsi_device_set_state(sdev, SDEV_QUIESCE);
- 	if (err == 0)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index d6869e0..4a33814 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -504,6 +504,7 @@ struct request_queue {
- 	 * various queue flags, see QUEUE_* below
- 	 */
- 	unsigned long		queue_flags;
-+	unsigned long		queue_gate;
- 
- 	/*
- 	 * ida allocated id for this queue.  Used to index queues from
-@@ -698,7 +699,6 @@ struct request_queue {
- #define QUEUE_FLAG_REGISTERED  26	/* queue has been registered to a disk */
- #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
- #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
--#define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
- 
- #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
- 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-@@ -736,8 +736,6 @@ bool blk_queue_flag_test_and_clear(unsigned int flag, struct request_queue *q);
- 	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
- 			     REQ_FAILFAST_DRIVER))
- #define blk_queue_quiesced(q)	test_bit(QUEUE_FLAG_QUIESCED, &(q)->queue_flags)
--#define blk_queue_preempt_only(q)				\
--	test_bit(QUEUE_FLAG_PREEMPT_ONLY, &(q)->queue_flags)
- #define blk_queue_fua(q)	test_bit(QUEUE_FLAG_FUA, &(q)->queue_flags)
- 
- extern int blk_set_preempt_only(struct request_queue *q);
+ Required properties:
+ 	- compatible = "gpio-keys";
 -- 
-2.7.4
+2.17.1
 
