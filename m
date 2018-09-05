@@ -2,120 +2,137 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EB2C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232E4C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0439F206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D15FB206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:33:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20150623.gappssmtp.com header.i=@linbit-com.20150623.gappssmtp.com header.b="lUW/a870"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0439F206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linbit.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ey3EDhDV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D15FB206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbeIENCb (ORCPT
+        id S1728218AbeIENCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:02:31 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44803 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbeIENCb (ORCPT
+        Wed, 5 Sep 2018 09:02:39 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45965 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbeIENCi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:02:31 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v16-v6so6634015wro.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 01:33:23 -0700 (PDT)
+        Wed, 5 Sep 2018 09:02:38 -0400
+Received: by mail-pl1-f196.google.com with SMTP id j8-v6so2945354pll.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 01:33:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9kK749RISeQorgRDsLhpAah28I7dobUTxNmOlBW9+W4=;
-        b=lUW/a870V7+AFr7SkkwCbAVq8aQ8qv6zH22JRt7dfuhWaRPjh/LtuNY+2nQyt3Gq/I
-         sn5Zh+2AYFDE1XL6SC7+sLovNsq8g16txnZU72pPUGJ8HkUZ2YDBqN2K/2pxpsa17uDp
-         A2DoVt0P+1+cbWDAXMYu2/BLPUIZBFcoQEHdEHvHQGcRDh5Im2+YlRRhY03qA4sbF61H
-         e18y5r1wD4XzBJTemqaXGR4uHFXtxs+azJdg2lTYv8yVf+4l49qZZvQKAI5Jv+RgXCMZ
-         oYeMMl4BhxP59zGv6WJXQcAA1NcPudUK2CVNRIYXc+TV9B+dJLXZVY5Qub6KYfD0G95o
-         qihg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9rlQpsNturQp1aMWiztaRrGd03LqpgMs3cg3FK7bu3o=;
+        b=Ey3EDhDVQsG7vBuM9gc2M4bdsAkYQBkEHIaAh4VDP+ouZcKPpG5E5ZXGJ+0Z6eN5QY
+         tlS0SLmqNB+gh0BbrcOeBFtdwrqbq8JtzkxTE0NdhDyo1VTQF9HGcnjIGEBbU0bZKtoq
+         Z1eMiGb129pmfbhw1kZGbJ18IZZH/s0L6rvWhdPRxiz0ytqjZPrL9JMnxK02vUR+Br21
+         t8nuBVz559W96qpvMXpGjSd8H2eOxwUxBqAGRF1E+tt3fwVBq3hLYQqpRGD3ZFAr/LsQ
+         kNxW+jyRyuSh2B5z2Rx4SnDJiNfJ/tQmNh6XSgrx4fDMWhq2sb7+zIpJo5bb636lJOpi
+         7kPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=9kK749RISeQorgRDsLhpAah28I7dobUTxNmOlBW9+W4=;
-        b=KSlwMebkY08Zt5RonW9ueYO6nXxyJ9kM1en8y9pGEBAfej3kAyS2Ss0JPks6Uu3Bhg
-         /YxSI5gKWnNJyJa1KV2zN7OsJtEeN8YRmalzJaAevOEdxGUQFilQBzLOXmR64ypgzSuC
-         SgEyF5QbRTpB7FGhzTXDBf8jEmfvA5nkP6pF2i14hpeFtICkMgsxmRIKQYat+j/OJzjZ
-         dFguxNfKFZW9QNUwr5eUu5Jck8xs5C/cIjwxQxX3quJzhS4pj3aXOksOYjLj9gbRJckt
-         4YxpVnJxq2HuFrgZdMdftlKRzRZ2oitikLB0lZvR+QCLqFnHNqiTvYjAzrQZGJJ9VBKB
-         YsYA==
-X-Gm-Message-State: APzg51DlfmiBjnX2CTjYC5N68BUFTZe/1fn3lENn7BNU4NWHe6kK3RT+
-        KVzwQ4kH2u1t7U53b/nr7Dyeiw==
-X-Google-Smtp-Source: ANB0VdZ72cq2Qocn9N8w2RA+oLzBeUMEHF9j9lc51asV/V5Lmfqrn4ERkuhMju8Mn62+lg5lhJgchw==
-X-Received: by 2002:a05:6000:10d0:: with SMTP id b16mr8625940wrx.226.1536136402475;
-        Wed, 05 Sep 2018 01:33:22 -0700 (PDT)
-Received: from soda.linbit (212-186-191-219.static.upcbusiness.at. [212.186.191.219])
-        by smtp.gmail.com with ESMTPSA id 69-v6sm1183590wmb.27.2018.09.05.01.33.21
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9rlQpsNturQp1aMWiztaRrGd03LqpgMs3cg3FK7bu3o=;
+        b=aCJVu9uIOG+zHwysmJ8hkHuaA3PpT2NUWwDD8xDaSzTjwA6ZvSdAOyP7dxWds1bwQn
+         +9c0OkCfP7z437mewwP47fvpGCq0nc0cCAoPTdGqfSs8rDFLrtkszzHsfKToXea9Xwrf
+         aiDG2Kx5cshBlG4x4Cf0OPS4C4WRrTrdz/9opMAyOx7tPvge2bcBhNZ0mQFi2/riLtVh
+         tQET3+vaxa2fGGDIDp0MzyYdHrkdz2K7L6a81IcrhYdAhQjqDBBqQ6F7EVUJJ09tHbHI
+         KsYPWnQCWqao/PQd3nYfm6nUUFwXE6gegBqVTD2zmIEA+IC5ysWbSY3zIdmelmOnh8vt
+         E1Zw==
+X-Gm-Message-State: APzg51Azg82t0H7SBMf+vIrxRM8kwBuVw6nCSIsO8ghQiBcrl/tYtLW8
+        nlJ4kM4/WlCfG34LEL0tvBU=
+X-Google-Smtp-Source: ANB0VdaEZ28MANL0MmTX4vKW+Ei+D8axx4107jKfzrlG8m3U7xgxlHJ5ujEAXy3nKQjrA4LWtCdHbA==
+X-Received: by 2002:a17:902:7447:: with SMTP id e7-v6mr13342082plt.186.1536136411927;
+        Wed, 05 Sep 2018 01:33:31 -0700 (PDT)
+Received: from localhost ([175.223.19.100])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm2008086pgk.28.2018.09.05.01.33.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 01:33:21 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 10:33:20 +0200
-From:   Lars Ellenberg <lars.ellenberg@linbit.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        drbd-dev@lists.linbit.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7] drbd: Convert from ahash to shash
-Message-ID: <20180905083320.GA28462@soda.linbit>
-Mail-Followup-To: Kees Cook <keescook@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        drbd-dev@lists.linbit.com, LKML <linux-kernel@vger.kernel.org>
-References: <20180806233216.GA6037@beast>
- <CAGXu5jKA6_aZpDXB2UurmW5cEGEC7aMcq=qvJGPVAifjnk17ug@mail.gmail.com>
- <CAGXu5jLyynGbnuhwabbViwzvRFzn-Vj5ktYOrypRGj_qk8UvQw@mail.gmail.com>
+        Wed, 05 Sep 2018 01:33:30 -0700 (PDT)
+Date:   Wed, 5 Sep 2018 17:33:26 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: Re: [PATCH 4.19 regression fix] printk: For early boot messages
+ check loglevel when flushing the buffer
+Message-ID: <20180905083326.GC19936@jagdpanzerIV>
+References: <20180904180154.845-1-hdegoede@redhat.com>
+ <20180905023522.GA1444@jagdpanzerIV>
+ <93901f2b-91ad-a910-7031-0040b827a3af@redhat.com>
+ <20180905053609.GA19936@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jLyynGbnuhwabbViwzvRFzn-Vj5ktYOrypRGj_qk8UvQw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180905053609.GA19936@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 08:04:18PM -0700, Kees Cook wrote:
-> On Mon, Sep 3, 2018 at 11:04 PM, Kees Cook <keescook@chromium.org> wrote:
-> > On Mon, Aug 6, 2018 at 4:32 PM, Kees Cook <keescook@chromium.org> wrote:
-> >> In preparing to remove all stack VLA usage from the kernel[1], this
-> >> removes the discouraged use of AHASH_REQUEST_ON_STACK in favor of
-> >> the smaller SHASH_DESC_ON_STACK by converting from ahash-wrapped-shash
-> >> to direct shash. By removing a layer of indirection this both improves
-> >> performance and reduces stack usage. The stack allocation will be made
-> >> a fixed size in a later patch to the crypto subsystem.
-> >>
-> >> The bulk of the lines in this change are simple s/ahash/shash/, but the
-> >> main logic differences are in drbd_csum_ee() and drbd_csum_bio(), which
-> >> externalizes the page walking with k(un)map_atomic() instead of using
-> >> scattergather.
-> >
-> > Hi Lars! How does this look to you? If you can Ack I assume Jens would
-> > be able to take this.
+On (09/05/18 14:36), Sergey Senozhatsky wrote:
+> 
+> Just a demonstration of the idea. It does not look very good, tho.
+> I'd rather have just one suppress_message_printing() in printk code.
+> 
+> // This is not a proposed patch, hence the 80-cols violation.
+> 
+> ---
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index c036f128cdc3..231ac18423e1 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2416,7 +2416,7 @@ void console_unlock(void)
+>  			break;
+>  
+>  		msg = log_from_idx(console_idx);
+> -		if (msg->flags & LOG_NOCONS) {
+> +		if (msg->flags & LOG_NOCONS || (exclusive_console && suppress_message_printing(msg->level))) {
+>  			/*
+>  			 * Skip record if !ignore_loglevel, and
+>  			 * record has level above the console loglevel.
 
-Sure, I should have ACKed it a month ago already.  As I said, I believe
-you the crypto. And you added the kmap_atomic as I pointed out.
-All good.
+D'oh... Sorry about that, but, believe it or not, this is completely
+not what I had in my mind. What I had, was something like this:
 
-> FWIW I've tested a simple drbd configuration before/after this change
-> and things seem to be working correctly.
+---
 
-You'd need "data-integrity-alg" set (or "verify-alg", and then have it
-do an online-verify) to excercise the crypto stuff,
-and you'd need a highmem system (are these still out there?)
-to have the kmap not be a no-op.  But I don't see any potential problem.
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index c036f128cdc3..dadb8c11b0d6 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2416,6 +2416,11 @@ void console_unlock(void)
+ 			break;
+ 
+ 		msg = log_from_idx(console_idx);
++
++		if (exclusive_console &&
++				!suppress_message_printing(msg->level))
++			msg->flags &= ~LOG_NOCONS;
++
+ 		if (msg->flags & LOG_NOCONS) {
+ 			/*
+ 			 * Skip record if !ignore_loglevel, and
 
-Thanks!
+---
 
-    Lars
+	-ss
