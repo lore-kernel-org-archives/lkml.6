@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C54C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C278C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C042075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4465A2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:07:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XDoUgTnF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C042075C
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JOV1Z2cQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4465A2075C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbeIELfK (ORCPT
+        id S1727801AbeIELgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 07:35:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52670 "EHLO
+        Wed, 5 Sep 2018 07:36:05 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52710 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbeIELfK (ORCPT
+        with ESMTP id S1726272AbeIELgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:35:10 -0400
+        Wed, 5 Sep 2018 07:36:05 -0400
 Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 50B35994;
-        Wed,  5 Sep 2018 09:06:22 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CABDE994;
+        Wed,  5 Sep 2018 09:07:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536131182;
-        bh=LCqNDp/OZWJaVMqX3QYYPXf0iP8DN49+oQzaxxwtmls=;
+        s=mail; t=1536131238;
+        bh=+QNzEIFgK58HIZLrPi2ND9EqMX5Qc8LpXR8HYm8sZCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XDoUgTnFleTgjkxe/RVEpaUBNOVeYyw7FujE5FTZQqfsZZJiL98iVP6+qUa5Zp3Nb
-         TXSfJEzc1NxStqo8C3RV0MHkOXVcKNW0Gqx+V5n3zCdQ7zUaTUsvEb+kjpU/vWNHwC
-         99+mUUPJ+rLk2831yUQ0P6E8bzE3GoR/8tXkzEho=
+        b=JOV1Z2cQPjP93JAqZbjpIW4cH43XsZbDmDZlodYzv1HnH4m74Ge8FQSwkouhBwW4e
+         Rd0SVUpwh6nKq4ZoC4EXpMsZMtNojmUYunZ78/sZVTsV2OOAb4paiub0K1/cD7nKZo
+         56X2lO4x8SIOdyfoXj4Vgn/UVBjUJIuSj4AsqJX4=
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Stefan Agner <stefan@agner.ch>
 Cc:     linus.walleij@linaro.org, airlied@linux.ie, robh+dt@kernel.org,
@@ -46,12 +46,12 @@ Cc:     linus.walleij@linaro.org, airlied@linux.ie, robh+dt@kernel.org,
         marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
-Date:   Wed, 05 Sep 2018 10:06:28 +0300
-Message-ID: <4035252.QuWadVx7pr@avalon>
+Subject: Re: [PATCH 3/6] dt-bindings: display: add data-enable polarity property
+Date:   Wed, 05 Sep 2018 10:07:24 +0300
+Message-ID: <139651706.L0sBFfZMDQ@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <20180905052113.21262-1-stefan@agner.ch>
-References: <20180905052113.21262-1-stefan@agner.ch>
+In-Reply-To: <20180905052113.21262-3-stefan@agner.ch>
+References: <20180905052113.21262-1-stefan@agner.ch> <20180905052113.21262-3-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -64,90 +64,32 @@ Hi Stefan,
 
 Thank you for the patch.
 
-On Wednesday, 5 September 2018 08:21:08 EEST Stefan Agner wrote:
-> The DRM bus flags convey additional information on pixel data on
-> the bus. All current available bus flags might be of interest for
-> a bridge. Remove the sampling_edge field and use bus_flags.
-> 
-> In the case at hand a dumb VGA bridge needs a specific data enable
-> polarity (DRM_BUS_FLAG_DE_LOW).
+On Wednesday, 5 September 2018 08:21:10 EEST Stefan Agner wrote:
+> Allow to specify the data-enable polarity required by a dumb VGA
+> DAC converting parallel RGB to VGA.
 > 
 > Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->  drivers/gpu/drm/bridge/dumb-vga-dac.c |  6 +++---
->  include/drm/drm_bridge.h              | 11 +++++------
->  2 files changed, 8 insertions(+), 9 deletions(-)
+>  .../devicetree/bindings/display/bridge/dumb-vga-dac.txt          | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> b/drivers/gpu/drm/bridge/dumb-vga-dac.c index 9b706789a341..7a5c24967115
-> 100644
-> --- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> +++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> @@ -234,7 +234,7 @@ static int dumb_vga_remove(struct platform_device *pdev)
-> */
->  static const struct drm_bridge_timings default_dac_timings = {
->  	/* Timing specifications, datasheet page 7 */
-> -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> +	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
->  	.setup_time_ps = 500,
->  	.hold_time_ps = 1500,
->  };
-> @@ -245,7 +245,7 @@ static const struct drm_bridge_timings
-> default_dac_timings = { */
->  static const struct drm_bridge_timings ti_ths8134_dac_timings = {
->  	/* From timing diagram, datasheet page 9 */
-> -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> +	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
->  	/* From datasheet, page 12 */
->  	.setup_time_ps = 3000,
->  	/* I guess this means latched input */
-> @@ -258,7 +258,7 @@ static const struct drm_bridge_timings
-> ti_ths8134_dac_timings = { */
->  static const struct drm_bridge_timings ti_ths8135_dac_timings = {
->  	/* From timing diagram, datasheet page 14 */
-> -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_POSEDGE,
-> +	.bus_flags = DRM_BUS_FLAG_PIXDATA_POSEDGE,
->  	/* From datasheet, page 16 */
->  	.setup_time_ps = 2000,
->  	.hold_time_ps = 500,
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index bd850747ce54..85d4b51eae19 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -244,14 +244,13 @@ struct drm_bridge_funcs {
->   */
->  struct drm_bridge_timings {
->  	/**
-> -	 * @sampling_edge:
-> +	 * @bus_flags:
->  	 *
-> -	 * Tells whether the bridge samples the digital input signal
-> -	 * from the display engine on the positive or negative edge of the
-> -	 * clock, this should reuse the DRM_BUS_FLAG_PIXDATA_[POS|NEG]EDGE
-> -	 * bitwise flags from the DRM connector (bit 2 and 3 valid).
-> +	 * Tells what additional settings for the pixel data on the bus
-> +	 * this bridge requires (like pixel signal polarity). See also
-> +	 * &drm_display_info->bus_flags.
->  	 */
-> -	u32 sampling_edge;
-> +	u32 bus_flags;
+> diff --git
+> a/Documentation/devicetree/bindings/display/bridge/dumb-vga-dac.txt
+> b/Documentation/devicetree/bindings/display/bridge/dumb-vga-dac.txt index
+> 164cbb15f04c..adbd2ca0af2f 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/dumb-vga-dac.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/dumb-vga-dac.txt
+> @@ -18,6 +18,7 @@ graph bindings specified in
+> Documentation/devicetree/bindings/graph.txt.
+> 
+>  Optional properties:
+>  - vdd-supply: Power supply for DAC
+> +- de-active: data-enable pulse is active low/high/ignored
 
-While I'm not opposed to extending the bridge structure to allow specifying 
-other flags, I think we're losing information here. The sampling_edge field 
-makes it clear that the DRM_BUS_FLAG_PIXDATA_(NEG|POS)EDGE flags specified on 
-which clock edge signals are sampled. bus_flags could be interpreted 
-differently, for instance as specifying on which clock edge signals are output 
-on the other side of the bridge.
+Which value corresponds to low, high and ignored ?
 
-We could easily fix this by specifying that the bus_flags field refers to the 
-input side of the bridge. We could also rename the field to input_bus_flags. 
-The rename could be delayed until needed, but that would result in yet another 
-change to all bridge drivers, so we may want to do it now as your patch 
-touches all the drivers already. Other options might also be possible.
-
->  	/**
->  	 * @setup_time_ps:
->  	 *
+>  Example
+>  -------
 
 -- 
 Regards,
