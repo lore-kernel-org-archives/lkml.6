@@ -2,110 +2,106 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17964C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DD8C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C390E206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B36206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="VulkXkyo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C390E206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7QaZHDS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B36206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeIEMuG (ORCPT
+        id S1727963AbeIEMu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:50:06 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35146 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeIEMuF (ORCPT
+        Wed, 5 Sep 2018 08:50:26 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32925 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeIEMu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:50:05 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o18-v6so6771928wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 01:21:01 -0700 (PDT)
+        Wed, 5 Sep 2018 08:50:26 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s12-v6so5494525ljj.0;
+        Wed, 05 Sep 2018 01:21:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8K1I8xc2w8AOJe7r3dRzbBGSdnCPfuIEXe71xRHHcnk=;
-        b=VulkXkyon7b59NFZ9E11H0GO+W7Nz+DxfcMDb22y9q+AC8OStL9DjcUxxuIla90pWk
-         ZcqXuWGOSA0NwPjJErtyeTcuj6UVptWTAduXZW0Vja82cKA63q8JJLV79+IVso+LrWDx
-         Ij0H7zVG3XeNckCxnH3Ri7ZaYw4fN0iJxPq7nqH/UCHg266Oex2KIbZomYBm1FlNrFeO
-         fHxzsNEL92cS8AmYQwer3/2f6sb3aaj/Fe8KmnIOGfr2iJhQIbriu0Llhg/5AO5uvioE
-         KIDy5v00sfzwpN4MtbRHUg7rcHV46SW46/sec6/0fVAr3VKlR410wTDggl/Lkbyvb7M0
-         f8PQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g7Oz8Gyx/qx1G0DRACk6nmbYCIAtPOVOe96rMTwRRoM=;
+        b=s7QaZHDScv+bGqPCS5Ytne+LJ12w0JATQfhTTzv8k8WXaLKDuSTEmEvaKSJTgRcTvW
+         osV0fBvdpfjLPBkTc9ouk+hSOcCK9kxjgHDrNRzouEDSNnU5IMnX8+zitwXYw0l6nPKX
+         GNE5/bNoMcBERtILjzHHjwww5z3eItzLsy5CxoZnm7NBPWOtp8eGqv+cWkh+LVXLc4Nr
+         BQblupJCmW+kgqH1Sj/Ce+C2fXBXhJoKGO0eDMl8d9trIYg+2uDbciCAwhRAuFUcUT9r
+         OoVflHR7gx6sIjsLs+Iy0pqaft354JhvZ5wLrKnKijApPXdjdtzaEYlb0Yxjpc32HXcA
+         ft8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8K1I8xc2w8AOJe7r3dRzbBGSdnCPfuIEXe71xRHHcnk=;
-        b=Lx5e34M+bQ50mSeH99hZoY3q9lwWTyRrn12WcFfZhg7Po5iIO/elCnK1GIi+Unljax
-         i16jxnRQH05XEcx/6JTPGXOx4NTl7x5eGJcS3mbddmbqL8WQOLCYf77StaG1YkFCpiUc
-         YXk2/sqXK/xVrM3e0DfV6RuyH/A/ri4iLDLtZfzCd228zkrIhZL4jVmY/6aKAwP9wSXc
-         RieOKfwn1+06D4wdoiYBUFdlGIofHxoRk3OrZbERKVxLXIiVrRDZy761NnhDkPfNJ4eU
-         Vikce4LjoPMqqJcsZviZFL8CZq3nuuHUJICqPnRMTKPBeh0ugUnd8kEo2dIUdUbJTU/M
-         Xpfg==
-X-Gm-Message-State: APzg51C5yoKWzzAprjTRMs9ktXyhf9A/hZAX2obBr5z+2YaPjRAMY6dM
-        DHgqgLOVHga+IwoDO3CV/bQAr4MpKKXcIYIneTK9Jw==
-X-Google-Smtp-Source: ANB0Vdap1FVUievUrSA/sxRi7JLxNiw6281xGbdpEmNiYwHwMM9Vhtqf62eJH87JCJ2lP6i4/GJWD0UtdcXycAdr0og=
-X-Received: by 2002:a1c:3a08:: with SMTP id h8-v6mr10789736wma.126.1536135660716;
- Wed, 05 Sep 2018 01:21:00 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g7Oz8Gyx/qx1G0DRACk6nmbYCIAtPOVOe96rMTwRRoM=;
+        b=fq8LLYIdN6NnjpGFHEtgY6vSJ7rg9PgbNe/l/aSMyKW24cGpSE9brVy1inSelMEIb1
+         3otGv171gSsQP+RAIvlREHlhGFjewZPGsPJTDZSv/3CCnqVx+8fOzVn8lOkhG40sWDv0
+         bz7YvNYUmAP19b0g1lFHEF4j+Slb+8fbeWaHd4GI2rtTBAgdnEKTVPpgi3UrtLxe/eSu
+         Wl4JU6OLCvoOT6wWrJiNlKbzZRB6ou4QZlSxBIukuoUEouEkXXSzDCaqNEFoJM1CNC5k
+         +X0Ez9c7hpQ+EppAIS+o0uv/GQ6DvTzcHOxLGllkYXEFqDuiSwRnEPzWJc/t1IPWmjb5
+         cqmw==
+X-Gm-Message-State: APzg51CiUFxpqGfoUhtYWI6WCc3jbWrX1s4kLmCwuqX1Rb5IPtHH1H61
+        Y54wbvJQd65jUmN9WR6t8Mo=
+X-Google-Smtp-Source: ANB0VdYGoP7eK0U4Dzfb+fOwf8C1sFLGI/tEgvm8Zg3YK/Fq3tYKr276yJM+8be7LE3kgFOwGj1izg==
+X-Received: by 2002:a2e:5719:: with SMTP id l25-v6mr22557435ljb.125.1536135681318;
+        Wed, 05 Sep 2018 01:21:21 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm193333ljc.2.2018.09.05.01.21.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 01:21:20 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fxT47-0003kG-Ms; Wed, 05 Sep 2018 10:21:31 +0200
+Date:   Wed, 5 Sep 2018 10:21:31 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        andy.shevchenko@gmail.com, ajaykuee@gmail.com,
+        daniel.thompson@linaro.org
+Subject: Re: [PATCH] USB: serial: ftdi_sio: implement GPIO support for FT230X
+Message-ID: <20180905082131.GV28861@localhost>
+References: <2d91567c930ae5770cc55f92c37a9c6d@pados.hu>
+ <20180904124924.GA7278@localhost>
+ <20180825204744.2307-1-pados@pados.hu>
+ <680c039b5fb2beafa48ea12e492341db@pados.hu>
 MIME-Version: 1.0
-Received: by 2002:adf:9dcb:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 01:21:00 -0700 (PDT)
-In-Reply-To: <20180904185826.GE25119@infradead.org>
-References: <20180904124514.6290-1-anup@brainfault.org> <20180904124514.6290-6-anup@brainfault.org>
- <20180904185826.GE25119@infradead.org>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Wed, 5 Sep 2018 13:51:00 +0530
-Message-ID: <CAAhSdy2BBuuJbT5Rp8GG2baOXM++ERr1JuZoKTrmWqxhPxu5Cg@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/5] clocksource: riscv_timer: Make timer interrupt as
- a per-CPU interrupt
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <680c039b5fb2beafa48ea12e492341db@pados.hu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 12:28 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Tue, Sep 04, 2018 at 06:15:14PM +0530, Anup Patel wrote:
->> Instead of directly calling RISC-V timer interrupt handler from
->> RISC-V local interrupt conntroller driver, this patch implements
->> RISC-V timer interrupt as a per-CPU interrupt using per-CPU APIs
->> of Linux IRQ subsystem.
->
-> And the point of that is?  Except for introducing lots of pointless
-> code of course..
+On Tue, Sep 04, 2018 at 06:07:49PM +0000, Karoly Pados wrote:
+> >>> + priv->gc.ngpio = 4;
+> >> 
+> >> Shouldn't this be handled the other way round? IIRC there are two FTX
+> >> device types with four pins, and one type where only one pin is
+> >> accessible.
+> > 
+> > There are 4 devices with 1 GPIO, 1 device with 2 GPIOs, 2 devices with 4 GPIOs,
+> > and 1 device with 6 GPIOs. Source: http://www.ftdichip.com/FT-X.htm (2nd table)
+> > Do you still want me turn this over?
+> > 
+> 
+> Aaah, but those other devices are not UART bridges. I see what you mean now.
+> The point for me when developing th original patch
 
-Instead of short-circuiting timer interrupt from low-level IRQ handler, we use
-Linux per-CPU IRQ handling for timer interrupt.
+The last sentence looks incomplete; did you hit send too soon or too
+late? ;)
 
-Without this patch, output of "cat /proc/interrupts" looks as follows:
-           CPU0       CPU1       CPU2       CPU3
-  8:          8         12         18          6  SiFive PLIC   8  virtio0
- 10:          9         11          3          5  SiFive PLIC  10  ttyS0
-
-With this patchset, output of "cat /proc/interrupts" looks as follows:
-           CPU0       CPU1       CPU2       CPU3
-  5:        995       1012        997       1015  RISC-V INTC   5 Edge
-     riscv_timer
-  8:         23          6         10          7  SiFive PLIC   8 Edge
-     virtio0
- 10:          9         10          5          4  SiFive PLIC  10 Edge
-     ttyS0
-
-Regards,
-Anup
+Johan
