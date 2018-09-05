@@ -2,443 +2,140 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 154B6C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E742CC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB5D2077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB5D2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 86ED42077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 01:12:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="N5k8ZxQM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="hpN+V78z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86ED42077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbeIEFij (ORCPT
+        id S1726401AbeIEFkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 01:38:39 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11660 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725853AbeIEFij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 01:38:39 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 82BF3A2CEC2D8;
-        Wed,  5 Sep 2018 09:10:56 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Wed, 5 Sep 2018
- 09:10:56 +0800
-Subject: Re: [PATCH v2] f2fs: fix to avoid NULL pointer dereference on
- se->discard_map
-To:     Vicente Bergas <vicencb@gmail.com>, Chao Yu <chao@kernel.org>
-CC:     <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20180903195217.5968-1-chao@kernel.org>
- <CAAMcf8A7WFtNmcpVFSZeMy=n08x7_icAspc=iS9cYo8WnZi-Ng@mail.gmail.com>
- <2fad4199-8193-a7ad-fc33-9591fa915839@kernel.org>
- <CAAMcf8B3cdR7_-2_UwWC_qfpBR6q5rsAZtJ8g6m05RUBq019gA@mail.gmail.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1d212e9d-49fa-61b5-f4cb-e2ca3593d3ab@huawei.com>
-Date:   Wed, 5 Sep 2018 09:10:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 01:40:13 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37238 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725853AbeIEFkN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 01:40:13 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8519rlP003376;
+        Tue, 4 Sep 2018 18:12:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=BDneJ44loy/WHiSxSREAsFoAWLUHvFYOfKEsm3n+8zY=;
+ b=N5k8ZxQMjNlzAeV/Ij30mNIYcQUMpLgUKx2CEShs4A2orKSlB39m73FF28XFa2W9F+n6
+ LzLVL4kCODoq2fsFrbKGuzVG+EJqTXJaSdm9L1VVGFHxmIs9xFGvHaA6RQ7uc4NEiRfp
+ 57xIkEplZYr1kkobpiwhXDez966ca9RsppA= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2ma2jngfqd-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 04 Sep 2018 18:12:31 -0700
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.34) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Tue, 4 Sep 2018 21:12:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BDneJ44loy/WHiSxSREAsFoAWLUHvFYOfKEsm3n+8zY=;
+ b=hpN+V78zbWlgiuxuHy2Zjs1i73i43kWTgFyaZREBQfEvvdBIGV+oVo8EIX8k6Q0l8yF6lE7lAEb8GFN9uMfJGq70qECZnWULxhYTxuPBUs+olsU8lBxucbeP5ePOeKN7s89H/cxQbJ1/j3L10FF6Oik2iwXwJ0oEglcEMg3pCR8=
+Received: from vall.thefacebook.com (2620:10d:c090:180::1:e8b3) by
+ MWHPR15MB1229.namprd15.prod.outlook.com (2603:10b6:320:23::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.18; Wed, 5 Sep 2018 01:12:24 +0000
+From:   <jgkamat@fb.com>
+To:     <shuah@kernel.org>
+CC:     <linux-kselftest@vger.kernel.org>, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>, <jaygkamat@gmail.com>,
+        <jgkamat@fb.com>
+Subject: kselftests for memory.oom.group
+Date:   Tue, 4 Sep 2018 18:08:25 -0700
+Message-ID: <20180905010827.27743-1-jgkamat@fb.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAAMcf8B3cdR7_-2_UwWC_qfpBR6q5rsAZtJ8g6m05RUBq019gA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c090:180::1:e8b3]
+X-ClientProxiedBy: DM5PR20CA0011.namprd20.prod.outlook.com
+ (2603:10b6:3:93::21) To MWHPR15MB1229.namprd15.prod.outlook.com
+ (2603:10b6:320:23::19)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9aa08cec-5584-4010-4bc2-08d612cca47d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1229;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1229;3:NRa9GBORoR4UxTP1i8H9o/+1tSZSnZfr3rQW5Lgf5H2mj4WjZLeW7gDcY9rmGYY97h/MQ6nk0Sx4IFD/ozktFW7G5gHUvPgBBCUNhyjol+0PJIL4PZgU/fz2435p5DGtSWhtDFVnwtKwOKua8QtCk6Cn4MDPvHRCdlX9b5xAANfqEpI0Qa/o4eiwYRrIjoe1gwdntzwCKn7zlsX5DSorZ2jZvvjQabX2W6eDoqveGG5IAp90pW+sohDcla8IO+CU;25:smXsKLqa5/9mq1n1DGuGLhGi6s57cbU3ZiV+VOImCzuXKxvHrVTV+7BlYBfHJhyVmd4c54rO+2jwQaklfeA9OWwgugIxe1ZRRbs0aDIc/A8lDMrOOYrk5vRi37rhTDuXpNex4woGnZdeoywNoQNIUFYX0elbP752Es7tPNnSq/Kr4GMkf2zATLYnagIgzUiX+ULH5EwckUIgq5vkZsLiikG1RGJRdiJpNnhnX3agdZCAlvEIYoKvFuwlmyYfXuLXS2FbFvuLgP6buPbSlGkIWNXONz2715YN+vj3shYi4lxp0k6gNZ66RhFvd5ggsS7SvrNT+8iH7ftAnmQbLlmWnQ==;31:dhPp/IECJ22I/M8O4ENEDMPd7mFt8WbvpzSMLFlkewsvpR/mvME47ZvrbxMI43aLz/0U4HclKbJPiqMFAJxJWjAFPfGo8mRCcf8ff1JxZSkMYpFn8gj23lF5d6Z/sPVyAJQwHCxvBWaxz0xmNrFcqeI+IhRuGHYDNKlUVXCmB5IL/vK0B5Nq5BTPMSxAGEh+S7U0JViwj/xPbI8YJkjX1pmco0YrDczL3Z62lh34axo=
+X-MS-TrafficTypeDiagnostic: MWHPR15MB1229:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1229;20:amZd9k7G2h2zcaW+ha3IRHbdbW7VLD25rvK3LHYy0hnk/pITqnrZnmSIrreNhgwRjpvnXjWNLaumVtbb6paleWs1dcGl5sC0hEqf6ZojsS7+I9m3K5PQq+lgORQ7n1vMH4oDQakgjN8RImi2NFifBEX5Hb82ckNJFsoxTvMYr3YDbLtl9/mK3ITJxyYyu9kgQX7YPXJHLH7Z0EC8tZh2ibr+mdBakM1qpxotURruC37t4a8w2yKqnnvJrcPBo79ZQkIe0PmoIS++cXniyvFvniSnRir2iY4zOHygGHPwsF7LOMoxg4zQOKVSIttjq1rM3dZNBcObF65BZYAAwx/F95z8hvw3NOh09AsJ0T5FnYmI8x8O+11jE3tJfxvn2OaI8p9LaL86XfSF4zzwZo4RRTZTK3KKap0o/SYMxG89dnTz6+1gM12hrqwSwRH2/QZPydgBiV+6iA9jNptoXCThRbb1OEzWZLTtEzyQRm8mPFXnPChCeEph6DmNSgafiKGW;4:UhyNWYamNuU8jMkPUq8FPeANXqnZAV7WyZ/vpKjG2vgmxR816nFpwoQjS0g50i/gqDegRc0AFT217eq371tlx9YdK+BQYM3eBLe6kJFw528JooyZ4T5zXd6uH+MOP+kQYOo6hXcSjcqB1ipLMSRxzh44RyLFzNAcen3nJ/N4w0/DiskFQSM/ohiolsCH8TNxRvvjYbt2cvq8mEa02fwtLcjlrtlRToLtS5uklOd/QMVfDgXTF/0fv6JZBfLpFCGsIUSiDoa6Bej1X3EbXEAU8w==
+X-Microsoft-Antispam-PRVS: <MWHPR15MB1229D0C131EEACFBA0F7C23FCE020@MWHPR15MB1229.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(10201501046)(3002001)(3231311)(11241501184)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:MWHPR15MB1229;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1229;
+X-Forefront-PRVS: 078693968A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(346002)(39860400002)(396003)(69224002)(189003)(199004)(33896004)(6916009)(86362001)(8936002)(25786009)(54906003)(16586007)(316002)(6506007)(386003)(5660300001)(69596002)(53936002)(85782001)(53416004)(50226002)(68736007)(81156014)(6512007)(81166006)(16526019)(48376002)(46003)(36756003)(47776003)(9686003)(186003)(97736004)(105586002)(8676002)(4326008)(51416003)(39060400002)(1076002)(106356001)(476003)(2906002)(478600001)(52116002)(6486002)(305945005)(7736002)(2616005)(2351001)(52396003)(486006)(2361001)(50466002)(6116002)(85772001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1229;H:vall.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR15MB1229;23:4AbhDer3XvFQFplxU1RFjWpq/DQmO/0hxQwLaPvjl?=
+ =?us-ascii?Q?exTvFmuvrX8BDYGC+B6eS1nl1lMT2dC3iqAz/LkyWVvt9arcl4/kLmQDn4or?=
+ =?us-ascii?Q?Wu3yYUe0boyTNIjlxMdjD9TkVm3L0+FRRRBFScjwMJd9vIGdHNEuf/Hd8xyR?=
+ =?us-ascii?Q?X4cB0Cdsak13bblflS/z9xyzOwMjDbXEGwQ4IbQhOjLBl0jwzEt7o1WBnVw4?=
+ =?us-ascii?Q?bQbhyvY8eD6S1l/FO8CkwyHwXlTTQurApK3S421I1JhB5LE/s6tk2JVxvCaS?=
+ =?us-ascii?Q?oeyPUhIfCDAd3aXRA9KFcuFbO06Hh0VPnyqdkUimiGmP8wql6LuTsB+7EfeL?=
+ =?us-ascii?Q?GQ+EapupSIgE2JhWoBDkOKRyhT7eSfgZSKJC+p+0gP+7PlzWQ9Z88Um+gecj?=
+ =?us-ascii?Q?iNvyZR/MmYpM1YPjq0hqlV4PgSNLVjCF8O1sxkv5Rn/LrHC7mpCnM8VK1ObW?=
+ =?us-ascii?Q?kDw8kQE4XuMaYmXnwhR23Kx4pCsmXGGMFfv6BDxVyg+uLrKFb8bSDZV5h5GJ?=
+ =?us-ascii?Q?+w8gIyutdOjFVWMhzeyRFxjLdB9XY28jHyGiI6TJqbcdQDgBOn/ctqVgdHvg?=
+ =?us-ascii?Q?KtM2WCiJxV38RJHVySUqQMz/VD8Wscw5Gfa9lmqq2khag8OE+MxPKR7qGZhI?=
+ =?us-ascii?Q?OyXOuW7BVC8f0VBSdHGLUwfcyinLGhnJ9Dv9Co3YtjC7vGhrmDgBoVp21Ptb?=
+ =?us-ascii?Q?KdRYEqbI1OVcD4EMwOm3X54t9aZXam2uvo5drAFZSXKFmgA85LtTDwPJg4nZ?=
+ =?us-ascii?Q?NGlqE8fPv8nCHkpQzqrPdSZu01e1aM7io8EPIArgEdFqOop3mVFRrrpDD7xc?=
+ =?us-ascii?Q?+qk+HwsfOh4V+K0jhpPcf45ENEh0Lb5qydLq3WgFzlzKIglNmT8kLy1r5gHS?=
+ =?us-ascii?Q?/EcbsgrYwHDt6oqWsF0amjhoIwk4UL19PMM1DqHDpE0EUQG5lEcDLMZjzFg5?=
+ =?us-ascii?Q?/YWHIiwP71kv+UPY6cD+dWQzBzP3x2X1JNi7flJKOWxi8JdC++cMmmUQ78e/?=
+ =?us-ascii?Q?OGDEcE1OpSSfF1K5BvNIkgjEaQiwH7vs4nrB7XS/opKzui0C8P1e5T6NdsF3?=
+ =?us-ascii?Q?SWSbcIcbq+xngM/wFg2maOlTVbU4NBfpOaVjzvbiJYNm3sgiU0QiDD3TiaeZ?=
+ =?us-ascii?Q?w3iyoG6zIz/CA1Jb7uQDMbE4VuNDe9wCjvsM7dghHX5j6eneQOR70FpLS/b6?=
+ =?us-ascii?Q?mrS0G6RRw60jCMrEaEnODn6U9ZNeiuIq+xYEspBTIS8mcu2vaOvGPUiKUjbi?=
+ =?us-ascii?Q?GwV8M5xkSMP45tQOhTipGc/HT753NohX70edZbq5mM46OCutaXUKFI4erp9D?=
+ =?us-ascii?Q?EQJiY8EVy8++YOaDVECYxU=3D?=
+X-Microsoft-Antispam-Message-Info: p+lBmvNtIlvHTt7mHkkC3wOfcgfx2fM7Rkr9hynqJa0rYeeQhnv1yB16GMTv9DzzBHp810BoOTUPPcEC283IqvDTmZvCVj+On7MxDcEcU88gZcYpOdRoiFAYN0UaEkjH9XCiTVsjeCqS9len4hmshtS/s0yWbUA/sNpHS67ZNLAaco3xpj1GCyN3NZoVvKZf9Lu2USx8WRvxRjjHWtQj+8PuI1aL9leXLWZfbOGr53OzDPd95NfLT5JRZH8uLLAqeiqlEYQ24IBeJ1/1sIoPhsLMrwLN1UKJvfKMdvhGpjoEHALy0Ir961RngWqOks6DSMWnVRoc64SfPmcLBYuG8f5OPfaFFg2V2NaW+lRwXHE=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1229;6:I4l0qZBiKvp2t/Ys17i8HMVkAVGDK/GnHwYYof4VE0V8LLm0+3vWI/xhIBt6XhXh8DN3oB16aUCe8Z64qYkZjMJYMyWU1KlmDCHKekxTvU9qtHd8NlK/Q1SikFgC9qcgiUUS3rAc52NU5NhGP2Y/7S2SqCsXMTXDYvweSfnJJJHf6AFNuDdWC2mFSzP2qq0hYw0PDiBBD3sawViVPbmCus/F6J3enWlNO3lAcMFQSXynWshYpo6d+oxFt6v8YP/VmEQD8OSJRQFgjGDEbv8BdT0HL5kIT+3BKcafII71Ta86vMFxJ1xpX6heKgdojgPbQwOFOMcUFOS26DmpfR8bz7NYP12nWJxuSu/yo7n7VIK5iyVTv5OPrvejthh8Bx4mPoJX88iZ5j3e31og74L35OZmHNosPJ1sMBpVeuz/xIk3XI5ZneRKgSkYhnI7f9tC+ir29SqKWjk++Rb7OSZkDw==;5:NJl3BiNPUy3zZ6aSPt8xTBxNl5xbCFHvOo19hiYZOj8FiPDSFg27AxiKJ8X9FPcV/i0ewZAq6gUdXBPu9pJU9caFRV5O8z6bX8u/DxVgf1DIbQDP6juiqRJ06OlzZ2RE4HXmAJWmnMVW7+TFn1vL2jUNbQqt4j6cSGv4Lw8aPlo=;7:PB2h1U8ADAvG8BC3zDS91Rs3DCnIjBGrGCYc3yaPYPj1+W1uNhKRElMoTG6rCy1rwTTtBGB8dcuGtf88FBjzvKp7fzLG8sRpSWgrvdekPrm3lZfLNv75ZuA32wNUUHakHdjFAVkBG07gbAjs0ucZ9ARh6FMzKw67p4LLSqa33sz4RV8Kmi49dh3xTwCkCz8s8eimV6FgYKSqhlBITydW3p0IhMc0qrlxKvlYsVxzOrFCVOfsiP9avSJm+zofOHBz
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR15MB1229;20:JjcVnoBp8nhI9/+OUvXj2so5GMPD9hh3XRbGGA6c1DAvhReExzQqlLJwJ2vNgAHyfn24Bzdhm203YDctRI68XdRGZRSbeUyqF2CBqs2OXJ7+sc6VeGubTACpkO7iZ5DI+c3A/hDYs8Dcab1dSOqdUf9iwHIl8zxUSxxST9pH8OY=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Sep 2018 01:12:24.5869 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9aa08cec-5584-4010-4bc2-08d612cca47d
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1229
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-04_14:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/5 0:00, Vicente Bergas wrote:
-> On Tue, Sep 4, 2018 at 5:45 PM, Chao Yu <chao@kernel.org> wrote:
->> On 2018/9/4 23:25, Vicente Bergas wrote:
->>> On Mon, Sep 3, 2018 at 9:52 PM, Chao Yu <chao@kernel.org> wrote:
->>>> From: Chao Yu <yuchao0@huawei.com>
->>>>
->>>> https://nam01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fbugzilla.kernel.org%2Fshow_bug.cgi%3Fid%3D200951&amp;data=02%7C01%7C%7Cc2be7ee866b04268e69f08d6127aa973%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636716715374991374&amp;sdata=E%2Boli5wWbe97f3QCdmAiIIZPEMInd9u221ldtVDqvtA%3D&amp;reserved=0
->>>>
->>>> These is a NULL pointer dereference issue reported in bugzilla:
->>>>
->>>> Hi,
->>>> in the setup there is a SATA SSD connected to a SATA-to-USB bridge.
->>>>
->>>> The disc is "Samsung SSD 850 PRO 256G" which supports TRIM.
->>>> There are four partitions:
->>>>  sda1: FAT  /boot
->>>>  sda2: F2FS /
->>>>  sda3: F2FS /home
->>>>  sda4: F2FS
->>>>
->>>> The bridge is ASMT1153e which uses the "uas" driver.
->>>> There is no TRIM pass-through, so, when mounting it reports:
->>>>  mounting with "discard" option, but the device does not support discard
->>>>
->>>> The USB host is USB3.0 and UASP capable. It is the one on RK3399.
->>>>
->>>> Given this everything works fine, except there is no TRIM support.
->>>>
->>>> In order to enable TRIM a new UDEV rule is added [1]:
->>>>  /etc/udev/rules.d/10-sata-bridge-trim.rules:
->>>>  ACTION=="add|change", ATTRS{idVendor}=="174c", ATTRS{idProduct}=="55aa", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"
->>>> After reboot any F2FS write hangs forever and dmesg reports:
->>>>  Unable to handle kernel NULL pointer dereference
->>>>
->>>> Also tested on a x86_64 system: works fine even with TRIM enabled.
->>>>  same disc
->>>>  same bridge
->>>>  different usb host controller
->>>>  different cpu architecture
->>>>  not root filesystem
->>>>
->>>> Regards,
->>>>   Vicenç.
->>>>
->>>> [1] Post #5 in https://nam01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fbbs.archlinux.org%2Fviewtopic.php%3Fid%3D236280&amp;data=02%7C01%7C%7Cc2be7ee866b04268e69f08d6127aa973%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C636716715374991374&amp;sdata=tLP2J%2BL2MPDnqbLm1JcmJ7HfM%2F9j%2F0xc2MET2QSAjVE%3D&amp;reserved=0
->>>>
->>>>  Unable to handle kernel NULL pointer dereference at virtual address 000000000000003e
->>>>  Mem abort info:
->>>>    ESR = 0x96000004
->>>>    Exception class = DABT (current EL), IL = 32 bits
->>>>    SET = 0, FnV = 0
->>>>    EA = 0, S1PTW = 0
->>>>  Data abort info:
->>>>    ISV = 0, ISS = 0x00000004
->>>>    CM = 0, WnR = 0
->>>>  user pgtable: 4k pages, 48-bit VAs, pgdp = 00000000626e3122
->>>>  [000000000000003e] pgd=0000000000000000
->>>>  Internal error: Oops: 96000004 [#1] SMP
->>>>  Modules linked in: overlay snd_soc_hdmi_codec rc_cec dw_hdmi_i2s_audio dw_hdmi_cec snd_soc_simple_card snd_soc_simple_card_utils snd_soc_rockchip_i2s rockchip_rga snd_soc_rockchip_pcm rockchipdrm videobuf2_dma_sg v4l2_mem2mem rtc_rk808 videobuf2_memops analogix_dp videobuf2_v4l2 videobuf2_common dw_hdmi dw_wdt cec rc_core videodev drm_kms_helper media drm rockchip_thermal rockchip_saradc realtek drm_panel_orientation_quirks syscopyarea sysfillrect sysimgblt fb_sys_fops dwmac_rk stmmac_platform stmmac pwm_bl squashfs loop crypto_user gpio_keys hid_kensington
->>>>  CPU: 5 PID: 957 Comm: nvim Not tainted 4.19.0-rc1-1-ARCH #1
->>>>  Hardware name: Sapphire-RK3399 Board (DT)
->>>>  pstate: 00000005 (nzcv daif -PAN -UAO)
->>>>  pc : update_sit_entry+0x304/0x4b0
->>>>  lr : update_sit_entry+0x108/0x4b0
->>>>  sp : ffff00000ca13bd0
->>>>  x29: ffff00000ca13bd0 x28: 000000000000003e
->>>>  x27: 0000000000000020 x26: 0000000000080000
->>>>  x25: 0000000000000048 x24: ffff8000ebb85cf8
->>>>  x23: 0000000000000253 x22: 00000000ffffffff
->>>>  x21: 00000000000535f2 x20: 00000000ffffffdf
->>>>  x19: ffff8000eb9e6800 x18: ffff8000eb9e6be8
->>>>  x17: 0000000007ce6926 x16: 000000001c83ffa8
->>>>  x15: 0000000000000000 x14: ffff8000f602df90
->>>>  x13: 0000000000000006 x12: 0000000000000040
->>>>  x11: 0000000000000228 x10: 0000000000000000
->>>>  x9 : 0000000000000000 x8 : 0000000000000000
->>>>  x7 : 00000000000535f2 x6 : ffff8000ebff3440
->>>>  x5 : ffff8000ebff3440 x4 : ffff8000ebe3a6c8
->>>>  x3 : 00000000ffffffff x2 : 0000000000000020
->>>>  x1 : 0000000000000000 x0 : ffff8000eb9e5800
->>>>  Process nvim (pid: 957, stack limit = 0x0000000063a78320)
->>>>  Call trace:
->>>>   update_sit_entry+0x304/0x4b0
->>>>   f2fs_invalidate_blocks+0x98/0x140
->>>>   truncate_node+0x90/0x400
->>>>   f2fs_remove_inode_page+0xe8/0x340
->>>>   f2fs_evict_inode+0x2b0/0x408
->>>>   evict+0xe0/0x1e0
->>>>   iput+0x160/0x260
->>>>   do_unlinkat+0x214/0x298
->>>>   __arm64_sys_unlinkat+0x3c/0x68
->>>>   el0_svc_handler+0x94/0x118
->>>>   el0_svc+0x8/0xc
->>>>  Code: f9400800 b9488400 36080140 f9400f01 (387c4820)
->>>>  ---[ end trace a0f21a307118c477 ]---
->>>>
->>>> The reason is it is possible to enable discard flag on block queue via
->>>> UDEV, but during mount, f2fs will initialize se->discard_map only if
->>>> this flag is set, once the flag is set after mount, f2fs may dereference
->>>> NULL pointer on se->discard_map.
->>>>
->>>> So this patch does below changes to fix this issue:
->>>> - initialize and update se->discard_map all the time.
->>>> - don't clear DISCARD option if device has no QUEUE_FLAG_DISCARD flag
->>>> during mount.
->>>> - don't issue small discard on zoned block device.
->>>> - introduce some functions to enhance the readability.
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>> v2:
->>>> - rebase to last dev branch.
->>>>  fs/f2fs/debug.c   |  3 +--
->>>>  fs/f2fs/f2fs.h    | 15 ++++++++---
->>>>  fs/f2fs/file.c    |  2 +-
->>>>  fs/f2fs/segment.c | 65 ++++++++++++++++++++---------------------------
->>>>  fs/f2fs/super.c   | 16 +++---------
->>>>  5 files changed, 46 insertions(+), 55 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
->>>> index 214a968962a1..ebe649d9793c 100644
->>>> --- a/fs/f2fs/debug.c
->>>> +++ b/fs/f2fs/debug.c
->>>> @@ -190,8 +190,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
->>>>         si->base_mem += MAIN_SEGS(sbi) * sizeof(struct seg_entry);
->>>>         si->base_mem += f2fs_bitmap_size(MAIN_SEGS(sbi));
->>>>         si->base_mem += 2 * SIT_VBLOCK_MAP_SIZE * MAIN_SEGS(sbi);
->>>> -       if (f2fs_discard_en(sbi))
->>>> -               si->base_mem += SIT_VBLOCK_MAP_SIZE * MAIN_SEGS(sbi);
->>>> +       si->base_mem += SIT_VBLOCK_MAP_SIZE * MAIN_SEGS(sbi);
->>>>         si->base_mem += SIT_VBLOCK_MAP_SIZE;
->>>>         if (sbi->segs_per_sec > 1)
->>>>                 si->base_mem += MAIN_SECS(sbi) * sizeof(struct sec_entry);
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index 96bde026636f..b575ec75ef87 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -3399,11 +3399,20 @@ static inline int get_blkz_type(struct f2fs_sb_info *sbi,
->>>>  }
->>>>  #endif
->>>>
->>>> -static inline bool f2fs_discard_en(struct f2fs_sb_info *sbi)
->>>> +static inline bool f2fs_hw_should_discard(struct f2fs_sb_info *sbi)
->>>>  {
->>>> -       struct request_queue *q = bdev_get_queue(sbi->sb->s_bdev);
->>>> +       return f2fs_sb_has_blkzoned(sbi->sb);
->>>> +}
->>>>
->>>> -       return blk_queue_discard(q) || f2fs_sb_has_blkzoned(sbi->sb);
->>>> +static inline bool f2fs_hw_support_discard(struct f2fs_sb_info *sbi)
->>>> +{
->>>> +       return blk_queue_discard(bdev_get_queue(sbi->sb->s_bdev));
->>>> +}
->>>> +
->>>> +static inline bool f2fs_realtime_discard_enable(struct f2fs_sb_info *sbi)
->>>> +{
->>>> +       return (test_opt(sbi, DISCARD) && f2fs_hw_support_discard(sbi)) ||
->>>> +                                       f2fs_hw_should_discard(sbi);
->>>>  }
->>>>
->>>>  static inline void set_opt_mode(struct f2fs_sb_info *sbi, unsigned int mt)
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index 5474aaa274b9..ca66b3eb197a 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -1978,7 +1978,7 @@ static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
->>>>         if (!capable(CAP_SYS_ADMIN))
->>>>                 return -EPERM;
->>>>
->>>> -       if (!blk_queue_discard(q))
->>>> +       if (!f2fs_hw_support_discard(F2FS_SB(sb)))
->>>>                 return -EOPNOTSUPP;
->>>>
->>>>         if (copy_from_user(&range, (struct fstrim_range __user *)arg,
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 30779aaa9dba..c372ff755818 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -1725,11 +1725,11 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->>>>         struct list_head *head = &SM_I(sbi)->dcc_info->entry_list;
->>>>         int i;
->>>>
->>>> -       if (se->valid_blocks == max_blocks || !f2fs_discard_en(sbi))
->>>> +       if (se->valid_blocks == max_blocks || !f2fs_hw_support_discard(sbi))
->>>>                 return false;
->>>>
->>>>         if (!force) {
->>>> -               if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
->>>> +               if (!f2fs_realtime_discard_enable(sbi) || !se->valid_blocks ||
->>>>                         SM_I(sbi)->dcc_info->nr_discards >=
->>>>                                 SM_I(sbi)->dcc_info->max_discards)
->>>>                         return false;
->>>> @@ -1835,7 +1835,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
->>>>                                 dirty_i->nr_dirty[PRE]--;
->>>>                 }
->>>>
->>>> -               if (!test_opt(sbi, DISCARD))
->>>> +               if (!f2fs_realtime_discard_enable(sbi))
->>>>                         continue;
->>>>
->>>>                 if (force && start >= cpc->trim_start &&
->>>> @@ -2025,8 +2025,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
->>>>                         del = 0;
->>>>                 }
->>>>
->>>> -               if (f2fs_discard_en(sbi) &&
->>>> -                       !f2fs_test_and_set_bit(offset, se->discard_map))
->>>> +               if (!f2fs_test_and_set_bit(offset, se->discard_map))
->>>>                         sbi->discard_blks--;
->>>>
->>>>                 /* don't overwrite by SSR to keep node chain */
->>>> @@ -2054,8 +2053,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
->>>>                         del = 0;
->>>>                 }
->>>>
->>>> -               if (f2fs_discard_en(sbi) &&
->>>> -                       f2fs_test_and_clear_bit(offset, se->discard_map))
->>>> +               if (f2fs_test_and_clear_bit(offset, se->discard_map))
->>>>                         sbi->discard_blks++;
->>>>         }
->>>>         if (!f2fs_test_bit(offset, se->ckpt_valid_map))
->>>> @@ -2671,7 +2669,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
->>>>          * discard option. User configuration looks like using runtime discard
->>>>          * or periodic fstrim instead of it.
->>>>          */
->>>> -       if (test_opt(sbi, DISCARD))
->>>> +       if (f2fs_realtime_discard_enable(sbi))
->>>>                 goto out;
->>>>
->>>>         start_block = START_BLOCK(sbi, start_segno);
->>>> @@ -3762,13 +3760,11 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
->>>>                         return -ENOMEM;
->>>>  #endif
->>>>
->>>> -               if (f2fs_discard_en(sbi)) {
->>>> -                       sit_i->sentries[start].discard_map
->>>> -                               = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
->>>> -                                                               GFP_KERNEL);
->>>> -                       if (!sit_i->sentries[start].discard_map)
->>>> -                               return -ENOMEM;
->>>> -               }
->>>> +               sit_i->sentries[start].discard_map
->>>> +                       = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
->>>> +                                                       GFP_KERNEL);
->>>> +               if (!sit_i->sentries[start].discard_map)
->>>> +                       return -ENOMEM;
->>>>         }
->>>>
->>>>         sit_i->tmp_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
->>>> @@ -3916,18 +3912,16 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
->>>>                                 total_node_blocks += se->valid_blocks;
->>>>
->>>>                         /* build discard map only one time */
->>>> -                       if (f2fs_discard_en(sbi)) {
->>>> -                               if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
->>>> -                                       memset(se->discard_map, 0xff,
->>>> -                                               SIT_VBLOCK_MAP_SIZE);
->>>> -                               } else {
->>>> -                                       memcpy(se->discard_map,
->>>> -                                               se->cur_valid_map,
->>>> -                                               SIT_VBLOCK_MAP_SIZE);
->>>> -                                       sbi->discard_blks +=
->>>> -                                               sbi->blocks_per_seg -
->>>> -                                               se->valid_blocks;
->>>> -                               }
->>>> +                       if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
->>>> +                               memset(se->discard_map, 0xff,
->>>> +                                       SIT_VBLOCK_MAP_SIZE);
->>>> +                       } else {
->>>> +                               memcpy(se->discard_map,
->>>> +                                       se->cur_valid_map,
->>>> +                                       SIT_VBLOCK_MAP_SIZE);
->>>> +                               sbi->discard_blks +=
->>>> +                                       sbi->blocks_per_seg -
->>>> +                                       se->valid_blocks;
->>>>                         }
->>>>
->>>>                         if (sbi->segs_per_sec > 1)
->>>> @@ -3965,16 +3959,13 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
->>>>                 if (IS_NODESEG(se->type))
->>>>                         total_node_blocks += se->valid_blocks;
->>>>
->>>> -               if (f2fs_discard_en(sbi)) {
->>>> -                       if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
->>>> -                               memset(se->discard_map, 0xff,
->>>> -                                                       SIT_VBLOCK_MAP_SIZE);
->>>> -                       } else {
->>>> -                               memcpy(se->discard_map, se->cur_valid_map,
->>>> -                                                       SIT_VBLOCK_MAP_SIZE);
->>>> -                               sbi->discard_blks += old_valid_blocks;
->>>> -                               sbi->discard_blks -= se->valid_blocks;
->>>> -                       }
->>>> +               if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
->>>> +                       memset(se->discard_map, 0xff, SIT_VBLOCK_MAP_SIZE);
->>>> +               } else {
->>>> +                       memcpy(se->discard_map, se->cur_valid_map,
->>>> +                                               SIT_VBLOCK_MAP_SIZE);
->>>> +                       sbi->discard_blks += old_valid_blocks;
->>>> +                       sbi->discard_blks -= se->valid_blocks;
->>>>                 }
->>>>
->>>>                 if (sbi->segs_per_sec > 1) {
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index 53d70b64fea1..5cad0f7687e9 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -360,7 +360,6 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
->>>>  static int parse_options(struct super_block *sb, char *options)
->>>>  {
->>>>         struct f2fs_sb_info *sbi = F2FS_SB(sb);
->>>> -       struct request_queue *q;
->>>>         substring_t args[MAX_OPT_ARGS];
->>>>         char *p, *name;
->>>>         int arg = 0;
->>>> @@ -415,14 +414,7 @@ static int parse_options(struct super_block *sb, char *options)
->>>>                                 return -EINVAL;
->>>>                         break;
->>>>                 case Opt_discard:
->>>> -                       q = bdev_get_queue(sb->s_bdev);
->>>> -                       if (blk_queue_discard(q)) {
->>>> -                               set_opt(sbi, DISCARD);
->>>> -                       } else if (!f2fs_sb_has_blkzoned(sb)) {
->>>> -                               f2fs_msg(sb, KERN_WARNING,
->>>> -                                       "mounting with \"discard\" option, but "
->>>> -                                       "the device does not support discard");
->>>> -                       }
->>>> +                       set_opt(sbi, DISCARD);
->>>>                         break;
->>>>                 case Opt_nodiscard:
->>>>                         if (f2fs_sb_has_blkzoned(sb)) {
->>>> @@ -1032,7 +1024,8 @@ static void f2fs_put_super(struct super_block *sb)
->>>>         /* be sure to wait for any on-going discard commands */
->>>>         dropped = f2fs_wait_discard_bios(sbi);
->>>>
->>>> -       if (f2fs_discard_en(sbi) && !sbi->discard_blks && !dropped) {
->>>> +       if ((f2fs_hw_support_discard(sbi) || f2fs_hw_should_discard(sbi)) &&
->>>> +                                       !sbi->discard_blks && !dropped) {
->>>>                 struct cp_control cpc = {
->>>>                         .reason = CP_UMOUNT | CP_TRIMMED,
->>>>                 };
->>>> @@ -1399,8 +1392,7 @@ static void default_options(struct f2fs_sb_info *sbi)
->>>>         set_opt(sbi, NOHEAP);
->>>>         sbi->sb->s_flags |= SB_LAZYTIME;
->>>>         set_opt(sbi, FLUSH_MERGE);
->>>> -       if (blk_queue_discard(bdev_get_queue(sbi->sb->s_bdev)))
->>>> -               set_opt(sbi, DISCARD);
->>>> +       set_opt(sbi, DISCARD);
->>>>         if (f2fs_sb_has_blkzoned(sbi->sb))
->>>>                 set_opt_mode(sbi, F2FS_MOUNT_LFS);
->>>>         else
->>>> --
->>>> 2.18.0
->>>>
->>>
->>> Hi,
->>> just tested and it works fine: no more segfaults.
->>> How can i check that TRIM is indeed being used?
->>
->> You can check discard trace:
->>
->> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_issue_discard/enable
->> cat /sys/kernel/debug/tracing/trace_pipe
-> 
-> I confirm that there are discarded blocks in two filesystems:
->  a.- The root filesystem, which had the discard option applied after mount.
->  b.- A non-root filesystem, which had the discard option applied before mount.
-> So, complete success!
+Hi Shuah,
 
-Thanks for your test. :)
+I wrote some tests for the new memory.oom.group feature in cgroups 2.
 
-Thanks,
+In the process, I discovered a few small bugs in the cgroups tests, which
+I have fixed as well in a separate commit.
 
-> 
-> Regards,
->   Vicenç.
-> 
->>
->> Thanks,
->>
->>>
->>> Tested-by: Vicente Bergas <vicencb@gmail.com>
->>>
->>> Regards,
->>>   Vicenç.
->>>
-> 
-> .
-> 
+This is my first ever patch to Linux, so let me know if you see any issues or
+improvements that can be made.
+
+Thanks for all your amazing work on Linux!
+-Jay
+
+
 
