@@ -2,161 +2,215 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E889C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EC0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F64206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:05:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jajEC4UY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F64206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 1802C20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 15:05:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1802C20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeIETgX (ORCPT
+        id S1727723AbeIETg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:36:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:46663 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbeIETgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:36:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4256TK0vsCz9s5c;
-        Thu,  6 Sep 2018 01:05:41 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536159945;
-        bh=86e9HYPyicsxITm/6dtjUTTnIOh/ljYWcLSRjnT061g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jajEC4UYmkkyyurPg2hQ8MXH2/jSyMY2avGsUKG6F17NBsbpmxAkyBBy4eiAoACVu
-         4x7N6b/cJAPTx2XPBASmYFjxaliAxkN64hy7Cb9lkcX6/XlOd4wKDlMs9Kv5VDGo/Q
-         F+C82zEouxFusHw4SyuKrKEo8/fOF5ziDZdPnYO/zx2tJjjDGxjUVsyZDP3p8izxKv
-         LJryzjIgVwnH3/BXezErIa1qTo1pZJ6Fo5OB6RIwVIes3VFwq7Mgel0E4xsGAUXgWC
-         9SKlwEZpi5z6WvwzdmZ7CBGFeycM3AAzmVxvuUdyRM/JwwdE/PHY4rKfuHp1oYfrWz
-         gQRjyHkBlaT5A==
-Date:   Thu, 6 Sep 2018 01:05:34 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        gregkh@linuxfoundation.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        abailon@baylibre.com, maxime.ripard@bootlin.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v9 0/8] Introduce on-chip interconnect API
-Message-ID: <20180906010534.329d0fca@canb.auug.org.au>
-In-Reply-To: <fe9f3e91-93f9-d7d5-1643-dc09543e2850@linaro.org>
-References: <20180831140151.13972-1-georgi.djakov@linaro.org>
-        <CAHLCerNd0hrLKgbni95_RSYOtsNufMCVtHbAKa4W+eo8H2cL2A@mail.gmail.com>
-        <20180905093620.6d9162ca@canb.auug.org.au>
-        <fe9f3e91-93f9-d7d5-1643-dc09543e2850@linaro.org>
+        Wed, 5 Sep 2018 15:36:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726189AbeIETg3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 15:36:29 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85EwsUn116056
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 11:05:53 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2maggdkpp7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 11:05:52 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 5 Sep 2018 11:05:51 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Sep 2018 11:05:48 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85F5l1835586152
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Sep 2018 15:05:47 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8BB71B207B;
+        Wed,  5 Sep 2018 11:04:34 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A24CB2072;
+        Wed,  5 Sep 2018 11:04:34 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Sep 2018 11:04:34 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A4F2816C1B2F; Wed,  5 Sep 2018 08:05:46 -0700 (PDT)
+Date:   Wed, 5 Sep 2018 08:05:46 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Borislav Petkov <bp@alien8.de>, x86-ml <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>, joel@joelfernandes.org
+Subject: Re: [PATCH] tracing: Add back in rcu_irq_enter/exit_irqson() for
+ rcuidle tracepoints
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180901173559.GC26871@zn.tnic>
+ <20180901175442.GO4225@linux.vnet.ibm.com>
+ <20180901184531.72ffb792@vmware.local.home>
+ <20180902041639.GQ4225@linux.vnet.ibm.com>
+ <20180904162611.6a120068@gandalf.local.home>
+ <20180904205321.GQ4225@linux.vnet.ibm.com>
+ <20180905082254.GA2237@zn.tnic>
+ <20180905125941.GE4225@linux.vnet.ibm.com>
+ <20180905092629.6ecb003b@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ov_.S6vdszHnU9RnU1g=UU+"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905092629.6ecb003b@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18090515-0040-0000-0000-0000046AA907
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01083935; UDB=6.00559420; IPR=6.00863935;
+ MB=3.00023126; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-05 15:05:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090515-0041-0000-0000-00000871CA95
+Message-Id: <20180905150546.GK4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809050158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Ov_.S6vdszHnU9RnU1g=UU+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 05, 2018 at 09:26:29AM -0400, Steven Rostedt wrote:
+> On Wed, 5 Sep 2018 05:59:41 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > On Wed, Sep 05, 2018 at 10:22:54AM +0200, Borislav Petkov wrote:
+> > > On Tue, Sep 04, 2018 at 01:53:21PM -0700, Paul E. McKenney wrote:  
+> > > > I must defer to Borislav on this one.  Assuming it has the desired
+> > > > effect, I am good with it.  
+> > > 
+> > > It did survive a bunch of reboots (the WARN would fire after boot
+> > > finishes, normally) so I guess we can run with it and see how it works
+> > > out in the next couple of weeks.
+> > > 
+> > > Thanks guys!  
+> > 
+> > Woo-hoo!!!  Thank you for testing this!
+> > 
+> 
+> Here's the official patch if you want to add an Ack/review/tested-by:
+> 
+> -- Steve
+> 
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Borislav reported the following splat:
+> 
+>  =============================
+>  WARNING: suspicious RCU usage
+>  4.19.0-rc1+ #1 Not tainted
+>  -----------------------------
+>  ./include/linux/rcupdate.h:631 rcu_read_lock() used illegally while idle!
+>  other info that might help us debug this:
+> 
+>  RCU used illegally from idle CPU!
+>  rcu_scheduler_active = 2, debug_locks = 1
+>  RCU used illegally from extended quiescent state!
+>  1 lock held by swapper/0/0:
+>   #0: 000000004557ee0e (rcu_read_lock){....}, at: perf_event_output_forward+0x0/0x130
+> 
+>  stack backtrace:
+>  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0-rc1+ #1
+>  Hardware name: LENOVO 2320CTO/2320CTO, BIOS G2ET86WW (2.06 ) 11/13/2012
+>  Call Trace:
+>   dump_stack+0x85/0xcb
+>   perf_event_output_forward+0xf6/0x130
+>   __perf_event_overflow+0x52/0xe0
+>   perf_swevent_overflow+0x91/0xb0
+>   perf_tp_event+0x11a/0x350
+>   ? find_held_lock+0x2d/0x90
+>   ? __lock_acquire+0x2ce/0x1350
+>   ? __lock_acquire+0x2ce/0x1350
+>   ? retint_kernel+0x2d/0x2d
+>   ? find_held_lock+0x2d/0x90
+>   ? tick_nohz_get_sleep_length+0x83/0xb0
+>   ? perf_trace_cpu+0xbb/0xd0
+>   ? perf_trace_buf_alloc+0x5a/0xa0
+>   perf_trace_cpu+0xbb/0xd0
+>   cpuidle_enter_state+0x185/0x340
+>   do_idle+0x1eb/0x260
+>   cpu_startup_entry+0x5f/0x70
+>   start_kernel+0x49b/0x4a6
+>   secondary_startup_64+0xa4/0xb0
+> 
+> This is due to the tracepoints moving to SRCU usage which does not require
+> RCU to be "watching". But perf uses these tracepoints with RCU and expects
+> it to be. Hence, we still need to add in the rcu_irq_enter/exit_irqson()
+> calls for "rcuidle" tracepoints. This is a temporary fix until we have SRCU
+> working in NMI context, and then perf can be converted to use that instead
+> of normal RCU.
+> 
+> Link: http://lkml.kernel.org/r/20180904162611.6a120068@gandalf.local.home
+> 
+> Cc: x86-ml <x86@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Reported-by: Borislav Petkov <bp@alien8.de>
+> Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Hi Georgi,
+Reviewed-by: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-On Wed, 5 Sep 2018 17:50:28 +0300 Georgi Djakov <georgi.djakov@linaro.org> =
-wrote:
->
-> On 09/05/2018 02:36 AM, Stephen Rothwell wrote:
-> >=20
-> > On Tue, 4 Sep 2018 15:54:27 +0530 Amit Kucheria <amit.kucheria@linaro.o=
-rg> wrote: =20
-> >>
-> >> I'm currently reviewing this patchset (long overdue), but considering
-> >> that we haven't added any major new features to the framework for the
-> >> last couple of revisions, can you get this patchset merged into
-> >> linux-next to see how things shake out there? We've had this merged
-> >> branch merged into a CI build on kernelci for a while now w/o any
-> >> major incident so we should increase its exposure.
-> >>
-> >> You could ask Stephen Rothwell if he'll accept the a branch directly
-> >> from you or he needs an upstream maintainer (GregKH?) to carry it. =20
-> >=20
-> > Since it appears to have been well reviewed and tested, I can take it
-> > if you send me a git URL and the names of contacts in case of issues
-> > with the branch.  Once Greg has merged it, I will try to drop it again
-> > (unless you think there will be an ongoing reason to keep it in
-> > linux-next separately), but a prompting email would also be nice in
-> > case I forget. =20
->=20
-> Thank you! Below is the git URL to pull from and you can use my e-mail
-> as contact for any issues.
->=20
-> git://git.linaro.org/people/georgi.djakov/linux.git#icc-next
->=20
-> I expect this to be a continuing effort with some upcoming users of this
-> API, so i plan to maintain this branch and occasionally put some
-> reviewed/tested patches to get wider integration testing. But let's see
-> what happens now.
->=20
-> In any case, if this increases your burden, feel free to drop it.
+> ---
+>  include/linux/tracepoint.h | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 7f2e16e76ac4..041f7e56a289 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -158,8 +158,10 @@ extern void syscall_unregfunc(void);
+>  		 * For rcuidle callers, use srcu since sched-rcu	\
+>  		 * doesn't work from the idle path.			\
+>  		 */							\
+> -		if (rcuidle)						\
+> +		if (rcuidle) {						\
+>  			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> +			rcu_irq_enter_irqson();				\
+> +		}							\
+>  									\
+>  		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
+>  									\
+> @@ -171,8 +173,10 @@ extern void syscall_unregfunc(void);
+>  			} while ((++it_func_ptr)->func);		\
+>  		}							\
+>  									\
+> -		if (rcuidle)						\
+> +		if (rcuidle) {						\
+> +			rcu_irq_exit_irqson();				\
+>  			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+> +		}							\
+>  									\
+>  		preempt_enable_notrace();				\
+>  	} while (0)
+> -- 
+> 2.13.6
+> 
 
-Added from (later) today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/Ov_.S6vdszHnU9RnU1g=UU+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluP8L4ACgkQAVBC80lX
-0GyFTQf+OsZLutdzyWpL9/ua0OrFaZjWQLoQeo/YknRXDu5SO0JlHhQtsukHUSe/
-cPCri2wHriSgRgrk48t17jA8p2MF9pkzblLrrmqJ4fYxdf3eSFsyZ6DKqGKSQzLs
-rtEdSUs/+RFLyNF6p3cuv+vIPwkDrqI+TiXPJ4EAOjvrQMut5nCGv9TanC64eK8i
-CnS7RJjcjM8fvwk+TeQGuFzmvJmyMvE3KUbPpachalE3bCFPDVrhHaHeFebp7yaa
-wkPwFvhqKzp8NPiBEG+MikqsZLWvk+jkg3TqhE2+IadgeMXRJaSmeY1Ef8chq1xs
-smB3W0PLpekjgxm8Tb33iIe22c351Q==
-=6HXW
------END PGP SIGNATURE-----
-
---Sig_/Ov_.S6vdszHnU9RnU1g=UU+--
