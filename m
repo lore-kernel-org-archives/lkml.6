@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB67C4321E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DCBC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13849206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13849206BA
+	by mail.kernel.org (Postfix) with ESMTP id 16D882075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D882075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbeIENBZ (ORCPT
+        id S1728086AbeIENB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:01:25 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:58517 "EHLO
+        Wed, 5 Sep 2018 09:01:27 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39407 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728009AbeIENBY (ORCPT
+        with ESMTP id S1727991AbeIENBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:01:24 -0400
-X-UUID: 8a2509dcbd8c461fa12670f2a450e211-20180905
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        Wed, 5 Sep 2018 09:01:25 -0400
+X-UUID: f8b73f10f6a44f31b7fc4d734b0efcd3-20180905
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1182560168; Wed, 05 Sep 2018 16:32:12 +0800
+        with ESMTP id 203330587; Wed, 05 Sep 2018 16:32:13 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 5 Sep 2018 16:31:48 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 5 Sep 2018 16:31:49 +0800
 Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 5 Sep 2018 16:31:48 +0800
+ Transport; Wed, 5 Sep 2018 16:31:49 +0800
 From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
 To:     David Airlie <airlied@linux.ie>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -52,9 +52,9 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
         chunhui dai <chunhui.dai@mediatek.com>
-Subject: [PATCH v2 05/13] drm/mediatek: dpi use new API for finding bridge
-Date:   Wed, 5 Sep 2018 16:31:38 +0800
-Message-ID: <20180905083146.14727-6-bibby.hsieh@mediatek.com>
+Subject: [PATCH v2 08/13] drm/mediatek: register hdmi codec more earlier
+Date:   Wed, 5 Sep 2018 16:31:41 +0800
+Message-ID: <20180905083146.14727-9-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
 References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
@@ -68,56 +68,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: chunhui dai <chunhui.dai@mediatek.com>
 
-Using new API for finding bridge.
+sometimes hdmi reprobe due to encoder probe late,
+but audio dai probe earlier than hdmi. it would make
+audio dai cannot find the hdmi codec. we need to
+register hdmi codec earlier, and the base name which
+used in the register should be PLATFORM_DEVID_NONE,
+otherwise some audio dai dirver could not match it.
 
 Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 3758cfeb586b..ed2c153c70a2 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -14,6 +14,7 @@
- #include <drm/drmP.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_of.h>
- #include <linux/kernel.h>
- #include <linux/component.h>
- #include <linux/platform_device.h>
-@@ -708,7 +709,6 @@ static int mtk_dpi_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct mtk_dpi *dpi;
- 	struct resource *mem;
--	struct device_node *bridge_node;
- 	int comp_id;
- 	const struct of_device_id *match;
- 	int ret;
-@@ -758,16 +758,13 @@ static int mtk_dpi_probe(struct platform_device *pdev)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index 7c022f3f53ec..2cb33098ec1a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1669,15 +1669,14 @@ static void mtk_hdmi_register_audio_driver(struct device *dev)
+ 		.max_i2s_channels = 2,
+ 		.i2s = 1,
+ 	};
+-	struct platform_device *pdev;
++	static struct platform_device *pdev;
+ 
+-	pdev = platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
+-					     PLATFORM_DEVID_AUTO, &codec_data,
+-					     sizeof(codec_data));
+-	if (IS_ERR(pdev))
++	if (!pdev) {
++		pdev = platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
++						     PLATFORM_DEVID_NONE,
++						     &codec_data,
++						     sizeof(codec_data));
++		DRM_INFO("%s driver bound to HDMI\n", HDMI_CODEC_DRV_NAME);
++	}
+ 		return;
+-
+-	DRM_INFO("%s driver bound to HDMI\n", HDMI_CODEC_DRV_NAME);
+ }
+ 
+ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
+@@ -1691,6 +1690,7 @@ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	hdmi->dev = dev;
++	mtk_hdmi_register_audio_driver(dev);
+ 
+ 	ret = mtk_hdmi_dt_parse_pdata(hdmi, pdev);
+ 	if (ret)
+@@ -1704,8 +1704,6 @@ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
--	bridge_node = of_graph_get_remote_node(dev->of_node, 0, 0);
--	if (!bridge_node)
--		return -ENODEV;
+-	mtk_hdmi_register_audio_driver(dev);
 -
--	dev_info(dev, "Found bridge node: %pOF\n", bridge_node);
--
--	dpi->bridge = of_drm_find_bridge(bridge_node);
--	of_node_put(bridge_node);
--	if (!dpi->bridge)
-+	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
-+					  NULL, &dpi->bridge);
-+	if (ret) {
-+		dev_err(dev, "Failed to find panel or bridge: %d\n", ret);
- 		return -EPROBE_DEFER;
-+	}
-+	dev_info(dev, "Found bridge node: %pOF\n", dpi->bridge);
- 
- 	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DPI);
- 	if (comp_id < 0) {
+ 	hdmi->bridge.funcs = &mtk_hdmi_bridge_funcs;
+ 	hdmi->bridge.of_node = pdev->dev.of_node;
+ 	drm_bridge_add(&hdmi->bridge);
 -- 
 2.12.5.2.gbdf23ab
 
