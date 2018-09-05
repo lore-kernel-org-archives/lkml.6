@@ -2,89 +2,83 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F150EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F67C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D02B206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:31:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CDB0206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 16:32:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JXG371kH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D02B206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e2Jknqta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDB0206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeIEVCQ (ORCPT
+        id S1727669AbeIEVDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 17:02:16 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50994 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbeIEVCP (ORCPT
+        Wed, 5 Sep 2018 17:03:49 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:34781 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbeIEVDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 17:02:15 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w85GSrUm148774;
-        Wed, 5 Sep 2018 16:31:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=Ffc9c8opSgwLpNSCeb1cbN8AV5Y9wcEm0UD8sfFRgEw=;
- b=JXG371kHG8h7NftVEHYO62I7ZAuMyl5FnsNz7zEANvqc+g5DjDL1VJVTRkObw5k5tARV
- ncr5dF4mMtNu5vSAYJejYFXI0exW61MxlcZlv7UkpzW7bz+YoWydTPPBd4Ze/lC4Z/hO
- PEwPJ/ttD0otgSokdPIBBYdekW24h+gAsczuU1iVqRmXqPZ2Tqd5gsvYiXUWrag1zBJc
- t5Gsia8if574U3M8A/8nYcXZ1R8xAkjIMGuFBFoayjm4Lpu6agdC6znC2yUgfOrb3FEd
- J7t3XQNT4TOjz0bUvSCOypeZ4uuL0VcpSyJu8u630iKEFHNZtG9MNDKLJ5UQkH0rF6yD kw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2m7j6tn725-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Sep 2018 16:31:12 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w85GVBQT028283
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Sep 2018 16:31:11 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w85GVA5F032699;
-        Wed, 5 Sep 2018 16:31:10 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Sep 2018 09:31:10 -0700
+        Wed, 5 Sep 2018 17:03:49 -0400
+Received: by mail-io0-f181.google.com with SMTP id c22-v6so6495686iob.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 09:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fzh3ZMwejjs5E6SxvS+IcDFKL35bgf/KZnkDqIiY4OE=;
+        b=e2JknqtawrGnvdCuTfDHg8c51MXq7x7j5x4pOEp8nFUdfBgjTDrJ4lZw1yC4ZFrDbG
+         EgEzNoPS04wK1V8/N1mJ6AHeAqwOaonbXUJMXo92+yEn9SRm3dDS3pmpWZLfQooD72Cl
+         dtP6m0+trbS6qkabi+87l+hihR4POyXdUhRus=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fzh3ZMwejjs5E6SxvS+IcDFKL35bgf/KZnkDqIiY4OE=;
+        b=OOCfwLJvT0f8N6CBVQd1GSdWnkZL0+1C3pKiFDp6aATv8m7xQb2+WsW2BCHRgEYUB9
+         0V+owXcAJ5RaE7svPLXTBwzTVXZvvxofZt2Tis4TBCwj/sEvOJw1Koxzdb51vuQ0LqZa
+         V/X+OZKVmVMBreJNidDOadIsOcrvL7JRgeezgTPk3sYrjIl0aOG7AO1RTRMTjieA7uCc
+         vbVUxR64rk7W7pmcmvmpHgFM0wjXkuIjQKevJtGFSC5BzFhAFoqOyzZQqAm0Z6y3gWS5
+         oRw3zzXe0p5An1Ext8f3uHdvnHVLamkuu0UAJxXWagcn90MbjhlBqvgpq8mbfSRj+An7
+         JaQQ==
+X-Gm-Message-State: APzg51D9i0qb/ZiPCCNk/DjaKT/sqoAx0XnIRjBOOP0cmmmeBS2UZjux
+        MNRMti1vi2WuGErXBu/H1Iqp84bKni4hleopEWI=
+X-Google-Smtp-Source: ANB0VdbIMl7msF3yufMxxf0dQSbQ1ieqOAgANKdr/1IUsJyKidT8a/n7Eby7/d1KT+jFPqg2ECSoGr5zPo900VzUPkA=
+X-Received: by 2002:a6b:7a49:: with SMTP id k9-v6mr27806995iop.238.1536165171764;
+ Wed, 05 Sep 2018 09:32:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <1536137722.4813.66.camel@gmx.de> <178d6adc-2a79-99dc-daa8-fb0ed9f0afd1@kernel.dk>
+ <yq15zzj3o99.fsf@oracle.com> <yq11sa73nzo.fsf@oracle.com>
+In-Reply-To: <yq11sa73nzo.fsf@oracle.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Sep 2018 09:32:40 -0700
+Message-ID: <CA+55aFzanD=T4hpO+D-LGqxuJ4CsVpNXrr6erQt7pA=iPAyDHg@mail.gmail.com>
+Subject: Re: [regression/bisected] 4.19 cycle boot time IO stalls
 To:     "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Mike Galbraith <efault@gmx.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-Subject: Re: [regression/bisected] 4.19 cycle boot time IO stalls
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1536137722.4813.66.camel@gmx.de>
-        <178d6adc-2a79-99dc-daa8-fb0ed9f0afd1@kernel.dk>
-        <yq15zzj3o99.fsf@oracle.com>
-Date:   Wed, 05 Sep 2018 12:31:07 -0400
-In-Reply-To: <yq15zzj3o99.fsf@oracle.com> (Martin K. Petersen's message of
-        "Wed, 05 Sep 2018 12:25:22 -0400")
-Message-ID: <yq11sa73nzo.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=666
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809050168
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Bottomley <jejb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 5, 2018 at 9:31 AM Martin K. Petersen
+<martin.petersen@oracle.com> wrote:
+>
+> > I reverted the two offending changes last week. James just hasn't sent
+> > Linus a pull request yet...
+>
+> Actually, he did earlier today.
 
-> I reverted the two offending changes last week. James just hasn't sent
-> Linus a pull request yet...
+And I've just pulled and pushed it out, so it's in my public tree now.
 
-Actually, he did earlier today.
+Thanks,
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+           Linus
