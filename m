@@ -2,79 +2,154 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B76C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D006C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43DEE2083E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43DEE2083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id BCE292086B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 22:07:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQB8Lfld"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE292086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbeIFCjr (ORCPT
+        id S1728946AbeIFCju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:39:47 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:41874 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbeIFCjr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:39:47 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w85M7UQ3079601;
-        Thu, 6 Sep 2018 07:07:30 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Thu, 06 Sep 2018 07:07:30 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w85M7PbT079583
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 6 Sep 2018 07:07:30 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: INFO: task hung in vfat_lookup
-To:     syzbot <syzbot+72000baa7858f1703b04@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-References: <00000000000019b8ee05751df11d@google.com>
-Cc:     hirofumi@mail.parknet.co.jp, linux-kernel@vger.kernel.org
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <0c2fec53-cdb6-520f-13a9-8f3f3ef7c9ec@I-love.SAKURA.ne.jp>
-Date:   Thu, 6 Sep 2018 07:07:27 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <00000000000019b8ee05751df11d@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 5 Sep 2018 22:39:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727586AbeIFCjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:39:49 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D6AF20869;
+        Wed,  5 Sep 2018 22:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536185257;
+        bh=zHR+oSQvSTNob/LgsxOREkA3+72gC8K3t2mDt+03Rc0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JQB8LfldUWnQ3gZYyrr+XgFD3kjKZ5sZzyWb3IDIXSIwCF2T7kQun/YZr25UUktPV
+         M0jUnAfG+vTo0KfkoxBB1XFDgfFiWvuSwpEyvK2KykTo9law1+DTJo0a7Sb7hEhmO6
+         lntYGL7+wuIZmWypHIXyZEb0eHN5X6uBckZ1WEWs=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 60/77] perf stat: Move ru_* data to 'struct perf_stat_config'
+Date:   Wed,  5 Sep 2018 19:04:23 -0300
+Message-Id: <20180905220440.20256-61-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180905220440.20256-1-acme@kernel.org>
+References: <20180905220440.20256-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/09/05 20:19, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    420f51f4ab6b Merge tag 'arm64-fixes' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11296c92400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
-> dashboard link: https://syzkaller.appspot.com/bug?extid=72000baa7858f1703b04
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
+From: Jiri Olsa <jolsa@kernel.org>
 
-A report for linux-next contains
+Move the 'ru_*' global variables to 'struct perf_stat_config', so that
+it can be passed around and used outside the 'perf stat' command.
 
-"getblk(): executed=9 bh_count=0 bh_state=0"
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180830063252.23729-36-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 12 +++++-------
+ tools/perf/util/stat.h    |  6 ++++++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
-lines. Therefore,
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index f61c2dc8c7e8..942ebfd8ef2e 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -171,8 +171,6 @@ static bool			interval_count;
+ static const char		*output_name;
+ static int			output_fd;
+ static u64			*walltime_run;
+-static bool			ru_display			= false;
+-static struct rusage		ru_data;
+ 
+ struct perf_stat {
+ 	bool			 record;
+@@ -583,7 +581,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 					break;
+ 			}
+ 		}
+-		wait4(child_pid, &status, 0, &ru_data);
++		wait4(child_pid, &status, 0, &stat_config.ru_data);
+ 
+ 		if (workload_exec_errno) {
+ 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
+@@ -1679,9 +1677,9 @@ static void print_footer(struct perf_stat_config *config)
+ 	if (config->run_count == 1) {
+ 		fprintf(output, " %17.9f seconds time elapsed", avg);
+ 
+-		if (ru_display) {
+-			double ru_utime = timeval2double(&ru_data.ru_utime);
+-			double ru_stime = timeval2double(&ru_data.ru_stime);
++		if (config->ru_display) {
++			double ru_utime = timeval2double(&config->ru_data.ru_utime);
++			double ru_stime = timeval2double(&config->ru_data.ru_stime);
+ 
+ 			fprintf(output, "\n\n");
+ 			fprintf(output, " %17.9f seconds user\n", ru_utime);
+@@ -2855,7 +2853,7 @@ int cmd_stat(int argc, const char **argv)
+ 	 * run and when there's specified tracee.
+ 	 */
+ 	if ((stat_config.run_count == 1) && target__none(&target))
+-		ru_display = true;
++		stat_config.ru_display = true;
+ 
+ 	if (stat_config.run_count < 0) {
+ 		pr_err("Run count must be a positive number\n");
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 6fb4dac26ccc..1fd0b7e196c6 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -4,6 +4,10 @@
+ 
+ #include <linux/types.h>
+ #include <stdio.h>
++#include <sys/types.h>
++#include <sys/time.h>
++#include <sys/resource.h>
++#include <sys/wait.h>
+ #include "xyarray.h"
+ #include "rblist.h"
+ #include "perf.h"
+@@ -95,6 +99,7 @@ struct perf_stat_config {
+ 	bool			 interval_clear;
+ 	bool			 metric_only;
+ 	bool			 null_run;
++	bool			 ru_display;
+ 	FILE			*output;
+ 	unsigned int		 interval;
+ 	unsigned int		 timeout;
+@@ -109,6 +114,7 @@ struct perf_stat_config {
+ 	int			 stats_num;
+ 	const char		*csv_sep;
+ 	struct stats		*walltime_nsecs_stats;
++	struct rusage		 ru_data;
+ };
+ 
+ void update_stats(struct stats *stats, u64 val);
+-- 
+2.14.4
 
-#syz dup: INFO: task hung in generic_file_write_iter
