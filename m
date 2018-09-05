@@ -2,122 +2,132 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE77BC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1AFC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62601206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63A46206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:33:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="p9sEOl2O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62601206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JyD5vy/1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A46206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbeIEOCA (ORCPT
+        id S1728154AbeIEOCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 10:02:00 -0400
-Received: from mail-co1nam03on0052.outbound.protection.outlook.com ([104.47.40.52]:10992
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbeIEOB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:01:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hiVE+Xn5ao6rbHRD+5by2POXDvxE9MMQt8Ww4Ro/hG8=;
- b=p9sEOl2O/MQQPQmbBF/2hi38C7Z+fBAVOqhobwbJq/q4NMpP+9o+MJrJN6PkF2uTAaBvxpKsuSn8L0TRrxnMtUpsDAms96sAr4vUVtNc9mfliKllwR99z3eSpRkx4hoxkDvKC5e1Y3IKzZdSd2kj9nh/CTaDQ5CthdngoW3w3vk=
-Received: from BN3PR0201MB0993.namprd02.prod.outlook.com (10.161.207.14) by
- BN3PR0201MB0900.namprd02.prod.outlook.com (10.160.154.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.17; Wed, 5 Sep 2018 09:32:31 +0000
-Received: from BN3PR0201MB0993.namprd02.prod.outlook.com
- ([fe80::29f7:170b:ce40:9b2e]) by BN3PR0201MB0993.namprd02.prod.outlook.com
- ([fe80::29f7:170b:ce40:9b2e%7]) with mapi id 15.20.1101.016; Wed, 5 Sep 2018
- 09:32:23 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        "kishon@ti.com" <kishon@ti.com>, Michal Simek <michals@xilinx.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] phy: zynqmp: Add dt bindings for ZynqMP phy
-Thread-Topic: [PATCH v2 2/2] phy: zynqmp: Add dt bindings for ZynqMP phy
-Thread-Index: AQHUQ3+hy27VgXpO6k27IQcF4RWjjKThZmqAgAAHxxA=
-Date:   Wed, 5 Sep 2018 09:32:23 +0000
-Message-ID: <BN3PR0201MB0993F5B9CAAFB3DF83A200B6A7020@BN3PR0201MB0993.namprd02.prod.outlook.com>
-References: <1535976844-12494-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <1535976844-12494-3-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <2831a270-a4d1-ba51-e13f-85c029bbe8c0@codeaurora.org>
-In-Reply-To: <2831a270-a4d1-ba51-e13f-85c029bbe8c0@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN3PR0201MB0900;6:EQBm7Em7vZJqIL5IpjzyK7QAOBlnCM+8j09PDz50TOImT3JTZi9lyuSVGEbEh1vH1XO/qQIZsypNgeloZmXO6u12D9rvhxEIj6uKWboP8lHpr9QVnjM6j3w/2IhjOyzTKG3ics+82CNRiF97X62dKfD5ggTlltWc8T5Ss1MD6sKuo3IMUs2+8yRjIl58SDCKcNwNFE5UW3KrEztXt750QDAsY+WiGoUNfTFV16raxNaHkU78NuLQvEYQ0YZK7ThfX8skwG2aMZMgyKsAA3sN3lRNLT6Oci9xqS2sDGEbq+tl88eLrTum58oW0oh2mZlob9w5RvNCZWXox9pGzpRcVukWatXWbQ1QksVhz0DuDyahSQxefdLes70yf9rn015m7KpMZSOijKO2tRG4guo+6V1mJ7VRaVUQttU5Nlc9EJa1mGLCh/SqEWqxYNm5xmtBubd8mgGYam2XmAE09o+N5Q==;5:KdJwaRbL8GbS5kZmN8qFeVk0MjZZ/mAbmQzvDdPAw2bP8jUi2YNLmu/FK8oIuXMIbEKMzGA4Hllr69DxbRTxB/WG4eUNcKI+NMKUALNeLUjOJdWkgLNnblM+j9JZtfAdQDSmokQum5Rjaca8L4it4RbxrqN+NIfA+XFi7051VmI=;7:HgWAX44ljEjH77a2iGnKDGBhHDn+VrUk7+249xpOmm+TCVH2KNHw1x6rsRSCsfIXY9jBgUBifUI3frCjbKurjg0cWg5nnQYEECCP+JjBue9z6Mq8/p1a9gL0pJKH2E6AATcx0uSgoKgMS1s2tBuo8yw6bt7HQSjqjYPQFRlJtK3/U3i5IMAQkSg+oe5gImucY1Igag8wv0S8k1BnuLZTdXeR62yV1Z9FbqXz8koFW79HFaS4h6P6whmhb1Z++JFY
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: da5e2597-c6e4-404d-aa36-08d613127c37
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN3PR0201MB0900;
-x-ms-traffictypediagnostic: BN3PR0201MB0900:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BN3PR0201MB09001B66373A400E7FCAD34DA7020@BN3PR0201MB0900.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3231344)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699016);SRVR:BN3PR0201MB0900;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0201MB0900;
-x-forefront-prvs: 078693968A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(376002)(346002)(199004)(189003)(2900100001)(3846002)(7736002)(186003)(305945005)(6116002)(5250100002)(2501003)(54906003)(68736007)(74316002)(110136005)(8676002)(2906002)(102836004)(76176011)(6246003)(39060400002)(316002)(7696005)(99286004)(86362001)(105586002)(14454004)(33656002)(14444005)(256004)(25786009)(53936002)(478600001)(5660300001)(66066001)(8936002)(81166006)(81156014)(26005)(55016002)(486006)(4326008)(6506007)(106356001)(446003)(9686003)(476003)(97736004)(6436002)(11346002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR0201MB0900;H:BN3PR0201MB0993.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EOQSlUqFH9rIpK3Xp7/Bk54L+Si0Fyd3BoArn9O7ommCvVxDpV9sZIPeHVwre0BBULvUKjNVzoO8VFbNuOVCqPwfq5XAcvS0XLLIe44Peo2gwvqVNpoTz2og5rGpp60qn0Pe+/C9mI+Z1dJritFc2Zhz7DOjSo1bJ+sXiSIzEOP3PeXwJEgw213LURT4rJIIET+DkHSZzVAauAPDr2gNOc2ccvIfVuYgj5kRBL4cX2CGKAfDWAzLOX6TVVROtixQOMdCnxcHmpqWEZDMS/vMNBwcvD/3KlEFcGfd16xYfWlAPcNqX0vbF8SWQhKQf4dQFPd7pclA2sz7txkv6L+GWA8R/zR506n8/mk8kBLuUXQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da5e2597-c6e4-404d-aa36-08d613127c37
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2018 09:32:23.1984
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0201MB0900
+        Wed, 5 Sep 2018 10:02:31 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57342 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeIEOCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 10:02:30 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180905093307euoutp01ab1977976f5246aa60f19301c021898a~Rdy3zpoH12685726857euoutp01p;
+        Wed,  5 Sep 2018 09:33:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180905093307euoutp01ab1977976f5246aa60f19301c021898a~Rdy3zpoH12685726857euoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1536139987;
+        bh=2usRkawckmVip8LLVholFNJl+qoSNb5lNKXogfnlYGg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=JyD5vy/1LS5PUtgjA5r64JPySmQoz/xF87jc60nUrLMzFrbw6RdeoTy5H0+dEbXgT
+         S/6hrgxZ/te235y1xKghRCNlv1/iyRsg2o0J4Pg6DslPxu3UxaHrmmH8ZYJe8eS9eN
+         NpTZeCorWQ9L0KyzMJAGHluIKtA9cnwFbLyjjWPY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180905093306eucas1p264e0a2d2d25fac7719f1cc78c900449d~Rdy3Vnyqx2266822668eucas1p2V;
+        Wed,  5 Sep 2018 09:33:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id E7.28.04806.2D2AF8B5; Wed,  5
+        Sep 2018 10:33:06 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180905093305eucas1p19cbdec510c32cedaf9a9de58fd2de9e1~Rdy2lOzrP1947919479eucas1p1y;
+        Wed,  5 Sep 2018 09:33:05 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-3f-5b8fa2d25164
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 01.7A.04284.1D2AF8B5; Wed,  5
+        Sep 2018 10:33:05 +0100 (BST)
+Received: from AMDC2765.digital.local ([106.116.147.25]) by
+        eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PEK00BNHT71V970@eusync1.samsung.com>;
+        Wed, 05 Sep 2018 10:33:05 +0100 (BST)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] mfd: max8997: Enale irq-wakeup unconditionally
+Date:   Wed, 05 Sep 2018 11:32:43 +0200
+Message-id: <20180905093243.3861-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZduzned1Li/qjDXqPiFlsnLGe1eL+16OM
+        Fpd3zWGzmHF+H5PF2iN32S1uN65gc2DzuHNtD5tH35ZVjB6fN8kFMEdx2aSk5mSWpRbp2yVw
+        ZTStii34y1HxddJilgbGtexdjJwcEgImEvvWvmLtYuTiEBJYwSgx78ElZgjnM6PEm655bF2M
+        HGBVd266Q8SXMUoc2T6fEcJpYJLYsOcLK8goNgFDia63XWwgtoiAs8TtD99YQIqYBbYwSky/
+        +ogFJCEsYC+xYMYBJhCbRUBV4uHs22BxXgEbiaWtO9kgbpKXWL3hADOEfZNV4tizXAjbReL1
+        64dQNcISr45vgfpBRqKz4yATyDIJgWZGifYZs9ghnB5Gia1zdkB1WEscPn4R7FRmAT6JSdum
+        M0P8xivR0SYEUeIhcX33GkYQW0ggVuLOz3ksExglFjAyrGIUTy0tzk1PLTbOSy3XK07MLS7N
+        S9dLzs/dxAiMpNP/jn/dwbjvT9IhRgEORiUeXo2Wvmgh1sSy4srcQ4wSHMxKIrwqXP3RQrwp
+        iZVVqUX58UWlOanFhxilOViUxHn5tNKihQTSE0tSs1NTC1KLYLJMHJxSDYzMsWVnEyJk5dnr
+        n71Kfj5pAvO8onm7VoTpxgWvPPyUYUbN1SYptyPnfHMq+a8cbu1MSK7fVXr7nGf91asmndel
+        1HfzSjfJasQmO89bUBDybG0ey97tflvmLxFUr5j7N/a8oumyo1wdbN/Xhl+L72iYc3dL2NX4
+        rWeWsfEU8WyrPjRx+718TUclluKMREMt5qLiRAAZNGVVoAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPJMWRmVeSWpSXmKPExsVy+t/xy7oXF/VHG7S0G1hsnLGe1eL+16OM
+        Fpd3zWGzmHF+H5PF2iN32S1uN65gc2DzuHNtD5tH35ZVjB6fN8kFMEdx2aSk5mSWpRbp2yVw
+        ZTStii34y1HxddJilgbGtexdjBwcEgImEnduuncxcnEICSxhlLg9aRcbhNPEJDFl72TGLkZO
+        DjYBQ4mut11sILaIgLPE7Q/fWECKmAW2MEq83LGfBSQhLGAvsWDGASYQm0VAVeLh7NtgcV4B
+        G4mlrTvBmiUE5CVWbzjAPIGRawEjwypGkdTS4tz03GJDveLE3OLSvHS95PzcTYxAb2879nPz
+        DsZLG4MPMQpwMCrx8Gq09EULsSaWFVfmHmKU4GBWEuFV4eqPFuJNSaysSi3Kjy8qzUktPsQo
+        zcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cDIOntJ6JmbZY0vNp/uehaykmeei9jnB5NX
+        Wa9eGH1QUzdR3MDugVDdu7f/lKqqOh7OOM8fm31rX6uInpbVLqVEZf/wycsd6z1fvX/14vGW
+        fxsdNytdiIhasv7+ZjuuecvTMjp2nvE9nd40bVbb5Zd7vdLjZjw6HZJTM2Xv7wkrHaQvzN54
+        RqzPUYmlOCPRUIu5qDgRAOWbD53yAQAA
+X-CMS-MailID: 20180905093305eucas1p19cbdec510c32cedaf9a9de58fd2de9e1
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180905093305eucas1p19cbdec510c32cedaf9a9de58fd2de9e1
+References: <CGME20180905093305eucas1p19cbdec510c32cedaf9a9de58fd2de9e1@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVml2ZWssDQoNCj4+ICtQaHkgcHJvdmlkZXIgbm9kZQ0KPj4gKz09PT09PT09PT09PT09PT09
-DQo+PiArDQo+PiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4+ICstIGNvbXBhdGlibGUJOiBDYW4g
-YmUgInhsbngsenlucW1wLXBzZ3RyLXYxLjEiIG9yICJ4bG54LHp5bnFtcC1wc2d0ciINCj4+ICsJ
-CSAgInhsbngsenlucW1wLXBzZ3RyLXYxLjEiIGhhcyAieGxueCx0eF90ZXJtaW5hdGlvbl9maXgi
-IHJlbW92ZWQNCj5UaGlzIGlzIG5vdCB2ZXJ5IGNsZWFyLiBZb3UgY2FuIHJhdGhlciBtZW50aW9u
-IHRoaXMgc3RhdGVtZW50IGZvciB0aGUgcHJvcGVydHkuDQo+ZS5nLiBJbiAieGxueCx0eF90ZXJt
-aW5hdGlvbl9maXgiIHlvdSBjYW4gd3JpdGUgLSB0aGlzIGlzIG5vdCByZXF1aXJlZCBmb3IgInhs
-bngsenlucW1wLQ0KPnBzZ3RyLXYxLjEuDQo+DQoNClRoYW5rcyBmb3Igc3BlbmRpbmcgeW91ciB0
-aW1lIGluIHJldmlld2luZyB0aGlzIHBhdGNoLCAgd2lsbCBjb3JyZWN0IHRoaXMgaW4gdGhlDQpu
-ZXh0IHNlcmllcyBvZiBwYXRjaC4NCiANCj4+ICsNCj4+ICstIHJlZyAgICAgICAgICAgOiBBZGRy
-ZXNzIGFuZCBsZW5ndGggb2YgcmVnaXN0ZXIgc2V0cyBmb3IgZWFjaCBkZXZpY2UgaW4NCj4+ICsg
-ICAgICAgICAgICAgICAgICAicmVnLW5hbWVzIg0KPj4gKw0KPj4gKy0gcmVnLW5hbWVzICAgICA6
-IFRoZSBuYW1lcyBvZiB0aGUgcmVnaXN0ZXIgYWRkcmVzc2VzIGNvcnJlc3BvbmRpbmcgdG8gdGhl
-DQo+PiArDQo+PiArbGFuZTE6DQo+PiArLSAjcGh5LWNlbGxzCTogU2hvdWxkIGJlIDQNCj4+ICsN
-Cj4+ICtsYW5lMjoNCj4+ICstICNwaHktY2VsbHMJOiBTaG91bGQgYmUgNA0KPj4gKw0KPj4gK2xh
-bmUzOg0KPj4gKy0gI3BoeS1jZWxscwk6IFNob3VsZCBiZSA0DQo+PiArDQo+PiArRXhhbXBsZToN
-Cj4+ICsJc2VyZGVzOiB6eW5xbXBfcGh5QGZkNDAwMDAwIHsNCj4NCj5waHkgaXMgbm90IGp1c3Qg
-dGhlIHNlcmRlcy4gQWxzbyBzL3p5bnFtcF9waHkvcGh5DQo+DQo+VGhpcyBjb3VsZCBiZToNCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgenlucW1wX3BoeTogcGh5QGZk
-NDAwMDAwDQo+DQpUaGFua3MgZm9yIGNvcnJlY3RpbmcsIHdpbGwgZml4IHRoaXMgaW4gbmV4dCBz
-ZXJpZXMgb2YgdGhpcyBwYXRjaA0KDQpCZXN0IFJlZ2FyZHMsDQpBbnVyYWcgS3VtYXIgVnVsaXNo
-YQ0K
+IRQ wakeup support for MAX8997 driver was initially configured by
+respective property in pdata. However, after the driver conversion to
+device-tree, setting it was left as 'todo'. Nowadays most of other MAX PMIC
+MFD drivers initialized from device-tree simply assume unconditionally that
+they can be an irq wakeup source, so enable wakeup support also for
+MAX8997. This fixes support for wakeup from MAX8997 RTC alarm.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/mfd/max8997.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+index 3f554c447521..7155e991cb82 100644
+--- a/drivers/mfd/max8997.c
++++ b/drivers/mfd/max8997.c
+@@ -152,12 +152,7 @@ static struct max8997_platform_data *max8997_i2c_parse_dt_pdata(
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	pd->ono = irq_of_parse_and_map(dev->of_node, 1);
+-
+-	/*
+-	 * ToDo: the 'wakeup' member in the platform data is more of a linux
+-	 * specfic information. Hence, there is no binding for that yet and
+-	 * not parsed here.
+-	 */
++	pd->wakeup = true;
+ 
+ 	return pd;
+ }
+-- 
+2.17.1
+
