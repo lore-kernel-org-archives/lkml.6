@@ -5,151 +5,113 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7F4C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2C3C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CB322073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:55:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CB322073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B6F52073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6F52073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeIEPZA (ORCPT
+        id S1727603AbeIEPZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:25:00 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:34919 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbeIEPY7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:24:59 -0400
-Received: by mail-yb1-f195.google.com with SMTP id o17-v6so2501867yba.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 03:55:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7B2v2hHSg+KboroGP/trjmfTfA11ZB66khXAHYGBKPY=;
-        b=BxzNp09qBAEuRGJ+XNLR8rmqpkYfEBT9fZ+UfDwpzmkzyvgpl39QLZo3xYDXVavPqx
-         GMKGMt4bTvXTD7v+BzhXahiYkVwSk85RPFuNhDJP6zthVaGoX6F/+Rwvz9HGX8qrI0Vg
-         Stwl2at7/6N2yb9mflz9cACr/WQv/l3TjuOh+fBFXW+sCP5k5JDkVQdJH5qiQWN/D4F6
-         bk0GDJpwX6jGIC4+DeLlhS/hCQbLaLkQ0VUfGHRPrspGespuA0DthtVGmGqfyXvKgKb7
-         Ls2xPzQxwUJQvqyvhhNLwfTdD3CH4T++M1yoax06hctK5u7ClmNWlNUqM49lizs+od1C
-         Jq9A==
-X-Gm-Message-State: APzg51B9DAMuIihyx7hSgDHklMzUB2jKedpznX0V4ut5jIMcn4XLP6g3
-        OQAfjNR+hwjdZWvSX1qsJAYEnQ==
-X-Google-Smtp-Source: ANB0VdalPRNATOGLBzliSEewvObeiiw41t7jE8EijYfe9SODpwyWacID+6LDTduZg541xyJbfGtBVA==
-X-Received: by 2002:a25:945:: with SMTP id u5-v6mr13998401ybm.300.1536144917644;
-        Wed, 05 Sep 2018 03:55:17 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-E2E.dyn6.twc.com. [2606:a000:1100:db::e2e])
-        by smtp.gmail.com with ESMTPSA id x133-v6sm527170ywg.49.2018.09.05.03.55.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 03:55:17 -0700 (PDT)
-Message-ID: <09ba078797a1327713e5c2d3111641246451c06e.camel@redhat.com>
-Subject: Re: POSIX violation by writeback error
-From:   Jeff Layton <jlayton@redhat.com>
-To:     =?UTF-8?Q?=E7=84=A6=E6=99=93=E5=86=AC?= <milestonejxd@gmail.com>
-Cc:     bfields@fieldses.org, R.E.Wolff@bitwizard.nl,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 06:55:15 -0400
-In-Reply-To: <CAJDTihxE07BuXMBmShXuj=TbJCK1mq3ZMFMxP1-T=xjhPF5ySw@mail.gmail.com>
-References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
-         <20180904075347.GH11854@BitWizard.nl>
-         <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
-         <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
-         <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
-         <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
-         <20180904161203.GD17478@fieldses.org> <20180904162348.GN17123@BitWizard.nl>
-         <20180904185411.GA22166@fieldses.org>
-         <a9d586a8c520e52bad2396b93f8d5cb8a9fd2071.camel@redhat.com>
-         <CAJDTihxE07BuXMBmShXuj=TbJCK1mq3ZMFMxP1-T=xjhPF5ySw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 5 Sep 2018 11:25:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54940 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727508AbeIEPZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 11:25:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8F7DFADF1;
+        Wed,  5 Sep 2018 10:56:00 +0000 (UTC)
+Subject: Re: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
+To:     Olaf Hering <olaf@aepfle.de>, xen-devel@lists.xenproject.org
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180905104039.13512-1-olaf@aepfle.de>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
+Date:   Wed, 5 Sep 2018 12:55:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180905104039.13512-1-olaf@aepfle.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-05 at 16:24 +0800, 焦晓冬 wrote:
-> On Wed, Sep 5, 2018 at 4:18 AM Jeff Layton <jlayton@redhat.com> wrote:
-> > 
-> > On Tue, 2018-09-04 at 14:54 -0400, J. Bruce Fields wrote:
-> > > On Tue, Sep 04, 2018 at 06:23:48PM +0200, Rogier Wolff wrote:
-> > > > On Tue, Sep 04, 2018 at 12:12:03PM -0400, J. Bruce Fields wrote:
-> > > > > Well, I think the point was that in the above examples you'd prefer that
-> > > > > the read just fail--no need to keep the data.  A bit marking the file
-> > > > > (or even the entire filesystem) unreadable would satisfy posix, I guess.
-> > > > > Whether that's practical, I don't know.
-> > > > 
-> > > > When you would do it like that (mark the whole filesystem as "in
-> > > > error") things go from bad to worse even faster. The Linux kernel
-> > > > tries to keep the system up even in the face of errors.
-> > > > 
-> > > > With that suggestion, having one application run into a writeback
-> > > > error would effectively crash the whole system because the filesystem
-> > > > may be the root filesystem and stuff like "sshd" that you need to
-> > > > diagnose the problem needs to be read from the disk....
-> > > 
-> > > Well, the absolutist position on posix compliance here would be that a
-> > > crash is still preferable to returning the wrong data.  And for the
-> > > cases 焦晓冬 gives, that sounds right?  Maybe it's the wrong balance in
-> > > general, I don't know.  And we do already have filesystems with
-> > > panic-on-error options, so if they aren't used maybe then maybe users
-> > > have already voted against that level of strictness.
-> > > 
-> > 
-> > Yeah, idk. The problem here is that this is squarely in the domain of
-> > implementation defined behavior. I do think that the current "policy"
-> > (if you call it that) of what to do after a wb error is weird and wrong.
-> > What we probably ought to do is start considering how we'd like it to
-> > behave.
-> > 
-> > How about something like this?
-> > 
-> > Mark the pages as "uncleanable" after a writeback error. We'll satisfy
-> > reads from the cached data until someone calls fsync, at which point
-> > we'd return the error and invalidate the uncleanable pages.
+On 05/09/18 12:40, Olaf Hering wrote:
+> The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
 > 
-> Totally agree with you.
+> BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+> PGD 0 P4D 0
+> Oops: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+> Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+> RIP: e030:device_offline+0x9/0xb0
+> Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+> RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+> R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+> R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+> FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+> CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+> Call Trace:
+>  handle_vcpu_hotplug_event+0xb5/0xc0
+>  xenwatch_thread+0x80/0x140
+>  ? wait_woken+0x80/0x80
+>  kthread+0x112/0x130
+>  ? kthread_create_worker_on_cpu+0x40/0x40
+>  ret_from_fork+0x3a/0x50
 > 
-> > 
-> > If no one calls fsync and scrapes the error, we'll hold on to it for as
-> > long as we can (or up to some predefined limit) and then after that
-> > we'll invalidate the uncleanable pages and start returning errors on
-> > reads. If someone eventually calls fsync afterward, we can return to
-> > normal operation.
-> 
-> Agree with you except that using fsync() as `clear_error_mark()` seems
-> weird and counter-intuitive.
-> 
+> Fix this crash by checking the return value of get_cpu_device().
 
-That is essentially how fsync (and the errseq_t infrastructure) works. 
+Instead of trying to fight the symptoms, I think avoiding to offline
+the last cpu would make more sense.
 
-Once the kernel has hit a wb error, it reports that error to fsync
-exactly once per fd. In practice, the errors are not "cleared", but it
-appears that way to the fsync caller.
+I don't think calling xen_arch_unregister_cpu() just a few lines down
+disable_hotplug_cpu() and then setting it as not present will result in
+a good user experience.
 
-> > 
-> > As always though...what about mmap? Would we need to SIGBUS at the point
-> > where we'd start returning errors on read()?
-> 
-> I think SIGBUS to mmap() is the same thing as EIO to read().
-> 
-> > 
-> > Would that approximate the current behavior enough and make sense?
-> > Implementing it all sounds non-trivial though...
-> 
-> No.
-> No problem is reported because nowadays we are relying on the
-> underlying disk drives. They transparently redirect bad sectors and
-> use S.M.A.R.T to waning us long before a real EIO could be seen.
-> As to network filesystems, if I'm not wrong, close() op calls fsync()
-> inside the implementation. So there is also no problem.
 
-There is no requirement for a filesystem to flush data on close(). In
-fact, most local filesystems do not. NFS does, but that's because it has
-to in order to provide close-to-open cache consistency semantics.
--- 
-Jeff Layton <jlayton@redhat.com>
-
+Juergen
