@@ -2,100 +2,78 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335FCC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083DCC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA1F2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA1F2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id AEB372073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 07:51:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nu+3NcQI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB372073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeIEMUG (ORCPT
+        id S1727802AbeIEMU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:20:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36300 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbeIEMUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:20:06 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DFDEA20741; Wed,  5 Sep 2018 09:51:07 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AFD3120379;
-        Wed,  5 Sep 2018 09:50:57 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 09:50:56 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
-Message-ID: <20180905075056.tob7itg3judccooe@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-9-icenowy@aosc.io>
+        Wed, 5 Sep 2018 08:20:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50394 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeIEMU1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 08:20:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=spSW9CKH/pSMgZh28Hnk8qV1dn+fO84v+Oblx+8OxH8=; b=Nu+3NcQIiTfY1q4mUzAPJq2W2
+        gSAySAZwI5cYJ4DqjBhjobjWHaEkOGWyil5zjctOaxSOIOHbRiFNlrMQFBm6g+1Eq5bAYpicPX/Iz
+        kNZEoPxHPJHjPHqo3yGtPx7NdeZK0DYAo42ZndQWI8SN3wey41AwnFwh8VLCdOGNNuxdIxIZkaPQr
+        k3nIhc8CYk0RL5XeJICvcHmBAQ7JjJMakA4ArvdIzr6XVW4Bv1mU1mJ+7lzfLmxgqv8X3tQ/+ewie
+        wg/hT8yUldInZ669t+4peyrINqw+pHxsF7l/eco0o+XnoAMSMn2c/NPATM+zi/hXV3EYgBoYzCUeB
+        9G91xG8cg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxSb0-0003B9-J6; Wed, 05 Sep 2018 07:51:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C49D420191BFE; Wed,  5 Sep 2018 09:51:24 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 09:51:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
+ be applied on arbitrary tasks
+Message-ID: <20180905075124.GM24124@hirez.programming.kicks-ass.net>
+References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
+ <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yi7cc75vsj32ybox"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180904044053.15425-9-icenowy@aosc.io>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 04, 2018 at 04:40:57PM +0200, Jiri Kosina wrote:
+> From: Jiri Kosina <jkosina@suse.cz>
+> 
+> Current ptrace_may_access() implementation assumes that the 'source' task is
+> always the caller (current).
 
---yi7cc75vsj32ybox
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 04, 2018 at 12:40:50PM +0800, Icenowy Zheng wrote:
-> +		hdmi_phy: hdmi-phy@1ef0000 {
-> +			compatible =3D "allwinner,sun8i-h3-hdmi-phy";
-> +			reg =3D <0x01ef0000 0x10000>;
-> +			clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-> +				 <&ccu 7>;
-> +			clock-names =3D "bus", "mod", "pll-0";
-> +			resets =3D <&ccu RST_BUS_HDMI0>;
-> +			reset-names =3D "phy";
-> +			#phy-cells =3D <0>;
-> +		};
-
-This needs to use the bindings we have for that phy.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---yi7cc75vsj32ybox
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPit8ACgkQ0rTAlCFN
-r3Tkig/+Jo/8vVNhqY7l0BzMPT7gMyQvnhZ73ScDV5wOcFsGh5j+A0hlGsRc/iAf
-PErPax5Of44I6XzJSRn9GuiaQsO4YlkkkhCwpDZuHlxOHtzQ1k9SVibm2YSpCFv/
-cO/oXRecrhqKeRdwwMrtZu2N/zV211kF9Xi1YQWYPUr9ELbrzMkqCbtRZp3YX77B
-i7Iqqeh+/smahMqmPvDNOJu9WlWcOIWfG+CeVaAbWrjxaxVTSA+gJu9Q9Qi9espF
-lTIc59fdgeQb2ZNWr6P88PKG+7Mf9oHXfnnEnowP3pdJ0+RLkHuqTsrnRB9rKP64
-RWV/DY+/rf1EH90DyJCf91Qa8U9kJM0Vksv2arNzf77UCRKKBkpleOPEMs3Eiiyo
-tkXQ9EWRdan1liaIaHnaRVTVNuFlqDOrt5i27aSeiX9YvgAnhcBACvsCA88BlsFy
-B2bSh6X7sF02QKrvgpIBx9QmbxeQNesvF1y/1WrAu73I1I0TgDNkmV/aTd6gy7aY
-VnTeajhkVv6Y3VgYVkRyyzqt5EeqOvP2epqt/pgjtlusYqEuCpbM8k3nczc0k02o
-CT+XurKq4zlbW4q5mwdboLhEfWRyO6cRJFI/kxDKRyrvHNhpQbeAus0746d/8bNS
-duYbPlnENPf5aN01S/1tGb3IeZlXcygXGmPBhRTFNmaQwdWc830=
-=JnHv
------END PGP SIGNATURE-----
-
---yi7cc75vsj32ybox--
+Note that now you 'fixed' the new user, this is still true. Which makes
+me think you do not in fact need this patch, right?
