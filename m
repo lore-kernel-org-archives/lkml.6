@@ -2,32 +2,32 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25267C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB67C4321E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD369206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD369206BA
+	by mail.kernel.org (Postfix) with ESMTP id 13849206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:32:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13849206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbeIENBX (ORCPT
+        id S1728066AbeIENBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:01:23 -0400
+        Wed, 5 Sep 2018 09:01:25 -0400
 Received: from mailgw01.mediatek.com ([210.61.82.183]:58517 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726272AbeIENBW (ORCPT
+        with ESMTP id S1728009AbeIENBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:01:22 -0400
-X-UUID: 8066abd5a2bd4cf4b2d830a8f3d1cf6b-20180905
+        Wed, 5 Sep 2018 09:01:24 -0400
+X-UUID: 8a2509dcbd8c461fa12670f2a450e211-20180905
 Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1945528390; Wed, 05 Sep 2018 16:32:11 +0800
+        with ESMTP id 1182560168; Wed, 05 Sep 2018 16:32:12 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Wed, 5 Sep 2018 16:31:48 +0800
@@ -52,9 +52,9 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
         chunhui dai <chunhui.dai@mediatek.com>
-Subject: [PATCH v2 03/13] drm/mediatek: adjust EDGE to match clock and data
-Date:   Wed, 5 Sep 2018 16:31:36 +0800
-Message-ID: <20180905083146.14727-4-bibby.hsieh@mediatek.com>
+Subject: [PATCH v2 05/13] drm/mediatek: dpi use new API for finding bridge
+Date:   Wed, 5 Sep 2018 16:31:38 +0800
+Message-ID: <20180905083146.14727-6-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
 References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
@@ -68,59 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: chunhui dai <chunhui.dai@mediatek.com>
 
-The default timing of DPI data and clock is not match.
-We could adjust this bit to make them match.
+Using new API for finding bridge.
 
 Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c      | 8 ++++++++
- drivers/gpu/drm/mediatek/mtk_dpi_regs.h | 1 +
- 2 files changed, 9 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_dpi.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 3db959fed493..df27107b1f0b 100644
+index 3758cfeb586b..ed2c153c70a2 100644
 --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
 +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -120,6 +120,7 @@ struct mtk_dpi_yc_limit {
+@@ -14,6 +14,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_of.h>
+ #include <linux/kernel.h>
+ #include <linux/component.h>
+ #include <linux/platform_device.h>
+@@ -708,7 +709,6 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_dpi *dpi;
+ 	struct resource *mem;
+-	struct device_node *bridge_node;
+ 	int comp_id;
+ 	const struct of_device_id *match;
+ 	int ret;
+@@ -758,16 +758,13 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- struct mtk_dpi_conf {
- 	const u32 reg_h_fre_con;
-+	bool edge_sel_en;
- };
+-	bridge_node = of_graph_get_remote_node(dev->of_node, 0, 0);
+-	if (!bridge_node)
+-		return -ENODEV;
+-
+-	dev_info(dev, "Found bridge node: %pOF\n", bridge_node);
+-
+-	dpi->bridge = of_drm_find_bridge(bridge_node);
+-	of_node_put(bridge_node);
+-	if (!dpi->bridge)
++	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
++					  NULL, &dpi->bridge);
++	if (ret) {
++		dev_err(dev, "Failed to find panel or bridge: %d\n", ret);
+ 		return -EPROBE_DEFER;
++	}
++	dev_info(dev, "Found bridge node: %pOF\n", dpi->bridge);
  
- static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
-@@ -350,6 +351,12 @@ static void mtk_dpi_config_2n_h_fre(struct mtk_dpi *dpi)
- 	mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, H_FRE_2N, H_FRE_2N);
- }
- 
-+static void mtk_dpi_config_disable_edge(struct mtk_dpi *dpi)
-+{
-+	if (dpi->conf->edge_sel_en)
-+		mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, 0, EDGE_SEL_EN);
-+}
-+
- static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
- 					enum mtk_dpi_out_color_format format)
- {
-@@ -535,6 +542,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
- 	mtk_dpi_config_yc_map(dpi, dpi->yc_map);
- 	mtk_dpi_config_color_format(dpi, dpi->color_format);
- 	mtk_dpi_config_2n_h_fre(dpi);
-+	mtk_dpi_config_disable_edge(dpi);
- 	mtk_dpi_sw_reset(dpi, false);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
-index 040444d7718d..d9db8c4cacd7 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
-@@ -223,5 +223,6 @@
- #define ESAV_CODE2			(0xFFF << 0)
- #define ESAV_CODE3_MSB			BIT(16)
- 
-+#define EDGE_SEL_EN			BIT(5)
- #define H_FRE_2N			BIT(25)
- #endif /* __MTK_DPI_REGS_H */
+ 	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DPI);
+ 	if (comp_id < 0) {
 -- 
 2.12.5.2.gbdf23ab
 
