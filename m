@@ -2,325 +2,148 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E83C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A9FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9046C2064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:40:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9046C2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3032F2064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:40:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwhytmDn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3032F2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeIENJY (ORCPT
+        id S1728020AbeIENJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:09:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727711AbeIENJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 09:09:24 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A86609FDCF;
-        Wed,  5 Sep 2018 08:40:14 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8BF693091374;
-        Wed,  5 Sep 2018 08:40:14 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 239D318005CD;
-        Wed,  5 Sep 2018 08:40:14 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 04:40:13 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, qemu-devel@nongnu.org,
-        linux-nvdimm@ml01.01.org, jack@suse.cz, stefanha@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, riel@surriel.com,
-        nilal@redhat.com, kwolf@redhat.com, pbonzini@redhat.com,
-        ross zwisler <ross.zwisler@intel.com>, david@redhat.com,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        hch@infradead.org, mst@redhat.com, niteshnarayanlal@hotmail.com,
-        lcapitulino@redhat.com, imammedo@redhat.com, eblake@redhat.com
-Message-ID: <1687915522.10201150.1536136813773.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180904152917.GE17047@intel.com>
-References: <20180904152917.GE17047@intel.com>
-Subject: Re: [PATCH 2/3] libnvdimm: nd_region flush callback support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.65.193.198, 10.4.195.29]
-Thread-Topic: libnvdimm: nd_region flush callback support
-Thread-Index: eJAPPbxbJA1uTokkB4us1rOF4q8Xmw==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 05 Sep 2018 08:40:15 +0000 (UTC)
+        Wed, 5 Sep 2018 09:09:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44278 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbeIENJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 09:09:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k21-v6so3096544pff.11;
+        Wed, 05 Sep 2018 01:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0NHXwXFwmPc5N5dOPMXoVD6V+R7knptfBR7UQTfwbng=;
+        b=HwhytmDnZM/rWy+ts15RExoKGZnmoG9u3K2TLyooIn7rWU7r7SCP0AMqMctkCCBDU6
+         TU94pXLKCva+7sqn2CYaAsIaA7NY4Z1qjR5aa2BiHepNWVIMcw99l74LNen1zSWzBu8s
+         nG3TtBYGsyXKyHFXIqnugziJWSq29Ud6cmSuJIa9txS25AY0Srjouhy2IgHU8uWHARgU
+         iB0TLMCVeeYPeb8Lh+RgW1fvKsf0+M/0tVEctBFoAtt03UYANDEuBg88WKN1hNq19dt6
+         cZ6vRPeOgUCkVNvrdJD3z+b+NpMOSJT3E0xBPgH19xeE71KE1bhIpR8FYTyO24OeolRH
+         XAzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0NHXwXFwmPc5N5dOPMXoVD6V+R7knptfBR7UQTfwbng=;
+        b=PMaUby0nPBb9buw7smCIhFqogbnqNHpof1ccEloIM02shi+19aiLOhxh1jFDzzEi5G
+         MItLE3WahcR4ace1bTa/GMun/VHfg49r6TbI107f5CyfmXdqFBMzlwraocEFCKkdmtQb
+         miul/Z+O0fdd+EYMj5lmYVWW/5SBeHydoXcDgqMKtwNSCzTZef4APYNVlUS6hxcJcBLY
+         qnXSYXNKWfVTKxpq1TK+VJdvJaSJUb8OT5VX6o0eLqrLXH/rlmO0yLMCytSFBUG41soY
+         kQLR+NrioQB35zyqJY6I6vXxxAK0cixbx8hHcX/FjwVsGJuPxTsMUvrvrVIn/exHqZE4
+         mEFw==
+X-Gm-Message-State: APzg51CyMEb8ZCKENGiOcv/2N7Yxx64c6YE2wt+9SgoATAAL9LBAz2Vi
+        sP6/zXHbBhVmJn1Poj95LUpo6G2Y
+X-Google-Smtp-Source: ANB0VdZA8cIZvyn3CxK31PvcgbeMDJ76hPI98F4qZmzSTPkxc0CgDcd5HmFoAlS6jOxjhZEg8nAwFQ==
+X-Received: by 2002:a63:2d87:: with SMTP id t129-v6mr13860925pgt.128.1536136826654;
+        Wed, 05 Sep 2018 01:40:26 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:dd3:bec:d9ff:b901])
+        by smtp.gmail.com with ESMTPSA id d12-v6sm2599464pfk.69.2018.09.05.01.40.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 01:40:26 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     mb@lightnvm.io, javier@cnexlabs.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] lightnvm: pblk-recovery: lightnvm: pblk: Fix two sleep-in-atomic-context bugs
+Date:   Wed,  5 Sep 2018 16:40:17 +0800
+Message-Id: <20180905084017.27593-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The driver may sleep with holding a spinlock.
 
-Hello,
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-Thanks for the report.
+[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 754:
+	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
 
-> 
-> Hi Pankaj,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linux-nvdimm/libnvdimm-for-next]
-> [also build test WARNING on v4.19-rc2 next-20180831]
-> [if your patch is applied to the wrong git tree, please drop us a note to
-> help improve the system]
-> 
-> url:
-> https://github.com/0day-ci/linux/commits/Pankaj-Gupta/kvm-fake-DAX-device/20180903-160032
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
-> libnvdimm-for-next
-> reproduce:
->         # apt-get install sparse
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF=-D__CHECK_ENDIAN__
-> :::::: branch date: 7 hours ago
-> :::::: commit date: 7 hours ago
-> 
->    drivers/nvdimm/pmem.c:116:25: sparse: expression using sizeof(void)
->    drivers/nvdimm/pmem.c:135:25: sparse: expression using sizeof(void)
-> >> drivers/nvdimm/pmem.c:204:32: sparse: incorrect type in assignment
-> >> (different base types) @@    expected restricted blk_status_t [usertype]
-> >> bi_status @@    got e] bi_status @@
+[FUNC] bio_map_kern(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 762:
+	bio_map_kern in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
 
-I will fix this in V2. Will wait for any review comments and address in v2.
+To fix these bugs, the call to pblk_line_replace_data() 
+is moved out of the spinlock protection.
 
-Thanks,
-Pankaj
+These bugs are found by my static analysis tool DSAC.
 
->    drivers/nvdimm/pmem.c:204:32:    expected restricted blk_status_t
->    [usertype] bi_status
->    drivers/nvdimm/pmem.c:204:32:    got int
->    drivers/nvdimm/pmem.c:208:9: sparse: expression using sizeof(void)
->    drivers/nvdimm/pmem.c:208:9: sparse: expression using sizeof(void)
->    include/linux/bvec.h:82:37: sparse: expression using sizeof(void)
->    include/linux/bvec.h:82:37: sparse: expression using sizeof(void)
->    include/linux/bvec.h:83:32: sparse: expression using sizeof(void)
->    include/linux/bvec.h:83:32: sparse: expression using sizeof(void)
->    drivers/nvdimm/pmem.c:220:32: sparse: incorrect type in assignment
->    (different base types) @@    expected restricted blk_status_t [usertype]
->    bi_status @@    got e] bi_status @@
->    drivers/nvdimm/pmem.c:220:32:    expected restricted blk_status_t
->    [usertype] bi_status
->    drivers/nvdimm/pmem.c:220:32:    got int
-> 
-> #
-> https://github.com/0day-ci/linux/commit/69b95edd2a1f4676361988fa36866b59427e2cfa
-> git remote add linux-review https://github.com/0day-ci/linux
-> git remote update linux-review
-> git checkout 69b95edd2a1f4676361988fa36866b59427e2cfa
-> vim +204 drivers/nvdimm/pmem.c
-> 
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  107
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  108  static
-> void write_pmem(void *pmem_addr, struct page *page,
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  109  		unsigned
-> int off, unsigned int len)
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  110  {
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  111  	unsigned
-> int chunk;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  112  	void
-> *mem;
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  113
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  114  	while
-> (len) {
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  115  		mem =
-> kmap_atomic(page);
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06 @116  		chunk =
-> min_t(unsigned int, len, PAGE_SIZE);
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  117
-> 		memcpy_flushcache(pmem_addr, mem + off, chunk);
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  118
-> 		kunmap_atomic(mem);
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  119  		len -=
-> chunk;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  120  		off = 0;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  121  		page++;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  122
-> 		pmem_addr += PAGE_SIZE;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  123  	}
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  124  }
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  125
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  126  static
-> blk_status_t read_pmem(struct page *page, unsigned int off,
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  127  		void
-> *pmem_addr, unsigned int len)
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  128  {
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  129  	unsigned
-> int chunk;
-> 60622d682 drivers/nvdimm/pmem.c Dan Williams      2018-05-03  130  	unsigned
-> long rem;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  131  	void
-> *mem;
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  132
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  133  	while
-> (len) {
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  134  		mem =
-> kmap_atomic(page);
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  135  		chunk =
-> min_t(unsigned int, len, PAGE_SIZE);
-> 60622d682 drivers/nvdimm/pmem.c Dan Williams      2018-05-03  136  		rem =
-> memcpy_mcsafe(mem + off, pmem_addr, chunk);
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  137
-> 		kunmap_atomic(mem);
-> 60622d682 drivers/nvdimm/pmem.c Dan Williams      2018-05-03  138  		if (rem)
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  139  			return
-> BLK_STS_IOERR;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  140  		len -=
-> chunk;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  141  		off = 0;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  142  		page++;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  143
-> 		pmem_addr += PAGE_SIZE;
-> 98cc093cb drivers/nvdimm/pmem.c Huang Ying        2017-09-06  144  	}
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  145  	return
-> BLK_STS_OK;
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  146  }
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  147
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  148  static
-> blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
-> 3f289dcb4 drivers/nvdimm/pmem.c Tejun Heo         2018-07-18  149
-> 			unsigned int len, unsigned int off, unsigned int op,
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  150
-> 			sector_t sector)
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  151  {
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  152
-> 	blk_status_t rc = BLK_STS_OK;
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  153  	bool
-> bad_pmem = false;
-> 32ab0a3f5 drivers/nvdimm/pmem.c Dan Williams      2015-08-01  154
-> 	phys_addr_t pmem_off = sector * 512 + pmem->data_offset;
-> 7a9eb2066 drivers/nvdimm/pmem.c Dan Williams      2016-06-03  155  	void
-> *pmem_addr = pmem->virt_addr + pmem_off;
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  156
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  157  	if
-> (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  158  		bad_pmem
-> = true;
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  159
-> 3f289dcb4 drivers/nvdimm/pmem.c Tejun Heo         2018-07-18  160  	if
-> (!op_is_write(op)) {
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  161  		if
-> (unlikely(bad_pmem))
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  162  			rc =
-> BLK_STS_IOERR;
-> b5ebc8ec6 drivers/nvdimm/pmem.c Dan Williams      2016-03-06  163  		else {
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  164  			rc =
-> read_pmem(page, off, pmem_addr, len);
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  165
-> 			flush_dcache_page(page);
-> b5ebc8ec6 drivers/nvdimm/pmem.c Dan Williams      2016-03-06  166  		}
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  167  	} else {
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  168  		/*
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  169  		 * Note
-> that we write the data both before and after
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  170  		 *
-> clearing poison.  The write before clear poison
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  171  		 *
-> handles situations where the latest written data is
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  172  		 *
-> preserved and the clear poison operation simply marks
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  173  		 * the
-> address range as valid without changing the data.
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  174  		 * In
-> this case application software can assume that an
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  175  		 *
-> interrupted write will either return the new good
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  176  		 * data
-> or an error.
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  177  		 *
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  178  		 *
-> However, if pmem_clear_poison() leaves the data in an
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  179  		 *
-> indeterminate state we need to perform the write
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  180  		 * after
-> clear poison.
-> 0a370d261 drivers/nvdimm/pmem.c Dan Williams      2016-04-14  181  		 */
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  182
-> 		flush_dcache_page(page);
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  183
-> 		write_pmem(pmem_addr, page, off, len);
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  184  		if
-> (unlikely(bad_pmem)) {
-> 3115bb02b drivers/nvdimm/pmem.c Toshi Kani        2016-10-13  185  			rc =
-> pmem_clear_poison(pmem, pmem_off, len);
-> bd697a80c drivers/nvdimm/pmem.c Vishal Verma      2016-09-30  186
-> 			write_pmem(pmem_addr, page, off, len);
-> 59e647398 drivers/nvdimm/pmem.c Dan Williams      2016-03-08  187  		}
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  188  	}
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  189
-> b5ebc8ec6 drivers/nvdimm/pmem.c Dan Williams      2016-03-06  190  	return
-> rc;
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  191  }
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  192
-> dece16353 drivers/nvdimm/pmem.c Jens Axboe        2015-11-05  193  static
-> blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  194  {
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  195
-> 	blk_status_t rc = 0;
-> f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  196  	bool
-> do_acct;
-> f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  197  	unsigned
-> long start;
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  198  	struct
-> bio_vec bvec;
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  199  	struct
-> bvec_iter iter;
-> bd842b8ca drivers/nvdimm/pmem.c Dan Williams      2016-03-18  200  	struct
-> pmem_device *pmem = q->queuedata;
-> 7e267a8c7 drivers/nvdimm/pmem.c Dan Williams      2016-06-01  201  	struct
-> nd_region *nd_region = to_region(pmem);
-> 7e267a8c7 drivers/nvdimm/pmem.c Dan Williams      2016-06-01  202
-> d2d6364dc drivers/nvdimm/pmem.c Ross Zwisler      2018-06-06  203  	if
-> (bio->bi_opf & REQ_PREFLUSH)
-> 69b95edd2 drivers/nvdimm/pmem.c Pankaj Gupta      2018-08-31 @204
-> 		bio->bi_status = nd_region->flush(nd_region);
-> 69b95edd2 drivers/nvdimm/pmem.c Pankaj Gupta      2018-08-31  205
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  206
-> f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  207  	do_acct =
-> nd_iostat_start(bio, &start);
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  208
-> 	bio_for_each_segment(bvec, bio, iter) {
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  209  		rc =
-> pmem_do_bvec(pmem, bvec.bv_page, bvec.bv_len,
-> 3f289dcb4 drivers/nvdimm/pmem.c Tejun Heo         2018-07-18  210
-> 				bvec.bv_offset, bio_op(bio), iter.bi_sector);
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  211  		if (rc)
-> {
-> 4e4cbee93 drivers/nvdimm/pmem.c Christoph Hellwig 2017-06-03  212
-> 			bio->bi_status = rc;
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  213  			break;
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  214  		}
-> e10624f8c drivers/nvdimm/pmem.c Dan Williams      2016-01-06  215  	}
-> f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  216  	if
-> (do_acct)
-> f0dc089ce drivers/nvdimm/pmem.c Dan Williams      2015-05-16  217
-> 		nd_iostat_end(bio, start);
-> 61031952f drivers/nvdimm/pmem.c Ross Zwisler      2015-06-25  218
-> 1eff9d322 drivers/nvdimm/pmem.c Jens Axboe        2016-08-05  219  	if
-> (bio->bi_opf & REQ_FUA)
-> 69b95edd2 drivers/nvdimm/pmem.c Pankaj Gupta      2018-08-31  220
-> 		bio->bi_status = nd_region->flush(nd_region);
-> 61031952f drivers/nvdimm/pmem.c Ross Zwisler      2015-06-25  221
-> 4246a0b63 drivers/nvdimm/pmem.c Christoph Hellwig 2015-07-20  222
-> 	bio_endio(bio);
-> dece16353 drivers/nvdimm/pmem.c Jens Axboe        2015-11-05  223  	return
-> BLK_QC_T_NONE;
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  224  }
-> 9e853f231 drivers/block/pmem.c  Ross Zwisler      2015-04-01  225
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+v2:
+* Move the call to pblk_line_replace_data() out of the spinlock 
+  protection, instead of v1 that changes GFP_KERNEL to GFP_ATOMIC in
+  the calls to bio_map_kern() and nvm_dev_dma_alloc().
+  Thanks Javier for good advice.
+---
+ drivers/lightnvm/pblk-recovery.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 3a5069183859..5fde414d78bb 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -955,12 +955,14 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 		}
+ 	}
+ 
+-	spin_lock(&l_mg->free_lock);
+ 	if (!open_lines) {
++		spin_lock(&l_mg->free_lock);
+ 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+ 							&l_mg->meta_bitmap));
++		spin_unlock(&l_mg->free_lock);
+ 		pblk_line_replace_data(pblk);
+ 	} else {
++		spin_lock(&l_mg->free_lock);
+ 		/* Allocate next line for preparation */
+ 		l_mg->data_next = pblk_line_get(pblk);
+ 		if (l_mg->data_next) {
+@@ -968,8 +970,8 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
+ 			is_next = 1;
+ 		}
++		spin_unlock(&l_mg->free_lock);
+ 	}
+-	spin_unlock(&l_mg->free_lock);
+ 
+ 	if (is_next)
+ 		pblk_line_erase(pblk, l_mg->data_next);
+-- 
+2.17.0
+
