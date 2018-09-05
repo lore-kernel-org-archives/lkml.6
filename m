@@ -2,103 +2,88 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952ECC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB8AC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB702075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccQ5BnJX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB702075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 534782075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534782075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeIFBYj (ORCPT
+        id S1727623AbeIFB3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:24:39 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:33790 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeIFBYj (ORCPT
+        Wed, 5 Sep 2018 21:29:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58894 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbeIFB3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:24:39 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 8-v6so16411705oip.0;
-        Wed, 05 Sep 2018 13:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=goEgowbwRPN0WOmpOkCghM4dNcTtbY0ALdvHSsB8exY=;
-        b=ccQ5BnJXxhrM1+pg7B4zCpUPjwBXqRtPpTk7byMwlDV8zUPyzy6bGtv3Q6uyAq5ocE
-         PGfAElKD5BNwaTTwxvsf6vbapnrto8RTQ/F6Ou4m6riwUVdx7SBLF45GANoDAVLMIt0x
-         +o5xFcR9tdDvPQRiKbAAbFRyigYNVAov+pII9zDZEEtrBYiYyxu0bcD64c4HH2o6pbNz
-         7Mf4gN4nMVXkm0/kSTVF3ESgBKk1EK0vWBFyULLW0tGT+tACg0OUcDvxWdKxtT6zPMBi
-         AtPoPjU29sQipRZ/DiJGQr1cgeMLsv3DcTd9C5mDvfXD9X+3KG6zwgLl0nqrBc3YL6rZ
-         M0DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=goEgowbwRPN0WOmpOkCghM4dNcTtbY0ALdvHSsB8exY=;
-        b=rl/Ac4VI0RkHSKyrxGxb/uIaxTsB3eRa/s79DhCu78bDGQnRl/6VXW/b/UIiubrG5w
-         +2Dv775d73FXaMAC5ybcdhm8lnN2oi9WTAvdtwQCgBkCvZ8KDNSiQx0SoL/W1+6j0lyG
-         fKkyRsSHmkXeLmPasKCWrwNBXVTtUbqvJkiwaqGiUb1bgmzQP7Xr6ZD2Mw+P8fiFSxcL
-         eJLPSxXI19preEihGOuDYzLUW7lWGtxQgYHBAUfaug8j/9OqoMVIjGCmVDeFTARKIjFu
-         G6lr8/L7WQ5XkxyR8nUabnbajxKhPNy6nqBF3OX4urubIpHaMgbk4II7LNBxvar7kDcZ
-         +zlA==
-X-Gm-Message-State: APzg51C65OAt2ZNJQF0C3evhx6QNIUwyRoUnKo+it5F1ttwo5TYSTOlZ
-        bt+QtCNbwZ/yFfyQtoWflczKrZbQcDhVJhVj7E0=
-X-Google-Smtp-Source: ANB0Vdb3Ywcqp/XbfCVwm7IMlDggr/GOO0iSliZn2VhGJrlN325MJsR9c6OGIwGjOHv1kcZIUIpOnU/BxpQXHWxBZ/Q=
-X-Received: by 2002:a54:4d9d:: with SMTP id y29-v6mr32868295oix.273.1536180764451;
- Wed, 05 Sep 2018 13:52:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <1532341959-3478-1-git-send-email-pengbo.mu@nxp.com>
- <1532341959-3478-3-git-send-email-pengbo.mu@nxp.com> <20180724232018.GA16709@rob-hp-laptop>
-In-Reply-To: <20180724232018.GA16709@rob-hp-laptop>
-From:   Yang Li <pku.leo@gmail.com>
-Date:   Wed, 5 Sep 2018 15:52:33 -0500
-Message-ID: <CADRPPNQQE1ESJ5WkMxySstxpaQir-w5XOdiwDe3qTTQ_cim5Xw@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] arm64: dts: dwc3: description of incr burst type
-To:     Rob Herring <robh@kernel.org>
-Cc:     pengbo.mu@nxp.com, Felipe Balbi <balbi@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Ran Wang <ran.wang_1@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Sep 2018 21:29:14 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D583FA1;
+        Wed,  5 Sep 2018 20:57:18 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 13:57:17 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Omar Sandoval <osandov@osandov.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        James Morse <james.morse@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
+Subject: Re: [PATCH v3] proc/kcore: fix invalid memory access in multi-page
+ read optimization
+Message-Id: <20180905135717.ff763b34c4a3f1ca500d715b@linux-foundation.org>
+In-Reply-To: <1536100702-28706-1-git-send-email-asmadeus@codewreck.org>
+References: <1536100545-26905-1-git-send-email-asmadeus@codewreck.org>
+        <1536100702-28706-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2018 at 6:23 PM Rob Herring <robh@kernel.org> wrote:
+On Wed,  5 Sep 2018 00:38:22 +0200 Dominique Martinet <asmadeus@codewreck.org> wrote:
+
+> The 'm' kcore_list item could point to kclist_head, and it is incorrect to
+> look at m->addr / m->size in this case.
+> There is no choice but to run through the list of entries for every address
+> if we did not find any entry in the previous iteration
+> 
+> Reset 'm' to NULL in that case at Omar Sandoval's suggestion.
+> 
+> ...
 >
-> On Mon, Jul 23, 2018 at 06:32:38PM +0800, Pengbo Mu wrote:
-> > Add description of 'snps,incr-burst-type-adjustment' to binding
-> > so that configuring devicetree.
-> >
-> > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> > Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/dwc3.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -464,6 +464,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  				ret = -EFAULT;
+>  				goto out;
+>  			}
+> +			m = NULL;
+>  		} else if (m->type == KCORE_VMALLOC) {
+>  			vread(buf, (char *)start, tsz);
+>  			/* we have to zero-fill user buffer even if no read */
 
-Hi Felipe,
+lgtm.  Let's add a nice little why-were-doing-this?
 
-What do you think about this patch?  The patch title prefix should be
-updated from "arm64: dts: dwc3" to "dt-bindings: usb: dwc3" though.
+--- a/fs/proc/kcore.c~proc-kcore-fix-invalid-memory-access-in-multi-page-read-optimization-v3-fix
++++ a/fs/proc/kcore.c
+@@ -464,7 +464,7 @@ read_kcore(struct file *file, char __use
+ 				ret = -EFAULT;
+ 				goto out;
+ 			}
+-			m = NULL;
++			m = NULL;	/* skip the list anchor */
+ 		} else if (m->type == KCORE_VMALLOC) {
+ 			vread(buf, (char *)start, tsz);
+ 			/* we have to zero-fill user buffer even if no read */
+_
 
-Regards,
-Leo
