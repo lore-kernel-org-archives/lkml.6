@@ -2,169 +2,180 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942CCC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0D4C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30C7220659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:42:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="lsHfCx7F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30C7220659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id BA06B20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:42:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA06B20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeIEQMK (ORCPT
+        id S1727659AbeIEQMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:12:10 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34462 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbeIEQMK (ORCPT
+        Wed, 5 Sep 2018 12:12:44 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39404 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbeIEQMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:12:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f8-v6so5975803ljk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 04:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uICETPQSbfhNJtjwfuh9flj/2Me5hbTHSjQ2WxyhSrE=;
-        b=lsHfCx7FQDmZaWxwgJhS4iao6++sIN2dPgqS8fiznVmU3CyWf/Jm3y3QmPPHkVuaih
-         YP8TSH3k5NXON59TT+qGQwd94bIqasjIac4zD6G+WCfZxr/P/rqJxiLyQrH7bAOPL1S3
-         K88A3SVk7HiWSqG4qyWymcow3Qbc7NRtbFaP0l5oFcALllQuCAwmrbEd2fmArydVVZAf
-         qL9Bwzqt/4ai8jvljUeNIhVKsfwoniHvv0K7GvCKE1ibSEWg+83svDUPcvEVlEnwO86Q
-         yGoS0SVcmQ9MbeIajhcs9jYvqU6VTVnA5Qq7gnR0I2DJl8nrbB+Heo2/VXUJLIr6cT92
-         XF6Q==
+        Wed, 5 Sep 2018 12:12:43 -0400
+Received: by mail-yw1-f67.google.com with SMTP id m62-v6so2495469ywd.6
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 04:42:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uICETPQSbfhNJtjwfuh9flj/2Me5hbTHSjQ2WxyhSrE=;
-        b=d7gDX4kk5mKMhNi4iKryubTE0Q3I8rZs1lVdVbM6ERZWsaI66ellJChvN2YV8LFnsQ
-         7e/LRNvNW7L1GenhDrtJ3bvlFLhbO9HSan4yJ1zWRDy0X8CUCXlcaVkQtkkcPFFwAY3f
-         J3+N/XYKy3/VPwkgkYka2j8nc/q8twJd41vFG+nSK7kJD1AEytDnJU28+Ari8h4JFDdz
-         rGPXMdFGDxJhePgmlKqZswfmXrZ9MEYQdRVQ79rOprHLS9ZTbi3dkobzubT+WT/UOWrA
-         z/aYXVEetr4HA2KXRwCgWOv7wgOBQlT6zbb2+ccEM5xTAxZYWh7ulMSGtpJKO35CLOOc
-         lX3A==
-X-Gm-Message-State: APzg51DGdT5j467VDuTs9HrOMF4aRR8ssb/MkHDqVZBQtyYpGA1ALJYf
-        ZEu/A8rJYMSTt/T8cyEyo6yHLWo/sxyRoIae7UmX
-X-Google-Smtp-Source: ANB0VdavlWKBNXeJJyBdfH82008cZr9tDmHM/lKPXcFgrwy9Utl1qet2pSQA4qjjJvlExUP1oMKeu6jtw7GIB8IQ/U4=
-X-Received: by 2002:a2e:97c8:: with SMTP id m8-v6mr24653282ljj.52.1536147736058;
- Wed, 05 Sep 2018 04:42:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <1536012923-16275-1-git-send-email-henrik@austad.us>
-In-Reply-To: <1536012923-16275-1-git-send-email-henrik@austad.us>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Sep 2018 07:42:04 -0400
-Message-ID: <CAHC9VhR7Zana3xTEj2jUGXb+hBzyh69g0rBg_p_4tkbjtCUdpw@mail.gmail.com>
-Subject: Re: [PATCH] [RFC v2] Drop all 00-INDEX files from Documentation/
-To:     henrik@austad.us
-Cc:     linux-doc@vger.kernel.org, corbet@lwn.net, bhelgaas@google.com,
-        paulmck@linux.vnet.ibm.com, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, axboe@kernel.dk, robh+dt@kernel.org,
-        mark.rutland@arm.com, b.zolnierkie@samsung.com,
-        linus.walleij@linaro.org, davem@davemloft.net, isdn@linux-pingi.de,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
-        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        jejb@parisc-linux.org, deller@gmx.de, rjw@rjwysocki.net,
-        len.brown@intel.com, pavel@ucw.cz, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, gregkh@linuxfoundation.org,
-        jslaby@suse.com, broonie@kernel.org, tglx@linutronix.de,
-        pbonzini@redhat.com, rkrcmar@redhat.com, zbr@ioremap.net,
-        hpa@zytor.com, x86@kernel.org, akpm@linux-foundation.org,
-        raven@themaw.net, jacek.anaszewski@gmail.com,
-        rppt@linux.vnet.ibm.com, jjj@gmx.de, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-security-module@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-spi@vger.kernel.org, kvm@vger.kernel.org, haustad@cisco.com
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8FHqLnxkzoMrMFgMukwdYSWdKfR3UQNGNZqGAZXzaic=;
+        b=lHwInj0kd+o++LjSIy5moFqzppmoZydDKwZCcaBbKp0r4GYl0KgdLT6I4lGVZqdvtI
+         oCdTXmnCNdNfFInq3dlutj88WxMnaayaKBracFOQCdsyPiVwGaR/iKwmwfgWQ799GHnk
+         UdLuE8PjT1e2R1766PKRg8d5POKEx4OqsHO8icvKPf3lGzaRy90VoBwMacO0r+JCTjT7
+         O5P5Bp4dHinYQkCmlCMv7gzK3lUlWt0pTLdtgFL6ENKkkOHyxsIbuqcW1f/XJj3WqH2F
+         s2GGeyXv/FReFZIMJ4KJ4osJEDx6+6O96df3b6frqWsisIi03WDRPyYgDOtAhI7oJTf+
+         Wrsw==
+X-Gm-Message-State: APzg51Dg6C9tZjxs+3jpBZFPUjt8ab7hn6CnGxpi8+9ufbxOTJldtjux
+        lxu0jWn3+xgb47geEdhC8ZGrWSdbOmQ=
+X-Google-Smtp-Source: ANB0Vdadf7jmycS/tpjLxYnJoFanBYfB9eT5v7vCnWM3R7rVBBzrLtdn/gzlVDLNsTjw9w05Tm06WA==
+X-Received: by 2002:a0d:c584:: with SMTP id h126-v6mr20084774ywd.425.1536147769165;
+        Wed, 05 Sep 2018 04:42:49 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-E2E.dyn6.twc.com. [2606:a000:1100:db::e2e])
+        by smtp.gmail.com with ESMTPSA id h68-v6sm626646ywc.7.2018.09.05.04.42.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Sep 2018 04:42:48 -0700 (PDT)
+Message-ID: <5fec9eccdb2e7418d7c594ce353557ed1c394d96.camel@redhat.com>
+Subject: Re: POSIX violation by writeback error
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Martin Steigerwald <martin@lichtvoll.de>
+Cc:     =?UTF-8?Q?=E7=84=A6=E6=99=93=E5=86=AC?= <milestonejxd@gmail.com>,
+        R.E.Wolff@bitwizard.nl, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Date:   Wed, 05 Sep 2018 07:42:46 -0400
+In-Reply-To: <1959947.mKHFU3S0Eq@merkaba>
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+         <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
+         <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+         <1959947.mKHFU3S0Eq@merkaba>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 6:15 PM Henrik Austad <henrik@austad.us> wrote:
-> This is a respin with a wider audience (all that get_maintainer returned)
-> and I know this spams a *lot* of people. Not sure what would be the correct
-> way, so my apologies for ruining your inbox.
->
-> The 00-INDEX files are supposed to give a summary of all files present
-> in a directory, but these files are horribly out of date and their
-> usefulness is brought into question. Often a simple "ls" would reveal
-> the same information as the filenames are generally quite descriptive as
-> a short introduction to what the file covers (it should not surprise
-> anyone what Documentation/sched/sched-design-CFS.txt covers)
->
-> A few years back it was mentioned that these files were no longer really
-> needed, and they have since then grown further out of date, so perhaps
-> it is time to just throw them out.
->
-> A short status yields the following _outdated_ 00-INDEX files, first
-> counter is files listed in 00-INDEX but missing in the directory, last
-> is files present but not listed in 00-INDEX.
->
-> List of outdated 00-INDEX:
-> Documentation: (4/10)
-> Documentation/sysctl: (0/1)
-> Documentation/timers: (1/0)
-> Documentation/blockdev: (3/1)
-> Documentation/w1/slaves: (0/1)
-> Documentation/locking: (0/1)
-> Documentation/devicetree: (0/5)
-> Documentation/power: (1/1)
-> Documentation/powerpc: (0/5)
-> Documentation/arm: (1/0)
-> Documentation/x86: (0/9)
-> Documentation/x86/x86_64: (1/1)
-> Documentation/scsi: (4/4)
-> Documentation/filesystems: (2/9)
-> Documentation/filesystems/nfs: (0/2)
-> Documentation/cgroup-v1: (0/2)
-> Documentation/kbuild: (0/4)
-> Documentation/spi: (1/0)
-> Documentation/virtual/kvm: (1/0)
-> Documentation/scheduler: (0/2)
-> Documentation/fb: (0/1)
-> Documentation/block: (0/1)
-> Documentation/networking: (6/37)
-> Documentation/vm: (1/3)
->
-> Then there are 364 subdirectories in Documentation/ with several files that
-> are missing 00-INDEX alltogether (and another 120 with a single file and no
-> 00-INDEX).
->
-> I don't really have an opinion to whether or not we /should/ have 00-INDEX,
-> but the above 00-INDEX should either be removed or be kept up to date. If
-> we should keep the files, I can try to keep them updated, but I rather not
-> if we just want to delete them anyway.
->
-> As a starting point, remove all index-files and references to 00-INDEX and
-> see where the discussion is going.
->
-> Again, sorry for the insanely wide distribution.
->
-> Signed-off-by: Henrik Austad <henrik@austad.us>
-...
-> Signed-off-by: Henrik Austad <haustad@cisco.com>
-> ---
->  Documentation/00-INDEX                  | 428 --------------------------------
-...
+On Wed, 2018-09-05 at 09:37 +0200, Martin Steigerwald wrote:
+> Jeff Layton - 04.09.18, 17:44:
+> > > - If the following read() could be served by a page in memory, just
+> > > returns the data. If the following read() could not be served by a
+> > > page in memory and the inode/address_space has a writeback error
+> > > mark, returns EIO. If there is a writeback error on the file, and
+> > > the request data could not be served
+> > > by a page in memory, it means we are reading a (partically)
+> > > corrupted
+> > > (out-of-data)
+> > > file. Receiving an EIO is expected.
+> > 
+> > No, an error on read is not expected there. Consider this:
+> > 
+> > Suppose the backend filesystem (maybe an NFSv3 export) is really r/o,
+> > but was mounted r/w. An application queues up a bunch of writes that
+> > of course can't be written back (they get EROFS or something when
+> > they're flushed back to the server), but that application never calls
+> > fsync.
+> > 
+> > A completely unrelated application is running as a user that can open
+> > the file for read, but not r/w. It then goes to open and read the file
+> > and then gets EIO back or maybe even EROFS.
+> > 
+> > Why should that application (which did zero writes) have any reason to
+> > think that the error was due to prior writeback failure by a
+> > completely separate process? Does EROFS make sense when you're
+> > attempting to do a read anyway?
+> > 
+> > Moreover, what is that application's remedy in this case? It just
+> > wants to read the file, but may not be able to even open it for write
+> > to issue an fsync to "clear" the error. How do we get things moving
+> > again so it can do what it wants?
+> > 
+> > I think your suggestion would open the floodgates for local DoS
+> > attacks.
+> 
+> I wonder whether a new error for reporting writeback errors like this 
+> could help out of the situation. But from all I read here so far, this 
+> is a really challenging situation to deal with.
+> 
+> I still remember how AmigaOS dealt with this case and from an usability 
+> point of view it was close to ideal: If a disk was removed, like a 
+> floppy disk, a network disk provided by Envoy or even a hard disk, it 
+> pops up a dialog "You MUST insert volume <name of volume> again". And if 
+> you did, it continued writing. That worked even with networked devices. 
+> I tested it. I unplugged the ethernet cable and replugged it and it 
+> continued writing.
+> 
+> I can imagine that this would be quite challenging to implement within 
+> Linux. I remember there has been a Google Summer of Code project for 
+> NetBSD at least been offered to implement this, but I never got to know 
+> whether it was taken or even implemented. If so it might serve as an 
+> inspiration. Anyway AmigaOS did this even for stationary hard disks. I 
+> had the issue of a flaky connection through IDE to SCSI and then SCSI to 
+> UWSCSI adapter. And when the hard disk had connection issues that dialog 
+> popped up, with the name of the operating system volume for example.
+> 
+> Every access to it was blocked then. It simply blocked all processes 
+> that accessed it till it became available again (usually I rebooted  in 
+> case of stationary device cause I had to open case or no hot plug 
+> available or working). 
+> 
+> But AFAIR AmigaOS also did not have a notion of caching writes for 
+> longer than maybe a few seconds or so and I think just within the device 
+> driver. Writes were (almost) immediate. There have been some 
+> asynchronous I/O libraries and I would expect an delay in the dialog 
+> popping up in that case.
+> 
+> It would be challenging to implement for Linux even just for removable 
+> devices. You have page dirtying and delayed writeback – which is still 
+> an performance issue with NFS of 1 GBit, rsync from local storage that 
+> is faster than 1 GBit and huge files, reducing dirty memory ratio may 
+> help to halve the time needed to complete the rsync copy operation. And 
+> you would need to communicate all the way to userspace to let the user 
+> know about the issue.
+> 
 
-Looks reasonable to me, you can add my ACK for the NetLabel bits.
+You may be interested in Project Banbury:
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+http://www.wil.cx/~willy/banbury.html
 
+> Still, at least for removable media, this would be almost the most 
+> usability friendly approach. With robust filesystems (Amiga Old 
+> Filesystem and Fast Filesystem was not robust in case of sudden write 
+> interruption, so the "MUST" was mean that way) one may even offer 
+> "Please insert device <name of device> again to write out unwritten data 
+> or choose to discard that data" in a dialog. And for removable media it 
+> may even work as blocking processes that access it usually would not 
+> block the whole system. But for the operating system disk? I know how 
+> Plasma desktop behaves during massive I/O operations. It usually just 
+> completely stalls to a halt. It seems to me that its processes do some 
+> I/O almost all of the time … or that the Linux kernel blocks other 
+> syscalls too during heavy I/O load.
+> 
+> I just liked to mention it as another crazy idea. But I bet it would 
+> practically need to rewrite the I/O subsystem in Linux to a great 
+> extent, probably diminishing its performance in situations of write 
+> pressure. Or maybe a genius finds a way to implement both. :)
+> 
+> What I do think tough is that the dirty page caching of Linux with its 
+> current standard settings is excessive. 5% / 10% of available memory 
+> often is a lot these days. There has been a discussion reducing the 
+> default, but AFAIK it was never done. Linus suggested in that discussion 
+> to about what the storage can write out in 3 to 5 seconds. That may even 
+> help with error reporting as reducing dirty memory ratio will reduce the 
+> memory pressure and so you may choose to add some memory allocations for 
+> error handling. And the time till you know its not working may be less.
+> 
 -- 
-paul moore
-www.paul-moore.com
+Jeff Layton <jlayton@redhat.com>
+
