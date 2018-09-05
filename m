@@ -2,136 +2,169 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 022E0C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D2CC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4462075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:52:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4462075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 54FDF20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:55:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="qSOmkZKF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54FDF20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeIERWN (ORCPT
+        id S1727201AbeIERZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:22:13 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:54908 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbeIERWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:22:13 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fxXHo-0005zi-9t; Wed, 05 Sep 2018 14:51:56 +0200
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH v2] cfq: clear queue pointers from cfqg after unpinning them
- in cfq_pd_offline
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Tejun Heo <tj@kernel.org>, jiufei.xue@linux.alibaba.com,
-        Caspar Zhang <caspar@linux.alibaba.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5278cac9-399f-3e30-add8-f15642ca6b8b@maciej.szmigiero.name>
-Date:   Wed, 5 Sep 2018 14:51:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 5 Sep 2018 13:25:37 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33897 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbeIERZh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:25:37 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k19-v6so3459631pfi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 05:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yZg8raJ7r688tTuKnt57q17VC8oTw5jtp2q0T7gCjuI=;
+        b=qSOmkZKFbi3HLzBnlzxiTADXk/OWkcmylawlPyIhFH5GUyxXdvPPfE1j/BhX6e2EKX
+         pFX3iRC723cIMivIAfBMN3AsuB19SJGWwRLPpb+q2yJXqzlPHttFvEtabzgwnkII7OM0
+         Ftx3E1nfKcQNAZ02rIaa8bhIJ5mq5R+53RI5njqo5jlliXM9OB5X6CVSg38UGqbxo9CN
+         6vWqMj74hzuzeLF0hGgenaMxK1+EdjhQcAbw+bN0J2D74W/NQSdSt7FVmvTPegAsninD
+         +6gq5bIJocomYxIC7p4H1q1k86FzZ2vO6xWDps1So5pCjCz5ZCH8ws7+nl0PmTV24LM0
+         q5zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yZg8raJ7r688tTuKnt57q17VC8oTw5jtp2q0T7gCjuI=;
+        b=fLQNQGAEGTVHUg5ZuwOR/biZJxMKLOHdWd8DiV/zJwxF5tOech712u16l2ZpqA1Jun
+         kukjUwmZJ1Kb5KrGJYp6IUL+SGc7OLpiKfgimDYSWArWvCVzKFRBcwkQQJhzfCilTjMI
+         h4k0pLF0Ojsn9AtAvAS42Jd0xLBPTDK41PfKudK+VyGN6ZpYg51O5iI1IC4nrHfny4SG
+         cz2vZkM6AIupyNJCKQ0S3osry9yp0cncLX+oN6YuGeaF3PKm65w9fXHTerw5CXC4j1vF
+         u3u2gY5oEaKKCxPr81JbakNZCQT/0+qS+nfb4sDey8NotwfThpG5kEQx/5Jsq+ECgPoc
+         bhTA==
+X-Gm-Message-State: APzg51A5cOdvDEmed2NA3WETBgcih1PhtPJrH6gpXUhCCZ+PjPXncCGz
+        LhwtibduV+ySUZ3lDPeeICf7uQ==
+X-Google-Smtp-Source: ANB0VdanKY+LSji4ec2hwVr99undYiiNMJL907QNClBZkjH37Dl9eqCZ23Yd6avxQpsX/dz4VKOkfg==
+X-Received: by 2002:a62:2744:: with SMTP id n65-v6mr40652858pfn.125.1536152127541;
+        Wed, 05 Sep 2018 05:55:27 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id c20-v6sm6557914pfh.143.2018.09.05.05.55.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 05:55:26 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id A427B300D96; Wed,  5 Sep 2018 15:55:22 +0300 (+03)
+Date:   Wed, 5 Sep 2018 15:55:22 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Zi Yan <zi.yan@cs.rutgers.edu>, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: hugepage: mark splitted page dirty when needed
+Message-ID: <20180905125522.x2puwfn5sr2zo3go@kshutemo-mobl1>
+References: <20180904075510.22338-1-peterx@redhat.com>
+ <20180904080115.o2zj4mlo7yzjdqfl@kshutemo-mobl1>
+ <D3B32B41-61D5-47B3-B1FC-77B0F71ADA47@cs.rutgers.edu>
+ <20180905073037.GA23021@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905073037.GA23021@xz-x1>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BFQ is already doing a similar thing in its .pd_offline_fn() method
-implementation.
+On Wed, Sep 05, 2018 at 03:30:37PM +0800, Peter Xu wrote:
+> On Tue, Sep 04, 2018 at 10:00:28AM -0400, Zi Yan wrote:
+> > On 4 Sep 2018, at 4:01, Kirill A. Shutemov wrote:
+> > 
+> > > On Tue, Sep 04, 2018 at 03:55:10PM +0800, Peter Xu wrote:
+> > >> When splitting a huge page, we should set all small pages as dirty if
+> > >> the original huge page has the dirty bit set before.  Otherwise we'll
+> > >> lose the original dirty bit.
+> > >
+> > > We don't lose it. It got transfered to struct page flag:
+> > >
+> > > 	if (pmd_dirty(old_pmd))
+> > > 		SetPageDirty(page);
+> > >
+> > 
+> > Plus, when split_huge_page_to_list() splits a THP, its subroutine __split_huge_page()
+> > propagates the dirty bit in the head page flag to all subpages in __split_huge_page_tail().
+> 
+> Hi, Kirill, Zi,
+> 
+> Thanks for your responses!
+> 
+> Though in my test the huge page seems to be splitted not by
+> split_huge_page_to_list() but by explicit calls to
+> change_protection().  The stack looks like this (again, this is a
+> customized kernel, and I added an explicit dump_stack() there):
+> 
+>   kernel:  dump_stack+0x5c/0x7b
+>   kernel:  __split_huge_pmd+0x192/0xdc0
+>   kernel:  ? update_load_avg+0x8b/0x550
+>   kernel:  ? update_load_avg+0x8b/0x550
+>   kernel:  ? account_entity_enqueue+0xc5/0xf0
+>   kernel:  ? enqueue_entity+0x112/0x650
+>   kernel:  change_protection+0x3a2/0xab0
+>   kernel:  mwriteprotect_range+0xdd/0x110
+>   kernel:  userfaultfd_ioctl+0x50b/0x1210
+>   kernel:  ? do_futex+0x2cf/0xb20
+>   kernel:  ? tty_write+0x1d2/0x2f0
+>   kernel:  ? do_vfs_ioctl+0x9f/0x610
+>   kernel:  do_vfs_ioctl+0x9f/0x610
+>   kernel:  ? __x64_sys_futex+0x88/0x180
+>   kernel:  ksys_ioctl+0x70/0x80
+>   kernel:  __x64_sys_ioctl+0x16/0x20
+>   kernel:  do_syscall_64+0x55/0x150
+>   kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> At the very time the userspace is sending an UFFDIO_WRITEPROTECT ioctl
+> to kernel space, which is handled by mwriteprotect_range().  In case
+> you'd like to refer to the kernel, it's basically this one from
+> Andrea's (with very trivial changes):
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git userfault
+> 
+> So... do we have two paths to split the huge pages separately?
 
-While it seems that after
-commit 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
-was reverted leaving these pointers intact no longer causes crashes
-clearing them is still a sensible thing to do to make the code more robust.
+We have two entiries that can be split: page table enties and underlying
+compound page.
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
-Changes from v1: Drop stable and fixes tags, rewrite the commit message
-as after commit 4c6994806f70 was reverted this change is no longer
-required to fix a crash.
+split_huge_pmd() (and variants of it) split the PMD entry into a PTE page
+table. It doens't touch underlying compound page. The page still can be
+mapped in other place as huge.
 
- block/cfq-iosched.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+split_huge_page() (and ivariants of it) split compound page into a number
+of 4k (or whatever PAGE_SIZE is). The operation requires splitting all
+PMD, but not other way around.
 
-diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
-index 2eb87444b157..ed41aa978c4a 100644
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -1644,14 +1644,20 @@ static void cfq_pd_offline(struct blkg_policy_data *pd)
- 	int i;
- 
- 	for (i = 0; i < IOPRIO_BE_NR; i++) {
--		if (cfqg->async_cfqq[0][i])
-+		if (cfqg->async_cfqq[0][i]) {
- 			cfq_put_queue(cfqg->async_cfqq[0][i]);
--		if (cfqg->async_cfqq[1][i])
-+			cfqg->async_cfqq[0][i] = NULL;
-+		}
-+		if (cfqg->async_cfqq[1][i]) {
- 			cfq_put_queue(cfqg->async_cfqq[1][i]);
-+			cfqg->async_cfqq[1][i] = NULL;
-+		}
- 	}
- 
--	if (cfqg->async_idle_cfqq)
-+	if (cfqg->async_idle_cfqq) {
- 		cfq_put_queue(cfqg->async_idle_cfqq);
-+		cfqg->async_idle_cfqq = NULL;
-+	}
- 
- 	/*
- 	 * @blkg is going offline and will be ignored by
+> 
+> Another (possibly very naive) question is: could any of you hint me
+> how the page dirty bit is finally applied to the PTEs?  These two
+> dirty flags confused me for a few days already (the SetPageDirty() one
+> which sets the page dirty flag, and the pte_mkdirty() which sets that
+> onto the real PTEs).
+
+Dirty bit from page table entries transferes to sturct page flug and used
+for decision making in reclaim path.
+
+-- 
+ Kirill A. Shutemov
