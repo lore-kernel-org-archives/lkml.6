@@ -2,116 +2,175 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2BFC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E433DC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F382077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:49:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F382077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BCED20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 14:50:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZezkK4zC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BCED20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbeIETUN (ORCPT
+        id S1727802AbeIETVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 15:20:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52592 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727364AbeIETUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 15:20:13 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A615A208BD; Wed,  5 Sep 2018 16:49:40 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-92-107.w90-88.abo.wanadoo.fr [90.88.33.107])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7B6D520734;
-        Wed,  5 Sep 2018 16:49:30 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 16:49:29 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Wed, 5 Sep 2018 15:21:05 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:40727 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeIETVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 15:21:05 -0400
+Received: by mail-wr1-f51.google.com with SMTP id n2-v6so7997257wrw.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 07:50:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uVHriZ5dRciV9IzBIORgRE21igKcSAlNvhBF4zo7WHU=;
+        b=ZezkK4zCbZLLveS90gtflFo3D2IekwBOhSvdlGiXjRhc0H0brbf3NXrw8kSAmhVxND
+         3kp+CJSTHLD11omzyf7FudjFLHP72Aj5OyFHXW7SpadwxCeBy1kxUSqXT+7Qz2qQmmEs
+         xYH5A26pT63T9P0E+WKMzxa9+FpwHnmfqiVAA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uVHriZ5dRciV9IzBIORgRE21igKcSAlNvhBF4zo7WHU=;
+        b=F1ccdDfzhWPWKGWAFl4vof9rwZtDr49pdi6PUEqYKGTeBw0LSZwdC9XFBu+wttxQs4
+         jzitJOiF258zWrSMEeM3Ys+d2sADeCpMrXt1o4xOb37uichEYBNi7SGrymAGVTeuZf4w
+         Slp1PHw7xTIzPnGFjzrVZNv0W12WZQc5t6fbSaThj6Qy7R+F+bnk2DK93gxOn3Kjja1F
+         weLalAKT3SRyyfNkrlU08kVB5ha3YNwm3lDtKlJvm+TzhM2w2fxXdYQKgkDXl/w2m2DU
+         9LEY4XFVRfOgtgYREx6yA7zRzjWPT64YgF85YZE676tlgUOun+dk8RsEG7fI0tq5Cuf/
+         8nTw==
+X-Gm-Message-State: APzg51BweFUVn4nR9lI/3NDgRsMS/HRW4Dii6uts598/++p3C0qP/xJ4
+        J+SPoKuVQaGi/MaY1wbt3B5x7A==
+X-Google-Smtp-Source: ANB0Vdaxs+h7KaSLsxX8+/ZjLkg6jOZeBPo8AaiNyMrT7hHSZAorVpVd1rQSeoJp5E8WtaaYTtbblQ==
+X-Received: by 2002:adf:c78e:: with SMTP id l14-v6mr26546760wrg.230.1536159031241;
+        Wed, 05 Sep 2018 07:50:31 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id y10-v6sm2521417wrl.87.2018.09.05.07.50.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 07:50:30 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v9 0/8] Introduce on-chip interconnect API
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        gregkh@linuxfoundation.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v4 4/4] drm/sun4i: Enable DesignWare HDMI for SUN50I
-Message-ID: <20180905144929.67kmbuef2ae6fm23@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
- <20180904163609.10171-4-jagan@amarulasolutions.com>
- <20180905070819.gisznpkvvuqire7c@flea>
- <CAMty3ZAzjSwq86BwB8O_7DrT0jrhn3ByzN34dY37pF3ZsAZ6uA@mail.gmail.com>
+        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        evgreen@chromium.org, Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        abailon@baylibre.com, maxime.ripard@bootlin.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20180831140151.13972-1-georgi.djakov@linaro.org>
+ <CAHLCerNd0hrLKgbni95_RSYOtsNufMCVtHbAKa4W+eo8H2cL2A@mail.gmail.com>
+ <20180905093620.6d9162ca@canb.auug.org.au>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <fe9f3e91-93f9-d7d5-1643-dc09543e2850@linaro.org>
+Date:   Wed, 5 Sep 2018 17:50:28 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q6f2ab7olekwmy4f"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZAzjSwq86BwB8O_7DrT0jrhn3ByzN34dY37pF3ZsAZ6uA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180905093620.6d9162ca@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stephen,
 
---q6f2ab7olekwmy4f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/05/2018 02:36 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 4 Sep 2018 15:54:27 +0530 Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>>
+>> I'm currently reviewing this patchset (long overdue), but considering
+>> that we haven't added any major new features to the framework for the
+>> last couple of revisions, can you get this patchset merged into
+>> linux-next to see how things shake out there? We've had this merged
+>> branch merged into a CI build on kernelci for a while now w/o any
+>> major incident so we should increase its exposure.
+>>
+>> You could ask Stephen Rothwell if he'll accept the a branch directly
+>> from you or he needs an upstream maintainer (GregKH?) to carry it.
+> 
+> Since it appears to have been well reviewed and tested, I can take it
+> if you send me a git URL and the names of contacts in case of issues
+> with the branch.  Once Greg has merged it, I will try to drop it again
+> (unless you think there will be an ongoing reason to keep it in
+> linux-next separately), but a prompting email would also be nice in
+> case I forget.
 
-On Wed, Sep 05, 2018 at 01:54:42PM +0530, Jagan Teki wrote:
-> On Wed, Sep 5, 2018 at 12:38 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Tue, Sep 04, 2018 at 10:06:09PM +0530, Jagan Teki wrote:
-> >> Allwinner SUN50I are now using DesignWare HDMI so enable
-> >> them as default. This can build DRM_SUN8I_DW_HDMI as module
-> >> since DRM in arm64 has module.
-> >>
-> >> Making this as defult to SUN8I, may cause an issue while
-> >> loading since arm32 DRM built as static.
-> >
-> > Uh? Why? We should fix this instead of working around it.
->=20
-> I didn't dig further on this. Since ARM64 has is fine with it both
-> (module and static) may be we can take this.
+Thank you! Below is the git URL to pull from and you can use my e-mail
+as contact for any issues.
 
-No, this build breakage needs to be (reported and) addressed first.
+git://git.linaro.org/people/georgi.djakov/linux.git#icc-next
 
-Maxime
+I expect this to be a continuing effort with some upcoming users of this
+API, so i plan to maintain this branch and occasionally put some
+reviewed/tested patches to get wider integration testing. But let's see
+what happens now.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+In any case, if this increases your burden, feel free to drop it.
 
---q6f2ab7olekwmy4f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluP7PgACgkQ0rTAlCFN
-r3T5kw/2Od43n9hafoNg1tqco9mclwfhV/jFpSOtIcn5up/zPCDuTmICAvcrL4eR
-Lp6FsVGmWDfKgVAFzbN9okOeOBb4q9UnFdxdM+kF/6Wimj6rfXXPGPZMRvrCkTe1
-84jtjJqnQh7tIAA4rvnqesGrXLhGJIwK0h7j9/tuG28Yub/mVXjbHF4F8HkAeSVP
-u6PCWJjWZ9UIk55hs7xcWfsojrNuue3+fkvmgZJ1bfgQ0XUQXC2bDCvU2QU6JM1h
-7x2bSVoBS4mKbdoYFUmP65gqLu5jwk52ZVrU2quvTPemebEv/jhziRbPOKokNZpm
-QCPkaDHZ+GGvr0yChUAhY8B2s/N7QXIyP296JZmXrzDHElri63VLWzjU2G8F80nt
-wmvhRaXCyQzZHnTypR+s6OBBqn1K2Nd67zmtiiP+m0CoTLOuxj5trf7CJ/jRISR8
-wIGExrVXMyWtXD+sq4tqYFyen7hitlir+suMHf5ebFg36usO4MNPfSQHSQw0QwcH
-3ES/svV/xVP73hCmU6Fsd03R0pieFuqh7tXhZEPOdDbY0z4VyOQ0ZuvDL4WaS3Qd
-s2xRXzjtCWyFBSIHTK9fslj8MeR5Twj9o52AANPXVzOr+Kr4ulxYypANuRwImWVz
-xtYmjxMdYqY8MasOiHCCkCYzeX84xhlkbpcIf9g+H3K/8vS1Mg==
-=Q3K4
------END PGP SIGNATURE-----
-
---q6f2ab7olekwmy4f--
+Thanks,
+Georgi
