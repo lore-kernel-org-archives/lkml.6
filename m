@@ -2,187 +2,192 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF989C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4E5C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5463E2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5463E2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 40B7F20652
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:36:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3oPfNV0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B7F20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeIEPCO (ORCPT
+        id S1727762AbeIEPGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:02:14 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13150 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726090AbeIEPCO (ORCPT
+        Wed, 5 Sep 2018 11:06:19 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44573 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbeIEPGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:02:14 -0400
-X-UUID: 18fa4df3d1494bb98c1e0ddec6b4957a-20180905
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1438648276; Wed, 05 Sep 2018 18:32:34 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 5 Sep 2018 18:32:32 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 5 Sep 2018 18:32:32 +0800
-Message-ID: <1536143551.4618.0.camel@mtksdaap41>
-Subject: Re: [PATCH v2 02/13] drm/mediatek: move hardware register to node
- data
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date:   Wed, 5 Sep 2018 18:32:31 +0800
-In-Reply-To: <20180905083146.14727-3-bibby.hsieh@mediatek.com>
-References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
-         <20180905083146.14727-3-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 5 Sep 2018 11:06:19 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g6-v6so5513442lfb.11;
+        Wed, 05 Sep 2018 03:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZuElKqwSqn3xAtTi3w1D1C9d5KOhaiA77yrxWWWS11E=;
+        b=l3oPfNV0Cx88ra0tDDFId0s8XlrK6JWYv82IA4EDvFLWW7XFdd+iKL3AgOzU8Ky/nl
+         w2vqnPda1SGNUVJb3IZ4DCTJezw4qQoTr6fAygdgek+2EXQoC0p0REHbJ8WyYIH44Kv2
+         Vo+FO3gpRT/Cb5TCOHvXlEPaBz+UUmZ9oELUokubVf4QbRaGaq24mHyVXOfcY476L9Vg
+         pS7MMrOCjTi6z5SN5szS04WZOqkdOfVd3TWEoysO/c/K8EVsw4HOjBykYHP8vQBFa4rx
+         0dIDXzzM96AgNp19AyigzE4vSSNKX01j3p3P1KygAq/vUagpQlxpBZN1I5/SvjBKa3GJ
+         8mOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZuElKqwSqn3xAtTi3w1D1C9d5KOhaiA77yrxWWWS11E=;
+        b=hFS6NJStMFMhlg+4IgCw0vhtRpcErmdMF/9FCDgylua/eCMIvaqd7OB16fiLdnt2NP
+         7jEgVGTie/v1uHUoFO82d7IeLLQGu9ERMXw1F9PrjfkwkubBWkbavugmII5eC82eQuKt
+         E0QDHrOTGjNKGPVjWZM7Kt+l6q5Yn3boRXsi1l6POKcviRhwsuWdeQX6IAXDEKvquiwo
+         OOzNpZrZmuomQ2Ki70KE4G6PPH+zHvpEzZ6ooZ7dXTBqPSQplUgTzLXolwC91KwQYdUH
+         WgtRBAM9j559BIOaeKi+ys1IbB5xDGnQypiv9NLCuNGNBPaG3hGhM7hrB7SZyz0gZhyS
+         oMAw==
+X-Gm-Message-State: APzg51B1UItYOfttlubDHl0CZ4jV0cVmdwtrtfOGig4BsTHgfd4r8RYL
+        mTjbGuEfHJaUYmCm7f6esrc=
+X-Google-Smtp-Source: ANB0VdZceb+fWrclxBAA7B8SmQzGEES3ikPmmXYUBpxAiWtWjxsYZsgg3EYgL61CFrPbeO0l/8R0HQ==
+X-Received: by 2002:a19:16d8:: with SMTP id 85-v6mr24371146lfw.142.1536143800503;
+        Wed, 05 Sep 2018 03:36:40 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id o184-v6sm245960lff.95.2018.09.05.03.36.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 03:36:39 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fxVB4-0002NS-7W; Wed, 05 Sep 2018 12:36:50 +0200
+Date:   Wed, 5 Sep 2018 12:36:50 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        andy.shevchenko@gmail.com, ajaykuee@gmail.com,
+        daniel.thompson@linaro.org
+Subject: Re: [PATCH] USB: serial: ftdi_sio: implement GPIO support for FT230X
+Message-ID: <20180905103650.GA1089@localhost>
+References: <20180825204744.2307-1-pados@pados.hu>
+ <20180904124924.GA7278@localhost>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904124924.GA7278@localhost>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
+On Tue, Sep 04, 2018 at 02:49:24PM +0200, Johan Hovold wrote:
+> On Sat, Aug 25, 2018 at 10:47:44PM +0200, Karoly Pados wrote:
 
-One more inline comment.
+Here are some more comments on the setup functions, after having
+prepared a patch adding support to FT232R.
 
-On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
+> > +static int ftx_gpioconf_init(struct usb_serial_port *port)
+
+Perhaps rename rename this using an ftdi_ prefix as well for consistency
+with the current device-specific functions.
+
+> > +{
+> > +	struct ftdi_private *priv = usb_get_serial_port_data(port);
+> > +	struct usb_serial *serial = port->serial;
+> > +	const u16 config_size = 0x24;
+> > +	u8 *config_buf;
+> > +	int result;
+> > +	u8 i;
+> > +
+
+[...]
+
+> > +	/*
+> > +	 * All FT-X devices have at least 1 GPIO, some have more.
+> > +	 * Chip-type guessing logic based on libftdi.
+> > +	 */
+> > +	priv->gc.ngpio = 1;
+> > +	if (serial->dev->descriptor.bcdDevice == 0x1000)  /* FT230X */
 > 
-> The address of register DPI_H_FRE_CON is different in different IC.
-> Using of_node data to find this address.
+> Missing le16_to_cpu().
 > 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c      | 29 +++++++++++++++++++++++------
->  drivers/gpu/drm/mediatek/mtk_dpi_regs.h |  1 -
->  2 files changed, 23 insertions(+), 7 deletions(-)
+> > +		priv->gc.ngpio = 4;
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> index d9373e67d328..3db959fed493 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -72,6 +72,7 @@ struct mtk_dpi {
->  	struct clk *tvd_clk;
->  	int irq;
->  	struct drm_display_mode mode;
-> +	const struct mtk_dpi_conf *conf;
->  	enum mtk_dpi_out_color_format color_format;
->  	enum mtk_dpi_out_yc_map yc_map;
->  	enum mtk_dpi_out_bit_num bit_num;
-> @@ -117,6 +118,10 @@ struct mtk_dpi_yc_limit {
->  	u16 c_bottom;
->  };
->  
-> +struct mtk_dpi_conf {
-> +	const u32 reg_h_fre_con;
+> Shouldn't this be handled the other way round? IIRC there are two FTX
+> device types with four pins, and one type where only one pin is
+> accessible.
+> 
+> > +
+> > +	/* Determine which pins are configured for CBUS bitbanging */
+> > +	priv->gpio_altfunc = 0xff;
+> > +	for (i = 0; i < priv->gc.ngpio; ++i) {
+> > +		if (config_buf[0x1A + i] == FTDI_SIO_CBUS_MUX_GPIO)
+> 
+> 0x1a warrants a define; but you shouldn't be reading 0x24 bytes from
+> offset 0 above when the pinconfig is stored in just a couple of words.
+> 
+> > +			priv->gpio_altfunc &= ~BIT(i);
+> > +	}
+> > +
+> > +	kfree(config_buf);
+> > +
+> > +	return 0;
+> > +}
 
-Remove 'const'.
+How about returning the number of gpios instead of having every
+device-specific function mess with priv->gc?
 
-Regards,
-CK
+> > +
+> > +static int ftdi_sio_gpio_init(struct usb_serial_port *port)
+> > +{
+> > +	struct ftdi_private *priv = usb_get_serial_port_data(port);
+> > +	struct usb_serial *serial = port->serial;
+> > +	int result;
+> > +
+> > +	/* Device-specific initializations */
+> > +	switch (priv->chip_type) {
+> > +	case FTX:
+> > +		result = ftx_gpioconf_init(port);
+> > +		break;
+> > +	default:
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (result < 0)
+> > +		return result;
+> > +
+> > +	/* Register GPIO chip to kernel */
+> > +	priv->gc.label = "ftdi_sio";
+> 
+> Maybe we shouldn't use the legacy sio suffix here; "ftdi" or "ftdi-cbus"
+> should do.
+> 
+> > +	priv->gc.request = ftdi_sio_gpio_request;
+> > +	priv->gc.get_direction = ftdi_sio_gpio_direction_get;
+> > +	priv->gc.direction_input = ftdi_sio_gpio_direction_input;
+> > +	priv->gc.direction_output = ftdi_sio_gpio_direction_output;
+> > +	priv->gc.get = ftdi_sio_gpio_get;
+> > +	priv->gc.set = ftdi_sio_gpio_set;
+> > +	priv->gc.owner = THIS_MODULE;
+> > +	priv->gc.parent = &serial->interface->dev;
+> > +	priv->gc.base = -1;
+> > +	priv->gc.can_sleep = true;
+> > +
+> > +	result = gpiochip_add_data(&priv->gc, port);
+> > +	if (!result)
+> > +		priv->gpio_registered = true;
+> > +
+> > +	return result;
+> > +}
 
-> +};
-> +
->  static void mtk_dpi_mask(struct mtk_dpi *dpi, u32 offset, u32 val, u32 mask)
->  {
->  	u32 tmp = readl(dpi->regs + offset) & ~mask;
-> @@ -342,7 +347,7 @@ static void mtk_dpi_config_swap_input(struct mtk_dpi *dpi, bool enable)
->  
->  static void mtk_dpi_config_2n_h_fre(struct mtk_dpi *dpi)
->  {
-> -	mtk_dpi_mask(dpi, DPI_H_FRE_CON, H_FRE_2N, H_FRE_2N);
-> +	mtk_dpi_mask(dpi, dpi->conf->reg_h_fre_con, H_FRE_2N, H_FRE_2N);
->  }
->  
->  static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
-> @@ -668,6 +673,18 @@ static const struct component_ops mtk_dpi_component_ops = {
->  	.unbind = mtk_dpi_unbind,
->  };
->  
-> +static const struct mtk_dpi_conf mt8173_conf = {
-> +	.reg_h_fre_con = 0xe0,
-> +};
-> +
-> +static const struct of_device_id mtk_dpi_of_ids[] = {
-> +	{ .compatible = "mediatek,mt8173-dpi",
-> +	  .data = &mt8173_conf,
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, mtk_dpi_of_ids);
-> +
->  static int mtk_dpi_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -675,13 +692,18 @@ static int mtk_dpi_probe(struct platform_device *pdev)
->  	struct resource *mem;
->  	struct device_node *bridge_node;
->  	int comp_id;
-> +	const struct of_device_id *match;
->  	int ret;
->  
-> +	match = of_match_node(mtk_dpi_of_ids, dev->of_node);
-> +	if (!match)
-> +		return -ENODEV;
->  	dpi = devm_kzalloc(dev, sizeof(*dpi), GFP_KERNEL);
->  	if (!dpi)
->  		return -ENOMEM;
->  
->  	dpi->dev = dev;
-> +	dpi->conf = (struct mtk_dpi_conf *)match->data;
->  
->  	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	dpi->regs = devm_ioremap_resource(dev, mem);
-> @@ -760,11 +782,6 @@ static int mtk_dpi_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static const struct of_device_id mtk_dpi_of_ids[] = {
-> -	{ .compatible = "mediatek,mt8173-dpi", },
-> -	{}
-> -};
-> -
->  struct platform_driver mtk_dpi_driver = {
->  	.probe = mtk_dpi_probe,
->  	.remove = mtk_dpi_remove,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
-> index 4b6ad4751a31..040444d7718d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi_regs.h
-> @@ -223,6 +223,5 @@
->  #define ESAV_CODE2			(0xFFF << 0)
->  #define ESAV_CODE3_MSB			BIT(16)
->  
-> -#define DPI_H_FRE_CON		0xE0
->  #define H_FRE_2N			BIT(25)
->  #endif /* __MTK_DPI_REGS_H */
+> > +#define FTDI_SIO_CBUS_MUX_GPIO		8
 
+And this one needs to have an FTX infix as it's FTX specific (e.g.
+rename as FTDI_FTX_CBUS_MUX_IOMODE, which I believe better matches with
+the various docs).
 
+Johan
