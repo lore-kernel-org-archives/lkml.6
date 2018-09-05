@@ -2,105 +2,249 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FFBC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314B1C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337A520839
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C82D92075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 19:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2xEhAzwM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337A520839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6JPN7ts"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82D92075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeIEXep (ORCPT
+        id S1727856AbeIEXew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 19:34:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35808 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeIEXep (ORCPT
+        Wed, 5 Sep 2018 19:34:52 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55489 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeIEXew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 19:34:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MUsKO0pa0Um+zuT4YtYePUtZuX5JqC56U8InfzuVuVA=; b=2xEhAzwME1IIkrnorIEHrUx0/
-        RYkTdflEibIfgJbdcToN9Y4fb+mE7yvT+NOTBF8uHlClXawRI5Edt3zhc8b8lKzFQKb9U5eG4+hdy
-        sYTs5LljeJ5grJJ2hbJKywdZHQcxPOoJ5jKYXTcREQ1liSy8TZAgEsPRGzpWxUI+QauzBL9ifDEUB
-        zzBQZFhdiCdAokwJ3rz8woCGGRlUnXU12O+JxmNbpKSctV5TCyJDD2fyEzwjjKE3vLaUVvyrInh3w
-        beoxzvNKUZlTptX+cDNtIECD3VtidKTAN+dLMH72POZCG2jZSVqpGSPQsearqEjhtJF+HBegWB0Z6
-        9qKxiUNzg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxd53-0000xG-Dd; Wed, 05 Sep 2018 19:03:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4089920210301; Wed,  5 Sep 2018 21:03:08 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 21:03:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
- be applied on arbitrary tasks
-Message-ID: <20180905190308.GD24082@hirez.programming.kicks-ass.net>
-References: <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
- <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
- <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
- <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm>
- <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com>
- <nycvar.YFH.7.76.1809050725390.15880@cbobk.fhfr.pm>
- <20180905155823.GL27886@tassilo.jf.intel.com>
- <20180905180459.GB11625@redhat.com>
- <nycvar.YFH.7.76.1809052026470.15880@cbobk.fhfr.pm>
- <20180905184018.GC11625@redhat.com>
+        Wed, 5 Sep 2018 19:34:52 -0400
+Received: by mail-wm0-f67.google.com with SMTP id f21-v6so9034900wmc.5;
+        Wed, 05 Sep 2018 12:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VFY7E3dHS3UFMrgW9b/UxSDp+GnCVUPjBEXxQ27f+2k=;
+        b=F6JPN7tsyKp08uBWiGeP+ds904idWjEcjsGswnHtx93oobBuwvUXtGlFsq//EI0QAp
+         oJSTe+zDD8//Ni9G5lTwtuaWvhz5BumrqktH8cIbRWsQTk3WPGhsWMN71htPpG0Ozxl+
+         flcSs+w0G0Lseog1AanCkW0kTaAEYBO+N80q7cug3MEePLAwW8gx7XmN+IOCFITMTanx
+         QRq7SSiJBY9Dc5Y5/bXPuUFqfCuW5pD/4vrmvY3Y8lKnb+gsjM8+5gSfqRVIsRn9QLVl
+         fVdmDSsXcHa1IJztriCv1DbFveba17EGoL6iE4D9bkC3oCvgDnrslwN2A9J+yuXFxbd3
+         Xofg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VFY7E3dHS3UFMrgW9b/UxSDp+GnCVUPjBEXxQ27f+2k=;
+        b=XnLTXyd/+Z3yjpWON9855NmmVTdv1oCkdlYKGPknGmc62R0ap/1G0pfpUTVOmEncgn
+         uMy+X13aK4Y4CM+Jtb/+JSw/EsVxbZeNwyRkzWSttqiDsIRfcfi1q3c6PiZp0w8BB9sD
+         dgXY7QOkDUXcFRNWpyYTH/o66ikXqIO5A7lNtH7aTX97/pDkD7eolnC3DUsRNTkJ5CrE
+         7m5F6mumY0XpOYZU3nUOFQ4axZg4BGFZN41IPjCiXmCa2NDvnr7x2kCR/UEVZjJx8iDo
+         G2iAeM9VIQ7rlnD0MMGuWzRmmd7TOj844WWQTpu4OvQtktMsjmfqBEY7YXixccIJOOqz
+         wtaA==
+X-Gm-Message-State: APzg51AAaOJnt6nv8yDx5Dgr6XkNEFQTjO7T7Rxy+EjSZVtqIZkpoLGi
+        2hzIKrhXUO9jHaE/ZqnH9AU=
+X-Google-Smtp-Source: ANB0VdaUzIpRl5oCfkD5sf9772ftlwvhvSF+LUX7O12/HMC5D6o58AaO1WYFdnczNMmOrpTNEZLyiQ==
+X-Received: by 2002:a1c:1d87:: with SMTP id d129-v6mr1079561wmd.34.1536174200105;
+        Wed, 05 Sep 2018 12:03:20 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4006:df00:b45a:4246:cb70:58f7])
+        by smtp.gmail.com with ESMTPSA id k5-v6sm6237975wrm.96.2018.09.05.12.03.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 12:03:19 -0700 (PDT)
+Date:   Wed, 5 Sep 2018 21:03:17 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        linux-kselftest@vger.kernel.org,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by
+ sparse
+Message-ID: <20180905190316.a34yycthgbamx2t3@ltop.local>
+References: <cover.1535629099.git.andreyknvl@google.com>
+ <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
+ <20180831081123.6mo62xnk54pvlxmc@ltop.local>
+ <20180831134244.GB19965@ZenIV.linux.org.uk>
+ <CAAeHK+w86m6YztnTGhuZPKRczb-+znZ1hiJskPXeQok4SgcaOw@mail.gmail.com>
+ <01cadefd-c929-cb45-500d-7043cf3943f6@arm.com>
+ <20180903151026.n2jak3e4yqusnogt@ltop.local>
+ <a31d3400-4523-2bda-a429-f2a221e69ee8@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180905184018.GC11625@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <a31d3400-4523-2bda-a429-f2a221e69ee8@arm.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 02:40:18PM -0400, Andrea Arcangeli wrote:
-> [ 1838.769917]  <<EOE>>  [<ffffffff816391e5>] avc_compute_av+0x126/0x1b5
+On Tue, Sep 04, 2018 at 12:27:23PM +0100, Vincenzo Frascino wrote:
+> On 03/09/18 16:10, Luc Van Oostenryck wrote:
+> > On Mon, Sep 03, 2018 at 02:49:38PM +0100, Vincenzo Frascino wrote:
+> >> On 03/09/18 13:34, Andrey Konovalov wrote:
+> >>> On Fri, Aug 31, 2018 at 3:42 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >>>> On Fri, Aug 31, 2018 at 10:11:24AM +0200, Luc Van Oostenryck wrote:
+> >>>>> On Thu, Aug 30, 2018 at 01:41:16PM +0200, Andrey Konovalov wrote:
+> >>>>>> This patch adds __force annotations for __user pointers casts detected by
+> >>>>>> sparse with the -Wcast-from-as flag enabled (added in [1]).
+> >>>>>>
+> >>>>>> [1] https://github.com/lucvoo/sparse-dev/commit/5f960cb10f56ec2017c128ef9d16060e0145f292
+> >>>>>
+> >>>>> Hi,
+> >>>>>
+> >>>>> It would be nice to have some explanation for why these added __force
+> >>>>> are useful.
+> >>>
+> >>> I'll add this in the next version, thanks!
+> >>>
+> >>>>         It would be even more useful if that series would either deal with
+> >>>> the noise for real ("that's what we intend here, that's what we intend there,
+> >>>> here's a primitive for such-and-such kind of cases, here we actually
+> >>>> ought to pass __user pointer instead of unsigned long", etc.) or left it
+> >>>> unmasked.
+> >>>>
+> >>>>         As it is, __force says only one thing: "I know the code is doing
+> >>>> the right thing here".  That belongs in primitives, and I do *not* mean the
+> >>>> #define cast_to_ulong(x) ((__force unsigned long)(x))
+> >>>> kind.
+> >>>>
+> >>>>         Folks, if you don't want to deal with that - leave the warnings be.
+> >>>> They do carry more information than "someone has slapped __force in that place".
+> >>>>
+> >>>> Al, very annoyed by that kind of information-hiding crap...
+> >>>
+> >>> This patch only adds __force to hide the reports I've looked at and
+> >>> decided that the code does the right thing. The cases where this is
+> >>> not the case are handled by the previous patches in the patchset. I'll
+> >>> this to the patch description as well. Is that OK?
+> >>>
+> >> I think as well that we should make explicit the information that
+> >> __force is hiding.
+> >> A possible solution could be defining some new address spaces and use
+> >> them where it is relevant in the kernel. Something like:
+> >>
+> >> # define __compat_ptr __attribute__((noderef, address_space(5)))
+> >> # define __tagged_ptr __attribute__((noderef, address_space(6)))
+> >>
+> >> In this way sparse can still identify the casting and trigger a warning.
+> >>
+> >> We could at that point modify sparse to ignore these conversions when a
+> >> specific flag is passed (i.e. -Wignore-compat-ptr, -Wignore-tagged-ptr)
+> >> to exclude from the generated warnings the ones we have already dealt
+> >> with.
+> >>
+> >> What do you think about this approach?
+> > 
+> > I'll be happy to add such warnings to sparse if it is useful to detect
+> > (and correct!) problems. I'm also thinking to other possiblities, like
+> > having some weaker form of __force (maybe simply __force_as (which will
+> > 'only' force the address space) or even __force_as(TO, FROM) (with TO
+> > and FROM being a mask of the address space allowed).I believe we need something here to address this type of problems and I like
+> your proposal of adding a weaker force in the form of __force_as(TO, FROM)
+> because I think it provides the right level information. 
+> 
+> > However, for the specific situation here, I'm not sure that using
+> > address spaces is the right choice because I suspect that the concept
+> > of tagged pointer is orthogonal to the one of (the usual) address space
+> > (it won't be possible for a pointer to be __tagged_ptr *and* __user).
+> I was thinking to address spaces because the information seems easily accessible
+> in sparse [1], but I am certainly open to any solution that can be semantically
+> more correct.
 
-That does read_lock(), which is not allowed from scheduler context.
+Yes, adding a new address space is easy (and doesn't need any modification
+to sparse). Here, I think adding a new 'modifier' __tagged (much like
+__nocast, __noderef, ...) would be much more appropriate.
+I think that at this point, it would be nice to have a clear description
+of the problem and what sort of checks are wanted.
+ 
+> > 
+> > OTOH, when I see already the tons of warnings for concepts established
+> > since many years (I'm thinking especially at __bitwise, see [1]) I'm a
+> > bit affraid of adding new, more specialized ones that people will
+> > understand even less how/when they need to use them.
+> Thanks for providing this statistic, it is very interesting. I understand your
+> concern, but I think that in this case we need a more specialized option not only
+> to find potential problems but even to provide the right amount of information
+> to who reads the code. 
+> 
+> A solution could be to let __force_as(TO, FROM) behave like __force and silence
+> the warning by default, but have an option in sparse to re-enable it 
+> (i.e. -Wshow-force-as). 
 
-> [ 1838.777125]  [<ffffffff810b842e>] ? walk_tg_tree_from+0xbe/0x110
-> [ 1838.783828]  [<ffffffff8128b9c4>] avc_has_perm_noaudit+0xc4/0x110
+That would be, indeed, a simple solution but IMO even more dangerous than
+__force itself (since by readingthe code with this annotation  people would 
+naturally think it only involves the AS will in fact it would be the same
+as __force). I prefer to directly implement a plain __force_as, forcing
+only the AS).
+ 
+> [1]
+> ---
+> commit ee7985f0c2b29c96aefe78df4139209eb4e719d8
+> Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> Date:   Wed Aug 15 10:55:44 2018 +0100
+> 
+>     print address space number for explicit cast to ulong
+>     
+>     This patch build on top of commit b34880d ("stricter warning
+>     for explicit cast to ulong") and prints the address space
+>     number when a "warning: cast removes address space of expression"
+>     is triggered.
+>     
+>     This makes easier to discriminate in between different address
+>     spaces.
+>     
+>     A validation example is provided as well as part of this patch.
+>     
+>     Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> 
+> diff --git a/evaluate.c b/evaluate.c
+> index 6d5d479..2fc0ebc 100644
+> --- a/evaluate.c
+> +++ b/evaluate.c
+> @@ -3017,8 +3017,12 @@ static struct symbol *evaluate_cast(struct expression *expr)
+>  		sas = stype->ctype.as;
+>  	}
+>  
+> -	if (!tas && sas > 0)
+> -		warning(expr->pos, "cast removes address space of expression");
+> +	if (!tas && sas > 0) {
+> +		if (Wcast_from_as)
+> +			warning(expr->pos, "cast removes address space of expression (<asn:%d>)", sas);
+> +		else
+> +			warning(expr->pos, "cast removes address space of expression");
+> +	}
 
-In current code this can end up in avc_update_node() which uses
-spin_lock(), which is a bug from scheduler context.o
+I think that the if (Wcast_from_as) is unneeded, the <asn:%d> can be added
+even if Wcast_from_as is false. Woukd it be OK for you?
 
-> [ 1838.790628]  [<ffffffff8128f1fb>] cred_has_capability+0x6b/0x120
-> [ 1838.797331]  [<ffffffff810db71c>] ? ktime_get+0x4c/0xd0
-> [ 1838.803160]  [<ffffffff810e167b>] ? clockevents_program_event+0x6b/0xf0
-> [ 1838.810532]  [<ffffffff8128f2de>] selinux_capable+0x2e/0x40
-> [ 1838.816748]  [<ffffffff81288f65>] security_capable_noaudit+0x15/0x20
-> [ 1838.823829]  [<ffffffff8108b975>] has_ns_capability_noaudit+0x15/0x20
-> [ 1838.831014]  [<ffffffff8108bc55>] ptrace_has_cap+0x35/0x40
-> [ 1838.837126]  [<ffffffff8108c717>] ___ptrace_may_access+0xa7/0x1e0
-> [ 1838.843925]  [<ffffffff8163f0ae>] __schedule+0x26e/0xa00
-> [ 1838.849855]  [<ffffffff81640949>] schedule_preempt_disabled+0x29/0x70
-> [ 1838.857041]  [<ffffffff810d9324>] cpu_startup_entry+0x184/0x290
-> [ 1838.863637]  [<ffffffff8104891a>] start_secondary+0x1da/0x250
-
-So yes, looks like all that security LSM nonsense isn't going to work
-here.
+-- Luc
