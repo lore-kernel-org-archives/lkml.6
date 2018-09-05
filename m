@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C81C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1766FC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE8820857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE8820857
+	by mail.kernel.org (Postfix) with ESMTP id B2FC820857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:30:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2FC820857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbeIERAY (ORCPT
+        id S1727721AbeIEQ6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:00:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727682AbeIEQ6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Sep 2018 12:58:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727627AbeIEQ6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:58:38 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4B0A2086E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 045DC20867;
         Wed,  5 Sep 2018 12:28:36 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fxWvD-0002AH-TE; Wed, 05 Sep 2018 08:28:35 -0400
-Message-Id: <20180905122835.798847460@goodmis.org>
+        id 1fxWvD-00027Z-1E; Wed, 05 Sep 2018 08:28:35 -0400
+Message-Id: <20180905122834.939477914@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Sep 2018 08:28:03 -0400
+Date:   Wed, 05 Sep 2018 08:27:58 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -42,9 +42,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: [PATCH RT 09/22] Revert "timer: delay waking softirqs from the jiffy tick"
+        tom.zanussi@linux.intel.com
+Subject: [PATCH RT 04/22] PM / suspend: Prevent might sleep splats (updated)
 References: <20180905122754.443196118@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -58,43 +57,39 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit b5b16907c58280e015d5673dca4c6bd3fde0c348 ]
+[ Upstream commit ec7ff06b919647a2fd7d2761a26f5a1d465e819c ]
 
-This patch was required as long as RT tasks where accounted to CFS
-load but this was only a work around. Upstream Commit 17bdcf949d03
-("sched: Drop all load weight manipulation for RT tasks") fixed the
-accounting of RT tasks into CFS load.
+This is an updated version of this patch which was merged upstream as
+commit c1a957d17086d20d52d7f9c8dffaeac2ee09d6f9
 
-Remove the patch and fix dependencies.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/time/timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/tick-common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index ff1d60d4c0cc..f57106c6e786 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1635,13 +1635,13 @@ void update_process_times(int user_tick)
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index 7f5a26c3a8ee..7a87a4488a5e 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -492,6 +492,7 @@ void tick_freeze(void)
+ 	if (tick_freeze_depth == num_online_cpus()) {
+ 		trace_suspend_resume(TPS("timekeeping_freeze"),
+ 				     smp_processor_id(), true);
++		system_state = SYSTEM_SUSPEND;
+ 		timekeeping_suspend();
+ 	} else {
+ 		tick_suspend_local();
+@@ -515,6 +516,7 @@ void tick_unfreeze(void)
  
- 	/* Note: this timer irq context must be accounted for as well. */
- 	account_process_tick(p, user_tick);
--	scheduler_tick();
- 	run_local_timers();
- 	rcu_check_callbacks(user_tick);
- #if defined(CONFIG_IRQ_WORK)
- 	if (in_irq())
- 		irq_work_tick();
- #endif
-+	scheduler_tick();
- 	if (IS_ENABLED(CONFIG_POSIX_TIMERS))
- 		run_posix_cpu_timers(p);
- }
+ 	if (tick_freeze_depth == num_online_cpus()) {
+ 		timekeeping_resume();
++		system_state = SYSTEM_RUNNING;
+ 		trace_suspend_resume(TPS("timekeeping_freeze"),
+ 				     smp_processor_id(), false);
+ 	} else {
 -- 
 2.18.0
 
