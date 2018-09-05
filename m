@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60452C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAC4C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1200820659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:13:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 932D82077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:13:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdtLF/87"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1200820659
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCmXW5Zb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932D82077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbeIFBp3 (ORCPT
+        id S1727763AbeIFBpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:45:29 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42272 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeIFBp2 (ORCPT
+        Wed, 5 Sep 2018 21:45:35 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34291 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727721AbeIFBpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:45:28 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g23-v6so3872645plq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:13:29 -0700 (PDT)
+        Wed, 5 Sep 2018 21:45:35 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k19-v6so4118139pfi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:date:message-id:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=FFB08YKorxcOMOwUtMi0I35BA7p13x7BDsSY6WAe3AI=;
-        b=DdtLF/87vAOXPUTUfEcTfx2b2IglcVvadCSny53Kc9sSV52xzfZh0E+ZHHet2VuAqK
-         hP5R+XpigMxTmZsuYyarck55nfJJZEWKH3RqqKxto0fpnqyUJtOguCSX9btcwVNQlqoq
-         7Y444rlBrdR+4RVH9ifTCKwhQW0vgF7hdyJyNHdIH6WqXodrU5iYjbczT8eTPLytqkrA
-         /NBjL+UL07iobWxnD/zTXafppmH/jQCYD0mwOAI6nUTARE3tbH+OHEq+WJK218M9NcaA
-         IE3RsLwpzsTRoVH9N5YTV6L36tvbbEqVTiJOFZIGRoZ4l2Gv7u8I5XYM8069fIhYK4gS
-         IE3w==
+        bh=qtZLT2M6XG6IyUs6kQVBDxV5Cznym29hpwromAFKuTs=;
+        b=PCmXW5ZbDuMnh4HmI+ZPOyS2bhYg+gRI8VlKuZl/2Ag5x5Sj7gjwFpYj2uhDzg0og8
+         9GIER6wxBvz67jxWM+1aRDAYF7ETfQ9TpiXfL5XGVaTg3nxIVACgIqQp02uobov1blpx
+         MoH2gAcvcLEm1ORyNttzMCMBHZ4OPz0F47CIdPqRQWYWAvK7UVzgbowOoimwNA3oxTQJ
+         KxtPPJp45aJw0OU5qKmi3NyRLg1EI8G4jFLxT4YkWBlyveD30QkWuU9uyj7Am1h6wGt2
+         NHwZUYOIiY6JNp7Euzyj0C4cuTJ73W28E9X+JC9CZHcq+QuBaQwZuropGo5OKQaGHIPu
+         i+cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=FFB08YKorxcOMOwUtMi0I35BA7p13x7BDsSY6WAe3AI=;
-        b=WuQxYveqhMbqYPHoTTBkGiGW6tAVpY0Rg0ExMHrEufSuAfpaOVb4uvw60e1uUL+zzs
-         MTMp+YoRjuv7uI1hO0AkrHVsaP4u4F2Dxrgxkhy+C0Ci25xgllDXDu3B1c79X+VqxKfM
-         wrrwneLfIpF8jb2IVhj5HetWCgb5Lxt+qKl/1Mgz/Fdu16k2WdghycCby3K86sUf/3QZ
-         5+BYCEwoFsBbVTHVi8/KB+jJQXZ675EAin16/8506QySqzu/OLOAMzh7H96MLrZCufKl
-         kj6tpHmvD4xEDOj+/Ekz5V3sYLXa0yhIpNF2wnSDe6FsWhD6maRt75rmR291oJRZpOko
-         rCeA==
-X-Gm-Message-State: APzg51Ab9AIdtuL6sR6Dq/pOixXvBjqxqBsuThfPElR36lv2YEy4Q/a8
-        AOFSdl6RLDwWbH1gZj5Hadg=
-X-Google-Smtp-Source: ANB0VdaP0uEFD0vUxKoZqr+MtSqk6mL/WLLyi+Nu7jfIFrinCMKXFzFyLQVGINzRzAMYlimlflyoiA==
-X-Received: by 2002:a17:902:598d:: with SMTP id p13-v6mr18229562pli.171.1536182009350;
-        Wed, 05 Sep 2018 14:13:29 -0700 (PDT)
+        bh=qtZLT2M6XG6IyUs6kQVBDxV5Cznym29hpwromAFKuTs=;
+        b=lzgigz5fp/97IghXjiW3qrF39jX//tOEdqF5RJ1OOJkWrU8h9WbI9aZSGDpx4OOY35
+         Xif19/BNZedprokcbtI9foh8czEMG+F4zGTPaySFqAvtF4hqlKrYGe5CcaMzcl24atNN
+         Z2UXeiGEAB62CR8BeEJnyAHzyHiImsOwvY3uLM4VJe8tyc0UZYF2JseRfzmzTzCe6Qu4
+         ovRT6HltzKC9fDxFUn8E5Lr83nhR8m39kqCDTEozavUIv0kqqVMrKdEvZGisaP1peFmU
+         LTs3JVmrjNK3lD/44ZMbHDv10VVRb0lCEjpmdh3VBwr26UMJeUTO9zUu2/mX97iM+o5H
+         JHOQ==
+X-Gm-Message-State: APzg51B1QEE59Nnkd1iPjrCTx4yuGLgopqeCMTAooF8RC12gvZn0cBKM
+        ItceIrFZVuVn20JTThTvBfU=
+X-Google-Smtp-Source: ANB0VdYyQruNYAtz2t+A0n+/XIhhDjINyfL74FX8J0goc8LPTaYFYfSAJnOxJDq+ED9a996cwwsbOQ==
+X-Received: by 2002:a65:62d8:: with SMTP id m24-v6mr23864849pgv.307.1536182015456;
+        Wed, 05 Sep 2018 14:13:35 -0700 (PDT)
 Received: from localhost.localdomain (static-50-53-21-37.bvtn.or.frontiernet.net. [50.53.21.37])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm4307213pfv.33.2018.09.05.14.13.28
+        by smtp.gmail.com with ESMTPSA id q25-v6sm3805544pfh.113.2018.09.05.14.13.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 14:13:28 -0700 (PDT)
-Subject: [PATCH v2 1/2] mm: Move page struct poisoning to
- CONFIG_DEBUG_VM_PAGE_INIT_POISON
+        Wed, 05 Sep 2018 14:13:34 -0700 (PDT)
+Subject: [PATCH v2 2/2] mm: Create non-atomic version of SetPageReserved for
+ init use
 From:   Alexander Duyck <alexander.duyck@gmail.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
         mhocko@suse.com, dave.hansen@intel.com, akpm@linux-foundation.org,
         mingo@kernel.org, kirill.shutemov@linux.intel.com
-Date:   Wed, 05 Sep 2018 14:13:28 -0700
-Message-ID: <20180905211328.3286.71674.stgit@localhost.localdomain>
+Date:   Wed, 05 Sep 2018 14:13:34 -0700
+Message-ID: <20180905211334.3286.84435.stgit@localhost.localdomain>
 In-Reply-To: <20180905211041.3286.19083.stgit@localhost.localdomain>
 References: <20180905211041.3286.19083.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -81,113 +81,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexander Duyck <alexander.h.duyck@intel.com>
 
-On systems with a large amount of memory it can take a significant amount
-of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-value. I have seen it take over 2 minutes to initialize a system with
-over 12GB of RAM.
+It doesn't make much sense to use the atomic SetPageReserved at init time
+when we are using memset to clear the memory and manipulating the page
+flags via simple "&=" and "|=" operations in __init_single_page.
 
-In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-the boot time returned to something much more reasonable as the
-arch_add_memory call completed in milliseconds versus seconds. However in
-doing that I had to disable all of the other VM debugging on the system.
+This patch adds a non-atomic version __SetPageReserved that can be used
+during page init and shows about a 10% improvement in initialization times
+on the systems I have available for testing.
 
-Instead of keeping the value in CONFIG_DEBUG_VM I am adding a new CONFIG
-value called CONFIG_DEBUG_VM_PAGE_INIT_POISON that will control the page
-poisoning independent of the CONFIG_DEBUG_VM option.
+I tried adding a bit of documentation based on commit <f1dd2cd13c4> ("mm,
+memory_hotplug: do not associate hotadded memory to zones until online").
 
+Ideally the reserved flag should be set earlier since there is a brief
+window where the page is initialization via __init_single_page and we have
+not set the PG_Reserved flag. I'm leaving that for a future patch set as
+that will require a more significant refactor.
+
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
 ---
- include/linux/page-flags.h |    8 ++++++++
- lib/Kconfig.debug          |   14 ++++++++++++++
- mm/memblock.c              |    5 ++---
- mm/sparse.c                |    4 +---
- 4 files changed, 25 insertions(+), 6 deletions(-)
+ include/linux/page-flags.h |    1 +
+ mm/page_alloc.c            |   13 +++++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 74bee8cecf4c..0e95ca63375a 100644
+index 0e95ca63375a..daee3ea2d1ed 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -13,6 +13,7 @@
- #include <linux/mm_types.h>
- #include <generated/bounds.h>
- #endif /* !__GENERATING_BOUNDS_H */
-+#include <linux/string.h>
+@@ -300,6 +300,7 @@ static inline void page_init_poison(struct page *page, size_t size)
  
- /*
-  * Various page->flags bits:
-@@ -162,6 +163,13 @@ static inline int PagePoisoned(const struct page *page)
- 	return page->flags == PAGE_POISON_PATTERN;
- }
+ PAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ 	__CLEARPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
++	__SETPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ PAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+ 	__CLEARPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+ 	__SETPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 05e983f42316..f2602021032f 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1231,7 +1231,8 @@ void __meminit reserve_bootmem_region(phys_addr_t start, phys_addr_t end)
+ 			/* Avoid false-positive PageTail() */
+ 			INIT_LIST_HEAD(&page->lru);
  
-+static inline void page_init_poison(struct page *page, size_t size)
-+{
-+#ifdef CONFIG_DEBUG_VM_PAGE_INIT_POISON
-+	memset(page, PAGE_POISON_PATTERN, size);
-+#endif
-+}
-+
- /*
-  * Page flags policies wrt compound pages
-  *
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 613316724c6a..3b1277c52fed 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -637,6 +637,20 @@ config DEBUG_VM_PGFLAGS
- 
- 	  If unsure, say N.
- 
-+config DEBUG_VM_PAGE_INIT_POISON
-+	bool "Enable early page metadata poisoning"
-+	default y
-+	depends on DEBUG_VM
-+	help
-+	  Seed the page metadata with a poison pattern to improve the
-+	  likelihood of detecting attempts to access the page prior to
-+	  initialization by the memory subsystem.
-+
-+	  This initialization can result in a longer boot time for systems
-+	  with a large amount of memory.
-+
-+	  If unsure, say Y.
-+
- config ARCH_HAS_DEBUG_VIRTUAL
- 	bool
- 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 237944479d25..a85315083b5a 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1444,10 +1444,9 @@ void * __init memblock_virt_alloc_try_nid_raw(
- 
- 	ptr = memblock_virt_alloc_internal(size, align,
- 					   min_addr, max_addr, nid);
--#ifdef CONFIG_DEBUG_VM
- 	if (ptr && size > 0)
--		memset(ptr, PAGE_POISON_PATTERN, size);
--#endif
-+		page_init_poison(ptr, size);
-+
- 	return ptr;
- }
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 10b07eea9a6e..67ad061f7fb8 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -696,13 +696,11 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
- 		goto out;
+-			SetPageReserved(page);
++			/* no need for atomic set_bit at init time */
++			__SetPageReserved(page);
+ 		}
  	}
+ }
+@@ -5517,8 +5518,16 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ not_early:
+ 		page = pfn_to_page(pfn);
+ 		__init_single_page(page, pfn, zone, nid);
++
++		/*
++		 * Mark page reserved as it will need to wait for onlining
++		 * phase for it to be fully associated with a zone.
++		 *
++		 * We can use the non-atomic __set_bit operation for setting
++		 * the flag as we are still initializing the pages.
++		 */
+ 		if (context == MEMMAP_HOTPLUG)
+-			SetPageReserved(page);
++			__SetPageReserved(page);
  
--#ifdef CONFIG_DEBUG_VM
- 	/*
- 	 * Poison uninitialized struct pages in order to catch invalid flags
- 	 * combinations.
- 	 */
--	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
--#endif
-+	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
- 
- 	section_mark_present(ms);
- 	sparse_init_one_section(ms, section_nr, memmap, usemap);
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
 
