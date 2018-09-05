@@ -2,120 +2,82 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94796C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FC8C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E9D020658
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9D020658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CBD9520659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:40:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD9520659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeIEQDX (ORCPT
+        id S1726463AbeIEQKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:03:23 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59290 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbeIEQDX (ORCPT
+        Wed, 5 Sep 2018 12:10:21 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33134 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725868AbeIEQKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:03:23 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxW3k-0001Rb-9D; Wed, 05 Sep 2018 13:33:20 +0200
-Date:   Wed, 5 Sep 2018 13:33:19 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Neeraj Upadhyay <neeraju@codeaurora.org>
-cc:     josh@joshtriplett.org, peterz@infradead.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dzickus@redhat.com,
-        brendan.jackman@arm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, sramana@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in
- takedown_cpu()
-In-Reply-To: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
-Message-ID: <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de>
-References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 5 Sep 2018 12:10:20 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w85BYEBW004130;
+        Wed, 5 Sep 2018 13:40:23 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2m7g7wxh5t-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 05 Sep 2018 13:40:23 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 774C134;
+        Wed,  5 Sep 2018 11:40:22 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 578372B7F;
+        Wed,  5 Sep 2018 11:40:22 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 5 Sep 2018
+ 13:40:22 +0200
+Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 5 Sep 2018 13:40:21 +0200
+From:   Amelie Delaunay <amelie.delaunay@st.com>
+To:     Minas Harutyunyan <hminas@synopsys.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 0/4] usb: dwc2: fix host mode external vbus supply management
+Date:   Wed, 5 Sep 2018 13:40:01 +0200
+Message-ID: <1536147605-26279-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018, Neeraj Upadhyay wrote:
-> If takedown_cpu() fails during _cpu_down(), st->state is reset,
-> by calling cpuhp_reset_state(). This results in an additional
-> increment of st->state, which results in CPUHP_AP_SMPBOOT_THREADS
-> state being skipped during rollback. Fix this by not calling
-> cpuhp_reset_state() and doing the state reset directly in
-> _cpu_down().
-> 
-> Fixes: 4dddfb5faa61 ("smp/hotplug: Rewrite AP state machine core")
-> Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-> ---
->  kernel/cpu.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index aa7fe85..9f49edb 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -970,7 +970,14 @@ static int __ref _cpu_down(unsigned int cpu, int tasks_frozen,
->  	 */
->  	ret = cpuhp_down_callbacks(cpu, st, target);
->  	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
-> -		cpuhp_reset_state(st, prev_state);
-> +		/*
-> +		 * As st->last is not set, cpuhp_reset_state() increments
-> +		 * st->state, which results in CPUHP_AP_SMPBOOT_THREADS being
-> +		 * skipped during rollback. So, don't use it here.
-> +		 */
-> +		st->rollback = true;
-> +		st->target = prev_state;
-> +		st->bringup = !st->bringup;
+This patchset fixes and improves host mode external vbus supply management,
+mainly around suspend/resume use cases. It also avoid 'vbus regulator"
+to be requested lots of times upon each call to dwc2_vbus_supply_init(),
+especially when pm runtime is enabled.
 
-No, this is just papering over the actual problem.
+Fabrice Gasnier (4):
+  usb: dwc2: get optional vbus-supply regulator once
+  usb: dwc2: fix a race with external vbus supply
+  usb: dwc2: fix call to vbus supply exit routine, call it unlocked
+  usb: dwc2: fix unbalanced use of external vbus-supply
 
-The state inconsistency happens in take_cpu_down() when it returns with a
-failure from __cpu_disable() because that returns with state = TEARDOWN_CPU
-and st->state is then incremented in undo_cpu_down().
+ drivers/usb/dwc2/hcd.c      | 45 ++++++++++++++++++++++++++++++++++-----------
+ drivers/usb/dwc2/platform.c |  8 ++++++++
+ 2 files changed, 42 insertions(+), 11 deletions(-)
 
-That's the real issue and we need to analyze the whole cpu_down rollback
-logic first.
-
-Thanks,
-
-	tglx
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- 
+2.7.4
 
