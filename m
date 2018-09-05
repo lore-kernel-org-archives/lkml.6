@@ -2,156 +2,161 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3D3C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60848C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC3F2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DA5D20839
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:19:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IfBDhHkV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC3F2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huhIrhrw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA5D20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeIEWtg (ORCPT
+        id S1727735AbeIEWuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 18:49:36 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40874 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeIEWtg (ORCPT
+        Wed, 5 Sep 2018 18:50:21 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44667 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbeIEWuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 18:49:36 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w85IIAgA051030;
-        Wed, 5 Sep 2018 13:18:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536171490;
-        bh=SWJ/zg50Cl/Rklso3yyezyPjS/hlkRRpZRf/fSvJT8Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=IfBDhHkV/kXElkztfq2UYiGgoT5hQV9OnHfYcaqNXlYeYedX5CVjmjPhqQOiJq5LU
-         ESLY3aEAMSJtIZ07QVybh9rNFUhvD3TKltkShadJeSt/STj4LTBGxwXjwAt8nYuzxY
-         zTwR3WCqbhiPK1QjGk9dB1mtDHL860227x1Nnxrw=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85IIAuV031176;
-        Wed, 5 Sep 2018 13:18:10 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 5 Sep
- 2018 13:18:09 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 5 Sep 2018 13:18:09 -0500
-Received: from [172.22.166.198] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85II9xZ014064;
-        Wed, 5 Sep 2018 13:18:09 -0500
-Subject: Re: [PATCH v5 2/2] leds: lm3697: Introduce the lm3697 driver
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180817151528.21623-1-dmurphy@ti.com>
- <20180817151528.21623-2-dmurphy@ti.com> <20180824100549.GC4045@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <a0651696-2cea-a96f-d1f1-b02c39ae187c@ti.com>
-Date:   Wed, 5 Sep 2018 13:18:08 -0500
+        Wed, 5 Sep 2018 18:50:20 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k21-v6so3872220pff.11;
+        Wed, 05 Sep 2018 11:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UDamL8VRf4EKSWN6s8tYmN/72+iNqHxtE93eS1Bvfx0=;
+        b=huhIrhrwYCO6Kw+45xaSzghCrG5b0GFaN+ByaQ5I3PzCYQmtp+XSg7eVqKnHQSmq23
+         vJC+F+voCKoNqOIYhIGzu3Vew6E6ci0u7Vgp9OWHYTVG7sU1Yoyi21oBBOy8mStAAvqv
+         dTgtX/NkEWM1JBle/GklBLoRhwXgabQqD00zddXavOO/IaDynHh0R2yYvGFU+oQvZDd4
+         0rCebnDaqM/A57ltmDrtwpVOB0XGXwOpN4qNb+uNjbrC5kcQy6yz9554+7vdctnvBveh
+         /o1CyoYgM0uzLGk1IyRG5HX2fgwbibrp9ZH3vw5wblyA6/N4CattPLhCXBs3DWCfK/bG
+         ChQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UDamL8VRf4EKSWN6s8tYmN/72+iNqHxtE93eS1Bvfx0=;
+        b=iHdkMdIRuq+1SI1KXkJ8ewR6+h6m0ZPAI3EWvM3aHLdaAO65rGhc8XhoTYJJD2K2qU
+         EbLNSuTVQ54VeOsvbj0ONr1ZtfJ+HJfkXpUOP0HkjM2d03f3Sq7vNepAzPkFtBCExewT
+         g5O7czMiA12R2c3Lb23eM7i0ei5reeWuV3i9gAX+o8CAu7Wj8DqESa6fWsfPFAMN4EM1
+         XbNtfD7OOr7cz15fwW8eahkukswFsJnVivmk1Bt/MJsXdm25vqq/JoTWZoIDxShp+6US
+         MerBuvcYRdd/HHNoNROOo6JAZMZuERmOZqTBHG6+2vwBjna1BHMMBF8g1698lORiiYT4
+         5Mlw==
+X-Gm-Message-State: APzg51A6Ohvyu9tiBjo/08CM/g6t2j+v4Hnk6hhjzHMn+Ibmfgvw6IGB
+        22EmhAI8R1vK4/RqdtJ4/L8=
+X-Google-Smtp-Source: ANB0VdYRE52pAi3KLpS+lePc+YtCShw2nQb0VKwQOXOjcEThATmAne2Em862scPRc0PDuBZAJAIdmA==
+X-Received: by 2002:a63:ad44:: with SMTP id y4-v6mr37320595pgo.138.1536171540120;
+        Wed, 05 Sep 2018 11:19:00 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm2979552pgp.34.2018.09.05.11.18.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 11:18:59 -0700 (PDT)
+Subject: Re: [PATCH 1/3] of/fdt: Scan the root node properties earlier
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180830190523.31474-1-robh@kernel.org>
+ <20180830190523.31474-2-robh@kernel.org>
+ <b86ed9cf-d5fd-09fb-eb82-0143c759f5cf@gmail.com>
+ <CAL_JsqJy0kDYCC35GR5TGLYyYU-UjOys_r2sFMQZuFto5HkExg@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <5da7b4ab-acd3-977a-6ac2-275911d7c436@gmail.com>
+Date:   Wed, 5 Sep 2018 11:18:58 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180824100549.GC4045@amd>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <CAL_JsqJy0kDYCC35GR5TGLYyYU-UjOys_r2sFMQZuFto5HkExg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
-
-On 08/24/2018 05:05 AM, Pavel Machek wrote:
-> Hi!
+On 09/05/18 04:51, Rob Herring wrote:
+> On Tue, Sep 4, 2018 at 8:49 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>>
+>> On 08/30/18 12:05, Rob Herring wrote:
+>>> Scan the root node properties (#{size,address}-cells) earlier,
+>>
+>>                                                         ^^^^^^^
+>>                              before mdesc->dt_fixup() is called
+>>
+>>> so that
+>>> the dt_root_addr_cells and dt_root_size_cells variables are initialized
+>>> and can be used.
+>>                  by mdesc->dt_fixup()
 > 
+> That's an ARM specific detail. Granted, ARM is the only caller.
 
-I am going to go ahead and update this code anyway and if we get the ti-lmu
-code in then we can adapt this code to use that framework
+The dt_root_addr_cells and dt_root_size_cells variables are being
+initialized earlier in this patch series so that of_fdt_limit_memory()
+can use them.  The only caller of of_fdt_limit_memory() is
+exynos_dt_fixup(), which is an mdesc->dt_fixup() function.
 
->> +/**
->> + * struct lm3697 -
->> + * @enable_gpio - Hardware enable gpio
->> + * @regulator - LED supply regulator pointer
->> + * @client - Pointer to the I2C client
->> + * @regmap - Devices register map
->> + * @dev - Pointer to the devices device struct
->> + * @lock - Lock for reading/writing the device
->> + * @leds - Array of LED strings.
->> + */
-> 
-> extra .
-
-ACK
 
 > 
->> +	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
->> +	if (ret) {
->> +		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
->> +		goto out;
->> +	}
->> +out:
+>>>
+>>> Cc: Frank Rowand <frowand.list@gmail.com>
+>>> Signed-off-by: Rob Herring <robh@kernel.org>
+>>> ---
+>>>  drivers/of/fdt.c | 7 ++++---
+>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>
+>> Moving early_init_dt_scan_root() to inside early_init_dt_verify()
+>> puts something that has nothing to do with verifying the fdt
+>> into a function whose purpose is the verify.  It hides the side
+>> effect of initializing the dt_root_addr_cells and dt_root_size_cells
+>> variables.
 > 
-> I'd avoid this goto.
+> It already has the side effect of setting initial_boot_params which
+> every subsequent function needs.
 
-Ack
+And that side effect should probably also be moved.
+
+
+>> I suggest creating a new function early_init_dt_scan_init_pre_dt_fixup(),
+>> move the chunk of code there instead of to early_init_dt_scan_nodes(),
+>> and call the new function from setup_machine_fdt(), just before
+>> calling  mdesc->dt_fixup().  This would be a little bit more code,
+>> but more clearly showing the intent.
+> 
+> I'm trying to reduce the number of functions arches call
+
+I like that goal.
+
+
+> and renaming
+> would need a bunch of arch changes. This change will also let me make
+> early_init_dt_scan_root private as powerpc is the only user. I need to
+> dust off a patch for that.
+> 
+> I'd be more inclined to push exynos to remove this altogether. After
+
+Not a bad idea.
+
+> all, if they claim their bindings are unstable, they can't really
+> claim their bootloader is stable/fixed.
+
+It seems that this series is showing us that maybe the three architecture
+specific (arc, arm, arm64) versions of setup_machine_fdt() should be
+consolidated so that we have consistent behavior for FDT.
+
+If we had a single setup_machine_fdt() then some of he hidden side
+effects of functions called by setup_machine_fdt() could instead
+be hoisted into setup_machine_fdt().
 
 > 
->> +static int lm3697_set_control_bank(struct lm3697 *priv)
->> +{
->> +	u8 control_bank_config = 0;
->> +	struct lm3697_led *led;
->> +	int ret, i;
->> +
->> +	led = &priv->leds[0];
->> +	if (led->control_bank == LM3697_CONTROL_A)
->> +		led = &priv->leds[1];
-> 
-> I'd expect CONTROL_A to correspond to leds[0]...?
-
-Not always there can be a situation where all HVLEDs can be configured
-for control bank B
-
-> 
->> +	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
->> +		if (led->hvled_strings[i] == LM3697_HVLED_ASSIGNMENT)
->> +			control_bank_config |= 1 << i;
->> +	}
-> 
-> Extra {}s.
-
-Ack
-
-> 
->> +	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
->> +	if (IS_ERR(priv->regulator))
->> +		priv->regulator = NULL;
-> 
-> If vled regulator is specified in dt and _get fails, is it worth a
-> warning?
-
-Hmmm.  That would be annoying on boot to have a warning on an optional
-parameter.  But if we need it I can add it.
-
-Dan
-
-> 
-> 									Pavel
+> Rob
 > 
 
-
--- 
-------------------
-Dan Murphy
