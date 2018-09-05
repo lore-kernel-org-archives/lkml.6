@@ -2,106 +2,111 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D80D9C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557BAC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C64B2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:40:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C64B2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E2DC2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:41:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rOWpEpNg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E2DC2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeIESK7 (ORCPT
+        id S1727739AbeIESL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:10:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57194 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726071AbeIESK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:10:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D0C68AE7D;
-        Wed,  5 Sep 2018 13:40:39 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 15:40:38 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     David Rientjes <rientjes@google.com>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
- should_reclaim_retry().
-Message-ID: <20180905134038.GE14951@dhcp22.suse.cz>
-References: <cb2d635c-c14d-c2cc-868a-d4c447364f0d@i-love.sakura.ne.jp>
- <alpine.DEB.2.21.1808231544001.150774@chino.kir.corp.google.com>
- <201808240031.w7O0V5hT019529@www262.sakura.ne.jp>
- <195a512f-aecc-f8cf-f409-6c42ee924a8c@i-love.sakura.ne.jp>
+        Wed, 5 Sep 2018 14:11:26 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38666 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeIESL0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 14:11:26 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w85DecSI025176;
+        Wed, 5 Sep 2018 08:40:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536154838;
+        bh=dkt8JdM0LOiZ5JRkEiDvnKCpH/fnSWWzVsvhT+rMSIE=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=rOWpEpNgPPRI/86pNMJROQssUJPD3rMdhoKVzD4LXeEsa7iKW8CDC4DpPdX5OKQui
+         fudVMxghI4ncL59kcUETWRSG8k5/Cu3r1vSdcS/Yye3aMDssmE8NNV5LDyK4ec7Q7V
+         SeLJRTvzfs4bh0k1utgItxmKdV4EjvRj3HJbyjNs=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85Decmo028135;
+        Wed, 5 Sep 2018 08:40:38 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 5 Sep
+ 2018 08:40:38 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 5 Sep 2018 08:40:38 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w85DebFm020966;
+        Wed, 5 Sep 2018 08:40:38 -0500
+Date:   Wed, 5 Sep 2018 08:40:37 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-kernel@vger.kernel.org>, <nsekhar@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Vignesh R <vigneshr@ti.com>
+Subject: Re: [PATCH v3] arm64: dts: ti: k3-am65: Change #address-cells and
+ #size-cells of interconnect to 2
+Message-ID: <20180905134037.szkh3wnugrtnrrfh@kahuna>
+References: <20180905111738.8280-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <195a512f-aecc-f8cf-f409-6c42ee924a8c@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180905111738.8280-1-kishon@ti.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-09-18 22:20:58, Tetsuo Handa wrote:
-> On 2018/08/24 9:31, Tetsuo Handa wrote:
-> > For now, I don't think we need to add af5679fbc669f31f to the list for
-> > CVE-2016-10723, for af5679fbc669f31f might cause premature next OOM victim
-> > selection (especially with CONFIG_PREEMPT=y kernels) due to
-> > 
-> >    __alloc_pages_may_oom():               oom_reap_task():
-> > 
-> >      mutex_trylock(&oom_lock) succeeds.
-> >      get_page_from_freelist() fails.
-> >      Preempted to other process.
-> >                                             oom_reap_task_mm() succeeds.
-> >                                             Sets MMF_OOM_SKIP.
-> >      Returned from preemption.
-> >      Finds that MMF_OOM_SKIP was already set.
-> >      Selects next OOM victim and kills it.
-> >      mutex_unlock(&oom_lock) is called.
-> > 
-> > race window like described as
-> > 
-> >     Tetsuo was arguing that at least MMF_OOM_SKIP should be set under the lock
-> >     to prevent from races when the page allocator didn't manage to get the
-> >     freed (reaped) memory in __alloc_pages_may_oom but it sees the flag later
-> >     on and move on to another victim.  Although this is possible in principle
-> >     let's wait for it to actually happen in real life before we make the
-> >     locking more complex again.
-> > 
-> > in that commit.
-> > 
+On 11:17-20180905, Kishon Vijay Abraham I wrote:
+> AM65 has two PCIe controllers and each PCIe controller has '2' address
+> spaces one within the 4GB address space of the SoC and the other above
+> the 4GB address space of the SoC (cbass_main) in addition to the
+> register space. The size of the address space above the 4GB SoC address
+> space is 4GB. These address ranges will be used by CPU/DMA to access
+> the PCIe address space. In order to represent the address space above
+> the 4GB SoC address space and to represent the size of this address
+> space as 4GB, change address-cells and size-cells of interconnect to 2.
 > 
-> Yes, that race window is real. We can needlessly select next OOM victim.
-> I think that af5679fbc669f31f was too optimistic.
+> Since OSPI has similar need in MCU Domain Memory Map, change
+> address-cells and size-cells of cbass_mcu interconnect also to 2.
+> 
+> Fixes: ea47eed33a3fe3d919 ("arm64: dts: ti: Add Support for AM654 SoC")
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> Acked-by: Vignesh R <vigneshr@ti.com>
+> ---
+> Changes from v2:
+> Added Fixes tag.
 
-Changelog said 
+Thanks.
+Acked-by: Nishanth Menon <nm@ti.com>
 
-"Although this is possible in principle let's wait for it to actually
-happen in real life before we make the locking more complex again."
-
-So what is the real life workload that hits it? The log you have pasted
-below doesn't tell much.
-
-> [  278.147280] Out of memory: Kill process 9943 (a.out) score 919 or sacrifice child
-> [  278.148927] Killed process 9943 (a.out) total-vm:4267252kB, anon-rss:3430056kB, file-rss:0kB, shmem-rss:0kB
-> [  278.151586] vmtoolsd invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
-[...]
-> [  278.331527] Out of memory: Kill process 8790 (firewalld) score 5 or sacrifice child
-> [  278.333267] Killed process 8790 (firewalld) total-vm:358012kB, anon-rss:21928kB, file-rss:0kB, shmem-rss:0kB
-> [  278.336430] oom_reaper: reaped process 8790 (firewalld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+Tero: Could we take this for v4.20 ? While this is a bug fix, I think
+it might be better in v4.20 window since it will help provide a clean merge
+of follow on nodes.
 
 -- 
-Michal Hocko
-SUSE Labs
+Regards,
+Nishanth Menon
