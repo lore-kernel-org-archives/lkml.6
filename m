@@ -2,100 +2,127 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA67C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DF9C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64EC220857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EC220857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 1D47820857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:03:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GPj4hurI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D47820857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeIERdj (ORCPT
+        id S1727679AbeIEReF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:33:39 -0400
-Received: from smtp20.cstnet.cn ([159.226.251.20]:55044 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725868AbeIERdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:33:38 -0400
-Received: from [172.20.20.131] (unknown [182.150.46.145])
-        by APP-10 (Coremail) with SMTP id tACowAC3vWER1I9bYpn9Bw--.6234S2;
-        Wed, 05 Sep 2018 21:03:14 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-Subject: Re: [PATCH v5 15/16] driver/edac: enable Hygon support to AMD64 EDAC
- driver
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
-        mchehab@kernel.org, mikhail.jin@gmail.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-edac@vger.kernel.org
-References: <cover.1535459012.git.puwen@hygon.cn>
- <47e08d8bab1cef667be3955941e7eedc23187ae1.1535459013.git.puwen@hygon.cn>
- <20180905104405.GG2237@zn.tnic>
-Message-ID: <03835d0f-225a-f7b9-dedb-5d474193181a@hygon.cn>
-Date:   Wed, 5 Sep 2018 21:03:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 13:34:05 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46721 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbeIEReF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:34:05 -0400
+Received: by mail-io0-f194.google.com with SMTP id y12-v6so5817646ioj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 06:03:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ob7yPhT44/Lkqbct77mnyu8pbxSlkFdORyu/Uy3uoPg=;
+        b=GPj4hurIavFE0g/uRvIAe1VR3YhUgAblUuFIfUrxcQRTd6vI0n7jP47go/RW/IRSXk
+         W0iWBCQWF3J2/FYwP8TnxDFvRTZsi4EamnGXn9iputqHcJesqxMPDiBudwQQH5YVjjQ7
+         HmGQRsB2HTaf/oC3iE4jqot0CA3ed/9VqgawA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ob7yPhT44/Lkqbct77mnyu8pbxSlkFdORyu/Uy3uoPg=;
+        b=KbK5E4RmUTkUzz1oNpB6WWqfzi3BJOb3s6qqdGhR5PAlFE9X9CCd22DIeV26VkgaeE
+         T7TaAv54C6xzLOs8JyNEp+mR2vq9EX/U/xTDVusqQLnhPEUu4hOmNCacUsgkFhoirZtM
+         aAgZoRSAUbQL0/EP8yuKOklUsK6+U92/nrqUPYAZfnlrnHH9+Yfj+ZUzbPOuwysd4HNK
+         6suEgLE+ZvlSuqiV1SX0C+uJaNa7VWJpwny62vOKIoPYnb6rkhy7UlwDltevq9kgTjJx
+         54WC3YGQUP6uI1A2J/rZUklROYHZT4Cwol4Q5V2YmPg33mofhSNlk7NpcT7H6dfThoLW
+         kx6w==
+X-Gm-Message-State: APzg51AxFgD/CxCPmyjJ5xjpsY4rONvtKzV+yCl1JHjleVEqoiYlqy8m
+        LCkSiGWcmntLl7sjvLZeEhvRLIwMWmp4Iq1Lv+nCzcAlGPt7cQ==
+X-Google-Smtp-Source: ANB0VdZHcQTaTtrtm9qkiWfLOPIEvKwEwx+QUFGQDQC43g5Y4AC/Agc4uXslCCBEgh9t4OTmuNoR42kuaPOrI2C9DiA=
+X-Received: by 2002:a6b:ba86:: with SMTP id k128-v6mr25428559iof.170.1536152633034;
+ Wed, 05 Sep 2018 06:03:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180905104405.GG2237@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: tACowAC3vWER1I9bYpn9Bw--.6234S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKrWkGrWfWw4rKF4UuryxGrg_yoWxtFX_Jr
-        1UZ34fWw4jqF1Iyws8J34rXa47Wa1jvr1xtF98GF9rZFn8tan3WFs5Cw1UurWkXwnxKr1f
-        ur1jgFy0y3srXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbVxYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
-        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26F4j6r4UJw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-        1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY
-        6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-        73UjIFyTuYvjxUF9NVUUUUU
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+Received: by 2002:a6b:1c06:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 06:03:52 -0700 (PDT)
+In-Reply-To: <20180905125645.GX24082@hirez.programming.kicks-ass.net>
+References: <1536099149-12564-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1536099149-12564-4-git-send-email-sai.praneeth.prakhya@intel.com>
+ <CAKv+Gu9mfWYww49OmBETutSsaTDfE6VFJjbf+LWAoXF=mNmDBA@mail.gmail.com> <20180905125645.GX24082@hirez.programming.kicks-ass.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 5 Sep 2018 15:03:52 +0200
+Message-ID: <CAKv+Gu_DC=+7_YmDGGJ9fYJkGSNbUK-eXOAGMuZ2B7XXPWvZ9g@mail.gmail.com>
+Subject: Re: [PATCH V3 3/5] x86/efi: Permanently save the EFI_MEMORY_MAP
+ passed by the firmware
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/5 18:44, Borislav Petkov wrote:
-> Subject should be:
-> 
-> EDAC, amd64: Add Hygon Dhyana support
+On 5 September 2018 at 14:56, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Wed, Sep 05, 2018 at 02:27:49PM +0200, Ard Biesheuvel wrote:
+>> On 5 September 2018 at 00:12, Sai Praneeth Prakhya
+>> <sai.praneeth.prakhya@intel.com> wrote:
+>> > From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>> >
+>> > The efi page fault handler that recovers from page faults caused by the
+>> > firmware needs the original memory map passed by the firmware. It looks
+>> > up this memory map to find the type of the memory region at which the
+>> > page fault occurred. Presently, EFI subsystem discards the original
+>> > memory map passed by the firmware and replaces it with a new memory map
+>> > that has only EFI_RUNTIME_SERVICES_<CODE/DATA> regions. But illegal
+>> > accesses by firmware can occur at any region. Hence, _only_ if
+>> > CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is defined, create a backup of the
+>> > original memory map passed by the firmware, so that efi page fault
+>> > handler could detect/recover from illegal accesses to *any* efi region.
+>> >
+>>
+>> Why do we care about the memory map at all when a fault occurs during
+>> the invocation of a EFI runtime service?
+>>
+>> I think reasoning about what went wrong and why, and distinguishing
+>> between allowable and non-allowable faults is a slippery slope, so
+>> [taking Thomas's feedback into account], I think we can simplify this
+>> series further and just block all subsequent EFI runtime services
+>> calls if any permission or page fault occurs while executing them.
+>>
+>> Would we still need to preserve the old memory map in that case?
+>
+> I thought the reason for having this was being able to know the fault is
+> in an EFI area. But of course, I'm not wel versed in this whole EFI
+> crapola.
 
-Thanks for the correction.
+I'm not entirely sure whether that really matters. The EFI services
+access the stack and can access byref/pointer arguments which are not
+covered by the EFI memory map as runtime services code/data, and so
+they can trigger page faults by running off the vmapped stack or
+writing to const byref arguments.
 
->> +	case 0x18:
->> +		fam_type	= &family_types[HYGON_F18_CPUS];
->> +		pvt->ops	= &family_types[HYGON_F18_CPUS].ops;
->> +		break;
->> +
-> 
-> You can use the F17_CPUS array element here and overwrite the ->ctl_name
-> string only. No need to define [HYGON_F18_CPUS] above... yet.
+EFI runtime services using boot services regions after they are no
+longer available are a known source of headaches, but I don't see why
+we should restrict ourselves to such cases if we bother to wire up
+fault handling specifically for EFI services calls.
 
-All right, the way reusing F17_CPUS will also minimize the code
-modification.
-
->> +#define PCI_DEVICE_ID_HYGON_18H_DF_F0	0x1460
->> +#define PCI_DEVICE_ID_HYGON_18H_DF_F6	0x1466
-> 
-> As in the previous patch - use the AMD defines.
-
-Will remove them in next version of patches.
-
--- 
-Regards,
-Pu Wen
-
+So any page or permission fault occurring in the context of a EFI
+runtime services invocation should be treated the same, I think.
