@@ -2,180 +2,194 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B91C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EB9C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B1720867
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:38:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B1720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 449E82073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:44:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GnDHyN64"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449E82073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbeIEHGc (ORCPT
+        id S1726339AbeIEHL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 03:06:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34672 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbeIEHGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 03:06:32 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B65B81DED;
-        Wed,  5 Sep 2018 02:38:37 +0000 (UTC)
-Received: from sky.random (ovpn-120-15.rdu2.redhat.com [10.10.120.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B52E3600C1;
-        Wed,  5 Sep 2018 02:38:33 +0000 (UTC)
-Date:   Tue, 4 Sep 2018 22:38:32 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     "Schaufler, Casey" <casey.schaufler@intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
- be applied on arbitrary tasks
-Message-ID: <20180905023832.GM4762@redhat.com>
-References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm>
- <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm>
- <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com>
- <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
- <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com>
- <20180904233714.GJ4762@redhat.com>
- <99FC4B6EFCEFD44486C35F4C281DC6732144723D@ORSMSX107.amr.corp.intel.com>
+        Wed, 5 Sep 2018 03:11:56 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38799 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbeIEHL4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 03:11:56 -0400
+Received: by mail-oi0-f68.google.com with SMTP id x197-v6so10824640oix.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 19:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=yj65X8yHMePEK1pjQXEf71vUUfZKI0OOItdWh4xAtB4=;
+        b=GnDHyN64cVpVV/dgdmll6JU24IQi/b6vksZ+z/zselAy/+/nGVacaJoC5u/BBVuza0
+         ZQbg99eQJxEaz3kVuADFAS+cYOkRWSUHY7AeLmroMP9+GhxZtM2zHhvx81SxcdCsh/+v
+         Hh1kicRsUTDYi+wBDdUFhhfzLwNusFeD2JLW4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=yj65X8yHMePEK1pjQXEf71vUUfZKI0OOItdWh4xAtB4=;
+        b=d2mImbScntVvwrrq5l3jAC8budlTbYmPycZ6S9TYh6IFyP6R9C/MPcKwJyg+EwtuWq
+         aAiH1APUDHcoZf9O516fD8JGOrqHvi86ZAYyPmFVQf9jVaD+u1M2EbLopGHVz7TeY925
+         JAepZ+4NVGgdpSlfqsa9mZfB5N4GOl8h3vpaGBEXjKKi7zqp7SszeQpaLaExu68K1b//
+         sm4d9EGz12o3Rv/z556lpMMW3KWPR6UJdvj6F4kMOevYTLvwp16jC21S+A6TcmBg9i5I
+         okBgS2Ynx3qgu6o4rnQj+fppwnSNc1TWgdQMUGtHNLt2gRYAIHH5lmXDYtTJIHpq0gM/
+         mOjw==
+X-Gm-Message-State: APzg51C1sdSdjvF5D1XFvnDtpSQZv0qJ2fhqHIMjF6S9L43/6bTVwRlo
+        706OSp05cL1u/jOcZLYgWJ9abVABT/AUfFQ/fVKdIQ==
+X-Google-Smtp-Source: ANB0VdYFtx3nbnVHbwUdZ+tdr1qgBk7P2HqMg9M5cRHAuvZVj5OvXVcgp+J74P1UNS0WU+DinFNLIAWDR7UzY/sgmkk=
+X-Received: by 2002:aca:5dc5:: with SMTP id r188-v6mr29011126oib.320.1536115439920;
+ Tue, 04 Sep 2018 19:43:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC6732144723D@ORSMSX107.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 05 Sep 2018 02:38:37 +0000 (UTC)
+Received: by 2002:a9d:3ec8:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 19:43:59 -0700 (PDT)
+In-Reply-To: <ff34b0fd-dd56-f239-94a9-d84673f6869a@gmail.com>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+ <e7642c73ac1c20b97990a887f76f2f51c41f930b.1536027873.git.baolin.wang@linaro.org>
+ <ff34b0fd-dd56-f239-94a9-d84673f6869a@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 5 Sep 2018 10:43:59 +0800
+Message-ID: <CAMz4kuJJUXe-z5s5cRQG19Yj4RE3uVqOCdWNpOX3f+wvW+WbrQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/2] leds: sc27xx: Add pattern_set/clear interfaces for
+ LED controller
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 01:00:37AM +0000, Schaufler, Casey wrote:
-> Sorry, I've been working in security too long for my
-> optimistic streak to be very wide.
+Hi Jacek,
 
-Eheh. So I was simply trying to follow in context, but it wasn't
-entirely clear, so I tried to take it out of context and then it was
-even less clear, never mind I was only looking for some more
-explanation.
+On 5 September 2018 at 04:19, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> On 09/04/2018 01:01 PM, Baolin Wang wrote:
+>> This patch implements the 'pattern_set'and 'pattern_clear'
+>> interfaces to support SC27XX LED breathing mode.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v7:
+>>  - Add its own ABI documentation file.
+>>
+>> Changes from v6:
+>>  - None.
+>>
+>> Changes from v5:
+>>  - None.
+>>
+>> Changes from v4:
+>>  - None.
+>>
+>> Changes from v3:
+>>  - None.
+>>
+>> Changes from v2:
+>>  - None.
+>>
+>> Changes from v1:
+>>  - Remove pattern_get interface.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-driver-sc27xx      |   11 +++
+>>  drivers/leds/leds-sc27xx-bltc.c                    |   94 ++++++++++++++++++++
+>>  2 files changed, 105 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> new file mode 100644
+>> index 0000000..ecef3ba
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,11 @@
+>> +What:                /sys/class/leds/<led>/hw_pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a hardware pattern for the SC27XX LED. For the SC27XX
+>> +             LED controller, it only supports 4 hardware patterns to configure
+>
+> If I understand it correctly then the four components: low, rise, high,
+> and fall time make a single pattern. So calling it "4 hardware patterns"
+> can be misleading. Below you're using "stage" notion - it would be good
+> to use it consequently on the whole span of this document.
 
-> Not especially, no. I have gotten considerable feedback that
-> it should be configurable, and while I may not see the value myself,
-> I do respect the people who've requested the configurability.
+Sure. I will modify the documentation to avoid misleading words.
 
-Correct me if I'm wrong, but LSM as last word "module" implies to make
-this logic modular.
+>
+>> +             the low time, rise time, high time and fall time for the breathing
+>> +             mode, and each stage duration unit is 125ms. So the format of
+>> +             the hardware pattern values should be:
+>
+> I'd be more precise here:
+>
+> Min stage duration: ???
+> Max stage duration: ???
+> Stage duration step: 125 ms
 
-My wondering is because:
+OK.
 
-1) why not just a single version of this logic in the scheduler?
-   (i.e. can only be on or off or perhaps a only-ibpb-dumpable tweak
-   to retain current slightly higher perf but less secure behavior)
+>
+>> +             "brightness_1 duration_1 brightness_2 duration_2 brightness_3
+>> +             duration_3 brightness_4 duration_4".
+>
+> Looking at sc27xx_led_pattern_set() it doesn't seem like you would
+> use brightnesses other then brightness_1. I assume that the low
+> brightness is fixed to 0 and the high brightness is the brightness_1.
+> If yes, than we don't need brightnesses in this pattern definition,
+> since the current brightness will suffice.
+>
+> You'd need to alter the hw_pattern description to say that the
+> brightness currently set is to be used as a high brightness, and the
+> hw_pattern for this driver consists only of the four delta_t components.
 
-2) even if you want a myriad of versions of this IBPB logic, how do
-   the different versions can possibly fit in a whole "module" whose
-   semantics have pretty much nothing to do with the other methods in
-   the module like LSM_HOOK_INIT(capable, cap_capable),
-   LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory), and
-   LSM_HOOK_INIT(mmap_addr, cap_mmap_addr), or even
-   LSM_HOOK_INIT(inode_follow_link, selinux_inode_follow_link),
-   LSM_HOOK_INIT(inode_permission, selinux_inode_permission). I mean
-   it looks an apple to oranges monolithic link in the same module. Or
-   are you going to load this method in a separate module with only a
-   single method implemented and then load multiple LSM modules at the
-   same time?
+Sorry for confusing here. For SC27XX LED, the 4 stages use one same
+brightness. To be compatible with the hardware pattern format, so we
+force to set one brightness for each stage. I will add some comments
+to explain the LED expects the same brightness for each stage instead
+of using the current brightness file which is not used for our
+breathing mode.
 
-3) if you need so much tweaking that not even a single off/on switch
-   independent of any module loaded through LSM is not enough, how is
-   it ok that all the rest shouldn't be configurable? All the rest has
-   more performance impact than this one so it'd start from there if
-   something.
+>
+> This is clear example of what I had on mind when having doubts
+> about using tuples for pattern_set.
+>
+> Alternatively, if we want to enforce tuples format for hw_pattern,
+> and if we want to be consistent - we'd need to require defining target
+> brightness for each stage properly, i.e.
+>
+> echo "100 500 100 500 0 500 0 500" > pattern
+>
+> Which would mean:
+>
+> 1. Rise from brightness 0 to 100 for 500 ms.
+> 2. Keep brightness 100 for 500 ms.
+> 3. Fall from brightness 100 to 0 for 500 ms.
+> 4. Keep brightness 0 for 500 ms.
+>
+> --
+> Best regards,
+> Jacek Anaszewski
 
-I understand how configurablity is valuable (this is why we kept
-everything dynamic tunable at runtime, including the PTI stop machine
-to allow even PTI TLB flushes to be turned off).
 
-I'm just trying to understand how IBPB fits in a LSM module
-implementation.
 
-Even if you build with CONFIG_SECURITY=n PTI won't go away, retpoline
-won't go away, the l1flush in vmenter won't go away, the
-pte/transhugepmd inversion won't go away, why only the runtime
-tunability or tweaking of IBPB fits in a LSM module?
-
-> If they provide different answers there should be different
-> functions. It's a question of viewpoint. If you don't care about
-> the SELinux viewpoint you shouldn't have to include it in your
-> checks, any more than you care about x86 issues when you're
-> running on a MIPS processor.
-
-I don't see how selinux fits into this. Selinux doesn't affect virtual
-memory protection. Not having selinux even built in doesn't mean you
-are ok with virtual memory protection not being provided by the CPU.
-
-Or in other words selinux fits into this as much as seccomp or
-apparmor fits into this.
-
-This is just like a memory barrier mb() to be executed in the context
-switch code. Security issues can emerge with the lack of it regardless
-if selinux is built in and enabled or CONFIG_SECURITY=n.
-
-selinux matters after an exploit already happened, this as opposed is
-needed to prevent the exploit in the first place.
-
-Also the correct fully secure version provides a single answer
-(i.e. in theory assuming a perfect implementation that didn't forget
-anything so having a single implementation will also increase the
-chances that we get as close as possible to the theoretical correct
-implementation).
-
-If it provides different answers in this case it is because somebody
-wants not perfect security to provide higher performance, i.e. the
-"configurablity" which is valuable and fine feature to provide. Just a
-LSM module doesn't seem the most flexibile way to provide
-configurability by far.
-
-> Yes, even security people have to worry about locking.
-
-Yes it was some lock that if contended would lockup if used from
-inside the scheduler.
-
-> What *is* the most robust way?
-
-The below pretty much explains it.
-
-> Yes, there are locking issues. The code in the LSM infrastructure and in
-> the security modules needs to be aware of that and deal with it. The SELinux
-> code I proposed is more complex than it could be because the audit code
-> requires locking that doesn't work in the switching context.
-
-Or in other words having multiple versions of this called from within
-the scheduler is a bit like making the kernel modular and then because
-the locking is subtle you may then have scheduler deadlocks only
-happening with some kernel module loaded instead of others, but the
-real question is what is the payoff compared to just allowing the
-scheduler code to be tuned with x86 debugfs or sysctl the normal
-way.
-
-Also how would a new common code method in LSM fit for CPUs that are
-so slow that they can't possibly need anything like IBPB and
-flush_RSB()?
-
-Thanks!
-Andrea
+-- 
+Baolin Wang
+Best Regards
