@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ED1C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58197C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E06E2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E06E2082B
+	by mail.kernel.org (Postfix) with ESMTP id 16E4520836
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 02:27:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E4520836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeIEGzZ (ORCPT
+        id S1726361AbeIEGzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 02:55:25 -0400
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:51343 "EHLO
+        Wed, 5 Sep 2018 02:55:22 -0400
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:51329 "EHLO
         barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726054AbeIEGzY (ORCPT
+        by vger.kernel.org with ESMTP id S1726040AbeIEGzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 02:55:24 -0400
-X-ASG-Debug-ID: 1536114439-093b7e636b125ed0002-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id nBve9uldMcqvkAAb (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 05 Sep 2018 10:27:21 +0800 (CST)
+        Wed, 5 Sep 2018 02:55:22 -0400
+X-ASG-Debug-ID: 1536114439-093b7e636b125ed0001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id KBMNxdeqBcn9NYpk (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 05 Sep 2018 10:27:20 +0800 (CST)
 X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
 Received: from localhost.localdomain.localdomain (10.5.21.103) by
  HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Sep 2018 10:27:25 +0800
+ 15.0.1395.4; Wed, 5 Sep 2018 10:27:24 +0800
 From:   Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 To:     <jeffrey.t.kirsher@intel.com>, <sergei.shtylyov@cogentembedded.com>
 CC:     <jacob.e.keller@intel.com>, <davem@davemloft.net>,
         <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-Subject: [PATCH v2 2/2] net: ethernet: i40evf: fix potential build error
-Date:   Wed, 5 Sep 2018 10:27:10 +0800
-X-ASG-Orig-Subj: [PATCH v2 2/2] net: ethernet: i40evf: fix potential build error
-Message-ID: <1536114430-21356-2-git-send-email-dongsheng.wang@hxt-semitech.com>
+Subject: [PATCH v2 1/2] net: ethernet: i40e: fix build error
+Date:   Wed, 5 Sep 2018 10:27:09 +0800
+X-ASG-Orig-Subj: [PATCH v2 1/2] net: ethernet: i40e: fix build error
+Message-ID: <1536114430-21356-1-git-send-email-dongsheng.wang@hxt-semitech.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1536114430-21356-1-git-send-email-dongsheng.wang@hxt-semitech.com>
-References: <1536114430-21356-1-git-send-email-dongsheng.wang@hxt-semitech.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.5.21.103]
 X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
  HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
@@ -53,69 +52,48 @@ X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
 X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
 X-Virus-Scanned: by bsmtpd at hxt-semitech.com
 X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.8162 1.0000 2.3757
-X-Barracuda-Spam-Score: 2.38
-X-Barracuda-Spam-Status: No, SCORE=2.38 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.6751 1.0000 1.1883
+X-Barracuda-Spam-Score: 1.69
+X-Barracuda-Spam-Status: No, SCORE=1.69 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_RULE7568M
 X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.56898
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------------------------
+        0.50 BSF_RULE7568M          Custom Rule 7568M
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Can't have non-inline function in a header file.
-There is a risk of "Multiple definition" from cross-including.
+Remove "inline" from __i40e_add_stat_strings.
+
+In file included from
+drivers/net/ethernet/intel/i40e/i40e_ethtool.c:9:0:
+drivers/net/ethernet/intel/i40e/i40e_ethtool.c: In function
+‘__i40e_add_stat_strings’:
+drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h:193:20: error:
+function ‘__i40e_add_stat_strings’ can never be inlined because it uses
+variable argument lists
+ static inline void __i40e_add_stat_strings(u8 **p, const struct
+					    i40e_stats stats[],
 
 Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 ---
- .../intel/i40evf/i40e_ethtool_stats.h         | 25 ++-----------------
- .../ethernet/intel/i40evf/i40evf_ethtool.c    | 24 ++++++++++++++++++
+v2:
+1. Move function.
+2. Include a new patch at [2/2].
+
+---
+ .../net/ethernet/intel/i40e/i40e_ethtool.c    | 24 ++++++++++++++++++
+ .../ethernet/intel/i40e/i40e_ethtool_stats.h  | 25 ++-----------------
  2 files changed, 26 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
-index 60b595dd8c39..d70a071f065f 100644
---- a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
-+++ b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
-@@ -181,29 +181,8 @@ i40evf_add_queue_stats(u64 **data, struct i40e_ring *ring)
- 	*data += size;
- }
- 
--/**
-- * __i40e_add_stat_strings - copy stat strings into ethtool buffer
-- * @p: ethtool supplied buffer
-- * @stats: stat definitions array
-- * @size: size of the stats array
-- *
-- * Format and copy the strings described by stats into the buffer pointed at
-- * by p.
-- **/
--static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
--				    const unsigned int size, ...)
--{
--	unsigned int i;
--
--	for (i = 0; i < size; i++) {
--		va_list args;
--
--		va_start(args, size);
--		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
--		*p += ETH_GSTRING_LEN;
--		va_end(args);
--	}
--}
-+void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-+			     const unsigned int size, ...);
- 
- /**
-  * 40e_add_stat_strings - copy stat strings into ethtool buffer
-diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-index 9319971c5c92..c9a54f6de61e 100644
---- a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-@@ -171,6 +171,30 @@ static void i40evf_get_priv_flag_strings(struct net_device *netdev, u8 *data)
- 	}
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+index d7d3974beca2..f4a70d67a80a 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+@@ -1821,6 +1821,30 @@ static void i40e_get_ethtool_stats(struct net_device *netdev,
+ 		  "ethtool stats count mismatch!");
  }
  
 +/**
@@ -143,8 +121,44 @@ index 9319971c5c92..c9a54f6de61e 100644
 +}
 +
  /**
-  * i40evf_get_stat_strings - Get stat strings
-  * @netdev: network interface device structure
+  * i40e_get_stat_strings - copy stat strings into supplied buffer
+  * @netdev: the netdev to collect strings for
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+index bba1cb0b658f..0874c352136a 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
++++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+@@ -181,29 +181,8 @@ i40e_add_queue_stats(u64 **data, struct i40e_ring *ring)
+ 	*data += size;
+ }
+ 
+-/**
+- * __i40e_add_stat_strings - copy stat strings into ethtool buffer
+- * @p: ethtool supplied buffer
+- * @stats: stat definitions array
+- * @size: size of the stats array
+- *
+- * Format and copy the strings described by stats into the buffer pointed at
+- * by p.
+- **/
+-static inline void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+-				    const unsigned int size, ...)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < size; i++) {
+-		va_list args;
+-
+-		va_start(args, size);
+-		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
+-		*p += ETH_GSTRING_LEN;
+-		va_end(args);
+-	}
+-}
++void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
++			     const unsigned int size, ...);
+ 
+ /**
+  * 40e_add_stat_strings - copy stat strings into ethtool buffer
 -- 
 2.18.0
 
