@@ -2,119 +2,126 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B19BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991A1C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B122075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 381E12077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:52:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="yMf+1mPs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B122075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cq/dkhvV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381E12077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeIESUa (ORCPT
+        id S1727724AbeIESWx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:20:30 -0400
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:61395 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726309AbeIESUa (ORCPT
+        Wed, 5 Sep 2018 14:22:53 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36801 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeIESWx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:20:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1536155411; x=1567691411;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=i50JMyCrAfJjl3PTC8TJijXNz3RgIJWW+54HXoX8VUs=;
-  b=yMf+1mPs94ivMy5i2BPkQjxx4hcNw5K76p8FiL5z6A0m4kjcW8TH3khu
-   jqJhssZJPqnnu+xZpr7d8Lz+tzTq8yP+AlNXnze41eOKLptcWGJvGEC7t
-   TshF5cTpsWL1egjlELeCjPhvyG4oqxK2iUomhKFVmH+tqP9uBLj/ATDIv
-   Q=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FbAACX3o9bhyeV50NaGgEBAQEBAgE?=
- =?us-ascii?q?BAQEIAQEBAYMkgg4yi3pfi1KEA5Q5gXoLhGwCg04hNBgBAgEBAgEBAgEBAhA?=
- =?us-ascii?q?BAQEKCwkIKS+CNSKCYgIBAxIoPxACAQg2EFcCBAENDRqCNEuCApggiVcBAQG?=
- =?us-ascii?q?CG4oHiliCF4ESgxKKVgKbXAcCj3YfjmKTTQIEAgQFAhSBQYIOcIM9gjKOII1?=
- =?us-ascii?q?TgR0BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2FbAACX3o9bhyeV50NaGgEBAQEBAgEBAQEIAQEBAYMkg?=
- =?us-ascii?q?g4yi3pfi1KEA5Q5gXoLhGwCg04hNBgBAgEBAgEBAgEBAhABAQEKCwkIKS+CN?=
- =?us-ascii?q?SKCYgIBAxIoPxACAQg2EFcCBAENDRqCNEuCApggiVcBAQGCG4oHiliCF4ESg?=
- =?us-ascii?q?xKKVgKbXAcCj3YfjmKTTQIEAgQFAhSBQYIOcIM9gjKOII1TgR0BAQ?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa6.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Sep 2018 08:50:10 -0500
-Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85Dh7G6094780
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 09:50:10 -0400
-Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
-        by mx0a-00154901.pphosted.com with ESMTP id 2m7n0qvxsx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 09:50:10 -0400
-From:   <Mario.Limonciello@dell.com>
-Received: from ausc60ps301.us.dell.com ([143.166.148.206])
-  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 05 Sep 2018 19:50:09 +0600
-X-LoopCount0: from 10.166.132.198
-X-IronPort-AV: E=Sophos;i="5.53,333,1531803600"; 
-   d="scan'208";a="1189016041"
-To:     <heikki.krogerus@linux.intel.com>, <whitequark@whitequark.org>,
-        <mika.westerberg@linux.intel.com>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: RE: USB type-C altmode support for UCSI
-Thread-Topic: USB type-C altmode support for UCSI
-Thread-Index: AQHURRvNkCnRMgofNUaEjdqM0tpgmqThs/fg
-Date:   Wed, 5 Sep 2018 13:50:03 +0000
-Message-ID: <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
-References: <1e8398f2c1790890f40b69f12e2934e3@whitequark.org>
- <20180903140623.GD15112@kuha.fi.intel.com>
- <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
- <20180905132429.GB25121@kuha.fi.intel.com>
-In-Reply-To: <20180905132429.GB25121@kuha.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 5 Sep 2018 14:22:53 -0400
+Received: by mail-oi0-f67.google.com with SMTP id r69-v6so13731681oie.3;
+        Wed, 05 Sep 2018 06:52:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LKvwu8OtoZ4dTxSvruBW9IKHgvV54zzmvBgHNM4O3bE=;
+        b=cq/dkhvV8mwFZcmG3FO7RQWWnpOezy+dh0Ftsme1cyryqJHmv+xQXkRER8+KRAJPAZ
+         pXe9Buo/9KVTNoq3CrvNxlFafZ/wDQrfqULLfLUg0T9pESVcT88Yub2Z1XFy0CaJse9Y
+         /shXHWQ+JA3DkGiNRwONQKyNbqP8FZqoh21rRZy9EkcdNbX9z8NliRrnu56KkDKZK4Bg
+         Eae4On6caFDthYtvZCb06BYYXgHWzshSiZz42H+5mUlbBwutk6dn8Q3DSBMEHC8yVbQi
+         RIrgVuCfJlcdnyTPkUpJFRDdv7FqXwdlr4e5CuYQFe5UAfwHKU4bDeZDxG4ZdSURCVCG
+         Of3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LKvwu8OtoZ4dTxSvruBW9IKHgvV54zzmvBgHNM4O3bE=;
+        b=N7LMwnK7FgvJuc/smTFs1c/K97yhivlnwPuufUuOVhErjQ0CshwiZ0kb8ri3ZJWyi+
+         chucB7+m9m5W3M3VRfQSzwLzeNdoWTNCVEZps1Fv5Djx1tdfPjEDXXGZ+rhJMJ3so2X/
+         AndJ3v5nOFOd9ZW2efi9ts1tuAE65lqnfPbDa4kxD6soUyNpdRnR6tglQmwRDttqzGwM
+         GR99pWj9Gg1EiRHXEr1yFhOm5sIc9nwlny8VFN+MrnrV7KQFCS1LWSXiqVfg4ECb+z3r
+         f+Y8ajR+Tf68LaF9nsFeHgOwKEa1/xwrpnUxtANDHeLq23tM1Of32UTuDwjuhB5rbCG+
+         IF/w==
+X-Gm-Message-State: APzg51AhXfgqixioQx/4G4WyZmEO4e9Gu1aTeBpKfKsOQYkhbukWt4J9
+        K0RJY7AMH71ymsRW5XR16Ow=
+X-Google-Smtp-Source: ANB0VdaWyDyq6adLuGO3u5lxkvP9ZUtPmtmq9qenYyp/UkxY/qGEsQpd/ZEE44IqbAC3Mjz7tfxUQQ==
+X-Received: by 2002:aca:171a:: with SMTP id j26-v6mr27666494oii.277.1536155553625;
+        Wed, 05 Sep 2018 06:52:33 -0700 (PDT)
+Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id t3-v6sm1502421oie.52.2018.09.05.06.52.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 06:52:33 -0700 (PDT)
+Subject: Re: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
+        keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com,
+        Ariel Elior <ariel.elior@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com
+References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
+ <20180903180242.14504-2-mr.nuke.me@gmail.com>
+ <20180905082605.69d9e5a0@shemminger-XPS-13-9360>
+From:   "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <122e86e4-7c0a-8539-75dc-1515c1b8c68f@gmail.com>
+Date:   Wed, 5 Sep 2018 08:52:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=736 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809050145
+In-Reply-To: <20180905082605.69d9e5a0@shemminger-XPS-13-9360>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > (There's also an UCSI bug where no notifications appear when connecting
-> > a device, only when disconnecting and only once, but it can be worked
-> > around by reloading the module, so it isn't critical. Not sure what's u=
-p
-> > with that either.)
->=20
-> This is indeed a separate issue, and you are the second person that
-> reports it. Either the (EC) firmware on those laptops is not
-> generating the connection event as is should for some reason, or the
-> EC driver in Linux kernel fails to deliver the event to the UCSI
-> driver. I don't have XPS 13 that I could use to reproduce the issue
-> unfortunately.
->=20
-> Mario! Can you help with this?
->=20
+On 09/05/2018 02:26 AM, Stephen Hemminger wrote:
+> On Mon,  3 Sep 2018 13:02:28 -0500
+> Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
+> 
+>> For certain bandwidth-critical devices (e.g. multi-port network cards)
+>> it is useful to know the available bandwidth to the root complex. This
+>> information is only available via the system log, which doesn't
+>> account for link degradation after probing.
+>>
+>> With a sysfs attribute, we can computes the bandwidth on-demand, and
+>> will detect degraded links.
+>>
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> 
+> In other places (like /sys/class/net/eth0/speed) only the raw value is printed
+> without suffix.  The general convention in sysfs is that it should be one value
+> per file and in more raw format.  So why not just print it in bits/sec without
+> suffix?
 
-I need to know which system this was and which BIOS FW package to try to re=
-produce
-if I can pass this to the right people, 9360/9370?  Current FW?
+I wanted to be consistent with other PCIe exports that use units.For 
+example:
 
-Is this happening with all type-C devices?  Or just Thunderbolt?  Or (worse=
-) just that
-TBT device?
-
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:05.0/max_link_speed:8 
+GT/s
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:05.0/current_link_speed:2.5 
+GT/s
+/sys/bus/pci/slots/182/cur_bus_speed:2.5 GT/s PCIe
+/sys/bus/pci/slots/182/max_bus_speed:8.0 GT/s PCIe
