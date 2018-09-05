@@ -2,144 +2,136 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125CDC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022E0C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D44F20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:51:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CKVAu6JR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cCrUmpVu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D44F20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BA4462075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:52:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4462075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeIERVa (ORCPT
+        id S1727665AbeIERWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:21:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37088 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbeIERVa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:21:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 05E61607DC; Wed,  5 Sep 2018 12:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536151881;
-        bh=Osy4Z+zNR5oPKgMubZYUo+PCgiLFm4Yzh7FsrxpmFlY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CKVAu6JRUpDXgeC51L23iyRmSHNK82dB5obW2hvEGbCthmSuIOPt8db7q3ffUab6b
-         70L6opdsWtIYZvtpOAdguYWxRa67oPp2UttcktcalK8XhyZ1SfmPVAvdB+2KP4xz+n
-         S7P/mX+HuuPgVe3T6O/z0IQNPgsEXNJGEImwi5m8=
-Received: from [10.204.78.89] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: neeraju@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3CF1E60388;
-        Wed,  5 Sep 2018 12:51:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536151880;
-        bh=Osy4Z+zNR5oPKgMubZYUo+PCgiLFm4Yzh7FsrxpmFlY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cCrUmpVunoFRiQjhDKVC2UQN1Qv/kCWvJ6AeBOpFcrfaSbuyMwt6DUmnqr7ipz8np
-         f6G0r2EBIUpZtO+bxfwzt2DLg/sJjY5tAV81g8YbH8qqPuWtTuiZ0ULEBW4GEpHP+i
-         5iUlUAClKjupyn2v0816jbfsXEjpa6TtxmdLgdKI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CF1E60388
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
-Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in
- takedown_cpu()
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     josh@joshtriplett.org, peterz@infradead.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dzickus@redhat.com,
-        brendan.jackman@arm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, sramana@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
- <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de>
-From:   Neeraj Upadhyay <neeraju@codeaurora.org>
-Message-ID: <5b0e528f-e597-9598-3ff6-b9e08ddb8165@codeaurora.org>
-Date:   Wed, 5 Sep 2018 18:21:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 5 Sep 2018 13:22:13 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:54908 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbeIERWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:22:13 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1fxXHo-0005zi-9t; Wed, 05 Sep 2018 14:51:56 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH v2] cfq: clear queue pointers from cfqg after unpinning them
+ in cfq_pd_offline
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Tejun Heo <tj@kernel.org>, jiufei.xue@linux.alibaba.com,
+        Caspar Zhang <caspar@linux.alibaba.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5278cac9-399f-3e30-add8-f15642ca6b8b@maciej.szmigiero.name>
+Date:   Wed, 5 Sep 2018 14:51:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-2
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+BFQ is already doing a similar thing in its .pd_offline_fn() method
+implementation.
 
+While it seems that after
+commit 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
+was reverted leaving these pointers intact no longer causes crashes
+clearing them is still a sensible thing to do to make the code more robust.
 
-On 09/05/2018 05:53 PM, Thomas Gleixner wrote:
-> On Wed, 5 Sep 2018, Thomas Gleixner wrote:
->> On Tue, 4 Sep 2018, Neeraj Upadhyay wrote:
->>>   	ret = cpuhp_down_callbacks(cpu, st, target);
->>>   	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
->>> -		cpuhp_reset_state(st, prev_state);
->>> +		/*
->>> +		 * As st->last is not set, cpuhp_reset_state() increments
->>> +		 * st->state, which results in CPUHP_AP_SMPBOOT_THREADS being
->>> +		 * skipped during rollback. So, don't use it here.
->>> +		 */
->>> +		st->rollback = true;
->>> +		st->target = prev_state;
->>> +		st->bringup = !st->bringup;
->> No, this is just papering over the actual problem.
->>
->> The state inconsistency happens in take_cpu_down() when it returns with a
->> failure from __cpu_disable() because that returns with state = TEARDOWN_CPU
->> and st->state is then incremented in undo_cpu_down().
->>
->> That's the real issue and we need to analyze the whole cpu_down rollback
->> logic first.
-> And looking closer this is a general issue. Just that the TEARDOWN state
-> makes it simple to observe. It's universaly broken, when the first teardown
-> callback fails because, st->state is only decremented _AFTER_ the callback
-> returns success, but undo_cpu_down() increments unconditionally.
->
-> Patch below.
->
-> Thanks,
->
-> 	tglx
-As per my understanding, there are 2 problems here; one is fixed with 
-your patch, and other is cpuhp_reset_state() is used during rollback 
-from non-AP to AP state, which seem to result in 2 increments of 
-st->state (one increment done by cpuhp_reset_state() and another by 
-cpu_thread_fun()) .
-> ----
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -916,7 +916,8 @@ static int cpuhp_down_callbacks(unsigned
->   		ret = cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
->   		if (ret) {
->   			st->target = prev_state;
-> -			undo_cpu_down(cpu, st);
-> +			if (st->state < prev_state)
-> +				undo_cpu_down(cpu, st);
->   			break;
->   		}
->   	}
-> @@ -969,7 +970,7 @@ static int __ref _cpu_down(unsigned int
->   	 * to do the further cleanups.
->   	 */
->   	ret = cpuhp_down_callbacks(cpu, st, target);
-> -	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
-> +	if (ret && st->state == CPUHP_TEARDOWN_CPU && st->state < prev_state) {
->   		cpuhp_reset_state(st, prev_state);
->   		__cpuhp_kick_ap(st);
->   	}
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+---
+Changes from v1: Drop stable and fixes tags, rewrite the commit message
+as after commit 4c6994806f70 was reverted this change is no longer
+required to fix a crash.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
-member of the Code Aurora Forum, hosted by The Linux Foundation
+ block/cfq-iosched.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index 2eb87444b157..ed41aa978c4a 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1644,14 +1644,20 @@ static void cfq_pd_offline(struct blkg_policy_data *pd)
+ 	int i;
+ 
+ 	for (i = 0; i < IOPRIO_BE_NR; i++) {
+-		if (cfqg->async_cfqq[0][i])
++		if (cfqg->async_cfqq[0][i]) {
+ 			cfq_put_queue(cfqg->async_cfqq[0][i]);
+-		if (cfqg->async_cfqq[1][i])
++			cfqg->async_cfqq[0][i] = NULL;
++		}
++		if (cfqg->async_cfqq[1][i]) {
+ 			cfq_put_queue(cfqg->async_cfqq[1][i]);
++			cfqg->async_cfqq[1][i] = NULL;
++		}
+ 	}
+ 
+-	if (cfqg->async_idle_cfqq)
++	if (cfqg->async_idle_cfqq) {
+ 		cfq_put_queue(cfqg->async_idle_cfqq);
++		cfqg->async_idle_cfqq = NULL;
++	}
+ 
+ 	/*
+ 	 * @blkg is going offline and will be ignored by
