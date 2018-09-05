@@ -2,127 +2,84 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC21EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870E4C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5849C2077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ACEB2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 12:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZdIVnz26"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5849C2077C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0pkfjKg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACEB2077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeIEQ3v (ORCPT
+        id S1727608AbeIEQbc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:29:51 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54347 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeIEQ3v (ORCPT
+        Wed, 5 Sep 2018 12:31:32 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46084 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbeIEQbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:29:51 -0400
-Received: by mail-it0-f68.google.com with SMTP id f14-v6so9459472ita.4
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 04:59:56 -0700 (PDT)
+        Wed, 5 Sep 2018 12:31:32 -0400
+Received: by mail-io0-f194.google.com with SMTP id y12-v6so5665391ioj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 05:01:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=lYhGd09aPcQAq/exWTUHGGwpextMVl6emunYiwEVmUU=;
-        b=ZdIVnz26A0+MpZwdyMUazxGP9nkD1q+18nidS0re62ZgRP7BtW6qIP8MGXEDuH+WzP
-         OqmhrOtZ76e2ZgO7TIf9HovPOs1gd9BdOcUNuSald7lkW/eWUfly1QBYi+lyWbttAaeB
-         c+sblFMSic8v4HUkHRpGBjwCr3FsgjZvAjQ4o=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lSf0yDi8PqP62CTn8/sU3Pa+MixB02TZKtGE3NSoeq4=;
+        b=Y0pkfjKgPW9516glVG0uPvBYd09qQbYE7Mi7cyDTiM5jNz+OqPpY0/twRiiLXwiM/B
+         S4+w4m3PlxQwI3ZIDgXwA0SOnVsw5QCV+viPAYJi/aflEte63I+xNGpFZrC93PdufyDb
+         O7K8ysxZvmbeL3WK5M2FzP5wT57CaDLyFypqs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=lYhGd09aPcQAq/exWTUHGGwpextMVl6emunYiwEVmUU=;
-        b=qPi/ORe6dAd77Ffq2mEaroA3i9af5tYSJcLEC1SpG7IUd9oYgL7IzTZ/2py/aHOmEO
-         QFdxQcsMbiSoHTlqAkF05K4Ta6xXNWFzlwaIl9PL9mqrktvTjqVt5uKUhfR4NJc8Txg6
-         MV7YYVZ1i/AjvqW6yreGcQZsRXcawh66c0M1243+j9/36uUy0bySIC6xjL6hNi3a3XnF
-         btW1Z7mWlXEqxgf8qrKFgj1We534wdjEaaQFJAXlSCLky3CEwqApM4AgCFbdILWYqM4v
-         Mth2KgWDnV3+rUyjsnAec0XymVYjPVjYcWg+MTUomsotSrrg/PF7SzINKsqHuRmazkPQ
-         R2Jg==
-X-Gm-Message-State: APzg51CW63Mos57wTMx6d4u4MKhy/orUr4mzon/Qx4ljibVjob27dlgz
-        YytGDcO9V+RJchHpCeIcrFQwpShx36dszYtu08kuxg==
-X-Google-Smtp-Source: ANB0VdZDcw696vHWoduFM0DnddAsvS/JaGndDL9sNES+f939GjTizpDaQPr4RicA0DxBnUV1pHykApqsnmQwgPDA8R8=
-X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr26509727jab.87.1536148795904;
- Wed, 05 Sep 2018 04:59:55 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lSf0yDi8PqP62CTn8/sU3Pa+MixB02TZKtGE3NSoeq4=;
+        b=dk4C+3sNJkYEAaY5/R1mpNzbn6ONjVO5ZUOg43UOHMh6XlW/6T2qSD54AW9CH+E9bZ
+         U/b3T+E++HADx26N0b71rkbLiJ9d8bIWrhZJUcLXg2D896oLCc7WUFQ65HwSAykvGPgt
+         VWrA2i1vcoBB7plU/EFdmhLiwFy6mUZP/nPkS7DUKsgKPKj5z+Z3JTYBoZbl5tm/k35D
+         C1JxgBJSz6ShPkmcjGwHe4rcPE7H5GhlmRQ6kOYLVQcYrn9a2adR6qgSFjprRySVVs4I
+         ZwKo2iqg//noXHKJTFF1X9heiLv7F7K8qpvkO8WE7Hgw4oL7fglxvpak/x9naR9auppC
+         yoZA==
+X-Gm-Message-State: APzg51CEGlYjtorrBz016pK/YFbZXe9UJUsg6XTI12zt+EQM0R7sNPo5
+        9vEpfvrL1cJtl38HAQ7cYm9Qr7lytQ+dn+X2YJwjMQ==
+X-Google-Smtp-Source: ANB0VdbfMo1JfoxIKco2xDuLX8TSGUjiRh5wKw2K4RYo/z9xrgDJQjjxd0WfCZ7cCFLT2CckSqrAK3GRvG4HrgTa0ys=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr23969169ioa.277.1536148895953;
+ Wed, 05 Sep 2018 05:01:35 -0700 (PDT)
 MIME-Version: 1.0
+References: <e80a35c7-a9f4-46bf-7036-11375f368ba5@infradead.org>
+In-Reply-To: <e80a35c7-a9f4-46bf-7036-11375f368ba5@infradead.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 5 Sep 2018 13:59:44 +0200
-Message-ID: <CACRpkdaD3aQQ6Kn6S-CCGOH2DsX5WUNBB0Jwq9P0k=O0E08MiQ@mail.gmail.com>
-Subject: [GIT PULL] GPIO fixes for v4.19 take one
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Wed, 5 Sep 2018 14:01:24 +0200
+Message-ID: <CACRpkdbhfsmpq28AcmbhswuvgYUvh+UQ5NUpsAyS2W+ROTHbNw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: fix kernel-doc notation warning for 'request_key'
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Sep 3, 2018 at 9:55 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 
-here are some GPIO fixes. The ACPI stuff is probably the most
-annoying for users that get fixed this time.
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix kernel-doc warning for missing struct member 'request_key':
+>
+> ../include/linux/gpio/driver.h:142: warning: Function parameter or member 'request_key' not described in 'gpio_irq_chip'
+>
+> Fixes: 39c3fd58952d ("kernel/irq: Extend lockdep class for request mutex")
 
-Details in the signed tag.
-
-Please pull it in!
+Patch applied. Thanks for spending time with documentation!
 
 Yours,
 Linus Walleij
-
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.19-2
-
-for you to fetch changes up to d49b48f088c323dbacae44dfbe56d9c985c8a2a1:
-
-  gpio: Fix crash due to registration race (2018-08-31 11:30:45 +0200)
-
-----------------------------------------------------------------
-GPIO fixes for the v4.19 cycle:
-
-- Atomic contexts, cansleep* calls and such fastpath/slopwpath
-  things.
-
-- Defer ACPI event handler registration to late_initcall()
-  so IRQs do not fire in our face before other drivers have
-  a chance to register handlers.
-
-- Race condition if a consumer requests a GPIO after
-  gpiochip_add_data_with_key() but before of_gpiochip_add()
-
-- Probe errorpath in the dwapb driver.
-
-----------------------------------------------------------------
-Alexey Khoroshilov (1):
-      gpio: dwapb: Fix error handling in dwapb_gpio_probe()
-
-Andy Shevchenko (1):
-      gpiolib: acpi: Switch to cansleep version of GPIO library call
-
-Hans de Goede (1):
-      gpiolib-acpi: Register GpioInt ACPI event handlers from a late_initcall
-
-Michael Hennerich (1):
-      gpio: adp5588: Fix sleep-in-atomic-context bug
-
-Vincent Whitchurch (1):
-      gpio: Fix crash due to registration race
-
- drivers/gpio/gpio-adp5588.c | 24 ++++++++++---
- drivers/gpio/gpio-dwapb.c   |  1 +
- drivers/gpio/gpiolib-acpi.c | 86 ++++++++++++++++++++++++++-------------------
- drivers/gpio/gpiolib-of.c   |  1 +
- 4 files changed, 72 insertions(+), 40 deletions(-)
