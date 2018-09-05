@@ -6,82 +6,89 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E72BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276AAC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B92BD2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C920B2075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:57:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WTGeZoKm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92BD2075E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JcjZ3tvJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C920B2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbeIEX15 (ORCPT
+        id S1727759AbeIEX25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 19:27:57 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35742 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeIEX14 (ORCPT
+        Wed, 5 Sep 2018 19:28:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42914 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeIEX25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 19:27:56 -0400
+        Wed, 5 Sep 2018 19:28:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eUlXs85ae9ElsPlYdSYa7Ouwvja3W9FuxWUf1gzGJ/0=; b=WTGeZoKmXrEV8C/IC2/txYpSe
-        Tus3l88kdVrFjJVJzv7z5z0USbr2TZuvM+ST6YbeMCkPrdpKt5vpLvlsHXjF+jRGLo3x9+j9YwP6Q
-        GNssX94idoMAkmsplGlQIUR+P02iTZemB/Iz1z5KMBBaxIU22Tm66fleBfqps0s+soq+Mg8/JLonp
-        zdVVJl6NSKSO7eYetP+jj5ze6c6OcEeSvibCQ1Xydm1NBNpTaA9pNC0+aDzUnimyxhX/ZwfIQiEzZ
-        1e1BEV6Gwz2pCETy8vC8l2j1ck0B9cMrnVwPmGEREJJKPFw5VAEaU+HqUJHPPozmFOEMswW6+IBO5
-        2o5e8aMPA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxcyR-0000ru-0R; Wed, 05 Sep 2018 18:56:19 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A692020210311; Wed,  5 Sep 2018 20:56:17 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 20:56:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
-Message-ID: <20180905185617.GC24082@hirez.programming.kicks-ass.net>
-References: <20180902173224.30606-1-namit@vmware.com>
+         bh=PGaimZxywD57RYrOy6eBDgC0DslmDh+Iz7/7RHqK5uc=; b=JcjZ3tvJsCqo9YAkxd0iCHb2n
+        sekaexN6RspUQJTTECHdbVtU1Q4cFKKTK1FC/4xNE92FIbCkZ/iIdRABNhb9hgSV3vToj7jGJHRpH
+        J1T4hxWVLXtVKiA19hdyYc79WD1+2RvrNrbgX6Z+rC2bCfXPSoTI+yqcXAFQ0VirHORCoj1IMJmJe
+        WlTDmGqUqvvrqGoJ3qEsNurKcA1JIDtvU3WT/TjRyuyopZQOB5MDoNo/wV4f2PCNMX7DdVp6ROW5z
+        s6Twm/orPJe0oY15Vla/Eudtso/ZprqIEneOW9MbAF0u1hO12kJ2qGPAYtW+5++tKBeGOzAgP6BVa
+        50yLpXQVg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxczV-0005mq-1r; Wed, 05 Sep 2018 18:57:25 +0000
+Date:   Wed, 5 Sep 2018 11:57:24 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/5] RISC-V: Select useful GENERIC_IRQ kconfig options
+Message-ID: <20180905185724.GB15741@infradead.org>
+References: <20180904124514.6290-1-anup@brainfault.org>
+ <20180904124514.6290-4-anup@brainfault.org>
+ <20180904185629.GC25119@infradead.org>
+ <CAAhSdy3qUkDmV5deoy9x3sqdv8xTq37od6SzgF0hmN1JPThGgw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180902173224.30606-1-namit@vmware.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAAhSdy3qUkDmV5deoy9x3sqdv8xTq37od6SzgF0hmN1JPThGgw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 02, 2018 at 10:32:18AM -0700, Nadav Amit wrote:
-> This patch-set addresses some issues that were raised in a recent
-> correspondence and might affect the security and the correctness of code
-> patching. (Note that patching performance is not addressed by this
-> patch-set).
+On Wed, Sep 05, 2018 at 10:22:27AM +0530, Anup Patel wrote:
+> I am sure we will see both Level and Edge triggered interrupts
+> in RISC-V system. The MMIO device interrupts will be mostly
+> Level triggered and PCI MSIs will be mapped as Edge triggered
+> by MSI controller.
 > 
-> The main issue that the patches deal with is the fact that the fixmap
-> PTEs that are used for patching are available for access from other
-> cores and might be exploited. They are not even flushed from the TLB in
-> remote cores, so the risk is even higher. Address this issue by
-> introducing a temporary mm that is only used during patching.
-> Unfortunately, due to init ordering, fixmap is still used during
-> boot-time patching. Future patches can eliminate the need for it.
-> 
+> We should definitely select GENERIC_IRQ_SHOW_LEVEL
+> so that nature of IRQ interrupt line is evident in /proc/interrupts.
 
-Remind me; why are we doing it like this instead of fixing fixmap?
-Because while this fixes the text_poke crud, it does leave fixmap
-broken.
+Please settle the argument with Thomas and Marc on what the default
+for this option should be - in the end it just shows another line
+in procfs, and I see no reason for RISC-V to ever deviated from the
+global Linux default here, whatever that default is.
+
+> >> HANDLE_DOMAIN_IRQ
+> >
+> > We aren't using handle_domain_irq anywhere in RISC-V, no need to
+> > build this.
+> 
+> The new RISC-V local interrupt controller driver introduced by
+> this patchset uses handle_domain_irq().
+
+So select it in the patch that needs it, not anywhere else.
