@@ -2,78 +2,103 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1490C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946C8C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677AB20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677AB20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2A19E20652
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:29:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A19E20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbeIEW6P (ORCPT
+        id S1727651AbeIEXAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 18:58:15 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60301 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbeIEW6P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 18:58:15 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxcVj-0002Gp-QV; Wed, 05 Sep 2018 20:26:39 +0200
-Date:   Wed, 5 Sep 2018 20:26:38 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andi Kleen <ak@linux.intel.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
+        Wed, 5 Sep 2018 19:00:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49744 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727195AbeIEXAc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 19:00:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4EBCBAF53;
+        Wed,  5 Sep 2018 18:29:08 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 20:29:07 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+cc:     Andi Kleen <ak@linux.intel.com>,
         Tim Chen <tim.c.chen@linux.intel.com>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
         "Woodhouse, David" <dwmw@amazon.co.uk>,
         Oleg Nesterov <oleg@redhat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>
 Subject: Re: [PATCH v3 1/3] ptrace: Provide ___ptrace_may_access() that can
  be applied on arbitrary tasks
-In-Reply-To: <20180905155823.GL27886@tassilo.jf.intel.com>
-Message-ID: <alpine.DEB.2.21.1809052025250.1416@nanos.tec.linutronix.de>
+In-Reply-To: <20180905180459.GB11625@redhat.com>
+Message-ID: <nycvar.YFH.7.76.1809052026470.15880@cbobk.fhfr.pm>
 References: <nycvar.YFH.7.76.1808312242130.25787@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809041619510.15880@cbobk.fhfr.pm> <alpine.LRH.2.00.1809041639340.14475@gjva.wvxbf.pm> <31436186-88da-324e-88a0-8fdca7bf60ac@linux.intel.com> <nycvar.YFH.7.76.1809041932590.15880@cbobk.fhfr.pm>
- <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com> <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm> <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com> <nycvar.YFH.7.76.1809050725390.15880@cbobk.fhfr.pm>
- <20180905155823.GL27886@tassilo.jf.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+ <99FC4B6EFCEFD44486C35F4C281DC67321447094@ORSMSX107.amr.corp.intel.com> <nycvar.YFH.7.76.1809042046180.15880@cbobk.fhfr.pm> <3f24e8c8-eab8-66c2-9a8d-957e30cac809@linux.intel.com> <nycvar.YFH.7.76.1809050725390.15880@cbobk.fhfr.pm> <20180905155823.GL27886@tassilo.jf.intel.com>
+ <20180905180459.GB11625@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018, Andi Kleen wrote:
+On Wed, 5 Sep 2018, Andrea Arcangeli wrote:
 
-> > So, after giving it a bit more thought, I still believe "I want spectre V2 
-> > protection" vs. "I do not care about spectre V2 on my system 
-> > (=nospectre_v2)" are the sane options we should provide; so I'll respin v4 
-> > of my patchset, including the ptrace check in switch_mm() (statically 
-> > patched out on !IBPB-capable systems), and we can then later see whether 
-> > the LSM implementation, once it exists, should be used instead.
+> ptrace_has_cap(tcred->user_ns, mode) is supposed to eventually lockup
+> hard if called from scheduler as it does some locking, and we fixed
+> that already half a year ago.
 > 
-> Please if you repost include plenty of performance numbers for multi threaded
-> workloads.  It's ridiculous to even discuss this without them.
+> Not sure how it's still unfixed in Jiri's codebase after so long, or
+> if it's an issue specific to 3.10 and upstream gets away without this.
 
-Either we care about that problem and provide a proper mechanism to protect
-systems or we do not. That's not a performance number problem at all.
+We haven't got any lockup reports in our kernels (and we do carry a 
+variant of this patch), so it might be somehow specific to 3.10.
+
+> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> index eb7862f185ff..4a8d0dd73c93 100644
+> --- a/kernel/ptrace.c
+> +++ b/kernel/ptrace.c
+> @@ -285,7 +285,8 @@ int ___ptrace_may_access(struct task_struct *tracer,
+>  	    gid_eq(caller_gid, tcred->sgid) &&
+>  	    gid_eq(caller_gid, tcred->gid))
+>  		goto ok;
+> -	if (ptrace_has_cap(tcred->user_ns, mode))
+> +	if (!(mode & PTRACE_MODE_NOACCESS_CHK) &&
+> +	    ptrace_has_cap(tcred->user_ns, mode))
+>  		goto ok;
+>  	rcu_read_unlock();
+>  	return -EPERM;
+> @@ -296,7 +297,8 @@ ok:
+>  		dumpable = get_dumpable(task->mm);
+>  	rcu_read_lock();
+>  	if (dumpable != SUID_DUMP_USER &&
+> -	    !ptrace_has_cap(__task_cred(task)->user_ns, mode)) {
+> +	    ((mode & PTRACE_MODE_NOACCESS_CHK) ||
+> +	     !ptrace_has_cap(__task_cred(task)->user_ns, mode))) {
+>  		rcu_read_unlock();
+>  		return -EPERM;
+
+I will look into this whether it's still applicable or not, thanks a lot 
+for the pointer.
+
+(and no, my testing of the patch I sent on current tree didn't produce any 
+hangs -- was there a reliable way to trigger it on 3.10?).
 
 Thanks,
 
-	tglx
+-- 
+Jiri Kosina
+SUSE Labs
+
