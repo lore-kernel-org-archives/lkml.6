@@ -2,108 +2,139 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2134C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D917EC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB5B5206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 847FC20645
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:35:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="obaeeyqa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5B5206BA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MMiyA17n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847FC20645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbeIFBHB (ORCPT
+        id S1728045AbeIFBHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:07:01 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46003 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727364AbeIFBHB (ORCPT
+        Wed, 5 Sep 2018 21:07:16 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43509 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727599AbeIFBHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:07:01 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u83-v6so7367695lje.12;
-        Wed, 05 Sep 2018 13:35:09 -0700 (PDT)
+        Wed, 5 Sep 2018 21:07:16 -0400
+Received: by mail-io0-f196.google.com with SMTP id y10-v6so7079503ioa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 13:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=q+ETAP1+maNYec/rRBgtch6mMVPItqHLdIw/EsJVvhg=;
-        b=obaeeyqa2zTsaG5acPlgKnhJpEMV1k0U/h46FY2GLgvpgkXhaf2pvePOCPL+fTfZBV
-         hmkrYiYK4lYKIJMeBO4D1X+dd1MXWD6UuHOzTeH0Y0hyErdm2botA5xmFdf/YJHP4eiP
-         036tE9j3PtFdR1pintsspE6ZqcdHwIbV0S60yz35Ev+ZaRcNaLtdoV86lrgMkrERHNru
-         +AAPYBzP9MRhq5Y6dNU1AMSSeMUT3qE2iqfTaf6hKJkXhFC6rZMheQOjHamYDC70FdLj
-         zpUaftnO6hUHVj73QkwekUCC7yeE3rIMSFxFcJa7EJjUa1SoBzu+KhFGp4mUz84GxVLH
-         lq7A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M6DxylLr/YiUzXV5RmOTu6Mbl/BCWyKG6XOwKTdCzOY=;
+        b=MMiyA17nMp1AdpzA62Cm+LrrQWY7XhfbH8kByicmOu4e6W7BxX2pokcQomNSsuU9Z2
+         EpfnPsJjI9Ml4BwgRwuYu/Y8tmCvofVscZ3x4JvmebR+51sciPv5RwuYvnNLTxRmsnF2
+         ZVqX+Bs+b/lxc8HnC45dh32hjsrY0vwmlu4mtNE+O0A2ZVe/1+Qi+TYFvBPY8LKj1/F9
+         eaj8Vg6tJPFZVBVVbBL85XOzhD/MnIpGCgVH5P7Nd+Vv+SKIissmV/5qOONdNMdcvSBT
+         jj/5dRlceHH/c78qkqWtoJDJHmZNHPaMycgaXqtt6tXegsApJq6TbPFAhOIBNQ65Rdbl
+         k6jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=q+ETAP1+maNYec/rRBgtch6mMVPItqHLdIw/EsJVvhg=;
-        b=kadcn77fhEfjbFBN338VRixR5xkK6LFlJHp/bAQDc8RjA+iRArya0zBLp805kjqiO3
-         qUDLUw6gd0rAEe+yYloHm0CkRCvtuPZCcBvuo0HJDaDtzOsTOAoh1Xnb0i9hGmY439y+
-         6altCk+3AqIhqPRyTbUZ60ce6T0qleJl6rWKLZhc5uckuNhtVDEIh/q5/gNBr+w2JnCz
-         CxaXhF6WnAH07InZNNm6Ncz+6CMIFud/zxg0f3MYjTBv/zSEkxevgvMjhQq1bFwIzqee
-         pP9QrOuX9Hikyq88at1sHTjeZSReUl8gupknJHHBcDlvAegvcMCOzlOla7HDkzuR5Anm
-         TMVg==
-X-Gm-Message-State: APzg51Dz7Qtl/f/PvLpnECEedtM2jKqR6Jzk7gq117WNDln1f5pegN0T
-        xJD6FaI3xA58B27znbzFo4c=
-X-Google-Smtp-Source: ANB0VdYA6z8CxOkJALwkCDR/BA4L/J1hrCMRFst683QaNTQCglMKptzi2iJakxo0hQkAL2qd2Bja2w==
-X-Received: by 2002:a2e:1301:: with SMTP id 1-v6mr20327019ljt.56.1536179708243;
-        Wed, 05 Sep 2018 13:35:08 -0700 (PDT)
-Received: from Mort.jumbo.freeair (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id b26-v6sm463683lfc.68.2018.09.05.13.35.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 13:35:07 -0700 (PDT)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] seccomp: remove unnecessary unlikely()
-Date:   Wed,  5 Sep 2018 23:34:43 +0300
-Message-Id: <20180905203443.32289-1-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M6DxylLr/YiUzXV5RmOTu6Mbl/BCWyKG6XOwKTdCzOY=;
+        b=ELPVjDWzmzXA6rzoYSCVtToWHbV4BjYuU6me0fE8Ov3miT52NtKM120CaqDr9dmwVC
+         J5VY2PtuAbKKKUPkXz7DLycUokibAZ/vYa5wPGAfLSxKDQ00mYpCQdFOZBsYoYH92wAD
+         RpFxCLI88uNFgqgnqdWHKmsixEB2bsu5R0N3J8QyNiJnQuWmjG0HOc3RW9E0VFwOFXD1
+         W1CUEuRfhrJP7zhcWc+s4Q6Vz0qPduCg/UK3lC3p39l4HMpTboBsESF9llsFalo8kTkk
+         0ckbkPVI0c9sOSA1kVHldCOkByb4yV3fzO768tWH+DogFAuGq7FKNL+7MN/COOPTq0Of
+         s+CA==
+X-Gm-Message-State: APzg51AJ8JhNCm9INSXijV//OpouLt/TFFxV375eAO6qs8e+Wcr71QDs
+        7gULSdOrm2qGOtF+oQ21yPvfvOsS6fMGl1l+17E=
+X-Google-Smtp-Source: ANB0VdbPigqD2wogyvNJrWMX1Swg6aTmKip/Iu+ho2u0K5C3SvVYAy47qmlb8I1UfQThRYO1pGJ7wWZy3shuzPde85w=
+X-Received: by 2002:a6b:cac3:: with SMTP id a186-v6mr27250299iog.116.1536179723982;
+ Wed, 05 Sep 2018 13:35:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180904181550.4416.50701.stgit@localhost.localdomain>
+ <20180904183345.4416.76515.stgit@localhost.localdomain> <20180905062428.GV14951@dhcp22.suse.cz>
+ <CAKgT0UeT1dL0VNMo1RSDkjABYBGLKjMsz5LsE_ML-EV+w2OURg@mail.gmail.com> <ec060d9b-d313-417c-4389-2ac7b482f94c@microsoft.com>
+In-Reply-To: <ec060d9b-d313-417c-4389-2ac7b482f94c@microsoft.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Wed, 5 Sep 2018 13:35:11 -0700
+Message-ID: <CAKgT0UdtgaZv5sjAcSe8-UYsxoji4scbJTRvTECZDpt+TPM+FA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: Create non-atomic version of SetPageReserved for
+ init use
+To:     Pavel.Tatashin@microsoft.com
+Cc:     mhocko@kernel.org, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WARN_ON() already contains an unlikely(), so it's not necessary to wrap it
-into another.
+On Wed, Sep 5, 2018 at 1:22 PM Pasha Tatashin
+<Pavel.Tatashin@microsoft.com> wrote:
+>
+>
+>
+> On 9/5/18 4:18 PM, Alexander Duyck wrote:
+> > On Tue, Sep 4, 2018 at 11:24 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >>
+> >> On Tue 04-09-18 11:33:45, Alexander Duyck wrote:
+> >>> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >>>
+> >>> It doesn't make much sense to use the atomic SetPageReserved at init time
+> >>> when we are using memset to clear the memory and manipulating the page
+> >>> flags via simple "&=" and "|=" operations in __init_single_page.
+> >>>
+> >>> This patch adds a non-atomic version __SetPageReserved that can be used
+> >>> during page init and shows about a 10% improvement in initialization times
+> >>> on the systems I have available for testing.
+> >>
+> >> I agree with Dave about a comment is due. I am also quite surprised that
+> >> this leads to such a large improvement. Could you be more specific about
+> >> your test and machines you were testing on?
+> >
+> > So my test case has been just initializing 4 3TB blocks of persistent
+> > memory with a few trace_printk values added to track total time in
+> > move_pfn_range_to_zone.
+> >
+> > What I have been seeing is that the time needed for the call drops on
+> > average from 35-36 seconds down to around 31-32.
+>
+> Just curious why is there variance? During boot time is usually pretty
+> consistent, as there is only one thread and system is in pretty much the
+> same state.
+>
+> A dmesg output in the commit log would be helpful.
+>
+> Thank you,
+> Pavel
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- kernel/seccomp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The variance has to do with the fact that it is being added via
+hot-plug. So in this case the system boots and then after 5 minutes it
+then goes about hot-plugging the memory. The memmap_init_zone call
+will make regular calls into cond_resched() and it seems like if there
+are any other active threads that can end up impacting the timings and
+provide a few hundred ms of variation between runs.
 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index fd023ac24e10..5a2a9af4663e 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -195,7 +195,7 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
- 			READ_ONCE(current->seccomp.filter);
- 
- 	/* Ensure unexpected behavior doesn't result in failing open. */
--	if (unlikely(WARN_ON(f == NULL)))
-+	if (WARN_ON(f == NULL))
- 		return SECCOMP_RET_KILL_PROCESS;
- 
- 	if (!sd) {
-@@ -297,7 +297,7 @@ static inline pid_t seccomp_can_sync_threads(void)
- 		/* Return the first thread that cannot be synchronized. */
- 		failed = task_pid_vnr(thread);
- 		/* If the pid cannot be resolved, then return -ESRCH */
--		if (unlikely(WARN_ON(failed == 0)))
-+		if (WARN_ON(failed == 0))
- 			failed = -ESRCH;
- 		return failed;
- 	}
--- 
-2.17.1
+In addition there is also NUMA locality that plays a role. I have seen
+values as low as 25.5s pre-patch, 23.2 after, and values as high as
+39.17 pre-patch, 37.3 after. I am assuming that the lowest values just
+happened to luck into being node local, and the highest values end up
+being 2 nodes away on the 4 node system I am testing. I'm planning to
+try and address the NUMA issues using an approach similar to what the
+deferred_init is already doing by trying to start a kernel thread on
+the correct node and then probably just waiting on that to complete
+outside of the hotplug lock. The solution will end up being a hybrid
+probably between the work Dan Williams had submitted a couple months
+ago and the existing deferred_init code. But I will be targeting that
+for 4.20 at the earliest.
 
+- Alex
