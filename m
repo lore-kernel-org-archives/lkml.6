@@ -2,107 +2,84 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E266DC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6C1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F652075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40C672075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:56:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGNx2Jp2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F652075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TxtkN1Wb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C672075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbeIEX0C (ORCPT
+        id S1727693AbeIEX1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 19:26:02 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43266 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeIEX0C (ORCPT
+        Wed, 5 Sep 2018 19:27:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42738 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbeIEX1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 19:26:02 -0400
-Received: by mail-lf1-f66.google.com with SMTP id h64-v6so6896247lfi.10;
-        Wed, 05 Sep 2018 11:54:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L40QfUfqELILge77L2Oi58OVOgVXdMv16buiRzoMXJ4=;
-        b=TGNx2Jp2yqfrFAJUb5JPmzQuF9fru33a5k/BWR6zhA3k7/cC7xvOEQK2EhE7EUV5yj
-         alyBPO/7/aoHRevXXNQG8VqBA1GTt6VAcRr7GRxgR+S8KfOLBs90RG1oUf5uluB1j2cM
-         OVw638fG9YaEk2v68HgpOSKEzQ7+rxn7aiEBYtqCwLLZDTK7oS6zc/EPVovZ1rSmHQOC
-         UnjO/DiqX1xKRfchlSvKAtzeT6Oeu2bObvk6718Uy2/ZIZpgw5W60PlZBkSfdw54QkP8
-         bLx4WhdkuY9PIWE6TC/QZRMSrZZA2Hznywgz76x9fzXmmkDfYh8q5j61e5AOGeRL7uTh
-         2w4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L40QfUfqELILge77L2Oi58OVOgVXdMv16buiRzoMXJ4=;
-        b=cdcM7jQpsfatnPKRwP/8OXtKrNcETrklfGnbSqyA5qdetDrjxaFPOisUWgmkSYuwDP
-         +ivLuyqwV/GsW2yZ/YklK4+ozmPifq5vpVpS5DC045p6O+duLEl9KRv1T5X5YICz3JK1
-         VUZ9thqW4rI3vxrH9IHz3/sqafmNVDKQ99brn30F5lS0asLSIYRCcNlZDx1xlRGLs73X
-         KxqpEXnd1hdexVxhabJjEdzCJI2HdU24TRqt5rDfxEjULDWE32/Y9GyhCtiy0mdNHZ3E
-         r5wuPDPaL8FteonfcUnnMBnBExpzBl1Sip0qu0STUpBqjM9wB7CDBGqfhmUEp3RU2FE+
-         Ztkg==
-X-Gm-Message-State: APzg51D1/HJPcL8HppoS1jAtqqGzcN9y2wd/iNhlcDxV+Hldvzsxy0/j
-        tFfGtH0CrPZJed1clbAtnuiRg348
-X-Google-Smtp-Source: ANB0VdZAsp4Rbg+1NDKxhlf9YXvmvRjaRDZcPJ/SVXwsozTOwkXuVSig97sz4i/fNLO3BRjRCSloYw==
-X-Received: by 2002:a19:db94:: with SMTP id t20-v6mr24197473lfi.126.1536173672742;
-        Wed, 05 Sep 2018 11:54:32 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm439233lfv.36.2018.09.05.11.54.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 11:54:32 -0700 (PDT)
-Subject: Re: [PATCH] infiniband: nes: add unlikely() to assert()
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     Faisal Latif <faisal.latif@intel.com>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Chien Tung <chien.tin.tung@intel.com>,
-        Roland Dreier <rolandd@cisco.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180831192418.12346-1-igor.stoppa@huawei.com>
- <20180905060106.GI2977@mtr-leonro.mtl.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <62351491-66cb-0541-85e4-481251433a19@gmail.com>
-Date:   Wed, 5 Sep 2018 21:54:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 19:27:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EFDUXFM7N9blfi2vX04wXNpX3qEo7tdrdnrYx7eYqR8=; b=TxtkN1WbnxdCVUqdCLsbNU2fN
+        7xTVFD7TADo7Qf/QyTfGCy30CuekRWKDahnuCIHloLqMhbZ8bOBZ64sUylqgzg/cEw4dyaOH93aVV
+        JSjymmrgBPIsgkEYV1gsZ0T2G8+5C92rHzOfIhjRK92QDAeQptMENKwJgsaGrVYXJwMnbIcjhRliD
+        kUOok89Xp+KOT2gCdzr5TZD6r3xZwroeNpxS6qrBmSOUEXPTnu46xw5XpfpspNDvpupUSy0TMPSBP
+        UlG2N4jqWdDvwZUEwUFwNXTM3IbM6Ed6GLK+ooXsMp0LjzFR5DH/SUBkGo51RZRINV9xTOpXf1RzB
+        BBPwaMbzw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxcyB-0005Sb-Ke; Wed, 05 Sep 2018 18:56:03 +0000
+Date:   Wed, 5 Sep 2018 11:56:03 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/5] RISC-V: Make IPI triggering flexible
+Message-ID: <20180905185603.GA15741@infradead.org>
+References: <20180904124514.6290-1-anup@brainfault.org>
+ <20180904124514.6290-2-anup@brainfault.org>
+ <20180904185001.GA25119@infradead.org>
+ <CAAhSdy1iPZ_Y4opsXBE0o09uzgSxV8A9YKHawFB+knXH7FFLsQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180905060106.GI2977@mtr-leonro.mtl.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAhSdy1iPZ_Y4opsXBE0o09uzgSxV8A9YKHawFB+knXH7FFLsQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 05, 2018 at 10:06:24AM +0530, Anup Patel wrote:
+> It's outrageous to call IPI mechanisms using interrupt-controller as "wacky".
 
+I call pluggable IPI whacky, and it's not outragous.  What is outragous
+is your bullshit architecture astronaut patches.
 
-On 05/09/18 09:01, Leon Romanovsky wrote:
-> On Fri, Aug 31, 2018 at 10:24:18PM +0300, Igor Stoppa wrote:
->> Typically the assert is expected to not fail.
-> 
-> This whole assert can be removed.
+There might be a nned to abstract IPI details even more in the future,
+but the way to do it is either architectureally in the RISC-V privileged
+spec, or in the SBI spec once we actually have one.
 
-ok
-
->>
->> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
->> Acked-by: Doug Ledford <dledford@redhat.com>
-> 
-> Most probably that I missed discussion, but anyway, does this
-> "Acked-by" come from internal or external discussion?
-
-https://lkml.org/lkml/2018/8/31/456
-
---
-igor
+Having host OSes go through hoops to provide pluggable IPI
+implementations is complete bullshit, and the argument that we already
+have this in some architectures is not a good reason to repeat that
+mistake.
