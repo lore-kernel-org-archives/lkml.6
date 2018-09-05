@@ -2,317 +2,84 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B6DC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF79C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB1220869
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB1220869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id EBD4C20869
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:42:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD4C20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeIEPL1 (ORCPT
+        id S1727726AbeIEPMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:11:27 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:38456 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727308AbeIEPLH (ORCPT
+        Wed, 5 Sep 2018 11:12:22 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59184 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeIEPMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:11:07 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85AdXSK022140;
-        Wed, 5 Sep 2018 05:41:22 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2m7r62n9jj-1;
-        Wed, 05 Sep 2018 05:41:22 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 5B786611C8B4;
-        Wed,  5 Sep 2018 05:43:30 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 5 Sep 2018
- 11:41:20 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w85AfKVB002407; Wed,
- 5 Sep 2018 11:41:20 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <broonie@kernel.org>,
-        <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH 5/5] mfd: lochnagar: Add initial binding documentation
-Date:   Wed, 5 Sep 2018 11:41:20 +0100
-Message-ID: <20180905104120.17252-5-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
-References: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
+        Wed, 5 Sep 2018 11:12:22 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fxVGg-0000rr-G8; Wed, 05 Sep 2018 12:42:38 +0200
+Date:   Wed, 5 Sep 2018 12:42:38 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Chuan Hua, Lei" <chuanhua.lei@linux.intel.com>
+cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v15 19/26] x86/tsc: calibrate tsc only once
+In-Reply-To: <b4f947f1-72e3-8dc1-7e9b-591d92306e55@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1809051240560.1416@nanos.tec.linutronix.de>
+References: <b4f947f1-72e3-8dc1-7e9b-591d92306e55@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1809050114
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lochnagar is an evaluation and development board for Cirrus
-Logic Smart CODEC and Amp devices. It allows the connection of
-most Cirrus Logic devices on mini-cards, as well as allowing
-connection of various application processor systems to provide a
-full evaluation platform.
+On Wed, 5 Sep 2018, Chuan Hua, Lei wrote:
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- .../devicetree/bindings/mfd/cirrus,lochnagar.txt   | 230 +++++++++++++++++++++
- 1 file changed, 230 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
+> > static unsigned long __init get_loops_per_jiffy(void)
+> > {
+> > 	unsigned long lpj = tsc_khz * KHZ;
+> > 
+> > 	do_div(lpj, HZ);
+> > 	return lpj;
+> > }
+> Just tried this with 4.19-rc2 on x86(32bit). lpj return as zero which is not
+> expected
+> After disassembling the code,
+> 	0xc1239a9e <+199>:   imul   $0x3e8,0xc12296e4,%edx
+> 	0xc1239aa8 <+209>:   xor    %ecx,%ecx
+> 	0xc1239aaa <+211>:   test   %edx,%edx
+> 	0xc1239aac <+213>:   mov    %eax,%ebx
+> 	0xc1239aae <+215>:   je     0xc1239abd <tsc_init+230>
+> 	0xc1239ab0 <+217>:   mov    $0x64,%ecx
+> 	0xc1239ab5 <+222>:   mov    %edx,%eax
+> 	0xc1239ab7 <+224>:   xor    %edx,%edx
+> 	0xc1239ab9 <+226>:   div    %ecx
+> 	0xc1239abb <+228>:   mov    %eax,%ecx
+> 	0xc1239abd <+230>:   mov    %ebx,%eax
+> 	0xc1239abf <+232>:   mov    $0x64,%ebx
+> 	0xc1239ac4 <+237>:   div    %ebx
+> 	0xc1239ac6 <+239>:   mov    %ecx,%edx
+> imul will load the result into %edx, %edx supposed to be high 32 bit which is
+> not zero,
+> It should be zero in this case. both lpj and tsc_khz should be u64 to work
+> properly.
 
-diff --git a/Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
-new file mode 100644
-index 000000000000..3382a14c19fe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
-@@ -0,0 +1,230 @@
-+Cirrus Logic Lochnagar Audio Development Board
-+
-+Lochnagar is an evaluation and development board for Cirrus Logic
-+Smart CODEC and Amp devices. It allows the connection of most Cirrus
-+Logic devices on mini-cards, as well as allowing connection of
-+various application processor systems to provide a full evaluation
-+platform.  Audio system topology, clocking and power can all be
-+controlled through the Lochnagar, allowing the device under test
-+to be used in a variety of possible use cases.
-+
-+Also see these documents for generic binding information:
-+  [1] GPIO : ../gpio/gpio.txt
-+  [2] Pinctrl: ../pinctrl/pinctrl-bindings.txt
-+  [3] Clock : ../clock/clock-bindings.txt
-+  [4] Regulator: ../regulator/regulator.txt
-+
-+And these for relevant defines:
-+  [5] include/dt-bindings/pinctrl/lochnagar.h
-+  [6] include/dt-bindings/clock/lochnagar.h
-+
-+Required properties:
-+
-+  - compatible : One of the following strings:
-+                 "cirrus,lochnagar1"
-+                 "cirrus,lochnagar2"
-+
-+  - reg : I2C slave address
-+
-+  - gpio-controller : Indicates this device is a GPIO controller.
-+  - #gpio-cells : Must be 2. The first cell is the pin number, see
-+    [5] for available pins and the second cell is used to specify
-+    optional parameters, see [1].
-+  - gpio-ranges : Range of pins managed by the GPIO controller, see
-+    [1]. Both the GPIO and Pinctrl base should be set to zero and the
-+    count to the appropriate of the LOCHNAGARx_PIN_NUM_GPIOS define,
-+    see [5].
-+
-+  - reset-gpios : Reset line to the Lochnagar, see [1].
-+
-+  - #clock-cells : Must be 1. The first cell indicates the clock
-+    number, see [6] for available clocks and [3].
-+
-+  - pinctrl-names : A pinctrl state named "default" must be defined.
-+  - pinctrl-0 : A phandle to the default pinctrl state.
-+
-+  - SYSVDD-supply: Primary power supply for the Lochnagar.
-+
-+Optional properties:
-+
-+  - present-gpios : Host present line, indicating the presence of a
-+    host system, see [1]. This can be omitted if the present line is
-+    tied in hardware.
-+
-+  - clocks : Must contain an entry for each clock in clock-names.
-+  - clock-names : May contain entries for each of the following
-+    clocks:
-+     - ln-cdc-clkout : Output clock from CODEC card.
-+     - ln-dsp-clkout : Output clock from DSP card.
-+     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
-+       input audio clocks from host system.
-+     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
-+       external connector.
-+     - ln-spdif-clkout : Optional input audio clock from SPDIF.
-+     - ln-adat-clkout : Optional input audio clock from ADAT.
-+
-+  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
-+    [6] for available clocks.
-+  - assigned-clock-parents : Parents to be assigned to the clocks
-+    listed in "assigned-clocks".
-+
-+  - MICBIAS1-supply, MICBIAS2-supply: Regulator supplies for the
-+    MICxVDD outputs, supplying the digital microphones, normally
-+    supplied from the attached CODEC.
-+
-+Required sub-nodes:
-+
-+The pin configurations are defined as a child of the pinctrl states
-+node, see [2]. Each sub-node can have the following properties:
-+  - groups : A list of groups to select (either this or "pins" must be
-+    specified), available groups:
-+      codec-aif1, codec-aif2, codec-aif3, dsp-aif1, dsp-aif2, psia1,
-+      psia2, gf-aif1, gf-aif2, gf-aif3, gf-aif4, spdif-aif, usb-aif1,
-+      usb-aif2, adat-aif, soundcard-aif
-+  - pins : A list of pin names to select (either this or "groups" must
-+    be specified), available pins:
-+      fgpa-gpio1, fgpa-gpio2, fgpa-gpio3, fgpa-gpio4, fgpa-gpio5,
-+      fgpa-gpio6, codec-gpio1, codec-gpio2, codec-gpio3, codec-gpio4,
-+      codec-gpio5, codec-gpio6, codec-gpio7, codec-gpio8, dsp-gpio1,
-+      dsp-gpio2, dsp-gpio3, dsp-gpio4, dsp-gpio5, dsp-gpio6, gf-gpio2,
-+      gf-gpio3, gf-gpio7, codec-aif1-bclk, codec-aif1-rxdat,
-+      codec-aif1-lrclk, codec-aif1-txdat, codec-aif2-bclk,
-+      codec-aif2-rxdat, codec-aif2-lrclk, codec-aif2-txdat,
-+      codec-aif3-bclk, codec-aif3-rxdat, codec-aif3-lrclk,
-+      codec-aif3-txdat, dsp-aif1-bclk, dsp-aif1-rxdat, dsp-aif1-lrclk,
-+      dsp-aif1-txdat, dsp-aif2-bclk, dsp-aif2-rxdat,
-+      dsp-aif2-lrclk, dsp-aif2-txdat, psia1-bclk, psia1-rxdat,
-+      psia1-lrclk, psia1-txdat, psia2-bclk, psia2-rxdat, psia2-lrclk,
-+      psia2-txdat, gf-aif3-bclk, gf-aif3-rxdat, gf-aif3-lrclk,
-+      gf-aif3-txdat, gf-aif4-bclk, gf-aif4-rxdat, gf-aif4-lrclk,
-+      gf-aif4-txdat, gf-aif1-bclk, gf-aif1-rxdat, gf-aif1-lrclk,
-+      gf-aif1-txdat, gf-aif2-bclk, gf-aif2-rxdat, gf-aif2-lrclk,
-+      gf-aif2-txdat, dsp-uart1-rx, dsp-uart1-tx, dsp-uart2-rx,
-+      dsp-uart2-tx, gf-uart2-rx, gf-uart2-tx, usb-uart-rx,
-+      codec-pdmclk1, codec-pdmdat1, codec-pdmclk2, codec-pdmdat2,
-+      codec-dmicclk1, codec-dmicdat1, codec-dmicclk2, codec-dmicdat2,
-+      codec-dmicclk3, codec-dmicdat3, codec-dmicclk4, codec-dmicdat4,
-+      dsp-dmicclk1, dsp-dmicdat1, dsp-dmicclk2, dsp-dmicdat2, i2c2-scl,
-+      i2c2-sda, i2c3-scl, i2c3-sda, i2c4-scl, i2c4-sda, dsp-standby,
-+      codec-mclk1, codec-mclk2, dsp-clkin, psia1-mclk, psia2-mclk,
-+      gf-gpio1, gf-gpio5, dsp-gpio20, led1, led2
-+  - function : The mux function to select, available functions:
-+      aif, fgpa-gpio1, fgpa-gpio2, fgpa-gpio3, fgpa-gpio4, fgpa-gpio5,
-+      fgpa-gpio6, codec-gpio1, codec-gpio2, codec-gpio3, codec-gpio4,
-+      codec-gpio5, codec-gpio6, codec-gpio7, codec-gpio8, dsp-gpio1,
-+      dsp-gpio2, dsp-gpio3, dsp-gpio4, dsp-gpio5, dsp-gpio6, gf-gpio2,
-+      gf-gpio3, gf-gpio7, gf-gpio1, gf-gpio5, dsp-gpio20, codec-clkout,
-+      dsp-clkout, pmic-32k, spdif-clkout, clk-12m288, clk-11m2986,
-+      clk-24m576, clk-22m5792, xmos-mclk, gf-clkout1, gf-mclk1,
-+      gf-mclk3, gf-mclk2, gf-clkout2, codec-mclk1, codec-mclk2,
-+      dsp-clkin, psia1-mclk, psia2-mclk, spdif-mclk, codec-irq,
-+      codec-reset, dsp-reset, dsp-irq, dsp-standby, codec-pdmclk1,
-+      codec-pdmdat1, codec-pdmclk2, codec-pdmdat2, codec-dmicclk1,
-+      codec-dmicdat1, codec-dmicclk2, codec-dmicdat2, codec-dmicclk3,
-+      codec-dmicdat3, codec-dmicclk4, codec-dmicdat4, dsp-dmicclk1,
-+      dsp-dmicdat1, dsp-dmicclk2, dsp-dmicdat2, dsp-uart1-rx,
-+      dsp-uart1-tx, dsp-uart2-rx, dsp-uart2-tx, gf-uart2-rx,
-+      gf-uart2-tx, usb-uart-rx, usb-uart-tx, i2c2-scl, i2c2-sda,
-+      i2c3-scl, i2c3-sda, i2c4-scl, i2c4-sda, gpio, spdif-aif, psia1,
-+      psia1-bclk, psia1-lrclk, psia1-rxdat, psia1-txdat, psia2,
-+      psia2-bclk, psia2-lrclk, psia2-rxdat, psia2-txdat, codec-aif1,
-+      codec-aif1-bclk, codec-aif1-lrclk, codec-aif1-rxdat,
-+      codec-aif1-txdat, codec-aif2, codec-aif2-bclk, codec-aif2-lrclk,
-+      codec-aif2-rxdat, codec-aif2-txdat, codec-aif3, codec-aif3-bclk,
-+      codec-aif3-lrclk, codec-aif3-rxdat, codec-aif3-txdat, dsp-aif1,
-+      dsp-aif1-bclk, dsp-aif1-lrclk, dsp-aif1-rxdat, dsp-aif1-txdat,
-+      dsp-aif2, dsp-aif2-bclk, dsp-aif2-lrclk, dsp-aif2-rxdat,
-+      dsp-aif2-txdat, gf-aif3, gf-aif3-bclk, gf-aif3-lrclk,
-+      gf-aif3-rxdat, gf-aif3-txdat, gf-aif4, gf-aif4-bclk,
-+      gf-aif4-lrclk, gf-aif4-rxdat, gf-aif4-txdat, gf-aif1,
-+      gf-aif1-bclk, gf-aif1-lrclk, gf-aif1-rxdat, gf-aif1-txdat,
-+      gf-aif2, gf-aif2-bclk, gf-aif2-lrclk, gf-aif2-rxdat,
-+      gf-aif2-txdat, usb-aif1, usb-aif2, adat-aif, soundcard-aif,
-+
-+  - aif-master : Specifies that an AIF group will be used as a master
-+    interface (either this or aif-slave is required if a group is
-+    being muxed to an AIF)
-+  - aif-slave : Specifies that an AIF group will be used as a slave
-+    interface (either this or aif-master is required if a group is
-+    being muxed to an AIF)
-+
-+Optional sub-nodes:
-+
-+  - VDDCORE : Initialisation data for the VDDCORE regulator, which
-+    supplies the CODECs digital core if it has no build regulator for that
-+    purpose.
-+
-+  - MICVDD : Initialisation data for the MICVDD regulator, which
-+    supplies the CODECs MICVDD.
-+  - MIC1VDD, MIC2VDD : Initialisation data for the MICxVDD supplies.
-+      Optional Properties:
-+      - cirrus,micbias-input : A property selecting which of the CODEC
-+        minicard micbias outputs should be used, valid values are 1 - 4.
-+
-+  - VDD1V8 : Recommended fixed regulator for the VDD1V8 regulator, which supplies the
-+    CODECs analog and 1.8V digital supplies.
-+      Required Properties:
-+      - compatible : Should be set to "regulator-fixed"
-+      - regulator-min-microvolt : Should be set to 1.8V
-+      - regulator-max-microvolt : Should be set to 1.8V
-+      - regulator-boot-on
-+      - regulator-always-on
-+      - vin-supply : Should be set to same supply as SYSVDD
-+
-+Example:
-+lochnagar: lochnagar@22 {
-+	compatible = "cirrus,lochnagar2";
-+	reg = <0x22>;
-+
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-ranges = <&lochnagar 0 0 110>;
-+
-+	reset-gpio = <&gpio0 55 0>;
-+	present-gpio = <&gpio0 60 0>;
-+
-+	#clock-cells = <1>;
-+
-+	clocks = <&clk_audio>;
-+	clock-names = "ln-gf-mclk2";
-+
-+	assigned-clocks = <&lochnagar LOCHNAGAR_CDC_MCLK1>,
-+			  <&lochnagar LOCHNAGAR_CDC_MCLK2>;
-+	assigned-clock-parents = <&clk_audio>,
-+				 <&lochnagar LOCHNAGAR_PMIC_32K>;
-+
-+	SYSVDD-supply = <&wallvdd>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pin_settings>;
-+
-+	pin_settings: pin_settings {
-+		ap_aif {
-+			aif-slave;
-+			groups = "gf-aif1";
-+			function = "codec-aif3";
-+		};
-+		codec_aif {
-+			aif-master;
-+			groups = "codec-aif3";
-+			function = "gf-aif1";
-+		};
-+	};
-+
-+	lochnagar_micvdd: MICVDD {
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	lochnagar_vdd1v8: VDD1V8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VDD1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+
-+		vin-supply = <&wallvdd>;
-+	};
-+};
--- 
-2.11.0
+Good catch! Care to send a patch?
 
+Thanks,
+
+	tglx
