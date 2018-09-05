@@ -2,85 +2,96 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC3CC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD4CC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E61872077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:10:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E61872077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 305AA2075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:11:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMGx3j+f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305AA2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbeIEKjW (ORCPT
+        id S1727698AbeIEKkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:39:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58736 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726299AbeIEKjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:39:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D6C57B0CE;
-        Wed,  5 Sep 2018 06:10:46 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 08:10:44 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
-        akpm@linux-foundation.org, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 1/2] mm: Move page struct poisoning from CONFIG_DEBUG_VM
- to CONFIG_DEBUG_VM_PGFLAGS
-Message-ID: <20180905061044.GT14951@dhcp22.suse.cz>
-References: <20180904181550.4416.50701.stgit@localhost.localdomain>
- <20180904183339.4416.44582.stgit@localhost.localdomain>
+        Wed, 5 Sep 2018 06:40:12 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44073 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbeIEKkM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 06:40:12 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k21-v6so2894893pff.11;
+        Tue, 04 Sep 2018 23:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Uva6WvTCO0peCxOukIV1wV5tNn0mHsrP8l7C0Uv665Q=;
+        b=fMGx3j+fHmbNiCYYf0bCE0CsLNOR+Hdy7VIohe5KgvE3TuE9s2ybym5BuPMqx3PYJ4
+         Dc+lWIo4kTNnalodstwsBghMJFQUhoKmjDayWzTflwQ/Jutm4UzhOMSPBnwXr6TByev+
+         9xjyRgmFD4EtAVBR9DOQL/fHpDRaU0oEjYnNNHAExXkrP8qe8ri8xQYCT58Xvur7qDM1
+         KGBECHcJeZOUzXS64OMr0kW8wMKbYvcpM1RMpnDsNuZLacjtUn8Ef1owCfkQqk3hfT+z
+         i3sU5kCOaXDCSd3sRy0aJphN35r+4qqVwzhuBu5vdTuJP+wvzi6yxznMEZ9vSda3vMDu
+         GyHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uva6WvTCO0peCxOukIV1wV5tNn0mHsrP8l7C0Uv665Q=;
+        b=mTYyJJn6MWxi8xkr4dPv6qWEwNLzTqU5E1oTHFsHyrnJuTi4xSZ0nQ06Csy5ALaDoc
+         A6qRUiPoezvVV/+RogkmWZ0Pe8i++QVFj/i+1wNWpXT+p+D2PnxL6DRDafdHDhCOB6QD
+         egomwWNdHfnwizUOZFx/tshjxRta2f4W7c/8S2A8Ki5uLuSiBKNnTdxaZoQqItA9HQLX
+         OyQH4Ydqe+tsXoqn0HvlMKj0+JaFaE47mmfdbAk/fR5mrQ7/NsdlkfG6nO+KgtuePZgF
+         w32hZTBpjvITenbat1BqlZRuP7Dij2e7eRsA4GC/mm9bSXdx3zgV2Q+eX+Vq9bJe96Xf
+         AhZw==
+X-Gm-Message-State: APzg51AqWo+pwfvrea0Os8w+tyAqgzJGeZkCfqLElaP6khL/fNUyYrUF
+        23VWdRA40n1kt5bLfao2Pt4=
+X-Google-Smtp-Source: ANB0VdYGofHun52QHt/JYHrtxBLzyEI65Tz5t/o+ACt1HUB4GvhUd80T+52IYGgaYU/kT1dxWqwoug==
+X-Received: by 2002:a63:9712:: with SMTP id n18-v6mr33887600pge.92.1536127897380;
+        Tue, 04 Sep 2018 23:11:37 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:bcd1])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1231335pfj.72.2018.09.04.23.11.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Sep 2018 23:11:36 -0700 (PDT)
+Date:   Tue, 4 Sep 2018 23:11:33 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     Taeung Song <treeze.taeung@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2] libbpf: Remove the duplicate checking of
+ function storage
+Message-ID: <20180905061132.m7kp5og6jopojajj@ast-mbp.dhcp.thefacebook.com>
+References: <20180902233007.3003-1-treeze.taeung@gmail.com>
+ <20180904110745.3ab4dc3e@cakuba>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180904183339.4416.44582.stgit@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180904110745.3ab4dc3e@cakuba>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-09-18 11:33:39, Alexander Duyck wrote:
-> From: Alexander Duyck <alexander.h.duyck@intel.com>
+On Tue, Sep 04, 2018 at 11:07:45AM +0200, Jakub Kicinski wrote:
+> On Mon,  3 Sep 2018 08:30:07 +0900, Taeung Song wrote:
+> > After the commit eac7d84519a3 ("tools: libbpf: don't return '.text'
+> > as a program for multi-function programs"), bpf_program__next()
+> > in bpf_object__for_each_program skips the function storage such as .text,
+> > so eliminate the duplicate checking.
+> > 
+> > Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> > Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
 > 
-> On systems with a large amount of memory it can take a significant amount
-> of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-> value. I have seen it take over 2 minutes to initialize a system with
-> over 12GB of RAM.
-> 
-> In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-> the boot time returned to something much more reasonable as the
-> arch_add_memory call completed in milliseconds versus seconds. However in
-> doing that I had to disable all of the other VM debugging on the system.
+> Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-I agree that CONFIG_DEBUG_VM is a big hammer but the primary point of
-this check is to catch uninitialized struct pages after the early mem
-init rework so the intention was to make it enabled on as many systems
-with debugging enabled as possible. DEBUG_VM is not free already so it
-sounded like a good idea to sneak it there.
+Applied, Thanks
 
-> I did a bit of research and it seems like the only function that checks
-> for this poison value is the PagePoisoned function, and it is only called
-> in two spots. One is the PF_POISONED_CHECK macro that is only in use when
-> CONFIG_DEBUG_VM_PGFLAGS is defined, and the other is as a part of the
-> __dump_page function which is using the check to prevent a recursive
-> failure in the event of discovering a poisoned page.
-
-Hmm, I have missed the dependency on CONFIG_DEBUG_VM_PGFLAGS when
-reviewing the patch. My debugging kernel config doesn't have it enabled
-for example. I know that Fedora configs have CONFIG_DEBUG_VM enabled
-but I cannot find their config right now to double check for the
-CONFIG_DEBUG_VM_PGFLAGS right now.
-
-I am not really sure this dependency was intentional but I strongly
-suspect Pavel really wanted to have it DEBUG_VM scoped. 
--- 
-Michal Hocko
-SUSE Labs
