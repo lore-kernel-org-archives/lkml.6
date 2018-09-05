@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 276AAC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49A2C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C920B2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 824702075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 18:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JcjZ3tvJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C920B2075E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XMc8oRU3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824702075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeIEX25 (ORCPT
+        id S1727775AbeIEXaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 19:28:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42914 "EHLO
+        Wed, 5 Sep 2018 19:30:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43080 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeIEX25 (ORCPT
+        with ESMTP id S1726544AbeIEXaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 19:28:57 -0400
+        Wed, 5 Sep 2018 19:30:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PGaimZxywD57RYrOy6eBDgC0DslmDh+Iz7/7RHqK5uc=; b=JcjZ3tvJsCqo9YAkxd0iCHb2n
-        sekaexN6RspUQJTTECHdbVtU1Q4cFKKTK1FC/4xNE92FIbCkZ/iIdRABNhb9hgSV3vToj7jGJHRpH
-        J1T4hxWVLXtVKiA19hdyYc79WD1+2RvrNrbgX6Z+rC2bCfXPSoTI+yqcXAFQ0VirHORCoj1IMJmJe
-        WlTDmGqUqvvrqGoJ3qEsNurKcA1JIDtvU3WT/TjRyuyopZQOB5MDoNo/wV4f2PCNMX7DdVp6ROW5z
-        s6Twm/orPJe0oY15Vla/Eudtso/ZprqIEneOW9MbAF0u1hO12kJ2qGPAYtW+5++tKBeGOzAgP6BVa
-        50yLpXQVg==;
+         bh=YlEFUv56Ere+pdHVG1ynH+sN3J+NXfrV66vKvwxpCo8=; b=XMc8oRU3yyNqLrZH5WwumJXbO
+        CwMsph9lJftwgtmzvwzM6URf1HKp4GhrmECAHNLml97Czlm3gBlmqpE4MmYnUMbwcufWMj+tsxP6n
+        MC+mF+QtxgX5s9XYRxr9Lu2lSvhhLGd/G60h1/XApE9k51dqm/e0ijnOwIk5Hw8Zoj04mh7NgJ1LQ
+        ZDCePA/u2/6h53amhLam7PGYTddwldLFMyReej3BupVSd1wPypehJVtLcjsUpj9T3vYu6QrCCqojA
+        5YDgv9GPbpU+3RvFM81vobilJfsMARVK6vtuXglFi+l8UZ2M3nOg+/4SNcuSAHGhOOpjIBu5nLJ0X
+        nzih5iwfQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxczV-0005mq-1r; Wed, 05 Sep 2018 18:57:25 +0000
-Date:   Wed, 5 Sep 2018 11:57:24 -0700
+        id 1fxd0g-0006HL-Q7; Wed, 05 Sep 2018 18:58:38 +0000
+Date:   Wed, 5 Sep 2018 11:58:38 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Anup Patel <anup@brainfault.org>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -51,17 +51,18 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Atish Patra <atish.patra@wdc.com>,
         linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 3/5] RISC-V: Select useful GENERIC_IRQ kconfig options
-Message-ID: <20180905185724.GB15741@infradead.org>
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [RFC PATCH 4/5] irqchip: RISC-V Local Interrupt Controller Driver
+Message-ID: <20180905185838.GC15741@infradead.org>
 References: <20180904124514.6290-1-anup@brainfault.org>
- <20180904124514.6290-4-anup@brainfault.org>
- <20180904185629.GC25119@infradead.org>
- <CAAhSdy3qUkDmV5deoy9x3sqdv8xTq37od6SzgF0hmN1JPThGgw@mail.gmail.com>
+ <20180904124514.6290-5-anup@brainfault.org>
+ <20180904185755.GD25119@infradead.org>
+ <CAAhSdy3-mM-zyYOvQBR+JsRTZGZWUF=4Y=0jTKhVMAYPxOfJ6Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAhSdy3qUkDmV5deoy9x3sqdv8xTq37od6SzgF0hmN1JPThGgw@mail.gmail.com>
+In-Reply-To: <CAAhSdy3-mM-zyYOvQBR+JsRTZGZWUF=4Y=0jTKhVMAYPxOfJ6Q@mail.gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,26 +70,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 10:22:27AM +0530, Anup Patel wrote:
-> I am sure we will see both Level and Edge triggered interrupts
-> in RISC-V system. The MMIO device interrupts will be mostly
-> Level triggered and PCI MSIs will be mapped as Edge triggered
-> by MSI controller.
-> 
-> We should definitely select GENERIC_IRQ_SHOW_LEVEL
-> so that nature of IRQ interrupt line is evident in /proc/interrupts.
+On Wed, Sep 05, 2018 at 11:39:01AM +0530, Anup Patel wrote:
+> Previously submitted driver, registered separate irq_domain for
+> each CPU and local IRQs were registered as regular IRQs to IRQ
+> subsystem.
+> (Refer, https://www.spinics.net/lists/devicetree/msg241230.html)
 
-Please settle the argument with Thomas and Marc on what the default
-for this option should be - in the end it just shows another line
-in procfs, and I see no reason for RISC-V to ever deviated from the
-global Linux default here, whatever that default is.
-
-> >> HANDLE_DOMAIN_IRQ
-> >
-> > We aren't using handle_domain_irq anywhere in RISC-V, no need to
-> > build this.
-> 
-> The new RISC-V local interrupt controller driver introduced by
-> this patchset uses handle_domain_irq().
-
-So select it in the patch that needs it, not anywhere else.
+And we reject that driver approach for good reason and are now
+doing the architectualy low-level irq handling in common code
+without any need whatsover to duplicate information in the
+privileged spec in DT. 
