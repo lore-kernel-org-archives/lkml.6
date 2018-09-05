@@ -2,94 +2,53 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991A1C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BE3C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381E12077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:52:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cq/dkhvV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381E12077C
+	by mail.kernel.org (Postfix) with ESMTP id 4E83C2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E83C2077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeIESWx (ORCPT
+        id S1727755AbeIESX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:22:53 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36801 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeIESWx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:22:53 -0400
-Received: by mail-oi0-f67.google.com with SMTP id r69-v6so13731681oie.3;
-        Wed, 05 Sep 2018 06:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LKvwu8OtoZ4dTxSvruBW9IKHgvV54zzmvBgHNM4O3bE=;
-        b=cq/dkhvV8mwFZcmG3FO7RQWWnpOezy+dh0Ftsme1cyryqJHmv+xQXkRER8+KRAJPAZ
-         pXe9Buo/9KVTNoq3CrvNxlFafZ/wDQrfqULLfLUg0T9pESVcT88Yub2Z1XFy0CaJse9Y
-         /shXHWQ+JA3DkGiNRwONQKyNbqP8FZqoh21rRZy9EkcdNbX9z8NliRrnu56KkDKZK4Bg
-         Eae4On6caFDthYtvZCb06BYYXgHWzshSiZz42H+5mUlbBwutk6dn8Q3DSBMEHC8yVbQi
-         RIrgVuCfJlcdnyTPkUpJFRDdv7FqXwdlr4e5CuYQFe5UAfwHKU4bDeZDxG4ZdSURCVCG
-         Of3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LKvwu8OtoZ4dTxSvruBW9IKHgvV54zzmvBgHNM4O3bE=;
-        b=N7LMwnK7FgvJuc/smTFs1c/K97yhivlnwPuufUuOVhErjQ0CshwiZ0kb8ri3ZJWyi+
-         chucB7+m9m5W3M3VRfQSzwLzeNdoWTNCVEZps1Fv5Djx1tdfPjEDXXGZ+rhJMJ3so2X/
-         AndJ3v5nOFOd9ZW2efi9ts1tuAE65lqnfPbDa4kxD6soUyNpdRnR6tglQmwRDttqzGwM
-         GR99pWj9Gg1EiRHXEr1yFhOm5sIc9nwlny8VFN+MrnrV7KQFCS1LWSXiqVfg4ECb+z3r
-         f+Y8ajR+Tf68LaF9nsFeHgOwKEa1/xwrpnUxtANDHeLq23tM1Of32UTuDwjuhB5rbCG+
-         IF/w==
-X-Gm-Message-State: APzg51AhXfgqixioQx/4G4WyZmEO4e9Gu1aTeBpKfKsOQYkhbukWt4J9
-        K0RJY7AMH71ymsRW5XR16Ow=
-X-Google-Smtp-Source: ANB0VdaWyDyq6adLuGO3u5lxkvP9ZUtPmtmq9qenYyp/UkxY/qGEsQpd/ZEE44IqbAC3Mjz7tfxUQQ==
-X-Received: by 2002:aca:171a:: with SMTP id j26-v6mr27666494oii.277.1536155553625;
-        Wed, 05 Sep 2018 06:52:33 -0700 (PDT)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id t3-v6sm1502421oie.52.2018.09.05.06.52.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 06:52:33 -0700 (PDT)
-Subject: Re: [PATCH 1/9] PCI: sysfs: Export available PCIe bandwidth
-To:     Stephen Hemminger <stephen@networkplumber.org>
-Cc:     linux-pci@vger.kernel.org, bhelgaas@google.com,
-        keith.busch@intel.com, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com,
-        Ariel Elior <ariel.elior@cavium.com>,
-        everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        oss-drivers@netronome.com
-References: <20180903180242.14504-1-mr.nuke.me@gmail.com>
- <20180903180242.14504-2-mr.nuke.me@gmail.com>
- <20180905082605.69d9e5a0@shemminger-XPS-13-9360>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <122e86e4-7c0a-8539-75dc-1515c1b8c68f@gmail.com>
-Date:   Wed, 5 Sep 2018 08:52:31 -0500
+        Wed, 5 Sep 2018 14:23:29 -0400
+Received: from mout02.posteo.de ([185.67.36.142]:60007 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726219AbeIESX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 14:23:29 -0400
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 180CA2106E
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Sep 2018 15:53:07 +0200 (CEST)
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4254sW66K2z9rxZ;
+        Wed,  5 Sep 2018 15:53:03 +0200 (CEST)
+Subject: Re: [PATCH v3 2/2] tty/serial: atmel: add ISO7816 support
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>
+References: <20180807130049.5957-1-ludovic.desroches@microchip.com>
+ <20180807130049.5957-3-ludovic.desroches@microchip.com>
+ <d66c4318-1d31-5c4e-3952-6b69a010b028@sorico.fr>
+ <20180809113035.kftvdalca7zsf4ly@M43218.corp.atmel.com>
+ <20180905124341.5n4gadgd5luza7fd@M43218.corp.atmel.com>
+From:   Richard Genoud <richard.genoud@gmail.com>
+Cc:     linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        alexandre.belloni@bootlin.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        jslaby@suse.com, Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <211528d5-81b6-46f2-4191-66023d928ae3@sorico.fr>
+Date:   Wed, 5 Sep 2018 15:53:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180905082605.69d9e5a0@shemminger-XPS-13-9360>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180905124341.5n4gadgd5luza7fd@M43218.corp.atmel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -97,31 +56,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 02:26 AM, Stephen Hemminger wrote:
-> On Mon,  3 Sep 2018 13:02:28 -0500
-> Alexandru Gagniuc <mr.nuke.me@gmail.com> wrote:
-> 
->> For certain bandwidth-critical devices (e.g. multi-port network cards)
->> it is useful to know the available bandwidth to the root complex. This
->> information is only available via the system log, which doesn't
->> account for link degradation after probing.
->>
->> With a sysfs attribute, we can computes the bandwidth on-demand, and
->> will detect degraded links.
->>
->> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> 
-> In other places (like /sys/class/net/eth0/speed) only the raw value is printed
-> without suffix.  The general convention in sysfs is that it should be one value
-> per file and in more raw format.  So why not just print it in bits/sec without
-> suffix?
+[added Nicolas back in the thread, he was removed somehow]
 
-I wanted to be consistent with other PCIe exports that use units.For 
-example:
+Hi Ludovic !
 
-/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:05.0/max_link_speed:8 
-GT/s
-/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:05.0/current_link_speed:2.5 
-GT/s
-/sys/bus/pci/slots/182/cur_bus_speed:2.5 GT/s PCIe
-/sys/bus/pci/slots/182/max_bus_speed:8.0 GT/s PCIe
+On 05/09/2018 14:43, Ludovic Desroches wrote:
+> Hi Richard,
+> 
+> On Thu, Aug 09, 2018 at 01:30:35PM +0200, Ludovic Desroches wrote:
+>> Hi Richard,
+>>
+>> On Thu, Aug 09, 2018 at 10:47:17AM +0200, Richard Genoud wrote:
+>>> Hi !
+>>>
+>>> On 07/08/2018 15:00, Ludovic Desroches wrote:
+>>>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>>>
+>>>> When mode is set in atmel_config_iso7816() we backup last RS232 mode
+>>>> for coming back to this mode if requested.
+>>>> Also allow setup of T=0 and T=1 parameter and basic support in set_termios
+>>>> function as well.
+>>>>
+>>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>>> [ludovic.desroches@microchip.com: rebase, add check on fidi ratio, checkpatch fixes]
+>>>> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+>>>> ---
+>>>>  drivers/tty/serial/atmel_serial.c | 211 +++++++++++++++++++++++++++++++++++---
+>>>>  drivers/tty/serial/atmel_serial.h |   6 +-
+>>>>  2 files changed, 201 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+>>>> index 8e4428725848..4a7ec44b0ace 100644
+>>>> --- a/drivers/tty/serial/atmel_serial.c
+>>>> +++ b/drivers/tty/serial/atmel_serial.c
+>>
+>> [...]
+>>
+>>>>  #if defined(CONFIG_OF)
+>>>> +static struct atmel_uart_pdata at91rm9200_pdata = {
+>>>> +	.fidi_min = 1,
+>>>> +	.fidi_max = 2047,
+>>>> +};
+>>>> +
+>>>> +static struct atmel_uart_pdata at91sam9260_pdata = {
+>>>> +	.fidi_min = 1,
+>>>> +	.fidi_max = 2047,
+>>>> +};
+>>>> +
+>>>> +static struct atmel_uart_pdata sama5d3_pdata = {
+>>>> +	.fidi_min = 3,
+>>>> +	.fidi_max = 65535,
+>>> Are you sure this is for sama5d3 ?
+>>> From the datasheets I have, 65535 is for sama5d4/sama5d2
+>>
+>> I checked it and I missed it. What a pity... In fact, it's a bit more
+>> tricky since the min value for d3 is 3 and no longer 1.
+>>
+>>> And also, you'll have to s/atmel,at91sam9260-usart/atmel,sama5d2-usart/g
+>>> in sama5d{2,4}.dtsi
+>>>
+>>
+>> Yes, I planed to send it later but I can add those patches within this
+>> set of patches. 
+>>
+>>> But I wonder if it could be detected via ATMEL_US_VERSION instead ?
+>>>
+>>
+>> I have not checked, I tend to prefer the compatible string for this kind
+>> of thing. But as we already use the version number, I can investigate
+>> this solution if it's the one you prefer.
+>>
+> 
+> ping about this question still in suspend in order to prepare a new version.
+Well, if we use the compatible string for this, we will have to add :
+- atmel,sama5d2-usart
+- atmel,sama5d3-usart
+- (maybe others ?)
+to the already existing :
+- atmel,at91sam9260-usart
+- atmel,at91rm9200-usart
+just for setting different limits on the fidi register.
+IMHO, it seems a bit overkill. Moreover, the ATMEL_US_VERSION has
+already been read, so...
+But if you think adding compatible strings is a better/cleaner solution, just convince me ! :)
