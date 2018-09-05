@@ -2,170 +2,80 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 265B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75BEC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3AFB20869
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:38:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N3266Q5C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3AFB20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E53920857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 10:38:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E53920857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeIEPIP (ORCPT
+        id S1727748AbeIEPIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:08:15 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32841 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbeIEPIO (ORCPT
+        Wed, 5 Sep 2018 11:08:18 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59174 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbeIEPIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:08:14 -0400
-Received: by mail-lj1-f195.google.com with SMTP id s12-v6so5813337ljj.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 03:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yus/3elztDMP/CxTk7PYJp4cOVLf5aJUWd25iTx+v9k=;
-        b=N3266Q5Cs1zWd7H5f4G9shUNak2kGxmuNsK10bs6rpQ6OOd10AYm3tv1VeHnKDdg/j
-         gJ0g3aNgpIjHuOUQaFdHGloVyn5kl5jnfwC7a16Fg6wLwGRyz+XGxn+QPZbI70vbsQgA
-         c6XYxlUQcIFCoPlkQwVwJ6AB9tbb0K0D8icOM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yus/3elztDMP/CxTk7PYJp4cOVLf5aJUWd25iTx+v9k=;
-        b=fABF6m7DuPd0GvlPIdEyhbv3AzHw0PA7hiiInLGdMQFFXvxcBp7TqQINncvaimgTDP
-         xNJK0GzxBEXlrnsyIPdoF3EhA3LoQujRNP9e0EHit3dLk4ttfWtoSXv2bmToOrB4yIMZ
-         7q9cRvWkH2gghVWWCXrs8OUextqW1aPcNtqykJ0UMTn6ERDocIeJw5tWZY5griElo05U
-         q+bNFYKuoHt3ZLkjJDguDzG6ugChbJw4wNRl/kMNQDKTDkrhKJrOtRTsYPX/eINf1Ztj
-         /9fEhWhGwFuESh44P4I5MESiDDj2D+sqt0Mu1/NpxOe62ojAowTrzbVumJhgoF0RIij8
-         chFQ==
-X-Gm-Message-State: APzg51CHtGR4bh9D82XaODQxgKcaefJcFXHhWTUh2Vnkgwjf7B68EzUC
-        sND43D4A++MYkNucpMYgZkTyIyAu8Stm0kduTSpIuw==
-X-Google-Smtp-Source: ANB0VdYfN885F09XxWCu5BPahqIGwP8ddcsaV/jmKXGZw6cdhlBhs5SkhLUnA1LP5r7PqiDy3zhqhBqbaGDTCZ9x8qk=
-X-Received: by 2002:a2e:550b:: with SMTP id j11-v6mr24063447ljb.124.1536143915798;
- Wed, 05 Sep 2018 03:38:35 -0700 (PDT)
+        Wed, 5 Sep 2018 11:08:17 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fxVCg-0000ll-JM; Wed, 05 Sep 2018 12:38:30 +0200
+Date:   Wed, 5 Sep 2018 12:38:30 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Kashyap Desai <kashyap.desai@broadcom.com>
+cc:     Dou Liyang <dou_liyang@163.com>, Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: RE: Affinity managed interrupts vs non-managed interrupts
+In-Reply-To: <c0f779f1d5ef131c39f9397f97d453e8@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1809051235180.1416@nanos.tec.linutronix.de>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com> <615d78004495aebc53807156d04d988c@mail.gmail.com>
+ <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de> <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de> <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com> <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
+ <66256272c020be186becdd7a3f049302@mail.gmail.com> <alpine.DEB.2.21.1809031719460.1383@nanos.tec.linutronix.de> <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com> <f436fa6a-b865-fadb-4f77-44309ff84405@163.com>
+ <c0f779f1d5ef131c39f9397f97d453e8@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a19:9a94:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 03:38:35 -0700 (PDT)
-In-Reply-To: <20180904193202.GB17786@kroah.com>
-References: <20180903165719.499675257@linuxfoundation.org> <20180904193202.GB17786@kroah.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 5 Sep 2018 16:08:35 +0530
-Message-ID: <CA+G9fYun7J_BCZ390oa5tY6jp6faaknczzDBuc7w5v6o8+WWVg@mail.gmail.com>
-Subject: Re: [PATCH 4.18 000/123] 4.18.6-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 September 2018 at 01:02, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Mon, Sep 03, 2018 at 06:55:44PM +0200, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 4.18.6 release.
->> There are 123 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Wed Sep  5 16:56:53 UTC 2018.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4=
-.18.6-rc1.gz
->> or in the git tree and branch at:
->>       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git linux-4.18.y
->> and the diffstat can be found below.
->
-> I have released -rc2 to fix a reported problem:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.18.6-rc2.gz
+On Wed, 5 Sep 2018, Kashyap Desai wrote:
+> > Shall we also spread the managed interrupts on allocation?
+> 
+> I tried your proposed patch. Using patch, It is not assigning effective irq
+> to CPU = 0 , but it pick *one* cpu from 0-71 range.
+> Eventually, effective cpu is always *one* logical cpu. Behavior is
+> different, but impact is still same.
 
-I get to see  4.18.6-rc1 not rc2.
-With the current results on given commit id are looking good.
+Oh well. This was not intended to magically provide the solution you want
+to have. It merily changed the behaviour of the managed interrupt
+selection, which is a valid thing to do independent of the stuff you want
+to see.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+As I said that needs more thought and I really can't tell when I have a
+time slot to look at that.
 
-Summary
-------------------------------------------------------------------------
+Thanks,
 
-kernel: 4.18.6-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.18.y
-git commit: a6a229cf7e7f147eb6d118815a01758749fa6e8d
-git describe: v4.18.5-124-ga6a229cf7e7f
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
-ild/v4.18.5-124-ga6a229cf7e7f
+	tglx
 
 
-No regressions (compared to build v4.18.5)
 
 
-Ran 21181 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* prep-inline
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
-
->
