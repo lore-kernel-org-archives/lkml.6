@@ -2,80 +2,94 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E33FC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4DDC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 329D32064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:03:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329D32064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E03292064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 08:04:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03292064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=BitWizard.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeIEMcC (ORCPT
+        id S1727676AbeIEMdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 08:32:02 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58794 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbeIEMcB (ORCPT
+        Wed, 5 Sep 2018 08:33:46 -0400
+Received: from cust-95-128-94-82.breedbanddelft.nl ([95.128.94.82]:45756 "EHLO
+        cust-95-128-94-82.breedbanddelft.nl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725865AbeIEMdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:32:01 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxSlo-00064p-BU; Wed, 05 Sep 2018 10:02:36 +0200
-Date:   Wed, 5 Sep 2018 10:02:35 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Baoquan He <bhe@redhat.com>, x86@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH 1/3] x86/boot: Add bit fields into xloadflags for 5-level
- kernel checking
-In-Reply-To: <7a1147d7-05af-98fe-3a14-b18ea445c2b5@zytor.com>
-Message-ID: <alpine.DEB.2.21.1809051002020.1416@nanos.tec.linutronix.de>
-References: <20180829141624.13985-1-bhe@redhat.com> <20180829141624.13985-2-bhe@redhat.com> <6ea94875-ae07-6220-eb3e-d3f830cdac03@zytor.com> <20180904034414.GI1740@192.168.1.3> <4546fc39-4982-4c91-c812-0df1e9bc9e20@zytor.com> <20180904052036.GJ1740@192.168.1.3>
- <c4f65956-ad99-84ee-d4bf-044a6f0c5010@zytor.com> <20180904084231.ubyjaqp4xhqcnper@kshutemo-mobl1> <7a1147d7-05af-98fe-3a14-b18ea445c2b5@zytor.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 5 Sep 2018 08:33:46 -0400
+Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
+        id 3B23013FC8F; Wed,  5 Sep 2018 10:04:45 +0200 (CEST)
+Date:   Wed, 5 Sep 2018 10:04:45 +0200
+From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
+To:     Martin Steigerwald <martin@lichtvoll.de>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: POSIX violation by writeback error
+Message-ID: <20180905080444.GD24519@BitWizard.nl>
+References: <CAJDTihz-rFb2SGaxZsQnXGnee_2qW_ynhPe=tZ4yzQBSV_KQ1g@mail.gmail.com>
+ <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+ <20180905070847.GC24519@BitWizard.nl>
+ <3805399.0d8HT3LL4o@merkaba>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3805399.0d8HT3LL4o@merkaba>
+Organization: BitWizard B.V.
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018, H. Peter Anvin wrote:
-
-> On 09/04/18 01:42, Kirill A. Shutemov wrote:
-> > 
-> > Switching between 4- and 5-level paging modes (in either direction)
-> > requires paing disabling. It means the code that does the switching has to
-> > be under 4G otherwise we would lose control.
-> > 
-> > We handle the switching correctly in kernel decompression code, but not on
-> > kexec caller side.
-> > 
-> > XLF_5LEVEL indicates that kernel decompression code can deal with
-> > switching between paging modes and it's safe to jump there in 5-level
-> > paging mode.
-> > 
-> > As an alternative we can change kexec to switch to 4-level paging mode
-> > before starting the new kernel. Not sure how hard it will be.
-> > 
+On Wed, Sep 05, 2018 at 09:39:58AM +0200, Martin Steigerwald wrote:
+> Rogier Wolff - 05.09.18, 09:08:
+> > So when a mail queuer puts mail the mailq files and the mail processor
+> > can get them out of there intact, nobody is going to notice.  (I know
+> > mail queuers should call fsync and report errors when that fails, but
+> > there are bound to be applications where calling fsync is not
+> > appropriate (*))
 > 
-> Have a flag saying entering in 5-level mode is fine.  However, you really
-> should support returning to 4-level mode in kexec.  It is *much* easier to do
-> on the caller side as you have total control of memory allocation there.
+> AFAIK at least Postfix MDA only reports mail as being accepted over SMTP 
+> once fsync() on the mail file completed successfully. And I´d expect 
+> every sensible MDA to do this. I don´t know how Dovecot MDA which I 
+> currently use for sieve support does this tough.
 
-Works for a regular kexec, but not for starting a crash kernel....
+Yes. That's why I added the remark that mailers will call fsync and know
+about it on the write side. I encountered a situation in the last few
+days that when a developer runs into this while developing, would have
+caused him to write: 
+  /* Calling this fsync causes unacceptable performance */
+  // fsync (fd); 
 
-Thanks,
+I know of an application somewhere that does realtime-gathering of
+call-records (number X called Y for Z seconds). They come in from a
+variety of sources, get de-duplicated standardized and written to
+files. Then different output modules push the data to the different
+consumers within the company. Billing among them. 
 
-	tglx
+Now getting old data there would be pretty bad. And calling fsync
+all the time might have performance issues.... 
+
+That's the situation where "old data is really bad". 
+
+But when apt-get upgrade replaces your /bin/sh and gets a write error
+returning error on subsequent reads is really bad. 
+
+It is more difficult than you think. 
+
+	Roger. 
+
+-- 
+** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
+**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
+*-- BitWizard writes Linux device drivers for any device you may have! --*
+The plan was simple, like my brother-in-law Phil. But unlike
+Phil, this plan just might work.
