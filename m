@@ -2,130 +2,219 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AC9C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16FCC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5738720857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 555DC2075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:46:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FrNtm902"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5738720857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JplN6/HV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 555DC2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeIEKOS (ORCPT
+        id S1726447AbeIEKPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:14:18 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:40408 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbeIEKOS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:14:18 -0400
-Received: by mail-yb1-f194.google.com with SMTP id t71-v6so2236012ybi.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 22:45:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TgQyjPv/UmUM12f+rlO6RT5g3LA/kxu/v8HXfz4yg+8=;
-        b=FrNtm902tE4M8COQEhMdNs5XKXyHK27Q6P8+t9Xx4MMKUY4kyoouxdc5AqPf/zePNk
-         HFL6WhEOjpblPVHHUADRdLSXg00jld+CtqG7D3GlfHMZsFv5OH6dpyJ5rJyrgSRaq+O+
-         70AJ6TUyL8118StEybY1AxpqqRFue1Xamd894=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TgQyjPv/UmUM12f+rlO6RT5g3LA/kxu/v8HXfz4yg+8=;
-        b=bGCP+TqG8P/529r2g0LVjckW2DnrKnIcPCpFlKlyikdQqtulo1SU63Ilx/6WHGLvsI
-         vgZ21ZLs2rx/GYqOnSTWCYdzSeeVFqp0TIBWwLkg+4bgeklwfxOFMb8MGUnemDBlQiga
-         6xgu9EB/PYLaLOi9zYKK4lbVk/U5M1FG44k2yjik5+8KnL9UsJn0MpLB+bO5/54bHQXw
-         eEK5LW0J4ChMTN78r9VI9TvmGHs0NN+IfyleehY2WG3LxguhbjIFuJP2uJImiHD6PnSS
-         iJUtYH/eAwFctJsLeTdtlvba/mm3GxczG9ltDDraWMEPw+fzEgwMkGw11uv+Ajkv+7jb
-         g3tA==
-X-Gm-Message-State: APzg51BqOUmW5NwMVE7/Si0VdzT6/64Ve5c6XohDVJfVu/2EAjD3sTOc
-        /rAZNHsWE2+shlshkiTiQmy2Et39INY=
-X-Google-Smtp-Source: ANB0Vdb6Zt/yr6tZ4SjkdiabbRoqm6GYppw/pWGneDMb7jrbRux2lRXjKI1UzEun66k1WIdHFdFszw==
-X-Received: by 2002:a5b:811:: with SMTP id x17-v6mr19858738ybp.382.1536126348826;
-        Tue, 04 Sep 2018 22:45:48 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id y144-v6sm387234ywy.79.2018.09.04.22.45.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 22:45:47 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id f145-v6so2238942ybg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 22:45:47 -0700 (PDT)
-X-Received: by 2002:a25:18c2:: with SMTP id 185-v6mr20005408yby.204.1536126346844;
- Tue, 04 Sep 2018 22:45:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
- <CAPBb6MXT4jiQXfgzq8fpXSQTsdcF0UZLB=RQ6itH5-JZx-27FA@mail.gmail.com>
-In-Reply-To: <CAPBb6MXT4jiQXfgzq8fpXSQTsdcF0UZLB=RQ6itH5-JZx-27FA@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 5 Sep 2018 14:45:35 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CALOiC1-8XSrnZxevBmHa=tTM8t37joGz6Fqu_GqgeAg@mail.gmail.com>
-Message-ID: <CAAFQd5CALOiC1-8XSrnZxevBmHa=tTM8t37joGz6Fqu_GqgeAg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Wed, 5 Sep 2018 06:15:23 -0400
+Received: from m12-14.163.com ([220.181.12.14]:55469 "EHLO m12-14.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbeIEKPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 06:15:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=+G/6g
+        aR2O8MJaBPRYUEBCCyUv0XxIMvwTKgxgdi9abo=; b=JplN6/HVMPyHbYCFcZkxd
+        duTTvaOir6u1LZK0CfXJOT51AzkrpDTErRQIFBWCH0SDsPLG/s8FbaLJIvU3hh0q
+        pbQVBYehGCv3cfxxsxFdXMTSE9NMRi4eI4YC0slTJvU3Jvnb8RyAHLCkNdZKn51j
+        1M15Y8kCNfI6VBskUI9ozw=
+Received: from localhost.localdomain (unknown [49.65.59.196])
+        by smtp10 (Coremail) with SMTP id DsCowABnptWpbY9bPrdaPw--.56241S2;
+        Wed, 05 Sep 2018 13:46:17 +0800 (CST)
+Subject: Re: Affinity managed interrupts vs non-managed interrupts
+To:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Pawel Osciak <posciak@chromium.org>, kamil@wypas.org,
-        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
-        nicolas@ndufresne.ca,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+ <20180829084618.GA24765@ming.t460p>
+ <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
+ <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
+ <615d78004495aebc53807156d04d988c@mail.gmail.com>
+ <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
+ <486f94a563d63c4779498fe8829a546c@mail.gmail.com>
+ <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
+ <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com>
+ <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
+ <66256272c020be186becdd7a3f049302@mail.gmail.com>
+ <alpine.DEB.2.21.1809031719460.1383@nanos.tec.linutronix.de>
+ <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com>
+From:   Dou Liyang <dou_liyang@163.com>
+Message-ID: <f436fa6a-b865-fadb-4f77-44309ff84405@163.com>
+Date:   Wed, 5 Sep 2018 13:46:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: DsCowABnptWpbY9bPrdaPw--.56241S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZF45XF1fZFyUArW7KF43trb_yoWrury8pF
+        Z3Jr17uFWDJ3Wqgw17AayDAFZIy3s7Ar13t3s5u3sa9ryftr1IgF1qqFykZFyUArWrCayU
+        CrZ0qryrZa4UJaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bUgArUUUUU=
+X-Originating-IP: [49.65.59.196]
+X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiLgm4olSIcI41IQAAsL
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 5:27 PM Alexandre Courbot <acourbot@chromium.org> wrote:
->
-> Hi Tomasz, just a few thoughts I came across while writing the
-> stateless codec document:
->
-> On Tue, Jul 24, 2018 at 11:06 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> [snip]
-> > +****************************************
-> > +Memory-to-memory Video Decoder Interface
-> > +****************************************
->
-> Since we have a m2m stateless decoder interface, can we call this the
-> m2m video *stateful* decoder interface? :)
+Hi Thomas, Kashyap,
 
-I guess it could make sense indeed. Let's wait for some other opinions, if any.
+At 09/04/2018 06:29 PM, Kashyap Desai wrote:
+>>> I am using " for-4.19/block " and this particular patch "a0c9259
+>>> irq/matrix: Spread interrupts on allocation" is included.
+>>
 
->
-> > +Conventions and notation used in this document
-> > +==============================================
-> [snip]
-> > +Glossary
-> > +========
->
-> I think these sections apply to both stateless and stateful. How about
-> moving then into dev-codec.rst and mentioning that they apply to the
-> two following sections?
+IMO, this patch is just used for non-managed interrupts.
 
-Or maybe we could put them into separate rst files and source them at
-the top of each interface documentation? Personally, I'm okay with
-either. On a related note, I'd love to see some kind of glossary
-lookup on mouse hoover, so that I don't have to scroll back and forth.
-:)
+>> So if all 16 have their effective affinity set to CPU0 then that's
+> strange
 
-Best regards,
-Tomasz
+But, all these 16 are managed interrupts, and will be assigned vectors
+by assign_managed_vector():
+{
+     cpumask_and(vector_searchmask, vector_searchmask, affmsk);
+     cpu = cpumask_first(vector_searchmask);
+
+     ...
+     vector = irq_matrix_alloc_managed(vector_matrix, cpu);
+     ...
+}
+
+Where we always used the *first* cpu in the vector_searchmask(0-71), not
+the suitable one. So I guess this situation happened.
+
+Shall we also spread the managed interrupts on allocation?
+
+Thanks,
+     dou
+-----------------8<----------------------------------------
+
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index 9f148e3d45b4..57dc05691f44 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -314,13 +314,12 @@ assign_managed_vector(struct irq_data *irqd, const 
+struct cpumask *dest)
+         int vector, cpu;
+
+         cpumask_and(vector_searchmask, vector_searchmask, affmsk);
+-       cpu = cpumask_first(vector_searchmask);
+-       if (cpu >= nr_cpu_ids)
+-               return -EINVAL;
++
+         /* set_affinity might call here for nothing */
+         if (apicd->vector && cpumask_test_cpu(apicd->cpu, 
+vector_searchmask))
+                 return 0;
+-       vector = irq_matrix_alloc_managed(vector_matrix, cpu);
++
++       vector = irq_matrix_alloc_managed(vector_matrix, 
+vector_searchmask, &cpu);
+         trace_vector_alloc_managed(irqd->irq, vector, vector);
+         if (vector < 0)
+                 return vector;
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 201de12a9957..36fdeff5043a 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -1151,7 +1151,8 @@ void irq_matrix_offline(struct irq_matrix *m);
+  void irq_matrix_assign_system(struct irq_matrix *m, unsigned int bit, 
+bool replace);
+  int irq_matrix_reserve_managed(struct irq_matrix *m, const struct 
+cpumask *msk);
+  void irq_matrix_remove_managed(struct irq_matrix *m, const struct 
+cpumask *msk);
+-int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu);
++int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask 
+*msk,
++                                       unsigned int *mapped_cpu);
+  void irq_matrix_reserve(struct irq_matrix *m);
+  void irq_matrix_remove_reserved(struct irq_matrix *m);
+  int irq_matrix_alloc(struct irq_matrix *m, const struct cpumask *msk,
+diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
+index 5092494bf261..d9e4e0a385fa 100644
+--- a/kernel/irq/matrix.c
++++ b/kernel/irq/matrix.c
+@@ -239,21 +239,40 @@ void irq_matrix_remove_managed(struct irq_matrix 
+*m, const struct cpumask *msk)
+   * @m:         Matrix pointer
+   * @cpu:       On which CPU the interrupt should be allocated
+   */
+-int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu)
++int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask 
+*msk,
++                                       unsigned int *mapped_cpu)
+  {
+-       struct cpumap *cm = per_cpu_ptr(m->maps, cpu);
+-       unsigned int bit, end = m->alloc_end;
+-
+-       /* Get managed bit which are not allocated */
+-       bitmap_andnot(m->scratch_map, cm->managed_map, cm->alloc_map, end);
+-       bit = find_first_bit(m->scratch_map, end);
+-       if (bit >= end)
+-               return -ENOSPC;
+-       set_bit(bit, cm->alloc_map);
+-       cm->allocated++;
+-       m->total_allocated++;
+-       trace_irq_matrix_alloc_managed(bit, cpu, m, cm);
+-       return bit;
++       unsigned int cpu, best_cpu, maxavl = 0;
++       unsigned int bit, end;
++       struct cpumap *cm;
++
++       best_cpu = UINT_MAX;
++       for_each_cpu(cpu, msk) {
++               cm = per_cpu_ptr(m->maps, cpu);
++
++               if (!cm->online || cm->available <= maxavl)
++                       continue;
++
++               best_cpu = cpu;
++               maxavl = cm->available;
++       }
++
++       if (maxavl) {
++               cm = per_cpu_ptr(m->maps, best_cpu);
++               end = m->alloc_end;
++               /* Get managed bit which are not allocated */
++               bitmap_andnot(m->scratch_map, cm->managed_map, 
+cm->alloc_map, end);
++               bit = find_first_bit(m->scratch_map, end);
++               if (bit >= end)
++                       return -ENOSPC;
++               set_bit(bit, cm->alloc_map);
++               cm->allocated++;
++               m->total_allocated++;
++               *mapped_cpu = best_cpu;
++               trace_irq_matrix_alloc_managed(bit, cpu, m, cm);
++               return bit;
++       }
++       return -ENOSPC;
+  }
+
+  /**
+
