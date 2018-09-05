@@ -2,159 +2,132 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E21BC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2989FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F22582082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:50:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IGnNzq0z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F22582082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id D27FF2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 00:51:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27FF2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbeIEFSW (ORCPT
+        id S1726335AbeIEFTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 01:18:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59226 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbeIEFSW (ORCPT
+        Wed, 5 Sep 2018 01:19:22 -0400
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:55472 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725825AbeIEFTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 01:18:22 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w850oKMo177468;
-        Wed, 5 Sep 2018 00:50:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=tf4HsFc1+QQncoGJ98uUp0Se6wuMhX+N8BV2Thy0lBs=;
- b=IGnNzq0zL+h+3mwnb3euR3G2UlxonKxA2Bmgu7llNaIh5hqD3rNn+6LpWFV0t7Q/XioZ
- U0LNCCWBT5GgUBbjgb7kTD63LAJyWXyxWxe7pRvYYl9nyQ8OqJWvFsJLFCQSXqVtH/68
- 1lOmys9UJrd47GluOP1EMInilFtt63H7lrGoH2K80cIDYuUJq85R5fgDPcpqHC/eunmN
- yfrxh5c4FwkvFf7ZvDvFttHD7yzQnj/SBbuhZK2bs6N9U0hgDp2RuUKUK9liN2dBqWp1
- CY142NrGFROjg/EKBbqueGoHuP4Tocg8/yNxKwvxX4fmFcXODx+eGQATgxQ651XcBwmt Lw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2m7j6tgfwd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Sep 2018 00:50:32 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w850oV6C022800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Sep 2018 00:50:31 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w850oVkR020541;
-        Wed, 5 Sep 2018 00:50:31 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Sep 2018 17:50:30 -0700
-Subject: Re: [RFC PATCH 1/2] pipe: introduce busy wait for pipe
-To:     Steven Sistare <steven.sistare@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, dhaval.giani@oracle.com
-References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
- <20180830202458.32579-2-subhra.mazumdar@oracle.com>
- <db00b844-055e-2024-2334-8e4b0e0ac5c5@oracle.com>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <575e7d13-98e2-b5bf-e241-3f72a28b8c8a@oracle.com>
-Date:   Tue, 4 Sep 2018 17:50:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Sep 2018 01:19:22 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 05 Sep 2018 10:21:44 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1fxM2o-0002y1-1s; Wed, 05 Sep 2018 10:51:42 +1000
+Date:   Wed, 5 Sep 2018 10:51:42 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Vito Caputo <vcaputo@pengaru.com>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Rogier Wolff <R.E.Wolff@BitWizard.nl>,
+        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: POSIX violation by writeback error
+Message-ID: <20180905005141.GD27618@dastard>
+References: <20180904075347.GH11854@BitWizard.nl>
+ <CAJDTihzqn3whQ47uUOxGYk4Je4S10ehNEQCtfb=j--iCsdDqgQ@mail.gmail.com>
+ <82ffc434137c2ca47a8edefbe7007f5cbecd1cca.camel@redhat.com>
+ <CAJDTihw7T8WLme09W8VHCRfiALq4fxg1ZsywcSjn6hXsAw5wRw@mail.gmail.com>
+ <cd137e88c9e882200c08c7336aa7b5a1c84a7ba3.camel@redhat.com>
+ <20180904161203.GD17478@fieldses.org>
+ <20180904162348.GN17123@BitWizard.nl>
+ <20180904185411.GA22166@fieldses.org>
+ <a9d586a8c520e52bad2396b93f8d5cb8a9fd2071.camel@redhat.com>
+ <20180904203534.yumaest6v5p6izln@shells.gnugeneration.com>
 MIME-Version: 1.0
-In-Reply-To: <db00b844-055e-2024-2334-8e4b0e0ac5c5@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9006 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809050007
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180904203534.yumaest6v5p6izln@shells.gnugeneration.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 04, 2018 at 01:35:34PM -0700, Vito Caputo wrote:
+> On Tue, Sep 04, 2018 at 04:18:18PM -0400, Jeff Layton wrote:
+> > On Tue, 2018-09-04 at 14:54 -0400, J. Bruce Fields wrote:
+> > > On Tue, Sep 04, 2018 at 06:23:48PM +0200, Rogier Wolff wrote:
+> > > > On Tue, Sep 04, 2018 at 12:12:03PM -0400, J. Bruce Fields wrote:
+> > > > > Well, I think the point was that in the above examples you'd prefer that
+> > > > > the read just fail--no need to keep the data.  A bit marking the file
+> > > > > (or even the entire filesystem) unreadable would satisfy posix, I guess.
+> > > > > Whether that's practical, I don't know.
+> > > > 
+> > > > When you would do it like that (mark the whole filesystem as "in
+> > > > error") things go from bad to worse even faster. The Linux kernel 
+> > > > tries to keep the system up even in the face of errors. 
+> > > > 
+> > > > With that suggestion, having one application run into a writeback
+> > > > error would effectively crash the whole system because the filesystem
+> > > > may be the root filesystem and stuff like "sshd" that you need to
+> > > > diagnose the problem needs to be read from the disk.... 
+> > > 
+> > > Well, the absolutist position on posix compliance here would be that a
+> > > crash is still preferable to returning the wrong data.  And for the
+> > > cases 焦晓冬 gives, that sounds right?  Maybe it's the wrong balance in
+> > > general, I don't know.  And we do already have filesystems with
+> > > panic-on-error options, so if they aren't used maybe then maybe users
+> > > have already voted against that level of strictness.
+> > > 
+> > 
+> > Yeah, idk. The problem here is that this is squarely in the domain of
+> > implementation defined behavior. I do think that the current "policy"
+> > (if you call it that) of what to do after a wb error is weird and wrong.
+> > What we probably ought to do is start considering how we'd like it to
+> > behave.
+> > 
+> > How about something like this?
+> > 
+> > Mark the pages as "uncleanable" after a writeback error. We'll satisfy
+> > reads from the cached data until someone calls fsync, at which point
+> > we'd return the error and invalidate the uncleanable pages.
+> > 
+> > If no one calls fsync and scrapes the error, we'll hold on to it for as
+> > long as we can (or up to some predefined limit) and then after that
+> > we'll invalidate the uncleanable pages and start returning errors on
+> > reads. If someone eventually calls fsync afterward, we can return to
+> > normal operation.
+> > 
+> > As always though...what about mmap? Would we need to SIGBUS at the point
+> > where we'd start returning errors on read()?
+> > 
+> > Would that approximate the current behavior enough and make sense?
+> > Implementing it all sounds non-trivial though...
+> > 
+> 
+> Here's a crazy and potentially stupid idea:
+> 
+> Implement a new class of swap space for backing dirty pages which fail
+> to write back.  Pages in this space survive reboots, essentially backing
+> the implicit commitment POSIX establishes in the face of asynchronous
+> writeback errors.  Rather than evicting these pages as clean, they are
+> swapped out to the persistent swap.
 
+And when that "swap" area gets write errors, too? What then? We're
+straight back to the same "what the hell do we do with the error"
+problem.
 
-On 08/31/2018 09:09 AM, Steven Sistare wrote:
-> On 8/30/2018 4:24 PM, subhra mazumdar wrote:
->> Introduce pipe_ll_usec field for pipes that indicates the amount of micro
->> seconds a thread should spin if pipe is empty or full before sleeping. This
->> is similar to network sockets. Workloads like hackbench in pipe mode
->> benefits significantly from this by avoiding the sleep and wakeup overhead.
->> Other similar usecases can benefit. pipe_wait_flag is used to signal any
->> thread busy waiting. pipe_busy_loop_timeout checks if spin time is over.
->>
->> Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
->> ---
->>   include/linux/pipe_fs_i.h | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>
->> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
->> index e7497c9..fdfd2a2 100644
->> --- a/include/linux/pipe_fs_i.h
->> +++ b/include/linux/pipe_fs_i.h
->> @@ -1,6 +1,8 @@
->>   #ifndef _LINUX_PIPE_FS_I_H
->>   #define _LINUX_PIPE_FS_I_H
->>   
->> +#include <linux/sched/clock.h>
->> +
->>   #define PIPE_DEF_BUFFERS	16
->>   
->>   #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
->> @@ -54,6 +56,8 @@ struct pipe_inode_info {
->>   	unsigned int waiting_writers;
->>   	unsigned int r_counter;
->>   	unsigned int w_counter;
->> +	unsigned int pipe_ll_usec;
->> +	unsigned long pipe_wait_flag;
->>   	struct page *tmp_page;
->>   	struct fasync_struct *fasync_readers;
->>   	struct fasync_struct *fasync_writers;
->> @@ -157,6 +161,21 @@ static inline int pipe_buf_steal(struct pipe_inode_info *pipe,
->>   	return buf->ops->steal(pipe, buf);
->>   }
->>   
->> +static inline unsigned long pipe_busy_loop_current_time(void)
->> +{
->> +	return (unsigned long)(local_clock() >> 10);
-> Why ">> 10" ? local_lock() has nanosec units, and you compare to the tunable
-> pipe_llc_sec which has microsec units.  Should be ">> 3".  Better yet, redefine
-> the tunable to have nanosec units.  I suspect you will need very large values
-> of the tunable to show similar results.
-It's 2^10. I don't think using nanosec units is necessary. It is unlikely
-data will be read or written in nano seconds. sk_busy_loop_timeout for
-sockets uses micro seconds too.
->
-> Also, since this type of optimization consumes CPU extra cycles that could
-> be used by other tasks, show the overall CPU utilization before and after
-> the optimization, such as by using "time hackbench ...".
-OK.
+Adding more turtles doesn't help solve this issue.
 
-Thanks,
-Subhra
->
-> - Steve
->
->> +}
->> +
->> +static inline bool pipe_busy_loop_timeout(struct pipe_inode_info *pipe,
->> +					  unsigned long start_time)
->> +{
->> +	unsigned long bp_usec = READ_ONCE(pipe->pipe_ll_usec);
->> +	unsigned long end_time = start_time + bp_usec;
->> +	unsigned long now = pipe_busy_loop_current_time();
->> +
->> +	return time_after(now, end_time);
->> +}
->> +
->>   /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
->>      memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
->>   #define PIPE_SIZE		PAGE_SIZE
->>
+Cheers,
 
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
