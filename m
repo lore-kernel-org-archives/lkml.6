@@ -3,174 +3,298 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8C1C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE95C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E33A2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E33A2073D
+	by mail.kernel.org (Postfix) with ESMTP id 8FE1F2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE1F2077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeIFC02 (ORCPT
+        id S1727764AbeIFC0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:26:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44196 "EHLO mx1.redhat.com"
+        Wed, 5 Sep 2018 22:26:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44214 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727593AbeIFC02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:26:28 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1727593AbeIFC0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:26:35 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5291F40216F3;
-        Wed,  5 Sep 2018 21:54:19 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id D39A140216F3;
+        Wed,  5 Sep 2018 21:54:25 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 256162027EA0;
-        Wed,  5 Sep 2018 21:54:18 +0000 (UTC)
-Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F1AC5112D16C;
+        Wed,  5 Sep 2018 21:54:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/22] KEYS: Provide key type operations for asymmetric key
+ ops
 From:   David Howells <dhowells@redhat.com>
 To:     jmorris@namei.org
 Cc:     denkenz@gmail.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 22:54:17 +0100
-Message-ID: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+Date:   Wed, 05 Sep 2018 22:54:24 +0100
+Message-ID: <153618446448.7946.17891209527565509218.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:19 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:19 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Provide five new operations in the key_type struct that can be used to
+provide access to asymmetric key operations.  These will be implemented for
+the asymmetric key type in a later patch and may refer to a key retained in
+RAM by the kernel or a key retained in crypto hardware.
 
-Hi James,
+     int (*asym_query)(const struct kernel_pkey_params *params,
+		       struct kernel_pkey_query *info);
+     int (*asym_eds_op)(struct kernel_pkey_params *params,
+			const void *in, void *out);
+     int (*asym_verify_signature)(struct kernel_pkey_params *params,
+			          const void *in, const void *in2);
 
-Here's a set of patches that does the following, if you could pull it please:
+Since encrypt, decrypt and sign are identical in their interfaces, they're
+rolled together in the asym_eds_op() operation and there's an operation ID
+in the params argument to distinguish them.
 
- (1) Adds keyctl() functions that permit an asymmetric-type key to be used
-     to encrypt, decrypt, sign and verify a small piece of data (typically
-     a session key or a hash) using the public and/or private key held in
-     the kernel.  A query function is also provided.
+Verify is different in that we supply the data and the signature instead
+and get an error value (or 0) as the only result on the expectation that
+this may well be how a hardware crypto device may work.
 
- (2) Adds an asymmetric-key parser for PKCS#8 to allow RSA private keys to
-     be passed to the kernel.  Currently only DER-encoded and unencrypted
-     PKCS#8 is supported.
-
- (3) Adds an asymmetric-key parser for TPM-wrapped key blobs.  The parser
-     gets the TPM to unpack the blob and then attaches it to a key from
-     which it can be used.  Currently only TPM-1.2 is supported.
-
-Example usage for a PKCS#8 blob:
-
-	j=`openssl pkcs8 -in private_key.pem -topk8 -nocrypt -outform DER | \
-	    keyctl padd asymmetric foo @s`
-
-Example usage for a TPM wrapped blob:
-
-	openssl genrsa -out /tmp/privkey.foo.pem 2048
-	create_tpm_key -s 2048 -w /tmp/privkey.foo.pem /tmp/privkey.foo.tpm
-	j=`openssl asn1parse -inform pem -in /tmp/privkey.foo.tpm -noout |
-	    keyctl padd asymmetric foo @s`
-
-See http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#rfc.section.4.4
-
-These keys can then be used thusly:
-
-	echo -n abcdefghijklmnopqrst >/tmp/data
-	keyctl pkey_encrypt $j /tmp/data enc=pkcs1 >/tmp/enc
-	keyctl pkey_decrypt $j /tmp/enc enc=pkcs1 >/tmp/dec
-	cmp /tmp/data /tmp/dec
-	keyctl pkey_sign $j /tmp/data enc=pkcs1 hash=sha1 >/tmp/sig
-	keyctl pkey_verify $j /tmp/data /tmp/sig enc=pkcs1 hash=sha1
-
-
-The kernel patches can be found tagged here:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tag/?h=keys-asym-keyctl-20180905
-
-and also on a branch here:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-asym-keyctl
-
-The keyutils changes needed can be found here:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/keyutils.git/log/?h=next
-
-David
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (8):
-      KEYS: Provide key type operations for asymmetric key ops
-      KEYS: Provide keyctls to drive the new key type ops for asymmetric keys
-      KEYS: Provide missing asymmetric key subops for new key type ops
-      KEYS: Make the X.509 and PKCS7 parsers supply the sig encoding type
-      KEYS: Provide software public key query function
-      KEYS: Allow the public_key struct to hold a private key
-      KEYS: Implement encrypt, decrypt and sign for software asymmetric key
-      KEYS: Implement PKCS#8 RSA Private Key parser
 
-Denis Kenzior (14):
-      crypto: rsa-pkcs1pad: Allow hash to be optional
-      KEYS: asym_tpm: add skeleton for asym_tpm
-      KEYS: asym_tpm: extract key size & public key
-      KEYS: Add parser for TPM-based keys
-      KEYS: asym_tpm: Implement pkey_query
-      KEYS: asym_tpm: Implement encryption operation
-      KEYS: trusted: Expose common functionality
-      KEYS: Move trusted.h to include/keys
-      KEYS: asym_tpm: Add loadkey2 and flushspecific
-      KEYS: asym_tpm: Implement tpm_unbind
-      KEYS: asym_tpm: Implement the decrypt operation
-      KEYS: asym_tpm: Implement signature verification
-      KEYS: asym_tpm: Implement tpm_sign
-      KEYS: asym_tpm: Add support for the sign operation
-
-
- Documentation/crypto/asymmetric-keys.txt  |   26 +
- Documentation/security/keys/core.rst      |  217 ++++++
- crypto/asymmetric_keys/Kconfig            |   31 +
- crypto/asymmetric_keys/Makefile           |   25 +
- crypto/asymmetric_keys/asym_tpm.c         |  988 +++++++++++++++++++++++++++++
- crypto/asymmetric_keys/asymmetric_keys.h  |    3 
- crypto/asymmetric_keys/asymmetric_type.c  |   43 +
- crypto/asymmetric_keys/pkcs7_parser.c     |    1 
- crypto/asymmetric_keys/pkcs8.asn1         |   24 +
- crypto/asymmetric_keys/pkcs8_parser.c     |  184 +++++
- crypto/asymmetric_keys/public_key.c       |  191 +++++-
- crypto/asymmetric_keys/signature.c        |   95 +++
- crypto/asymmetric_keys/tpm.asn1           |    5 
- crypto/asymmetric_keys/tpm_parser.c       |  102 +++
- crypto/asymmetric_keys/x509_cert_parser.c |   21 -
- crypto/rsa-pkcs1pad.c                     |   59 +-
- include/crypto/asym_tpm_subtype.h         |   19 +
- include/crypto/public_key.h               |   14 
- include/keys/asymmetric-subtype.h         |    9 
- include/keys/trusted.h                    |  136 ++++
- include/linux/key-type.h                  |   11 
- include/linux/keyctl.h                    |   46 +
- include/uapi/linux/keyctl.h               |   30 +
- security/keys/Makefile                    |    1 
- security/keys/compat.c                    |   18 +
- security/keys/internal.h                  |   39 +
- security/keys/keyctl.c                    |   24 +
- security/keys/keyctl_pkey.c               |  323 +++++++++
- security/keys/trusted.c                   |   14 
- security/keys/trusted.h                   |  124 ----
- 30 files changed, 2639 insertions(+), 184 deletions(-)
- create mode 100644 crypto/asymmetric_keys/asym_tpm.c
- create mode 100644 crypto/asymmetric_keys/pkcs8.asn1
- create mode 100644 crypto/asymmetric_keys/pkcs8_parser.c
- create mode 100644 crypto/asymmetric_keys/tpm.asn1
- create mode 100644 crypto/asymmetric_keys/tpm_parser.c
- create mode 100644 include/crypto/asym_tpm_subtype.h
- create mode 100644 include/keys/trusted.h
+ Documentation/security/keys/core.rst |  106 ++++++++++++++++++++++++++++++++++
+ include/linux/key-type.h             |   11 ++++
+ include/linux/keyctl.h               |   46 +++++++++++++++
+ include/uapi/linux/keyctl.h          |    5 ++
+ 4 files changed, 168 insertions(+)
  create mode 100644 include/linux/keyctl.h
- create mode 100644 security/keys/keyctl_pkey.c
- delete mode 100644 security/keys/trusted.h
+
+diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
+index 9ce7256c6edb..2cdccde6c585 100644
+--- a/Documentation/security/keys/core.rst
++++ b/Documentation/security/keys/core.rst
+@@ -1483,6 +1483,112 @@ The structure has a number of fields, some of which are mandatory:
+      attempted key link operation. If there is no match, -EINVAL is returned.
+ 
+ 
++  *  ``int (*asym_eds_op)(struct kernel_pkey_params *params,
++			  const void *in, void *out);``
++     ``int (*asym_verify_signature)(struct kernel_pkey_params *params,
++				    const void *in, const void *in2);``
++
++     These methods are optional.  If provided the first allows a key to be
++     used to encrypt, decrypt or sign a blob of data, and the second allows a
++     key to verify a signature.
++
++     In all cases, the following information is provided in the params block::
++
++	struct kernel_pkey_params {
++		struct key	*key;
++		const char	*encoding;
++		const char	*hash_algo;
++		char		*info;
++		__u32		in_len;
++		union {
++			__u32	out_len;
++			__u32	in2_len;
++		};
++		enum kernel_pkey_operation op : 8;
++	};
++
++     This includes the key to be used; an optional string indicating the
++     encoding to use (for instance, "pkcs1" may be used with an RSA key to
++     indicate RSASSA-PKCS1-v1.5 or RSAES-PKCS1-v1.5 encoding); the name of the
++     hash algorithm used to generate the data for a signature (if appropriate);
++     the sizes of the input and output (or second input) buffers; and the ID of
++     the operation to be performed.
++
++     For a given operation ID, the input and output buffers are used as
++     follows::
++
++	Operation ID		in,in_len	out,out_len	in2,in2_len
++	=======================	===============	===============	===============
++	kernel_pkey_encrypt	Raw data	Encrypted data	-
++	kernel_pkey_decrypt	Encrypted data	Raw data	-
++	kernel_pkey_sign	Raw data	Signature	-
++	kernel_pkey_verify	Raw data	-		Signature
++
++     asym_eds_op() deals with encryption, decryption and signature creation as
++     specified by params->op.  Note that params->op is also set for
++     asym_verify_signature().
++
++     Encrypting and signature creation both take raw data in the input buffer
++     and return the encrypted result in the output buffer.  Padding may have
++     been added if an encoding was set.  In the case of signature creation,
++     depending on the encoding, the padding created may need to indicate the
++     digest algorithm - the name of which should be supplied in hash_algo.
++
++     Decryption takes encrypted data in the input buffer and returns the raw
++     data in the output buffer.  Padding will get checked and stripped off if
++     an encoding was set.
++
++     Verification takes raw data in the input buffer and the signature in the
++     second input buffer and checks that the one matches the other.  Padding
++     will be validated.  Depending on the encoding, the digest algorithm used
++     to generate the raw data may need to be indicated in hash_algo.
++
++     If successful, asym_eds_op() should return the number of bytes written
++     into the output buffer.  asym_verify_signature() should return 0.
++
++     A variety of errors may be returned, including EOPNOTSUPP if the operation
++     is not supported; EKEYREJECTED if verification fails; ENOPKG if the
++     required crypto isn't available.
++
++
++  *  ``int (*asym_query)(const struct kernel_pkey_params *params,
++			 struct kernel_pkey_query *info);``
++
++     This method is optional.  If provided it allows information about the
++     public or asymmetric key held in the key to be determined.
++
++     The parameter block is as for asym_eds_op() and co. but in_len and out_len
++     are unused.  The encoding and hash_algo fields should be used to reduce
++     the returned buffer/data sizes as appropriate.
++
++     If successful, the following information is filled in::
++
++	struct kernel_pkey_query {
++		__u32		supported_ops;
++		__u32		key_size;
++		__u16		max_data_size;
++		__u16		max_sig_size;
++		__u16		max_enc_size;
++		__u16		max_dec_size;
++	};
++
++     The supported_ops field will contain a bitmask indicating what operations
++     are supported by the key, including encryption of a blob, decryption of a
++     blob, signing a blob and verifying the signature on a blob.  The following
++     constants are defined for this::
++
++	KEYCTL_SUPPORTS_{ENCRYPT,DECRYPT,SIGN,VERIFY}
++
++     The key_size field is the size of the key in bits.  max_data_size and
++     max_sig_size are the maximum raw data and signature sizes for creation and
++     verification of a signature; max_enc_size and max_dec_size are the maximum
++     raw data and signature sizes for encryption and decryption.  The
++     max_*_size fields are measured in bytes.
++
++     If successful, 0 will be returned.  If the key doesn't support this,
++     EOPNOTSUPP will be returned.
++
++
+ Request-Key Callback Service
+ ============================
+ 
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index 05d8fb5a06c4..bc9af551fc83 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -17,6 +17,9 @@
+ 
+ #ifdef CONFIG_KEYS
+ 
++struct kernel_pkey_query;
++struct kernel_pkey_params;
++
+ /*
+  * key under-construction record
+  * - passed to the request_key actor if supplied
+@@ -155,6 +158,14 @@ struct key_type {
+ 	 */
+ 	struct key_restriction *(*lookup_restriction)(const char *params);
+ 
++	/* Asymmetric key accessor functions. */
++	int (*asym_query)(const struct kernel_pkey_params *params,
++			  struct kernel_pkey_query *info);
++	int (*asym_eds_op)(struct kernel_pkey_params *params,
++			   const void *in, void *out);
++	int (*asym_verify_signature)(struct kernel_pkey_params *params,
++				     const void *in, const void *in2);
++
+ 	/* internal fields */
+ 	struct list_head	link;		/* link in types list */
+ 	struct lock_class_key	lock_class;	/* key->sem lock class */
+diff --git a/include/linux/keyctl.h b/include/linux/keyctl.h
+new file mode 100644
+index 000000000000..e89b4a4e43d0
+--- /dev/null
++++ b/include/linux/keyctl.h
+@@ -0,0 +1,46 @@
++/* keyctl kernel bits
++ *
++ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#ifndef __LINUX_KEYCTL_H
++#define __LINUX_KEYCTL_H
++
++#include <uapi/linux/keyctl.h>
++
++struct kernel_pkey_query {
++	__u32		supported_ops;	/* Which ops are supported */
++	__u32		key_size;	/* Size of the key in bits */
++	__u16		max_data_size;	/* Maximum size of raw data to sign in bytes */
++	__u16		max_sig_size;	/* Maximum size of signature in bytes */
++	__u16		max_enc_size;	/* Maximum size of encrypted blob in bytes */
++	__u16		max_dec_size;	/* Maximum size of decrypted blob in bytes */
++};
++
++enum kernel_pkey_operation {
++	kernel_pkey_encrypt,
++	kernel_pkey_decrypt,
++	kernel_pkey_sign,
++	kernel_pkey_verify,
++};
++
++struct kernel_pkey_params {
++	struct key	*key;
++	const char	*encoding;	/* Encoding (eg. "oaep" or NULL for raw) */
++	const char	*hash_algo;	/* Digest algorithm used (eg. "sha1") or NULL if N/A */
++	char		*info;		/* Modified info string to be released later */
++	__u32		in_len;		/* Input data size */
++	union {
++		__u32	out_len;	/* Output buffer size (enc/dec/sign) */
++		__u32	in2_len;	/* 2nd input data size (verify) */
++	};
++	enum kernel_pkey_operation op : 8;
++};
++
++#endif /* __LINUX_KEYCTL_H */
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 7b8c9e19bad1..d5eac15bc00c 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -77,4 +77,9 @@ struct keyctl_kdf_params {
+ 	__u32 __spare[8];
+ };
+ 
++#define KEYCTL_SUPPORTS_ENCRYPT		0x01
++#define KEYCTL_SUPPORTS_DECRYPT		0x02
++#define KEYCTL_SUPPORTS_SIGN		0x04
++#define KEYCTL_SUPPORTS_VERIFY		0x08
++
+ #endif /*  _LINUX_KEYCTL_H */
 
