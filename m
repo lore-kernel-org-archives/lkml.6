@@ -2,78 +2,81 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759A2C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719B3C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85F72075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:29:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85F72075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.cmu.edu
+	by mail.kernel.org (Postfix) with ESMTP id 169762075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 17:32:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 169762075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeIEWAL (ORCPT
+        id S1727707AbeIEWED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 18:00:11 -0400
-Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:60296 "EHLO
-        hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727397AbeIEWAL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 18:00:11 -0400
-Received: from [127.0.0.1] (helo=cs.cmu.edu)
-        by hurricane.elijah.cs.cmu.edu with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <jaharkes@cs.cmu.edu>)
-        id 1fxbbv-000053-Oz; Wed, 05 Sep 2018 13:28:59 -0400
-Date:   Wed, 5 Sep 2018 13:28:58 -0400
-From:   Jan Harkes <jaharkes@cs.cmu.edu>
-To:     Yann Droneaud <ydroneaud@opteya.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] UAPI: coda: Don't use internal kernel structs in
- UAPI
-Message-ID: <20180905172858.pv2vafetjzzk5jxs@cs.cmu.edu>
-Mail-Followup-To: Yann Droneaud <ydroneaud@opteya.com>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <153616286704.23468.584491117180383924.stgit@warthog.procyon.org.uk>
- <153616291029.23468.16421004714304578585.stgit@warthog.procyon.org.uk>
- <1c57005277ac723ebb670a1dc847a205f0529d53.camel@opteya.com>
+        Wed, 5 Sep 2018 18:04:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:19139 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727195AbeIEWED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 18:04:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 10:32:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
+   d="scan'208";a="83311370"
+Received: from gsharm2-mobl1.amr.corp.intel.com (HELO localhost) ([10.249.37.218])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Sep 2018 10:32:48 -0700
+Date:   Wed, 5 Sep 2018 20:32:48 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
+Message-ID: <20180905173248.GD11368@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VchsQXGRrcrcB06w68PzUZb5NJLo2B_ZKf6ZLqyBbvWhA@mail.gmail.com>
+ <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c57005277ac723ebb670a1dc847a205f0529d53.camel@opteya.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <83f5ec5f-1b31-15eb-7341-84ee9c7977e2@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 07:12:37PM +0200, Yann Droneaud wrote:
-> Le mercredi 05 septembre 2018 à 16:55 +0100, David Howells a écrit :
-> > The size and layout of internal kernel structures may not be relied
-> > upon outside of the kernel and may even change in a containerised
-> > environment if a container image is frozen and shifted to another
-> > machine.
-> > 
-> > Excise these from Coda's upc_req struct.
-...
+On Tue, Sep 04, 2018 at 09:04:44AM -0700, Dave Hansen wrote:
+> On 09/03/2018 06:16 AM, Andy Shevchenko wrote:
+> >> +       EBLOCK  = 0x9,
+> >> +       EPA     = 0xA,
+> >> +       EWB     = 0xB,
+> >> +       ETRACK  = 0xC,
+> >> +       EAUG    = 0xD,
+> >> +       EMODPR  = 0xE,
+> >> +       EMODT   = 0xF,
+> >> +};
+> > Hmm... This E prefix confuses me with (system wide) error codes. Has
+> > it been discussed before? If so, can you point on the conclusion why
+> > the current format is good?
 > 
-> This structure should not have been exposed to userspace in the first
-> place: it's unusable by userspace as it is. It was incorrect to have it
-> outside of #ifdef __KERNEL__ before commit 607ca46e97a1b ... 
-...
-> So the structure can be moved back to <linux/coda_psdev.h>.
+> Making them SGX_EWHATEVER isn't a horrible idea.
 
-I found a year old patch that clearly fell through the cracks that
-fixes this exact thing.
+OK, going with that.
 
-    https://lkml.org/lkml/2017/8/6/186
-
-Jan
+/Jarkko
