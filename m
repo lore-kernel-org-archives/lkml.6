@@ -6,148 +6,87 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F506C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D76DC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5BC4206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:23:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5BC4206BA
+	by mail.kernel.org (Postfix) with ESMTP id D29F0206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:23:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29F0206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeIENwv (ORCPT
+        id S1728196AbeIENwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 09:52:51 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:39216 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728157AbeIENwu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Sep 2018 09:52:50 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:55128 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeIENwt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 09:52:49 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id XlPU1y00P3XaVaC06lPUaK; Wed, 05 Sep 2018 11:23:29 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id XlPU1y00Q3XaVaC01lPUyw; Wed, 05 Sep 2018 11:23:28 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fxU24-0006p3-CP; Wed, 05 Sep 2018 11:23:28 +0200
+        id 1fxU24-0006p3-II; Wed, 05 Sep 2018 11:23:28 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fxTlB-0002aW-52; Wed, 05 Sep 2018 11:06:01 +0200
+        id 1fxTlB-0002aO-2d; Wed, 05 Sep 2018 11:06:01 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Laura Abbott <labbott@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] gpio: Restore indentation of continued lines
-Date:   Wed,  5 Sep 2018 11:05:55 +0200
-Message-Id: <20180905090555.9888-4-geert+renesas@glider.be>
+Subject: [PATCH 0/3] gpio: Fix VLA removal fallout
+Date:   Wed,  5 Sep 2018 11:05:52 +0200
+Message-Id: <20180905090555.9888-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180905090555.9888-1-geert+renesas@glider.be>
-References: <20180905090555.9888-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes: 3027743f83f867d8 ("gpio: Remove VLA from gpiolib")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpiolib.c        | 12 ++++++------
- drivers/gpio/gpiolib.h        |  6 +++---
- include/linux/gpio/consumer.h | 11 +++++------
- 3 files changed, 14 insertions(+), 15 deletions(-)
+	Hi Linus,
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b8486e204b9e8c69..e95aac19ab6a0a2a 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3025,9 +3025,9 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
- }
- 
- int gpiod_set_array_value_complex(bool raw, bool can_sleep,
--				   unsigned int array_size,
--				   struct gpio_desc **desc_array,
--				   int *value_array)
-+				  unsigned int array_size,
-+				  struct gpio_desc **desc_array,
-+				  int *value_array)
- {
- 	int i = 0;
- 
-@@ -3163,7 +3163,7 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
-  * complain if the GPIO chip functions potentially sleep.
-  */
- int gpiod_set_raw_array_value(unsigned int array_size,
--			 struct gpio_desc **desc_array, int *value_array)
-+			      struct gpio_desc **desc_array, int *value_array)
- {
- 	if (!desc_array)
- 		return -EINVAL;
-@@ -3503,8 +3503,8 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
-  * This function is to be called from contexts that can sleep.
-  */
- int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
--					struct gpio_desc **desc_array,
--					int *value_array)
-+				       struct gpio_desc **desc_array,
-+				       int *value_array)
- {
- 	might_sleep_if(extra_checks);
- 	if (!desc_array)
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index a7e49fef73d41de2..5fc5aa9f84b33fc4 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -189,9 +189,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  struct gpio_desc **desc_array,
- 				  int *value_array);
- int gpiod_set_array_value_complex(bool raw, bool can_sleep,
--				   unsigned int array_size,
--				   struct gpio_desc **desc_array,
--				   int *value_array);
-+				  unsigned int array_size,
-+				  struct gpio_desc **desc_array,
-+				  int *value_array);
- 
- /* This is just passed between gpiolib and devres */
- struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 54ca52f67e8cf38b..e60e2085d48ce995 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -114,8 +114,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
- 			      int *value_array);
- void gpiod_set_raw_value(struct gpio_desc *desc, int value);
- int gpiod_set_raw_array_value(unsigned int array_size,
--			       struct gpio_desc **desc_array,
--			       int *value_array);
-+			      struct gpio_desc **desc_array, int *value_array);
- 
- /* Value get/set from sleeping context */
- int gpiod_get_value_cansleep(const struct gpio_desc *desc);
-@@ -132,8 +131,8 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
- 				       int *value_array);
- void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
- int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
--					struct gpio_desc **desc_array,
--					int *value_array);
-+				       struct gpio_desc **desc_array,
-+				       int *value_array);
- 
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
-@@ -369,8 +368,8 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- 	WARN_ON(1);
- }
- static inline int gpiod_set_raw_array_value(unsigned int array_size,
--					     struct gpio_desc **desc_array,
--					     int *value_array)
-+					    struct gpio_desc **desc_array,
-+					    int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
+This patch series fixes various (mostly harmless) issues introduced by
+commit 3027743f83f867d8 ("gpio: Remove VLA from gpiolib").
+
+As per the "one patch should fix one issue"-policy, this series contains 3
+patches, although they all have the same Fixes: tag.
+
+W.r.t. propagating errors: while gpiod_set_array_value_complex() and its
+callers can now return an error code, this is currently limited to -ENOMEM.
+Actual failures setting a GPIO output value cannot be propagated, as
+gpio_chip.set() still returns void.  Do you want to change that?
+E.g. gen_74x164_set_value() can fail.
+
+Feel free to fold patches if deemed appropriate.
+
+Thanks!
+
+Geert Uytterhoeven (3):
+  Documentation: gpio: Fix return type of gpiod_set_raw_array_value*()
+  gpio: Propagate errors from gpiod_set_array_value_complex()
+  gpio: Restore indentation of continued lines
+
+ Documentation/driver-api/gpio/consumer.rst | 24 +++++++--------
+ drivers/gpio/gpiolib.c                     | 34 +++++++++++-----------
+ drivers/gpio/gpiolib.h                     |  6 ++--
+ include/linux/gpio/consumer.h              | 31 ++++++++++----------
+ 4 files changed, 48 insertions(+), 47 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
