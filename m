@@ -2,386 +2,213 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8F4C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CF2C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECEBB2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEBB2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C705120839
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QC9O9Yt+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C705120839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbeIFC0s (ORCPT
+        id S1727873AbeIFC04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:26:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44222 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727793AbeIFC0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:26:47 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 59BF140216E3;
-        Wed,  5 Sep 2018 21:54:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F394112D16C;
-        Wed,  5 Sep 2018 21:54:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/22] KEYS: Provide missing asymmetric key subops for new
- key type ops
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 22:54:37 +0100
-Message-ID: <153618447788.7946.12036865757091293640.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Wed, 5 Sep 2018 22:26:56 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34895 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727824AbeIFC04 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:26:56 -0400
+Received: by mail-io0-f195.google.com with SMTP id w11-v6so7272775iob.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:54:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OzSGOPfK5Nz7DruLUyX9lOE5Oj01I9xouOuLccHJTe4=;
+        b=QC9O9Yt+VS94TqPVKIN5P/IXpZvzckvOnuJ7El2cXaGBJUcm3ThBI9pCgnHa2p+PJb
+         ehN4FU3+UnxnQaO+wgZcP774uCFEijy0yjEZ6Gs389FzZ3BZZHxXvkhMApBagn1tkAkF
+         5w8B0Zbk1/X380ES7GVrch3YAxdk+ioAQlRiT1MCjftHd6t5sIjDs8wMnWgj+7Dl6+xa
+         Apngj6kqrqEDGgGRf+pLIWK+aaLoofHLf3umNDY9HwoIcz/1CMx8zRQKl/lNrNRNJVcn
+         ZfAanYWxaKvaHH2w2VadZyETq1o16/MkmQOoK8jj6q2kuiWWWcAl1JzkQGKqYzTqajC7
+         mA+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OzSGOPfK5Nz7DruLUyX9lOE5Oj01I9xouOuLccHJTe4=;
+        b=AgK7rKWqinKHehxnLkqZotXyOH1qq9hOrdvkchTz1GrcEbxZqo0IRicvBDuZKu0F+6
+         jmPo0uks69ai52U/QJogn2DBaAs/lfsoYR18mon0MXmxNM6JHCkeFQs+7aNON00KRZPl
+         U0NwPFOlRMHrb9Ze33kmU5bmsC6zdpYW6axg/j98LzRr113jAMFRDU9Nb2H9Z93mgXYD
+         MyqnuXtCldAcR+NFxa8LOTwJPtHLe4+ErwL9cRWeYDHj9muIkeGfOsNsnCEU0YuFzzEA
+         vJv0d8bhIvAw7es65LKYLzCXHZOBXoBPBwpkfcLCPE5tO2Asm4S2imR/C85BFy8tKPDZ
+         d9eg==
+X-Gm-Message-State: APzg51CVoVQch1Q6NyUH+4g+C/NoKE/rZaPOmvNNEuyrl/QOwnoC8tBv
+        JMzowfGmKitf+Q64bX4bX9tx5q7/oo2jpgoc8VE=
+X-Google-Smtp-Source: ANB0VdaYu4In1Uh+ODXuHnN/RnI2XMro+x8VyGyKHAWR6Zq89WaQMMjYlkOzbpFANDdldiT6xWJNwzmhtvdg3HatoUw=
+X-Received: by 2002:a6b:5911:: with SMTP id n17-v6mr28175103iob.68.1536184487494;
+ Wed, 05 Sep 2018 14:54:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:39 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+References: <20180905211041.3286.19083.stgit@localhost.localdomain>
+ <20180905211328.3286.71674.stgit@localhost.localdomain> <cd1fc4c6-cc86-8bf7-6aa0-b722c56057e3@microsoft.com>
+ <CAKgT0UcC2=Nrk+TDkidxjidnJzvhUPyYRD1uZ09BBWLcmcaOug@mail.gmail.com> <985fe87b-b8f4-de58-ea2a-970cbe51b72d@microsoft.com>
+In-Reply-To: <985fe87b-b8f4-de58-ea2a-970cbe51b72d@microsoft.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Wed, 5 Sep 2018 14:54:35 -0700
+Message-ID: <CAKgT0Ud12tMA_LcJ6_yAD4aMObHWCHqKPbwrEdNGcWsiKuVLYg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm: Move page struct poisoning to CONFIG_DEBUG_VM_PAGE_INIT_POISON
+To:     Pavel.Tatashin@microsoft.com
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide the missing asymmetric key subops for new key type ops.  This
-include query, encrypt, decrypt and create signature.  Verify signature
-already exists.  Also provided are accessor functions for this:
+On Wed, Sep 5, 2018 at 2:38 PM Pasha Tatashin
+<Pavel.Tatashin@microsoft.com> wrote:
+>
+>
+>
+> On 9/5/18 5:29 PM, Alexander Duyck wrote:
+> > On Wed, Sep 5, 2018 at 2:22 PM Pasha Tatashin
+> > <Pavel.Tatashin@microsoft.com> wrote:
+> >>
+> >>
+> >>
+> >> On 9/5/18 5:13 PM, Alexander Duyck wrote:
+> >>> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >>>
+> >>> On systems with a large amount of memory it can take a significant amount
+> >>> of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+> >>> value. I have seen it take over 2 minutes to initialize a system with
+> >>> over 12GB of RAM.
+> >>>
+> >>> In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+> >>> the boot time returned to something much more reasonable as the
+> >>> arch_add_memory call completed in milliseconds versus seconds. However in
+> >>> doing that I had to disable all of the other VM debugging on the system.
+> >>>
+> >>> Instead of keeping the value in CONFIG_DEBUG_VM I am adding a new CONFIG
+> >>> value called CONFIG_DEBUG_VM_PAGE_INIT_POISON that will control the page
+> >>> poisoning independent of the CONFIG_DEBUG_VM option.
+> >>>
+> >>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> >>> ---
+> >>>  include/linux/page-flags.h |    8 ++++++++
+> >>>  lib/Kconfig.debug          |   14 ++++++++++++++
+> >>>  mm/memblock.c              |    5 ++---
+> >>>  mm/sparse.c                |    4 +---
+> >>>  4 files changed, 25 insertions(+), 6 deletions(-)
+> >>>
+> >>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> >>> index 74bee8cecf4c..0e95ca63375a 100644
+> >>> --- a/include/linux/page-flags.h
+> >>> +++ b/include/linux/page-flags.h
+> >>> @@ -13,6 +13,7 @@
+> >>>  #include <linux/mm_types.h>
+> >>>  #include <generated/bounds.h>
+> >>>  #endif /* !__GENERATING_BOUNDS_H */
+> >>> +#include <linux/string.h>
+> >>>
+> >>>  /*
+> >>>   * Various page->flags bits:
+> >>> @@ -162,6 +163,13 @@ static inline int PagePoisoned(const struct page *page)
+> >>>       return page->flags == PAGE_POISON_PATTERN;
+> >>>  }
+> >>>
+> >>> +static inline void page_init_poison(struct page *page, size_t size)
+> >>> +{
+> >>> +#ifdef CONFIG_DEBUG_VM_PAGE_INIT_POISON
+> >>> +     memset(page, PAGE_POISON_PATTERN, size);
+> >>> +#endif
+> >>> +}
+> >>> +
+> >>>  /*
+> >>>   * Page flags policies wrt compound pages
+> >>>   *
+> >>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> >>> index 613316724c6a..3b1277c52fed 100644
+> >>> --- a/lib/Kconfig.debug
+> >>> +++ b/lib/Kconfig.debug
+> >>> @@ -637,6 +637,20 @@ config DEBUG_VM_PGFLAGS
+> >>>
+> >>>         If unsure, say N.
+> >>>
+> >>> +config DEBUG_VM_PAGE_INIT_POISON
+> >>> +     bool "Enable early page metadata poisoning"
+> >>> +     default y
+> >>> +     depends on DEBUG_VM
+> >>> +     help
+> >>> +       Seed the page metadata with a poison pattern to improve the
+> >>> +       likelihood of detecting attempts to access the page prior to
+> >>> +       initialization by the memory subsystem.
+> >>> +
+> >>> +       This initialization can result in a longer boot time for systems
+> >>> +       with a large amount of memory.
+> >>
+> >> What happens when DEBUG_VM_PGFLAGS = y and
+> >> DEBUG_VM_PAGE_INIT_POISON = n ?
+> >>
+> >> We are testing for pattern that was not set?
+> >>
+> >> I think DEBUG_VM_PAGE_INIT_POISON must depend on DEBUG_VM_PGFLAGS instead.
+> >>
+> >> Looks good otherwise.
+> >>
+> >> Thank you,
+> >> Pavel
+> >
+> > The problem is that I then end up in the same situation I had in the
+> > last patch where you have to have DEBUG_VM_PGFLAGS on in order to do
+> > the seeding with poison.
+>
+> OK
+>
+> >
+> > I can wrap the bit of code in PagePoisoned to just always return false
+> > if we didn't set the pattern. I figure there is value to be had for
+> > running DEBUG_VM_PGFLAGS regardless of the poison check, or
+> > DEBUG_VM_PAGE_INIT_POISON without the PGFLAGS check. That is why I
+> > wanted to leave them independent.
+>
+> How about:
+>
+> Remove "depends on DEBUG_VM", but make DEBUG_VM_PGFLAGS to depend on
+> both DEBUG_VM and DEBUG_VM_PAGE_INIT_POISON?
+>
+> DEBUG_VM_PGFLAGS is already extremely slow, so having this extra
+> dependency is OK.
+>
+> Thank you,
+> Pavel
 
-	int query_asymmetric_key(const struct key *key,
-				 struct kernel_pkey_query *info);
+Why create the extra dependency though? In the case of DEBUG_VM I am
+doing it so that we can retain the original behavior where enabling
+DEBUG_VM should enable the poisoning. I want to avoid this just
+getting disabled by default and want to try to stick to the original
+behavior as closely as possible unless we want to go in and explicitly
+turn it off.
 
-	int encrypt_blob(struct kernel_pkey_params *params,
-			 const void *data, void *enc);
-	int decrypt_blob(struct kernel_pkey_params *params,
-			 const void *enc, void *data);
-	int create_signature(struct kernel_pkey_params *params,
-			     const void *data, void *enc);
+From what I can tell the original code prior to your changes didn't
+bother checking for the poison value when testing the page flags. The
+poison value only applies prior to the page being initialized, so the
+value add for having it is only so much. It makes more sense to me to
+have these as two separate config options where enabling both would
+give you the maximum benefit, but you could test with either one or
+the other if you so desired.
 
-The public_key_signature struct gains an encoding field to carry the
-encoding for verify_signature().
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- Documentation/crypto/asymmetric-keys.txt |   24 ++++++--
- crypto/asymmetric_keys/asymmetric_keys.h |    3 +
- crypto/asymmetric_keys/asymmetric_type.c |   43 ++++++++++++++
- crypto/asymmetric_keys/signature.c       |   95 ++++++++++++++++++++++++++++++
- include/crypto/public_key.h              |   13 +++-
- include/keys/asymmetric-subtype.h        |    9 +++
- 6 files changed, 180 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
-index 5969bf42562a..deb656ef008b 100644
---- a/Documentation/crypto/asymmetric-keys.txt
-+++ b/Documentation/crypto/asymmetric-keys.txt
-@@ -183,6 +183,10 @@ and looks like the following:
- 
- 		void (*describe)(const struct key *key, struct seq_file *m);
- 		void (*destroy)(void *payload);
-+		int (*query)(const struct kernel_pkey_params *params,
-+			     struct kernel_pkey_query *info);
-+		int (*eds_op)(struct kernel_pkey_params *params,
-+			      const void *in, void *out);
- 		int (*verify_signature)(const struct key *key,
- 					const struct public_key_signature *sig);
- 	};
-@@ -207,12 +211,22 @@ There are a number of operations defined by the subtype:
-      asymmetric key will look after freeing the fingerprint and releasing the
-      reference on the subtype module.
- 
-- (3) verify_signature().
-+ (3) query().
- 
--     Optional.  These are the entry points for the key usage operations.
--     Currently there is only the one defined.  If not set, the caller will be
--     given -ENOTSUPP.  The subtype may do anything it likes to implement an
--     operation, including offloading to hardware.
-+     Mandatory.  This is a function for querying the capabilities of a key.
-+
-+ (4) eds_op().
-+
-+     Optional.  This is the entry point for the encryption, decryption and
-+     signature creation operations (which are distinguished by the operation ID
-+     in the parameter struct).  The subtype may do anything it likes to
-+     implement an operation, including offloading to hardware.
-+
-+ (5) verify_signature().
-+
-+     Optional.  This is the entry point for signature verification.  The
-+     subtype may do anything it likes to implement an operation, including
-+     offloading to hardware.
- 
- 
- ==========================
-diff --git a/crypto/asymmetric_keys/asymmetric_keys.h b/crypto/asymmetric_keys/asymmetric_keys.h
-index ca8e9ac34ce6..7be1ccf4fa9f 100644
---- a/crypto/asymmetric_keys/asymmetric_keys.h
-+++ b/crypto/asymmetric_keys/asymmetric_keys.h
-@@ -16,3 +16,6 @@ extern struct asymmetric_key_id *asymmetric_key_hex_to_key_id(const char *id);
- extern int __asymmetric_key_hex_to_key_id(const char *id,
- 					  struct asymmetric_key_id *match_id,
- 					  size_t hexlen);
-+
-+extern int asymmetric_key_eds_op(struct kernel_pkey_params *params,
-+				 const void *in, void *out);
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index 26539e9a8bda..69a0788a7de5 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/ctype.h>
- #include <keys/system_keyring.h>
-+#include <keys/user-type.h>
- #include "asymmetric_keys.h"
- 
- MODULE_LICENSE("GPL");
-@@ -538,6 +539,45 @@ static struct key_restriction *asymmetric_lookup_restriction(
- 	return ret;
- }
- 
-+int asymmetric_key_eds_op(struct kernel_pkey_params *params,
-+			  const void *in, void *out)
-+{
-+	const struct asymmetric_key_subtype *subtype;
-+	struct key *key = params->key;
-+	int ret;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (key->type != &key_type_asymmetric)
-+		return -EINVAL;
-+	subtype = asymmetric_key_subtype(key);
-+	if (!subtype ||
-+	    !key->payload.data[0])
-+		return -EINVAL;
-+	if (!subtype->eds_op)
-+		return -ENOTSUPP;
-+
-+	ret = subtype->eds_op(params, in, out);
-+
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+
-+static int asymmetric_key_verify_signature(struct kernel_pkey_params *params,
-+					   const void *in, const void *in2)
-+{
-+	struct public_key_signature sig = {
-+		.s_size		= params->in2_len,
-+		.digest_size	= params->in_len,
-+		.encoding	= params->encoding,
-+		.hash_algo	= params->hash_algo,
-+		.digest		= (void *)in,
-+		.s		= (void *)in2,
-+	};
-+
-+	return verify_signature(params->key, &sig);
-+}
-+
- struct key_type key_type_asymmetric = {
- 	.name			= "asymmetric",
- 	.preparse		= asymmetric_key_preparse,
-@@ -548,6 +588,9 @@ struct key_type key_type_asymmetric = {
- 	.destroy		= asymmetric_key_destroy,
- 	.describe		= asymmetric_key_describe,
- 	.lookup_restriction	= asymmetric_lookup_restriction,
-+	.asym_query		= query_asymmetric_key,
-+	.asym_eds_op		= asymmetric_key_eds_op,
-+	.asym_verify_signature	= asymmetric_key_verify_signature,
- };
- EXPORT_SYMBOL_GPL(key_type_asymmetric);
- 
-diff --git a/crypto/asymmetric_keys/signature.c b/crypto/asymmetric_keys/signature.c
-index 28198314bc39..ad95a58c6642 100644
---- a/crypto/asymmetric_keys/signature.c
-+++ b/crypto/asymmetric_keys/signature.c
-@@ -16,7 +16,9 @@
- #include <linux/export.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-+#include <linux/keyctl.h>
- #include <crypto/public_key.h>
-+#include <keys/user-type.h>
- #include "asymmetric_keys.h"
- 
- /*
-@@ -36,6 +38,99 @@ void public_key_signature_free(struct public_key_signature *sig)
- }
- EXPORT_SYMBOL_GPL(public_key_signature_free);
- 
-+/**
-+ * query_asymmetric_key - Get information about an aymmetric key.
-+ * @params: Various parameters.
-+ * @info: Where to put the information.
-+ */
-+int query_asymmetric_key(const struct kernel_pkey_params *params,
-+			 struct kernel_pkey_query *info)
-+{
-+	const struct asymmetric_key_subtype *subtype;
-+	struct key *key = params->key;
-+	int ret;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (key->type != &key_type_asymmetric)
-+		return -EINVAL;
-+	subtype = asymmetric_key_subtype(key);
-+	if (!subtype ||
-+	    !key->payload.data[0])
-+		return -EINVAL;
-+	if (!subtype->query)
-+		return -ENOTSUPP;
-+
-+	ret = subtype->query(params, info);
-+
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(query_asymmetric_key);
-+
-+/**
-+ * encrypt_blob - Encrypt data using an asymmetric key
-+ * @params: Various parameters
-+ * @data: Data blob to be encrypted, length params->data_len
-+ * @enc: Encrypted data buffer, length params->enc_len
-+ *
-+ * Encrypt the specified data blob using the private key specified by
-+ * params->key.  The encrypted data is wrapped in an encoding if
-+ * params->encoding is specified (eg. "pkcs1").
-+ *
-+ * Returns the length of the data placed in the encrypted data buffer or an
-+ * error.
-+ */
-+int encrypt_blob(struct kernel_pkey_params *params,
-+		 const void *data, void *enc)
-+{
-+	params->op = kernel_pkey_encrypt;
-+	return asymmetric_key_eds_op(params, data, enc);
-+}
-+EXPORT_SYMBOL_GPL(encrypt_blob);
-+
-+/**
-+ * decrypt_blob - Decrypt data using an asymmetric key
-+ * @params: Various parameters
-+ * @enc: Encrypted data to be decrypted, length params->enc_len
-+ * @data: Decrypted data buffer, length params->data_len
-+ *
-+ * Decrypt the specified data blob using the private key specified by
-+ * params->key.  The decrypted data is wrapped in an encoding if
-+ * params->encoding is specified (eg. "pkcs1").
-+ *
-+ * Returns the length of the data placed in the decrypted data buffer or an
-+ * error.
-+ */
-+int decrypt_blob(struct kernel_pkey_params *params,
-+		 const void *enc, void *data)
-+{
-+	params->op = kernel_pkey_decrypt;
-+	return asymmetric_key_eds_op(params, enc, data);
-+}
-+EXPORT_SYMBOL_GPL(decrypt_blob);
-+
-+/**
-+ * create_signature - Sign some data using an asymmetric key
-+ * @params: Various parameters
-+ * @data: Data blob to be signed, length params->data_len
-+ * @enc: Signature buffer, length params->enc_len
-+ *
-+ * Sign the specified data blob using the private key specified by params->key.
-+ * The signature is wrapped in an encoding if params->encoding is specified
-+ * (eg. "pkcs1").  If the encoding needs to know the digest type, this can be
-+ * passed through params->hash_algo (eg. "sha1").
-+ *
-+ * Returns the length of the data placed in the signature buffer or an error.
-+ */
-+int create_signature(struct kernel_pkey_params *params,
-+		     const void *data, void *enc)
-+{
-+	params->op = kernel_pkey_sign;
-+	return asymmetric_key_eds_op(params, data, enc);
-+}
-+EXPORT_SYMBOL_GPL(create_signature);
-+
- /**
-  * verify_signature - Initiate the use of an asymmetric key to verify a signature
-  * @key: The asymmetric key to verify against
-diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-index e0b681a717ba..3a1047a0195c 100644
---- a/include/crypto/public_key.h
-+++ b/include/crypto/public_key.h
-@@ -14,6 +14,8 @@
- #ifndef _LINUX_PUBLIC_KEY_H
- #define _LINUX_PUBLIC_KEY_H
- 
-+#include <linux/keyctl.h>
-+
- /*
-  * Cryptographic data for the public-key subtype of the asymmetric key type.
-  *
-@@ -40,6 +42,7 @@ struct public_key_signature {
- 	u8 digest_size;		/* Number of bytes in digest */
- 	const char *pkey_algo;
- 	const char *hash_algo;
-+	const char *encoding;
- };
- 
- extern void public_key_signature_free(struct public_key_signature *sig);
-@@ -65,8 +68,14 @@ extern int restrict_link_by_key_or_keyring_chain(struct key *trust_keyring,
- 						 const union key_payload *payload,
- 						 struct key *trusted);
- 
--extern int verify_signature(const struct key *key,
--			    const struct public_key_signature *sig);
-+extern int query_asymmetric_key(const struct kernel_pkey_params *,
-+				struct kernel_pkey_query *);
-+
-+extern int encrypt_blob(struct kernel_pkey_params *, const void *, void *);
-+extern int decrypt_blob(struct kernel_pkey_params *, const void *, void *);
-+extern int create_signature(struct kernel_pkey_params *, const void *, void *);
-+extern int verify_signature(const struct key *,
-+			    const struct public_key_signature *);
- 
- int public_key_verify_signature(const struct public_key *pkey,
- 				const struct public_key_signature *sig);
-diff --git a/include/keys/asymmetric-subtype.h b/include/keys/asymmetric-subtype.h
-index e0a9c2368872..9ce2f0fae57e 100644
---- a/include/keys/asymmetric-subtype.h
-+++ b/include/keys/asymmetric-subtype.h
-@@ -17,6 +17,8 @@
- #include <linux/seq_file.h>
- #include <keys/asymmetric-type.h>
- 
-+struct kernel_pkey_query;
-+struct kernel_pkey_params;
- struct public_key_signature;
- 
- /*
-@@ -34,6 +36,13 @@ struct asymmetric_key_subtype {
- 	/* Destroy a key of this subtype */
- 	void (*destroy)(void *payload_crypto, void *payload_auth);
- 
-+	int (*query)(const struct kernel_pkey_params *params,
-+		     struct kernel_pkey_query *info);
-+
-+	/* Encrypt/decrypt/sign data */
-+	int (*eds_op)(struct kernel_pkey_params *params,
-+		      const void *in, void *out);
-+
- 	/* Verify the signature on a key of this subtype (optional) */
- 	int (*verify_signature)(const struct key *key,
- 				const struct public_key_signature *sig);
-
+- Alex
