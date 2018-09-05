@@ -2,105 +2,100 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E25BC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73F8C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F10205F4
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:46:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F10205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 851A0205F4
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 09:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851A0205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbeIEOPc (ORCPT
+        id S1728157AbeIEOPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 10:15:32 -0400
-Received: from mga17.intel.com ([192.55.52.151]:50621 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbeIEOPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 10:15:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 02:46:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
-   d="scan'208";a="70493450"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga007.jf.intel.com with SMTP; 05 Sep 2018 02:46:03 -0700
-Received: by lahna (sSMTP sendmail emulation); Wed, 05 Sep 2018 12:46:02 +0300
-Date:   Wed, 5 Sep 2018 12:46:02 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH 2/2] thunderbolt: Initialize after IOMMUs
-Message-ID: <20180905094602.GH2283@lahna.fi.intel.com>
-References: <20180903132012.23531-1-mika.westerberg@linux.intel.com>
- <20180903132012.23531-2-mika.westerberg@linux.intel.com>
- <20180905084746.xmckzskxzsdliz3e@wunner.de>
+        Wed, 5 Sep 2018 10:15:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52270 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeIEOPe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 10:15:34 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fxUNx-0004CD-Hk; Wed, 05 Sep 2018 09:46:05 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Abdun Nihaal <abdun.nihaal@gmail.com>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: most: video: fix registration of an empty comp core_component
+Date:   Wed,  5 Sep 2018 10:46:05 +0100
+Message-Id: <20180905094605.14827-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905084746.xmckzskxzsdliz3e@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 10:47:46AM +0200, Lukas Wunner wrote:
-> On Mon, Sep 03, 2018 at 04:20:12PM +0300, Mika Westerberg wrote:
-> > If IOMMU is enabled and Thunderbolt driver is built into the kernel
-> > image, it will be probed before IOMMUs are attached to the PCI bus.
-> > Because of this DMA mappings the driver does will not go through IOMMU
-> > and start failing right after IOMMUs are enabled.
-> > 
-> > For this reason move the Thunderbolt driver initialization happen at
-> > rootfs level.
-> > 
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > ---
-> >  drivers/thunderbolt/nhi.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-> > index 88cff05a1808..5cd6bdfa068f 100644
-> > --- a/drivers/thunderbolt/nhi.c
-> > +++ b/drivers/thunderbolt/nhi.c
-> > @@ -1191,5 +1191,5 @@ static void __exit nhi_unload(void)
-> >  	tb_domain_exit();
-> >  }
-> >  
-> > -fs_initcall(nhi_init);
-> > +rootfs_initcall(nhi_init);
-> >  module_exit(nhi_unload);
-> 
-> What if the rootfs is located on a Thunderbolt-attached drive and
-> the thunderbolt driver needs to establish tunnels to that drive
-> before rootfs can be accessed?  Doesn't the above break such a setup?
+From: Colin Ian King <colin.king@canonical.com>
 
-No, then you put the driver as part of your initrd.
+Currently we have structrues comp (which is empty) and comp_info being
+used to register and deregister the component.  This mismatch in naming
+occurred from a previous commit that renamed aim_info to comp. Fix this
+to use consistent component naming in line with most/net, most/sound etc.
 
-> I think the dependency on the IOMMU should be open coded by returning
-> -EPROBE_DEFER from the ->probe hook if it's not yet attached.
-> Shuffling around initcall order is just applying duct tape.
+This fixes the message two issues, one with a null empty name when
+loading the module:
 
-It is not a dependency. The same thing can happen with any other driver
-if they happen to initialize any DMA with the device before IOMMUs are
-initialized.
+[ 1485.269515] most_core: registered new core component (null)
 
-> Commit acb40d841257 already changed module_init() to fs_initcall()
-> and now it has to be changed again.  Shows how fragile this is.
+and an Oops when removing the module:
 
-It is a bit fragile but I don't see any other way to handle this than
-trusting on the link ordering. Both -EPROBE_DEFER and device_links are
-out of the question AFAICT.
+[ 1485.277971] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[ 1485.278648] PGD 0 P4D 0
+[ 1485.279253] Oops: 0002 [#2] SMP PTI
+[ 1485.279847] CPU: 1 PID: 32629 Comm: modprobe Tainted: P      D WC OE     4.18.0-8-generic #9
+[ 1485.280442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+[ 1485.281040] RIP: 0010:most_deregister_component+0x3c/0x70 [most_core]
+.. etc
+
+Fixes: 1b10a0316e2d ("staging: most: video: remove aim designators")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/most/video/video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
+index cf342eb58e10..ad7e28ab9a4f 100644
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -530,7 +530,7 @@ static int comp_disconnect_channel(struct most_interface *iface,
+ 	return 0;
+ }
+ 
+-static struct core_component comp_info = {
++static struct core_component comp = {
+ 	.name = "video",
+ 	.probe_channel = comp_probe_channel,
+ 	.disconnect_channel = comp_disconnect_channel,
+@@ -565,7 +565,7 @@ static void __exit comp_exit(void)
+ 	}
+ 	spin_unlock_irq(&list_lock);
+ 
+-	most_deregister_component(&comp_info);
++	most_deregister_component(&comp);
+ 	BUG_ON(!list_empty(&video_devices));
+ }
+ 
+-- 
+2.17.1
+
