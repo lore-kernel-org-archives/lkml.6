@@ -2,105 +2,83 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FE5C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4443BC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A72B2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:52:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iLNxntR9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mHhQUpuL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A72B2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E49F02073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 05:54:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49F02073D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeIEKUu (ORCPT
+        id S1727267AbeIEKXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:20:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52546 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIEKUt (ORCPT
+        Wed, 5 Sep 2018 06:23:03 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34921 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbeIEKXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:20:49 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 75D95607DC; Wed,  5 Sep 2018 05:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536126739;
-        bh=Bjj9runRAgUuvtri2C2sPVPUxv/h61rXCc2V7svh0i4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iLNxntR9soSEPb9Fltwz25/lMGu54ZXz6m2wTR4FVy0pNRXrkRJQg/jhogfVi5Ip0
-         hpFkmqAIrHvjFcaXbwg/pcnquQoSYF9e1QQ8w2u6ZcfBkII9Gf3fvBxejeHLQ7AYqn
-         RZN0UDLk09iD7GJCdEifM3PJa6qJikfbIjkJjKhw=
-Received: from neeraju-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: neeraju@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7BA276038E;
-        Wed,  5 Sep 2018 05:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536126738;
-        bh=Bjj9runRAgUuvtri2C2sPVPUxv/h61rXCc2V7svh0i4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mHhQUpuLKusuzkUQKx5ONtcbAfpxCS53jI7MTkb3YOga9OnTWxtP/O6oafnz07h8+
-         PpVe4QbENLpjtMWB7jJL2gIJfboj44m/cBrDpORhNPKlPnJLFJFaFPwz4G1vc/yRBb
-         Nmc1U1jHVjvnMcdOiKwTv2GzZSLomrbVnd9E943o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BA276038E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
-From:   Neeraj Upadhyay <neeraju@codeaurora.org>
-To:     tglx@linutronix.de, josh@joshtriplett.org, peterz@infradead.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dzickus@redhat.com,
-        brendan.jackman@arm.com, malat@debian.org, mojha@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org, sramana@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>
-Subject: [PATCH] cpu/hotplug: Fix acquire of st->should_run in cpuhp_thread_fun()
-Date:   Wed,  5 Sep 2018 11:22:07 +0530
-Message-Id: <1536126727-11629-1-git-send-email-neeraju@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 5 Sep 2018 06:23:02 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fxQlp-0000px-LN; Wed, 05 Sep 2018 07:54:29 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fxQln-0003sY-Lx; Wed, 05 Sep 2018 07:54:27 +0200
+Date:   Wed, 5 Sep 2018 07:54:27 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V2 1/2] tty: serial: imx: add lock for registers
+ save/restore
+Message-ID: <20180905055427.q67larwwfbttdoof@pengutronix.de>
+References: <1536110667-23530-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1536110667-23530-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The smp_mb() in cpuhp_thread_fun() appears to be misplaced, and
-need to be after the load of st->should_run, to prevent
-reordering of the later load/stores w.r.t. the load of
-st->should_run.
+Hello,
 
-Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
----
- kernel/cpu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Wed, Sep 05, 2018 at 09:24:26AM +0800, Anson Huang wrote:
+> In noirq suspend/resume stage with no_console_suspend enabled,
+> imx_uart_console_write() may be called to print out log_buf
+> message by printk(), so there will be race condition between
+> imx_uart_console_write() and imx_uart_save/restore_context(),
+> need to add lock to protect the registers save/restore operations.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/tty/serial/imx.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 239c0fa..c15332d 100644
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index aa7fe85..eb4041f 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -607,15 +607,15 @@ static void cpuhp_thread_fun(unsigned int cpu)
- 	bool bringup = st->bringup;
- 	enum cpuhp_state state;
- 
-+	if (WARN_ON_ONCE(!st->should_run))
-+		return;
-+
- 	/*
- 	 * ACQUIRE for the cpuhp_should_run() load of ->should_run. Ensures
- 	 * that if we see ->should_run we also see the rest of the state.
- 	 */
- 	smp_mb();
- 
--	if (WARN_ON_ONCE(!st->should_run))
--		return;
--
- 	cpuhp_lock_acquire(bringup);
- 
- 	if (st->single) {
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Thanks
+Uwe
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
-member of the Code Aurora Forum, hosted by The Linux Foundation
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
