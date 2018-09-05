@@ -1,55 +1,54 @@
 Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49CCC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E285C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE4820839
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:56:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE4820839
+	by mail.kernel.org (Postfix) with ESMTP id 119ED2077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:56:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 119ED2077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbeIFC2O (ORCPT
+        id S1728195AbeIFC2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:28:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32794 "EHLO mx1.redhat.com"
+        Wed, 5 Sep 2018 22:28:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32804 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727592AbeIFC2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:28:14 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1727592AbeIFC2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:28:21 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D8233402242D;
-        Wed,  5 Sep 2018 21:56:04 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6B1E5402242D;
+        Wed,  5 Sep 2018 21:56:11 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 03C18202706C;
-        Wed,  5 Sep 2018 21:56:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 82EFE63F20;
+        Wed,  5 Sep 2018 21:56:10 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 16/22] KEYS: Move trusted.h to include/keys
+Subject: [PATCH 17/22] KEYS: asym_tpm: Add loadkey2 and flushspecific
 From:   David Howells <dhowells@redhat.com>
 To:     jmorris@namei.org
 Cc:     denkenz@gmail.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 22:56:03 +0100
-Message-ID: <153618456351.7946.16069792174440572937.stgit@warthog.procyon.org.uk>
+Date:   Wed, 05 Sep 2018 22:56:10 +0100
+Message-ID: <153618457002.7946.741829373041553399.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 05 Sep 2018 21:56:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 05 Sep 2018 21:56:04 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 05 Sep 2018 21:56:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 05 Sep 2018 21:56:11 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,312 +56,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
+This commit adds TPM_LoadKey2 and TPM_FlushSpecific operations.
+
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: James Morris <james.morris@microsoft.com>
 ---
 
- include/keys/trusted.h  |  136 +++++++++++++++++++++++++++++++++++++++++++++++
- security/keys/trusted.c |    2 -
- security/keys/trusted.h |  136 -----------------------------------------------
- 3 files changed, 137 insertions(+), 137 deletions(-)
- create mode 100644 include/keys/trusted.h
- delete mode 100644 security/keys/trusted.h
+ crypto/asymmetric_keys/asym_tpm.c |   94 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-diff --git a/include/keys/trusted.h b/include/keys/trusted.h
-new file mode 100644
-index 000000000000..adbcb6817826
---- /dev/null
-+++ b/include/keys/trusted.h
-@@ -0,0 +1,136 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __TRUSTED_KEY_H
-+#define __TRUSTED_KEY_H
-+
-+/* implementation specific TPM constants */
-+#define MAX_BUF_SIZE			1024
-+#define TPM_GETRANDOM_SIZE		14
-+#define TPM_OSAP_SIZE			36
-+#define TPM_OIAP_SIZE			10
-+#define TPM_SEAL_SIZE			87
-+#define TPM_UNSEAL_SIZE			104
-+#define TPM_SIZE_OFFSET			2
-+#define TPM_RETURN_OFFSET		6
-+#define TPM_DATA_OFFSET			10
-+
-+#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
-+#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
-+#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
-+
-+struct tpm_buf {
-+	int len;
-+	unsigned char data[MAX_BUF_SIZE];
-+};
-+
-+#define INIT_BUF(tb) (tb->len = 0)
-+
-+struct osapsess {
-+	uint32_t handle;
-+	unsigned char secret[SHA1_DIGEST_SIZE];
-+	unsigned char enonce[TPM_NONCE_SIZE];
-+};
-+
-+/* discrete values, but have to store in uint16_t for TPM use */
-+enum {
-+	SEAL_keytype = 1,
-+	SRK_keytype = 4
-+};
-+
-+int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-+			unsigned int keylen, unsigned char *h1,
-+			unsigned char *h2, unsigned char h3, ...);
-+int TSS_checkhmac1(unsigned char *buffer,
-+			  const uint32_t command,
-+			  const unsigned char *ononce,
-+			  const unsigned char *key,
-+			  unsigned int keylen, ...);
-+
-+int trusted_tpm_send(unsigned char *cmd, size_t buflen);
-+int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
-+
-+#define TPM_DEBUG 0
-+
-+#if TPM_DEBUG
-+static inline void dump_options(struct trusted_key_options *o)
-+{
-+	pr_info("trusted_key: sealing key type %d\n", o->keytype);
-+	pr_info("trusted_key: sealing key handle %0X\n", o->keyhandle);
-+	pr_info("trusted_key: pcrlock %d\n", o->pcrlock);
-+	pr_info("trusted_key: pcrinfo %d\n", o->pcrinfo_len);
-+	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-+		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-+}
-+
-+static inline void dump_payload(struct trusted_key_payload *p)
-+{
-+	pr_info("trusted_key: key_len %d\n", p->key_len);
-+	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
-+		       16, 1, p->key, p->key_len, 0);
-+	pr_info("trusted_key: bloblen %d\n", p->blob_len);
-+	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
-+		       16, 1, p->blob, p->blob_len, 0);
-+	pr_info("trusted_key: migratable %d\n", p->migratable);
-+}
-+
-+static inline void dump_sess(struct osapsess *s)
-+{
-+	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-+		       16, 1, &s->handle, 4, 0);
-+	pr_info("trusted-key: secret:\n");
-+	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-+		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-+	pr_info("trusted-key: enonce:\n");
-+	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-+		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-+}
-+
-+static inline void dump_tpm_buf(unsigned char *buf)
-+{
-+	int len;
-+
-+	pr_info("\ntrusted-key: tpm buffer\n");
-+	len = LOAD32(buf, TPM_SIZE_OFFSET);
-+	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-+}
-+#else
-+static inline void dump_options(struct trusted_key_options *o)
-+{
-+}
-+
-+static inline void dump_payload(struct trusted_key_payload *p)
-+{
-+}
-+
-+static inline void dump_sess(struct osapsess *s)
-+{
-+}
-+
-+static inline void dump_tpm_buf(unsigned char *buf)
-+{
-+}
-+#endif
-+
-+static inline void store8(struct tpm_buf *buf, const unsigned char value)
-+{
-+	buf->data[buf->len++] = value;
-+}
-+
-+static inline void store16(struct tpm_buf *buf, const uint16_t value)
-+{
-+	*(uint16_t *) & buf->data[buf->len] = htons(value);
-+	buf->len += sizeof value;
-+}
-+
-+static inline void store32(struct tpm_buf *buf, const uint32_t value)
-+{
-+	*(uint32_t *) & buf->data[buf->len] = htonl(value);
-+	buf->len += sizeof value;
-+}
-+
-+static inline void storebytes(struct tpm_buf *buf, const unsigned char *in,
-+			      const int len)
-+{
-+	memcpy(buf->data + buf->len, in, len);
-+	buf->len += len;
-+}
-+#endif
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index 1c025fdfe0e0..ff6789365a12 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -30,7 +30,7 @@
+diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
+index 8edca3c4c193..6a2d33014ecc 100644
+--- a/crypto/asymmetric_keys/asym_tpm.c
++++ b/crypto/asymmetric_keys/asym_tpm.c
+@@ -7,11 +7,105 @@
+ #include <linux/seq_file.h>
+ #include <linux/scatterlist.h>
  #include <linux/tpm.h>
- #include <linux/tpm_command.h>
- 
--#include "trusted.h"
++#include <linux/tpm_command.h>
+ #include <crypto/akcipher.h>
++#include <crypto/hash.h>
++#include <crypto/sha.h>
+ #include <asm/unaligned.h>
+ #include <keys/asymmetric-subtype.h>
 +#include <keys/trusted.h>
+ #include <crypto/asym_tpm_subtype.h>
  
- static const char hmac_alg[] = "hmac(sha1)";
- static const char hash_alg[] = "sha1";
-diff --git a/security/keys/trusted.h b/security/keys/trusted.h
-deleted file mode 100644
-index adbcb6817826..000000000000
---- a/security/keys/trusted.h
-+++ /dev/null
-@@ -1,136 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __TRUSTED_KEY_H
--#define __TRUSTED_KEY_H
--
--/* implementation specific TPM constants */
--#define MAX_BUF_SIZE			1024
--#define TPM_GETRANDOM_SIZE		14
--#define TPM_OSAP_SIZE			36
--#define TPM_OIAP_SIZE			10
--#define TPM_SEAL_SIZE			87
--#define TPM_UNSEAL_SIZE			104
--#define TPM_SIZE_OFFSET			2
--#define TPM_RETURN_OFFSET		6
--#define TPM_DATA_OFFSET			10
--
--#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
--#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
--#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
--
--struct tpm_buf {
--	int len;
--	unsigned char data[MAX_BUF_SIZE];
--};
--
--#define INIT_BUF(tb) (tb->len = 0)
--
--struct osapsess {
--	uint32_t handle;
--	unsigned char secret[SHA1_DIGEST_SIZE];
--	unsigned char enonce[TPM_NONCE_SIZE];
--};
--
--/* discrete values, but have to store in uint16_t for TPM use */
--enum {
--	SEAL_keytype = 1,
--	SRK_keytype = 4
--};
--
--int TSS_authhmac(unsigned char *digest, const unsigned char *key,
--			unsigned int keylen, unsigned char *h1,
--			unsigned char *h2, unsigned char h3, ...);
--int TSS_checkhmac1(unsigned char *buffer,
--			  const uint32_t command,
--			  const unsigned char *ononce,
--			  const unsigned char *key,
--			  unsigned int keylen, ...);
--
--int trusted_tpm_send(unsigned char *cmd, size_t buflen);
--int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
--
--#define TPM_DEBUG 0
--
--#if TPM_DEBUG
--static inline void dump_options(struct trusted_key_options *o)
--{
--	pr_info("trusted_key: sealing key type %d\n", o->keytype);
--	pr_info("trusted_key: sealing key handle %0X\n", o->keyhandle);
--	pr_info("trusted_key: pcrlock %d\n", o->pcrlock);
--	pr_info("trusted_key: pcrinfo %d\n", o->pcrinfo_len);
--	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
--		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
--}
--
--static inline void dump_payload(struct trusted_key_payload *p)
--{
--	pr_info("trusted_key: key_len %d\n", p->key_len);
--	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
--		       16, 1, p->key, p->key_len, 0);
--	pr_info("trusted_key: bloblen %d\n", p->blob_len);
--	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
--		       16, 1, p->blob, p->blob_len, 0);
--	pr_info("trusted_key: migratable %d\n", p->migratable);
--}
--
--static inline void dump_sess(struct osapsess *s)
--{
--	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
--		       16, 1, &s->handle, 4, 0);
--	pr_info("trusted-key: secret:\n");
--	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
--		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
--	pr_info("trusted-key: enonce:\n");
--	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
--		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
--}
--
--static inline void dump_tpm_buf(unsigned char *buf)
--{
--	int len;
--
--	pr_info("\ntrusted-key: tpm buffer\n");
--	len = LOAD32(buf, TPM_SIZE_OFFSET);
--	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
--}
--#else
--static inline void dump_options(struct trusted_key_options *o)
--{
--}
--
--static inline void dump_payload(struct trusted_key_payload *p)
--{
--}
--
--static inline void dump_sess(struct osapsess *s)
--{
--}
--
--static inline void dump_tpm_buf(unsigned char *buf)
--{
--}
--#endif
--
--static inline void store8(struct tpm_buf *buf, const unsigned char value)
--{
--	buf->data[buf->len++] = value;
--}
--
--static inline void store16(struct tpm_buf *buf, const uint16_t value)
--{
--	*(uint16_t *) & buf->data[buf->len] = htons(value);
--	buf->len += sizeof value;
--}
--
--static inline void store32(struct tpm_buf *buf, const uint32_t value)
--{
--	*(uint32_t *) & buf->data[buf->len] = htonl(value);
--	buf->len += sizeof value;
--}
--
--static inline void storebytes(struct tpm_buf *buf, const unsigned char *in,
--			      const int len)
--{
--	memcpy(buf->data + buf->len, in, len);
--	buf->len += len;
--}
--#endif
++#define TPM_ORD_FLUSHSPECIFIC	186
++#define TPM_ORD_LOADKEY2	65
++#define TPM_LOADKEY2_SIZE		59
++#define TPM_FLUSHSPECIFIC_SIZE		18
++
++#define TPM_RT_KEY                      0x00000001
++
++/*
++ * Load a TPM key from the blob provided by userspace
++ */
++static int tpm_loadkey2(struct tpm_buf *tb,
++			uint32_t keyhandle, unsigned char *keyauth,
++			const unsigned char *keyblob, int keybloblen,
++			uint32_t *newhandle)
++{
++	unsigned char nonceodd[TPM_NONCE_SIZE];
++	unsigned char enonce[TPM_NONCE_SIZE];
++	unsigned char authdata[SHA1_DIGEST_SIZE];
++	uint32_t authhandle = 0;
++	unsigned char cont = 0;
++	uint32_t ordinal;
++	int ret;
++
++	ordinal = htonl(TPM_ORD_LOADKEY2);
++
++	/* session for loading the key */
++	ret = oiap(tb, &authhandle, enonce);
++	if (ret < 0) {
++		pr_info("oiap failed (%d)\n", ret);
++		return ret;
++	}
++
++	/* generate odd nonce */
++	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
++	if (ret < 0) {
++		pr_info("tpm_get_random failed (%d)\n", ret);
++		return ret;
++	}
++
++	/* calculate authorization HMAC value */
++	ret = TSS_authhmac(authdata, keyauth, SHA1_DIGEST_SIZE, enonce,
++			   nonceodd, cont, sizeof(uint32_t), &ordinal,
++			   keybloblen, keyblob, 0, 0);
++	if (ret < 0)
++		return ret;
++
++	/* build the request buffer */
++	INIT_BUF(tb);
++	store16(tb, TPM_TAG_RQU_AUTH1_COMMAND);
++	store32(tb, TPM_LOADKEY2_SIZE + keybloblen);
++	store32(tb, TPM_ORD_LOADKEY2);
++	store32(tb, keyhandle);
++	storebytes(tb, keyblob, keybloblen);
++	store32(tb, authhandle);
++	storebytes(tb, nonceodd, TPM_NONCE_SIZE);
++	store8(tb, cont);
++	storebytes(tb, authdata, SHA1_DIGEST_SIZE);
++
++	ret = trusted_tpm_send(tb->data, MAX_BUF_SIZE);
++	if (ret < 0) {
++		pr_info("authhmac failed (%d)\n", ret);
++		return ret;
++	}
++
++	ret = TSS_checkhmac1(tb->data, ordinal, nonceodd, keyauth,
++			     SHA1_DIGEST_SIZE, 0, 0);
++	if (ret < 0) {
++		pr_info("TSS_checkhmac1 failed (%d)\n", ret);
++		return ret;
++	}
++
++	*newhandle = LOAD32(tb->data, TPM_DATA_OFFSET);
++	return 0;
++}
++
++/*
++ * Execute the FlushSpecific TPM command
++ */
++static int tpm_flushspecific(struct tpm_buf *tb, uint32_t handle)
++{
++	INIT_BUF(tb);
++	store16(tb, TPM_TAG_RQU_COMMAND);
++	store32(tb, TPM_FLUSHSPECIFIC_SIZE);
++	store32(tb, TPM_ORD_FLUSHSPECIFIC);
++	store32(tb, handle);
++	store32(tb, TPM_RT_KEY);
++
++	return trusted_tpm_send(tb->data, MAX_BUF_SIZE);
++}
++
+ /*
+  * Maximum buffer size for the BER/DER encoded public key.  The public key
+  * is of the form SEQUENCE { INTEGER n, INTEGER e } where n is a maximum 2048
 
