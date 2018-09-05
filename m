@@ -3,75 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916F3C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA67C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3963C20857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3963C20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 64EC220857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EC220857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeIERc5 (ORCPT
+        id S1727637AbeIERdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 13:32:57 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59508 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbeIERc5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 13:32:57 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxXSC-0004C7-PW; Wed, 05 Sep 2018 15:02:40 +0200
-Date:   Wed, 5 Sep 2018 15:02:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     kernel test robot <rong.a.chen@intel.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [LKP] 3f906ba236 [ 71.192813] WARNING: possible circular locking
- dependency detected
-In-Reply-To: <20180905090553.GA6655@shao2-debian>
-Message-ID: <alpine.DEB.2.21.1809051459130.1416@nanos.tec.linutronix.de>
-References: <20180905090553.GA6655@shao2-debian>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 5 Sep 2018 13:33:39 -0400
+Received: from smtp20.cstnet.cn ([159.226.251.20]:55044 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725868AbeIERdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 13:33:38 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-10 (Coremail) with SMTP id tACowAC3vWER1I9bYpn9Bw--.6234S2;
+        Wed, 05 Sep 2018 21:03:14 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v5 15/16] driver/edac: enable Hygon support to AMD64 EDAC
+ driver
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        mchehab@kernel.org, mikhail.jin@gmail.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-edac@vger.kernel.org
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <47e08d8bab1cef667be3955941e7eedc23187ae1.1535459013.git.puwen@hygon.cn>
+ <20180905104405.GG2237@zn.tnic>
+Message-ID: <03835d0f-225a-f7b9-dedb-5d474193181a@hygon.cn>
+Date:   Wed, 5 Sep 2018 21:03:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180905104405.GG2237@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: tACowAC3vWER1I9bYpn9Bw--.6234S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrWkGrWfWw4rKF4UuryxGrg_yoWxtFX_Jr
+        1UZ34fWw4jqF1Iyws8J34rXa47Wa1jvr1xtF98GF9rZFn8tan3WFs5Cw1UurWkXwnxKr1f
+        ur1jgFy0y3srXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbVxYjsxI4VWkCwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
+        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26F4j6r4UJw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+        c7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+        1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY
+        6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+        73UjIFyTuYvjxUF9NVUUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018, kernel test robot wrote:
-
-> Greetings,
+On 2018/9/5 18:44, Borislav Petkov wrote:
+> Subject should be:
 > 
-> 0day kernel testing robot got the below dmesg and the first bad commit is
+> EDAC, amd64: Add Hygon Dhyana support
+
+Thanks for the correction.
+
+>> +	case 0x18:
+>> +		fam_type	= &family_types[HYGON_F18_CPUS];
+>> +		pvt->ops	= &family_types[HYGON_F18_CPUS].ops;
+>> +		break;
+>> +
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> You can use the F17_CPUS array element here and overwrite the ->ctl_name
+> string only. No need to define [HYGON_F18_CPUS] above... yet.
+
+All right, the way reusing F17_CPUS will also minimize the code
+modification.
+
+>> +#define PCI_DEVICE_ID_HYGON_18H_DF_F0	0x1460
+>> +#define PCI_DEVICE_ID_HYGON_18H_DF_F6	0x1466
 > 
-> commit 3f906ba23689a3f824424c50f3ae937c2c70f676
-> Author:     Thomas Gleixner <tglx@linutronix.de>
-> AuthorDate: Mon Jul 10 15:50:09 2017 -0700
-> Commit:     Linus Torvalds <torvalds@linux-foundation.org>
-> CommitDate: Mon Jul 10 16:32:33 2017 -0700
+> As in the previous patch - use the AMD defines.
 
-So it identified a more than one year old commit. Great.
+Will remove them in next version of patches.
 
-> vm86 returned ENOSYS, marking as inactive. 20044 iterations. [F:14867 S:5032 HI:3700] [ 57.651003] synth uevent: /module/pcmcia_core: unknown uevent action string [ 71.189062] [ 71.191953] ====================================================== [ 71.192813] WARNING: possible circular locking dependency detected [ 71.193664] 4.12.0-10480-g3f906ba #1 Not tainted [ 71.194355] ------------------------------------------------------ [ 71.195211] trinity-c0/1666 is trying to acquire lock: [ 71.195958] (mem_hotplug_lock.rw_sem){.+.+.+}, at: show_slab_objects+0x14b/0x440 [ 71.197284] [ 71.197284] but task is already holding lock:
+-- 
+Regards,
+Pu Wen
 
-along with completely unparseable information. What am I supposed to do
-with this mail?
-
-Thanks,
-
-	tglx
