@@ -3,77 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E8EC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB7CC4321E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC7A206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:31:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC7A206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C871A206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:32:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C871A206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbeIFBDb (ORCPT
+        id S1727942AbeIFBES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:03:31 -0400
-Received: from mga04.intel.com ([192.55.52.120]:40627 "EHLO mga04.intel.com"
+        Wed, 5 Sep 2018 21:04:18 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54040 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727750AbeIFBDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:03:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 13:31:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="87961531"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by orsmga001.jf.intel.com with ESMTP; 05 Sep 2018 13:31:40 -0700
-Subject: [PATCH] uio: fix is_source param for check_copy_size() in
- copy_to_iter_mcsafe()
-From:   Dave Jiang <dave.jiang@intel.com>
-To:     gregkh@linuxfoundation.org
-Cc:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
-        fan.du@intel.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 13:31:40 -0700
-Message-ID: <153617950046.33664.13445188581267552601.stgit@djiang5-desk3.ch.intel.com>
-User-Agent: StGit/unknown-version
+        id S1727645AbeIFBES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 21:04:18 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fxeT9-0005h5-6D; Wed, 05 Sep 2018 14:32:08 -0600
+To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+ <20180830185352.3369-8-logang@deltatee.com>
+ <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
+ <20180901082812.GB670@lst.de>
+ <5f79c012-c6e1-56bb-62fd-0689181fb2c9@deltatee.com>
+ <59b28977-8f2a-6228-2050-03fae6bdbedd@kernel.dk>
+ <1b4283da-44df-4a02-3167-e295243cef78@deltatee.com>
+ <09258b9b-3aed-9890-b31a-bd70a133966c@kernel.dk>
+ <20180905195647.GA1626@lst.de>
+ <bcc1b3cf-2fd9-fa61-9cfb-b0e4d84e5d94@kernel.dk>
+ <20180905201152.GA1893@lst.de>
+ <eb42fb94-9da6-955b-8524-0a0f5ac4bd19@deltatee.com>
+ <2a3394bd-5f13-4818-43f4-dfc61f501e05@kernel.dk>
+ <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com>
+ <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <f9e660cd-b597-bb6e-56a2-82fe71cb3649@deltatee.com>
+Date:   Wed, 5 Sep 2018 14:32:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, axboe@kernel.dk
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-copy_to_iter_mcsafe() is passing in the is_source parameter as "false"
-to check_copy_size(). This is different than what copy_to_iter() does.
-Also, the addr parameter passed to check_copy_size() is the source so
-therefore we should be passing in "true" instead.
 
-Fixes: 8780356ef630 ("x86/asm/memcpy_mcsafe: Define copy_to_iter_mcsafe()")
 
-Reported-by: Fan Du <fan.du@intel.com>
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
----
- include/linux/uio.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 05/09/18 02:19 PM, Jens Axboe wrote:
+> On 9/5/18 2:18 PM, Logan Gunthorpe wrote:
+>>
+>>
+>> On 05/09/18 02:14 PM, Jens Axboe wrote:
+>>> But if the caller must absolutely know where the bio will end up, then
+>>> it seems super redundant. So I'd vote for killing this check, it buys
+>>> us absolutely nothing and isn't even exhaustive in its current form.
+>>
+>>
+>> Ok, I'll remove it for v6.
+> 
+> Since the drivers needs to know it's doing it right, it might not
+> hurt to add a sanity check helper for that. Just have the driver
+> call it, and don't add it in the normal IO submission path.
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 409c845d4cd3..422b1c01ee0d 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -172,7 +172,7 @@ size_t copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
- static __always_inline __must_check
- size_t copy_to_iter_mcsafe(void *addr, size_t bytes, struct iov_iter *i)
- {
--	if (unlikely(!check_copy_size(addr, bytes, false)))
-+	if (unlikely(!check_copy_size(addr, bytes, true)))
- 		return 0;
- 	else
- 		return _copy_to_iter_mcsafe(addr, bytes, i);
+I'm not sure I really see the value in that. It's the same principle in
+asking the driver to do the WARN: if the developer knew enough to use
+the special helper, they probably knew well enough to do the rest correctly.
 
+I guess one other thing to point out is that, on x86, if a driver
+submits P2P pages to a PCI device that doesn't have kernel support,
+everything will likely just work. Even though the driver isn't doing any
+of the work correctly and the requests are not being mapped with
+pci_p2pdma_map() functions. Such code on other arches would likely
+break. So developers may be lulled into thinking they're doing the
+correct thing when in fact they are not and the WARN in the common code
+would prevent that.
+
+Logan
