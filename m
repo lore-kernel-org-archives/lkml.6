@@ -2,119 +2,191 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2442CC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6E1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C6D2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D60532077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 03:52:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="dyWvTgwf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C6D2073D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pat49Tyu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D60532077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeIEHzs (ORCPT
+        id S1727195AbeIEIUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 03:55:48 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:43833 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbeIEHzs (ORCPT
+        Wed, 5 Sep 2018 04:20:11 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36029 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbeIEIUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 03:55:48 -0400
-Received: by mail-yb1-f193.google.com with SMTP id k5-v6so2141475ybo.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 20:27:44 -0700 (PDT)
+        Wed, 5 Sep 2018 04:20:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d1-v6so2715576pgo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Sep 2018 20:52:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ettus-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QOCnZbyzmr6xs+c4mZtIc74zeiICZDvrCsymiTx5XTY=;
-        b=dyWvTgwfQkriDP87ZMLpCjmYbjw9ZhU2zE5AmKwPbYoYQE1ylnBhi2aYnB1tIxUk6r
-         fuHZvjSP04vszKcJUD51/HcU3DaDNshXAk8I8jjxwdIeFXRxwGeq1cA9ytcJ09DoTzDj
-         mk7KNipiN4/E9NLnN2BQYr/A9fWAIILVMj8a2NjbXOihXgs+jnnzRsSm3XeSrzKhJZWk
-         R73Py2ujEj3Be4AQlKDfyspcbP6WToz/kgSyUTHvRuFJ3oHfshn+3oq9DD1ft/tAiNKI
-         e4tg5V5MN4QAnsGUyXn29iN88rPymNfCXzyZGkNp3RfC7TI0bBeF1fe/E3rnNkER5S0+
-         bvEQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DwzSrIFFr2XEPRnAul1Xp/yAnzhrNDwD0KzCpbRM79Y=;
+        b=pat49TyuEbVqzgknJRrAGxqMMYThHvyEcuZCVHeM1LCtWAW6QNe4mAK3rjnZLoOmxx
+         uQc7Mh6Nv1lnqqzALoF7jgsZJjLSBMiMUPrm+M62excFLeaZklQ9TiE5j+Byr+szhPnw
+         w6+UN0CPVtTDhrT5J4zWFEJbUMjeXP8cyUkqVtLlNXqY5eitnCAksn6LSAXTEJXsbX2u
+         ZJVNzKgYJrKkibNuTbRO4V9l6KFsoZagLM+s2CHk8yX6MkTWmJ1abJNN0yRcIE8C0Fxp
+         QAJN0KgZpF4GwK+cOVXD96mIR3Zk6jqbbWFTI7j7FG0CK+U4TnL2RsUbQLCJ9kXN93oq
+         uADA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QOCnZbyzmr6xs+c4mZtIc74zeiICZDvrCsymiTx5XTY=;
-        b=mW2+f8IhIMheQ8GEa+zxRo6KQ6hdcpf6vMOpiHhnE67yhxeJTb/XoSILTrQWDiw5pH
-         vf+QRovnnG6QsZaFrRKBj44TIYyikIlkL5m82xzZtYJdZb1b72fz2LJiMhufWPBE56a5
-         GAXtCBlDYSFQ26o0eJiN2/1R7hhODJcDyZ43UZabDZUTAbwA3TFxob/5nTaULH9BIcC1
-         7j7elJCrNAZx1gWGeL35ZeYUDYif2bBd6mLcLFyDQ/TGwjL7kt+vAsml4TQJyqPWDPSK
-         git6XpyzUvpvKoMarCiF7oMJ2k2wt/ZBrFLzc/erMwZaj4abUFz/W1rTJQRSvaVEomRI
-         7isQ==
-X-Gm-Message-State: APzg51CulfIDu8dZHxZWQFL57yZWm5fKrFwq4mTpZtqBlwMjdNFSsNXK
-        npi5IxkMSPdT9R5grYO4/bGx44lhvwE3glaZomUNMQ==
-X-Google-Smtp-Source: ANB0VdZT0huOrlhyRBZvEYKOe6tNiSdVqBWCJxJx0SXa4EWPjmzB2zZ9tG8k0/lvs9V2sAAvrAEn0kH+L76nuWB2UnY=
-X-Received: by 2002:a25:dd2:: with SMTP id 201-v6mr17758259ybn.301.1536118064116;
- Tue, 04 Sep 2018 20:27:44 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DwzSrIFFr2XEPRnAul1Xp/yAnzhrNDwD0KzCpbRM79Y=;
+        b=RpnzFPYgOZIx1Gaue0ue+O8RSe3cljzXiFm76ixJhdL+zpXS4PiilKBa2C75j9t6Dz
+         WMpNS1yFqega1+5AND1Hb/zOqk/UcSgbjBqb4vwBqdx/g025/6Z388IkwRqMSiuE9U6h
+         +XQ/qHJVHw5ruD3oYRgXZIl1LrN42YweahAOh3HJvWX04WUdrKV6iAcQXndzhaZ+zrqm
+         RZv4MU5P2oUrQI60AdzQnQL+9ZMvpJMROYmyqPce3H8c0CQKvadYO478j0phKMHczgid
+         SYwOU0U1Bgzalxae9LRL3xWDEQ3Rgd4UaqpVPGHf7WhopXmMNJ1hq+L93Oj7Z7G/JSVu
+         H6qg==
+X-Gm-Message-State: APzg51ABObiURutBRszwsKq20j6R2d0I8uka1NE00u8OECuYWkDHNV7V
+        y437LdsvHqGZckE55vPL5iU=
+X-Google-Smtp-Source: ANB0Vdau1n+6FlpzgeaJywtz8dmPFHCpT4kgxgYPt2vwR+DGgNObEv0p56xec4HuC5SOw6DVDEaIgw==
+X-Received: by 2002:a63:c807:: with SMTP id z7-v6mr33602623pgg.77.1536119520116;
+        Tue, 04 Sep 2018 20:52:00 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
+        by smtp.gmail.com with ESMTPSA id l70-v6sm643863pge.36.2018.09.04.20.51.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Sep 2018 20:51:59 -0700 (PDT)
+Date:   Wed, 5 Sep 2018 13:51:56 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: Regression from patch 'tty: hvc: hvc_poll() break hv read loop'
+Message-ID: <20180905135156.7ac7727b@roar.ozlabs.ibm.com>
+In-Reply-To: <20180904211635.GD335@mellanox.com>
+References: <20180904174808.GS335@mellanox.com>
+        <20180905071529.3b7a09c4@roar.ozlabs.ibm.com>
+        <20180904211635.GD335@mellanox.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a0d:e106:0:0:0:0:0 with HTTP; Tue, 4 Sep 2018 20:27:43 -0700 (PDT)
-In-Reply-To: <20180905010100.GN29121@lunn.ch>
-References: <20180905001535.19168-1-mdf@kernel.org> <20180905010100.GN29121@lunn.ch>
-From:   Moritz Fischer <moritz.fischer@ettus.com>
-Date:   Tue, 4 Sep 2018 20:27:43 -0700
-Message-ID: <CAAtXAHdu1a5dTP8rd7+Oc2--5F-nU5E6M796KZKd8croYcLVoQ@mail.gmail.com>
-Subject: Re: [RFC/PATCH] net: nixge: Add PHYLINK support
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alex Williams <alex.williams@ni.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Tue, 4 Sep 2018 15:16:35 -0600
+Jason Gunthorpe <jgg@mellanox.com> wrote:
 
-On Tue, Sep 4, 2018 at 6:01 PM, Andrew Lunn <andrew@lunn.ch> wrote:
->> 3) I'm again not sure about the 'select PHYLINK', wouldn't
->>    wanna break the build again...
->
-> Hi Moritz
->
-> I think it is safe. PHYLINK has no stated dependencies on OF. But i
-> suspect it currently is pretty useless without OF.
+> On Wed, Sep 05, 2018 at 07:15:29AM +1000, Nicholas Piggin wrote:
+> > On Tue, 4 Sep 2018 11:48:08 -0600
+> > Jason Gunthorpe <jgg@mellanox.com> wrote:
+> >   
+> > > Hi Nicholas,
+> > > 
+> > > I am testing 4.19-rc2 and I see bad behavior with my qemu hvc0
+> > > console..
+> > > 
+> > > Running interactive with qemu (qemu-2.11.2-1.fc28) on the console
+> > > providing hvc0, using options like:
+> > > 
+> > >         -nographic
+> > >         -chardev stdio,id=stdio,mux=on,signal=off
+> > >         -mon chardev=stdio
+> > > 	-device isa-serial,chardev=stdio
+> > >         -device virtio-serial-pci
+> > > 	-device virtconsole,chardev=stdio
+> > > 
+> > > I see the hvc0 console hang regularly, ie doing something like 'up
+> > > arrow' in bash causes the hvc0 console to hang. Prior kernels worked
+> > > OK.
+> > > 
+> > > Any ideas? I'm not familiar with this code.. Thanks!  
+> > 
+> > Yes I have had another report, I'm working on a fix. Sorry it has taken
+> > a while and thank you for the report.  
+> 
+> Okay, let me know when you have a fix and I will be able to test it
+> for you!
 
-Ok, great. Thanks!
+Can you try this?
 
->> @@ -1286,7 +1329,13 @@ static int nixge_probe(struct platform_device *pdev)
->>       priv->coalesce_count_rx = XAXIDMA_DFT_RX_THRESHOLD;
->>       priv->coalesce_count_tx = XAXIDMA_DFT_TX_THRESHOLD;
->>
->> -     err = nixge_mdio_setup(priv, pdev->dev.of_node);
->> +     mn = of_get_child_by_name(pdev->dev.of_node, "mdio");
->> +     if (!mn) {
->> +             dev_warn(&pdev->dev, "No \"mdio\" subnode found, defaulting to legacy\n");
->> +             mn = pdev->dev.of_node;
->> +     }
->> +
->> +     err = nixge_mdio_setup(priv, mn);
->
-> I would suggest making this a patch of its own.
-
-Yeah, will do.
-> Also, do you need the legacy behaviour? If there are no boards out in
-> the wild which this will break, just make the change.
-
-Well all users basically use devicetree overlays that we distribute
-with the FPGA images
-as part of a filesystem update. So I suppose it wouldn't break anyone,
-yet... It would certainly
-make the code easier to read.
-
-> Please also update the device tree binding documentation.
-
-Yeah will do.
-
-Thanks for the feedback,
-
-Moritz
+diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
+index 5414c4a87bea..f5fc3ba49130 100644
+--- a/drivers/tty/hvc/hvc_console.c
++++ b/drivers/tty/hvc/hvc_console.c
+@@ -49,6 +49,8 @@
+ #define N_OUTBUF	16
+ #define N_INBUF		16
+ 
++#define HVC_ATOMIC_READ_MAX	128
++
+ #define __ALIGNED__ __attribute__((__aligned__(sizeof(long))))
+ 
+ static struct tty_driver *hvc_driver;
+@@ -522,6 +524,8 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
+ 		return -EIO;
+ 
+ 	while (count > 0) {
++		int ret;
++
+ 		spin_lock_irqsave(&hp->lock, flags);
+ 
+ 		rsize = hp->outbuf_size - hp->n_outbuf;
+@@ -537,10 +541,13 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
+ 		}
+ 
+ 		if (hp->n_outbuf > 0)
+-			hvc_push(hp);
++			ret = hvc_push(hp);
+ 
+ 		spin_unlock_irqrestore(&hp->lock, flags);
+ 
++		if (!ret)
++			break;
++
+ 		if (count) {
+ 			if (hp->n_outbuf > 0)
+ 				hvc_flush(hp);
+@@ -669,8 +676,8 @@ static int __hvc_poll(struct hvc_struct *hp, bool may_sleep)
+ 	if (!hp->irq_requested)
+ 		poll_mask |= HVC_POLL_READ;
+ 
++ read_again:
+ 	/* Read data if any */
+-
+ 	count = tty_buffer_request_room(&hp->port, N_INBUF);
+ 
+ 	/* If flip is full, just reschedule a later read */
+@@ -717,9 +724,23 @@ static int __hvc_poll(struct hvc_struct *hp, bool may_sleep)
+ #endif /* CONFIG_MAGIC_SYSRQ */
+ 		tty_insert_flip_char(&hp->port, buf[i], 0);
+ 	}
+-	if (n == count)
+-		poll_mask |= HVC_POLL_READ;
+-	read_total = n;
++	read_total += n;
++
++	if (may_sleep) {
++		/* Keep going until the flip is full */
++		spin_unlock_irqrestore(&hp->lock, flags);
++		cond_resched();
++		spin_lock_irqsave(&hp->lock, flags);
++		goto read_again;
++	} else if (read_total < HVC_ATOMIC_READ_MAX) {
++		/* Break and defer if it's a large read in atomic */
++		goto read_again;
++	}
++
++	/*
++	 * Latency break, schedule another poll immediately.
++	 */
++	poll_mask |= HVC_POLL_READ;
+ 
+  out:
+ 	/* Wakeup write queue if necessary */
