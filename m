@@ -2,98 +2,83 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED62BC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347BEC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C26F2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:43:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="M+iAuvG3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C26F2073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id D9FF72073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:47:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9FF72073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeIFCPL (ORCPT
+        id S1727672AbeIFCTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:15:11 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:44250 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeIFCPL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:15:11 -0400
-Received: by mail-yb1-f196.google.com with SMTP id l16-v6so3299705ybk.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 14:43:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qXZubM8MF/Lw3QDANhwRZtFYSjHznjc5hICQlHp7cko=;
-        b=M+iAuvG3nZuE+iAp8SieNDJtUSc+tUkG89ZfAYtfxK5ugvz93f4eDUzpQ7mO511D0G
-         WCpqluaGB+8oMV+TYwpyJ2M5HYjOyXj+FUw4KIu4/sOoHF7UBxwRPBAv4gKuS/jloHts
-         Z2BH6dIP18ZJkH6qVow1nkgDBjejunAgC07Usz0O6ifZ7ORxO1orGcM/0bsfD271p6O4
-         4j9oW1PFKRQi1pNd/kHU7+I8NPaCGcqe/KcMulVod/1ktFig4wloJUY4d47nGmPrPTxf
-         DoHaZsx0U8+8WJF2ZFMdY4ypmPH+ibIUZkhdCItDdSOLd1hSVrkb7R3o6xwTQanZEWbe
-         K2Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qXZubM8MF/Lw3QDANhwRZtFYSjHznjc5hICQlHp7cko=;
-        b=A50tw3HUvCvaZAKcWf0mXsamgItXk+Z7xFgK1DUoidrgsP34J55hTtmtUpoFD0ZUE6
-         nNP4Ys8wtQ+NoxhFwsnh5pE9kN9XMCgJWgS65BAwG9BCmvSOAF83T+E5tXzG0xz091vH
-         hipAInZ8x7+JC5tNNSh2cFHRLg17XLi7KQaNX9BDkTUoeKlCMxb3Hp0YwfKdydsxBFTy
-         RCG+kwdQHbm3IRmqw9qQglbKcfK9omBY3NTXTzXWyvpurPzVES6L/V692li3BSR61cQv
-         qXIZdXxPU2mBw3O+/09ToiAU6E91Q99uwJnCJ/AxU3ynEnh11PM6N/b5cTszU8cqtXTR
-         6QSQ==
-X-Gm-Message-State: APzg51D9h3OibikwccbDM3oNUqqLxUpHL0eTR+oEdvk6QKgU9qpUVDfd
-        9QFEs6JZIQ+JiQWjaM0dkcPt+A==
-X-Google-Smtp-Source: ANB0VdZFPobuR+pATaCxUujxSwPnu+WW/S0aPZcMhkXcg2rIRce4Atq3CQMyxeqdnyU3h6mCvd+WpQ==
-X-Received: by 2002:a25:bdcb:: with SMTP id g11-v6mr21206517ybk.494.1536183785217;
-        Wed, 05 Sep 2018 14:43:05 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::3622])
-        by smtp.gmail.com with ESMTPSA id e124-v6sm1017519ywh.66.2018.09.05.14.43.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 14:43:03 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 17:43:03 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
- IO v4
-Message-ID: <20180905214303.GA30178@cmpxchg.org>
-References: <20180828172258.3185-1-hannes@cmpxchg.org>
+        Wed, 5 Sep 2018 22:19:14 -0400
+Received: from mga17.intel.com ([192.55.52.151]:7133 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727364AbeIFCTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:19:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 14:47:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
+   d="scan'208";a="67844584"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga007.fm.intel.com with ESMTP; 05 Sep 2018 14:47:06 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id AB0EA300B65; Wed,  5 Sep 2018 14:47:07 -0700 (PDT)
+Date:   Wed, 5 Sep 2018 14:47:07 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Eduardo Valentin <eduval@amazon.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/1] perf/x86/intel: make error messages less confusing
+Message-ID: <20180905214707.GM27886@tassilo.jf.intel.com>
+References: <20180823150732.11249-1-eduval@amazon.com>
+ <20180905085212.GS24124@hirez.programming.kicks-ass.net>
+ <20180905155317.GA20320@u40b0340c692b58f6553c.ant.amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180828172258.3185-1-hannes@cmpxchg.org>
+In-Reply-To: <20180905155317.GA20320@u40b0340c692b58f6553c.ant.amazon.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 01:22:49PM -0400, Johannes Weiner wrote:
-> This version 4 of the PSI series incorporates feedback from Peter and
-> fixes two races in the lockless aggregator that Suren found in his
-> testing and which caused the sample calculation to sometimes underflow
-> and record bogusly large samples; details at the bottom of this email.
+On Wed, Sep 05, 2018 at 08:53:17AM -0700, Eduardo Valentin wrote:
+> On Wed, Sep 05, 2018 at 10:52:12AM +0200, Peter Zijlstra wrote:
+> > On Thu, Aug 23, 2018 at 08:07:32AM -0700, Eduardo Valentin wrote:
+> > > On a system with X86_FEATURE_ARCH_PERFMON disabled
+> > > and with a model not known by family PMU drivers,
+> > > user gets a kernel message log like the following:
+> > > [ 0.100114] Performance Events: unsupported p6 CPU model 85 no PMU driver, software events only.
+> > > 
+> > > The "unsupported .. CPU" part may be confusing for some
+> > > users leading to wrong understanding that the kernel
+> > > does not support the CPU model.
+> > 
+> > Send them back to first grade, such that they might learn to read?
+> > 
+> 
+> :-)
 
-Peter, do the changes from v3 look sane to you?
+I think it's a valid concern, I guess Eduardo actually has real people
+who got confused.
 
-If there aren't any further objections, I was hoping we could get this
-lined up for 4.20.
+-Andi
