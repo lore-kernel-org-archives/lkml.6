@@ -6,83 +6,114 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED5DC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCEFC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FB920861
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FB920861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DFC8B20658
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC8B20658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbeIEP6l (ORCPT
+        id S1727413AbeIEP6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:58:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:55557 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeIEP6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:58:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 04:28:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
-   d="scan'208";a="83207174"
-Received: from kfitzx-mobl.ger.corp.intel.com (HELO localhost) ([10.252.37.75])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Sep 2018 04:28:49 -0700
-Date:   Wed, 5 Sep 2018 14:28:47 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Peter Huewe <peterhuewe@gmx.de>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] tpm: Make SECURITYFS a weak dependency
-Message-ID: <20180905112847.GC9696@linux.intel.com>
-References: <20180903195151.7576-1-peterhuewe@gmx.de>
+        Wed, 5 Sep 2018 11:58:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41158 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725868AbeIEP6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 11:58:42 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 57AC326A5E;
+        Wed,  5 Sep 2018 11:28:53 +0000 (UTC)
+Received: from krava (unknown [10.43.17.49])
+        by smtp.corp.redhat.com (Postfix) with SMTP id F303CD93D5;
+        Wed,  5 Sep 2018 11:28:51 +0000 (UTC)
+Date:   Wed, 5 Sep 2018 13:28:51 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 0/2]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Message-ID: <20180905112851.GA29759@krava>
+References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180903195151.7576-1-peterhuewe@gmx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 05 Sep 2018 11:28:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 05 Sep 2018 11:28:53 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 09:51:51PM +0200, Peter Huewe wrote:
-> While having SECURITYFS enabled for the tpm subsystem is beneficial in
-> most cases, it is not strictly necessary to have it enabled at all.
-> Especially on platforms without any boot firmware integration of the TPM
-> (e.g. raspberry pi) it does not add any value for the tpm subsystem,
-> as there is no eventlog present.
+On Wed, Sep 05, 2018 at 10:16:42AM +0300, Alexey Budankov wrote:
 > 
-> By turning it from 'select' to 'imply' it still gets selected per
-> default, but enables users who want to save some kb of ram by turning
-> SECURITYFS off.
+> Currently in record mode the tool implements trace writing serially. 
+> The algorithm loops over mapped per-cpu data buffers and stores 
+> ready data chunks into a trace file using write() system call.
 > 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> At some circumstances the kernel may lack free space in a buffer 
+> because the other buffer's half is not yet written to disk due to 
+> some other buffer's data writing by the tool at the moment.
+> 
+> Thus serial trace writing implementation may cause the kernel 
+> to loose profiling data and that is what observed when profiling 
+> highly parallel CPU bound workloads on machines with big number 
+> of cores.
+> 
+> Experiment with profiling matrix multiplication code executing 128 
+> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
+> demonstrates data loss metrics value of 98%:
+> 
+> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
+>     --call-graph dwarf,1024 --user-regs=IP,SP,BP \
+>     --switch-events -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
+>     matrix.gcc
+> 
+> Data loss metrics is the ratio lost_time/elapsed_time where 
+> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+> records and elapsed_time is the elapsed application run time 
+> under profiling.
+> 
+> Applying asynchronous trace streaming thru Posix AIO API
+> (http://man7.org/linux/man-pages/man7/aio.7.html) 
+> lowers data loss metrics value providing 2x improvement -
+> lowering 98% loss to almost 0%.
+> 
 > ---
->  drivers/char/tpm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Alexey Budankov (2):
+>         perf util: map data buffer for preserving collected data
+> 	perf record: enable asynchronous trace writing
+>  
+>  tools/perf/builtin-record.c | 197 +++++++++++++++++++++++++++++++++++++++++++-
+>  tools/perf/perf.h           |   1 +
+>  tools/perf/util/evlist.c    |   7 +-
+>  tools/perf/util/evlist.h    |   3 +-
+>  tools/perf/util/mmap.c      | 110 +++++++++++++++++++++----
+>  tools/perf/util/mmap.h      |  10 ++-
+>  6 files changed, 302 insertions(+), 26 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index 18c81cbe4704..536e55d3919f 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -5,7 +5,7 @@
->  menuconfig TCG_TPM
->  	tristate "TPM Hardware Support"
->  	depends on HAS_IOMEM
-> -	select SECURITYFS
-> +	imply SECURITYFS
->  	select CRYPTO
->  	select CRYPTO_HASH_INFO
->  	---help---
-> -- 
-> 2.16.4
-> 
+> ---
+>  Changes in v7:
+>  - implemented handling record.aio setting from perfconfig file
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+can't apply this version on Arnaldo's perf/core...
 
-/Jarkko
+[jolsa@krava linux-perf]$ git am /tmp/ab/
+Applying: perf util: map data buffer for preserving collected data
+error: patch failed: tools/perf/util/mmap.c:166
+error: tools/perf/util/mmap.c: patch does not apply
+
+thanks,
+jirka
