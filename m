@@ -2,94 +2,109 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDFBC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB2CC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129A020857
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 769802077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:51:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="eEmD40/G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129A020857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aat3Hg2q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769802077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeIEQUU (ORCPT
+        id S1727627AbeIEQV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 12:20:20 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.24]:19386 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbeIEQUU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 12:20:20 -0400
-X-Greylist: delayed 4194 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 12:20:19 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536148225;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=A+eJmaJDrDcA/dBJZg94K8jc1FAAIH0z9Qir5owBZGQ=;
-        b=eEmD40/GDqVn68BD+hDVEFJ+NHnl/7j8aLxEE9VwbC4iijwqpOxdU0pkfDp3R92ZJ8
-        sweTN4JInNnOVVsjG08xvMRSMhpPaK+/ZMSn3tI9MsV3Zm7ZzUE/WMkqbaI6Wyd+PXXM
-        aHfXQZoD/osFGoT/yPxw9aJdqQ++WroqsoTU06zToXHVRMBvsjlP/92V5Palc+N6Hq/j
-        zdCa9+a0GGIYq+wDUWDCL+0mRGaX1c5/+VD2adnx8QimvHFTCU2yTKeXIcvoOaTcHZto
-        iwyJNthMkwCDs1gBnnwtfN+c5aXileRPYiaamvSA+U9E0BiZYNQRfzEWJjPqZXHUgtK4
-        Bbrw==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivsAQtyRsdRVZ54BGpAypu4eYvjwzPAqxRcXNDW+"
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.0 AUTH)
-        with ESMTPSA id L0862bu85BoO5DZ
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 5 Sep 2018 13:50:24 +0200 (CEST)
-Date:   Wed, 5 Sep 2018 13:50:19 +0200
-From:   Olaf Hering <olaf@aepfle.de>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     xen-devel@lists.xenproject.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] xen: avoid crash in disable_hotplug_cpu
-Message-ID: <20180905135019.56b303da.olaf@aepfle.de>
-In-Reply-To: <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
-References: <20180905104039.13512-1-olaf@aepfle.de>
-        <7630aac8-8588-6e42-0807-f98b66ce37b5@suse.com>
-X-Mailer: Claws Mail 3.16.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Wed, 5 Sep 2018 12:21:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbeIEQV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 12:21:27 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 532BD20857;
+        Wed,  5 Sep 2018 11:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536148293;
+        bh=HHEfYWgEJ5vmpfBSBprIk9vCLvaZcerqqe6tadM0IzM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Aat3Hg2q/GFAgfYSlzcRGiXHq6F5JsUrA+emTHjK0vAosO+lC4ogTNlh85ILLEAL9
+         sGARBSqzbH3HzezeWIf0SV5t9Yhx9lciTIhGLQ85FulRWybcUGB7hRtfkmxeUZo0BL
+         FJjbpaMJbpvWsWw16oefxxuBHycVFGjdI2KLqomI=
+Received: by mail-qk1-f172.google.com with SMTP id j7-v6so4585660qkd.13;
+        Wed, 05 Sep 2018 04:51:33 -0700 (PDT)
+X-Gm-Message-State: APzg51DDyh7ux1FrzdCALnYa97skV6I1Q8iQIxTHWBCEmLRZtRhQzuIB
+        cSrz8lRZwAINne6tUsXYwiDD3WqhF9JJlXbjdw==
+X-Google-Smtp-Source: ANB0VdbATx8yMVFQ/OqAtUNT+kgsUw9G5iZ1P7m2+Mb6hvelv5dA9u6/87xsnPCSdvAplHV2BN+Q6FVkEwoz4De7ZwY=
+X-Received: by 2002:a37:169c:: with SMTP id 28-v6mr31650649qkw.184.1536148292502;
+ Wed, 05 Sep 2018 04:51:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/9_A9212rbA3FEtpY02kkZAv"; protocol="application/pgp-signature"
+References: <20180830190523.31474-1-robh@kernel.org> <20180830190523.31474-2-robh@kernel.org>
+ <b86ed9cf-d5fd-09fb-eb82-0143c759f5cf@gmail.com>
+In-Reply-To: <b86ed9cf-d5fd-09fb-eb82-0143c759f5cf@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 5 Sep 2018 06:51:20 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJy0kDYCC35GR5TGLYyYU-UjOys_r2sFMQZuFto5HkExg@mail.gmail.com>
+Message-ID: <CAL_JsqJy0kDYCC35GR5TGLYyYU-UjOys_r2sFMQZuFto5HkExg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] of/fdt: Scan the root node properties earlier
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9_A9212rbA3FEtpY02kkZAv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 4, 2018 at 8:49 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 08/30/18 12:05, Rob Herring wrote:
+> > Scan the root node properties (#{size,address}-cells) earlier,
+>
+>                                                         ^^^^^^^
+>                              before mdesc->dt_fixup() is called
+>
+> > so that
+> > the dt_root_addr_cells and dt_root_size_cells variables are initialized
+> > and can be used.
+>                  by mdesc->dt_fixup()
 
-Am Wed, 5 Sep 2018 12:55:58 +0200
-schrieb Juergen Gross <jgross@suse.com>:
+That's an ARM specific detail. Granted, ARM is the only caller.
 
-> the last cpu
+> >
+> > Cc: Frank Rowand <frowand.list@gmail.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  drivers/of/fdt.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> >
+> Moving early_init_dt_scan_root() to inside early_init_dt_verify()
+> puts something that has nothing to do with verifying the fdt
+> into a function whose purpose is the verify.  It hides the side
+> effect of initializing the dt_root_addr_cells and dt_root_size_cells
+> variables.
 
-Which one is the "last" one? I mean, if cpu#0 never can be offlined than pe=
-rhaps the code should check for just that and return early. But if cpu#0 co=
-uld be disabled while some other cpu is the remaining cpu, some other check=
- is needed I think.
+It already has the side effect of setting initial_boot_params which
+every subsequent function needs.
 
-Olaf
+> I suggest creating a new function early_init_dt_scan_init_pre_dt_fixup(),
+> move the chunk of code there instead of to early_init_dt_scan_nodes(),
+> and call the new function from setup_machine_fdt(), just before
+> calling  mdesc->dt_fixup().  This would be a little bit more code,
+> but more clearly showing the intent.
 
---Sig_/9_A9212rbA3FEtpY02kkZAv
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
+I'm trying to reduce the number of functions arches call and renaming
+would need a bunch of arch changes. This change will also let me make
+early_init_dt_scan_root private as powerpc is the only user. I need to
+dust off a patch for that.
 
------BEGIN PGP SIGNATURE-----
+I'd be more inclined to push exynos to remove this altogether. After
+all, if they claim their bindings are unstable, they can't really
+claim their bootloader is stable/fixed.
 
-iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCW4/C+wAKCRBdQqD6ppg2
-frlGAJ9IqMrNEZ+KR+wJ/FSquh6l+aGV6ACeN8hFlwCo1KKm1VhjD09C4UsVH4Y=
-=zyjz
------END PGP SIGNATURE-----
-
---Sig_/9_A9212rbA3FEtpY02kkZAv--
+Rob
