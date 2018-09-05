@@ -2,96 +2,124 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD4CC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8806FC43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305AA2075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:11:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMGx3j+f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305AA2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BB192077C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 06:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB192077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=systec-electronic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeIEKkM (ORCPT
+        id S1727626AbeIEKlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 06:40:12 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44073 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbeIEKkM (ORCPT
+        Wed, 5 Sep 2018 06:41:23 -0400
+Received: from webbox1416.server-home.net ([77.236.96.61]:39503 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726272AbeIEKlX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 06:40:12 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so2894893pff.11;
-        Tue, 04 Sep 2018 23:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Uva6WvTCO0peCxOukIV1wV5tNn0mHsrP8l7C0Uv665Q=;
-        b=fMGx3j+fHmbNiCYYf0bCE0CsLNOR+Hdy7VIohe5KgvE3TuE9s2ybym5BuPMqx3PYJ4
-         Dc+lWIo4kTNnalodstwsBghMJFQUhoKmjDayWzTflwQ/Jutm4UzhOMSPBnwXr6TByev+
-         9xjyRgmFD4EtAVBR9DOQL/fHpDRaU0oEjYnNNHAExXkrP8qe8ri8xQYCT58Xvur7qDM1
-         KGBECHcJeZOUzXS64OMr0kW8wMKbYvcpM1RMpnDsNuZLacjtUn8Ef1owCfkQqk3hfT+z
-         i3sU5kCOaXDCSd3sRy0aJphN35r+4qqVwzhuBu5vdTuJP+wvzi6yxznMEZ9vSda3vMDu
-         GyHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Uva6WvTCO0peCxOukIV1wV5tNn0mHsrP8l7C0Uv665Q=;
-        b=mTYyJJn6MWxi8xkr4dPv6qWEwNLzTqU5E1oTHFsHyrnJuTi4xSZ0nQ06Csy5ALaDoc
-         A6qRUiPoezvVV/+RogkmWZ0Pe8i++QVFj/i+1wNWpXT+p+D2PnxL6DRDafdHDhCOB6QD
-         egomwWNdHfnwizUOZFx/tshjxRta2f4W7c/8S2A8Ki5uLuSiBKNnTdxaZoQqItA9HQLX
-         OyQH4Ydqe+tsXoqn0HvlMKj0+JaFaE47mmfdbAk/fR5mrQ7/NsdlkfG6nO+KgtuePZgF
-         w32hZTBpjvITenbat1BqlZRuP7Dij2e7eRsA4GC/mm9bSXdx3zgV2Q+eX+Vq9bJe96Xf
-         AhZw==
-X-Gm-Message-State: APzg51AqWo+pwfvrea0Os8w+tyAqgzJGeZkCfqLElaP6khL/fNUyYrUF
-        23VWdRA40n1kt5bLfao2Pt4=
-X-Google-Smtp-Source: ANB0VdYGofHun52QHt/JYHrtxBLzyEI65Tz5t/o+ACt1HUB4GvhUd80T+52IYGgaYU/kT1dxWqwoug==
-X-Received: by 2002:a63:9712:: with SMTP id n18-v6mr33887600pge.92.1536127897380;
-        Tue, 04 Sep 2018 23:11:37 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:bcd1])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm1231335pfj.72.2018.09.04.23.11.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Sep 2018 23:11:36 -0700 (PDT)
-Date:   Tue, 4 Sep 2018 23:11:33 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     Taeung Song <treeze.taeung@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2] libbpf: Remove the duplicate checking of
- function storage
-Message-ID: <20180905061132.m7kp5og6jopojajj@ast-mbp.dhcp.thefacebook.com>
-References: <20180902233007.3003-1-treeze.taeung@gmail.com>
- <20180904110745.3ab4dc3e@cakuba>
+        Wed, 5 Sep 2018 06:41:23 -0400
+X-Greylist: delayed 439 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Sep 2018 06:41:23 EDT
+Received: from imapserver.systec-electronic.com (unknown [212.185.67.146])
+        by webbox1416.server-home.net (Postfix) with ESMTPA id CF62927A6B3;
+        Wed,  5 Sep 2018 08:05:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by imapserver.systec-electronic.com (Postfix) with ESMTP id 9F04A1A1B50;
+        Wed,  5 Sep 2018 08:05:31 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at imapserver.systec-electronic.com
+Received: from imapserver.systec-electronic.com ([127.0.0.1])
+        by localhost (imapserver.systec-electronic.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fAX3J75soR6O; Wed,  5 Sep 2018 08:05:29 +0200 (CEST)
+Received: from ws-140106.localnet (ws-140106.systec.local [192.168.10.92])
+        by imapserver.systec-electronic.com (Postfix) with ESMTPA id 97DCB1A1B4F;
+        Wed,  5 Sep 2018 08:05:29 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@systec-electronic.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+Date:   Wed, 05 Sep 2018 08:05:29 +0200
+Message-ID: <2109885.PdqaXYh4EC@ws-140106>
+In-Reply-To: <20180904181629.20712-3-keescook@chromium.org>
+References: <20180904181629.20712-1-keescook@chromium.org> <20180904181629.20712-3-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904110745.3ab4dc3e@cakuba>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 11:07:45AM +0200, Jakub Kicinski wrote:
-> On Mon,  3 Sep 2018 08:30:07 +0900, Taeung Song wrote:
-> > After the commit eac7d84519a3 ("tools: libbpf: don't return '.text'
-> > as a program for multi-function programs"), bpf_program__next()
-> > in bpf_object__for_each_program skips the function storage such as .text,
-> > so eliminate the duplicate checking.
-> > 
-> > Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-> > Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+On Tuesday, September 4, 2018, 8:16:29 PM CEST Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> caps the skcipher request size similar to other limits and adds a sanity
+> check at registration. Looking at instrumented tcrypt output, the largest
+> is for lrw:
 > 
-> Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+> 	crypt: testing lrw(aes)
+> 	crypto_skcipher_set_reqsize: 8
+> 	crypto_skcipher_set_reqsize: 88
+> 	crypto_skcipher_set_reqsize: 472
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  include/crypto/internal/skcipher.h | 3 +++
+>  include/crypto/skcipher.h          | 4 +++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
+> index d2926ecae2ac..6da811c0747e 100644
+> --- a/include/crypto/internal/skcipher.h
+> +++ b/include/crypto/internal/skcipher.h
+> @@ -130,6 +130,9 @@ static inline struct crypto_skcipher *crypto_spawn_skcipher(
+>  static inline int crypto_skcipher_set_reqsize(
+>  	struct crypto_skcipher *skcipher, unsigned int reqsize)
+>  {
+> +	if (WARN_ON(reqsize > SKCIPHER_MAX_REQSIZE))
+> +		return -EINVAL;
+> +
+>  	skcipher->reqsize = reqsize;
+>  
+>  	return 0;
+> diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+> index 2f327f090c3e..c48e194438cf 100644
+> --- a/include/crypto/skcipher.h
+> +++ b/include/crypto/skcipher.h
+> @@ -139,9 +139,11 @@ struct skcipher_alg {
+>  	struct crypto_alg base;
+>  };
+>  
+> +#define SKCIPHER_MAX_REQSIZE	472
+> +
+>  #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+>  	char __##name##_desc[sizeof(struct skcipher_request) + \
+> -		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
+> +		SKCIPHER_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
+>  	struct skcipher_request *name = (void *)__##name##_desc
 
-Applied, Thanks
+Now tfm could be removed from the macro arguments, no?
+
+Best regards,
+Alexander
+
+
 
