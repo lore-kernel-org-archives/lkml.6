@@ -5,786 +5,383 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E01C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8F4C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4FD2073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4FD2073D
+	by mail.kernel.org (Postfix) with ESMTP id ECEBB2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:54:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEBB2073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeIFC0o (ORCPT
+        id S1727822AbeIFC0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 22:26:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45188 "EHLO mx1.redhat.com"
+        Wed, 5 Sep 2018 22:26:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44222 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727518AbeIFC0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 22:26:44 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        id S1727793AbeIFC0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 22:26:47 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B2ACA8575F;
-        Wed,  5 Sep 2018 21:54:32 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 59BF140216E3;
+        Wed,  5 Sep 2018 21:54:39 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C8D12166BA1;
-        Wed,  5 Sep 2018 21:54:31 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F394112D16C;
+        Wed,  5 Sep 2018 21:54:38 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 02/22] KEYS: Provide keyctls to drive the new key type ops
- for asymmetric keys
+Subject: [PATCH 03/22] KEYS: Provide missing asymmetric key subops for new
+ key type ops
 From:   David Howells <dhowells@redhat.com>
 To:     jmorris@namei.org
 Cc:     denkenz@gmail.com, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Sep 2018 22:54:31 +0100
-Message-ID: <153618447101.7946.4954006465235569857.stgit@warthog.procyon.org.uk>
+Date:   Wed, 05 Sep 2018 22:54:37 +0100
+Message-ID: <153618447788.7946.12036865757091293640.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 05 Sep 2018 21:54:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 05 Sep 2018 21:54:32 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:39 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 05 Sep 2018 21:54:39 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide five keyctl functions that permit userspace to make use of the new
-key type ops for accessing and driving asymmetric keys.
+Provide the missing asymmetric key subops for new key type ops.  This
+include query, encrypt, decrypt and create signature.  Verify signature
+already exists.  Also provided are accessor functions for this:
 
- (*) Query an asymmetric key.
+	int query_asymmetric_key(const struct key *key,
+				 struct kernel_pkey_query *info);
 
-	long keyctl(KEYCTL_PKEY_QUERY,
-		    key_serial_t key, unsigned long reserved,
-		    struct keyctl_pkey_query *info);
+	int encrypt_blob(struct kernel_pkey_params *params,
+			 const void *data, void *enc);
+	int decrypt_blob(struct kernel_pkey_params *params,
+			 const void *enc, void *data);
+	int create_signature(struct kernel_pkey_params *params,
+			     const void *data, void *enc);
 
-     Get information about an asymmetric key.  The information is returned
-     in the keyctl_pkey_query struct:
-
-	__u32	supported_ops;
-
-     A bit mask of flags indicating which ops are supported.  This is
-     constructed from a bitwise-OR of:
-
-	KEYCTL_SUPPORTS_{ENCRYPT,DECRYPT,SIGN,VERIFY}
-
-	__u32	key_size;
-
-     The size in bits of the key.
-
-	__u16	max_data_size;
-	__u16	max_sig_size;
-	__u16	max_enc_size;
-	__u16	max_dec_size;
-
-     The maximum sizes in bytes of a blob of data to be signed, a signature
-     blob, a blob to be encrypted and a blob to be decrypted.
-
-     reserved must be set to 0.  This is intended for future use to hand
-     over one or more passphrases needed unlock a key.
-
-     If successful, 0 is returned.  If the key is not an asymmetric key,
-     EOPNOTSUPP is returned.
-
-
- (*) Encrypt, decrypt, sign or verify a blob using an asymmetric key.
-
-	long keyctl(KEYCTL_PKEY_ENCRYPT,
-		    const struct keyctl_pkey_params *params,
-		    const char *info,
-		    const void *in,
-		    void *out);
-
-	long keyctl(KEYCTL_PKEY_DECRYPT,
-		    const struct keyctl_pkey_params *params,
-		    const char *info,
-		    const void *in,
-		    void *out);
-
-	long keyctl(KEYCTL_PKEY_SIGN,
-		    const struct keyctl_pkey_params *params,
-		    const char *info,
-		    const void *in,
-		    void *out);
-
-	long keyctl(KEYCTL_PKEY_VERIFY,
-		    const struct keyctl_pkey_params *params,
-		    const char *info,
-		    const void *in,
-		    const void *in2);
-
-     Use an asymmetric key to perform a public-key cryptographic operation
-     a blob of data.
-
-     The parameter block pointed to by params contains a number of integer
-     values:
-
-	__s32		key_id;
-	__u32		in_len;
-	__u32		out_len;
-	__u32		in2_len;
-
-     For a given operation, the in and out buffers are used as follows:
-
-	Operation ID		in,in_len	out,out_len	in2,in2_len
-	=======================	===============	===============	===========
-	KEYCTL_PKEY_ENCRYPT	Raw data	Encrypted data	-
-	KEYCTL_PKEY_DECRYPT	Encrypted data	Raw data	-
-	KEYCTL_PKEY_SIGN	Raw data	Signature	-
-	KEYCTL_PKEY_VERIFY	Raw data	-		Signature
-
-     info is a string of key=value pairs that supply supplementary
-     information.
-
-     The __spare space in the parameter block must be set to 0.  This is
-     intended, amongst other things, to allow the passing of passphrases
-     required to unlock a key.
-
-     If successful, encrypt, decrypt and sign all return the amount of data
-     written into the output buffer.  Verification returns 0 on success.
+The public_key_signature struct gains an encoding field to carry the
+encoding for verify_signature().
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- Documentation/security/keys/core.rst |  111 ++++++++++++
- include/uapi/linux/keyctl.h          |   25 +++
- security/keys/Makefile               |    1 
- security/keys/compat.c               |   18 ++
- security/keys/internal.h             |   39 ++++
- security/keys/keyctl.c               |   24 +++
- security/keys/keyctl_pkey.c          |  323 ++++++++++++++++++++++++++++++++++
- 7 files changed, 541 insertions(+)
- create mode 100644 security/keys/keyctl_pkey.c
+ Documentation/crypto/asymmetric-keys.txt |   24 ++++++--
+ crypto/asymmetric_keys/asymmetric_keys.h |    3 +
+ crypto/asymmetric_keys/asymmetric_type.c |   43 ++++++++++++++
+ crypto/asymmetric_keys/signature.c       |   95 ++++++++++++++++++++++++++++++
+ include/crypto/public_key.h              |   13 +++-
+ include/keys/asymmetric-subtype.h        |    9 +++
+ 6 files changed, 180 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 2cdccde6c585..3d36f42283e6 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -859,6 +859,7 @@ The keyctl syscall functions are:
-      and either the buffer length or the OtherInfo length exceeds the
-      allowed length.
+diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
+index 5969bf42562a..deb656ef008b 100644
+--- a/Documentation/crypto/asymmetric-keys.txt
++++ b/Documentation/crypto/asymmetric-keys.txt
+@@ -183,6 +183,10 @@ and looks like the following:
  
-+
-   *  Restrict keyring linkage::
+ 		void (*describe)(const struct key *key, struct seq_file *m);
+ 		void (*destroy)(void *payload);
++		int (*query)(const struct kernel_pkey_params *params,
++			     struct kernel_pkey_query *info);
++		int (*eds_op)(struct kernel_pkey_params *params,
++			      const void *in, void *out);
+ 		int (*verify_signature)(const struct key *key,
+ 					const struct public_key_signature *sig);
+ 	};
+@@ -207,12 +211,22 @@ There are a number of operations defined by the subtype:
+      asymmetric key will look after freeing the fingerprint and releasing the
+      reference on the subtype module.
  
- 	long keyctl(KEYCTL_RESTRICT_KEYRING, key_serial_t keyring,
-@@ -890,6 +891,116 @@ The keyctl syscall functions are:
-      applicable to the asymmetric key type.
+- (3) verify_signature().
++ (3) query().
+ 
+-     Optional.  These are the entry points for the key usage operations.
+-     Currently there is only the one defined.  If not set, the caller will be
+-     given -ENOTSUPP.  The subtype may do anything it likes to implement an
+-     operation, including offloading to hardware.
++     Mandatory.  This is a function for querying the capabilities of a key.
++
++ (4) eds_op().
++
++     Optional.  This is the entry point for the encryption, decryption and
++     signature creation operations (which are distinguished by the operation ID
++     in the parameter struct).  The subtype may do anything it likes to
++     implement an operation, including offloading to hardware.
++
++ (5) verify_signature().
++
++     Optional.  This is the entry point for signature verification.  The
++     subtype may do anything it likes to implement an operation, including
++     offloading to hardware.
  
  
-+  *  Query an asymmetric key::
+ ==========================
+diff --git a/crypto/asymmetric_keys/asymmetric_keys.h b/crypto/asymmetric_keys/asymmetric_keys.h
+index ca8e9ac34ce6..7be1ccf4fa9f 100644
+--- a/crypto/asymmetric_keys/asymmetric_keys.h
++++ b/crypto/asymmetric_keys/asymmetric_keys.h
+@@ -16,3 +16,6 @@ extern struct asymmetric_key_id *asymmetric_key_hex_to_key_id(const char *id);
+ extern int __asymmetric_key_hex_to_key_id(const char *id,
+ 					  struct asymmetric_key_id *match_id,
+ 					  size_t hexlen);
 +
-+	long keyctl(KEYCTL_PKEY_QUERY,
-+		    key_serial_t key_id, unsigned long reserved,
-+		    struct keyctl_pkey_query *info);
-+
-+     Get information about an asymmetric key.  The information is returned in
-+     the keyctl_pkey_query struct::
-+
-+	__u32	supported_ops;
-+	__u32	key_size;
-+	__u16	max_data_size;
-+	__u16	max_sig_size;
-+	__u16	max_enc_size;
-+	__u16	max_dec_size;
-+	__u32	__spare[10];
-+
-+     ``supported_ops`` contains a bit mask of flags indicating which ops are
-+     supported.  This is constructed from a bitwise-OR of::
-+
-+	KEYCTL_SUPPORTS_{ENCRYPT,DECRYPT,SIGN,VERIFY}
-+
-+     ``key_size`` indicated the size of the key in bits.
-+
-+     ``max_*_size`` indicate the maximum sizes in bytes of a blob of data to be
-+     signed, a signature blob, a blob to be encrypted and a blob to be
-+     decrypted.
-+
-+     ``__spare[]`` must be set to 0.  This is intended for future use to hand
-+     over one or more passphrases needed unlock a key.
-+
-+     If successful, 0 is returned.  If the key is not an asymmetric key,
-+     EOPNOTSUPP is returned.
-+
-+
-+  *  Encrypt, decrypt, sign or verify a blob using an asymmetric key::
-+
-+	long keyctl(KEYCTL_PKEY_ENCRYPT,
-+		    const struct keyctl_pkey_params *params,
-+		    const char *info,
-+		    const void *in,
-+		    void *out);
-+
-+	long keyctl(KEYCTL_PKEY_DECRYPT,
-+		    const struct keyctl_pkey_params *params,
-+		    const char *info,
-+		    const void *in,
-+		    void *out);
-+
-+	long keyctl(KEYCTL_PKEY_SIGN,
-+		    const struct keyctl_pkey_params *params,
-+		    const char *info,
-+		    const void *in,
-+		    void *out);
-+
-+	long keyctl(KEYCTL_PKEY_VERIFY,
-+		    const struct keyctl_pkey_params *params,
-+		    const char *info,
-+		    const void *in,
-+		    const void *in2);
-+
-+     Use an asymmetric key to perform a public-key cryptographic operation a
-+     blob of data.  For encryption and verification, the asymmetric key may
-+     only need the public parts to be available, but for decryption and signing
-+     the private parts are required also.
-+
-+     The parameter block pointed to by params contains a number of integer
-+     values::
-+
-+	__s32		key_id;
-+	__u32		in_len;
-+	__u32		out_len;
-+	__u32		in2_len;
-+
-+     ``key_id`` is the ID of the asymmetric key to be used.  ``in_len`` and
-+     ``in2_len`` indicate the amount of data in the in and in2 buffers and
-+     ``out_len`` indicates the size of the out buffer as appropriate for the
-+     above operations.
-+
-+     For a given operation, the in and out buffers are used as follows::
-+
-+	Operation ID		in,in_len	out,out_len	in2,in2_len
-+	=======================	===============	===============	===============
-+	KEYCTL_PKEY_ENCRYPT	Raw data	Encrypted data	-
-+	KEYCTL_PKEY_DECRYPT	Encrypted data	Raw data	-
-+	KEYCTL_PKEY_SIGN	Raw data	Signature	-
-+	KEYCTL_PKEY_VERIFY	Raw data	-		Signature
-+
-+     ``info`` is a string of key=value pairs that supply supplementary
-+     information.  These include:
-+
-+	``enc=<encoding>`` The encoding of the encrypted/signature blob.  This
-+			can be "pkcs1" for RSASSA-PKCS1-v1.5 or
-+			RSAES-PKCS1-v1.5; "pss" for "RSASSA-PSS"; "oaep" for
-+			"RSAES-OAEP".  If omitted or is "raw", the raw output
-+			of the encryption function is specified.
-+
-+	``hash=<algo>``	If the data buffer contains the output of a hash
-+			function and the encoding includes some indication of
-+			which hash function was used, the hash function can be
-+			specified with this, eg. "hash=sha256".
-+
-+     The ``__spare[]`` space in the parameter block must be set to 0.  This is
-+     intended, amongst other things, to allow the passing of passphrases
-+     required to unlock a key.
-+
-+     If successful, encrypt, decrypt and sign all return the amount of data
-+     written into the output buffer.  Verification returns 0 on success.
-+
-+
- Kernel Services
- ===============
++extern int asymmetric_key_eds_op(struct kernel_pkey_params *params,
++				 const void *in, void *out);
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+index 26539e9a8bda..69a0788a7de5 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
+ #include <keys/system_keyring.h>
++#include <keys/user-type.h>
+ #include "asymmetric_keys.h"
  
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index d5eac15bc00c..1a5a7948606e 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -61,6 +61,11 @@
- #define KEYCTL_INVALIDATE		21	/* invalidate a key */
- #define KEYCTL_GET_PERSISTENT		22	/* get a user's persistent keyring */
- #define KEYCTL_DH_COMPUTE		23	/* Compute Diffie-Hellman values */
-+#define KEYCTL_PKEY_QUERY		24	/* Query public key parameters */
-+#define KEYCTL_PKEY_ENCRYPT		25	/* Encrypt a blob using a public key */
-+#define KEYCTL_PKEY_DECRYPT		26	/* Decrypt a blob using a public key */
-+#define KEYCTL_PKEY_SIGN		27	/* Create a public key signature */
-+#define KEYCTL_PKEY_VERIFY		28	/* Verify a public key signature */
- #define KEYCTL_RESTRICT_KEYRING		29	/* Restrict keys allowed to link to a keyring */
+ MODULE_LICENSE("GPL");
+@@ -538,6 +539,45 @@ static struct key_restriction *asymmetric_lookup_restriction(
+ 	return ret;
+ }
  
- /* keyctl structures */
-@@ -82,4 +87,24 @@ struct keyctl_kdf_params {
- #define KEYCTL_SUPPORTS_SIGN		0x04
- #define KEYCTL_SUPPORTS_VERIFY		0x08
- 
-+struct keyctl_pkey_query {
-+	__u32		supported_ops;	/* Which ops are supported */
-+	__u32		key_size;	/* Size of the key in bits */
-+	__u16		max_data_size;	/* Maximum size of raw data to sign in bytes */
-+	__u16		max_sig_size;	/* Maximum size of signature in bytes */
-+	__u16		max_enc_size;	/* Maximum size of encrypted blob in bytes */
-+	__u16		max_dec_size;	/* Maximum size of decrypted blob in bytes */
-+	__u32		__spare[10];
-+};
++int asymmetric_key_eds_op(struct kernel_pkey_params *params,
++			  const void *in, void *out)
++{
++	const struct asymmetric_key_subtype *subtype;
++	struct key *key = params->key;
++	int ret;
 +
-+struct keyctl_pkey_params {
-+	__s32		key_id;		/* Serial no. of public key to use */
-+	__u32		in_len;		/* Input data size */
-+	union {
-+		__u32		out_len;	/* Output buffer size (encrypt/decrypt/sign) */
-+		__u32		in2_len;	/* 2nd input data size (verify) */
++	pr_devel("==>%s()\n", __func__);
++
++	if (key->type != &key_type_asymmetric)
++		return -EINVAL;
++	subtype = asymmetric_key_subtype(key);
++	if (!subtype ||
++	    !key->payload.data[0])
++		return -EINVAL;
++	if (!subtype->eds_op)
++		return -ENOTSUPP;
++
++	ret = subtype->eds_op(params, in, out);
++
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++
++static int asymmetric_key_verify_signature(struct kernel_pkey_params *params,
++					   const void *in, const void *in2)
++{
++	struct public_key_signature sig = {
++		.s_size		= params->in2_len,
++		.digest_size	= params->in_len,
++		.encoding	= params->encoding,
++		.hash_algo	= params->hash_algo,
++		.digest		= (void *)in,
++		.s		= (void *)in2,
 +	};
-+	__u32		__spare[7];
-+};
 +
- #endif /*  _LINUX_KEYCTL_H */
-diff --git a/security/keys/Makefile b/security/keys/Makefile
-index ef1581b337a3..9cef54064f60 100644
---- a/security/keys/Makefile
-+++ b/security/keys/Makefile
-@@ -22,6 +22,7 @@ obj-$(CONFIG_PROC_FS) += proc.o
- obj-$(CONFIG_SYSCTL) += sysctl.o
- obj-$(CONFIG_PERSISTENT_KEYRINGS) += persistent.o
- obj-$(CONFIG_KEY_DH_OPERATIONS) += dh.o
-+obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += keyctl_pkey.o
- 
- #
- # Key types
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index e87c89c0177c..9482df601dc3 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -141,6 +141,24 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 		return keyctl_restrict_keyring(arg2, compat_ptr(arg3),
- 					       compat_ptr(arg4));
- 
-+	case KEYCTL_PKEY_QUERY:
-+		if (arg3 != 0)
-+			return -EINVAL;
-+		return keyctl_pkey_query(arg2,
-+					 compat_ptr(arg4),
-+					 compat_ptr(arg5));
-+
-+	case KEYCTL_PKEY_ENCRYPT:
-+	case KEYCTL_PKEY_DECRYPT:
-+	case KEYCTL_PKEY_SIGN:
-+		return keyctl_pkey_e_d_s(option,
-+					 compat_ptr(arg2), compat_ptr(arg3),
-+					 compat_ptr(arg4), compat_ptr(arg5));
-+
-+	case KEYCTL_PKEY_VERIFY:
-+		return keyctl_pkey_verify(compat_ptr(arg2), compat_ptr(arg3),
-+					  compat_ptr(arg4), compat_ptr(arg5));
-+
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 9f8208dc0e55..74cb0ff42fed 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -298,6 +298,45 @@ static inline long compat_keyctl_dh_compute(
- #endif
- #endif
- 
-+#ifdef CONFIG_ASYMMETRIC_KEY_TYPE
-+extern long keyctl_pkey_query(key_serial_t,
-+			      const char __user *,
-+			      struct keyctl_pkey_query __user *);
-+
-+extern long keyctl_pkey_verify(const struct keyctl_pkey_params __user *,
-+			       const char __user *,
-+			       const void __user *, const void __user *);
-+
-+extern long keyctl_pkey_e_d_s(int,
-+			      const struct keyctl_pkey_params __user *,
-+			      const char __user *,
-+			      const void __user *, void __user *);
-+#else
-+static inline long keyctl_pkey_query(key_serial_t id,
-+				     const char __user *_info,
-+				     struct keyctl_pkey_query __user *_res)
-+{
-+	return -EOPNOTSUPP;
++	return verify_signature(params->key, &sig);
 +}
 +
-+static inline long keyctl_pkey_verify(const struct keyctl_pkey_params __user *params,
-+				      const char __user *_info,
-+				      const void __user *_in,
-+				      const void __user *_in2)
+ struct key_type key_type_asymmetric = {
+ 	.name			= "asymmetric",
+ 	.preparse		= asymmetric_key_preparse,
+@@ -548,6 +588,9 @@ struct key_type key_type_asymmetric = {
+ 	.destroy		= asymmetric_key_destroy,
+ 	.describe		= asymmetric_key_describe,
+ 	.lookup_restriction	= asymmetric_lookup_restriction,
++	.asym_query		= query_asymmetric_key,
++	.asym_eds_op		= asymmetric_key_eds_op,
++	.asym_verify_signature	= asymmetric_key_verify_signature,
+ };
+ EXPORT_SYMBOL_GPL(key_type_asymmetric);
+ 
+diff --git a/crypto/asymmetric_keys/signature.c b/crypto/asymmetric_keys/signature.c
+index 28198314bc39..ad95a58c6642 100644
+--- a/crypto/asymmetric_keys/signature.c
++++ b/crypto/asymmetric_keys/signature.c
+@@ -16,7 +16,9 @@
+ #include <linux/export.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/keyctl.h>
+ #include <crypto/public_key.h>
++#include <keys/user-type.h>
+ #include "asymmetric_keys.h"
+ 
+ /*
+@@ -36,6 +38,99 @@ void public_key_signature_free(struct public_key_signature *sig)
+ }
+ EXPORT_SYMBOL_GPL(public_key_signature_free);
+ 
++/**
++ * query_asymmetric_key - Get information about an aymmetric key.
++ * @params: Various parameters.
++ * @info: Where to put the information.
++ */
++int query_asymmetric_key(const struct kernel_pkey_params *params,
++			 struct kernel_pkey_query *info)
 +{
-+	return -EOPNOTSUPP;
-+}
++	const struct asymmetric_key_subtype *subtype;
++	struct key *key = params->key;
++	int ret;
 +
-+static inline long keyctl_pkey_e_d_s(int op,
-+				     const struct keyctl_pkey_params __user *params,
-+				     const char __user *_info,
-+				     const void __user *_in,
-+				     void __user *_out)
-+{
-+	return -EOPNOTSUPP;
++	pr_devel("==>%s()\n", __func__);
++
++	if (key->type != &key_type_asymmetric)
++		return -EINVAL;
++	subtype = asymmetric_key_subtype(key);
++	if (!subtype ||
++	    !key->payload.data[0])
++		return -EINVAL;
++	if (!subtype->query)
++		return -ENOTSUPP;
++
++	ret = subtype->query(params, info);
++
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
 +}
-+#endif
++EXPORT_SYMBOL_GPL(query_asymmetric_key);
++
++/**
++ * encrypt_blob - Encrypt data using an asymmetric key
++ * @params: Various parameters
++ * @data: Data blob to be encrypted, length params->data_len
++ * @enc: Encrypted data buffer, length params->enc_len
++ *
++ * Encrypt the specified data blob using the private key specified by
++ * params->key.  The encrypted data is wrapped in an encoding if
++ * params->encoding is specified (eg. "pkcs1").
++ *
++ * Returns the length of the data placed in the encrypted data buffer or an
++ * error.
++ */
++int encrypt_blob(struct kernel_pkey_params *params,
++		 const void *data, void *enc)
++{
++	params->op = kernel_pkey_encrypt;
++	return asymmetric_key_eds_op(params, data, enc);
++}
++EXPORT_SYMBOL_GPL(encrypt_blob);
++
++/**
++ * decrypt_blob - Decrypt data using an asymmetric key
++ * @params: Various parameters
++ * @enc: Encrypted data to be decrypted, length params->enc_len
++ * @data: Decrypted data buffer, length params->data_len
++ *
++ * Decrypt the specified data blob using the private key specified by
++ * params->key.  The decrypted data is wrapped in an encoding if
++ * params->encoding is specified (eg. "pkcs1").
++ *
++ * Returns the length of the data placed in the decrypted data buffer or an
++ * error.
++ */
++int decrypt_blob(struct kernel_pkey_params *params,
++		 const void *enc, void *data)
++{
++	params->op = kernel_pkey_decrypt;
++	return asymmetric_key_eds_op(params, enc, data);
++}
++EXPORT_SYMBOL_GPL(decrypt_blob);
++
++/**
++ * create_signature - Sign some data using an asymmetric key
++ * @params: Various parameters
++ * @data: Data blob to be signed, length params->data_len
++ * @enc: Signature buffer, length params->enc_len
++ *
++ * Sign the specified data blob using the private key specified by params->key.
++ * The signature is wrapped in an encoding if params->encoding is specified
++ * (eg. "pkcs1").  If the encoding needs to know the digest type, this can be
++ * passed through params->hash_algo (eg. "sha1").
++ *
++ * Returns the length of the data placed in the signature buffer or an error.
++ */
++int create_signature(struct kernel_pkey_params *params,
++		     const void *data, void *enc)
++{
++	params->op = kernel_pkey_sign;
++	return asymmetric_key_eds_op(params, data, enc);
++}
++EXPORT_SYMBOL_GPL(create_signature);
++
+ /**
+  * verify_signature - Initiate the use of an asymmetric key to verify a signature
+  * @key: The asymmetric key to verify against
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index e0b681a717ba..3a1047a0195c 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -14,6 +14,8 @@
+ #ifndef _LINUX_PUBLIC_KEY_H
+ #define _LINUX_PUBLIC_KEY_H
+ 
++#include <linux/keyctl.h>
 +
  /*
-  * Debugging key validation
-  */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 1ffe60bb2845..18619690ce77 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1747,6 +1747,30 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 					       (const char __user *) arg3,
- 					       (const char __user *) arg4);
+  * Cryptographic data for the public-key subtype of the asymmetric key type.
+  *
+@@ -40,6 +42,7 @@ struct public_key_signature {
+ 	u8 digest_size;		/* Number of bytes in digest */
+ 	const char *pkey_algo;
+ 	const char *hash_algo;
++	const char *encoding;
+ };
  
-+	case KEYCTL_PKEY_QUERY:
-+		if (arg3 != 0)
-+			return -EINVAL;
-+		return keyctl_pkey_query((key_serial_t)arg2,
-+					 (const char __user *)arg4,
-+					 (struct keyctl_pkey_query *)arg5);
+ extern void public_key_signature_free(struct public_key_signature *sig);
+@@ -65,8 +68,14 @@ extern int restrict_link_by_key_or_keyring_chain(struct key *trust_keyring,
+ 						 const union key_payload *payload,
+ 						 struct key *trusted);
+ 
+-extern int verify_signature(const struct key *key,
+-			    const struct public_key_signature *sig);
++extern int query_asymmetric_key(const struct kernel_pkey_params *,
++				struct kernel_pkey_query *);
 +
-+	case KEYCTL_PKEY_ENCRYPT:
-+	case KEYCTL_PKEY_DECRYPT:
-+	case KEYCTL_PKEY_SIGN:
-+		return keyctl_pkey_e_d_s(
-+			option,
-+			(const struct keyctl_pkey_params __user *)arg2,
-+			(const char __user *)arg3,
-+			(const void __user *)arg4,
-+			(void __user *)arg5);
++extern int encrypt_blob(struct kernel_pkey_params *, const void *, void *);
++extern int decrypt_blob(struct kernel_pkey_params *, const void *, void *);
++extern int create_signature(struct kernel_pkey_params *, const void *, void *);
++extern int verify_signature(const struct key *,
++			    const struct public_key_signature *);
+ 
+ int public_key_verify_signature(const struct public_key *pkey,
+ 				const struct public_key_signature *sig);
+diff --git a/include/keys/asymmetric-subtype.h b/include/keys/asymmetric-subtype.h
+index e0a9c2368872..9ce2f0fae57e 100644
+--- a/include/keys/asymmetric-subtype.h
++++ b/include/keys/asymmetric-subtype.h
+@@ -17,6 +17,8 @@
+ #include <linux/seq_file.h>
+ #include <keys/asymmetric-type.h>
+ 
++struct kernel_pkey_query;
++struct kernel_pkey_params;
+ struct public_key_signature;
+ 
+ /*
+@@ -34,6 +36,13 @@ struct asymmetric_key_subtype {
+ 	/* Destroy a key of this subtype */
+ 	void (*destroy)(void *payload_crypto, void *payload_auth);
+ 
++	int (*query)(const struct kernel_pkey_params *params,
++		     struct kernel_pkey_query *info);
 +
-+	case KEYCTL_PKEY_VERIFY:
-+		return keyctl_pkey_verify(
-+			(const struct keyctl_pkey_params __user *)arg2,
-+			(const char __user *)arg3,
-+			(const void __user *)arg4,
-+			(const void __user *)arg5);
++	/* Encrypt/decrypt/sign data */
++	int (*eds_op)(struct kernel_pkey_params *params,
++		      const void *in, void *out);
 +
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-new file mode 100644
-index 000000000000..783978842f13
---- /dev/null
-+++ b/security/keys/keyctl_pkey.c
-@@ -0,0 +1,323 @@
-+/* Public-key operation keyctls
-+ *
-+ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/err.h>
-+#include <linux/key.h>
-+#include <linux/keyctl.h>
-+#include <linux/parser.h>
-+#include <linux/uaccess.h>
-+#include <keys/user-type.h>
-+#include "internal.h"
-+
-+static void keyctl_pkey_params_free(struct kernel_pkey_params *params)
-+{
-+	kfree(params->info);
-+	key_put(params->key);
-+}
-+
-+enum {
-+	Opt_err = -1,
-+	Opt_enc,		/* "enc=<encoding>" eg. "enc=oaep" */
-+	Opt_hash,		/* "hash=<digest-name>" eg. "hash=sha1" */
-+};
-+
-+static const match_table_t param_keys = {
-+	{ Opt_enc,	"enc=%s" },
-+	{ Opt_hash,	"hash=%s" },
-+	{ Opt_err,	NULL }
-+};
-+
-+/*
-+ * Parse the information string which consists of key=val pairs.
-+ */
-+static int keyctl_pkey_params_parse(struct kernel_pkey_params *params)
-+{
-+	unsigned long token_mask = 0;
-+	substring_t args[MAX_OPT_ARGS];
-+	char *c = params->info, *p, *q;
-+	int token;
-+
-+	while ((p = strsep(&c, " \t"))) {
-+		if (*p == '\0' || *p == ' ' || *p == '\t')
-+			continue;
-+		token = match_token(p, param_keys, args);
-+		if (__test_and_set_bit(token, &token_mask))
-+			return -EINVAL;
-+		q = args[0].from;
-+		if (!q[0])
-+			return -EINVAL;
-+
-+		switch (token) {
-+		case Opt_enc:
-+			params->encoding = q;
-+			break;
-+
-+		case Opt_hash:
-+			params->hash_algo = q;
-+			break;
-+
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Interpret parameters.  Callers must always call the free function
-+ * on params, even if an error is returned.
-+ */
-+static int keyctl_pkey_params_get(key_serial_t id,
-+				  const char __user *_info,
-+				  struct kernel_pkey_params *params)
-+{
-+	key_ref_t key_ref;
-+	void *p;
-+	int ret;
-+
-+	memset(params, 0, sizeof(*params));
-+	params->encoding = "raw";
-+
-+	p = strndup_user(_info, PAGE_SIZE);
-+	if (IS_ERR(p))
-+		return PTR_ERR(p);
-+	params->info = p;
-+
-+	ret = keyctl_pkey_params_parse(params);
-+	if (ret < 0)
-+		return ret;
-+
-+	key_ref = lookup_user_key(id, 0, KEY_NEED_SEARCH);
-+	if (IS_ERR(key_ref))
-+		return PTR_ERR(key_ref);
-+	params->key = key_ref_to_ptr(key_ref);
-+
-+	if (!params->key->type->asym_query)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Get parameters from userspace.  Callers must always call the free function
-+ * on params, even if an error is returned.
-+ */
-+static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_params,
-+				    const char __user *_info,
-+				    int op,
-+				    struct kernel_pkey_params *params)
-+{
-+	struct keyctl_pkey_params uparams;
-+	struct kernel_pkey_query info;
-+	int ret;
-+
-+	memset(params, 0, sizeof(*params));
-+	params->encoding = "raw";
-+
-+	if (copy_from_user(&uparams, _params, sizeof(uparams)) != 0)
-+		return -EFAULT;
-+
-+	ret = keyctl_pkey_params_get(uparams.key_id, _info, params);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = params->key->type->asym_query(params, &info);
-+	if (ret < 0)
-+		return ret;
-+
-+	switch (op) {
-+	case KEYCTL_PKEY_ENCRYPT:
-+	case KEYCTL_PKEY_DECRYPT:
-+		if (uparams.in_len  > info.max_enc_size ||
-+		    uparams.out_len > info.max_dec_size)
-+			return -EINVAL;
-+		break;
-+	case KEYCTL_PKEY_SIGN:
-+	case KEYCTL_PKEY_VERIFY:
-+		if (uparams.in_len  > info.max_sig_size ||
-+		    uparams.out_len > info.max_data_size)
-+			return -EINVAL;
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	params->in_len  = uparams.in_len;
-+	params->out_len = uparams.out_len;
-+	return 0;
-+}
-+
-+/*
-+ * Query information about an asymmetric key.
-+ */
-+long keyctl_pkey_query(key_serial_t id,
-+		       const char __user *_info,
-+		       struct keyctl_pkey_query __user *_res)
-+{
-+	struct kernel_pkey_params params;
-+	struct kernel_pkey_query res;
-+	long ret;
-+
-+	memset(&params, 0, sizeof(params));
-+
-+	ret = keyctl_pkey_params_get(id, _info, &params);
-+	if (ret < 0)
-+		goto error;
-+
-+	ret = params.key->type->asym_query(&params, &res);
-+	if (ret < 0)
-+		goto error;
-+
-+	ret = -EFAULT;
-+	if (copy_to_user(_res, &res, sizeof(res)) == 0 &&
-+	    clear_user(_res->__spare, sizeof(_res->__spare)) == 0)
-+		ret = 0;
-+
-+error:
-+	keyctl_pkey_params_free(&params);
-+	return ret;
-+}
-+
-+/*
-+ * Encrypt/decrypt/sign
-+ *
-+ * Encrypt data, decrypt data or sign data using a public key.
-+ *
-+ * _info is a string of supplementary information in key=val format.  For
-+ * instance, it might contain:
-+ *
-+ *	"enc=pkcs1 hash=sha256"
-+ *
-+ * where enc= specifies the encoding and hash= selects the OID to go in that
-+ * particular encoding if required.  If enc= isn't supplied, it's assumed that
-+ * the caller is supplying raw values.
-+ *
-+ * If successful, the amount of data written into the output buffer is
-+ * returned.
-+ */
-+long keyctl_pkey_e_d_s(int op,
-+		       const struct keyctl_pkey_params __user *_params,
-+		       const char __user *_info,
-+		       const void __user *_in,
-+		       void __user *_out)
-+{
-+	struct kernel_pkey_params params;
-+	void *in, *out;
-+	long ret;
-+
-+	ret = keyctl_pkey_params_get_2(_params, _info, op, &params);
-+	if (ret < 0)
-+		goto error_params;
-+
-+	ret = -EOPNOTSUPP;
-+	if (!params.key->type->asym_eds_op)
-+		goto error_params;
-+
-+	switch (op) {
-+	case KEYCTL_PKEY_ENCRYPT:
-+		params.op = kernel_pkey_encrypt;
-+		break;
-+	case KEYCTL_PKEY_DECRYPT:
-+		params.op = kernel_pkey_decrypt;
-+		break;
-+	case KEYCTL_PKEY_SIGN:
-+		params.op = kernel_pkey_sign;
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	in = memdup_user(_in, params.in_len);
-+	if (IS_ERR(in)) {
-+		ret = PTR_ERR(in);
-+		goto error_params;
-+	}
-+
-+	ret = -ENOMEM;
-+	out = kmalloc(params.out_len, GFP_KERNEL);
-+	if (!out)
-+		goto error_in;
-+
-+	ret = params.key->type->asym_eds_op(&params, in, out);
-+	if (ret < 0)
-+		goto error_out;
-+
-+	if (copy_to_user(_out, out, ret) != 0)
-+		ret = -EFAULT;
-+
-+error_out:
-+	kfree(out);
-+error_in:
-+	kfree(in);
-+error_params:
-+	keyctl_pkey_params_free(&params);
-+	return ret;
-+}
-+
-+/*
-+ * Verify a signature.
-+ *
-+ * Verify a public key signature using the given key, or if not given, search
-+ * for a matching key.
-+ *
-+ * _info is a string of supplementary information in key=val format.  For
-+ * instance, it might contain:
-+ *
-+ *	"enc=pkcs1 hash=sha256"
-+ *
-+ * where enc= specifies the signature blob encoding and hash= selects the OID
-+ * to go in that particular encoding.  If enc= isn't supplied, it's assumed
-+ * that the caller is supplying raw values.
-+ *
-+ * If successful, 0 is returned.
-+ */
-+long keyctl_pkey_verify(const struct keyctl_pkey_params __user *_params,
-+			const char __user *_info,
-+			const void __user *_in,
-+			const void __user *_in2)
-+{
-+	struct kernel_pkey_params params;
-+	void *in, *in2;
-+	long ret;
-+
-+	ret = keyctl_pkey_params_get_2(_params, _info, KEYCTL_PKEY_VERIFY,
-+				       &params);
-+	if (ret < 0)
-+		goto error_params;
-+
-+	ret = -EOPNOTSUPP;
-+	if (!params.key->type->asym_verify_signature)
-+		goto error_params;
-+
-+	in = memdup_user(_in, params.in_len);
-+	if (IS_ERR(in)) {
-+		ret = PTR_ERR(in);
-+		goto error_params;
-+	}
-+
-+	in2 = memdup_user(_in2, params.in2_len);
-+	if (IS_ERR(in2)) {
-+		ret = PTR_ERR(in2);
-+		goto error_in;
-+	}
-+
-+	params.op = kernel_pkey_verify;
-+	ret = params.key->type->asym_verify_signature(&params, in, in2);
-+
-+	kfree(in2);
-+error_in:
-+	kfree(in);
-+error_params:
-+	keyctl_pkey_params_free(&params);
-+	return ret;
-+}
+ 	/* Verify the signature on a key of this subtype (optional) */
+ 	int (*verify_signature)(const struct key *key,
+ 				const struct public_key_signature *sig);
 
