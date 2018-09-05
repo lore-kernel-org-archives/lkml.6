@@ -2,211 +2,124 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDC7C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A88C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75572073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75572073D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 237042073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:52:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KK0Tb6Ia"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237042073D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeIFBYF (ORCPT
+        id S1727818AbeIFBYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:24:05 -0400
-Received: from mga14.intel.com ([192.55.52.115]:54843 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbeIFBYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:24:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 13:52:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="71913024"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.151]) ([10.24.14.151])
-  by orsmga006.jf.intel.com with ESMTP; 05 Sep 2018 13:52:10 -0700
-Subject: Re: [PATCH][RFC] x86/intel_rdt: Do not display size for non-CAT
- resource
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        "Bityutskiy, Artem" <artem.bityutskiy@intel.com>
-References: <20180904174614.26682-1-yu.c.chen@intel.com>
- <8cf4c10f-68fe-04a5-029c-9cb22db413ff@intel.com>
- <8cd8165b-c2e6-7ffc-1ef8-a7b497fab99e@intel.com>
- <20180905062805.GA29120@chenyu-desktop>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <c7f6f590-bfa7-7951-77df-6f009e994741@intel.com>
-Date:   Wed, 5 Sep 2018 13:52:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 5 Sep 2018 21:24:10 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43774 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeIFBYJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 21:24:09 -0400
+Received: by mail-lf1-f66.google.com with SMTP id h64-v6so7178656lfi.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 13:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aicMK5C5D2SvUUEKHEW1kmfcWOpCYDrAlSXyHY0cfgw=;
+        b=KK0Tb6IaIoJr9spg3wVI4hej2wOuPO62csrN+YXvRu/nHrYyS+dkVe7wra6bxQn8Rn
+         FTcgwcZ7G/N/QHxH2v9n5H/5OMiJjWkn79va0JQsGLvlGeVxnm9/SiWAJPkuYSpDv6US
+         OvY+yPLx/uwR7mh4q7vuPxJOQiYzcOdRMLEAtf7pgrvSaUbWYbg4AHA4lPw1dt524JBx
+         uax5zwltWdQPNfy5W88Tiy3UxyHIEh6bpPLEVBupCBTn6Ny8ShIgK6dnzHhVZvXGEdSw
+         9vk83s5SQ3WbL6+1E+dhcXO8bEeZNJhzVlombXoCY1eLLUEjQjvkVUbeYXPJGU85txNO
+         UzDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aicMK5C5D2SvUUEKHEW1kmfcWOpCYDrAlSXyHY0cfgw=;
+        b=dUBRJrzrcFuL39uKvgkN9jpW54+Dz6n4EntRlJo25ui9SUOq/m7LoaBpYHnqXwGSBY
+         NSLCu5p9cpCGAgIMyohulVcyuSrPAgR3Je4Yo1nJ8kfHY9H/XAhnbjrcYAqFSi1GistY
+         vkDd2tFZZ5+4Iwd/hBzMiGXra0w6DWsrHEOPwwxMEefl31mPd0D6dcXu8OPIzRjbaUWq
+         2UCQjFcOYj16aGLqgIV0Lur4QeuwhThLptZMbg0OICu71wpGK1Lp8a8bzUbn5a7DL04j
+         D11hRm6ey9vDGl3e2tZskm1/KqR8onBx1ZMN3jUALiCAb2jcX/9bb6KoHY8y/+22HkLV
+         Wx+Q==
+X-Gm-Message-State: APzg51BdEBAiqAKgl7yy8RaUu8GWRFLbXlywzF/6DgQ5k/lUj86itCwk
+        wxG1HOMRNjbQ5aO2QB711LvAujIWTSk=
+X-Google-Smtp-Source: ANB0VdYf8ePGLUyiaCBQ2Dbg4LeYHUOTawdnVoY1LBOlA9BHwWxAhWQESZd54hc979UFbjyvmKIT2w==
+X-Received: by 2002:a19:8f10:: with SMTP id r16-v6mr25973982lfd.1.1536180733200;
+        Wed, 05 Sep 2018 13:52:13 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id z5-v6sm467137lfg.75.2018.09.05.13.52.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 13:52:12 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] mtd: rawnand: ams-delta: Cleanups and optimizations
+Date:   Wed, 05 Sep 2018 22:53:27 +0200
+Message-ID: <1855340.fVHtouTg44@z50>
+In-Reply-To: <20180905084757.432e7c19@xps13>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com> <20180820213904.13475-1-jmkrzyszt@gmail.com> <20180905084757.432e7c19@xps13>
 MIME-Version: 1.0
-In-Reply-To: <20180905062805.GA29120@chenyu-desktop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yu,
+Hi Miquel, Tony,
 
-On 9/4/2018 11:28 PM, Yu Chen wrote:
-> On Tue, Sep 04, 2018 at 03:36:01PM -0700, Reinette Chatre wrote:
->> On 9/4/2018 1:24 PM, Reinette Chatre wrote:
->>> On 9/4/2018 10:46 AM, Chen Yu wrote:
->>>> On a platform with MB resource enabled, a divided-by-zero
->>>> exception is triggered when accessing 'size':
->>>>
->>>> [  151.193447] divide error: 0000 [#1] SMP PTI
->>>> [  151.197743] CPU: 93 PID: 1929 Comm: cat Not tainted 4.19.0-rc2-debug-rdt+ #25
->>>> [  151.205070] Hardware name: Dell Inc. PowerEdge R640/0CRT1G, BIOS 1.3.7 02/08/2018
->>>> [  151.212783] RIP: 0010:rdtgroup_cbm_to_size+0x7e/0xa0
->>>> [  151.237172] RSP: 0018:ffffb3454f90bd88 EFLAGS: 00010246
->>>> [  151.242538] RAX: 00000000023c0000 RBX: 0000000000000000 RCX: 0000000000000003
->>>> [  151.249878] RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
->>>> [  151.257213] RBP: ffff96ff0089e000 R08: 0000000000000000 R09: 0000000000aaaaaa
->>>> [  151.264544] R10: ffffb3454f90bd8c R11: 00000000ffffffff R12: ffffffffb5028910
->>>> [  151.271887] R13: ffffffffb5028910 R14: 0000000000000064 R15: ffff96ff0089e000
->>>> [  151.279217] FS:  00007f95a623a500(0000) GS:ffff97170f9c0000(0000) knlGS:0000000000000000
->>>> [  151.287532] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> [  151.293432] CR2: 00007f95a6217000 CR3: 00000023f696c003 CR4: 00000000007606e0
->>>> [  151.300766] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>> [  151.308094] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>> [  151.315426] PKRU: 55555554
->>>> [  151.318212] Call Trace:
->>>> [  151.320732]  rdtgroup_size_show+0x11a/0x1d0
->>>> [  151.325039]  seq_read+0xd8/0x3b0
->>>> [  151.328363]  __vfs_read+0x36/0x170
->>>> [  151.331857]  vfs_read+0x89/0x130
->>>> [  151.335179]  ksys_read+0x52/0xc0
->>>> [  151.338500]  do_syscall_64+0x5b/0x180
->>>> [  151.342261]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>>
->>>> This is because for MB resource, the r->cache.cbm_len is zero, thus
->>>> calculating size in rdtgroup_cbm_to_size() will trigger the exception.
->>>>
->>>> Fix this issue by not exposing 'size' for non-CAT resources.
->>>>
->>>> Fixes: d9b48c86eb38 ("x86/intel_rdt: Display resource groups'
->>>> allocations in bytes")
->>>> Cc: Reinette Chatre <reinette.chatre@intel.com>
->>>> Cc: Fenghua Yu <fenghua.yu@intel.com>
->>>> Cc: Tony Luck <tony.luck@intel.com>
->>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
->>>> ---
->>>>  arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
->>>> index b799c00bef09..53fd07b2f61a 100644
->>>> --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
->>>> +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
->>>> @@ -1329,7 +1329,7 @@ static struct rftype res_common_files[] = {
->>>>  		.mode		= 0444,
->>>>  		.kf_ops		= &rdtgroup_kf_single_ops,
->>>>  		.seq_show	= rdtgroup_size_show,
->>>> -		.fflags		= RF_CTRL_BASE,
->>>> +		.fflags		= RF_CTRL_INFO | RFTYPE_RES_CACHE,
->>>>  	},
->>>>  
->>>>  };
->>>>
->>>
->>> Thank you very much for catching this.
->>>
->>> I think we need to change the fix a bit because from that I can tell the
->>> above would cause the "size" file to be relocated to the system wide
->>> "info" directory 
-> Okay. Just curious, if changing like this, will it be moved to resctrl/info/L3/size or
-> resctrl/info/size?
+On Wednesday, September 5, 2018 8:47:57 AM CEST Miquel Raynal wrote:
+> Hi Janusz,
+> 
+> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote on Mon, 20 Aug 2018
+> 23:39:01 +0200:
+> 
+> > This series consist of possibly ready to apply patches extracted from
+> > a former one titled "mtd: rawnand:  ams-delta: Use GPIO API for data I/O".
+> > Remaining patches implementing conversion of data I/O to GPIO have been
+> > postponed until gpiolib is optimized to ensure sufficient performance.
+> > 
+> > 
+> > Janusz Krzysztofik (3):
+> >       mtd: rawnand: ams-delta: show parent device in sysfs
+> >       mtd: rawnand: ams-delta: Use private structure
+> >       mtd: rawnand: ams-delta: Set port direction when needed
+> 
+> Patch 2/3 does not apply on nand/next. Indeed the driver does not look
+> the same as in the diff.
 
-This change should attempt to create this file in all cache resources
-within the info subdirectory. So resctrl/info/L3/size,
-resctrl/info/L2/size, etc.
+That's because I built it on top of my former series from the mid of July, 
+containing "[PATCH v2 2/3 v4] mtd: rawnand: ams-delta: use GPIO lookup table". 
+It was acked by you, Miquel, and supposed to be merged via linux-omap tree.
 
-Take care though that the file handling routine (rdtgroup_size_show())
-assumes that it is associated with a resource group.
+> I don't see any changes on my side that could
+> explain this so perhaps you could rebase on top of 4.19-rc2 (or
+> nand/next, as you wish) and resend the series?
 
->>> while we would like to have this file remain associated
->>> with the resource group - but just not apply to a MB resource.
->>>
->>> A similar fix may also be needed for the resource group's "mode" file
->>> that was also recently introduced.
->>>
->>> I am taking a closer look now.
->>
->> The "size" file is intended to be associated with a resource group and
->> to list the size in bytes of the cache allocations. It does not
->> currently accommodate the memory bandwidth allocations as you
->> discovered. A system may have multiple resources to be managed via RDT,
->> it could include cache as well as memory, and to thus not expose the
->> "size" file if memory bandwidth allocation is supported is not ideal
->> since the user would not be able to see this information for the cache
->> resources.
->>
->> So, instead of not exposing the "size" file when memory bandwidth
->> allocation is in use I think that we could just include the memory
->> bandwidth allocation information in the existing file. This would be in
->> the currently active bandwidth granularity that would essentially
->> duplicate the schemata information.
->>
-> I might understand incorrectly, but in this way, the size in resctrl top
-> dir will display all the domain ranges within all the resources, say, the
-> size for MB, L3 will be displayed in one file, right? Will the 'size' be
-> displayed under each resource dir in info dir?
+As far as I can see, Tony hasn't applied that series yet, so maybe I can still 
+move that patch out of there and insert it into this series in front of the 
+other 3 patches and resend. That would however make patch 3/3 of that old 
+series depend on this one.
 
-Yes (answering your first question), the size file is intended to
-reflect the allocations of all resources associated with the associated
-resource group. It does follow the display of the schemata file in this
-regard and is indeed a different visualization of the same content - for
-cache it is size in bytes instead of a bitmask. The top resctrl
-directory is the default resource group but a user could create more
-resource groups with "mkdir" in the top directory.
+Tony, what do you think?
 
->> While looking further at how the new files (size and mode) will behave
->> when a MBA resource is present I think I discovered a few more issues:
->> - the "exclusive" mode should not apply to a MBA resource
->> - it should not be possible to pseudo-lock a MBA resource
->>
->> I attempt to address the above issues with the change below. Could you
->> please try it out with what you are currently testing?
-> This patch works.
-> Tested-by: Chen Yu <yu.c.chen@intel.com>
-
-Thank you very much for trying it out.
-
->> I do not have
->> access to a system with a MBA resource - could you please let me know
->> what system you are testing on so I can try out more tests?
->>
-> I'm using SKYLAKE-X, of cpu stepping 4, so l3cat might be disabled
-> due to errorta.
-
-Thank you. I now have access to a similar system and will test these
-changes more before resubmitting.
+Thanks,
+Janusz
 
 
-> BTW, may I know the scope of CBM? It seems that in this patch all
-> the other resource than MBA could leverage CBM to calculate their
-> resource size. What if other resources are added in the future?
-
-Yes, at this time I am only aware of the MBA control interface that does
-not use a CBM and it is distinguished specifically because of this.
-Indeed, if other non-CBM allocation/control resources are added in the
-future we may consider to abstract how (if at all - like MBA) the size
-is computed.
-
-Reinette
 
