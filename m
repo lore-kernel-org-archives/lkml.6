@@ -2,99 +2,126 @@ Return-Path: <SRS0=wmYC=LT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3152C43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD795C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9647E20659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766BE20857
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 13:39:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="E9YlQTO7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9647E20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="km/yPEPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 766BE20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeIESFc (ORCPT
+        id S1727604AbeIESJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 14:05:32 -0400
-Received: from imap.thunk.org ([74.207.234.97]:53278 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbeIESFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 14:05:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=L82TUGwx2aGNJNUD9o05Akx2Xn48SaAYMTxNLgjEO0E=; b=E9YlQTO7s440gBBdg3YUp7+Gpk
-        okzllADs9zQXMobbu/FDSqlEnJ52jpfz0pllH8BOYUe0nliFicpxWuf8sUXhD9JHCt+21Ds8y8I7+
-        FHrLPTUJ9l6lGz74zYLceZHTqO4rgsC9Bm3aPkrL9oK32gdaaHMvl3xvisZ88D2TjfI0=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fxXxU-0003qP-Cr; Wed, 05 Sep 2018 13:35:00 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 44F787A4B95; Wed,  5 Sep 2018 09:34:59 -0400 (EDT)
-Date:   Wed, 5 Sep 2018 09:34:59 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com, tim.c.chen@linux.intel.com,
-        zwisler@kernel.org, willy@infradead.org
-Subject: Re: linux-next test error
-Message-ID: <20180905133459.GF23909@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Souptick Joarder <jrdr.linux@gmail.com>, Jan Kara <jack@suse.cz>,
-        syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com, tim.c.chen@linux.intel.com,
-        zwisler@kernel.org, willy@infradead.org
-References: <0000000000004f6b5805751a8189@google.com>
- <20180905085545.GD24902@quack2.suse.cz>
- <CAFqt6zZtjPFdfAGxp43oqN3=z9+vAGzdOvDcgFaU+05ffCGu7A@mail.gmail.com>
+        Wed, 5 Sep 2018 14:09:29 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35868 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIESJ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 14:09:28 -0400
+Received: by mail-it0-f66.google.com with SMTP id u13-v6so9486445iti.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 06:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=beehM+0Rh6OfeZ2Y47c3+eKqPiv1RKMXzjjGePj3hJg=;
+        b=km/yPEPPrXhda+va5po8YzBBodQbGFUuvGGBz+biC6JQWq8SAg1/lVbFY0sUgc/Fq0
+         ynVbbJxcvDmDNEL7KmCTQkasC9sDXHJR8+9d78xV0Jy6Bjs5as7N4F45MErYw8Q/Bl4X
+         5xPMzhnCGj5n9KuJ2MUFNY931sxirQNWNubaPPlqPIc5Fn7vqPC6ODqNi8EqbA1FJFvx
+         TMntOKK0F7x3Sp81Sd0SANfugPiVj8lSxvgoRwoHTOWlNlxR9ixzUaxZEZfkbvun7UKS
+         ZcVAZFgByYGEmYWrynOIG/Q7mKvSZBzAj6WhgfaiDH4IIYnPCwvFFd0Wnm1h50HIr+Ct
+         n9aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=beehM+0Rh6OfeZ2Y47c3+eKqPiv1RKMXzjjGePj3hJg=;
+        b=SkN+UtJ9FrjepN4YQBsKlBXraEJmBOK7vrNM89KAiYRmRUXtocU3vF1xDU44wEwrQ1
+         dbPwt+t7sToE5jrng+vpH+RMYC8MCnWBAf1W4reXIPDis3U7pae5pF07gqEfW4xBGtf0
+         R8DlfnA5210/8s7Z0Zv7GGhqHGLzf1nCC9HNJ03SdoeBq8ok1fVaM9T5Hgi3k9d9K7gy
+         MlLeBAPFAJylpLpGtTjd1W2Ix9esC0I0ezc7Ah1ryiqEpY1Rf/wVHH7A+sQltBBIdiO9
+         w1+KKw4E0rrPnrqjBz/tIaejaeP2NeL3bemldBxxfQf5PpbW3ZhKZY7gynr7kJmVMC8a
+         1Xug==
+X-Gm-Message-State: APzg51AC2l7dJkqeDVnghqvREPFQAo9wIvHqqvZh50ra2hoH4bUcGWrW
+        +k5zFC51whOO4LYI3jwcYdWFqw==
+X-Google-Smtp-Source: ANB0VdYA5b1AozOWbaNZssgGg07wER2taaOF8xcapHbG/4O3JdO0oyTeOQfORBaNWe1UJlc+M5t7uQ==
+X-Received: by 2002:a02:4add:: with SMTP id s90-v6mr26366030jad.21.1536154750946;
+        Wed, 05 Sep 2018 06:39:10 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm561845ioc.63.2018.09.05.06.39.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 06:39:09 -0700 (PDT)
+Subject: Re: [regression/bisected] 4.19 cycle boot time IO stalls
+To:     Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <1536137722.4813.66.camel@gmx.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <178d6adc-2a79-99dc-daa8-fb0ed9f0afd1@kernel.dk>
+Date:   Wed, 5 Sep 2018 07:39:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zZtjPFdfAGxp43oqN3=z9+vAGzdOvDcgFaU+05ffCGu7A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <1536137722.4813.66.camel@gmx.de>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 03:20:16PM +0530, Souptick Joarder wrote:
+On 9/5/18 2:55 AM, Mike Galbraith wrote:
+> Greetings,
 > 
-> "fs: convert return type int to vm_fault_t" is still under
-> review/discusson and not yet merge
-> into linux-next. I am not seeing it into linux-next tree.Can you
-> please share the commit id ?
+> I've been seeing $subject, decided to take the time to try to bisect
+> the little bugger.  The hangs are not 100% repeatable, and while
+> bisection with a 5 boot go/nogo threshold seemed to go smoothly, it
+> ended up fingering a merge commit (sigh).
+> 
+> Box has an SSD (unused only by windows 10 box came with) and 3 spinning
+> rust buckets that I normally use with BFQ via a udev rule, but CFQ does
+> the same, so scheduler is seemingly irrelevant.  However, in 7 crash
+> dumps, all of which look about like the data below the bisect log,
+> there is something relevant, namely the hung 'tlp' task (powersaving
+> script of some sort for laptops according to the package description). 
+> That knob twiddling script is present/hung in all, making me a tad
+> suspicious, and indeed, testing with the final (bad) kernel, all I have
+> to do to eliminate hangs is to remove the 'tlp' package.  Verified via
+> remove, 5 boots work fine, reinstall, 2 of 5 hang, remove again, 10 of
+> 10 work fine, reinstall, 2 in a row hang.
+> 
+> Seems pretty certain that tlp script is what inspires bug to raise its
+> ugly head.  WRT bisection result itself, munged merge seems far less
+> likely than a false negative having knocked bisection off course.
+> 
+> 72f02ba66bd83b54054da20eae550123de84da6f is the first bad commit
 
-It's at: 83c0adddcc6ed128168e7b87eaed0c21eac908e4 in the Linux Next
-branch.
+I bet it's the host busy change from Ming, which I already
+reported as being the culprit for another test failure I had. For
+some reason it's not merged yet, nudge nudge Martin. You can test
+by reverting:
 
-Dmitry, can you try reverting this commit and see if it makes the
-problem go away?
+commit 328728630d9f2bf14b82ca30b5e47489beefe361
+Author: Ming Lei <ming.lei@redhat.com>
+Date:   Sun Jun 24 22:03:27 2018 +0800
 
-Souptick, can we just NACK this patch and completely drop it from all
-trees?
+    scsi: core: avoid host-wide host_busy counter for scsi_mq
 
-I think we need to be a *lot* more careful about this vm_fault_t patch
-thing.  If you can't be bothered to run xfstests, we need to introduce
-a new function which replaces block_page_mkwrite() --- and then let
-each file system try to convert over to it at their own pace, after
-they've done regression testing.
+which was slightly modified by 265d59aacbce, so you'll want to
+yank that one first.
 
-						- Ted
+BTW, that suse email for me hasn't worked in 12 years :-)
+
+-- 
+Jens Axboe
+
