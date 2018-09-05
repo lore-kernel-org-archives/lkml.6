@@ -3,87 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB8AC43334
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D06C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 534782075E
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 20:57:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534782075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CF1E92075E
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 21:03:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF1E92075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbeIFB3O (ORCPT
+        id S1727693AbeIFBfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 21:29:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58894 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeIFB3O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 21:29:14 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D583FA1;
-        Wed,  5 Sep 2018 20:57:18 +0000 (UTC)
-Date:   Wed, 5 Sep 2018 13:57:17 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Omar Sandoval <osandov@osandov.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: Re: [PATCH v3] proc/kcore: fix invalid memory access in multi-page
- read optimization
-Message-Id: <20180905135717.ff763b34c4a3f1ca500d715b@linux-foundation.org>
-In-Reply-To: <1536100702-28706-1-git-send-email-asmadeus@codewreck.org>
-References: <1536100545-26905-1-git-send-email-asmadeus@codewreck.org>
-        <1536100702-28706-1-git-send-email-asmadeus@codewreck.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 5 Sep 2018 21:35:36 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54260 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727669AbeIFBfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 21:35:36 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fxexN-0006AE-HK; Wed, 05 Sep 2018 15:03:22 -0600
+To:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180830185352.3369-1-logang@deltatee.com>
+ <20180830185352.3369-8-logang@deltatee.com>
+ <b5ab8fa3-34ac-3117-fa0d-5206c3939435@kernel.dk>
+ <20180901082812.GB670@lst.de>
+ <5f79c012-c6e1-56bb-62fd-0689181fb2c9@deltatee.com>
+ <59b28977-8f2a-6228-2050-03fae6bdbedd@kernel.dk>
+ <1b4283da-44df-4a02-3167-e295243cef78@deltatee.com>
+ <09258b9b-3aed-9890-b31a-bd70a133966c@kernel.dk>
+ <20180905195647.GA1626@lst.de>
+ <bcc1b3cf-2fd9-fa61-9cfb-b0e4d84e5d94@kernel.dk>
+ <20180905201152.GA1893@lst.de>
+ <eb42fb94-9da6-955b-8524-0a0f5ac4bd19@deltatee.com>
+ <2a3394bd-5f13-4818-43f4-dfc61f501e05@kernel.dk>
+ <e3ef26e6-6c8d-25b8-fa64-14594a51263c@deltatee.com>
+ <3af4d1d4-da07-c0a6-8464-9ddc1378f2f4@kernel.dk>
+ <f9e660cd-b597-bb6e-56a2-82fe71cb3649@deltatee.com>
+ <34d9b2f7-9e6d-4a0a-77e5-ec0e99610f5c@kernel.dk>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c41c802c-9235-5383-2dfa-af9c1553f11b@deltatee.com>
+Date:   Wed, 5 Sep 2018 15:03:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <34d9b2f7-9e6d-4a0a-77e5-ec0e99610f5c@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, axboe@kernel.dk
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v5 07/13] block: Add PCI P2P flag for request queue and
+ check support for requests
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  5 Sep 2018 00:38:22 +0200 Dominique Martinet <asmadeus@codewreck.org> wrote:
 
-> The 'm' kcore_list item could point to kclist_head, and it is incorrect to
-> look at m->addr / m->size in this case.
-> There is no choice but to run through the list of entries for every address
-> if we did not find any entry in the previous iteration
+
+On 05/09/18 02:36 PM, Jens Axboe wrote:
+> On 9/5/18 2:32 PM, Logan Gunthorpe wrote:
+>>
+>>
+>> On 05/09/18 02:19 PM, Jens Axboe wrote:
+>>> On 9/5/18 2:18 PM, Logan Gunthorpe wrote:
+>>>>
+>>>>
+>>>> On 05/09/18 02:14 PM, Jens Axboe wrote:
+>>>>> But if the caller must absolutely know where the bio will end up, then
+>>>>> it seems super redundant. So I'd vote for killing this check, it buys
+>>>>> us absolutely nothing and isn't even exhaustive in its current form.
+>>>>
+>>>>
+>>>> Ok, I'll remove it for v6.
+>>>
+>>> Since the drivers needs to know it's doing it right, it might not
+>>> hurt to add a sanity check helper for that. Just have the driver
+>>> call it, and don't add it in the normal IO submission path.
+>>
+>> I'm not sure I really see the value in that. It's the same principle in
+>> asking the driver to do the WARN: if the developer knew enough to use
+>> the special helper, they probably knew well enough to do the rest correctly.
 > 
-> Reset 'm' to NULL in that case at Omar Sandoval's suggestion.
-> 
-> ...
->
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -464,6 +464,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->  				ret = -EFAULT;
->  				goto out;
->  			}
-> +			m = NULL;
->  		} else if (m->type == KCORE_VMALLOC) {
->  			vread(buf, (char *)start, tsz);
->  			/* we have to zero-fill user buffer even if no read */
+> I don't agree with that at all. It's a "is my request valid" helper,
+> it's not some obscure and rarely used functionality. You're making up
+> this API right now, if you really want it done for every IO, make it
+> part of the p2p submission process. You could even hide it behind a
+> debug thing, if you like.
 
-lgtm.  Let's add a nice little why-were-doing-this?
+There is no special p2p submission process. In the nvme-of case we are
+using the existing process and with the code in blk-core it didn't
+change it's process at all. Creating a helper will create one and I can
+look at making a pci_p2pdma_submit_bio() for v6; but if the developer
+screws up and still calls the regular submit_bio() things will only be
+very subtly broken and that won't be obvious.
 
---- a/fs/proc/kcore.c~proc-kcore-fix-invalid-memory-access-in-multi-page-read-optimization-v3-fix
-+++ a/fs/proc/kcore.c
-@@ -464,7 +464,7 @@ read_kcore(struct file *file, char __use
- 				ret = -EFAULT;
- 				goto out;
- 			}
--			m = NULL;
-+			m = NULL;	/* skip the list anchor */
- 		} else if (m->type == KCORE_VMALLOC) {
- 			vread(buf, (char *)start, tsz);
- 			/* we have to zero-fill user buffer even if no read */
-_
-
+Logan
