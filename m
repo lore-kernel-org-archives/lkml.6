@@ -6,65 +6,130 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58852C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F61C43334
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E35D72077C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:14:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E35D72077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B8C920861
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Sep 2018 11:14:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B8C920861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbeIEPoN (ORCPT
+        id S1727592AbeIEPoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Sep 2018 11:44:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19279 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbeIEPoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Sep 2018 11:44:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 04:14:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,333,1531810800"; 
-   d="scan'208";a="83203401"
-Received: from kfitzx-mobl.ger.corp.intel.com (HELO localhost) ([10.252.37.75])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Sep 2018 04:12:57 -0700
-Date:   Wed, 5 Sep 2018 14:12:56 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: fix response size validation in tpm_get_random()
-Message-ID: <20180905111256.GA9696@linux.intel.com>
-References: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
+        Wed, 5 Sep 2018 11:44:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725868AbeIEPoa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Sep 2018 11:44:30 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w85BEVcd009442
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Sep 2018 07:14:43 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2macndvky5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 07:14:43 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Wed, 5 Sep 2018 12:14:41 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Sep 2018 12:14:38 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w85BEblK43909220
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Sep 2018 11:14:37 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A75F84C04E;
+        Wed,  5 Sep 2018 14:14:32 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C12824C040;
+        Wed,  5 Sep 2018 14:14:31 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed,  5 Sep 2018 14:14:31 +0100 (BST)
+Date:   Wed, 5 Sep 2018 04:14:36 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
+ <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+ <20180904082424.GA2090@linux.vnet.ibm.com>
+ <20180904093626.GA23936@linaro.org>
+ <20180904103742.GC61288@linux.vnet.ibm.com>
+ <CAKfTPtBVLWgtRJpP0nTOVpkwJse6BwrGa28o4qat0T3kOvEAfw@mail.gmail.com>
+ <20180905085029.GA57420@linux.vnet.ibm.com>
+ <CAKfTPtCzznnkR-DDw5DkHYef0nLtB+Yt9UHYMMaJdKD043H7XA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKfTPtCzznnkR-DDw5DkHYef0nLtB+Yt9UHYMMaJdKD043H7XA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18090511-0012-0000-0000-000002A4184D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090511-0013-0000-0000-000020D839B0
+Message-Id: <20180905111436.GB57420@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-05_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=789 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809050120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 04:10:04AM +0300, Jarkko Sakkinen wrote:
-> When checking whether the response is large enough to be able to contain
-> the received random bytes in tpm_get_random() and tpm2_get_random(),
-> they fail to take account the header size, which should be added to the
-> minimum size. This commit fixes this issue.
+* Vincent Guittot <vincent.guittot@linaro.org> [2018-09-05 11:11:35]:
+
+> On Wed, 5 Sep 2018 at 10:50, Srikar Dronamraju
+> <srikar@linux.vnet.ibm.com> wrote:
+> >
+> > * Vincent Guittot <vincent.guittot@linaro.org> [2018-09-05 09:36:42]:
+> >
+> > > >
+> > > > I dont know of any systems that have come with single threaded and
+> > > > multithreaded. However some user can still offline few threads in a core
+> > > > while leaving other cores untouched. I dont really know why somebody
+> > > > would want to do it.  For example, some customer was toying with SMT 3
+> > > > mode in a SMT 8 power8 box.
+> > >
+> > > In this case, it means that we have the same core capacity whatever
+> > > the number of CPUs
+> > > and a core with SMT 3 will be set with the same compute capacity as
+> > > the core with SMT 8.
+> > > Does it still make sense ?
+> > >
+> >
+> > To me it make sense atleast from  a power 8 perspective, because SMT 1 >
+> > SMT 2 > SMT 4 > SMT8. So if one core is configured for SMT 2 and other
+> > core is configured for SMT4; all threads being busy, the  individual
+> > threads running on SMT2 core will complete more work than SMT 4 core
+> > threads.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: c659af78eb7b ("tpm: Check size of response before accessing data")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> I agree for individual thread capacity but at core group level, the
+> core SMT 1 will have the same capacity as core group SMT 8 so load
+> balance will try to balance evenly the tasks between the 2 cores
+> whereas core SMT 8 > core SMT1 , isn't it ?
+> 
 
-Stefan, you did the original commit. Does this look right to you?
+I believe that Core capacity irrespective of the number of threads
+should be similar. We wanted to give a small benefit if the core has
+multiple threads and that was smt_gain. Lets say we have 8 equal sw
+threads running on 2 cores; one being SMT 2 and other being SMT4.
+then 4 threads should be spread to each core. So that we would be fair
+to each of the 8 SW threads.
 
-/Jarkko
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
