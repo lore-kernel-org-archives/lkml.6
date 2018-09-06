@@ -2,377 +2,75 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91759C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91A3C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9FC2077C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9FC2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 572282077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:56:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="pVJXD/Gq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 572282077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeIFNaf (ORCPT
+        id S1728139AbeIFNbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:30:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42092 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727838AbeIFNaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:30:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 87B5DACE1;
-        Thu,  6 Sep 2018 08:56:07 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 10:56:07 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 22/29] mm: nobootmem: remove bootmem allocation APIs
-Message-ID: <20180906085607.GG14951@dhcp22.suse.cz>
-References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1536163184-26356-23-git-send-email-rppt@linux.vnet.ibm.com>
+        Thu, 6 Sep 2018 09:31:09 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:58209 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727629AbeIFNbJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:31:09 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 56E3E25B74A;
+        Thu,  6 Sep 2018 18:56:42 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1536224202; bh=bhHD0+3d6gfJXjAqeAdtUqrhbthheZ8DYzDzicI5ImE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pVJXD/GqtDp3/qCZfjFy8CK69ysbHzazpAnEBuGXOoWIUI3EskjdXuqQJa8lpOWEY
+         cExGD7iVs7iDYzQAMsBaqt7ZV99GtdNdZgUSaGTLxE1A+vBMFF2vNGl/8vMAF4tFTa
+         TSo9XreznmzRSmovAJ8cr3j0F2H6FhnUzk1h4tec=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 9E05E9404AF; Thu,  6 Sep 2018 10:56:37 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 10:56:37 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 05/21] ARM: shmobile: use for_each_of_cpu_node iterator
+Message-ID: <20180906085637.h7ae46qqdjti5g7q@verge.net.au>
+References: <20180905193738.19325-1-robh@kernel.org>
+ <20180905193738.19325-6-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536163184-26356-23-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180905193738.19325-6-robh@kernel.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-09-18 18:59:37, Mike Rapoport wrote:
-> The bootmem compatibility APIs are not used and can be removed.
+On Wed, Sep 05, 2018 at 02:37:22PM -0500, Rob Herring wrote:
+> Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
+> has the side effect of defaulting to iterating using "cpu" node names in
+> preference to the deprecated (for FDT) device_type == "cpu".
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-I am happy to see this finally go
-Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> ---
->  include/linux/bootmem.h |  47 ----------
->  mm/nobootmem.c          | 224 ------------------------------------------------
->  2 files changed, 271 deletions(-)
-> 
-> diff --git a/include/linux/bootmem.h b/include/linux/bootmem.h
-> index c97c105..73f1272 100644
-> --- a/include/linux/bootmem.h
-> +++ b/include/linux/bootmem.h
-> @@ -36,33 +36,6 @@ extern void free_bootmem_node(pg_data_t *pgdat,
->  extern void free_bootmem(unsigned long physaddr, unsigned long size);
->  extern void free_bootmem_late(unsigned long physaddr, unsigned long size);
->  
-> -extern void *__alloc_bootmem(unsigned long size,
-> -			     unsigned long align,
-> -			     unsigned long goal);
-> -extern void *__alloc_bootmem_nopanic(unsigned long size,
-> -				     unsigned long align,
-> -				     unsigned long goal) __malloc;
-> -extern void *__alloc_bootmem_node(pg_data_t *pgdat,
-> -				  unsigned long size,
-> -				  unsigned long align,
-> -				  unsigned long goal) __malloc;
-> -void *__alloc_bootmem_node_high(pg_data_t *pgdat,
-> -				  unsigned long size,
-> -				  unsigned long align,
-> -				  unsigned long goal) __malloc;
-> -extern void *__alloc_bootmem_node_nopanic(pg_data_t *pgdat,
-> -				  unsigned long size,
-> -				  unsigned long align,
-> -				  unsigned long goal) __malloc;
-> -void *___alloc_bootmem_node_nopanic(pg_data_t *pgdat,
-> -				  unsigned long size,
-> -				  unsigned long align,
-> -				  unsigned long goal,
-> -				  unsigned long limit) __malloc;
-> -extern void *__alloc_bootmem_low(unsigned long size,
-> -				 unsigned long align,
-> -				 unsigned long goal) __malloc;
-> -
->  /* We are using top down, so it is safe to use 0 here */
->  #define BOOTMEM_LOW_LIMIT 0
->  
-> @@ -70,26 +43,6 @@ extern void *__alloc_bootmem_low(unsigned long size,
->  #define ARCH_LOW_ADDRESS_LIMIT  0xffffffffUL
->  #endif
->  
-> -#define alloc_bootmem(x) \
-> -	__alloc_bootmem(x, SMP_CACHE_BYTES, BOOTMEM_LOW_LIMIT)
-> -#define alloc_bootmem_align(x, align) \
-> -	__alloc_bootmem(x, align, BOOTMEM_LOW_LIMIT)
-> -#define alloc_bootmem_pages(x) \
-> -	__alloc_bootmem(x, PAGE_SIZE, BOOTMEM_LOW_LIMIT)
-> -#define alloc_bootmem_pages_nopanic(x) \
-> -	__alloc_bootmem_nopanic(x, PAGE_SIZE, BOOTMEM_LOW_LIMIT)
-> -#define alloc_bootmem_node(pgdat, x) \
-> -	__alloc_bootmem_node(pgdat, x, SMP_CACHE_BYTES, BOOTMEM_LOW_LIMIT)
-> -#define alloc_bootmem_node_nopanic(pgdat, x) \
-> -	__alloc_bootmem_node_nopanic(pgdat, x, SMP_CACHE_BYTES, BOOTMEM_LOW_LIMIT)
-> -#define alloc_bootmem_pages_node(pgdat, x) \
-> -	__alloc_bootmem_node(pgdat, x, PAGE_SIZE, BOOTMEM_LOW_LIMIT)
-> -
-> -#define alloc_bootmem_low(x) \
-> -	__alloc_bootmem_low(x, SMP_CACHE_BYTES, 0)
-> -#define alloc_bootmem_low_pages(x) \
-> -	__alloc_bootmem_low(x, PAGE_SIZE, 0)
-> -
->  /* FIXME: use MEMBLOCK_ALLOC_* variants here */
->  #define BOOTMEM_ALLOC_ACCESSIBLE	0
->  #define BOOTMEM_ALLOC_ANYWHERE		(~(phys_addr_t)0)
-> diff --git a/mm/nobootmem.c b/mm/nobootmem.c
-> index 44ce7de..bc38e56 100644
-> --- a/mm/nobootmem.c
-> +++ b/mm/nobootmem.c
-> @@ -33,41 +33,6 @@ unsigned long min_low_pfn;
->  unsigned long max_pfn;
->  unsigned long long max_possible_pfn;
->  
-> -static void * __init __alloc_memory_core_early(int nid, u64 size, u64 align,
-> -					u64 goal, u64 limit)
-> -{
-> -	void *ptr;
-> -	u64 addr;
-> -	enum memblock_flags flags = choose_memblock_flags();
-> -
-> -	if (limit > memblock.current_limit)
-> -		limit = memblock.current_limit;
-> -
-> -again:
-> -	addr = memblock_find_in_range_node(size, align, goal, limit, nid,
-> -					   flags);
-> -	if (!addr && (flags & MEMBLOCK_MIRROR)) {
-> -		flags &= ~MEMBLOCK_MIRROR;
-> -		pr_warn("Could not allocate %pap bytes of mirrored memory\n",
-> -			&size);
-> -		goto again;
-> -	}
-> -	if (!addr)
-> -		return NULL;
-> -
-> -	if (memblock_reserve(addr, size))
-> -		return NULL;
-> -
-> -	ptr = phys_to_virt(addr);
-> -	memset(ptr, 0, size);
-> -	/*
-> -	 * The min_count is set to 0 so that bootmem allocated blocks
-> -	 * are never reported as leaks.
-> -	 */
-> -	kmemleak_alloc(ptr, size, 0, 0);
-> -	return ptr;
-> -}
-> -
->  /**
->   * free_bootmem_late - free bootmem pages directly to page allocator
->   * @addr: starting address of the range
-> @@ -215,192 +180,3 @@ void __init free_bootmem(unsigned long addr, unsigned long size)
->  {
->  	memblock_free(addr, size);
->  }
-> -
-> -static void * __init ___alloc_bootmem_nopanic(unsigned long size,
-> -					unsigned long align,
-> -					unsigned long goal,
-> -					unsigned long limit)
-> -{
-> -	void *ptr;
-> -
-> -	if (WARN_ON_ONCE(slab_is_available()))
-> -		return kzalloc(size, GFP_NOWAIT);
-> -
-> -restart:
-> -
-> -	ptr = __alloc_memory_core_early(NUMA_NO_NODE, size, align, goal, limit);
-> -
-> -	if (ptr)
-> -		return ptr;
-> -
-> -	if (goal != 0) {
-> -		goal = 0;
-> -		goto restart;
-> -	}
-> -
-> -	return NULL;
-> -}
-> -
-> -/**
-> - * __alloc_bootmem_nopanic - allocate boot memory without panicking
-> - * @size: size of the request in bytes
-> - * @align: alignment of the region
-> - * @goal: preferred starting address of the region
-> - *
-> - * The goal is dropped if it can not be satisfied and the allocation will
-> - * fall back to memory below @goal.
-> - *
-> - * Allocation may happen on any node in the system.
-> - *
-> - * Return: address of the allocated region or %NULL on failure.
-> - */
-> -void * __init __alloc_bootmem_nopanic(unsigned long size, unsigned long align,
-> -					unsigned long goal)
-> -{
-> -	unsigned long limit = -1UL;
-> -
-> -	return ___alloc_bootmem_nopanic(size, align, goal, limit);
-> -}
-> -
-> -static void * __init ___alloc_bootmem(unsigned long size, unsigned long align,
-> -					unsigned long goal, unsigned long limit)
-> -{
-> -	void *mem = ___alloc_bootmem_nopanic(size, align, goal, limit);
-> -
-> -	if (mem)
-> -		return mem;
-> -	/*
-> -	 * Whoops, we cannot satisfy the allocation request.
-> -	 */
-> -	pr_alert("bootmem alloc of %lu bytes failed!\n", size);
-> -	panic("Out of memory");
-> -	return NULL;
-> -}
-> -
-> -/**
-> - * __alloc_bootmem - allocate boot memory
-> - * @size: size of the request in bytes
-> - * @align: alignment of the region
-> - * @goal: preferred starting address of the region
-> - *
-> - * The goal is dropped if it can not be satisfied and the allocation will
-> - * fall back to memory below @goal.
-> - *
-> - * Allocation may happen on any node in the system.
-> - *
-> - * The function panics if the request can not be satisfied.
-> - *
-> - * Return: address of the allocated region.
-> - */
-> -void * __init __alloc_bootmem(unsigned long size, unsigned long align,
-> -			      unsigned long goal)
-> -{
-> -	unsigned long limit = -1UL;
-> -
-> -	return ___alloc_bootmem(size, align, goal, limit);
-> -}
-> -
-> -void * __init ___alloc_bootmem_node_nopanic(pg_data_t *pgdat,
-> -						   unsigned long size,
-> -						   unsigned long align,
-> -						   unsigned long goal,
-> -						   unsigned long limit)
-> -{
-> -	void *ptr;
-> -
-> -again:
-> -	ptr = __alloc_memory_core_early(pgdat->node_id, size, align,
-> -					goal, limit);
-> -	if (ptr)
-> -		return ptr;
-> -
-> -	ptr = __alloc_memory_core_early(NUMA_NO_NODE, size, align,
-> -					goal, limit);
-> -	if (ptr)
-> -		return ptr;
-> -
-> -	if (goal) {
-> -		goal = 0;
-> -		goto again;
-> -	}
-> -
-> -	return NULL;
-> -}
-> -
-> -void * __init __alloc_bootmem_node_nopanic(pg_data_t *pgdat, unsigned long size,
-> -				   unsigned long align, unsigned long goal)
-> -{
-> -	if (WARN_ON_ONCE(slab_is_available()))
-> -		return kzalloc_node(size, GFP_NOWAIT, pgdat->node_id);
-> -
-> -	return ___alloc_bootmem_node_nopanic(pgdat, size, align, goal, 0);
-> -}
-> -
-> -static void * __init ___alloc_bootmem_node(pg_data_t *pgdat, unsigned long size,
-> -				    unsigned long align, unsigned long goal,
-> -				    unsigned long limit)
-> -{
-> -	void *ptr;
-> -
-> -	ptr = ___alloc_bootmem_node_nopanic(pgdat, size, align, goal, limit);
-> -	if (ptr)
-> -		return ptr;
-> -
-> -	pr_alert("bootmem alloc of %lu bytes failed!\n", size);
-> -	panic("Out of memory");
-> -	return NULL;
-> -}
-> -
-> -/**
-> - * __alloc_bootmem_node - allocate boot memory from a specific node
-> - * @pgdat: node to allocate from
-> - * @size: size of the request in bytes
-> - * @align: alignment of the region
-> - * @goal: preferred starting address of the region
-> - *
-> - * The goal is dropped if it can not be satisfied and the allocation will
-> - * fall back to memory below @goal.
-> - *
-> - * Allocation may fall back to any node in the system if the specified node
-> - * can not hold the requested memory.
-> - *
-> - * The function panics if the request can not be satisfied.
-> - *
-> - * Return: address of the allocated region.
-> - */
-> -void * __init __alloc_bootmem_node(pg_data_t *pgdat, unsigned long size,
-> -				   unsigned long align, unsigned long goal)
-> -{
-> -	if (WARN_ON_ONCE(slab_is_available()))
-> -		return kzalloc_node(size, GFP_NOWAIT, pgdat->node_id);
-> -
-> -	return ___alloc_bootmem_node(pgdat, size, align, goal, 0);
-> -}
-> -
-> -void * __init __alloc_bootmem_node_high(pg_data_t *pgdat, unsigned long size,
-> -				   unsigned long align, unsigned long goal)
-> -{
-> -	return __alloc_bootmem_node(pgdat, size, align, goal);
-> -}
-> -
-> -
-> -/**
-> - * __alloc_bootmem_low - allocate low boot memory
-> - * @size: size of the request in bytes
-> - * @align: alignment of the region
-> - * @goal: preferred starting address of the region
-> - *
-> - * The goal is dropped if it can not be satisfied and the allocation will
-> - * fall back to memory below @goal.
-> - *
-> - * Allocation may happen on any node in the system.
-> - *
-> - * The function panics if the request can not be satisfied.
-> - *
-> - * Return: address of the allocated region.
-> - */
-> -void * __init __alloc_bootmem_low(unsigned long size, unsigned long align,
-> -				  unsigned long goal)
-> -{
-> -	return ___alloc_bootmem(size, align, goal, ARCH_LOW_ADDRESS_LIMIT);
-> -}
-> -- 
-> 2.7.4
-> 
-
--- 
-Michal Hocko
-SUSE Labs
