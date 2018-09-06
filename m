@@ -3,80 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5884C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32309C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7966220659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:35:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7966220659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E0A7A20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0A7A20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730048AbeIFTLX (ORCPT
+        id S1730086AbeIFTL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:11:23 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44498 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeIFTLX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:11:23 -0400
-Received: by mail-qk1-f195.google.com with SMTP id d131-v6so7435188qke.11;
-        Thu, 06 Sep 2018 07:35:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kcvla0kV4NHcFw3QwcM7wWDpAKpbbcozGK5eYXEoSpY=;
-        b=tuz6oPSsShZV+6uKSwIV7xy/fectJtNq5aLLG+7+RGU33b6XxaK0l/HgDNAXt9Nqhf
-         vFpGnIq7ia860gaLdXrEKEIJJEeexijFWnO3gFecd+6ztZs9dDGljbkMLL713DM1BAeh
-         1R08OemgAL7svdsivUSfDpkJoFMQqM4iWGHCaGpsOyxdTyN5D/mhPtFW4tn9hGDmZhHp
-         KKOinWHkz548LW89qC3CJST8OJra3vV8XrVJD5659DxsvPfrC4FLGfOYM7phVWXaikGE
-         /JizPbb3zyS4JauVZWxEwmhMgHJIR9CV2dFwYX5LegQmPzWYUeAGGrFSYOv1qbGT6+FE
-         Q4FQ==
-X-Gm-Message-State: APzg51CvoqR985/GYPmxD3/NLtUqkGrokTqj++Y2YXyS9aQP0Ifybrv4
-        Ebr2EFaLRmeM9W4+Yrg6Mmrij9S/YwtblAoe9ww=
-X-Google-Smtp-Source: ANB0VdYCDUAu2kodWLVI/um6ILZK0B1Uv+knOTbFgtOvomG6DlXAQQXVHdUNwdiZf5Z5rIPfNltdtwJ7DT+NHJg2hhs=
-X-Received: by 2002:a37:7347:: with SMTP id o68-v6mr2300148qkc.291.1536244533087;
- Thu, 06 Sep 2018 07:35:33 -0700 (PDT)
+        Thu, 6 Sep 2018 15:11:27 -0400
+Received: from mga17.intel.com ([192.55.52.151]:21261 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729124AbeIFTL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 15:11:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 07:35:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="230731057"
+Received: from twbrusni-mobl.amr.corp.intel.com (HELO [10.251.16.54]) ([10.251.16.54])
+  by orsmga004.jf.intel.com with ESMTP; 06 Sep 2018 07:35:37 -0700
+Subject: Re: [RFC][PATCH 4/5] [PATCH 4/5] kvm-ept-idle: EPT page table walk
+ for A bits
+To:     Fengguang Wu <fengguang.wu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180901112818.126790961@intel.com>
+ <20180901124811.644382292@intel.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Peng DongX <dongx.peng@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Brendan Gregg <bgregg@netflix.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <e92183a0-b1ca-c45e-5b3f-e69f5886a368@intel.com>
+Date:   Thu, 6 Sep 2018 07:35:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1536138304.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Sep 2018 16:35:17 +0200
-Message-ID: <CAK8P3a3rACZHeSUm5Tct2PxfY4_GfkFEjb2hCwLWSpvNc2qDtg@mail.gmail.com>
-Subject: Re: [PATCH V3 00/26] C-SKY(csky) Linux Kernel Port
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180901124811.644382292@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> This is the 3th version patchset to add the Linux kernel port for C-SKY(csky).
-> Thanks to everyone who provided feedback on the previous version.
->
-> This patchset adds architecture support to Linux for C-SKY's 32-bit embedded
-> CPU cores and the patches are based on linux-4.18.4
+On 09/01/2018 04:28 AM, Fengguang Wu wrote:
+> (2) would need fundemental changes to the interface. It seems existing solutions
+> for sparse files like SEEK_HOLE/SEEK_DATA and FIEMAP ioctl may not serve this
+> situation well. The most efficient way could be to fill user space read()
+> buffer with an array of small extents:
 
-I looked at all patches again, overall this seems well done, thanks
-for addressing
-all the prior feedback.
+I've only been doing kernel development a few short years, but I've
+learned that designing user/kernel interfaces is hard.
 
-Most of my comments are are for fairly unimportant issues, the one thing
-I found that needs to be properly addressed is the asm/io.h header, which
-should implement the I/O accessors as your hardware requires them.
+A comment in an RFC saying that we need "fundamental changes to the
+interface" seems to be more of a cry for help than a request for
+comment.  This basically says to me: ignore the interface, it's broken.
 
-       Arnd
+> This borrows host page table walk macros/functions to do EPT walk.
+> So it depends on them using the same level.
+
+Have you actually run this code?
+
+How does this work?  It's walking the 'ept_root' that appears to be a
+guest CR3 register value.  It doesn't appear to be the host CR3 value of
+the qemu (or other hypervisor).
+
+I'm also woefully confused why you are calling these EPT walks and then
+walking the x86-style page tables.  EPT tables don't have the same
+format as x86 page tables, plus they don't start at a CR3-provided value.
+
+I'm also rather unsure that when running a VM, *any* host-format page
+tables get updated A/D bits.  You need a host vaddr to do a host-format
+page table walk in the host page tables, and the EPT tables do direct
+guest physical to host physical translation.  There's no host vaddr
+involved at all in those translations.
+
+> +		if (!ept_pte_present(*pte) ||
+> +		    !ept_pte_accessed(*pte))
+> +			idle = 1;
+
+Huh?  So, !Present and idle are treated the same?  If you had large
+swaths of !Present memory, you would see that in this interface and say,
+"gee, I've got a lot of idle memory to migrate" and then go do a bunch
+of calls to migrate it?  That seems terminally wasteful.
+
+Who is going to use this?
+
+Do you have an example, at least dummy app?
+
+Can more than one app read this data at the same time?  Who manages it?
+Who owns it?  Are multiple reads destructive?
+
+This entire set is almost entirely comment-free except for the
+occasional C++ comments.  That doesn't inspire confidence.
