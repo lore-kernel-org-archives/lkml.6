@@ -2,76 +2,96 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8718C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4428EC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BCB920659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:32:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BCB920659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CF73D20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:35:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF73D20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbeIFTIS (ORCPT
+        id S1729990AbeIFTKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:08:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53194 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729124AbeIFTIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:08:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CA75FAF43;
-        Thu,  6 Sep 2018 14:32:27 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 16:32:26 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     benjamin.tissoires@redhat.com, hdegoede@redhat.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aaron Ma <aaron.ma@canonical.com>,
-        AceLan Kao <acelan.kao@canonical.com>
-Subject: Re: [PATCH v2] HID: i2c-hid: Don't reset device upon system resume
-In-Reply-To: <20180906025518.30191-1-kai.heng.feng@canonical.com>
-Message-ID: <nycvar.YFH.7.76.1809061631250.15880@cbobk.fhfr.pm>
-References: <20180906025518.30191-1-kai.heng.feng@canonical.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 6 Sep 2018 15:10:55 -0400
+Received: from gateway20.websitewelcome.com ([192.185.49.40]:43670 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729124AbeIFTKz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 15:10:55 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id EC9CE400E15B0
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Sep 2018 09:35:05 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id xvMVfEh5WBcCXxvMvfgoUF; Thu, 06 Sep 2018 09:35:05 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.106.191] (port=34464 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fxvMV-000ToD-3T; Thu, 06 Sep 2018 09:34:23 -0500
+Date:   Thu, 6 Sep 2018 09:34:21 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] interconnect: core: Fix uninitialized variable
+Message-ID: <20180906143421.GA3779@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.191
+X-Source-L: No
+X-Exim-ID: 1fxvMV-000ToD-3T
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.106.191]:34464
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018, Kai-Heng Feng wrote:
+There is a potential execution path in which variable *ret* is returned
+without being properly initialized previously.
 
-> Raydium touchscreen triggers interrupt storm after system-wide suspend:
-> [ 179.085033] i2c_hid i2c-CUST0000:00: i2c_hid_get_input: incomplete
-> report (58/65535)
-> 
-> According to Raydium, Windows driver does not reset the device after
-> system resume.
-> 
-> The HID over I2C spec does specify a reset should be used at
-> intialization, but it doesn't specify if reset is required for system
-> suspend.
-> 
-> Tested this patch on other i2c-hid touchpanels I have and those
-> touchpanels do work after S3 without doing reset. If any regression
-> happens to other touchpanel vendors, we can use quirk for Raydium
-> devices.
-> 
-> There's still one device uses I2C_HID_QUIRK_RESEND_REPORT_DESCR so keep
-> it there.
-> 
-> Cc: Aaron Ma <aaron.ma@canonical.com>
-> Cc: AceLan Kao <acelan.kao@canonical.com>
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Fix this by initializing variable *ret* to -EINVAL.
 
-Queued in for-4.19/fixes. Thanks,
+Addresses-Coverity-ID: 1473202 ("Uninitialized scalar variable")
+Fixes: 81b4cdb447fe ("interconnect: Add generic on-chip interconnect API")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/interconnect/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 2740f1a..ea5245f 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -227,7 +227,7 @@ static int aggregate_requests(struct icc_node *node)
+ static int apply_constraints(struct icc_path *path)
+ {
+ 	struct icc_node *next, *prev = NULL;
+-	int ret;
++	int ret = -EINVAL;
+ 	int i;
+ 
+ 	for (i = 0; i < path->num_nodes; i++, prev = next) {
 -- 
-Jiri Kosina
-SUSE Labs
+2.7.4
 
