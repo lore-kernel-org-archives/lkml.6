@@ -2,109 +2,84 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A601CC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20970C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D802077C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D802077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AEF6A2086B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:21:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dto9cLZb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF6A2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeIFMzU (ORCPT
+        id S1728096AbeIFMzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:55:20 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:57742 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbeIFMzU (ORCPT
+        Thu, 6 Sep 2018 08:55:46 -0400
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:54880 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbeIFMzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:55:20 -0400
-Received: by mail-it0-f72.google.com with SMTP id e6-v6so11262705itc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 01:21:03 -0700 (PDT)
+        Thu, 6 Sep 2018 08:55:45 -0400
+Received: by mail-wm0-f41.google.com with SMTP id c14-v6so10475190wmb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 01:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XSH4FEc4I5NTzpCx5BMBUcqlTwHzKNHIXhCvZZwBQtI=;
+        b=dto9cLZbr7hmf8uVKhWaXe7bmxZQNpA1U3h1Et8L44tSjocLu6f7E5gItgHEzalp+G
+         keBG7xBZizDCZkHpOWVSazDoa4/RkGg+NWwrGLRqrLClKgF0i2zS+7fYcGIdm0UgqYeA
+         twCdZCHg7nY58b5UCwdX4y6Xds2aXJWIxAtsrhO+PsY884xiagK/UZxI2yIfgoohuva3
+         i6rsLee/4/J9d8aLguFyDsJTyPENobV0Kb9sDtmLD8oiWi+6Doc/HuGKsl+CN75X84f8
+         XILVCJC9K1J7zmhQW7vRb+/34DMd2qNtYJ5iRDd6FRPQ9VqWBm53J8G3Jbe9t1GGb24C
+         gi3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=peSZ2dhR9PHQkvcEFt8LyPSg2Wty/ErBz2nF44IfNwk=;
-        b=IO/xFgFZ/YhOaojFnYw3zt+tQajf2yTSumef1IbZUde3OQuyoieQyO3D+kr/hMFsm/
-         7JZUyuu149HXVPM0SapCmFxHjNJz7yA8pXsEPbSKUwG8hxoS8MSkbgzomO2FERSBnBm0
-         gLt7isHnFLdxCVTT2nwSr1MLfgHiganoZU4copCfDVF/YZ+ZHHydOaVfvjJIzaoIQiua
-         HEai1DuskCVEjMXMcrRxqVCoI8nPXv9Du5dwgQ9+dUC1+uxcBAxpU451NQyksG1pBRBr
-         aLMK4pFwxmc2BrftCrQzzPvzfW0KRJUC4P9McOKC61YIo3o4HCjzHvbH9H7AskrojPUu
-         rGjw==
-X-Gm-Message-State: APzg51CsuHta9X1A9C5w+kLlGZt829944TcbX0GG9ifyz4HhqJVTkJaN
-        eBmaCA79lzprRQIALQ7y/Ykic8yF+ZV3pRZDEo9Yz5abK8wK
-X-Google-Smtp-Source: ANB0Vda/6SbAOy2Veqi8bXGZJ/Oj6y6rfF7mCqTLKuTrYtZgA2gQLGvkPUn7JZ7mY4sqwih6R+4qpMUgXwVGpEYU8UFGfK8uTaNi
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XSH4FEc4I5NTzpCx5BMBUcqlTwHzKNHIXhCvZZwBQtI=;
+        b=DagBMqj60/Ez1bdy8ae8jvyQ8vmJBD1Xt38zfzrwYy9CIDmi3LL9YhfrFP49e5emYT
+         /dT8aZJQOaSgIQJzUsg1zS6n+5YEgWeaFGO9tKNhrHauzd1DD9P4rUUCsXClW8dP7DiW
+         GgTgjghjWZ6BW333nlX5cgRo3GKn0Otd9MYogeSFUcKyg+qQCZ2NV+GDwkk8X24ffC7I
+         YM/qLsEQMCskYLpswocuHAraJdpGz+ABnBQFQqwxrkNFnbo9ZZAEdk3hT4E8MqVrCpTL
+         s26C3zVJi/RPrDkftkzTDCxVsCFm09f7GTN99xE1wE5yQB6rhxYYYveSIna2RBUuqRa2
+         REZA==
+X-Gm-Message-State: APzg51C/+TE/Z/mt+mQlzQZm2IjVci1HMEvX3PQtdThqFAfCyD2cbBcn
+        9JaeQh8IHgFAyWjgU0/amv6tUbAvrvouw8IbuXh2eQ==
+X-Google-Smtp-Source: ANB0VdYT9LXAv3nMlHwGwwD1zHA4vyk20wPCW5340piMhQg0TG/ApyrIRCdBLU45S86lw9SbKMaIOHvw/w8kJ5gDmdY=
+X-Received: by 2002:a1c:6386:: with SMTP id x128-v6mr1464669wmb.104.1536222087639;
+ Thu, 06 Sep 2018 01:21:27 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:56ce:: with SMTP id o197-v6mr1800792itb.32.1536222063262;
- Thu, 06 Sep 2018 01:21:03 -0700 (PDT)
-Date:   Thu, 06 Sep 2018 01:21:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006082bd05752f92bb@google.com>
-Subject: linux-next boot error (2)
-From:   syzbot <syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, alexander.levin@verizon.com,
-        dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        linux@dominikbrodowski.net, luc.vanoostenryck@gmail.com,
-        nikolaus.voss@loewensteinmedical.de, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a1c:686:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 01:21:26 -0700 (PDT)
+In-Reply-To: <20180823114954.30704-4-mjourdan@baylibre.com>
+References: <20180823114954.30704-1-mjourdan@baylibre.com> <20180823114954.30704-4-mjourdan@baylibre.com>
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Thu, 6 Sep 2018 10:21:26 +0200
+Message-ID: <CAMO6nayiONr5Z5P35jhSY7i52+7Sfn_GLU=syFVV-cS8Bhxeiw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] ARM64: dts: meson-gx: add dmcbus and canvas nodes.
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     Maxime Jourdan <mjourdan@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Kevin,
 
-syzbot found the following crash on:
+If you don't mind, please change the title from "ARM64" to "arm64" if
+this gets merged.
 
-HEAD commit:    509d1f0c294a Add linux-next specific files for 20180906
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=157b857a400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a648893bbc933
-dashboard link: https://syzkaller.appspot.com/bug?extid=762a577f56cfb1574647
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Thanks!
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com
-
-kernel panic: VFS: Unable to mount root fs on unknown-block(8,1) driver: sd
-   0801         2096128 sda1 24d8ab2f-01
-
-1f00             128 mtdblock0
-  (driver?)
-Kernel panic - not syncing: VFS: Unable to mount root fs on  
-unknown-block(8,1)
-CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc2-next-20180906+ #60
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  mount_block_root+0x61f/0x71f init/do_mounts.c:442
-  mount_root+0x2d0/0x317 init/do_mounts.c:562
-  prepare_namespace+0x26c/0x2ab init/do_mounts.c:621
-  kernel_init_freeable+0x590/0x5ae init/main.c:1163
-  kernel_init+0x11/0x1b3 init/main.c:1063
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Maxime
