@@ -2,223 +2,116 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 094BFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF7DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B857D20861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:34:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B857D20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F0640206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0640206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeIFNI2 (ORCPT
+        id S1728173AbeIFNJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:08:28 -0400
-Received: from twin.jikos.cz ([91.219.245.39]:50094 "EHLO twin.jikos.cz"
+        Thu, 6 Sep 2018 09:09:52 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:42482 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728127AbeIFNI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:08:28 -0400
-Received: from twin.jikos.cz (jikos@[127.0.0.1])
-        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id w868XewG016461
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 6 Sep 2018 10:33:41 +0200
-Received: from localhost (jikos@localhost)
-        by twin.jikos.cz (8.13.6/8.13.6/Submit) with ESMTP id w868Xd5U015693;
-        Thu, 6 Sep 2018 10:33:39 +0200
-X-Authentication-Warning: twin.jikos.cz: jikos owned process doing -bs
-Date:   Thu, 6 Sep 2018 10:33:39 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v4 2/2] x86/speculation: Enable cross-hyperthread spectre v2
- STIBP mitigation
-In-Reply-To: <nycvar.YFH.7.76.1809061013160.15880@cbobk.fhfr.pm>
-Message-ID: <alpine.LRH.2.00.1809061032540.3446@gjva.wvxbf.pm>
-References: <nycvar.YFH.7.76.1809061013160.15880@cbobk.fhfr.pm>
-User-Agent: Alpine 2.00 (LRH 1167 2008-08-23)
+        id S1727827AbeIFNJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:09:52 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Qxpyof8OjICm; Thu,  6 Sep 2018 10:35:13 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCBB900329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b900:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D65951EC02D1;
+        Thu,  6 Sep 2018 10:35:12 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 10:35:06 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org
+Subject: Re: [PATCH 18/21] edac: cpc925: use for_each_of_cpu_node iterator
+Message-ID: <20180906083506.GA10768@zn.tnic>
+References: <20180905193738.19325-1-robh@kernel.org>
+ <20180905193738.19325-19-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180905193738.19325-19-robh@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+On Wed, Sep 05, 2018 at 02:37:35PM -0500, Rob Herring wrote:
+> Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
+> has the side effect of defaulting to iterating using "cpu" node names in
+> preference to the deprecated (for FDT) device_type == "cpu".
+> 
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: linux-edac@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Please ack and I will take via the DT tree. This is dependent on the
+> first 2 patches.
 
-STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
-(once enabled) prevents cross-hyperthread control of decisions made by
-indirect branch predictors.
+Completely unknown territory for me so I'd trust your judgement. Staring
+at 1/21, the conversion looks ok except the removal of those prints that
+a cpu nodes are not present - I wonder if they even meant anything or
+were just there during driver development...
 
-Enable this feature if
+>  drivers/edac/cpc925_edac.c | 20 ++------------------
+>  1 file changed, 2 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/edac/cpc925_edac.c b/drivers/edac/cpc925_edac.c
+> index 2c98e020df05..3c0881ac9880 100644
+> --- a/drivers/edac/cpc925_edac.c
+> +++ b/drivers/edac/cpc925_edac.c
+> @@ -593,8 +593,7 @@ static void cpc925_mc_check(struct mem_ctl_info *mci)
+>  /******************** CPU err device********************************/
+>  static u32 cpc925_cpu_mask_disabled(void)
+>  {
+> -	struct device_node *cpus;
+> -	struct device_node *cpunode = NULL;
+> +	struct device_node *cpunode;
+>  	static u32 mask = 0;
+> 
+>  	/* use cached value if available */
+> @@ -603,20 +602,8 @@ static u32 cpc925_cpu_mask_disabled(void)
+> 
+>  	mask = APIMASK_ADI0 | APIMASK_ADI1;
+> 
+> -	cpus = of_find_node_by_path("/cpus");
+> -	if (cpus == NULL) {
+> -		cpc925_printk(KERN_DEBUG, "No /cpus node !\n");
 
-- the CPU is vulnerable to spectre v2
-- the CPU supports SMT and has SMT siblings online
-- spectre_v2 mitigation autoselection is enabled (default)
+This thing...
 
-After some previous discussion, this patch leaves STIBP on all the time,
-as wrmsr on crossing kernel boundary is a no-no. This could perhaps later
-be a bit more optimized (like disabling it in NOHZ, experiment with
-disabling it in idle, etc) if needed.
+> -		return 0;
+> -	}
+> -
+> -	while ((cpunode = of_get_next_child(cpus, cpunode)) != NULL) {
+> +	for_each_of_cpu_node(cpunode) {
+>  		const u32 *reg = of_get_property(cpunode, "reg", NULL);
+> -
+> -		if (strcmp(cpunode->type, "cpu")) {
+> -			cpc925_printk(KERN_ERR, "Not a cpu node in /cpus: %s\n", cpunode->name);
 
-Note: the code could be made less awkward if it'd be guaranteed that STIBP
-could be kept on on a primary thread with SMT sibling being offline, without
-potentially imposing performance penalty. This doesn't seem to be defined
-anywhere though, so let's better be safe then sorry and always flip STIBP
-both on primary and sibling threads on hotplug transitions.
+... and this thing.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
-
-Hopefully properly threaded now, sorry for the duplicates. alpine 2.21
-clearly has a bug that it sometimes eats Reply-to: header :/ Apologizes
-for all the noise
-
- arch/x86/kernel/cpu/bugs.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++
- kernel/cpu.c               | 13 +++++++++-
- 2 files changed, 75 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 40bdaea97fe7..ba3df0a49a2e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -325,6 +325,56 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 	return cmd;
- }
- 
-+static bool stibp_needed(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+		return false;
-+
-+	if (cpu_smt_control != CPU_SMT_ENABLED)
-+		return false;
-+
-+	if (!boot_cpu_has(X86_FEATURE_STIBP))
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * The read-modify-write of the MSR doesn't need any race protection here,
-+ * as we're running in atomic context.
-+ */
-+static void enable_stibp(void *info)
-+{
-+	u64 mask;
-+	rdmsrl(MSR_IA32_SPEC_CTRL, mask);
-+	mask |= SPEC_CTRL_STIBP;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, mask);
-+}
-+
-+static void disable_stibp(void *info)
-+{
-+	u64 mask;
-+	rdmsrl(MSR_IA32_SPEC_CTRL, mask);
-+	mask &= ~SPEC_CTRL_STIBP;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, mask);
-+}
-+
-+void arch_smt_enable_errata(void)
-+{
-+	if (stibp_needed()) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: Enabling STIBP\n");
-+		on_each_cpu(enable_stibp, NULL, 1);
-+	}
-+}
-+
-+void arch_smt_disable_errata(void)
-+{
-+	if (stibp_needed()) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: Disabling STIBP\n");
-+		on_each_cpu(disable_stibp, NULL, 1);
-+	}
-+}
-+
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -424,6 +474,9 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-+
-+	/* Enable STIBP on BP if needed */
-+	arch_smt_enable_errata();
- }
- 
- #undef pr_fmt
-@@ -655,6 +708,16 @@ void x86_spec_ctrl_setup_ap(void)
- 
- 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
- 		x86_amd_ssb_disable();
-+
-+	/*
-+	 * If we are here during system bootup, enable STIBP.
-+	 *
-+	 * If we are here because of SMT hotplug, STIBP will be enabled by the
-+	 * SMT control code (enabling here would not be sufficient, as it
-+	 * needs to happen on primary threads as well).
-+	 */
-+	if (stibp_needed() && system_state < SYSTEM_RUNNING)
-+		enable_stibp(NULL);
- }
- 
- #undef pr_fmt
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index aa7fe85ad62e..d3613d546829 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2025,17 +2025,27 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
-+/*
-+ * Architectures that need SMT-specific errata handling during SMT hotplug
-+ * should override these.
-+ */
-+void __weak arch_smt_enable_errata(void) { };
-+void __weak arch_smt_disable_errata(void) { };
-+
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
- 
- 	cpu_maps_update_begin();
-+	arch_smt_disable_errata();
- 	for_each_online_cpu(cpu) {
- 		if (topology_is_primary_thread(cpu))
- 			continue;
- 		ret = cpu_down_maps_locked(cpu, CPUHP_OFFLINE);
--		if (ret)
-+		if (ret) {
-+			arch_smt_enable_errata();
- 			break;
-+		}
- 		/*
- 		 * As this needs to hold the cpu maps lock it's impossible
- 		 * to call device_offline() because that ends up calling
-@@ -2073,6 +2083,7 @@ static int cpuhp_smt_enable(void)
- 		/* See comment in cpuhp_smt_disable() */
- 		cpuhp_online_cpu_device(cpu);
- 	}
-+	arch_smt_enable_errata();
- 	cpu_maps_update_done();
- 	return ret;
- }
+Thx.
 
 -- 
-Jiri Kosina
-SUSE Labs
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
