@@ -2,110 +2,102 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C26DC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0860FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF33920652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF33920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id AB71420652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:15:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EsjMIAIF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB71420652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbeIFUun (ORCPT
+        id S1727872AbeIFUv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 16:50:43 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:18048 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeIFUun (ORCPT
+        Thu, 6 Sep 2018 16:51:59 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41969 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbeIFUv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 16:50:43 -0400
-X-IronPort-AV: E=Sophos;i="5.53,338,1531785600"; 
-   d="scan'208";a="78657326"
-Date:   Thu, 6 Sep 2018 18:14:21 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
-CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <drbd-user@lists.linbit.com>
-Subject: Re: [PATCH] xen-blkback: Switch to closed state after releasing the
- backing device
-Message-ID: <20180906161421.ba35p6qx5rvktjos@mac.bytemobile.com>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905162756.GA26705@gavran.carpriv.carnet.hr>
+        Thu, 6 Sep 2018 16:51:59 -0400
+Received: by mail-oi0-f66.google.com with SMTP id k12-v6so21573152oiw.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ciCVaYPRc2WngadWfkFmnVvwn24qXRIYuOCGVqQLGo0=;
+        b=EsjMIAIFbmbKK3sNicie/oicXb0JlTnHQK+Ne9OEoDloVdBzSNLyAqRcoGgHRCO1MM
+         x9UVWjDpmD2AWCBuaW8hyuzPS35X5+94gArJPgc6O7rbC1OSNDDPecHltrLViV4bdA6l
+         04l99vQQ0q2ui2KFCd5vZ1QC4781xX1RSw0EZwz0aveJnifgzEpVwPei/Vz4gOd9VItl
+         esnVZA3y6o/u2nfVYza7wC6uLonaGsBxXCx4hsbCjAzFqWapXMLZaMNn1kgfHNC+ooo7
+         6QGT4huLj9KeuNdlzpyBsppAyMlcPrk3LT+gKb8e+gJ2okRyOEeHUHI8opy0DlUUic3+
+         h1vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ciCVaYPRc2WngadWfkFmnVvwn24qXRIYuOCGVqQLGo0=;
+        b=Xbq+BueaJHm6y5VTLQ/4OLEwX6pyAGrayyM3Fi8MAzqfYjT574EqMbalseXIfoBFQs
+         pfBeM6jqzHYAvb+z55o3kkdsKcQfp8nxFauxnUb2SjqYg8PlS/y5na3hEuohTzvcBqu5
+         /PZ4abaRvmc/hUx4nau+FbnSrV3dJhYpwYuZkngzCQRpc53E6wh6Np1yO4E5Okhzs7Jx
+         f2/dECx54PwoHQ4cSc9pa6TVAxQlWppBOLF7rXPZt8fGsDIm0vKR20kGDBmRtVFO/XuY
+         NIOyrlutcOsfb+DrT0JNDasrSmR7Cd+G2NILCYaC5XwtCiy4pH8Wq4N4J0V0SrPaOpvs
+         JpYw==
+X-Gm-Message-State: APzg51BWg7RSYIOXL5Ho0N8QtMJzwV8G8/6XwEw2A/rRRpg3SGHuy+QX
+        IwLi/JxrX2td4XUZwGJoPLR18uRtn4cNJ+9AhpwmnZSM
+X-Google-Smtp-Source: ANB0VdbqQ0bA1qFOCsDZuV/2dgGcZnT8H6U4KwYfEErNx4rI3WZG2hl8L6I9nsgzUUK/6xWaiLJ0kI1kJEpq3B7vt+g=
+X-Received: by 2002:aca:b40a:: with SMTP id d10-v6mr3803968oif.190.1536250545053;
+ Thu, 06 Sep 2018 09:15:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180905162756.GA26705@gavran.carpriv.carnet.hr>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-5-tycho@tycho.ws>
+In-Reply-To: <20180906152859.7810-5-tycho@tycho.ws>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 6 Sep 2018 18:15:18 +0200
+Message-ID: <CAG48ez2oQnAb=OMGOUz0GfSWMsjqydPe8dmp6L=QswSQpSpVXA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via USER_NOTIF
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>, suda.akihiro@lab.ntt.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 06:27:56PM +0200, Valentin Vidic wrote:
-> On Wed, Sep 05, 2018 at 12:36:49PM +0200, Roger Pau Monné wrote:
-> > On Wed, Aug 29, 2018 at 08:52:14AM +0200, Valentin Vidic wrote:
-> > > Switching to closed state earlier can cause the block-drbd
-> > > script to fail with 'Device is held open by someone':
-> > > 
-> > > root: /etc/xen/scripts/block-drbd: remove XENBUS_PATH=backend/vbd/6/51712
-> > > kernel: [ 2222.278235] block drbd6: State change failed: Device is held open by someone
-> > > kernel: [ 2222.278304] block drbd6:   state = { cs:Connected ro:Primary/Secondary ds:UpToDate/UpToDate r----- }
-> > > kernel: [ 2222.278340] block drbd6:  wanted = { cs:Connected ro:Secondary/Secondary ds:UpToDate/UpToDate r----- }
-> > > root: /etc/xen/scripts/block-drbd: Writing backend/vbd/6/51712/hotplug-error /etc/xen/scripts/block-drbd failed; error detected. backend/vbd/6/51712/hotplug-status error to xenstore.
-> > > root: /etc/xen/scripts/block-drbd: /etc/xen/scripts/block-drbd failed; error detected.
-> > > 
-> > > Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
-> > > Cc: stable@vger.kernel.org
-> > > ---
-> > >  drivers/block/xen-blkback/xenbus.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-> > > index a4bc74e72c39..43bddc996709 100644
-> > > --- a/drivers/block/xen-blkback/xenbus.c
-> > > +++ b/drivers/block/xen-blkback/xenbus.c
-> > > @@ -323,6 +323,7 @@ static void xen_blkif_free(struct xen_blkif *blkif)
-> > >  {
-> > >  	WARN_ON(xen_blkif_disconnect(blkif));
-> > >  	xen_vbd_free(&blkif->vbd);
-> > > +	xenbus_switch_state(blkif->be->dev, XenbusStateClosed);
-> > >  	kfree(blkif->be->mode);
-> > >  	kfree(blkif->be);
-> > >  
-> > > @@ -814,7 +815,6 @@ static void frontend_changed(struct xenbus_device *dev,
-> > >  
-> > >  	case XenbusStateClosed:
-> > >  		xen_blkif_disconnect(be->blkif);
-> > > -		xenbus_switch_state(dev, XenbusStateClosed);
-> > >  		if (xenbus_dev_is_online(dev))
-> > >  			break;
-> > 
-> > AFAICT, this will cause the backend to never switch to 'Closed' state
-> > until the toolstack sets online to 0, which is not good IMO.
-> > 
-> > If for example a frontend decides to close a device, the backend will
-> > stay in state 'Closing' until the toolstack actually removes the disk
-> > by setting online to 0.
-> > 
-> > This will prevent resetting blk connections, as blkback will refuse to
-> > switch to state XenbusStateInitWait unless it's at XenbusStateClosed
-> > (see the XenbusStateInitialising case in frontend_changed), which will
-> > never be reached with your patch.
-> 
-> Ok, is it possible to test this somehow?
+On Thu, Sep 6, 2018 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> The idea here is that the userspace handler should be able to pass an fd
+> back to the trapped task, for example so it can be returned from socket().
+[...]
+> diff --git a/Documentation/userspace-api/seccomp_filter.rst b/Documentation/userspace-api/seccomp_filter.rst
+> index d1498885c1c7..1c0aab306426 100644
+> --- a/Documentation/userspace-api/seccomp_filter.rst
+> +++ b/Documentation/userspace-api/seccomp_filter.rst
+> @@ -235,6 +235,9 @@ The interface for a seccomp notification fd consists of two structures:
+>          __u64 id;
+>          __s32 error;
+>          __s64 val;
+> +        __u8 return_fd;
+> +        __u32 fd;
+> +        __u32 fd_flags;
 
-Yes, you can try booting a PV guest with pvgrub, that will cause
-pvgrub to open a blk connection, then close it and afterwards the OS
-kernel will start a new connection.
+Normally,  syscalls that take an optional file descriptor accept a
+signed 32-bit number, with -1 standing for "no file descriptor". Is
+there a reason why this uses a separate variable to signal whether an
+fd was provided?
 
-Thanks, Roger.
+Apart from that, this patch looks good to me.
