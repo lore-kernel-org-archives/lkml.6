@@ -2,570 +2,220 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6214C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44771C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86EE62064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:40:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EE62064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id C1C942064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="k1lVNq1S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C942064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbeIFOPX (ORCPT
+        id S1727753AbeIFOTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:15:23 -0400
-Received: from mx.socionext.com ([202.248.49.38]:11897 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727793AbeIFOPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:15:22 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 06 Sep 2018 18:40:43 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id ED362600AA;
-        Thu,  6 Sep 2018 18:40:43 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 6 Sep 2018 18:40:43 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 1B0961A03A2;
-        Thu,  6 Sep 2018 18:40:43 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host controller support
-Date:   Thu,  6 Sep 2018 18:40:32 +0900
-Message-Id: <1536226832-5089-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536226832-5089-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1536226832-5089-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Thu, 6 Sep 2018 10:19:43 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38253 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbeIFOTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 10:19:43 -0400
+Received: by mail-wm0-f67.google.com with SMTP id t25-v6so10499534wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 02:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tgshcRLx1vH7kASvmQNkcvFr86xktIDrNPYWSdcQnOg=;
+        b=k1lVNq1Sq6rtVmL0M4cdBYmqhH4Bjz/bw3Ma6JVgbhJIWwQYRoyWBL9bp1cdGaTWjc
+         QG+Yh3CtqSB7KZ0pABYHBJV46dNhV3F0wOOUwBphDfx8BFQGbTKPUQs8xfpVwiMNvLfV
+         9Euq5Ky7hCQGz043FCIulATtR4RviieJorJL+sbT9vBH1oIAxoI3Vo3yiX4DfrCmJ4+E
+         MZU67wcxxUBkcBgPIMNFuKqjoia1KGp7VGS+hgxGNcX95kJrL0kicpQKErOMV5GVbv07
+         u9PXu8EPLsAObsZV5JVFHkJlrzhdDcErm9Ol5uH7mfYNq/LM76JxKWpmLMutUrpwfpbJ
+         suEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=tgshcRLx1vH7kASvmQNkcvFr86xktIDrNPYWSdcQnOg=;
+        b=kkbrjVCr0xAtdDiKc9PrdgPX7V0Oj/IILQdu1vqMfM4CHYZJ8VbajHuFqQncnrIHap
+         ioEuKs43UtGYU2MD+5asZVawD7aGniwZl5eJ+4srwzKMF/aNex2LuEjDzjhVYkxLJkVQ
+         fWtCWqF66WDTX8tJL7PXHsmjGuO2RcO7pbT76oGqSdTCs+xnk8vMh7hd4itAZahwyGx0
+         Xuu6zxC3LB/a4WIXwmvMSsIJx4Zatmed2T4EaZmVuMXpq8o6Q+z9uSP+M9ZP/vNzz7hf
+         71Fjs14oBWt1GIGhqx06nrqTd2VHYs4Gc9Xajx2etOZeOMGVHNKw4XaYrHkwgM3E1MJT
+         LZQw==
+X-Gm-Message-State: APzg51AkZLNC9QbdWhq7tR5Q9clWQ9NUCHrVxlczD5S+JRS9GK6npmxC
+        xceuTRiG2ul2Vyo7lAo86Mk6eg==
+X-Google-Smtp-Source: ANB0VdbmJhsa39zE4T3IOqYgQGc3iWVXtSRaxHacNHzn5fQuD/rZHylVHyN8ZHVQHlwZH8aEIA9Q/w==
+X-Received: by 2002:a1c:5dd4:: with SMTP id r203-v6mr1609766wmb.29.1536227103017;
+        Thu, 06 Sep 2018 02:45:03 -0700 (PDT)
+Received: from localhost (smb-adpcdg1-01.hotspot.hub-one.net. [213.174.99.129])
+        by smtp.gmail.com with ESMTPSA id w17-v6sm2902418wmc.43.2018.09.06.02.45.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 02:45:02 -0700 (PDT)
+Date:   Thu, 06 Sep 2018 02:45:02 -0700 (PDT)
+X-Google-Original-Date: Wed, 05 Sep 2018 17:58:24 PDT (-0700)
+Subject:     Re: [PATCH] dt-bindings: riscv,cpu-intc: Cleanups from a missed review
+In-Reply-To: <CABGGisyZ=kuWesNkKRQQATsSf6_aiWTscmW1OANLtTSJAKQ0EA@mail.gmail.com>
+CC:     atish.patra@wdc.com, linux-riscv@lists.infradead.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        aou@eecs.berkeley.edu, jason@lakedaemon.net, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, merker@debian.org,
+        tglx@linutronix.de
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     robh@kernel.org
+Message-ID: <mhng-e7a3701e-b23f-43ac-9daf-03a3eaaca5b1@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces specific glue layer for UniPhier platform to support
-PCIe host controller that is based on the DesignWare PCIe core, and
-this driver supports Root Complex (host) mode.
+On Tue, 21 Aug 2018 05:59:03 PDT (-0700), robh@kernel.org wrote:
+> On Mon, Aug 20, 2018 at 6:10 PM Atish Patra <atish.patra@wdc.com> wrote:
+>>
+>> On 8/20/18 4:01 PM, Palmer Dabbelt wrote:
+>> > I managed to miss one of Rob's code reviews on the mailing list
+>> > <http://lists.infradead.org/pipermail/linux-riscv/2018-August/001139.html>.
+>> > The patch has already been merged, so I'm submitting a fixup.
+>> >
+>> > Sorry!
+>> >
+>> > Fixes: b67bc7cb4088 ("dt-bindings: interrupt-controller: RISC-V local interrupt controller")
+>> > Cc: Rob Herring <robh@kernel.org>
+>> > Cc: Christoph Hellwig <hch@infradead.org>
+>> > Cc: Karsten Merker <merker@debian.org>
+>> > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+>> > ---
+>> >   .../bindings/interrupt-controller/riscv,cpu-intc.txt       | 14 +++++++++++---
+>> >   1 file changed, 11 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+>> > index b0a8af51c388..265b223cd978 100644
+>> > --- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+>> > +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+>> > @@ -11,7 +11,7 @@ The RISC-V supervisor ISA manual specifies three interrupt sources that are
+>> >   attached to every HLIC: software interrupts, the timer interrupt, and external
+>> >   interrupts.  Software interrupts are used to send IPIs between cores.  The
+>> >   timer interrupt comes from an architecturally mandated real-time timer that is
+>> > -controller via Supervisor Binary Interface (SBI) calls and CSR reads.  External
+>> > +controlled via Supervisor Binary Interface (SBI) calls and CSR reads.  External
+>> >   interrupts connect all other device interrupts to the HLIC, which are routed
+>> >   via the platform-level interrupt controller (PLIC).
+>> >
+>> > @@ -25,7 +25,15 @@ in the system.
+>> >
+>> >   Required properties:
+>> >   - compatible : "riscv,cpu-intc"
+>>
+>> Since this is a fix up patch, we should update the compatible string
+>> with the sifive specific one as well. no?
+>
+> I think it is fine as is if my understanding is correct. Given this is
+> part of the RISC-V spec(s), then using 'riscv' here for riscv,cpu-intc
+> is fine. It was only the PLIC which didn't have any standard
+> definition that I had issue with. Plus, with the SoC specific string,
+> I'm not too worried about what the fallback is.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/pci/controller/dwc/Kconfig         |   9 +
- drivers/pci/controller/dwc/Makefile        |   1 +
- drivers/pci/controller/dwc/pcie-uniphier.c | 465 +++++++++++++++++++++++++++++
- 3 files changed, 475 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
+I agree.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 91b0194..d8fdb02 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -193,4 +193,13 @@ config PCIE_HISI_STB
- 	help
-           Say Y here if you want PCIe controller support on HiSilicon STB SoCs
- 
-+config PCIE_UNIPHIER
-+	bool "Socionext UniPhier PCIe controllers"
-+	depends on OF && (ARCH_UNIPHIER || COMPILE_TEST)
-+	depends on PCI_MSI_IRQ_DOMAIN
-+	select PCIE_DW_HOST
-+	help
-+	  Say Y here if you want PCIe controller support on UniPhier SoCs.
-+	  This driver supports LD20 and PXs3 SoCs.
-+
- endmenu
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index 5d2ce72..cbde733 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
- obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
- obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
-+obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
- 
- # The following drivers are for devices that use the generic ACPI
- # pci_root.c driver but don't support standard ECAM config access.
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
-new file mode 100644
-index 0000000..4090967
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-uniphier.c
-@@ -0,0 +1,465 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe host controller driver for UniPhier SoCs
-+ * Copyright 2018 Socionext Inc.
-+ * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/irqdomain.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "pcie-designware.h"
-+
-+#define PCL_PINCTRL0			0x002c
-+#define PCL_PERST_PLDN_REGEN		BIT(12)
-+#define PCL_PERST_NOE_REGEN		BIT(11)
-+#define PCL_PERST_OUT_REGEN		BIT(8)
-+#define PCL_PERST_PLDN_REGVAL		BIT(4)
-+#define PCL_PERST_NOE_REGVAL		BIT(3)
-+#define PCL_PERST_OUT_REGVAL		BIT(0)
-+
-+#define PCL_PIPEMON			0x0044
-+#define PCL_PCLK_ALIVE			BIT(15)
-+
-+#define PCL_APP_READY_CTRL		0x8008
-+#define PCL_APP_LTSSM_ENABLE		BIT(0)
-+
-+#define PCL_APP_PM0			0x8078
-+#define PCL_SYS_AUX_PWR_DET		BIT(8)
-+
-+#define PCL_RCV_INT			0x8108
-+#define PCL_CFG_BW_MGT_ENABLE		BIT(20)
-+#define PCL_CFG_LINK_AUTO_BW_ENABLE	BIT(19)
-+#define PCL_CFG_AER_RC_ERR_MSI_ENABLE	BIT(18)
-+#define PCL_CFG_PME_MSI_ENABLE		BIT(17)
-+#define PCL_CFG_BW_MGT_STATUS		BIT(4)
-+#define PCL_CFG_LINK_AUTO_BW_STATUS	BIT(3)
-+#define PCL_CFG_AER_RC_ERR_MSI_STATUS	BIT(2)
-+#define PCL_CFG_PME_MSI_STATUS		BIT(1)
-+#define PCL_RCV_INT_ALL_ENABLE			\
-+	(PCL_CFG_BW_MGT_ENABLE | PCL_CFG_LINK_AUTO_BW_ENABLE \
-+	 | PCL_CFG_AER_RC_ERR_MSI_ENABLE | PCL_CFG_PME_MSI_ENABLE)
-+
-+#define PCL_RCV_INTX			0x810c
-+#define PCL_RADM_INTD_ENABLE		BIT(19)
-+#define PCL_RADM_INTC_ENABLE		BIT(18)
-+#define PCL_RADM_INTB_ENABLE		BIT(17)
-+#define PCL_RADM_INTA_ENABLE		BIT(16)
-+#define PCL_RADM_INTD_STATUS		BIT(3)
-+#define PCL_RADM_INTC_STATUS		BIT(2)
-+#define PCL_RADM_INTB_STATUS		BIT(1)
-+#define PCL_RADM_INTA_STATUS		BIT(0)
-+#define PCL_RCV_INTX_ALL_ENABLE			\
-+	(PCL_RADM_INTD_ENABLE | PCL_RADM_INTC_ENABLE \
-+	 | PCL_RADM_INTB_ENABLE	| PCL_RADM_INTA_ENABLE)
-+
-+#define PCL_STATUS_LINK			0x8140
-+#define PCL_RDLH_LINK_UP		BIT(1)
-+#define PCL_XMLH_LINK_UP		BIT(0)
-+
-+struct uniphier_pcie_priv {
-+	void __iomem *base;
-+	struct dw_pcie pci;
-+	struct clk *clk;
-+	struct reset_control *rst;
-+	struct phy *phy;
-+	struct irq_domain *irq_domain;
-+};
-+
-+#define to_uniphier_pcie(x)	dev_get_drvdata((x)->dev)
-+
-+static void uniphier_pcie_ltssm_enable(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	val |= PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_ltssm_disable(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + PCL_APP_READY_CTRL);
-+	val &= ~PCL_APP_LTSSM_ENABLE;
-+	writel(val, priv->base + PCL_APP_READY_CTRL);
-+}
-+
-+static void uniphier_pcie_init_rc(struct uniphier_pcie_priv *priv)
-+{
-+	u32 val;
-+
-+	/* use auxiliary power detection */
-+	val = readl(priv->base + PCL_APP_PM0);
-+	val |= PCL_SYS_AUX_PWR_DET;
-+	writel(val, priv->base + PCL_APP_PM0);
-+
-+	/* assert PERST# */
-+	val = readl(priv->base + PCL_PINCTRL0);
-+	val &= ~(PCL_PERST_NOE_REGVAL | PCL_PERST_OUT_REGVAL
-+		 | PCL_PERST_PLDN_REGVAL);
-+	val |= PCL_PERST_NOE_REGEN | PCL_PERST_OUT_REGEN
-+		| PCL_PERST_PLDN_REGEN;
-+	writel(val, priv->base + PCL_PINCTRL0);
-+
-+	uniphier_pcie_ltssm_disable(priv);
-+
-+	usleep_range(100000, 200000);
-+
-+	/* deassert PERST# */
-+	val = readl(priv->base + PCL_PINCTRL0);
-+	val |= PCL_PERST_OUT_REGVAL | PCL_PERST_OUT_REGEN;
-+	writel(val, priv->base + PCL_PINCTRL0);
-+}
-+
-+static int uniphier_pcie_wait_rc(struct uniphier_pcie_priv *priv)
-+{
-+	u32 status;
-+	int ret;
-+
-+	/* wait PIPE clock */
-+	ret = readl_poll_timeout(priv->base + PCL_PIPEMON, status,
-+				 status & PCL_PCLK_ALIVE, 100000, 1000000);
-+	if (ret) {
-+		dev_err(priv->pci.dev,
-+			"Failed to initialize controller in RC mode\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_link_up(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	u32 val, mask;
-+
-+	val = readl(priv->base + PCL_STATUS_LINK);
-+	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
-+
-+	return (val & mask) == mask;
-+}
-+
-+static int uniphier_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	int ret;
-+
-+	if (dw_pcie_link_up(pci))
-+		return 0;
-+
-+	uniphier_pcie_ltssm_enable(priv);
-+
-+	ret = dw_pcie_wait_for_link(pci);
-+	if (ret == -ETIMEDOUT) {
-+		dev_warn(pci->dev, "Link not up\n");
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
-+static void uniphier_pcie_stop_link(struct dw_pcie *pci)
-+{
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+
-+	uniphier_pcie_ltssm_disable(priv);
-+}
-+
-+static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
-+				  irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-+	irq_set_chip_data(irq, domain->host_data);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops uniphier_intx_domain_ops = {
-+	.map = uniphier_pcie_intx_map,
-+};
-+
-+static int uniphier_pcie_init_irq_domain(struct pcie_port *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-+	struct device_node *np = pci->dev->of_node;
-+	struct device_node *np_intc = of_get_next_child(np, NULL);
-+
-+	if (!np_intc) {
-+		dev_err(pci->dev, "Failed to get child node\n");
-+		return -ENODEV;
-+	}
-+
-+	priv->irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
-+						 &uniphier_intx_domain_ops,
-+						 pp);
-+	if (!priv->irq_domain) {
-+		dev_err(pci->dev, "Failed to get INTx domain\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
-+{
-+	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
-+	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
-+}
-+
-+static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
-+{
-+	writel(0, priv->base + PCL_RCV_INT);
-+	writel(0, priv->base + PCL_RCV_INTX);
-+}
-+
-+static irqreturn_t uniphier_pcie_irq_handler(int irq, void *arg)
-+{
-+	struct uniphier_pcie_priv *priv = arg;
-+	struct dw_pcie *pci = &priv->pci;
-+	u32 val;
-+
-+	/* INT for debug */
-+	val = readl(priv->base + PCL_RCV_INT);
-+
-+	if (val & PCL_CFG_BW_MGT_STATUS)
-+		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
-+	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
-+		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
-+	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
-+		dev_dbg(pci->dev, "Root Error\n");
-+	if (val & PCL_CFG_PME_MSI_STATUS)
-+		dev_dbg(pci->dev, "PME Interrupt\n");
-+
-+	writel(val, priv->base + PCL_RCV_INT);
-+
-+	/* INTx */
-+	val = readl(priv->base + PCL_RCV_INTX);
-+
-+	if (val & PCL_RADM_INTA_STATUS)
-+		generic_handle_irq(irq_find_mapping(priv->irq_domain, 0));
-+	if (val & PCL_RADM_INTB_STATUS)
-+		generic_handle_irq(irq_find_mapping(priv->irq_domain, 1));
-+	if (val & PCL_RADM_INTC_STATUS)
-+		generic_handle_irq(irq_find_mapping(priv->irq_domain, 2));
-+	if (val & PCL_RADM_INTD_STATUS)
-+		generic_handle_irq(irq_find_mapping(priv->irq_domain, 3));
-+
-+	writel(val, priv->base + PCL_RCV_INTX);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t uniphier_pcie_msi_irq_handler(int irq, void *arg)
-+{
-+	struct pcie_port *pp = arg;
-+
-+	return dw_handle_msi_irq(pp);
-+}
-+
-+static int uniphier_pcie_host_init(struct pcie_port *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	int ret;
-+
-+	dw_pcie_setup_rc(pp);
-+	ret = uniphier_pcie_establish_link(pci);
-+	if (ret)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		dw_pcie_msi_init(pp);
-+
-+	return 0;
-+}
-+
-+static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
-+	.host_init = uniphier_pcie_host_init,
-+};
-+
-+static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
-+				  struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = &priv->pci;
-+	struct pcie_port *pp = &pci->pp;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	pp->root_bus_nr = -1;
-+	pp->ops = &uniphier_pcie_host_ops;
-+
-+	pp->irq = platform_get_irq_byname(pdev, "intx");
-+	if (pp->irq < 0) {
-+		dev_err(dev, "Failed to get intx irq\n");
-+		return pp->irq;
-+	}
-+
-+	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-+			       IRQF_SHARED, "pcie", priv);
-+	if (ret) {
-+		dev_err(dev, "Failed to request irq %d\n", pp->irq);
-+		return ret;
-+	}
-+
-+	ret = uniphier_pcie_init_irq_domain(pp);
-+	if (ret)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-+		if (pp->msi_irq < 0)
-+			return pp->msi_irq;
-+
-+		ret = devm_request_irq(dev, pp->msi_irq,
-+				       uniphier_pcie_msi_irq_handler,
-+				       IRQF_SHARED, "pcie-msi", pp);
-+		if (ret) {
-+			dev_err(dev, "failed to request msi_irq %d\n",
-+				pp->msi_irq);
-+			return ret;
-+		}
-+	}
-+
-+	ret = dw_pcie_host_init(pp);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize host (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int uniphier_pcie_host_enable(struct uniphier_pcie_priv *priv)
-+{
-+	int ret;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret)
-+		goto out_clk_disable;
-+
-+	uniphier_pcie_init_rc(priv);
-+
-+	ret = phy_init(priv->phy);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	ret = uniphier_pcie_wait_rc(priv);
-+	if (ret)
-+		goto out_phy_exit;
-+
-+	uniphier_pcie_irq_enable(priv);
-+
-+	return 0;
-+
-+out_phy_exit:
-+	phy_exit(priv->phy);
-+out_rst_assert:
-+	reset_control_assert(priv->rst);
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk);
-+
-+	return ret;
-+}
-+
-+static void uniphier_pcie_host_disable(struct uniphier_pcie_priv *priv)
-+{
-+	uniphier_pcie_irq_disable(priv);
-+	phy_exit(priv->phy);
-+	reset_control_assert(priv->rst);
-+	clk_disable_unprepare(priv->clk);
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = uniphier_pcie_establish_link,
-+	.stop_link = uniphier_pcie_stop_link,
-+	.link_up = uniphier_pcie_link_up,
-+};
-+
-+static int uniphier_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_pcie_priv *priv;
-+	struct resource *res;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->pci.dev = dev;
-+	priv->pci.ops = &dw_pcie_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(priv->pci.dbi_base))
-+		return PTR_ERR(priv->pci.dbi_base);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk))
-+		return PTR_ERR(priv->clk);
-+
-+	priv->rst = devm_reset_control_get_shared(dev, NULL);
-+	if (IS_ERR(priv->rst))
-+		return PTR_ERR(priv->rst);
-+
-+	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
-+	if (IS_ERR(priv->phy))
-+		return PTR_ERR(priv->phy);
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = uniphier_pcie_host_enable(priv);
-+	if (ret)
-+		return ret;
-+
-+	return uniphier_add_pcie_port(priv, pdev);
-+}
-+
-+static int uniphier_pcie_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_pcie_priv *priv = platform_get_drvdata(pdev);
-+
-+	uniphier_pcie_host_disable(priv);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id uniphier_pcie_match[] = {
-+	{ .compatible = "socionext,uniphier-pcie", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_pcie_match);
-+
-+static struct platform_driver uniphier_pcie_driver = {
-+	.probe  = uniphier_pcie_probe,
-+	.remove = uniphier_pcie_remove,
-+	.driver = {
-+		.name = "uniphier-pcie",
-+		.of_match_table = uniphier_pcie_match,
-+	},
-+};
-+builtin_platform_driver(uniphier_pcie_driver);
-+
-+MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier PCIe host controller driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+> However, sifive,fu540-c000-cpu-intc does need to be documented.
+> Putting it in the example is not documenting it.
 
+Makes sense.  I wrote up something quickly
+
+    diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+    index 265b223cd978..30c23fba9676 100644
+    --- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+    +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+    @@ -24,7 +24,14 @@ a PLIC interrupt property will typically list the HLICs for all present HARTs
+     in the system.
+    
+     Required properties:
+    -- compatible : "riscv,cpu-intc"
+    +- compatible : should be one of
+    +        "sifive,fu540-c000-cpu-intc"
+    +  and must contain "riscv,cpu-intc".  The intent here is that each
+    +  implementation of the standard RISC-V interrupt controller contains a unique
+    +  compatible string in addition to the standard string "riscv,cpu-intc".  This
+    +  allows the specific implementation of the interrupt controller to be
+    +  differentiated from others in case of yet to be discovered
+    +  incompatibilities between the extant implementations.
+     - #interrupt-cells : should be <1>.  The interrupt sources are defined by the
+       RISC-V supervisor ISA manual, with only the following three interrupts being
+       defined for supervisor mode:
+
+but it's very much a first pass as I managed to confuse myself while writing 
+the documentation.  The central issue here is that the "riscv,cpu-intc" on the 
+fu540-c000 is actually provided by our machine-mode firmware, so I'm not sure 
+calling this "sifive,fu540-c000-cpu-intc" is actually the right thing to do 
+here.  It should really be called something like 
+"ENTITY,bbl-cpu-intc-537ae11ae506" -- where that's a git hash of the BBL used, 
+and I'm not sure what "ENTITY" should be (bbl is part of the RISC-V GitHub, but 
+it's not part of any RISC-V spec).
+That naming scheme is a nightmare, though, so I don't want to suggest it :).
+
+There's then the additional wrinkle where, in the current BBL implementation, 
+we just use the machine-mode hardware trap delegation mechanism to directly 
+provide most of the relevant traps to Linux without actually invoking any 
+software.  As a result, that means any as-of-yet undiscovered bugs present in 
+that particular hardware path will end up manifesting in Linux.  The trouble 
+then is that if we discover one of these bugs we'd want to fix it in the 
+machine-mode monitor, so the actual behavior of the interrupt controller that 
+Linux sees would end up depending on both the hardware implementation as well 
+as the machine-mode monitor's implementation.  The resulting naming scheme 
+seems crazy.
+
+Maybe the right thing to do here is to just call this something like
+
+    compatible = "sifive,fu540-c000-cpu-intc-0", "riscv,cpu-intc";
+
+which would result in a patch that looks like
+
+    diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+    index 265b223cd978..36a6a06dcac4 100644
+    --- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+    +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.txt
+    @@ -24,7 +24,17 @@ a PLIC interrupt property will typically list the HLICs for all present HARTs
+     in the system.
+
+     Required properties:
+    -- compatible : "riscv,cpu-intc"
+    +- compatible : should be one of
+    +        "sifive,fu540-c000-cpu-intc-0"
+    +  and must contain "riscv,cpu-intc".  The intent here is that each
+    +  implementation of the standard RISC-V interrupt controller contains a unique
+    +  compatible string in addition to the standard string "riscv,cpu-intc".  This
+    +  allows the specific implementation of the interrupt controller to be
+    +  differentiated from others in case of yet to be discovered
+    +  incompatibilities between the extant implementations.  In this case, we
+    +  indicate the exact interrupt controller implementation by providing
+    +  "fu540-c000" as the hardware implementation's identifier and "0" as the
+    +  software implementation's identifier.
+     - #interrupt-cells : should be <1>.  The interrupt sources are defined by the
+       RISC-V supervisor ISA manual, with only the following three interrupts being
+       defined for supervisor mode:
+    @@ -46,7 +56,7 @@ An example device tree entry for a HLIC is show below.
+     		...
+     		cpu1-intc: interrupt-controller {
+     			#interrupt-cells = <1>;
+    -			compatible = "sifive,fu540-c000-cpu-intc", "riscv,cpu-intc";
+    +			compatible = "sifive,fu540-c000-cpu-intc-0", "riscv,cpu-intc";
+     			interrupt-controller;
+     		};
+     	};
+
+With the idea being that at least we can figure out if we end up with a bug 
+that can be worked around in software.
+
+> Rob
+
+Thanks for all the help!
