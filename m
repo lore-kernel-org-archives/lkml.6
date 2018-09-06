@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08379C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112E8C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B57F020861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B57F020861
+	by mail.kernel.org (Postfix) with ESMTP id BC7D720844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:09:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7D720844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbeIFRnx (ORCPT
+        id S1729079AbeIFRoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:43:53 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58339 "EHLO
+        Thu, 6 Sep 2018 13:44:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45831 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeIFRnx (ORCPT
+        with ESMTP id S1727636AbeIFRoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:43:53 -0400
+        Thu, 6 Sep 2018 13:44:23 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86D8H46303664
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86D8mlP303744
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:08:17 -0700
+        Thu, 6 Sep 2018 06:08:48 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86D8HG8303661;
-        Thu, 6 Sep 2018 06:08:17 -0700
-Date:   Thu, 6 Sep 2018 06:08:17 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86D8liP303740;
+        Thu, 6 Sep 2018 06:08:47 -0700
+Date:   Thu, 6 Sep 2018 06:08:47 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-og4r9k87mzp9hv7el046idmd@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
-        dsahern@gmail.com, mingo@kernel.org, wangnan0@huawei.com,
-        namhyung@kernel.org, hpa@zytor.com, jolsa@kernel.org,
-        adrian.hunter@intel.com
-Reply-To: namhyung@kernel.org, hpa@zytor.com, jolsa@kernel.org,
-          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, acme@redhat.com, dsahern@gmail.com,
-          mingo@kernel.org, wangnan0@huawei.com
+Message-ID: <tip-epz6y9i0eavmerc5ha98t7gn@git.kernel.org>
+Cc:     jolsa@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        wangnan0@huawei.com, dsahern@gmail.com, namhyung@kernel.org,
+        acme@redhat.com, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          namhyung@kernel.org, dsahern@gmail.com, wangnan0@huawei.com,
+          acme@redhat.com, tglx@linutronix.de, adrian.hunter@intel.com,
+          jolsa@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Make the augmented_syscalls filter out
- the tracepoint event
-Git-Commit-ID: 6ccc18a9a17a1189b8b157176ce4a58c458c9eee
+Subject: [tip:perf/core] perf trace: Print the syscall name for
+ augmented_syscalls
+Git-Commit-ID: 1cdf618f23867dd1dae58f10f1f82839f2bf73b4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,90 +59,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6ccc18a9a17a1189b8b157176ce4a58c458c9eee
-Gitweb:     https://git.kernel.org/tip/6ccc18a9a17a1189b8b157176ce4a58c458c9eee
+Commit-ID:  1cdf618f23867dd1dae58f10f1f82839f2bf73b4
+Gitweb:     https://git.kernel.org/tip/1cdf618f23867dd1dae58f10f1f82839f2bf73b4
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 21 Aug 2018 11:14:15 -0300
+AuthorDate: Tue, 21 Aug 2018 11:44:23 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 30 Aug 2018 15:52:19 -0300
 
-perf trace: Make the augmented_syscalls filter out the tracepoint event
+perf trace: Print the syscall name for augmented_syscalls
 
-When we attach a eBPF object to a tracepoint, if we return 1, then that
-tracepoint will be stored in the perf's ring buffer. In the
-augmented_syscalls.c case we want to just attach and _override_ the
-tracepoint payload with an augmented, extended one.
+Since we copy all the payload for raw_syscalls:sys_enter plus add
+expanded pointers, we can use the syscall id to get its name, etc:
 
-In this example, tools/perf/examples/bpf/augmented_syscalls.c, we are
-attaching to the 'openat' syscall, and adding, after the
-syscalls:sys_enter_openat usual payload as defined by
-/sys/kernel/debug/tracing/events/syscalls/sys_enter_openat/format, a
-snapshot of its sole pointer arg:
-
-  # grep 'field:.*\*' /sys/kernel/debug/tracing/events/syscalls/sys_enter_openat/format
-	field:const char * filename;	offset:24;	size:8;	signed:0;
+  # grep 'field:.* id' /sys/kernel/debug/tracing/events/raw_syscalls/sys_enter/format
+	field:long id;	offset:8;	size:8;	signed:1;
   #
-
-For now this is not being considered, the next csets will make use of
-it, but as this is overriding the syscall tracepoint enter, we don't
-want that event appearing on the ring buffer, just our synthesized one.
 
 Before:
 
-  # perf trace -e ~acme/git/perf/tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
-     0.000 (         ): __augmented_syscalls__:dfd: CWD, filename: /etc/ld.so.cache, flags: CLOEXEC
-     0.006 (         ): syscalls:sys_enter_openat:dfd: CWD, filename: , flags: CLOEXEC
-     0.007 ( 0.004 ms): cat/24044 openat(dfd: CWD, filename: 0x216dda8, flags: CLOEXEC                  ) = 3
-     0.028 (         ): __augmented_syscalls__:dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC
-     0.030 (         ): syscalls:sys_enter_openat:dfd: CWD, filename: , flags: CLOEXEC
-     0.031 ( 0.006 ms): cat/24044 openat(dfd: CWD, filename: 0x2375ce0, flags: CLOEXEC                  ) = 3
-     0.291 (         ): __augmented_syscalls__:dfd: CWD, filename: /etc/passwd
-     0.293 (         ): syscalls:sys_enter_openat:dfd: CWD, filename:
-     0.294 ( 0.004 ms): cat/24044 openat(dfd: CWD, filename: 0x637db06b                                 ) = 3
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
+     0.000 (         ): __augmented_syscalls__:dfd: CWD, filename: 0xec9f9da8, flags: CLOEXEC
+     0.006 ( 0.006 ms): cat/2395 openat(dfd: CWD, filename: 0xec9f9da8, flags: CLOEXEC) = 3
+     0.041 (         ): __augmented_syscalls__:dfd: CWD, filename: 0xecc01ce0, flags: CLOEXEC
+     0.042 ( 0.007 ms): cat/2395 openat(dfd: CWD, filename: 0xecc01ce0, flags: CLOEXEC) = 3
+     0.376 (         ): __augmented_syscalls__:dfd: CWD, filename: 0xac0a806b
+     0.379 ( 0.006 ms): cat/2395 openat(dfd: CWD, filename: 0xac0a806b) = 3
   #
 
 After:
 
-  # perf trace -e ~acme/git/perf/tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
-     0.000 (         ): __augmented_syscalls__:dfd: CWD, filename: 0x9c6a1da8, flags: CLOEXEC
-     0.005 ( 0.015 ms): cat/27341 openat(dfd: CWD, filename: 0x9c6a1da8, flags: CLOEXEC                 ) = 3
-     0.040 (         ): __augmented_syscalls__:dfd: CWD, filename: 0x9c8a9ce0, flags: CLOEXEC
-     0.041 ( 0.006 ms): cat/27341 openat(dfd: CWD, filename: 0x9c8a9ce0, flags: CLOEXEC                 ) = 3
-     0.294 (         ): __augmented_syscalls__:dfd: CWD, filename: 0x482a706b
-     0.296 ( 0.067 ms): cat/27341 openat(dfd: CWD, filename: 0x482a706b                                 ) = 3
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c,openat cat /etc/passwd > /dev/null
+     0.000 (         ): openat(dfd: CWD, filename: 0x31b6dda8, flags: CLOEXEC)
+     0.009 ( 0.009 ms): cat/3619 openat(dfd: CWD, filename: 0x31b6dda8, flags: CLOEXEC) = 3
+     0.051 (         ): openat(dfd: CWD, filename: 0x31d75ce0, flags: CLOEXEC)
+     0.054 ( 0.010 ms): cat/3619 openat(dfd: CWD, filename: 0x31d75ce0, flags: CLOEXEC) = 3
+     0.539 (         ): openat(dfd: CWD, filename: 0xca71506b)
+     0.543 ( 0.115 ms): cat/3619 openat(dfd: CWD, filename: 0xca71506b) = 3
   #
-
-Now lets replace that __augmented_syscalls__ name with the syscall name,
-using:
-
-  # grep 'field:.*syscall_nr' /sys/kernel/debug/tracing/events/syscalls/sys_enter_openat/format
-	field:int __syscall_nr;	offset:8;	size:4;	signed:1;
-  #
-
-That the synthesized payload has exactly where the syscall enter
-tracepoint puts it.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-og4r9k87mzp9hv7el046idmd@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-epz6y9i0eavmerc5ha98t7gn@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_syscalls.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index 69a31386d8cd..10e7997ab481 100644
---- a/tools/perf/examples/bpf/augmented_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -49,7 +49,7 @@ int syscall_enter(openat)(struct syscall_enter_openat_args *args)
- 	probe_read_str(&augmented_args.filename, sizeof(augmented_args.filename), args->filename_ptr);
- 	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU,
- 			  &augmented_args, sizeof(augmented_args));
--	return 1;
-+	return 0;
- }
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 7deae6c8cb25..bcf882afd6d0 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2055,13 +2055,33 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
+ 	if (trace->trace_syscalls)
+ 		fprintf(trace->output, "(         ): ");
  
- license(GPL);
++	if (evsel == trace->syscalls.events.augmented) {
++		int id = perf_evsel__sc_tp_uint(evsel, id, sample);
++		struct syscall *sc = trace__syscall_info(trace, evsel, id);
++
++		if (sc) {
++			struct thread *thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
++
++			if (thread) {
++				fprintf(trace->output, "%s(", sc->name);
++				trace__fprintf_sys_enter(trace, evsel, sample);
++				fputc(')', trace->output);
++				thread__put(thread);
++				goto newline;
++			}
++		}
++
++		/*
++		 * XXX: Not having the associated syscall info or not finding/adding
++		 * 	the thread should never happen, but if it does...
++		 * 	fall thru and print it as a bpf_output event.
++		 */
++	}
++
+ 	fprintf(trace->output, "%s:", evsel->name);
+ 
+ 	if (perf_evsel__is_bpf_output(evsel)) {
+-		if (evsel == trace->syscalls.events.augmented)
+-			trace__fprintf_sys_enter(trace, evsel, sample);
+-		else
+-			bpf_output__fprintf(trace, sample);
++		bpf_output__fprintf(trace, sample);
+ 	} else if (evsel->tp_format) {
+ 		if (strncmp(evsel->tp_format->name, "sys_enter_", 10) ||
+ 		    trace__fprintf_sys_enter(trace, evsel, sample)) {
+@@ -2071,6 +2091,7 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
+ 		}
+ 	}
+ 
++newline:
+ 	fprintf(trace->output, "\n");
+ 
+ 	if (callchain_ret > 0)
