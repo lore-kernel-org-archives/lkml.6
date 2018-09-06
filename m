@@ -2,132 +2,128 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FECC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB1BC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB422075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:43:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlLtdSvN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB422075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BAD7D2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD7D2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbeIGBUU (ORCPT
+        id S1730099AbeIGBVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 21:20:20 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33739 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730069AbeIGBUU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 21:20:20 -0400
-Received: by mail-yb1-f195.google.com with SMTP id m123-v6so4672405ybm.0;
-        Thu, 06 Sep 2018 13:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GJ0UPslJxrAbVKKtV6nvTniosPmHe+Z8otYVdfOdD3U=;
-        b=TlLtdSvNi260eITMOW/emVb421ywK2n3dkfZEQR+EgqMdVIm2rDjoiCsIrwzIqTTAe
-         Wywr5i66e5vKJc3Gg525voIrEISEKenkIEEmkGIqHcjFJ3zlzk5a/K6/R6rxM2n9Rq1g
-         3gQqgKxkkOFZj3ixQdlG3T2TE8vAgt068FXeveCPUiiwLtau9dCfIAu+zOqmfOCOGfHK
-         6Pt8a/LB/DIW+mxUuD4ifPogdmXfQRT6QWPSNKx08pGBmtd+C8HQ/MlpmltEQZt/mz0q
-         eqCLoZ/vOe9y6Lw+xc+1A61SFzPxjBd6My9FGJCEC2Rc11hry/IwvWzfEztMdSb3Kp2o
-         KyGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GJ0UPslJxrAbVKKtV6nvTniosPmHe+Z8otYVdfOdD3U=;
-        b=onaVn1zMMle2DHsKM1Pr2q9BMx6/sGR0gYk3lYAld/jXBRPmjT0YjSumWZLTgTvtii
-         nS5KybQmIoQNL+NxENjrMMP3sXYlgqDzfmcPEoawJpRaqk79XcsxZbXO5wGMc+mgEXYm
-         ieXD3ghi/dojEBTstMUepG8Udk4sOw+63MqX8po4hVBBemLy4gI8jvCZvtB6ym+nSOAy
-         Po1zOWvPp3ps64R57p7u0zruqIdGscLchXKr2j9wFsKmVnijgbggLQeTxrkn8ChRyL1K
-         NrlhxZOkGPHtCmzUO6wZw9G1yP+oEWC8a0IJOAY9yx0cgIgOxwE+wN+KU/7cHnCL6YHm
-         zS4g==
-X-Gm-Message-State: APzg51DGYDOQ1NH68QhPIVRUV+CK1y1/UhD7KVxHPXJXGDGysu0KL5dJ
-        zDZCQuqbzL4klMK2lNi6af4=
-X-Google-Smtp-Source: ANB0VdY4c/95Ux64RFnQj1zvG5p1Cx5ozn2JoPkmWW8wAv2B1rEYbjmdG8Hlz5edp1f3sibnp0r65g==
-X-Received: by 2002:a25:ba8b:: with SMTP id s11-v6mr2503471ybg.87.1536266588617;
-        Thu, 06 Sep 2018 13:43:08 -0700 (PDT)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::3:20a])
-        by smtp.gmail.com with ESMTPSA id 200-v6sm2826445ywr.102.2018.09.06.13.43.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 13:43:07 -0700 (PDT)
-Date:   Thu, 6 Sep 2018 16:43:06 -0400
-From:   Dennis Zhou <dennisszhou@gmail.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/15] blkcg: consolidate bio_issue_init and blkg
- association
-Message-ID: <20180906204305.GB26048@dennisz-mbp.dhcp.thefacebook.com>
-References: <20180831015356.69796-1-dennisszhou@gmail.com>
- <20180831015356.69796-8-dennisszhou@gmail.com>
- <20180831154225.zoiztxvdvcfaat5r@destiny>
+        Thu, 6 Sep 2018 21:21:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41485 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727629AbeIGBVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 21:21:53 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 84B54208BE; Thu,  6 Sep 2018 22:44:41 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8D1C5208AF;
+        Thu,  6 Sep 2018 22:44:24 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 22:44:22 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 2/2] mtd: nand: esmt: retrieve ecc requirements from 5th
+ id byte
+Message-ID: <20180906224422.4be710c8@bbrezillon>
+In-Reply-To: <20180906084922.14845-2-marcel@ziswiler.com>
+References: <20180906084922.14845-1-marcel@ziswiler.com>
+        <20180906084922.14845-2-marcel@ziswiler.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831154225.zoiztxvdvcfaat5r@destiny>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 11:42:26AM -0400, Josef Bacik wrote:
-> On Thu, Aug 30, 2018 at 09:53:48PM -0400, Dennis Zhou wrote:
-> > diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-> > index 22b2ff0440cc..9d7052bad6f7 100644
-> > --- a/block/blk-iolatency.c
-> > +++ b/block/blk-iolatency.c
-> > @@ -395,34 +395,12 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio,
-> >  				     spinlock_t *lock)
-> >  {
-> >  	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
-> > -	struct blkcg *blkcg;
-> > -	struct blkcg_gq *blkg;
-> > -	struct request_queue *q = rqos->q;
-> > +	struct blkcg_gq *blkg = bio->bi_blkg;
-> >  	bool issue_as_root = bio_issue_as_root_blkg(bio);
-> >  
-> >  	if (!blk_iolatency_enabled(blkiolat))
-> >  		return;
-> >  
-> > -	rcu_read_lock();
-> > -	bio_associate_blkcg(bio, NULL);
-> > -	blkcg = bio_blkcg(bio);
-> > -	blkg = blkg_lookup(blkcg, q);
-> > -	if (unlikely(!blkg)) {
-> > -		if (!lock)
-> > -			spin_lock_irq(q->queue_lock);
-> > -		blkg = __blkg_lookup_create(blkcg, q);
-> > -		if (IS_ERR(blkg))
-> > -			blkg = NULL;
-> > -		if (!lock)
-> > -			spin_unlock_irq(q->queue_lock);
-> > -	}
-> > -	if (!blkg)
-> > -		goto out;
-> > -
-> > -	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
-> > -	bio_associate_blkg(bio, blkg);
-> > -out:
-> > -	rcu_read_unlock();
-> 
-> Move this removal to the previous patch, so you keep this patch soley about the
-> bio_issue_init.  Thanks,
-> 
+On Thu,  6 Sep 2018 10:49:22 +0200
+Marcel Ziswiler <marcel@ziswiler.com> wrote:
 
-I've moved this removal to the previous patch and addressed the kbuild
-errors.
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> This patch enables support to read the ECC level from the NAND flash
+> using ESMT SLC NAND ID byte 5 information as documented e.g. in the
+> following data sheet:
+> 
+> https://www.esmt.com.tw/upload/pdf/ESMT/datasheets/F59L1G81LA(2Y).pdf
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> ---
+> 
+>  drivers/mtd/nand/raw/nand_esmt.c | 46 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 drivers/mtd/nand/raw/nand_esmt.c
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_esmt.c b/drivers/mtd/nand/raw/nand_esmt.c
+> new file mode 100644
+> index 000000000000..360d351ac043
+> --- /dev/null
+> +++ b/drivers/mtd/nand/raw/nand_esmt.c
+> @@ -0,0 +1,46 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 Toradex AG
+> + *
+> + * Author: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> + */
+> +
+> +#include <linux/mtd/rawnand.h>
+> +
+> +static void esmt_nand_decode_id(struct nand_chip *chip)
+> +{
+> +	nand_decode_ext_id(chip);
+> +
+> +	/* Extract ECC requirements from 5th id byte. */
+> +	if (chip->id.len >= 5 && nand_is_slc(chip)) {
+> +		chip->ecc_step_ds = 512;
+> +		switch (chip->id.data[4] & 0x3) {
+> +		case 0x0:
+> +			chip->ecc_strength_ds = 4;
+> +			break;
+> +		case 0x1:
+> +			chip->ecc_strength_ds = 2;
+> +			break;
+> +		case 0x2:
+> +			chip->ecc_strength_ds = 1;
+> +			break;
+> +		default:
+> +			WARN(1, "Could not get ECC info");
+> +			chip->ecc_step_ds = 0;
+> +			break;
+> +		}
+> +	}
+> +}
+> +
+> +static int esmt_nand_init(struct nand_chip *chip)
+> +{
+> +	if (nand_is_slc(chip))
+> +		chip->bbt_options |= NAND_BBT_SCAN2NDPAGE;
+> +
+> +	return 0;
+> +}
+> +
+> +const struct nand_manufacturer_ops esmt_nand_manuf_ops = {
+> +	.detect = esmt_nand_decode_id,
+> +	.init = esmt_nand_init,
+> +};
 
-Thanks,
-Dennis
+Looks like you forgot to hook the new esmt_nand_manuf_ops to the ESMT
+entry (in the nand_manufacturer table), so as is, the patch is not
+exactly adding support for ECC req parsing ;-).
