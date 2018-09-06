@@ -2,221 +2,90 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB51AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B493C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 789CA20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:29:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789CA20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AC47F2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:31:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="N2JZZeJv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC47F2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeIGEG4 (ORCPT
+        id S1727589AbeIGEJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 00:06:56 -0400
-Received: from mga05.intel.com ([192.55.52.43]:24972 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726119AbeIGEGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 00:06:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 16:28:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="68154889"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.52])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Sep 2018 16:28:51 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     ricardo.neri@intel.com, matt@codeblueprint.co.uk,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V4 1/3] efi: Make efi_rts_work accessible to efi page fault handler
-Date:   Thu,  6 Sep 2018 16:27:46 -0700
-Message-Id: <1536276468-28499-2-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+        Fri, 7 Sep 2018 00:09:36 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:50430 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725745AbeIGEJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 00:09:36 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 853415C00FA;
+        Fri,  7 Sep 2018 01:31:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1536276703;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8AFx999YG4x9nzEIiS2ow9h7MmRRuB2TWyq5UQa+9Po=;
+        b=N2JZZeJv11r7VpZERLmj5IlEr5kddgoBiPU/3Mr6fLv3ZZ4+7azk0Kp9oztHH5VXhgbM8h
+        VMk0VQXXo7HHBrSQ55fUfusbuJRJrHxtG1LGlDOXQtlypkm8E8Z8Rfpf5IaGwT5hgfR5CN
+        gQ8s6R1KZHCZDOLsZJgqCUERLafruTo=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 06 Sep 2018 16:31:42 -0700
+From:   Stefan Agner <stefan@agner.ch>
+To:     thierry.reding@gmail.com, airlied@linux.ie
+Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: return with probe defer if GPIO subsystem is
+ not ready
+In-Reply-To: <20180726133606.14587-1-stefan@agner.ch>
+References: <20180726133606.14587-1-stefan@agner.ch>
+Message-ID: <de84d04c902d1f7f22b6f024b853a1c7@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+On 26.07.2018 06:36, Stefan Agner wrote:
+> If the GPIO subsystem is not ready make sure to return -EPROBE_DEFER
+> instead of silently continuing without HPD.
+> 
+> Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-After the kernel has booted, if any accesses by firmware causes a page
-fault, the efi page fault handler would freeze efi_rts_wq and schedules
-a new process. To do this, the efi page fault handler needs
-efi_rts_work. Hence, make it accessible.
+I think this did not get merged yet, any chance to get it in?
 
-There will be no race conditions in accessing this structure, because,
-all the calls to efi runtime services are already serialized.
+--
+Stefan
 
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Al Stone <astone@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/firmware/efi/runtime-wrappers.c | 53 ++++++---------------------------
- include/linux/efi.h                     | 36 ++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index aa66cbf23512..b18b2d864c2c 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -45,39 +45,7 @@
- #define __efi_call_virt(f, args...) \
- 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
- 
--/* efi_runtime_service() function identifiers */
--enum efi_rts_ids {
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
--};
--
--/*
-- * efi_runtime_work:	Details of EFI Runtime Service work
-- * @arg<1-5>:		EFI Runtime Service function arguments
-- * @status:		Status of executing EFI Runtime Service
-- * @efi_rts_id:		EFI Runtime Service function identifier
-- * @efi_rts_comp:	Struct used for handling completions
-- */
--struct efi_runtime_work {
--	void *arg1;
--	void *arg2;
--	void *arg3;
--	void *arg4;
--	void *arg5;
--	efi_status_t status;
--	struct work_struct work;
--	enum efi_rts_ids efi_rts_id;
--	struct completion efi_rts_comp;
--};
-+struct efi_runtime_work efi_rts_work;
- 
- /*
-  * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
-@@ -91,7 +59,6 @@ struct efi_runtime_work {
-  */
- #define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
- ({									\
--	struct efi_runtime_work efi_rts_work;				\
- 	efi_rts_work.status = EFI_ABORTED;				\
- 									\
- 	init_completion(&efi_rts_work.efi_rts_comp);			\
-@@ -184,18 +151,16 @@ static DEFINE_SEMAPHORE(efi_runtime_lock);
-  */
- static void efi_call_rts(struct work_struct *work)
- {
--	struct efi_runtime_work *efi_rts_work;
- 	void *arg1, *arg2, *arg3, *arg4, *arg5;
- 	efi_status_t status = EFI_NOT_FOUND;
- 
--	efi_rts_work = container_of(work, struct efi_runtime_work, work);
--	arg1 = efi_rts_work->arg1;
--	arg2 = efi_rts_work->arg2;
--	arg3 = efi_rts_work->arg3;
--	arg4 = efi_rts_work->arg4;
--	arg5 = efi_rts_work->arg5;
-+	arg1 = efi_rts_work.arg1;
-+	arg2 = efi_rts_work.arg2;
-+	arg3 = efi_rts_work.arg3;
-+	arg4 = efi_rts_work.arg4;
-+	arg5 = efi_rts_work.arg5;
- 
--	switch (efi_rts_work->efi_rts_id) {
-+	switch (efi_rts_work.efi_rts_id) {
- 	case GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
-@@ -253,8 +218,8 @@ static void efi_call_rts(struct work_struct *work)
- 		 */
- 		pr_err("Requested executing invalid EFI Runtime Service.\n");
- 	}
--	efi_rts_work->status = status;
--	complete(&efi_rts_work->efi_rts_comp);
-+	efi_rts_work.status = status;
-+	complete(&efi_rts_work.efi_rts_comp);
- }
- 
- static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 401e4b254e30..855992b15269 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1659,7 +1659,43 @@ struct linux_efi_tpm_eventlog {
- 
- extern int efi_tpm_eventlog_init(void);
- 
-+/* efi_runtime_service() function identifiers */
-+enum efi_rts_ids {
-+	GET_TIME,
-+	SET_TIME,
-+	GET_WAKEUP_TIME,
-+	SET_WAKEUP_TIME,
-+	GET_VARIABLE,
-+	GET_NEXT_VARIABLE,
-+	SET_VARIABLE,
-+	QUERY_VARIABLE_INFO,
-+	GET_NEXT_HIGH_MONO_COUNT,
-+	UPDATE_CAPSULE,
-+	QUERY_CAPSULE_CAPS,
-+};
-+
-+/*
-+ * efi_runtime_work:	Details of EFI Runtime Service work
-+ * @arg<1-5>:		EFI Runtime Service function arguments
-+ * @status:		Status of executing EFI Runtime Service
-+ * @efi_rts_id:		EFI Runtime Service function identifier
-+ * @efi_rts_comp:	Struct used for handling completions
-+ */
-+struct efi_runtime_work {
-+	void *arg1;
-+	void *arg2;
-+	void *arg3;
-+	void *arg4;
-+	void *arg5;
-+	efi_status_t status;
-+	struct work_struct work;
-+	enum efi_rts_ids efi_rts_id;
-+	struct completion efi_rts_comp;
-+};
-+
- /* Workqueue to queue EFI Runtime Services */
- extern struct workqueue_struct *efi_rts_wq;
- 
-+extern struct efi_runtime_work efi_rts_work;
-+
- #endif /* _LINUX_EFI_H */
--- 
-2.7.4
-
+> ---
+>  drivers/gpu/drm/tegra/output.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index ffe34bd0bb9d..4bcefe455afd 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -133,7 +133,9 @@ int tegra_output_probe(struct tegra_output *output)
+>  	output->hpd_gpio = of_get_named_gpio_flags(output->of_node,
+>  						   "nvidia,hpd-gpio", 0,
+>  						   &output->hpd_gpio_flags);
+> -	if (gpio_is_valid(output->hpd_gpio)) {
+> +	if (output->hpd_gpio == -EPROBE_DEFER) {
+> +		return -EPROBE_DEFER;
+> +	} else if (gpio_is_valid(output->hpd_gpio)) {
+>  		unsigned long flags;
+>  
+>  		err = gpio_request_one(output->hpd_gpio, GPIOF_DIR_IN,
