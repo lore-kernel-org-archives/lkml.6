@@ -2,71 +2,97 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FA9C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A04F2C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C3F20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C3F20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 46C1520645
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:04:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="d/bYPJKM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C1520645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbeIFSjB (ORCPT
+        id S1729124AbeIFSkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:39:01 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34123 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbeIFSjB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:39:01 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxusO-0000Ur-Us; Thu, 06 Sep 2018 16:03:17 +0200
-Date:   Thu, 6 Sep 2018 16:03:16 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     James Morse <james.morse@arm.com>
-cc:     Fenghua Yu <fenghua.yu@intel.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Vikas Shivappa <vikas.shivappa@linux.intel.com>
-Subject: Re: [RFC PATCH 00/20] x86/intel_rdt: Start abstraction for a second
- arch
-In-Reply-To: <dfe94bdc-8fe8-55ff-9c6d-268ffd9dc4ed@arm.com>
-Message-ID: <alpine.DEB.2.21.1809061559260.1570@nanos.tec.linutronix.de>
-References: <20180824104519.11203-1-james.morse@arm.com> <20180827142204.GA223688@romley-ivt3.sc.intel.com> <dfe94bdc-8fe8-55ff-9c6d-268ffd9dc4ed@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 6 Sep 2018 14:40:05 -0400
+Received: from imap.thunk.org ([74.207.234.97]:58612 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726980AbeIFSkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:40:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=v4i0W8Eit1QWtpbTMTQOwrKERR8aCN+1JGBuOsipjVY=; b=d/bYPJKM0ELLa+UA1PdcrT8F2J
+        QAV9W1GFDQSx0SBBWFMkgu8lHhKPa04sZ658WyWYOAaOeXaEBNU4DWBSdH52dwMnwbrpT2YBGbCZx
+        02MolgSi3eW1cxnxGbu6B/G6EbLgUUyCEbVsQkH+ykM+iiR3azDORVOLmlRNcVxUP8Sk=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fxutK-0003tn-OW; Thu, 06 Sep 2018 14:04:14 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AE6717A5670; Thu,  6 Sep 2018 10:04:13 -0400 (EDT)
+Date:   Thu, 6 Sep 2018 10:04:13 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Widespread crashes in next-20180906
+Message-ID: <20180906140413.GA5098@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
+        David Howells <dhowells@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <2e8e31f5-4db5-4907-2d09-f6444bc78ede@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e8e31f5-4db5-4907-2d09-f6444bc78ede@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018, James Morse wrote:
-> You want to see it all at once (great!). I'm not quite ready with all this yet,
-> so it will be a while. I assumed 'all at once' would be to much to ask from
-> reviewers, hence this attempt to break it into small chunks and post it over a
-> longer period of time.
+On Thu, Sep 06, 2018 at 06:45:15AM -0700, Guenter Roeck wrote:
+> Build results:
+> 	total: 134 pass: 133 fail: 1
+> Failed builds:
+> 	sparc32:allmodconfig
+> Qemu test results:
+> 	total: 311 pass: 76 fail: 235
+> Failed builds:
+> 	<pretty much everything trying to boot from disk>
+> 
+> Error message is always something like
+> 
+> Filesystem requires source device
+> VFS: Cannot open root device "hda" or unknown-block(3,0): error -2
+> 
+> The only variance is the boot device. Logs in full glory are available
+> at https://kerneltests.org/builders/, in the "next" column.
+> 
+> I did not run bisect, but the recent filesystem changes are a definite suspect.
 
-And that's perfectly fine. We know where you are heading to and we also
-don't want to have duplication of that stuff. So separating it in place
-which also makes further modification follow that separate model is the
-right thing to do.
+Yes, this is the vm_fault_t changes.  See the other thread on LKML.
+The guilty commit was: 83c0adddcc6e: fs: convert return type int to
+vm_fault_t
 
-That said, can the RDT people @Intel please look at that separation as a
-work of its own? Moving the separated part over to fs/xxx is a nobrainer
-after that.
+This is the *second* time vm_fault_t patches have broken things.  The
+first time it went through the ext4 tree, and I NACK'ed it after
+running a 60 second smoke test showed it was broken.  The seocnd time
+the problem was supposedly fixed, but it went through the mm tree, and
+so I didn't have a chance regression test or stop it...
 
-I skimmed through the pile and couldn't spot something which made me
-immediately barf, but my capacity is not allowing me to do a thorough
-review.
-
-Thanks,
-
-	tglx
+      		       		  	      	     - Ted
