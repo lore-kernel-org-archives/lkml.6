@@ -2,127 +2,106 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007C9C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E97C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7EE2083E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1106D2083E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:47:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPtf+iGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7EE2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oQYvEd53"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1106D2083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeIFFSI (ORCPT
+        id S1727611AbeIFFTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 01:18:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbeIFFSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 01:18:08 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 105EF20869
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Sep 2018 00:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536194725;
-        bh=tmi7tUwbTuglFSDc+paxPWYyLHwVb72GNy9bUempHn4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lPtf+iGIY3l7jwMbdZ9yO6RCSyq7ECccUWUTPR7yIbR2g7mNfo9se1Xejyx/1dnMa
-         T4Gmb/0bC/F+bCAkREs720E2YUDHRAnn2xL4IY5f13WP9A9iAeEkGVV0EV6GyV+oN+
-         9bfbYzMhja28nS1ChOfSNX2a49HvK7t/MNycK3BI=
-Received: by mail-wr1-f41.google.com with SMTP id n2-v6so9470039wrw.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:45:24 -0700 (PDT)
-X-Gm-Message-State: APzg51C1eLDgNdYrPh2M6vDVqMZDtihy5frmLRa9/oRE/s+is2yMa0eS
-        VWXGIIoE3LhfduFFSJkMZlNn0oU7LG7kH3+oBLM3vg==
-X-Google-Smtp-Source: ANB0VdbAid2WtIQxFTuVbmNuLtgagQn2mgrEwjSund9OcrMEa7YNq3+xHbb4SrHv14bctk9itIrGgSS7oDLJy6DMCCI=
-X-Received: by 2002:a5d:6550:: with SMTP id z16-v6mr183743wrv.194.1536194723562;
- Wed, 05 Sep 2018 17:45:23 -0700 (PDT)
+        Thu, 6 Sep 2018 01:19:40 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:19052 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeIFFTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 01:19:40 -0400
+Received: from mail-vk0-f46.google.com (mail-vk0-f46.google.com [209.85.213.46]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w860kkQq016151;
+        Thu, 6 Sep 2018 09:46:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w860kkQq016151
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1536194807;
+        bh=g0egjPCelI6n2dEjsi/ifhGbKKp3Uokc0v1jzZOk7RI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=oQYvEd53GIFBZlalbTkwdrr+tR/+/yodv9LYuDMMU60hwM2r5QtSlOCk74/n0eIHb
+         f3Li4Uax1+R7Q4QrxKUBhDsn4kNSPNS8k60UBhGImQKoYYM54xqACy9Q46YQmXNHSR
+         BpsuEDSJSNkeOYoCDf5r/LWu287ZUOUVyqDlN417pNesiMucD4LBxjktM8asiihaT4
+         lzj9qoNsX6BXNFDy7R1oQDnGdG1o25vlhocfHrA29mJi6DOKFuaKkP6eKFfOApwt6q
+         Gsb9hSNs7Hk1Qvgt8Y43KRZaNiXPp1aKDOv2Yc2nYygk7rEU6kgKoLJWk1daJB0NEN
+         8wBD1dQyulJgw==
+X-Nifty-SrcIP: [209.85.213.46]
+Received: by mail-vk0-f46.google.com with SMTP id s17-v6so3420551vke.10;
+        Wed, 05 Sep 2018 17:46:47 -0700 (PDT)
+X-Gm-Message-State: APzg51DU+peYZgWaf55qFCXRUyqaaxmniIsoTFKvBGc4ekDbi0MIdryY
+        eUbIhfyonyLhOvKyWxK8R7b9IXfN9cxXB+DVwM4=
+X-Google-Smtp-Source: ANB0VdaYP7cEJwt9bh/vT+/bKvD0aRSC4TQyalpdis+wS70zFvWniSwVn5DwijncK81CHKMj4NGwXj24/4vANaYKDeo=
+X-Received: by 2002:a1f:de46:: with SMTP id v67-v6mr87959vkg.55.1536194806193;
+ Wed, 05 Sep 2018 17:46:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com> <a82f72fd77a6c06d23e6d08acc9df2a816d6235d.1536138304.git.ren_guo@c-sky.com>
-In-Reply-To: <a82f72fd77a6c06d23e6d08acc9df2a816d6235d.1536138304.git.ren_guo@c-sky.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 5 Sep 2018 19:45:12 -0500
-X-Gmail-Original-Message-ID: <CABGGiszOxskc_V1E8A4i34OWSUdOSVX-QSRrgG+NjTbashND_g@mail.gmail.com>
-Message-ID: <CABGGiszOxskc_V1E8A4i34OWSUdOSVX-QSRrgG+NjTbashND_g@mail.gmail.com>
-Subject: Re: [PATCH V3 22/26] dt-bindings: interrupt-controller: C-SKY SMP intc
-To:     ren_guo@c-sky.com
-Cc:     linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 17:46:05 -0700 (PDT)
+In-Reply-To: <20180905225333.GA23155@gate.crashing.org>
+References: <1532072796-7947-1-git-send-email-yamada.masahiro@socionext.com>
+ <1532072796-7947-8-git-send-email-yamada.masahiro@socionext.com>
+ <20180903093945.GA1195@zn.tnic> <CAK7LNAQOd-QA6E7189q4K-p_9ReRtE88UbhtuXS9600nOQTgaA@mail.gmail.com>
+ <20180903100021.GD10249@zn.tnic> <20180905225333.GA23155@gate.crashing.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 6 Sep 2018 09:46:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATJ494dsB_dYu3LvvxebBJCo-ru+-9d=ctVmG_BbXr7Og@mail.gmail.com>
+Message-ID: <CAK7LNATJ494dsB_dYu3LvvxebBJCo-ru+-9d=ctVmG_BbXr7Og@mail.gmail.com>
+Subject: Re: [PATCH v4 07/11] kbuild: use 'include' directive to load
+ auto.conf from top Makefile
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Dirk Gouders <dirk@gouders.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 7:09 AM Guo Ren <ren_guo@c-sky.com> wrote:
+2018-09-06 7:53 GMT+09:00 Segher Boessenkool <segher@kernel.crashing.org>:
+> On Mon, Sep 03, 2018 at 12:00:21PM +0200, Borislav Petkov wrote:
+>> On Mon, Sep 03, 2018 at 06:54:12PM +0900, Masahiro Yamada wrote:
+>> > You are right - I missed this usecase,
+>> > but I still want to excuse "it is rare enough".
+>>
+>> Isn't there a Makefile way to check file existence before including it?
 >
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> ---
->  .../bindings/interrupt-controller/csky,mpintc.txt  | 40 ++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> new file mode 100644
-> index 0000000..49d1658
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-> @@ -0,0 +1,40 @@
-> +===========================================
-> +C-SKY Multi-processors Interrupt Controller
-> +===========================================
-> +
-> +C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
-> +SMP soc, and it also could be used in non-SMP system.
+> Sure there is, you can use $(wildcard ) .
 
-How is it accessed? No mmio registers?
 
-> +
-> +Interrupt number definition:
-> +
-> +  0-15  : software irq, and we use 15 as our IPI_IRQ.
-> + 16-31  : private  irq, and we use 16 as the co-processor timer.
-> + 31-1024: common irq for soc ip.
-> +
-> +=============================
-> +intc node bindings definition
-> +=============================
-> +
-> +       Description: Describes SMP interrupt controller
-> +
-> +       PROPERTIES
-> +
-> +        - compatible
-> +               Usage: required
-> +                Value type: <string>
-> +                Definition: must be "csky,mpintc"
-> +        - interrupt-cells
-> +                Usage: required
-> +                Value type: <u32>
-> +                Definition: must be <1>
-> +        - interrupt-controller:
-> +                Usage: required
-> +
-> +Examples:
-> +---------
-> +
-> +       intc: interrupt-controller {
-> +               compatible = "csky,mpintc";
-> +               #interrupt-cells = <1>;
-> +               interrupt-controller;
-> +       };
-> --
-> 2.7.4
->
+If you work around it by $(wildcard ),
+we need something else that terminates building
+in case auto.conf is really missing.
+
+
+I do not want to revert
+
+commit 2063945fdc3d4c0ac8f9319d942eda720d02aabe
+Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri Jul 20 16:46:36 2018 +0900
+
+    kbuild: remove auto.conf from prerequisite of phony targets
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
