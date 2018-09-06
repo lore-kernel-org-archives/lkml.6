@@ -3,521 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6763EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE24C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5C620844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5C620844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FB492075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB492075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729505AbeIFSGX (ORCPT
+        id S1729517AbeIFSG3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:06:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46849 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbeIFSGX (ORCPT
+        Thu, 6 Sep 2018 14:06:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51402 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728776AbeIFSG2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:06:23 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DULuj308582
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:30:21 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DULxX308578;
-        Thu, 6 Sep 2018 06:30:21 -0700
-Date:   Thu, 6 Sep 2018 06:30:21 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-f3ca50e61ff4aebfbefc666be2e064d277ad524c@git.kernel.org>
-Cc:     namhyung@kernel.org, acme@redhat.com, dsahern@gmail.com,
-        mingo@kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, andi@firstfloor.org, jolsa@kernel.org
-Reply-To: andi@firstfloor.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          tglx@linutronix.de, jolsa@kernel.org, dsahern@gmail.com,
-          acme@redhat.com, namhyung@kernel.org, peterz@infradead.org,
-          alexander.shishkin@linux.intel.com, mingo@kernel.org
-In-Reply-To: <20180830063252.23729-19-jolsa@kernel.org>
-References: <20180830063252.23729-19-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Pass 'struct perf_stat_config' argument
- to local print functions
-Git-Commit-ID: f3ca50e61ff4aebfbefc666be2e064d277ad524c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 14:06:28 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86DUSqq007921
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 09:30:55 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb31bpbkt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:30:53 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 6 Sep 2018 07:30:52 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 07:30:49 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86DUmbG38142124
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 06:30:48 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5EC87805C;
+        Thu,  6 Sep 2018 07:30:48 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A2B27805E;
+        Thu,  6 Sep 2018 07:30:45 -0600 (MDT)
+Received: from [9.102.0.183] (unknown [9.102.0.183])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Sep 2018 07:30:45 -0600 (MDT)
+Subject: Re: [RFC PATCH V2 4/4] powerpc/mm/iommu: Allow migration of cma
+ allocated pages during mm_iommu_get
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        mpe@ellerman.id.au, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20180906054342.25094-1-aneesh.kumar@linux.ibm.com>
+ <20180906054342.25094-4-aneesh.kumar@linux.ibm.com>
+ <20180906125356.GX14951@dhcp22.suse.cz>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Thu, 6 Sep 2018 19:00:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180906125356.GX14951@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18090613-8235-0000-0000-00000DF9D812
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01084382; UDB=6.00559689; IPR=6.00864382;
+ MB=3.00023143; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-06 13:30:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090613-8236-0000-0000-0000428BBFBF
+Message-Id: <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=909 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f3ca50e61ff4aebfbefc666be2e064d277ad524c
-Gitweb:     https://git.kernel.org/tip/f3ca50e61ff4aebfbefc666be2e064d277ad524c
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:27 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
+On 09/06/2018 06:23 PM, Michal Hocko wrote:
+> On Thu 06-09-18 11:13:42, Aneesh Kumar K.V wrote:
+>> Current code doesn't do page migration if the page allocated is a compound page.
+>> With HugeTLB migration support, we can end up allocating hugetlb pages from
+>> CMA region. Also THP pages can be allocated from CMA region. This patch updates
+>> the code to handle compound pages correctly.
+>>
+>> This use the new helper get_user_pages_cma_migrate. It does one get_user_pages
+>> with right count, instead of doing one get_user_pages per page. That avoids
+>> reading page table multiple times.
+>>
+>> The patch also convert the hpas member of mm_iommu_table_group_mem_t to a union.
+>> We use the same storage location to store pointers to struct page. We cannot
+>> update alll the code path use struct page *, because we access hpas in real mode
+>> and we can't do that struct page * to pfn conversion in real mode.
+> 
+> I am not fmailiar with this code so bear with me. I am completely
+> missing the purpose of this patch. The changelog doesn't really explain
+> that AFAICS. I can only guess that you do not want to establish long
+> pins on CMA pages, right? So whenever you are about to pin a page that
+> is in CMA you migrate it away to a different !__GFP_MOVABLE page, right?
 
-perf stat: Pass 'struct perf_stat_config' argument to local print functions
+That is right.
 
-Add 'struct perf_stat_config' argument to print functions, so that those
-functions can be moved out of the 'perf stat' command to a generic class
-in the following patches.
+> If that is the case then how do you handle pins which are already in
+> zone_movable? I do not see any specific check for those.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-19-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-stat.c | 149 +++++++++++++++++++++++++---------------------
- 1 file changed, 80 insertions(+), 69 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index f340641fe63a..f56da22abccc 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -660,30 +660,33 @@ static int run_perf_stat(int argc, const char **argv, int run_idx)
- 	return ret;
- }
- 
--static void print_running(u64 run, u64 ena)
-+static void print_running(struct perf_stat_config *config,
-+			  u64 run, u64 ena)
- {
- 	if (csv_output) {
--		fprintf(stat_config.output, "%s%" PRIu64 "%s%.2f",
-+		fprintf(config->output, "%s%" PRIu64 "%s%.2f",
- 					csv_sep,
- 					run,
- 					csv_sep,
- 					ena ? 100.0 * run / ena : 100.0);
- 	} else if (run != ena) {
--		fprintf(stat_config.output, "  (%.2f%%)", 100.0 * run / ena);
-+		fprintf(config->output, "  (%.2f%%)", 100.0 * run / ena);
- 	}
- }
- 
--static void print_noise_pct(double total, double avg)
-+static void print_noise_pct(struct perf_stat_config *config,
-+			    double total, double avg)
- {
- 	double pct = rel_stddev_stats(total, avg);
- 
- 	if (csv_output)
--		fprintf(stat_config.output, "%s%.2f%%", csv_sep, pct);
-+		fprintf(config->output, "%s%.2f%%", csv_sep, pct);
- 	else if (pct)
--		fprintf(stat_config.output, "  ( +-%6.2f%% )", pct);
-+		fprintf(config->output, "  ( +-%6.2f%% )", pct);
- }
- 
--static void print_noise(struct perf_evsel *evsel, double avg)
-+static void print_noise(struct perf_stat_config *config,
-+			struct perf_evsel *evsel, double avg)
- {
- 	struct perf_stat_evsel *ps;
- 
-@@ -691,7 +694,7 @@ static void print_noise(struct perf_evsel *evsel, double avg)
- 		return;
- 
- 	ps = evsel->stats;
--	print_noise_pct(stddev_stats(&ps->res_stats[0]), avg);
-+	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
- }
- 
- static void aggr_printout(struct perf_evsel *evsel, int id, int nr)
-@@ -987,13 +990,14 @@ static bool is_mixed_hw_group(struct perf_evsel *counter)
- 	return false;
- }
- 
--static void printout(int id, int nr, struct perf_evsel *counter, double uval,
-+static void printout(struct perf_stat_config *config, int id, int nr,
-+		     struct perf_evsel *counter, double uval,
- 		     char *prefix, u64 run, u64 ena, double noise,
- 		     struct runtime_stat *st)
- {
- 	struct perf_stat_output_ctx out;
- 	struct outstate os = {
--		.fh = stat_config.output,
-+		.fh = config->output,
- 		.prefix = prefix ? prefix : "",
- 		.id = id,
- 		.nr = nr,
-@@ -1023,7 +1027,7 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
- 		pm = print_metric_csv;
- 		nl = new_line_csv;
- 		os.nfields = 3;
--		os.nfields += aggr_fields[stat_config.aggr_mode];
-+		os.nfields += aggr_fields[config->aggr_mode];
- 		if (counter->cgrp)
- 			os.nfields++;
- 	}
-@@ -1034,7 +1038,7 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
- 		}
- 		aggr_printout(counter, id, nr);
- 
--		fprintf(stat_config.output, "%*s%s",
-+		fprintf(config->output, "%*s%s",
- 			csv_output ? 0 : 18,
- 			counter->supported ? CNTR_NOT_COUNTED : CNTR_NOT_SUPPORTED,
- 			csv_sep);
-@@ -1045,22 +1049,22 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
- 				print_mixed_hw_group_error = 1;
- 		}
- 
--		fprintf(stat_config.output, "%-*s%s",
-+		fprintf(config->output, "%-*s%s",
- 			csv_output ? 0 : unit_width,
- 			counter->unit, csv_sep);
- 
--		fprintf(stat_config.output, "%*s",
-+		fprintf(config->output, "%*s",
- 			csv_output ? 0 : -25,
- 			perf_evsel__name(counter));
- 
- 		if (counter->cgrp)
--			fprintf(stat_config.output, "%s%s",
-+			fprintf(config->output, "%s%s",
- 				csv_sep, counter->cgrp->name);
- 
- 		if (!csv_output)
- 			pm(&os, NULL, NULL, "", 0);
--		print_noise(counter, noise);
--		print_running(run, ena);
-+		print_noise(config, counter, noise);
-+		print_running(config, run, ena);
- 		if (csv_output)
- 			pm(&os, NULL, NULL, "", 0);
- 		return;
-@@ -1075,16 +1079,16 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
- 	out.force_header = false;
- 
- 	if (csv_output && !metric_only) {
--		print_noise(counter, noise);
--		print_running(run, ena);
-+		print_noise(config, counter, noise);
-+		print_running(config, run, ena);
- 	}
- 
- 	perf_stat__print_shadow_stats(counter, uval,
- 				first_shadow_cpu(counter, id),
- 				&out, &metric_events, st);
- 	if (!csv_output && !metric_only) {
--		print_noise(counter, noise);
--		print_running(run, ena);
-+		print_noise(config, counter, noise);
-+		print_running(config, run, ena);
- 	}
- }
- 
-@@ -1211,9 +1215,10 @@ static void aggr_cb(struct perf_evsel *counter, void *data, bool first)
- 	}
- }
- 
--static void print_aggr(char *prefix)
-+static void print_aggr(struct perf_stat_config *config,
-+		       char *prefix)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	struct perf_evsel *counter;
- 	int s, id, nr;
- 	double uval;
-@@ -1256,8 +1261,8 @@ static void print_aggr(char *prefix)
- 				fprintf(output, "%s", prefix);
- 
- 			uval = val * counter->scale;
--			printout(id, nr, counter, uval, prefix, run, ena, 1.0,
--				 &rt_stat);
-+			printout(config, id, nr, counter, uval, prefix,
-+				 run, ena, 1.0, &rt_stat);
- 			if (!metric_only)
- 				fputc('\n', output);
- 		}
-@@ -1320,9 +1325,10 @@ static struct perf_aggr_thread_value *sort_aggr_thread(
- 	return buf;
- }
- 
--static void print_aggr_thread(struct perf_evsel *counter, char *prefix)
-+static void print_aggr_thread(struct perf_stat_config *config,
-+			      struct perf_evsel *counter, char *prefix)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	int nthreads = thread_map__nr(counter->threads);
- 	int ncpus = cpu_map__nr(counter->cpus);
- 	int thread, sorted_threads, id;
-@@ -1339,12 +1345,12 @@ static void print_aggr_thread(struct perf_evsel *counter, char *prefix)
- 			fprintf(output, "%s", prefix);
- 
- 		id = buf[thread].id;
--		if (stat_config.stats)
--			printout(id, 0, buf[thread].counter, buf[thread].uval,
-+		if (config->stats)
-+			printout(config, id, 0, buf[thread].counter, buf[thread].uval,
- 				 prefix, buf[thread].run, buf[thread].ena, 1.0,
--				 &stat_config.stats[id]);
-+				 &config->stats[id]);
- 		else
--			printout(id, 0, buf[thread].counter, buf[thread].uval,
-+			printout(config, id, 0, buf[thread].counter, buf[thread].uval,
- 				 prefix, buf[thread].run, buf[thread].ena, 1.0,
- 				 &rt_stat);
- 		fputc('\n', output);
-@@ -1372,9 +1378,10 @@ static void counter_aggr_cb(struct perf_evsel *counter, void *data,
-  * Print out the results of a single counter:
-  * aggregated counts in system-wide mode
-  */
--static void print_counter_aggr(struct perf_evsel *counter, char *prefix)
-+static void print_counter_aggr(struct perf_stat_config *config,
-+			       struct perf_evsel *counter, char *prefix)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	double uval;
- 	struct caggr_data cd = { .avg = 0.0 };
- 
-@@ -1385,7 +1392,7 @@ static void print_counter_aggr(struct perf_evsel *counter, char *prefix)
- 		fprintf(output, "%s", prefix);
- 
- 	uval = cd.avg * counter->scale;
--	printout(-1, 0, counter, uval, prefix, cd.avg_running, cd.avg_enabled,
-+	printout(config, -1, 0, counter, uval, prefix, cd.avg_running, cd.avg_enabled,
- 		 cd.avg, &rt_stat);
- 	if (!metric_only)
- 		fprintf(output, "\n");
-@@ -1405,9 +1412,10 @@ static void counter_cb(struct perf_evsel *counter, void *data,
-  * Print out the results of a single counter:
-  * does not use aggregated count in system-wide
-  */
--static void print_counter(struct perf_evsel *counter, char *prefix)
-+static void print_counter(struct perf_stat_config *config,
-+			  struct perf_evsel *counter, char *prefix)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	u64 ena, run, val;
- 	double uval;
- 	int cpu;
-@@ -1425,14 +1433,15 @@ static void print_counter(struct perf_evsel *counter, char *prefix)
- 			fprintf(output, "%s", prefix);
- 
- 		uval = val * counter->scale;
--		printout(cpu, 0, counter, uval, prefix, run, ena, 1.0,
-+		printout(config, cpu, 0, counter, uval, prefix, run, ena, 1.0,
- 			 &rt_stat);
- 
- 		fputc('\n', output);
- 	}
- }
- 
--static void print_no_aggr_metric(char *prefix)
-+static void print_no_aggr_metric(struct perf_stat_config *config,
-+				 char *prefix)
- {
- 	int cpu;
- 	int nrcpus = 0;
-@@ -1445,7 +1454,7 @@ static void print_no_aggr_metric(char *prefix)
- 		bool first = true;
- 
- 		if (prefix)
--			fputs(prefix, stat_config.output);
-+			fputs(prefix, config->output);
- 		evlist__for_each_entry(evsel_list, counter) {
- 			if (is_duration_time(counter))
- 				continue;
-@@ -1458,10 +1467,10 @@ static void print_no_aggr_metric(char *prefix)
- 			run = perf_counts(counter->counts, cpu, 0)->run;
- 
- 			uval = val * counter->scale;
--			printout(cpu, 0, counter, uval, prefix, run, ena, 1.0,
-+			printout(config, cpu, 0, counter, uval, prefix, run, ena, 1.0,
- 				 &rt_stat);
- 		}
--		fputc('\n', stat_config.output);
-+		fputc('\n', config->output);
- 	}
- }
- 
-@@ -1481,25 +1490,25 @@ static const char *aggr_header_csv[] = {
- 	[AGGR_GLOBAL] 	=	""
- };
- 
--static void print_metric_headers(const char *prefix, bool no_indent)
-+static void print_metric_headers(struct perf_stat_config *config,
-+				 const char *prefix, bool no_indent)
- {
- 	struct perf_stat_output_ctx out;
- 	struct perf_evsel *counter;
- 	struct outstate os = {
--		.fh = stat_config.output
-+		.fh = config->output
- 	};
- 
- 	if (prefix)
--		fprintf(stat_config.output, "%s", prefix);
-+		fprintf(config->output, "%s", prefix);
- 
- 	if (!csv_output && !no_indent)
--		fprintf(stat_config.output, "%*s",
--			aggr_header_lens[stat_config.aggr_mode], "");
-+		fprintf(config->output, "%*s",
-+			aggr_header_lens[config->aggr_mode], "");
- 	if (csv_output) {
--		if (stat_config.interval)
--			fputs("time,", stat_config.output);
--		fputs(aggr_header_csv[stat_config.aggr_mode],
--			stat_config.output);
-+		if (config->interval)
-+			fputs("time,", config->output);
-+		fputs(aggr_header_csv[config->aggr_mode], config->output);
- 	}
- 
- 	/* Print metrics headers only */
-@@ -1518,12 +1527,13 @@ static void print_metric_headers(const char *prefix, bool no_indent)
- 					      &metric_events,
- 					      &rt_stat);
- 	}
--	fputc('\n', stat_config.output);
-+	fputc('\n', config->output);
- }
- 
--static void print_interval(char *prefix, struct timespec *ts)
-+static void print_interval(struct perf_stat_config *config,
-+			   char *prefix, struct timespec *ts)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	static int num_print_interval;
- 
- 	if (interval_clear)
-@@ -1532,7 +1542,7 @@ static void print_interval(char *prefix, struct timespec *ts)
- 	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
- 
- 	if ((num_print_interval == 0 && !csv_output) || interval_clear) {
--		switch (stat_config.aggr_mode) {
-+		switch (config->aggr_mode) {
- 		case AGGR_SOCKET:
- 			fprintf(output, "#           time socket cpus");
- 			if (!metric_only)
-@@ -1564,14 +1574,15 @@ static void print_interval(char *prefix, struct timespec *ts)
- 	}
- 
- 	if ((num_print_interval == 0 || interval_clear) && metric_only)
--		print_metric_headers(" ", true);
-+		print_metric_headers(config, " ", true);
- 	if (++num_print_interval == 25)
- 		num_print_interval = 0;
- }
- 
--static void print_header(int argc, const char **argv)
-+static void print_header(struct perf_stat_config *config,
-+			 int argc, const char **argv)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	int i;
- 
- 	fflush(stdout);
-@@ -1639,10 +1650,10 @@ static double timeval2double(struct timeval *t)
- 	return t->tv_sec + (double) t->tv_usec/USEC_PER_SEC;
- }
- 
--static void print_footer(void)
-+static void print_footer(struct perf_stat_config *config)
- {
- 	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	int n;
- 
- 	if (!null_run)
-@@ -1673,7 +1684,7 @@ static void print_footer(void)
- 		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
- 			precision, avg, precision, sd);
- 
--		print_noise_pct(sd, avg);
-+		print_noise_pct(config, sd, avg);
- 	}
- 	fprintf(output, "\n\n");
- 
-@@ -1703,15 +1714,15 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
- 	char buf[64], *prefix = NULL;
- 
- 	if (interval)
--		print_interval(prefix = buf, ts);
-+		print_interval(config, prefix = buf, ts);
- 	else
--		print_header(argc, argv);
-+		print_header(config, argc, argv);
- 
- 	if (metric_only) {
- 		static int num_print_iv;
- 
- 		if (num_print_iv == 0 && !interval)
--			print_metric_headers(prefix, false);
-+			print_metric_headers(config, prefix, false);
- 		if (num_print_iv++ == 25)
- 			num_print_iv = 0;
- 		if (config->aggr_mode == AGGR_GLOBAL && prefix)
-@@ -1721,32 +1732,32 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
- 	switch (config->aggr_mode) {
- 	case AGGR_CORE:
- 	case AGGR_SOCKET:
--		print_aggr(prefix);
-+		print_aggr(config, prefix);
- 		break;
- 	case AGGR_THREAD:
- 		evlist__for_each_entry(evlist, counter) {
- 			if (is_duration_time(counter))
- 				continue;
--			print_aggr_thread(counter, prefix);
-+			print_aggr_thread(config, counter, prefix);
- 		}
- 		break;
- 	case AGGR_GLOBAL:
- 		evlist__for_each_entry(evlist, counter) {
- 			if (is_duration_time(counter))
- 				continue;
--			print_counter_aggr(counter, prefix);
-+			print_counter_aggr(config, counter, prefix);
- 		}
- 		if (metric_only)
- 			fputc('\n', config->output);
- 		break;
- 	case AGGR_NONE:
- 		if (metric_only)
--			print_no_aggr_metric(prefix);
-+			print_no_aggr_metric(config, prefix);
- 		else {
- 			evlist__for_each_entry(evlist, counter) {
- 				if (is_duration_time(counter))
- 					continue;
--				print_counter(counter, prefix);
-+				print_counter(config, counter, prefix);
- 			}
- 		}
- 		break;
-@@ -1756,7 +1767,7 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
- 	}
- 
- 	if (!interval && !csv_output)
--		print_footer();
-+		print_footer(config);
- 
- 	fflush(config->output);
- }
+> 
+> Btw. why is this a proper thing to do? Problems with longterm pins are
+> not only for CMA/ZONE_MOVABLE pages. Pinned pages are not reclaimable as
+> well so there is a risk of OOMs if there are too many of them. We have
+> discussed approaches that would allow to force pin invalidation/revocation
+> at LSF/MM. Isn't that a more appropriate solution to the problem you are
+> seeing?
+> 
+
+The CMA area is used on powerpc platforms to allocate guest specific 
+page table (hash page table). If we don't have sufficient free pages we 
+fail to allocate hash page table that result in failure to start guest.
+
+Now with vfio, we end up pinning the entire guest RAM. There is a 
+possibility that these guest RAM  pages got allocated from CMA region. 
+We already do supporting migrating those pages out except for compound 
+pages. What this patch does is to start supporting compound page 
+migration that got allocated out of CMA region (ie, THP pages and 
+hugetlb pages if platform supported hugetlb migration).
+
+Now to do that I added a helper get_user_pages_cma_migrate().
+
+I agree that long term pinned pages do have other issues. The patchset 
+is not solving that issue.
+
+-aneesh
+
