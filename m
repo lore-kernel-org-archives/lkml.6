@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1633C4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E877C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7355D20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD38C2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:11:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZeZpxhh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7355D20659
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UI7VscDH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD38C2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbeIGBsa (ORCPT
+        id S1730387AbeIGBse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 21:48:30 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37342 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728640AbeIGBs3 (ORCPT
+        Thu, 6 Sep 2018 21:48:34 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46222 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729202AbeIGBsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 21:48:29 -0400
-Received: by mail-yw1-f66.google.com with SMTP id x83-v6so4639316ywd.4;
-        Thu, 06 Sep 2018 14:11:11 -0700 (PDT)
+        Thu, 6 Sep 2018 21:48:30 -0400
+Received: by mail-yw1-f68.google.com with SMTP id j131-v6so4618221ywc.13;
+        Thu, 06 Sep 2018 14:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kr3LadMM0rKDZvlg+vJ7kD1QWB4QzxFif1xXQ0yMxjc=;
-        b=ZeZpxhh4NEZv4hYBp68PyrfCC0g+1qTP3Rhy+NXhcSydhMm0GfmM87ZAPdoUTGSJZi
-         Z6W5mzx0bvD20f3HhwNvVjLOdnAshBVo6hEuEcmNNi87Fm/1iHc3Q/nh7rDac5c5ivkQ
-         uzWv/A39qHqXhs452FOg9BxGf74DSfo4D/2h7nTA2O+xF5dd87oYbblLLdJHmkhX8m3h
-         TnKSxZJQVS/Dhjdvx0NbMe6AJZaUYq9kqdfqb36Un6sOt9/I51U4WqW9bowgkx2VpURi
-         1fcRNwBMHiQjZpJ4NtzaChphgnLKR8wrUa94z9puMbuxJH8CTn7a9CWu0lqdOU16W54J
-         9yPQ==
+        bh=li/WLeyYZgAmqutk7Zj8a0MrbpRWnmiZIqWMYyLNvQQ=;
+        b=UI7VscDH/l6E17im9zGgmArb8j5UUC4o+m3+ZQv3xoG0c7rEbszVyJ41fqVxka3KMX
+         Xch9o3fraGfGWHwyK7GdoG/S+Xz7GO7zBXKaHkSMBMfTCHpT9JgHqDt8f8Uyxx5arMgc
+         /6QoXUf85mdAZoHUHal2EujTMRnIlGvZ/ijuq+y2cC4HlbntxHaHLrypNboqo1Ihd8AY
+         v0uUBOz0esO4SbinmSwNBYQ2dUUZhVGw7QMSrbrewiZ+BcaN6iduS34SdJ3TexSb+s8y
+         nn77px8wIKgPxoiC3XQ5fubOMRS/Iz70Hvnw0LmRhRVjxu7T445IicGcWPQWenbMLhiS
+         5Reg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kr3LadMM0rKDZvlg+vJ7kD1QWB4QzxFif1xXQ0yMxjc=;
-        b=JJe6i3Gb1FR7GLx3ewPOLH7MKXZsLni8eqc+LywJBIJVWdlKqrZel9vSMJYVZDIzVn
-         IGMCGtktNsnNqCt0E0Vxihlr7VSYUXMmTYw3/RQBigIUPJ6EShq6pM0T87TNcWSFky8J
-         BupgpLc6WNxVbPj4kmLJdC9ayStxML4VExeZ3jb7eb1YMc3i8ZBr31LPS4ck0ZWJesG4
-         rjZYOe1jmwb8PrWTMU7bRlmqbHhSNfQPe9DhP15tWUfSVDTE6W+NNBmSX+r9kV9q3Dhk
-         ffSngE+w4fECqikuoXB5VxxxiwMO4Wf2BLTkilRBTWdyUR/ZLT2mV6ra4Dyh6pQXW6Kb
-         niBg==
-X-Gm-Message-State: APzg51CQjvCdsFYdit6yH/mCB93kzMVbvfDaGPTk3M+cPW41Fn0ylsWT
-        uUO80BQ2fk2h8CofRrOSnEg=
-X-Google-Smtp-Source: ANB0VdYDHc19O4W3rLfcByE/9+VxOkRc5rraWB2zcF2Hu0LkpReLcrg9TQevJHDmCYjfXT83uiRKCA==
-X-Received: by 2002:a81:a1d7:: with SMTP id y206-v6mr2549628ywg.212.1536268270871;
-        Thu, 06 Sep 2018 14:11:10 -0700 (PDT)
+        bh=li/WLeyYZgAmqutk7Zj8a0MrbpRWnmiZIqWMYyLNvQQ=;
+        b=o/VPtubKPwHgzUZ+PCf0JevMJk9M/yteEsVnUMW16hmHtFeA2mPUt4QUL5E9EbR96F
+         IHQgUy5KVwaaUWBfE1Jf6t7V9DvrfszPh3jG8PTrRjvQqCo+0J291IiC7j1YynBvE1Zk
+         uLfOL4Pi0FizmRY4DjxLFeRM8ty7xi1ScgemhzlvTVsME0UX1ralpFQvvr0KAHeUjIgs
+         pP0CpS/WAAlRqVfzSfKjR2+TsCtBptPtGmOWD3RWatgztNret+4UqP7sYaLqV8gP7b24
+         UUpfdhhzXDFORF8640BS6sJvtq8KNIPGZrNWlQ750jPGtauIigNHRTWbF3Kv/G72+gqj
+         q3GQ==
+X-Gm-Message-State: APzg51AYQRtOdf3pCyG+vorfJT5lAJlrwichQvolkvyjm52WGuMNrRQw
+        fHOZWc4KRWhqQNbZjn0HAtU=
+X-Google-Smtp-Source: ANB0VdapsMcKHyVWtfjMIHZOyL7lgjzsZKCo+1Z58Oe1hacA/ThbWkGBsL235IyMtfyIePaVzgNJow==
+X-Received: by 2002:a81:26d5:: with SMTP id m204-v6mr2596985ywm.156.1536268272047;
+        Thu, 06 Sep 2018 14:11:12 -0700 (PDT)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.129])
-        by smtp.gmail.com with ESMTPSA id u67-v6sm2032802ywa.56.2018.09.06.14.11.09
+        by smtp.gmail.com with ESMTPSA id u67-v6sm2032802ywa.56.2018.09.06.14.11.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 14:11:10 -0700 (PDT)
+        Thu, 06 Sep 2018 14:11:11 -0700 (PDT)
 From:   Dennis Zhou <dennisszhou@gmail.com>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -65,9 +65,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH 11/12] blkcg: change blkg reference counting to use percpu_ref
-Date:   Thu,  6 Sep 2018 17:10:44 -0400
-Message-Id: <20180906211045.29055-12-dennisszhou@gmail.com>
+Subject: [PATCH 12/12] blkcg: rename blkg_try_get to blkg_tryget
+Date:   Thu,  6 Sep 2018 17:10:45 -0400
+Message-Id: <20180906211045.29055-13-dennisszhou@gmail.com>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180906211045.29055-1-dennisszhou@gmail.com>
 References: <20180906211045.29055-1-dennisszhou@gmail.com>
@@ -78,186 +78,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
 
-Now that every bio is associated with a blkg, this puts the use of
-blkg_get, blkg_try_get, and blkg_put on the hot path. This switches over
-the refcnt in blkg to use percpu_ref.
+blkg reference counting now uses percpu_ref rather than atomic_t. Let's
+make this consistent with css_tryget. This renames blkg_try_get to
+blkg_tryget and now returns a bool rather than the blkg or NULL.
 
 Signed-off-by: Dennis Zhou <dennisszhou@gmail.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 ---
-v2: add call_rcu to blkg_release path.
+ block/bio.c                |  2 +-
+ block/blk-cgroup.c         |  3 +--
+ block/blk-iolatency.c      |  2 +-
+ include/linux/blk-cgroup.h | 14 ++++++--------
+ 4 files changed, 9 insertions(+), 12 deletions(-)
 
- block/blk-cgroup.c         | 64 +++++++++++++++++++++++---------------
- include/linux/blk-cgroup.h | 15 +++------
- 2 files changed, 44 insertions(+), 35 deletions(-)
-
+diff --git a/block/bio.c b/block/bio.c
+index 3cc8fcd8b827..bed3328c92ff 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1971,7 +1971,7 @@ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
+ {
+ 	if (unlikely(bio->bi_blkg))
+ 		return -EBUSY;
+-	bio->bi_blkg = blkg_try_get_closest(blkg);
++	bio->bi_blkg = blkg_tryget_closest(blkg);
+ 	return 0;
+ }
+ 
 diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 9f8aba29b7c1..1efd697c9019 100644
+index 1efd697c9019..0c9aeb30ba8e 100644
 --- a/block/blk-cgroup.c
 +++ b/block/blk-cgroup.c
-@@ -84,6 +84,37 @@ static void blkg_free(struct blkcg_gq *blkg)
- 	kfree(blkg);
- }
+@@ -1793,8 +1793,7 @@ void blkcg_maybe_throttle_current(void)
+ 	blkg = blkg_lookup(blkcg, q);
+ 	if (!blkg)
+ 		goto out;
+-	blkg = blkg_try_get(blkg);
+-	if (!blkg)
++	if (!blkg_tryget(blkg))
+ 		goto out;
+ 	rcu_read_unlock();
  
-+static void __blkg_release(struct rcu_head *rcu)
-+{
-+	struct blkcg_gq *blkg = container_of(rcu, struct blkcg_gq, rcu_head);
-+
-+	percpu_ref_exit(&blkg->refcnt);
-+
-+	/* release the blkcg and parent blkg refs this blkg has been holding */
-+	css_put(&blkg->blkcg->css);
-+	if (blkg->parent)
-+		blkg_put(blkg->parent);
-+
-+	wb_congested_put(blkg->wb_congested);
-+
-+	blkg_free(blkg);
-+}
-+
-+/*
-+ * A group is RCU protected, but having an rcu lock does not mean that one
-+ * can access all the fields of blkg and assume these are valid.  For
-+ * example, don't try to follow throtl_data and request queue links.
-+ *
-+ * Having a reference to blkg under an rcu allows accesses to only values
-+ * local to groups like group stats and group rate limits.
-+ */
-+static void blkg_release(struct percpu_ref *ref)
-+{
-+	struct blkcg_gq *blkg = container_of(ref, struct blkcg_gq, refcnt);
-+
-+	call_rcu(&blkg->rcu_head, __blkg_release);
-+}
-+
- /**
-  * blkg_alloc - allocate a blkg
-  * @blkcg: block cgroup the new blkg is associated with
-@@ -110,7 +141,6 @@ static struct blkcg_gq *blkg_alloc(struct blkcg *blkcg, struct request_queue *q,
- 	blkg->q = q;
- 	INIT_LIST_HEAD(&blkg->q_node);
- 	blkg->blkcg = blkcg;
--	atomic_set(&blkg->refcnt, 1);
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index 9d7052bad6f7..5a4cec54c998 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -628,7 +628,7 @@ static void blkiolatency_timer_fn(struct timer_list *t)
+ 		 * We could be exiting, don't access the pd unless we have a
+ 		 * ref on the blkg.
+ 		 */
+-		if (!blkg_try_get(blkg))
++		if (!blkg_tryget(blkg))
+ 			continue;
  
- 	/* root blkg uses @q->root_rl, init rl only for !root blkgs */
- 	if (blkcg != &blkcg_root) {
-@@ -217,6 +247,11 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
- 		blkg_get(blkg->parent);
- 	}
- 
-+	ret = percpu_ref_init(&blkg->refcnt, blkg_release, 0,
-+			      GFP_NOWAIT | __GFP_NOWARN);
-+	if (ret)
-+		goto err_cancel_ref;
-+
- 	/* invoke per-policy init */
- 	for (i = 0; i < BLKCG_MAX_POLS; i++) {
- 		struct blkcg_policy *pol = blkcg_policy[i];
-@@ -249,6 +284,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
- 	blkg_put(blkg);
- 	return ERR_PTR(ret);
- 
-+err_cancel_ref:
-+	percpu_ref_exit(&blkg->refcnt);
- err_put_congested:
- 	wb_congested_put(wb_congested);
- err_put_css:
-@@ -386,7 +423,7 @@ static void blkg_destroy(struct blkcg_gq *blkg)
- 	 * Put the reference taken at the time of creation so that when all
- 	 * queues are gone, group can be destroyed.
- 	 */
--	blkg_put(blkg);
-+	percpu_ref_kill(&blkg->refcnt);
- }
- 
- /**
-@@ -413,29 +450,6 @@ static void blkg_destroy_all(struct request_queue *q)
- 	q->root_rl.blkg = NULL;
- }
- 
--/*
-- * A group is RCU protected, but having an rcu lock does not mean that one
-- * can access all the fields of blkg and assume these are valid.  For
-- * example, don't try to follow throtl_data and request queue links.
-- *
-- * Having a reference to blkg under an rcu allows accesses to only values
-- * local to groups like group stats and group rate limits.
-- */
--void __blkg_release_rcu(struct rcu_head *rcu_head)
--{
--	struct blkcg_gq *blkg = container_of(rcu_head, struct blkcg_gq, rcu_head);
--
--	/* release the blkcg and parent blkg refs this blkg has been holding */
--	css_put(&blkg->blkcg->css);
--	if (blkg->parent)
--		blkg_put(blkg->parent);
--
--	wb_congested_put(blkg->wb_congested);
--
--	blkg_free(blkg);
--}
--EXPORT_SYMBOL_GPL(__blkg_release_rcu);
--
- /*
-  * The next function used by blk_queue_for_each_rl().  It's a bit tricky
-  * because the root blkg uses @q->root_rl instead of its own rl.
+ 		iolat = blkg_to_lat(blkg);
 diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 7964e7fc6521..f8edff271a17 100644
+index f8edff271a17..b5bbd9bdf37e 100644
 --- a/include/linux/blk-cgroup.h
 +++ b/include/linux/blk-cgroup.h
-@@ -126,7 +126,7 @@ struct blkcg_gq {
- 	struct request_list		rl;
- 
- 	/* reference count */
--	atomic_t			refcnt;
-+	struct percpu_ref		refcnt;
- 
- 	/* is this blkg online? protected by both blkcg and q locks */
- 	bool				online;
-@@ -490,8 +490,7 @@ static inline int blkg_path(struct blkcg_gq *blkg, char *buf, int buflen)
-  */
- static inline void blkg_get(struct blkcg_gq *blkg)
- {
--	WARN_ON_ONCE(atomic_read(&blkg->refcnt) <= 0);
--	atomic_inc(&blkg->refcnt);
-+	percpu_ref_get(&blkg->refcnt);
+@@ -494,27 +494,25 @@ static inline void blkg_get(struct blkcg_gq *blkg)
  }
  
  /**
-@@ -503,7 +502,7 @@ static inline void blkg_get(struct blkcg_gq *blkg)
+- * blkg_try_get - try and get a blkg reference
++ * blkg_tryget - try and get a blkg reference
+  * @blkg: blkg to get
+  *
+  * This is for use when doing an RCU lookup of the blkg.  We may be in the midst
+  * of freeing this blkg, so we can only use it if the refcnt is not zero.
   */
- static inline struct blkcg_gq *blkg_try_get(struct blkcg_gq *blkg)
+-static inline struct blkcg_gq *blkg_try_get(struct blkcg_gq *blkg)
++static inline bool blkg_tryget(struct blkcg_gq *blkg)
  {
--	if (atomic_inc_not_zero(&blkg->refcnt))
-+	if (percpu_ref_tryget(&blkg->refcnt))
- 		return blkg;
- 	return NULL;
+-	if (percpu_ref_tryget(&blkg->refcnt))
+-		return blkg;
+-	return NULL;
++	return percpu_ref_tryget(&blkg->refcnt);
  }
-@@ -517,23 +516,19 @@ static inline struct blkcg_gq *blkg_try_get(struct blkcg_gq *blkg)
+ 
+ /**
+- * blkg_try_get_closest - try and get a blkg ref on the closet blkg
++ * blkg_tryget_closest - try and get a blkg ref on the closet blkg
+  * @blkg: blkg to get
+  *
+  * This walks up the blkg tree to find the closest non-dying blkg and returns
+  * the blkg that it did association with as it may not be the passed in blkg.
   */
- static inline struct blkcg_gq *blkg_try_get_closest(struct blkcg_gq *blkg)
+-static inline struct blkcg_gq *blkg_try_get_closest(struct blkcg_gq *blkg)
++static inline struct blkcg_gq *blkg_tryget_closest(struct blkcg_gq *blkg)
  {
--	while (!atomic_inc_not_zero(&blkg->refcnt))
-+	while (!percpu_ref_tryget(&blkg->refcnt))
+ 	while (!percpu_ref_tryget(&blkg->refcnt))
  		blkg = blkg->parent;
+@@ -599,7 +597,7 @@ static inline struct request_list *blk_get_rl(struct request_queue *q,
+ 	if (unlikely(!blkg))
+ 		blkg = __blkg_lookup_create(blkcg, q);
  
- 	return blkg;
- }
+-	if (!blkg_try_get(blkg))
++	if (!blkg_tryget(blkg))
+ 		goto rl_use_root;
  
--void __blkg_release_rcu(struct rcu_head *rcu);
--
- /**
-  * blkg_put - put a blkg reference
-  * @blkg: blkg to put
-  */
- static inline void blkg_put(struct blkcg_gq *blkg)
- {
--	WARN_ON_ONCE(atomic_read(&blkg->refcnt) <= 0);
--	if (atomic_dec_and_test(&blkg->refcnt))
--		call_rcu(&blkg->rcu_head, __blkg_release_rcu);
-+	percpu_ref_put(&blkg->refcnt);
- }
- 
- /**
+ 	rcu_read_unlock();
 -- 
 2.17.1
 
