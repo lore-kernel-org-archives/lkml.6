@@ -2,136 +2,276 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCF1C4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF15C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2698A20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3C220844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:39:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="feOt0DAj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2698A20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D6g1CZgM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB3C220844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeIGCOr (ORCPT
+        id S1727822AbeIGCQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 22:14:47 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:33750 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbeIGCOr (ORCPT
+        Thu, 6 Sep 2018 22:16:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49508 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeIGCQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 22:14:47 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w86LXu4O076812;
-        Thu, 6 Sep 2018 21:36:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=Och9rxEGmTEvoV4ajxvU5ranLDtkUFEtfNtIQhSVlQs=;
- b=feOt0DAj/7/E570KZ5bGVR4MMwBJk1qsY+RJ+9z5rxQyCyauZjqPq+kiuaZ+aEyKkD5P
- SXai5DnzdyDwHNLqhDeYqwsXCFSg83sHyYuoolQjGGuv/68HHCH8mlWNxtXRZ3H4q+kS
- SloeVpiAYW7i5DcZ9xsnBJu3XJH51B9JZ/rISfFTG9f0BpQz+0rl+tezn+uL6ZmWRTbO
- maAHh3hafbJ3GjdwmGv7BZspTAjUzPKPQXQJ6th5YJhhihlW56y5EZzrxa+2OoyJb4bj
- hilm1lm+t9Gyzx8CupFG40p6uJEiTNPgSAjH3339YzJuIcY/Orz7aCpPuXvBMUoAiTyG Pg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2m7kdqxfve-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Sep 2018 21:36:47 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w86LajCt027688
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Sep 2018 21:36:45 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w86Laf8H003298;
-        Thu, 6 Sep 2018 21:36:42 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Sep 2018 14:36:41 -0700
-Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
-To:     "Huang, Ying" <ying.huang@intel.com>,
-        Christopher Lameter <cl@linux.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Aaron Lu <aaron.lu@intel.com>, alex.kogan@oracle.com,
-        akpm@linux-foundation.org, boqun.feng@gmail.com, brouer@redhat.com,
-        dave@stgolabs.net, dave.dice@oracle.com,
-        Dhaval Giani <dhaval.giani@oracle.com>, ktkhai@virtuozzo.com,
-        ldufour@linux.vnet.ibm.com, Pavel.Tatashin@microsoft.com,
-        paulmck@linux.vnet.ibm.com, shady.issa@oracle.com,
-        tariqt@mellanox.com, tglx@linutronix.de, tim.c.chen@intel.com,
-        vbabka@suse.cz, longman@redhat.com, yang.shi@linux.alibaba.com,
-        shy828301@gmail.com, subhra.mazumdar@oracle.com,
-        Steven Sistare <steven.sistare@oracle.com>, jwadams@google.com,
-        ashwinch@google.com, sqazi@google.com,
-        Shakeel Butt <shakeelb@google.com>, walken@google.com,
-        rientjes@google.com, junaids@google.com,
-        Neha Agarwal <nehaagarwal@google.com>,
-        Hugh Dickins <hughd@google.com>
-References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
- <01000165aa490dc9-64abf872-afd1-4a81-a46d-a50d0131de93-000000@email.amazonses.com>
- <877ejzqtdy.fsf@yhuang-dev.intel.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <bd6f6f8b-4880-6c20-62f5-bb6ca3b5e6f7@oracle.com>
-Date:   Thu, 6 Sep 2018 14:36:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 22:16:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MmOzpdPlrOhGX/65Vy0uauDiuoYpL4R0X/s8wbhU9Lg=; b=D6g1CZgMUjYLLDdKzPqtpZAab
+        oE6jk62G+jJzoyxvvnVbiPt6bTFR/0N+vOu7Od+ONCabF/GMAyW/kCUF6hqo2nT/8mUzXJKSNBoAm
+        Pgba2q5GhZLYSeICVBFr84SlegpACNv/YcBAxgTefPh8ZFkg/NS3bOVjv5qamNdIi+8izLhxTPhZ4
+        hUBBRpla7vMccU/6lyh5MKOJCObSBsrQWN4NF4Toxam+0X4C4h0GNu44SMO+p3Ev42sUadoHpv14D
+        F5vsc/ixVvF7fiVz1GR1QaS9FygUKFgN5FOcqWtmR4b+uYOXXehlFnzXwPE+BINEDnjKg6OFgSwVq
+        nezAIcs7Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fy1zS-00052S-33; Thu, 06 Sep 2018 21:39:02 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id A55EA6E0AA9; Thu,  6 Sep 2018 23:38:57 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 23:38:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        mingo@redhat.com, acme@kernel.org, vikas.shivappa@linux.intel.com,
+        gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 5/6] x86/intel_rdt: Use perf infrastructure for
+ measurements
+Message-ID: <20180906213857.GF9358@worktop.programming.kicks-ass.net>
+References: <cover.1534450299.git.reinette.chatre@intel.com>
+ <30b32ebd826023ab88f3ab3122e4c414ea532722.1534450299.git.reinette.chatre@intel.com>
+ <20180906141524.GF24106@hirez.programming.kicks-ass.net>
+ <40894b6f-c421-32fb-39c3-3dddbed5aa91@intel.com>
+ <20180906194441.GA9358@worktop.programming.kicks-ass.net>
+ <2465aa4d-fa84-cb0c-082a-15240472b349@intel.com>
+ <20180906202943.GE9358@worktop.programming.kicks-ass.net>
+ <12da3ce5-710b-b18e-8c0c-a0aa3724afd2@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <877ejzqtdy.fsf@yhuang-dev.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9008 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=666
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809060209
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12da3ce5-710b-b18e-8c0c-a0aa3724afd2@intel.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 06:58 PM, Huang, Ying wrote:
-> Hi, Christopher,
+On Thu, Sep 06, 2018 at 01:37:14PM -0700, Reinette Chatre wrote:
+> On 9/6/2018 1:29 PM, Peter Zijlstra wrote:
+> > On Thu, Sep 06, 2018 at 01:05:05PM -0700, Reinette Chatre wrote:
+> >> When I separate the above into the two functions it just becomes either:
+> >>                    rdpmcl(l2_hit_pmcnum, l2_hits_after);
+> >>                    rdpmcl(l2_miss_pmcnum, l2_miss_after);
+> >> or:
+> >>                    rdpmcl(l3_hit_pmcnum, l3_hits_after);
+> >>                    rdpmcl(l3_miss_pmcnum, l3_miss_after);
+> >>
+> > 
+> > Right, which is the exact _same_ code, so you only need a single
+> > function.
+> > 
 > 
-> Christopher Lameter <cl@linux.com> writes:
-> 
->> On Tue, 4 Sep 2018, Daniel Jordan wrote:
->>
->>>  - Promoting huge page usage:  With memory sizes becoming ever larger, huge
->>> pages are becoming more and more important to reduce TLB misses and the
->>> overhead of memory management itself--that is, to make the system scalable
->>> with the memory size.  But there are still some remaining gaps that prevent
->>> huge pages from being deployed in some situations, such as huge page
->>> allocation latency and memory fragmentation.
->>
->> You forgot the major issue that huge pages in the page cache are not
->> supported and thus we have performance issues with fast NVME drives that
->> are now able to do 3Gbytes per sec that are only possible to reach with
->> directio and huge pages.
-> 
-> Yes.  That is an important gap for huge page.  Although we have huge
-> page cache support for tmpfs, we lacks that for normal file systems.
-> 
->> IMHO the huge page issue is just the reflection of a certain hardware
->> manufacturer inflicting pain for over a decade on its poor users by not
->> supporting larger base page sizes than 4k. No such workarounds needed on
->> platforms that support large sizes. Things just zoom along without
->> contortions necessary to deal with huge pages etc.
->>
->> Can we come up with a 2M base page VM or something? We have possible
->> memory sizes of a couple TB now. That should give us a million or so 2M
->> pages to work with.
-> 
-> That sounds a good idea.  Don't know whether someone has tried this.
+> From my understanding it is not this code specifically that is causing
+> the cache misses but instead the code and variables used to decide
+> whether to run them or not. These would still be needed when I extract
+> the above into inline functions.
 
-IIRC, Hugh Dickins and some others at Google tried going down this path.
-There was a brief discussion at LSF/MM.  It is something I too would like
-to explore in my spare time.
+Oh, seriously, use your brain.. This is trivial stuff. Compare the two
+functions l2/l3.
 
--- 
-Mike Kravetz
+They are _identical_ except for some silly bits before/after and
+some spurious differences because apparently you cannot copy/paste.
+I thought there would be some differences in the loop, but not even
+that. They really are identical.
+
+The below should work I think.
+
+---
+
+struct recidency_counts {
+	u64 miss_before, hits_before;
+	u64 miss_after,  hits_after;
+};
+
+static int measure_residency_fn(struct perf_event_attr *miss_attr,
+				struct perf_event_attr *hit_attr,
+				void *plr, struct recidency_counts *counts)
+ {
++	u64 hits_before, hits_after, miss_before, miss_after;
++	struct perf_event *miss_event, *hit_event;
++	int hit_pmcnum, miss_pmcnum;
+ 	unsigned int line_size;
+ 	unsigned int size;
+ 	unsigned long i;
+ 	void *mem_r;
++	u64 tmp;
+ 
++	miss_event = perf_event_create_kernel_counter(miss_attr,
++							 plr->cpu,
++							 NULL, NULL, NULL);
++	if (IS_ERR(miss_event))
++		goto out;
++
++	hit_event = perf_event_create_kernel_counter(hit_attr,
++							plr->cpu,
++							NULL, NULL, NULL);
++	if (IS_ERR(hit_event))
++		goto out_miss;
++
++	local_irq_disable();
++	/*
++	 * Check any possible error state of events used by performing
++	 * one local read.
++	 */
++	if (perf_event_read_local(miss_event, &tmp, NULL, NULL)) {
++		local_irq_enable();
++		goto out_hit;
++	}
++	if (perf_event_read_local(hit_event, &tmp, NULL, NULL)) {
++		local_irq_enable();
++		goto out_hit;
++	}
++
++	/*
++	 * Disable hardware prefetchers.
+ 	 *
++	 * Call wrmsr direcly to avoid the local register variables from
++	 * being overwritten due to reordering of their assignment with
++	 * the wrmsr calls.
++	 */
++	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
++
++	/* Initialize rest of local variables */
++	/*
++	 * Performance event has been validated right before this with
++	 * interrupts disabled - it is thus safe to read the counter index.
++	 */
++	miss_pmcnum = x86_perf_rdpmc_index(miss_event);
++	hit_pmcnum = x86_perf_rdpmc_index(hit_event);
++	line_size = READ_ONCE(plr->line_size);
++	mem_r = READ_ONCE(plr->kmem);
++	size = READ_ONCE(plr->size);
++
++	/*
++	 * Read counter variables twice - first to load the instructions
++	 * used in L1 cache, second to capture accurate value that does not
++	 * include cache misses incurred because of instruction loads.
++	 */
++	rdpmcl(hit_pmcnum, hits_before);
++	rdpmcl(miss_pmcnum, miss_before);
++	/*
++	 */
++	rmb();
++	rdpmcl(hit_pmcnum, hits_before);
++	rdpmcl(miss_pmcnum, miss_before);
++	/*
++	 */
++	rmb();
++	for (i = 0; i < size; i += line_size) {
++		/*
++		 * Add a barrier to prevent speculative execution of this
++		 * loop reading beyond the end of the buffer.
++		 */
++		rmb();
++		asm volatile("mov (%0,%1,1), %%eax\n\t"
++			     :
++			     : "r" (mem_r), "r" (i)
++			     : "%eax", "memory");
++	}
+	rmb();
++	rdpmcl(hit_pmcnum, hits_after);
++	rdpmcl(miss_pmcnum, miss_after);
++	rmb();
++	/* Re-enable hardware prefetchers */
++	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
++	local_irq_enable();
++out_hit:
++	perf_event_release_kernel(hit_event);
++out_miss:
++	perf_event_release_kernel(miss_event);
++out:
+	counts->miss_before = miss_before;
+	counts->hits_before = hits_before;
+	counts->miss_after  = miss_after;
+	counts->hits_after  = hits_after;
++	return 0;
++}
+
+measure_l2_recidency()
+{
+	struct recidency_counts counts;
+
++       switch (boot_cpu_data.x86_model) {
++       case INTEL_FAM6_ATOM_GOLDMONT:
++       case INTEL_FAM6_ATOM_GEMINI_LAKE:
++               perf_miss_attr.config = X86_CONFIG(.event = 0xd1,
++                                                  .umask = 0x10);
++               perf_hit_attr.config = X86_CONFIG(.event = 0xd1,
++                                                 .umask = 0x2);
++               break;
++       default:
++               goto out;
++       }
+
+	measure_recidency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
+
+	trace_pseudo_lock_l2(counts->hits_after - counts->hits_before,
+			     counts->miss_after - counts->miss_before);
+out:
++	plr->thread_done = 1;
++	wake_up_interruptible(&plr->lock_thread_wq);
+}
+
+measure_l3_residency()
+{
+	struct recidency_counts counts;
+
+        switch (boot_cpu_data.x86_model) {
+        case INTEL_FAM6_BROADWELL_X:
+                /* On BDW the l3_hit_bits count references, not hits */
++               perf_hit_attr.config = X86_CONFIG(.event = 0x2e,
++                                                 .umask = 0x4f);
++               perf_miss_attr.config = X86_CONFIG(.event = 0x2e,
++                                                  .umask = 0x41);
+                break;
+        default:
+                goto out;
+        }
+
+	measure_recidency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
+
++       counts->miss_after -= counts->miss_before;
++       if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X) {
++               /*
++                * On BDW references and misses are counted, need to adjust.
++                * Sometimes the "hits" counter is a bit more than the
++                * references, for example, x references but x + 1 hits.
++                * To not report invalid hit values in this case we treat
++                * that as misses equal to references.
++                */
++               /* First compute the number of cache references measured */
++               counts->hits_after -= counts->hits_before;
++               /* Next convert references to cache hits */
++               counts->hits_after -= counts->miss_after > counts->hits_after ?
++                                       counts->hits_after : counts->miss_after;
++       } else {
++               counts->hits_after -= counts->hits_before;
+        }
+
++       trace_pseudo_lock_l3(counts->hits_after, counts->miss_after);
+}
