@@ -2,546 +2,155 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20609C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 417B9C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6AF20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6AF20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CED632083E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:42:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sTcprHs/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED632083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbeIFHMi convert rfc822-to-8bit (ORCPT
+        id S1726539AbeIFHPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 03:12:38 -0400
-Received: from mga07.intel.com ([134.134.136.100]:10761 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726031AbeIFHMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 03:12:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:39:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="230590280"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga004.jf.intel.com with ESMTP; 05 Sep 2018 19:39:17 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 5 Sep 2018 19:39:17 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
- Thu, 6 Sep 2018 10:39:13 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [PATCH v2 04/12] iommu/vt-d: Add 256-bit invalidation
- descriptor support
-Thread-Topic: [PATCH v2 04/12] iommu/vt-d: Add 256-bit invalidation
- descriptor support
-Thread-Index: AQHUQAHuihxPsX6UqkW6Id94H54OSKTij3DA
-Date:   Thu, 6 Sep 2018 02:39:12 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2B3B@SHSMSX101.ccr.corp.intel.com>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-5-baolu.lu@linux.intel.com>
-In-Reply-To: <20180830013524.28743-5-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzY2ZGMxMmItYTc1Ny00ZDljLWE5ZWItMWY5MzgzMmE3YTZlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYVI3Y3drNkcrQ0tYemVNSmVMS3cwOXVmSldidWVaSFwvXC9IdzZnSkYyZ1wvd0RIZzN4d2NTZFJ4OTdiZGd2ZWdzRCJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Sep 2018 03:15:54 -0400
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:36090 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbeIFHPx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 03:15:53 -0400
+Received: by mail-pg1-f176.google.com with SMTP id d1-v6so4408914pgo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 19:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qiBZc2IxMhxSEkJoa8YmMba53gZuoD1ISFDGdgAjcYI=;
+        b=sTcprHs/uuLdQ13bd9NTL/0a7fMtjqXEK5nzFLlJFRqjYfndY1M9EZ1Bh1EhCF9/Kf
+         DFAVnrbvRN/9URt/UtIbAcSFCpms3jSBHQ3WqGpd7RUNGco8WaKiD9jOpt7hPgSM5AUb
+         hXXAJcM/mgePQjW8sgWHi6fZmnwzeeV+BRkRb2xwpuW0nI/dWsatT5l+Xtjzym2+ldJi
+         OkZHGTmROD8temBqmoI3jzEV3HjLWGvdk+y/BILilhpZUWgR6TkMVH9wDy5ipz/qYgzX
+         aTPnPNaMW9FPyudvIh4/h/azeats/cwvATK1+JO65Hexc3Tji3yvo85wxuOmcCPcxC00
+         Ekrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qiBZc2IxMhxSEkJoa8YmMba53gZuoD1ISFDGdgAjcYI=;
+        b=axkk2isnQog01FDMOchvrie4PCmBgAbB/nGCsEQEERn2vPxilzbd3F/j/Dv//c0p2t
+         w4Zb9GJCfQTbLxgKvr/9CQL1cu4DF6pBeofFYafZR+4ZqWhElsZIL31nbf5u9cR1Pmsg
+         nZoKhdFnkQafl8tnQX6FYSmi7vV62i5o9VlQQUfvxnh1EAu/hrTkKjU6N1idiKBblQOi
+         WYBrNOjDinGgm5AvqpEAGpZsiqjMlsBKolZnf9ORHXSskKehWgEZiuVsjoyKdY1FelVT
+         tQ8gzpQKDA4zIreoo7dVwQ+Um2K4SXYyZwecbSuAnrc3gM0ec900M5fWkrlMrTjeW1T7
+         VnQQ==
+X-Gm-Message-State: APzg51CQXhV4ISQ4nVgxD10JjUDw2e6TLWWFBIJ8+6jCKr54qIiv7kvV
+        BnMkU9bSyajFTAhvFO/G3Ws=
+X-Google-Smtp-Source: ANB0VdaKs08pJ67pnHTsBWPGSdQL94sqRd2lLI3rQNBflcS1h8pZuRo90MA4znWkCT16DMHnjGQplw==
+X-Received: by 2002:aa7:8118:: with SMTP id b24-v6mr712626pfi.78.1536201768575;
+        Wed, 05 Sep 2018 19:42:48 -0700 (PDT)
+Received: from localhost ([110.70.59.68])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm7563826pgh.60.2018.09.05.19.42.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Sep 2018 19:42:47 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 11:42:43 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [linux-next] DDC responded, but no EDID for %s errors
+Message-ID: <20180906024243.GB749@jagdpanzerIV>
+References: <20180802024648.GA499@jagdpanzerIV>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180802024648.GA499@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
-> Sent: Thursday, August 30, 2018 9:35 AM
+On (08/02/18 11:46), Sergey Senozhatsky wrote:
+> Hi,
 > 
-> Intel vt-d spec rev3.0 requires software to use 256-bit
-> descriptors in invalidation queue. As the spec reads in
-> section 6.5.2:
+> My dmesg is filled up with these errors
 > 
-> Remapping hardware supporting Scalable Mode Translations
-> (ECAP_REG.SMTS=1) allow software to additionally program
-> the width of the descriptors (128-bits or 256-bits) that
-> will be written into the Queue. Software should setup the
-> Invalidation Queue for 256-bit descriptors before progra-
-> mming remapping hardware for scalable-mode translation as
-> 128-bit descriptors are treated as invalid descriptors
-> (see Table 21 in Section 6.5.2.10) in scalable-mode.
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for HDMI-A-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for HDMI-A-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> [..]
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+>  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> [..]
 > 
-> This patch adds 256-bit invalidation descriptor support
-> if the hardware presents scalable mode capability.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Liu Yi L <yi.l.liu@intel.com>
-> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
->  drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
->  drivers/iommu/intel_irq_remapping.c |  6 ++-
->  include/linux/intel-iommu.h         |  7 ++-
->  4 files changed, 113 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> index d9c748b6f9e4..b1429fa2cf29 100644
-> --- a/drivers/iommu/dmar.c
-> +++ b/drivers/iommu/dmar.c
-> @@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu
-> *iommu, int index)
->  	int head, tail;
->  	struct q_inval *qi = iommu->qi;
->  	int wait_index = (index + 1) % QI_LENGTH;
-> +	int shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
+> Basically, a message every 10s or so. Any chance we can make them
+> go away?
 
-could add a new macro: qi_shift()
+A gentle ping?
 
-> 
->  	if (qi->desc_status[wait_index] == QI_ABORT)
->  		return -EAGAIN;
-> @@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu
-> *iommu, int index)
->  	 */
->  	if (fault & DMA_FSTS_IQE) {
->  		head = readl(iommu->reg + DMAR_IQH_REG);
-> -		if ((head >> DMAR_IQ_SHIFT) == index) {
-> +		if ((head >> shift) == index) {
+It literally floods my logbuf with that "DRM: DDC responded, but no EDID
+for VGA-1" thing.
 
-could be another macro: qi_index(head)
+name -a
+4.19.0-rc2-dbg-00118-gb9a3bad8af2d
 
-> +			struct qi_desc *desc = qi->desc + head;
-> +
->  			pr_err("VT-d detected invalid descriptor: "
->  				"low=%llx, high=%llx\n",
-> -				(unsigned long long)qi->desc[index].low,
-> -				(unsigned long long)qi->desc[index].high);
-> -			memcpy(&qi->desc[index], &qi->desc[wait_index],
-> -					sizeof(struct qi_desc));
-> +				(unsigned long long)desc->qw0,
-> +				(unsigned long long)desc->qw1);
+$ dmesg | tail -42
+[ 3615.796938] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3626.036865] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3636.276878] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3646.516866] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3656.756750] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3666.996949] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3677.236884] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3687.476865] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3697.716858] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3707.956934] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3718.196925] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3728.436884] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3738.676861] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3748.916731] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3759.156754] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3769.396861] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3779.636826] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3789.876892] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3800.116686] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3810.356926] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3820.596887] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3830.836909] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3841.076932] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3851.316681] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3861.556926] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3871.796869] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3882.036750] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3892.276836] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3902.516803] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3912.756640] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3922.996957] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3933.236700] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3943.476851] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3953.716928] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3963.956915] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3974.196861] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3984.436928] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 3994.676885] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 4004.917030] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 4015.156935] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 4025.396872] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+[ 4035.636877] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
 
-what about qw2 and qw3 in 256-bit case?
-
-> +			memcpy(desc, qi->desc + (wait_index << shift),
-> +			       1 << shift);
->  			writel(DMA_FSTS_IQE, iommu->reg +
-> DMAR_FSTS_REG);
->  			return -EINVAL;
->  		}
-> @@ -1191,10 +1194,10 @@ static int qi_check_fault(struct intel_iommu
-> *iommu, int index)
->  	 */
->  	if (fault & DMA_FSTS_ITE) {
->  		head = readl(iommu->reg + DMAR_IQH_REG);
-> -		head = ((head >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) %
-> QI_LENGTH;
-> +		head = ((head >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
->  		head |= 1;
->  		tail = readl(iommu->reg + DMAR_IQT_REG);
-> -		tail = ((tail >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) %
-> QI_LENGTH;
-> +		tail = ((tail >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
-> 
->  		writel(DMA_FSTS_ITE, iommu->reg + DMAR_FSTS_REG);
-> 
-> @@ -1222,15 +1225,14 @@ int qi_submit_sync(struct qi_desc *desc, struct
-> intel_iommu *iommu)
->  {
->  	int rc;
->  	struct q_inval *qi = iommu->qi;
-> -	struct qi_desc *hw, wait_desc;
-> +	int offset, shift, length;
-> +	struct qi_desc wait_desc;
->  	int wait_index, index;
->  	unsigned long flags;
-> 
->  	if (!qi)
->  		return 0;
-> 
-> -	hw = qi->desc;
-> -
->  restart:
->  	rc = 0;
-> 
-> @@ -1243,16 +1245,21 @@ int qi_submit_sync(struct qi_desc *desc, struct
-> intel_iommu *iommu)
-> 
->  	index = qi->free_head;
->  	wait_index = (index + 1) % QI_LENGTH;
-> +	shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
-> +	length = 1 << shift;
-> 
->  	qi->desc_status[index] = qi->desc_status[wait_index] = QI_IN_USE;
-> 
-> -	hw[index] = *desc;
-> -
-> -	wait_desc.low = QI_IWD_STATUS_DATA(QI_DONE) |
-> +	offset = index << shift;
-> +	memcpy(qi->desc + offset, desc, length);
-> +	wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
->  			QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
-> -	wait_desc.high = virt_to_phys(&qi->desc_status[wait_index]);
-> +	wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
-> +	wait_desc.qw2 = 0;
-> +	wait_desc.qw3 = 0;
-> 
-> -	hw[wait_index] = wait_desc;
-> +	offset = wait_index << shift;
-> +	memcpy(qi->desc + offset, &wait_desc, length);
-> 
->  	qi->free_head = (qi->free_head + 2) % QI_LENGTH;
->  	qi->free_cnt -= 2;
-> @@ -1261,7 +1268,7 @@ int qi_submit_sync(struct qi_desc *desc, struct
-> intel_iommu *iommu)
->  	 * update the HW tail register indicating the presence of
->  	 * new descriptors.
->  	 */
-> -	writel(qi->free_head << DMAR_IQ_SHIFT, iommu->reg +
-> DMAR_IQT_REG);
-> +	writel(qi->free_head << shift, iommu->reg + DMAR_IQT_REG);
-> 
->  	while (qi->desc_status[wait_index] != QI_DONE) {
->  		/*
-> @@ -1298,8 +1305,10 @@ void qi_global_iec(struct intel_iommu *iommu)
->  {
->  	struct qi_desc desc;
-> 
-> -	desc.low = QI_IEC_TYPE;
-> -	desc.high = 0;
-> +	desc.qw0 = QI_IEC_TYPE;
-> +	desc.qw1 = 0;
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> 
->  	/* should never fail */
->  	qi_submit_sync(&desc, iommu);
-> @@ -1310,9 +1319,11 @@ void qi_flush_context(struct intel_iommu
-> *iommu, u16 did, u16 sid, u8 fm,
->  {
->  	struct qi_desc desc;
-> 
-> -	desc.low = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
-> +	desc.qw0 = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
->  			| QI_CC_GRAN(type) | QI_CC_TYPE;
-> -	desc.high = 0;
-> +	desc.qw1 = 0;
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> 
->  	qi_submit_sync(&desc, iommu);
->  }
-> @@ -1331,10 +1342,12 @@ void qi_flush_iotlb(struct intel_iommu
-> *iommu, u16 did, u64 addr,
->  	if (cap_read_drain(iommu->cap))
->  		dr = 1;
-> 
-> -	desc.low = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) |
-> QI_IOTLB_DW(dw)
-> +	desc.qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) |
-> QI_IOTLB_DW(dw)
->  		| QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
-> -	desc.high = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
-> +	desc.qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
->  		| QI_IOTLB_AM(size_order);
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> 
->  	qi_submit_sync(&desc, iommu);
->  }
-> @@ -1347,15 +1360,17 @@ void qi_flush_dev_iotlb(struct intel_iommu
-> *iommu, u16 sid, u16 pfsid,
->  	if (mask) {
->  		WARN_ON_ONCE(addr & ((1ULL << (VTD_PAGE_SHIFT +
-> mask)) - 1));
->  		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
-> -		desc.high = QI_DEV_IOTLB_ADDR(addr) |
-> QI_DEV_IOTLB_SIZE;
-> +		desc.qw1 = QI_DEV_IOTLB_ADDR(addr) |
-> QI_DEV_IOTLB_SIZE;
->  	} else
-> -		desc.high = QI_DEV_IOTLB_ADDR(addr);
-> +		desc.qw1 = QI_DEV_IOTLB_ADDR(addr);
-> 
->  	if (qdep >= QI_DEV_IOTLB_MAX_INVS)
->  		qdep = 0;
-> 
-> -	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
-> +	desc.qw0 = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
->  		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> 
->  	qi_submit_sync(&desc, iommu);
->  }
-> @@ -1403,16 +1418,24 @@ static void __dmar_enable_qi(struct
-> intel_iommu *iommu)
->  	u32 sts;
->  	unsigned long flags;
->  	struct q_inval *qi = iommu->qi;
-> +	u64 val = virt_to_phys(qi->desc);
-> 
->  	qi->free_head = qi->free_tail = 0;
->  	qi->free_cnt = QI_LENGTH;
-> 
-> +	/*
-> +	 * Set DW=1 and QS=1 in IQA_REG when Scalable Mode capability
-> +	 * is present.
-> +	 */
-> +	if (ecap_smts(iommu->ecap))
-> +		val |= (1 << 11) | 1;
-> +
->  	raw_spin_lock_irqsave(&iommu->register_lock, flags);
-> 
->  	/* write zero to the tail reg */
->  	writel(0, iommu->reg + DMAR_IQT_REG);
-> 
-> -	dmar_writeq(iommu->reg + DMAR_IQA_REG, virt_to_phys(qi-
-> >desc));
-> +	dmar_writeq(iommu->reg + DMAR_IQA_REG, val);
-> 
->  	iommu->gcmd |= DMA_GCMD_QIE;
->  	writel(iommu->gcmd, iommu->reg + DMAR_GCMD_REG);
-> @@ -1448,8 +1471,12 @@ int dmar_enable_qi(struct intel_iommu
-> *iommu)
-> 
->  	qi = iommu->qi;
-> 
-> -
-> -	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC |
-> __GFP_ZERO, 0);
-> +	/*
-> +	 * Need two pages to accommodate 256 descriptors of 256 bits each
-> +	 * if the remapping hardware supports scalable mode translation.
-> +	 */
-> +	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC |
-> __GFP_ZERO,
-> +				     !!ecap_smts(iommu->ecap));
->  	if (!desc_page) {
->  		kfree(qi);
->  		iommu->qi = NULL;
-> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> index 6c0bd9ee9602..a06ed098e928 100644
-> --- a/drivers/iommu/intel-svm.c
-> +++ b/drivers/iommu/intel-svm.c
-> @@ -161,27 +161,40 @@ static void intel_flush_svm_range_dev (struct
-> intel_svm *svm, struct intel_svm_d
->  		 * because that's the only option the hardware gives us.
-> Despite
->  		 * the fact that they are actually only accessible through one.
-> */
->  		if (gl)
-> -			desc.low = QI_EIOTLB_PASID(svm->pasid) |
-> QI_EIOTLB_DID(sdev->did) |
-> -				QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
-> QI_EIOTLB_TYPE;
-> +			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-> +					QI_EIOTLB_DID(sdev->did) |
-> +
-> 	QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
-> +					QI_EIOTLB_TYPE;
->  		else
-> -			desc.low = QI_EIOTLB_PASID(svm->pasid) |
-> QI_EIOTLB_DID(sdev->did) |
-> -				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID)
-> | QI_EIOTLB_TYPE;
-> -		desc.high = 0;
-> +			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-> +					QI_EIOTLB_DID(sdev->did) |
-> +
-> 	QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-> +					QI_EIOTLB_TYPE;
-> +		desc.qw1 = 0;
->  	} else {
->  		int mask = ilog2(__roundup_pow_of_two(pages));
-> 
-> -		desc.low = QI_EIOTLB_PASID(svm->pasid) |
-> QI_EIOTLB_DID(sdev->did) |
-> -			QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
-> QI_EIOTLB_TYPE;
-> -		desc.high = QI_EIOTLB_ADDR(address) | QI_EIOTLB_GL(gl) |
-> -			QI_EIOTLB_IH(ih) | QI_EIOTLB_AM(mask);
-> +		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-> +				QI_EIOTLB_DID(sdev->did) |
-> +				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
-> +				QI_EIOTLB_TYPE;
-> +		desc.qw1 = QI_EIOTLB_ADDR(address) |
-> +				QI_EIOTLB_GL(gl) |
-> +				QI_EIOTLB_IH(ih) |
-> +				QI_EIOTLB_AM(mask);
->  	}
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
->  	qi_submit_sync(&desc, svm->iommu);
-> 
->  	if (sdev->dev_iotlb) {
-> -		desc.low = QI_DEV_EIOTLB_PASID(svm->pasid) |
-> QI_DEV_EIOTLB_SID(sdev->sid) |
-> -			QI_DEV_EIOTLB_QDEP(sdev->qdep) |
-> QI_DEIOTLB_TYPE;
-> +		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
-> +				QI_DEV_EIOTLB_SID(sdev->sid) |
-> +				QI_DEV_EIOTLB_QDEP(sdev->qdep) |
-> +				QI_DEIOTLB_TYPE;
->  		if (pages == -1) {
-> -			desc.high = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
-> QI_DEV_EIOTLB_SIZE;
-> +			desc.qw1 = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
-> +					QI_DEV_EIOTLB_SIZE;
->  		} else if (pages > 1) {
->  			/* The least significant zero bit indicates the size. So,
->  			 * for example, an "address" value of 0x12345f000
-> will
-> @@ -189,10 +202,13 @@ static void intel_flush_svm_range_dev (struct
-> intel_svm *svm, struct intel_svm_d
->  			unsigned long last = address + ((unsigned
-> long)(pages - 1) << VTD_PAGE_SHIFT);
->  			unsigned long mask =
-> __rounddown_pow_of_two(address ^ last);
-> 
-> -			desc.high = QI_DEV_EIOTLB_ADDR((address &
-> ~mask) | (mask - 1)) | QI_DEV_EIOTLB_SIZE;
-> +			desc.qw1 = QI_DEV_EIOTLB_ADDR((address &
-> ~mask) |
-> +					(mask - 1)) | QI_DEV_EIOTLB_SIZE;
->  		} else {
-> -			desc.high = QI_DEV_EIOTLB_ADDR(address);
-> +			desc.qw1 = QI_DEV_EIOTLB_ADDR(address);
->  		}
-> +		desc.qw2 = 0;
-> +		desc.qw3 = 0;
->  		qi_submit_sync(&desc, svm->iommu);
->  	}
->  }
-> @@ -237,8 +253,11 @@ static void intel_flush_pasid_dev(struct intel_svm
-> *svm, struct intel_svm_dev *s
->  {
->  	struct qi_desc desc;
-> 
-> -	desc.high = 0;
-> -	desc.low = QI_PC_TYPE | QI_PC_DID(sdev->did) | QI_PC_PASID_SEL
-> | QI_PC_PASID(pasid);
-> +	desc.qw0 = QI_PC_TYPE | QI_PC_DID(sdev->did) |
-> +			QI_PC_PASID_SEL | QI_PC_PASID(pasid);
-> +	desc.qw1 = 0;
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> 
->  	qi_submit_sync(&desc, svm->iommu);
->  }
-> @@ -668,24 +687,27 @@ static irqreturn_t prq_event_thread(int irq, void
-> *d)
->  	no_pasid:
->  		if (req->lpig) {
->  			/* Page Group Response */
-> -			resp.low = QI_PGRP_PASID(req->pasid) |
-> +			resp.qw0 = QI_PGRP_PASID(req->pasid) |
->  				QI_PGRP_DID((req->bus << 8) | req->devfn)
-> |
->  				QI_PGRP_PASID_P(req->pasid_present) |
->  				QI_PGRP_RESP_TYPE;
-> -			resp.high = QI_PGRP_IDX(req->prg_index) |
-> -				QI_PGRP_PRIV(req->private) |
-> QI_PGRP_RESP_CODE(result);
-> -
-> -			qi_submit_sync(&resp, iommu);
-> +			resp.qw1 = QI_PGRP_IDX(req->prg_index) |
-> +				QI_PGRP_PRIV(req->private) |
-> +				QI_PGRP_RESP_CODE(result);
->  		} else if (req->srr) {
->  			/* Page Stream Response */
-> -			resp.low = QI_PSTRM_IDX(req->prg_index) |
-> -				QI_PSTRM_PRIV(req->private) |
-> QI_PSTRM_BUS(req->bus) |
-> -				QI_PSTRM_PASID(req->pasid) |
-> QI_PSTRM_RESP_TYPE;
-> -			resp.high = QI_PSTRM_ADDR(address) |
-> QI_PSTRM_DEVFN(req->devfn) |
-> +			resp.qw0 = QI_PSTRM_IDX(req->prg_index) |
-> +				QI_PSTRM_PRIV(req->private) |
-> +				QI_PSTRM_BUS(req->bus) |
-> +				QI_PSTRM_PASID(req->pasid) |
-> +				QI_PSTRM_RESP_TYPE;
-> +			resp.qw1 = QI_PSTRM_ADDR(address) |
-> +				QI_PSTRM_DEVFN(req->devfn) |
->  				QI_PSTRM_RESP_CODE(result);
-> -
-> -			qi_submit_sync(&resp, iommu);
->  		}
-> +		resp.qw2 = 0;
-> +		resp.qw3 = 0;
-> +		qi_submit_sync(&resp, iommu);
-> 
->  		head = (head + sizeof(*req)) & PRQ_RING_MASK;
->  	}
-> diff --git a/drivers/iommu/intel_irq_remapping.c
-> b/drivers/iommu/intel_irq_remapping.c
-> index 967450bd421a..916391f33ca6 100644
-> --- a/drivers/iommu/intel_irq_remapping.c
-> +++ b/drivers/iommu/intel_irq_remapping.c
-> @@ -145,9 +145,11 @@ static int qi_flush_iec(struct intel_iommu *iommu,
-> int index, int mask)
->  {
->  	struct qi_desc desc;
-> 
-> -	desc.low = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
-> +	desc.qw0 = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
->  		   | QI_IEC_SELECTIVE;
-> -	desc.high = 0;
-> +	desc.qw1 = 0;
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> 
->  	return qi_submit_sync(&desc, iommu);
->  }
-> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-> index 41791903a5e3..72aff482b293 100644
-> --- a/include/linux/intel-iommu.h
-> +++ b/include/linux/intel-iommu.h
-> @@ -340,12 +340,15 @@ enum {
->  #define QI_GRAN_PSI_PASID		3
-> 
->  struct qi_desc {
-> -	u64 low, high;
-> +	u64 qw0;
-> +	u64 qw1;
-> +	u64 qw2;
-> +	u64 qw3;
->  };
-> 
->  struct q_inval {
->  	raw_spinlock_t  q_lock;
-> -	struct qi_desc  *desc;          /* invalidation queue */
-> +	void		*desc;          /* invalidation queue */
->  	int             *desc_status;   /* desc status */
->  	int             free_head;      /* first free entry */
->  	int             free_tail;      /* last free entry */
-> --
-> 2.17.1
-
+	-ss
