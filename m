@@ -2,133 +2,204 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AA4C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0FBC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E37206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E37206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 55736206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55736206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeIFPWu (ORCPT
+        id S1727755AbeIFPXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:22:50 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55938 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725918AbeIFPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:22:50 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 03:47:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,337,1531810800"; 
-   d="scan'208";a="260329959"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga005.fm.intel.com with SMTP; 06 Sep 2018 03:47:45 -0700
-Received: by lahna (sSMTP sendmail emulation); Thu, 06 Sep 2018 13:47:46 +0300
-Date:   Thu, 6 Sep 2018 13:47:46 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>
-Subject: Re: [PATCH 1/3] thunderbolt: Make the driver less verbose
-Message-ID: <20180906104746.GW2283@lahna.fi.intel.com>
-References: <20180903133304.70362-1-mika.westerberg@linux.intel.com>
- <20180903133304.70362-2-mika.westerberg@linux.intel.com>
- <20180905090510.fvryu6ivxagdzoyx@wunner.de>
- <20180905095451.GI2283@lahna.fi.intel.com>
- <20180906084143.sah4njyft7z5squb@wunner.de>
+        Thu, 6 Sep 2018 11:23:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60779 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeIFPXS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 11:23:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86Ak7qr264532
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 03:46:07 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Ak58p264515;
+        Thu, 6 Sep 2018 03:46:05 -0700
+Date:   Thu, 6 Sep 2018 03:46:05 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-760902b24960679c2e8592de3a56359d2c205731@git.kernel.org>
+Cc:     mingo@kernel.org, frame@mailbox.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, kevin@shanahan.id.au,
+        niklas.cassel@linaro.org, tglx@linutronix.de, hpa@zytor.com
+Reply-To: niklas.cassel@linaro.org, tglx@linutronix.de, hpa@zytor.com,
+          mingo@kernel.org, frame@mailbox.org, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, kevin@shanahan.id.au
+In-Reply-To: <20180905084158.GR24124@hirez.programming.kicks-ass.net>
+References: <20180905084158.GR24124@hirez.programming.kicks-ass.net>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] clocksource: Revert "Remove kthread"
+Git-Commit-ID: 760902b24960679c2e8592de3a56359d2c205731
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180906084143.sah4njyft7z5squb@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:41:43AM +0200, Lukas Wunner wrote:
-> On Wed, Sep 05, 2018 at 12:54:51PM +0300, Mika Westerberg wrote:
-> > On Wed, Sep 05, 2018 at 11:05:10AM +0200, Lukas Wunner wrote:
-> > > On Mon, Sep 03, 2018 at 04:33:02PM +0300, Mika Westerberg wrote:
-> > > > Currently the driver logs quite a lot to the system message buffer even
-> > > > when doing normal operations. This information is not useful for
-> > > > ordinary users and might even annoy some.
-> > > 
-> > > No, the verbose logging is done on purpose to aid us in reverse-engineering
-> > > the protocol.  For example ...
-> > > 
-> > > > -	tb_port_info(port, "  Unknown1: %#x Unknown2: %#x Unknown3: %#x\n",
-> > > > -		     hop->unknown1, hop->unknown2, hop->unknown3);
-> > > 
-> > > ... why do you think we're logging these seemingly stupid unknown
-> > > bitfields?  Because whenever someone posts dmesg output they
-> > > inadvertantly post the contents of those unknown fields and we can
-> > > then google the value of those fields on various controllers and
-> > > machines and deduce their possible meaning.
-> > 
-> > And the majority of people get tons of completely useless messages
-> > filling their dmesgs? No, I don't think that's a good thing.
-> 
-> As you know the OS-controlled tunnel manager is far from feature
-> complete.  I think the "majority of people" are perfectly willing
-> to accept verbose logging if it helps us fill in those gaps.
-> 
-> You make it sound like logfiles are spammed all the time, but
-> messages are in fact only logged on driver initialization and hotplug.
+Commit-ID:  760902b24960679c2e8592de3a56359d2c205731
+Gitweb:     https://git.kernel.org/tip/760902b24960679c2e8592de3a56359d2c205731
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Wed, 5 Sep 2018 10:41:58 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 6 Sep 2018 12:42:28 +0200
 
-And every time the controller runtime suspends/resumes. Every
-suspend/resume. Every time ring gets initialized/teared when you connect
-cable between computers. It is way too much for a driver that is part of
-production operating system.
+clocksource: Revert "Remove kthread"
 
-> We wouldn't be in this situation if we had a proper Thunderbolt spec.
-> It wasn't *my* idea to keep it under wraps.
+I turns out that the silly spawn kthread from worker was actually needed.
 
-Please don't start that again.
+clocksource_watchdog_kthread() cannot be called directly from
+clocksource_watchdog_work(), because clocksource_select() calls
+timekeeping_notify() which uses stop_machine(). One cannot use
+stop_machine() from a workqueue() due lock inversions wrt CPU hotplug.
 
-I can't affect when the spec is released, really. I'm just a poor driver
-guy trying to get this working as good as possible.
+Revert the patch but add a comment that explain why we jump through such
+apparently silly hoops.
 
-> So please leave the messages at info level so as not to hinder our work.
-> 
-> As for your claim that the "majority of people" find the messages
-> useless", I rather suspect that you, personally, find them useless
-> because you complained about noisiness of the driver before:
-> 
->    "I don't think we want to log anything with info level to be honest.
->     The driver currently already is pretty noisy so adding even more
->     information there just makes it worse ;-)
->     I would rather convert debugging information to use tracepoints and
->     get rid of the tb_*_info() things completely."
->     https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1401181.html
-> 
-> And guess what I responded:
-> 
->    "The noisiness has value in that it helps with reverse-engineering:
->     Just google for dmesg output and check what other machines are
->     reporting for unknown registers. :-)
->     If there was public documentation available or Intel would be okay
->     with answering specific questions (as you've done with the 0x30
->     attribute id), then the value obviously diminishes."
+Fixes: 7197e77abcb6 ("clocksource: Remove kthread")
+Reported-by: Siegfried Metz <frame@mailbox.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Tested-by: Kevin Shanahan <kevin@shanahan.id.au>
+Tested-by: viktor_jaegerskuepper@freenet.de
+Tested-by: Siegfried Metz <frame@mailbox.org>
+Cc: rafael.j.wysocki@intel.com
+Cc: len.brown@intel.com
+Cc: diego.viola@gmail.com
+Cc: rui.zhang@intel.com
+Cc: bjorn.andersson@linaro.org
+Link: https://lkml.kernel.org/r/20180905084158.GR24124@hirez.programming.kicks-ass.net
+---
+ kernel/time/clocksource.c | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
 
-It is not just me, see here:
-
-https://lkml.org/lkml/2017/10/31/864
-
-And I fully agree.
-
-Andreas was fine at the time to silence the driver. I just did not have
-time to do that until now.
-
-Andreas, let me know if you have objections about this patch.
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index f74fb00d8064..0e6e97a01942 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -133,19 +133,40 @@ static void inline clocksource_watchdog_unlock(unsigned long *flags)
+ 	spin_unlock_irqrestore(&watchdog_lock, *flags);
+ }
+ 
++static int clocksource_watchdog_kthread(void *data);
++static void __clocksource_change_rating(struct clocksource *cs, int rating);
++
+ /*
+  * Interval: 0.5sec Threshold: 0.0625s
+  */
+ #define WATCHDOG_INTERVAL (HZ >> 1)
+ #define WATCHDOG_THRESHOLD (NSEC_PER_SEC >> 4)
+ 
++static void clocksource_watchdog_work(struct work_struct *work)
++{
++	/*
++	 * We cannot directly run clocksource_watchdog_kthread() here, because
++	 * clocksource_select() calls timekeeping_notify() which uses
++	 * stop_machine(). One cannot use stop_machine() from a workqueue() due
++	 * lock inversions wrt CPU hotplug.
++	 *
++	 * Also, we only ever run this work once or twice during the lifetime
++	 * of the kernel, so there is no point in creating a more permanent
++	 * kthread for this.
++	 *
++	 * If kthread_run fails the next watchdog scan over the
++	 * watchdog_list will find the unstable clock again.
++	 */
++	kthread_run(clocksource_watchdog_kthread, NULL, "kwatchdog");
++}
++
+ static void __clocksource_unstable(struct clocksource *cs)
+ {
+ 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
+ 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
+ 
+ 	/*
+-	 * If the clocksource is registered clocksource_watchdog_work() will
++	 * If the clocksource is registered clocksource_watchdog_kthread() will
+ 	 * re-rate and re-select.
+ 	 */
+ 	if (list_empty(&cs->list)) {
+@@ -156,7 +177,7 @@ static void __clocksource_unstable(struct clocksource *cs)
+ 	if (cs->mark_unstable)
+ 		cs->mark_unstable(cs);
+ 
+-	/* kick clocksource_watchdog_work() */
++	/* kick clocksource_watchdog_kthread() */
+ 	if (finished_booting)
+ 		schedule_work(&watchdog_work);
+ }
+@@ -166,7 +187,7 @@ static void __clocksource_unstable(struct clocksource *cs)
+  * @cs:		clocksource to be marked unstable
+  *
+  * This function is called by the x86 TSC code to mark clocksources as unstable;
+- * it defers demotion and re-selection to a work.
++ * it defers demotion and re-selection to a kthread.
+  */
+ void clocksource_mark_unstable(struct clocksource *cs)
+ {
+@@ -391,9 +412,7 @@ static void clocksource_dequeue_watchdog(struct clocksource *cs)
+ 	}
+ }
+ 
+-static void __clocksource_change_rating(struct clocksource *cs, int rating);
+-
+-static int __clocksource_watchdog_work(void)
++static int __clocksource_watchdog_kthread(void)
+ {
+ 	struct clocksource *cs, *tmp;
+ 	unsigned long flags;
+@@ -418,12 +437,13 @@ static int __clocksource_watchdog_work(void)
+ 	return select;
+ }
+ 
+-static void clocksource_watchdog_work(struct work_struct *work)
++static int clocksource_watchdog_kthread(void *data)
+ {
+ 	mutex_lock(&clocksource_mutex);
+-	if (__clocksource_watchdog_work())
++	if (__clocksource_watchdog_kthread())
+ 		clocksource_select();
+ 	mutex_unlock(&clocksource_mutex);
++	return 0;
+ }
+ 
+ static bool clocksource_is_watchdog(struct clocksource *cs)
+@@ -442,7 +462,7 @@ static void clocksource_enqueue_watchdog(struct clocksource *cs)
+ static void clocksource_select_watchdog(bool fallback) { }
+ static inline void clocksource_dequeue_watchdog(struct clocksource *cs) { }
+ static inline void clocksource_resume_watchdog(void) { }
+-static inline int __clocksource_watchdog_work(void) { return 0; }
++static inline int __clocksource_watchdog_kthread(void) { return 0; }
+ static bool clocksource_is_watchdog(struct clocksource *cs) { return false; }
+ void clocksource_mark_unstable(struct clocksource *cs) { }
+ 
+@@ -810,7 +830,7 @@ static int __init clocksource_done_booting(void)
+ 	/*
+ 	 * Run the watchdog first to eliminate unstable clock sources
+ 	 */
+-	__clocksource_watchdog_work();
++	__clocksource_watchdog_kthread();
+ 	clocksource_select();
+ 	mutex_unlock(&clocksource_mutex);
+ 	return 0;
