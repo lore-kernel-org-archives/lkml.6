@@ -3,69 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670DCC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3120DC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4462077C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:04:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4462077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+	by mail.kernel.org (Postfix) with ESMTP id E094C2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:04:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E094C2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeIFNil (ORCPT
+        id S1728317AbeIFNiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:38:41 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:10437 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbeIFNik (ORCPT
+        Thu, 6 Sep 2018 09:38:51 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38562 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727629AbeIFNiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:38:40 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.17]) by rmmx-syy-dmz-app12-12012 (RichMail) with SMTP id 2eec5b90ed8be85-0522f; Thu, 06 Sep 2018 17:04:11 +0800 (CST)
-X-RM-TRANSID: 2eec5b90ed8be85-0522f
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee95b90ed8a2e4-e4ec2;
-        Thu, 06 Sep 2018 17:04:11 +0800 (CST)
-X-RM-TRANSID: 2ee95b90ed8a2e4-e4ec2
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf tools: use PTR_ERR_OR_ZERO inetead of return code
-Date:   Thu,  6 Sep 2018 17:04:08 +0800
-Message-Id: <1536224648-6597-1-git-send-email-dingxiang@cmss.chinamobile.com>
+        Thu, 6 Sep 2018 09:38:51 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w868xG7K007329;
+        Thu, 6 Sep 2018 11:03:44 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2macwsdsqc-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 06 Sep 2018 11:03:44 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BB63A31;
+        Thu,  6 Sep 2018 09:03:43 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8E8F626ED;
+        Thu,  6 Sep 2018 09:03:43 +0000 (GMT)
+Received: from localhost (10.75.127.49) by SFHDAG6NODE3.st.com (10.75.127.18)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 6 Sep 2018 11:03:43
+ +0200
+From:   <patrice.chotard@st.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC:     <patrice.chotard@st.com>,
+        Christophe Priouzeau <christophe.priouzeau@st.com>
+Subject: [PATCH] ARM: dts: stih410: change syntax of multiple DAI
+Date:   Thu, 6 Sep 2018 11:03:31 +0200
+Message-ID: <1536224611-30979-1-git-send-email-patrice.chotard@st.com>
 X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG6NODE3.st.com
+ (10.75.127.18)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use PTR_ERR_OR_ZERO for bpf__setup_stdout return code
+From: Christophe Priouzeau <christophe.priouzeau@st.com>
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+With change of syntax for 'simple-audio-card,dai-link' containers,
+devicetrees of stih410 must be updated.
+
+This fixes the following error:
+
+[    3.839466] asoc-simple-card sound: asoc_simple_card_dai_link_of:
+Can't find simple-audio-card,cpu DT node
+[    3.849150] asoc-simple-card sound: parse error -22
+
+Signed-off-by: Christophe Priouzeau <christophe.priouzeau@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- tools/perf/util/bpf-loader.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/stih410-b2260.dts  |  5 ++++-
+ arch/arm/boot/dts/stihxxx-b2120.dtsi | 11 ++++++++---
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-index 47aac41..f9ae1a9 100644
---- a/tools/perf/util/bpf-loader.c
-+++ b/tools/perf/util/bpf-loader.c
-@@ -1615,7 +1615,7 @@ struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const cha
- int bpf__setup_stdout(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel = bpf__setup_output_event(evlist, "__bpf_stdout__");
--	return IS_ERR(evsel) ? PTR_ERR(evsel) : 0;
-+	return PTR_ERR_OR_ZERO(evsel);
- }
+diff --git a/arch/arm/boot/dts/stih410-b2260.dts b/arch/arm/boot/dts/stih410-b2260.dts
+index 155caa8..4ee6d51 100644
+--- a/arch/arm/boot/dts/stih410-b2260.dts
++++ b/arch/arm/boot/dts/stih410-b2260.dts
+@@ -61,8 +61,11 @@
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "STI-B2260";
+ 		status = "okay";
++		#address-cells = <1>;
++		#size-cells = <0>;
  
- #define ERRNO_OFFSET(e)		((e) - __BPF_LOADER_ERRNO__START)
+-		simple-audio-card,dai-link0 {
++		simple-audio-card,dai-link@0 {
++			reg = <0>;
+ 			/* DAC */
+ 			format = "i2s";
+ 			mclk-fs = <128>;
+diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+index 4dedfcb..97e05f5 100644
+--- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
++++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+@@ -27,8 +27,11 @@
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "STI-B2120";
+ 		status = "okay";
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 
+-		simple-audio-card,dai-link0 {
++		simple-audio-card,dai-link@0 {
++			reg = <0>;
+ 			/* HDMI */
+ 			format = "i2s";
+ 			mclk-fs = <128>;
+@@ -41,7 +44,8 @@
+ 			};
+ 		};
+ 
+-		simple-audio-card,dai-link1 {
++		simple-audio-card,dai-link@1 {
++			reg = <1>;
+ 			/* DAC */
+ 			format = "i2s";
+ 			mclk-fs = <256>;
+@@ -55,7 +59,8 @@
+ 			};
+ 		};
+ 
+-		simple-audio-card,dai-link2 {
++		simple-audio-card,dai-link@2 {
++			reg = <2>;
+ 			/* SPDIF */
+ 			format = "left_j";
+ 			mclk-fs = <128>;
 -- 
 1.9.1
-
-
 
