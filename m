@@ -2,85 +2,101 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53822C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9930CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB3FC20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F1D20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=temperror (0-bit key) header.d=securecloudseven.com header.i=@securecloudseven.com header.b="nKD3T23d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB3FC20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=securecloudseven.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tiJdWlHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F1D20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeIFWcy (ORCPT
+        id S1728094AbeIFWd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 18:32:54 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:36028 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727732AbeIFWcx (ORCPT
+        Thu, 6 Sep 2018 18:33:56 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45263 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbeIFWdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 18:32:53 -0400
-Received: by mail-it0-f71.google.com with SMTP id m185-v6so13557941itm.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 10:56:18 -0700 (PDT)
+        Thu, 6 Sep 2018 18:33:55 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x26-v6so5600375pge.12;
+        Thu, 06 Sep 2018 10:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=securecloudseven.com; s=google;
-        h=mime-version:message-id:date:subject:from:to
-         :content-transfer-encoding;
-        bh=VXmfNxFeC3t8/KckOEtG5DPP2kB0Dt5B/xDnaaJ3vXs=;
-        b=nKD3T23dop5cGqffjz+CASzkM3sBpv9FeTyDb7RjTQzr7NodUrlhv97A2u7vpKATxx
-         Ck45qLJ0iElgSONs7xjfLIbfdfwrCtXyyZKCQgfIhgS8kPVD3cZ4eUyk0b3x0D39BwJG
-         oGhlfFcspRYzFMJxhtjjl0y9WBf0mJUTtZnsk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7wP83UWWdy3oHS2ydsR4I/R3KsYvz9J3rPpQO0wa5MM=;
+        b=tiJdWlHd4MGiiKqXf2m5GrTZqzotetGFif4zWTILTtLl+me4yQuz4TWOEr1aqPfjwO
+         U18HQ2G89b8Sg3z8b5IFevLFjKkbvtnQfP7rRej5sJyuUnhlRz1Gqj2Fz9Czv4XtArsI
+         Pj6TCETm98z9euvIHozex10oHz1L90EBtIQC6vcR34xOhTswaL+XDzLf96YaWniinQ0O
+         FSJxaVuWQhq/t1qZYD/6fL7DLsBFNabjDLfEEApTWRyd9/E3m6TLwUWV0Zz7tOnEbtse
+         pi57fty2qI1TVsxHMccTqXzrO/GftcKXskqRG1pE4ybX716UCvx00Cn5irz/3Ht46ziq
+         wW4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:message-id:date:subject:from:to
-         :content-transfer-encoding;
-        bh=VXmfNxFeC3t8/KckOEtG5DPP2kB0Dt5B/xDnaaJ3vXs=;
-        b=kK0TgfA5MjEpikxVP4nX+42X92atA1EKcCtfbM+nfMLFZTC1+UOPWz3YjsNZJMl4hi
-         Y6dfEBjN4JW4jWAHbTbtzAb5eCywjSi0FhjIAf9v9uGb751ogyAOW8RLmAl2CTyuYo8H
-         XNZhc0Chn9iPwIQjbzf38GhaxGyVIvflfIQNWSOkTQTAHsOMwfd4l2wUZi/J0zhfTRMt
-         8Dk/qBfAPkJUTrLXSgxlQS2Q1eUNWbpqMGsWnJHBMPRNE1a5fYDGCCMF/D9M+RIdZuOw
-         fQq5Y6AJ5ujsVKCoVjnTAGe9Qw/FJS3sWdsLw7dYyav9ZcvR1VdCp5cpPG+IpZLXDyY+
-         +q5A==
-X-Gm-Message-State: APzg51A3PQoUHDY5XkL/tXn/Yaqtg1L5Qyo8rVEMtGft4ezjlrDaO+We
-        YIhdnnKUdoYSVj7ePiGjXXD3OosDmfdk
-X-Google-Smtp-Source: ANB0VdZrmYUnQa5j21vUdCQwgZCmuqAHgX9xw4zvhMp/+RusPHwNLP1CeE5Z23nnNZhoRnx6cbx2TZKh7w==
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7wP83UWWdy3oHS2ydsR4I/R3KsYvz9J3rPpQO0wa5MM=;
+        b=XM/ObGBbyt09Yw8mGCjmU6XzqhFZBTcmEg0GIGbIgnsRJ8mTwUgRWdT4+NEt2H+zov
+         z+lkFZo8t5Kfhr7n7FG+FcBn144yP5KyDeaX0sY4kVPgPFKv6PQSDTDbkGAJ/nJPoN0A
+         lKNJLKL79RDaxL6Z3PK6xGxsZl5qiue8JwafpEilxtvZgzztaUprWMeMygFauWiqY7uJ
+         HGSg6jo9AOGkvtYLCLGsgGc7kIjk/oWmCTcXSbn3s6ib8ECydSZgrtED7ASogxhwI0h1
+         2OjOLnWslZ7cUauIzUbWZeLA5BjaCMO2aXCL2DJnQNsmoqyRv63glGePAoX+IBvhQNM6
+         DMCQ==
+X-Gm-Message-State: APzg51C+X/XsvTKJLV3z6GHiGtYA35JhgLgeJawenQ4BASRsl/Jzbnah
+        dVeEpKJkfeC0YP3iGQF52Ok=
+X-Google-Smtp-Source: ANB0VdaHhqI306R1+Qhv5D2j8QhTvj5ZgIVoPKaqSKVj5E+C1MRr4e++Qzn2zCOlAubIBK8J0EQFDw==
+X-Received: by 2002:a62:63c2:: with SMTP id x185-v6mr4140745pfb.13.1536256640120;
+        Thu, 06 Sep 2018 10:57:20 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::5:7a4e])
+        by smtp.gmail.com with ESMTPSA id e64-v6sm8626246pfk.87.2018.09.06.10.57.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 10:57:19 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 10:57:18 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Mauricio Vasquez B <mauricio.vasquez@polito.it>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH bpf] selftests/bpf: add missing executables to .gitignore
+Message-ID: <20180906175716.5vaxpmclyvottvys@ast-mbp.dhcp.thefacebook.com>
+References: <1535990727-2778-1-git-send-email-mauricio.vasquez@polito.it>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8b58:: with SMTP id n85-v6mr3174827iod.138.1536256578139;
- Thu, 06 Sep 2018 10:56:18 -0700 (PDT)
-Message-ID: <0000000000009fbc700575379bf2@google.com>
-Date:   Thu, 06 Sep 2018 17:56:18 +0000
-Subject: Targeted Global B2B Companies emails list
-From:   christine.walker@securecloudseven.com
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535990727-2778-1-git-send-email-mauricio.vasquez@polito.it>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCkkganVzdCB3YW50ZWQgdG8gY2hlY2sgaWYgeW91IHdvdWxkIGJlIGludGVyZXN0ZWQg
-aW4gYSBsaXN0IG9mIE1hbmFnZWQgIA0KU2VydmljZSBQcm92aWRlcnMgKE1TUHMpIGFuZCBNYW5h
-Z2VkIFNlY3VyaXR5IFNlcnZpY2UgUHJvdmlkZXJzIChNU1NQcyk/DQoNCldlIGFsc28gaGF2ZSB0
-aGUgZGF0YSBpbnRlbGxpZ2VuY2Ugb2Y6DQoNCuKAoiAgICAgICBNYW5hZ2VkIFNlcnZpY2UgUHJv
-dmlkZXJzIChNU1DigJlzKSDigJMgMjUsMDAwIHVuaXF1ZSBjb21wYW5pZXMNCuKAoiAgICAgICBN
-YW5hZ2VkIFNlY3VyaXR5IFNlcnZpY2UgUHJvdmlkZXJzIChNU1NQ4oCZcykg4oCTIDcsNTIwIHVu
-aXF1ZSBjb21wYW5pZXMNCuKAoiAgICAgICBJVCBEZWNpc2lvbiBNYWtlcnMg4oCTIDZtaWxsaW9u
-IGFjcm9zcyBhbGwgaW5kdXN0cnkNCuKAoiAgICAgICBCdXNpbmVzcyBEZWNpc2lvbiBNYWtlcnMg
-4oCTIDEwIG1pbGxpb24gYWNyb3NzIGFsbCBpbmR1c3RyeQ0K4oCiICAgICAgIFZhbHVlIEFkZGVk
-IFJlc2VsbGVycy0gVkFScw0K4oCiICAgICAgIEluZGVwZW5kZW50IFNvZnR3YXJlIFZlbmRvcnMt
-IElTVnMNCuKAoiAgICAgICBTeXN0ZW0gSW50ZWdyYXRvcnMtIFNJcw0K4oCiICAgICAgIFZvSVAg
-U2VydmljZSBQcm92aWRlcnMuDQrigKIgICAgICAgVGVsZWNvbW11bmljYXRpb25zIFNlcnZpY2Ug
-UHJvdmlkZXJzIChUU1BzKQ0K4oCiICAgICAgIEFwcGxpY2F0aW9uIFNlcnZpY2UgUHJvdmlkZXJz
-IChBU1BzKQ0K4oCiICAgICAgIElUIE1hbmFnZWQgU2VydmljZXMgUHJvdmlkZXJzIChJVE1TUCkN
-CuKAoiAgICAgICBTdG9yYWdlIFNlcnZpY2UgUHJvdmlkZXJzIChTU1BzKQ0KDQpLaW5kbHkgcmV2
-aWV3IGFuZCBsZXQgbWUga25vdyBpZiBJIGNhbiBzaGFyZSBtb3JlIGluZm9ybWF0aW9uIG9uIHRo
-aXMuDQoNCkkgbG9vayBmb3J3YXJkIHRvIGhlYXJpbmcgZnJvbSB5b3UuDQoNClJlZ2FyZHMsDQpD
-aHJpc3RpbmUNCk1hcmtldGluZyBTcGVjaWFsaXN0DQoNCklmIHlvdSBkb24ndCB3YW50IHRvIGlu
-Y2x1ZGUgeW91cnNlbGYgaW4gb3VyIG1haWxpbmcgbGlzdCwgcGxlYXNlIHJlcGx5ICANCmJhY2sg
-4oCcTGVhdmUgT3V0IiBpbiBhIHN1YmplY3QgbGluZQ0K
+On Mon, Sep 03, 2018 at 06:05:27PM +0200, Mauricio Vasquez B wrote:
+> Signed-off-by: Mauricio Vasquez B <mauricio.vasquez@polito.it>
+> ---
+>  tools/testing/selftests/bpf/.gitignore | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
+> index 49938d72cf63..4d789c1e5167 100644
+> --- a/tools/testing/selftests/bpf/.gitignore
+> +++ b/tools/testing/selftests/bpf/.gitignore
+> @@ -19,3 +19,7 @@ test_btf
+>  test_sockmap
+>  test_lirc_mode2_user
+>  get_cgroup_id_user
+> +test_skb_cgroup_id_user
+> +test_socket_cookie
+> +test_cgroup_storage
+> +test_select_reuseport
+
+Applied, Thanks
+
