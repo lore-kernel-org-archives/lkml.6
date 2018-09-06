@@ -2,85 +2,156 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC781C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA24C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986FD2083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7407E2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:48:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R11S8aJF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986FD2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="g5BE+Kpl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7407E2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbeIFVWy (ORCPT
+        id S1728239AbeIFVZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:22:54 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37876 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728232AbeIFVWx (ORCPT
+        Thu, 6 Sep 2018 17:25:14 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:46750 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727738AbeIFVZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:22:53 -0400
-Received: by mail-oi0-f66.google.com with SMTP id p84-v6so21816583oic.4;
-        Thu, 06 Sep 2018 09:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vBYBsj5C0+fa8O0738PilxaqO2r2+LY52dBEYr7H+1Q=;
-        b=R11S8aJFi96fzd9fABY1ghJTwL5pz+y4SkO4fa9asMfsipxsljR9O/qiBGQkGLfdw7
-         IczcVu4FXwBZvsIfFD0v3J/TNuAg07JnNKDDYtOdse8JQNZXSTTRuRHI1tGmHswuGL6L
-         wvOOVF8O0uAFdVdvPT+3olodJrr5U5MNhUQn+FUQ1EvdoS66Nh3Ig1b0JE86vO0X3YZ2
-         TSOC27uXpnMNBRVCuYsejIJegfc6yLWACKOxm4BzeXEN5mUUEfK0c/TqJ0VK93rVz8v6
-         DY9CRBBWMH1ojzDepAEWrqP2ak8jSNwHdmrlrp52H5RBvJBaySxmCjnAsGjpR9K2ib1r
-         Nelw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vBYBsj5C0+fa8O0738PilxaqO2r2+LY52dBEYr7H+1Q=;
-        b=QUU3x5i3OJayvbRpY62PVDnSaC0vYWcjJDh6mDv/F57CryzEPxCJ6/bLVa/f4SarM5
-         FhY7nda/zRrRgwwSIeqGNlL//Rm/0/4elfWQWfdGCNYcTr9bYEmjtO2Wa/5Q8oZyAhGa
-         0KGXaOoDZlMsgBF1EWYNymQUVMnYZRQSqfTPvVZIFE6BPMdbU9xj8WcIG2BZ/OEZT77J
-         3uMGUmtFwMMWkv2i0t1onYGjnfi/ap7IlyZdIcJttNCdzC9tNZnj37T4gOXMEX7QQgPX
-         L2RvZoSyVZM47oZsJqUONl+Wx1lYInZKBCjE1dIRCyqBRVtFFCLQwNxSSeMJ63qsJzrx
-         Cv8A==
-X-Gm-Message-State: APzg51Di6wVbeShb/nafSqQtAVwg4iKwM5EyepLHBlSyGosafQV9skeA
-        xJgP3kbtvYC9J5lEaX78KRTRGp7KaSgsY89EX8c=
-X-Google-Smtp-Source: ANB0VdaYBH/tjSAyK8jveOXEHHa68UfBiComyQ8g98DtFLUti++huVS3fIM/fYTXq1VFxX2SFViT3qlz8rZB2sz3BVo=
-X-Received: by 2002:aca:401:: with SMTP id 1-v6mr3504647oie.28.1536252392830;
- Thu, 06 Sep 2018 09:46:32 -0700 (PDT)
+        Thu, 6 Sep 2018 17:25:14 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 5C8725C08AC;
+        Thu,  6 Sep 2018 18:48:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1536252531;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZtMm+q5K0uLBEnCXOndLdPzPHG4bKRNCOaaBo9673O0=;
+        b=g5BE+KplTNOf7ssvA+uBj9kLjMLvJJJpbxuYO/WYQ73KwKaC40ecrwinyYu87pu2FkM1fz
+        0UfA1hiziTocYtunf8e8dRCOtDw8F3JX2EpUniolWcXQCKllAin/qWjpMLt0sMQQqKUAyQ
+        CEyyo2qZ6vk8GkEVcga8AlJeaT/LR94=
 MIME-Version: 1.0
-Received: by 2002:a9d:cca:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 09:46:32 -0700 (PDT)
-In-Reply-To: <1536204258-433-1-git-send-email-Anson.Huang@nxp.com>
-References: <1536204258-433-1-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 6 Sep 2018 13:46:32 -0300
-Message-ID: <CAOMZO5DzYBz3U=RT-HzzK5KMMnYipceCWh9eYuYRmBctkRZ_=w@mail.gmail.com>
-Subject: Re: [PATCH V2] input: egalax_ts: add system wakeup support
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 06 Sep 2018 09:48:51 -0700
+From:   Stefan Agner <stefan@agner.ch>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-input@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        NXP Linux Team <linux-imx@nxp.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        sean@poorly.run, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        max.krummenacher@toradex.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
+In-Reply-To: <10044412.4MiZRujKJI@avalon>
+References: <20180905052113.21262-1-stefan@agner.ch>
+ <a00c1650b69ba85bed7ae39b81a0c40f@agner.ch>
+ <CACRpkdbw0VjkHYcUpox+DorRG0oRdPARL4ShgPfV2eFaUF_w0g@mail.gmail.com>
+ <10044412.4MiZRujKJI@avalon>
+Message-ID: <d07214d3005fb7229f17dd62d1b5b8ee@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 12:24 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> This patch adds wakeup function support for egalax touch
-> screen, if "wakeup-source" is added to device tree's egalax
-> touch screen node, the wakeup function will be enabled, and
-> egalax touch screen will be able to wakeup system from suspend.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On 06.09.2018 05:25, Laurent Pinchart wrote:
+> Hi Linus,
+> 
+> On Thursday, 6 September 2018 14:07:41 EEST Linus Walleij wrote:
+>> On Wed, Sep 5, 2018 at 8:32 PM Stefan Agner <stefan@agner.ch> wrote:
+>> > On 05.09.2018 00:44, Laurent Pinchart wrote:
+>> >
+>> > Good point! I actually really don't like that we use the same flags here
+>> > but from a different perspective. Especially since the flags defines
+>> > document things differently:
+>> >
+>> > /* drive data on pos. edge */
+>> > #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
+>> > /* drive data on neg. edge */
+>> > #define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
+>>
+>> Maybe a stupid comment from my side, but can't we just change the
+>> documentation to match the usecases?
+>>
+>> /* Trigger pixel data latch on positive edge */
+>> #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
+> 
+> The flags are used for the drm_connector bus_flags field, and really mean 
+> driving on the positive/negative edges. We this can't change their meaning 
+> like this.
+> 
+>> > Using the opposite perspective would also need translation in crtc
+>> > drivers... So far no driver uses sampling_edge.
+>> >
+>> > I would prefer if we always use the meaning as documented by the flags.
+>> >
+>> > I guess we would need to convert DRM_BUS_FLAG_PIXDATA_POSEDGE ->
+>> > DRM_BUS_FLAG_PIXDATA_NEGEDGE.
+>> >
+>> > Linus Walleij, you added sampling edge, any thoughts?
+>>
+>> I just thought it was generally useful to have triggering edge encoded
+>> into the bridge as it makes it clear that this edge is something
+>> that is a delayed version of the driving edge which is subject to
+>> clock skew caused by the speed of electrons in silicon and
+>> copper and slew rate caused by parasitic capacitance.
+> 
+> I agree that we need both the driving and sampling edge. In many case they 
+> will be opposite, and providing some kind of appropriate defaults in APIs is 
+> fine by me, but we need a way to specify both when needed.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+We do have pixel clock flags for displays, but also they are actually
+controller oriented:
+
+https://elixir.bootlin.com/linux/latest/source/include/video/display_timing.h#L15
+
+I guess having different flags to denote driving and sampling edge
+independently would be ideal. But then, is there really a use case where
+it wouldn't be the exact opposite?
+
+The other bus flags are actually fine as is. I suggest to just stick
+with the bus flags as we have them now, at least for now.
+
+Alternatively, we could provide "consumer/bridge" oriented flags which
+use the same bit and just are the opposite of the controller oriented
+flags, e.g.:
+
+/* drive data on pos. edge */
+#define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
+/* drive data on neg. edge */
+#define DRM_BUS_FLAG_PIXDATA_NEGEDGE	(1<<3)
+/* sample data on neg. edge */
+#define DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE	(1<<2)
+/* sample data on pos. edge */
+#define DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE	(1<<3)
+
+--
+Stefan
+
+
+
