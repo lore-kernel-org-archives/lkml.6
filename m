@@ -6,93 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC28C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 878F1C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 420AF206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:13:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420AF206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AAB620861
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:13:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AAB620861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbeIFRtF (ORCPT
+        id S1729125AbeIFRtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:49:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48813 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727698AbeIFRtE (ORCPT
+        Thu, 6 Sep 2018 13:49:10 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46977 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeIFRtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:49:04 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DDRhu304562
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:13:27 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DDRlb304559;
-        Thu, 6 Sep 2018 06:13:27 -0700
-Date:   Thu, 6 Sep 2018 06:13:27 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5z7qw529sdebrn9y1xxqw9hf@git.kernel.org>
-Cc:     namhyung@kernel.org, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, hpa@zytor.com, wangnan0@huawei.com,
-        dsahern@gmail.com
-Reply-To: wangnan0@huawei.com, adrian.hunter@intel.com, hpa@zytor.com,
-          dsahern@gmail.com, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          tglx@linutronix.de, mingo@kernel.org, acme@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf bpf: Give precedence to bpf header dir
-Git-Commit-ID: d35b168c3dcdf103c2b2d694ad8513a669781703
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 13:49:09 -0400
+Received: by mail-ua1-f66.google.com with SMTP id u11-v6so8624621uan.13;
+        Thu, 06 Sep 2018 06:13:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FMi1fiXiQnlIIm20vOCO9Ai8Uq3ouuXvA0TXGEkRtWI=;
+        b=Xes3LWUQnZ6CgDlA66he0sqJs0m1Vszw+990zDeqWWaXIkry/rqWbwOjNI3NaQrBcp
+         nX5Go7RoBdcBbKUbiaaTdT7K8wVLom9WjOu0xZRnLT2M5FdqOyg5hFYxVHs2RS1ZcgQu
+         Kvwn1qAdn7iv8kCGrXj8WhIqnjs9J2g/eZ3x+vt8ASFOEOch/ck4Skdn7mOw9vxvXg5T
+         BOWhEgQ7Vcm5bJWUDZHTuvfdYh+6ssvDCPHpbfxA5GW9cu0Ewhv1NwadcaJwPrZMn0sr
+         HzmwY1ofm6apdgeE8tNTdeH+DjoNxVJN8uN2aS0L0PY5CMvzfL9HHkYzHf+ou74S43e3
+         XbHA==
+X-Gm-Message-State: APzg51AQetM5dDygc3RxfdK8YHtWVXVvrpUyoInrCjKtk+MhZod+57WR
+        773lqjudZr3eUyshxjXZ7udmw01A2cF8mcnRyxc=
+X-Google-Smtp-Source: ANB0VdYuqCPS7oaEhD1Dhm+ONl2xMkVrLOAfak+ENZyqTtq8kbfKHRpXGNztfm83TJckkur/vwiRQaXO49LIfMpP+2Y=
+X-Received: by 2002:ab0:60ae:: with SMTP id f14-v6mr936720uam.153.1536239621198;
+ Thu, 06 Sep 2018 06:13:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180905090555.9888-1-geert+renesas@glider.be> <CACRpkdZMD-GJUtcSiP30Rb-XAR6OHXZvdmEgOY-CxgauDGvViQ@mail.gmail.com>
+In-Reply-To: <CACRpkdZMD-GJUtcSiP30Rb-XAR6OHXZvdmEgOY-CxgauDGvViQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 6 Sep 2018 15:13:28 +0200
+Message-ID: <CAMuHMdUgEqLxWPaE_G7YUGUmTteAW29Lqtnvgp=JRXOrJA-gxA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpio: Fix VLA removal fallout
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d35b168c3dcdf103c2b2d694ad8513a669781703
-Gitweb:     https://git.kernel.org/tip/d35b168c3dcdf103c2b2d694ad8513a669781703
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 29 Aug 2018 23:53:22 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:20 -0300
+Hi Linus,
 
-perf bpf: Give precedence to bpf header dir
+On Thu, Sep 6, 2018 at 3:01 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Sep 5, 2018 at 11:23 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > This patch series fixes various (mostly harmless) issues introduced by
+> > commit 3027743f83f867d8 ("gpio: Remove VLA from gpiolib").
+> >
+> > As per the "one patch should fix one issue"-policy, this series contains 3
+> > patches, although they all have the same Fixes: tag.
+> >
+> > W.r.t. propagating errors: while gpiod_set_array_value_complex() and its
+> > callers can now return an error code, this is currently limited to -ENOMEM.
+> > Actual failures setting a GPIO output value cannot be propagated, as
+> > gpio_chip.set() still returns void.  Do you want to change that?
+> > E.g. gen_74x164_set_value() can fail.
+> >
+> > Feel free to fold patches if deemed appropriate.
+>
+> What I want to know is if these patches drive a truck through Janusz patch
+> set augmenting the array functions that I definately also plan to merge for
+> this kernel cycle.
+>
+> Issues should be fixed of course, but if some of them already disappear
+> if I apply Janusz patches, I'd rather postpone ... is it going to be hard
+> to redo the cleanups on top of his patches?
 
-I need to check the need for $KERNEL_INC_OPTIONS when building eBPF
-restricted C programs, for now just give precedence to
-$PERF_BPF_INC_OPTIONS so that we can get a linux/socket.h usable
-in eBPF programs.
+I can respin afterwards. Just a few changed lines of context.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-5z7qw529sdebrn9y1xxqw9hf@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/llvm-utils.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+One question is if the stable team plans to backport the VLA removal (and
+my fixes) or not...
 
-diff --git a/tools/perf/util/llvm-utils.c b/tools/perf/util/llvm-utils.c
-index 19262f98cd4e..5b0b60f00275 100644
---- a/tools/perf/util/llvm-utils.c
-+++ b/tools/perf/util/llvm-utils.c
-@@ -19,7 +19,7 @@
- #define CLANG_BPF_CMD_DEFAULT_TEMPLATE				\
- 		"$CLANG_EXEC -D__KERNEL__ -D__NR_CPUS__=$NR_CPUS "\
- 		"-DLINUX_VERSION_CODE=$LINUX_VERSION_CODE "	\
--		"$CLANG_OPTIONS $KERNEL_INC_OPTIONS $PERF_BPF_INC_OPTIONS " \
-+		"$CLANG_OPTIONS $PERF_BPF_INC_OPTIONS $KERNEL_INC_OPTIONS " \
- 		"-Wno-unused-value -Wno-pointer-sign "		\
- 		"-working-directory $WORKING_DIR "		\
- 		"-c \"$CLANG_SOURCE\" -target bpf $CLANG_EMIT_LLVM -O2 -o - $LLVM_OPTIONS_PIPE"
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
