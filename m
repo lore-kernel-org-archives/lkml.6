@@ -2,169 +2,101 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F710C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 485B3C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8EF2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:06:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="EVt2PaVF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8EF2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id F04A12075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:08:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F04A12075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbeIFMjt (ORCPT
+        id S1727953AbeIFMmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:39:49 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53554 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeIFMjt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:39:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1536221193; x=1567757193;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=bfVTp7cnxr5hnNuRr8+ZprlpDsamHWYPA+p2uCLMvek=;
-  b=EVt2PaVFkAHH40J4Y8LRXXdOSv8huHIaYKntaDeIF/58PStS3E7/v4qL
-   /pY2C12vLp2dZfKULiXcCqzi/YYgcQ8H9bsDrO4OiY51eoAwQNM2Sx0Ed
-   re0h4uyrncUre70FPpoibndrUnGI9ne6cQ273I8+B+iCrCSbWKSURbpvs
-   bqI8ieBmRLSaAc2bsVHX/TnjZCHFM3taNvr/NQeRi/orghwSbrZYIOMtB
-   uLbI8QLHGT0usKFpMGzbiErgXOkHgpD+Ccu6MoFThR9j+hkLFfn9GdVo2
-   YUin4nhIbQRwoPzDOpBNmcmGpqzm8WQLdctwdRzfSjsZkL1RWwGzahqbp
-   g==;
-X-IronPort-AV: E=Sophos;i="5.53,337,1531756800"; 
-   d="scan'208";a="186673940"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Sep 2018 16:06:32 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 06 Sep 2018 00:52:12 -0700
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 06 Sep 2018 01:05:36 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        hch@infradead.org, anup@brainfault.org
-Cc:     mark.rutland@arm.com, atish.patra@wdc.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com,
-        marc.zyngier@arm.com, jeremy.linton@arm.com,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        catalin.marinas@arm.com, dmitriy@oss-tech.org,
-        ard.biesheuvel@linaro.org
-Subject: [PATCH v3 02/12] RISC-V: Filter ISA and MMU values in cpuinfo
-Date:   Thu,  6 Sep 2018 01:05:25 -0700
-Message-Id: <1536221135-182613-3-git-send-email-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536221135-182613-1-git-send-email-atish.patra@wdc.com>
-References: <1536221135-182613-1-git-send-email-atish.patra@wdc.com>
+        Thu, 6 Sep 2018 08:42:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34760 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726490AbeIFMmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:42:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4F7B7AE0E;
+        Thu,  6 Sep 2018 08:08:05 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 10:08:04 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 15/29] memblock: replace alloc_bootmem_pages_node
+ with memblock_alloc_node
+Message-ID: <20180906080804.GX14951@dhcp22.suse.cz>
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-16-git-send-email-rppt@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536163184-26356-16-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Palmer Dabbelt <palmer@sifive.com>
+On Wed 05-09-18 18:59:30, Mike Rapoport wrote:
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-We shouldn't be directly passing device tree values to userspace, both
-because there could be mistakes in device trees and because the kernel
-doesn't support arbitrary ISAs.
+again a short work of wisdom please.
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-[Atish: checkpatch fix and code comment formatting update]
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/kernel/cpu.c | 68 ++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 7 deletions(-)
+The change itself looks good.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index ca6c81e5..b10cf054 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -58,6 +58,63 @@ int riscv_of_processor_hart(struct device_node *node)
- 
- #ifdef CONFIG_PROC_FS
- 
-+static void print_isa(struct seq_file *f, const char *orig_isa)
-+{
-+	static const char *ext = "mafdc";
-+	const char *isa = orig_isa;
-+	const char *e;
-+
-+	/*
-+	 * Linux doesn't support rv32e or rv128i, and we only support booting
-+	 * kernels on harts with the same ISA that the kernel is compiled for.
-+	 */
-+#if defined(CONFIG_32BIT)
-+	if (strncmp(isa, "rv32i", 5) != 0)
-+		return;
-+#elif defined(CONFIG_64BIT)
-+	if (strncmp(isa, "rv64i", 5) != 0)
-+		return;
-+#endif
-+
-+	/* Print the base ISA, as we already know it's legal. */
-+	seq_puts(f, "isa\t: ");
-+	seq_write(f, isa, 5);
-+	isa += 5;
-+
-+	/*
-+	 * Check the rest of the ISA string for valid extensions, printing those
-+	 * we find.  RISC-V ISA strings define an order, so we only print the
-+	 * extension bits when they're in order.
-+	 */
-+	for (e = ext; *e != '\0'; ++e) {
-+		if (isa[0] == e[0]) {
-+			seq_write(f, isa, 1);
-+			isa++;
-+		}
-+	}
-+
-+	/*
-+	 * If we were given an unsupported ISA in the device tree then print
-+	 * a bit of info describing what went wrong.
-+	 */
-+	if (isa[0] != '\0')
-+		pr_info("unsupported ISA \"%s\" in device tree", orig_isa);
-+}
-+
-+static void print_mmu(struct seq_file *f, const char *mmu_type)
-+{
-+#if defined(CONFIG_32BIT)
-+	if (strcmp(mmu_type, "riscv,sv32") != 0)
-+		return;
-+#elif defined(CONFIG_64BIT)
-+	if ((strcmp(mmu_type, "riscv,sv39") != 0)
-+	    && (strcmp(mmu_type, "riscv,sv48") != 0))
-+		return;
-+#endif
-+
-+	seq_printf(f, "mmu\t: %s\n", mmu_type+6);
-+}
-+
- static void *c_start(struct seq_file *m, loff_t *pos)
- {
- 	*pos = cpumask_next(*pos - 1, cpu_online_mask);
-@@ -83,13 +140,10 @@ static int c_show(struct seq_file *m, void *v)
- 	const char *compat, *isa, *mmu;
- 
- 	seq_printf(m, "hart\t: %lu\n", hart_id);
--	if (!of_property_read_string(node, "riscv,isa", &isa)
--	    && isa[0] == 'r'
--	    && isa[1] == 'v')
--		seq_printf(m, "isa\t: %s\n", isa);
--	if (!of_property_read_string(node, "mmu-type", &mmu)
--	    && !strncmp(mmu, "riscv,", 6))
--		seq_printf(m, "mmu\t: %s\n", mmu+6);
-+	if (!of_property_read_string(node, "riscv,isa", &isa))
-+		print_isa(m, isa);
-+	if (!of_property_read_string(node, "mmu-type", &mmu))
-+		print_mmu(m, mmu);
- 	if (!of_property_read_string(node, "compatible", &compat)
- 	    && strcmp(compat, "riscv"))
- 		seq_printf(m, "uarch\t: %s\n", compat);
+> ---
+>  arch/ia64/mm/init.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
+> index 3b85c3e..ffcc358 100644
+> --- a/arch/ia64/mm/init.c
+> +++ b/arch/ia64/mm/init.c
+> @@ -447,19 +447,19 @@ int __init create_mem_map_page_table(u64 start, u64 end, void *arg)
+>  	for (address = start_page; address < end_page; address += PAGE_SIZE) {
+>  		pgd = pgd_offset_k(address);
+>  		if (pgd_none(*pgd))
+> -			pgd_populate(&init_mm, pgd, alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE));
+> +			pgd_populate(&init_mm, pgd, memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node));
+>  		pud = pud_offset(pgd, address);
+>  
+>  		if (pud_none(*pud))
+> -			pud_populate(&init_mm, pud, alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE));
+> +			pud_populate(&init_mm, pud, memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node));
+>  		pmd = pmd_offset(pud, address);
+>  
+>  		if (pmd_none(*pmd))
+> -			pmd_populate_kernel(&init_mm, pmd, alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE));
+> +			pmd_populate_kernel(&init_mm, pmd, memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node));
+>  		pte = pte_offset_kernel(pmd, address);
+>  
+>  		if (pte_none(*pte))
+> -			set_pte(pte, pfn_pte(__pa(alloc_bootmem_pages_node(NODE_DATA(node), PAGE_SIZE)) >> PAGE_SHIFT,
+> +			set_pte(pte, pfn_pte(__pa(memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node))) >> PAGE_SHIFT,
+>  					     PAGE_KERNEL));
+>  	}
+>  	return 0;
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
