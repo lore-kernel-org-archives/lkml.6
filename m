@@ -2,127 +2,156 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B05C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F45BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476A420861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:47:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="OkDaMZ3M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476A420861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 4D04A206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:49:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D04A206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726099AbeIGEZB (ORCPT
+        id S1726250AbeIGE1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 00:25:01 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:50542 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbeIGEZB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 00:25:01 -0400
-Received: from trochilidae.toradex.int (75-146-58-181-Washington.hfc.comcastbusiness.net [75.146.58.181])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 5C61E5C00FA;
-        Fri,  7 Sep 2018 01:47:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1536277624;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=Dl4CLM6q7zOJqIy8RkTGv4ePUE33y8Gam9cCZdubahQ=;
-        b=OkDaMZ3MiRm9EtFOY9vJ1KIuo1/iMz7YnWjGYhYuRttxY/CfpLWq7SPBCb/uWHCmttEdiz
-        BRgW0+wmFS2GDrSwY6j6VFD58QVVNmhJ6bwE3vrg05/rOMj6PPKcHhvxxc/hC0L31kIaKK
-        JyncySS4OShBx9c507VFJG/00X/11Kw=
-From:   Stefan Agner <stefan@agner.ch>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] ARM: dts: imx6q-apalis: mux RESET_MOCI# signal
-Date:   Thu,  6 Sep 2018 16:46:58 -0700
-Message-Id: <20180906234658.12205-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
+        Fri, 7 Sep 2018 00:27:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52360 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725743AbeIGE1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 00:27:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E93DC7A9;
+        Thu,  6 Sep 2018 16:49:48 -0700 (PDT)
+Received: from [10.103.100.29] (unknown [10.103.100.29])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F1A53F557;
+        Thu,  6 Sep 2018 16:49:48 -0700 (PDT)
+Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
+ static key
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-8-quentin.perret@arm.com>
+ <f206f192-1bbf-f868-c8c6-8215334639db@arm.com>
+ <20180906092955.tq27mhzfkovo2ehn@queper01-lin>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <e4e9d572-94ba-9d01-d18a-aa0ddd6fd357@arm.com>
+Date:   Thu, 6 Sep 2018 16:49:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180906092955.tq27mhzfkovo2ehn@queper01-lin>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pinctrl properties on the IOMUXC node get overwritten by the
-carrier board level device tree, hence the pinctrl_reset_moci
-pinctrl does not get applied.
+On 09/06/2018 02:29 AM, Quentin Perret wrote:
+> Hi Dietmar,
+> 
+> On Wednesday 05 Sep 2018 at 23:06:38 (-0700), Dietmar Eggemann wrote:
+>> On 08/20/2018 02:44 AM, Quentin Perret wrote:
+>>> In order to ensure a minimal performance impact on non-energy-aware
+>>> systems, introduce a static_key guarding the access to Energy-Aware
+>>> Scheduling (EAS) code.
+>>>
+>>> The static key is set iff all the following conditions are met for at
+>>> least one root domain:
+>>>     1. all online CPUs of the root domain are covered by the Energy
+>>>        Model (EM);
+>>>     2. the complexity of the root domain's EM is low enough to keep
+>>>        scheduling overheads low;
+>>>     3. the root domain has an asymmetric CPU capacity topology (detected
+>>>        by looking for the SD_ASYM_CPUCAPACITY flag in the sched_domain
+>>>        hierarchy).
+>>
+>> This is pretty much the list (+ is schedutil running) of conditions to set
+>> rd->pd != NULL in build_perf_domains().
+> 
+> Yes, exactly. I actually loop over the rds to check if one of them has a
+> pd != NULL in order to enable/disable the static key. So the check for
+> those conditions is always done at the rd level.
+> 
+>> So when testing 'static_branch_unlikely(&sched_energy_present) &&
+>> rcu_dereference(rd->pd)' don't you test two times the same thing?
+> 
+> Well, not exactly. You could have two rds in your system, and only one
+> of the two has an Energy Model. The static key is just a performance
+> optimization for !EAS systems really. But I must admit it sort of lost a
 
-Associate the pinctrl_reset_moci pinctrl with the PCIe node where
-we also make use of the pin as a reset GPIO.
+Ah, that's correct. But the static key could be exchanged by a sched 
+feature, that's the important bit here.
 
-Since the pin is muxed as a GPIO by default not muxing it explicitly
-worked fine in practise.
+> bit of its interest over the versions. I mean, it's not that clear now
+> that a static key is a better option than a sched_feat as you suggest
+> below.
+> 
+>> Also, if let's say somebody wants to run another EM user (e.g. a thermal
+>> governor, like IPA) but not EAS on a asymmetric CPU capacity system. This
+>> can't be achieved with the current static branch approach
+> 
+> I assume you're talking about IPA once migrated to using the EM
+> framework ? In this case, I think you're right, we won't have a single
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/imx6q-apalis-eval.dts       | 2 ++
- arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts | 2 ++
- arch/arm/boot/dts/imx6q-apalis-ixora.dts      | 2 ++
- arch/arm/boot/dts/imx6qdl-apalis.dtsi         | 4 ----
- 4 files changed, 6 insertions(+), 4 deletions(-)
+Right, in case we will have multiple user of the EM in the future.
 
-diff --git a/arch/arm/boot/dts/imx6q-apalis-eval.dts b/arch/arm/boot/dts/imx6q-apalis-eval.dts
-index 707ac9a46115..0edd3043d9c1 100644
---- a/arch/arm/boot/dts/imx6q-apalis-eval.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-eval.dts
-@@ -196,6 +196,8 @@
- };
- 
- &pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_reset_moci>;
- 	/* active-high meaning opposite of regular PERST# active-low polarity */
- 	reset-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
- 	reset-gpio-active-high;
-diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-index 4e1c8feaef82..b94bb687be6b 100644
---- a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
-@@ -196,6 +196,8 @@
- };
- 
- &pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_reset_moci>;
- 	/* active-high meaning opposite of regular PERST# active-low polarity */
- 	reset-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
- 	reset-gpio-active-high;
-diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora.dts b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-index 469e3d0e2827..302fd6adc8a7 100644
---- a/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-+++ b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
-@@ -200,6 +200,8 @@
- };
- 
- &pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_reset_moci>;
- 	/* active-high meaning opposite of regular PERST# active-low polarity */
- 	reset-gpio = <&gpio1 28 GPIO_ACTIVE_HIGH>;
- 	reset-gpio-active-high;
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index 05f07ea3e8c8..3dc99dd8dde1 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -482,10 +482,6 @@
- };
- 
- &iomuxc {
--	/* pins used on module */
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_reset_moci>;
--
- 	pinctrl_apalis_gpio1: gpio2io04grp {
- 		fsl,pins = <
- 			MX6QDL_PAD_NANDF_D4__GPIO2_IO04 0x130b0
--- 
-2.18.0
+> tunable left to enable/disable EAS. On a big.LITTLE platform, if you
+> want IPA, EAS will always be enabled by side effect ...
+> 
+> That's a very good point actually. I think some people will not be happy
+> with that. There are big.LITTLE users (not very many of them, but still)
+> who don't care that much about energy, but do about performance. And
+> those guys might want to use IPA without EAS. So I guess we really need
+> a new knob.
 
+I guess so too.
+
+>> So what about using a (disabled by default ?) sched_feature + rd->pd != NULL
+>> instead?
+> 
+> Right, that's an option. I could remove the static key and
+> sched_energy_start() altogether and replace all the
+> "if (static_branch_unlikely(&sched_energy_present))" by
+> "if (sched_feat(ENERGY_AWARE))" for example. That should be equivalent
+> to what I did with the static key from a performance standpoint. But that
+> would mean users have to manually flip switches to get EAS up and
+> running ... I assume it's the price to pay for configurability.
+> 
+> Another option would be a KConfig option + static key. I could keep all
+> of the ifdefery inside an accessor function like the following:
+> 
+> 	static inline bool sched_energy_aware(void)
+> 	{
+> 	#ifdef CONFIG_SCHED_ENERGY
+> 		return static_branch_likely(&sched_energy_present);
+> 	#else
+> 		return false;
+> 	#endif
+> 	}
+> 
+> Now, I understand that scheduler-related KConfig options aren't welcome
+> in general, so I tend to prefer the sched_feat option.
+> 
+> Thoughts ?
+
+I would prefer a sched_feature. I guess it has to be disabled by default 
+so that other systems don't have to check rcu_dereference(rd->pd) in the 
+wakeup path.
+
+But since at the beginning EAS will be the only user of the EM there is 
+no need to change the static key sched_energy_present right now.
