@@ -2,85 +2,94 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D91EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98034C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEBDD2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:31:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEBDD2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F72020844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:32:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jtrwReKQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F72020844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbeIFXIb (ORCPT
+        id S1730460AbeIFXI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:08:31 -0400
-Received: from sauhun.de ([88.99.104.3]:48108 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbeIFXIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:08:31 -0400
-Received: from localhost (i577A6E95.versanet.de [87.122.110.149])
-        by pokefinder.org (Postfix) with ESMTPSA id DD7F02C058F;
-        Thu,  6 Sep 2018 20:31:46 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 20:31:44 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jun Gao <jun.gao@mediatek.com>
-Cc:     srv_heupstream@mediatek.com, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/2] i2c: mediatek: Register i2c adapter driver earlier
-Message-ID: <20180906183144.GD8607@kunai>
-References: <1536239729-10008-1-git-send-email-jun.gao@mediatek.com>
- <1536239729-10008-2-git-send-email-jun.gao@mediatek.com>
+        Thu, 6 Sep 2018 19:08:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45108 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727640AbeIFXI6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:08:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=EaTQRWH92bKkiyrNh9+noUJ6tLv7LImLaL95HpCzMPw=; b=jtrwReKQniX2UadwV3/dwisazu
+        CioeYKnXos3NJEJu7xhow+B897MCwX46oXeXqzJ+21vScFYhCLRF5/lHpFZLRdzab5/Fznc1ScNFk
+        0XzD1ZuAjKQF9LVJYqn2XrLKtkoV8CejHrauNj8u4BFSMvJ6xKaaOtc4/LLv70qQ6v7dhyt2VvyBZ
+        lK9Sa1e50SFxF1WPZs5FvOvYuBttOv9K9NOoS9q7FEAXDZPZgy9UlToGB3+G765njq508Ho8eN5Ge
+        uuhAdobIMt/XWI+f+l3ww1WN0kYQ86XXeNuYE2IEHVTEKbB2o4oogRwEctyv151yOgWprOmYG6L68
+        CrII+zxQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxz4W-0007cM-WC; Thu, 06 Sep 2018 18:32:05 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D7DDA2018BF7D; Thu,  6 Sep 2018 20:31:57 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 20:31:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Message-ID: <20180906183157.GK24106@hirez.programming.kicks-ass.net>
+References: <20180902173224.30606-1-namit@vmware.com>
+ <20180905185617.GC24082@hirez.programming.kicks-ass.net>
+ <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+ <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
+ <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+ <20180906101641.GG24142@hirez.programming.kicks-ass.net>
+ <6703CD9F-2D84-4449-A423-A4DC24677673@vmware.com>
+ <20180906171754.GJ24106@hirez.programming.kicks-ass.net>
+ <9AF220A3-D783-442E-8E5B-AD0150628347@vmware.com>
+ <32902EEE-FF64-4C12-A043-1848CC927C88@amacapital.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="M38YqGLZlgb6RLPS"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1536239729-10008-2-git-send-email-jun.gao@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <32902EEE-FF64-4C12-A043-1848CC927C88@amacapital.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 06, 2018 at 11:09:23AM -0700, Andy Lutomirski wrote:
+> > On Sep 6, 2018, at 10:58 AM, Nadav Amit <namit@vmware.com> wrote:
+> > It depends what security you want. Some may consider even the short
+> > time-window in which the kernel code is writable from other cores as
+> > insufficient for security.
+> > 
+> > In addition, the set removes the need for remote TLB shootdowns that
+> > text_poke() - with this fix - requires.
+> > 
+> 
+> I’m personally in favor of not needing a global broadcast flush to install kprobes.
 
---M38YqGLZlgb6RLPS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 06, 2018 at 09:15:28PM +0800, Jun Gao wrote:
-> From: Jun Gao <jun.gao@mediatek.com>
->=20
-> In order not to block the initializations of some i2c devices.
-> Register i2c adapter driver at appropriate time.
->=20
-> Signed-off-by: Jun Gao <jun.gao@mediatek.com>
-
-The reasons this patch was rejected in v2 still hold.
-
-
---M38YqGLZlgb6RLPS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluRcpAACgkQFA3kzBSg
-KbZN3BAAsqTrWJ5QI5dYweb+tLwNyMhYSAnc4IFN6kWZUrd5EXil95DmgJk4X2MP
-e593rEqeyLhpnX96PTFZOuwKtz1Pd/VUvUa2u1IHM1K6NiK4lTfLRa54Fi/8/5Hs
-tZHsgiZaxAXiZ6wxfLIoE/FKFipvgmpX72qfxsGPjMU21668qrGfzrLpNzZMd4n/
-TEMgo3ILkMEM8JBepw6FdVgAUyt+lBd51PSd5Sruo0i+Yungl0whikIa/9Lxl21K
-Mgh3oJ9E+fhCrL4soX8NSjW+foFGs52Wz1dumnhLXkkcuwOPfzZzYbGOt0bDiuIo
-yDvweosF9HovW35oVT1lDP+3N6FT8o06plxVpcvPtLBhywQ9GF0lP7BFqd/I0XPE
-7+0LM0dfmNF5og0Hc5My6ZhwWP+Qvd5YpcUGTIf7qlFY2zE+00H9/cHuSERqQKAn
-eYQaVm6TZrGQ9+eIn/BxWiSQZfqg08Qa6TVgR/HAW2nqJ0DIn8Hdl6C7WP59ucB9
-vCke0c8CXLMDI5AHgUWcsrZ6gHzlx7yNn7kkxoqdBUbUfOMS5gUStIv7ca6+NS5i
-+cj3ymQCwvMXBmI44w8Fz3y2f4RCziQ9gOWvX77t0aUIrG17x1Z5EsVgJmOdN98H
-T4SOfeEAi29j1Ah/GmLMenRA09M83tsYiQDdkouteYbJMhh6rtQ=
-=fhL5
------END PGP SIGNATURE-----
-
---M38YqGLZlgb6RLPS--
+That's fine. But at that point its an optimization, not a correctness
+issue.
