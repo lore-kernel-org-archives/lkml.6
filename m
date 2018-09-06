@@ -2,72 +2,73 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDA1C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063E2C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966C820857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C2C20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fAZ8awyf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966C820857
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="k6pkK116"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C2C20857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbeIFOT5 (ORCPT
+        id S1728456AbeIFOUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:19:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33597 "EHLO
+        Thu, 6 Sep 2018 10:20:07 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39769 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbeIFOTz (ORCPT
+        with ESMTP id S1728425AbeIFOUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:19:55 -0400
-Received: by mail-wm0-f67.google.com with SMTP id r1-v6so13909808wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 02:45:16 -0700 (PDT)
+        Thu, 6 Sep 2018 10:20:06 -0400
+Received: by mail-wm0-f67.google.com with SMTP id q8-v6so10560152wmq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 02:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
          :content-transfer-encoding;
-        bh=GdDoGGGCnDzwoVBcTkzvGUgTIWTGiOZCABgdNN8twlc=;
-        b=fAZ8awyfPTfYxIfY7+BEHeT1wILEQ9TmvGEp9CxcokFhDQoIDe3UwPVyWDOP0NA7AQ
-         fDLNWgWUM+OG0W02LjAcUeXUTulZk6idxbEcCX00vHfKe98cD+c/9T9qUsw7vxLhK1AL
-         U39FBX5uXWukCQ9qNYN2cqlBm+EWjL6w4NZwMi9bY+GhqeVxQYorTJPiApkL/sVHUbFi
-         QZrCf1arub5zkIN439iPg5PgZzgRjXH/4gTWWV+GHL72/WtYlNmgCGjE6OKmtxZD1Zxq
-         NPfF9Sl90NTL2mcpME0bBoXBDFEdCUOPqQzVV16C5AeZC/xE7wSoHpQTZGbuPo5MH1iI
-         g1vA==
+        bh=u0lfzEM6OKUDa2ZxzUSTFZCtfnqL+76LEzTwJAF+FFk=;
+        b=k6pkK116ukq13kcMlzeyfmDiLn60xbMWCv/3PAJYa4R+sXoi8CVeCa5kFHeGKKDJJR
+         uTQB87XjAYI6yvUc0tA1UfTwTI2tRC+DoMvkmOOs6IPhoPOczaMgI6wtRo0EG9zCLVcc
+         aJO5LRrhHxaFRPTJ83zkBevpzJcB4h3QU4axWQsX5D1jwhTM1iy55+DyKEjLYsWXpC9t
+         AEqfzDwPjntKSWYzKRrSw8jQR2QgCu6615OiPj9qj7vTSMCFtdsCCjrxOleqyJPjcsHP
+         vP/9hp8J4SwbCJOoeLIPdjkHgrZ2ABlssYeIM0xWXQUsAkw7HaeBTGB+kjcP0omJ3rjw
+         L3Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
          :mime-version:content-transfer-encoding;
-        bh=GdDoGGGCnDzwoVBcTkzvGUgTIWTGiOZCABgdNN8twlc=;
-        b=LCdNSCM8VNANc+FujzYDwa3wrdqFWRAx5kL5B9lAK4GLM7SLKBovkS0KTrT6YB9J8E
-         Zwy+DHd6Dcj29lmeJnSug4E5vrdzzvS6tvr01IY8l4ucVy2IGdhPqRgwXzsUQhEnlQjw
-         U7buoouzvxPWOc9s4Q2vYLNBcL4ubTKBVXEM72oabJGRTqpbpnEDWWtjcQwNZGUFlzQk
-         kM1QNkF88Jb4FEN6EjIcQpBdVpN16G3WY/f0/QPZN+4kQBtLC4LjFY1FiDcD8w2nC2tA
-         Cuj/0bmIs4PxSD+3hk9PNN6HcaKleFvVEpfgs+fdEANbjHdbaBukJxzeD3kj0NXdzHwC
-         BZCw==
-X-Gm-Message-State: APzg51De4nwgRN0TcBsEJr95MhgspkXaptehqOkJUnMvKcUlki5WGS5j
-        3uX3tZDKQ3Q4SOhgym1E5pcmjLDNUR/3Nw==
-X-Google-Smtp-Source: ANB0VdbmAm/5rl+HdX3tkoJvA4vA1ADOOQm+jEhU7Mmoyq5FRhnTr0ysF6UN9rzfT4AtWDSGzXcbEg==
-X-Received: by 2002:a1c:b157:: with SMTP id a84-v6mr1521959wmf.18.1536227116047;
-        Thu, 06 Sep 2018 02:45:16 -0700 (PDT)
+        bh=u0lfzEM6OKUDa2ZxzUSTFZCtfnqL+76LEzTwJAF+FFk=;
+        b=pOq3ic0NDtyP8U7SPFu/miAFpereU6Uq6kr4dNlEyXE2gz36RQMAjXiEJT03YPUJsj
+         FzuP0yrLeh85EeYLjphgToHXzY07YcTGNXsyww4ZTVU18c2t0A+IUbjcH1J0iTYou0SO
+         TssBA/um/L1K9QUl3qL5O0omIOYkZDHbGPKLR/RrNLpS+c/AR4DieYzIyq/Gw37dokQX
+         MSpT2aA3BN7scv4rov1AHmcKKKUIa0Qnjw/9+0iF9EHP7INrrRbFTe8iUkMZxTNfEWhU
+         0/ETKXiXXPNU54QWEltgCZ9XDYcGWGczLO5fVr9Xd008KAewsLdR4W9ymCahTTlKxkCx
+         EYyQ==
+X-Gm-Message-State: APzg51C1+i21RBsprAyr7+SXOboNQ1KUoTCf5Lw63CidUScBV7WNOgUa
+        Mo0kzDSV0DpxSX1FxnqywoB/Sg==
+X-Google-Smtp-Source: ANB0VdY4HpFgC42YSfsXcojvdj5KfvIJYhAYBAyOtf7Kl81e1/gdFQR2wA/kMjGm3Qhtatetc02e4g==
+X-Received: by 2002:a1c:14c3:: with SMTP id 186-v6mr1496022wmu.21.1536227126959;
+        Thu, 06 Sep 2018 02:45:26 -0700 (PDT)
 Received: from localhost (smb-adpcdg1-01.hotspot.hub-one.net. [213.174.99.129])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm3425599wrq.7.2018.09.06.02.45.14
+        by smtp.gmail.com with ESMTPSA id k13-v6sm3426199wrq.7.2018.09.06.02.45.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 02:45:15 -0700 (PDT)
-Date:   Thu, 06 Sep 2018 02:45:15 -0700 (PDT)
-X-Google-Original-Date: Wed, 05 Sep 2018 22:27:13 PDT (-0700)
-Subject:     Re: [PATCH] y2038: Remove newstat family from default syscall set
-In-Reply-To: <20180901174353.GA14271@roeck-us.net>
-CC:     Arnd Bergmann <arnd@arndb.de>, aou@eecs.berkeley.edu,
+        Thu, 06 Sep 2018 02:45:26 -0700 (PDT)
+Date:   Thu, 06 Sep 2018 02:45:26 -0700 (PDT)
+X-Google-Original-Date: Thu, 06 Sep 2018 01:03:33 PDT (-0700)
+Subject:     Re: [RFC PATCH 1/5] RISC-V: Make IPI triggering flexible
+In-Reply-To: <20180904185001.GA25119@infradead.org>
+CC:     aou@eecs.berkeley.edu, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        atish.patra@wdc.com, Christoph Hellwig <hch@infradead.org>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 From:   Palmer Dabbelt <palmer@sifive.com>
-To:     linux@roeck-us.net
-Message-ID: <mhng-a047b20f-8546-4762-bcf0-f884be595b92@palmer-si-x1c4>
+To:     Christoph Hellwig <hch@infradead.org>, anup@brainfault.org
+Message-ID: <mhng-ba039ed5-dcff-41d3-b237-0708b5e117b2@palmer-si-x1c4>
 Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
@@ -76,72 +77,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 01 Sep 2018 10:43:53 PDT (-0700), linux@roeck-us.net wrote:
-> Hi Arnd,
+On Tue, 04 Sep 2018 11:50:02 PDT (-0700), Christoph Hellwig wrote:
+> On Tue, Sep 04, 2018 at 06:15:10PM +0530, Anup Patel wrote:
+>> The mechanism to trigger IPI is generally part of interrupt-controller
+>> driver for various architectures. On RISC-V, we have an option to trigger
+>> IPI using SBI or SOC vendor can implement RISC-V CPU where IPI will be
+>> triggered using SOC interrupt-controller (e.g. custom PLIC).
 >
-> On Fri, Apr 13, 2018 at 11:50:12AM +0200, Arnd Bergmann wrote:
->> We have four generations of stat() syscalls:
->> - the oldstat syscalls that are only used on the older architectures
->> - the newstat family that is used on all 64-bit architectures but
->>   lacked support for large files on 32-bit architectures.
->> - the stat64 family that is used mostly on 32-bit architectures to
->>   replace newstat
->> - statx() to replace all of the above, adding 64-bit timestamps among
->>   other things.
->>
->> We already compile stat64 only on those architectures that need it,
->> but newstat is always built, including on those that don't reference
->> it. This adds a new __ARCH_WANT_NEW_STAT symbol along the lines of
->> __ARCH_WANT_OLD_STAT and __ARCH_WANT_STAT64 to control compilation of
->> newstat. All architectures that need it use an explict define, the
->> others now get a little bit smaller, and future architecture (including
->> 64-bit targets) won't ever see it.
->>
+> Which is exactly what we want to avoid, and should not make it easy.
 >
-> This patch causes my riscv boot tests to crash in -next
+> The last thing we need is non-standard whacky IPI mechanisms, and
+> that is why we habe SBI calls for it.  I think we should simply
+> stat that if an RISC-V cpu design bypasse the SBI for no good reason
+> we'll simply not support it.
 
-Ah, thanks for running these!
+I agree.  Hiding this sort of stuff is the whole point of the SBI.
 
-> sbin/init: error while loading shared libraries: libc.so.6: cannot stat shared object: Error 38
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00007f00
->
-> The following change fixes the problem for me, but of course I have no idea
-> if it is correct. Copying RISC-V maintainers for input.
->
-> Guenter
->
-> ---
-> diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
-> index 0caea01d5cca..eff7aa9aa163 100644
-> --- a/arch/riscv/include/asm/unistd.h
-> +++ b/arch/riscv/include/asm/unistd.h
-> @@ -16,6 +16,7 @@
->   * be included multiple times.  See uapi/asm/syscalls.h for more info.
->   */
->
-> +#define __ARCH_WANT_NEW_STAT
->  #define __ARCH_WANT_SYS_CLONE
->  #include <uapi/asm/unistd.h>
->  #include <uapi/asm/syscalls.h>
+Anup: do you have some concrete reason for trying to avoid the SBI?  If it's 
+just to add non-standard interrupt controllers then I don't think that's a 
+sufficient reason, as you can just add support for whatever the non-standard 
+interrupt mechanism is in the SBI implementation -- that's what we're doing 
+with BBL's CLINT driver, though there's not a whole lot of wackiness there so 
+at least the SBI implementation is pretty small.
 
-I'm afraid I'm not sure what the right thing to do here is either, but from the 
-patch description it does seem like we should have this guarded by an "#ifdef 
-CONFIG_32BIT" so we can keep it out of our 32-bit ABI (which isn't in glibc 
-yet, so isn't stable) in favor of statx() (or maybe stat64()?).  The one 
-problem here is that I can't find "newstat" anywhere in glibc to verify it's 
-actually supposed to be part of our 64-bit ABI, though I can find a bunch of 
-references to "statx" that seem to indicate it's meant to be present.
+> So NAK for this patch.
 
-That said, assuming you don't have anything wacky going on in userspace if this 
-breaks the ABI then it breaks the ABI, so however newstat got into a binary we 
-still need to keep it around.  Poking around my Fedora glibc image I see
-
-    000000000009b040 <__xstat>:
-       9b040:       e51d                    bnez    a0,9b06e <__xstat+0x2e>
-       9b042:       04f00893                li      a7,79
-       9b046:       f9c00513                li      a0,-100
-       9b04a:       4681                    li      a3,0
-       9b04c:       00000073                ecall
-
-which seems to coorespond with sys_newfstatat, which indicates to me we should 
-have it in the 64-bit ABI.
+Certainly without a compelling reason, and even then I'd only want to take some 
+standard interrupt controller -- for example, the CLIC (or whatever the result 
+of the fast interrupts task group is called) could be a viable option.  Even 
+with a standard interrupt controller, we'd need a really compelling reason to 
+do so.
