@@ -2,259 +2,128 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0027EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A495EC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D3F220844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:13:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3F220844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 512C020857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:13:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6ovPMPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 512C020857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbeIFStH (ORCPT
+        id S1729788AbeIFSta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:49:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46482 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728905AbeIFStH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:49:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E566980D;
-        Thu,  6 Sep 2018 07:13:22 -0700 (PDT)
-Received: from [10.4.13.84] (e119884-lin.emea.arm.com [10.4.13.84])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83C793F614;
-        Thu,  6 Sep 2018 07:13:18 -0700 (PDT)
-Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by
- sparse
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        linux-kselftest@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <cover.1535629099.git.andreyknvl@google.com>
- <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
- <20180831081123.6mo62xnk54pvlxmc@ltop.local>
- <20180831134244.GB19965@ZenIV.linux.org.uk>
- <CAAeHK+w86m6YztnTGhuZPKRczb-+znZ1hiJskPXeQok4SgcaOw@mail.gmail.com>
- <01cadefd-c929-cb45-500d-7043cf3943f6@arm.com>
- <20180903151026.n2jak3e4yqusnogt@ltop.local>
- <a31d3400-4523-2bda-a429-f2a221e69ee8@arm.com>
- <20180905190316.a34yycthgbamx2t3@ltop.local>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <5074b9b6-2b8d-c410-f908-b4c17dacbb2c@arm.com>
-Date:   Thu, 6 Sep 2018 15:13:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 14:49:30 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45510 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728905AbeIFSta (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:49:30 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u83-v6so9423734lje.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 07:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=BuMxjxZ+2MvmTLTZqSQIbnuGHXcgd8YbQtM3hlMRd4s=;
+        b=A6ovPMPPdt0ecYJKpqTXVF9igCaWarjk+W36Hne7yYTavkVdiogx5O+RTxm2O/8kbc
+         K/GlClVKpb13ahb94qGOvRoXrIc6NPyoF8wQe9Gpq7UGe1oF2Z/EYZYCsJ/9H80BwavZ
+         Ras2Cn4ts1ppDdkzjq8eHBS71fr8zDm5/5WaA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=BuMxjxZ+2MvmTLTZqSQIbnuGHXcgd8YbQtM3hlMRd4s=;
+        b=bDk38eeDMTKAZ5+vb01MGDlnluzckR7XmLx+UjDKn31jku+Dncvz6+wETTLarI4Ki7
+         bnoa0YgM1Dm2MW3f0P+IoHWRvOQ19GZdYA+eUntNsXxpmTOXi3uffQwUbFIb8Zn5dKI6
+         OF9TjalAEzCLWrn3HjkCyLo2VsmgFCjOza7Ph3KkDl5yXJu2w1U7XolloWj5+ec/7M33
+         1WKy3bK8zJ60y9m66a+l/QQ6Jy9MUzzenoK6lRKQZZdoVKxqVyMtwl5Y7KH4RnhdWlL/
+         Jb/nUmSPJ/jhcEl6U6sclSBk5PqAn3GDkCGAWTXZynxtmlRHgE/2BOmycKWUDviA3JZ/
+         aGSQ==
+X-Gm-Message-State: APzg51ArxURq8SUmhxAPigReU2WymZDpaVxjnvxbiZ5y4gFCEzOtjqdB
+        Bs82PNnIKx3V6Oi2pNq5Ktwk2rcrVrXzyZrNOEpuhQ==
+X-Google-Smtp-Source: ANB0VdahyMxnmBj0lYLyiutT3PuIwLe7VAF1UN4nRRiGlJLJd/14jYlswhJOVq3uyaF2uPdfA2kVCcuIDvfOU3dVBjk=
+X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr2058162ljh.45.1536243223976;
+ Thu, 06 Sep 2018 07:13:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180905190316.a34yycthgbamx2t3@ltop.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a19:8fd3:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 07:13:23 -0700 (PDT)
+In-Reply-To: <20180906140413.GA5098@thunk.org>
+References: <2e8e31f5-4db5-4907-2d09-f6444bc78ede@roeck-us.net> <20180906140413.GA5098@thunk.org>
+From:   Matt Hart <matthew.hart@linaro.org>
+Date:   Thu, 6 Sep 2018 15:13:23 +0100
+Message-ID: <CAH+k93Fgk2yZ3OzBOL2uxSVuOqEJB5wS1Zfny8bDkbuQ3sM6Jw@mail.gmail.com>
+Subject: Re: Widespread crashes in next-20180906
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
+        David Howells <dhowells@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6 September 2018 at 15:04, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Thu, Sep 06, 2018 at 06:45:15AM -0700, Guenter Roeck wrote:
+>> Build results:
+>>       total: 134 pass: 133 fail: 1
 
-On 05/09/18 20:03, Luc Van Oostenryck wrote:
-> On Tue, Sep 04, 2018 at 12:27:23PM +0100, Vincenzo Frascino wrote:
->> On 03/09/18 16:10, Luc Van Oostenryck wrote:
->>> On Mon, Sep 03, 2018 at 02:49:38PM +0100, Vincenzo Frascino wrote:
->>>> On 03/09/18 13:34, Andrey Konovalov wrote:
->>>>> On Fri, Aug 31, 2018 at 3:42 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->>>>>> On Fri, Aug 31, 2018 at 10:11:24AM +0200, Luc Van Oostenryck wrote:
->>>>>>> On Thu, Aug 30, 2018 at 01:41:16PM +0200, Andrey Konovalov wrote:
->>>>>>>> This patch adds __force annotations for __user pointers casts detected by
->>>>>>>> sparse with the -Wcast-from-as flag enabled (added in [1]).
->>>>>>>>
->>>>>>>> [1] https://github.com/lucvoo/sparse-dev/commit/5f960cb10f56ec2017c128ef9d16060e0145f292
->>>>>>>
->>>>>>> Hi,
->>>>>>>
->>>>>>> It would be nice to have some explanation for why these added __force
->>>>>>> are useful.
->>>>>
->>>>> I'll add this in the next version, thanks!
->>>>>
->>>>>>         It would be even more useful if that series would either deal with
->>>>>> the noise for real ("that's what we intend here, that's what we intend there,
->>>>>> here's a primitive for such-and-such kind of cases, here we actually
->>>>>> ought to pass __user pointer instead of unsigned long", etc.) or left it
->>>>>> unmasked.
->>>>>>
->>>>>>         As it is, __force says only one thing: "I know the code is doing
->>>>>> the right thing here".  That belongs in primitives, and I do *not* mean the
->>>>>> #define cast_to_ulong(x) ((__force unsigned long)(x))
->>>>>> kind.
->>>>>>
->>>>>>         Folks, if you don't want to deal with that - leave the warnings be.
->>>>>> They do carry more information than "someone has slapped __force in that place".
->>>>>>
->>>>>> Al, very annoyed by that kind of information-hiding crap...
->>>>>
->>>>> This patch only adds __force to hide the reports I've looked at and
->>>>> decided that the code does the right thing. The cases where this is
->>>>> not the case are handled by the previous patches in the patchset. I'll
->>>>> this to the patch description as well. Is that OK?
->>>>>
->>>> I think as well that we should make explicit the information that
->>>> __force is hiding.
->>>> A possible solution could be defining some new address spaces and use
->>>> them where it is relevant in the kernel. Something like:
->>>>
->>>> # define __compat_ptr __attribute__((noderef, address_space(5)))
->>>> # define __tagged_ptr __attribute__((noderef, address_space(6)))
->>>>
->>>> In this way sparse can still identify the casting and trigger a warning.
->>>>
->>>> We could at that point modify sparse to ignore these conversions when a
->>>> specific flag is passed (i.e. -Wignore-compat-ptr, -Wignore-tagged-ptr)
->>>> to exclude from the generated warnings the ones we have already dealt
->>>> with.
->>>>
->>>> What do you think about this approach?
->>>
->>> I'll be happy to add such warnings to sparse if it is useful to detect
->>> (and correct!) problems. I'm also thinking to other possiblities, like
->>> having some weaker form of __force (maybe simply __force_as (which will
->>> 'only' force the address space) or even __force_as(TO, FROM) (with TO
->>> and FROM being a mask of the address space allowed).I believe we need something here to address this type of problems and I like
->> your proposal of adding a weaker force in the form of __force_as(TO, FROM)
->> because I think it provides the right level information. 
+Do you build arm64? Because KernelCI is seeing build failures in arm64
+defconfig for next-20180906
+Clearly it's a module build problem for sunxi but I'm not sure who to
+CC about this.
+
+https://kernelci.org/build/next/branch/master/kernel/next-20180906/
+https://storage.kernelci.org/next/master/next-20180906/arm64/defconfig/build.log
+
+ERROR: "sun8i_tcon_top_de_config"
+[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+ERROR: "sun8i_tcon_top_set_hdmi_src"
+[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko]
+undefined!
+../scripts/Makefile.modpost:92: recipe for target '__modpost' failed
+make[2]: *** [__modpost] Error 1
+make[2]: Target '_modpost' not remade because of errors.
+/home/buildslave/workspace/kernel-build/linux/Makefile:1223: recipe
+for target 'modules' failed
+make[1]: *** [modules] Error 2
+make[1]: Target '_all' not remade because of errors.
+Makefile:146: recipe for target 'sub-make' failed
+make: *** [sub-make] Error 2
+make: Target '_all' not remade because of errors.
+
+>> Failed builds:
+>>       sparc32:allmodconfig
+>> Qemu test results:
+>>       total: 311 pass: 76 fail: 235
+>> Failed builds:
+>>       <pretty much everything trying to boot from disk>
 >>
->>> However, for the specific situation here, I'm not sure that using
->>> address spaces is the right choice because I suspect that the concept
->>> of tagged pointer is orthogonal to the one of (the usual) address space
->>> (it won't be possible for a pointer to be __tagged_ptr *and* __user).
->> I was thinking to address spaces because the information seems easily accessible
->> in sparse [1], but I am certainly open to any solution that can be semantically
->> more correct.
-> 
-> Yes, adding a new address space is easy (and doesn't need any modification
-> to sparse). Here, I think adding a new 'modifier' __tagged (much like
-> __nocast, __noderef, ...) would be much more appropriate.
-> I think that at this point, it would be nice to have a clear description
-> of the problem and what sort of checks are wanted.
+>> Error message is always something like
+>>
+>> Filesystem requires source device
+>> VFS: Cannot open root device "hda" or unknown-block(3,0): error -2
+>>
+>> The only variance is the boot device. Logs in full glory are available
+>> at https://kerneltests.org/builders/, in the "next" column.
+>>
+>> I did not run bisect, but the recent filesystem changes are a definite suspect.
 >
-
-
-The problem we are trying to address here is to identify when the user pointers
-are cast to integer types and to sanitize (when required) the kernel, when this
-happens.
-
-The way on which we are trying to address this problem based on what Andrey
-proposed in his patch-set is to use the Top Byte Ignore feature (which is a 64 bit
-specific feature).
-
-Based on what I said I think that we require 2 'modifiers':
-- __compat (or __compat_ptr) used when the kernel is dealing with user compat 
-pointers (32 bit, they can not be tagged). It should behave like force
-(silence warnings), but having something separate IMO makes more clear the
-intention of what we are trying to do.
-- __tagged (or __tagged_ptr) used when the kernel is dealing with user normal
-pointers (which can be tagged). In this case sparse should still be able to trigger
-a warning (that can be disabled by default as I was proposing in my previous email).
-When we put a tagged identifier we declare that we analyzed the code impacted by
-the conversion and eventually sanitized it. Having the warning still there allows us
-or whoever is looking at the code to always go back to the identified issue.  
-  
->>>
->>> OTOH, when I see already the tons of warnings for concepts established
->>> since many years (I'm thinking especially at __bitwise, see [1]) I'm a
->>> bit affraid of adding new, more specialized ones that people will
->>> understand even less how/when they need to use them.
->> Thanks for providing this statistic, it is very interesting. I understand your
->> concern, but I think that in this case we need a more specialized option not only
->> to find potential problems but even to provide the right amount of information
->> to who reads the code. 
->>
->> A solution could be to let __force_as(TO, FROM) behave like __force and silence
->> the warning by default, but have an option in sparse to re-enable it 
->> (i.e. -Wshow-force-as). 
-> 
-> That would be, indeed, a simple solution but IMO even more dangerous than
-> __force itself (since by readingthe code with this annotation  people would 
-> naturally think it only involves the AS will in fact it would be the same
-> as __force). I prefer to directly implement a plain __force_as, forcing
-> only the AS).
->  
-
-Agreed, even if we can't stop people from overlooking at things, I believe that
-we will all benefit if they are clearer.
-
->> [1]
->> ---
->> commit ee7985f0c2b29c96aefe78df4139209eb4e719d8
->> Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
->> Date:   Wed Aug 15 10:55:44 2018 +0100
->>
->>     print address space number for explicit cast to ulong
->>     
->>     This patch build on top of commit b34880d ("stricter warning
->>     for explicit cast to ulong") and prints the address space
->>     number when a "warning: cast removes address space of expression"
->>     is triggered.
->>     
->>     This makes easier to discriminate in between different address
->>     spaces.
->>     
->>     A validation example is provided as well as part of this patch.
->>     
->>     Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>
->> diff --git a/evaluate.c b/evaluate.c
->> index 6d5d479..2fc0ebc 100644
->> --- a/evaluate.c
->> +++ b/evaluate.c
->> @@ -3017,8 +3017,12 @@ static struct symbol *evaluate_cast(struct expression *expr)
->>  		sas = stype->ctype.as;
->>  	}
->>  
->> -	if (!tas && sas > 0)
->> -		warning(expr->pos, "cast removes address space of expression");
->> +	if (!tas && sas > 0) {
->> +		if (Wcast_from_as)
->> +			warning(expr->pos, "cast removes address space of expression (<asn:%d>)", sas);
->> +		else
->> +			warning(expr->pos, "cast removes address space of expression");
->> +	}
-> 
-> I think that the if (Wcast_from_as) is unneeded, the <asn:%d> can be added
-> even if Wcast_from_as is false. Woukd it be OK for you?
-> 
-
-Yes, it is OK for me (I put it there because I did not know if we wanted to preserve the
-original behavior). Feel free to hack my patch if you want to put it on your tree.
-Thanks.
-
-> -- Luc
-> 
-
--- 
-Regards,
-Vincenzo
+> Yes, this is the vm_fault_t changes.  See the other thread on LKML.
+> The guilty commit was: 83c0adddcc6e: fs: convert return type int to
+> vm_fault_t
+>
+> This is the *second* time vm_fault_t patches have broken things.  The
+> first time it went through the ext4 tree, and I NACK'ed it after
+> running a 60 second smoke test showed it was broken.  The seocnd time
+> the problem was supposedly fixed, but it went through the mm tree, and
+> so I didn't have a chance regression test or stop it...
+>
+>                                                      - Ted
