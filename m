@@ -5,213 +5,127 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04BEC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5761C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8667B2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:21:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8667B2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 758042075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:21:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 758042075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeIFV6Q (ORCPT
+        id S1728551AbeIFV6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:58:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34456 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726541AbeIFV6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:58:16 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 280378077104;
-        Thu,  6 Sep 2018 17:21:47 +0000 (UTC)
-Received: from redhat.com (ovpn-120-232.rdu2.redhat.com [10.10.120.232])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CA13F10073DD;
-        Thu,  6 Sep 2018 17:21:46 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 13:21:46 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH net-next 06/11] tuntap: split out XDP logic
-Message-ID: <20180906131703-mutt-send-email-mst@kernel.org>
-References: <20180906040526.22518-1-jasowang@redhat.com>
- <20180906040526.22518-7-jasowang@redhat.com>
+        Thu, 6 Sep 2018 17:58:20 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34073 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726541AbeIFV6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 17:58:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 10:21:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="83646017"
+Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Sep 2018 10:21:38 -0700
+Subject: Re: [PATCH] x86: use WRITE_ONCE() when setting PTEs
+To:     Nadav Amit <namit@vmware.com>, Thomas Gleixner <tglx@linutronix.de>
+References: <20180902181451.80520-1-namit@vmware.com>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <8aef58c7-c27c-5df8-69b3-b188dd5f64e8@intel.com>
+Date:   Thu, 6 Sep 2018 10:21:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906040526.22518-7-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 17:21:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 17:21:47 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180902181451.80520-1-namit@vmware.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 12:05:21PM +0800, Jason Wang wrote:
-> This patch split out XDP logic into a single function. This make it to
-> be reused by XDP batching path in the following patch.
+On 09/02/2018 11:14 AM, Nadav Amit wrote:
+> When page-table entries are set, the compiler might optimize their
+> assignment by using multiple instructions to set the PTE. This might
+> turn into a security hazard if the user somehow manages to use the
+> interim PTE. L1TF does not make our lives easier, making even an interim
+> non-present PTE a security hazard.
 > 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/net/tun.c | 84 ++++++++++++++++++++++++++++-------------------
->  1 file changed, 51 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 389aa0727cc6..21b125020b3b 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1635,6 +1635,44 @@ static bool tun_can_build_skb(struct tun_struct *tun, struct tun_file *tfile,
->  	return true;
->  }
->  
-> +static u32 tun_do_xdp(struct tun_struct *tun,
-> +		      struct tun_file *tfile,
-> +		      struct bpf_prog *xdp_prog,
-> +		      struct xdp_buff *xdp,
-> +		      int *err)
-> +{
-> +	u32 act = bpf_prog_run_xdp(xdp_prog, xdp);
-> +
-> +	switch (act) {
-> +	case XDP_REDIRECT:
-> +		*err = xdp_do_redirect(tun->dev, xdp, xdp_prog);
-> +		xdp_do_flush_map();
-> +		if (*err)
-> +			break;
-> +		goto out;
-> +	case XDP_TX:
-> +		*err = tun_xdp_tx(tun->dev, xdp);
-> +		if (*err < 0)
-> +			break;
-> +		*err = 0;
-> +		goto out;
-> +	case XDP_PASS:
-> +		goto out;
+> Using WRITE_ONCE() to set PTEs and friends should prevent this potential
+> security hazard.
 
-Do we need goto? why not just return?
+But, our types are already 64-bit, and we're doing a 64-bit pointer
+write.  Our WRITE_ONCE() implementation boils down to:
 
-> +	default:
-> +		bpf_warn_invalid_xdp_action(act);
-> +		/* fall through */
-> +	case XDP_ABORTED:
-> +		trace_xdp_exception(tun->dev, xdp_prog, act);
-> +		/* fall through */
-> +	case XDP_DROP:
-> +		break;
-> +	}
-> +
-> +	put_page(virt_to_head_page(xdp->data_hard_start));
-
-put here because caller does get_page :( Not pretty.
-I'd move this out to the caller.
-
-> +out:
-> +	return act;
-
-How about combining err and act? err is < 0 XDP_PASS is > 0.
-No need for pointers then.
-
-> +}
-> +
->  static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  				     struct tun_file *tfile,
->  				     struct iov_iter *from,
-> @@ -1645,10 +1683,10 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  	struct sk_buff *skb = NULL;
->  	struct bpf_prog *xdp_prog;
->  	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> -	unsigned int delta = 0;
->  	char *buf;
->  	size_t copied;
-> -	int err, pad = TUN_RX_PAD;
-> +	int pad = TUN_RX_PAD;
-> +	int err = 0;
->  
->  	rcu_read_lock();
->  	xdp_prog = rcu_dereference(tun->xdp_prog);
-> @@ -1685,9 +1723,8 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  	local_bh_disable();
->  	rcu_read_lock();
->  	xdp_prog = rcu_dereference(tun->xdp_prog);
-> -	if (xdp_prog && !*skb_xdp) {
-> +	if (xdp_prog) {
->  		struct xdp_buff xdp;
-> -		void *orig_data;
->  		u32 act;
->  
->  		xdp.data_hard_start = buf;
-> @@ -1695,33 +1732,14 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  		xdp_set_data_meta_invalid(&xdp);
->  		xdp.data_end = xdp.data + len;
->  		xdp.rxq = &tfile->xdp_rxq;
-> -		orig_data = xdp.data;
-> -		act = bpf_prog_run_xdp(xdp_prog, &xdp);
-> -
-> -		switch (act) {
-> -		case XDP_REDIRECT:
-> -			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
-> -			xdp_do_flush_map();
-> -			if (err)
-> -				goto err_xdp;
-> -			goto out;
-> -		case XDP_TX:
-> -			if (tun_xdp_tx(tun->dev, &xdp) < 0)
-> -				goto err_xdp;
-> -			goto out;
-> -		case XDP_PASS:
-> -			delta = orig_data - xdp.data;
-> -			len = xdp.data_end - xdp.data;
-> -			break;
-> -		default:
-> -			bpf_warn_invalid_xdp_action(act);
-> -			/* fall through */
-> -		case XDP_ABORTED:
-> -			trace_xdp_exception(tun->dev, xdp_prog, act);
-> -			/* fall through */
-> -		case XDP_DROP:
-> +		act = tun_do_xdp(tun, tfile, xdp_prog, &xdp, &err);
-> +		if (err)
->  			goto err_xdp;
-> -		}
-> +		if (act != XDP_PASS)
-> +			goto out;
-
-likely?
-
-> +
-> +		pad = xdp.data - xdp.data_hard_start;
-> +		len = xdp.data_end - xdp.data;
->  	}
->  	rcu_read_unlock();
->  	local_bh_enable();
-> @@ -1729,18 +1747,18 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->  build:
->  	skb = build_skb(buf, buflen);
->  	if (!skb) {
-> +		put_page(alloc_frag->page);
->  		skb = ERR_PTR(-ENOMEM);
->  		goto out;
->  	}
->  
-> -	skb_reserve(skb, pad - delta);
-> +	skb_reserve(skb, pad);
->  	skb_put(skb, len);
->  
->  	return skb;
->  
->  err_xdp:
-> -	alloc_frag->offset -= buflen;
-> -	put_page(alloc_frag->page);
-> +	this_cpu_inc(tun->pcpu_stats->rx_dropped);
+static __always_inline void __write_once_size(...
+{
+        switch (size) {
+	...
+        case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
 
 
-This fixes bug in previous patch which dropped it. OK :)
+For 64-bit types, which is precisely the same thing.  Right?
 
->  out:
->  	rcu_read_unlock();
->  	local_bh_enable();
-> -- 
-> 2.17.1
+So, while I agree that it's nice to document the need for a full 64-bit
+"atomicity" of the PTE set, I don't see a practical problem here with
+our implementation.
+
+There's probably a massive number of things that would break if we
+assumed sane 64-bit writes can be observed piecemeal.
