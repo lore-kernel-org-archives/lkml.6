@@ -2,81 +2,98 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEEFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D310DC4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E51220659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E51220659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DE2020659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:42:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="uPSPXBMt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE2020659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeIGDTv convert rfc822-to-8bit (ORCPT
+        id S1728268AbeIGDUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 23:19:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50762 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbeIGDTv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 23:19:51 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 596A8D0A;
-        Thu,  6 Sep 2018 22:42:09 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 15:42:08 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] prctl: add PR_[GS]ET_KILLABLE
-Message-Id: <20180906154208.24f397896957116d1a644a3b@linux-foundation.org>
-In-Reply-To: <20180803144021.56920-2-j@bitron.ch>
-References: <20180730075241.24002-1-j@bitron.ch>
-        <20180803144021.56920-1-j@bitron.ch>
-        <20180803144021.56920-2-j@bitron.ch>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Sep 2018 23:20:06 -0400
+Received: from imap.thunk.org ([74.207.234.97]:60732 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbeIGDUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 23:20:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=slsTku73Cxw/ihQxR6Z0iOhKkYfMux615hAUa0qRy7U=; b=uPSPXBMtkyaLBYDSRCqYIoLG0y
+        U1MfNTK/A7Zbog4x2EYn7VQGB7512NmJsfykl4Euv51SloLdMbqbI4psG60ORH5WnTR5zcSft1qQS
+        6ngyqQUuR2OZKntpk55zBzqUcootRkVPgq8jRmyOl0l4w4FP7RslBEUzqZFXZ+DLcmq0=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fy2yZ-0007vp-Dx; Thu, 06 Sep 2018 22:42:11 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A19477A5675; Thu,  6 Sep 2018 18:42:10 -0400 (EDT)
+Date:   Thu, 6 Sep 2018 18:42:10 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Xuewei Zhang <xueweiz@google.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Ming Lei <ming.lei@redhat.com>, Hannes Reinecke <hare@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aditya Kali <adityakali@google.com>,
+        Guenter Roeck <groeck@chromium.org>, maze@google.com
+Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
+ rotational device
+Message-ID: <20180906224210.GK5098@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Xuewei Zhang <xueweiz@google.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Ming Lei <ming.lei@redhat.com>, Hannes Reinecke <hare@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Paolo Bonzini <pbonzini@redhat.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aditya Kali <adityakali@google.com>,
+        Guenter Roeck <groeck@chromium.org>, maze@google.com
+References: <20180906203719.209399-1-xueweiz@google.com>
+ <1536272873.26747.11.camel@acm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536272873.26747.11.camel@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  3 Aug 2018 16:40:21 +0200 Jürg Billeter <j@bitron.ch> wrote:
+On Thu, Sep 06, 2018 at 03:27:53PM -0700, Bart Van Assche wrote:
+> 
+> Although this patch looks fine to me, seeing this patch makes me wonder
+> whether the default should be changed (QUEUE_FLAG_MQ_DEFAULT) instead of
+> modifying the sd driver. Can anyone remind me why QUEUE_FLAG_MQ_DEFAULT does
+> not include QUEUE_FLAG_ADD_RANDOM?
 
-> PR_SET_KILLABLE clears the SIGNAL_UNKILLABLE flag. This allows
-> CLONE_NEWPID tasks to restore normal signal behavior, opting out of the
-> special signal protection for init processes. This prctl does not allow
-> setting the SIGNAL_UNKILLABLE flag, only clearing.
-> 
-> The SIGNAL_UNKILLABLE flag, which is implicitly set for tasks cloned
-> with CLONE_NEWPID, has the effect of ignoring all signals (from
-> userspace) if the corresponding handler is set to SIG_DFL. The only
-> exceptions are SIGKILL and SIGSTOP and they are only accepted if raised
-> from an ancestor namespace.
-> 
-> SIGINT, SIGQUIT and SIGTSTP are used in job control for ^C, ^\, ^Z.
-> While a task with the SIGNAL_UNKILLABLE flag could install handlers for
-> these signals, this is not sufficient to implement a shell that uses
-> CLONE_NEWPID for child processes:
-> 
->  * As SIGSTOP is ignored when raised from the SIGNAL_UNKILLABLE process
->    itself, it's not possible to implement the stop action in a custom
->    SIGTSTP handler.
->  * Many applications do not install handlers for these signals and
->    thus, job control won't work properly with unmodified applications.
-> 
-> There are other scenarios besides job control in a shell where
-> applications rely on the default actions as described in signal(7) and
-> PID isolation may be useful. This new prctl makes the signal protection
-> for "init" processes optional, without breaking backward compatibility.
+There was a discussion about a number of *years* ago; blk-mq has been
+baking for a very long time.  In the early days of block_mq, the
+overwhelming percentage of the users of blk-mq where those who were
+using PCIe attached flash.  So when, I raised this question, the
+argument was that SSD users have no entropy.  Which I agree with; but
+now that blk-mq is the default, and hard drives are using blk-mq, it's
+time for a patch like Xuewei's.
 
-This one is above my pay grade.  Eric & Oleg: could you please provide
-input?
+Cheers,
 
+					- Ted
