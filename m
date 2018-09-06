@@ -2,132 +2,232 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2098C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96ABC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA2420861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:18:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vBXzWE2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA2420861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 65D012075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:19:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D012075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeIFQyE (ORCPT
+        id S1728329AbeIFQy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 12:54:04 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39723 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727644AbeIFQyE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 12:54:04 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s14-v6so2187693wrw.6;
-        Thu, 06 Sep 2018 05:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=87dUN+chB2+KcTGn3unqxyRyAqgYwx+Uln/JPGkcbrM=;
-        b=vBXzWE2tX77aUfBdKKdBCvPW0H1arSRIIZpKOYCFbsTuUp1LOlL60tyq2Ea8yNCaFO
-         gBhkRE9BtNbitv5cy/6KHlz0oOJy3EaTrB0lp47brCZcm5IcemA3YuAMSdaD2N4jT8Hz
-         KHsZWCg4vvcPmd71nLhVBuQVtNtgOwmgiqz1qUtPsRRvjTEeahy6BjNnJz+rmd+cQxDP
-         luWGydZeqznLEylMVjyhAtk6MDKX9JLUsm7W0Bh4U6FKzX9Onbx8WqTNC0b1li6+okcE
-         xB1EX7s+L3alXaJbKQquqWY8MtORPwQH1UeNZnIZboJcPwyrMOnTybPn+i+L1w/5TeeD
-         wfng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=87dUN+chB2+KcTGn3unqxyRyAqgYwx+Uln/JPGkcbrM=;
-        b=P420RFl5Fp4E5RBAFATqdBqglsWTUiAtNnAunr8jRtTD8V84ueLiaJFP4HxtsgFHlA
-         Me1G2WRMW4uJE87uK84amxgDkznYMuwBmAyBH+n1EDKXtUZCA31vLX67+PLVoMrseTTO
-         uo6NzRp9pQOFcbjLMA8nuXEboKE78SWz+k+pkYjJ46y1WW1931ANV7s2k13jfwXv/0tR
-         8LCGV6rOxgL2nM/iFGyskjDZTy/SuR8oVB/LzlTADQ790nnx1375uJoM8F14GlwPFK0/
-         MGh9dS5l+9nGAk5QFbbEEsioLGaUwuUPx+700Bkcs9dKkjwOIxrgHRsgWtU3eHA/24ib
-         L9sw==
-X-Gm-Message-State: APzg51BxCIRgVhAJIRgcvEi886EOAMwsEkfeiwPEXPYF5zYwXhkEAVNs
-        cLyKfv6Nnz0SE5EywGdF9Q8=
-X-Google-Smtp-Source: ANB0VdZ4tnWnW3UZh5+22PaEZfVkcH1REbakMJVejlqZBYgybE7Ur1bVXsrpLFQ6H0poIwj/jXacxQ==
-X-Received: by 2002:adf:8367:: with SMTP id 94-v6mr2147620wrd.258.1536236329421;
-        Thu, 06 Sep 2018 05:18:49 -0700 (PDT)
-Received: from [10.104.24.89] (eduroam-nat3.rz.uni-ulm.de. [134.60.112.238])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm4292669wrr.81.2018.09.06.05.18.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 05:18:48 -0700 (PDT)
-Subject: Re: [linux-sunxi] Re: [PATCH v3 27/30] ARM: dts: sun8i: h3: use
- calibration for ths
-To:     icenowy@aosc.io, maxime.ripard@bootlin.com
-Cc:     Emmanuel Vadot <manu@bidouilliste.com>, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org,
-        linux@armlinux.org.uk, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, eugen.hristev@microchip.com,
-        rdunlap@infradead.org, vilhelm.gray@gmail.com,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        geert+renesas@glider.be, lukas@wunner.de, arnd@arndb.de,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180830154518.29507-1-embed3d@gmail.com>
- <20180830154518.29507-28-embed3d@gmail.com>
- <20180904184623.e4386b8e6b657b1b25e90c09@bidouilliste.com>
- <55579dd6-625d-e71b-1482-4592dccac665@gmail.com>
- <20180906115114.inc6dhqhy47obo25@flea>
- <BEA89263-1186-432A-B274-228FAC21A798@aosc.io>
-From:   Philipp Rossak <embed3d@gmail.com>
-Message-ID: <d8825c55-60e0-16da-e122-22855c294bc4@gmail.com>
-Date:   Thu, 6 Sep 2018 14:18:45 +0200
+        Thu, 6 Sep 2018 12:54:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44500 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727126AbeIFQy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 12:54:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C57817A9;
+        Thu,  6 Sep 2018 05:19:15 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B34553F575;
+        Thu,  6 Sep 2018 05:19:14 -0700 (PDT)
+Subject: Re: [PATCH 3/4] dma-mapping: remove dma_deconfigure
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180827084711.23407-1-hch@lst.de>
+ <20180827084711.23407-4-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <401fcbc4-bcb2-66b3-1440-9db6051b9805@arm.com>
+Date:   Thu, 6 Sep 2018 13:19:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <BEA89263-1186-432A-B274-228FAC21A798@aosc.io>
+In-Reply-To: <20180827084711.23407-4-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 27/08/18 09:47, Christoph Hellwig wrote:
+> This goes through a lot of hooks just to call arch_teardown_dma_ops.
+> Replace it with a direct call instead.
 
+Agreed. We originally had the deconfigure() hooks for symmetry in case 
+there might need to be some firmware-specific state to tear down, but 
+with the benefit of a couple of years' hindsight now it really doesn't 
+look like that's ever likely to be necessary.
 
-On 06.09.2018 14:04, Icenowy Zheng wrote:
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/acpi/arm64/iort.c   |  2 +-
+>   drivers/acpi/scan.c         | 10 ----------
+>   drivers/base/dd.c           |  4 ++--
+>   drivers/of/device.c         | 12 ------------
+>   include/acpi/acpi_bus.h     |  1 -
+>   include/linux/acpi.h        |  2 --
+>   include/linux/dma-mapping.h |  6 ------
+>   include/linux/of_device.h   |  3 ---
+>   kernel/dma/mapping.c        |  6 ------
+>   9 files changed, 3 insertions(+), 43 deletions(-)
 > 
+> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+> index 08f26db2da7e..2a361e22d38d 100644
+> --- a/drivers/acpi/arm64/iort.c
+> +++ b/drivers/acpi/arm64/iort.c
+> @@ -1428,7 +1428,7 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+>   	return 0;
+>   
+>   dma_deconfigure:
+> -	acpi_dma_deconfigure(&pdev->dev);
+> +	arch_teardown_dma_ops(&pdev->dev);
+>   dev_put:
+>   	platform_device_put(pdev);
+>   
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index e1b6231cfa1c..56676a56b3e3 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1469,16 +1469,6 @@ int acpi_dma_configure(struct device *dev, enum dev_dma_attr attr)
+>   }
+>   EXPORT_SYMBOL_GPL(acpi_dma_configure);
+>   
+> -/**
+> - * acpi_dma_deconfigure - Tear-down DMA configuration for the device.
+> - * @dev: The pointer to the device
+> - */
+> -void acpi_dma_deconfigure(struct device *dev)
+> -{
+> -	arch_teardown_dma_ops(dev);
+> -}
+> -EXPORT_SYMBOL_GPL(acpi_dma_deconfigure);
+> -
+>   static void acpi_init_coherency(struct acpi_device *adev)
+>   {
+>   	unsigned long long cca = 0;
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 65128cf8427c..169412ee4ae8 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -539,7 +539,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+>   	goto done;
+>   
+>   probe_failed:
+> -	dma_deconfigure(dev);
+> +	arch_teardown_dma_ops(dev);
+>   dma_failed:
+>   	if (dev->bus)
+>   		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+> @@ -968,7 +968,7 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>   			drv->remove(dev);
+>   
+>   		device_links_driver_cleanup(dev);
+> -		dma_deconfigure(dev);
+> +		arch_teardown_dma_ops(dev);
+>   
+>   		devres_release_all(dev);
+>   		dev->driver = NULL;
+> diff --git a/drivers/of/device.c b/drivers/of/device.c
+> index 5957cd4fa262..c7fa5a9697c9 100644
+> --- a/drivers/of/device.c
+> +++ b/drivers/of/device.c
+> @@ -170,18 +170,6 @@ int of_dma_configure(struct device *dev, struct device_node *np, bool force_dma)
+>   }
+>   EXPORT_SYMBOL_GPL(of_dma_configure);
+>   
+> -/**
+> - * of_dma_deconfigure - Clean up DMA configuration
+> - * @dev:	Device for which to clean up DMA configuration
+> - *
+> - * Clean up all configuration performed by of_dma_configure_ops() and free all
+> - * resources that have been allocated.
+> - */
+> -void of_dma_deconfigure(struct device *dev)
+> -{
+> -	arch_teardown_dma_ops(dev);
+> -}
+> -
+>   int of_device_register(struct platform_device *pdev)
+>   {
+>   	device_initialize(&pdev->dev);
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index ba4dd54f2c82..53600f527a70 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -595,7 +595,6 @@ enum dev_dma_attr acpi_get_dma_attr(struct acpi_device *adev);
+>   int acpi_dma_get_range(struct device *dev, u64 *dma_addr, u64 *offset,
+>   		       u64 *size);
+>   int acpi_dma_configure(struct device *dev, enum dev_dma_attr attr);
+> -void acpi_dma_deconfigure(struct device *dev);
+>   
+>   struct acpi_device *acpi_find_child_device(struct acpi_device *parent,
+>   					   u64 address, bool check_children);
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index de8d3d3fa651..af4628979d13 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -831,8 +831,6 @@ static inline int acpi_dma_configure(struct device *dev,
+>   	return 0;
+>   }
+>   
+> -static inline void acpi_dma_deconfigure(struct device *dev) { }
+> -
+>   #define ACPI_PTR(_ptr)	(NULL)
+>   
+>   static inline void acpi_device_set_enumerated(struct acpi_device *adev)
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 1c6c7c09bcf2..1423b69f3cc9 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -753,12 +753,6 @@ dma_mark_declared_memory_occupied(struct device *dev,
+>   }
+>   #endif /* CONFIG_HAVE_GENERIC_DMA_COHERENT */
+>   
+> -#ifdef CONFIG_HAS_DMA
+> -void dma_deconfigure(struct device *dev);
+> -#else
+> -static inline void dma_deconfigure(struct device *dev) {}
+> -#endif
+> -
+>   /*
+>    * Managed DMA API
+>    */
+> diff --git a/include/linux/of_device.h b/include/linux/of_device.h
+> index 165fd302b442..8d31e39dd564 100644
+> --- a/include/linux/of_device.h
+> +++ b/include/linux/of_device.h
+> @@ -58,7 +58,6 @@ static inline struct device_node *of_cpu_device_node_get(int cpu)
+>   int of_dma_configure(struct device *dev,
+>   		     struct device_node *np,
+>   		     bool force_dma);
+> -void of_dma_deconfigure(struct device *dev);
+>   #else /* CONFIG_OF */
+>   
+>   static inline int of_driver_match_device(struct device *dev,
+> @@ -113,8 +112,6 @@ static inline int of_dma_configure(struct device *dev,
+>   {
+>   	return 0;
+>   }
+> -static inline void of_dma_deconfigure(struct device *dev)
+> -{}
+>   #endif /* CONFIG_OF */
+>   
+>   #endif /* _LINUX_OF_DEVICE_H */
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 25607ceb4a50..3540cb399bd2 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -327,9 +327,3 @@ void dma_common_free_remap(void *cpu_addr, size_t size, unsigned long vm_flags)
+>   	vunmap(cpu_addr);
+>   }
+>   #endif
+> -
+> -void dma_deconfigure(struct device *dev)
+> -{
+> -	of_dma_deconfigure(dev);
+> -	acpi_dma_deconfigure(dev);
+> -}
 > 
-> 于 2018年9月6日 GMT+08:00 下午7:51:15, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->> On Thu, Sep 06, 2018 at 01:47:47PM +0200, Philipp Rossak wrote:
->>> On 04.09.2018 18:46, Emmanuel Vadot wrote:
->>>>> +			/* Data cells */
->>>>> +			thermal_calibration: calib@234 {
->>>>> +				reg = <0x234 0x8>;
->>>>> +			};
->>>>    You are declaring 8 bytes of calibration data but to my knowledge
->> it's
->>>> only 2 bytes per sensor, so 2 bytes for H3.
->>>>    Am I missing something ?
->>>>
->>>>    Thanks,
->>>
->>> Emmanuel you are right, it is 2 bytes per Sensor and should be 2
->> bytes for
->>> H3, but the thermal calibration data field is on all chips 64 bit
->> wide - so
->>> 8 bytes. So I'm reading here the complete calibration data field.
->>
->> Having one cell per channel would make more sense I guess.
-Ok I will change this.
-> 
-> I have mentioned that this is impossible because of wrong
-> addressing caused by LE2BE in SID driver.
->
-I know! But I would like to prepare patches for it, that they can be 
-merged when this is fixed.
-
-Philipp
-
