@@ -2,113 +2,124 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C389C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F35BC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D491620652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:25:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D491620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1486820652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FmU7EmQD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1486820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbeIFRAp (ORCPT
+        id S1728489AbeIFRBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:00:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38479 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeIFRAp (ORCPT
+        Thu, 6 Sep 2018 13:01:10 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39786 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeIFRBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:00:45 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86CP1PD292050
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 05:25:01 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86CP1wM292047;
-        Thu, 6 Sep 2018 05:25:01 -0700
-Date:   Thu, 6 Sep 2018 05:25:01 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Chuanhua Lei <tipbot@zytor.com>
-Message-ID: <tip-17f6bac2249356c795339e03a0742cd79be3cab8@git.kernel.org>
-Cc:     rajvi.jingar@intel.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
-        chuanhua.lei@linux.intel.com, mingo@kernel.org,
-        len.brown@intel.com, pasha.tatashin@microsoft.com
-Reply-To: tglx@linutronix.de, douly.fnst@cn.fujitsu.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com,
-          peterz@infradead.org, rajvi.jingar@intel.com,
-          pasha.tatashin@microsoft.com, len.brown@intel.com,
-          mingo@kernel.org, chuanhua.lei@linux.intel.com
-In-Reply-To: <1536228203-18701-1-git-send-email-chuanhua.lei@linux.intel.com>
-References: <1536228203-18701-1-git-send-email-chuanhua.lei@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/tsc: Prevent result truncation on 32bit
-Git-Commit-ID: 17f6bac2249356c795339e03a0742cd79be3cab8
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 13:01:10 -0400
+Received: from avalon.localnet (38-237-62-37.mobileinternet.proximus.be [37.62.237.38])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4741B119E;
+        Thu,  6 Sep 2018 14:25:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536236752;
+        bh=oTWt0i8tpHR94qs+kZq4+rnkmm4BrLC9HhAoBJSKkTo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FmU7EmQDLmDiztTquyqYwL/SXoYqUkQ9wxqMtZh8pgOe4kLfNqwp+CgL1NKUxNuwP
+         A3Ixrv88UGJtazLCcrO/GychHapeyPlblCz61aHPeL/Msv4T8n+OcsY9yLQD61+RH3
+         Ba0PZ3PM5o3LiGb8u6o4FGJSCuAmLKSvKRXLVclU=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stefan Agner <stefan@agner.ch>, Dave Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        sean@poorly.run, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        max.krummenacher@toradex.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
+Date:   Thu, 06 Sep 2018 15:25:56 +0300
+Message-ID: <10044412.4MiZRujKJI@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CACRpkdbw0VjkHYcUpox+DorRG0oRdPARL4ShgPfV2eFaUF_w0g@mail.gmail.com>
+References: <20180905052113.21262-1-stefan@agner.ch> <a00c1650b69ba85bed7ae39b81a0c40f@agner.ch> <CACRpkdbw0VjkHYcUpox+DorRG0oRdPARL4ShgPfV2eFaUF_w0g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  17f6bac2249356c795339e03a0742cd79be3cab8
-Gitweb:     https://git.kernel.org/tip/17f6bac2249356c795339e03a0742cd79be3cab8
-Author:     Chuanhua Lei <chuanhua.lei@linux.intel.com>
-AuthorDate: Thu, 6 Sep 2018 18:03:23 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 6 Sep 2018 14:22:01 +0200
+Hi Linus,
 
-x86/tsc: Prevent result truncation on 32bit
+On Thursday, 6 September 2018 14:07:41 EEST Linus Walleij wrote:
+> On Wed, Sep 5, 2018 at 8:32 PM Stefan Agner <stefan@agner.ch> wrote:
+> > On 05.09.2018 00:44, Laurent Pinchart wrote:
+> > 
+> > Good point! I actually really don't like that we use the same flags here
+> > but from a different perspective. Especially since the flags defines
+> > document things differently:
+> > 
+> > /* drive data on pos. edge */
+> > #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
+> > /* drive data on neg. edge */
+> > #define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
+> 
+> Maybe a stupid comment from my side, but can't we just change the
+> documentation to match the usecases?
+> 
+> /* Trigger pixel data latch on positive edge */
+> #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
 
-Loops per jiffy is calculated by multiplying tsc_khz with 1e3 and then
-dividing it by HZ.
+The flags are used for the drm_connector bus_flags field, and really mean 
+driving on the positive/negative edges. We this can't change their meaning 
+like this.
 
-Both tsc_khz and the temporary variable holding the multiplication result
-are of type unsigned long, so on 32bit the result is truncated to the lower
-32bit.
+> > Using the opposite perspective would also need translation in crtc
+> > drivers... So far no driver uses sampling_edge.
+> > 
+> > I would prefer if we always use the meaning as documented by the flags.
+> > 
+> > I guess we would need to convert DRM_BUS_FLAG_PIXDATA_POSEDGE ->
+> > DRM_BUS_FLAG_PIXDATA_NEGEDGE.
+> > 
+> > Linus Walleij, you added sampling edge, any thoughts?
+> 
+> I just thought it was generally useful to have triggering edge encoded
+> into the bridge as it makes it clear that this edge is something
+> that is a delayed version of the driving edge which is subject to
+> clock skew caused by the speed of electrons in silicon and
+> copper and slew rate caused by parasitic capacitance.
 
-Use u64 as type for the temporary variable and cast tsc_khz to it before
-multiplying.
+I agree that we need both the driving and sampling edge. In many case they 
+will be opposite, and providing some kind of appropriate defaults in APIs is 
+fine by me, but we need a way to specify both when needed.
 
-[ tglx: Massaged changelog and removed pointless braces ]
+-- 
+Regards,
 
-Fixes: cf7a63ef4e02 ("x86/tsc: Calibrate tsc only once")
-Signed-off-by: Chuanhua Lei <chuanhua.lei@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: yixin.zhu@linux.intel.com
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Pavel Tatashin <pasha.tatashin@microsoft.com>
-Cc: Rajvi Jingar <rajvi.jingar@intel.com>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Link: https://lkml.kernel.org/r/1536228203-18701-1-git-send-email-chuanhua.lei@linux.intel.com
+Laurent Pinchart
 
----
- arch/x86/kernel/tsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 1463468ba9a0..6490f618e096 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -1415,7 +1415,7 @@ static bool __init determine_cpu_tsc_frequencies(bool early)
- 
- static unsigned long __init get_loops_per_jiffy(void)
- {
--	unsigned long lpj = tsc_khz * KHZ;
-+	u64 lpj = (u64)tsc_khz * KHZ;
- 
- 	do_div(lpj, HZ);
- 	return lpj;
+
