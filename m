@@ -6,84 +6,135 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF44C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86964C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0125120857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0125120857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4654E20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4654E20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeIFRi6 (ORCPT
+        id S1728865AbeIFRjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:38:58 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:42994 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbeIFRi5 (ORCPT
+        Thu, 6 Sep 2018 13:39:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42997 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728366AbeIFRjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:38:57 -0400
-Received: by mail-qt0-f193.google.com with SMTP id z8-v6so12068516qto.9;
-        Thu, 06 Sep 2018 06:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GvRRXxTPXvlPLq4d/bd1gWyopv4au4Ov4w3vlq+Ev2c=;
-        b=lvAHcotz0QNIm7ZCI82OdJ4ABMCA+a+LPOf9GAqbPDINT8MzHAm1mOOIYxagcsDdbL
-         hLZ9F2RxaPSVs5wdycM1+AbSbmHGkshlNez+YtoXeAXU425YIYjF6MlJQS8ZlYoOWBjF
-         e24l7FH8d1pPC8un50nis3oaKGtSocqnqH40Omp7myMT9d5Y1uht2BM2XRvKMKHU0A9y
-         GIsJjIdy6kywzl+LFxUf9fFhA3mQWt/d5fS4itPBrNtrbTFrbiX3ltg5TSwgHKymsZ2Q
-         kARyLdBv1x9AuXY50Q4LsC0dQYcHMVjzwBp0U20ZQgi09fPfkpxyFMLQPTfyLVIOcpxS
-         RfbA==
-X-Gm-Message-State: APzg51A5Xfex1Vm3WFgD8wwDQlfAJGMsdDE/1iQhuNZhGn7rXMe5K+Do
-        /OKsDl0xfoZri8jn685SOUHcUdoy/dDFKjT7vRkgoQ==
-X-Google-Smtp-Source: ANB0Vda6k18oMOiaBzjrN++UStjy3WvsN1Tuz5SBco0DoHyIV5+Whpw5/aQtSrVVFL7rqJ45WQzCYWR46M2VeTNfAu8=
-X-Received: by 2002:a0c:fb08:: with SMTP id c8-v6mr1866269qvp.149.1536239012711;
- Thu, 06 Sep 2018 06:03:32 -0700 (PDT)
+        Thu, 6 Sep 2018 13:39:22 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86D3aud301451
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:03:36 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86D3acT301448;
+        Thu, 6 Sep 2018 06:03:36 -0700
+Date:   Thu, 6 Sep 2018 06:03:36 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-bf06278c3fdf8909c3a9283e2c270b0fc170fa90@git.kernel.org>
+Cc:     hpa@zytor.com, namhyung@kernel.org, jolsa@kernel.org,
+        chabbi.milind@gmail.com, peterz@infradead.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, dsahern@gmail.com,
+        oleg@redhat.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Reply-To: tglx@linutronix.de, acme@redhat.com,
+          linux-kernel@vger.kernel.org, oleg@redhat.com, dsahern@gmail.com,
+          alexander.shishkin@linux.intel.com, mingo@kernel.org,
+          peterz@infradead.org, chabbi.milind@gmail.com,
+          namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com
+In-Reply-To: <20180827091228.2878-6-jolsa@kernel.org>
+References: <20180827091228.2878-6-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/hw_breakpoint: Simplify breakpoint enable in
+ perf_event_modify_breakpoint
+Git-Commit-ID: bf06278c3fdf8909c3a9283e2c270b0fc170fa90
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com> <a82f72fd77a6c06d23e6d08acc9df2a816d6235d.1536138304.git.ren_guo@c-sky.com>
- <CABGGiszOxskc_V1E8A4i34OWSUdOSVX-QSRrgG+NjTbashND_g@mail.gmail.com> <20180906022322.GA30251@guoren-Inspiron-7460>
-In-Reply-To: <20180906022322.GA30251@guoren-Inspiron-7460>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Sep 2018 15:03:16 +0200
-Message-ID: <CAK8P3a0qRKEfdyQ5V0JcukTG+e0vSLycoBkC4YxRM_os9_jUcQ@mail.gmail.com>
-Subject: Re: [PATCH V3 22/26] dt-bindings: interrupt-controller: C-SKY SMP intc
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 4:23 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> On Wed, Sep 05, 2018 at 07:45:12PM -0500, Rob Herring wrote:
-> > On Wed, Sep 5, 2018 at 7:09 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > > +
-> > > +C-SKY Multi-processors Interrupt Controller is designed for ck807/ck810/ck860
-> > > +SMP soc, and it also could be used in non-SMP system.
-> >
-> > How is it accessed? No mmio registers?
-> Mmio reg base is got from cpu-coprocessor register and I'll detail
-> it here in next version patch.
->
-> csky_mpintc_init(struct device_node *node, struct device_node *parent)
-> {
->         ...
->         INTCG_base = ioremap(mfcr("cr<31, 14>"), INTC_SIZE);
+Commit-ID:  bf06278c3fdf8909c3a9283e2c270b0fc170fa90
+Gitweb:     https://git.kernel.org/tip/bf06278c3fdf8909c3a9283e2c270b0fc170fa90
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Mon, 27 Aug 2018 11:12:28 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 14:49:24 -0300
 
-It that reliable? I remember a similar situation with some registers on ARM
-that are usually identified through a special CPU register, but in some
-cases the SoC integrator put the wrong address in there, so we need to
-look up the address in DT anyway.
+perf/hw_breakpoint: Simplify breakpoint enable in perf_event_modify_breakpoint
 
-      Arnd
+We can safely enable the breakpoint back for both the fail and success
+paths by checking only the bp->attr.disabled, which either holds the new
+'requested' disabled state or the original breakpoint state.
+
+Committer testing:
+
+At the end of the series, the 'perf test' entry introduced as the first
+patch now runs to completion without finding the fixed issues:
+
+  # perf test "bp modify"
+  62: x86 bp modify                                         : Ok
+  #
+
+In verbose mode:
+
+  # perf test -v "bp modify"
+  62: x86 bp modify                                         :
+  --- start ---
+  test child forked, pid 5161
+  rip 5950a0, bp_1 0x5950a0
+  in bp_1
+  rip 5950a0, bp_1 0x5950a0
+  in bp_1
+  test child finished with 0
+  ---- end ----
+  x86 bp modify: Ok
+
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Milind Chabbi <chabbi.milind@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180827091228.2878-6-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ kernel/events/core.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f6ea33a9f904..22ede28ec07d 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2867,16 +2867,11 @@ static int perf_event_modify_breakpoint(struct perf_event *bp,
+ 	_perf_event_disable(bp);
+ 
+ 	err = modify_user_hw_breakpoint_check(bp, attr, true);
+-	if (err) {
+-		if (!bp->attr.disabled)
+-			_perf_event_enable(bp);
+ 
+-		return err;
+-	}
+-
+-	if (!attr->disabled)
++	if (!bp->attr.disabled)
+ 		_perf_event_enable(bp);
+-	return 0;
++
++	return err;
+ }
+ 
+ static int perf_event_modify_attr(struct perf_event *event,
