@@ -3,208 +3,173 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F740C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030E4C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E772064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:51:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E772064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernkonzept.com
+	by mail.kernel.org (Postfix) with ESMTP id A77782064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A77782064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbeIFO0H (ORCPT
+        id S1728450AbeIFO1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:26:07 -0400
-Received: from serv1.kernkonzept.com ([88.99.87.17]:47297 "EHLO
-        mx.kernkonzept.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728001AbeIFO0H (ORCPT
+        Thu, 6 Sep 2018 10:27:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40548 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727655AbeIFO1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:26:07 -0400
-X-Greylist: delayed 1768 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Sep 2018 10:26:05 EDT
-Received: from ip5f5b9406.dynamic.kabel-deutschland.de ([95.91.148.6] helo=localhost.localdomain)
-        by mx.kernkonzept.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128) (Exim 4.89)
-        id 1fxqUG-0000xv-Ot; Thu, 06 Sep 2018 11:22:04 +0200
-From:   Philipp Eppelt <philipp.eppelt@kernkonzept.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=philipp.eppelt@kernkonzept.com; prefer-encrypt=mutual;
- keydata=
- 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
- khuLCBwcsLPhxbjZ6s1AXffYGA==
-Subject: x86/apic: MSI address malformed for "flat" driver
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <d407ee89-3d6c-b55d-d633-abf7644e9766@kernkonzept.com>
-Date:   Thu, 6 Sep 2018 11:22:04 +0200
+        Thu, 6 Sep 2018 10:27:34 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w869oTo8088592
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 05:52:53 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2maye2xxqm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 05:52:53 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Thu, 6 Sep 2018 10:52:51 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 10:52:48 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w869qlHa44171412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 09:52:47 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE53142045;
+        Thu,  6 Sep 2018 12:52:41 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 688E94203F;
+        Thu,  6 Sep 2018 12:52:41 +0100 (BST)
+Received: from [10.0.2.15] (unknown [9.152.224.222])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Sep 2018 12:52:41 +0100 (BST)
+Subject: Re: [GIT PULL] s390 patches for the 4.19 merge window #2
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+References: <20180824094225.68b2adc6@mschwideX1>
+ <CAGXu5jJVvWbKnRR_XyBH5yWLzNAEPzuguppBfxXaU4x+tE0M2g@mail.gmail.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Thu, 6 Sep 2018 11:52:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAGXu5jJVvWbKnRR_XyBH5yWLzNAEPzuguppBfxXaU4x+tE0M2g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18090609-0020-0000-0000-000002C21844
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090609-0021-0000-0000-0000210F4D39
+Message-Id: <3cbec995-e04e-7d32-265a-9a639ec2ac73@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 05.09.2018 02:16, Kees Cook wrote:
+> On Fri, Aug 24, 2018 at 12:42 AM, Martin Schwidefsky
+> <schwidefsky@de.ibm.com> wrote:
+>> Harald Freudenberger (5):
+>>       s390/zcrypt: hex string mask improvements for apmask and aqmask.
+> This (and an earlier 2017 commit) adds VLAs, which are being
+> removed[1] from the kernel:
+>
+> drivers/s390/crypto/ap_bus.c:980:3: warning: ISO C90 forbids variable
+> length array ‘clrm’ [-Wvla]
+> drivers/s390/crypto/ap_bus.c:981:3: warning: ISO C90 forbids variable
+> length array ‘setm’ [-Wvla]
+> drivers/s390/crypto/ap_bus.c:995:3: warning: ISO C90 forbids variable
+> length array ‘setm’ [-Wvla]
+>
+> static int process_mask_arg(const char *str,
+>                             unsigned long *bitmap, int bits,
+>                             struct mutex *lock)
+> ...
+>                 DECLARE_BITMAP(clrm, bits);
+>                 DECLARE_BITMAP(setm, bits);
+>
+> Can someone please adjust this to make these fixed size again?
+>
+> Thanks!
+>
+> -Kees
+>
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>
+Here is a simple solution which just hard codes the upper limit to 256 bits.
+As all callers are only internal to the ap bus code and do obey to this limit
+this shouldn't be a real limitation.
 
-I believe the x86/APIC implementation does not behave according to the
-Intel SDM specification, when it comes to composing MSI messages for the
-"flat" APIC driver as of a31e58e129f73ab5b04016330b13ed51fde7a961 .
+However, a version which really allocates will follow and then I'll discuss
+with Martin, which version to post upstream.
 
+========================================
 
-APIC "flat" driver and MSI address composing from the current master
-(2018-09-02, 60c1f89241d49bacf71035470684a8d7b4bb46ea):
+From: Harald Freudenberger <freude@linux.ibm.com>
+Date: Thu, 6 Sep 2018 11:29:36 +0200
+Subject: [PATCH] s390/zcrypt: remove VLA use in ap bus code
 
-  static struct apic apic_flat __ro_after_init = {
-  ...
-	.irq_delivery_mode		= dest_Fixed,
-	.irq_dest_mode			= 1, /* logical */
-  ...
-	.calc_dest_apicid		= apic_flat_calc_apicid,
-  };
+The internal function to parse sysfs arguments uses VLAs -
+dynamic bitmap arrays on the stack where the size is determined
+by a invocation argument.
 
+Reworked the code to have fixed sizes and check, if the caller
+comply to this limit. However, one code path uses two of these
+bitmap arrays and thus has a stack footprint of 64 bytes.
 
-  static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg
-*msg) {
-  ...
-	msg->address_lo =
-		MSI_ADDR_BASE_LO |
-		((apic->irq_dest_mode == 0) ?
-			MSI_ADDR_DEST_MODE_PHYSICAL :
-			MSI_ADDR_DEST_MODE_LOGICAL) |
-		MSI_ADDR_REDIRECTION_CPU |
-		MSI_ADDR_DEST_ID(cfg->dest_apicid);
-  ...
-  }
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+---
+ drivers/s390/crypto/ap_bus.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The "flat" driver defines the MSI addressing scheme to be used as
-logical addressing in flat mode. The MSI msg address is composed
-accordingly, but sets MSI_ADDR_REDIRECTION_CPU which is a zero at bit[3].
-
-The intel SDM states for the MSI address format (SDM vol.3 10.11):
-31-20  0xfee
-19-12  Destination ID (DID)
-11-4   Reserved
-3      Redirection Hint (RH)
-2      Destination Mode (DM)
-1-0    XX
-
-The relation of RH and DM is, if RH is 0, DM is ignored and the DID
-field is interpreted the same as are bits [63:56] in the IO-APIC,
-meaning as local APIC ID.
-
-If RH is 1 and DM is 0, physical addressing is used (see the
-apic_physflat driver).
-If RH is 1 and DM is 1, logical addressing is used which splits up into
-flat and cluster mode determined by the APICs DFR and LDR using the
-logical APIC address.
-
-
-Currently, irq_msi_compose_msg composes for the "flat" driver an address
-like 0xfee0'1004 for a 64-bit single-core system without IO-APIC and MSI
-remapping and no ACPI (a virtual system).
-
-That's incorrect because RH == 0 means the DID should show a local APIC
-ID, but it shows a logical APIC ID for logical flat addressing (DM == 1,
-DFR[31:28] == 0).
-The LDR register is correctly set up as well, so the behavior is
-consistent, but completely ignores the RH value.
-
-The DID calculation producing the local APIC ID should be done by
-"apic_default_calc_apicid", when the RH bit is not set.
-
-
-That's my analysis I want to put up for discussion.
-
-I hope to have included all necessary information on my setup, please
-let me know if I missed something.
-
-
-I don't have an overview over all affected parts in and around the APIC,
-so I am currently not able to produce a patch (besides just changing
-.calc_dest_apicid which makes the "flat" driver inconsistent).
-
-
-Cheers,
-Philipp
-
-
-p.s. I am on vacation the next three weeks starting Saturday, so forgive
-me for not answering in the meantime.
-
-
-Kernel config: x86_64_defconfig
-+
-CONFIG_KERNEL_XZ=y
-CONFIG_BLK_DEV_INITRD=y
-CONFIG_CC_STACKPROTECTOR_REGULAR=y
-CONFIG_PCI_MSI=y
-CONFIG_OF=y
-CONFIG_BLK_DEV_RAM=y
-CONFIG_BLK_DEV_RAM_SIZE=16384
-CONFIG_VIRTIO_BLK=y
-CONFIG_SERIO_RAW=y
-CONFIG_VT_HW_CONSOLE_BINDING=y
-CONFIG_VIRTIO_CONSOLE=y
-CONFIG_HW_RANDOM_VIRTIO=y
-CONFIG_VIRTIO_PCI=y
-# CONFIG_VIRTIO_PCI_LEGACY is not set
-CONFIG_VIRTIO_INPUT=y
-CONFIG_EXT3_FS=y
-CONFIG_TMPFS=y
-CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
-CONFIG_DEBUG_FS=y
-CONFIG_STACKTRACE=y
-CONFIG_MEMTEST=y
-
-
-virtual System:
-x86-64 64-bit UP, 128MB RAM, no ACPI, no MSI remapping, no IO-APIC
-
+diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+index ec891bc7d10a..20f2fa2276c8 100644
+--- a/drivers/s390/crypto/ap_bus.c
++++ b/drivers/s390/crypto/ap_bus.c
+@@ -972,13 +972,13 @@ static int process_mask_arg(const char *str,
+ {
+     int i;
+ 
+-    /* bits needs to be a multiple of 8 */
+-    if (bits & 0x07)
++    /* bits needs to be a multiple of 8 and <= 256 */
++    if (bits & 0x07 || bits > 256)
+         return -EINVAL;
+ 
+     if (*str == '+' || *str == '-') {
+-        DECLARE_BITMAP(clrm, bits);
+-        DECLARE_BITMAP(setm, bits);
++        DECLARE_BITMAP(clrm, 256);
++        DECLARE_BITMAP(setm, 256);
+ 
+         i = str2clrsetmasks(str, clrm, setm, bits);
+         if (i)
+@@ -992,7 +992,7 @@ static int process_mask_arg(const char *str,
+                 set_bit_inv(i, bitmap);
+         }
+     } else {
+-        DECLARE_BITMAP(setm, bits);
++        DECLARE_BITMAP(setm, 256);
+ 
+         i = hex2bitmap(str, setm, bits);
+         if (i)
 -- 
-philipp.eppelt@kernkonzept.com - Tel. 0351-41 883 221
-http://www.kernkonzept.com
+2.17.1
+
+
