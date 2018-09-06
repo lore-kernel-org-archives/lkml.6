@@ -2,156 +2,138 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1DBC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2009C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 632FB2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 632FB2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F6AA2064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6AA2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbeIFSEi (ORCPT
+        id S1729458AbeIFSEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 6 Sep 2018 14:04:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53989 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729225AbeIFSEi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Sep 2018 14:04:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45514 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728699AbeIFSEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:04:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA96F5A745;
-        Thu,  6 Sep 2018 13:29:04 +0000 (UTC)
-Received: from krava (unknown [10.43.17.49])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5F65A2027EA0;
-        Thu,  6 Sep 2018 13:29:03 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 15:28:59 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCHv3] perf tools: Add struct ordered_events_buffer layer
-Message-ID: <20180906132859.GA9577@krava>
-References: <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
- <20180810115431.GA4162@krava>
- <20180813130446.GA8685@krava>
- <CABPqkBSgYEFFAkddBqZbYXe9tjUY7RbMBjQsZht8ki1iOR6unw@mail.gmail.com>
- <20180815084825.GD3180@krava>
- <20180827092818.GA3725@krava>
- <CABPqkBQS+QG1jjzMU=wpuOJXD5A8iiPj3fNZoHSsPep7rfEQow@mail.gmail.com>
- <20180827170543.GA31347@krava>
- <20180902144738.GA28012@krava>
- <CABPqkBTiDYm_pbFdbQCiNTpECVpWyOb16vBFC7AZ=vzqcR=2ig@mail.gmail.com>
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DSgv2308244
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:28:42 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DSgu3308241;
+        Thu, 6 Sep 2018 06:28:42 -0700
+Date:   Thu, 6 Sep 2018 06:28:42 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-a5a9eac1a018ad3bfcf9a3ec11eae99fd35f466b@git.kernel.org>
+Cc:     jolsa@kernel.org, acme@redhat.com, tglx@linutronix.de,
+        peterz@infradead.org, mingo@kernel.org, namhyung@kernel.org,
+        andi@firstfloor.org, alexander.shishkin@linux.intel.com,
+        dsahern@gmail.com, hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, jolsa@kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, peterz@infradead.org, andi@firstfloor.org,
+          namhyung@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          dsahern@gmail.com, alexander.shishkin@linux.intel.com
+In-Reply-To: <20180830063252.23729-16-jolsa@kernel.org>
+References: <20180830063252.23729-16-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Introduce perf_evlist__print_counters()
+Git-Commit-ID: a5a9eac1a018ad3bfcf9a3ec11eae99fd35f466b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CABPqkBTiDYm_pbFdbQCiNTpECVpWyOb16vBFC7AZ=vzqcR=2ig@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 13:29:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 13:29:04 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 07:37:56PM -0700, Stephane Eranian wrote:
+Commit-ID:  a5a9eac1a018ad3bfcf9a3ec11eae99fd35f466b
+Gitweb:     https://git.kernel.org/tip/a5a9eac1a018ad3bfcf9a3ec11eae99fd35f466b
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 30 Aug 2018 08:32:24 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:22 -0300
 
-SNIP
+perf stat: Introduce perf_evlist__print_counters()
 
-> 
-> I think the code is correct now for the issue related to uninitialized pointer.
-> But there is still one problem I found stressing the code with max_alloc_size.
-> The way the following is written:
-> 
->        if (!list_empty(cache)) {
->                 new = list_entry(cache->next, struct ordered_event, list);
->                 list_del(&new->list);
->         } else if (oe->buffer) {
->                 new = oe->buffer + oe->buffer_idx;
->                 if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
->                         oe->buffer = NULL;
->         } else if (oe->cur_alloc_size < oe->max_alloc_size) {
->                 size_t size = sizeof(*oe->buffer) MAX_SAMPLE_BUFFER *
-> sizeof(*new);
-> 
->                 oe->buffer = malloc(size);
->                 if (!oe->buffer) {
->                         free_dup_event(oe, new_event);
->                         return NULL;
->                 }
-> 
->                 pr("alloc size %" PRIu64 "B (+%zu), max %" PRIu64 "B\n",
->                    oe->cur_alloc_size, size, oe->max_alloc_size);
-> 
->                 oe->cur_alloc_size += size;
-> 
-> You can end up with oe->cur_alloc_size > oe->max_alloc_size in case
-> the max limit is
-> really low (< size_t size = sizeof (*oe->buffer) + MAX_SAMPLE_BUFFER *
-> sizeof(*new);
-> So I think to make sure you can never allocate more than the max, you
-> have to do:
-> 
->       size_t size = sizeof(*oe->buffer) MAX_SAMPLE_BUFFER * sizeof(*new);
->        if (!list_empty(cache)) {
->                 new = list_entry(cache->next, struct ordered_event, list);
->                 list_del(&new->list);
->         } else if (oe->buffer) {
->                 new = oe->buffer + oe->buffer_idx;
->                 if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
->                         oe->buffer = NULL;
->         } else if ((oe->cur_alloc_size + size) < oe->max_alloc_size) {
-> 
-> Then you will never allocate more than the max.
-> I think with this change, we are okay.
-> Tested-by: Stephane Eranian <eranian@google.com>
+To be in charge of printing out the stat output. It will be moved out of
+the 'perf stat' command in the following patches.
 
-yep, makes sense.. something like below then
-I'll post it on top of the previous patch
-
-thanks,
-jirka
-
-
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180830063252.23729-16-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index 87171e8fd70d..2d1d0f3c8f77 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -101,6 +101,7 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 	struct list_head *cache = &oe->cache;
- 	struct ordered_event *new = NULL;
- 	union perf_event *new_event;
-+	size_t size;
+ tools/perf/builtin-stat.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 54768ec15dbc..db11832bbdbc 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -1692,7 +1692,10 @@ static void print_footer(void)
+ 			"the same PMU. Try reorganizing the group.\n");
+ }
  
- 	new_event = dup_event(oe, event);
- 	if (!new_event)
-@@ -133,6 +134,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 	 * Removal of ordered event object moves it from events to
- 	 * the cache list.
- 	 */
-+	size = sizeof(*oe->buffer) + MAX_SAMPLE_BUFFER * sizeof(*new);
+-static void print_counters(struct timespec *ts, int argc, const char **argv)
++static void
++perf_evlist__print_counters(struct perf_evlist *evlist,
++			    struct timespec *ts,
++			    int argc, const char **argv)
+ {
+ 	int interval = stat_config.interval;
+ 	struct perf_evsel *counter;
+@@ -1724,14 +1727,14 @@ static void print_counters(struct timespec *ts, int argc, const char **argv)
+ 		print_aggr(prefix);
+ 		break;
+ 	case AGGR_THREAD:
+-		evlist__for_each_entry(evsel_list, counter) {
++		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+ 			print_aggr_thread(counter, prefix);
+ 		}
+ 		break;
+ 	case AGGR_GLOBAL:
+-		evlist__for_each_entry(evsel_list, counter) {
++		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+ 			print_counter_aggr(counter, prefix);
+@@ -1743,7 +1746,7 @@ static void print_counters(struct timespec *ts, int argc, const char **argv)
+ 		if (metric_only)
+ 			print_no_aggr_metric(prefix);
+ 		else {
+-			evlist__for_each_entry(evsel_list, counter) {
++			evlist__for_each_entry(evlist, counter) {
+ 				if (is_duration_time(counter))
+ 					continue;
+ 				print_counter(counter, prefix);
+@@ -1761,6 +1764,11 @@ static void print_counters(struct timespec *ts, int argc, const char **argv)
+ 	fflush(stat_config.output);
+ }
+ 
++static void print_counters(struct timespec *ts, int argc, const char **argv)
++{
++	perf_evlist__print_counters(evsel_list, ts, argc, argv);
++}
 +
- 	if (!list_empty(cache)) {
- 		new = list_entry(cache->next, struct ordered_event, list);
- 		list_del(&new->list);
-@@ -140,10 +143,7 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 		new = &oe->buffer->event[oe->buffer_idx];
- 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
- 			oe->buffer = NULL;
--	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
--		size_t size = sizeof(*oe->buffer) +
--			      MAX_SAMPLE_BUFFER * sizeof(*new);
--
-+	} else if ((oe->cur_alloc_size + size) < oe->max_alloc_size) {
- 		oe->buffer = malloc(size);
- 		if (!oe->buffer) {
- 			free_dup_event(oe, new_event);
+ static volatile int signr = -1;
+ 
+ static void skip_signal(int signo)
