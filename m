@@ -2,176 +2,111 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD7EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2340C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49732083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:27:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="VruonReK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49732083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 889782075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:28:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889782075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbeIFWEJ (ORCPT
+        id S1730086AbeIFWEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 18:04:09 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:47138 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbeIFWEJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 18:04:09 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 8B4075C08AC;
-        Thu,  6 Sep 2018 19:27:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1536254857;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zH15cs26qYQnTN72QlZnTgeN2SRn7AVR2FOdxCYzQgY=;
-        b=VruonReK2ofsG31sFlqqOInLafO05tIX4KSblzTPbI/JBWpzUqsbvaEj9vz079wIoHuw8B
-        c7Wrk/DsfzlpoKaAVryXf+5M1vHmrv3g63C9icjXPyJeYQ2Hsx5QG/UZk/TGvmYaTKKG3A
-        TFYwl1ky8NV1PhVyNJnN9hsE+oUDHgw=
+        Thu, 6 Sep 2018 18:04:31 -0400
+Received: from mga06.intel.com ([134.134.136.31]:64129 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728175AbeIFWEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 18:04:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 10:28:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
+   d="scan'208";a="83647576"
+Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Sep 2018 10:27:08 -0700
+Subject: Re: [PATCH] x86/fault: Decode page fault OOPSes better
+To:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org
+References: <0a4c64885e9a51705dcc0f49526823ed429e0720.1535773238.git.luto@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <8268eb6b-ea83-385f-de5f-e79f4d8a454c@linux.intel.com>
+Date:   Thu, 6 Sep 2018 10:27:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 06 Sep 2018 10:27:36 -0700
-From:   Stefan Agner <stefan@agner.ch>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        max.krummenacher@toradex.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
-In-Reply-To: <1611934.U20VZ57ca3@avalon>
-References: <20180905052113.21262-1-stefan@agner.ch>
- <10044412.4MiZRujKJI@avalon> <d07214d3005fb7229f17dd62d1b5b8ee@agner.ch>
- <1611934.U20VZ57ca3@avalon>
-Message-ID: <c1507b33c4b2d8e657cd6cdf54e14136@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+In-Reply-To: <0a4c64885e9a51705dcc0f49526823ed429e0720.1535773238.git.luto@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.09.2018 09:54, Laurent Pinchart wrote:
-> Hi Stefan,
-> 
-> On Thursday, 6 September 2018 19:48:51 EEST Stefan Agner wrote:
->> On 06.09.2018 05:25, Laurent Pinchart wrote:
->> > On Thursday, 6 September 2018 14:07:41 EEST Linus Walleij wrote:
->> >> On Wed, Sep 5, 2018 at 8:32 PM Stefan Agner <stefan@agner.ch> wrote:
->> >> > On 05.09.2018 00:44, Laurent Pinchart wrote:
->> >> >
->> >> > Good point! I actually really don't like that we use the same flags
->> >> > here
->> >> > but from a different perspective. Especially since the flags defines
->> >> > document things differently:
->> >> >
->> >> > /* drive data on pos. edge */
->> >> > #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
->> >> > /* drive data on neg. edge */
->> >> > #define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
->> >>
->> >> Maybe a stupid comment from my side, but can't we just change the
->> >> documentation to match the usecases?
->> >>
->> >> /* Trigger pixel data latch on positive edge */
->> >> #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
->> >
->> > The flags are used for the drm_connector bus_flags field, and really mean
->> > driving on the positive/negative edges. We this can't change their meaning
->> > like this.
->> >
->> >> > Using the opposite perspective would also need translation in crtc
->> >> > drivers... So far no driver uses sampling_edge.
->> >> >
->> >> > I would prefer if we always use the meaning as documented by the flags.
->> >> >
->> >> > I guess we would need to convert DRM_BUS_FLAG_PIXDATA_POSEDGE ->
->> >> > DRM_BUS_FLAG_PIXDATA_NEGEDGE.
->> >> >
->> >> > Linus Walleij, you added sampling edge, any thoughts?
->> >>
->> >> I just thought it was generally useful to have triggering edge encoded
->> >> into the bridge as it makes it clear that this edge is something
->> >> that is a delayed version of the driving edge which is subject to
->> >> clock skew caused by the speed of electrons in silicon and
->> >> copper and slew rate caused by parasitic capacitance.
->> >
->> > I agree that we need both the driving and sampling edge. In many case they
->> > will be opposite, and providing some kind of appropriate defaults in APIs
->> > is fine by me, but we need a way to specify both when needed.
->>
->> We do have pixel clock flags for displays, but also they are actually
->> controller oriented:
->>
->> https://elixir.bootlin.com/linux/latest/source/include/video/display_timing.
->> h#L15
->>
->> I guess having different flags to denote driving and sampling edge
->> independently would be ideal. But then, is there really a use case where
->> it wouldn't be the exact opposite?
-> 
-> Yes, for instance when the transmission delay for clock and data signals is 
-> different, you may want to sample on the same edge used by the transmitter to 
-> latch the output. Linus had that case, which prompted him to add the sampling 
-> edge field.
-> 
+On 08/31/2018 08:42 PM, Andy Lutomirski wrote:
+> One of Linus' favorite hobbies seems to be looking at OOPSes and
+> decoding the error code in his head.  This is not one of my favorite
+> hobbies :)
 
-Bu in that case the controller does not know what it actually should do
-with the sampling information alone either...
+I just work around this by having a screenshot of 'enum
+x86_pf_error_code' as my desktop background.
 
-Where is that code handling that today? sample_edge has been added, but
-I only see setup_time_ps being used in pl111_display.c.
+I love stuff like this.  I'd only ask for more, like in
+show_signal_msg() or the page fault tracepoints too.
 
-I'm not a hardware guy, but according to my rough calculation a pixel
-clock signal at 100MHz would need to be 1.5m off compared to the data
-signals to skew by a half period! Length matching is usually only
-necessary at really high speed signals. Is that really what is going on
-here?
-
-Why not just work around by specifying "the wrong" edge...?
-
---
-Stefan
-
->> The other bus flags are actually fine as is. I suggest to just stick
->> with the bus flags as we have them now, at least for now.
->>
->> Alternatively, we could provide "consumer/bridge" oriented flags which
->> use the same bit and just are the opposite of the controller oriented
->> flags, e.g.:
->>
->> /* drive data on pos. edge */
->> #define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
->> /* drive data on neg. edge */
->> #define DRM_BUS_FLAG_PIXDATA_NEGEDGE	(1<<3)
->> /* sample data on neg. edge */
->> #define DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE	(1<<2)
->> /* sample data on pos. edge */
->> #define DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE	(1<<3)
+BTW, I'm feeling rather perturbed that error_code diverges from the
+hardware-issued error code for user-mode implicit accesses/buglets.  I
+really wish captured the "raw" hardware error codes.
