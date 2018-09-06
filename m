@@ -2,337 +2,262 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D32C4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21378C4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B20A2206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:22:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B20A2206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AE5F6206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:23:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AQh9/1bL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE5F6206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeIGC7n (ORCPT
+        id S1728578AbeIGDAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 22:59:43 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63802 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbeIGC7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 22:59:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 15:22:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="260505741"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Sep 2018 15:22:05 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1fy2f1-00066b-0d; Fri, 07 Sep 2018 06:21:59 +0800
-Date:   Fri, 7 Sep 2018 06:21:43 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     kbuild-all@01.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Rik van Riel <riel@surriel.com>,
-        Roman Gushchin <guro@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] mm: slowly shrink slabs with a relatively small
- number of objects
-Message-ID: <201809070616.4yBTU0cs%fengguang.wu@intel.com>
-References: <20180904224707.10356-1-guro@fb.com>
+        Thu, 6 Sep 2018 23:00:42 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36412 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728344AbeIGDAm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 23:00:42 -0400
+Received: by mail-yw1-f68.google.com with SMTP id w202-v6so4707923yww.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 15:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=G34fq9Mov16VHQeRQWiSMoMRJfFib/6fiWgZPLITTUU=;
+        b=AQh9/1bLGkzW+2T9dJTtTUMjLyFlfyK6wDUPJ+M8PuvXfwvGfrIVS8vmQ5DokatpC7
+         nUZNKT2dNh0Q2N9Bqi1tlxj3ty6E5oertRhkJgDR7pt9q5j655vwPOmfG/8dxbl2fj5z
+         H/C3f3mndZ3moD2E8PwzX4TiTOxRHoHv/GV5E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=G34fq9Mov16VHQeRQWiSMoMRJfFib/6fiWgZPLITTUU=;
+        b=lcfkJ0r5ThB3ZZl2RUMuUdQSHQrqitEiltA/oXZ/nDzg5QGWCRDMwXRhqPlM5zYYvW
+         fhYhaIty9WO3YXBCFsuTOIl8Sj6WfkMmUQckf3WtqNZyU528Kt4mkOAmS9xuNf2RBzBS
+         XL5wa7Vo8I+uoI393/2GJSmZBaGf3pj1fNbRY7B+pIx63LXiOffrLULE2kC6eYNILFSF
+         jxq1siXLFiZwFP5eySi1ET9PRdoyQoGbnTOaO3Axb1DVZqJUMxHDhYlOQbGmP5qnX4cM
+         SXFhUDWtqC9yXxH5DO30IjhC0ppWTYaq3t7VEMtXpVQWQ2kNKd436RVrZmQEaUnG9AoN
+         FymA==
+X-Gm-Message-State: APzg51BFItcyX3T6wHy0gtHXweziIs+K2e4J1iQSfj0h0/gFt0wZE1bm
+        V94FmFt14yIkKbxTmsu/cr1MKGrZWW0=
+X-Google-Smtp-Source: ANB0VdY2lyOQTxzi2aU4LhLwaKKlFZWBTyg7JsnhWoZunDFbefeoBQ4HF+7xhG+XiPPJRzyrcuh+qw==
+X-Received: by 2002:a81:717:: with SMTP id 23-v6mr861268ywh.290.1536272584165;
+        Thu, 06 Sep 2018 15:23:04 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id 201-v6sm2227556ywn.103.2018.09.06.15.23.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 15:23:02 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id m123-v6so4769564ybm.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 15:23:02 -0700 (PDT)
+X-Received: by 2002:a25:1345:: with SMTP id 66-v6mr2643636ybt.171.1536272581869;
+ Thu, 06 Sep 2018 15:23:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180904224707.10356-1-guro@fb.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 15:23:01 -0700 (PDT)
+In-Reply-To: <CAGXu5jJHnUF_C7ChNdxkYMPW59-jTMSJpiTB7XyAYhe6=00zbg@mail.gmail.com>
+References: <20180904181629.20712-1-keescook@chromium.org> <20180904181629.20712-3-keescook@chromium.org>
+ <CAKv+Gu9uJ+ZjBSCM=aU0GDvYR72cy2k8reXdLV5on3dOVw8KdQ@mail.gmail.com>
+ <CAGXu5jKmcuhULMR=O9B_hJAxEK8uV36uoMxm4F3F8yYSuMzYNA@mail.gmail.com>
+ <CAKv+Gu_0vWUqkUex45iW=pAfUbKVsqzP9MDf6OOwTg-nUVPZNg@mail.gmail.com>
+ <CAGXu5j+z8eQKu_3sm93pdo+bBZDFqkHNM3Y0tKTDbnHfUNzywg@mail.gmail.com> <CAGXu5jJHnUF_C7ChNdxkYMPW59-jTMSJpiTB7XyAYhe6=00zbg@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 6 Sep 2018 15:23:01 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKPnjG-E6cCf89DncM6dz6O+8HcHv9vsTbYr3m1zvD3bA@mail.gmail.com>
+Message-ID: <CAGXu5jKPnjG-E6cCf89DncM6dz6O+8HcHv9vsTbYr3m1zvD3bA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roman,
+On Thu, Sep 6, 2018 at 1:22 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Sep 5, 2018 at 5:43 PM, Kees Cook <keescook@chromium.org> wrote:
+>> On Wed, Sep 5, 2018 at 3:49 PM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On 5 September 2018 at 23:05, Kees Cook <keescook@chromium.org> wrote:
+>>>> On Wed, Sep 5, 2018 at 2:18 AM, Ard Biesheuvel
+>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>> On 4 September 2018 at 20:16, Kees Cook <keescook@chromium.org> wrote:
+>>>>>> In the quest to remove all stack VLA usage from the kernel[1], this
+>>>>>> caps the skcipher request size similar to other limits and adds a sanity
+>>>>>> check at registration. Looking at instrumented tcrypt output, the largest
+>>>>>> is for lrw:
+>>>>>>
+>>>>>>         crypt: testing lrw(aes)
+>>>>>>         crypto_skcipher_set_reqsize: 8
+>>>>>>         crypto_skcipher_set_reqsize: 88
+>>>>>>         crypto_skcipher_set_reqsize: 472
+>>>>>>
+>>>>>
+>>>>> Are you sure this is a representative sampling? I haven't double
+>>>>> checked myself, but we have plenty of drivers for peripherals in
+>>>>> drivers/crypto that implement block ciphers, and they would not turn
+>>>>> up in tcrypt unless you are running on a platform that provides the
+>>>>> hardware in question.
+>>>>
+>>>> Hrm, excellent point. Looking at this again:
+>>>> [...]
+>>>> And of the crt_ablkcipher.reqsize assignments/initializers, I found:
+>>>>
+>>>> ablkcipher reqsize:
+>>>> 1       struct dcp_aes_req_ctx
+>>>> 8       struct atmel_tdes_reqctx
+>>>> 8       struct cryptd_blkcipher_request_ctx
+>>>> 8       struct mtk_aes_reqctx
+>>>> 8       struct omap_des_reqctx
+>>>> 8       struct s5p_aes_reqctx
+>>>> 8       struct sahara_aes_reqctx
+>>>> 8       struct stm32_cryp_reqctx
+>>>> 8       struct stm32_cryp_reqctx
+>>>> 16      struct ablk_ctx
+>>>> 24      struct atmel_aes_reqctx
+>>>> 48      struct omap_aes_reqctx
+>>>> 48      struct omap_aes_reqctx
+>>>> 48      struct qat_crypto_request
+>>>> 56      struct artpec6_crypto_request_context
+>>>> 64      struct chcr_blkcipher_req_ctx
+>>>> 80      struct spacc_req
+>>>> 80      struct virtio_crypto_sym_request
+>>>> 136     struct qce_cipher_reqctx
+>>>> 168     struct n2_request_context
+>>>> 328     struct ccp_des3_req_ctx
+>>>> 400     struct ccp_aes_req_ctx
+>>>> 536     struct hifn_request_context
+>>>> 992     struct cvm_req_ctx
+>>>> 2456    struct iproc_reqctx_s
+>
+> All of these are ASYNC (they're all crt_ablkcipher), so IIUC, I can ignore them.
+>
+>>>> The base ablkcipher wrapper is:
+>>>> 80      struct ablkcipher_request
+>>>>
+>>>> And in my earlier skcipher wrapper analysis, lrw was the largest
+>>>> skcipher wrapper:
+>>>> 384     struct rctx
+>>>>
+>>>> iproc_reqctx_s is an extreme outlier, with cvm_req_ctx at a bit less than half.
+>>>>
+>>>> Making this a 2920 byte fixed array doesn't seem sensible at all
+>>>> (though that's what's already possible to use with existing
+>>>> SKCIPHER_REQUEST_ON_STACK users).
+>>>>
+>>>> What's the right path forward here?
+>>>>
+>>>
+>>> The skcipher implementations based on crypto IP blocks are typically
+>>> asynchronous, and I wouldn't be surprised if a fair number of
+>>> SKCIPHER_REQUEST_ON_STACK() users are limited to synchronous
+>>> skciphers.
+>>
+>> Looks similar to ahash vs shash. :) Yes, so nearly all
+>> crypto_alloc_skcipher() users explicitly mask away ASYNC. What's left
+>> appears to be:
+>>
+>> crypto/drbg.c:  sk_tfm = crypto_alloc_skcipher(ctr_name, 0, 0);
+>> crypto/tcrypt.c:        tfm = crypto_alloc_skcipher(algo, 0, async ? 0
+>> : CRYPTO_ALG_ASYNC);
+>> drivers/crypto/omap-aes.c:      ctx->ctr =
+>> crypto_alloc_skcipher("ecb(aes)", 0, 0);
+>> drivers/md/dm-crypt.c:          cc->cipher_tfm.tfms[i] =
+>> crypto_alloc_skcipher(ciphermode, 0, 0);
+>> drivers/md/dm-integrity.c:              ic->journal_crypt =
+>> crypto_alloc_skcipher(ic->journal_crypt_alg.alg_string, 0, 0);
+>> fs/crypto/keyinfo.c:    struct crypto_skcipher *tfm =
+>> crypto_alloc_skcipher("ecb(aes)", 0, 0);
+>> fs/crypto/keyinfo.c:    ctfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
+>> fs/ecryptfs/crypto.c:   crypt_stat->tfm =
+>> crypto_alloc_skcipher(full_alg_name, 0, 0);
+>>
+>> I'll cross-reference this with SKCIPHER_REQUEST_ON_STACK...
+>
+> None of these use SKCIPHER_REQUEST_ON_STACK that I can find.
+>
+>>> So we could formalize this and limit SKCIPHER_REQUEST_ON_STACK() to
+>>> synchronous skciphers, which implies that the reqsize limit only has
+>>> to apply synchronous skciphers as well. But before we can do this, we
+>>> have to identify the remaining occurrences that allow asynchronous
+>>> skciphers to be used, and replace them with heap allocations.
+>>
+>> Sounds good; thanks!
+>
+> crypto_init_skcipher_ops_blkcipher() doesn't touch reqsize at all, so
+> the only places I can find it gets changed are with direct callers of
+> crypto_skcipher_set_reqsize(), which, when wrapping a sync blkcipher
+> start with a reqsize == 0. So, the remaining non-ASYNC callers ask
+> for:
+>
+> 4       struct sun4i_cipher_req_ctx
+> 96      struct crypto_rfc3686_req_ctx
+> 375     sum:
+>                 160     crypto_skcipher_blocksize(cipher) (max)
+>                 152     struct crypto_cts_reqctx
+>                 63      align_mask (max)
+> 384     struct rctx
+>
+> So, following your patch to encrypt/decrypt, I can add reqsize check
+> there. How does this look, on top of your patch?
+>
+> --- a/include/crypto/skcipher.h
+> +++ b/include/crypto/skcipher.h
+> @@ -144,9 +144,10 @@ struct skcipher_alg {
+>  /*
+>   * This must only ever be used with synchronous algorithms.
+>   */
+> +#define MAX_SYNC_SKCIPHER_REQSIZE      384
+>  #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+>         char __##name##_desc[sizeof(struct skcipher_request) + \
+> -               crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR = { 1 } \
+> +               MAX_SYNC_SKCIPHER_REQSIZE] CRYPTO_MINALIGN_ATTR = { 1 } \
+>         struct skcipher_request *name = (void *)__##name##_desc
 
-Thank you for the patch! Perhaps something to improve:
+If the lack of named initializer is too ugly, we could do something crazy like:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.19-rc2 next-20180906]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+#define MAX_SYNC_SKCIPHER_REQSIZE       384
+struct skcipher_request_on_stack {
+        union {
+                struct skcipher_request req;
+                char bytes[sizeof(struct skcipher_request) +
+                           MAX_SYNC_SKCIPHER_REQSIZE];
+        };
+};
 
-url:    https://github.com/0day-ci/linux/commits/Roman-Gushchin/mm-slowly-shrink-slabs-with-a-relatively-small-number-of-objects/20180906-142351
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+/*
+ * This must only ever be used with synchronous algorithms.
+ */
+#define SKCIPHER_REQUEST_ON_STACK(name)                         \
+        struct skcipher_request_on_stack __##name##_req =       \
+                { req.__onstack = 1 };                          \
+        struct skcipher_request *name = &(__##name##_req.req)
 
 
-sparse warnings: (new ones prefixed by >>)
+-Kees
 
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:79:1: sparse: incorrect type in argument 3 (different base types) @@    expected unsigned long [unsigned] flags @@    got resunsigned long [unsigned] flags @@
-   include/trace/events/vmscan.h:79:1:    expected unsigned long [unsigned] flags
-   include/trace/events/vmscan.h:79:1:    got restricted gfp_t [usertype] gfp_flags
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:106:1: sparse: incorrect type in argument 3 (different base types) @@    expected unsigned long [unsigned] flags @@    got resunsigned long [unsigned] flags @@
-   include/trace/events/vmscan.h:106:1:    expected unsigned long [unsigned] flags
-   include/trace/events/vmscan.h:106:1:    got restricted gfp_t [usertype] gfp_flags
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: cast from restricted gfp_t
-   include/trace/events/vmscan.h:196:1: sparse: too many warnings
->> mm/vmscan.c:488:17: sparse: incompatible types in comparison expression (different type sizes)
-   In file included from include/asm-generic/bug.h:18:0,
-                    from arch/x86/include/asm/bug.h:83,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from include/linux/mm.h:9,
-                    from mm/vmscan.c:17:
-   mm/vmscan.c: In function 'do_shrink_slab':
-   include/linux/kernel.h:845:29: warning: comparison of distinct pointer types lacks a cast
-      (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                                ^
-   include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
-      (__typecheck(x, y) && __no_side_effects(x, y))
-       ^~~~~~~~~~~
-   include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
-     __builtin_choose_expr(__safe_cmp(x, y), 121-                        ^~~~~~~~~~
-   include/linux/kernel.h:885:19: note: in expansion of macro '__careful_cmp'
-    #define max(x, y) __careful_cmp(x, y, >)
-                      ^~~~~~~~~~~~~
-   mm/vmscan.c:488:10: note: in expansion of macro 'max'
-     delta = max(delta, min(freeable, batch_size));
-             ^~~
-
-vim +488 mm/vmscan.c
-
-   446	
-   447	static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
-   448					    struct shrinker *shrinker, int priority)
-   449	{
-   450		unsigned long freed = 0;
-   451		unsigned long long delta;
-   452		long total_scan;
-   453		long freeable;
-   454		long nr;
-   455		long new_nr;
-   456		int nid = shrinkctl->nid;
-   457		long batch_size = shrinker->batch ? shrinker->batch
-   458						  : SHRINK_BATCH;
-   459		long scanned = 0, next_deferred;
-   460	
-   461		if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
-   462			nid = 0;
-   463	
-   464		freeable = shrinker->count_objects(shrinker, shrinkctl);
-   465		if (freeable == 0 || freeable == SHRINK_EMPTY)
-   466			return freeable;
-   467	
-   468		/*
-   469		 * copy the current shrinker scan count into a local variable
-   470		 * and zero it so that other concurrent shrinker invocations
-   471		 * don't also do this scanning work.
-   472		 */
-   473		nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
-   474	
-   475		total_scan = nr;
-   476		delta = freeable >> priority;
-   477		delta *= 4;
-   478		do_div(delta, shrinker->seeks);
-   479	
-   480		/*
-   481		 * Make sure we apply some minimal pressure even on
-   482		 * small cgroups. This is necessary because some of
-   483		 * belonging objects can hold a reference to a dying
-   484		 * child cgroup. If we don't scan them, the dying
-   485		 * cgroup can't go away unless the memory pressure
-   486		 * (and the scanning priority) raise significantly.
-   487		 */
- > 488		delta = max(delta, min(freeable, batch_size));
-   489	
-   490		total_scan += delta;
-   491		if (total_scan < 0) {
-   492			pr_err("shrink_slab: %pF negative objects to delete nr=%ld\n",
-   493			       shrinker->scan_objects, total_scan);
-   494			total_scan = freeable;
-   495			next_deferred = nr;
-   496		} else
-   497			next_deferred = total_scan;
-   498	
-   499		/*
-   500		 * We need to avoid excessive windup on filesystem shrinkers
-   501		 * due to large numbers of GFP_NOFS allocations causing the
-   502		 * shrinkers to return -1 all the time. This results in a large
-   503		 * nr being built up so when a shrink that can do some work
-   504		 * comes along it empties the entire cache due to nr >>>
-   505		 * freeable. This is bad for sustaining a working set in
-   506		 * memory.
-   507		 *
-   508		 * Hence only allow the shrinker to scan the entire cache when
-   509		 * a large delta change is calculated directly.
-   510		 */
-   511		if (delta < freeable / 4)
-   512			total_scan = min(total_scan, freeable / 2);
-   513	
-   514		/*
-   515		 * Avoid risking looping forever due to too large nr value:
-   516		 * never try to free more than twice the estimate number of
-   517		 * freeable entries.
-   518		 */
-   519		if (total_scan > freeable * 2)
-   520			total_scan = freeable * 2;
-   521	
-   522		trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
-   523					   freeable, delta, total_scan, priority);
-   524	
-   525		/*
-   526		 * Normally, we should not scan less than batch_size objects in one
-   527		 * pass to avoid too frequent shrinker calls, but if the slab has less
-   528		 * than batch_size objects in total and we are really tight on memory,
-   529		 * we will try to reclaim all available objects, otherwise we can end
-   530		 * up failing allocations although there are plenty of reclaimable
-   531		 * objects spread over several slabs with usage less than the
-   532		 * batch_size.
-   533		 *
-   534		 * We detect the "tight on memory" situations by looking at the total
-   535		 * number of objects we want to scan (total_scan). If it is greater
-   536		 * than the total number of objects on slab (freeable), we must be
-   537		 * scanning at high prio and therefore should try to reclaim as much as
-   538		 * possible.
-   539		 */
-   540		while (total_scan >= batch_size ||
-   541		       total_scan >= freeable) {
-   542			unsigned long ret;
-   543			unsigned long nr_to_scan = min(batch_size, total_scan);
-   544	
-   545			shrinkctl->nr_to_scan = nr_to_scan;
-   546			shrinkctl->nr_scanned = nr_to_scan;
-   547			ret = shrinker->scan_objects(shrinker, shrinkctl);
-   548			if (ret == SHRINK_STOP)
-   549				break;
-   550			freed += ret;
-   551	
-   552			count_vm_events(SLABS_SCANNED, shrinkctl->nr_scanned);
-   553			total_scan -= shrinkctl->nr_scanned;
-   554			scanned += shrinkctl->nr_scanned;
-   555	
-   556			cond_resched();
-   557		}
-   558	
-   559		if (next_deferred >= scanned)
-   560			next_deferred -= scanned;
-   561		else
-   562			next_deferred = 0;
-   563		/*
-   564		 * move the unused scan count back into the shrinker in a
-   565		 * manner that handles concurrent updates. If we exhausted the
-   566		 * scan, there is no need to do an update.
-   567		 */
-   568		if (next_deferred > 0)
-   569			new_nr = atomic_long_add_return(next_deferred,
-   570							&shrinker->nr_deferred[nid]);
-   571		else
-   572			new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
-   573	
-   574		trace_mm_shrink_slab_end(shrinker, nid, freed, nr, new_nr, total_scan);
-   575		return freed;
-   576	}
-   577	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Kees Cook
+Pixel Security
