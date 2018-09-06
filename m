@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4B0C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E57C4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9C72077C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:08:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9C72077C
+	by mail.kernel.org (Postfix) with ESMTP id 1BA992077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:08:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA992077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeIFNnO (ORCPT
+        id S1728380AbeIFNnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:43:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:41108 "EHLO foss.arm.com"
+        Thu, 6 Sep 2018 09:43:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:41114 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbeIFNnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:43:14 -0400
+        id S1725894AbeIFNnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:43:15 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F3211596;
-        Thu,  6 Sep 2018 02:08:45 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D8B815B2;
+        Thu,  6 Sep 2018 02:08:47 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4ACB03F575;
-        Thu,  6 Sep 2018 02:08:44 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DD3B83F575;
+        Thu,  6 Sep 2018 02:08:45 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, suzuki.poulose@arm.com,
         robert.walker@arm.com, al.grant@arm.com
-Subject: [PATCH v2 01/14] coresight: Handle failures in enabling a trace path
-Date:   Thu,  6 Sep 2018 10:08:22 +0100
-Message-Id: <1536224915-31766-2-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 02/14] coresight: tmc-etr: Refactor for handling errors
+Date:   Thu,  6 Sep 2018 10:08:23 +0100
+Message-Id: <1536224915-31766-3-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
 References: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,116 +44,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-coresight_enable_path() enables the components in a trace
-path from a given source to a sink, excluding the source.
-The operation is performed in the reverse order; the sink
-first and then backwards in the list. However, if we encounter
-an error in enabling any of the component, we simply disable
-all the components in the given path irrespective of whether
-we enabled some of the components in the enable iteration.
-This could interfere with another trace session if one of the
-link devices is turned off (e.g, TMC-ETF). So, we need to
-make sure that we only disable those components which were
-actually enabled from the iteration.
-
-This patch achieves the same by refactoring the coresight_disable_path
-to accept a "node" to start from in the forward order, which can
-then be used from the error path of coresight_enable_path().
-With this change, we don't issue a disable call back for a component
-which didn't get enabled. This change of behavior triggers
-a bug in coresight_enable_link(), where we leave the refcount
-on the device and will prevent the device from being enabled
-forever. So, we also drop the refcount in the coresight_enable_link()
-if the operation failed.
-
-Also, with the refactoring, we always start after the first node (which
-is the "SOURCE" device) for disabling the entire path. This implies,
-we must not find a "SOURCE" in the middle of the path. Hence, added
-a WARN_ON() to make sure the paths we get are sane, rather than
-simply ignoring them.
+Refactor the tmc-etr enable operation to make it easier to
+handle errors in enabling the hardware. We need to make
+sure that the buffer is compatible with the ETR. This
+patch re-arranges to make the error handling easier, by
+deferring the hardware enablement until all the errors
+are checked. This also avoids turning the CATU on/off
+during a sysfs read session.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 67 ++++++++++++++++---------
+ 1 file changed, 43 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index e73ca6a..f4f5075 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -187,8 +187,10 @@ static int coresight_enable_link(struct coresight_device *csdev,
- 	if (atomic_inc_return(&csdev->refcnt[refport]) == 1) {
- 		if (link_ops(csdev)->enable) {
- 			ret = link_ops(csdev)->enable(csdev, inport, outport);
--			if (ret)
-+			if (ret) {
-+				atomic_dec(&csdev->refcnt[refport]);
- 				return ret;
-+			}
- 		}
- 	}
- 
-@@ -277,13 +279,21 @@ static bool coresight_disable_source(struct coresight_device *csdev)
- 	return !csdev->enable;
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index 56fea4f..c426935 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -918,21 +918,10 @@ static void tmc_sync_etr_buf(struct tmc_drvdata *drvdata)
+ 		tmc_etr_buf_insert_barrier_packet(etr_buf, etr_buf->offset);
  }
  
--void coresight_disable_path(struct list_head *path)
-+/*
-+ * coresight_disable_path_from : Disable components in the given path beyond
-+ * @nd in the list. If @nd is NULL, all the components, except the SOURCE are
-+ * disabled.
-+ */
-+static void coresight_disable_path_from(struct list_head *path,
-+					struct coresight_node *nd)
+-static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
+-			      struct etr_buf *etr_buf)
++static void __tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
  {
- 	u32 type;
--	struct coresight_node *nd;
- 	struct coresight_device *csdev, *parent, *child;
+ 	u32 axictl, sts;
+-
+-	/* Callers should provide an appropriate buffer for use */
+-	if (WARN_ON(!etr_buf || drvdata->etr_buf))
+-		return;
+-	drvdata->etr_buf = etr_buf;
+-
+-	/*
+-	 * If this ETR is connected to a CATU, enable it before we turn
+-	 * this on
+-	 */
+-	tmc_etr_enable_catu(drvdata);
++	struct etr_buf *etr_buf = drvdata->etr_buf;
  
--	list_for_each_entry(nd, path, link) {
-+	if (!nd)
-+		nd = list_first_entry(path, struct coresight_node, link);
-+
-+	list_for_each_entry_continue(nd, path, link) {
- 		csdev = nd->csdev;
- 		type = csdev->type;
+ 	CS_UNLOCK(drvdata->base);
  
-@@ -303,7 +313,12 @@ void coresight_disable_path(struct list_head *path)
- 			coresight_disable_sink(csdev);
- 			break;
- 		case CORESIGHT_DEV_TYPE_SOURCE:
--			/* sources are disabled from either sysFS or Perf */
-+			/*
-+			 * We skip the first node in the path assuming that it
-+			 * is the source. So we don't expect a source device in
-+			 * the middle of a path.
-+			 */
-+			WARN_ON(1);
- 			break;
- 		case CORESIGHT_DEV_TYPE_LINK:
- 			parent = list_prev_entry(nd, link)->csdev;
-@@ -316,6 +331,11 @@ void coresight_disable_path(struct list_head *path)
+@@ -952,11 +941,8 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
+ 		axictl |= TMC_AXICTL_ARCACHE_OS;
  	}
+ 
+-	if (etr_buf->mode == ETR_MODE_ETR_SG) {
+-		if (WARN_ON(!tmc_etr_has_cap(drvdata, TMC_ETR_SG)))
+-			return;
++	if (etr_buf->mode == ETR_MODE_ETR_SG)
+ 		axictl |= TMC_AXICTL_SCT_GAT_MODE;
+-	}
+ 
+ 	writel_relaxed(axictl, drvdata->base + TMC_AXICTL);
+ 	tmc_write_dba(drvdata, etr_buf->hwaddr);
+@@ -982,6 +968,32 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
+ 	CS_LOCK(drvdata->base);
  }
  
-+void coresight_disable_path(struct list_head *path)
++static int tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
++			     struct etr_buf *etr_buf)
 +{
-+	coresight_disable_path_from(path, NULL);
++	/* Callers should provide an appropriate buffer for use */
++	if (WARN_ON(!etr_buf))
++		return -EINVAL;
++
++	if ((etr_buf->mode == ETR_MODE_ETR_SG) &&
++	    WARN_ON(!tmc_etr_has_cap(drvdata, TMC_ETR_SG)))
++		return -EINVAL;
++
++	if (WARN_ON(drvdata->etr_buf))
++		return -EBUSY;
++
++	/* Set the buffer for the session */
++	drvdata->etr_buf = etr_buf;
++	/*
++	 * If this ETR is connected to a CATU, enable it before we turn
++	 * this on.
++	 */
++	tmc_etr_enable_catu(drvdata);
++
++	__tmc_etr_enable_hw(drvdata);
++	return 0;
 +}
 +
- int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data)
- {
- 
-@@ -369,7 +389,7 @@ int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data)
- out:
- 	return ret;
- err:
--	coresight_disable_path(path);
-+	coresight_disable_path_from(path, nd);
- 	goto out;
+ /*
+  * Return the available trace data in the buffer (starts at etr_buf->offset,
+  * limited by etr_buf->len) from @pos, with a maximum limit of @len,
+@@ -1037,7 +1049,7 @@ static void tmc_etr_sync_sysfs_buf(struct tmc_drvdata *drvdata)
+ 	}
  }
  
+-static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
++static void __tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
+ {
+ 	CS_UNLOCK(drvdata->base);
+ 
+@@ -1053,6 +1065,11 @@ static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
+ 
+ 	CS_LOCK(drvdata->base);
+ 
++}
++
++static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
++{
++	__tmc_etr_disable_hw(drvdata);
+ 	/* Disable CATU device if this ETR is connected to one */
+ 	tmc_etr_disable_catu(drvdata);
+ 	/* Reset the ETR buf used by hardware */
+@@ -1111,8 +1128,9 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+ 		drvdata->sysfs_buf = new_buf;
+ 	}
+ 
+-	drvdata->mode = CS_MODE_SYSFS;
+-	tmc_etr_enable_hw(drvdata, drvdata->sysfs_buf);
++	ret = tmc_etr_enable_hw(drvdata, drvdata->sysfs_buf);
++	if (!ret)
++		drvdata->mode = CS_MODE_SYSFS;
+ out:
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+@@ -1342,8 +1360,9 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
+ 
+ 	etr_perf->head = PERF_IDX2OFF(handle->head, etr_perf);
+ 	drvdata->perf_data = etr_perf;
+-	drvdata->mode = CS_MODE_PERF;
+-	tmc_etr_enable_hw(drvdata, etr_perf->etr_buf);
++	rc = tmc_etr_enable_hw(drvdata, etr_perf->etr_buf);
++	if (!rc)
++		drvdata->mode = CS_MODE_PERF;
+ 
+ unlock_out:
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+@@ -1425,7 +1444,7 @@ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
+ 
+ 	/* Disable the TMC if we are trying to read from a running session. */
+ 	if (drvdata->mode == CS_MODE_SYSFS)
+-		tmc_etr_disable_hw(drvdata);
++		__tmc_etr_disable_hw(drvdata);
+ 
+ 	drvdata->reading = true;
+ out:
+@@ -1452,7 +1471,7 @@ int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
+ 		 * buffer. Since the tracer is still enabled drvdata::buf can't
+ 		 * be NULL.
+ 		 */
+-		tmc_etr_enable_hw(drvdata, drvdata->sysfs_buf);
++		__tmc_etr_enable_hw(drvdata);
+ 	} else {
+ 		/*
+ 		 * The ETR is not tracing and the buffer was just read.
 -- 
 2.7.4
 
