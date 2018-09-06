@@ -6,56 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320F5C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE2EC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEE5C206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:51:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE5C206BA
+	by mail.kernel.org (Postfix) with ESMTP id 1162A206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:51:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1162A206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbeIFS1d (ORCPT
+        id S1729875AbeIFS1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:27:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39589 "EHLO
+        Thu, 6 Sep 2018 14:27:36 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47143 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbeIFS1d (ORCPT
+        with ESMTP id S1726837AbeIFS1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:27:33 -0400
+        Thu, 6 Sep 2018 14:27:35 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86Dn8Ee311446
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DppP3312089
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:49:08 -0700
+        Thu, 6 Sep 2018 06:51:51 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Dn7p2311443;
-        Thu, 6 Sep 2018 06:49:07 -0700
-Date:   Thu, 6 Sep 2018 06:49:07 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DppAv312086;
+        Thu, 6 Sep 2018 06:51:51 -0700
+Date:   Thu, 6 Sep 2018 06:51:51 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-hnizqwqrs03vcq1b74yao0f6@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mpetlan@redhat.com,
-        namhyung@kernel.org, peterz@infradead.org,
-        tmricht@linux.vnet.ibm.com, jolsa@kernel.org, tglx@linutronix.de,
-        acme@redhat.com, kim.phillips@arm.com, adrian.hunter@intel.com,
-        naveen.n.rao@linux.vnet.ibm.com, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, sandipan@linux.vnet.ibm.com,
-        brueckner@linux.vnet.ibm.com, dsahern@gmail.com,
-        sukadev@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com,
-        wangnan0@huawei.com, hpa@zytor.com
-Reply-To: adrian.hunter@intel.com, kim.phillips@arm.com, acme@redhat.com,
-          tglx@linutronix.de, jolsa@kernel.org, tmricht@linux.vnet.ibm.com,
-          peterz@infradead.org, namhyung@kernel.org, mpetlan@redhat.com,
-          linux-kernel@vger.kernel.org, ravi.bangoria@linux.ibm.com,
-          hpa@zytor.com, wangnan0@huawei.com, dsahern@gmail.com,
-          sukadev@linux.vnet.ibm.com, brueckner@linux.vnet.ibm.com,
-          sandipan@linux.vnet.ibm.com, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com,
-          naveen.n.rao@linux.vnet.ibm.com
+From:   tip-bot for Neeraj Upadhyay <tipbot@zytor.com>
+Message-ID: <tip-f8b7530aa0a1def79c93101216b5b17cf408a70a@git.kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        peterz@infraded.org, mingo@kernel.org, neeraju@codeaurora.org
+Reply-To: tglx@linutronix.de, hpa@zytor.com, peterz@infraded.org,
+          neeraju@codeaurora.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <1536126727-11629-1-git-send-email-neeraju@codeaurora.org>
+References: <1536126727-11629-1-git-send-email-neeraju@codeaurora.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests: Fix record+probe_libc_inet_pton.sh
- without ping's debuginfo
-Git-Commit-ID: 1632936480a53d85ef3012cd9f290e247251cbb9
+Subject: [tip:smp/urgent] cpu/hotplug: Adjust misplaced smb() in
+ cpuhp_thread_fun()
+Git-Commit-ID: f8b7530aa0a1def79c93101216b5b17cf408a70a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -69,64 +58,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1632936480a53d85ef3012cd9f290e247251cbb9
-Gitweb:     https://git.kernel.org/tip/1632936480a53d85ef3012cd9f290e247251cbb9
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 5 Sep 2018 10:47:56 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 5 Sep 2018 10:47:56 -0300
+Commit-ID:  f8b7530aa0a1def79c93101216b5b17cf408a70a
+Gitweb:     https://git.kernel.org/tip/f8b7530aa0a1def79c93101216b5b17cf408a70a
+Author:     Neeraj Upadhyay <neeraju@codeaurora.org>
+AuthorDate: Wed, 5 Sep 2018 11:22:07 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 6 Sep 2018 15:21:37 +0200
 
-perf tests: Fix record+probe_libc_inet_pton.sh without ping's debuginfo
+cpu/hotplug: Adjust misplaced smb() in cpuhp_thread_fun()
 
-When we don't have the iputils-debuginfo package installed, i.e. when we
-don't have the DWARF information needed to resolve ping's samples, we
-end up failing this 'perf test' entry:
+The smp_mb() in cpuhp_thread_fun() is misplaced. It needs to be after the
+load of st->should_run to prevent reordering of the later load/stores
+w.r.t. the load of st->should_run.
 
-  # perf test ping
-  62: probe libc's inet_pton & backtrace it with ping       : Ok
-  # rpm -e iputils-debuginfo
-  # perf test ping
-  62: probe libc's inet_pton & backtrace it with ping       : FAILED!
-  #
+Fixes: 4dddfb5faa61 ("smp/hotplug: Rewrite AP state machine core")
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infraded.org>
+Cc: josh@joshtriplett.org
+Cc: peterz@infradead.org
+Cc: jiangshanlai@gmail.com
+Cc: dzickus@redhat.com
+Cc: brendan.jackman@arm.com
+Cc: malat@debian.org
+Cc: mojha@codeaurora.org
+Cc: sramana@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1536126727-11629-1-git-send-email-neeraju@codeaurora.org
 
-Fix it to accept "[unknown]" where the symbol + offset, when resolved,
-is expected.
-
-I think this will fail in the other arches as well, but since I can't
-test now, I'm leaving s390x and ppc cases as-is.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: 7903a7086723 ("perf script: Show symbol offsets by default")
-Link: https://lkml.kernel.org/n/tip-hnizqwqrs03vcq1b74yao0f6@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/cpu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 3013ac8f83d0..cab7b0aea6ea 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -48,7 +48,7 @@ trace_libc_inet_pton_backtrace() {
- 	*)
- 		eventattr='max-stack=3'
- 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
--		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-+		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
- 	esac
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index aa7fe85ad62e..eb4041f78073 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -607,15 +607,15 @@ static void cpuhp_thread_fun(unsigned int cpu)
+ 	bool bringup = st->bringup;
+ 	enum cpuhp_state state;
  
++	if (WARN_ON_ONCE(!st->should_run))
++		return;
++
+ 	/*
+ 	 * ACQUIRE for the cpuhp_should_run() load of ->should_run. Ensures
+ 	 * that if we see ->should_run we also see the rest of the state.
+ 	 */
+ 	smp_mb();
+ 
+-	if (WARN_ON_ONCE(!st->should_run))
+-		return;
+-
+ 	cpuhp_lock_acquire(bringup);
+ 
+ 	if (st->single) {
