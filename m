@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F84C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947DFC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1773D2064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1773D2064D
+	by mail.kernel.org (Postfix) with ESMTP id 58B5020844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:29:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B5020844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbeIFSFF (ORCPT
+        id S1729479AbeIFSFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:05:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51991 "EHLO
+        Thu, 6 Sep 2018 14:05:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56749 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728993AbeIFSFE (ORCPT
+        with ESMTP id S1728996AbeIFSFJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:05:04 -0400
+        Thu, 6 Sep 2018 14:05:09 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DS9Rh308213
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DTE6v308312
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:28:09 -0700
+        Thu, 6 Sep 2018 06:29:14 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DS9PK308209;
-        Thu, 6 Sep 2018 06:28:09 -0700
-Date:   Thu, 6 Sep 2018 06:28:09 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DTEtx308309;
+        Thu, 6 Sep 2018 06:29:14 -0700
+Date:   Thu, 6 Sep 2018 06:29:14 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-0a4e64d391a2c771ae33e648cf84d4492369560c@git.kernel.org>
-Cc:     mingo@kernel.org, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, acme@redhat.com, andi@firstfloor.org,
-        dsahern@gmail.com, namhyung@kernel.org, jolsa@kernel.org,
-        peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: andi@firstfloor.org, dsahern@gmail.com, namhyung@kernel.org,
-          peterz@infradead.org, jolsa@kernel.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-          acme@redhat.com
-In-Reply-To: <20180830063252.23729-15-jolsa@kernel.org>
-References: <20180830063252.23729-15-jolsa@kernel.org>
+Message-ID: <tip-0174820a8ba108f2e72dac5caaea3500c8ca6323@git.kernel.org>
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        dsahern@gmail.com, mingo@kernel.org, namhyung@kernel.org,
+        tglx@linutronix.de, acme@redhat.com, andi@firstfloor.org
+Reply-To: andi@firstfloor.org, tglx@linutronix.de, mingo@kernel.org,
+          namhyung@kernel.org, acme@redhat.com, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, dsahern@gmail.com,
+          peterz@infradead.org, jolsa@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20180830063252.23729-17-jolsa@kernel.org>
+References: <20180830063252.23729-17-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Move perf_stat_synthesize_config() to
- stat.c
-Git-Commit-ID: 0a4e64d391a2c771ae33e648cf84d4492369560c
+Subject: [tip:perf/core] perf stat: Move STAT_RECORD out of
+ perf_evlist__print_counters()
+Git-Commit-ID: 0174820a8ba108f2e72dac5caaea3500c8ca6323
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,16 +62,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0a4e64d391a2c771ae33e648cf84d4492369560c
-Gitweb:     https://git.kernel.org/tip/0a4e64d391a2c771ae33e648cf84d4492369560c
+Commit-ID:  0174820a8ba108f2e72dac5caaea3500c8ca6323
+Gitweb:     https://git.kernel.org/tip/0174820a8ba108f2e72dac5caaea3500c8ca6323
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:23 +0200
+AuthorDate: Thu, 30 Aug 2018 08:32:25 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 30 Aug 2018 15:52:22 -0300
 
-perf stat: Move perf_stat_synthesize_config() to stat.c
+perf stat: Move STAT_RECORD out of perf_evlist__print_counters()
 
-So that it can be used globally.
+It's stat related and should stay in the 'perf stat' command.  The
+perf_evlist__print_counters function will be moved out in the following
+patches.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -79,136 +81,35 @@ Cc: Andi Kleen <andi@firstfloor.org>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-15-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180830063252.23729-17-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 42 ------------------------------------------
- tools/perf/util/stat.c    | 42 ++++++++++++++++++++++++++++++++++++++++++
- tools/perf/util/stat.h    |  6 ++++++
- 3 files changed, 48 insertions(+), 42 deletions(-)
+ tools/perf/builtin-stat.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 1171d4e00276..54768ec15dbc 100644
+index db11832bbdbc..4ffbb6594eb6 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -402,48 +402,6 @@ static void workload_exec_failed_signal(int signo __maybe_unused, siginfo_t *inf
- 	workload_exec_errno = info->si_value.sival_int;
- }
+@@ -1701,10 +1701,6 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 	struct perf_evsel *counter;
+ 	char buf[64], *prefix = NULL;
  
--static int perf_stat_synthesize_config(struct perf_stat_config *config,
--				       struct perf_tool *tool,
--				       struct perf_evlist *evlist,
--				       perf_event__handler_t process,
--				       bool attrs)
--{
--	int err;
+-	/* Do not print anything if we record to the pipe. */
+-	if (STAT_RECORD && perf_stat.data.is_pipe)
+-		return;
 -
--	if (attrs) {
--		err = perf_event__synthesize_attrs(tool, evlist, process);
--		if (err < 0) {
--			pr_err("Couldn't synthesize attrs.\n");
--			return err;
--		}
--	}
--
--	err = perf_event__synthesize_extra_attr(tool, evlist, process,
--						attrs);
--
--	err = perf_event__synthesize_thread_map2(tool, evlist->threads,
--						 process, NULL);
--	if (err < 0) {
--		pr_err("Couldn't synthesize thread map.\n");
--		return err;
--	}
--
--	err = perf_event__synthesize_cpu_map(tool, evlist->cpus,
--					     process, NULL);
--	if (err < 0) {
--		pr_err("Couldn't synthesize thread map.\n");
--		return err;
--	}
--
--	err = perf_event__synthesize_stat_config(tool, config, process, NULL);
--	if (err < 0) {
--		pr_err("Couldn't synthesize config.\n");
--		return err;
--	}
--
--	return 0;
--}
--
- static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+ 	if (interval)
+ 		print_interval(prefix = buf, ts);
+ 	else
+@@ -1766,6 +1762,10 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 
+ static void print_counters(struct timespec *ts, int argc, const char **argv)
  {
- 	return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 3bd24255376a..5d3172bcc4ae 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -488,3 +488,45 @@ int create_perf_stat_counter(struct perf_evsel *evsel,
- 
- 	return perf_evsel__open_per_thread(evsel, evsel->threads);
++	/* Do not print anything if we record to the pipe. */
++	if (STAT_RECORD && perf_stat.data.is_pipe)
++		return;
++
+ 	perf_evlist__print_counters(evsel_list, ts, argc, argv);
  }
-+
-+int perf_stat_synthesize_config(struct perf_stat_config *config,
-+				struct perf_tool *tool,
-+				struct perf_evlist *evlist,
-+				perf_event__handler_t process,
-+				bool attrs)
-+{
-+	int err;
-+
-+	if (attrs) {
-+		err = perf_event__synthesize_attrs(tool, evlist, process);
-+		if (err < 0) {
-+			pr_err("Couldn't synthesize attrs.\n");
-+			return err;
-+		}
-+	}
-+
-+	err = perf_event__synthesize_extra_attr(tool, evlist, process,
-+						attrs);
-+
-+	err = perf_event__synthesize_thread_map2(tool, evlist->threads,
-+						 process, NULL);
-+	if (err < 0) {
-+		pr_err("Couldn't synthesize thread map.\n");
-+		return err;
-+	}
-+
-+	err = perf_event__synthesize_cpu_map(tool, evlist->cpus,
-+					     process, NULL);
-+	if (err < 0) {
-+		pr_err("Couldn't synthesize thread map.\n");
-+		return err;
-+	}
-+
-+	err = perf_event__synthesize_stat_config(tool, config, process, NULL);
-+	if (err < 0) {
-+		pr_err("Couldn't synthesize config.\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 8fb596641545..da6a706daecc 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -7,6 +7,7 @@
- #include "xyarray.h"
- #include "rblist.h"
- #include "perf.h"
-+#include "event.h"
  
- struct stats {
- 	double n, mean, M2;
-@@ -179,4 +180,9 @@ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp);
- int create_perf_stat_counter(struct perf_evsel *evsel,
- 			     struct perf_stat_config *config,
- 			     struct target *target);
-+int perf_stat_synthesize_config(struct perf_stat_config *config,
-+				struct perf_tool *tool,
-+				struct perf_evlist *evlist,
-+				perf_event__handler_t process,
-+				bool attrs);
- #endif
