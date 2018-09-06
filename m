@@ -2,103 +2,109 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB3EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A601CC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413E320659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:20:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413E320659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 66D802077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:21:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D802077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeIFMyk (ORCPT
+        id S1728069AbeIFMzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:54:40 -0400
-Received: from mga04.intel.com ([192.55.52.120]:53890 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727508AbeIFMyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:54:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 01:20:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,337,1531810800"; 
-   d="scan'208";a="68797950"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2018 01:20:23 -0700
-Received: from [10.125.252.28] (abudanko-mobl.ccr.corp.intel.com [10.125.252.28])
-        by linux.intel.com (Postfix) with ESMTP id DCCA15801AB;
-        Thu,  6 Sep 2018 01:20:21 -0700 (PDT)
-Subject: Re: [PATCH v7 0/2]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
- <20180905112851.GA29759@krava>
- <34e2f944-f5f3-094a-5997-899cea92d206@linux.intel.com>
- <20180905185141.GA2700@kernel.org>
- <7d0d0d1e-4a9d-dc8d-343e-8a3a2d76870c@linux.intel.com>
- <20180906081438.GB8248@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <9c3fd200-e2e8-3cf1-09b0-c89bafc76750@linux.intel.com>
-Date:   Thu, 6 Sep 2018 11:20:20 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 08:55:20 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:57742 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbeIFMzU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:55:20 -0400
+Received: by mail-it0-f72.google.com with SMTP id e6-v6so11262705itc.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 01:21:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=peSZ2dhR9PHQkvcEFt8LyPSg2Wty/ErBz2nF44IfNwk=;
+        b=IO/xFgFZ/YhOaojFnYw3zt+tQajf2yTSumef1IbZUde3OQuyoieQyO3D+kr/hMFsm/
+         7JZUyuu149HXVPM0SapCmFxHjNJz7yA8pXsEPbSKUwG8hxoS8MSkbgzomO2FERSBnBm0
+         gLt7isHnFLdxCVTT2nwSr1MLfgHiganoZU4copCfDVF/YZ+ZHHydOaVfvjJIzaoIQiua
+         HEai1DuskCVEjMXMcrRxqVCoI8nPXv9Du5dwgQ9+dUC1+uxcBAxpU451NQyksG1pBRBr
+         aLMK4pFwxmc2BrftCrQzzPvzfW0KRJUC4P9McOKC61YIo3o4HCjzHvbH9H7AskrojPUu
+         rGjw==
+X-Gm-Message-State: APzg51CsuHta9X1A9C5w+kLlGZt829944TcbX0GG9ifyz4HhqJVTkJaN
+        eBmaCA79lzprRQIALQ7y/Ykic8yF+ZV3pRZDEo9Yz5abK8wK
+X-Google-Smtp-Source: ANB0Vda/6SbAOy2Veqi8bXGZJ/Oj6y6rfF7mCqTLKuTrYtZgA2gQLGvkPUn7JZ7mY4sqwih6R+4qpMUgXwVGpEYU8UFGfK8uTaNi
 MIME-Version: 1.0
-In-Reply-To: <20180906081438.GB8248@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a24:56ce:: with SMTP id o197-v6mr1800792itb.32.1536222063262;
+ Thu, 06 Sep 2018 01:21:03 -0700 (PDT)
+Date:   Thu, 06 Sep 2018 01:21:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006082bd05752f92bb@google.com>
+Subject: linux-next boot error (2)
+From:   syzbot <syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, alexander.levin@verizon.com,
+        dhowells@redhat.com, linux-kernel@vger.kernel.org,
+        linux@dominikbrodowski.net, luc.vanoostenryck@gmail.com,
+        nikolaus.voss@loewensteinmedical.de, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello,
 
-On 06.09.2018 11:14, Jiri Olsa wrote:
-> On Thu, Sep 06, 2018 at 09:03:17AM +0300, Alexey Budankov wrote:
->> Hi,
->>
->> On 05.09.2018 21:51, Arnaldo Carvalho de Melo wrote:
->>> Em Wed, Sep 05, 2018 at 08:37:32PM +0300, Alexey Budankov escreveu:
->>>> On 05.09.2018 14:28, Jiri Olsa wrote:
->>>>> can't apply this version on Arnaldo's perf/core...
->>>  
->>>> my git remote -v
->>>  
->>>> origin	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (fetch)
->>>> origin	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (push)
->>>  
->>>> branch is perf/core, according to MAINTAINERS content.
->>>  
->>>> What is Arnaldo's perf/core? This one?
->>>  
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux
->>>  
->>>> and branch is perf/core?
->>>
->>> yes.
->>
->> Is this the actual one for the tool development? Am I missing something?
-> 
-> yep, Arnaldo takes all and pushes his perf/core to Ingo
-> it's better to always rebase to it
+syzbot found the following crash on:
 
-Good to know. Thanks!
+HEAD commit:    509d1f0c294a Add linux-next specific files for 20180906
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=157b857a400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a648893bbc933
+dashboard link: https://syzkaller.appspot.com/bug?extid=762a577f56cfb1574647
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-> 
-> thanks,
-> jirka
-> 
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com
+
+kernel panic: VFS: Unable to mount root fs on unknown-block(8,1) driver: sd
+   0801         2096128 sda1 24d8ab2f-01
+
+1f00             128 mtdblock0
+  (driver?)
+Kernel panic - not syncing: VFS: Unable to mount root fs on  
+unknown-block(8,1)
+CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc2-next-20180906+ #60
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  mount_block_root+0x61f/0x71f init/do_mounts.c:442
+  mount_root+0x2d0/0x317 init/do_mounts.c:562
+  prepare_namespace+0x26c/0x2ab init/do_mounts.c:621
+  kernel_init_freeable+0x590/0x5ae init/main.c:1163
+  kernel_init+0x11/0x1b3 init/main.c:1063
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
