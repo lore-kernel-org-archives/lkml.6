@@ -2,139 +2,131 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7463C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56559C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B5B2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:18:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MSGyRVoQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B5B2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C5F82075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:18:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5F82075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbeIFVy1 (ORCPT
+        id S1729614AbeIFVyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:54:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49460 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728074AbeIFVy1 (ORCPT
+        Thu, 6 Sep 2018 17:54:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728074AbeIFVyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:54:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=92kLe+ZA7i8xLr9KM09UIIhtHm4W5k0v9LZceprp9Eo=; b=MSGyRVoQPrXpUAPOGoWn0DRRvz
-        wtV94A7p+Rh1qfEKvgegFAsHiOuo0nwprJjOmw1TkjfSvippYSAHq+/CvImZBhSzBO++QetqpO7rt
-        Cd8+qKGKnSmN4ABB0ERnHxvqlnDzqYU/wUMHKEg5gg1m9xb+X0BwwnqXfXDfj6fYPGaZjoR2/W7y+
-        USglgCg2MwNtfhQfe3Xb73Rx/96ObE0QWaWpn2hN020ChyCCr9NvLJxicHcDYUjmCt0c8x6ESHds3
-        BZYmhwMGdANAAP4nQx8OWJGr9LFIQO0IyaFnwYDOlt98Z03I+EgudlmdOrZ/NaEve5xRTI4YZa3/t
-        3hbUqXdA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxxul-0001uD-PG; Thu, 06 Sep 2018 17:17:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 24A7D2018BF7D; Thu,  6 Sep 2018 19:17:54 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 19:17:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
-Message-ID: <20180906171754.GJ24106@hirez.programming.kicks-ass.net>
-References: <20180902173224.30606-1-namit@vmware.com>
- <20180905185617.GC24082@hirez.programming.kicks-ass.net>
- <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
- <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
- <20180906081300.GF24082@hirez.programming.kicks-ass.net>
- <20180906101641.GG24142@hirez.programming.kicks-ass.net>
- <6703CD9F-2D84-4449-A423-A4DC24677673@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6703CD9F-2D84-4449-A423-A4DC24677673@vmware.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 6 Sep 2018 17:54:35 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86HAHis064761
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 13:18:08 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb6j25u31-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 13:18:07 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bryantly@linux.vnet.ibm.com>;
+        Thu, 6 Sep 2018 13:18:06 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 13:18:03 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86HI2Ya45875214
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 17:18:02 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA24B2805A;
+        Thu,  6 Sep 2018 13:16:13 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7523A2805C;
+        Thu,  6 Sep 2018 13:16:13 -0400 (EDT)
+Received: from bryants-mbp-4.rchland.ibm.com (unknown [9.10.79.137])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Sep 2018 13:16:13 -0400 (EDT)
+From:   "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>
+To:     davem@davemloft.net, gregkh@linuxfoundation.org
+Cc:     mchehab+samsung@kernel.org, akpm@linux-foundation.org,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        "Bryant G. Ly" <bryantly@linux.ibm.com>
+Subject: [PATCH] MAINTAINERS: Update Email Address for Bryant G. Ly
+Date:   Thu,  6 Sep 2018 12:17:59 -0500
+X-Mailer: git-send-email 2.7.2
+X-TM-AS-GCONF: 00
+x-cbid: 18090617-0040-0000-0000-0000046B61C9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01084458; UDB=6.00559734; IPR=6.00864458;
+ MB=3.00023147; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-06 17:18:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090617-0041-0000-0000-000008728498
+Message-Id: <1536254279-37408-1-git-send-email-bryantly@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=861 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 05:01:25PM +0000, Nadav Amit wrote:
-> In addition, there might be a couple of issues with your fix:
+From: "Bryant G. Ly" <bryantly@linux.ibm.com>
 
-It boots on my box ;-)
+I am leaving IBM to go to Catalogic Software, updating email
+address so I can continue to maintain the drivers.
 
-> 1. __set_pte_vaddr() is not used exclusive by set_fixmap(). This means
-> the warning might be wrong, but also means that these code patches (Xen’s
-> set_pte_mfn(), CPU-entry-area setup) needs to be checked. And as you said
-> before, someone might use this function for other purposes as well.
+Signed-off-by: Bryant G. Ly <bryantly@linux.ibm.com>
+---
+ .mailmap    | 2 ++
+ MAINTAINERS | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-CEA is fine, that actually needs it too.
-
-The one thing I missed out on earlier is the below chunk, that is no
-longer needed now that cea_set_pte() actually does the right thing.
-
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index b7b01d762d32..14ad97fa0749 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -293,12 +293,6 @@ static void ds_update_cea(void *cea, void *addr, size_t size, pgprot_t prot)
- 	preempt_disable();
- 	for (; msz < size; msz += PAGE_SIZE, pa += PAGE_SIZE, cea += PAGE_SIZE)
- 		cea_set_pte(cea, pa, prot);
--
--	/*
--	 * This is a cross-CPU update of the cpu_entry_area, we must shoot down
--	 * all TLB entries for it.
--	 */
--	flush_tlb_kernel_range(start, start + size);
- 	preempt_enable();
- }
+diff --git a/.mailmap b/.mailmap
+index 285e096..6354b1e 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -41,6 +41,8 @@ Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon.dev@gmail.com>
+ Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon@overkiz.com>
+ Brian Avery <b.avery@hp.com>
+ Brian King <brking@us.ibm.com>
++Bryant G. Ly <bryangly@gmail.com> <bgly@us.ibm.com> <bryantly@linux.vnet.ibm.com>
++Bryant G. Ly <bryantly@linux.ibm.com>
+ Christoph Hellwig <hch@lst.de>
+ Christophe Ricard <christophe.ricard@gmail.com>
+ Corey Minyard <minyard@acm.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5b256b..8d529dc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6983,7 +6983,7 @@ S:	Supported
+ F:	drivers/scsi/ibmvscsi/ibmvfc*
  
-@@ -310,8 +304,6 @@ static void ds_clear_cea(void *cea, size_t size)
- 	preempt_disable();
- 	for (; msz < size; msz += PAGE_SIZE, cea += PAGE_SIZE)
- 		cea_set_pte(cea, 0, PAGE_NONE);
--
--	flush_tlb_kernel_range(start, start + size);
- 	preempt_enable();
- }
+ IBM Power Virtual Management Channel Driver
+-M:	Bryant G. Ly <bryantly@linux.vnet.ibm.com>
++M:	Bryant G. Ly <bryangly@gmail.com>
+ M:	Steven Royer <seroyer@linux.vnet.ibm.com>
+ S:	Supported
+ F:	drivers/misc/ibmvmc.*
+@@ -6996,7 +6996,7 @@ F:	drivers/scsi/ibmvscsi/ibmvscsi*
+ F:	include/scsi/viosrp.h
  
+ IBM Power Virtual SCSI Device Target Driver
+-M:	Bryant G. Ly <bryantly@linux.vnet.ibm.com>
++M:	Bryant G. Ly <bryangly@gmail.com>
+ M:	Michael Cyr <mikecyr@linux.vnet.ibm.com>
+ L:	linux-scsi@vger.kernel.org
+ L:	target-devel@vger.kernel.org
+-- 
+2.7.2
 
-> 2. Printing the virtual address can break KASLR.
-
-Local KASLR is a myth.. but sure, we can fix the print.
-
-> 3. The WARN() can introduce some overhead since checking if IRQs are
-> disabled takes considerably long time. Perhaps VM_WARN() or something is
-> better. I realize this code-path is not on the hot-path though...
-
-Yeah, if it triggers you have bigger problems. We can make it
-WARN_ONCE() I suppose.
-
-> 4. I guess flush_tlb_kernel_range() should also have something like
-> VM_WARN_ON(irqs_disabled()), just as an additional general sanity check.
-
-It has, it's hidden in kernel/smp.c:smp_call_function_many().
-
-> Let me know if you want me to make these changes and include your patch in
-> the set.
-
-The set is no longer needed. text_poke() is fine and correct with this
-one patch.
