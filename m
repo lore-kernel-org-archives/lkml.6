@@ -2,130 +2,112 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1C7C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA818C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C5320659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:12:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C5320659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 581072077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:13:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="suDNZVtL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581072077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeIFMrK (ORCPT
+        id S1727973AbeIFMra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:47:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35338 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725913AbeIFMrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:47:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C43BFAE0E;
-        Thu,  6 Sep 2018 08:12:53 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 565AF1E3606; Thu,  6 Sep 2018 10:12:53 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 10:12:53 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com, tim.c.chen@linux.intel.com,
-        zwisler@kernel.org
-Subject: Re: linux-next test error
-Message-ID: <20180906081253.GB19319@quack2.suse.cz>
-References: <0000000000004f6b5805751a8189@google.com>
- <20180905085545.GD24902@quack2.suse.cz>
- <CAFqt6zaeOzrzMCqtnv=3gF4+K9HGtbB0C7bOeE+6YmBvvxBaxQ@mail.gmail.com>
+        Thu, 6 Sep 2018 08:47:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41296 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeIFMra (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:47:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=EL9JG27UJcViQr2Ylr8SzYbhcRVeRIco2rUJptg+Hk0=; b=suDNZVtLtDN+Y1oQKHWSiIISh
+        q5XPLdrks+6L5K/ivFXSKefU/SePw1k6Y8Kgsc5Z0/NBPmCWtyXbaReGM8PB1W4W6Nv3+fWlpHWlV
+        la3Ax5NuQe/bJW/ZAvD0NqDHp+yAq9r1G0p1KSUjWQb+15RbG2kihPfUQgAmIDf9JVxjbBsgP9ia1
+        wNhHDHM569awb8Dy1DcFtewKVkIqrqLJ1OfoWsItgkelLpdvyKNRmaOp6++DReFrMqG28iwDUARSV
+        48psn9dN+CSoGD+AZDu2W0yCqi4FjlmkKQgyeYSslF+LKWDpvHi96xYu8RvOOXg2z7A5W/KSFVH6Q
+        SNgQsKtdg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxpPT-0000g6-HZ; Thu, 06 Sep 2018 08:13:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 21B732024EB09; Thu,  6 Sep 2018 10:13:00 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 10:13:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Message-ID: <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+References: <20180902173224.30606-1-namit@vmware.com>
+ <20180905185617.GC24082@hirez.programming.kicks-ass.net>
+ <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+ <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zaeOzrzMCqtnv=3gF4+K9HGtbB0C7bOeE+6YmBvvxBaxQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 06-09-18 00:37:06, Souptick Joarder wrote:
-> On Wed, Sep 5, 2018 at 2:25 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 05-09-18 00:13:02, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    387ac6229ecf Add linux-next specific files for 20180905
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=149c67a6400000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=ad5163873ecfbc32
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=87a05ae4accd500f5242
-> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > >
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com
-> > >
-> > > INFO: task hung in do_page_mkwriteINFO: task syz-fuzzer:4876 blocked for
-> > > more than 140 seconds.
-> > >       Not tainted 4.19.0-rc2-next-20180905+ #56
-> > > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > > syz-fuzzer      D21704  4876   4871 0x00000000
-> > > Call Trace:
-> > >  context_switch kernel/sched/core.c:2825 [inline]
-> > >  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
-> > >  schedule+0xfb/0x450 kernel/sched/core.c:3517
-> > >  io_schedule+0x1c/0x70 kernel/sched/core.c:5140
-> > >  wait_on_page_bit_common mm/filemap.c:1100 [inline]
-> > >  __lock_page+0x5b7/0x7a0 mm/filemap.c:1273
-> > >  lock_page include/linux/pagemap.h:483 [inline]
-> > >  do_page_mkwrite+0x429/0x520 mm/memory.c:2391
-> >
-> > Waiting for page lock after ->page_mkwrite callback. Which means
-> > ->page_mkwrite did not return VM_FAULT_LOCKED but 0. Looking into
-> > linux-next... indeed "fs: convert return type int to vm_fault_t" has busted
-> > block_page_mkwrite(). It has to return VM_FAULT_LOCKED and not 0 now.
-> > Souptick, can I ask you to run 'fstests' for at least common filesystems
-> > like ext4, xfs, btrfs when you change generic filesystem code please? That
-> > would catch a bug like this immediately. Thanks.
+On Wed, Sep 05, 2018 at 07:10:46PM +0000, Nadav Amit wrote:
+> at 12:02 PM, Nadav Amit <namit@vmware.com> wrote:
 > 
-> Looking into existing code block_page_mkwrite() returns 0, not VM_FAULT_LOCKED
-> in true path and this patch doesn't change any existing behaviour of
-> block_page_mkwrite()
-> except adding one new input parameter to return err value to caller function.
-
-Yeah, you are right and this confused me. In your version
-block_page_mkwrite() returns block_page_mkwrite_return(err1) in case of
-error but 0 in case of success and the caller - ext4_page_mkwrite() - then
-uses block_page_mkwrite_return() again if block_page_mkwrite() returned 0.
-So I agree the code path I pointed out won't result in returning 0 instead
-of VM_FAULT_LOCKED but the calling convention is really very confusing.
-
-> -int ext4_page_mkwrite(struct vm_fault *vmf)
-> +vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+> > at 11:56 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > 
+> >> On Sun, Sep 02, 2018 at 10:32:18AM -0700, Nadav Amit wrote:
+> >>> This patch-set addresses some issues that were raised in a recent
+> >>> correspondence and might affect the security and the correctness of code
+> >>> patching. (Note that patching performance is not addressed by this
+> >>> patch-set).
+> >>> 
+> >>> The main issue that the patches deal with is the fact that the fixmap
+> >>> PTEs that are used for patching are available for access from other
+> >>> cores and might be exploited. They are not even flushed from the TLB in
+> >>> remote cores, so the risk is even higher. Address this issue by
+> >>> introducing a temporary mm that is only used during patching.
+> >>> Unfortunately, due to init ordering, fixmap is still used during
+> >>> boot-time patching. Future patches can eliminate the need for it.
+> >> 
+> >> Remind me; why are we doing it like this instead of fixing fixmap?
+> >> Because while this fixes the text_poke crud, it does leave fixmap
+> >> broken.
+> > 
+> > Do you have other fixmap mappings in mind that are modified after boot?
 > 
-> +       err = 0;
-> +       ret = block_page_mkwrite(vma, vmf, get_block, &err);
->         if (!ret && ext4_should_journal_data(inode)) {
->                 if (ext4_walk_page_buffers(handle, page_buffers(page), 0,
->                           PAGE_SIZE, NULL, do_journal_get_write_access)) {
->                         unlock_page(page);
-> -                       ret = VM_FAULT_SIGBUS;
-> 
-> I think, this part has created problem where page_mkwrite()
-> end up with returning 0.
+> Oh.. I misunderstood you. You mean: why not to make the fixmap mappings that
+> are used for text_poke() as private ones.
 
-So this branch is definitely wrong but I somewhat doubt it's the one we've
-taken - this can happen only in case of IO error.
+No, you got it the first time. There are in fact more fixmap abusers;
+see drivers/acpi/apei/ghes.c.  Also, as long as set_fixmap() allows
+overwriting a _PAGE_PRESENT pte and has that dodgy
+__flush_tlb_one_kernel() in it, the broken remains (and can return).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So we need to fix fixmap, to either disallow overwriting a _PAGE_PRESENT
+pte, or to issue a full TLB invalidate.
+
+Either fix will terminally break GHES, but that's OK, they've known
+about this issue since 2015 and haven't cared, so I can't be bothered
+about them.
+
