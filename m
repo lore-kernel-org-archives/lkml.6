@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C066DC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EB6C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83C9D20861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:08:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83C9D20861
+	by mail.kernel.org (Postfix) with ESMTP id EFB8C20861
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB8C20861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeIFNnZ (ORCPT
+        id S1728488AbeIFNn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 6 Sep 2018 09:43:26 -0400
+Received: from foss.arm.com ([217.140.101.70]:41168 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728446AbeIFNnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Sep 2018 09:43:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41158 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728304AbeIFNnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:43:23 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BE0A1B4B;
-        Thu,  6 Sep 2018 02:08:55 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE0AA1B55;
+        Thu,  6 Sep 2018 02:08:56 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DB7FD3F575;
-        Thu,  6 Sep 2018 02:08:53 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 79A4B3F575;
+        Thu,  6 Sep 2018 02:08:55 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, suzuki.poulose@arm.com,
         robert.walker@arm.com, al.grant@arm.com
-Subject: [PATCH v2 07/14] coresight: etb10: Handle errors enabling the device
-Date:   Thu,  6 Sep 2018 10:08:28 +0100
-Message-Id: <1536224915-31766-8-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 08/14] coresight: dynamic-replicator: Handle multiple connections
+Date:   Thu,  6 Sep 2018 10:08:29 +0100
+Message-Id: <1536224915-31766-9-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
 References: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,68 +44,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prepare the etb10 driver to return errors in enabling
-the device.
+When a replicator port is enabled, we block the traffic
+on the other port and route all traffic to the new enabled
+port. If there are two active trace sessions each targeting
+the two different paths from the replicator, the second session
+will disable the first session and route all the data to the
+second path.
+                    ETR
+                 /
+e.g, replicator
+                 \
+                    ETB
+
+If CPU0 is operated in sysfs mode to ETR and CPU1 is operated
+in perf mode to ETB, depending on the order in which the
+replicator is enabled one device is blocked.
+
+Ideally we need trace-id for the session to make the
+right choice. That implies we need a trace-id allocation
+logic for the coresight subsystem and use that to route
+the traffic. The short term solution is to only manage
+the "target port" and leave the other port untouched.
+That leaves both the paths unaffected, except that some
+unwanted traffic may be pushed to the paths (if the Trace-IDs
+are not far enough), which is still fine and can be filtered
+out while processing rather than silently blocking the data.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
-Changes since v1:
- - Rebased to the coresight/next
----
- drivers/hwtracing/coresight/coresight-etb10.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ .../coresight/coresight-dynamic-replicator.c       | 66 ++++++++++++++++------
+ 1 file changed, 48 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 08fa660..824be0c 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -106,7 +106,7 @@ static unsigned int etb_get_buffer_depth(struct etb_drvdata *drvdata)
- 	return depth;
- }
+diff --git a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+index ebb8043..97f4673 100644
+--- a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+@@ -34,26 +34,42 @@ struct replicator_state {
+ 	struct coresight_device	*csdev;
+ };
  
--static void etb_enable_hw(struct etb_drvdata *drvdata)
-+static void __etb_enable_hw(struct etb_drvdata *drvdata)
- {
- 	int i;
- 	u32 depth;
-@@ -134,6 +134,12 @@ static void etb_enable_hw(struct etb_drvdata *drvdata)
- 	CS_LOCK(drvdata->base);
- }
- 
-+static int etb_enable_hw(struct etb_drvdata *drvdata)
++/*
++ * replicator_reset : Reset the replicator configuration to sane values.
++ */
++static void replicator_reset(struct replicator_state *drvdata)
 +{
-+	__etb_enable_hw(drvdata);
-+	return 0;
++	CS_UNLOCK(drvdata->base);
++
++	writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
++	writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
++
++	CS_LOCK(drvdata->base);
 +}
 +
- static int etb_enable_sysfs(struct coresight_device *csdev)
+ static int replicator_enable(struct coresight_device *csdev, int inport,
+ 			      int outport)
  {
- 	int ret = 0;
-@@ -152,8 +158,9 @@ static int etb_enable_sysfs(struct coresight_device *csdev)
- 	if (drvdata->mode == CS_MODE_SYSFS)
- 		goto out;
++	u32 reg;
+ 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
  
--	drvdata->mode = CS_MODE_SYSFS;
--	etb_enable_hw(drvdata);
-+	ret = etb_enable_hw(drvdata);
-+	if (!ret)
-+		drvdata->mode = CS_MODE_SYSFS;
+-	CS_UNLOCK(drvdata->base);
+-
+-	/*
+-	 * Ensure that the other port is disabled
+-	 * 0x00 - passing through the replicator unimpeded
+-	 * 0xff - disable (or impede) the flow of ATB data
+-	 */
+-	if (outport == 0) {
+-		writel_relaxed(0x00, drvdata->base + REPLICATOR_IDFILTER0);
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
+-	} else {
+-		writel_relaxed(0x00, drvdata->base + REPLICATOR_IDFILTER1);
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
++	switch (outport) {
++	case 0:
++		reg = REPLICATOR_IDFILTER0;
++		break;
++	case 1:
++		reg = REPLICATOR_IDFILTER1;
++		break;
++	default:
++		WARN_ON(1);
++		return -EINVAL;
+ 	}
  
- out:
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-@@ -183,8 +190,9 @@ static int etb_enable_perf(struct coresight_device *csdev, void *data)
- 	if (ret)
- 		goto out;
++	CS_UNLOCK(drvdata->base);
++
++
++	/* Ensure that the outport is enabled. */
++	writel_relaxed(0x00, drvdata->base + reg);
+ 	CS_LOCK(drvdata->base);
  
--	drvdata->mode = CS_MODE_PERF;
--	etb_enable_hw(drvdata);
-+	ret = etb_enable_hw(drvdata);
-+	if (!ret)
-+		drvdata->mode = CS_MODE_PERF;
+ 	dev_dbg(drvdata->dev, "REPLICATOR enabled\n");
+@@ -63,15 +79,25 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+ static void replicator_disable(struct coresight_device *csdev, int inport,
+ 				int outport)
+ {
++	u32 reg;
+ 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
  
- out:
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
++	switch (outport) {
++	case 0:
++		reg = REPLICATOR_IDFILTER0;
++		break;
++	case 1:
++		reg = REPLICATOR_IDFILTER1;
++		break;
++	default:
++		WARN_ON(1);
++		return;
++	}
++
+ 	CS_UNLOCK(drvdata->base);
+ 
+ 	/* disable the flow of ATB data through port */
+-	if (outport == 0)
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
+-	else
+-		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
++	writel_relaxed(0xff, drvdata->base + reg);
+ 
+ 	CS_LOCK(drvdata->base);
+ 
+@@ -156,7 +182,11 @@ static int replicator_probe(struct amba_device *adev, const struct amba_id *id)
+ 	desc.groups = replicator_groups;
+ 	drvdata->csdev = coresight_register(&desc);
+ 
+-	return PTR_ERR_OR_ZERO(drvdata->csdev);
++	if (!IS_ERR(drvdata->csdev)) {
++		replicator_reset(drvdata);
++		return 0;
++	}
++	return PTR_ERR(drvdata->csdev);
+ }
+ 
+ #ifdef CONFIG_PM
 -- 
 2.7.4
 
