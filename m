@@ -2,108 +2,147 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1F9C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A9BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 840462075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:36:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4178D2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:40:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oo1siWCk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oo1siWCk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 840462075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RulWN5Ht"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4178D2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeIFVNH (ORCPT
+        id S1727993AbeIFVQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:13:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51160 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeIFVNH (ORCPT
+        Thu, 6 Sep 2018 17:16:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40862 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbeIFVQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:13:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DFEE9607C6; Thu,  6 Sep 2018 16:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536251808;
-        bh=o6KKQR4Rkb9G+dzQw9TfuGDpjxlRpUPJ2k5JOZwq/0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oo1siWCkvaJBA6PPYUUBcqeAGHQunq3qG1Mdnyn+H6GCUXm3afjEjiRTgqnBIkno1
-         XHe4j20vw6M1axNmI3gFrCwcxMUQ6YwUBfiNoLs78Bi7q/4zsROBpQ6xx73hHeEIM5
-         MjdhV/mcZ3fyuI7gEJlHh23BoSB0WdGMFFdgGaGQ=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 28E5A606FA;
-        Thu,  6 Sep 2018 16:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536251808;
-        bh=o6KKQR4Rkb9G+dzQw9TfuGDpjxlRpUPJ2k5JOZwq/0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oo1siWCkvaJBA6PPYUUBcqeAGHQunq3qG1Mdnyn+H6GCUXm3afjEjiRTgqnBIkno1
-         XHe4j20vw6M1axNmI3gFrCwcxMUQ6YwUBfiNoLs78Bi7q/4zsROBpQ6xx73hHeEIM5
-         MjdhV/mcZ3fyuI7gEJlHh23BoSB0WdGMFFdgGaGQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28E5A606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Thu, 6 Sep 2018 10:36:47 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     bjorn.andersson@linaro.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, marc.zyngier@arm.com,
-        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org, andy.gross@linaro.org,
-        dianders@chromium.org
-Subject: Re: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC
- interrupt only during suspend
-Message-ID: <20180906163647.GE28215@codeaurora.org>
-References: <20180817191026.32245-1-ilina@codeaurora.org>
- <20180817191026.32245-3-ilina@codeaurora.org>
- <153509896098.28926.3622217918056498792@swboyd.mtv.corp.google.com>
- <20180824171432.GM5081@codeaurora.org>
- <153540005334.129321.18196967002233663397@swboyd.mtv.corp.google.com>
- <20180904210934.GA23990@codeaurora.org>
- <153609843656.119890.7258329648640765778@swboyd.mtv.corp.google.com>
+        Thu, 6 Sep 2018 17:16:22 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s17-v6so5235453plp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wlm/2akOmDOzhTREznTfzxeoJoyseVDGJ+1+AmvoRyY=;
+        b=RulWN5Ht+7LcJ8/lhC+x66AC1p2+Sdh9TRenJZU2RXb7Uz9sJH6056WB1FusLaeoua
+         yjVQojqBkMTRSyROlkNEzUJ1ojtfIPvV2Cc8YTzT+mSv78EX7KjS1gpuzcSCGdpNDlfn
+         npXdPjl+rOTmpyGeGFKZNkYSK/RyJjfQ9TUK72x5UvQJ1LkSZK4Q1a5V5eFCluVP/HWC
+         RVI948DNvInDhYAhX7+VTubyx2VETbuJE2pXHoDMIbtDERQcGN+BROqr9s3PtaSSOulI
+         r3QLcjCXuH6+R3W4VdUgqdq/csaEtqFOk4DL1KbiaJgMOhVjJdThC/1wMI3SmeLHbjVW
+         uxPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wlm/2akOmDOzhTREznTfzxeoJoyseVDGJ+1+AmvoRyY=;
+        b=kYjpBx96MrBM17pXm/Yt0A6gdlp/ba7LLcgoXLGtCm5dw2G90nDp9xeT9W+Xw1DbyD
+         RG0nTAS+uLimquBZdSiOHjnm43mV9//wzF/sILyAnunnRkUZt5RQJdYwcDzOVXXVVeR8
+         Lwy4uVF21WuoM8H7oQrPMK60RJ8mKZDUnYYhFSWQoNkFa7PyAvyLFjcPw55725qMalmY
+         MWmuP1DsSGkzy0fH431WxwLOh4yQN1iroaCj6IQZGp4NbQX2rZeBnAXi/WHN2hYr+WiD
+         j+OXgmh2Cb250A2+Jc8etBcNLvnr4d9TtZZjlrrPxrYJoQQep5B/FkP+tWUGtAcTeWeG
+         PN9w==
+X-Gm-Message-State: APzg51BrLauBdH+iVA5KDUMou9OyNHh8JyIK0cMehToxG86uj2J7eWEc
+        MBU9A8NuhVwJGtcI/jrkVZmzmAd+Nu2mZTc5rksCuA==
+X-Google-Smtp-Source: ANB0VdZfoSUVlwPQDyCjVZaxSIoPBUA4dlbYZQxP3qJleOzOPzqe5h3IhO1JJfVZHedh3c69bFsJBjIijEmE+9ZRb0M=
+X-Received: by 2002:a17:902:7102:: with SMTP id a2-v6mr3534422pll.217.1536252003143;
+ Thu, 06 Sep 2018 09:40:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <153609843656.119890.7258329648640765778@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <cover.1535462971.git.andreyknvl@google.com> <20180905141032.b1ddaab53d1b2b3bada95415@linux-foundation.org>
+ <20180906100543.GI3592@arm.com> <CAAeHK+wStsNwh2oKv-KCG4kx5538FuDMQ6Yw2X=sK5LPrw2DZg@mail.gmail.com>
+In-Reply-To: <CAAeHK+wStsNwh2oKv-KCG4kx5538FuDMQ6Yw2X=sK5LPrw2DZg@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 6 Sep 2018 09:39:51 -0700
+Message-ID: <CAKwvOdk=F=kja-ZznrifTO8EASmPF0CoTPWbFxpMqLk-_KGEEQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/18] khwasan: kernel hardware assisted address sanitizer
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04 2018 at 16:00 -0600, Stephen Boyd wrote:
->Quoting Lina Iyer (2018-09-04 14:09:34)
->> On Mon, Aug 27 2018 at 14:01 -0600, Stephen Boyd wrote:
->> >
->> >Can't we just configure a different chained IRQ handler with
->> >irq_set_chained_handler_and_data() for each of the GPIO IRQs that are
->> >handled by PDC to be the interrupts provide by the PDC irq controller
->> >that match the GPIOs? And then set their parent irq with
->> >irq_set_parent() for completeness? And also move those GPIOs from the
->> >existing msm_gpio irqchip to a different PDC gpio irqchip that does
->> >nothing besides push irqchip calls up to the PDC irqchip? Then we don't
->> >even have to think about resending anything and we can rely on PDC to do
->> >all the interrupt sensing all the time but still provide the irqs from
->> >the GPIO controller.
->> >
->> Seems like the irqchips need to be in hierarchy for this to work, which
->> is not the case with TLMM and the PDC, currently.
->>
+On Thu, Sep 6, 2018 at 4:06 AM Andrey Konovalov <andreyknvl@google.com> wrote:
 >
->Why? Does something mandate that the chained irq is also the
->hierarchical parent irqchip?
+> On Thu, Sep 6, 2018 at 12:05 PM, Will Deacon <will.deacon@arm.com> wrote:
+> > On Wed, Sep 05, 2018 at 02:10:32PM -0700, Andrew Morton wrote:
+> >> On Wed, 29 Aug 2018 13:35:04 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
+> >>
+> >> > This patchset adds a new mode to KASAN [1], which is called KHWASAN
+> >> > (Kernel HardWare assisted Address SANitizer).
+> >>
+> >> We're at v6 and there are no reviewed-by's or acked-by's to be seen.
+> >> Is that a fair commentary on what has been happening, or have people
+> >> been remiss in sending and gathering such things?
+> >
+> > I still have concerns about the consequences of merging this as anything
+> > other than a debug option [1]. Unfortunately, merging it as a debug option
+> > defeats the whole point, so I think we need to spend more effort on developing
+> > tools that can help us to find and fix the subtle bugs which will arise from
+> > enabling tagged pointers in the kernel.
 >
-All the _parent() functions like irq_set_wake_parent() etc need
-parent_data to be set, which is only set during hierarchy.
+> I totally don't mind calling it a debug option. Do I need to somehow
+> specify it somewhere?
+>
+> Why does it defeat the point? The point is to ease KASAN-like testing
+> on devices with limited memory.
 
--- Lina
+I don't disagree with using it strictly for debug.  When I say I want
+the series for Pixel phones, I should have been clearer that my intent
+is for a limited pool of internal testers to walk around with KHWASAN
+enabled devices; not general end users.  It's hard enough today to get
+anyone to test KASAN/ASAN on their "daily driver" due to the memory
+usage and resulting performance.
 
+We don't ship KASAN or KUBSAN on by default to end users (nor plan
+to); it's used strictly for fuzzing through syzkaller (or by brave
+"dogfooders" on the internal kernel teams).  KHWASAN would let these
+dogfooders go from being brave to fearless.
+
+-- 
+Thanks,
+~Nick Desaulniers
