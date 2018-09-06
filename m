@@ -2,90 +2,182 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270A7C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40DFC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF0F20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:43:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF0F20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E0F02086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:43:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="yfpD4il4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0F02086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbeIFQSF (ORCPT
+        id S1727972AbeIFQSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 12:18:05 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:2875 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbeIFQSF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 12:18:05 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.3]) by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee75b9112bf546-093f3; Thu, 06 Sep 2018 19:42:55 +0800 (CST)
-X-RM-TRANSID: 2ee75b9112bf546-093f3
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee25b9112be017-ee673;
-        Thu, 06 Sep 2018 19:42:55 +0800 (CST)
-X-RM-TRANSID: 2ee25b9112be017-ee673
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Cc:     dingxiang@cmss.chinamobile.com
-Subject: [PATCH v2] perf tools: use PTR_ERR_OR_ZERO inetead of return code
-Date:   Thu,  6 Sep 2018 19:42:51 +0800
-Message-Id: <1536234171-15970-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 6 Sep 2018 12:18:41 -0400
+Received: from mail-bn3nam01on0067.outbound.protection.outlook.com ([104.47.33.67]:46448
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727728AbeIFQSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 12:18:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FKTZsOiZNtVm/DFl6c5Jk736JUbeZFAAirJ772E6K4c=;
+ b=yfpD4il4By6ZVLawSfsqQwC74R4bqDMd4ZlnTYHs19Xrlh2oavNUDJTXD8Kj5uah0eTW0Puc9i7TrYR5nANKGfwxO2JifsgWcyaYhp2UG7J3n6UI2I/qCGCbxo8AlhaDl6z3I/riLPFO3OzY+NoQ5XlKrc04RPdzrmEjOHg1Kgk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
+ BN7PR12MB2675.namprd12.prod.outlook.com (2603:10b6:408:29::29) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.18; Thu, 6 Sep 2018 11:43:27 +0000
+From:   Brijesh Singh <brijesh.singh@amd.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH v5 0/5] x86: Fix SEV guest regression
+Date:   Thu,  6 Sep 2018 06:42:57 -0500
+Message-Id: <1536234182-2809-1-git-send-email-brijesh.singh@amd.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [165.204.77.1]
+X-ClientProxiedBy: CY4PR03CA0002.namprd03.prod.outlook.com
+ (2603:10b6:903:33::12) To BN7PR12MB2675.namprd12.prod.outlook.com
+ (2603:10b6:408:29::29)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d4de581d-e856-429a-1020-08d613edf676
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2675;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2675;3:9lBhiZ/Y1NqRUp0WTjEFRJ0Tj90b6/S/NTvyOya34z/tqhePPKpDnh/6+NnkSgvvd/c0zYJFkQSM5AMR2p1DEpKkO/eX25RvoLRdfjQFiu01o8eMaIeLovqn6Spo+0rs5Ef0YUHEVS5eYaaeNyvP6zvPlUNZ0OWfiDbZMLtq+74bFS4lJxpBxzbqASF8hChRlUiiKRwx2VbQF/zUFGK+amPHcXNaG19WvEWSvCEOcL0/qZzssULjlN0VzIydRdLa;25:/gYZ2lFluyBUzcrViGCHkrz1+hmjsEh6mVbNTebmFRsI0JLmZta2u4/ipmOCMT3apMfmX43Pu3lly22twGJMH8O5vl5c9N6nbK71SjptFj286vd+00d2HMS3wSB8Q6mA3thUE0hrvtU+zJQ5ci92tt4DfANRBiG4KV0Fgof23pYZwFet86SFQpAjSwveULFWn29VSfam6mX1v0orjpc0I68j9SRdbgNsSD5TgVWUZhMQCFmXGChHDvrB61I6gt73xvTv2sO0tiXk5tLdw2OOSl4fhRycCIpgdzlMep+6/Hx/OlnO+31hVhu83SPihdtYR/v1Nm9C2yd0uT0fEx9xXw==;31:nqtx2oaVBW8KRemgRxAn6uxvydeBwxh7kzyli3aTX4fr2Krf6OL9BQCnzVpC0XZqVqynl0NNspoJCGAilP5t3I2IVTGMQn3e2a0qc8u9pXctBBP4oc34MGIh4J04WQr+zlV4qpYyVqkJJE108PVxdMjwSF5iORrf/3Lkc+VxKnDttiD92c0JXoNrzqDQ+BrH5T7VBuVpuCEldKAAvz2uM56dcvQW8SMtyFEogHNKk6Q=
+X-MS-TrafficTypeDiagnostic: BN7PR12MB2675:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2675;20:hZcxDAjqXuUPHjbznOUlE38+nRhtFBlS086okja2v8rKlR4A11vNdzm5dTM0Hm+RfB4Axv78KC6pRZ48hbcAzUP0daGF9wIqMUSwBzNJwF0ZTcLiyeHu5dIzFa3yKEF+ErxcT1LqWuGDF+L3s+9mnrXv4my4/saesXMLRiWTBG/flYvg290ncAMfCZ/JFCCqcAt+BdhI+0mCN0IhAf4onnYA9oJaWjmaNPdSxuRlhB9pqNfcTMo2P09eKHrfZ3C4Ml6kVIaeiJh8ahHdBosFOl8UAWHmiGVIef4T11ZjULUf2383y9xtTC7indZnj5uHK1omlRnsK33fNlsjQUyrt2kY7i1Kwxu3cJkAT9VFYNRqBQTyHp2kVXciNefu08DGAzXDNWH7OgLvH8wdFXDTqwVl6WYrN/dZW2N9izpRGmrZCWxqTI1Ix+U45wyvfyUxOYeBiM+bv2zqSLWvKaw6PVi97WWRzCr5hP0/UeiI/Qz7LRrB4U5Sn3Q3YX7lMG2A;4:Drn2TaygFhoCEseY7TLVEtUOvmxzkRmDkoISL8080SEgOW3WwJ+u5IWBh0kGblf+lzkd+Ap1uy8IP9XUFjyuUIfDH5j8rFyQNQO8hQ4XmH83dcL0byq4liMNLf8s8DARRqGeV0RcUl9QMJBPhactMEOUN4cL/ff3/yZ3Eh2qK2tkMJRNfakVxdPDN+4UqRVHecwjmVy/O3S++UjFv0a4MBdFOn6MeYaIL/H5M3d4nZyT88Oc92swFcw2haBuEE3zUieU8caznUCsOvgOm47vBzW8xWBk7vezLT45WOYietYjwtaLQUwAhcl1a6+v6lTcyQLVxYSJPO9OSYq3BgemEK36pL928wz8R6Oipw2RSpNhkE1v5GbyAM4D6+UcmNHs
+X-Microsoft-Antispam-PRVS: <BN7PR12MB2675DF4B318AE346437036CCE5010@BN7PR12MB2675.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(84791874153150)(228905959029699);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:BN7PR12MB2675;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2675;
+X-Forefront-PRVS: 0787459938
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(346002)(136003)(39860400002)(189003)(199004)(25786009)(47776003)(86362001)(14444005)(68736007)(66066001)(7736002)(6486002)(53416004)(106356001)(6666003)(5660300001)(3846002)(305945005)(4326008)(6116002)(6306002)(36756003)(105586002)(26005)(7696005)(50466002)(52116002)(8676002)(50226002)(956004)(2616005)(53936002)(2870700001)(966005)(97736004)(23676004)(478600001)(316002)(186003)(16526019)(54906003)(81156014)(81166006)(2906002)(44832011)(476003)(386003)(8936002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2675;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjdQUjEyTUIyNjc1OzIzOmNQUWZjNEpERHZlYkNMVHNsdUVZdGdCdTZS?=
+ =?utf-8?B?NkdvbmR4Q2M1NjZoeVRVRVFpSmVjakw5R1kvRDZUbWxRSlRmRmNLWWptTUg4?=
+ =?utf-8?B?N05FRk92MENzUHIxbmhKMnIxOUtLYlBCMUY4R3dEMjIyRkZpMFVORmM4NFM5?=
+ =?utf-8?B?bHNXWUVYeUdWb3hMRmVaSzhRTGVQT2NRakl1eFVaM3BEbjBMb1p4T3VuWVJN?=
+ =?utf-8?B?dHE1M3dGOWxBRUdPS0J0RXNENXRKWjdJWTBzRWFaOTI3R0tjR1RldytWM0tv?=
+ =?utf-8?B?K3UxRnMxN2l4T29ZVXA3dnp2cW9DWENDdnh4Qy92Rlo4NkNiL0RGZk5nTHVT?=
+ =?utf-8?B?TDhQaDR0LzhHNlVKR1Q0NHVTTzd2bVNIblh0elUwVHBya1lvc0xjd1c5cHly?=
+ =?utf-8?B?WHNQSDlaVENGcFdXRU5WL2VMZy9wVzFObzZyVjI0MXoyaHBRWTRZK2c4amVB?=
+ =?utf-8?B?SVVWcmIwVGdSd2dWb1pkdmJMcldQZnREenk0UU5oemw1eHpxc3ZhMldqbTJE?=
+ =?utf-8?B?dk5PWTNiZjIxWXVxZ3dYQ2hwL3dESE9oRHo4WVM0dXZXUzlyYjRWd0xwT3lH?=
+ =?utf-8?B?TWdUWDRTWjQxZlptckhLVTR6RnJYVm1NczNOdldKQUQyS2MxYnFoK1NPMnlW?=
+ =?utf-8?B?ZTE2OXlyVW9ZdU8wc21TMEpPbDk5RndQYmNZUnRVaGZhTnJHNE9JVXpBL2lU?=
+ =?utf-8?B?VHZLV3FQdTh1RGxldzBGbHd6eEU3MHUvZVlsV1lJM0E4cVA4R2xWRDlWWkZx?=
+ =?utf-8?B?N3JMOXhSejFRNlFlUnZZYmNVMVg1bkFqNzBIMXFMUVpWc0VOS2s3NmtjZEJZ?=
+ =?utf-8?B?cnl5TjY2V01tb3NLYld6dlFUZ1VWVlFxYk9zWjh0UFVBcTBYT0RLSVorY01N?=
+ =?utf-8?B?T08vS3lRc3BZeGNQSTBycmhFalUzU01NWDk0S0x3Ym5xam81T2w4ZGp1alo2?=
+ =?utf-8?B?b3d1TWl3N2NlUVp0QTAvRmQ1TXVMMkdhaStrSlBXSWtFTk5zWTI5VEJhZGhB?=
+ =?utf-8?B?bVA5MVR3cmZ5TzY5V1g4dXozNm12R3VCTWpMNjZta2JZZk9iY2d4bVMwQTJo?=
+ =?utf-8?B?RENIazFLY1pEUy9aYXk3UUlTVkNkczl1bnhiU2xJWncrT0xxSktxd2VzOGU4?=
+ =?utf-8?B?UzlKTFU3dEV3YUxWa1ZlTFQ0Ykl5Tm10b0t1bzByaGNTUHdqL2lkTXkrbkNi?=
+ =?utf-8?B?RHM1RFlWVnJpL3N5Z1FPY0JHaTdERm0wbFk3SmlaejAvRG96SjFacWlyc3Mz?=
+ =?utf-8?B?c2h2dUtyRGlJaGZsSzNURmVWK0RTWEcrMmhZUWJOdEFwcVhISlFXSzQ2aW51?=
+ =?utf-8?B?UUJhYWphMUdPcHg1bmZQVXpBSklxMHZQY1FnbW1hdmUxOXREekRJYlA0alpu?=
+ =?utf-8?B?YU1UR1ArdFExSjhPdlBBTVQzcktlcEl2RmNzVFY5anNmK2pObXFIcDkzUnht?=
+ =?utf-8?B?MWxDVzE5bGwyQ3lIMW9MMTZMUElDZS9GL3REenJHdmloWDhOZVJhL0hDQ2x2?=
+ =?utf-8?B?MnMzWWFhRHRnRjNXUTdQYWVKNHlLbHJBNG9yNGI5azg5ajhha05oM1JnYzgy?=
+ =?utf-8?Q?4dHrY7GKIrzqgd6gvAZF+3D6HDsMv80ugVlZjQIiUmnU=3D?=
+X-Microsoft-Antispam-Message-Info: lJlN4r2L9pHiWF64WnBSGFtE+TFgLenFaic3XqK63dzQGUeZutTvuMteDcQ/h750W4iYNET+Tl4uDKiwmGKFBAD23xwSkhg8TZrryuNovWz+rKyRk+xHIZ5Oul1xNPMn9O63AsAQQnY5vHldjZHWypQs8brNQY+kuSoKVxPhrG7s0ew0/dILu6vxso/Ua4PV+SAv79X2mK1wZjXXGQMNrLCJBH+uL+w/io6GDhaLwLzaP/MJn6JI1vp+Txehx193/dtPf6ZBLefCfF/mGWdQfykM88w03Uo029b8+iWi1hSIoqYKzxd51AGX9/VUoq7P9+szmf4nw15FP0UK1vb3/wuX5cTQ+yVgsgihjg2eYno=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2675;6:ht4iRTn2baUUymopNTLJC3oQdn5dd+G8GB+ukzgxSyIQNujVbHc5fxIE3G4zdXtu7Ci9Tavitqc0ZOluaC3KkmX5mol+j3hUg7ZxPn+PAqryizGi0e+W+Tke719iUMYgmxVsJsleqsQHkoQ1ufenEoJGjAaDoJw2gOeYkhoLd4xW2McuM1h1dO7KpFDaaHSpBOB4Dj2awFotOGrPnHdOmqyHiWurlAX1oEW8TZrtusZ+8oi35BXD0w/hzCaj2ptjzc9DjNc4CiWn7iZUKnX7u+yr14jzLjR3o4Kzc+d3yIy4zPSEOWOZh/SmiBxIiXkrZrbcaitL1u00khcbRQaJLltOBAGCksDOQQMEsFlnmzkUWXBliDrBsQ6VRsye3CGWGXlJQPuHdIeR5fwgArOf8lIFS8wPQwSzK0gp4vP/xaMb3wP++coGYHibqDHOr3k8MSzNIGUBEDR3lfsZU+Zz8w==;5:t8einzbuODKOuihX0roaus/GPjuQl1BjkgfSFJnYgZCA2neBoPxGcoLy7eWwc9eEWuRnJLq18bb2UaTsAtuZWOBiRh/hV5XqwRMrrl/U9OCbx6Dev2C6/3dhH5gzzZH+Zr/JLNdhdqrpngn+Ylj0MFv9ykg4+LL1SaaRy/ReXbA=;7:IGpmpOBhrQRO1YehHhodRTy7lOKFH27nHdvZMRSS/WWgNClupIjPiX4u3Jojd3popmCTiWnuxcW4x8jfMfF3qGSF9/rOqtt7ydrB+GWCOk0tlcz3NP5IB0zCPgyisNFRwYNmCsql94ThrSMDV0SNbjuSuVd/laDNDDwfCavZXLgrx+duZdJk4ggs09h2ObJcJ+gLyJwsbQBlldqHC6i6VTsJOFFXHRNf/P5YNpyeDEU69M3bSIT9AJSK1yVevj5K
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2675;20:+YCpQ9ceQumz5cbfuRntjfQzvxP+XjK4UKSAs3vGzRHhTrelNR754famOwYiZA9V4KOyVMdpPw2zUNGtcRUNH3agKMWjf18fmRpJpLuoqDFY/7vwt1MEBTZNgShZQsA949bYKm2ONsrqHPm0K9k2EBpi5uAgxCU8sgS8osFxxR4NjnC/GifoBPKbDW5apdHMPA99a6gEpUg7eDCIRB/D/BnPxd6/YP4JwCwWuzaSnBv8S19dSI7ST8j3974txlGj
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2018 11:43:27.0894 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4de581d-e856-429a-1020-08d613edf676
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2675
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use PTR_ERR_OR_ZERO for bpf__setup_stdout return code
+The following commit
 
-v2: add macro PTR_ERR_OR_ZERO to err.h
+"
+x86/kvmclock: Remove memblock dependency
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- tools/include/linux/err.h    | 7 +++++++
- tools/perf/util/bpf-loader.c | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
+"
 
-diff --git a/tools/include/linux/err.h b/tools/include/linux/err.h
-index 7a8b61a..0946496 100644
---- a/tools/include/linux/err.h
-+++ b/tools/include/linux/err.h
-@@ -52,4 +52,11 @@ static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
- 	return unlikely(!ptr) || IS_ERR_VALUE((unsigned long)ptr);
- }
- 
-+static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
-+{
-+	if (IS_ERR(ptr))
-+		return PTR_ERR(ptr);
-+	else
-+		return 0;
-+}
- #endif /* _LINUX_ERR_H */
-diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-index 47aac41..f9ae1a9 100644
---- a/tools/perf/util/bpf-loader.c
-+++ b/tools/perf/util/bpf-loader.c
-@@ -1615,7 +1615,7 @@ struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const cha
- int bpf__setup_stdout(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel = bpf__setup_output_event(evlist, "__bpf_stdout__");
--	return IS_ERR(evsel) ? PTR_ERR(evsel) : 0;
-+	return PTR_ERR_OR_ZERO(evsel);
- }
- 
- #define ERRNO_OFFSET(e)		((e) - __BPF_LOADER_ERRNO__START)
+introduced SEV guest regression.
+
+The guest physical address holding the wall_clock and hv_clock_boot
+are shared with the hypervisor must be mapped with C=0 when SEV
+is active. To clear the C-bit we use  kernel_physical_mapping_init() to
+split the large pages. The above commit moved the kvmclock initialization
+very early and kernel_physical_mapping_init() fails to allocate memory
+while spliting the large page.
+
+To solve it, we add a special .data..decrypted section, this section can be
+used to hold the shared variables. Early boot code maps this section with
+C=0. The section is pmd aligned and sized to avoid the need to split the pages.
+Caller can use __decrypted attribute to add the variables in .data..decrypted
+section. 
+
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+
+Changes since v4:
+ - define few static pages in .data..decrypted which can be used
+   for cpus > HVC_BOOT_ARRAY_SIZE when SEV is active.
+
+Changes since v3:
+ - commit message improvements (based on Sean's feedback)
+
+Changes since v2:
+ - commit message and code comment improvements (based on Boris feedback)
+ - move sme_populate_pgd fixes in new patch.
+ - drop stable Cc - will submit to stable after patch is upstreamed.
+
+Changes since v1:
+ - move the logic to re-arrange mapping in new patch
+ - move the definition of __start_data_* in mem_encrypt.h
+ - map the workarea buffer as encrypted when SEV is enabled
+ - enhance the sme_populate_pgd to update the pte/pmd flags when mapping exist
+
+Brijesh Singh (5):
+  x86/mm: Restructure sme_encrypt_kernel()
+  x86/mm: fix sme_populate_pgd() to update page flags
+  x86/mm: add .data..decrypted section to hold shared variables
+  x86/kvm: use __decrypted attribute in shared variables
+  x86/kvm: Avoid dynamic allocation of pvclock data when SEV is active
+
+ arch/x86/include/asm/mem_encrypt.h |  10 ++
+ arch/x86/kernel/head64.c           |  11 ++
+ arch/x86/kernel/kvmclock.c         |  26 ++++-
+ arch/x86/kernel/vmlinux.lds.S      |  20 ++++
+ arch/x86/mm/init.c                 |   3 +
+ arch/x86/mm/mem_encrypt.c          |  10 ++
+ arch/x86/mm/mem_encrypt_identity.c | 232 +++++++++++++++++++++++++++----------
+ 7 files changed, 245 insertions(+), 67 deletions(-)
+
 -- 
-1.9.1
-
-
+2.7.4
 
