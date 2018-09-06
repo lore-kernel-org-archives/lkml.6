@@ -2,130 +2,92 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC62C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0C9C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8673120844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8788A20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="u+GPaK9H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8673120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="dERIa/YY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8788A20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbeIFSyw (ORCPT
+        id S1730032AbeIFSzK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:54:52 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40152 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728905AbeIFSyv (ORCPT
+        Thu, 6 Sep 2018 14:55:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33933 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728950AbeIFSzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:54:51 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w86EEMvH140035;
-        Thu, 6 Sep 2018 14:18:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=2wV4y7NwXNDqXL49flRa59c6LmzUXXxP9FMySXyiiDk=;
- b=u+GPaK9HNcuzMDec853d6xywhIUamiefsNZJW2u75fTtGqv5MiMf+YUowjxnqlGa4Nzx
- DyKXsN/uZE1hEtWR9egNRszu8NpvI1OnNxXq+jkOY5EAcYC985qKopUHb0G5yylJdNxa
- N7wURD86z2fhH7V05+84Gr1jRyH4BV8rI5BN+WMuAC1tiRcHcLJYnPhOw54A6+jsHTU3
- 95nUiDq55goIPzy9aHTUcynsdL5WAAD/36PTctIxQg6kFnoI+a25lhoA9vCi1uBm+zop
- xAXrtBkU0dqy3kBq5HDRTz9ETrxrn+tTZnXRd0OKdb/7nIEs78qwwCqDkvVMuPurwG9w RQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2m7jqpve6y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Sep 2018 14:18:39 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w86EIbQC018257
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Sep 2018 14:18:37 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w86EIaEc031870;
-        Thu, 6 Sep 2018 14:18:36 GMT
-Received: from [10.191.31.201] (/10.191.31.201)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Sep 2018 07:18:36 -0700
-Subject: Re: [PATCH 3/3] nvme-pci: use queue close instead of queue freeze
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, keith.busch@intel.com, jsmart2021@gmail.com,
-        sagi@grimberg.me, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, bart.vanassche@wdc.com
-References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
- <1536120586-3378-4-git-send-email-jianchao.w.wang@oracle.com>
- <20180905220910.GC21352@ming.t460p>
- <8ba97c77-0c3b-75df-0259-3c97ef7b774e@oracle.com>
- <20180906130715.GB31250@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <165989bc-949f-570e-c1d2-0ee1f0d4472a@oracle.com>
-Date:   Thu, 6 Sep 2018 22:19:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 14:55:09 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g33-v6so11637083wrd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 07:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WzQoOj9YobfeAab5PFc08NTFjLIe2hwvasBZ6Gshjtk=;
+        b=dERIa/YY2wv94u42gjQ27DOa6uT7y6/RbmaVw40NWzZFVUsLPg0cEfQTg/KN7rWEdY
+         1zB+Dcanx4SN7Z2uNxgdnMu8c0a0cdm5MoZmVQJ5vavT++q3DPLTxYaNR7kCvWUhqR2O
+         HR9l+kxJ0oCQZEgIrHDuxBKsb1pgEyotV0k2UlFj0bj8LyQmBJRVavGC/t0xRVOf62tC
+         1EKV1ZOr5hyYRkWtdwJ2G/ULy97NadpziCVF4Tcb1slrft6z8KbkFr8AB+5+lhMX61LF
+         C85CBvK8rdl3pWROTxp3o3pOTbAyzB261N5cx284QLDiwd1vCr8A5z1yWj053J6s8JAO
+         iK/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WzQoOj9YobfeAab5PFc08NTFjLIe2hwvasBZ6Gshjtk=;
+        b=WDcGLcNUTIaJ34BOcNwiJhR89AiRtn2Z48iTTTBLlEoSigtK+GSl3+3AwpqILcqL+I
+         cU4aJjwdLvaXehldYpA3dDWkN70cUdfhweFealCmLNX1pxTmQy0NUi+x1BgMCBLbh9r2
+         LD4B15QvTkqYPm1zUWvnZGoVolnKOYL64Y8mODc7DqVZHTyqpJho97PC1Ze1RxbnKT4L
+         P/WzIJjHfKpK0OBO7eWWGtECRbpTbj/PzxQQNVixkNH5XgjNTRw6Qet8ZAWGMGg0WF21
+         ntm2BTxEVdRVy2o7gWTWHGNwHhvyKNMXzt6WQc2YrVcinrgq1DBXZOnV0l+T+5tgelmg
+         0lsA==
+X-Gm-Message-State: APzg51BKO/F2xifXqihQnQ9UWQ4cL64HUFzbfrQJako1+CBjdVtjjgxS
+        XXLGeysV8sfZIK+wnbUbvvIoJ/AVBPyFEgKWXptaNw==
+X-Google-Smtp-Source: ANB0VdbvpzTGibKY9vGQu3jdj1AgTtefc2cDAmQxubkA7m/O2OBH2UL+fXOs+5m5S4SU+yo6KoyITZJcGnWbuC5nuWM=
+X-Received: by 2002:adf:aa9c:: with SMTP id h28-v6mr2615151wrc.149.1536243563264;
+ Thu, 06 Sep 2018 07:19:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180906130715.GB31250@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809060142
+Received: by 2002:adf:9dcb:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 07:19:22 -0700 (PDT)
+In-Reply-To: <20180906140628.GA10580@infradead.org>
+References: <20180906123651.28500-1-anup@brainfault.org> <20180906123651.28500-4-anup@brainfault.org>
+ <20180906140628.GA10580@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Thu, 6 Sep 2018 19:49:22 +0530
+Message-ID: <CAAhSdy0Rn5q_xeWYK84qMf69w0=vgz6=Pin9kyAKpZ17Vf3x5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 6, 2018 at 7:36 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> Just as before:  NAK to entirely pointless abstractions.  Please stop
+> beating the dead horse.
 
+That's just your opinion without any concrete reasoning.
 
-On 09/06/2018 09:07 PM, Ming Lei wrote:
-> On Thu, Sep 06, 2018 at 09:28:46AM +0800, jianchao.wang wrote:
->> Hi Ming
->>
->> On 09/06/2018 06:09 AM, Ming Lei wrote:
->>> nvme_dev_add() still may call freeze & unfreeze queue, so your patch
->>> can't avoid draining queue completely here.
->>
->> Yes, I know this. We still need to freeze queue when update nr_hw_queues.
->> But we move forward a step at least. :)
->> We don't need to drain request queue in normal case of nvme_reset_work.
-> 
-> It is hard to say who is the normal case. In case of CPU hotplug, it is quite
-> easy to trigger updating nr_hw_queues.
-> 
->>
->> As for updating nr_hw_queues, we could try some other method on it next.
-> 
-> The thing is that draining queue may be inevitable inside reset work
-> function because of updating nr_hw_queues, that means the approach in
-> this patchset is just a partial solution
-> 
-> Or it may not make sense to do that because we may never remove the draining
-> queue in the code path of updating nr_hw_queues.
-> 
-> Given they belong to same issue, I suggest to solve them all.
+Even after explaining in various ways, you fail to understand the
+flexibility brought by this driver.
 
-I still think if just prevent new IO, freeze queue is over-kill.
-
-With respect to update nr_hw_queues, we could try to take the bios down from the
-queued requests as the blk_steal_bios. Then re-issue these bios after updating the
-nr_hw_queues.
-
-Thanks
-Jianchao
-
-> 
-> Thanks,
-> Ming
-> 
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=cybJ83konrbKh9jtodiaZRmNrKAo1YtEI_oyaNIbuvk&s=EBhkv_XTOQb3K3-4esnkBrs_ErKuNzXDqZwrIzEA0ig&e=
-> 
+Regards,
+Anup
