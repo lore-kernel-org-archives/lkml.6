@@ -2,108 +2,140 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318B7C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04749C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DCC20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DCC20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id BDA5120869
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:31:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA5120869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbeIFTHW (ORCPT
+        id S1730057AbeIFTH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:07:22 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34567 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729937AbeIFTHW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:07:22 -0400
-Received: by mail-qt0-f195.google.com with SMTP id m13-v6so12523197qth.1;
-        Thu, 06 Sep 2018 07:31:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/dTnNXbG7AJ3uOEcFPlRh3sJWKocXIpEXNe+XKnoXLs=;
-        b=dUDoB1TKr/o3a4AG//35ZYAfIbDtAgGAxsaHfB8qLUxUrAzXMYP7WOuOpv6RTUiqjP
-         O36r7oZtrb/vWXNGatBoERo78QFbpzQhdZVOkS5CjqMTlQ237tQHHWcvbKtnz9g3x/Pz
-         2QW5ok2/ECGIPxYXwJRUVr7/QAtxKmBthqgKfoKa/subTgtFUZLG/UZ/FZfLw3g6chIf
-         5gbSYj10GANSTIQS/HEJdU0i5dapiCPbZSvAfrnxBN9ie6Tzl0JfsJmNzUb9oarUMZBw
-         FuceygILQ24oZ1ZbFoGjHpE/fouUaKMS68gTsFoQQZYFtw39BskOheEtVbx9qbh29zBy
-         E/tw==
-X-Gm-Message-State: APzg51DC9Y3Nkq6NsaVsrhgd+gHw5pWwcNx/5d3AAsATCCUGIexug3dD
-        jLkFJOBR4CNyuIWLtx0EIvXcoeh1EvrZ4DIR4f4=
-X-Google-Smtp-Source: ANB0VdY8j/AuofxpDy2wzUMKVc4/XVNUAgnelbrw/nkbzsLRiJdYFKJvYzhU6vg3SDoLQzBfY1njwl8c6lLmb7fjQcA=
-X-Received: by 2002:aed:2b47:: with SMTP id p65-v6mr2331145qtd.132.1536244292864;
- Thu, 06 Sep 2018 07:31:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com> <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
-In-Reply-To: <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Sep 2018 16:31:16 +0200
-Message-ID: <CAK8P3a1fYM0X=F+9yD6BVLq=57eJeFWXCvywjQOFwEHz7oAhcg@mail.gmail.com>
-Subject: Re: [PATCH V3 06/26] csky: Cache and TLB routines
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thu, 6 Sep 2018 15:07:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53044 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729937AbeIFTH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 15:07:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E14BCAF43;
+        Thu,  6 Sep 2018 14:31:36 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 16:31:36 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: Re: [PATCH 4.19 regression fix] printk: For early boot messages
+ check loglevel when flushing the buffer
+Message-ID: <20180906143136.vqka4dsetbhjc4fs@pathway.suse.cz>
+References: <20180904180154.845-1-hdegoede@redhat.com>
+ <20180905023522.GA1444@jagdpanzerIV>
+ <93901f2b-91ad-a910-7031-0040b827a3af@redhat.com>
+ <20180905053609.GA19936@jagdpanzerIV>
+ <20180905083326.GC19936@jagdpanzerIV>
+ <20180905110207.rxy3upplgkjbk5oi@pathway.suse.cz>
+ <eeada499-1624-6a6c-783a-d017301bbd86@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eeada499-1624-6a6c-783a-d017301bbd86@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
+On Wed 2018-09-05 17:20:53, Hans de Goede wrote:
+> HI,
+> 
+> On 05-09-18 13:02, Petr Mladek wrote:
+> > On Wed 2018-09-05 17:33:26, Sergey Senozhatsky wrote:
+> > > On (09/05/18 14:36), Sergey Senozhatsky wrote:
+> > > > 
+> > > > Just a demonstration of the idea. It does not look very good, tho.
+> > > > I'd rather have just one suppress_message_printing() in printk code.
+> > > > 
+> > > > // This is not a proposed patch, hence the 80-cols violation.
+> > > > 
+> > > > ---
+> > > > 
+> > > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > > index c036f128cdc3..231ac18423e1 100644
+> > > > --- a/kernel/printk/printk.c
+> > > > +++ b/kernel/printk/printk.c
+> > > > @@ -2416,7 +2416,7 @@ void console_unlock(void)
+> > > >   			break;
+> > > >   		msg = log_from_idx(console_idx);
+> > > > -		if (msg->flags & LOG_NOCONS) {
+> > > > +		if (msg->flags & LOG_NOCONS || (exclusive_console && suppress_message_printing(msg->level))) {
+> > > >   			/*
+> > > >   			 * Skip record if !ignore_loglevel, and
+> > > >   			 * record has level above the console loglevel.
+> > > 
+> > > D'oh... Sorry about that, but, believe it or not, this is completely
+> > > not what I had in my mind. What I had, was something like this:
+> > > 
+> > > ---
+> > > 
+> > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > index c036f128cdc3..dadb8c11b0d6 100644
+> > > --- a/kernel/printk/printk.c
+> > > +++ b/kernel/printk/printk.c
+> > > @@ -2416,6 +2416,11 @@ void console_unlock(void)
+> > >   			break;
+> > >   		msg = log_from_idx(console_idx);
+> > > +
+> > > +		if (exclusive_console &&
+> > > +				!suppress_message_printing(msg->level))
+> > > +			msg->flags &= ~LOG_NOCONS;
+> > 
+> > Hmm, this does not help with consoles without CON_PRINTBUFFER
+> > flag. Note that the first registered console prints all messages
+> > even without this flag.
+> > 
+> > Also there is "debug" earlyparam where we need the opposite. I mean
+> > that we want to show messages that were suppressed by default.
+> > 
+> > I played with another solution, see the patch below. It defines
+> > which messages have a valid NOCONS flag according to the msg_seq
+> > number. IMHO, it is a bit more straightforward but it is still
+> > a hack. I am not super happy about it.
+> > 
+> > 
+> > Hmm, I seriously think about reverting the commit 375899cddcbb
+> > ("printk: make sure to print log on console.") and solving it
+> > another way.
+> > 
+> > For example, the commit was primary about locations that
+> > wanted to make some messages always visible or always
+> > suppressed. We could create LOG_FORCE_NOCONS and
+> > LOG_FORCE_CONS for these two special cases.
+> > 
+> > 
+> > 
+> > Possible solution:
+> 
+> So do you want me to give this solution a try or was this mainly for
+> discussion purposes?   If you've a fix which you think you are
+> happy with and plan to merge I would be happy to try it.
 
-> diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
-> new file mode 100644
-> index 0000000..fcb2142
-> --- /dev/null
-> +++ b/arch/csky/include/asm/io.h
-> @@ -0,0 +1,23 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-> +#ifndef __ASM_CSKY_IO_H
-> +#define __ASM_CSKY_IO_H
-> +
-> +#include <abi/pgtable-bits.h>
-> +#include <linux/types.h>
-> +#include <linux/version.h>
-> +
-> +extern void __iomem *ioremap(phys_addr_t offset, size_t size);
-> +
-> +extern void iounmap(void *addr);
-> +
-> +extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
-> +               size_t size, unsigned long flags);
-> +
-> +#define ioremap_nocache(phy, sz)       ioremap(phy, sz)
-> +#define ioremap_wc ioremap_nocache
-> +#define ioremap_wt ioremap_nocache
-> +
-> +#include <asm-generic/io.h>
+It was rather for discussion purposes. I prefer the revert
+for the moment.
 
-It is very unusual for an architecture to not need special handling in asm/io.h,
-to do the proper barriers etc.
+If nobody comes with a better idea or is not against, I am going
+to send the revert.
 
-Can you describe how C-Sky hardware implements MMIO?
-
-In particular:
-
-- Is a read from uncached memory always serialized with DMA, and with
-  other CPUs doing MMIO access to a different address?
-
-- How does endianess work? Are there any buses that flip bytes around
-  when running big-endian, or do you always do that in software?
-
-        Arnd
+Best Regards,
+Petr
