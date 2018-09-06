@@ -2,189 +2,114 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54D4C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48375C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35FC520659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C90D420659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:40:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="g4U3FApv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35FC520659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="CtRHCxsY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90D420659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeIFLM6 (ORCPT
+        id S1727679AbeIFLOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 07:12:58 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36761 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbeIFLM6 (ORCPT
+        Thu, 6 Sep 2018 07:14:37 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.20]:28559 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbeIFLOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 07:12:58 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e1-v6so988274wrt.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 23:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=drdCZGACtIDDKjoQw/oDI+FjGY3Btpe/MmFPHzLGxkg=;
-        b=g4U3FApvZj0Ri4tBqK3HtfHKoozrTWC6yYI2n/aPtp61LrE4uRQKF5TpB/tPuSkyBW
-         tHanbp4uNAMeM7hs3GS5BlibPa4Va/lYK/U4JL2CIrQv0NaUr2skNVAI2CZlFjqpqHiZ
-         Kh6zZXEjgfLWO/KJswMKZ9JFLLNCCen/0yZ71vOOOJdzKDmeTWkif2pMV4scLXc26MTy
-         DpcsxQD3Yqi+jY+EaedUSfrJn/y9qtvOalSv6dUZFF0lv7OMdflCYTEcdiQ7quKr2p9V
-         0rrPdx2V8/GyNlnxEDC2JwPgDWhdgplb8BM7UTGCJCMRRKouzMu/Cc9kfjbZUqerBHVB
-         O8og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=drdCZGACtIDDKjoQw/oDI+FjGY3Btpe/MmFPHzLGxkg=;
-        b=EHSjGFkoA0AsvUHY+zp9xc9qC0bSeexQTXT4zPzB1OWT6aJNuUvcdPbZHBh08M3ijG
-         qJPKyKjYbxN2R/QaNvGV9NOZwyePJlQ/O9/1/tQFt2ZTRjnzcLAl/zhaHL9HUB60+P3N
-         DjLiZ1BT78hW8TuahL6/WX6j/BygKt0VeAUv/F1JmqxZznRxYBbJn1QaWBZj9Y7DAll9
-         LAXiaVhGn4JaUk7J4TywYve7fVXwvSdlXR9vLEI54eGMu/Q4WlF7izDPP8wMhkm+/dFW
-         yATfD5D64rT4YJqLapvpIwFgQJHrLRnS5cQkGQzqgXE8uzSTI5DdRfTsTwvzxfSaSsG2
-         2lYA==
-X-Gm-Message-State: APzg51DSUsoYo++9GA3D9XGfL4gpYW2dMSJiSX1oz9m8qKFO/BN97hnG
-        OFE/4R4KYdxwhXfG/M3DFKIZ3w==
-X-Google-Smtp-Source: ANB0VdYlOln5RezUt/KYpUkaSFJko6791LB/QcjqXaQbcHJkcptIDkLjRQfNxWTcGI+tgw4XXLNn7w==
-X-Received: by 2002:adf:e711:: with SMTP id c17-v6mr983429wrm.143.1536215941862;
-        Wed, 05 Sep 2018 23:39:01 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id r66-v6sm6964761wmb.37.2018.09.05.23.39.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Sep 2018 23:39:01 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        davem@davemloft.net
-Cc:     linux-kernel@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH RESEND] zlib: remove fall through warnings
-Date:   Thu,  6 Sep 2018 06:38:40 +0000
-Message-Id: <1536215920-19955-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 6 Sep 2018 07:14:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536216040;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=bF+Krm3I8WIUlKdtR2oIJZBTyfmrZZAUf0G6Dt3mXXw=;
+        b=CtRHCxsYQKKrf5YFk+TEK1PlRq+kzEnW/D3t+FhBD8rR9nM6iWkrzJQGx1NweAp7gj
+        ++PH2xJXRfIeD6u/DQu2aa9PWwnuuSvHqHUnWEHL7HexIj8/7gmeC0bq3GsltDN//Ftm
+        Ypi8dLzwE/KCR8HMNSmcF2otbCJvJEuzQ2H7e++xUVFaenF3l7jmsZDMgxI9CyzMFFMF
+        l1woqxPr0ePVEb+b3/JEUuNP7NmDjKhomlW4wptihOkgMcMvXfXKMbrm7x++ZfVPKg7D
+        IIHSKMJZvxWbkBT87p8S5dTBqmX2x+gTJiNt2wW+uXGrGKEwndwOvoxxun6TFpVL0JGP
+        wm5g==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc0/lb4QMstw0mqi/C51hpW50R4vli8caicjAbM"
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.0 AUTH)
+        with ESMTPSA id L0862bu866bE8IH
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 6 Sep 2018 08:37:14 +0200 (CEST)
+From:   Olaf Hering <olaf@aepfle.de>
+To:     xen-devel@lists.xenproject.org
+Cc:     Olaf Hering <olaf@aepfle.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] xen: avoid crash in disable_hotplug_cpu
+Date:   Thu,  6 Sep 2018 08:37:11 +0200
+Message-Id: <20180906063712.28639-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.16.4
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch remove all following fall through warnings by
-adding /* fall through */ markers.
-Note that we cannot add "__attribute__ ((fallthrough));" due to it is GCC7 only
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:384:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:391:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:393:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:430:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:556:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:595:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:602:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:627:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:646:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/arm/boot/compressed/../../../../lib/zlib_inflate/inflate.c:696:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
 
-It is easy to see that thoses fall through are needed since in each case state->mode are set to the case value just below.
+BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+RIP: e030:device_offline+0x9/0xb0
+Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+Call Trace:
+ handle_vcpu_hotplug_event+0xb5/0xc0
+ xenwatch_thread+0x80/0x140
+ ? wait_woken+0x80/0x80
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x40/0x40
+ ret_from_fork+0x3a/0x50
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+This happens because handle_vcpu_hotplug_event is called twice. In the
+first iteration cpu_present is still true, in the second iteration
+cpu_present is false which causes get_cpu_device to return NULL.
+In case of cpu#0, cpu_online is apparently always true.
+
+Fix this crash by checking if the cpu can be hotplugged, which is false
+for a cpu that was just removed.
+
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
 ---
- lib/zlib_inflate/inflate.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/xen/cpu_hotplug.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/lib/zlib_inflate/inflate.c b/lib/zlib_inflate/inflate.c
-index 58a733b10387..48f14cd58c77 100644
---- a/lib/zlib_inflate/inflate.c
-+++ b/lib/zlib_inflate/inflate.c
-@@ -382,6 +382,7 @@ int zlib_inflate(z_streamp strm, int flush)
-             strm->adler = state->check = REVERSE(hold);
-             INITBITS();
-             state->mode = DICT;
-+	    /* fall through */
-         case DICT:
-             if (state->havedict == 0) {
-                 RESTORE();
-@@ -389,8 +390,10 @@ int zlib_inflate(z_streamp strm, int flush)
-             }
-             strm->adler = state->check = zlib_adler32(0L, NULL, 0);
-             state->mode = TYPE;
-+	    /* fall through */
-         case TYPE:
-             if (flush == Z_BLOCK) goto inf_leave;
-+	    /* fall through */
-         case TYPEDO:
-             if (state->last) {
-                 BYTEBITS();
-@@ -428,6 +431,7 @@ int zlib_inflate(z_streamp strm, int flush)
-             state->length = (unsigned)hold & 0xffff;
-             INITBITS();
-             state->mode = COPY;
-+	    /* fall through */
-         case COPY:
-             copy = state->length;
-             if (copy) {
-@@ -461,6 +465,7 @@ int zlib_inflate(z_streamp strm, int flush)
- #endif
-             state->have = 0;
-             state->mode = LENLENS;
-+	    /* fall through */
-         case LENLENS:
-             while (state->have < state->ncode) {
-                 NEEDBITS(3);
-@@ -481,6 +486,7 @@ int zlib_inflate(z_streamp strm, int flush)
-             }
-             state->have = 0;
-             state->mode = CODELENS;
-+	    /* fall through */
-         case CODELENS:
-             while (state->have < state->nlen + state->ndist) {
-                 for (;;) {
-@@ -554,6 +560,7 @@ int zlib_inflate(z_streamp strm, int flush)
-                 break;
-             }
-             state->mode = LEN;
-+	    /* fall through */
-         case LEN:
-             if (have >= 6 && left >= 258) {
-                 RESTORE();
-@@ -593,6 +600,7 @@ int zlib_inflate(z_streamp strm, int flush)
-             }
-             state->extra = (unsigned)(this.op) & 15;
-             state->mode = LENEXT;
-+	    /* fall through */
-         case LENEXT:
-             if (state->extra) {
-                 NEEDBITS(state->extra);
-@@ -600,6 +608,7 @@ int zlib_inflate(z_streamp strm, int flush)
-                 DROPBITS(state->extra);
-             }
-             state->mode = DIST;
-+	    /* fall through */
-         case DIST:
-             for (;;) {
-                 this = state->distcode[BITS(state->distbits)];
-@@ -625,6 +634,7 @@ int zlib_inflate(z_streamp strm, int flush)
-             state->offset = (unsigned)this.val;
-             state->extra = (unsigned)(this.op) & 15;
-             state->mode = DISTEXT;
-+	    /* fall through */
-         case DISTEXT:
-             if (state->extra) {
-                 NEEDBITS(state->extra);
-@@ -644,6 +654,7 @@ int zlib_inflate(z_streamp strm, int flush)
-                 break;
-             }
-             state->mode = MATCH;
-+	    /* fall through */
-         case MATCH:
-             if (left == 0) goto inf_leave;
-             copy = out - left;
-@@ -694,6 +705,7 @@ int zlib_inflate(z_streamp strm, int flush)
-                 INITBITS();
-             }
-             state->mode = DONE;
-+	    /* fall through */
-         case DONE:
-             ret = Z_STREAM_END;
-             goto inf_leave;
--- 
-2.16.4
-
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index d4265c8ebb22..bf1e41ed9d41 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -19,6 +19,8 @@ static void enable_hotplug_cpu(int cpu)
+ 
+ static void disable_hotplug_cpu(int cpu)
+ {
++	if (!cpu_is_hotpluggable(cpu))
++		return;
+ 	if (cpu_online(cpu)) {
+ 		lock_device_hotplug();
+ 		device_offline(get_cpu_device(cpu));
