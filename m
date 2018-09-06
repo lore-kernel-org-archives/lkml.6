@@ -2,286 +2,123 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5033C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BABC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD0B204FD
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:48:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD0B204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E2E8204FD
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2E8204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeIFTYM (ORCPT
+        id S1730220AbeIFTYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:24:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59740 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729840AbeIFTYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:24:11 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6CFAF2079D; Thu,  6 Sep 2018 16:48:18 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 352E120701;
-        Thu,  6 Sep 2018 16:48:08 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 16:48:07 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 02/10] phy: Add configuration interface
-Message-ID: <20180906144807.pn753tgfyovvheil@flea>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
- <a739a2d623c3e60373a73e1ec206c2aa35c4a742.1536138624.git-series.maxime.ripard@bootlin.com>
- <8397722.XVQDA25ZU6@avalon>
+        Thu, 6 Sep 2018 15:24:36 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:45746 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729840AbeIFTYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 15:24:36 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86EiiQj027605;
+        Thu, 6 Sep 2018 09:48:36 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com ([141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2m7q6p7axm-1;
+        Thu, 06 Sep 2018 09:48:36 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 1730E611E121;
+        Thu,  6 Sep 2018 09:48:36 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 6 Sep 2018
+ 15:48:35 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w86EmYFq001713; Thu,
+ 6 Sep 2018 15:48:34 +0100
+Date:   Thu, 6 Sep 2018 15:48:34 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 1/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20180906144834.GD1653@imbe.wolfsonmicro.main>
+References: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
+ <CACRpkdakAAAFKfRFeB_8kUCyGts_7sojVwyexe4aL4QQo2CcGg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="33flwg4e7gzoxrap"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <8397722.XVQDA25ZU6@avalon>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CACRpkdakAAAFKfRFeB_8kUCyGts_7sojVwyexe4aL4QQo2CcGg@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1809060146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 06, 2018 at 03:46:12PM +0200, Linus Walleij wrote:
+> On Wed, Sep 5, 2018 at 12:41 PM Charles Keepax
+> <ckeepax@opensource.cirrus.com> wrote:
+> 
+> > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> >
+> > Lochnagar is an evaluation and development board for Cirrus
+> > Logic Smart CODEC and Amp devices. It allows the connection of
+> > most Cirrus Logic devices on mini-cards, as well as allowing
+> > connection of various application processor systems to provide a
+> > full evaluation platform.  Audio system topology, clocking and
+> > power can all be controlled through the Lochnagar, allowing the
+> > device under test to be used in a variety of possible use cases.
+> >
+> > As the Lochnagar is a fairly complex device this MFD driver
+> > allows the drivers for the various features to be bound
+> > in. Initially clocking, regulator and pinctrl will be added as
+> > these are necessary to configure the system. But in time at least
+> > audio and voltage/current monitoring will also be added.
+> >
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> 
+> It's a bit confusing, maybe you can clear it up:
+> it appears to be an I2C device, so when you say this is a
+> "development board" is there something like a board
+> controller that is accessed over I2C and this is what the
+> driver really probes to, not the board per se?
+> 
+> I guess jamming this card into the I2C slot of any other
+> system (would work fine with a 96Boards LS connector
+> as it seems, actually)  also involves connecting some
+> I2S or similar on the side for high-datarate traffic?
+> 
+> This driver seems to only concern itself with the I2C
+> board controller per se, not the board is that right?
+> 
 
---33flwg4e7gzoxrap
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah I have poorly phrased that, these patches are very much
+just dealing with the board controller chip.
 
-On Wed, Sep 05, 2018 at 04:39:46PM +0300, Laurent Pinchart wrote:
-> Hi Maxime,
->=20
-> Thank you for the patch.
->=20
-> On Wednesday, 5 September 2018 12:16:33 EEST Maxime Ripard wrote:
-> > The phy framework is only allowing to configure the power state of the =
-PHY
-> > using the init and power_on hooks, and their power_off and exit
-> > counterparts.
-> >=20
-> > While it works for most, simple, PHYs supported so far, some more advan=
-ced
-> > PHYs need some configuration depending on runtime parameters. These PHYs
-> > have been supported by a number of means already, often by using ad-hoc
-> > drivers in their consumer drivers.
-> >=20
-> > That doesn't work too well however, when a consumer device needs to deal
->=20
-> s/deal/deal with/
->=20
-> > multiple PHYs, or when multiple consumers need to deal with the same PH=
-Y (a
-> > DSI driver and a CSI driver for example).
-> >=20
-> > So we'll add a new interface, through two funtions, phy_validate and
-> > phy_configure. The first one will allow to check that a current
-> > configuration, for a given mode, is applicable. It will also allow the =
-PHY
-> > driver to tune the settings given as parameters as it sees fit.
-> >=20
-> > phy_configure will actually apply that configuration in the phy itself.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > ---
-> >  drivers/phy/phy-core.c  | 62 +++++++++++++++++++++++++++++++++++++++++=
-+-
-> >  include/linux/phy/phy.h | 42 ++++++++++++++++++++++++++++-
-> >  2 files changed, 104 insertions(+)
-> >=20
-> > diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> > index 35fd38c5a4a1..6eaf655e370f 100644
-> > --- a/drivers/phy/phy-core.c
-> > +++ b/drivers/phy/phy-core.c
-> > @@ -408,6 +408,68 @@ int phy_calibrate(struct phy *phy)
-> >  EXPORT_SYMBOL_GPL(phy_calibrate);
-> >=20
-> >  /**
-> > + * phy_configure() - Changes the phy parameters
-> > + * @phy: the phy returned by phy_get()
-> > + * @mode: phy_mode the configuration is applicable to.
-> > + * @opts: New configuration to apply
-> > + *
-> > + * Used to change the PHY parameters. phy_init() must have
-> > + * been called on the phy.
-> > + *
-> > + * Returns: 0 if successful, an negative error code otherwise
-> > + */
-> > +int phy_configure(struct phy *phy, enum phy_mode mode,
-> > +		  union phy_configure_opts *opts)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!phy)
-> > +		return -EINVAL;
-> > +
-> > +	if (!phy->ops->configure)
-> > +		return 0;
->=20
-> Shouldn't you report an error to the caller ? If a caller expects the PHY=
- to=20
-> be configurable, I would assume that silently ignoring the requested=20
-> configuration won't work great.
+You could connect just the I2C to something like the 96Boards LS
+connector, and control all the functionality accessed by this
+driver. Although if you want to send audio between your 96Boards
+device and the Lochnagar you would need to connect up some I2S as
+well.
 
-I'm not sure. I also expect a device having to interact with multiple
-PHYs, some of them needing some configuration while some other do
-not. In that scenario, returning 0 seems to be the right thing to do.
-
-> > +	mutex_lock(&phy->mutex);
-> > +	ret =3D phy->ops->configure(phy, mode, opts);
-> > +	mutex_unlock(&phy->mutex);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * phy_validate() - Checks the phy parameters
-> > + * @phy: the phy returned by phy_get()
-> > + * @mode: phy_mode the configuration is applicable to.
-> > + * @opts: Configuration to check
-> > + *
-> > + * Used to check that the current set of parameters can be handled by
-> > + * the phy. Implementations are free to tune the parameters passed as
-> > + * arguments if needed by some implementation detail or
-> > + * constraints. It will not change any actual configuration of the
-> > + * PHY, so calling it as many times as deemed fit will have no side
-> > + * effect.
-> > + *
-> > + * Returns: 0 if successful, an negative error code otherwise
-> > + */
-> > +int phy_validate(struct phy *phy, enum phy_mode mode,
-> > +		  union phy_configure_opts *opts)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!phy)
-> > +		return -EINVAL;
-> > +
-> > +	if (!phy->ops->validate)
-> > +		return 0;
-> > +
-> > +	mutex_lock(&phy->mutex);
-> > +	ret =3D phy->ops->validate(phy, mode, opts);
-> > +	mutex_unlock(&phy->mutex);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> >   * _of_phy_get() - lookup and obtain a reference to a phy by phandle
-> >   * @np: device_node for which to get the phy
-> >   * @index: the index of the phy
-> > diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> > index 9cba7fe16c23..3cc315dcfcd0 100644
-> > --- a/include/linux/phy/phy.h
-> > +++ b/include/linux/phy/phy.h
-> > @@ -44,6 +44,12 @@ enum phy_mode {
-> >  };
-> >=20
-> >  /**
-> > + * union phy_configure_opts - Opaque generic phy configuration
-> > + */
-> > +union phy_configure_opts {
-> > +};
-> > +
-> > +/**
-> >   * struct phy_ops - set of function pointers for performing phy operat=
-ions
-> >   * @init: operation to be performed for initializing phy
-> >   * @exit: operation to be performed while exiting
-> > @@ -60,6 +66,38 @@ struct phy_ops {
-> >  	int	(*power_on)(struct phy *phy);
-> >  	int	(*power_off)(struct phy *phy);
-> >  	int	(*set_mode)(struct phy *phy, enum phy_mode mode);
-> > +
-> > +	/**
-> > +	 * @configure:
-> > +	 *
-> > +	 * Optional.
-> > +	 *
-> > +	 * Used to change the PHY parameters. phy_init() must have
-> > +	 * been called on the phy.
-> > +	 *
-> > +	 * Returns: 0 if successful, an negative error code otherwise
-> > +	 */
-> > +	int	(*configure)(struct phy *phy, enum phy_mode mode,
-> > +			     union phy_configure_opts *opts);
->=20
-> Is this function allowed to modify opts ? If so, to what extent ? If not,=
- the=20
-> pointer should be made const.
-
-That's a pretty good question. I guess it could modify it to the same
-extent than validate could. Would that make sense?
-
-> > +	/**
-> > +	 * @validate:
-> > +	 *
-> > +	 * Optional.
-> > +	 *
-> > +	 * Used to check that the current set of parameters can be
-> > +	 * handled by the phy. Implementations are free to tune the
-> > +	 * parameters passed as arguments if needed by some
-> > +	 * implementation detail or constraints. It must not change
-> > +	 * any actual configuration of the PHY, so calling it as many
-> > +	 * times as deemed fit by the consumer must have no side
-> > +	 * effect.
-> > +	 *
-> > +	 * Returns: 0 if the configuration can be applied, an negative
-> > +	 * error code otherwise
->=20
-> When should this operation modify the passed parameters, and when should =
-it=20
-> return an error ? I understand that your goal is to implement a negotiati=
-on=20
-> mechanism for the PHY parameters, and to be really useful I think we need=
- to=20
-> document it more precisely.
-
-My initial idea was to reject a configuration that wouldn't be
-achievable by the PHY, ie you're asking something that is outside of
-the operating boundaries, while you would be able to change settings
-that would be operational, but sub-optimal.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---33flwg4e7gzoxrap
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluRPiYACgkQ0rTAlCFN
-r3SRWA//cUYYut4180G/9uCKBeCWj2+DOC1ui9ruF4aPmdk/G2mIkorldTB8hATt
-RaUNqjMOjLtwn9K84SSZaXQPCQWsL1pxie559v7ff5ccp2knjonZo1ET/oi17AHW
-xOARqG3Hu6mhiaUzGmtlmSjeyhj0rmOwr/QfoQ5T8PDJIQb+38CRLAt9rY6NCOfr
-hbdhRtkA0E0CYGKCl1gf64CDu7WDeghzsxd3RvpW6CbKRRuyHcYIkNsnSOprOEGc
-tm4PlvXSlvyaF1KmK//WWax7NsOQErT2MSufzrkPC47nQpspUkXg6GxnY0VW/J/K
-oQibZgTVzcBHPYtTFE77Y5NF6RXMzI/yHiTPdkxIzp3TsI5EBE7v0b5ckr7ZMGBl
-UttXuNtBwzHwooTXmORg8Uvr919X6cgdnzvwpGjGOR1qTrIR9XFMkCrc4Wt7Ibgp
-DAVdom82UYnu48yTDRauCqpCqfzKJbvaFvFq6NwLtW2NiRXb/KkUk5ZO7BwAdk8G
-Uyv/V80ZvCoHC9E5zFIJDkqWVdenBC2/x3sQ9G63UO8d2zTMgQ/QoHUnzIUf9lZg
-MWs8v5RfTIgZvsxvCoNbGdSe06V3Sjg+StObrKD2bbD9hV5yDB+M2f6s7QadHH2T
-AKtaqo5k+KBxsQLSjanH5pTTT6tbiwJtqnzwzkayZOcRi1TLeDw=
-=uU9Q
------END PGP SIGNATURE-----
-
---33flwg4e7gzoxrap--
+Thanks,
+Charles
