@@ -2,88 +2,85 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44CFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A70CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F14320652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F14320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id D831B20652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:04:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D831B20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbeIFPfq (ORCPT
+        id S1728334AbeIFPi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:35:46 -0400
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:41089 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728037AbeIFPfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:35:46 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 247E92801FD34;
-        Thu,  6 Sep 2018 13:00:50 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id CB0CF44FAB6; Thu,  6 Sep 2018 13:00:49 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 13:00:49 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH 2/2] thunderbolt: Initialize after IOMMUs
-Message-ID: <20180906110049.gfdhurvkvvdjw7zh@wunner.de>
-References: <20180903132012.23531-1-mika.westerberg@linux.intel.com>
- <20180903132012.23531-2-mika.westerberg@linux.intel.com>
- <20180905084746.xmckzskxzsdliz3e@wunner.de>
- <20180905094602.GH2283@lahna.fi.intel.com>
- <20180906081337.3mosfpfggfmoj633@wunner.de>
- <20180906103602.GV2283@lahna.fi.intel.com>
+        Thu, 6 Sep 2018 11:38:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39352 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727625AbeIFPi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 11:38:56 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0951140241CA;
+        Thu,  6 Sep 2018 11:04:02 +0000 (UTC)
+Received: from krava (unknown [10.43.17.49])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B9C262027EA0;
+        Thu,  6 Sep 2018 11:04:00 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 13:04:00 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 2/2]: perf record: enable asynchronous trace writing
+Message-ID: <20180906110400.GD8248@krava>
+References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
+ <dc18a621-4464-e5a5-ce10-5f7b2f6a9176@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180906103602.GV2283@lahna.fi.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <dc18a621-4464-e5a5-ce10-5f7b2f6a9176@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 11:04:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 11:04:02 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 01:36:02PM +0300, Mika Westerberg wrote:
-> On Thu, Sep 06, 2018 at 10:13:37AM +0200, Lukas Wunner wrote:
-> > So with this patch, you rely on the linker ordering nhi_init() after
-> > ir_dev_scope_init(), however to the best of my knowledge the link
-> > order is not guaranteed.
-> 
-> What says that?
+On Wed, Sep 05, 2018 at 10:39:25AM +0300, Alexey Budankov wrote:
 
-Within the same initcall level, the ordering is determined by the Makefile
-AFAIK.  Someone changes the Makefile, your dependency scheme falls apart.
+SNIP
 
+> -static int record__pushfn(void *to, void *bf, size_t size)
+> +static int record__pushfn(void *to, struct aiocb *cblock, void *data, size_t size)
+>  {
+> +	off_t off;
+>  	struct record *rec = to;
+> +	int ret, trace_fd = rec->session->data->file.fd;
+>  
+>  	rec->samples++;
+> -	return record__write(rec, bf, size);
+> +
+> +	off =
+> +	lseek(trace_fd, 0, SEEK_CUR);
+> +	lseek(trace_fd, off + size, SEEK_SET);
+> +
+> +	ret = record__aio_write(cblock, trace_fd, data, size, off);
+> +	if (!ret) {
+> +		rec->bytes_written += size;
+> +		if (switch_output_size(rec))
+> +			trigger_hit(&switch_output_trigger);
 
-> > Looking at commit acb40d841257, which started this, I'm wondering
-> > why you did not simply export tbnet_init() and call it from the
-> > thunderbolt driver after the property stuff has been fully set up?
-> > After all, thunderbolt-net is useless without thunderbolt or am I
-> > missing something?  Then you could revert back to module_init().
-> 
-> The same reason you don't call PCI driver functions from PCI core. It
-> makes absolutely zero sense.
-> 
-> Thunderbolt is bus and provides driver API to drivers. We hopefully are
-> getting other service drivers (say SCSI over TBT) that are going to be
-> use the same interfaces.
+why do you need to call switch output from here?
 
-Then add a blocking notifier chain into which these service drivers can
-hook.  Other buses have that as well.
-
-Thanks,
-
-Lukas
+jirka
