@@ -2,129 +2,109 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF19C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7696C4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB6A820659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:50:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6A820659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4DEB120659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:53:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEB120659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeIGC1j (ORCPT
+        id S1727688AbeIGCbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 22:27:39 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:15841 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726361AbeIGC1j (ORCPT
+        Thu, 6 Sep 2018 22:31:23 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:58240 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbeIGCbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 22:27:39 -0400
-X-IronPort-AV: E=Sophos;i="5.53,339,1531778400"; 
-   d="scan'208";a="345310021"
-Received: from lneuilly-657-1-24-134.w92-154.abo.wanadoo.fr (HELO hadrien) ([92.154.38.134])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 23:50:07 +0200
-Date:   Thu, 6 Sep 2018 23:50:07 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Mikita Lipski <mikita.lipski@amd.com>
-cc:     linux-kernel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>, kbuild-all@01.org
-Subject: drivers/gpu/drm/amd/display/dc/core/dc_resource.c:352:1-14: code
- aligned with following code on line 354 (fwd)
-Message-ID: <alpine.DEB.2.20.1809062349170.25742@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 6 Sep 2018 22:31:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 3ABCB41926;
+        Thu,  6 Sep 2018 21:53:52 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id amGr8CKqesqz; Thu,  6 Sep 2018 21:53:52 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id C2F83418D6;
+        Thu,  6 Sep 2018 21:53:41 +0000 (UTC)
+Subject: Re: [PATCH] arm64: add NUMA emulation support
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
+        sudeep.holla@arm.com, ganapatrao.kulkarni@cavium.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180824230559.32336-1-shuah@kernel.org>
+ <20180828174011.GE20375@arm.com>
+ <a58ad11f-3c22-ed7f-a0cd-938aabc4adaf@kernel.org>
+ <20180829110802.GD10349@dhcp22.suse.cz>
+ <f041ba95-03e6-4a7d-c324-870b45a2f648@kernel.org>
+ <20180905064252.GW14951@dhcp22.suse.cz>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <c1b58f13-6190-20e9-7e4f-b8bc2b9d5f80@kernel.org>
+Date:   Thu, 6 Sep 2018 15:53:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180905064252.GW14951@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It looks like line 352 needs to be indented more.
+On 09/05/2018 12:42 AM, Michal Hocko wrote:
+> On Tue 04-09-18 15:59:34, Shuah Khan wrote:
+> [...]
+>> This will support the following workload requirements:
+>>
+>> - reserving one or more NUMA memory nodes for class of critical tasks that require
+>>   guaranteed memory availability.
+>> - isolate memory blocks with a guaranteed exclusive access.
+> 
+> How do you enforce kernel doesn't allocate from those reserved nodes?
+> They will be in a fallback zonelists so once the memory gets used on all
+> other ones then the kernel happily spills over to your reserved node.
 
-julia
+I should have clarified the "isolate memory blocks with a guaranteed exclusive
+access." scope.
 
----------- Forwarded message ----------
-Date: Fri, 7 Sep 2018 05:47:25 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: drivers/gpu/drm/amd/display/dc/core/dc_resource.c:352:1-14: code
-    aligned with following code on line 354
+Kernel does satisfy GFP_ATOMIC at the expense of cpuset exclusive/hardwall policies
+to not stress the kernel.
 
-CC: kbuild-all@01.org
-CC: linux-kernel@vger.kernel.org
-TO: Mikita Lipski <mikita.lipski@amd.com>
-CC: Alex Deucher <alexander.deucher@amd.com>
-CC: Hersen Wu <hersenxs.wu@amd.com>
+It is not the intent to make sure kernel doesn't allocate from these reserved
+nodes. The intent is to work within the constraints of cpuset mem.exclusive and
+cpuset mem.hardwall policies.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   db44bf4b4768a0664d3c9d9000ecb747de31ded8
-commit: 3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c drm/amd/display: Don't share clk source between DP and HDMI
-date:   4 weeks ago
-:::::: branch date: 5 hours ago
-:::::: commit date: 4 weeks ago
+> 
+>> NUMA emulation to split the flat machine into "x" number of nodes, combined with
+>> cpuset cgroup with the following example configuration will make it possible to
+>> support the above workloads on non-NUMA platforms.
+>>
+>> numa=fake=4
+>>
+>> cpuset.mems=2
+>> cpuset.cpus=2
+>> cpuset.mem_exclusive=1 (enabling exclusive use of the memory nodes by a CPU set)
+>> cpuset.mem_hardwall=1  (separate the memory nodes that are allocated to different cgroups)
+> 
+> This will only enforce userspace to follow and I strongly suspect that
+> tasks in the root cgroup will be allowed to allocate as well.
+> 
 
->> drivers/gpu/drm/amd/display/dc/core/dc_resource.c:352:1-14: code aligned with following code on line 354
+A few critical allocations could be satisfied and root cgroup prevails. It is not the
+intent to have exclusivity at the expense of the kernel.
 
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c
-git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-git remote update linus
-git checkout 3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c
-vim +352 drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+This feature will allow a way to configure cpusets on non-NUMA for workloads that can
+benefit from the reservation and isolation that is available within the constraints of
+exclusive cpuset policies.
 
-4562236b Harry Wentland   2017-09-12  310
-4562236b Harry Wentland   2017-09-12  311  bool resource_are_streams_timing_synchronizable(
-0971c40e Harry Wentland   2017-07-27  312  	struct dc_stream_state *stream1,
-0971c40e Harry Wentland   2017-07-27  313  	struct dc_stream_state *stream2)
-4562236b Harry Wentland   2017-09-12  314  {
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  315) 	if (stream1->timing.h_total != stream2->timing.h_total)
-4562236b Harry Wentland   2017-09-12  316  		return false;
-4562236b Harry Wentland   2017-09-12  317
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  318) 	if (stream1->timing.v_total != stream2->timing.v_total)
-4562236b Harry Wentland   2017-09-12  319  		return false;
-4562236b Harry Wentland   2017-09-12  320
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  321) 	if (stream1->timing.h_addressable
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  322) 				!= stream2->timing.h_addressable)
-4562236b Harry Wentland   2017-09-12  323  		return false;
-4562236b Harry Wentland   2017-09-12  324
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  325) 	if (stream1->timing.v_addressable
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  326) 				!= stream2->timing.v_addressable)
-4562236b Harry Wentland   2017-09-12  327  		return false;
-4562236b Harry Wentland   2017-09-12  328
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  329) 	if (stream1->timing.pix_clk_khz
-4fa086b9 Leo (Sunpeng  Li 2017-07-25  330) 				!= stream2->timing.pix_clk_khz)
-4562236b Harry Wentland   2017-09-12  331  		return false;
-4562236b Harry Wentland   2017-09-12  332
-3e27e10e Mikita Lipski    2018-07-12  333  	if (stream1->clamping.c_depth != stream2->clamping.c_depth)
-3e27e10e Mikita Lipski    2018-07-12  334  		return false;
-3e27e10e Mikita Lipski    2018-07-12  335
-4562236b Harry Wentland   2017-09-12  336  	if (stream1->phy_pix_clk != stream2->phy_pix_clk
-7e2fe319 Charlene Liu     2017-03-17  337  			&& (!dc_is_dp_signal(stream1->signal)
-7e2fe319 Charlene Liu     2017-03-17  338  			|| !dc_is_dp_signal(stream2->signal)))
-4562236b Harry Wentland   2017-09-12  339  		return false;
-4562236b Harry Wentland   2017-09-12  340
-4562236b Harry Wentland   2017-09-12  341  	return true;
-4562236b Harry Wentland   2017-09-12  342  }
-3e27e10e Mikita Lipski    2018-07-12  343  static bool is_dp_and_hdmi_sharable(
-3e27e10e Mikita Lipski    2018-07-12  344  		struct dc_stream_state *stream1,
-3e27e10e Mikita Lipski    2018-07-12  345  		struct dc_stream_state *stream2)
-3e27e10e Mikita Lipski    2018-07-12  346  {
-3e27e10e Mikita Lipski    2018-07-12  347  	if (stream1->ctx->dc->caps.disable_dp_clk_share)
-3e27e10e Mikita Lipski    2018-07-12  348  		return false;
-3e27e10e Mikita Lipski    2018-07-12  349
-3e27e10e Mikita Lipski    2018-07-12  350  	if (stream1->clamping.c_depth != COLOR_DEPTH_888 ||
-3e27e10e Mikita Lipski    2018-07-12  351  	    stream2->clamping.c_depth != COLOR_DEPTH_888)
-3e27e10e Mikita Lipski    2018-07-12 @352  	return false;
-3e27e10e Mikita Lipski    2018-07-12  353
-3e27e10e Mikita Lipski    2018-07-12 @354  	return true;
-3e27e10e Mikita Lipski    2018-07-12  355
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+thanks,
+-- Shuah
