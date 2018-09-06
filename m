@@ -2,98 +2,240 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BFCC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5470CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E382075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E382075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id F0305206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0305206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729993AbeIFSWZ (ORCPT
+        id S1730017AbeIFSWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:22:25 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:12842 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729479AbeIFSWY (ORCPT
+        Thu, 6 Sep 2018 14:22:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33245 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729803AbeIFSWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:22:24 -0400
-X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
-   d="scan'208";a="17303232"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Sep 2018 06:46:38 -0700
-Received: from ibiza.rfo.atmel.com (10.10.76.4) by chn-sv-exch07.mchp-main.com
- (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Thu, 6 Sep 2018
- 06:46:37 -0700
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>, <arnd@arndb.de>,
-        <richard.genoud@gmail.com>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-        "Ludovic Desroches" <ludovic.desroches@microchip.com>
-Subject: [PATCH v4 0/2] add ISO7816 support
-Date:   Thu, 6 Sep 2018 15:42:12 +0200
-Message-ID: <20180906134214.29031-1-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.12.2
+        Thu, 6 Sep 2018 14:22:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DkQKM311014
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:46:26 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DkQCY311011;
+        Thu, 6 Sep 2018 06:46:26 -0700
+Date:   Thu, 6 Sep 2018 06:46:26 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-wkpsivs1a9afwldbul46btbv@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        wangnan0@huawei.com, dsahern@gmail.com, hpa@zytor.com,
+        mingo@kernel.org, namhyung@kernel.org, yhs@fb.com,
+        adrian.hunter@intel.com, g.borello@gmail.com, jolsa@kernel.org,
+        daniel@iogearbox.net, acme@redhat.com
+Reply-To: g.borello@gmail.com, jolsa@kernel.org, daniel@iogearbox.net,
+          acme@redhat.com, wangnan0@huawei.com, hpa@zytor.com,
+          dsahern@gmail.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, mingo@kernel.org, namhyung@kernel.org,
+          adrian.hunter@intel.com, yhs@fb.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf augmented_syscalls: Avoid optimization to pass
+ older BPF validators
+Git-Commit-ID: 7538d16397dfc72d8b61a99c32c592a75ae7f157
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit-ID:  7538d16397dfc72d8b61a99c32c592a75ae7f157
+Gitweb:     https://git.kernel.org/tip/7538d16397dfc72d8b61a99c32c592a75ae7f157
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 3 Sep 2018 15:18:37 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 3 Sep 2018 15:29:53 -0300
 
-This patchset adds support for the ISO7816 standard. The USART devices in
-Microchip SoCs have an ISO7816 mode. It allows to let the USART managing
-the CLK and I/O signals of a smart card.
+perf augmented_syscalls: Avoid optimization to pass older BPF validators
 
-Changes:
-- v4
-  - use the IP version number instead of the compatible string to set
-  min and max values for fidi.
-  - remove a useless macro for fidi.
-- v3
-  - add IOCTLs to parisc arch.
-  - rework atmel_config_iso7816 according to the comments by Richard.
-  - keep max iteration hard coded. Will see later if the user need to set
-  this value. It may also concern the normal/inverse mode.
-  - improve the checking of the value from the user space.
-- v2
-  - uart_get_iso7816_config: check there is an iso7816_config function.
-  - use IOCTL macros to generate the IOCTL number.
-  - check that reserved field is not used.
-  - remove debug logs.
-  - check that the iso7816_config is right before doing any action.
-  - change the error from nack and max iteration status to a debug message.
-  - remove patch 3 as it concerns both rs485 and iso7816 to think more.
-  about the need of adding a lock or not.
+See https://www.spinics.net/lists/netdev/msg480099.html for the whole
+discussio, but to make the augmented_syscalls.c BPF program to get built
+and loaded successfully in a greater range of kernels, add an extra
+check.
 
-Nicolas Ferre (2):
-  tty/serial_core: add ISO7816 infrastructure
-  tty/serial: atmel: add ISO7816 support
+Related patch:
 
- arch/alpha/include/uapi/asm/ioctls.h   |   2 +
- arch/mips/include/uapi/asm/ioctls.h    |   2 +
- arch/parisc/include/uapi/asm/ioctls.h  |   2 +
- arch/powerpc/include/uapi/asm/ioctls.h |   2 +
- arch/sh/include/uapi/asm/ioctls.h      |   2 +
- arch/sparc/include/uapi/asm/ioctls.h   |   2 +
- arch/xtensa/include/uapi/asm/ioctls.h  |   2 +
- drivers/tty/serial/atmel_serial.c      | 190 +++++++++++++++++++++++++++++++--
- drivers/tty/serial/atmel_serial.h      |   3 +-
- drivers/tty/serial/serial_core.c       |  60 +++++++++++
- include/linux/serial_core.h            |   3 +
- include/uapi/asm-generic/ioctls.h      |   2 +
- include/uapi/linux/serial.h            |  17 +++
- 13 files changed, 277 insertions(+), 12 deletions(-)
+  a60dd35d2e39 ("bpf: change bpf_perf_event_output arg5 type to ARG_CONST_SIZE_OR_ZERO")
 
--- 
-2.12.2
+That is in the kernel since v4.15, I couldn't figure why this is hitting
+me with 4.17.17, but adding the workaround discussed there makes this
+work with this fedora kernel and with 4.18.recent.
 
+Before:
+
+  # uname -a
+  Linux seventh 4.17.17-100.fc27.x86_64 #1 SMP Mon Aug 20 15:53:11 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c cat /etc/passwd > /dev/null
+  libbpf: load bpf program failed: Permission denied
+  libbpf: -- BEGIN DUMP LOG ---
+  libbpf:
+  0: (bf) r6 = r1
+  1: (b7) r1 = 0
+  2: (7b) *(u64 *)(r10 -8) = r1
+  3: (7b) *(u64 *)(r10 -16) = r1
+  4: (7b) *(u64 *)(r10 -24) = r1
+  5: (7b) *(u64 *)(r10 -32) = r1
+  6: (7b) *(u64 *)(r10 -40) = r1
+  7: (7b) *(u64 *)(r10 -48) = r1
+  8: (7b) *(u64 *)(r10 -56) = r1
+  9: (7b) *(u64 *)(r10 -64) = r1
+  10: (7b) *(u64 *)(r10 -72) = r1
+  11: (7b) *(u64 *)(r10 -80) = r1
+  12: (7b) *(u64 *)(r10 -88) = r1
+  13: (7b) *(u64 *)(r10 -96) = r1
+  14: (7b) *(u64 *)(r10 -104) = r1
+  15: (7b) *(u64 *)(r10 -112) = r1
+  16: (7b) *(u64 *)(r10 -120) = r1
+  17: (7b) *(u64 *)(r10 -128) = r1
+  18: (7b) *(u64 *)(r10 -136) = r1
+  19: (7b) *(u64 *)(r10 -144) = r1
+  20: (7b) *(u64 *)(r10 -152) = r1
+  21: (7b) *(u64 *)(r10 -160) = r1
+  22: (7b) *(u64 *)(r10 -168) = r1
+  23: (7b) *(u64 *)(r10 -176) = r1
+  24: (7b) *(u64 *)(r10 -184) = r1
+  25: (7b) *(u64 *)(r10 -192) = r1
+  26: (7b) *(u64 *)(r10 -200) = r1
+  27: (7b) *(u64 *)(r10 -208) = r1
+  28: (7b) *(u64 *)(r10 -216) = r1
+  29: (7b) *(u64 *)(r10 -224) = r1
+  30: (7b) *(u64 *)(r10 -232) = r1
+  31: (7b) *(u64 *)(r10 -240) = r1
+  32: (7b) *(u64 *)(r10 -248) = r1
+  33: (7b) *(u64 *)(r10 -256) = r1
+  34: (7b) *(u64 *)(r10 -264) = r1
+  35: (7b) *(u64 *)(r10 -272) = r1
+  36: (7b) *(u64 *)(r10 -280) = r1
+  37: (7b) *(u64 *)(r10 -288) = r1
+  38: (7b) *(u64 *)(r10 -296) = r1
+  39: (7b) *(u64 *)(r10 -304) = r1
+  40: (7b) *(u64 *)(r10 -312) = r1
+  41: (bf) r7 = r10
+  42: (07) r7 += -312
+  43: (bf) r1 = r7
+  44: (b7) r2 = 48
+  45: (bf) r3 = r6
+  46: (85) call bpf_probe_read#4
+  47: (79) r3 = *(u64 *)(r6 +24)
+  48: (bf) r1 = r10
+  49: (07) r1 += -256
+  50: (b7) r8 = 256
+  51: (b7) r2 = 256
+  52: (85) call bpf_probe_read_str#45
+  53: (bf) r1 = r0
+  54: (67) r1 <<= 32
+  55: (77) r1 >>= 32
+  56: (bf) r5 = r0
+  57: (07) r5 += 56
+  58: (2d) if r8 > r1 goto pc+1
+   R0=inv(id=0) R1=inv(id=0,umin_value=256,umax_value=4294967295,var_off=(0x0; 0xffffffff)) R5=inv(id=0) R6=ctx(id=0,off=0,imm=0) R7=fp-312,call_-1 R8=inv256 R10=fp0,call_-1 fp-264=0
+  59: (b7) r5 = 312
+  60: (63) *(u32 *)(r10 -264) = r0
+  61: (67) r5 <<= 32
+  62: (77) r5 >>= 32
+  63: (bf) r1 = r6
+  64: (18) r2 = 0xffff8b9120cc8500
+  66: (18) r3 = 0xffffffff
+  68: (bf) r4 = r7
+  69: (85) call bpf_perf_event_output#25
+  70: (b7) r0 = 0
+  71: (95) exit
+
+  from 58 to 60: R0=inv(id=0) R1=inv(id=0,umax_value=255,var_off=(0x0; 0xff)) R5=inv(id=0) R6=ctx(id=0,off=0,imm=0) R7=fp-312,call_-1 R8=inv256 R10=fp0,call_-1 fp-264=0
+  60: (63) *(u32 *)(r10 -264) = r0
+  61: (67) r5 <<= 32
+  62: (77) r5 >>= 32
+  63: (bf) r1 = r6
+  64: (18) r2 = 0xffff8b9120cc8500
+  66: (18) r3 = 0xffffffff
+  68: (bf) r4 = r7
+  69: (85) call bpf_perf_event_output#25
+  R5 unbounded memory access, use 'var &= const' or 'if (var < const)'
+
+  libbpf: -- END LOG --
+  libbpf: failed to load program 'syscalls:sys_enter_openat'
+  libbpf: failed to load object 'tools/perf/examples/bpf/augmented_syscalls.c'
+  bpf: load objects failed: err=-4007: (Kernel verifier blocks program loading)
+  event syntax error: 'tools/perf/examples/bpf/augmented_syscalls.c'
+                       \___ Kernel verifier blocks program loading
+
+After:
+
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c cat /etc/passwd > /dev/null
+     0.000 cat/29249 openat(dfd: CWD, filename: /etc/ld.so.cache, flags: CLOEXEC)
+     0.008 cat/29249 syscalls:sys_exit_openat:0x3
+     0.021 cat/29249 openat(dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC)
+     0.025 cat/29249 syscalls:sys_exit_openat:0x3
+     0.180 cat/29249 open(filename: /usr/lib/locale/locale-archive, flags: CLOEXEC)
+     0.185 cat/29249 syscalls:sys_exit_open:0x3
+     0.242 cat/29249 openat(dfd: CWD, filename: /etc/passwd)
+     0.245 cat/29249 syscalls:sys_exit_openat:0x3
+  #
+
+It also works with a more recent kernel:
+
+  # uname -a
+  Linux jouet 4.18.0-00014-g4e67b2a5df5d #6 SMP Thu Aug 30 17:34:17 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c cat /etc/passwd > /dev/null
+     0.000 cat/26451 openat(dfd: CWD, filename: /etc/ld.so.cache, flags: CLOEXEC)
+     0.020 cat/26451 syscalls:sys_exit_openat:0x3
+     0.039 cat/26451 openat(dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC)
+     0.044 cat/26451 syscalls:sys_exit_openat:0x3
+     0.231 cat/26451 open(filename: /usr/lib/locale/locale-archive, flags: CLOEXEC)
+     0.238 cat/26451 syscalls:sys_exit_open:0x3
+     0.278 cat/26451 openat(dfd: CWD, filename: /etc/passwd)
+     0.282 cat/26451 syscalls:sys_exit_openat:0x3
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Gianluca Borello <g.borello@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Yonghong Song <yhs@fb.com>
+Link: https://lkml.kernel.org/n/tip-wkpsivs1a9afwldbul46btbv@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/examples/bpf/augmented_syscalls.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
+index 0decbcfa8b90..2ae44813ef2d 100644
+--- a/tools/perf/examples/bpf/augmented_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_syscalls.c
+@@ -51,8 +51,10 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
+ 	augmented_args.filename.size = probe_read_str(&augmented_args.filename.value, 		\
+ 						      sizeof(augmented_args.filename.value), 	\
+ 						      args->filename_ptr); 			\
+-	if (augmented_args.filename.size < sizeof(augmented_args.filename.value))		\
++	if (augmented_args.filename.size < sizeof(augmented_args.filename.value)) {		\
+ 		len -= sizeof(augmented_args.filename.value) - augmented_args.filename.size;	\
++		len &= sizeof(augmented_args.filename.value) - 1;				\
++	}											\
+ 	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
+ 			  &augmented_args, len);						\
+ 	return 0;										\
