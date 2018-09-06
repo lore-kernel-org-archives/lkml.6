@@ -3,149 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9774BC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B295FC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 457CB20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:10:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 457CB20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 65D09206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:11:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D09206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbeIFSpp convert rfc822-to-8bit (ORCPT
+        id S1729443AbeIFSqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:45:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58749 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbeIFSpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:45:44 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7B1DF2072B; Thu,  6 Sep 2018 16:09:59 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C4CE1206FF;
-        Thu,  6 Sep 2018 16:09:48 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 16:09:47 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Przemyslaw Gaj <pgaj@cadence.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180906160947.3c80072f@bbrezillon>
-In-Reply-To: <5AD923AE-E86E-4414-A48F-CE7399E18431@cadence.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-        <20180824143934.6d6b6487@bbrezillon>
-        <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
-        <20180824201600.7d80bca9@bbrezillon>
-        <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
-        <20180828140209.29155d00@bbrezillon>
-        <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
-        <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
-        <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
-        <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
-        <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
-        <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
-        <20180906151437.4259d6fc@bbrezillon>
-        <5AD923AE-E86E-4414-A48F-CE7399E18431@cadence.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 6 Sep 2018 14:46:50 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34829 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728929AbeIFSqu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:46:50 -0400
+Received: by mail-qt0-f193.google.com with SMTP id j7-v6so12404782qtp.2;
+        Thu, 06 Sep 2018 07:11:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z3oM06lmWNJgiB/R5oFcZh9AMqGJwo4dOOsATyJhVGo=;
+        b=qQlekQPG3q/l3XGdG0Av0YcGCsRtNXqozObYMGZGDV9dnlQcbNQYWdJ2D5Oag3Q8Lj
+         ii+iwWoAVqhgHzM6dsSdeFJSFdWXyqD2y63jAgZ6mBOnXarqVS+fykFwZsyjuftgvumq
+         BWynF7f7sEczOo6PfflJcHdbyoTYT/o4v3qMN67HVY46ink798hmEUTrh2dvAWkDVJYk
+         rDw5SlvK9HAOY3KnzoOWHiWQW1hgQ2j8wOuUkjGLPi++W2BxrgMKRmXjOwJ82WIoYfUL
+         Upp0FElAJ8dxdRWfng8wveJdwjUGGq8vl0GCQJkCVDDRtVTh0VLG49McwgwOfzDvPf/c
+         O4TQ==
+X-Gm-Message-State: APzg51AEAz3iFIVXZYcmt2BmpH2J2bwZCVo4PUsqopOYlMH3/5grr2Ud
+        3oJcY02z2kTvDlqkSz27fhaINLBwxMsyZ8FzqzwGhILa
+X-Google-Smtp-Source: ANB0Vdac+IiqzzY55VNt+/qlwznXAGJV8LuUQAjo8EYwtwjoiWf/z6VT/W6JkehgvRtIhqmjAFvt6PJFOWP/YpA6W6U=
+X-Received: by 2002:a0c:885b:: with SMTP id 27-v6mr2188732qvm.115.1536243065551;
+ Thu, 06 Sep 2018 07:11:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <cover.1536138304.git.ren_guo@c-sky.com> <bff609c9d2c5f0085448cc7d4227614ab7b7116a.1536138304.git.ren_guo@c-sky.com>
+In-Reply-To: <bff609c9d2c5f0085448cc7d4227614ab7b7116a.1536138304.git.ren_guo@c-sky.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 6 Sep 2018 16:10:49 +0200
+Message-ID: <CAK8P3a1W5yvymAHKLTP5EwLm_usUqVBBE_86pRp0TmxrTiTfjA@mail.gmail.com>
+Subject: Re: [PATCH V3 05/26] csky: System Call
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 13:47:29 +0000
-Przemyslaw Gaj <pgaj@cadence.com> wrote:
+On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
 
-> ﻿On 9/6/18, 3:14 PM, "Boris Brezillon" <boris.brezillon@bootlin.com> wrote:
-> 
->     EXTERNAL MAIL
->     
->     
->     On Thu, 6 Sep 2018 14:59:46 +0200
->     Arnd Bergmann <arnd@arndb.de> wrote:
->     
->     > On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:  
->     > >
->     > > Hi Boris, Vitor,
->     > >
->     > > This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
->     > > https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=aUq983L2pue2FqKFoP6PGHMJQyoJ7kl3s3GZ-_haXqY&r=CMnAfM_OfpqcWZRfiqcRWw&m=OPSa25ENnrF0Qv70DG49ZngfdygJZubjo3TOgBA3pJ4&s=_C6i1KPplQGcWvQYPkrGx7V3TjKDJvqt3KG-vcdU2K4&e=
->     > >
->     > > Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
->     > > It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
->     > >
->     > > I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)    
->     > 
->     > 
->     > Can you explain the reason for having a user space interface and DT property?
->     > I thought we had concluded earlier that we wouldn't need that, but it's possible
->     > that I missed something in the discussion since then.  
->     
->     I don't think the sysfs knob is needed, this being said, after thinking
->     a bit more about mastership handover and the secondary master case, I
->     think we have something important to solve.
->     
->     When a master is not in control of the bus, it gets informed of devices
->     present on the bus by monitoring DAA or DEFSLVS broadcast events. That
->     means the secondary master should populate the bus with I3C/I2C devices
->     on such events, but that's not enough, because DEFSLVS/DAA do not
->     provide all device info. Some of them (like read/write/ibi limitations)
->     require extra CCC commands, and, to send those CCC commands, the
->     secondary master must claim the bus. We could add a case where we
->     declare devices as partially discovered until the master acquires
->     ownership of the bus, but that means part of the data returned by
->     i3c_device_get_info() will be inaccurate, which might have an impact on
->     some i3c driver ->probe() functions.
-> 
-> How do you want to handle cases when secondary master joins the bus after 
-> DEFSLVS? Of course we can send DEFSLVS after secondary master joins the bus.
+> +SYSCALL_DEFINE6(mmap2,
+> +       unsigned long, addr,
+> +       unsigned long, len,
+> +       unsigned long, prot,
+> +       unsigned long, flags,
+> +       unsigned long, fd,
+> +       off_t, offset)
+> +{
+> +       if (unlikely(offset & (~PAGE_MASK >> 12)))
+> +               return -EINVAL;
+> +       return sys_mmap_pgoff(addr, len, prot, flags, fd,
+> +               offset >> (PAGE_SHIFT - 12));
+> +}
 
-That's already the case ;-). Every time the current master discovers
-another master, it's sends a DEFSLVS at the end of the DAA procedure.
+Please call ksys_mmap_pgoff() instead of sys_mmap_pgoff() here.
 
->     
->     We could also say that partially discovered devices should not be
->     registered to the device model, but we then hit the problem of "who can
->     force the secondary master to claim the bus if there's no users?".
-> 
-> Now I feel like I missed something. Do you want to populate second instance
-> of the same physical bus? If yes, then we don't need to have reference 
-> between masters in DT.
+The prototype in include/asm-generic/syscalls.h uses 'unsigned long'
+for the last argument as well, not off_t.
 
-This is the discussion we've had about 1 month ago with Arnd, Wolfram
-and Peter, and the conclusion was that 2 different masters connected to
-the same physical bus should expose 2 different buses (which means
-having the same physical devices exposed 2 times in Linux).
+> +struct mmap_arg_struct {
+> +       unsigned long addr;
+> +       unsigned long len;
+> +       unsigned long prot;
+> +       unsigned long flags;
+> +       unsigned long fd;
+> +       unsigned long offset;
+> +};
+> +
+> +SYSCALL_DEFINE1(mmap,
+> +       struct mmap_arg_struct *, arg)
+
+Something is still wrong here, there should be no way to
+call sys_mmap(), since it's not in the syscall table.
+
+> +/*
+> + * for abiv1 the 64bits args should be even th, So we need mov the advice forward.
+> + */
+> +SYSCALL_DEFINE4(csky_fadvise64_64,
+> +       int, fd,
+> +       int, advice,
+> +       loff_t, offset,
+> +       loff_t, len)
+> +{
+> +       return sys_fadvise64_64(fd, offset, len, advice);
+> +}
+
+And call ksys_fadvise64_64() here.
+
+> +#undef __SYSCALL
+> +#define __SYSCALL(nr, call) [nr] = (call),
+> +
+> +#define sys_fadvise64_64 sys_csky_fadvise64_64
+> +void * const sys_call_table[__NR_syscalls] __page_aligned_data = {
+> +       [0 ... __NR_syscalls - 1] = sys_ni_syscall,
+> +#include <asm/unistd.h>
+> +};
+
+This looks good now.
+
+       Arnd
