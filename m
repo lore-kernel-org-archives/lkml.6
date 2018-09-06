@@ -3,85 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2276C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C74FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A233720873
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A233720873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E3AA20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:24:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3AA20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeIFL6B (ORCPT
+        id S1727735AbeIFL6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 07:58:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32986 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726136AbeIFL6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 07:58:01 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 739254021CC1;
-        Thu,  6 Sep 2018 07:23:57 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0664E2156889;
-        Thu,  6 Sep 2018 07:23:55 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id E8CAE4F968; Thu,  6 Sep 2018 09:23:54 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 09:23:54 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Peter Wu <peter@lekensteyn.nl>
-Cc:     David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH] bochs: convert to drm_fb_helper_fbdev_setup/teardown
-Message-ID: <20180906072354.2vsv67k2a2m43vx5@sirius.home.kraxel.org>
-References: <20180905144127.5690-1-peter@lekensteyn.nl>
- <20180905144628.GG4929@phenom.ffwll.local>
- <20180905150630.GA25979@al>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905150630.GA25979@al>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 07:23:57 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 07:23:57 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+        Thu, 6 Sep 2018 07:58:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:41289 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727635AbeIFL6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 07:58:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 00:24:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,337,1531810800"; 
+   d="scan'208";a="261165399"
+Received: from shlabacsbb03.sh.intel.com (HELO localhost) ([10.239.146.208])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2018 00:24:07 -0700
+From:   Zhi Jin <zhi.jin@intel.com>
+To:     alexander.shishkin@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org, Zhi Jin <zhi.jin@intel.com>
+Subject: [PATCH] stm class: increase pos if no free channels found
+Date:   Thu,  6 Sep 2018 15:22:10 +0800
+Message-Id: <1536218530-18601-1-git-send-email-zhi.jin@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+Considering this case in find_free_channels():
 
-> > You can probably get rid of this one if you're refactoring even more. The
-> > generic fb_probe implementation (already merged) plus gem-shmem support
-> > for it (still in flight) from Noralf should be able to pull that off. That
-> > gives you the fb_mmap implementation, but with 100% generic code instead
-> > of a driver specific hack like Max did.
-> 
-> Aside from the warning, I have not observed actual issues. This patch
-> was prepared on top of v4.18.1 but the new drm_fb_helper_generic_probe
-> helper is in master (future 4.19). I suppose that it can be done as a
-> future cleanup. Nice work Noralf on reducing duplication!
+bitmap:
+       +------------------+-+-+-+-+-+-+-+-+-+-+
+       |     ......       |0|0|0|0|0|0|0|1|0|0|
+       +------------------+-+-+-+-+-+-+-+-+-+-+
 
-FYI: qemu kms driver patches go through drm-misc-next, so you can also
-work against that branch.
+1. Channel #2 has been occupied, so bit #2 is 1, and the others
+   are all 0.
+2. Another thread tries to find 4 free channels from #0.
+3. In the 1st loop, pos starts from 0, and then it checks if the
+   following 4 bits are all 0, but fails, as bit#2 is 1.
+4. In the 2st loop, pos is not updated, and still starts from 0,
+   so nothing changes against loop #1.
+5. Dead loop ...
 
-> > I'll leave merging to Gerd.
-> 
-> Thanks, I somehow missed a patch. This one does not compile due to
-> "fb.initialized" still being used in bochs_drv.c. Removal is trivial,
-> I'll wait for some more feedback and then send a v2 with another patch
-> prepended.
+This patch is to update the pos in step #3 to avoid the issue.
 
-Patch looks good to me (except for the build failure which you've
-noticed already).
+Fixes: 7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
+Signed-off-by: Zhi Jin <zhi.jin@intel.com>
+---
+ drivers/hwtracing/stm/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-cheers,
-  Gerd
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 10bcb5d73f90..c86a979b9bd7 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -244,6 +244,8 @@ static int find_free_channels(unsigned long *bitmap, unsigned int start,
+ 			;
+ 		if (i == width)
+ 			return pos;
++
++		pos += i;
+ 	}
+ 
+ 	return -1;
+-- 
+2.7.4
 
