@@ -2,86 +2,67 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACDAC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291E9C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DCD22075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DCD22075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id E70902075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:33:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70902075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbeIFXKe (ORCPT
+        id S1730483AbeIFXKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:10:34 -0400
-Received: from sauhun.de ([88.99.104.3]:48138 "EHLO pokefinder.org"
+        Thu, 6 Sep 2018 19:10:38 -0400
+Received: from mga05.intel.com ([192.55.52.43]:59814 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728767AbeIFXKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:10:34 -0400
-Received: from localhost (i577A6E95.versanet.de [87.122.110.149])
-        by pokefinder.org (Postfix) with ESMTPSA id 90D022C058F;
-        Thu,  6 Sep 2018 20:33:49 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 20:33:47 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jun Gao <jun.gao@mediatek.com>
-Cc:     srv_heupstream@mediatek.com, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 2/2] i2c: mediatek: Use DMA safe buffers for i2c
- transactions
-Message-ID: <20180906183347.GE8607@kunai>
-References: <1536239729-10008-1-git-send-email-jun.gao@mediatek.com>
- <1536239729-10008-3-git-send-email-jun.gao@mediatek.com>
+        id S1728767AbeIFXKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:10:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 11:33:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
+   d="scan'208";a="261330520"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2018 11:33:47 -0700
+Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
+ events properly
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-aspeed@lists.ozlabs.org, james.feist@linux.intel.com,
+        Andrew Jeffery <andrew@aj.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jarkko.nikula@linux.intel.com, vernon.mauery@linux.intel.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c@vger.kernel.org
+References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
+ <CAFd5g46fRrYW8E8FsPB=5fWSGxemgc4ENc4D2fT7yBfH6p4ERg@mail.gmail.com>
+ <eab56d58-0703-d201-dc9a-f9fd257e96cf@linux.intel.com>
+ <20180906180837.GA8607@kunai>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <0e844fc2-777b-7aee-2402-9fe579cbcf51@linux.intel.com>
+Date:   Thu, 6 Sep 2018 11:33:47 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bi5JUZtvcfApsciF"
-Content-Disposition: inline
-In-Reply-To: <1536239729-10008-3-git-send-email-jun.gao@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180906180837.GA8607@kunai>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> 
+> Please don't quote the whole message. Everyone else has to scroll down
+> a lot to find the relevant information. Thanks!
+> 
 
---bi5JUZtvcfApsciF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 06, 2018 at 09:15:29PM +0800, Jun Gao wrote:
-> From: Jun Gao <jun.gao@mediatek.com>
->=20
-> DMA mode will always be used in i2c transactions, try to allocate
-> a DMA safe buffer if the buf of struct i2c_msg used is not DMA safe.
->=20
-> Signed-off-by: Jun Gao <jun.gao@mediatek.com>
-
-Applied to for-next, thanks!
-
-
---bi5JUZtvcfApsciF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluRcwsACgkQFA3kzBSg
-KbZa0A//X8r1smIUOljW7c4uxJqYfYp+QlX18IAFMkaIJlEwhJeXlk7iLyYwk8j+
-WYEqojJ/wE0M56aQhjGwSENT9wXcE+jcl92k+ieashTSs/kWLGZnYh1DFXXdblXj
-9m5CwbyRpYcaWD/+3yf6VxnNPci0CwJ1mbocDjF2OFfgMFQtoiQ2NQjHQS5j2/iQ
-bMlaSFx8iFF+mSrfT9pEBfD9OJ+uQrsfvsBAxN2cOSnKtgClH5hlDVOSv/AtkVXw
-NZMAhcPshGfLYHQ3g+ZGRSkX50X9APZPz4LNTygHFwS+dDCIQNVPPB7CeuN4ALwI
-WUJSvt4xAkGnO2d6lMAH9iyYi66KSQ38eo27Xk9hLhXXd9xh9N1Sj5sBBRJzKZ33
-smSRorXjLfm/hDQGLDgW2qhOb/MV1dqCLXUQVYpfmCQxIPFXiZ7zA1qzfK8UhifP
-7qEyHJl1NP+r70+qATFieM2Bb1j7llUARHKjuBDj69cbW8tRTpV96SyAeoqOHRk2
-jdDf2HonzQhJjAS88O9UqWz+JHmZarOzX9bDu7NqC/Y2WDD92voCnl60BSa6dTjP
-5wHjp1K9iZk9R+aaRKevpIQmOnfqtq7St37UZN0mvhkguiSs2F7xiTWsmlNPiJ0X
-D/DeAPzRJOcRtOQLmzdLuObKpIlHEUnRo3WwAeY3Wy3tmcUdOg8=
-=LmrF
------END PGP SIGNATURE-----
-
---bi5JUZtvcfApsciF--
+Will keep that in mind. Thanks Wolfram!
