@@ -2,110 +2,151 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B587C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A400C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E70B206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D557206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:09:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDh9TQm2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E70B206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAaynUjv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D557206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeIGDlV (ORCPT
+        id S1728271AbeIGDqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 23:41:21 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52842 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbeIGDlV (ORCPT
+        Thu, 6 Sep 2018 23:46:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44122 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeIGDqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 23:41:21 -0400
-Received: by mail-wm0-f68.google.com with SMTP id y139-v6so12813207wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 16:03:34 -0700 (PDT)
+        Thu, 6 Sep 2018 23:46:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v16-v6so13023046wro.11;
+        Thu, 06 Sep 2018 16:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=TjYY1V6XgUtJlPaW4l1bRAiafDh6u6CiY5eox43rQXA=;
-        b=sDh9TQm2S8IOLrpOnEv7NcE3exftB3N5MBhHxMe6RyL70PBlt4fZPQMrdGTy0dPhD7
-         xnFGtwXtdVaeJJf86P7MjbCVo42gJt9UP8L7yHtEHEp3+IkEObnYqclRiFQ8L1M/VcG/
-         ZvDv02IoV9b/kRC6NmM6Ub88r5ZCc1+2ltjQF7NAuWMEFXZhIxd1oADh5AejhBe5AmsK
-         Bf3oB0je0Flq7JHqg/KLKIxIURvaxC1ERfAFZpFSBIYBsCH8dW++KKol/3Snpv+zvSi1
-         NqUhX30AwU7H3KHw4axAyaGVbo1aIUJhryCW8IGTgPCxADUob/F9doAgp0rB+2zXTdnB
-         hyGQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Dl23JlZFX2N7Sk84NoMV3OPQFJEMkQOyjltXomwmaAk=;
+        b=YAaynUjvKkyQfly30qkqyo2Dy1pfAavEQdQJi/KbXzv7XP/vd4xGwfeeBTdcG0e3gj
+         5df9MhwkzL2NlkCDOXl2kp5PSHoJdgjS0WKmpwmgAukGR3R6JxfDaHBH7vci/dj7y8R2
+         fCfFo2RkWSp1t53mHNkBQ6e4W2AtwGQxyv4ZCSMDjlVb98zKjNQUKvy7zAOqqBmdiVeT
+         28z6c9T0068WL+Ik7O5SqO/aIKruRhnHbTHzsoBjIftXznPyhCPzF/srLxzSv/2Lagb5
+         GY36rGiFjaxWp5dWee4MbZB835UOmJl9PmSjvn49+5F+iCfDeaq5vMEOIduC9jB54OpM
+         9hDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=TjYY1V6XgUtJlPaW4l1bRAiafDh6u6CiY5eox43rQXA=;
-        b=Mq+yHbUJSIwuiZEqsrMPD0SBT/xUlxmKhnT/1wTvxI5+lISw4++Dt7WVWp6v+dImMA
-         31aSEs3rlBStJmtwGsl+F/5JiAkfNuTwgkmjoWPmiRZ+SlxKgWbyZvtzSIviK5Dua6FN
-         ceBLPkqD4exUo8kRBTDXVBK2LAo8h4rc9futNSITC2DyBPG6dXa50l2X/Y6aHUGpZwt6
-         SDvv6VAuJ09iaae2K/BjYvt2PzIqYlXYh8ETQl5LOyQqct+VY26IZcfb4PZGrY5yWGc1
-         BE2JeEGaSJeXD1R+Dw5ur0mN2BCGPCWbNnLwSNtF4hyqVfJWxpi0SVwbKGVXlQcvkjKt
-         +5sQ==
-X-Gm-Message-State: APzg51A04zxS7E93TKkYKL3uZJCwpkngiuUC2NvnChL41h3dRN9HMSXT
-        zt6hzK9Rme2gfQYr5KgtmO8vTE16GtbZju0Wod76FQ==
-X-Google-Smtp-Source: ANB0VdYzdIcW/MuTae0Z8J3Et1deySPsSe1vdfkiAL6wEMRc9ixijPuCFiRGMVLacaBr9hCV52zLgkRAMVoeLLTCcT8=
-X-Received: by 2002:a1c:200c:: with SMTP id g12-v6mr3693576wmg.102.1536275012863;
- Thu, 06 Sep 2018 16:03:32 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dl23JlZFX2N7Sk84NoMV3OPQFJEMkQOyjltXomwmaAk=;
+        b=SMDxJBbKBF4A2o+lfr60DG67d2NARqshCNiPwAfmaq4YOKKE/Ca3v+LcueX+IrSkal
+         M/qLzZVyhDbWpxRrt2FzyKu2BBJuhr8owcM/V5ssUxDmsQXN4IMNlhxsJqawrfm9hRO5
+         KiZixrVcd6RmAKOFOO+yKzgYIf5DyhAfuQyiw7dwglrFcuP2WZstMeVckGmYD8mGBOXA
+         jAk1a1b/kXzVrk9zSnVBtIx3Jt5mQ9H+T0PdeijIenPdmEsupUvPhbEj0fmy+NE7mbcV
+         yfQ4JPPfJ1S8bmWLlP1MVUfEPBGZbkuQGliuXCBmdm5WEq+7ZaoC8qZwOd6E30tlXajZ
+         BSSA==
+X-Gm-Message-State: APzg51C5qdlvBdqvU7cRaOeR9hlY/VYC+i5RIiV29254vgibqbZV9ZON
+        RqLJbrbPS57rSQw7SLVudYE=
+X-Google-Smtp-Source: ANB0VdaFcNuNjPMgJNkhu9lpH7K05NCamFNd8soqY05+Vk7vbCcBPqhiko5L41dp8BfFKZqtJygciQ==
+X-Received: by 2002:adf:de85:: with SMTP id w5-v6mr4419021wrl.270.1536275342271;
+        Thu, 06 Sep 2018 16:09:02 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4006:df00:f830:4b56:d713:5075])
+        by smtp.gmail.com with ESMTPSA id z21-v6sm3939460wmi.29.2018.09.06.16.09.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 16:09:01 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 01:08:59 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>, eugenis@google.com,
+        Lee.Smith@arm.com,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob.Bramley@arm.com, Ruben.Ayrapetyan@arm.com,
+        cpandya@codeaurora.org
+Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by
+ sparse
+Message-ID: <20180906230858.psedqdai3dw2cvvl@ltop.local>
+References: <cover.1535629099.git.andreyknvl@google.com>
+ <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
+ <CA+55aFyW9N2tSb2bQvkthbVVyY6nt5yFeWQRLHp1zruBmb5ocw@mail.gmail.com>
+ <CA+55aFy2t_MHgr_CgwbhtFkL+djaCq2qMM1G+f2DwJ0qEr1URQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180906203719.209399-1-xueweiz@google.com> <1536272873.26747.11.camel@acm.org>
- <20180906224210.GK5098@thunk.org>
-In-Reply-To: <20180906224210.GK5098@thunk.org>
-From:   Xuewei Zhang <xueweiz@google.com>
-Date:   Thu, 6 Sep 2018 16:03:21 -0700
-Message-ID: <CAPtwhKoFE-eZcRkvhpJgyutGK91ZouwSjTRb-cwHLQjBkriksw@mail.gmail.com>
-Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
- rotational device
-To:     "Theodore Ts'o" <tytso@mit.edu>, bvanassche@acm.org,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        ming.lei@redhat.com, hare@suse.de, hch@lst.de, pbonzini@redhat.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aditya Kali <adityakali@google.com>, groeck@chromium.org,
-        =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFy2t_MHgr_CgwbhtFkL+djaCq2qMM1G+f2DwJ0qEr1URQ@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 3:42 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Thu, Sep 06, 2018 at 03:27:53PM -0700, Bart Van Assche wrote:
+On Thu, Sep 06, 2018 at 02:16:19PM -0700, Linus Torvalds wrote:
+> On Thu, Sep 6, 2018 at 2:13 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > Although this patch looks fine to me, seeing this patch makes me wonder
-> > whether the default should be changed (QUEUE_FLAG_MQ_DEFAULT) instead of
-> > modifying the sd driver. Can anyone remind me why QUEUE_FLAG_MQ_DEFAULT does
-> > not include QUEUE_FLAG_ADD_RANDOM?
+> > So for example:
+> >
+> > >  static inline compat_uptr_t ptr_to_compat(void __user *uptr)
+> > >  {
+> > > -       return (u32)(unsigned long)uptr;
+> > > +       return (u32)(__force unsigned long)uptr;
+> > >  }
+> >
+> > this actually looks correct.
+> 
+> Side note: I do think that while the above is correct, the rest of the
+> patch shows that we might be better off simply not havign the warning
+> for address space changes at all for the "cast a pointer to an integer
+> type" case.
+> 
+> When you cast to a non-pointer type, the address space issue simply
+> doesn't exist at all, so the warning makes less sense.
+> 
+> It's really just he "pointer to one address space" being cast to
+> "pointer to another address space" that should really warn, and that
+> might need that "__force" thing.
+> 
+> Hmm? So maybe a sparse change is better for most of that patch.
 
-Besides Ted's point of "SSD users have no entropy", I think there are two more
-reasons:
-1. setting QUEUE_FLAG_ADD_RANDOM has a more visible performance hit
-on SSD disks than rotational disks.
-2. SSD disks provide less entropy than rotational disks.
-I actually experimented on Container-Optimized OS, running on Google Compute
-Engine with QUEUE_FLAG_ADD_RANDOM set.
-Turns out the VM will have ~800 bit of entropy provided on boot on
-rotational disk;
-and will only have ~70 bit of entropy if running on SSD (and remember there are
-~50 bit contributed from other sources).
-(in the above experiment, both disks were virtualized disks)
+Unless I'm misunderstanding something, I don't think there is
+anything to change for this specific point. Sparse don't warn
+(by default) on "cast from pointer with address space to integer",
+as it always been the case, I think. I think it's the good choice.
 
->
-> There was a discussion about a number of *years* ago; blk-mq has been
-> baking for a very long time.  In the early days of block_mq, the
-> overwhelming percentage of the users of blk-mq where those who were
-> using PCIe attached flash.  So when, I raised this question, the
-> argument was that SSD users have no entropy.  Which I agree with; but
-> now that blk-mq is the default, and hard drives are using blk-mq, it's
-> time for a patch like Xuewei's.
->
-> Cheers,
->
->                                         - Ted
+It's just that recently, I've added a new flag -Wcast-from-as [1],
+defaulting to 'no', specifically to *detect* these cast because of
+these tagged pointers.
+
+Note: I tend to think more and more that __force is simply too
+      strong and weaker form, like __force_as and __force_bitwise
+      would be more appropriate.
+
+
+-- Luc Van Oostenryck
+
+[1] d96da358c ("stricter warning for explicit cast to ulong")
