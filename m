@@ -2,98 +2,147 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8689C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63DFC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3090F20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:59:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QHWufvI1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3090F20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DF6220645
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:00:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DF6220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730048AbeIFSew (ORCPT
+        id S1730059AbeIFSgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:34:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33097 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729995AbeIFSev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:34:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v90-v6so11575863wrc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 06:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=r5jJc2S34MqKcDe2xIZm65osysYJmMlgiFVDcWOqGi4=;
-        b=QHWufvI1U51SB2KMuCKO0DQsLsZ61cGd6hKwL2UUZzwKzoVRjcf5mX/Qntx4BtV1l2
-         ZKma1IXyHBNff2zo/lkx10sLrkmIIkSbLp4K2T/tCdcB2Y4ZxxTmyY07ExJ0VGLwNzDH
-         k55fd+4eP2l26kbC5SSzrwG2HW5rZfoQlTFhgG3hGpAwQ6912IAVlSkxDpi7IrKz6AWw
-         zlIlYFmFSG7tiu8EfyTsmixhejYIA0bKoDZ3Q0iRSqLymejxSI5mxBKvsy38Necggfgs
-         FMqpaEVjqVpPyVjjx+mwe+eklN1+BYzhNNO5OwDL3J9MJYYemJjVhyVdV3N8/YJ8/dEG
-         NFbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=r5jJc2S34MqKcDe2xIZm65osysYJmMlgiFVDcWOqGi4=;
-        b=YB0SmTEWnaXKVFmmT7xUxCIcQttL08Q0tMiSe1JOriusIzaB5eaAmw9JKMjL4yFiZG
-         naqS3ei6nuH99ypqGB//0X7TGOJ5dAV72sqQf1FB9XJMwJs5lN5heM9LVCgcuYeS9XAM
-         wJGphOdQSy2aJccWzbh7o4xXxokZhfMA3ayBkrWiaMIcwn9P0r+0WODgEgnahbaF41+0
-         RBGUMrHah7x0HdXPEdfIi/Sca37Phl7GUoOjiHXIkY/0ph2Ur/dnrtUhFAeNXT9sudMK
-         zqZ+6VOhd9kWx3ms6u7SDwfoyTM6NuzKDioCVsT3Y/FgfEdGbPPcVENi/4VCwVFJtznc
-         KNUg==
-X-Gm-Message-State: APzg51DF1AXK6uuoq54Po/f/Jib+b9nQ+L2iby3j9hE8mIQx9VsErlKo
-        qss8L/TnrGKJ8UlLrSBFXmFPvg==
-X-Google-Smtp-Source: ANB0VdY7fjU8Quy6bizcTtBDv/M24RtfDps9uvX4EXv52Jh93VpeKRlDU7FBC+VeVLrV7VVhxmdP5A==
-X-Received: by 2002:adf:9187:: with SMTP id 7-v6mr2494408wri.215.1536242349279;
-        Thu, 06 Sep 2018 06:59:09 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id r66-v6sm8768660wmb.37.2018.09.06.06.59.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Sep 2018 06:59:08 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: pwm: silently error out on EPROBE_DEFER
-Date:   Thu,  6 Sep 2018 15:59:04 +0200
-Message-Id: <20180906135904.13803-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 6 Sep 2018 14:36:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:46292 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729534AbeIFSgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:36:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E510180D;
+        Thu,  6 Sep 2018 07:00:31 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 228963F614;
+        Thu,  6 Sep 2018 07:00:28 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 15:00:26 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20180906140026.GC25636@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-3-patrick.bellasi@arm.com>
+ <20180906081728.GB27626@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906081728.GB27626@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When probing, if we fail to get the pwm due to probe deferal, we shouldn't
-print an error message. Just be silent in this case.
+On 06-Sep 10:17, Juri Lelli wrote:
+> On 28/08/18 14:53, Patrick Bellasi wrote:
+> 
+> [...]
+> 
+> >  static inline int __setscheduler_uclamp(struct task_struct *p,
+> >  					const struct sched_attr *attr)
+> >  {
+> > -	if (attr->sched_util_min > attr->sched_util_max)
+> > -		return -EINVAL;
+> > -	if (attr->sched_util_max > SCHED_CAPACITY_SCALE)
+> > -		return -EINVAL;
+> > +	int group_id[UCLAMP_CNT] = { UCLAMP_NOT_VALID };
+> > +	int lower_bound, upper_bound;
+> > +	struct uclamp_se *uc_se;
+> > +	int result = 0;
+> >  
+> > -	p->uclamp[UCLAMP_MIN] = attr->sched_util_min;
+> > -	p->uclamp[UCLAMP_MAX] = attr->sched_util_max;
+> > +	mutex_lock(&uclamp_mutex);
+> >  
+> > -	return 0;
+> > +	/* Find a valid group_id for each required clamp value */
+> > +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
+> > +		upper_bound = (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
+> > +			? attr->sched_util_max
+> > +			: p->uclamp[UCLAMP_MAX].value;
+> > +
+> > +		if (upper_bound == UCLAMP_NOT_VALID)
+> > +			upper_bound = SCHED_CAPACITY_SCALE;
+> > +		if (attr->sched_util_min > upper_bound) {
+> > +			result = -EINVAL;
+> > +			goto done;
+> > +		}
+> > +
+> > +		result = uclamp_group_find(UCLAMP_MIN, attr->sched_util_min);
+> > +		if (result == -ENOSPC) {
+> > +			pr_err(UCLAMP_ENOSPC_FMT, "MIN");
+> > +			goto done;
+> > +		}
+> > +		group_id[UCLAMP_MIN] = result;
+> > +	}
+> > +	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
+> > +		lower_bound = (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
+> > +			? attr->sched_util_min
+> > +			: p->uclamp[UCLAMP_MIN].value;
+> > +
+> > +		if (lower_bound == UCLAMP_NOT_VALID)
+> > +			lower_bound = 0;
+> > +		if (attr->sched_util_max < lower_bound ||
+> > +		    attr->sched_util_max > SCHED_CAPACITY_SCALE) {
+> > +			result = -EINVAL;
+> > +			goto done;
+> > +		}
+> > +
+> > +		result = uclamp_group_find(UCLAMP_MAX, attr->sched_util_max);
+> > +		if (result == -ENOSPC) {
+> > +			pr_err(UCLAMP_ENOSPC_FMT, "MAX");
+> > +			goto done;
+> > +		}
+> > +		group_id[UCLAMP_MAX] = result;
+> > +	}
+> 
+> Don't you have to reset result to 0 here (it seems what follows cannot
+> fail anymore)? Otherwise this function will return latest
+> uclamp_group_find return value, which will be interpreted as error if
+> not 0.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/leds/leds-pwm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes, wired.. it uses to work on my tests just because I return from
+the caller on !0 and:
+ - that's just good enough to set by uclamps
+ - my current rt-app integration does not check the sycall return value
+ - my tests never request the clamp_group mapped on group_id=0
 
-diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-index df80c89ebe7f..5d3faae51d59 100644
---- a/drivers/leds/leds-pwm.c
-+++ b/drivers/leds/leds-pwm.c
-@@ -100,8 +100,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
- 		led_data->pwm = devm_pwm_get(dev, led->name);
- 	if (IS_ERR(led_data->pwm)) {
- 		ret = PTR_ERR(led_data->pwm);
--		dev_err(dev, "unable to request PWM for %s: %d\n",
--			led->name, ret);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "unable to request PWM for %s: %d\n",
-+				led->name, ret);
- 		return ret;
- 	}
- 
+:(
+
+Will fix both this and the rt-app integration and the tests !
+
+Cheers Patrick
+
 -- 
-2.17.1
+#include <best/regards.h>
 
+Patrick Bellasi
