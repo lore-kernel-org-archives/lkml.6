@@ -3,55 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C589FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47068C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0862083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:06:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0862083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F0EC220652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:07:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0EC220652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbeIFVnR (ORCPT
+        id S1728212AbeIFVoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:43:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:48686 "EHLO foss.arm.com"
+        Thu, 6 Sep 2018 17:44:19 -0400
+Received: from mga18.intel.com ([134.134.136.126]:33068 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728178AbeIFVnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:43:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3AB47A9;
-        Thu,  6 Sep 2018 10:06:52 -0700 (PDT)
-Received: from [10.4.12.111] (ostrya.Emea.Arm.com [10.4.12.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D582F3F557;
-        Thu,  6 Sep 2018 10:06:50 -0700 (PDT)
-Subject: Re: [PATCH v5 13/23] iommu: introduce device fault report API
-To:     Auger Eric <eric.auger@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     Jean Delvare <khali@linux-fr.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>
-References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1526072055-86990-14-git-send-email-jacob.jun.pan@linux.intel.com>
- <2094d667-5dbf-b4b8-8e19-c76d67b82362@redhat.com>
- <e19eb88b-b24b-66bc-8d5b-6196b26f1456@arm.com>
- <9013df5a-02f9-55b8-eb5e-fad4be0a2c92@redhat.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <289610e3-2633-e448-259c-194e6f2c2b52@arm.com>
-Date:   Thu, 6 Sep 2018 18:06:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1727740AbeIFVoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 17:44:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 10:07:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="83641795"
+Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Sep 2018 10:07:53 -0700
+Subject: Re: [PATCH v2 1/2] mm: Move page struct poisoning to
+ CONFIG_DEBUG_VM_PAGE_INIT_POISON
+To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>
+References: <20180905211041.3286.19083.stgit@localhost.localdomain>
+ <20180905211328.3286.71674.stgit@localhost.localdomain>
+ <20180906054735.GJ14951@dhcp22.suse.cz>
+ <0c1c36f7-f45a-8fe9-dd52-0f60b42064a9@intel.com>
+ <20180906151336.GD14951@dhcp22.suse.cz>
+ <CAKgT0UfiKWZO6hyjc1RpRTgD+CvM=KnbYokSueLFi7X5h+GMKQ@mail.gmail.com>
+ <4f154937-118c-96cf-cf8e-c95a2ca68d44@microsoft.com>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <c5dc8ef6-587d-e286-af80-568094a65007@intel.com>
+Date:   Thu, 6 Sep 2018 10:07:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <9013df5a-02f9-55b8-eb5e-fad4be0a2c92@redhat.com>
+In-Reply-To: <4f154937-118c-96cf-cf8e-c95a2ca68d44@microsoft.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,73 +106,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/2018 14:14, Auger Eric wrote:
-> Hi Jean-Philippe,
+On 09/06/2018 09:12 AM, Pasha Tatashin wrote:
 > 
-> On 09/06/2018 02:42 PM, Jean-Philippe Brucker wrote:
->> On 06/09/2018 10:25, Auger Eric wrote:
->>>> +		mutex_lock(&fparam->lock);
->>>> +		list_add_tail(&evt_pending->list, &fparam->faults);
->>> same doubt as Yi Liu. You cannot rely on the userspace willingness to
->>> void the queue and deallocate this memory.
+> I do not want to make this feature less tested. Poisoning memory allowed
+> us to catch corner case bugs like these:
 > 
-> By the way I saw there is a kind of garbage collectors for faults which
-> wouldn't have received any responses. However I am not sure this removes
-> the concern of having the fault list on kernel side growing beyond
-> acceptable limits.
+> ab1e8d8960b68f54af42b6484b5950bd13a4054b
+> mm: don't allow deferred pages with NEED_PER_CPU_KM
+> 
+> e181ae0c5db9544de9c53239eb22bc012ce75033
+> mm: zero unavailable pages before memmap init
+> 
+> And several more that were fixed by other people.
 
-How about per-device quotas? (https://lkml.org/lkml/2018/4/23/706 for
-reference) With PRI the IOMMU driver already sets per-device credits
-when initializing the device (pci_enable_pri), so if the device behaves
-properly it shouldn't send new page requests once the number of
-outstanding ones is maxed out.
-
-The stall mode of SMMU doesn't have per-device limit, and depending on
-the implementation it might be easy for one guest using stall to prevent
-other guests from receiving faults. For this reason we'll have to
-enforce a per-device stall quota in the SMMU driver, and immediately
-terminate faults that exceed this quota. We could easily do the same for
-PRI, if we don't trust devices to follow the spec. The difficult part is
-finding the right number of credits...
-
->> Host device drivers that use this API to be notified on fault can't deal
->> with arch-specific event formats (SMMU event, Vt-d fault event, etc), so
->> the APIs should be arch-agnostic. Given that requirement, using a single
->> iommu_fault_event structure for both PRI and event queues made sense,
->> especially since the even queue can have stall events that look a lot
->> like PRI page requests.
-> I understand the data structure needs to be generic. Now I guess PRI
-> events and other standard translator error events (that can happen
-> without PRI) may have different characteristics in event fields,
-
-Right, an event contains more information than a PRI page request.
-Stage-2 fields (CLASS, S2, IPA, TTRnW) cannot be represented by
-iommu_fault_event at the moment. For precise emulation it might be
-useful to at least add the S2 flag (as a new iommu_fault_reason?), so
-that when the guest maps stage-1 to an invalid GPA, QEMU could for
-example inject an external abort.
-
-> queue
-> size, that may deserve to create different APIs and internal data
-> structs. Also this may help separating the concerns.
-
-It might duplicate them. If the consumer of the event report is a host
-device driver, the SMMU needs to report a "generic" iommu_fault_event,
-and if the consumer is VFIO it would report a specialized one
-
-> My remark also
-> stems from the fact the SMMU uses 2 different queues, whose size can
-> also be different.
-
-Hm, for PRI requests the kernel-userspace queue size should actually be
-the number of PRI credits for that device. Hadn't thought about it
-before, where do we pass that info to userspace? For fault events, the
-queue could be as big as the SMMU event queue, though using all that
-space might be wasteful. Non-stalled events should be rare and reporting
-them isn't urgent. Stalled ones would need the number of stall credits I
-mentioned above, which realistically will be a lot less than the SMMU
-event queue size. Given that a device will use either PRI or stall but
-not both, I still think events and PRI could go through the same queue.
-
-Thanks,
-Jean
+Just curious: were these found in the wild, or by a developer doing
+normal development having turned on lots of debug options?
