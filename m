@@ -2,88 +2,87 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E687C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3F9C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4604F2075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:23:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="clA70rPF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4604F2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 781482075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:24:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781482075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730417AbeIFW7n (ORCPT
+        id S1728291AbeIFXAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 18:59:43 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:33665 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbeIFW7n (ORCPT
+        Thu, 6 Sep 2018 19:00:41 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34004 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbeIFXAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 18:59:43 -0400
-Received: by mail-oi0-f49.google.com with SMTP id 8-v6so22437405oip.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 11:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=eKdC3kL6lGzjZixCtLqgSWHC+raQs25fIAOiHCVjhAg=;
-        b=clA70rPFevptjvEPc2bs+bjJv4LF7clgD3rEjTirTPu9PifeJFjt6VMAXTGhS7MCAJ
-         cEn3jzzi77fMBQZdyHQGKoUee85tDNXc8x4xkuSMOluy2ypMnNwgsIy5ZqHNLGG6VEWX
-         hYDt2kZRInYyldnGkejiHpNZAYRJ1a+cgJzNsv2v28D3YpTM7lj5DHqFe/Xs8ooKYprT
-         0s0zZ62pByHq4oApdQrKuEmRtuk5sY6xJWM8pX5q7SiOUedc6/goOUEER1/w0iJpofrG
-         CBVml+ieAYmCyQEc0uGTks7LlQ1xQnYM+zih5R9SrwOZrAtueQb09pavm+Lr8vA0TCq+
-         ixPQ==
+        Thu, 6 Sep 2018 19:00:41 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k19-v6so5706681pfi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 11:24:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=eKdC3kL6lGzjZixCtLqgSWHC+raQs25fIAOiHCVjhAg=;
-        b=YLWgk5xtLRdbfgBSuzKsm02dzxU2GxgCHG21ME8YoTRufENjOIX64k5ditgXN8KGNi
-         f6N1YNWv3d9Dy07wH7jLVoGGx4VSRD3jbyOdl4CAcv1xGEL2//qPH90oNL58mYqiyC7B
-         oz7Hczmgf3Dr8cKnP1rF08BE3DlEpzNYteyPSwm0uPMJn2mGT49L5XicjnjtTLz9ZG2o
-         2mDhmR79ntQpUolObbJV1YTrQeCvu3ho8YE6xRafdRYSLUwV7VB03eFYU/A7g4qjqTxj
-         RLyA9Lit47IINRw92LpHbcLkQPpod4JBsHcmlA/dX82sJpny2M966xjZFWBKbFy7iFdk
-         lGlg==
-X-Gm-Message-State: APzg51CgH4ZD0CfGwsIsq5xzAeUwxupl0YHKNlqhqn2TyPc1Kapz7PM3
-        QlCJbBOq0yyMQtXHPThOfhlQKXOHnrDz7V78HYbrl8SjKos=
-X-Google-Smtp-Source: ANB0VdbzPvP8YH/iPsMmQEg/0TF5LP2/PfKz88XuCA4q+Y/HaGLPKAxuPEv7LDbP9u8+wjjDaNEbAd01ohVwFYgYSM0=
-X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr4180380oif.348.1536258182130;
- Thu, 06 Sep 2018 11:23:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2E170GdDLCBZZ2OYnlivT2k2lXaCdh6T65oK4bwHCso=;
+        b=SxQrAwUfesN1T+5yvbdiYgdzi2wB6in7K2d+109tzf9Ja3G+GFJxgFPOzUuqbLub/6
+         /sa/fbZv4YXDK7hZoTcAN5i/ajdMjQ/F/NwgGntbZ5GtPBa8VhYabLOMvolcehh0LrvQ
+         eGNOAE1UtuzNV3VoM3y3uoZlPR/ZZDC9LBb+76AzKv8PC8omiedjyRKc7t6ywO6p9ckQ
+         cSWPpsmV3Dljjsc3x335BxFIMMkyUY3X7YqgMmo7dYl3cIMzAdEvObYvEiPWmWRj4ZkW
+         KrCHPInKUUXtEmh2I3PL/nIwUMlbBbG3x0JzFAdDL1GEnQRfJgF4hGTQymQTmedqxok7
+         ASPg==
+X-Gm-Message-State: APzg51BbTJjDLjRQOVg11pJKIy4HSuyb4g2XzgfAle9dW9Hx48PIg0fg
+        7R3MVngQFEphkxQQ6sAkA8sAjg==
+X-Google-Smtp-Source: ANB0VdZ7Gpqk0GhVOetbgs4QWF4hepbT9fQvfGcbTvr/t4DLQ4hmipRqtoGveeZdKI9d2yell9YOHQ==
+X-Received: by 2002:a63:4606:: with SMTP id t6-v6mr4086266pga.271.1536258240222;
+        Thu, 06 Sep 2018 11:24:00 -0700 (PDT)
+Received: from localhost ([207.114.172.147])
+        by smtp.gmail.com with ESMTPSA id v72-v6sm15489172pfj.22.2018.09.06.11.23.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Sep 2018 11:23:59 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 11:23:59 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Alan Tull <atull@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Moritz Fischer <mdf@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: fpga: fix freeze controller compatible in
+ region doc
+Message-ID: <20180906182359.GB20419@archbook>
+References: <20180906180152.3620-1-atull@kernel.org>
 MIME-Version: 1.0
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 6 Sep 2018 20:22:35 +0200
-Message-ID: <CAG48ez0nCC0_on95q7x_8cwSyJ8ATReA0ysDnEr=CW2tkqE=7w@mail.gmail.com>
-Subject: Smack: wrong-looking capable() check in smk_ptrace_rule_check()
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906180152.3620-1-atull@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Hi Alan,
 
-I noticed the following check in smk_ptrace_rule_check():
+looks like it's just the examples, right? So not sure someone
+would be affected by that, yet?
 
-                if (tracer_known->smk_known == tracee_known->smk_known)
-                        rc = 0;
-                else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
-                        rc = -EACCES;
-                else if (capable(CAP_SYS_PTRACE))
-                        rc = 0;
-                else
-                        rc = -EACCES;
+On Thu, Sep 06, 2018 at 01:01:52PM -0500, Alan Tull wrote:
+> Documentation/devicetree/bindings/fpga/fpga-region.txt has an error
+> regarding the freeze controller bridge, secifically:
+> 
+>  compatible = "altr,freeze-bridge";
+> 
+> The compatibility string should be "altr,freeze-bridge-controller"
+> as set forth in altera-freeze-bridge.txt.
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
 
-Note that smk_ptrace_rule_check() can be called from not just
-smack_ptrace_access_check() and smack_ptrace_traceme(), but also
-smack_bprm_set_creds(). AFAICS this means that if a task executes with
-a smack privilege transition and smack_ptrace_rule is
-SMACK_PTRACE_EXACT, whether the execution is permitted depends on
-whether _the debugged task_ has CAP_SYS_PTRACE (and not on whether the
-debugger has that capability).
-This seems like it's probably unintentional?
+Acked-by: Moritz Fischer <mdf@kernel.org>
+
+Cheers,
+
+Moritz
