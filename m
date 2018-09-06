@@ -1,119 +1,99 @@
 Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32597C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5123DC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA122064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:37:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA122064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 07AE22064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:37:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYtxpOEO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AE22064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbeIFSM7 (ORCPT
+        id S1729710AbeIFSNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:12:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36923 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbeIFSM6 (ORCPT
+        Thu, 6 Sep 2018 14:13:19 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38984 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbeIFSNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:12:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86Db0No309632
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:37:00 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Db0RX309628;
-        Thu, 6 Sep 2018 06:37:00 -0700
-Date:   Thu, 6 Sep 2018 06:37:00 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-77e0faf8552c9329d58a4de460928e03252647c6@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, dsahern@gmail.com,
-        peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
-        hpa@zytor.com, tglx@linutronix.de, namhyung@kernel.org,
-        andi@firstfloor.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
-Reply-To: namhyung@kernel.org, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, andi@firstfloor.org,
-          acme@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-          mingo@kernel.org, peterz@infradead.org,
-          alexander.shishkin@linux.intel.com, dsahern@gmail.com
-In-Reply-To: <20180830063252.23729-31-jolsa@kernel.org>
-References: <20180830063252.23729-31-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Pass 'evlist' to aggr_update_shadow()
-Git-Commit-ID: 77e0faf8552c9329d58a4de460928e03252647c6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 14:13:19 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v77-v6so9095438lfa.6;
+        Thu, 06 Sep 2018 06:37:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jVPvpo3u/AdFOxsuq8hcRZoaMoN/vBXGtwVmkoZ9cVU=;
+        b=XYtxpOEOjHvXOR3iRObzpt9oTLEfyn7Hom/1zS36Tk4BMmw+FaLZWyEy4tk3tw5phH
+         p4BTAlQGEmM44x3SXvXRiViKMO7oHOShSHjWfAlfApG2JVRHR0MzKJXtnEpx36EUvc5E
+         0UNOoIfI3d9Rz2/MnWzAteODGOp8LxW0Py3zULMrB4HASR2UDRxfcRgCXplMG8f1pNQ5
+         iK9fShaxZouq+UQRdwJcrjaHwgzTfQNnqW23WLElVvTopr1dj2dsmV5W0qq8ypPzyxFH
+         YyzpGEtx9czbv48WWPR++QZ0ycHNtDTC8T7xuJo/Ek+AjloOnlwfeBHSXlaxUu1BhCdc
+         auaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jVPvpo3u/AdFOxsuq8hcRZoaMoN/vBXGtwVmkoZ9cVU=;
+        b=Q3kKOSfn+Ci1oiip3duwMEfVrCW1GELabQgQ4d3kEzbNNK8ZI35R//o/AT6W8Wmtce
+         wchhWSjUfUxTUypPYEb2mHnG0joOzK7CzAA5q6BqIUbgUEpVszMa7oIn3/pAQ8Wris82
+         HccRW5i8iRhOE89DO4K25BnDTjQZEI6KDbV9fCaCkzeJjWPsc5TcYGLKCGhuIj0PP/HR
+         HtI5CvVpnX9dyiNxtdRqmNk0O2PUbxX/CGQm0Jmm9rVEbo+UvkbT2XFBZYwIDudjp3ql
+         BH6Egd0+ufJw2CzhjPstExf28eQOzx4S5GsbTJ8Xz2MGesubLvBHZLQE6UPrL55xjc2S
+         G2YA==
+X-Gm-Message-State: APzg51AekHtxVHADUZP9URwI27kWiCykvaaCmKUieFbIdgEaTUSerkxP
+        XtI4bsO6htgpDYBUMpCZDuq/RpPEA1S3tXmdRmE=
+X-Google-Smtp-Source: ANB0Vdbq34rULhA+zVrsGJ6cf1gdUufWGXJQ6N/ppHT+5L66CRYwBlJ+tUBvz3Feil34bqm/i4h3OoBvPnVdFzSFRqQ=
+X-Received: by 2002:a19:c38b:: with SMTP id t133-v6mr2109798lff.7.1536241062239;
+ Thu, 06 Sep 2018 06:37:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180817070105.1725-1-simon.k.r.goldschmidt@gmail.com>
+ <20180904194944.19721-1-simon.k.r.goldschmidt@gmail.com> <20180906110926.GF5360@sirena.org.uk>
+ <CAAh8qsyMcL-acBf4nXq2RSE=Y43FMG8v+TuyvvmgGtkjHchAyQ@mail.gmail.com> <20180906132333.GG5360@sirena.org.uk>
+In-Reply-To: <20180906132333.GG5360@sirena.org.uk>
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Date:   Thu, 6 Sep 2018 15:37:30 +0200
+Message-ID: <CAAh8qsxKQF4ZPJACYy03z9LQzU0tBB9wv9ztZ3AC4kE_OHGH4g@mail.gmail.com>
+Subject: Re: [PATCH v3] spi: dw: support 4-16 bits per word
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Trent Piepho <tpiepho@impinj.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  77e0faf8552c9329d58a4de460928e03252647c6
-Gitweb:     https://git.kernel.org/tip/77e0faf8552c9329d58a4de460928e03252647c6
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:39 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:24 -0300
+On Thu, Sep 6, 2018 at 3:23 PM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Thu, Sep 06, 2018 at 01:23:34PM +0200, Simon Goldschmidt wrote:
+> > On Thu, Sep 6, 2018 at 1:09 PM Mark Brown <broonie@kernel.org> wrote:
+>
+> > > Please don't send new patches in reply to old patch serieses, it makes
+> > > it harder to follow what the current version of things is and makes it
+> > > much easier for the patches to get lost in the old threads.
+>
+> > Ok, no problem and thanks for the hint! Where does this requirement
+> > come from? Patchwork or mail sorting habits?
+>
+> Mail sorting.  It can mean that you get things like someone deleting a
+> thread and the new patch getting caught up in a thread delete command
+> and hence missed.
+>
+> > Anyway, how does this continue, will you pick the patch or do I need
+> > to somehow collect yet more reviews?
+>
+> You should've got a mail at about the same time saying it's been
+> applied.
 
-perf stat: Pass 'evlist' to aggr_update_shadow()
-
-Pass a 'evlist' argument to aggr_update_shadow(), to get rid of the
-global 'evsel_list' variable dependency.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-31-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-stat.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index f5ac6545af34..2711d8f6e4b8 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1099,7 +1099,8 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 	}
- }
- 
--static void aggr_update_shadow(struct perf_stat_config *config)
-+static void aggr_update_shadow(struct perf_stat_config *config,
-+			       struct perf_evlist *evlist)
- {
- 	int cpu, s2, id, s;
- 	u64 val;
-@@ -1107,7 +1108,7 @@ static void aggr_update_shadow(struct perf_stat_config *config)
- 
- 	for (s = 0; s < aggr_map->nr; s++) {
- 		id = aggr_map->map[s];
--		evlist__for_each_entry(evsel_list, counter) {
-+		evlist__for_each_entry(evlist, counter) {
- 			val = 0;
- 			for (cpu = 0; cpu < perf_evsel__nr_cpus(counter); cpu++) {
- 				s2 = aggr_get_id(evsel_list->cpus, cpu);
-@@ -1238,7 +1239,7 @@ static void print_aggr(struct perf_stat_config *config,
- 	if (!(aggr_map || aggr_get_id))
- 		return;
- 
--	aggr_update_shadow(config);
-+	aggr_update_shadow(config, evlist);
- 
- 	/*
- 	 * With metric_only everything is on a single line.
+Right, got it. Thanks again.
