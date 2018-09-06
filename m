@@ -2,55 +2,57 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC862C4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5004C43143
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 875C72075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E43D2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:59:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QK5+saYE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 875C72075B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A3UJKfaD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E43D2075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbeIGDgs (ORCPT
+        id S1728242AbeIGDgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 23:36:48 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33015 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeIGDgs (ORCPT
+        Thu, 6 Sep 2018 23:36:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33705 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeIGDgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 23:36:48 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s7-v6so5982683pgc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 15:59:03 -0700 (PDT)
+        Thu, 6 Sep 2018 23:36:49 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so6016153pfn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 15:59:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=54lVbIo1lDuCzb67uTyjPcUEOxnRHWhERg6k2kB4aPw=;
-        b=QK5+saYE4Z5USdkq1zbsNBAYLnzqWCyoVg4HRYIuK7XPgFcGLCW4A7smQFmjJiu0Ft
-         V21wW7yOZIodYJCX0hjyP31aqBfg7b2SzyNvgK8XjRQpWMCRsu2/Tl6YDE8WMbjwb6xl
-         exwn3dXT49Pnj0OmyHhXnf4rR3AX/s+Y4/Blo=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3iq55GoU+tLApB726SD4i2dQYVt9A2ASC3TLsp01ZLo=;
+        b=A3UJKfaDq/KIZ/jSL4CCz6gf6ItNwoNjslBKueg5aPG8kQGOubBHg7K7Il2pd/+Fo9
+         m9SRDwWCZ+BNIMCbF6OCTkmwG7F2DPAHdEEOIrDOW+HHIZKef8WL5PAXkdZPAGRszfOL
+         tD8KjyfeBs2oEjZcNVZLl2jtOXXzlWyWNbjgs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=54lVbIo1lDuCzb67uTyjPcUEOxnRHWhERg6k2kB4aPw=;
-        b=g+MjbaNaNHhsk+Rt5KOqZLOEpICByJ0LitiX74MAgRdK/9zhoa7DZN+f2CU4Vo82+W
-         MA9mqgs3HKYxrPxpaHcZ/0hi+dZhy0XD5LvP+9O9cCgmGvzQqQQyLDROGgYZSumgeegE
-         81MypQRmytTZJLW/Jo0ffrKvRostcMIoT72/ervQE4NhXa36OIfw2zQoF6ZpBIPPk5Pi
-         0LjVZz0z8tt6fFHKKx4ru0F8x4seMAAoXDn9mPrtfSxMMt432A7TIop2Kqz90bekKWL3
-         IauI+Hfm1J4uRcjxMyNrRntSXOgmf8tYSfCTrYry4sPt4pLl+XpTzS9h8qYFsGFego54
-         Q3fQ==
-X-Gm-Message-State: APzg51AOQZ8xc/GZbthQamtSN5IOeKrxm/m3GkDxiV239xKYZDgcBo4R
-        ebBh1SjfEyIJ8kS8LsFlLK7S9Q==
-X-Google-Smtp-Source: ANB0Vda85UoUNLCHyDbUfpwrzSzQ7QzZiO3WbEwSFwIhi2cKd31czDvTVhRpkJuPO7lXxee+lT2xoA==
-X-Received: by 2002:a63:d645:: with SMTP id d5-v6mr5176531pgj.450.1536274742889;
-        Thu, 06 Sep 2018 15:59:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3iq55GoU+tLApB726SD4i2dQYVt9A2ASC3TLsp01ZLo=;
+        b=XhlBo/VyDxoMH9XyAZQb52R76c+LzoD8oXVGGrEH/8qW9bW9YfpARsq5RXyMs6J7Gm
+         PG28YMBv9MBA1J///qhd6WywvcUR6KSQtH5CNJe4ek6woSUwsGUaEc5HyaasBZnmeCfx
+         5IuHrGmdS2vB/tcr7v24N+Apa+/1sfVZE+yY0XkhDNjV5BAHabNcOL7vZOEMFmx3Xy/I
+         d1lJOallUH18cjUAcpyAQ8Ko/DmqmKNKZZh6DjS/u/aNJ/ZAUl8VAG4EyYKoFm74G5aB
+         5KxZK23gKzATjXFXUTGdj2zNjN8RkZFgFU9qHNr8tTskHV3gHjM0W/bYfZvRTxZm7853
+         UW8A==
+X-Gm-Message-State: APzg51DcXcSW0L3tAw8PhsI4PUSBwDpia0X3eYA9buE3kSkZgzGJBKbk
+        Jzo8C7zwWYoceKBCr1osQ/krVjvHL5I=
+X-Google-Smtp-Source: ANB0Vdb093qGdJ0xfu9GJ0+hy2cT35kwDytA4iv8Ph7ohgX2b1qNn+dNjq02qUNHOEwns4ge1kcbfg==
+X-Received: by 2002:a62:1bc2:: with SMTP id b185-v6mr5445400pfb.170.1536274743739;
+        Thu, 06 Sep 2018 15:59:03 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm10777007pgt.66.2018.09.06.15.59.01
+        by smtp.gmail.com with ESMTPSA id c1-v6sm6535693pgp.34.2018.09.06.15.59.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 06 Sep 2018 15:59:01 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -71,70 +73,99 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/4] crypto: skcipher - Remove VLA usage
-Date:   Thu,  6 Sep 2018 15:58:50 -0700
-Message-Id: <20180906225854.40989-1-keescook@chromium.org>
+Subject: [PATCH v2 3/4] crypto: skcipher - Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+Date:   Thu,  6 Sep 2018 15:58:53 -0700
+Message-Id: <20180906225854.40989-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180906225854.40989-1-keescook@chromium.org>
+References: <20180906225854.40989-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes VLAs[1] from SKCIPHER_REQUEST_ON_STACK by making sure that
-on-stack requests are being used only on non-ASYNC algorithms and that
-enough space has been reserved.
+In the quest to remove all stack VLA usage from the kernel[1], this caps
+the non-ASYNC skcipher request size similar to other limits and adds a
+sanity check at usage. After a review of all non-ASYNC algorithm callers
+of crypto_skcipher_set_reqsize(), the largest appears to be 384:
 
-v2:
-- Instead of globally failing large reqsizes, limit to only non-ASYNC users
-  of the on-stack request.
-- Remove unused tfm argument after VLA removal.
-
--Kees
+4       struct sun4i_cipher_req_ctx
+96      struct crypto_rfc3686_req_ctx
+375     cts:
+                160     crypto_skcipher_blocksize(cipher) (max)
+                152     struct crypto_cts_reqctx
+                63      align_mask (max)
+384     struct rctx (lrw, xts)
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Kees Cook (4):
-  crypto: skcipher - Consolidate encrypt/decrypt sanity check
-  crypto: skcipher - Enforce non-ASYNC for on-stack requests
-  crypto: skcipher - Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-  crypto: skcipher - Remove unused argument to SKCIPHER_REQUEST_ON_STACK()
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/crypto/skcipher.h | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
- arch/s390/crypto/aes_s390.c                   |  8 +-
- arch/x86/crypto/fpu.c                         |  4 +-
- crypto/algif_aead.c                           |  2 +-
- crypto/authenc.c                              |  2 +-
- crypto/authencesn.c                           |  2 +-
- crypto/cryptd.c                               |  4 +-
- crypto/echainiv.c                             |  2 +-
- crypto/gcm.c                                  |  2 +-
- crypto/seqiv.c                                |  2 +-
- drivers/block/cryptoloop.c                    |  2 +-
- drivers/crypto/axis/artpec6_crypto.c          |  2 +-
- drivers/crypto/ccp/ccp-crypto-aes-xts.c       |  2 +-
- drivers/crypto/chelsio/chcr_algo.c            |  2 +-
- drivers/crypto/mxs-dcp.c                      |  2 +-
- drivers/crypto/omap-aes.c                     |  2 +-
- drivers/crypto/picoxcell_crypto.c             |  2 +-
- drivers/crypto/qce/ablkcipher.c               |  2 +-
- drivers/crypto/sahara.c                       |  8 +-
- drivers/crypto/vmx/aes_cbc.c                  |  4 +-
- drivers/crypto/vmx/aes_ctr.c                  |  2 +-
- drivers/crypto/vmx/aes_xts.c                  |  2 +-
- drivers/net/ppp/ppp_mppe.c                    |  6 +-
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c  |  4 +-
- drivers/staging/rtl8192e/rtllib_crypt_wep.c   |  4 +-
- .../rtl8192u/ieee80211/ieee80211_crypt_tkip.c |  4 +-
- .../rtl8192u/ieee80211/ieee80211_crypt_wep.c  |  4 +-
- drivers/usb/wusbcore/crypto.c                 |  2 +-
- include/crypto/skcipher.h                     | 74 ++++++++++++++-----
- net/ceph/crypto.c                             |  2 +-
- net/mac802154/llsec.c                         |  4 +-
- net/rxrpc/rxkad.c                             | 10 +--
- net/sunrpc/auth_gss/gss_krb5_crypto.c         | 14 ++--
- net/wireless/lib80211_crypt_tkip.c            |  4 +-
- net/wireless/lib80211_crypt_wep.c             |  4 +-
- 34 files changed, 116 insertions(+), 80 deletions(-)
-
+diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+index 3aabd5d098ed..cca216999bf1 100644
+--- a/include/crypto/skcipher.h
++++ b/include/crypto/skcipher.h
+@@ -144,9 +144,10 @@ struct skcipher_alg {
+ /*
+  * This must only ever be used with synchronous algorithms.
+  */
++#define MAX_SYNC_SKCIPHER_REQSIZE	384
+ #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+ 	char __##name##_desc[sizeof(struct skcipher_request) + \
+-		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR = { 1 }; \
++		MAX_SYNC_SKCIPHER_REQSIZE] CRYPTO_MINALIGN_ATTR = { 1 }; \
+ 	struct skcipher_request *name = (void *)__##name##_desc
+ 
+ /**
+@@ -412,6 +413,17 @@ static inline unsigned int crypto_skcipher_default_keysize(
+ 	return tfm->keysize;
+ }
+ 
++/**
++ * crypto_skcipher_reqsize() - obtain size of the request data structure
++ * @tfm: cipher handle
++ *
++ * Return: number of bytes
++ */
++static inline unsigned int crypto_skcipher_reqsize(struct crypto_skcipher *tfm)
++{
++	return tfm->reqsize;
++}
++
+ /**
+  * crypto_skcipher_reqtfm() - obtain cipher handle from request
+  * @req: skcipher_request out of which the cipher handle is to be obtained
+@@ -446,6 +458,9 @@ static inline struct crypto_skcipher *crypto_skcipher_reqtfm_check(
+ 		if (WARN_ON(crypto_skcipher_alg(tfm)->base.cra_flags &
+ 				CRYPTO_ALG_ASYNC))
+ 			return ERR_PTR(-EINVAL);
++		if (WARN_ON(crypto_skcipher_reqsize(tfm) >
++				MAX_SYNC_SKCIPHER_REQSIZE))
++			return ERR_PTR(-ENOSPC);
+ 	}
+ 
+ 	if (crypto_skcipher_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
+@@ -507,17 +522,6 @@ static inline int crypto_skcipher_decrypt(struct skcipher_request *req)
+  * skcipher handle to the crypto_skcipher_* API calls.
+  */
+ 
+-/**
+- * crypto_skcipher_reqsize() - obtain size of the request data structure
+- * @tfm: cipher handle
+- *
+- * Return: number of bytes
+- */
+-static inline unsigned int crypto_skcipher_reqsize(struct crypto_skcipher *tfm)
+-{
+-	return tfm->reqsize;
+-}
+-
+ /**
+  * skcipher_request_set_tfm() - update cipher handle reference in request
+  * @req: request handle to be modified
 -- 
 2.17.1
 
