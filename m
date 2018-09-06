@@ -2,62 +2,92 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC87C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37844C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63C9204EC
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:00:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63C9204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id E382420857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:01:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E382420857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeIFRfm (ORCPT
+        id S1728798AbeIFRg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:35:42 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:61880 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727700AbeIFRfm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:35:42 -0400
-X-IronPort-AV: E=Sophos;i="5.53,338,1531785600"; 
-   d="scan'208";a="64591337"
-Date:   Thu, 6 Sep 2018 14:00:16 +0100
-From:   Wei Liu <wei.liu2@citrix.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-CC:     <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, Wei Liu <wei.liu2@citrix.com>
-Subject: Re: [PATCH] xen/manage: don't complain about an empty value in
- control/sysrq node
-Message-ID: <20180906130016.3nu6zvitjci7x5ge@zion.uk.xensource.com>
-References: <20180906112608.4221-1-vkuznets@redhat.com>
+        Thu, 6 Sep 2018 13:36:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33240 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727700AbeIFRg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:36:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F34AFAE70;
+        Thu,  6 Sep 2018 13:01:03 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 15:01:02 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Rob Herring <robh@kernel.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mingo@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
+        paul.burton@mips.com, Thomas Gleixner <tglx@linutronix.de>,
+        tony.luck@intel.com, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 07/29] memblock: remove _virt from APIs returning
+ virtual address
+Message-ID: <20180906130102.GY14951@dhcp22.suse.cz>
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-8-git-send-email-rppt@linux.vnet.ibm.com>
+ <CABGGiswdb1x-=vqrgxZ9i2dnLdsgtXq4+5H9Y1JRd90YVMW69A@mail.gmail.com>
+ <20180905172017.GA2203@rapoport-lnx>
+ <20180906072800.GN14951@dhcp22.suse.cz>
+ <20180906124321.GD27492@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180906112608.4221-1-vkuznets@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180906124321.GD27492@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 01:26:08PM +0200, Vitaly Kuznetsov wrote:
-> When guest receives a sysrq request from the host it acknowledges it by
-> writing '\0' to control/sysrq xenstore node. This, however, make xenstore
-> watch fire again but xenbus_scanf() fails to parse empty value with "%c"
-> format string:
+On Thu 06-09-18 15:43:21, Mike Rapoport wrote:
+> On Thu, Sep 06, 2018 at 09:28:00AM +0200, Michal Hocko wrote:
+> > On Wed 05-09-18 20:20:18, Mike Rapoport wrote:
+> > > On Wed, Sep 05, 2018 at 12:04:36PM -0500, Rob Herring wrote:
+> > > > On Wed, Sep 5, 2018 at 11:00 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+> > > > >
+> > > > > The conversion is done using
+> > > > >
+> > > > > sed -i 's@memblock_virt_alloc@memblock_alloc@g' \
+> > > > >         $(git grep -l memblock_virt_alloc)
+> > > > 
+> > > > What's the reason to do this? It seems like a lot of churn even if a
+> > > > mechanical change.
+> > > 
+> > > I felt that memblock_virt_alloc_ is too long for a prefix, e.g:
+> > > memblock_virt_alloc_node_nopanic, memblock_virt_alloc_low_nopanic.
+> > > 
+> > > And for consistency I've changed the memblock_virt_alloc as well.
+> > 
+> > I would keep the current API unless the name is terribly misleading or
+> > it can be improved a lot. Neither seems to be the case here. So I would
+> > rather stick with the status quo.
 > 
->  sysrq: SysRq : Emergency Sync
->  Emergency Sync complete
->  xen:manage: Error -34 reading sysrq code in control/sysrq
-> 
-> Ignore -ERANGE the same way we already ignore -ENOENT, empty value in
-> control/sysrq is totally legal.
-> 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> I'm ok with the memblock_virt_alloc by itself, but having 'virt' in
+> 'memblock_virt_alloc_try_nid_nopanic' and 'memblock_virt_alloc_low_nopanic'
+> reduces code readability in my opinion.
 
-Reviewed-by: Wei Liu <wei.liu2@citrix.com>
+Well, is _nopanic really really useful in the name. Do we even need/want
+implicit panic/nopanic semantic? The code should rather check for the
+return value and decide depending on the code path. I suspect removing
+panic/nopanic would make the API slightly lighter.
+
+-- 
+Michal Hocko
+SUSE Labs
