@@ -2,111 +2,354 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15199C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5FEC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6102064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:13:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6102064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id A8BA120652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:15:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8BA120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbeIFGqJ (ORCPT
+        id S1726116AbeIFGsq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 02:46:09 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:38007 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725850AbeIFGqJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 02:46:09 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08469427|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07440;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.Cn4WQaU_1536199974;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cn4WQaU_1536199974)
-          by smtp.aliyun-inc.com(10.147.42.198);
-          Thu, 06 Sep 2018 10:12:54 +0800
-Date:   Thu, 6 Sep 2018 10:12:54 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V3 21/26] dt-bindings: interrupt-controller: C-SKY APB
- intc
-Message-ID: <20180906021254.GC29405@guoren-Inspiron-7460>
-References: <cover.1536138304.git.ren_guo@c-sky.com>
- <62dae1828ade759584bbf1507fe4a9e69d247a50.1536138304.git.ren_guo@c-sky.com>
- <CABGGiswB5OUU7JDP+-s3s8ONkXZY2AAvSijQedsNtZ6p8LqZeA@mail.gmail.com>
+        Thu, 6 Sep 2018 02:48:46 -0400
+Received: from mga07.intel.com ([134.134.136.100]:8427 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725850AbeIFGsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 02:48:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:15:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
+   d="scan'208";a="87583336"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Sep 2018 19:14:02 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 5 Sep 2018 19:14:02 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
+ Thu, 6 Sep 2018 10:14:00 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: RE: [PATCH v2 02/12] iommu/vt-d: Manage scalalble mode PASID tables
+Thread-Topic: [PATCH v2 02/12] iommu/vt-d: Manage scalalble mode PASID tables
+Thread-Index: AQHUQAHs3HUDSv3XyUCGZgqDJ7RwY6TiiUeg
+Date:   Thu, 6 Sep 2018 02:14:00 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A85@SHSMSX101.ccr.corp.intel.com>
+References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
+ <20180830013524.28743-3-baolu.lu@linux.intel.com>
+In-Reply-To: <20180830013524.28743-3-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmM3NTIxNmYtNGNjYS00NDJlLTgxZDEtNTM4MDI5Y2M3ZjY4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoialBDRWZvN1JQOW9yVDlLVUhKRllHejRQSUZkcFh0bGdrcmNEK2JMbDZyZ1JndjFwcEVkcmFwN3VpeUpubHlWaiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABGGiswB5OUU7JDP+-s3s8ONkXZY2AAvSijQedsNtZ6p8LqZeA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 07:43:10PM -0500, Rob Herring wrote:
-> On Wed, Sep 5, 2018 at 7:10 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> >
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > ---
-> >  .../interrupt-controller/csky,apb-intc.txt         | 45 ++++++++++++++++++++++
-> >  1 file changed, 45 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> > new file mode 100644
-> > index 0000000..faa482c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> > @@ -0,0 +1,45 @@
-> > +==============================
-> > +C-SKY APB Interrupt Controller
-> > +==============================
-> > +
-> > +C-SKY APB Interrupt Controller is a simple soc interrupt controller
-> > +on the apb bus and we only use it as root irq controller.
-> > +
-> > + - csky,apb-intc is used in a lot of csky fpgas and socs, it support 64 irq nums.
-> > + - csky,dual-apb-intc consists of 2 apb-intc and 128 irq nums supported.
+> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+> Sent: Thursday, August 30, 2018 9:35 AM
 > 
-> Can't this be described in DT as 2 csky,apb-intc nodes?
-In detail, dual-apb-intc is not the same as two apb-intc, so I still want to name them
-separately, so I will keep this and it is clearer.
-
-> > +        - compatible
-> > +                Usage: required
-> > +                Value type: <string>
-> > +                Definition: must be "csky,apb-intc"
-> > +                                   "csky,dual-apb-intc"
-> > +                                   "csky,gx6605s-intc"
-> > +        - interrupt-cells
+> In scalable mode, pasid structure is a two level table with
+> a pasid directory table and a pasid table. Any pasid entry
+> can be identified by a pasid value in below way.
 > 
-> #interrupt-cells
-Yes, I forgot #.
-             - #interrupt-cells
-
-> > +                Usage: required
-> > +                Value type: <u32>
-> > +                Definition: must be <1>
+>    1
+>    9                       6 5      0
+>     .-----------------------.-------.
+>     |              PASID    |       |
+>     '-----------------------'-------'    .-------------.
+>              |                    |      |             |
+>              |                    |      |             |
+>              |                    |      |             |
+>              |     .-----------.  |      .-------------.
+>              |     |           |  |----->| PASID Entry |
+>              |     |           |  |      '-------------'
+>              |     |           |  |Plus  |             |
+>              |     .-----------.  |      |             |
+>              |---->| DIR Entry |-------->|             |
+>              |     '-----------'         '-------------'
+> .---------.  |Plus |           |
+> | Context |  |     |           |
+> |  Entry  |------->|           |
+> '---------'        '-----------'
 > 
-> No edge or level configuration?
-No, also no support in hardware.
-
-> > +
-> > +       intc: interrupt-controller {
+> This changes the pasid table APIs to support scalable mode
+> PASID directory and PASID table. It also adds a helper to
+> get the PASID table entry according to the pasid value.
 > 
-> Needs a unit-address.
-Ok, change it to:
-            intc: interrupt-controller@0x00500000 {
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Liu Yi L <yi.l.liu@intel.com>
+> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+> ---
+>  drivers/iommu/intel-iommu.c |  2 +-
+>  drivers/iommu/intel-pasid.c | 72 ++++++++++++++++++++++++++++++++----
+> -
+>  drivers/iommu/intel-pasid.h | 10 +++++-
+>  drivers/iommu/intel-svm.c   |  6 +---
+>  4 files changed, 74 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 5845edf4dcf9..b0da4f765274 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -2507,7 +2507,7 @@ static struct dmar_domain
+> *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+>  	if (dev)
+>  		dev->archdata.iommu = info;
+> 
+> -	if (dev && dev_is_pci(dev) && info->pasid_supported) {
+> +	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
 
- Guo Ren
+worthy of a comment here that PASID table now is mandatory in
+scalable mode, instead of optional for 1st level usage before.
+
+>  		ret = intel_pasid_alloc_table(dev);
+>  		if (ret) {
+>  			__dmar_remove_one_dev_info(info);
+> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
+> index fe95c9bd4d33..d6e90cd5b062 100644
+> --- a/drivers/iommu/intel-pasid.c
+> +++ b/drivers/iommu/intel-pasid.c
+> @@ -127,8 +127,7 @@ int intel_pasid_alloc_table(struct device *dev)
+>  	int ret, order;
+> 
+>  	info = dev->archdata.iommu;
+> -	if (WARN_ON(!info || !dev_is_pci(dev) ||
+> -		    !info->pasid_supported || info->pasid_table))
+> +	if (WARN_ON(!info || !dev_is_pci(dev) || info->pasid_table))
+>  		return -EINVAL;
+
+following same logic should you check sm_supported here?
+
+> 
+>  	/* DMA alias device already has a pasid table, use it: */
+> @@ -143,8 +142,9 @@ int intel_pasid_alloc_table(struct device *dev)
+>  		return -ENOMEM;
+>  	INIT_LIST_HEAD(&pasid_table->dev);
+> 
+> -	size = sizeof(struct pasid_entry);
+> +	size = sizeof(struct pasid_dir_entry);
+>  	count = min_t(int, pci_max_pasids(to_pci_dev(dev)),
+> intel_pasid_max_id);
+> +	count >>= PASID_PDE_SHIFT;
+>  	order = get_order(size * count);
+>  	pages = alloc_pages_node(info->iommu->node,
+>  				 GFP_ATOMIC | __GFP_ZERO,
+> @@ -154,7 +154,7 @@ int intel_pasid_alloc_table(struct device *dev)
+> 
+>  	pasid_table->table = page_address(pages);
+>  	pasid_table->order = order;
+> -	pasid_table->max_pasid = count;
+> +	pasid_table->max_pasid = count << PASID_PDE_SHIFT;
+
+are you sure of that count is PDE_SHIFT aligned? otherwise >>
+then << would lose some bits. If sure, then better add some check.
+
+> 
+>  attach_out:
+>  	device_attach_pasid_table(info, pasid_table);
+> @@ -162,14 +162,33 @@ int intel_pasid_alloc_table(struct device *dev)
+>  	return 0;
+>  }
+> 
+> +/* Get PRESENT bit of a PASID directory entry. */
+> +static inline bool
+> +pasid_pde_is_present(struct pasid_dir_entry *pde)
+> +{
+> +	return READ_ONCE(pde->val) & PASID_PTE_PRESENT;
+
+curious why adding READ_ONCE specifically for PASID structure,
+but not used for any other existing vtd structures? Is it to address
+some specific requirement on PASID structure as defined in spec?
+
+> +}
+> +
+> +/* Get PASID table from a PASID directory entry. */
+> +static inline struct pasid_entry *
+> +get_pasid_table_from_pde(struct pasid_dir_entry *pde)
+> +{
+> +	if (!pasid_pde_is_present(pde))
+> +		return NULL;
+> +
+> +	return phys_to_virt(READ_ONCE(pde->val) & PDE_PFN_MASK);
+> +}
+> +
+>  void intel_pasid_free_table(struct device *dev)
+>  {
+>  	struct device_domain_info *info;
+>  	struct pasid_table *pasid_table;
+> +	struct pasid_dir_entry *dir;
+> +	struct pasid_entry *table;
+> +	int i, max_pde;
+> 
+>  	info = dev->archdata.iommu;
+> -	if (!info || !dev_is_pci(dev) ||
+> -	    !info->pasid_supported || !info->pasid_table)
+> +	if (!info || !dev_is_pci(dev) || !info->pasid_table)
+>  		return;
+> 
+>  	pasid_table = info->pasid_table;
+> @@ -178,6 +197,14 @@ void intel_pasid_free_table(struct device *dev)
+>  	if (!list_empty(&pasid_table->dev))
+>  		return;
+> 
+> +	/* Free scalable mode PASID directory tables: */
+> +	dir = pasid_table->table;
+> +	max_pde = pasid_table->max_pasid >> PASID_PDE_SHIFT;
+> +	for (i = 0; i < max_pde; i++) {
+> +		table = get_pasid_table_from_pde(&dir[i]);
+> +		free_pgtable_page(table);
+> +	}
+> +
+>  	free_pages((unsigned long)pasid_table->table, pasid_table->order);
+>  	kfree(pasid_table);
+>  }
+> @@ -206,17 +233,37 @@ int intel_pasid_get_dev_max_id(struct device
+> *dev)
+> 
+>  struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid)
+>  {
+> +	struct device_domain_info *info;
+>  	struct pasid_table *pasid_table;
+> +	struct pasid_dir_entry *dir;
+>  	struct pasid_entry *entries;
+> +	int dir_index, index;
+> 
+>  	pasid_table = intel_pasid_get_table(dev);
+>  	if (WARN_ON(!pasid_table || pasid < 0 ||
+>  		    pasid >= intel_pasid_get_dev_max_id(dev)))
+>  		return NULL;
+> 
+> -	entries = pasid_table->table;
+> +	dir = pasid_table->table;
+> +	info = dev->archdata.iommu;
+> +	dir_index = pasid >> PASID_PDE_SHIFT;
+> +	index = pasid & PASID_PTE_MASK;
+> +
+> +	spin_lock(&pasid_lock);
+> +	entries = get_pasid_table_from_pde(&dir[dir_index]);
+> +	if (!entries) {
+> +		entries = alloc_pgtable_page(info->iommu->node);
+> +		if (!entries) {
+> +			spin_unlock(&pasid_lock);
+> +			return NULL;
+> +		}
+> +
+> +		WRITE_ONCE(dir[dir_index].val,
+> +			   (u64)virt_to_phys(entries) | PASID_PTE_PRESENT);
+> +	}
+> +	spin_unlock(&pasid_lock);
+> 
+> -	return &entries[pasid];
+> +	return &entries[index];
+>  }
+> 
+>  /*
+> @@ -224,7 +271,14 @@ struct pasid_entry *intel_pasid_get_entry(struct
+> device *dev, int pasid)
+>   */
+>  static inline void pasid_clear_entry(struct pasid_entry *pe)
+>  {
+> -	WRITE_ONCE(pe->val, 0);
+> +	WRITE_ONCE(pe->val[0], 0);
+> +	WRITE_ONCE(pe->val[1], 0);
+> +	WRITE_ONCE(pe->val[2], 0);
+> +	WRITE_ONCE(pe->val[3], 0);
+> +	WRITE_ONCE(pe->val[4], 0);
+> +	WRITE_ONCE(pe->val[5], 0);
+> +	WRITE_ONCE(pe->val[6], 0);
+> +	WRITE_ONCE(pe->val[7], 0);
+
+memset?
+
+>  }
+> 
+>  void intel_pasid_clear_entry(struct device *dev, int pasid)
+> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
+> index 1c05ed6fc5a5..12f480c2bb8b 100644
+> --- a/drivers/iommu/intel-pasid.h
+> +++ b/drivers/iommu/intel-pasid.h
+> @@ -12,11 +12,19 @@
+> 
+>  #define PASID_MIN			0x1
+>  #define PASID_MAX			0x100000
+> +#define PASID_PTE_MASK			0x3F
+> +#define PASID_PTE_PRESENT		1
+> +#define PDE_PFN_MASK			PAGE_MASK
+> +#define PASID_PDE_SHIFT			6
+> 
+> -struct pasid_entry {
+> +struct pasid_dir_entry {
+>  	u64 val;
+>  };
+> 
+> +struct pasid_entry {
+> +	u64 val[8];
+> +};
+> +
+>  /* The representative of a PASID table */
+>  struct pasid_table {
+>  	void			*table;		/* pasid table pointer */
+> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> index 4a03e5090952..6c0bd9ee9602 100644
+> --- a/drivers/iommu/intel-svm.c
+> +++ b/drivers/iommu/intel-svm.c
+> @@ -65,8 +65,6 @@ int intel_svm_init(struct intel_iommu *iommu)
+> 
+>  	order = get_order(sizeof(struct pasid_entry) * iommu->pasid_max);
+>  	if (ecap_dis(iommu->ecap)) {
+> -		/* Just making it explicit... */
+> -		BUILD_BUG_ON(sizeof(struct pasid_entry) != sizeof(struct
+> pasid_state_entry));
+>  		pages = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
+>  		if (pages)
+>  			iommu->pasid_state_table = page_address(pages);
+> @@ -406,9 +404,7 @@ int intel_svm_bind_mm(struct device *dev, int
+> *pasid, int flags, struct svm_dev_
+>  			pasid_entry_val |= PASID_ENTRY_FLPM_5LP;
+> 
+>  		entry = intel_pasid_get_entry(dev, svm->pasid);
+> -		entry->val = pasid_entry_val;
+> -
+> -		wmb();
+> +		WRITE_ONCE(entry->val[0], pasid_entry_val);
+> 
+>  		/*
+>  		 * Flush PASID cache when a PASID table entry becomes
+> --
+> 2.17.1
+
