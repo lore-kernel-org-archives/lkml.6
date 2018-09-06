@@ -2,100 +2,101 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB0FC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8986DC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E48D20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:48:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E48D20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 14C542064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:50:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFPouwoG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C542064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbeIFXYp (ORCPT
+        id S1730542AbeIFX1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:24:45 -0400
-Received: from mga05.intel.com ([192.55.52.43]:61319 "EHLO mga05.intel.com"
+        Thu, 6 Sep 2018 19:27:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbeIFXYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:24:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 11:47:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="261333616"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2018 11:47:50 -0700
-Date:   Thu, 6 Sep 2018 11:47:50 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v5 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
- when SEV is active
-Message-ID: <20180906184750.GB4570@linux.intel.com>
-References: <1536234182-2809-1-git-send-email-brijesh.singh@amd.com>
- <1536234182-2809-6-git-send-email-brijesh.singh@amd.com>
- <20180906122423.GA11144@zn.tnic>
- <20180906135041.GB32336@linux.intel.com>
- <20180906141825.GB370@linux.intel.com>
- <fcd5efe9-3e26-3aff-9173-9f8c3f3183f1@amd.com>
+        id S1727043AbeIFX1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:27:11 -0400
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3479620861;
+        Thu,  6 Sep 2018 18:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536259824;
+        bh=tmMm7eVA0zGd3cTvdEC/8cNW4aOFfHy8SpZxDZPRmzc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hFPouwoGLBOaKZ0KKdNCsSZ/M3i1UG+AsclfPT+XjHRn7JNrlGdZJ4WptrIGkoPoB
+         jn5rovBAVi9oLjSxKPYp9We8Rhu21spzh4IDwZ6i+7ge5rBfN6b0VX6TAAOkXTgnRl
+         7zcnBR+Hw/7kuSsED/8c9UHwZMyJhT/Y/QWy9YV8=
+Received: by mail-yb1-f182.google.com with SMTP id k5-v6so4518355ybo.10;
+        Thu, 06 Sep 2018 11:50:24 -0700 (PDT)
+X-Gm-Message-State: APzg51BeZSxGZqyfh9UfJL04zAVOnF9VIrsXXlW6NDBHlRcsqKimntAw
+        iRClNeekMqnS4e1STIfEu8SgS2GJP7MESFUxZms=
+X-Google-Smtp-Source: ANB0VdZ8FlNtVpyjSeA+QZGgUQEWQNwMTMxRbY357DaptaWNy5pHmXdzZGT/moF9BQSF/MTS/k+lIdZ8Vv5IahodRz4=
+X-Received: by 2002:a25:9884:: with SMTP id l4-v6mr2341944ybo.255.1536259823418;
+ Thu, 06 Sep 2018 11:50:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fcd5efe9-3e26-3aff-9173-9f8c3f3183f1@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180904212237.3078-1-atull@kernel.org> <20180904212237.3078-4-atull@kernel.org>
+ <CAJYdmeO0RegP4q1tVow1U0=Zc42GEHMuqsHsvHvMqp89zZ6Wpw@mail.gmail.com>
+ <CANk1AXQaSLziycCv4X50xufehu7AgV34pxydxs8H14uFREy4YQ@mail.gmail.com> <20180906181918.GA20419@archbook>
+In-Reply-To: <20180906181918.GA20419@archbook>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 6 Sep 2018 13:49:47 -0500
+X-Gmail-Original-Message-ID: <CANk1AXSvDf=kDRdGq-VkFxFZvLTYkfNKqPCDau=9K5e8BjvTuA@mail.gmail.com>
+Message-ID: <CANk1AXSvDf=kDRdGq-VkFxFZvLTYkfNKqPCDau=9K5e8BjvTuA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] fpga: bridge: add devm_fpga_bridge_create
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Moritz Fischer <moritz.fischer.private@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 01:37:50PM -0500, Brijesh Singh wrote:
-> 
-> 
-> On 09/06/2018 09:18 AM, Sean Christopherson wrote:
-> ....
-> 
-> >>>
-> >>>So are we going to be defining a decrypted section for every piece of
-> >>>machinery now?
-> >>>
-> >>>That's a bit too much in my book.
-> >>>
-> >>>Why can't you simply free everything in .data..decrypted on !SVE guests?
-> >>
-> >>That would prevent adding __decrypted to existing declarations, e.g.
-> >>hv_clock_boot, which would be ugly in its own right.  A more generic
-> >>solution would be to add something like __decrypted_exclusive to mark
-> >>data that is used if and only if SEV is active, and then free the
-> >>SEV-only data when SEV is disabled.
+On Thu, Sep 6, 2018 at 1:19 PM Moritz Fischer <mdf@kernel.org> wrote:
+>
+> Hi Alan,
+>
+> On Wed, Sep 05, 2018 at 10:38:53AM -0500, Alan Tull wrote:
+> > > > - * fpga_bridge_unregister - unregister and free a fpga bridge
+> > > > - * @bridge:    FPGA bridge struct created by fpga_bridge_create
+> > > > + * fpga_bridge_unregister - unregister a FPGA bridge
+> > > > + *
+> > > > + * @bridge: FPGA bridge struct
+> > > > + *
+> > > > + * This function is intended for use in a FPGA bridge driver's remove function.
+> > > > + * If the bridge was created with devm_fpga_bridge_create(), the bridge struct
+> > > > + * will be automatically freed.  If the bridge was created with
+> > > > + * fpga_bridge_create(), the caller is responsible for freeing the bridge with
+> > > > + * fpga_bridge_free().
+> > >
+> > > I find the formulation somewhat confusing, since it could be
+> > > interpreted as if you
+> > > used the devm_() functions you don't have to call unregister().
 > >
-> >Oh, and we'd need to make sure __decrypted_exclusive is freed when
-> >!CONFIG_AMD_MEM_ENCRYPT, and preferably !sev_active() since the big
-> >array is used only if SEV is active.  This patch unconditionally
-> >defines hv_clock_dec but only frees it if CONFIG_AMD_MEM_ENCRYPT=y &&
-> >!mem_encrypt_active().
-> >
-> 
-> Again we have to consider the bare metal scenario while doing this. The
-> aux array you proposed will be added in decrypted section only when
-> CONFIG_AMD_MEM_ENCRYPT=y.  If CONFIG_AMD_MEM_ENCRYPT=n then nothng
-> gets put in .data.decrypted section. At the runtime, if memory
-> encryption is active then .data.decrypted_hvclock will contains useful
-> data.
-> 
-> The __decrypted attribute in "" when CONFIG_AMD_MEM_ENCRYPT=n.
+> > Yes I'm being too verbose and it's making things muddled.  How about
+> > if I take out the part that starts with "If bridge was created..."?
+> > That just leaves "This function is intended for use in a FPGA bridge
+> > driver's remove function."
+>
+> Sounds good.
 
-Right, but won't the data get dumped into the regular .bss in that
-case, i.e. needs to be freed?
+OK, for v3 I'll make a similar change in patches 2 and 4.
+
+Alan
+
+>
+> Moritz
