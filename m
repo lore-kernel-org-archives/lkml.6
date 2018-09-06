@@ -2,90 +2,83 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACB7C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3E2C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2303620844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:05:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gfekDSD9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2303620844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FCAF20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:05:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCAF20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbeIFRlJ (ORCPT
+        id S1728951AbeIFRlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:41:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56976 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbeIFRlJ (ORCPT
+        Thu, 6 Sep 2018 13:41:20 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39276 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbeIFRlT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:41:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=h3Dg1bsYP/eXn34XlMO+rNxssT74rT9HvORegCcKKHA=; b=gfekDSD9VBRp36Eivd34Zt99Q
-        1smLrlKu/H905oru7/E2BX9/+SQqNWic/niZ6M+hswMuYKf+GRdm3dPjCzqqefADJIn7tekdTp7uB
-        Wzg37/cFrFOfHYcYmia7/YiaUrgr0xjraSB8bkZMAeUt6nreatSmoBuiNzcRNZzjFPrJs9fUa5fps
-        5LCuh7MRTHwR+agqla8Mc9fH19KF87URqfjpQ/zhLzWesAettdlhnczVDd/omhvI3P9lnTuS2ht/m
-        Z6urQ9IF2pGTuQ9O1Gj011yzjDld8x/mUXdQlLfHkBfkCAyoBA5lwb88gzHvCuJc2yYY2HH8ar5nq
-        nCfoEFTJA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxtya-00011K-Ll; Thu, 06 Sep 2018 13:05:36 +0000
-Date:   Thu, 6 Sep 2018 06:05:36 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-        syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com,
-        tim.c.chen@linux.intel.com, zwisler@kernel.org
-Subject: Re: linux-next test error
-Message-ID: <20180906130536.GA29639@bombadil.infradead.org>
-References: <0000000000004f6b5805751a8189@google.com>
- <20180905085545.GD24902@quack2.suse.cz>
- <CAFqt6zZtjPFdfAGxp43oqN3=z9+vAGzdOvDcgFaU+05ffCGu7A@mail.gmail.com>
- <20180905133459.GF23909@thunk.org>
- <CAFqt6za5OvHgONOgpmhxS+YsYZyiXUhzpmOgZYyHWPHEO34QwQ@mail.gmail.com>
- <20180906083800.GC19319@quack2.suse.cz>
- <CAFqt6zZ=uaArS0hrbgZGLe38HgSPhZBHzsGEJOZiQGm4Y2N0yw@mail.gmail.com>
+        Thu, 6 Sep 2018 13:41:19 -0400
+Received: by mail-qt0-f196.google.com with SMTP id o15-v6so12083432qtk.6;
+        Thu, 06 Sep 2018 06:05:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cu+k9yKRf2QMFnxAFAWWxRdzk+b7JUhgG9yk5bk7M4U=;
+        b=ix/E2DVVgOBLcnc8Hsj2XPmKOFHe5MPtN8nJmvOjoULlb0btvRIlJwiHnOTg4Nnp/b
+         D5v3E44ozHndcjc1zoL4smG11oN9af7ebtcs2rQzl6j/kkBkmB4TAMv7y7BRK5aM4F9N
+         5F3YNirKFAlPepomAZRzBnC5t4ChCLYrEXU/HwtmeeFDBXk2a0LXQGi7nfK8f4mYdf82
+         +A+toBfnhRpfT0vVMm+H/VBma8B773MfCkgyWEFxfr18Q2I7k5IF8OiFtK7a/+dFP7Fm
+         iNwKsD8B7i4g/BrPBMUNesyup/BrepvwlzOKoyF4vVO+5HaKArgjQMXWkD0As4sGXMLr
+         ounA==
+X-Gm-Message-State: APzg51BJXVg5rjOc4X5Bej0Nh6z6bNprY57g5ARnU8wdCvUpoQaPlusM
+        XNm8TeBgZIx2kff3EkpbBx18Lvb3yVQTfqOhgtk=
+X-Google-Smtp-Source: ANB0VdZDcUZVcX7hE8cREiqeQMGuCG/yF+vFhysvynt/+QJ2eoXwqDeU+ax0Ymb99TKRHS/q7hFZJdNP/m9/+TFRsy8=
+X-Received: by 2002:a0c:fb08:: with SMTP id c8-v6mr1877659qvp.149.1536239154483;
+ Thu, 06 Sep 2018 06:05:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zZ=uaArS0hrbgZGLe38HgSPhZBHzsGEJOZiQGm4Y2N0yw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <cover.1536138304.git.ren_guo@c-sky.com> <62dae1828ade759584bbf1507fe4a9e69d247a50.1536138304.git.ren_guo@c-sky.com>
+ <CABGGiswB5OUU7JDP+-s3s8ONkXZY2AAvSijQedsNtZ6p8LqZeA@mail.gmail.com> <20180906021254.GC29405@guoren-Inspiron-7460>
+In-Reply-To: <20180906021254.GC29405@guoren-Inspiron-7460>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 6 Sep 2018 15:05:38 +0200
+Message-ID: <CAK8P3a3h4KxkvAXZV+=7T6vdiQdOd0quos9BUtX-E=Q2H_0rfA@mail.gmail.com>
+Subject: Re: [PATCH V3 21/26] dt-bindings: interrupt-controller: C-SKY APB intc
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 05:56:31PM +0530, Souptick Joarder wrote:
-> On Thu, Sep 6, 2018 at 2:08 PM Jan Kara <jack@suse.cz> wrote:
-> > Yes, I'd start with converting ext4_page_mkwrite() - that should be pretty
-> > straightforward - and we can leave block_page_mkwrite() as is for now. I
-> > don't think allocating other VM_FAULT_ codes is going to cut it as
-> > generally the filesystem may need to communicate different error codes back
-> > and you don't know in advance which are interesting.
-> 
-> Then I need to take care of ext4_page_mkwrite() and ext4_filemap_fault()
-> to migrate to use vm_fault_t return type. Everything else can be removed
-> from this patch and it will go as a separate patch.
-> 
-> As block_page_mkwrite() is getting called from 2 places in ext4 and nilfs and
-> both places fault handler code convert errno to VM_FAULT_CODE using
-> block_page_mkwrite_return(), is it required to migrate block_page_mkwrite()
-> to use vm_fault_t return type and further complicate the API or better to
-> leave this API in current state ??
+On Thu, Sep 6, 2018 at 4:13 AM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> On Wed, Sep 05, 2018 at 07:43:10PM -0500, Rob Herring wrote:
+> > On Wed, Sep 5, 2018 at 7:10 AM Guo Ren <ren_guo@c-sky.com> wrote:
+> > >
+> > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > > +
+> > > +       intc: interrupt-controller {
+> >
+> > Needs a unit-address.
+> Ok, change it to:
+>             intc: interrupt-controller@0x00500000 {
 
-Leave block_page_mkwrite() alone.  Somebody who understands it better
-than you do can take care of converting it, if that's even the right
-thing to do.  Let's get the typedef conversion _finished_ so we get the
-benefit of typechecking for driver writers.
+The unit address has no leading 0x or leading zeroes, so
+interrupt-controller@500000
+
+        Arnd
