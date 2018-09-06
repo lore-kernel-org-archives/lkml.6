@@ -2,61 +2,50 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D82C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3EDC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB8CD2075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:42:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Phqyw20W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB8CD2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 04A9F2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:43:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A9F2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeIFVSd (ORCPT
+        id S1728085AbeIFVUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:18:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        Thu, 6 Sep 2018 17:20:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbeIFVSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:18:32 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1726506AbeIFVUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 17:20:11 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25C2C2075E;
-        Thu,  6 Sep 2018 16:42:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536252133;
-        bh=yVfZRj6s3Ocx/ZUVRKkgqqz3B30dUDlWuFYXukNvwYI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Phqyw20WJ6tHLf58+zkmO99piizq6alZHhJ+AeKSEfkmPttBXmtxJWVt4ePae43QM
-         xBsZ+x517UairVhW7crd3OyfHJHzIJA72zkPkjpnD4/l/ZB3XTR68r2ikGRXekMEAf
-         MhJ9L9dxNjeIRX5Ib2Iu6K+L1LGRlxyzL68tvx7w=
-Date:   Fri, 7 Sep 2018 01:42:09 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arnd@arndb.de
-Subject: Re: linux-next: build warnings from the build of Linus' tree
-Message-Id: <20180907014209.49e2940f74615a1e4f544ffd@kernel.org>
-In-Reply-To: <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
-References: <20180824133206.4218c2e5@canb.auug.org.au>
-        <20180824172053.20fa197294f51496dcec5605@kernel.org>
-        <20180824204756.e787765461975cd1e27502dc@kernel.org>
-        <20180824224211.2934d7c0@canb.auug.org.au>
-        <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org>
-        <20180828072333.36af4d5d@canb.auug.org.au>
-        <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
-        <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
+        by mail.kernel.org (Postfix) with ESMTPSA id EB5C62075E;
+        Thu,  6 Sep 2018 16:43:50 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 12:43:49 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        tom.zanussi@linux.intel.com
+Subject: Re: [PATCH RT 00/22] Linux 4.14.63-rt41-rc1
+Message-ID: <20180906124349.56b89024@gandalf.local.home>
+In-Reply-To: <20180906075434.xa64dy7d6p4yolyi@linutronix.de>
+References: <20180905122754.443196118@goodmis.org>
+        <20180906075434.xa64dy7d6p4yolyi@linutronix.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,97 +53,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 12:49:39 +0200
-Peter Oberparleiter <oberpar@linux.ibm.com> wrote:
+On Thu, 6 Sep 2018 09:54:34 +0200
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-> On 28.08.2018 02:43, Masami Hiramatsu wrote:
-> > I recently added a gcov profiling for ftrace, following Documentation/dev-tools/gcov.rst.
-> > 6b7dca401cb1 ("tracing: Allow gcov profiling on only ftrace subsystem")
+> On 2018-09-05 08:27:54 [-0400], Steven Rostedt wrote:
+> > Dear RT Folks,
 > > 
-> > and it caused may orphan section warnings/errors on arm and powerpc64.
-> > We also found same error happens when CONFIG_GCOV_PROFILE_ALL=y.
-> > So I guess GCOV kernel subsystem broken in some environment.
+> > This is the RT stable review cycle of patch 4.14.63-rt41-rc1.
+> > 
+> > Please scream at me if I messed something up. Please test the patches too.
+> > 
+> > The -rc release will be uploaded to kernel.org and will be deleted when
+> > the final release is out. This is just a review release (or release candidate).
+> > 
+> > The pre-releases will not be pushed to the git repository, only the
+> > final release is.
+> > 
+> > If all goes well, this patch will be converted to the next main release
+> > on 9/7/2018.  
 > 
-> I can confirm that these issues are unrelated to your commit which only
-> made the existing problems visible by enabling gcov-kernel profiling for
-> allyesconfig builds. Both problems already exist in v4.18 and likely
-> earlier versions.
+> Your tree (v4.14.63) has
+>   80d20d35af1ed ("nohz: Fix local_timer_softirq_pending()")
+>   0a0e0829f9901 ("nohz: Fix missing tick reprogram when interrupting an
+>                  inline softirq")
 > 
-> Problem 1: link failure on arm
-> (https://lkml.org/lkml/2018/8/24/345)
-> 
-> The root cause appears to be that the arm linker script only partially
-> discards unneeded sections generated by the compiler when gcov-kernel
-> profiling is enabled.
-> 
-> Problem 2: linker warnings on powerpc
-> (https://lkml.org/lkml/2018/8/24/72)
-> 
-> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y adds compiler flag
-> -fdata-sections. This option causes GCC to create separate data sections
-> for data objects, including those generated by GCC internally for gcov
-> profiling. Since the name of these internal data objects starts with a .
-> (.LPBX0, .LPBX1), the resulting section name starts with "data..". As
-> section names starting with "data.." are used for specific purposes in
-> the Linux kernel, the linker script does not automatically handle them,
-> resulting in the "orphan section" linker warnings.
+> which means that the patch "nohz: Prevent erroneous tick stop
+> invocations" can be reverted / dropped. It might have clashed during the
+> emerge of the stable tree.
+>
 
-Good catch! I didn't know that option.
+My tree also has this:
 
-> 
-> I've attached a quick fix that should address both problems. I'd
-> appreciate if this patch could get some testing before I post proper fix
-> patches.
+commit 5536f5491a2e098 
 
-Hmm, I'm still not able to reproduce it on powerpc cross build even with
-CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y ... So, sorry I couldn't test this patch.
-
-> 
-> -- >8 --
-> diff --git a/arch/arm/kernel/vmlinux.lds.h b/arch/arm/kernel/vmlinux.lds.h
-> index ae5fdff18406..2ca33277a28b 100644
-> --- a/arch/arm/kernel/vmlinux.lds.h
-> +++ b/arch/arm/kernel/vmlinux.lds.h
-> @@ -48,6 +48,7 @@
-> 
->  #define ARM_DISCARD							\
->  		*(.ARM.exidx.exit.text)					\
-> +		*(.ARM.exidx.text.exit)					\
-
-BTW, why would we need this?
-
-Thanks,
-
->  		*(.ARM.extab.exit.text)					\
->  		ARM_CPU_DISCARD(*(.ARM.exidx.cpuexit.text))		\
->  		ARM_CPU_DISCARD(*(.ARM.extab.cpuexit.text))		\
-> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> index 7b75ff6e2fce..5cf3b90c5592 100644
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -68,7 +68,7 @@
->   */
->  #ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
->  #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
-> -#define DATA_MAIN .data .data.[0-9a-zA-Z_]*
-> +#define DATA_MAIN .data .data.[0-9a-zA-Z_]* .data..LPBX*
->  #define SDATA_MAIN .sdata .sdata.[0-9a-zA-Z_]*
->  #define RODATA_MAIN .rodata .rodata.[0-9a-zA-Z_]*
->  #define BSS_MAIN .bss .bss.[0-9a-zA-Z_]*
-> @@ -613,7 +613,7 @@
-> 
->  #define EXIT_DATA							\
->  	*(.exit.data .exit.data.*)					\
-> -	*(.fini_array)							\
-> +	*(.fini_array .fini_array.*)					\
->  	*(.dtors)							\
->  	MEM_DISCARD(exit.data*)						\
->  	MEM_DISCARD(exit.rodata*)
-> -- 
-> Peter Oberparleiter
-> Linux on Z Development - IBM Germany
-> 
+    softirq: keep the 'softirq pending' check RT-only
+    
+    The patch "nohz: Prevent erroneous tick stop invocations" was merged
+    differently upstream. The original issue where a slow box could lock up
+    with a pending timer remained. I currently assume that this is a RT only
+    issue and keep the patch as RT only.
+    
+    Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+What needs to be done?
+
+-- Steve
