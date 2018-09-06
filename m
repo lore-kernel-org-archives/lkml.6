@@ -2,473 +2,166 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB2FC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF45C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B11720652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:16:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B11720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4054820659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:17:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4054820659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeIFHtd convert rfc822-to-8bit (ORCPT
+        id S1727734AbeIFHuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 03:49:33 -0400
-Received: from mga18.intel.com ([134.134.136.126]:8443 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbeIFHtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 03:49:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 20:16:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="70718390"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga007.jf.intel.com with ESMTP; 05 Sep 2018 20:11:54 -0700
-Received: from fmsmsx158.amr.corp.intel.com (10.18.116.75) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 5 Sep 2018 20:11:53 -0700
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- fmsmsx158.amr.corp.intel.com (10.18.116.75) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 5 Sep 2018 20:11:53 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.226]) with mapi id 14.03.0319.002;
- Thu, 6 Sep 2018 11:11:51 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [PATCH v2 06/12] iommu/vt-d: Add second level page table
- interface
-Thread-Topic: [PATCH v2 06/12] iommu/vt-d: Add second level page table
- interface
-Thread-Index: AQHUQAHwDWc2LNkyDUSjEMfaICr4mqTimnUA
-Date:   Thu, 6 Sep 2018 03:11:50 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2C24@SHSMSX101.ccr.corp.intel.com>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-7-baolu.lu@linux.intel.com>
-In-Reply-To: <20180830013524.28743-7-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiY2YxOTk0NzUtZDBmMC00YWQyLTkzNmMtMjVmYzlhNTM3ZDc4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaVZjdHAyRTdwYVF6M0JIdGZTNWdEOEhmUDFiY2xIUUNmNFY3NDg2VDFsUVwvWHd0WXlEOWc5ZkREWHRFRmxuZFwvIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Sep 2018 03:50:15 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:54555 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbeIFHuO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 03:50:14 -0400
+Received: by mail-it0-f72.google.com with SMTP id r19-v6so10572896itc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 20:17:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=7QcoBJ6rc2zksRQBWTYTR7ODFMrfeMAVRnXCReYZQ94=;
+        b=dlEw6d2XPPc0dzJNG2H27Wlw40uQ46M129wo2Ib2EbXjLYqssViCGhE0q9M3JO7kLb
+         UaUbMrqzPO74Wdp+LSALVsF09vGjEITqAdptbUUVRN6D+bVy9/805jWhIyE4AdTpM9F+
+         ARVWsKru95yVbZ1nCHWnd1AjKhATCEg/Kvr1rfJ11qFf/Bd0/8UTdkUIZnLICrndcgEH
+         VmLVsM7OG+5DAl3oTpcajo5KKLR8oomJlAs7EMrbIl/DPEYodr9K3THPLXFswOORCSUG
+         s+Z1SZzzX1oHIwoJ+wxES1k1EebQTWG6TN9wdgxaZB2jlySGjDVHVVE9s36X31ERFszv
+         /wig==
+X-Gm-Message-State: APzg51A4kc50JgirS3xUhvyCEerTBC3T2yEp6/MHdS0tWhwIs1wAaWjv
+        vepY2V8nOwH/jdw4sdm5Y7ZAHfCzT1FhIIT5eb38idXfLJxe
+X-Google-Smtp-Source: ANB0VdYpIhnTRZ4iJ2zEuFAjivdH69GLlCa4Ut0AJS1rymSsm/TCr4wKSDmagihIezAt9kkMD7tvHpVak3/FXSZmWLZThXhm97fo
 MIME-Version: 1.0
+X-Received: by 2002:a6b:bf47:: with SMTP id p68-v6mr490014iof.82.1536203822981;
+ Wed, 05 Sep 2018 20:17:02 -0700 (PDT)
+Date:   Wed, 05 Sep 2018 20:17:02 -0700
+In-Reply-To: <0000000000003658b00574dc08cc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002bef6405752b530b@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in _decode_session6
+From:   syzbot <syzbot+acffccec848dc13fe459@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+        dvyukov@google.com, herbert@gondor.apana.org.au,
+        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, steffen.klassert@secunet.com,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
-> Sent: Thursday, August 30, 2018 9:35 AM
-> 
-> This adds the interfaces to setup or tear down the structures
-> for second level page table translations. This includes types
-> of second level only translation and pass through.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Liu Yi L <yi.l.liu@intel.com>
-> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-> ---
->  drivers/iommu/intel-iommu.c |   2 +-
->  drivers/iommu/intel-pasid.c | 246
-> ++++++++++++++++++++++++++++++++++++
->  drivers/iommu/intel-pasid.h |   7 +
->  include/linux/intel-iommu.h |   3 +
->  4 files changed, 257 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 562da10bf93e..de6b909bb47a 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -1232,7 +1232,7 @@ static void iommu_set_root_entry(struct
-> intel_iommu *iommu)
->  	raw_spin_unlock_irqrestore(&iommu->register_lock, flag);
->  }
-> 
-> -static void iommu_flush_write_buffer(struct intel_iommu *iommu)
-> +void iommu_flush_write_buffer(struct intel_iommu *iommu)
->  {
->  	u32 val;
->  	unsigned long flag;
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index d6e90cd5b062..edcea1d8b9fc 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -9,6 +9,7 @@
-> 
->  #define pr_fmt(fmt)	"DMAR: " fmt
-> 
-> +#include <linux/bitops.h>
->  #include <linux/dmar.h>
->  #include <linux/intel-iommu.h>
->  #include <linux/iommu.h>
-> @@ -291,3 +292,248 @@ void intel_pasid_clear_entry(struct device *dev,
-> int pasid)
-> 
->  	pasid_clear_entry(pe);
->  }
-> +
-> +static inline void pasid_set_bits(u64 *ptr, u64 mask, u64 bits)
-> +{
-> +	u64 old;
-> +
-> +	old = READ_ONCE(*ptr);
-> +	WRITE_ONCE(*ptr, (old & ~mask) | bits);
-> +}
-> +
-> +/*
-> + * Setup the DID(Domain Identifier) field (Bit 64~79) of scalable mode
-> + * PASID entry.
-> + */
-> +static inline void
-> +pasid_set_domain_id(struct pasid_entry *pe, u64 value)
-> +{
-> +	pasid_set_bits(&pe->val[1], GENMASK_ULL(15, 0), value);
-> +}
-> +
-> +/*
-> + * Setup the SLPTPTR(Second Level Page Table Pointer) field (Bit 12~63)
-> + * of a scalable mode PASID entry.
-> + */
-> +static inline void
-> +pasid_set_address_root(struct pasid_entry *pe, u64 value)
+syzbot has found a reproducer for the following crash on:
 
-is address_root too general? especially when the entry could contain both
-1st level and 2nd level pointers.
+HEAD commit:    b36fdc6853a3 Merge tag 'gpio-v4.19-2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164938d1400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4c7e83258d6e0156
+dashboard link: https://syzkaller.appspot.com/bug?extid=acffccec848dc13fe459
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=115f172e400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16399be1400000
 
-> +{
-> +	pasid_set_bits(&pe->val[0], VTD_PAGE_MASK, value);
-> +}
-> +
-> +/*
-> + * Setup the AW(Address Width) field (Bit 2~4) of a scalable mode PASID
-> + * entry.
-> + */
-> +static inline void
-> +pasid_set_address_width(struct pasid_entry *pe, u64 value)
-> +{
-> +	pasid_set_bits(&pe->val[0], GENMASK_ULL(4, 2), value << 2);
-> +}
-> +
-> +/*
-> + * Setup the PGTT(PASID Granular Translation Type) field (Bit 6~8)
-> + * of a scalable mode PASID entry.
-> + */
-> +static inline void
-> +pasid_set_translation_type(struct pasid_entry *pe, u64 value)
-> +{
-> +	pasid_set_bits(&pe->val[0], GENMASK_ULL(8, 6), value << 6);
-> +}
-> +
-> +/*
-> + * Enable fault processing by clearing the FPD(Fault Processing
-> + * Disable) field (Bit 1) of a scalable mode PASID entry.
-> + */
-> +static inline void pasid_set_fault_enable(struct pasid_entry *pe)
-> +{
-> +	pasid_set_bits(&pe->val[0], 1 << 1, 0);
-> +}
-> +
-> +/*
-> + * Setup the SRE(Supervisor Request Enable) field (Bit 128) of a
-> + * scalable mode PASID entry.
-> + */
-> +static inline void pasid_set_sre(struct pasid_entry *pe)
-> +{
-> +	pasid_set_bits(&pe->val[2], 1 << 0, 1);
-> +}
-> +
-> +/*
-> + * Setup the P(Present) field (Bit 0) of a scalable mode PASID
-> + * entry.
-> + */
-> +static inline void pasid_set_present(struct pasid_entry *pe)
-> +{
-> +	pasid_set_bits(&pe->val[0], 1 << 0, 1);
-> +}
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+acffccec848dc13fe459@syzkaller.appspotmail.com
 
-it's a long list and there could be more in the future. What about
-defining some macro to simplify LOC, e.g.
+IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in _decode_session6+0x1331/0x14e0  
+net/ipv6/xfrm6_policy.c:161
+Read of size 1 at addr ffff8801d4a67f07 by task syz-executor092/4673
 
-#define PASID_SET(name, i, m, b)				\
-static inline void pasid_set_name(struct pasid_entry *pe)	\
-{								\
-	pasid_set_bits(&pe->val[i], m, b);			\
-}
+CPU: 1 PID: 4673 Comm: syz-executor092 Not tainted 4.19.0-rc2+ #223
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  _decode_session6+0x1331/0x14e0 net/ipv6/xfrm6_policy.c:161
+  __xfrm_decode_session+0x71/0x140 net/xfrm/xfrm_policy.c:2299
+  xfrm_decode_session include/net/xfrm.h:1232 [inline]
+  vti6_tnl_xmit+0x3fc/0x1bb1 net/ipv6/ip6_vti.c:542
+  __netdev_start_xmit include/linux/netdevice.h:4287 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4296 [inline]
+  xmit_one net/core/dev.c:3216 [inline]
+  dev_hard_start_xmit+0x272/0xc10 net/core/dev.c:3232
+  __dev_queue_xmit+0x2ab2/0x3870 net/core/dev.c:3802
+  dev_queue_xmit+0x17/0x20 net/core/dev.c:3835
+  __bpf_tx_skb net/core/filter.c:2012 [inline]
+  __bpf_redirect_common net/core/filter.c:2050 [inline]
+  __bpf_redirect+0x5b7/0xae0 net/core/filter.c:2057
+  ____bpf_clone_redirect net/core/filter.c:2090 [inline]
+  bpf_clone_redirect+0x2f6/0x490 net/core/filter.c:2062
+  bpf_prog_c39d1ba309a769f7+0xe9e/0x1000
 
-PASID_SET(present, 0, 1<<0, 1);
-PASID_SET(sre, 2, 1<<0, 1);
-...
+Allocated by task 4673:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc_node mm/slab.c:3682 [inline]
+  __kmalloc_node_track_caller+0x47/0x70 mm/slab.c:3696
+  __kmalloc_reserve.isra.41+0x3a/0xe0 net/core/skbuff.c:137
+  pskb_expand_head+0x230/0x10e0 net/core/skbuff.c:1463
+  skb_ensure_writable+0x3dd/0x640 net/core/skbuff.c:5129
+  __bpf_try_make_writable net/core/filter.c:1633 [inline]
+  bpf_try_make_writable net/core/filter.c:1639 [inline]
+  bpf_try_make_head_writable net/core/filter.c:1647 [inline]
+  ____bpf_clone_redirect net/core/filter.c:2084 [inline]
+  bpf_clone_redirect+0x14a/0x490 net/core/filter.c:2062
+  bpf_prog_c39d1ba309a769f7+0xe9e/0x1000
 
-> +
-> +/*
-> + * Setup Page Walk Snoop bit (Bit 87) of a scalable mode PASID
-> + * entry.
-> + */
-> +static inline void pasid_set_page_snoop(struct pasid_entry *pe, bool value)
-> +{
-> +	pasid_set_bits(&pe->val[1], 1 << 23, value);
-> +}
-> +
-> +static void
-> +pasid_based_pasid_cache_invalidation(struct intel_iommu *iommu,
-> +				     int did, int pasid)
+Freed by task 3286:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x210 mm/slab.c:3813
+  load_elf_binary+0x2569/0x5610 fs/binfmt_elf.c:1118
+  search_binary_handler+0x17d/0x570 fs/exec.c:1653
+  exec_binprm fs/exec.c:1695 [inline]
+  __do_execve_file.isra.35+0x15ff/0x2460 fs/exec.c:1819
+  do_execveat_common fs/exec.c:1866 [inline]
+  do_execve fs/exec.c:1883 [inline]
+  __do_sys_execve fs/exec.c:1964 [inline]
+  __se_sys_execve fs/exec.c:1959 [inline]
+  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1959
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-pasid_cache_invalidation_with_pasid
+The buggy address belongs to the object at ffff8801d4a67d00
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 7 bytes to the right of
+  512-byte region [ffff8801d4a67d00, ffff8801d4a67f00)
+The buggy address belongs to the page:
+page:ffffea00075299c0 count:1 mapcount:0 mapping:ffff8801dac00940 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0007529988 ffffea0007529a48 ffff8801dac00940
+raw: 0000000000000000 ffff8801d4a67080 0000000100000006 0000000000000000
+page dumped because: kasan: bad access detected
 
-> +{
-> +	struct qi_desc desc;
-> +
-> +	desc.qw0 = QI_PC_DID(did) | QI_PC_PASID_SEL |
-> QI_PC_PASID(pasid);
-> +	desc.qw1 = 0;
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> +
-> +	qi_submit_sync(&desc, iommu);
-> +}
-> +
-> +static void
-> +pasid_based_iotlb_cache_invalidation(struct intel_iommu *iommu,
-> +				     u16 did, u32 pasid)
-
-iotlb_invalidation_with_pasid
-
-> +{
-> +	struct qi_desc desc;
-> +
-> +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
-> +			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-> QI_EIOTLB_TYPE;
-> +	desc.qw1 = 0;
-> +	desc.qw2 = 0;
-> +	desc.qw3 = 0;
-> +
-> +	qi_submit_sync(&desc, iommu);
-> +}
-> +
-> +static void
-> +pasid_based_dev_iotlb_cache_invalidation(struct intel_iommu *iommu,
-> +					 struct device *dev, int pasid)
-
-devtlb_invalidation_with_pasid
-
-> +{
-> +	struct device_domain_info *info;
-> +	u16 sid, qdep, pfsid;
-> +
-> +	info = dev->archdata.iommu;
-> +	if (!info || !info->ats_enabled)
-> +		return;
-> +
-> +	sid = info->bus << 8 | info->devfn;
-> +	qdep = info->ats_qdep;
-> +	pfsid = info->pfsid;
-> +
-> +	qi_flush_dev_iotlb(iommu, sid, pfsid, qdep, 0, 64 -
-> VTD_PAGE_SHIFT);
-> +}
-> +
-> +static void tear_down_one_pasid_entry(struct intel_iommu *iommu,
-> +				      struct device *dev, u16 did,
-> +				      int pasid)
-> +{
-> +	struct pasid_entry *pte;
-
-ptep
-
-> +
-> +	intel_pasid_clear_entry(dev, pasid);
-> +
-> +	if (!ecap_coherent(iommu->ecap)) {
-> +		pte = intel_pasid_get_entry(dev, pasid);
-> +		clflush_cache_range(pte, sizeof(*pte));
-> +	}
-> +
-> +	pasid_based_pasid_cache_invalidation(iommu, did, pasid);
-> +	pasid_based_iotlb_cache_invalidation(iommu, did, pasid);
-> +
-> +	/* Device IOTLB doesn't need to be flushed in caching mode. */
-> +	if (!cap_caching_mode(iommu->cap))
-> +		pasid_based_dev_iotlb_cache_invalidation(iommu, dev,
-> pasid);
-
-can you elaborate, or point to any spec reference?
-
-> +}
-> +
-> +/*
-> + * Set up the scalable mode pasid table entry for second only or
-> + * passthrough translation type.
-> + */
-> +int intel_pasid_setup_second_level(struct intel_iommu *iommu,
-
-second_level doesn't imply passthrough. what about intel_pasid_
-setup_common, which is then invoked by SL or PT individually (
-or even FL)?
-
-> +				   struct dmar_domain *domain,
-> +				   struct device *dev, int pasid,
-> +				   bool pass_through)
-> +{
-> +	struct pasid_entry *pte;
-> +	struct dma_pte *pgd;
-> +	u64 pgd_val;
-> +	int agaw;
-> +	u16 did;
-> +
-> +	/*
-> +	 * If hardware advertises no support for second level translation,
-> +	 * we only allow pass through translation setup.
-> +	 */
-> +	if (!(ecap_slts(iommu->ecap) || pass_through)) {
-> +		pr_err("No first level translation support on %s, only pass-
-
-first->second
-
-> through mode allowed\n",
-> +		       iommu->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * Skip top levels of page tables for iommu which has less agaw
-
-skip doesn't mean error
-
-> +	 * than default. Unnecessary for PT mode.
-> +	 */
-> +	pgd = domain->pgd;
-> +	if (!pass_through) {
-> +		for (agaw = domain->agaw; agaw != iommu->agaw; agaw--)
-> {
-> +			pgd = phys_to_virt(dma_pte_addr(pgd));
-> +			if (!dma_pte_present(pgd)) {
-> +				dev_err(dev, "Invalid domain page table\n");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
-> +	pgd_val = pass_through ? 0 : virt_to_phys(pgd);
-> +	did = pass_through ? FLPT_DEFAULT_DID :
-> +			domain->iommu_did[iommu->seq_id];
-> +
-> +	pte = intel_pasid_get_entry(dev, pasid);
-> +	if (!pte) {
-> +		dev_err(dev, "Failed to get pasid entry of PASID %d\n",
-> pasid);
-> +		return -ENODEV;
-> +	}
-> +
-> +	pasid_clear_entry(pte);
-> +	pasid_set_domain_id(pte, did);
-> +
-> +	if (!pass_through)
-> +		pasid_set_address_root(pte, pgd_val);
-> +
-> +	pasid_set_address_width(pte, iommu->agaw);
-> +	pasid_set_translation_type(pte, pass_through ? 4 : 2);
-> +	pasid_set_fault_enable(pte);
-> +	pasid_set_page_snoop(pte, !!ecap_smpwc(iommu->ecap));
-> +
-> +	/*
-> +	 * Since it is a second level only translation setup, we should
-> +	 * set SRE bit as well (addresses are expected to be GPAs).
-> +	 */
-> +	pasid_set_sre(pte);
-> +	pasid_set_present(pte);
-> +
-> +	if (!ecap_coherent(iommu->ecap))
-> +		clflush_cache_range(pte, sizeof(*pte));
-> +
-> +	if (cap_caching_mode(iommu->cap)) {
-> +		pasid_based_pasid_cache_invalidation(iommu, did, pasid);
-> +		pasid_based_iotlb_cache_invalidation(iommu, did, pasid);
-> +	} else {
-> +		iommu_flush_write_buffer(iommu);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Tear down the scalable mode pasid table entry for second only or
-> + * passthrough translation type.
-> + */
-> +void intel_pasid_tear_down_second_level(struct intel_iommu *iommu,
-> +					struct dmar_domain *domain,
-> +					struct device *dev, int pasid)
-> +{
-> +	u16 did = domain->iommu_did[iommu->seq_id];
-> +
-> +	tear_down_one_pasid_entry(iommu, dev, did, pasid);
-> +}
-> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
-> index 03c1612d173c..85b158a1826a 100644
-> --- a/drivers/iommu/intel-pasid.h
-> +++ b/drivers/iommu/intel-pasid.h
-> @@ -49,5 +49,12 @@ struct pasid_table *intel_pasid_get_table(struct
-> device *dev);
->  int intel_pasid_get_dev_max_id(struct device *dev);
->  struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid);
->  void intel_pasid_clear_entry(struct device *dev, int pasid);
-> +int intel_pasid_setup_second_level(struct intel_iommu *iommu,
-> +				   struct dmar_domain *domain,
-> +				   struct device *dev, int pasid,
-> +				   bool pass_through);
-> +void intel_pasid_tear_down_second_level(struct intel_iommu *iommu,
-> +					struct dmar_domain *domain,
-> +					struct device *dev, int pasid);
-> 
->  #endif /* __INTEL_PASID_H */
-> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-> index 72aff482b293..d77d23dfd221 100644
-> --- a/include/linux/intel-iommu.h
-> +++ b/include/linux/intel-iommu.h
-> @@ -115,6 +115,8 @@
->   * Extended Capability Register
->   */
-> 
-> +#define ecap_smpwc(e)		(((e) >> 48) & 0x1)
-> +#define ecap_slts(e)		(((e) >> 46) & 0x1)
->  #define ecap_smts(e)		(((e) >> 43) & 0x1)
->  #define ecap_dit(e)		((e >> 41) & 0x1)
->  #define ecap_pasid(e)		((e >> 40) & 0x1)
-> @@ -571,6 +573,7 @@ void free_pgtable_page(void *vaddr);
->  struct intel_iommu *domain_get_iommu(struct dmar_domain *domain);
->  int for_each_device_domain(int (*fn)(struct device_domain_info *info,
->  				     void *data), void *data);
-> +void iommu_flush_write_buffer(struct intel_iommu *iommu);
-> 
->  #ifdef CONFIG_INTEL_IOMMU_SVM
->  int intel_svm_init(struct intel_iommu *iommu);
-> --
-> 2.17.1
+Memory state around the buggy address:
+  ffff8801d4a67e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801d4a67e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801d4a67f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                    ^
+  ffff8801d4a67f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d4a68000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
