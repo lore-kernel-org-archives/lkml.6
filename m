@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFDEC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D5DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F77206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:10:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F77206BA
+	by mail.kernel.org (Postfix) with ESMTP id 2E1B920876
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1B920876
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbeIFNo2 (ORCPT
+        id S1728478AbeIFNp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:44:28 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43116 "EHLO huawei.com"
+        Thu, 6 Sep 2018 09:45:57 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11666 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728059AbeIFNo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:44:27 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1F00B3374D596;
-        Thu,  6 Sep 2018 17:09:55 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
- 17:09:48 +0800
-Date:   Thu, 6 Sep 2018 17:08:01 +0800
+        id S1727817AbeIFNp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:45:57 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id ECB658CFFD7F5;
+        Thu,  6 Sep 2018 17:11:23 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
+ 17:11:18 +0800
+Date:   Thu, 6 Sep 2018 17:09:31 +0800
 From:   Kenneth Lee <liguozhu@hisilicon.com>
 To:     Randy Dunlap <rdunlap@infradead.org>
 CC:     Kenneth Lee <nek.in.cn@gmail.com>,
@@ -48,16 +48,16 @@ CC:     Kenneth Lee <nek.in.cn@gmail.com>,
         <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH 4/7] crypto: add hisilicon Queue Manager driver
-Message-ID: <20180906090801.GC230707@Turing-Arch-b>
+Subject: Re: [PATCH 6/7] crypto: add sdmdev support to Hisilicon QM
+Message-ID: <20180906090931.GD230707@Turing-Arch-b>
 References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180903005204.26041-5-nek.in.cn@gmail.com>
- <4e46a451-d1cd-ac68-84b4-20792fdbc733@infradead.org>
+ <20180903005204.26041-7-nek.in.cn@gmail.com>
+ <46e57b2b-756e-e256-5b3c-30749d865512@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e46a451-d1cd-ac68-84b4-20792fdbc733@infradead.org>
+In-Reply-To: <46e57b2b-756e-e256-5b3c-30749d865512@infradead.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
@@ -66,8 +66,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 02, 2018 at 07:15:07PM -0700, Randy Dunlap wrote:
-> Date: Sun, 2 Sep 2018 19:15:07 -0700
+On Sun, Sep 02, 2018 at 07:19:03PM -0700, Randy Dunlap wrote:
+> Date: Sun, 2 Sep 2018 19:19:03 -0700
 > From: Randy Dunlap <rdunlap@infradead.org>
 > To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
 >  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
@@ -82,27 +82,47 @@ On Sun, Sep 02, 2018 at 07:15:07PM -0700, Randy Dunlap wrote:
 >  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
 >  Sanjay Kumar <sanjay.k.kumar@intel.com>
 > CC: linuxarm@huawei.com
-> Subject: Re: [PATCH 4/7] crypto: add hisilicon Queue Manager driver
+> Subject: Re: [PATCH 6/7] crypto: add sdmdev support to Hisilicon QM
 > User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
 >  Thunderbird/52.9.1
-> Message-ID: <4e46a451-d1cd-ac68-84b4-20792fdbc733@infradead.org>
+> Message-ID: <46e57b2b-756e-e256-5b3c-30749d865512@infradead.org>
 > 
 > On 09/02/2018 05:52 PM, Kenneth Lee wrote:
 > > diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-> > index 8ca9c503bcb0..02a6eef84101 100644
+> > index 1d155708cd69..b85fab48fdab 100644
 > > --- a/drivers/crypto/hisilicon/Kconfig
 > > +++ b/drivers/crypto/hisilicon/Kconfig
-> > @@ -1,4 +1,8 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> > +config CRYPTO_DEV_HISILICON
-> > +	tristate "Support for HISILICON CRYPTO ACCELERATOR"
+> > @@ -17,6 +17,16 @@ config CRYPTO_DEV_HISI_SEC
+> >  	  To compile this as a module, choose M here: the module
+> >  	  will be called hisi_sec.
+> >  
+> > +config CRYPTO_DEV_HISI_SDMDEV
+> > +	bool "Enable SDMDEV interface"
+> > +	depends on CRYPTO_DEV_HISILICON
+> > +	select VFIO_SDMDEV
 > > +	help
-> > +	  Enable this to use Hisilicon Hardware Accelerators
+> > +	  Enable this enable the SDMDEV, "shared IOMMU Domain Mediated Device"
 > 
-> 	                                        Accelerators.
+> At a minimum:
+> 	  Enable this to enable the SDMDEV,
+> 
+> although that could be done better.  Maybe just:
+> 	  Enable the SDMDEV "shared IOMMU Domain Mediated Device"
+> 
+> 	  
+> > +	  interface for all Hisilicon accelerators if they can. The SDMDEV
+> 
+> probably drop "if they can":          accelerators.  The SDMDEV interface
+> 
+> > +	  enable the WarpDrive user space accelerator driver to access the
+> 
+> 	  enables
 
-Thanks, will change it in next version.
+Thank you, will change them all in the coming version.
 
+> 
+> > +	  hardware function directly.
+> > +
 > 
 > 
 > -- 
