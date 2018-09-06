@@ -2,518 +2,166 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C20C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E186BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D034D2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 914F5206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:50:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L4RGtRyc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D034D2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="RjDymW4F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 914F5206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbeIFSZ4 (ORCPT
+        id S1730047AbeIFS0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:25:56 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45854 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeIFSZy (ORCPT
+        Thu, 6 Sep 2018 14:26:01 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:47782 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbeIFS0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:25:54 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w86Do9j5036285;
-        Thu, 6 Sep 2018 08:50:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536241809;
-        bh=OSoJLRI9hkorVgkMWY1UUOSsfWpDn/n8iogwU+UHwZg=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=L4RGtRycjkSaLw2VTQgb85W+Uvvau1AJ4bKiJJPIlxBJg0uAqWdkOUKTHfXQCLx6E
-         7DtM5V7eHXtmA4h3hPNFBVMmkx6QWtFThinF2MZCi5mT+CLzJIsrvlhfoFKSRxc6rH
-         gFJwc2jw61TFnXGr+w1atFPa44oDIIJYWZH0oyPA=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w86Do92A018292;
-        Thu, 6 Sep 2018 08:50:09 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 6 Sep
- 2018 08:50:08 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 6 Sep 2018 08:50:09 -0500
-Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w86Do89X007815;
-        Thu, 6 Sep 2018 08:50:08 -0500
-Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.167.71])
-        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w86Do8x12675;
-        Thu, 6 Sep 2018 08:50:08 -0500 (CDT)
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v6 2/2] leds: lm3697: Introduce the lm3697 driver
-Date:   Thu, 6 Sep 2018 08:50:05 -0500
-Message-ID: <20180906135005.6718-2-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <20180906135005.6718-1-dmurphy@ti.com>
-References: <20180906135005.6718-1-dmurphy@ti.com>
+        Thu, 6 Sep 2018 14:26:00 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id A8E7D10C1317;
+        Thu,  6 Sep 2018 06:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536241821; bh=5RAP9nqSKQ926+vpff6dok6KZ88dtvepvkeIiCG3YWs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=RjDymW4Fu80i0kr/Pnjb0wbNUNsP1EnplgGWxTQaxHejdxmbxDGy0cEnZzgUKB6Tr
+         y6+a5RMY3bkCn21mkjhbc+ZEHybSO3dhDZqlu8KB79B61u4CsbCKxy2B5flTNwXyeb
+         7ZN7uV7uW5YBTYoMR/zwuUDja3GZv3qoeylF6kDqHDfJZuyhrdZVJlClkXGecXdFo4
+         LyJ7lhUCDPWQx1yOnJ6ts49HGtH9YMErAp34w2UfpooQzw9omMHYKXiPxLZ+Pl4ttA
+         M0yGbJBi7A2kHs+gMxxaipdTGA11DWCQfoA6xUY2p4qpKHJIa50/nlmRHZXskLaOY/
+         7mYrckTk1geMA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 90CE45465;
+        Thu,  6 Sep 2018 06:50:18 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 6 Sep 2018 06:50:18 -0700
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 6 Sep 2018 15:50:12 +0200
+Received: from [10.0.2.15] (10.107.25.90) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 6 Sep
+ 2018 15:50:11 +0200
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     Przemyslaw Gaj <pgaj@cadence.com>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        "Alicja Jurasik-Urbaniak" <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        Peter Rosin <peda@axentia.se>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+ <20180719152930.3715-2-boris.brezillon@bootlin.com>
+ <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+ <20180824143934.6d6b6487@bbrezillon>
+ <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
+ <20180824201600.7d80bca9@bbrezillon>
+ <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
+ <20180828140209.29155d00@bbrezillon>
+ <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
+ <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
+ <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
+ <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
+ <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
+ <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
+ <20180906151437.4259d6fc@bbrezillon> <20180906152055.5618d235@bbrezillon>
+From:   vitor <Vitor.Soares@synopsys.com>
+Message-ID: <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
+Date:   Thu, 6 Sep 2018 14:50:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180906152055.5618d235@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.25.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the lm3697 LED driver for
-backlighting and display.
-
-Datasheet location:
-http://www.ti.com/lit/ds/symlink/lm3697.pdf
-
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
-
-v6 - Fix nitpicks - https://lore.kernel.org/patchwork/patch/975388/
-
-v5 - Fix nitpick issues with code - https://lore.kernel.org/patchwork/patch/975061/
-v4 - Made modifications to the control bank routine to accomodate the DT changes
-https://lore.kernel.org/patchwork/patch/974811/
-v3 - Add code to support led-sources and control bank configuration also fix
-other miscellaneous issues reported- https://lore.kernel.org/patchwork/patch/972336/
-v2 - Removed unneed 'of' calls in dt_parse, fixed comment, fixed checkpatch
-error, and change led registration - https://lore.kernel.org/patchwork/patch/971327/
+Hi,
 
 
- drivers/leds/Kconfig       |   9 +
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-lm3697.c | 379 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 389 insertions(+)
- create mode 100644 drivers/leds/leds-lm3697.c
+On 06-09-2018 14:20, Boris Brezillon wrote:
+> On Thu, 6 Sep 2018 15:14:37 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>
+>> On Thu, 6 Sep 2018 14:59:46 +0200
+>> Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>>> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:
+>>>> Hi Boris, Vitor,
+>>>>
+>>>> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
+>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=Q9DWw3KGmshGw0f5QTiffbpbESyUlPx6KmASuDBtX9Y&s=HHE_y1kyMszJvP_tSP9JkDlPYxDywBeHwkMGgCR11uI&e=
+>>>>
+>>>> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
+>>>> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
+>>>>
+>>>> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)
+>>>
+>>> Can you explain the reason for having a user space interface and DT property?
+>>> I thought we had concluded earlier that we wouldn't need that, but it's possible
+>>> that I missed something in the discussion since then.
+>> I don't think the sysfs knob is needed, this being said, after thinking
+>> a bit more about mastership handover and the secondary master case, I
+>> think we have something important to solve.
+>>
+>> When a master is not in control of the bus, it gets informed of devices
+>> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
+>> means the secondary master should populate the bus with I3C/I2C devices
+>> on such events, but that's not enough, because DEFSLVS/DAA do not
+>> provide all device info.Some of them (like read/write/ibi limitations)
+>> require extra CCC commands, and, to send those CCC commands, the
+>> secondary master must claim the bus. We could add a case where we
+>> declare devices as partially discovered until the master acquires
+>> ownership of the bus, but that means part of the data returned by
+>> i3c_device_get_info() will be inaccurate, which might have an impact on
+>> some i3c driver ->probe() functions.
+> Hm, one possible solution would be to register partially discovered
+> devices to the device model and let i3c_device_get_info() claim the bus
+> and request missing data when needed. This way, if the driver needs to
+> call i3c_device_get_info() in its probe path, it should work just fine.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 44097a3e0fcc..784cbe375724 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -151,6 +151,15 @@ config LEDS_LM3642
- 	  converter plus 1.5A constant current driver for a high-current
- 	  white LED.
- 
-+config LEDS_LM3697
-+	tristate "LED support for LM3697 Chip"
-+	depends on LEDS_CLASS && I2C
-+	select REGMAP_I2C
-+	help
-+	  This option enables support for LEDs connected to LM3697.
-+	  The LM3697 is an 11 bit high performance backlight driver for
-+	  keypad and display lighting.
-+
- config LEDS_LM3692X
- 	tristate "LED support for LM3692x Chips"
- 	depends on LEDS_CLASS && I2C && OF
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 420b5d2cfa62..2813f089f3db 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
- obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
- obj-$(CONFIG_LEDS_LM3642)		+= leds-lm3642.o
-+obj-$(CONFIG_LEDS_LM3697)		+= leds-lm3697.o
- obj-$(CONFIG_LEDS_MIKROTIK_RB532)	+= leds-rb532.o
- obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
- obj-$(CONFIG_LEDS_NET48XX)		+= leds-net48xx.o
-diff --git a/drivers/leds/leds-lm3697.c b/drivers/leds/leds-lm3697.c
-new file mode 100644
-index 000000000000..ef42336ef68e
---- /dev/null
-+++ b/drivers/leds/leds-lm3697.c
-@@ -0,0 +1,379 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// TI LM3697 LED chip family driver
-+// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+#include <uapi/linux/uleds.h>
-+
-+#define LM3697_REV			0x0
-+#define LM3697_RESET			0x1
-+#define LM3697_OUTPUT_CONFIG		0x10
-+#define LM3697_CTRL_A_RAMP		0x11
-+#define LM3697_CTRL_B_RAMP		0x12
-+#define LM3697_CTRL_A_B_RT_RAMP		0x13
-+#define LM3697_CTRL_A_B_RAMP_CFG	0x14
-+#define LM3697_CTRL_A_B_BRT_CFG		0x16
-+#define LM3697_CTRL_A_FS_CURR_CFG	0x17
-+#define LM3697_CTRL_B_FS_CURR_CFG	0x18
-+#define LM3697_PWM_CFG			0x1c
-+#define LM3697_CTRL_A_BRT_LSB		0x20
-+#define LM3697_CTRL_A_BRT_MSB		0x21
-+#define LM3697_CTRL_B_BRT_LSB		0x22
-+#define LM3697_CTRL_B_BRT_MSB		0x23
-+#define LM3697_CTRL_ENABLE		0x24
-+
-+#define LM3697_SW_RESET		BIT(0)
-+
-+#define LM3697_CTRL_A_EN	BIT(0)
-+#define LM3697_CTRL_B_EN	BIT(1)
-+#define LM3697_CTRL_A_B_EN	(LM3697_CTRL_A_EN | LM3697_CTRL_B_EN)
-+
-+#define LM3697_MAX_LED_STRINGS	3
-+
-+#define LM3697_CONTROL_A	0
-+#define LM3697_CONTROL_B	1
-+#define LM3697_HVLED_ASSIGNMENT	1
-+
-+/**
-+ * struct lm3697_led -
-+ * @hvled_strings - Array of LED strings associated with a control bank
-+ * @label - LED label
-+ * @led_dev - LED class device
-+ * @priv - Pointer to the device struct
-+ * @control_bank - Control bank the LED is associated to. 0 is control bank A
-+ *		   1 is control bank B.
-+ */
-+struct lm3697_led {
-+	u32 hvled_strings[LM3697_MAX_LED_STRINGS];
-+	char label[LED_MAX_NAME_SIZE];
-+	struct led_classdev led_dev;
-+	struct lm3697 *priv;
-+	int control_bank;
-+};
-+
-+/**
-+ * struct lm3697 -
-+ * @enable_gpio - Hardware enable gpio
-+ * @regulator - LED supply regulator pointer
-+ * @client - Pointer to the I2C client
-+ * @regmap - Devices register map
-+ * @dev - Pointer to the devices device struct
-+ * @lock - Lock for reading/writing the device
-+ * @leds - Array of LED strings.
-+ */
-+struct lm3697 {
-+	struct gpio_desc *enable_gpio;
-+	struct regulator *regulator;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct device *dev;
-+	struct mutex lock;
-+	struct lm3697_led leds[];
-+};
-+
-+static const struct reg_default lm3697_reg_defs[] = {
-+	{LM3697_OUTPUT_CONFIG, 0x6},
-+	{LM3697_CTRL_A_RAMP, 0x0},
-+	{LM3697_CTRL_B_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RT_RAMP, 0x0},
-+	{LM3697_CTRL_A_B_RAMP_CFG, 0x0},
-+	{LM3697_CTRL_A_B_BRT_CFG, 0x0},
-+	{LM3697_CTRL_A_FS_CURR_CFG, 0x13},
-+	{LM3697_CTRL_B_FS_CURR_CFG, 0x13},
-+	{LM3697_PWM_CFG, 0xc},
-+	{LM3697_CTRL_A_BRT_LSB, 0x0},
-+	{LM3697_CTRL_A_BRT_MSB, 0x0},
-+	{LM3697_CTRL_B_BRT_LSB, 0x0},
-+	{LM3697_CTRL_B_BRT_MSB, 0x0},
-+	{LM3697_CTRL_ENABLE, 0x0},
-+};
-+
-+static const struct regmap_config lm3697_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LM3697_CTRL_ENABLE,
-+	.reg_defaults = lm3697_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lm3697_reg_defs),
-+	.cache_type = REGCACHE_FLAT,
-+};
-+
-+static int lm3697_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness brt_val)
-+{
-+	struct lm3697_led *led = container_of(led_cdev, struct lm3697_led,
-+					      led_dev);
-+	int brt_msb_reg, brt_lsb_reg, ctrl_en_val;
-+	int led_brightness_lsb = (brt_val >> 5);
-+	int ret;
-+
-+	mutex_lock(&led->priv->lock);
-+
-+	if (led->control_bank == LM3697_CONTROL_A) {
-+		brt_msb_reg = LM3697_CTRL_A_BRT_MSB;
-+		brt_lsb_reg = LM3697_CTRL_A_BRT_LSB;
-+		ctrl_en_val = LM3697_CTRL_A_EN;
-+	} else {
-+		brt_msb_reg = LM3697_CTRL_B_BRT_MSB;
-+		brt_lsb_reg = LM3697_CTRL_B_BRT_LSB;
-+		ctrl_en_val = LM3697_CTRL_B_EN;
-+	}
-+
-+	if (brt_val == LED_OFF)
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ~ctrl_en_val);
-+	else
-+		ret = regmap_update_bits(led->priv->regmap, LM3697_CTRL_ENABLE,
-+					 ctrl_en_val, ctrl_en_val);
-+
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write CTRL enable\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->priv->regmap, brt_lsb_reg, led_brightness_lsb);
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write LSB\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
-+	if (ret) {
-+		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
-+		goto out;
-+	}
-+out:
-+	mutex_unlock(&led->priv->lock);
-+	return ret;
-+}
-+
-+static int lm3697_set_control_bank(struct lm3697 *priv)
-+{
-+	u8 control_bank_config = 0;
-+	struct lm3697_led *led;
-+	int ret, i;
-+
-+	led = &priv->leds[0];
-+	if (led->control_bank == LM3697_CONTROL_A)
-+		led = &priv->leds[1];
-+
-+	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
-+		if (led->hvled_strings[i] == LM3697_HVLED_ASSIGNMENT)
-+			control_bank_config |= 1 << i;
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_OUTPUT_CONFIG,
-+			   control_bank_config);
-+	if (ret)
-+		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
-+
-+	return ret;
-+}
-+
-+static int lm3697_init(struct lm3697 *priv)
-+{
-+	int ret;
-+
-+	if (priv->enable_gpio) {
-+		gpiod_direction_output(priv->enable_gpio, 1);
-+	} else {
-+		ret = regmap_write(priv->regmap, LM3697_RESET, LM3697_SW_RESET);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "Cannot reset the device\n");
-+			goto out;
-+		}
-+	}
-+
-+	ret = regmap_write(priv->regmap, LM3697_CTRL_ENABLE, 0x0);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
-+		goto out;
-+	}
-+
-+	ret = lm3697_set_control_bank(priv);
-+	if (ret)
-+		dev_err(&priv->client->dev, "Setting the CRTL bank failed\n");
-+
-+out:
-+	return ret;
-+}
-+
-+static int lm3697_probe_dt(struct lm3697 *priv)
-+{
-+	struct fwnode_handle *child = NULL;
-+	struct lm3697_led *led;
-+	const char *name;
-+	int control_bank;
-+	size_t i = 0;
-+	int ret;
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
-+						   "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio)) {
-+		ret = PTR_ERR(priv->enable_gpio);
-+		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
-+	if (IS_ERR(priv->regulator))
-+		priv->regulator = NULL;
-+
-+	device_for_each_child_node(priv->dev, child) {
-+		ret = fwnode_property_read_u32(child, "reg", &control_bank);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "reg property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		if (control_bank > LM3697_CONTROL_B) {
-+			dev_err(&priv->client->dev, "reg property is invalid\n");
-+			ret = -EINVAL;
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		led = &priv->leds[i];
-+		led->control_bank = control_bank;
-+		ret = fwnode_property_read_u32_array(child, "led-sources",
-+						    led->hvled_strings,
-+						    LM3697_MAX_LED_STRINGS);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led-sources property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		fwnode_property_read_string(child, "linux,default-trigger",
-+					    &led->led_dev.default_trigger);
-+
-+		ret = fwnode_property_read_string(child, "label", &name);
-+		if (ret)
-+			snprintf(led->label, sizeof(led->label),
-+				"%s::", priv->client->name);
-+		else
-+			snprintf(led->label, sizeof(led->label),
-+				 "%s:%s", priv->client->name, name);
-+
-+		led->priv = priv;
-+		led->led_dev.name = led->label;
-+		led->led_dev.brightness_set_blocking = lm3697_brightness_set;
-+
-+		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led register err: %d\n",
-+				ret);
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		i++;
-+	}
-+
-+child_out:
-+	return ret;
-+}
-+
-+static int lm3697_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct lm3697 *led;
-+	int count;
-+	int ret;
-+
-+	count = device_get_child_node_count(&client->dev);
-+	if (!count) {
-+		dev_err(&client->dev, "LEDs are not defined in device tree!");
-+		return -ENODEV;
-+	}
-+
-+	led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
-+			   GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	mutex_init(&led->lock);
-+	i2c_set_clientdata(client, led);
-+
-+	led->client = client;
-+	led->dev = &client->dev;
-+	led->regmap = devm_regmap_init_i2c(client, &lm3697_regmap_config);
-+	if (IS_ERR(led->regmap)) {
-+		ret = PTR_ERR(led->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = lm3697_probe_dt(led);
-+	if (ret)
-+		return ret;
-+
-+	return lm3697_init(led);
-+}
-+
-+static int lm3697_remove(struct i2c_client *client)
-+{
-+	struct lm3697 *led = i2c_get_clientdata(client);
-+	int ret;
-+
-+	ret = regmap_update_bits(led->regmap, LM3697_CTRL_ENABLE,
-+				 LM3697_CTRL_A_B_EN, 0);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed to disable the device\n");
-+		return ret;
-+	}
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lm3697_id[] = {
-+	{ "lm3697", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lm3697_id);
-+
-+static const struct of_device_id of_lm3697_leds_match[] = {
-+	{ .compatible = "ti,lm3697", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_lm3697_leds_match);
-+
-+static struct i2c_driver lm3697_driver = {
-+	.driver = {
-+		.name	= "lm3697",
-+		.of_match_table = of_lm3697_leds_match,
-+	},
-+	.probe		= lm3697_probe,
-+	.remove		= lm3697_remove,
-+	.id_table	= lm3697_id,
-+};
-+module_i2c_driver(lm3697_driver);
-+
-+MODULE_DESCRIPTION("Texas Instruments LM3697 LED driver");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.0.1855.g63749b2dea
+Why don't use the i3c_master_add_i3c_dev_locked that job? It create, 
+attach and retrieve the device info.
+This can be triggered after the secondary master receive ENEC MR until 
+them is keep in the driver memory.
+
+Best regards,
+Vitor Soares
+
 
