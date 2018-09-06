@@ -5,36 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D37C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEB5C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61C5920870
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C5920870
+	by mail.kernel.org (Postfix) with ESMTP id 42D43206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:57:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42D43206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeIFQaH (ORCPT
+        id S1727644AbeIFQc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 12:30:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:14321 "EHLO mga05.intel.com"
+        Thu, 6 Sep 2018 12:32:28 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62446 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbeIFQaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 12:30:07 -0400
+        id S1725929AbeIFQc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 12:32:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 04:55:00 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 04:57:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
-   d="scan'208";a="88154922"
+   d="scan'208";a="254997471"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 06 Sep 2018 04:54:48 -0700
+  by orsmga005.jf.intel.com with ESMTP; 06 Sep 2018 04:57:19 -0700
 Received: from [10.125.252.28] (abudanko-mobl.ccr.corp.intel.com [10.125.252.28])
-        by linux.intel.com (Postfix) with ESMTP id AD9BC5803D7;
-        Thu,  6 Sep 2018 04:54:46 -0700 (PDT)
-Subject: Re: [PATCH v7 1/2]: perf util: map data buffer for preserving
- collected data
+        by linux.intel.com (Postfix) with ESMTP id B4EC55803D7;
+        Thu,  6 Sep 2018 04:57:17 -0700 (PDT)
+Subject: Re: [PATCH v7 2/2]: perf record: enable asynchronous trace writing
 To:     Jiri Olsa <jolsa@redhat.com>
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -44,16 +43,16 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
- <cf6cd6ca-12dd-9ee8-8e18-ee02f289c45e@linux.intel.com>
- <20180906110441.GI8248@krava>
+ <dc18a621-4464-e5a5-ce10-5f7b2f6a9176@linux.intel.com>
+ <20180906110400.GD8248@krava>
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <668c4974-27be-2546-0284-5b72c2a9a0e1@linux.intel.com>
-Date:   Thu, 6 Sep 2018 14:54:45 +0300
+Message-ID: <af8cc53e-b6c3-9a28-6f66-45817b65badc@linux.intel.com>
+Date:   Thu, 6 Sep 2018 14:57:16 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180906110441.GI8248@krava>
+In-Reply-To: <20180906110400.GD8248@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,46 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 06.09.2018 14:04, Jiri Olsa wrote:
-> On Wed, Sep 05, 2018 at 10:19:56AM +0300, Alexey Budankov wrote:
+> On Wed, Sep 05, 2018 at 10:39:25AM +0300, Alexey Budankov wrote:
 > 
 > SNIP
 > 
->> @@ -166,6 +174,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
->>  
->>  int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
+>> -static int record__pushfn(void *to, void *bf, size_t size)
+>> +static int record__pushfn(void *to, struct aiocb *cblock, void *data, size_t size)
 >>  {
->> +	int i;
->>  	/*
->>  	 * The last one will be done at perf_mmap__consume(), so that we
->>  	 * make sure we don't prevent tools from consuming every last event in
->> @@ -190,6 +199,50 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
->>  		map->base = NULL;
->>  		return -1;
->>  	}
->> +	map->nr_cblocks = mp->nr_cblocks;
->> +	map->cblocks = calloc(map->nr_cblocks, sizeof(struct aiocb*));
->> +	if (!map->cblocks) {
->> +		pr_debug2("failed to allocate perf event data buffers, error %d\n",
->> +				errno);
->> +		return -1;
->> +	}
->> +	map->data = calloc(map->nr_cblocks, sizeof(void*));
->> +	if (map->data) {
->> +		int delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
->> +		for (i = 0; i < map->nr_cblocks; ++i) {
->> +			map->data[i] = malloc(perf_mmap__mmap_len(map));
->> +			if (map->data[i]) {
->> +				int prio;
->> +				unsigned char *data = map->data[i];
->> +				map->cblocks[i] = (struct aiocb *)&data[map->mask + 1];
+>> +	off_t off;
+>>  	struct record *rec = to;
+>> +	int ret, trace_fd = rec->session->data->file.fd;
+>>  
+>>  	rec->samples++;
+>> -	return record__write(rec, bf, size);
+>> +
+>> +	off =
+>> +	lseek(trace_fd, 0, SEEK_CUR);
+>> +	lseek(trace_fd, off + size, SEEK_SET);
+>> +
+>> +	ret = record__aio_write(cblock, trace_fd, data, size, off);
+>> +	if (!ret) {
+>> +		rec->bytes_written += size;
+>> +		if (switch_output_size(rec))
+>> +			trigger_hit(&switch_output_trigger);
 > 
-> the 'struct aiocb' is allocated at the last page of the buffer?
-> is that enough space? could we please make this more transparent
-> and allocate that space separately?
+> why do you need to call switch output from here?
 
-Would the array of pointers followed by the array of referenced objects fit?
+Just preserved this logic from the serial implementation.
 
 > 
-> thanks,
 > jirka
 > 
