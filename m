@@ -2,113 +2,124 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD643C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFCDC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D712075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:45:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aa57Wlz1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D712075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A10E82075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10E82075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbeIFUV6 (ORCPT
+        id S1730335AbeIFUWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 16:21:58 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33854 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728047AbeIFUV6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 16:21:58 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 13-v6so21494064ois.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 08:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SCF/qGOGTlsPnERb2AnClt8bZvvrNKHSZvr5ZA3FL0k=;
-        b=aa57Wlz1qcEqmNezU9oMI1c4IduE1+jZlS4oLQi3GhO8k0luazSwPnf/itreCnQuWC
-         YvBc6yxiLs7EXup3uizv3vOekIITSlftGLa17iQXpH/qiqG8PCSvh50H5psGWi99LR+8
-         HdVivpK1pcFozuqMzOTsyJLdAwbSw2wl+Fwl9rgjvMvwi6qnDrzIFU/4D9dn2mrb2A/p
-         d8ub7R/71qIZX92wWBLNURWs6h6la6dS2Z9YA+K1nEDJZeGtzLkRlMsi6mjS/u45g+MV
-         rQo1QkOvTZXB2kqehGeOC85po2j8QsLDmBhXUy3mU/EfaRm5j1IJzNw+EYvwjymRwWuf
-         ELxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SCF/qGOGTlsPnERb2AnClt8bZvvrNKHSZvr5ZA3FL0k=;
-        b=RsnKFwaqAVN0XeEWjg9czWIMyxrb4PnCssH5kRlH0BMArKA8d4yx6GK4pY5Z9taKcL
-         rtq61q8HrVExBAzripsdkPVxj8oQIvN+AP8eNX1exxWyO02L5voUUHet0rBeYaf6tX4Z
-         Yn2X0M4Wq+A16SqQ7SjfW6lgH7YD1AYdpz36ffGwpBOz1Zu8KKQZRZ1/uiWozjpHUMom
-         1kdmkvKixpCDgT/CdBBYGrfLF2s/cE2YcDouEQcAkpcfT8nJNqvmN8knGgqmZ0PYUgsA
-         T6DRS5xBt+BFaqL4yb+jG6BQyhsrM9jBoGRxPoVfoQ8G4eDLl7X6L7bnxVvs+3RbbMOu
-         Ws2w==
-X-Gm-Message-State: APzg51C+EbS7qmB4WHx2v1Qi7TyIbXAwaGep5IdzSMc3fDChi9pZDt4z
-        dptIgEuDIv2dWdothJwF9vIXOWnGFG7ohbdwSA9BYA==
-X-Google-Smtp-Source: ANB0VdZnZ5IzqRwr29PPnWagZEt+JFJXf5cTrL0IpHw6BbSWedX58v1ysRQWamQ8EcxSHrEvcuBHlE9kvBwZjJjZuIw=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr3501091oia.229.1536248751783;
- Thu, 06 Sep 2018 08:45:51 -0700 (PDT)
+        Thu, 6 Sep 2018 16:22:09 -0400
+Received: from mga03.intel.com ([134.134.136.65]:59547 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730149AbeIFUWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 16:22:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 08:46:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="70877833"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
+  by orsmga007.jf.intel.com with ESMTP; 06 Sep 2018 08:45:59 -0700
+Subject: Re: [PATCH] uio: fix is_source param for check_copy_size() in
+ copy_to_iter_mcsafe()
+From:   Dave Jiang <dave.jiang@intel.com>
+To:     gregkh@linuxfoundation.org
+Cc:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        fan.du@intel.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org,
+        Wenwei Tao <wenwei.tww@alibaba-inc.com>
+References: <153617950046.33664.13445188581267552601.stgit@djiang5-desk3.ch.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ o6nmKbYpUAltQObU2w==
+Message-ID: <c81d5d9d-4d9f-917f-d7f5-4d9a4dc6e146@intel.com>
+Date:   Thu, 6 Sep 2018 08:45:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-4-tycho@tycho.ws>
-In-Reply-To: <20180906152859.7810-4-tycho@tycho.ws>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 6 Sep 2018 17:45:25 +0200
-Message-ID: <CAG48ez3gRpGZT4Vk7ZZXk5dkYeVfnGsaqeFZeOio0GpqFd=Vow@mail.gmail.com>
-Subject: Re: [PATCH v6 3/5] seccomp: add a way to get a listener fd from ptrace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>, suda.akihiro@lab.ntt.co.jp
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <153617950046.33664.13445188581267552601.stgit@djiang5-desk3.ch.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
-> version which can acquire filters is useful. There are at least two reasons
-> this is preferable, even though it uses ptrace:
->
-> 1. You can control tasks that aren't cooperating with you
-> 2. You can control tasks whose filters block sendmsg() and socket(); if the
->    task installs a filter which blocks these calls, there's no way with
->    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
-[...]
-> +long seccomp_new_listener(struct task_struct *task,
-> +                         unsigned long filter_off)
-> +{
-> +       struct seccomp_filter *filter;
-> +       struct file *listener;
-> +       int fd;
-> +
-> +       if (!capable(CAP_SYS_ADMIN))
-> +               return -EACCES;
-> +
-> +       filter = get_nth_filter(task, filter_off);
-> +       if (IS_ERR(filter))
-> +               return PTR_ERR(filter);
-> +
-> +       fd = get_unused_fd_flags(0);
-> +       if (fd < 0) {
-> +               __put_seccomp_filter(filter);
-> +               return fd;
-> +       }
-> +
-> +       listener = init_listener(task, task->seccomp.filter);
 
-Did you mean to write something like `init_listener(task, filter)` here?
+
+On 09/05/2018 01:31 PM, Dave Jiang wrote:
+> copy_to_iter_mcsafe() is passing in the is_source parameter as "false"
+> to check_copy_size(). This is different than what copy_to_iter() does.
+> Also, the addr parameter passed to check_copy_size() is the source so
+> therefore we should be passing in "true" instead.
+> 
+> Fixes: 8780356ef630 ("x86/asm/memcpy_mcsafe: Define copy_to_iter_mcsafe()")
+> 
+> Reported-by: Fan Du <fan.du@intel.com>
+Slight correction:
+Reported-by: Wenwei Tao <wenwei.tww@alibaba-inc.com>
+
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+> ---
+>  include/linux/uio.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 409c845d4cd3..422b1c01ee0d 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -172,7 +172,7 @@ size_t copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
+>  static __always_inline __must_check
+>  size_t copy_to_iter_mcsafe(void *addr, size_t bytes, struct iov_iter *i)
+>  {
+> -	if (unlikely(!check_copy_size(addr, bytes, false)))
+> +	if (unlikely(!check_copy_size(addr, bytes, true)))
+>  		return 0;
+>  	else
+>  		return _copy_to_iter_mcsafe(addr, bytes, i);
+> 
