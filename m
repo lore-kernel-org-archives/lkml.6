@@ -2,288 +2,149 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA7BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF81EC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3323C2075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3323C2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7628320659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:20:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="anT1rZiS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7628320659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbeIGA4B (ORCPT
+        id S1729367AbeIGA56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 20:56:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39538 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727635AbeIGA4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 20:56:01 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69D0980C3C2D;
-        Thu,  6 Sep 2018 20:18:54 +0000 (UTC)
-Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D3B4210073B5;
-        Thu,  6 Sep 2018 20:18:51 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] locking/rwsem: Make owner store task pointer of last owning reader
-Date:   Thu,  6 Sep 2018 16:18:34 -0400
-Message-Id: <1536265114-10842-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 20:18:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 20:18:54 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Thu, 6 Sep 2018 20:57:58 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:37553 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728820AbeIGA55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 20:57:57 -0400
+Received: by mail-ua1-f68.google.com with SMTP id y10-v6so10152569uao.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 13:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kFlKKQ+/69uIIR4WJO5EdC1jtbtoFf9Pi3YWjYW+e8k=;
+        b=anT1rZiSFW54boC0agWYT9t7tfbxpCY5e6r8pOniulL2yW3ONqQhEHrRTFw7Q0MoFr
+         UV+7wEGNMqSO8mW/onqQcTRVssErMjR8s/pG8kgD54wGXuY6Ld4JNlde/nrh4HimyByM
+         ES79Ya2oGFY7INab6TBfL4k9kJaM9EIa8jzAk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kFlKKQ+/69uIIR4WJO5EdC1jtbtoFf9Pi3YWjYW+e8k=;
+        b=WiQxaLeTnpdkIGKitMrw3XOdYFXg27w4MJLBibIDFX8xlwTcEHildweXoynjO1rZM5
+         p/FJpCHMCyo5WtrcAklPR2QELfBYErVZKZ5omMaYgYVhUeejGL1CPya0fdPwgpKqGNW1
+         SRcjXJ0RnIJmxTCpilEOOu6Mt5g0TjvVWUwPplAtrywEs0Cf2HI52IHBsyOjYlK/NlXm
+         A07hAQhR7NFAdj7PwHq7FM1iQUgto1TiVChWQxY1v98LWGSuTjqX31Ub5OInMNmH8Jeo
+         NBd8bJc/YmM+0Sdk+JrW6KolzixvE9EhmDiAyNaX5IDJ7nciphataDkhWvBWBd48zu1+
+         bHvg==
+X-Gm-Message-State: APzg51DzQ9eVZareH6LtjnJVJwhXXWLZIk+5iInxaPaJkuO6kNpIQLki
+        Le+CNN3+Z1xoXHOTQI/3K8/cLC40oX8=
+X-Google-Smtp-Source: ANB0VdZsM9C+Prww0VwshJwU+uyePAxrteWTeLurLKQecuNcfxbmOtPp7/xi63T0Pmm76N6k6AxnXg==
+X-Received: by 2002:a1f:aa8a:: with SMTP id t132-v6mr1629383vke.80.1536265250615;
+        Thu, 06 Sep 2018 13:20:50 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id n14-v6sm3323810uai.40.2018.09.06.13.20.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 13:20:49 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id g18-v6so10160375uam.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 13:20:49 -0700 (PDT)
+X-Received: by 2002:a1f:a784:: with SMTP id q126-v6mr1644098vke.70.1536265248957;
+ Thu, 06 Sep 2018 13:20:48 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1f:5e8e:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 13:20:48 -0700 (PDT)
+In-Reply-To: <20180906201206.GX2523@minitux>
+References: <20180901221953.21666-1-bjorn.andersson@linaro.org>
+ <CAD=FV=VE5gYyivgy=OrZV6g0UrtYfZZ+CGv7DV+v5be3teVSdw@mail.gmail.com> <20180906201206.GX2523@minitux>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 6 Sep 2018 13:20:48 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Whf=Y3xrrOO46gA5EwxssJFxt1dZ9B=5=np=fo8R3dSQ@mail.gmail.com>
+Message-ID: <CAD=FV=Whf=Y3xrrOO46gA5EwxssJFxt1dZ9B=5=np=fo8R3dSQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: pm8998 and pmi8998 regulators
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when a reader acquires a lock, it only sets the
-RWSEM_READER_OWNED bit in the owner field. The other bits are simply
-not used. When debugging hanging cases involving rwsems and readers,
-the owner value does not provide much useful information at all.
+Hi,
 
-This patch modifies the current behavior to always store the task_struct
-pointer of the last rwsem-acquiring reader in a reader-owned rwsem. This
-may be useful in debugging rwsem hanging cases especially if only one
-reader is involved. However, the task in the owner field may not the
-real owner or one of the real owners at all when the owner value is
-examined, for example, in a crash dump. So it is just an additional
-hint about the past history.
+On Thu, Sep 6, 2018 at 1:12 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>> * Seems to have a few rails named differently LDO22 is named
+>> "vreg_l22a_2p95" in your DTS but "vreg_l22a_2p85" in mine as one
+>> example.  The schematics I have (from Dec 5, 2017) show it as 2p85.
+>>
+>
+> Looks like a typo on my part, yours matches the schematics I have as
+> well.
 
-If CONFIG_DEBUG_RWSEMS is enabled, the owner field will be checked at
-unlock time too to make sure the task pointer value is valid. That does
-have a slight performance cost and so is only enabled as part of that
-debug option.
+OK.  That was just one example.  Maybe do a diff of the two and see if
+you find any where you believe your patch was right and mine was
+wrong.
 
-From the performance point of view, it is expected that the changes
-shouldn't have any noticeable performance impact. A rwsem microbenchmark
-(with 48 worker threads and 1:1 reader/writer ratio) was ran on a
-2-socket 24-core 48-thread Haswell system.  The locking rates on a
-4.19-rc1 based kernel were as follows:
 
-  1) Unpatched kernel:				543.3 kops/s
-  2) Patched kernel:				549.2 kops/s
-  3) Patched kernel (CONFIG_DEBUG_RWSEMS on):	546.6 kops/s
+>> * Is lacking many alternate names for rails.  We can debate this also
+>> if you want.
+>>
+>
+> Afaict names such as "vdda_pcie_1p2" is the name of the pin on the
+> SDM845, while the thing that comes out of the regulator is named
+> vreg_l26a_1p2.
+>
+> So I believe this name should be used in the pcie node as:
+>
+>   vdda_pcie_1p2-supply = <&vreg_l26a_1p2>;
 
-There was actually a slight increase in performance (1.1%) in this
-particular case. Maybe it was caused by the elimination of a branch or
-just a testing noise. Turning on the CONFIG_DEBUG_RWSEMS option also
-had less than the expected impact on performance.
+Adding labels for things like "vdda_pcie_1p2" is based on a suggestion
+Stephen Boyd made to me that he felt it would be nice to be able to
+refer to things by the name of the supply pin on the SoC.  This could
+possibly enable better sharing of device tree snippets between
+different boards using the same SoC and the idea seemed sane to me, so
+I implemented it.  I described it in my commit message like this:
 
-The least significant 2 bits of the owner value are now used to designate
-the rwsem is readers owned and the owners are anonymous.
+- Regulators that are hooked up to supply pins on the SoC are given
+  an alias matching the name of that pin (pin name comes from the
+  Qualcomm SoC "device specification" doc).
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/rwsem.h       |  4 +-
- kernel/locking/rwsem-xadd.c |  2 +-
- kernel/locking/rwsem.c      |  7 ++--
- kernel/locking/rwsem.h      | 95 +++++++++++++++++++++++++++++++++------------
- 4 files changed, 78 insertions(+), 30 deletions(-)
+If folks don't like it, though, it's easy to remove.
 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index ab93b6e..67dbb57 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -45,10 +45,10 @@ struct rw_semaphore {
- };
- 
- /*
-- * Setting bit 0 of the owner field with other non-zero bits will indicate
-+ * Setting bit 1 of the owner field but not bit 0 will indicate
-  * that the rwsem is writer-owned with an unknown owner.
-  */
--#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1L)
-+#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-2L)
- 
- extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
- extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 01fcb80..09b1800 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -180,7 +180,7 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 		 * but it gives the spinners an early indication that the
- 		 * readers now have the lock.
- 		 */
--		rwsem_set_reader_owned(sem);
-+		__rwsem_set_reader_owned(sem, waiter->task);
- 	}
- 
- 	/*
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 776308d..e586f0d 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -117,8 +117,9 @@ int down_write_trylock(struct rw_semaphore *sem)
- void up_read(struct rw_semaphore *sem)
- {
- 	rwsem_release(&sem->dep_map, 1, _RET_IP_);
--	DEBUG_RWSEMS_WARN_ON(sem->owner != RWSEM_READER_OWNED);
-+	DEBUG_RWSEMS_WARN_ON(!((unsigned long)sem->owner & RWSEM_READER_OWNED));
- 
-+	rwsem_clear_reader_owned(sem);
- 	__up_read(sem);
- }
- 
-@@ -181,7 +182,7 @@ void down_read_non_owner(struct rw_semaphore *sem)
- 	might_sleep();
- 
- 	__down_read(sem);
--	rwsem_set_reader_owned(sem);
-+	__rwsem_set_reader_owned(sem, NULL);
- }
- 
- EXPORT_SYMBOL(down_read_non_owner);
-@@ -215,7 +216,7 @@ int __sched down_write_killable_nested(struct rw_semaphore *sem, int subclass)
- 
- void up_read_non_owner(struct rw_semaphore *sem)
- {
--	DEBUG_RWSEMS_WARN_ON(sem->owner != RWSEM_READER_OWNED);
-+	DEBUG_RWSEMS_WARN_ON(!((unsigned long)sem->owner & RWSEM_READER_OWNED));
- 	__up_read(sem);
- }
- 
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index b9d0e72..bad2bca 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -1,24 +1,30 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * The owner field of the rw_semaphore structure will be set to
-- * RWSEM_READER_OWNED when a reader grabs the lock. A writer will clear
-- * the owner field when it unlocks. A reader, on the other hand, will
-- * not touch the owner field when it unlocks.
-+ * The least significant 2 bits of the owner value has the following
-+ * meanings when set.
-+ *  - RWSEM_READER_OWNED (bit 0): The rwsem is owned by readers
-+ *  - RWSEM_ANONYMOUSLY_OWNED (bit 1): The rwsem is anonymously owned,
-+ *    i.e. the owner(s) cannot be readily determined. It can be reader
-+ *    owned or the owning writer is indeterminate.
-  *
-- * In essence, the owner field now has the following 4 states:
-- *  1) 0
-- *     - lock is free or the owner hasn't set the field yet
-- *  2) RWSEM_READER_OWNED
-- *     - lock is currently or previously owned by readers (lock is free
-- *       or not set by owner yet)
-- *  3) RWSEM_ANONYMOUSLY_OWNED bit set with some other bits set as well
-- *     - lock is owned by an anonymous writer, so spinning on the lock
-- *       owner should be disabled.
-- *  4) Other non-zero value
-- *     - a writer owns the lock and other writers can spin on the lock owner.
-+ * When a writer acquires a rwsem, it puts its task_struct pointer
-+ * into the owner field. It is cleared after an unlock.
-+ *
-+ * When a reader acquires a rwsem, it will also puts its task_struct
-+ * pointer into the owner field with both the RWSEM_READER_OWNED and
-+ * RWSEM_ANONYMOUSLY_OWNED bits set. On unlock, the owner field will
-+ * largely be left untouched. So for a free or reader-owned rwsem,
-+ * the owner value may contain information about the last reader that
-+ * acquires the rwsem. The anonymous bit is set because that particular
-+ * reader may or may not still own the lock.
-+ *
-+ * That information may be helpful in debugging cases where the system
-+ * seems to hang on a reader owned rwsem especially if only one reader
-+ * is involved. Ideally we would like to track all the readers that own
-+ * a rwsem, but the overhead is simply too big.
-  */
--#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 0)
--#define RWSEM_READER_OWNED	((struct task_struct *)RWSEM_ANONYMOUSLY_OWNED)
-+#define RWSEM_READER_OWNED	(1UL << 0)
-+#define RWSEM_ANONYMOUSLY_OWNED	(1UL << 1)
- 
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
-@@ -44,15 +50,26 @@ static inline void rwsem_clear_owner(struct rw_semaphore *sem)
- 	WRITE_ONCE(sem->owner, NULL);
- }
- 
-+/*
-+ * The task_struct pointer of the last owning reader will be left in
-+ * the owner field.
-+ *
-+ * Note that the owner value just indicates the task has owned the rwsem
-+ * previously, it may not be the real owner or one of the real owners
-+ * anymore when that field is examined, so take it with a grain of salt.
-+ */
-+static inline void __rwsem_set_reader_owned(struct rw_semaphore *sem,
-+					    struct task_struct *owner)
-+{
-+	unsigned long val = (unsigned long)owner | RWSEM_READER_OWNED
-+						 | RWSEM_ANONYMOUSLY_OWNED;
-+
-+	WRITE_ONCE(sem->owner, (struct task_struct *)val);
-+}
-+
- static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- {
--	/*
--	 * We check the owner value first to make sure that we will only
--	 * do a write to the rwsem cacheline when it is really necessary
--	 * to minimize cacheline contention.
--	 */
--	if (READ_ONCE(sem->owner) != RWSEM_READER_OWNED)
--		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
-+	__rwsem_set_reader_owned(sem, current);
- }
- 
- /*
-@@ -72,6 +89,25 @@ static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
- {
- 	return (unsigned long)owner & RWSEM_ANONYMOUSLY_OWNED;
- }
-+
-+#ifdef CONFIG_DEBUG_RWSEMS
-+/*
-+ * With CONFIG_DEBUG_RWSEMS configured, it will make sure that if there
-+ * is a task pointer in owner of a reader-owned rwsem, it will be the
-+ * real owner or one of the real owners. The only exception is when the
-+ * unlock is done by up_read_non_owner().
-+ */
-+#define rwsem_clear_reader_owned rwsem_clear_reader_owned
-+static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
-+{
-+	unsigned long val = (unsigned long)current | RWSEM_READER_OWNED
-+						   | RWSEM_ANONYMOUSLY_OWNED;
-+	if (READ_ONCE(sem->owner) == (struct task_struct *)val)
-+		cmpxchg_relaxed((unsigned long *)&sem->owner, val,
-+				RWSEM_READER_OWNED | RWSEM_ANONYMOUSLY_OWNED);
-+}
-+#endif
-+
- #else
- static inline void rwsem_set_owner(struct rw_semaphore *sem)
- {
-@@ -81,7 +117,18 @@ static inline void rwsem_clear_owner(struct rw_semaphore *sem)
- {
- }
- 
-+static inline void __rwsem_set_reader_owned(struct rw_semaphore *sem,
-+					   struct task_struct *owner)
-+{
-+}
-+
- static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- {
- }
- #endif
-+
-+#ifndef rwsem_clear_reader_owned
-+static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
-+{
-+}
-+#endif
--- 
-1.8.3.1
+>> * Have a few voltage values different.  If you have better info than
+>> me we should update to yours.  Diffing against yours does make me
+>> believe that perhaps LDO14 should be listed as 1.88 V in my patch.
+>>
+>
+> Downstream it's listed as min: 1.8V max: 1.88V init: 1.8V.
 
+I can change mine to that.  It's a very strange specification though.
+Is it really 1.80 - 1.88 V?  Does something out there actually need
+the voltage to be variable in this small range?
+
+
+>> * Is lacking pm8005.
+>>
+>
+> I didn't need this, yet...
+
+OK.  I can certainly remove it as needed--the downstream patch I
+started with had it so I figured I'd keep it in.
+
+
+-Doug
