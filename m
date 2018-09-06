@@ -2,154 +2,119 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8918D2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lOOPOYfP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8918D2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A5E020844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A5E020844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbeIFXLU (ORCPT
+        id S1728700AbeIFXMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:11:20 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:39081 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbeIFXLT (ORCPT
+        Thu, 6 Sep 2018 19:12:35 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:37484 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbeIFXMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:11:19 -0400
-Received: by mail-ua1-f66.google.com with SMTP id g18-v6so9822930uam.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 11:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=kaOl//CCJ6TM2qLUZQtDDpU/llgYGkt3l6Xkuf1eeQ4=;
-        b=lOOPOYfPzhu4EtaFAzi+hmcAxCqZPPv4/9qLMaytJvep6gIGHgCxNq/3m6/Dcvwf5E
-         KTvZxvR4fjwKu99paR3VbwRM7mYNoEbGxWPfrzjM1WJ4zvEuhTdkYJveiaPWqqZvWysg
-         ocabv+Ws49/jznMmf9RQ8RzjxaZJU6WitiNHs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=kaOl//CCJ6TM2qLUZQtDDpU/llgYGkt3l6Xkuf1eeQ4=;
-        b=k8flSYXVV9xVTxMYd1X8APqvo9faM/s1bNceC9pqkNyWgucN3GZEejL8eov3ri/qI/
-         lH/Okp8Nd6Qcwg0sFBJSeopBe/VP+rLSU21wAMLtq+L3Rz1+C8TnQLLq/AOy58kdZXhp
-         78kN4xPSkUo8XEoOmSMfML6rFrLARsutCs3cUs/2W/nIdsMGwXUrnhcsAXbk3+V31QMA
-         M9wN5YY03QNpGhJJoyODIDgvQmDYE5BkNrFKBbnctIVDIjxvtNL64b/y9t32aJzeHl18
-         Lrl1SbLTsK/ErtpbIbAzrw8VZ05w1jSTXypDYXAI1KOnKe9/jDGrvjXbPPpabh8nUWXm
-         7hZg==
-X-Gm-Message-State: APzg51BczFbxhlG4kJMLgWOss3xu73S3M5+XLr/zznU8vcjGlmK3Qs1H
-        UplPqXR5noFom0KOmhHbyuCreuV7Nrs=
-X-Google-Smtp-Source: ANB0VdY6CLgmizNA08yhVAdEIKFVt+g0TLgtGjdGJtyY+PByORnoo7dVtPzs4LM0W8m0wW3sYK3rUA==
-X-Received: by 2002:a9f:3b69:: with SMTP id j41-v6mr1563678uah.37.1536258875498;
-        Thu, 06 Sep 2018 11:34:35 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id g86-v6sm1804614vkc.36.2018.09.06.11.34.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 11:34:34 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id 101-v6so9802776uav.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 11:34:34 -0700 (PDT)
-X-Received: by 2002:a1f:ebc7:: with SMTP id j190-v6mr1419244vkh.114.1536258873515;
- Thu, 06 Sep 2018 11:34:33 -0700 (PDT)
+        Thu, 6 Sep 2018 19:12:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 7EA42215C9;
+        Thu,  6 Sep 2018 18:35:49 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5VcHqzgmjg_i; Thu,  6 Sep 2018 18:35:49 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id A26A020F6B;
+        Thu,  6 Sep 2018 18:35:43 +0000 (UTC)
+Reply-To: shuah@kernel.org
+Subject: Re: [PATCH v2] cgroup: kselftests: add test_core to .gitignore
+To:     Lei Yang <Lei.Yang@windriver.com>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, claudiozumbo@gmail.com,
+        Shuah Khan <shuah@kernel.org>
+References: <1536212843-3774-1-git-send-email-Lei.Yang@windriver.com>
+From:   Shuah Khan <shuah@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=shuah@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ae04ec24-5e2c-3f6d-42b3-453fcb508a01@kernel.org>
+Date:   Thu, 6 Sep 2018 12:35:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a1f:5e8e:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 11:34:32 -0700 (PDT)
-In-Reply-To: <20180827171003.GU160295@google.com>
-References: <20180808191339.16875-1-mka@chromium.org> <20180808191339.16875-3-mka@chromium.org>
- <CAD=FV=Ug3oiHOLxYRXtr0LbBUyXjBB=92fAYfpfhEQ8Xih6PNA@mail.gmail.com> <20180827171003.GU160295@google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 6 Sep 2018 11:34:32 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vvhjcs9UwLkyHJ+nxwRCk70SBC3eVxBXwK7DFcPeu8wQ@mail.gmail.com>
-Message-ID: <CAD=FV=Vvhjcs9UwLkyHJ+nxwRCk70SBC3eVxBXwK7DFcPeu8wQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: pm8998: Add adc node
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1536212843-3774-1-git-send-email-Lei.Yang@windriver.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 09/05/2018 11:47 PM, Lei Yang wrote:
+> Update .gitignore file.
+> 
+> Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+> ---
+>  tools/testing/selftests/cgroup/.gitignore | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/cgroup/.gitignore b/tools/testing/selftests/cgroup/.gitignore
+> index 95eb3a5..adacda5 100644
+> --- a/tools/testing/selftests/cgroup/.gitignore
+> +++ b/tools/testing/selftests/cgroup/.gitignore
+> @@ -1 +1,2 @@
+>  test_memcontrol
+> +test_core
+> 
 
-On Mon, Aug 27, 2018 at 10:10 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> On Fri, Aug 10, 2018 at 05:09:17PM -0700, Doug Anderson wrote:
->> Hi,
->>
->> On Wed, Aug 8, 2018 at 12:13 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
->> > This adds the adc node to pm8998 based on the examples in the
->> > bindings. It also fixes the order of the included headers.
->> >
->> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
->> > ---
->> >  arch/arm64/boot/dts/qcom/pm8998.dtsi | 13 ++++++++++++-
->> >  1 file changed, 12 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
->> > index 92bed1e7d4bb..f70f6101bceb 100644
->> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
->> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
->> > @@ -1,8 +1,9 @@
->> >  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> >  /* Copyright 2018 Google LLC. */
->> >
->> > -#include <dt-bindings/spmi/spmi.h>
->> > +#include <dt-bindings/iio/qcom,spmi-vadc.h>
->> >  #include <dt-bindings/interrupt-controller/irq.h>
->> > +#include <dt-bindings/spmi/spmi.h>
->> >
->> >  &spmi_bus {
->> >         pm8998_lsid0: pmic@0 {
->> > @@ -11,6 +12,16 @@
->> >                 #address-cells = <1>;
->> >                 #size-cells = <0>;
->> >
->> > +               pm8998_adc: adc@3100 {
->> > +                       compatible = "qcom,spmi-adc-rev2";
->> > +                       reg = <0x3100>;
->> > +                       interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
->> > +                       #address-cells = <1>;
->> > +                       #size-cells = <0>;
->> > +                       #io-channel-cells = <1>;
->> > +                       io-channel-ranges;
->> > +               };
->>
->> I'm a little confused about what the "io-channel-ranges" does here.
->> The documentation isn't clear at all to me for it.  If I'm reading it
->> right it's also supposed to be for iio-consumers, but you're using it
->> in a provider.  I see you copied this from the example.  Maybe the
->> example is wrong?  ...or I'm just confused...
->
-> Yes, I copied it from the example, its use here is also not clear to
-> me, other ADC providers like adc@126c0000 in exynos3250.dtsi or
-> adc@180a6000 in bcm-cygnus.dtsi also specify it ...
->
-> Siddartha/Jonathan, could you help to clarify if "io-channel-ranges"
-> should really be specified here as the DT example suggests?
 
-Does everything work if you just remove the "io-channel-ranges"?  We
-could remove it and always add it back in later if someone could
-explain what it's for or if we find a reason why it was needed?  ...or
-we have any other ideas for how to get this resolved?  :(
+Thanks. Applied to linux-kselftest next
 
--Doug
+-- Shuah
