@@ -6,198 +6,108 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3228FC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1D5C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7E6120844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:17:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7E6120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F0D12086B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:18:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0D12086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbeIFSxB (ORCPT
+        id S1729991AbeIFSyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:53:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46168 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728905AbeIFSxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:53:00 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57D2440241DC;
-        Thu,  6 Sep 2018 14:17:14 +0000 (UTC)
-Received: from redhat.com (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 80AF12027EA0;
-        Thu,  6 Sep 2018 14:17:10 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 10:17:09 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Zi Yan <zi.yan@cs.rutgers.edu>, linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: hugepage: mark splitted page dirty when needed
-Message-ID: <20180906141708.GB3830@redhat.com>
-References: <20180904075510.22338-1-peterx@redhat.com>
- <20180904080115.o2zj4mlo7yzjdqfl@kshutemo-mobl1>
- <D3B32B41-61D5-47B3-B1FC-77B0F71ADA47@cs.rutgers.edu>
- <20180905073037.GA23021@xz-x1>
- <20180905125522.x2puwfn5sr2zo3go@kshutemo-mobl1>
- <20180906113933.GG16937@xz-x1>
+        Thu, 6 Sep 2018 14:54:13 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25114 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728905AbeIFSyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:54:12 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 07:18:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="72112674"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
+  by orsmga006.jf.intel.com with ESMTP; 06 Sep 2018 07:18:25 -0700
+Date:   Thu, 6 Sep 2018 07:18:25 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Brijesh Singh <brijesh.singh@amd.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v5 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
+ when SEV is active
+Message-ID: <20180906141825.GB370@linux.intel.com>
+References: <1536234182-2809-1-git-send-email-brijesh.singh@amd.com>
+ <1536234182-2809-6-git-send-email-brijesh.singh@amd.com>
+ <20180906122423.GA11144@zn.tnic>
+ <20180906135041.GB32336@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180906113933.GG16937@xz-x1>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 14:17:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 14:17:14 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+In-Reply-To: <20180906135041.GB32336@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 07:39:33PM +0800, Peter Xu wrote:
-> On Wed, Sep 05, 2018 at 03:55:22PM +0300, Kirill A. Shutemov wrote:
-> > On Wed, Sep 05, 2018 at 03:30:37PM +0800, Peter Xu wrote:
-> > > On Tue, Sep 04, 2018 at 10:00:28AM -0400, Zi Yan wrote:
-> > > > On 4 Sep 2018, at 4:01, Kirill A. Shutemov wrote:
-> > > > 
-> > > > > On Tue, Sep 04, 2018 at 03:55:10PM +0800, Peter Xu wrote:
-> > > > >> When splitting a huge page, we should set all small pages as dirty if
-> > > > >> the original huge page has the dirty bit set before.  Otherwise we'll
-> > > > >> lose the original dirty bit.
-> > > > >
-> > > > > We don't lose it. It got transfered to struct page flag:
-> > > > >
-> > > > > 	if (pmd_dirty(old_pmd))
-> > > > > 		SetPageDirty(page);
-> > > > >
-> > > > 
-> > > > Plus, when split_huge_page_to_list() splits a THP, its subroutine __split_huge_page()
-> > > > propagates the dirty bit in the head page flag to all subpages in __split_huge_page_tail().
+On Thu, Sep 06, 2018 at 06:50:41AM -0700, Sean Christopherson wrote:
+> On Thu, Sep 06, 2018 at 02:24:23PM +0200, Borislav Petkov wrote:
+> > On Thu, Sep 06, 2018 at 06:43:02AM -0500, Brijesh Singh wrote:
+> > > Currently, the per-cpu pvclock data is allocated dynamically when
+> > > cpu > HVC_BOOT_ARRAY_SIZE. The physical address of this variable is
+> > > shared between the guest and the hypervisor hence it must be mapped as
+> > > unencrypted (ie. C=0) when SEV is active.
 > > > 
-> > > Hi, Kirill, Zi,
+> > > When SEV is active, we will be wasting fairly sizeable amount of memory
+> > > since each CPU will be doing a separate 4k allocation so that it can clear
+> > > C-bit. Let's define few extra static page sized array of pvclock data.
+> > > In the preparatory stage of CPU hotplug, use the element of this static
+> > > array to avoid the dynamic allocation. This array will be put in
+> > > the .data..decrypted section so that its mapped with C=0 during the boot.
 > > > 
-> > > Thanks for your responses!
+> > > In non-SEV case, this static page will unused and free'd by the
+> > > free_decrypted_mem().
 > > > 
-> > > Though in my test the huge page seems to be splitted not by
-> > > split_huge_page_to_list() but by explicit calls to
-> > > change_protection().  The stack looks like this (again, this is a
-> > > customized kernel, and I added an explicit dump_stack() there):
-> > > 
-> > >   kernel:  dump_stack+0x5c/0x7b
-> > >   kernel:  __split_huge_pmd+0x192/0xdc0
-> > >   kernel:  ? update_load_avg+0x8b/0x550
-> > >   kernel:  ? update_load_avg+0x8b/0x550
-> > >   kernel:  ? account_entity_enqueue+0xc5/0xf0
-> > >   kernel:  ? enqueue_entity+0x112/0x650
-> > >   kernel:  change_protection+0x3a2/0xab0
-> > >   kernel:  mwriteprotect_range+0xdd/0x110
-> > >   kernel:  userfaultfd_ioctl+0x50b/0x1210
-> > >   kernel:  ? do_futex+0x2cf/0xb20
-> > >   kernel:  ? tty_write+0x1d2/0x2f0
-> > >   kernel:  ? do_vfs_ioctl+0x9f/0x610
-> > >   kernel:  do_vfs_ioctl+0x9f/0x610
-> > >   kernel:  ? __x64_sys_futex+0x88/0x180
-> > >   kernel:  ksys_ioctl+0x70/0x80
-> > >   kernel:  __x64_sys_ioctl+0x16/0x20
-> > >   kernel:  do_syscall_64+0x55/0x150
-> > >   kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > 
-> > > At the very time the userspace is sending an UFFDIO_WRITEPROTECT ioctl
-> > > to kernel space, which is handled by mwriteprotect_range().  In case
-> > > you'd like to refer to the kernel, it's basically this one from
-> > > Andrea's (with very trivial changes):
-> > > 
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git userfault
-> > > 
-> > > So... do we have two paths to split the huge pages separately?
+> > > diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
+> > > index 802b2eb..aa204af 100644
+> > > --- a/arch/x86/include/asm/mem_encrypt.h
+> > > +++ b/arch/x86/include/asm/mem_encrypt.h
+> > > @@ -48,11 +48,13 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size);
+> > >  
+> > >  /* Architecture __weak replacement functions */
+> > >  void __init mem_encrypt_init(void);
+> > > +void __init free_decrypted_mem(void);
+> > >  
+> > >  bool sme_active(void);
+> > >  bool sev_active(void);
+> > >  
+> > >  #define __decrypted __attribute__((__section__(".data..decrypted")))
+> > > +#define __decrypted_hvclock __attribute__((__section__(".data..decrypted_hvclock")))
 > > 
-> > We have two entiries that can be split: page table enties and underlying
-> > compound page.
+> > So are we going to be defining a decrypted section for every piece of
+> > machinery now?
 > > 
-> > split_huge_pmd() (and variants of it) split the PMD entry into a PTE page
-> > table. It doens't touch underlying compound page. The page still can be
-> > mapped in other place as huge.
+> > That's a bit too much in my book.
 > > 
-> > split_huge_page() (and ivariants of it) split compound page into a number
-> > of 4k (or whatever PAGE_SIZE is). The operation requires splitting all
-> > PMD, but not other way around.
-> > 
-> > > 
-> > > Another (possibly very naive) question is: could any of you hint me
-> > > how the page dirty bit is finally applied to the PTEs?  These two
-> > > dirty flags confused me for a few days already (the SetPageDirty() one
-> > > which sets the page dirty flag, and the pte_mkdirty() which sets that
-> > > onto the real PTEs).
-> > 
-> > Dirty bit from page table entries transferes to sturct page flug and used
-> > for decision making in reclaim path.
+> > Why can't you simply free everything in .data..decrypted on !SVE guests?
 > 
-> Thanks for explaining.  It's much clearer for me.
-> 
-> Though for the issue I have encountered, I am still confused on why
-> that dirty bit can be ignored for the splitted PTEs.  Indeed we have:
-> 
-> 	if (pmd_dirty(old_pmd))
-> 		SetPageDirty(page);
-> 
-> However to me this only transfers (as you explained above) the dirty
-> bit (AFAIU it's possibly set by the hardware when the page is written)
-> to the page struct of the compound page.  It did not really apply to
-> every small page of the splitted huge page.  As you also explained,
-> this __split_huge_pmd() only splits the PMD entry but it keeps the
-> compound huge page there, then IMHO it should also apply the dirty
-> bits from the huge page to all the small page entries, no?
-> 
-> These dirty bits are really important to my scenario since AFAIU the
-> change_protection() call is using these dirty bits to decide whether
-> it should append the WRITE bit - it finally corresponds to the lines
-> in change_pte_range():
-> 
->         /* Avoid taking write faults for known dirty pages */
->         if (dirty_accountable && pte_dirty(ptent) &&
->                         (pte_soft_dirty(ptent) ||
->                                 !(vma->vm_flags & VM_SOFTDIRTY))) {
->                 ptent = pte_mkwrite(ptent);
->         }
-> 
-> So when mprotect() with that range (my case is UFFDIO_WRITEPROTECT,
-> which is similar) although we pass in the new protocol with VM_WRITE
-> here it'll still mask it since the dirty bit is not set, then the
-> userspace program (in my case, the QEMU thread that handles write
-> protect failures) can never fixup the write-protected page fault.
-> 
-> Am I missing anything important here?
-> 
+> That would prevent adding __decrypted to existing declarations, e.g.
+> hv_clock_boot, which would be ugly in its own right.  A more generic
+> solution would be to add something like __decrypted_exclusive to mark
+> data that is used if and only if SEV is active, and then free the
+> SEV-only data when SEV is disabled.
 
-For reference mwriteprotect_range code:
-https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?id=b16cb9fcb76bec59cbe1427e73246dc81a4942e2
-
-mwriteprotect_range usage:
-https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git/commit/?id=aa97daa6e54f2cfed1a6f1f38f9629608b8aadcc
-
-Maybe you can describe the issues you are having because i admit
-not seing what is wrong here. When mwriteprotect_range is call
-with UFFDIO_WRITEPROTECT_MODE_WP then dirty_accountable is false
-and thus above if is not taken and pte is properly write protected
-and thus UFFDIO_WRITEPROTECT_MODE_WP do what its name suggest no
-matter what is the pte dirty state.
-
-I am not sure what UFFDIO_WRITEPROTECT_MODE_DONTWAKE means as this
-is the one that might depends on the pte dirty state. So without
-knowing what UFFDIO_WRITEPROTECT_MODE_DONTWAKE do, i am not sure
-i see any bug here.
-
-Cheers,
-Jérôme
+Oh, and we'd need to make sure __decrypted_exclusive is freed when
+!CONFIG_AMD_MEM_ENCRYPT, and preferably !sev_active() since the big
+array is used only if SEV is active.  This patch unconditionally
+defines hv_clock_dec but only frees it if CONFIG_AMD_MEM_ENCRYPT=y &&
+!mem_encrypt_active().
