@@ -2,188 +2,368 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76B3C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE84C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8882B20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:55:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4E/lmG4p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8882B20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 16BEB20645
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16BEB20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbeIFSav (ORCPT
+        id S1729952AbeIFSdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:30:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53350 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeIFSav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:30:51 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w86Dmi8J086823;
-        Thu, 6 Sep 2018 13:54:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=SHwC4gFiBR9oL2bQhEYndf0K0ioWACrbe84zjfgML1M=;
- b=4E/lmG4pPMLb4VCuRQjpw3lFzuhxfyN2JGkJhR4sOUXAg5ywp2D9XifImLQAddm/iwte
- hzfyuJ3dewy8tsjdFVlTUhgHR21cjBT575G9vi9XSzEKWKbdtBrcehSGG2e3fidBT7eD
- 63jGfBK3uuqimkCJhPmM6x+q3yL4iywApD1/XQrUz9ibmtWNxFH+USOaeZ5q15gZ1K5g
- +IJaeX67SkxNX7YviBWuy0vIUWO+Y17o/UnwRL+uIVU0W3ZU4MM3VaHYpi8ccFx/AfJb
- Kl+IywUT9kUI89uyArqg4mN/AksgVqHMTYuHctRp937jSh89CrAJzzyf1pyHvqjTXXOf 7A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2m7j6tva5v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Sep 2018 13:54:38 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w86DsWbI021689
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Sep 2018 13:54:32 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w86DsW5R006790;
-        Thu, 6 Sep 2018 13:54:32 GMT
-Received: from [10.191.31.201] (/10.191.31.201)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Sep 2018 06:54:32 -0700
-Subject: Re: [PATCH 0/3] Introduce a light-weight queue close feature
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, keith.busch@intel.com, jsmart2021@gmail.com,
-        sagi@grimberg.me, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, bart.vanassche@wdc.com
-References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180905212659.GB21352@ming.t460p>
- <b7074098-ab79-53b2-5cc6-25f859c4c666@oracle.com>
- <20180906125659.GA31250@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <51b4019b-8773-b76d-ee00-4399a86dbf16@oracle.com>
-Date:   Thu, 6 Sep 2018 21:55:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 14:33:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729313AbeIFSdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:33:32 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80DCADFFA;
+        Thu,  6 Sep 2018 13:57:50 +0000 (UTC)
+Received: from krava (unknown [10.43.17.49])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 225D92166B41;
+        Thu,  6 Sep 2018 13:57:49 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 15:57:48 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf/x86/intel: Export mem events only if there's PEBs
+ support
+Message-ID: <20180906135748.GC9577@krava>
+References: <20180813154820.16991-1-jolsa@kernel.org>
+ <20180827090624.GI24695@krava>
+ <20180828081232.GI24124@hirez.programming.kicks-ass.net>
+ <20180828081911.GC23727@krava>
 MIME-Version: 1.0
-In-Reply-To: <20180906125659.GA31250@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809060139
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828081911.GC23727@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 13:57:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 13:57:50 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 28, 2018 at 10:19:11AM +0200, Jiri Olsa wrote:
+> On Tue, Aug 28, 2018 at 10:12:32AM +0200, Peter Zijlstra wrote:
+> > On Mon, Aug 27, 2018 at 11:06:24AM +0200, Jiri Olsa wrote:
+> > > +static __init struct attribute **get_hsw_events_attrs(bool *alloc)
+> > >  {
+> > > +	if (boot_cpu_has(X86_FEATURE_RTM)) {
+> > > +		*alloc = true;
+> > > +		return merge_attr(hsw_events_attrs, hsw_tsx_events_attrs);
+> > > +	}
+> > > +	return hsw_events_attrs;
+> > >  }
+> > 
+> > 
+> > 
+> > > @@ -4357,6 +4374,15 @@ __init int intel_pmu_init(void)
+> > >  		WARN_ON(!x86_pmu.format_attrs);
+> > >  	}
+> > >  
+> > > +	if (x86_pmu.pebs && mem_attr) {
+> > > +		struct attribute **attr = x86_pmu.cpu_events;
+> > > +
+> > > +		x86_pmu.cpu_events = merge_attr(x86_pmu.cpu_events, mem_attr);
+> > > +
+> > > +		if (alloc_events)
+> > > +			kfree(attr);
+> > > +	}
+> > > +
+> > >  	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
+> > >  		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
+> > >  		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
+> > 
+> > 
+> > static __init struct attribute **
+> > get_events_attrs(struct attribute **base,
+> > 		 struct attribute **mem,
+> > 		 struct attribute **tsx)
+> > {
+> > 	struct attribute **attrs = base;
+> > 	struct attribute **old;
+> > 
+> > 	if (mem) {
+> > 		old = attrs;
+> > 		attrs = merge_attrs(attrs, mem);
+> > 		if (old != base)
+> > 			kfree(old);
+> > 	}
+> > 
+> > 	if (tsx && boot_cpu_has(X86_FEATURE_RTM)) {
+> > 		old = attrs;
+> > 		attrs = merge_attrs(attrs, tsx);
+> > 		if (old != base)
+> > 			kfree(old);
+> > 	}
+> > 
+> > 	return attrs;
+> > }
+> > 
+> > Would that not help to concentrate things a little more?
+> 
+> looks like it would ;-) will check and repost
+
+new version attached.. Michael tested on several machines,
+but I couldn't find haswell with working tsx, to test
+that those events are displayed
+
+thanks,
+jirka
 
 
-On 09/06/2018 08:57 PM, Ming Lei wrote:
-> On Thu, Sep 06, 2018 at 09:51:43AM +0800, jianchao.wang wrote:
->> Hi Ming
->>
->> On 09/06/2018 05:27 AM, Ming Lei wrote:
->>> On Wed, Sep 05, 2018 at 12:09:43PM +0800, Jianchao Wang wrote:
->>>> Dear all
->>>>
->>>> As we know, queue freeze is used to stop new IO comming in and drain
->>>> the request queue. And the draining queue here is necessary, because
->>>> queue freeze kills the percpu-ref q_usage_counter and need to drain
->>>> the q_usage_counter before switch it back to percpu mode. This could
->>>> be a trouble when we just want to prevent new IO.
->>>>
->>>> In nvme-pci, nvme_dev_disable freezes queues to prevent new IO.
->>>> nvme_reset_work will unfreeze and wait to drain the queues. However,
->>>> if IO timeout at the moment, no body could do recovery as nvme_reset_work
->>>> is waiting. We will encounter IO hang.
->>>
->>> As we discussed this nvme time issue before, I have pointed out that
->>> this is because of blk_mq_unfreeze_queue()'s limit which requires that
->>> unfreeze can only be done when this queue ref counter drops to zero.
->>>
->>> For this nvme timeout case, we may relax the limit, for example,
->>> introducing another API of blk_freeze_queue_stop() as counter-pair of
->>> blk_freeze_queue_start(), and simply switch the percpu-ref to percpu mode
->>> from atomic mode inside the new API.
->>
->> Looks like we cannot switch a percpu-ref to percpu mode directly w/o drain it.
->> Some references maybe lost.
->>
->> static void __percpu_ref_switch_to_percpu(struct percpu_ref *ref)
->> {
->> 	unsigned long __percpu *percpu_count = percpu_count_ptr(ref);
->> 	int cpu;
->>
->> 	BUG_ON(!percpu_count);
->>
->> 	if (!(ref->percpu_count_ptr & __PERCPU_REF_ATOMIC))
->> 		return;
->>
->> 	atomic_long_add(PERCPU_COUNT_BIAS, &ref->count);
->>
->> 	/*
->> 	 * Restore per-cpu operation.  smp_store_release() is paired
->> 	 * with READ_ONCE() in __ref_is_percpu() and guarantees that the
->> 	 * zeroing is visible to all percpu accesses which can see the
->> 	 * following __PERCPU_REF_ATOMIC clearing.i
->> 	 */
->> 	for_each_possible_cpu(cpu)
->> 		*per_cpu_ptr(percpu_count, cpu) = 0;
->>
->> 	smp_store_release(&ref->percpu_count_ptr,
->> 			  ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC);
-> 
-> Before REF_ATOMIC is cleared, all counting is done on the atomic type
-> of &ref->count, and it is easy to keep the reference counter at
-> ATOMIC mode. Also the reference counter can only be READ at atomic mode.
-> 
-> So could you explain a bit how the lost may happen? And it is lost at
-> atomic mode or percpu mode?
+---
+Memory events depends on PEBs support and access to LDLAT msr,
+but we display them in /sys/devices/cpu/events even if the cpu
+does not provide those, like for KVM guests.
 
-I just mean __percpu_ref_switch_percpu just zeros the percpu_count.
-It doesn't give the original values back to the percpu_count from atomic count
+That brings the false assumption that those events should
+be available, while they fail event to open.
 
-> 
->> }
->>
->>>
->>>>
->>>> So introduce a light-weight queue close feature in this patch set
->>>> which could prevent new IO and needn't drain the queue.
->>>
->>> Frankly speaking, IMO, it may not be an good idea to mess up the fast path
->>> just for handling the extremely unusual timeout event. The same is true
->>> for doing the preemp only stuff, as you saw I have posted patchset for
->>> killing it.
->>>
->>
->> In normal case, it is just a judgment like 
->>
->> 	if (unlikely(READ_ONCE(q->queue_gate))
->>
->> It should not be a big deal.> 
-> Adding this stuff in fast path is quite difficult to verify its correctness
-> because it is really lockless, or even barrier-less.
-> 
-> Not to mention, READ_ONCE() implies one barrier of smp_read_barrier_depends().
+Separating the mem-* events attributes and merging them
+with cpu_events only if there's PEBs support detected.
 
-The checking is under rcu lock, the write side could use synchonize_rcu to ensure
-the updating is globally visible.t
-As for the READ_ONCE, it could be discarded.
+We could also check if LDLAT msr is available, but the
+PEBs check seems to cover the need now.
 
-Thanks
-Jianchao
-> 
-> Thanks,
-> Ming
-> 
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=BQVCMSSS6lYwogr6CE82oIlpLu5ReP8c4lHGgnvswV4&s=rZLfbqzKKXjlCpY1Sy6ocaQjAKZoJq_A49gvSucohNk&e=
-> 
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ arch/x86/events/core.c       |  8 ++---
+ arch/x86/events/intel/core.c | 69 +++++++++++++++++++++++++++---------
+ 2 files changed, 56 insertions(+), 21 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 5f4829f10129..1a17004f6559 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1631,9 +1631,9 @@ __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
+ 	struct attribute **new;
+ 	int j, i;
+ 
+-	for (j = 0; a[j]; j++)
++	for (j = 0; a && a[j]; j++)
+ 		;
+-	for (i = 0; b[i]; i++)
++	for (i = 0; b && b[i]; i++)
+ 		j++;
+ 	j++;
+ 
+@@ -1642,9 +1642,9 @@ __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
+ 		return NULL;
+ 
+ 	j = 0;
+-	for (i = 0; a[i]; i++)
++	for (i = 0; a && a[i]; i++)
+ 		new[j++] = a[i];
+-	for (i = 0; b[i]; i++)
++	for (i = 0; b && b[i]; i++)
+ 		new[j++] = b[i];
+ 	new[j] = NULL;
+ 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 035c37481f57..a10f80f697b7 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -242,7 +242,7 @@ EVENT_ATTR_STR(mem-loads,	mem_ld_nhm,	"event=0x0b,umask=0x10,ldlat=3");
+ EVENT_ATTR_STR(mem-loads,	mem_ld_snb,	"event=0xcd,umask=0x1,ldlat=3");
+ EVENT_ATTR_STR(mem-stores,	mem_st_snb,	"event=0xcd,umask=0x2");
+ 
+-static struct attribute *nhm_events_attrs[] = {
++static struct attribute *nhm_mem_events_attrs[] = {
+ 	EVENT_PTR(mem_ld_nhm),
+ 	NULL,
+ };
+@@ -278,8 +278,6 @@ EVENT_ATTR_STR_HT(topdown-recovery-bubbles.scale, td_recovery_bubbles_scale,
+ 	"4", "2");
+ 
+ static struct attribute *snb_events_attrs[] = {
+-	EVENT_PTR(mem_ld_snb),
+-	EVENT_PTR(mem_st_snb),
+ 	EVENT_PTR(td_slots_issued),
+ 	EVENT_PTR(td_slots_retired),
+ 	EVENT_PTR(td_fetch_bubbles),
+@@ -290,6 +288,12 @@ static struct attribute *snb_events_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute *snb_mem_events_attrs[] = {
++	EVENT_PTR(mem_ld_snb),
++	EVENT_PTR(mem_st_snb),
++	NULL,
++};
++
+ static struct event_constraint intel_hsw_event_constraints[] = {
+ 	FIXED_EVENT_CONSTRAINT(0x00c0, 0), /* INST_RETIRED.ANY */
+ 	FIXED_EVENT_CONSTRAINT(0x003c, 1), /* CPU_CLK_UNHALTED.CORE */
+@@ -3764,8 +3768,6 @@ EVENT_ATTR_STR(cycles-t,	cycles_t,	"event=0x3c,in_tx=1");
+ EVENT_ATTR_STR(cycles-ct,	cycles_ct,	"event=0x3c,in_tx=1,in_tx_cp=1");
+ 
+ static struct attribute *hsw_events_attrs[] = {
+-	EVENT_PTR(mem_ld_hsw),
+-	EVENT_PTR(mem_st_hsw),
+ 	EVENT_PTR(td_slots_issued),
+ 	EVENT_PTR(td_slots_retired),
+ 	EVENT_PTR(td_fetch_bubbles),
+@@ -3776,6 +3778,12 @@ static struct attribute *hsw_events_attrs[] = {
+ 	NULL
+ };
+ 
++static struct attribute *hsw_mem_events_attrs[] = {
++	EVENT_PTR(mem_ld_hsw),
++	EVENT_PTR(mem_st_hsw),
++	NULL,
++};
++
+ static struct attribute *hsw_tsx_events_attrs[] = {
+ 	EVENT_PTR(tx_start),
+ 	EVENT_PTR(tx_commit),
+@@ -3792,13 +3800,6 @@ static struct attribute *hsw_tsx_events_attrs[] = {
+ 	NULL
+ };
+ 
+-static __init struct attribute **get_hsw_events_attrs(void)
+-{
+-	return boot_cpu_has(X86_FEATURE_RTM) ?
+-		merge_attr(hsw_events_attrs, hsw_tsx_events_attrs) :
+-		hsw_events_attrs;
+-}
+-
+ static ssize_t freeze_on_smi_show(struct device *cdev,
+ 				  struct device_attribute *attr,
+ 				  char *buf)
+@@ -3875,9 +3876,32 @@ static struct attribute *intel_pmu_attrs[] = {
+ 	NULL,
+ };
+ 
++static __init struct attribute **
++get_events_attrs(struct attribute **base,
++		 struct attribute **mem,
++		 struct attribute **tsx)
++{
++	struct attribute **attrs = base;
++	struct attribute **old;
++
++	if (mem && x86_pmu.pebs)
++		attrs = merge_attr(attrs, mem);
++
++	if (tsx && boot_cpu_has(X86_FEATURE_RTM)) {
++		old = attrs;
++		attrs = merge_attr(attrs, tsx);
++		if (old != base)
++			kfree(old);
++	}
++
++	return attrs;
++}
++
+ __init int intel_pmu_init(void)
+ {
+ 	struct attribute **extra_attr = NULL;
++	struct attribute **mem_attr = NULL;
++	struct attribute **tsx_attr = NULL;
+ 	struct attribute **to_free = NULL;
+ 	union cpuid10_edx edx;
+ 	union cpuid10_eax eax;
+@@ -3986,7 +4010,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.enable_all = intel_pmu_nhm_enable_all;
+ 		x86_pmu.extra_regs = intel_nehalem_extra_regs;
+ 
+-		x86_pmu.cpu_events = nhm_events_attrs;
++		mem_attr = nhm_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.STALLED_CYCLES */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4112,7 +4136,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.extra_regs = intel_westmere_extra_regs;
+ 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
+ 
+-		x86_pmu.cpu_events = nhm_events_attrs;
++		mem_attr = nhm_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.STALLED_CYCLES */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4152,6 +4176,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
+ 
+ 		x86_pmu.cpu_events = snb_events_attrs;
++		mem_attr = snb_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4192,6 +4217,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
+ 
+ 		x86_pmu.cpu_events = snb_events_attrs;
++		mem_attr = snb_mem_events_attrs;
+ 
+ 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
+ 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
+@@ -4226,10 +4252,12 @@ __init int intel_pmu_init(void)
+ 
+ 		x86_pmu.hw_config = hsw_hw_config;
+ 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
+-		x86_pmu.cpu_events = get_hsw_events_attrs();
++		x86_pmu.cpu_events = hsw_events_attrs;
+ 		x86_pmu.lbr_double_abort = true;
+ 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
+ 			hsw_format_attr : nhm_format_attr;
++		mem_attr = hsw_mem_events_attrs;
++		tsx_attr = hsw_tsx_events_attrs;
+ 		pr_cont("Haswell events, ");
+ 		name = "haswell";
+ 		break;
+@@ -4265,10 +4293,12 @@ __init int intel_pmu_init(void)
+ 
+ 		x86_pmu.hw_config = hsw_hw_config;
+ 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
+-		x86_pmu.cpu_events = get_hsw_events_attrs();
++		x86_pmu.cpu_events = hsw_events_attrs;
+ 		x86_pmu.limit_period = bdw_limit_period;
+ 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
+ 			hsw_format_attr : nhm_format_attr;
++		mem_attr = hsw_mem_events_attrs;
++		tsx_attr = hsw_tsx_events_attrs;
+ 		pr_cont("Broadwell events, ");
+ 		name = "broadwell";
+ 		break;
+@@ -4324,7 +4354,9 @@ __init int intel_pmu_init(void)
+ 			hsw_format_attr : nhm_format_attr;
+ 		extra_attr = merge_attr(extra_attr, skl_format_attr);
+ 		to_free = extra_attr;
+-		x86_pmu.cpu_events = get_hsw_events_attrs();
++		x86_pmu.cpu_events = hsw_events_attrs;
++		mem_attr = hsw_mem_events_attrs;
++		tsx_attr = hsw_tsx_events_attrs;
+ 		intel_pmu_pebs_data_source_skl(
+ 			boot_cpu_data.x86_model == INTEL_FAM6_SKYLAKE_X);
+ 		pr_cont("Skylake events, ");
+@@ -4357,6 +4389,9 @@ __init int intel_pmu_init(void)
+ 		WARN_ON(!x86_pmu.format_attrs);
+ 	}
+ 
++	x86_pmu.cpu_events = get_events_attrs(x86_pmu.cpu_events,
++					      mem_attr, tsx_attr);
++
+ 	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
+ 		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
+ 		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
+-- 
+2.17.1
+
