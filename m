@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 711DAC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF247C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C4BD20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4BD20652
+	by mail.kernel.org (Postfix) with ESMTP id 610B520652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:34:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610B520652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730297AbeIFUJQ (ORCPT
+        id S1730298AbeIFUKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 16:09:16 -0400
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:41983 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730122AbeIFUJQ (ORCPT
+        Thu, 6 Sep 2018 16:10:31 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33693 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728047AbeIFUKb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 16:09:16 -0400
-Received: by mail-qt0-f180.google.com with SMTP id t39-v6so12721831qtc.8;
-        Thu, 06 Sep 2018 08:33:13 -0700 (PDT)
+        Thu, 6 Sep 2018 16:10:31 -0400
+Received: by mail-qt0-f195.google.com with SMTP id r37-v6so12763499qtc.0;
+        Thu, 06 Sep 2018 08:34:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pmq0aP8AsZXHxIFUzVAzjm4xPIZGowl9iQfl7lsLmzc=;
-        b=ZKem3uGYb93KxlP+QZyaR7Y7aEst6zrv0si9UGBpaRy45en2pEQpqshWIlV3hegsB2
-         aOSqOGz4TXKRjwRCDpw6uR5tYH9jBAQLt/ioHKLiQycrShO+rV+AvbDkJGyPbBLITquz
-         Pjz4zIwIC6giWcPybIC7Q9R4kblCVyH1T52BFe/jL/8w/VEvdP+yh/jGhDgqmkWzZtj6
-         j3GL3GO39ndHNQbMu7XekiIJGN+fSIX1g5H+nJhMHh/L6I9vRD4576/RHVP1E7HhcA/c
-         Z5za84q3os0VmrXFEgriWiRP87cC7YeCMH+DZPbeHjIIEfDQgh2UGdeJj34QVCq+Aaa7
-         2KHg==
-X-Gm-Message-State: APzg51DYwgl+zKMo4m6tq2ta0R+Q0mNE8MpSqN18k7nr2EenCsgjFrf+
-        +1vtWn6Z9NLkW7OSdUqkFcbmZZK1Z7etjrNn1PE=
-X-Google-Smtp-Source: ANB0VdYiYrGcaE4cDFgTCVzq1kR/KD0BlDXh2ztemuPQ0T7A8UAbwxcu3Dl54fBDxL7/GHv1ADNXvuJqK8ecn/VtbIw=
-X-Received: by 2002:a0c:a8cc:: with SMTP id h12-v6mr2554322qvc.161.1536247992716;
- Thu, 06 Sep 2018 08:33:12 -0700 (PDT)
+        bh=KNGokkwUhey0RkEa5BHYg24UDPn/fvsP9pEoBGNlQho=;
+        b=i0pz5XWn3adRZQYQbZfedxoYBLUio+WYdHOHL5oRZqNcXvu7J6hN7vD1sMEla7jfKr
+         6A7GsnmTl1fzuA9uL53P2/UEXUdSo1Atir7BeVEEq12hS79313VPzTAOO4MreAINb4rg
+         uDGGndKG4/RgfAavkK6ARM7daVXmatIvKLS4ECI4LqE6NdqtuEYd/a+EU8mnvRCT8SmE
+         bGxEvQtWQ76HVxJGXScFUUmeslpwpc+4wvylqWwGVZ8dOiMxggxhZcmv3laqeyhfoTEE
+         Mvx5FYtGreNlxl/vhwKsp5cbOZz82U+heOFVG8inc5BNW95fAoMZzW6c8ZTpijNRCGbV
+         JHvQ==
+X-Gm-Message-State: APzg51BelESyAprqfwYW83CYH/3oEh+r4e6JXRLTBZkCu17wND4HuH8g
+        lQNNw3RRgxla88/ZQl5cYKkq+HzVl8WsSJ//P7g=
+X-Google-Smtp-Source: ANB0VdanPcPCJdCWkpi6FFPhwIKiRorvTEKq7alt5qxSRt/P+PhADUIHbcgAdJ+gjGYCaXAbGctE7Vi88nY4ZN0C6zM=
+X-Received: by 2002:aed:2b47:: with SMTP id p65-v6mr2586905qtd.132.1536248067485;
+ Thu, 06 Sep 2018 08:34:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org> <1536036087-15260-4-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1536036087-15260-4-git-send-email-firoz.khan@linaro.org>
+References: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org> <1536036087-15260-5-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1536036087-15260-5-git-send-email-firoz.khan@linaro.org>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Sep 2018 17:32:56 +0200
-Message-ID: <CAK8P3a0cfk6MG2SBRhJZ41suHw4D-dyCYGhqV9YeD_1rSMrGqQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] sparc: Add system call table generation support
+Date:   Thu, 6 Sep 2018 17:34:11 +0200
+Message-ID: <CAK8P3a2qFoCOzM6x-_mv0Um2E-WHDeOU-fuuZ65TtDKKcPxNrQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] sparc: uapi header and system call table file generation
 To:     Firoz Khan <firoz.khan@linaro.org>
 Cc:     David Miller <davem@davemloft.net>,
         sparclinux <sparclinux@vger.kernel.org>,
@@ -67,17 +67,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Sep 4, 2018 at 6:42 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> System call table generation script must be run to generate
+> unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
+> will have changes which will invokes the script.
+>
+> This patch will generate unistd_32/64.h and syscall_table_
+> 32/64/c32.h files by the syscall table generation script
+> invoked by arch/sparc/Makefile and the generated files against
+> the removed files will be identical.
+>
+> The generated uapi header file will be included in uapi/asm/
+> unistd_32/64.h and generated system call table support file will
+> be included by arch/sparc/kernel/syscall_table_32/64.S file.
 
-> The system call table generation script is added in
-> syscalls directory which contain the script to generate
-> both uapi header file system call table generation file
-> and syscall_32/64.tbl file which'll be the input for the
-> scripts.
+These changes all look good to me.
 
-I would argue that for sparc we only want a single input
-table, since the 32/64 versions are similar enough that the
-differences can be addressed with 'abi' flag, rather than
-having everything marked as 'common'. Isn't that the
-purpose of the abi flag in the first place?
-
-          Arnd
+       Arnd
