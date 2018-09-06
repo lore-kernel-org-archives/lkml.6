@@ -1,118 +1,162 @@
 Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6AAC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1705CC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F132075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:16:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0F132075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BE93D2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:16:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE93D2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbeIFRwP (ORCPT
+        id S1729262AbeIFRwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:52:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60828 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729016AbeIFRwP (ORCPT
+        Thu, 6 Sep 2018 13:52:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44471 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729162AbeIFRwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:52:15 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86DElwG008521
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 09:16:46 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb2y9nxxs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:16:45 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Thu, 6 Sep 2018 14:16:43 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 14:16:38 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86DGbHI43581622
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 13:16:37 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1789BAE051;
-        Thu,  6 Sep 2018 16:15:59 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08B5DAE058;
-        Thu,  6 Sep 2018 16:15:58 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.92])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  6 Sep 2018 16:15:57 +0100 (BST)
-Date:   Thu, 6 Sep 2018 16:16:34 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/29] mm: remove bootmem allocator
-References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180906091538.GN14951@dhcp22.suse.cz>
+        Thu, 6 Sep 2018 13:52:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DGhlC305072
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:16:43 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DGgBB305069;
+        Thu, 6 Sep 2018 06:16:42 -0700
+Date:   Thu, 6 Sep 2018 06:16:42 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-v3s85ra659tc40g1s1xaqoun@git.kernel.org>
+Cc:     jolsa@kernel.org, tglx@linutronix.de, dsahern@gmail.com,
+        hpa@zytor.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        wangnan0@huawei.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+        mingo@kernel.org
+Reply-To: acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          wangnan0@huawei.com, adrian.hunter@intel.com,
+          namhyung@kernel.org, tglx@linutronix.de, jolsa@kernel.org,
+          hpa@zytor.com, dsahern@gmail.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace beauty: Reorganize 'struct sockaddr *'
+ beautifier
+Git-Commit-ID: b043cb524d2892be75c78bc348e83863829d50a0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180906091538.GN14951@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18090613-4275-0000-0000-000002B63C2D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090613-4276-0000-0000-000037BF5B68
-Message-Id: <20180906131634.GJ27492@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=555 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 11:15:38AM +0200, Michal Hocko wrote:
-> On Wed 05-09-18 18:59:15, Mike Rapoport wrote:
-> [...]
-> >  325 files changed, 846 insertions(+), 2478 deletions(-)
-> >  delete mode 100644 include/linux/bootmem.h
-> >  delete mode 100644 mm/bootmem.c
-> >  delete mode 100644 mm/nobootmem.c
-> 
-> This is really impressive! Thanks a lot for working on this. I wish we
-> could simplify the memblock API as well. There are just too many public
-> functions with subtly different semantic and barely any useful
-> documentation.
+Commit-ID:  b043cb524d2892be75c78bc348e83863829d50a0
+Gitweb:     https://git.kernel.org/tip/b043cb524d2892be75c78bc348e83863829d50a0
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 29 Aug 2018 17:11:33 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:20 -0300
 
-There are also many functions with exactly the same semantic :)
+perf trace beauty: Reorganize 'struct sockaddr *' beautifier
 
-Cleaning up the memblock API would be the next step.
+Use an array to multiplex by sockaddr->sa_family, this way adding new
+families gets a bit easier and tidy.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-v3s85ra659tc40g1s1xaqoun@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/sockaddr.c | 60 +++++++++++++++++++++++++-------------
+ 1 file changed, 39 insertions(+), 21 deletions(-)
+
+diff --git a/tools/perf/trace/beauty/sockaddr.c b/tools/perf/trace/beauty/sockaddr.c
+index 3944a7d54d3c..71a79f72d9d9 100644
+--- a/tools/perf/trace/beauty/sockaddr.c
++++ b/tools/perf/trace/beauty/sockaddr.c
+@@ -17,34 +17,52 @@ static const char *socket_families[] = {
+ };
+ DEFINE_STRARRAY(socket_families);
  
-> But even this is a great step forward!
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
-
--- 
-Sincerely yours,
-Mike.
-
++static size_t af_inet__scnprintf(struct sockaddr *sa, char *bf, size_t size)
++{
++	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
++	char tmp[16];
++	return scnprintf(bf, size, ", port: %d, addr: %s", ntohs(sin->sin_port),
++			 inet_ntop(sin->sin_family, &sin->sin_addr, tmp, sizeof(tmp)));
++}
++
++static size_t af_inet6__scnprintf(struct sockaddr *sa, char *bf, size_t size)
++{
++	struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
++	u32 flowinfo = ntohl(sin6->sin6_flowinfo);
++	char tmp[512];
++	size_t printed = scnprintf(bf, size, ", port: %d, addr: %s", ntohs(sin6->sin6_port),
++				   inet_ntop(sin6->sin6_family, &sin6->sin6_addr, tmp, sizeof(tmp)));
++	if (flowinfo != 0)
++		printed += scnprintf(bf + printed, size - printed, ", flowinfo: %lu", flowinfo);
++	if (sin6->sin6_scope_id != 0)
++		printed += scnprintf(bf + printed, size - printed, ", scope_id: %lu", sin6->sin6_scope_id);
++
++	return printed;
++}
++
++static size_t af_local__scnprintf(struct sockaddr *sa, char *bf, size_t size)
++{
++	struct sockaddr_un *sun = (struct sockaddr_un *)sa;
++	return scnprintf(bf, size, ", path: %s", sun->sun_path);
++}
++
++static size_t (*af_scnprintfs[])(struct sockaddr *sa, char *bf, size_t size) = {
++	[AF_LOCAL] = af_local__scnprintf,
++	[AF_INET]  = af_inet__scnprintf,
++	[AF_INET6] = af_inet6__scnprintf,
++};
++
+ static size_t syscall_arg__scnprintf_augmented_sockaddr(struct syscall_arg *arg, char *bf, size_t size)
+ {
+-	struct sockaddr_in *sin = (struct sockaddr_in *)arg->augmented.args;
++	struct sockaddr *sa = (struct sockaddr *)arg->augmented.args;
+ 	char family[32];
+ 	size_t printed;
+ 
+-	strarray__scnprintf(&strarray__socket_families, family, sizeof(family), "%d", sin->sin_family);
++	strarray__scnprintf(&strarray__socket_families, family, sizeof(family), "%d", sa->sa_family);
+ 	printed = scnprintf(bf, size, "{ .family: %s", family);
+ 
+-	if (sin->sin_family == AF_INET) {
+-		char tmp[512];
+-		printed += scnprintf(bf + printed, size - printed, ", port: %d, addr: %s", ntohs(sin->sin_port),
+-				     inet_ntop(sin->sin_family, &sin->sin_addr, tmp, sizeof(tmp)));
+-	} else if (sin->sin_family == AF_INET6) {
+-		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sin;
+-		u32 flowinfo = ntohl(sin6->sin6_flowinfo);
+-		char tmp[512];
+-
+-		printed += scnprintf(bf + printed, size - printed, ", port: %d, addr: %s", ntohs(sin6->sin6_port),
+-				     inet_ntop(sin6->sin6_family, &sin6->sin6_addr, tmp, sizeof(tmp)));
+-		if (flowinfo != 0)
+-			printed += scnprintf(bf + printed, size - printed, ", flowinfo: %lu", flowinfo);
+-		if (sin6->sin6_scope_id != 0)
+-			printed += scnprintf(bf + printed, size - printed, ", scope_id: %lu", sin6->sin6_scope_id);
+-	} else if (sin->sin_family == AF_LOCAL) {
+-		struct sockaddr_un *sun = (struct sockaddr_un *)sin;
+-		printed += scnprintf(bf + printed, size - printed, ", path: %s", sun->sun_path);
+-	}
++	if (sa->sa_family < ARRAY_SIZE(af_scnprintfs) && af_scnprintfs[sa->sa_family])
++		printed += af_scnprintfs[sa->sa_family](sa, bf + printed, size - printed);
+ 
+ 	return printed + scnprintf(bf + printed, size - printed, " }");
+ }
