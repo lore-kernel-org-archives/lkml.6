@@ -2,129 +2,114 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB18C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BB8C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4093206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4093206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E59282075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAME6Hmj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59282075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbeIFSVi (ORCPT
+        id S1729932AbeIFSWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:21:38 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46271 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729233AbeIFSVh (ORCPT
+        Thu, 6 Sep 2018 14:22:03 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55958 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729708AbeIFSWC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:21:37 -0400
-Received: by mail-qk1-f193.google.com with SMTP id j7-v6so7301100qkd.13;
-        Thu, 06 Sep 2018 06:45:59 -0700 (PDT)
+        Thu, 6 Sep 2018 14:22:02 -0400
+Received: by mail-it0-f68.google.com with SMTP id d10-v6so14785617itj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 06:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OMIoBcyCnnsiRKrbYO+gBBx66uwywt8vjOE+4okCjUU=;
+        b=ZAME6HmjjFEx/3AkJwjhOqiWmFpgXSTNyCPi8TtSj7NpspIZoR0CqkCLrzPDE4+B0s
+         juJYks+mLp0fuFXFNFcTl0gbQnqfkIR7+81/GxzWX2zNOX0IEyzayup9ICK53zMiJzVD
+         KgN44TtLvdUG4HLDD3l5NxBRzMQS/cWci1oYk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=i2g0T2EbTMEwCPKkfyKiIgQpN+o/UUbZymtjz0q96Lc=;
-        b=D+m79WwaURigaYHOsdQ/T6aiK01nCokXPK/bkD6TBxRP+eplys+HykGMcHJ5M2zsgb
-         UPxIulROoFGkQapmoyPZ6JcMeU46ufn2pZCAMC/emVPlKzZZvQ6jHX4hTAMaSyC/W+2W
-         p9PkZAFmzKsWvG+Hf6bi+dM0+S+JJYciUXqlAKDcNyh90uHsanLzlUQkEy7o7RA3wqxk
-         F2oimBK4wEwrpdnINfDzpc5mP+nLsrsHne8w7da7Dqwzk4ZAXu7FVwcUqLuW8CIV6p7s
-         eQZbPQQBC4GHdDnJh8AnB6kA/pS742boKmAL1as6EIpkASicuPD9er2p96IkvGTinGnx
-         fCBw==
-X-Gm-Message-State: APzg51ChbMX8JEeCVnS5J2JnKvO75PGvIX3KdqN2ReL+Mux9MBzmcmy5
-        5zeDPt8/ZNAwqRxI0OSSzCm/vyUXsS5D/7VDJsg=
-X-Google-Smtp-Source: ANB0Vdbyjf0HZYZXLKfaQrtL6oInhu+NqdmWjSjYlIoGiPFyBVokOGIpwosv4NocLIr0QXSt9h9T2nqgCl3QngQ2WdI=
-X-Received: by 2002:a37:6b03:: with SMTP id g3-v6mr2061403qkc.107.1536241558740;
- Thu, 06 Sep 2018 06:45:58 -0700 (PDT)
+        bh=OMIoBcyCnnsiRKrbYO+gBBx66uwywt8vjOE+4okCjUU=;
+        b=EkZb9FQVe+2Edl64xle8wy1WYPm0cxWTOSNVh5ldhHuLVsXO1kfrYerxtxQk+bpDr/
+         a3xQ5MnwtKJbeC0RDOSityFA1J3VJEsCh8fN6ZNz9p3yjcLhM1FnfeLNJQlPiRlQFHRW
+         KAErR7FOZp9Pmm3mzVmJIMxN3hveE4dtnlQJQPsMcdg5bcuMYBlZJ+B0bmfSk1PAFTkg
+         8EohOc78e/OlVyWSvjENU1EtRl23PkUs45+P0L6fYf+kethd/i9V1h8I+Un6/31qYswP
+         qx0MudZIq8ukqAYvwSOklSkv91ZaFmLqE+FjQrVj0aY2xHJaB+51owpJzuV8K8Im954p
+         vQUw==
+X-Gm-Message-State: APzg51CLEoVbr0V0wxUMMZR0JKeiELj+NL2/tZbXErhvpBXQGjqUaPi0
+        XTTukJ+Qh2iSltF+nH+XbYtyE5QB5JEp/pAZEgDHPA==
+X-Google-Smtp-Source: ANB0VdZF0rdH0rmSBp04lgsyilZHJD6DADy/zf1ogg1GoKfHowr5AYTOoXkQeJYftIIFMMaiXVuI3iEf4FbXI63GnW4=
+X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr2801025itc.16.1536241584783;
+ Thu, 06 Sep 2018 06:46:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com> <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
- <20180824143934.6d6b6487@bbrezillon> <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
- <20180824201600.7d80bca9@bbrezillon> <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
- <20180828140209.29155d00@bbrezillon> <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
- <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com> <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
- <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com> <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
- <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
- <20180906151437.4259d6fc@bbrezillon> <20180906152055.5618d235@bbrezillon>
-In-Reply-To: <20180906152055.5618d235@bbrezillon>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Sep 2018 15:45:41 +0200
-Message-ID: <CAK8P3a1dgw5_54rdE6Emsii93VuT8msA4z79C-iCCxCZihuFJw@mail.gmail.com>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Przemyslaw Gaj <pgaj@cadence.com>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
+References: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 6 Sep 2018 15:46:12 +0200
+Message-ID: <CACRpkdakAAAFKfRFeB_8kUCyGts_7sojVwyexe4aL4QQo2CcGg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] mfd: lochnagar: Add support for the Cirrus Logic Lochnagar
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Peter Rosin <peda@axentia.se>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 3:21 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
+On Wed, Sep 5, 2018 at 12:41 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+
+> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 >
-> On Thu, 6 Sep 2018 15:14:37 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-
-> > When a master is not in control of the bus, it gets informed of devices
-> > present on the bus by monitoring DAA or DEFSLVS broadcast events. That
-> > means the secondary master should populate the bus with I3C/I2C devices
-> > on such events, but that's not enough, because DEFSLVS/DAA do not
-> > provide all device info. Some of them (like read/write/ibi limitations)
-> > require extra CCC commands, and, to send those CCC commands, the
-> > secondary master must claim the bus. We could add a case where we
-> > declare devices as partially discovered until the master acquires
-> > ownership of the bus, but that means part of the data returned by
-> > i3c_device_get_info() will be inaccurate, which might have an impact on
-> > some i3c driver ->probe() functions.
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform.  Audio system topology, clocking and
+> power can all be controlled through the Lochnagar, allowing the
+> device under test to be used in a variety of possible use cases.
 >
-> Hm, one possible solution would be to register partially discovered
-> devices to the device model and let i3c_device_get_info() claim the bus
-> and request missing data when needed. This way, if the driver needs to
-> call i3c_device_get_info() in its probe path, it should work just fine.
+> As the Lochnagar is a fairly complex device this MFD driver
+> allows the drivers for the various features to be bound
+> in. Initially clocking, regulator and pinctrl will be added as
+> these are necessary to configure the system. But in time at least
+> audio and voltage/current monitoring will also be added.
+>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-I guess you could also call i3c_device_get_info() in the common i3c_probe()
-function before calling into the driver.
+It's a bit confusing, maybe you can clear it up:
+it appears to be an I2C device, so when you say this is a
+"development board" is there something like a board
+controller that is accessed over I2C and this is what the
+driver really probes to, not the board per se?
 
-However, either way, we may still have a problem here: if the current master
-decides not to hand over master access to us at all, the probe() function
-will be blocked indefinitely, and that may stop us from probing other devices
-later on, or hang the module loader (depending on what context that
-probe() is called from).
+I guess jamming this card into the I2C slot of any other
+system (would work fine with a 96Boards LS connector
+as it seems, actually)  also involves connecting some
+I2S or similar on the side for high-datarate traffic?
 
-Using a timeout here could avoid the hang, but leads to other potential
-issues, e.g. how to decide whether to retry the probe later.
+This driver seems to only concern itself with the I2C
+board controller per se, not the board is that right?
 
-       Arnd
+Yours,
+Linus Walleij
