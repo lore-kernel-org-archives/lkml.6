@@ -2,368 +2,140 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE84C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2304DC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16BEB20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16BEB20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CDB8F20645
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB8F20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbeIFSdc (ORCPT
+        id S1729990AbeIFSeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:33:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729313AbeIFSdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:33:32 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 80DCADFFA;
-        Thu,  6 Sep 2018 13:57:50 +0000 (UTC)
-Received: from krava (unknown [10.43.17.49])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 225D92166B41;
-        Thu,  6 Sep 2018 13:57:49 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 15:57:48 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf/x86/intel: Export mem events only if there's PEBs
- support
-Message-ID: <20180906135748.GC9577@krava>
-References: <20180813154820.16991-1-jolsa@kernel.org>
- <20180827090624.GI24695@krava>
- <20180828081232.GI24124@hirez.programming.kicks-ass.net>
- <20180828081911.GC23727@krava>
+        Thu, 6 Sep 2018 14:34:50 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46102 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeIFSeu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:34:50 -0400
+Received: by mail-qt0-f196.google.com with SMTP id d4-v6so12277581qtn.13;
+        Thu, 06 Sep 2018 06:59:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SCmfoEHF6tpswy7RJzvTM57796B+XTWiu04ipvfdkWM=;
+        b=QZFA7YModPMGnTRDnef3wKaVHpKXNVRQsCC+3CZrggVJWva6sG3LZvwE6zhGHszlVd
+         fI1ntU1ptc37WSLRQ4rKbl4ww5d1VyZB8SQjS7yE9uMIZDp/P54OTwOS/vpvAV05xQDm
+         bJ56P9zaG6oV6Y2SdRYDlHFS1JlVTBip1hKwHKjMcAodNFJkVNaC/z8atwqi+ekUDqMp
+         wfa6vQ8ziIbIk1szv4eTY49+nUTCmn92KBYEigKrR8BNUGlpN1fpbWCVmXHWIbU8/jNR
+         0zmh7i4eGsSq2FeWt4nMzQR4r10qHziaClZJoQ4puPIqfi0oWgQje27hjgFkeC38rZmK
+         joTQ==
+X-Gm-Message-State: APzg51Bl5RgZo3L1+QukLibQLK4uCB+KUQh1/tLwf6CWB0QClHvgNa9O
+        tbGoIml5kd87oZZ4wSmSNiE5Wl0+O4i5GG3DodI=
+X-Google-Smtp-Source: ANB0VdZQxzaqrCesjgEtw38CZi7F7UKcCvbid+Ki7GdynuayQxsReT/kFPRwjwGEvt10FnaFVfPKFu2t9hEuxbUgmsY=
+X-Received: by 2002:ac8:c9:: with SMTP id d9-v6mr2170117qtg.213.1536242348011;
+ Thu, 06 Sep 2018 06:59:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828081911.GC23727@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 13:57:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 13:57:50 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+References: <cover.1536138304.git.ren_guo@c-sky.com> <dc7a52f2c2571a85c87e163d49cecddd3c2f2430.1536138304.git.ren_guo@c-sky.com>
+In-Reply-To: <dc7a52f2c2571a85c87e163d49cecddd3c2f2430.1536138304.git.ren_guo@c-sky.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 6 Sep 2018 15:58:51 +0200
+Message-ID: <CAK8P3a1obhCyZcY6D-X7_HnGnHCO3+srZQXniThiMNqvxLSQzA@mail.gmail.com>
+Subject: Re: [PATCH V3 02/26] csky: defconfig
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 10:19:11AM +0200, Jiri Olsa wrote:
-> On Tue, Aug 28, 2018 at 10:12:32AM +0200, Peter Zijlstra wrote:
-> > On Mon, Aug 27, 2018 at 11:06:24AM +0200, Jiri Olsa wrote:
-> > > +static __init struct attribute **get_hsw_events_attrs(bool *alloc)
-> > >  {
-> > > +	if (boot_cpu_has(X86_FEATURE_RTM)) {
-> > > +		*alloc = true;
-> > > +		return merge_attr(hsw_events_attrs, hsw_tsx_events_attrs);
-> > > +	}
-> > > +	return hsw_events_attrs;
-> > >  }
-> > 
-> > 
-> > 
-> > > @@ -4357,6 +4374,15 @@ __init int intel_pmu_init(void)
-> > >  		WARN_ON(!x86_pmu.format_attrs);
-> > >  	}
-> > >  
-> > > +	if (x86_pmu.pebs && mem_attr) {
-> > > +		struct attribute **attr = x86_pmu.cpu_events;
-> > > +
-> > > +		x86_pmu.cpu_events = merge_attr(x86_pmu.cpu_events, mem_attr);
-> > > +
-> > > +		if (alloc_events)
-> > > +			kfree(attr);
-> > > +	}
-> > > +
-> > >  	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
-> > >  		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
-> > >  		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
-> > 
-> > 
-> > static __init struct attribute **
-> > get_events_attrs(struct attribute **base,
-> > 		 struct attribute **mem,
-> > 		 struct attribute **tsx)
-> > {
-> > 	struct attribute **attrs = base;
-> > 	struct attribute **old;
-> > 
-> > 	if (mem) {
-> > 		old = attrs;
-> > 		attrs = merge_attrs(attrs, mem);
-> > 		if (old != base)
-> > 			kfree(old);
-> > 	}
-> > 
-> > 	if (tsx && boot_cpu_has(X86_FEATURE_RTM)) {
-> > 		old = attrs;
-> > 		attrs = merge_attrs(attrs, tsx);
-> > 		if (old != base)
-> > 			kfree(old);
-> > 	}
-> > 
-> > 	return attrs;
-> > }
-> > 
-> > Would that not help to concentrate things a little more?
-> 
-> looks like it would ;-) will check and repost
+On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  arch/csky/configs/defconfig | 76 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 arch/csky/configs/defconfig
+>
+> diff --git a/arch/csky/configs/defconfig b/arch/csky/configs/defconfig
+> new file mode 100644
+> index 0000000..c6a5a40
+> --- /dev/null
+> +++ b/arch/csky/configs/defconfig
+> @@ -0,0 +1,76 @@
+> +# CONFIG_LOCALVERSION_AUTO is not set
+> +CONFIG_DEFAULT_HOSTNAME="csky"
+> +# CONFIG_SWAP is not set
+> +CONFIG_SYSVIPC=y
+> +CONFIG_POSIX_MQUEUE=y
+> +CONFIG_USELIB=y
 
-new version attached.. Michael tested on several machines,
-but I couldn't find haswell with working tsx, to test
-that those events are displayed
+CONFIG_USELIB seems misplaced here, very few architectures can even
+call that, and it's not in the asm-generic/unistd.h file.
 
-thanks,
-jirka
+> +CONFIG_RELAY=y
 
+relay is selected by drivers that need it, you should not need to turn
+it on here.
 
----
-Memory events depends on PEBs support and access to LDLAT msr,
-but we display them in /sys/devices/cpu/events even if the cpu
-does not provide those, like for KVM guests.
+> +CONFIG_SYSCTL_SYSCALL=y
 
-That brings the false assumption that those events should
-be available, while they fail event to open.
+Also not in the asm-generic syscall table. We should probably hide the
+CONFIG_USELIB and CONFIG_SYSCTL_SYSCALL options so they
+only appear on architectures that can use them (patches welcome).
 
-Separating the mem-* events attributes and merging them
-with cpu_events only if there's PEBs support detected.
+> +CONFIG_KALLSYMS_ALL=y
 
-We could also check if LDLAT msr is available, but the
-PEBs check seems to cover the need now.
+While useful for debugging, this is also something I would not expect
+in the defconfig file
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- arch/x86/events/core.c       |  8 ++---
- arch/x86/events/intel/core.c | 69 +++++++++++++++++++++++++++---------
- 2 files changed, 56 insertions(+), 21 deletions(-)
+> +CONFIG_USERFAULTFD=y
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5f4829f10129..1a17004f6559 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1631,9 +1631,9 @@ __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
- 	struct attribute **new;
- 	int j, i;
- 
--	for (j = 0; a[j]; j++)
-+	for (j = 0; a && a[j]; j++)
- 		;
--	for (i = 0; b[i]; i++)
-+	for (i = 0; b && b[i]; i++)
- 		j++;
- 	j++;
- 
-@@ -1642,9 +1642,9 @@ __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
- 		return NULL;
- 
- 	j = 0;
--	for (i = 0; a[i]; i++)
-+	for (i = 0; a && a[i]; i++)
- 		new[j++] = a[i];
--	for (i = 0; b[i]; i++)
-+	for (i = 0; b && b[i]; i++)
- 		new[j++] = b[i];
- 	new[j] = NULL;
- 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 035c37481f57..a10f80f697b7 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -242,7 +242,7 @@ EVENT_ATTR_STR(mem-loads,	mem_ld_nhm,	"event=0x0b,umask=0x10,ldlat=3");
- EVENT_ATTR_STR(mem-loads,	mem_ld_snb,	"event=0xcd,umask=0x1,ldlat=3");
- EVENT_ATTR_STR(mem-stores,	mem_st_snb,	"event=0xcd,umask=0x2");
- 
--static struct attribute *nhm_events_attrs[] = {
-+static struct attribute *nhm_mem_events_attrs[] = {
- 	EVENT_PTR(mem_ld_nhm),
- 	NULL,
- };
-@@ -278,8 +278,6 @@ EVENT_ATTR_STR_HT(topdown-recovery-bubbles.scale, td_recovery_bubbles_scale,
- 	"4", "2");
- 
- static struct attribute *snb_events_attrs[] = {
--	EVENT_PTR(mem_ld_snb),
--	EVENT_PTR(mem_st_snb),
- 	EVENT_PTR(td_slots_issued),
- 	EVENT_PTR(td_slots_retired),
- 	EVENT_PTR(td_fetch_bubbles),
-@@ -290,6 +288,12 @@ static struct attribute *snb_events_attrs[] = {
- 	NULL,
- };
- 
-+static struct attribute *snb_mem_events_attrs[] = {
-+	EVENT_PTR(mem_ld_snb),
-+	EVENT_PTR(mem_st_snb),
-+	NULL,
-+};
-+
- static struct event_constraint intel_hsw_event_constraints[] = {
- 	FIXED_EVENT_CONSTRAINT(0x00c0, 0), /* INST_RETIRED.ANY */
- 	FIXED_EVENT_CONSTRAINT(0x003c, 1), /* CPU_CLK_UNHALTED.CORE */
-@@ -3764,8 +3768,6 @@ EVENT_ATTR_STR(cycles-t,	cycles_t,	"event=0x3c,in_tx=1");
- EVENT_ATTR_STR(cycles-ct,	cycles_ct,	"event=0x3c,in_tx=1,in_tx_cp=1");
- 
- static struct attribute *hsw_events_attrs[] = {
--	EVENT_PTR(mem_ld_hsw),
--	EVENT_PTR(mem_st_hsw),
- 	EVENT_PTR(td_slots_issued),
- 	EVENT_PTR(td_slots_retired),
- 	EVENT_PTR(td_fetch_bubbles),
-@@ -3776,6 +3778,12 @@ static struct attribute *hsw_events_attrs[] = {
- 	NULL
- };
- 
-+static struct attribute *hsw_mem_events_attrs[] = {
-+	EVENT_PTR(mem_ld_hsw),
-+	EVENT_PTR(mem_st_hsw),
-+	NULL,
-+};
-+
- static struct attribute *hsw_tsx_events_attrs[] = {
- 	EVENT_PTR(tx_start),
- 	EVENT_PTR(tx_commit),
-@@ -3792,13 +3800,6 @@ static struct attribute *hsw_tsx_events_attrs[] = {
- 	NULL
- };
- 
--static __init struct attribute **get_hsw_events_attrs(void)
--{
--	return boot_cpu_has(X86_FEATURE_RTM) ?
--		merge_attr(hsw_events_attrs, hsw_tsx_events_attrs) :
--		hsw_events_attrs;
--}
--
- static ssize_t freeze_on_smi_show(struct device *cdev,
- 				  struct device_attribute *attr,
- 				  char *buf)
-@@ -3875,9 +3876,32 @@ static struct attribute *intel_pmu_attrs[] = {
- 	NULL,
- };
- 
-+static __init struct attribute **
-+get_events_attrs(struct attribute **base,
-+		 struct attribute **mem,
-+		 struct attribute **tsx)
-+{
-+	struct attribute **attrs = base;
-+	struct attribute **old;
-+
-+	if (mem && x86_pmu.pebs)
-+		attrs = merge_attr(attrs, mem);
-+
-+	if (tsx && boot_cpu_has(X86_FEATURE_RTM)) {
-+		old = attrs;
-+		attrs = merge_attr(attrs, tsx);
-+		if (old != base)
-+			kfree(old);
-+	}
-+
-+	return attrs;
-+}
-+
- __init int intel_pmu_init(void)
- {
- 	struct attribute **extra_attr = NULL;
-+	struct attribute **mem_attr = NULL;
-+	struct attribute **tsx_attr = NULL;
- 	struct attribute **to_free = NULL;
- 	union cpuid10_edx edx;
- 	union cpuid10_eax eax;
-@@ -3986,7 +4010,7 @@ __init int intel_pmu_init(void)
- 		x86_pmu.enable_all = intel_pmu_nhm_enable_all;
- 		x86_pmu.extra_regs = intel_nehalem_extra_regs;
- 
--		x86_pmu.cpu_events = nhm_events_attrs;
-+		mem_attr = nhm_mem_events_attrs;
- 
- 		/* UOPS_ISSUED.STALLED_CYCLES */
- 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
-@@ -4112,7 +4136,7 @@ __init int intel_pmu_init(void)
- 		x86_pmu.extra_regs = intel_westmere_extra_regs;
- 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
- 
--		x86_pmu.cpu_events = nhm_events_attrs;
-+		mem_attr = nhm_mem_events_attrs;
- 
- 		/* UOPS_ISSUED.STALLED_CYCLES */
- 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
-@@ -4152,6 +4176,7 @@ __init int intel_pmu_init(void)
- 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
- 
- 		x86_pmu.cpu_events = snb_events_attrs;
-+		mem_attr = snb_mem_events_attrs;
- 
- 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
- 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
-@@ -4192,6 +4217,7 @@ __init int intel_pmu_init(void)
- 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
- 
- 		x86_pmu.cpu_events = snb_events_attrs;
-+		mem_attr = snb_mem_events_attrs;
- 
- 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
- 		intel_perfmon_event_map[PERF_COUNT_HW_STALLED_CYCLES_FRONTEND] =
-@@ -4226,10 +4252,12 @@ __init int intel_pmu_init(void)
- 
- 		x86_pmu.hw_config = hsw_hw_config;
- 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
--		x86_pmu.cpu_events = get_hsw_events_attrs();
-+		x86_pmu.cpu_events = hsw_events_attrs;
- 		x86_pmu.lbr_double_abort = true;
- 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
- 			hsw_format_attr : nhm_format_attr;
-+		mem_attr = hsw_mem_events_attrs;
-+		tsx_attr = hsw_tsx_events_attrs;
- 		pr_cont("Haswell events, ");
- 		name = "haswell";
- 		break;
-@@ -4265,10 +4293,12 @@ __init int intel_pmu_init(void)
- 
- 		x86_pmu.hw_config = hsw_hw_config;
- 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
--		x86_pmu.cpu_events = get_hsw_events_attrs();
-+		x86_pmu.cpu_events = hsw_events_attrs;
- 		x86_pmu.limit_period = bdw_limit_period;
- 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
- 			hsw_format_attr : nhm_format_attr;
-+		mem_attr = hsw_mem_events_attrs;
-+		tsx_attr = hsw_tsx_events_attrs;
- 		pr_cont("Broadwell events, ");
- 		name = "broadwell";
- 		break;
-@@ -4324,7 +4354,9 @@ __init int intel_pmu_init(void)
- 			hsw_format_attr : nhm_format_attr;
- 		extra_attr = merge_attr(extra_attr, skl_format_attr);
- 		to_free = extra_attr;
--		x86_pmu.cpu_events = get_hsw_events_attrs();
-+		x86_pmu.cpu_events = hsw_events_attrs;
-+		mem_attr = hsw_mem_events_attrs;
-+		tsx_attr = hsw_tsx_events_attrs;
- 		intel_pmu_pebs_data_source_skl(
- 			boot_cpu_data.x86_model == INTEL_FAM6_SKYLAKE_X);
- 		pr_cont("Skylake events, ");
-@@ -4357,6 +4389,9 @@ __init int intel_pmu_init(void)
- 		WARN_ON(!x86_pmu.format_attrs);
- 	}
- 
-+	x86_pmu.cpu_events = get_events_attrs(x86_pmu.cpu_events,
-+					      mem_attr, tsx_attr);
-+
- 	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
- 		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
- 		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
--- 
-2.17.1
+Probably not needed either, unless you have a specific use
+case.
 
+> +CONFIG_EMBEDDED=y
+
+This (and CONFIG_EXPERT) is mostly there to expose options
+that are otherwise hidden for good reasons. Is there any option
+you tweak that depends on this? If not, then remove this as well.
+
+> +CONFIG_PROFILING=y
+
+This is only for oprofile, which new architectures should generally
+no longer implement. Better implement PERF only.
+
+> +CONFIG_BLK_DEV_INTEGRITY=y
+
+This is also fairly unusual.
+
+> +CONFIG_EXT2_FS=y
+> +CONFIG_EXT2_FS_XATTR=y
+> +CONFIG_EXT2_FS_POSIX_ACL=y
+> +CONFIG_EXT2_FS_SECURITY=y
+> +CONFIG_EXT3_FS=y
+> +CONFIG_EXT3_FS_POSIX_ACL=y
+> +CONFIG_EXT3_FS_SECURITY=y
+
+Better enable only EXT4 and drop EXT2/EXT3.
+
+> +CONFIG_UNUSED_SYMBOLS=y
+
+You should only need this to work around bugs, so
+I'd turn it off.
+
+       Arnd
