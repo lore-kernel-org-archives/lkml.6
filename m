@@ -2,90 +2,95 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B493C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FFCC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC47F2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:31:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BACF22075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:37:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="N2JZZeJv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC47F2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D+WgThQe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACF22075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeIGEJg (ORCPT
+        id S1727743AbeIGEPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 00:09:36 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:50430 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725745AbeIGEJg (ORCPT
+        Fri, 7 Sep 2018 00:15:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48370 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeIGEPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 00:09:36 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 853415C00FA;
-        Fri,  7 Sep 2018 01:31:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1536276703;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8AFx999YG4x9nzEIiS2ow9h7MmRRuB2TWyq5UQa+9Po=;
-        b=N2JZZeJv11r7VpZERLmj5IlEr5kddgoBiPU/3Mr6fLv3ZZ4+7azk0Kp9oztHH5VXhgbM8h
-        VMk0VQXXo7HHBrSQ55fUfusbuJRJrHxtG1LGlDOXQtlypkm8E8Z8Rfpf5IaGwT5hgfR5CN
-        gQ8s6R1KZHCZDOLsZJgqCUERLafruTo=
+        Fri, 7 Sep 2018 00:15:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+fNmr2U3/50TYgKUmR325SPC2sikD+JHOs96VKIEg/4=; b=D+WgThQeloxXsL8dGLgVLNSFt
+        qTd3A8eCKH/aVYSlb9rUOdb7UEf6EwYrRLW30sV0/g4mr/6SIbPnwZMoBkujbdcLX4PBSWplw4LYU
+        lLqSAHuGAXcVSasWZDw1EDtJf/IvI7MC2c6u4WdhE5stbcPJde5s57wFOlcR6plPMuTwKf9oWpIed
+        nUVOdNJB1ercuJ0wzlCn93SjdPjd6sLIWY34lC3HqWoPQDH4wTi7FpQc5he3aW+JO263XS+dWUjxM
+        DHzrRyY9+nxBVxtigEaj/uvJ7tbRlOzpAl8zo59sRyOjbqLz80HIuQYHjXCpN2T14t5dBd7RJsN9Z
+        nK7Tm2ijA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fy3q1-0003zg-7E; Thu, 06 Sep 2018 23:37:25 +0000
+To:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2] modules_install: warn when missing System.map file
+Message-ID: <dde798fd-9fef-6ac0-a3bc-6aa7193c5d89@infradead.org>
+Date:   Thu, 6 Sep 2018 16:37:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 06 Sep 2018 16:31:42 -0700
-From:   Stefan Agner <stefan@agner.ch>
-To:     thierry.reding@gmail.com, airlied@linux.ie
-Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: return with probe defer if GPIO subsystem is
- not ready
-In-Reply-To: <20180726133606.14587-1-stefan@agner.ch>
-References: <20180726133606.14587-1-stefan@agner.ch>
-Message-ID: <de84d04c902d1f7f22b6f024b853a1c7@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.07.2018 06:36, Stefan Agner wrote:
-> If the GPIO subsystem is not ready make sure to return -EPROBE_DEFER
-> instead of silently continuing without HPD.
-> 
-> Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-I think this did not get merged yet, any chance to get it in?
+If there is no System.map file for "make modules_install",
+scripts/depmod.sh will silently exit with success, having done
+nothing.  Since this is an unexpected situation, change it to
+report a Warning for the missing file.  The behavior is not
+changed except for the Warning message.
 
---
-Stefan
+The (previous) silent success and new Warning can be reproduced
+by:
+$ make mrproper; make defconfig
+$ make modules; make modules_install
 
-> ---
->  drivers/gpu/drm/tegra/output.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-> index ffe34bd0bb9d..4bcefe455afd 100644
-> --- a/drivers/gpu/drm/tegra/output.c
-> +++ b/drivers/gpu/drm/tegra/output.c
-> @@ -133,7 +133,9 @@ int tegra_output_probe(struct tegra_output *output)
->  	output->hpd_gpio = of_get_named_gpio_flags(output->of_node,
->  						   "nvidia,hpd-gpio", 0,
->  						   &output->hpd_gpio_flags);
-> -	if (gpio_is_valid(output->hpd_gpio)) {
-> +	if (output->hpd_gpio == -EPROBE_DEFER) {
-> +		return -EPROBE_DEFER;
-> +	} else if (gpio_is_valid(output->hpd_gpio)) {
->  		unsigned long flags;
->  
->  		err = gpio_request_one(output->hpd_gpio, GPIOF_DIR_IN,
+and since System.map is produced by "make vmlinux", the steps
+above omit producing the System.map file.
+
+Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+v2: add Yamada-san's suggestions for >&2 and Skipping depmod.
+
+ scripts/depmod.sh |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- lnx-419-rc1.orig/scripts/depmod.sh
++++ lnx-419-rc1/scripts/depmod.sh
+@@ -11,6 +11,7 @@ DEPMOD=$1
+ KERNELRELEASE=$2
+ 
+ if ! test -r System.map ; then
++	echo "Warning: modules_install: missing 'System.map' file. Skipping depmod." >&2
+ 	exit 0
+ fi
+ 
+
