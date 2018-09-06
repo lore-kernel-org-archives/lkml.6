@@ -3,120 +3,169 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23466C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE63620844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE63620844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CA0FC2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0FC2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbeIFVsZ (ORCPT
+        id S1728706AbeIFVvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:48:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48826 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbeIFVsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:48:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 351427A9;
-        Thu,  6 Sep 2018 10:11:59 -0700 (PDT)
-Received: from [10.4.12.116] (e107155-lin.Emea.Arm.com [10.4.12.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9EFBE3F557;
-        Thu,  6 Sep 2018 10:11:57 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, arm@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Kevin Hilman <khilman@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] firmware: arm_scmi: fix divide by zero when
- sustained_perf_level is zero
-To:     Olof Johansson <olof@lixom.net>
-References: <1536165491-27813-1-git-send-email-sudeep.holla@arm.com>
- <1536246639-7420-1-git-send-email-sudeep.holla@arm.com>
- <20180906165932.csa5b4vlmaekv5y2@localhost>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <bc4cb705-e9a4-d006-66f0-7b32128b39d0@arm.com>
-Date:   Thu, 6 Sep 2018 18:11:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 17:51:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34096 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726541AbeIFVvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 17:51:14 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB9108077104;
+        Thu,  6 Sep 2018 17:14:46 +0000 (UTC)
+Received: from redhat.com (ovpn-120-232.rdu2.redhat.com [10.10.120.232])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5DFD210D14C6;
+        Thu,  6 Sep 2018 17:14:46 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 13:14:46 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH net-next 04/11] tuntap: simplify error handling in
+ tun_build_skb()
+Message-ID: <20180906130425-mutt-send-email-mst@kernel.org>
+References: <20180906040526.22518-1-jasowang@redhat.com>
+ <20180906040526.22518-5-jasowang@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180906165932.csa5b4vlmaekv5y2@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906040526.22518-5-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 17:14:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 17:14:46 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/09/18 17:59, Olof Johansson wrote:
-> Hi,
+On Thu, Sep 06, 2018 at 12:05:19PM +0800, Jason Wang wrote:
+> There's no need to duplicate page get logic in each action. So this
+> patch tries to get page and calculate the offset before processing XDP
+> actions, and undo them when meet errors (we don't care the performance
+> on errors). This will be used for factoring out XDP logic.
 > 
-> On Thu, Sep 06, 2018 at 04:10:39PM +0100, Sudeep Holla wrote:
->> Firmware can provide zero as values for sustained performance level and
->> corresponding sustained frequency in kHz in order to hide the actual
->> frequencies and provide only abstract values. It may endup with divide
->> by zero scenario resulting in kernel panic.
->>
->> Let's set the multiplication factor to one if either one or both of them
->> (sustained_perf_level and sustained_freq) are set to zero.
->>
->> Fixes: a9e3fbfaa0ff ("firmware: arm_scmi: add initial support for performance protocol")
->> Reported-by: Ionela Voinescu <ionela.voinescu@arm.com>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> ---
->>  drivers/firmware/arm_scmi/perf.c | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> Hi ARM SoC team,
->>
->> Can you pick this patch directly ?
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+I see some issues with this one.
+
+> ---
+>  drivers/net/tun.c | 37 ++++++++++++++++---------------------
+>  1 file changed, 16 insertions(+), 21 deletions(-)
 > 
-> Applied, however:
-> 
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index 372caf7d67d9..f8cdcfa392c3 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -1642,7 +1642,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>  				     int len, int *skb_xdp)
+>  {
+>  	struct page_frag *alloc_frag = &current->task_frag;
+> -	struct sk_buff *skb;
+> +	struct sk_buff *skb = NULL;
+>  	struct bpf_prog *xdp_prog;
+>  	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+>  	unsigned int delta = 0;
+> @@ -1668,6 +1668,9 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>  	if (copied != len)
+>  		return ERR_PTR(-EFAULT);
+>  
+> +	get_page(alloc_frag->page);
+> +	alloc_frag->offset += buflen;
+> +
 
-Thanks.
+This adds an atomic op on XDP_DROP which is a data path
+operation for some workloads.
 
->> diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
->> index 721e6c57beae..64342944d917 100644
->> --- a/drivers/firmware/arm_scmi/perf.c
->> +++ b/drivers/firmware/arm_scmi/perf.c
->> @@ -166,7 +166,13 @@ scmi_perf_domain_attributes_get(const struct scmi_handle *handle, u32 domain,
->>  					le32_to_cpu(attr->sustained_freq_khz);
->>  		dom_info->sustained_perf_level =
->>  					le32_to_cpu(attr->sustained_perf_level);
->> -		dom_info->mult_factor =	(dom_info->sustained_freq_khz * 1000) /
->> +		if (!dom_info->sustained_freq_khz ||
->> +		    !dom_info->sustained_perf_level)
->> +			/* CPUFreq converts to kHz, hence default 1000 */
->> +			dom_info->mult_factor =	1000;
->> +		else
->> +			dom_info->mult_factor =
->> +					(dom_info->sustained_freq_khz * 1000) /
->>  					dom_info->sustained_perf_level;
->>  		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
-> 
-> I noticed you do memcpy of these name strings in a few places, and use
-> it as a string. Any firmware that would return a non-terminated string
-> would cause problems later on. strlcpy() might be a better approach.
-> 
+>  	/* There's a small window that XDP may be set after the check
+>  	 * of xdp_prog above, this should be rare and for simplicity
+>  	 * we do XDP on skb in case the headroom is not enough.
+> @@ -1695,23 +1698,15 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>  
+>  		switch (act) {
+>  		case XDP_REDIRECT:
+> -			get_page(alloc_frag->page);
+> -			alloc_frag->offset += buflen;
+>  			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
+>  			xdp_do_flush_map();
+>  			if (err)
+> -				goto err_redirect;
+> -			rcu_read_unlock();
+> -			local_bh_enable();
+> -			return NULL;
+> +				goto err_xdp;
+> +			goto out;
+>  		case XDP_TX:
+> -			get_page(alloc_frag->page);
+> -			alloc_frag->offset += buflen;
+>  			if (tun_xdp_tx(tun->dev, &xdp) < 0)
+> -				goto err_redirect;
+> -			rcu_read_unlock();
+> -			local_bh_enable();
+> -			return NULL;
+> +				goto err_xdp;
+> +			goto out;
+>  		case XDP_PASS:
+>  			delta = orig_data - xdp.data;
+>  			len = xdp.data_end - xdp.data;
+> @@ -1730,23 +1725,23 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>  	local_bh_enable();
+>  
+>  	skb = build_skb(buf, buflen);
+> -	if (!skb)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!skb) {
+> +		skb = ERR_PTR(-ENOMEM);
+> +		goto out;
 
-I seem to have assumed firmware always conforms to the definition: "Null
-terminated ASCII string of up to 16 bytes in length" when I initially
-wrote this.
+So goto out will skip put_page, and we did
+do get_page above. Seems wrong. You should
+goto err_skb or something like this.
 
-Thanks for the finding this and the suggestion, it's always safer to
-protect against firmware bugs. I will find all the occurrences and fix them.
 
--- 
-Regards,
-Sudeep
+> +	}
+>  
+>  	skb_reserve(skb, pad - delta);
+>  	skb_put(skb, len);
+> -	get_page(alloc_frag->page);
+> -	alloc_frag->offset += buflen;
+>  
+>  	return skb;
+>  
+> -err_redirect:
+> -	put_page(alloc_frag->page);
+>  err_xdp:
+> +	alloc_frag->offset -= buflen;
+> +	put_page(alloc_frag->page);
+> +out:
+
+Out here isn't an error at all, is it?  You should not mix return and
+error handling IMHO.
+
+
+
+>  	rcu_read_unlock();
+>  	local_bh_enable();
+> -	this_cpu_inc(tun->pcpu_stats->rx_dropped);
+
+Doesn't this break rx_dropped accounting?
+
+> -	return NULL;
+> +	return skb;
+>  }
+>  
+>  /* Get packet from user space buffer */
+> -- 
+> 2.17.1
