@@ -2,130 +2,134 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFDDC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D307C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEE332075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE332075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 48C252075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C252075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbeIFR4j (ORCPT
+        id S1729356AbeIFR5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:56:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57118 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728724AbeIFR4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:56:38 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3B386207AD; Thu,  6 Sep 2018 15:21:07 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7748B20763;
-        Thu,  6 Sep 2018 15:20:56 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 15:20:55 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Przemyslaw Gaj <pgaj@cadence.com>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180906152055.5618d235@bbrezillon>
-In-Reply-To: <20180906151437.4259d6fc@bbrezillon>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-        <20180824143934.6d6b6487@bbrezillon>
-        <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
-        <20180824201600.7d80bca9@bbrezillon>
-        <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
-        <20180828140209.29155d00@bbrezillon>
-        <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
-        <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
-        <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
-        <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
-        <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
-        <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
-        <20180906151437.4259d6fc@bbrezillon>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 6 Sep 2018 13:57:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40268 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728724AbeIFR5I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:57:08 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86DENMs014791
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 09:21:37 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mb4sugt3g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:21:36 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 6 Sep 2018 14:21:35 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 14:21:30 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86DLTPC37355706
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 13:21:29 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E290A4055;
+        Thu,  6 Sep 2018 16:21:21 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 65CC0A4051;
+        Thu,  6 Sep 2018 16:21:20 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.92])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  6 Sep 2018 16:21:20 +0100 (BST)
+Date:   Thu, 6 Sep 2018 16:21:26 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 00/29] mm: remove bootmem allocator
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180906091538.GN14951@dhcp22.suse.cz>
+ <46ae5e64-7b1a-afab-bfef-d00183a7ef76@microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46ae5e64-7b1a-afab-bfef-d00183a7ef76@microsoft.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18090613-0016-0000-0000-000002014382
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090613-0017-0000-0000-00003257EDDE
+Message-Id: <20180906132126.GK27492@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=546 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 15:14:37 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-
-> On Thu, 6 Sep 2018 14:59:46 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, Sep 06, 2018 at 01:04:47PM +0000, Pasha Tatashin wrote:
 > 
-> > On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:  
-> > >
-> > > Hi Boris, Vitor,
-> > >
-> > > This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
-> > > https://github.com/przemekgaj/i3c-linux/commit/d54fe68a9d3e573c0c454a2c6f1afafc20142ec5
-> > >
-> > > Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
-> > > It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
-> > >
-> > > I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)    
+> 
+> On 9/6/18 5:15 AM, Michal Hocko wrote:
+> > On Wed 05-09-18 18:59:15, Mike Rapoport wrote:
+> > [...]
+> >>  325 files changed, 846 insertions(+), 2478 deletions(-)
+> >>  delete mode 100644 include/linux/bootmem.h
+> >>  delete mode 100644 mm/bootmem.c
+> >>  delete mode 100644 mm/nobootmem.c
 > > 
+> > This is really impressive! Thanks a lot for working on this. I wish we
+> > could simplify the memblock API as well. There are just too many public
+> > functions with subtly different semantic and barely any useful
+> > documentation.
 > > 
-> > Can you explain the reason for having a user space interface and DT property?
-> > I thought we had concluded earlier that we wouldn't need that, but it's possible
-> > that I missed something in the discussion since then.  
+> > But even this is a great step forward!
 > 
-> I don't think the sysfs knob is needed, this being said, after thinking
-> a bit more about mastership handover and the secondary master case, I
-> think we have something important to solve.
+> This is a great simplification of boot process. Thank you Mike!
 > 
-> When a master is not in control of the bus, it gets informed of devices
-> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
-> means the secondary master should populate the bus with I3C/I2C devices
-> on such events, but that's not enough, because DEFSLVS/DAA do not
-> provide all device info. Some of them (like read/write/ibi limitations)
-> require extra CCC commands, and, to send those CCC commands, the
-> secondary master must claim the bus. We could add a case where we
-> declare devices as partially discovered until the master acquires
-> ownership of the bus, but that means part of the data returned by
-> i3c_device_get_info() will be inaccurate, which might have an impact on
-> some i3c driver ->probe() functions.
+> I agree, with Michal in the future, once nobootmem kernel stabalizes
+> after this effort, we should start simplifying memblock allocator API:
+> it won't be as big effort as this one, as I think, that can be done in
+> incremental phases, but it will help to make early boot much more stable
+> and uniform across arches.
 
-Hm, one possible solution would be to register partially discovered
-devices to the device model and let i3c_device_get_info() claim the bus
-and request missing data when needed. This way, if the driver needs to
-call i3c_device_get_info() in its probe path, it should work just fine.
+It's not only about the memblock APIs. Every arch has its own way of memory
+detection and initialization, all this should be revisited at some point.
+But yes, apart from the memblock APIs update which will be quite
+disruptive, the arches memory initialization can be updated incrementally.
+ 
+> Thank you,
+> Pavel
+
+-- 
+Sincerely yours,
+Mike.
+
