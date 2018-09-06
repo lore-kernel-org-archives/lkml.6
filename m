@@ -2,71 +2,117 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE58BC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB66FC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1A520659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:10:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1A520659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7D92120659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D92120659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbeIFMoZ (ORCPT
+        id S1728024AbeIFMog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:44:25 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:32905 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeIFMoZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:44:25 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxpMg-0000Yp-3T; Thu, 06 Sep 2018 10:10:10 +0200
-Date:   Thu, 6 Sep 2018 10:10:09 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-cc:     linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, bryanh@codeaurora.org,
-        psodagud@codeaurora.org
-Subject: Re: [PATCH] kernel: cpu: Handle hotplug failure for state
- CPUHP_AP_IDLE_DEAD
-In-Reply-To: <1536174917-11408-1-git-send-email-pheragu@codeaurora.org>
-Message-ID: <alpine.DEB.2.21.1809060957540.1416@nanos.tec.linutronix.de>
-References: <1536174917-11408-1-git-send-email-pheragu@codeaurora.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 6 Sep 2018 08:44:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11665 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727203AbeIFMog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:44:36 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A9597446D93F2;
+        Thu,  6 Sep 2018 16:10:18 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
+ 16:10:11 +0800
+Date:   Thu, 6 Sep 2018 16:08:24 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH 3/7] vfio: add sdmdev support
+Message-ID: <20180906080824.GA230707@Turing-Arch-b>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180903005204.26041-4-nek.in.cn@gmail.com>
+ <0574e7dc-bed2-d2d0-3aa6-93590d54ce81@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <0574e7dc-bed2-d2d0-3aa6-93590d54ce81@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Sep 2018, Prakruthi Deepak Heragu wrote:
+On Sun, Sep 02, 2018 at 07:11:12PM -0700, Randy Dunlap wrote:
+> Date: Sun, 2 Sep 2018 19:11:12 -0700
+> From: Randy Dunlap <rdunlap@infradead.org>
+> To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+>  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
+>  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Alex Williamson
+>  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
+>  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
+>  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
+>  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
+>  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
+>  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+>  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+>  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
+>  Sanjay Kumar <sanjay.k.kumar@intel.com>
+> CC: linuxarm@huawei.com
+> Subject: Re: [PATCH 3/7] vfio: add sdmdev support
+> User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+>  Thunderbird/52.9.1
+> Message-ID: <0574e7dc-bed2-d2d0-3aa6-93590d54ce81@infradead.org>
+> 
+> On 09/02/2018 05:52 PM, Kenneth Lee wrote:
+> > diff --git a/drivers/vfio/sdmdev/Kconfig b/drivers/vfio/sdmdev/Kconfig
+> > new file mode 100644
+> > index 000000000000..51474272870d
+> > --- /dev/null
+> > +++ b/drivers/vfio/sdmdev/Kconfig
+> > @@ -0,0 +1,10 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +config VFIO_SDMDEV
+> > +	tristate "Support for Share Domain MDEV"
+> > +	depends on VFIO_MDEV_DEVICE
+> > +	help
+> > +	  Support for VFIO Share Domain MDEV, which enables the kernel to
+> > +	  support light weight hardware accelerator framework, WarpDrive.
+> 
+> 	          lightweight
+> 
+Thank you, will fix it.
+> > +
+> > +	  To compile this as a module, choose M here: the module will be called
+> > +	  sdmdev.
+> 
+> 
+> thanks,
+> -- 
+> ~Randy
 
-> Once the tear down hotplug handler is run, cpu is dead and enters
-> into CPUHP_AP_IDLE_DEAD state. Any callbacks that fail in the state
-> machine with state < CPUHP_AP_IDLE must be treated as fatal as this
-> could result into timer not beig migrated away from dead cpu and run
-> into issues like work queue lock ups, sched_clock timer wrapping to
-> zero as sched_clock_poll which is in the hrtimer base of cpu being
-> hotplugged does not get migrated.
-
-BUG_ON() is the last resort when there is no other way out. And there is no
-reason to treat such a failure as fatal unconditionally.
-
-Why would any of those callback fail at all? And if that ever happens, then
-we really can be smarter than just giving up.
-
-Thanks,
-
-	tglx
-
+-- 
+			-Kenneth(Hisilicon)
 
