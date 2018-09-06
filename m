@@ -2,114 +2,128 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BB8C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766A5C4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59282075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAME6Hmj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59282075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A25F206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A25F206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbeIFSWD (ORCPT
+        id S1729948AbeIFSWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:22:03 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55958 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729708AbeIFSWC (ORCPT
+        Thu, 6 Sep 2018 14:22:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54137 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729708AbeIFSWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:22:02 -0400
-Received: by mail-it0-f68.google.com with SMTP id d10-v6so14785617itj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 06:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OMIoBcyCnnsiRKrbYO+gBBx66uwywt8vjOE+4okCjUU=;
-        b=ZAME6HmjjFEx/3AkJwjhOqiWmFpgXSTNyCPi8TtSj7NpspIZoR0CqkCLrzPDE4+B0s
-         juJYks+mLp0fuFXFNFcTl0gbQnqfkIR7+81/GxzWX2zNOX0IEyzayup9ICK53zMiJzVD
-         KgN44TtLvdUG4HLDD3l5NxBRzMQS/cWci1oYk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OMIoBcyCnnsiRKrbYO+gBBx66uwywt8vjOE+4okCjUU=;
-        b=EkZb9FQVe+2Edl64xle8wy1WYPm0cxWTOSNVh5ldhHuLVsXO1kfrYerxtxQk+bpDr/
-         a3xQ5MnwtKJbeC0RDOSityFA1J3VJEsCh8fN6ZNz9p3yjcLhM1FnfeLNJQlPiRlQFHRW
-         KAErR7FOZp9Pmm3mzVmJIMxN3hveE4dtnlQJQPsMcdg5bcuMYBlZJ+B0bmfSk1PAFTkg
-         8EohOc78e/OlVyWSvjENU1EtRl23PkUs45+P0L6fYf+kethd/i9V1h8I+Un6/31qYswP
-         qx0MudZIq8ukqAYvwSOklSkv91ZaFmLqE+FjQrVj0aY2xHJaB+51owpJzuV8K8Im954p
-         vQUw==
-X-Gm-Message-State: APzg51CLEoVbr0V0wxUMMZR0JKeiELj+NL2/tZbXErhvpBXQGjqUaPi0
-        XTTukJ+Qh2iSltF+nH+XbYtyE5QB5JEp/pAZEgDHPA==
-X-Google-Smtp-Source: ANB0VdZF0rdH0rmSBp04lgsyilZHJD6DADy/zf1ogg1GoKfHowr5AYTOoXkQeJYftIIFMMaiXVuI3iEf4FbXI63GnW4=
-X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr2801025itc.16.1536241584783;
- Thu, 06 Sep 2018 06:46:24 -0700 (PDT)
+        Thu, 6 Sep 2018 14:22:04 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DjpS2310927
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:45:51 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Djo2W310924;
+        Thu, 6 Sep 2018 06:45:50 -0700
+Date:   Thu, 6 Sep 2018 06:45:50 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-jtsapwibyxrnv1xjfsgzp0fj@git.kernel.org>
+Cc:     adrian.hunter@intel.com, yhs@fb.com, dsahern@gmail.com,
+        acme@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        wangnan0@huawei.com, mingo@kernel.org, hpa@zytor.com,
+        jolsa@kernel.org, daniel@iogearbox.net, namhyung@kernel.org
+Reply-To: wangnan0@huawei.com, mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+          yhs@fb.com, acme@redhat.com, dsahern@gmail.com, hpa@zytor.com,
+          jolsa@kernel.org, namhyung@kernel.org, daniel@iogearbox.net
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf augmented_syscalls: Check probe_read_str()
+ return separately
+Git-Commit-ID: 21d7eb9a24739cdc5ea19c90a79e5a585866ba35
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
-In-Reply-To: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 6 Sep 2018 15:46:12 +0200
-Message-ID: <CACRpkdakAAAFKfRFeB_8kUCyGts_7sojVwyexe4aL4QQo2CcGg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] mfd: lochnagar: Add support for the Cirrus Logic Lochnagar
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 12:41 PM Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
+Commit-ID:  21d7eb9a24739cdc5ea19c90a79e5a585866ba35
+Gitweb:     https://git.kernel.org/tip/21d7eb9a24739cdc5ea19c90a79e5a585866ba35
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 3 Sep 2018 15:02:22 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 3 Sep 2018 15:13:33 -0300
 
-> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform.  Audio system topology, clocking and
-> power can all be controlled through the Lochnagar, allowing the
-> device under test to be used in a variety of possible use cases.
->
-> As the Lochnagar is a fairly complex device this MFD driver
-> allows the drivers for the various features to be bound
-> in. Initially clocking, regulator and pinctrl will be added as
-> these are necessary to configure the system. But in time at least
-> audio and voltage/current monitoring will also be added.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+perf augmented_syscalls: Check probe_read_str() return separately
 
-It's a bit confusing, maybe you can clear it up:
-it appears to be an I2C device, so when you say this is a
-"development board" is there something like a board
-controller that is accessed over I2C and this is what the
-driver really probes to, not the board per se?
+Using a value returned from probe_read_str() to tell how many bytes to
+copy using perf_event_output() has issues in some older kernels, like
+4.17.17-100.fc27.x86_64, so separate the bounds checking done on how
+many bytes to copy to a separate variable, so that the next patch has
+only what is being done to make the test pass on older BPF validators.
 
-I guess jamming this card into the I2C slot of any other
-system (would work fine with a 96Boards LS connector
-as it seems, actually)  also involves connecting some
-I2S or similar on the side for high-datarate traffic?
+For reference, see the discussion in this thread:
 
-This driver seems to only concern itself with the I2C
-board controller per se, not the board is that right?
+  https://www.spinics.net/lists/netdev/msg480099.html
 
-Yours,
-Linus Walleij
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Yonghong Song <yhs@fb.com>
+Link: https://lkml.kernel.org/n/tip-jtsapwibyxrnv1xjfsgzp0fj@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/examples/bpf/augmented_syscalls.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
+index 1419a9186937..0decbcfa8b90 100644
+--- a/tools/perf/examples/bpf/augmented_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_syscalls.c
+@@ -33,9 +33,9 @@ struct syscall_exit_args {
+ };
+ 
+ struct augmented_filename {
+-	int	size;
+-	int	reserved;
+-	char	value[256];
++	unsigned int	size;
++	int		reserved;
++	char		value[256];
+ };
+ 
+ #define augmented_filename_syscall(syscall)							\
+@@ -46,14 +46,15 @@ struct augmented_enter_##syscall##_args {			 				\
+ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
+ {												\
+ 	struct augmented_enter_##syscall##_args augmented_args = { .filename.reserved = 0, }; 	\
++	unsigned int len = sizeof(augmented_args);						\
+ 	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);			\
+ 	augmented_args.filename.size = probe_read_str(&augmented_args.filename.value, 		\
+ 						      sizeof(augmented_args.filename.value), 	\
+ 						      args->filename_ptr); 			\
++	if (augmented_args.filename.size < sizeof(augmented_args.filename.value))		\
++		len -= sizeof(augmented_args.filename.value) - augmented_args.filename.size;	\
+ 	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
+-			  &augmented_args, 							\
+-			  (sizeof(augmented_args) - sizeof(augmented_args.filename.value) +	\
+-			   augmented_args.filename.size));					\
++			  &augmented_args, len);						\
+ 	return 0;										\
+ }												\
+ int syscall_exit(syscall)(struct syscall_exit_args *args)					\
