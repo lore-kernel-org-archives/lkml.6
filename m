@@ -2,116 +2,206 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8168BC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14878C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394A220857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:49:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u6MrGgh+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394A220857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BBAEC2083E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBAEC2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbeIFHWc (ORCPT
+        id S1726583AbeIFH0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 03:22:32 -0400
-Received: from mail-pl1-f178.google.com ([209.85.214.178]:46654 "EHLO
-        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbeIFHWc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 03:22:32 -0400
-Received: by mail-pl1-f178.google.com with SMTP id t19-v6so4218563ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 19:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/LLln6zV0ZE8Fi0YboVCaQmsol/1HuDHktf8xMHjlFA=;
-        b=u6MrGgh+raigOk0fAdOZVFxz9/mJixBHULJva4ns6kSjts2Ty6KdS98UjoNc6J520X
-         28Q9fijBHrVA+mV+IHCVamd7lv2qbr/ABznClzqGiozCa4R2GNFs9bxnY0CAOVGNEtzG
-         ckgikJxCXvUrk7fLXnDvBUh2Kc1G4ia2fRNP2SbF8OKDHWgYo3QsgjaLXzyZFztFfh0x
-         Thd4I3WE8XrsQkh8j1wwmxEaGh1gVRhvb++6XJZNWabRTiY3EkwczWF0rRvHlsBGm8Ru
-         RHi3DjLnGt3hlxsVBgtItv/oMl5heRCw+w3Qna54mnKp8N2fPyRrLZhcmK2FSjXtOL6K
-         Tiog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/LLln6zV0ZE8Fi0YboVCaQmsol/1HuDHktf8xMHjlFA=;
-        b=m81vcowWDjcDMlN4VWE9+PdDY2DCglRo+4d+kQvLqA0cNKuwP2674po+OlDtlFDFSK
-         nn2dChMMJCKb14zCkgr4Q9SLRQoOweQ4TzhVKhI4/vHVuknHeev8D2/dP3rV8I7ndG5I
-         x7tlnzhUw55nISIZRoLEUpedsu6hR0Gp6kQ1GDVWLmG5rnlhGi6UDXFYWXVcmvrb82uE
-         9ZeiWTC7h5r9EUeUck4O5SkCvI3jWfG2jiVyp8vycpvn3uUs4fypsZw9/y9aWme2sb5s
-         yu1trdHnGe+0560v0hKSwq/Kw5ZWboMwQyURw2L6D5TsP+t8EY2bqBnE0soL3vybni7N
-         p6sA==
-X-Gm-Message-State: APzg51DI2j8v0r6kIc0lUXEiJqrbDpnikw1fEiOCLNp9GO7tv771dNwl
-        NkAxQY1Qr4CgTLaX/0JZv8E=
-X-Google-Smtp-Source: ANB0VdaxKF/+hgXpIjDrdak0slik8ZaGck9qQIHM6UKmitW6O285HFW2GlEBzuksGKjXDJXCSRKeVg==
-X-Received: by 2002:a17:902:8e86:: with SMTP id bg6-v6mr681484plb.108.1536202166320;
-        Wed, 05 Sep 2018 19:49:26 -0700 (PDT)
-Received: from localhost ([110.70.59.68])
-        by smtp.gmail.com with ESMTPSA id i3-v6sm3626382pgq.35.2018.09.05.19.49.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 19:49:25 -0700 (PDT)
-Date:   Thu, 6 Sep 2018 11:49:21 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Ben Skeggs <bskeggs@redhat.com>
-Cc:     sergey.senozhatsky.work@gmail.com, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau <nouveau@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        torvalds@linux-foundation.org
-Subject: Re: [linux-next] DDC responded, but no EDID for %s errors
-Message-ID: <20180906024921.GC749@jagdpanzerIV>
-References: <20180802024648.GA499@jagdpanzerIV>
- <20180906024243.GB749@jagdpanzerIV>
- <CABDvA=kjVto=Wo1=K9o36mWkvnmG1ck8dPm--G5jQokqH7XGCA@mail.gmail.com>
+        Thu, 6 Sep 2018 03:26:13 -0400
+Received: from mga01.intel.com ([192.55.52.88]:4599 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726059AbeIFH0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 03:26:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:53:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
+   d="scan'208";a="68742364"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by fmsmga008.fm.intel.com with ESMTP; 05 Sep 2018 19:53:04 -0700
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v2 03/12] iommu/vt-d: Move page table helpers into header
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
+ <20180830013524.28743-4-baolu.lu@linux.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A9F@SHSMSX101.ccr.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <08966280-44db-a9a8-bc54-93f698c87823@linux.intel.com>
+Date:   Thu, 6 Sep 2018 10:52:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABDvA=kjVto=Wo1=K9o36mWkvnmG1ck8dPm--G5jQokqH7XGCA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A9F@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/06/18 12:46), Ben Skeggs wrote:
-> On Thu, Sep 6, 2018 at 12:42 PM Sergey Senozhatsky
-> <sergey.senozhatsky.work@gmail.com> wrote:
-> >
-> > On (08/02/18 11:46), Sergey Senozhatsky wrote:
-> > > Hi,
-> > >
-> > > My dmesg is filled up with these errors
-> > >
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for HDMI-A-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for HDMI-A-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > > [..]
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
-> > > [..]
-> > >
-> > > Basically, a message every 10s or so. Any chance we can make them
-> > > go away?
-> >
-> > A gentle ping?
-> I've got patches queued in my tree to resolve this, I will get them to
-> drm-fixes shortly.
+Hi,
 
-Thanks!
+On 09/06/2018 10:15 AM, Tian, Kevin wrote:
+>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>> Sent: Thursday, August 30, 2018 9:35 AM
+>>
+>> So that they could also be used in other source files.
+>>
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Cc: Kevin Tian <kevin.tian@intel.com>
+>> Cc: Liu Yi L <yi.l.liu@intel.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
-	-ss
+Thank you, Kevin.
+
+Best regards,
+Lu Baolu
+
+> 
+>> ---
+>>   drivers/iommu/intel-iommu.c | 43 -------------------------------------
+>>   include/linux/intel-iommu.h | 43
+>> +++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 43 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index b0da4f765274..93cde957adc7 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -315,49 +315,6 @@ static inline void context_clear_entry(struct
+>> context_entry *context)
+>>   	context->hi = 0;
+>>   }
+>>
+>> -/*
+>> - * 0: readable
+>> - * 1: writable
+>> - * 2-6: reserved
+>> - * 7: super page
+>> - * 8-10: available
+>> - * 11: snoop behavior
+>> - * 12-63: Host physcial address
+>> - */
+>> -struct dma_pte {
+>> -	u64 val;
+>> -};
+>> -
+>> -static inline void dma_clear_pte(struct dma_pte *pte)
+>> -{
+>> -	pte->val = 0;
+>> -}
+>> -
+>> -static inline u64 dma_pte_addr(struct dma_pte *pte)
+>> -{
+>> -#ifdef CONFIG_64BIT
+>> -	return pte->val & VTD_PAGE_MASK;
+>> -#else
+>> -	/* Must have a full atomic 64-bit read */
+>> -	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
+>> -#endif
+>> -}
+>> -
+>> -static inline bool dma_pte_present(struct dma_pte *pte)
+>> -{
+>> -	return (pte->val & 3) != 0;
+>> -}
+>> -
+>> -static inline bool dma_pte_superpage(struct dma_pte *pte)
+>> -{
+>> -	return (pte->val & DMA_PTE_LARGE_PAGE);
+>> -}
+>> -
+>> -static inline int first_pte_in_page(struct dma_pte *pte)
+>> -{
+>> -	return !((unsigned long)pte & ~VTD_PAGE_MASK);
+>> -}
+>> -
+>>   /*
+>>    * This domain is a statically identity mapping domain.
+>>    *	1. This domain creats a static 1:1 mapping to all usable memory.
+>> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+>> index 2173ae35f1dc..41791903a5e3 100644
+>> --- a/include/linux/intel-iommu.h
+>> +++ b/include/linux/intel-iommu.h
+>> @@ -501,6 +501,49 @@ static inline void __iommu_flush_cache(
+>>   		clflush_cache_range(addr, size);
+>>   }
+>>
+>> +/*
+>> + * 0: readable
+>> + * 1: writable
+>> + * 2-6: reserved
+>> + * 7: super page
+>> + * 8-10: available
+>> + * 11: snoop behavior
+>> + * 12-63: Host physcial address
+>> + */
+>> +struct dma_pte {
+>> +	u64 val;
+>> +};
+>> +
+>> +static inline void dma_clear_pte(struct dma_pte *pte)
+>> +{
+>> +	pte->val = 0;
+>> +}
+>> +
+>> +static inline u64 dma_pte_addr(struct dma_pte *pte)
+>> +{
+>> +#ifdef CONFIG_64BIT
+>> +	return pte->val & VTD_PAGE_MASK;
+>> +#else
+>> +	/* Must have a full atomic 64-bit read */
+>> +	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
+>> +#endif
+>> +}
+>> +
+>> +static inline bool dma_pte_present(struct dma_pte *pte)
+>> +{
+>> +	return (pte->val & 3) != 0;
+>> +}
+>> +
+>> +static inline bool dma_pte_superpage(struct dma_pte *pte)
+>> +{
+>> +	return (pte->val & DMA_PTE_LARGE_PAGE);
+>> +}
+>> +
+>> +static inline int first_pte_in_page(struct dma_pte *pte)
+>> +{
+>> +	return !((unsigned long)pte & ~VTD_PAGE_MASK);
+>> +}
+>> +
+>>   extern struct dmar_drhd_unit * dmar_find_matched_drhd_unit(struct
+>> pci_dev *dev);
+>>   extern int dmar_find_matched_atsr_unit(struct pci_dev *dev);
+>>
+>> --
+>> 2.17.1
+> 
+> 
