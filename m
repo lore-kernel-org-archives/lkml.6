@@ -6,200 +6,161 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0FBC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8EBC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55736206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:48:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55736206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 99077206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:49:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99077206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbeIFPXT (ORCPT
+        id S1727789AbeIFPYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:23:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60779 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeIFPXS (ORCPT
+        Thu, 6 Sep 2018 11:24:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55616 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726349AbeIFPYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:23:18 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86Ak7qr264532
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 03:46:07 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Ak58p264515;
-        Thu, 6 Sep 2018 03:46:05 -0700
-Date:   Thu, 6 Sep 2018 03:46:05 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-760902b24960679c2e8592de3a56359d2c205731@git.kernel.org>
-Cc:     mingo@kernel.org, frame@mailbox.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, kevin@shanahan.id.au,
-        niklas.cassel@linaro.org, tglx@linutronix.de, hpa@zytor.com
-Reply-To: niklas.cassel@linaro.org, tglx@linutronix.de, hpa@zytor.com,
-          mingo@kernel.org, frame@mailbox.org, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, kevin@shanahan.id.au
-In-Reply-To: <20180905084158.GR24124@hirez.programming.kicks-ass.net>
-References: <20180905084158.GR24124@hirez.programming.kicks-ass.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] clocksource: Revert "Remove kthread"
-Git-Commit-ID: 760902b24960679c2e8592de3a56359d2c205731
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 11:24:37 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86AjTUX017025
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 06:49:43 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mb1ckuuu3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 06:49:43 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
+        Thu, 6 Sep 2018 11:49:42 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 11:49:39 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86AnceM34865332
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 10:49:38 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 31D6842041;
+        Thu,  6 Sep 2018 13:49:32 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DFAA642049;
+        Thu,  6 Sep 2018 13:49:31 +0100 (BST)
+Received: from [9.152.212.144] (unknown [9.152.212.144])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Sep 2018 13:49:31 +0100 (BST)
+From:   Peter Oberparleiter <oberpar@linux.ibm.com>
+Subject: Re: linux-next: build warnings from the build of Linus' tree
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arnd@arndb.de
+References: <20180824133206.4218c2e5@canb.auug.org.au>
+ <20180824172053.20fa197294f51496dcec5605@kernel.org>
+ <20180824204756.e787765461975cd1e27502dc@kernel.org>
+ <20180824224211.2934d7c0@canb.auug.org.au>
+ <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org>
+ <20180828072333.36af4d5d@canb.auug.org.au>
+ <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
+Date:   Thu, 6 Sep 2018 12:49:39 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18090610-0016-0000-0000-000002013062
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090610-0017-0000-0000-00003257D9F3
+Message-Id: <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  760902b24960679c2e8592de3a56359d2c205731
-Gitweb:     https://git.kernel.org/tip/760902b24960679c2e8592de3a56359d2c205731
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Wed, 5 Sep 2018 10:41:58 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 6 Sep 2018 12:42:28 +0200
+On 28.08.2018 02:43, Masami Hiramatsu wrote:
+> I recently added a gcov profiling for ftrace, following Documentation/dev-tools/gcov.rst.
+> 6b7dca401cb1 ("tracing: Allow gcov profiling on only ftrace subsystem")
+> 
+> and it caused may orphan section warnings/errors on arm and powerpc64.
+> We also found same error happens when CONFIG_GCOV_PROFILE_ALL=y.
+> So I guess GCOV kernel subsystem broken in some environment.
 
-clocksource: Revert "Remove kthread"
+I can confirm that these issues are unrelated to your commit which only
+made the existing problems visible by enabling gcov-kernel profiling for
+allyesconfig builds. Both problems already exist in v4.18 and likely
+earlier versions.
 
-I turns out that the silly spawn kthread from worker was actually needed.
+Problem 1: link failure on arm
+(https://lkml.org/lkml/2018/8/24/345)
 
-clocksource_watchdog_kthread() cannot be called directly from
-clocksource_watchdog_work(), because clocksource_select() calls
-timekeeping_notify() which uses stop_machine(). One cannot use
-stop_machine() from a workqueue() due lock inversions wrt CPU hotplug.
+The root cause appears to be that the arm linker script only partially
+discards unneeded sections generated by the compiler when gcov-kernel
+profiling is enabled.
 
-Revert the patch but add a comment that explain why we jump through such
-apparently silly hoops.
+Problem 2: linker warnings on powerpc
+(https://lkml.org/lkml/2018/8/24/72)
 
-Fixes: 7197e77abcb6 ("clocksource: Remove kthread")
-Reported-by: Siegfried Metz <frame@mailbox.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Kevin Shanahan <kevin@shanahan.id.au>
-Tested-by: viktor_jaegerskuepper@freenet.de
-Tested-by: Siegfried Metz <frame@mailbox.org>
-Cc: rafael.j.wysocki@intel.com
-Cc: len.brown@intel.com
-Cc: diego.viola@gmail.com
-Cc: rui.zhang@intel.com
-Cc: bjorn.andersson@linaro.org
-Link: https://lkml.kernel.org/r/20180905084158.GR24124@hirez.programming.kicks-ass.net
----
- kernel/time/clocksource.c | 40 ++++++++++++++++++++++++++++++----------
- 1 file changed, 30 insertions(+), 10 deletions(-)
+CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y adds compiler flag
+-fdata-sections. This option causes GCC to create separate data sections
+for data objects, including those generated by GCC internally for gcov
+profiling. Since the name of these internal data objects starts with a .
+(.LPBX0, .LPBX1), the resulting section name starts with "data..". As
+section names starting with "data.." are used for specific purposes in
+the Linux kernel, the linker script does not automatically handle them,
+resulting in the "orphan section" linker warnings.
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index f74fb00d8064..0e6e97a01942 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -133,19 +133,40 @@ static void inline clocksource_watchdog_unlock(unsigned long *flags)
- 	spin_unlock_irqrestore(&watchdog_lock, *flags);
- }
- 
-+static int clocksource_watchdog_kthread(void *data);
-+static void __clocksource_change_rating(struct clocksource *cs, int rating);
-+
- /*
-  * Interval: 0.5sec Threshold: 0.0625s
+I've attached a quick fix that should address both problems. I'd
+appreciate if this patch could get some testing before I post proper fix
+patches.
+
+-- >8 --
+diff --git a/arch/arm/kernel/vmlinux.lds.h b/arch/arm/kernel/vmlinux.lds.h
+index ae5fdff18406..2ca33277a28b 100644
+--- a/arch/arm/kernel/vmlinux.lds.h
++++ b/arch/arm/kernel/vmlinux.lds.h
+@@ -48,6 +48,7 @@
+
+ #define ARM_DISCARD							\
+ 		*(.ARM.exidx.exit.text)					\
++		*(.ARM.exidx.text.exit)					\
+ 		*(.ARM.extab.exit.text)					\
+ 		ARM_CPU_DISCARD(*(.ARM.exidx.cpuexit.text))		\
+ 		ARM_CPU_DISCARD(*(.ARM.extab.cpuexit.text))		\
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 7b75ff6e2fce..5cf3b90c5592 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -68,7 +68,7 @@
   */
- #define WATCHDOG_INTERVAL (HZ >> 1)
- #define WATCHDOG_THRESHOLD (NSEC_PER_SEC >> 4)
- 
-+static void clocksource_watchdog_work(struct work_struct *work)
-+{
-+	/*
-+	 * We cannot directly run clocksource_watchdog_kthread() here, because
-+	 * clocksource_select() calls timekeeping_notify() which uses
-+	 * stop_machine(). One cannot use stop_machine() from a workqueue() due
-+	 * lock inversions wrt CPU hotplug.
-+	 *
-+	 * Also, we only ever run this work once or twice during the lifetime
-+	 * of the kernel, so there is no point in creating a more permanent
-+	 * kthread for this.
-+	 *
-+	 * If kthread_run fails the next watchdog scan over the
-+	 * watchdog_list will find the unstable clock again.
-+	 */
-+	kthread_run(clocksource_watchdog_kthread, NULL, "kwatchdog");
-+}
-+
- static void __clocksource_unstable(struct clocksource *cs)
- {
- 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
- 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
- 
- 	/*
--	 * If the clocksource is registered clocksource_watchdog_work() will
-+	 * If the clocksource is registered clocksource_watchdog_kthread() will
- 	 * re-rate and re-select.
- 	 */
- 	if (list_empty(&cs->list)) {
-@@ -156,7 +177,7 @@ static void __clocksource_unstable(struct clocksource *cs)
- 	if (cs->mark_unstable)
- 		cs->mark_unstable(cs);
- 
--	/* kick clocksource_watchdog_work() */
-+	/* kick clocksource_watchdog_kthread() */
- 	if (finished_booting)
- 		schedule_work(&watchdog_work);
- }
-@@ -166,7 +187,7 @@ static void __clocksource_unstable(struct clocksource *cs)
-  * @cs:		clocksource to be marked unstable
-  *
-  * This function is called by the x86 TSC code to mark clocksources as unstable;
-- * it defers demotion and re-selection to a work.
-+ * it defers demotion and re-selection to a kthread.
-  */
- void clocksource_mark_unstable(struct clocksource *cs)
- {
-@@ -391,9 +412,7 @@ static void clocksource_dequeue_watchdog(struct clocksource *cs)
- 	}
- }
- 
--static void __clocksource_change_rating(struct clocksource *cs, int rating);
--
--static int __clocksource_watchdog_work(void)
-+static int __clocksource_watchdog_kthread(void)
- {
- 	struct clocksource *cs, *tmp;
- 	unsigned long flags;
-@@ -418,12 +437,13 @@ static int __clocksource_watchdog_work(void)
- 	return select;
- }
- 
--static void clocksource_watchdog_work(struct work_struct *work)
-+static int clocksource_watchdog_kthread(void *data)
- {
- 	mutex_lock(&clocksource_mutex);
--	if (__clocksource_watchdog_work())
-+	if (__clocksource_watchdog_kthread())
- 		clocksource_select();
- 	mutex_unlock(&clocksource_mutex);
-+	return 0;
- }
- 
- static bool clocksource_is_watchdog(struct clocksource *cs)
-@@ -442,7 +462,7 @@ static void clocksource_enqueue_watchdog(struct clocksource *cs)
- static void clocksource_select_watchdog(bool fallback) { }
- static inline void clocksource_dequeue_watchdog(struct clocksource *cs) { }
- static inline void clocksource_resume_watchdog(void) { }
--static inline int __clocksource_watchdog_work(void) { return 0; }
-+static inline int __clocksource_watchdog_kthread(void) { return 0; }
- static bool clocksource_is_watchdog(struct clocksource *cs) { return false; }
- void clocksource_mark_unstable(struct clocksource *cs) { }
- 
-@@ -810,7 +830,7 @@ static int __init clocksource_done_booting(void)
- 	/*
- 	 * Run the watchdog first to eliminate unstable clock sources
- 	 */
--	__clocksource_watchdog_work();
-+	__clocksource_watchdog_kthread();
- 	clocksource_select();
- 	mutex_unlock(&clocksource_mutex);
- 	return 0;
+ #ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
+ #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
+-#define DATA_MAIN .data .data.[0-9a-zA-Z_]*
++#define DATA_MAIN .data .data.[0-9a-zA-Z_]* .data..LPBX*
+ #define SDATA_MAIN .sdata .sdata.[0-9a-zA-Z_]*
+ #define RODATA_MAIN .rodata .rodata.[0-9a-zA-Z_]*
+ #define BSS_MAIN .bss .bss.[0-9a-zA-Z_]*
+@@ -613,7 +613,7 @@
+
+ #define EXIT_DATA							\
+ 	*(.exit.data .exit.data.*)					\
+-	*(.fini_array)							\
++	*(.fini_array .fini_array.*)					\
+ 	*(.dtors)							\
+ 	MEM_DISCARD(exit.data*)						\
+ 	MEM_DISCARD(exit.rodata*)
+-- 
+Peter Oberparleiter
+Linux on Z Development - IBM Germany
+
