@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C9FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD9AC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20AC320857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABEB02083E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:36:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWYTezkB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AC320857
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILAfUmFR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEB02083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeIFHJx (ORCPT
+        id S1727644AbeIFHJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 03:09:53 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35478 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeIFHJx (ORCPT
+        Thu, 6 Sep 2018 03:09:58 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41285 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeIFHJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 03:09:53 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p12-v6so4471284pfh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 19:36:49 -0700 (PDT)
+        Thu, 6 Sep 2018 03:09:57 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h79-v6so4455941pfk.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 19:36:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5ZVcxdL3wgI2wwi7DksSKEhHqYPWKpAEMhlcil+nVwI=;
-        b=eWYTezkBwD0rqOrGD8Li+S2CbxKBTOOtAf7XVIHIjFHdgLdLzBcgud+2O4/gO+sKpr
-         5RJcTFErJQwa4GDfbgao1DKxBfuCYx0cKOcYmADS3gKhhHblOX/ETEZ2Dq+0o4JDozow
-         V8uF1rWUebCdDHaoptix7xPP2ZVqczDXf7kl+tfu4rp3qejUiJKj1KfY71k720PB6ez9
-         rhCRY06MXlV9nwwxj/cb9Zd/Dqkp3DM6IQ0hkLkf+aCsms+gvrQPoNI+Ga+O/F8YQttF
-         TxX9UUDRWUmYKdm79d+tYBSC9MEb0xCAcheZcJVkw4gGcQsyUr1/JHGNT3SYybX2RwsD
-         nyag==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=s7Y3+norEz7TJZRyCOKdtGp3Ym7ll6SRnpl6liy9gM8=;
+        b=ILAfUmFRcRa19Y//2JYSQIU1tkoBnpNSES/iPv6OrGRhB82SWuIYm7ElTyoopQaqLA
+         3+utBlOw8TQfriULyUFtZLPKZC/5GKCBi185trSWRF301MINA1dbbu7mzzDdoddWCefK
+         OJntm9xoj6cdsn5pRolrocw5OKjnQcQkd9tr+uMIiwZMYDnp3L7UMrFqhzIb1UN7puUj
+         MCp7mwHw6Pae6wjBF4D0OvUO147uDUEfF97FTpelv+QMHHSHv3jk/qrk/RJgrbAYJHQ1
+         qzdfbcdSDwtoztld6AEaqcDZEhs+hppK/4uVt/KTKK5MFahAgDFDKt9GefONwfgkNLAb
+         q6QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5ZVcxdL3wgI2wwi7DksSKEhHqYPWKpAEMhlcil+nVwI=;
-        b=pjcxJ/TxwkJ8Uqzw63PWQJAGYWSS3AQOmhREapgDccEEqaXfF5F+XXAdQAO2f6oawc
-         t5FAUuNEJpPWuOl2Xg0ukuNRFTA2MYdRqjgFLxD0v8ERichPfx1HmHXLo/EObANxfsy2
-         HOR+5wvO3R/y81x3Eq8jMK/NYbl46K30SOJoHb41nUgBsl+/1dJjYmHEvEejUUxtDebB
-         3NCzVw+wB2Unnu0HPu3uZGhwK6qLFh2LYrKJfnsLGgcR623HXmX/G76JRDuOD0FfeLkB
-         LTmOzo5r1BHrul0QgP9Qh8WekyfGqF8XF6NTR/nRWhm4XboNAQpKnwVSB1SiIWEL0IDs
-         kZCw==
-X-Gm-Message-State: APzg51Bhm0vC/QQJP/f32LTb0LiwBtQuy1FoFe00yIIxIgkt6gnkYwjX
-        Fc/lw8kQfZl7OcTakaIWzS+ai9U=
-X-Google-Smtp-Source: ANB0VdY2rODLGOVw3aQuzMOe86Gn9lrCBJwTC3/tRYhhk/ODoO28XCbKYiU7pvvtnDUDATOOo7UY+Q==
-X-Received: by 2002:a62:2285:: with SMTP id p5-v6mr653210pfj.53.1536201408926;
-        Wed, 05 Sep 2018 19:36:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=s7Y3+norEz7TJZRyCOKdtGp3Ym7ll6SRnpl6liy9gM8=;
+        b=P2DCrj1Yzvw9o9YYbEyj3PL4YxkCqoWe3Asaj2Mp2Cm23m5UhPjBJAjdwLWFFf3aEF
+         IgJrE9G20wZekLYN8RN1HCbBAqqXt6siQKpKjRA829YM1NXSGhsgBirYIcP8N7LtMzLr
+         k0ckK65CfBb7n7x78KvjE9tmAxlh6i80Vz+5XbYFTf6W7C/alOdcLVOIHxsyXNPwQWyz
+         swX7dSHnly8u+phfgRiTh4KMSpRAs3rXOg3xzthV33uunmkVXL1qJq6fxRR6VZR0zaH6
+         bG3+8KXbR7MTGsxJ8WcumwNBeGf2oI1+DxpkWUAIpeleVa6vb9u1ezrEk7PdzNsgcZGc
+         Yo1A==
+X-Gm-Message-State: APzg51AfvOQrQ9t5Vo5LKTFXbRWmm8efODG77GKce3kmTDTFj+5AF7bw
+        QdMTRrMFHd2nhWsSCN4/6A0CBDE=
+X-Google-Smtp-Source: ANB0VdaCHClv30ZQZZu3pNC6bYhEKIeYJWPNIkc0zlaQvaGf7zI2lbZR9On7BOYeWqdrSPdGHEB2RA==
+X-Received: by 2002:a63:7107:: with SMTP id m7-v6mr607531pgc.73.1536201413502;
+        Wed, 05 Sep 2018 19:36:53 -0700 (PDT)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id r17-v6sm8780990pff.50.2018.09.05.19.36.44
+        by smtp.gmail.com with ESMTPSA id r17-v6sm8780990pff.50.2018.09.05.19.36.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Sep 2018 19:36:47 -0700 (PDT)
+        Wed, 05 Sep 2018 19:36:52 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -66,31 +67,21 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Baoquan He <bhe@redhat.com>,
         Chao Fan <fanc.fnst@cn.fujitsu.com>, x86@kernel.org
-Subject: [PATCH 0/3] x86/boot/KASLR: enhance randomness of kernel load addr when using GiB hugepage
-Date:   Thu,  6 Sep 2018 10:36:19 +0800
-Message-Id: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH 1/3] x86/boot/KASLR: change the prototypes of process_efi_entries/process_e820_entries
+Date:   Thu,  6 Sep 2018 10:36:20 +0800
+Message-Id: <1536201382-13133-2-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
+References: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 747ff6265db4 ("x86/boot/KASLR: Skip specified number of 1GB huge
-pages when doing physical randomization (KASLR)") and commit
-9b912485e0e7 ("x86/boot/KASLR: Add two new functions for 1GB huge pages
-handling") prevent the physical load addr of kernel from spoiling a good
-candidate of GiB page. But the algorithm deterministicly chooses the most
-front GiB page for hugetlb, and sacrifices the randomness, which
-is the heart of the KASLR. This patch tries to enlarge the randomness in
-the cases where hugepages=X < the num Y of good candidate of GiB
-page.
-To comparison, taking a typical KVM guest for example, the head 3GiB mem
-can not be used as GiB hugetlb. Denoting the total mem size as Z(GiB), when
-Z=5, then Y=2, assuming X=1, the randomness range before this patch is
-4GiB, after this patch is 5GiB, and get a 25% improvement of randomness.
-If Z=6, then Y=3, assuming X=2, the improvement equals: 50%( 6/(6-2) - 1);
-assuming X=1, the improvement will be: 20% (6/(6-1) - 1)
+Changing the prototypes of process_efi_entries/process_e820_entries in
+order to reuse the mem entries' iteration (used in patch 3/3).
 
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
@@ -98,17 +89,84 @@ Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Cc: Baoquan He <bhe@redhat.com>
 Cc: Chao Fan <fanc.fnst@cn.fujitsu.com> (authored:1/16=6%)
 Cc: x86@kernel.org
+---
+ arch/x86/boot/compressed/kaslr.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-Pingfan Liu (3):
-  x86/boot/KASLR: change the prototypes of
-    process_efi_entries/process_e820_entries
-  x86/boot/KASLR: change the prototype of process_mem_region() to meet
-    the align requirement
-  x86/boot/KASLR: enhance randomness when using GiB hugepage
-
- arch/x86/boot/compressed/kaslr.c | 228 ++++++++++++++++++++++++++-------------
- 1 file changed, 152 insertions(+), 76 deletions(-)
-
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index d1e19f3..5185267 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -573,6 +573,10 @@ static unsigned long slots_fetch_random(void)
+ 	return 0;
+ }
+ 
++typedef void (*handles_mem_region)(struct mem_vector *entry,
++			       unsigned long minimum,
++			       unsigned long image_size);
++
+ static void process_mem_region(struct mem_vector *entry,
+ 			       unsigned long minimum,
+ 			       unsigned long image_size)
+@@ -658,7 +662,8 @@ static void process_mem_region(struct mem_vector *entry,
+  * for slots adding)
+  */
+ static bool
+-process_efi_entries(unsigned long minimum, unsigned long image_size)
++process_efi_entries(unsigned long minimum, unsigned long image_size,
++	handles_mem_region handle)
+ {
+ 	struct efi_info *e = &boot_params->efi_info;
+ 	bool efi_mirror_found = false;
+@@ -717,7 +722,7 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+ 
+ 		region.start = md->phys_addr;
+ 		region.size = md->num_pages << EFI_PAGE_SHIFT;
+-		process_mem_region(&region, minimum, image_size);
++		(*handle)(&region, minimum, image_size);
+ 		if (slot_area_index == MAX_SLOT_AREA) {
+ 			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
+ 			break;
+@@ -727,14 +732,15 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+ }
+ #else
+ static inline bool
+-process_efi_entries(unsigned long minimum, unsigned long image_size)
++process_efi_entries(unsigned long minimum, unsigned long image_size,
++	handles_mem_region handle)
+ {
+ 	return false;
+ }
+ #endif
+ 
+ static void process_e820_entries(unsigned long minimum,
+-				 unsigned long image_size)
++	unsigned long image_size, handles_mem_region handle)
+ {
+ 	int i;
+ 	struct mem_vector region;
+@@ -748,7 +754,7 @@ static void process_e820_entries(unsigned long minimum,
+ 			continue;
+ 		region.start = entry->addr;
+ 		region.size = entry->size;
+-		process_mem_region(&region, minimum, image_size);
++		(*handle)(&region, minimum, image_size);
+ 		if (slot_area_index == MAX_SLOT_AREA) {
+ 			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
+ 			break;
+@@ -768,10 +774,10 @@ static unsigned long find_random_phys_addr(unsigned long minimum,
+ 	/* Make sure minimum is aligned. */
+ 	minimum = ALIGN(minimum, CONFIG_PHYSICAL_ALIGN);
+ 
+-	if (process_efi_entries(minimum, image_size))
++	if (process_efi_entries(minimum, image_size, process_mem_region))
+ 		return slots_fetch_random();
+ 
+-	process_e820_entries(minimum, image_size);
++	process_e820_entries(minimum, image_size, process_mem_region);
+ 	return slots_fetch_random();
+ }
+ 
 -- 
 2.7.4
 
