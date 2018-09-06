@@ -2,229 +2,191 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA97C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E5CC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8E02075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F3D22075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:39:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksjQ7VM2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8E02075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="Mjc9cG5w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F3D22075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=riseup.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbeIFJKn (ORCPT
+        id S1726265AbeIFJMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 05:10:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55085 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbeIFJKm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 05:10:42 -0400
-Received: by mail-wm0-f65.google.com with SMTP id c14-v6so9976496wmb.4;
-        Wed, 05 Sep 2018 21:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jrP+uifvr7tPAyyU0KvnJrThnPNwdpdoWfrDnDXnVjM=;
-        b=ksjQ7VM21+jUFt8GFFlMLzH9iEHhzrmJXp1Go3jtpHUldEK8P/rUZUu60gH9zchrps
-         zAl5asDXD4X2hqIIc6v1UyxEzPcMdLeDxRAQ68y9z58v2IQ1DQSC7o7PfgE2y7KyiaVA
-         Ef2y4JJBIAbUM6UTQAeRCTJjGN4E65Q7n1+gCId9/mpNcaOzFC8OkZvzmQKAuvw/O1qt
-         oNNlHq2vc6Sg9hRstujEzAJF8Wbu25U136Gy29MZ8N8jI691V1O5ZUdTfVWdWTgx07pE
-         izQ9Hgbb0TzjGP6wNpS5mY/n5AnmuGOP/1ce5tcSOm2qxKI4/tthQGkpmPVR7LHke6Im
-         UAFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jrP+uifvr7tPAyyU0KvnJrThnPNwdpdoWfrDnDXnVjM=;
-        b=G7RBqs0FrlpS34ddwtPY1UDFHNqNM9+ST2G2nsI0OUjChpDcXIpGMi2ec1olZvtTMJ
-         tH33T+BKhlPaPu1zDigYGXciDkGRDs1YL5YHwCM0q006nDyH92uMiXRf6aiqkyb8GFSn
-         I12QsnUk+2Pt7QCzZYnqBq+/js/p8IhSobUEBlKq8ve+lgVl0R7evWFWSvj+HUBXz4qz
-         qsvtWUokwtd7Vmfio6OD5CaYs4lr3UYCI3BT3wbYKgoK4re0iDXWO4VwcmDuTcUJc8oo
-         jN1S2vTeb6i8B+Hhbu1qJPI5KXHUJMeHQseo4C3iW3SJNMinqsQ4JyAbKsorBtpMLDBh
-         aS9A==
-X-Gm-Message-State: APzg51AYSzukcN4ChorODu0TPaPi7CTKymoMMYMUQKmiiBLnNNx1U8Jg
-        KwhXxeNOpMPA902Bvj8lDw59J/oJw7I=
-X-Google-Smtp-Source: ANB0Vdaoyw1cVRt5U+fEn78SiwZLVAwUcdvfcSDgld+v+5baMglgBm9QqCqcTshpBUQdh0YCpqk2QA==
-X-Received: by 2002:a1c:2108:: with SMTP id h8-v6mr805530wmh.108.1536208628050;
-        Wed, 05 Sep 2018 21:37:08 -0700 (PDT)
-Received: from alpaca.bmw-carit.intra ([145.253.130.2])
-        by smtp.gmail.com with ESMTPSA id k5-v6sm9243936wrm.96.2018.09.05.21.37.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Sep 2018 21:37:07 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     linux-scsi@vger.kernel.org
-Cc:     Hannes Reinecke <hare@suse.de>, QLogic-Storage-Upstream@qlogic.com,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        QLogic-Storage-Upstream@cavium.com, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] fcoe: make use of fip_mode enum complete
-Date:   Thu,  6 Sep 2018 06:36:42 +0200
-Message-Id: <1536208602-25765-1-git-send-email-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 6 Sep 2018 05:12:52 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:48249 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbeIFJMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 05:12:52 -0400
+Received: from cotinga.riseup.net (cotinga-pn.riseup.net [10.0.1.164])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id 030BE1A05BA;
+        Wed,  5 Sep 2018 21:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1536208760; bh=O7iRf9O+l+sSKrjm7g6rZMouwoxRaA0sRfPCepdB0Ng=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=Mjc9cG5wnKrl/n/6TWbeS+HuyWX45u5bFUKn3RPTghdsjfTcp8UJ8WlZAA4FQv999
+         S9XjjVc7WmrezvIQHjwBmAnxcd1uuGlRtZTUKp2d8sZi3PF6uNIcUyQ6JLlHUqRrIY
+         sC+mZXOe7a25dUGkmXbhaQLVXzcvTl8AElIVoMTg=
+X-Riseup-User-ID: 32C2A5A71ACD2318D421CA0E2258C168FC02FFF1CCDAC30804A60671984D3951
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by cotinga.riseup.net with ESMTPSA id D28A168564;
+        Wed,  5 Sep 2018 21:39:17 -0700 (PDT)
+From:   Francisco Jerez <currojerez@riseup.net>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>, lenb@kernel.org,
+        rjw@rjwysocki.net, viresh.kumar@linaro.org
+Cc:     mgorman@techsingularity.net, ggherdovich@suse.cz,
+        peterz@infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
+In-Reply-To: <8c56f28c2cc11de37fa3517348559eb040894702.camel@linux.intel.com>
+References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com> <1244c5d6-460e-0e0b-b7bf-a46e73327383@intel.com> <8736upda8s.fsf@riseup.net> <b48340f59011bc3d7402b6a811bce4fa861fab7b.camel@linux.intel.com> <8736uobu7w.fsf@riseup.net> <8c56f28c2cc11de37fa3517348559eb040894702.camel@linux.intel.com>
+Date:   Wed, 05 Sep 2018 21:20:08 -0700
+Message-ID: <87in3j9s07.fsf@riseup.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="==-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 1917d42d14b7 ("fcoe: use enum for fip_mode") introduces a separate
-enum for the fip_mode that shall be used during initialisation handling
-until it is passed to fcoe_ctrl_link_up to set the initial fip_state.
-That change was incomplete and gcc quietly converted in various places
-between the fip_mode and the fip_state enum values with implicit enum
-conversions, which fortunately cannot cause any issues in the actual
-code's execution.
+--==-=-=
+Content-Type: multipart/mixed; boundary="=-=-="
 
-clang however warns about these implicit enum conversions in the scsi
-drivers. This commit consolidates the use of the two enums, guided by
-clang's enum-conversion warnings.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This commit now completes the use of the fip_mode:
-It expects and uses fip_mode in {bnx2fc,fcoe}_interface_create and
-fcoe_ctlr_init, and it explicitly converts from fip_mode to fip_state
-only at the single point in fcoe_ctlr_link_up.
+Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
 
-To eliminate that adding or removing values from fip_mode or fip_state enum
-break the right mapping of values, all fip_mode values are assigned to
-their fip_state counterparts.
+> [...]
+>
+>> > >=20
+>> > > This patch causes a number of statistically significant
+>> > > regressions
+>> > > (with significance of 1%) on the two systems I've tested it
+>> > > on.  On
+>> > > my
+>> >=20
+>> > Sure. These patches are targeted to Atom clients where some of
+>> > these
+>> > server like workload may have some minor regression on few watts
+>> > TDP
+>> > parts.
+>>=20
+>> Neither the 36% regression of fs-mark, the 21% regression of sqlite,
+>> nor
+>> the 10% regression of warsaw qualify as small.  And most of the test
+>> cases on the list of regressions aren't exclusively server-like, if
+>> at
+>> all.  Warsaw, gtkperf, jxrendermark and lightsmark are all graphics
+>> benchmarks -- Latency is as important if not more for interactive
+>> workloads than it is for server workloads.  In the case of a conflict
+>> like the one we're dealing with right now between optimizing for
+>> throughput (e.g. for the maximum number of requests per second) and
+>> optimizing for latency (e.g. for the minimum request duration), you
+>> are
+>> more likely to be concerned about the former than about the latter in
+>> a
+>> server setup.
+>
+> Eero,
+> Please add your test results here.
+>
+> No matter which algorithm you do, there will be variations. So you have
+> to look at the platforms which you are targeting. For this platform=20
+> number one item is use of less turbo and hope you know why?
 
-Fixes: 1917d42d14b7 ("fcoe: use enum for fip_mode")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-checkpatch.pl complains about:
-WARNING: function definition argument 'struct fcoe_ctlr *' should also have an identifier name
-#133: FILE: include/scsi/libfcoe.h:253:
-+void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_mode);
+Unfortunately the current controller uses turbo frequently on Atoms for
+TDP-limited graphics workloads regardless of IOWAIT boosting.  IOWAIT
+boosting simply exacerbated the pre-existing energy efficiency problem.
 
-I can address that with:
--void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_mode);
-+void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode);
+> On this platform GFX patch caused this issue as it was submitted after
+> io boost patchset. So rather that should be reverted first before
+> optimizing anything.
+>
+>
+>
+>>=20
+>> > But weighing against reduced TURBO usage (which is enough trigger)
+>> > and
+>> > improvement in tests done by Eero (which was primary complaint to
+>> > us).
+>> >=20
+>> > It is trivial patch. Yes, the patch is not perfect and doesn't
+>> > close
+>> > doors for any improvements.
+>> >=20
+>>=20
+>> It's sort of self-contained because it's awfully incomplete.Don't
+>> agtr
+>
+>>=20
+>> > I see your idea, but how to implement in acceptable way is a
+>> > challenge.
+>>=20
+>> Main challenge was getting the code to work without regressions in
+>> latency-sensitive workloads, which I did, because you told me that it
+>> wasn't acceptable for it to cause any regressions on the Phoronix
+>> daily-system-tracker, whether latency-bound or not.
+> Yes, because your intention was to have a global change not a low power
+> Atom specific,
+>
 
-However, all the other FIP API function signatures currently also have no
-identifier name; so I will keep that line as-is for local consistency.
+My intention was to target low-power Atoms only since the first day we
+discussed this problem.  The cover letter of the series I sent and the
+commit messages make this fairly clear.
 
-If I should address the checkpatch.pl issue, I can provide a separate
-patch to make all fcoe functions in the header follow the coding style
-suggested by checkpatch.pl. Just let me know what you want.
+>>   What is left in
+>> order to address Peter's concerns is for the most part plumbing,
+>> that's
+>> guaranteed not to have any functional impact on the heuristic.  The
+>> fact
+>> that we don't expect it to change the performance of the system makes
+>> it
+>> substantially less time-consuming to validate than altering the
+>> performance trade-offs of the heuristic dynamically in order to avoid
+>> regressions (which is what has kept my systems busy most of the time
+>> lately).  Seems like my series, even in its current state without the
+>> changes requested by Peter is closer to being ready for production
+>> than
+>> this patch is.
+>
+> Sorry, Not at all. We call such patches as experimental series.
 
-compile tested allyesconfig on top of next-20180831 with gcc-8.2.0,
-clang-6.0.1 and clang-7
+The numbers speak otherwise.
 
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c  | 2 +-
- drivers/scsi/fcoe/fcoe.c           | 2 +-
- drivers/scsi/fcoe/fcoe_ctlr.c      | 4 ++--
- drivers/scsi/fcoe/fcoe_transport.c | 2 +-
- drivers/scsi/qedf/qedf_main.c      | 2 +-
- include/scsi/libfcoe.h             | 8 ++++----
- 6 files changed, 10 insertions(+), 10 deletions(-)
+> You caused 100% regression to idle power. There is no version 2 after
+> that, even if you fixed locally even to look.
+>
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index f000458..83aaab4 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -1445,7 +1445,7 @@ static struct bnx2fc_hba *bnx2fc_hba_create(struct cnic_dev *cnic)
- static struct bnx2fc_interface *
- bnx2fc_interface_create(struct bnx2fc_hba *hba,
- 			struct net_device *netdev,
--			enum fip_state fip_mode)
-+			enum fip_mode fip_mode)
- {
- 	struct fcoe_ctlr_device *ctlr_dev;
- 	struct bnx2fc_interface *interface;
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index f46b312..6768b2e 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -390,7 +390,7 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
-  * Returns: pointer to a struct fcoe_interface or NULL on error
-  */
- static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
--						    enum fip_state fip_mode)
-+						    enum fip_mode fip_mode)
- {
- 	struct fcoe_ctlr_device *ctlr_dev;
- 	struct fcoe_ctlr *ctlr;
-diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
-index 54da316..a52d3ad 100644
---- a/drivers/scsi/fcoe/fcoe_ctlr.c
-+++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-@@ -147,7 +147,7 @@ static void fcoe_ctlr_map_dest(struct fcoe_ctlr *fip)
-  * fcoe_ctlr_init() - Initialize the FCoE Controller instance
-  * @fip: The FCoE controller to initialize
-  */
--void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_state mode)
-+void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode mode)
- {
- 	fcoe_ctlr_set_state(fip, FIP_ST_LINK_WAIT);
- 	fip->mode = mode;
-@@ -454,7 +454,7 @@ void fcoe_ctlr_link_up(struct fcoe_ctlr *fip)
- 		mutex_unlock(&fip->ctlr_mutex);
- 		fc_linkup(fip->lp);
- 	} else if (fip->state == FIP_ST_LINK_WAIT) {
--		fcoe_ctlr_set_state(fip, fip->mode);
-+		fcoe_ctlr_set_state(fip, (enum fip_state) fip->mode);
- 		switch (fip->mode) {
- 		default:
- 			LIBFCOE_FIP_DBG(fip, "invalid mode %d\n", fip->mode);
-diff --git a/drivers/scsi/fcoe/fcoe_transport.c b/drivers/scsi/fcoe/fcoe_transport.c
-index f4909cd..b381ab0 100644
---- a/drivers/scsi/fcoe/fcoe_transport.c
-+++ b/drivers/scsi/fcoe/fcoe_transport.c
-@@ -873,7 +873,7 @@ static int fcoe_transport_create(const char *buffer,
- 	int rc = -ENODEV;
- 	struct net_device *netdev = NULL;
- 	struct fcoe_transport *ft = NULL;
--	enum fip_state fip_mode = (enum fip_state)(long)kp->arg;
-+	enum fip_mode fip_mode = (enum fip_mode)(long)kp->arg;
- 
- 	mutex_lock(&ft_mutex);
- 
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index 0a5dd55..cd61905 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -1418,7 +1418,7 @@ static struct libfc_function_template qedf_lport_template = {
- 
- static void qedf_fcoe_ctlr_setup(struct qedf_ctx *qedf)
- {
--	fcoe_ctlr_init(&qedf->ctlr, FIP_ST_AUTO);
-+	fcoe_ctlr_init(&qedf->ctlr, FIP_MODE_AUTO);
- 
- 	qedf->ctlr.send = qedf_fip_send;
- 	qedf->ctlr.get_src_addr = qedf_get_src_mac;
-diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
-index cb8a273..10d6d92 100644
---- a/include/scsi/libfcoe.h
-+++ b/include/scsi/libfcoe.h
-@@ -80,9 +80,9 @@ enum fip_state {
-  */
- enum fip_mode {
- 	FIP_MODE_AUTO = FIP_ST_AUTO,
--	FIP_MODE_NON_FIP,
--	FIP_MODE_FABRIC,
--	FIP_MODE_VN2VN,
-+	FIP_MODE_NON_FIP = FIP_ST_NON_FIP,
-+	FIP_MODE_FABRIC = FIP_ST_ENABLED,
-+	FIP_MODE_VN2VN = FIP_ST_VNMP_START,
- };
- 
- /**
-@@ -250,7 +250,7 @@ struct fcoe_rport {
- };
- 
- /* FIP API functions */
--void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_state);
-+void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_mode);
- void fcoe_ctlr_destroy(struct fcoe_ctlr *);
- void fcoe_ctlr_link_up(struct fcoe_ctlr *);
- int fcoe_ctlr_link_down(struct fcoe_ctlr *);
--- 
-2.7.4
+I did post a link to a v2 that fixed the idle power issue on the v1
+thread, but I didn't intend to send it for review yet.  I'll send it out
+once I've fully taken into account Peter's feedback.
 
+> Thanks,
+> Srinivas
+
+--=-=-=--
+
+--==-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEAREIAB0WIQST8OekYz69PM20/4aDmTidfVK/WwUCW5Cq+AAKCRCDmTidfVK/
+W6sIAP9TnWh8OPsd2tgmocKMDN8Thrf71op/SrvzRsNvSqoa5gEAjs/8de3OOxYh
+CettM1Ncc4usc8Wh11kvS3PfSAsu+A8=
+=GW9w
+-----END PGP SIGNATURE-----
+--==-=-=--
