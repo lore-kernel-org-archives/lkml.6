@@ -2,98 +2,133 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5215C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4999BC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4852075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4852075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DC3DA2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:41:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t3T5adKY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3DA2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbeIGBQx (ORCPT
+        id S1730047AbeIGBTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 21:16:53 -0400
-Received: from mga04.intel.com ([192.55.52.120]:2827 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbeIGBQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 21:16:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 13:39:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="260483659"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Sep 2018 13:39:26 -0700
-Date:   Thu, 6 Sep 2018 13:39:26 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v5 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
- when SEV is active
-Message-ID: <20180906203926.GA5717@linux.intel.com>
-References: <1536234182-2809-1-git-send-email-brijesh.singh@amd.com>
- <1536234182-2809-6-git-send-email-brijesh.singh@amd.com>
- <20180906122423.GA11144@zn.tnic>
- <20180906135041.GB32336@linux.intel.com>
- <20180906141825.GB370@linux.intel.com>
- <fcd5efe9-3e26-3aff-9173-9f8c3f3183f1@amd.com>
- <20180906184750.GB4570@linux.intel.com>
- <c219ec47-1a1f-5d19-0b5b-0cebb706ca6c@amd.com>
- <20180906194710.GA16605@linux.intel.com>
- <9126c92f-ad3b-a5b6-ac44-416405489a7e@amd.com>
+        Thu, 6 Sep 2018 21:19:08 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:41582 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbeIGBTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 21:19:08 -0400
+Received: by mail-yb1-f195.google.com with SMTP id u33-v6so4651408ybi.8;
+        Thu, 06 Sep 2018 13:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KkHyODO2LSs2B8yvP42X+QdwGHycGvN193FxePG3aQk=;
+        b=t3T5adKYRwRFPQMhEvUeP2yfGV374Fe54ZxfTYTpaTMdl7Y7B5aoD1cAf88u1HCSyf
+         bSswgjNuTadYjutV8OEkmsXMgy2h5CI5CfEiur56DUWTQJrPdImzrEr/o4K/O7jdlvrS
+         M6LIXbhnpQQZPRDq7W4oR4ssWeqhanK016GmxKJ48SwWX1HkCTqNyhpzgZzjeaMCyn0W
+         Lo+mh5nNZgq46s3WXsFGc5KGvzBxMMgVYfF2Wx5u6d3d0p0bU4hH98gtv9SvWb4Tep26
+         0b9xAxbXCL7FuYo6SvIMuss9m+8PR6B8fyMeHOOsOh/rAYFcIa3HuN1oglz578Bq7FQF
+         ieDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KkHyODO2LSs2B8yvP42X+QdwGHycGvN193FxePG3aQk=;
+        b=JB0VxpXWlrK5COClYncf5MD6gf4uun7Iv5rnKa7ghEDUhgcScNHJatU+ojRRk2dUuy
+         4N/+al+1ZwR7S2mdI0JkZB4eq3PNohEey1C0MYZ7v0Nej9zJ8MfalOhhvJKxmiKgsepx
+         3ONTTEub7GZZYy431+hLgCnrqw/k/lMDvgWooPgrksy+ZrmzeuckV/tgRzSrSUx33XrN
+         VMFW1UyhKgrWW7dPfqbl4il9IvcAbiLvR63rrykEfQbfzqKSueWsFBOLafASLbuApNys
+         H8Hh6hgCReBxHLly93+oiY7/wcYSRsZoiDIxcK2dwr2hZl3gBeyX73ipVQbkYXLafITK
+         XBmw==
+X-Gm-Message-State: APzg51B6jrCR2y/8wXrTkakbHgybRL9FqLxWaqqTA5NNC0rLv7haJqD6
+        0EsLlPTFkbzIgvCOszLobsM=
+X-Google-Smtp-Source: ANB0VdbDmpe4w0Jigbx7umkXh3cvRbeJM8skKz9WjVZ+489jTgrpnwgQaflXSIZPixwl1yedIv/PCg==
+X-Received: by 2002:a25:9111:: with SMTP id v17-v6mr2567147ybl.120.1536266516666;
+        Thu, 06 Sep 2018 13:41:56 -0700 (PDT)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::3:20a])
+        by smtp.gmail.com with ESMTPSA id u124-v6sm2092273ywd.37.2018.09.06.13.41.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 13:41:56 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 16:41:54 -0400
+From:   Dennis Zhou <dennisszhou@gmail.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/15] blkcg: always associate a bio with a blkg
+Message-ID: <20180906204153.GA26048@dennisz-mbp.dhcp.thefacebook.com>
+References: <20180831015356.69796-1-dennisszhou@gmail.com>
+ <20180831015356.69796-7-dennisszhou@gmail.com>
+ <20180831231609.GD1488037@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9126c92f-ad3b-a5b6-ac44-416405489a7e@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180831231609.GD1488037@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 03:20:46PM -0500, Brijesh Singh wrote:
+On Fri, Aug 31, 2018 at 04:16:09PM -0700, Tejun Heo wrote:
+> Hello,
 > 
+> On Thu, Aug 30, 2018 at 09:53:47PM -0400, Dennis Zhou wrote:
+> > From: "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
+> > 
+> > Previously, blkg's were only assigned as needed by blk-iolatency and
+> > blk-throttle. bio->css was also always being associated while blkg was
+> > being looked up and then thrown away in blkcg_bio_issue_check.
+> > 
+> > This patch beings the cleanup of bio->css and bio->bi_blkg by always
+>              ^
+> 	     begins
 > 
-> On 09/06/2018 02:47 PM, Sean Christopherson wrote:
-> ...
-> 
-> >>
-> >>Yes, the auxiliary array will dumped into the regular .bss when
-> >>CONFIG_AMD_MEM_ENCRYPT=n. Typically it will be few k, I am not
-> >>sure if its worth complicating the code to save those extra memory.
-> >>Most of the distro's have CONFIG_AMD_MEM_ENCRYPT=y anyways.
-> >
-> >I just realized that we'll try to create a bogus array if 'NR_CPUS <=
-> >HVC_BOOT_ARRAY_SIZE'.  A bit ugly, but we could #ifdef away both that
-> >and CONFIG_AMD_MEM_ENCRYPT=n in a single shot, e.g.:
-> >
-> >#if defined(CONFIG_AMD_MEM_ENCRYPT) && NR_CPUS > HVC_BOOT_ARRAY_SIZE
-> >#define HVC_AUX_ARRAY_SIZE  \
-> >	PAGE_ALIGN((NR_CPUS - HVC_BOOT_ARRAY_SIZE) * \
-> >		   sizeof(struct pvclock_vsyscall_time_info))
-> >static struct pvclock_vsyscall_time_info
-> >	hv_clock_aux[HVC_AUX_ARRAY_SIZE] __decrypted __aligned(PAGE_SIZE);
-> >#endif
-> >
-> 
-> The HVC_BOOT_ARRAY_SIZE macro uses sizeof(..) and to my understanding
-> the sizeof operators are not allowed in '#if'. Anyway, I will try to see
-> if it can be used, if not then I will stick to CONFIG_AMD_MEM_ENCRYPT
-> check.
 
-Hmm, we'll need something otherwise 'NR_CPUS - HVC_BOOT_ARRAY_SIZE'
-will wrap and cause build errors.
+Thanks!
+
+> > +int bio_associate_create_blkg(struct request_queue *q, struct bio *bio)
+> > +{
+> > +	struct blkcg *blkcg;
+> > +	struct blkcg_gq *blkg;
+> > +	int ret = 0;
+> > +
+> > +	/* someone has already associated this bio with a blkg */
+> > +	if (bio->bi_blkg)
+> > +		return ret;
+> > +
+> > +	rcu_read_lock();
+> > +
+> > +	bio_associate_blkcg(bio, NULL);
+> > +	blkcg = bio_blkcg(bio);
+> > +
+> > +	if (!blkcg->css.parent) {
+> > +		ret = bio_associate_blkg(bio, q->root_blkg);
+> > +		goto assoc_out;
+> > +	}
+> > +
+> > +	blkg = blkg_lookup_create(blkcg, q);
+> > +	if (IS_ERR(blkg))
+> > +		blkg = q->root_blkg;
+> > +
+> > +	ret = bio_associate_blkg(bio, blkg);
+> > +assoc_out:
+> 
+> Maybe if/else instead of goto?
+> 
+
+Yeah, no need for goto.
+
+Thanks,
+Dennis
