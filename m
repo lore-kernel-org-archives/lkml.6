@@ -2,77 +2,85 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AFCC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A659DC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4E1206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4E1206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6A9B1206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A9B1206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbeIFMNc (ORCPT
+        id S1727962AbeIFMNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:13:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:32782 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbeIFMNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:13:32 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fxosq-00083j-Sg; Thu, 06 Sep 2018 09:39:21 +0200
-Date:   Thu, 6 Sep 2018 09:39:20 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [4.14.66-rt40] [report][cpuhotplug] BUG: sleeping function
- called from invalid context at kernel/locking/rtmutex.c:974
-Message-ID: <20180906073920.mgqunl4sfcsore35@linutronix.de>
-References: <4277080d-fbd1-282c-164d-c07796260c36@ti.com>
- <20180829140817.7pr5g2aonbp55fjr@linutronix.de>
- <3aaebda9-a956-55d6-0b04-f84daa6e4866@ti.com>
- <20180830091456.mz73o26ohrc3rq2f@linutronix.de>
- <c744c81c-752e-499e-ffe1-32df30a7831b@ti.com>
- <20180831193053.e3wvssdrxxnw2qah@linutronix.de>
- <1bb777d4-7d72-ecdf-4b78-7d60ec49b815@ti.com>
+        Thu, 6 Sep 2018 08:13:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59146 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725929AbeIFMNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:13:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2BA6BADF4;
+        Thu,  6 Sep 2018 07:39:32 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 09:39:31 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 08/29] memblock: replace alloc_bootmem_align with
+ memblock_alloc
+Message-ID: <20180906073931.GQ14951@dhcp22.suse.cz>
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-9-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1bb777d4-7d72-ecdf-4b78-7d60ec49b815@ti.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1536163184-26356-9-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-31 14:42:25 [-0500], Grygorii Strashko wrote:
+On Wed 05-09-18 18:59:23, Mike Rapoport wrote:
+> The functions are equivalent, just the later does not require nobootmem
+> translation layer.
 > 
-> 
-> On 08/31/2018 02:30 PM, Sebastian Andrzej Siewior wrote:
-> > On 2018-08-31 14:19:53 [-0500], Grygorii Strashko wrote:
-> >>
-> >> I've tried this and do not see warnings. I'm sending 4.14-rt patches i have as
-> >> I could miss smth while cherry-picking.
-> > 
-> > perfect. Thanks for the confirmation.
-> > I saw your three patches. Could you please instead just backport the two
-> > patches I have in v4.16 so that it applies on v4.14?
-> > 
-> 
-> Do you mean these two:
-> https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/commit/?h=linux-4.16.y-rt&id=c7a3334c762a9b1dd2e39cb2ded00ce66e8a06d1
-Yes,
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/commit/?h=linux-4.16.y-rt&id=e083f14dc2e98ced872bf077b4d1cccf95b7e4f8
-no, just 
-	https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/commit/?h=linux-4.16.y-rt-rebase&id=d6914631a84f47eaf5647da3bb09d58eca156b3f
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Sebastian
+> ---
+>  arch/x86/xen/p2m.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
+> index 159a897..68c0f14 100644
+> --- a/arch/x86/xen/p2m.c
+> +++ b/arch/x86/xen/p2m.c
+> @@ -180,7 +180,7 @@ static void p2m_init_identity(unsigned long *p2m, unsigned long pfn)
+>  static void * __ref alloc_p2m_page(void)
+>  {
+>  	if (unlikely(!slab_is_available()))
+> -		return alloc_bootmem_align(PAGE_SIZE, PAGE_SIZE);
+> +		return memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>  
+>  	return (void *)__get_free_page(GFP_KERNEL);
+>  }
+> -- 
+> 2.7.4
+
+-- 
+Michal Hocko
+SUSE Labs
