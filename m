@@ -2,93 +2,73 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05C4C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0625FC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5E020844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:35:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A5E020844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AFA6B20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:36:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="soHjk24D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA6B20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbeIFXMf (ORCPT
+        id S1728849AbeIFXNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:12:35 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:37484 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbeIFXMe (ORCPT
+        Thu, 6 Sep 2018 19:13:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52026 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728468AbeIFXNb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:12:34 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 7EA42215C9;
-        Thu,  6 Sep 2018 18:35:49 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5VcHqzgmjg_i; Thu,  6 Sep 2018 18:35:49 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id A26A020F6B;
-        Thu,  6 Sep 2018 18:35:43 +0000 (UTC)
-Reply-To: shuah@kernel.org
-Subject: Re: [PATCH v2] cgroup: kselftests: add test_core to .gitignore
-To:     Lei Yang <Lei.Yang@windriver.com>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, claudiozumbo@gmail.com,
-        Shuah Khan <shuah@kernel.org>
-References: <1536212843-3774-1-git-send-email-Lei.Yang@windriver.com>
-From:   Shuah Khan <shuah@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuah@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ae04ec24-5e2c-3f6d-42b3-453fcb508a01@kernel.org>
-Date:   Thu, 6 Sep 2018 12:35:42 -0600
+        Thu, 6 Sep 2018 19:13:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dsPkwDqkgPJNRtFkRW3tQYjUsU2sTvS4QHz1vIiUdm4=; b=soHjk24DVpP4Gc41A33pEoKQt
+        wPZhZB9i4hUdvfM9699xpwJe1xz33dJ3IAI8im9o2KR5VMyBq7m5xmkwwa5EZzrjI4wfm/oLyYL5f
+        j9iuiOt2ME3SZrTcL0UNLpvNaW8fxgtJRyxNYKjiZ2spNMif/ypFqPSS12MuYT00bYK1kW5F+J46e
+        6Pwyt2u7klZyznrbVb6LixwwSElp9XMFmudaoMGAc+7m01xvKPB+Tftv8l74vl2H0FtIIeyz7OhGz
+        RjXEumb9DJ7jPi3NkyjO0wfsuk+yTcTe47S/riflgNU0znI2CDof/+zfc8ptgMJl7PowIf1lsYsoA
+        i+4RmSOPw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxz8x-00025G-Ix; Thu, 06 Sep 2018 18:36:39 +0000
+Subject: Re: [PATCH 1/7] vfio/sdmdev: Add documents for WarpDrive framework
+To:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>
+Cc:     linuxarm@huawei.com
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180903005204.26041-2-nek.in.cn@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
+Date:   Thu, 6 Sep 2018 11:36:36 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1536212843-3774-1-git-send-email-Lei.Yang@windriver.com>
+In-Reply-To: <20180903005204.26041-2-nek.in.cn@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -97,24 +77,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 11:47 PM, Lei Yang wrote:
-> Update .gitignore file.
+Hi,
+
+On 09/02/2018 05:51 PM, Kenneth Lee wrote:
+> From: Kenneth Lee <liguozhu@hisilicon.com>
 > 
-> Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+> WarpDrive is a common user space accelerator framework.  Its main component
+> in Kernel is called sdmdev, Share Domain Mediated Device. It exposes
+> the hardware capabilities to the user space via vfio-mdev. So processes in
+> user land can obtain a "queue" by open the device and direct access the
+> hardware MMIO space or do DMA operation via VFIO interface.
+> 
+> WarpDrive is intended to be used with Jean Philippe Brucker's SVA
+> patchset to support multi-process. But This is not a must.  Without the
+> SVA patches, WarpDrive can still work for one process for every hardware
+> device.
+> 
+> This patch add detail documents for the framework.
+> 
+> Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
 > ---
->  tools/testing/selftests/cgroup/.gitignore | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/cgroup/.gitignore b/tools/testing/selftests/cgroup/.gitignore
-> index 95eb3a5..adacda5 100644
-> --- a/tools/testing/selftests/cgroup/.gitignore
-> +++ b/tools/testing/selftests/cgroup/.gitignore
-> @@ -1 +1,2 @@
->  test_memcontrol
-> +test_core
-> 
+>  Documentation/00-INDEX                |   2 +
+>  Documentation/warpdrive/warpdrive.rst | 100 ++++
+>  Documentation/warpdrive/wd-arch.svg   | 728 ++++++++++++++++++++++++++
+>  3 files changed, 830 insertions(+)
+>  create mode 100644 Documentation/warpdrive/warpdrive.rst
+>  create mode 100644 Documentation/warpdrive/wd-arch.svg
+
+> diff --git a/Documentation/warpdrive/warpdrive.rst b/Documentation/warpdrive/warpdrive.rst
+> new file mode 100644
+> index 000000000000..6d2a5d1e08c4
+> --- /dev/null
+> +++ b/Documentation/warpdrive/warpdrive.rst
+> @@ -0,0 +1,100 @@
+> +Introduction of WarpDrive
+> +=========================
+> +
+> +*WarpDrive* is a general accelerator framework for user space. It intends to
+> +provide interface for the user process to send request to hardware
+> +accelerator without heavy user-kernel interaction cost.
+> +
+> +The *WarpDrive* user library is supposed to provide a pipe-based API, such as:
+
+Do you say "is supposed to" because it doesn't do that (yet)?
+Or you could just change that to say:
+
+   The WarpDrive user library provides a pipe-based API, such as:
 
 
-Thanks. Applied to linux-kselftest next
+> +        ::
+> +        int wd_request_queue(struct wd_queue *q);
+> +        void wd_release_queue(struct wd_queue *q);
+> +
+> +        int wd_send(struct wd_queue *q, void *req);
+> +        int wd_recv(struct wd_queue *q, void **req);
+> +        int wd_recv_sync(struct wd_queue *q, void **req);
+> +        int wd_flush(struct wd_queue *q);
+> +
+> +*wd_request_queue* creates the pipe connection, *queue*, between the
+> +application and the hardware. The application sends request and pulls the
+> +answer back by asynchronized wd_send/wd_recv, which directly interact with the
+> +hardware (by MMIO or share memory) without syscall.
+> +
+> +*WarpDrive* maintains a unified application address space among all involved
+> +accelerators.  With the following APIs: ::
 
--- Shuah
+Seems like an extra '.' there.  How about:
+
+  accelerators with the following APIs: ::
+
+> +
+> +        int wd_mem_share(struct wd_queue *q, const void *addr,
+> +                         size_t size, int flags);
+> +        void wd_mem_unshare(struct wd_queue *q, const void *addr, size_t size);
+> +
+> +The referred process space shared by these APIs can be directly referred by the
+> +hardware. The process can also dedicate its whole process space with flags,
+> +*WD_SHARE_ALL* (not in this patch yet).
+> +
+> +The name *WarpDrive* is simply a cool and general name meaning the framework
+> +makes the application faster. As it will be explained in this text later, the
+> +facility in kernel is called *SDMDEV*, namely "Share Domain Mediated Device".
+> +
+> +
+> +How does it work
+> +================
+> +
+> +*WarpDrive* is built upon *VFIO-MDEV*. The queue is wrapped as *mdev* in VFIO.
+> +So memory sharing can be done via standard VFIO standard DMA interface.
+> +
+> +The architecture is illustrated as follow figure:
+> +
+> +.. image:: wd-arch.svg
+> +        :alt: WarpDrive Architecture
+> +
+> +Accelerator driver shares its capability via *SDMDEV* API: ::
+> +
+> +        vfio_sdmdev_register(struct vfio_sdmdev *sdmdev);
+> +        vfio_sdmdev_unregister(struct vfio_sdmdev *sdmdev);
+> +        vfio_sdmdev_wake_up(struct spimdev_queue *q);
+> +
+> +*vfio_sdmdev_register* is a helper function to register the hardware to the
+> +*VFIO_MDEV* framework. The queue creation is done by *mdev* creation interface.
+> +
+> +*WarpDrive* User library mmap the mdev to access its mmio space and shared
+
+s/mmio/MMIO/
+
+> +memory. Request can be sent to, or receive from, hardware in this mmap-ed
+> +space until the queue is full or empty.
+> +
+> +The user library can wait on the queue by ioctl(VFIO_SDMDEV_CMD_WAIT) the mdev
+> +if the queue is full or empty. If the queue status is changed, the hardware
+> +driver use *vfio_sdmdev_wake_up* to wake up the waiting process.
+> +
+> +
+> +Multiple processes support
+> +==========================
+> +
+> +In the latest mainline kernel (4.18) when this document is written,
+> +multi-process is not supported in VFIO yet.
+> +
+> +Jean Philippe Brucker has a patchset to enable it[1]_. We have tested it
+> +with our hardware (which is known as *D06*). It works well. *WarpDrive* rely
+> +on them to support multiple processes. If it is not enabled, *WarpDrive* can
+> +still work, but it support only one mdev for a process, which will share the
+> +same io map table with kernel. (But it is not going to be a security problem,
+> +since the user application cannot access the kernel address space)
+> +
+> +When multiprocess is support, mdev can be created based on how many
+> +hardware resource (queue) is available. Because the VFIO framework accepts only
+> +one open from one mdev iommu_group. Mdev become the smallest unit for process
+> +to use queue. And the mdev will not be released if the user process exist. So
+> +it will need a resource agent to manage the mdev allocation for the user
+> +process. This is not in this document's range.
+> +
+> +
+> +Legacy Mode Support
+> +===================
+> +For the hardware on which IOMMU is not support, WarpDrive can run on *NOIOMMU*
+> +mode. That require some update to the mdev driver, which is not included in
+> +this version yet.
+> +
+> +
+> +References
+> +==========
+> +.. [1] https://patchwork.kernel.org/patch/10394851/
+> +
+> +.. vim: tw=78
+
+thanks,
+-- 
+~Randy
