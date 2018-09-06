@@ -2,705 +2,117 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BA1C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EBFC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE772075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65F2F2075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:42:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ixQUimhj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE772075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="Ij5HaiGp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F2F2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729116AbeIGAS6 (ORCPT
+        id S1729941AbeIGATR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 20:18:58 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41334 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbeIGAS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 20:18:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s15-v6so5742761pgv.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 12:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=nEVsG8I9gtzO0qSyTeCmMCliq/+iYhDz4JY2pHPGM2w=;
-        b=ixQUimhj822x0dnB/Iz5oaSadXMt599TFcUHvi/KNI24rP8HKF2uQvDWLT2aT2f+qL
-         xzh7c+3QerwAwaEoa9lwnyTmIe066eb+++CTIyRL0m34I9hf2b6O03byU5Qv8yGB3dLd
-         lY+FBceX4a19RrfH4ANRqGxwKpEptD6XiQqbLIpwyWqCYHq20T45RIOgmIJ97tCmZrYE
-         2n5nvWWvKjD7MghON32eiOhcvN6ZbIZnepoSfAGtolmptbWcdg4yb/Xob/w1+19EWu1i
-         K52UhhMhY55dperRxguEq2oZPwhOn8yUIwK2K3h+VlnYV2H09Ul4nKHeDNOXpgWnNInv
-         vU+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=nEVsG8I9gtzO0qSyTeCmMCliq/+iYhDz4JY2pHPGM2w=;
-        b=GsuiWmxp4ioExwG+L7HwVp/zarUnh4jSCWNjJwh4vRMcRQU2rmGHTBuQlEmmUVi7yQ
-         Wx3En8wsqMJwDc26Jv27ge2vC5QFLwcmqQhNi3zmxrAoyCYmh0nkvqtlqVIGHnmPrNkm
-         T9r5l49JL+I3zeo1M5GC9ujX5M06IfjdXtqgck6D3lGv4G5RolTL45VFAOqp5rrasBif
-         qjoDrvZzJa296VWmLZVRsuiHR7wgtxMNhnCHgjLDufpl/xyDl2P+kMaw3Iyu+QZfE74M
-         eSz+crGc1TH6uFUuTu25Xteh39miLSWMak7tkf7a/Kx0CdBHf6SdMQWIG5FrmmMYSbN8
-         neOw==
-X-Gm-Message-State: APzg51CQIoY+jf9M4n8tqNhxirMZFRKMtzvpbjDviI5NVg6zaKY9MVLV
-        cNb5nGz7jGLETrYgGe/Nfijn9vMCg5JUI3HSn/CfNQ==
-X-Google-Smtp-Source: ANB0Vdb1/Lwg6xS9F8ju3eM7yfbSw8hsL5tBVOLbEOHpsnsltfsHYy2htdb9si9IMCB09j5RgtfMEq7qNXQIs7UlFQY=
-X-Received: by 2002:a63:4702:: with SMTP id u2-v6mr4342500pga.95.1536262917662;
- Thu, 06 Sep 2018 12:41:57 -0700 (PDT)
+        Thu, 6 Sep 2018 20:19:17 -0400
+Received: from mail-dm3nam03on0077.outbound.protection.outlook.com ([104.47.41.77]:7136
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727650AbeIGATR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 20:19:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VCIqaiQnr55OZv6xAtOLMZXGBz/pmBb6fXdBYJMIxpk=;
+ b=Ij5HaiGpbICJPeU/sjOBbCN6E+sSbXGRKN3YTUvm7DIQcm2x9U8wFz6tMTu5HAaOJwJzzSdT+WQDXp3yc9Ftf0N7MPX8lGGCYWDqc6ntiYVsrukknUsiN8ZxnyePydprR6QQk3wF84/uXLMBcRn7jE0F3wQrXDAGnCjrEKOVkgs=
+Received: from BL0PR05MB4772.namprd05.prod.outlook.com (20.177.145.81) by
+ BL0PR05MB4691.namprd05.prod.outlook.com (20.177.145.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.11; Thu, 6 Sep 2018 19:42:14 +0000
+Received: from BL0PR05MB4772.namprd05.prod.outlook.com
+ ([fe80::70ee:7ce:cd75:1112]) by BL0PR05MB4772.namprd05.prod.outlook.com
+ ([fe80::70ee:7ce:cd75:1112%4]) with mapi id 15.20.1122.009; Thu, 6 Sep 2018
+ 19:42:14 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2 1/6] Fix "x86/alternatives: Lockdep-enforce text_mutex
+ in text_poke*()"
+Thread-Topic: [PATCH v2 1/6] Fix "x86/alternatives: Lockdep-enforce text_mutex
+ in text_poke*()"
+Thread-Index: AQHUQuMbEqvSNOHryEuRcEhAlbQ9L6TjrQmAgAAAm4A=
+Date:   Thu, 6 Sep 2018 19:42:14 +0000
+Message-ID: <BD1F532F-1006-4CDC-9470-C8A91619E4DE@vmware.com>
+References: <20180902173224.30606-1-namit@vmware.com>
+ <20180902173224.30606-2-namit@vmware.com>
+ <20180906194003.GD4816@worktop.programming.kicks-ass.net>
+In-Reply-To: <20180906194003.GD4816@worktop.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL0PR05MB4691;20:LMCSzw5Ju8TBpBOdNJJCmikhAYR+ICLK3Dywc4BylfaTKEuM9xzjLQmGILweS0R59MeY80lMxEmZ7N3hhk+1g0rg+Tp6K3ta6CyXpo4R/chzws42hu5EcJ/QWRH2S7EroYT0hhXfdnAp/NzKBkkQy1MYqvM77dcAWUe8fUdLWIY=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1e7c24e9-afc1-49cf-62c8-08d61430d8da
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BL0PR05MB4691;
+x-ms-traffictypediagnostic: BL0PR05MB4691:
+bcl:    0
+x-microsoft-antispam-prvs: <BL0PR05MB469108941851E60D6046E0CED0010@BL0PR05MB4691.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:BL0PR05MB4691;BCL:0;PCL:0;RULEID:;SRVR:BL0PR05MB4691;
+x-forefront-prvs: 0787459938
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(366004)(396003)(199004)(189003)(25786009)(316002)(6916009)(14444005)(81156014)(86362001)(2906002)(256004)(81166006)(36756003)(186003)(97736004)(6246003)(14454004)(26005)(6506007)(102836004)(5660300001)(66066001)(83716003)(4326008)(478600001)(8936002)(7416002)(106356001)(11346002)(3846002)(53936002)(6486002)(476003)(6512007)(54906003)(105586002)(33656002)(2616005)(6436002)(68736007)(229853002)(486006)(446003)(2900100001)(76176011)(82746002)(7736002)(99286004)(5250100002)(8676002)(305945005)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR05MB4691;H:BL0PR05MB4772.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uAoJDP+hoUZME8PlxDC42MF9XcXKjRmHKSOX56+sqw7c3sW9sNrOXSr90hum2e3qGsEVbEcft4jriTBPDnIiBQGK4pdd+u84Ue28Zf0z+DCyBOrZ1RbHuAqINy553YZp5EYDYn7j6BUbQMi+rq2dQBh8kw65EAC9f/9e1g+GV2n0VUUzTw8BlLj+ZpKP3b4m0lLTnw6UWBSjAkJkoZRHRno1XgVsu7P80teffq+iIV2YGxki+54Nh3mhkFez2NqCDClh4M/tH8OzC38LFr8c0cAw1xfe0lAPPiFw7xurRm7IetJ4+JzD+ZPeNBCkJZ4lSIogjWVrYPedTWuGQ1phQECQF0TofaNBOt4UhkP9DHA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9280685D9FEEB04BB4A67C99F6D7439F@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 6 Sep 2018 12:41:37
- -0700 (PDT)
-In-Reply-To: <20180906193822.GG5098@thunk.org>
-References: <00000000000091615e0575368e33@google.com> <20180906193822.GG5098@thunk.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 6 Sep 2018 21:41:37 +0200
-Message-ID: <CACT4Y+aGjkmq4cEaQXagd_YqjE4a1HoNgcEzqeNj-g0Hg_hQHw@mail.gmail.com>
-Subject: Re: possible deadlock in ext4_evict_inode
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        syzbot <syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e7c24e9-afc1-49cf-62c8-08d61430d8da
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2018 19:42:14.6649
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR05MB4691
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 9:38 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> On Thu, Sep 06, 2018 at 09:41:04AM -0700, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    b36fdc6853a3 Merge tag 'gpio-v4.19-2' of git://git.kernel...
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1716bc9e400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=6c9564cd177daf0c
->> dashboard link: https://syzkaller.appspot.com/bug?extid=0eefc1e06a77d327a056
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13db48be400000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
->
-> This looks like it's a Smack issue?
-
-
-Looks like it.
-
-Happens only on smack instance:
-https://syzkaller.appspot.com/bug?extid=0eefc1e06a77d327a056
-
-Let's add +smack maintainers.
-
-
->> 8021q: adding VLAN 0 to HW filter on device team0
->> 8021q: adding VLAN 0 to HW filter on device team0
->> syz-executor0 (11193) used greatest stack depth: 15352 bytes left
->>
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 4.19.0-rc2+ #1 Not tainted
->> ------------------------------------------------------
->> syz-executor3/11182 is trying to acquire lock:
->> 00000000c157b042 (sb_internal){.+.+}, at: sb_start_intwrite
->> include/linux/fs.h:1613 [inline]
->> 00000000c157b042 (sb_internal){.+.+}, at: ext4_evict_inode+0x588/0x19b0
->> fs/ext4/inode.c:250
->>
->> but task is already holding lock:
->> 00000000128cdd3b (fs_reclaim){+.+.}, at: fs_reclaim_acquire.part.98+0x0/0x30
->> mm/page_alloc.c:463
->>
->> which lock already depends on the new lock.
->>
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #3 (fs_reclaim){+.+.}:
->>        __fs_reclaim_acquire mm/page_alloc.c:3728 [inline]
->>        fs_reclaim_acquire.part.98+0x24/0x30 mm/page_alloc.c:3739
->>        fs_reclaim_acquire+0x14/0x20 mm/page_alloc.c:3740
->>        slab_pre_alloc_hook mm/slab.h:418 [inline]
->>        slab_alloc mm/slab.c:3378 [inline]
->>        kmem_cache_alloc_trace+0x2d/0x730 mm/slab.c:3618
->>        kmalloc include/linux/slab.h:513 [inline]
->>        kzalloc include/linux/slab.h:707 [inline]
->>        smk_fetch.part.24+0x5a/0xf0 security/smack/smack_lsm.c:273
->>        smk_fetch security/smack/smack_lsm.c:3548 [inline]
->>        smack_d_instantiate+0x946/0xea0 security/smack/smack_lsm.c:3502
->>        security_d_instantiate+0x5c/0xf0 security/security.c:1287
->>        d_instantiate+0x5e/0xa0 fs/dcache.c:1870
->>        shmem_mknod+0x189/0x1f0 mm/shmem.c:2812
->>        vfs_mknod+0x447/0x800 fs/namei.c:3719
->>        handle_create+0x1ff/0x7c0 drivers/base/devtmpfs.c:211
->>        handle drivers/base/devtmpfs.c:374 [inline]
->>        devtmpfsd+0x27f/0x4c0 drivers/base/devtmpfs.c:400
->>        kthread+0x35a/0x420 kernel/kthread.c:246
->>        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
->>
->> -> #2 (&isp->smk_lock){+.+.}:
->>        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
->>        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
->>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
->>        smack_d_instantiate+0x130/0xea0 security/smack/smack_lsm.c:3369
->>        security_d_instantiate+0x5c/0xf0 security/security.c:1287
->>        d_instantiate_new+0x7e/0x160 fs/dcache.c:1889
->>        ext4_add_nondir+0x81/0x90 fs/ext4/namei.c:2415
->>        ext4_symlink+0x761/0x1170 fs/ext4/namei.c:3162
->>        vfs_symlink+0x37a/0x5d0 fs/namei.c:4127
->>        do_symlinkat+0x242/0x2d0 fs/namei.c:4154
->>        __do_sys_symlink fs/namei.c:4173 [inline]
->>        __se_sys_symlink fs/namei.c:4171 [inline]
->>        __x64_sys_symlink+0x59/0x80 fs/namei.c:4171
->>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> -> #1 (jbd2_handle){++++}:
->>        start_this_handle+0x5c0/0x1260 fs/jbd2/transaction.c:385
->>        jbd2__journal_start+0x3c9/0x9f0 fs/jbd2/transaction.c:439
->>        __ext4_journal_start_sb+0x18d/0x590 fs/ext4/ext4_jbd2.c:81
->>        ext4_sample_last_mounted fs/ext4/file.c:414 [inline]
->>        ext4_file_open+0x552/0x7b0 fs/ext4/file.c:439
->>        do_dentry_open+0x499/0x1250 fs/open.c:771
->>        vfs_open+0xa0/0xd0 fs/open.c:880
->>        do_last fs/namei.c:3418 [inline]
->>        path_openat+0x130f/0x5340 fs/namei.c:3534
->>        do_filp_open+0x255/0x380 fs/namei.c:3564
->>        do_open_execat+0x221/0x8e0 fs/exec.c:853
->>        __do_execve_file.isra.35+0x1707/0x2460 fs/exec.c:1755
->>        do_execveat_common fs/exec.c:1866 [inline]
->>        do_execve fs/exec.c:1883 [inline]
->>        __do_sys_execve fs/exec.c:1964 [inline]
->>        __se_sys_execve fs/exec.c:1959 [inline]
->>        __x64_sys_execve+0x8f/0xc0 fs/exec.c:1959
->>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> -> #0 (sb_internal){.+.+}:
->>        lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
->>        percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
->> [inline]
->>        percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
->>        __sb_start_write+0x1e9/0x300 fs/super.c:1387
->>        sb_start_intwrite include/linux/fs.h:1613 [inline]
->>        ext4_evict_inode+0x588/0x19b0 fs/ext4/inode.c:250
->>        evict+0x4ae/0x990 fs/inode.c:558
->>        iput_final fs/inode.c:1547 [inline]
->>        iput+0x5fa/0xa00 fs/inode.c:1573
->>        dentry_unlink_inode+0x461/0x5e0 fs/dcache.c:374
->>        __dentry_kill+0x44c/0x7a0 fs/dcache.c:566
->>        dentry_kill+0xc9/0x5a0 fs/dcache.c:685
->>        shrink_dentry_list+0x36c/0x7c0 fs/dcache.c:1090
->>        prune_dcache_sb+0x12f/0x1c0 fs/dcache.c:1171
->>        super_cache_scan+0x270/0x480 fs/super.c:102
->>        do_shrink_slab+0x4ba/0xbb0 mm/vmscan.c:536
->>        shrink_slab_memcg mm/vmscan.c:601 [inline]
->>        shrink_slab+0x6fe/0x8c0 mm/vmscan.c:674
->>        shrink_node+0x429/0x16a0 mm/vmscan.c:2735
->>        shrink_zones mm/vmscan.c:2964 [inline]
->>        do_try_to_free_pages+0x3e7/0x1290 mm/vmscan.c:3026
->>        try_to_free_pages+0x4b2/0xa60 mm/vmscan.c:3241
->>        __perform_reclaim mm/page_alloc.c:3769 [inline]
->>        __alloc_pages_direct_reclaim mm/page_alloc.c:3790 [inline]
->>        __alloc_pages_slowpath+0x95a/0x2cb0 mm/page_alloc.c:4191
->>        __alloc_pages_nodemask+0xa1b/0xd10 mm/page_alloc.c:4390
->>        __alloc_pages include/linux/gfp.h:473 [inline]
->>        __alloc_pages_node include/linux/gfp.h:486 [inline]
->>        kmem_getpages mm/slab.c:1409 [inline]
->>        cache_grow_begin+0x91/0x710 mm/slab.c:2677
->>        fallback_alloc+0x203/0x2c0 mm/slab.c:3219
->>        ____cache_alloc_node+0x1c7/0x1e0 mm/slab.c:3287
->>        slab_alloc_node mm/slab.c:3327 [inline]
->>        kmem_cache_alloc_node_trace+0xe9/0x720 mm/slab.c:3661
->>        __do_kmalloc_node mm/slab.c:3681 [inline]
->>        __kmalloc_node+0x33/0x70 mm/slab.c:3689
->>        kmalloc_node include/linux/slab.h:555 [inline]
->>        kvmalloc_node+0xb9/0xf0 mm/util.c:423
->>        kvmalloc include/linux/mm.h:577 [inline]
->>        sem_alloc ipc/sem.c:497 [inline]
->>        newary+0x244/0xb50 ipc/sem.c:527
->>        ipcget_new ipc/util.c:315 [inline]
->>        ipcget+0x15d/0x11d0 ipc/util.c:614
->>        ksys_semget+0x1c0/0x280 ipc/sem.c:604
->>        __do_sys_semget ipc/sem.c:609 [inline]
->>        __se_sys_semget ipc/sem.c:607 [inline]
->>        __x64_sys_semget+0x73/0xb0 ipc/sem.c:607
->>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>
->> other info that might help us debug this:
->>
->> Chain exists of:
->>   sb_internal --> &isp->smk_lock --> fs_reclaim
->>
->>  Possible unsafe locking scenario:
->>
->>        CPU0                    CPU1
->>        ----                    ----
->>   lock(fs_reclaim);
->>                                lock(&isp->smk_lock);
->>                                lock(fs_reclaim);
->>   lock(sb_internal);
->>
->>  *** DEADLOCK ***
->>
->> 4 locks held by syz-executor3/11182:
->>  #0: 000000000ed49aa7 (&ids->rwsem){+.+.}, at: ipcget_new ipc/util.c:314
->> [inline]
->>  #0: 000000000ed49aa7 (&ids->rwsem){+.+.}, at: ipcget+0x125/0x11d0
->> ipc/util.c:614
->>  #1: 00000000128cdd3b (fs_reclaim){+.+.}, at:
->> fs_reclaim_acquire.part.98+0x0/0x30 mm/page_alloc.c:463
->>  #2: 00000000c7d74038 (shrinker_rwsem){++++}, at: shrink_slab_memcg
->> mm/vmscan.c:578 [inline]
->>  #2: 00000000c7d74038 (shrinker_rwsem){++++}, at: shrink_slab+0x1d1/0x8c0
->> mm/vmscan.c:674
->>  #3: 00000000a3e33771 (&type->s_umount_key#28){++++}, at:
->> trylock_super+0x22/0x110 fs/super.c:412
->>
->> stack backtrace:
->> CPU: 1 PID: 11182 Comm: syz-executor3 Not tainted 4.19.0-rc2+ #1
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->>  print_circular_bug.isra.34.cold.55+0x1bd/0x27d
->> kernel/locking/lockdep.c:1222
->>  check_prev_add kernel/locking/lockdep.c:1862 [inline]
->>  check_prevs_add kernel/locking/lockdep.c:1975 [inline]
->>  validate_chain kernel/locking/lockdep.c:2416 [inline]
->>  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
->>  lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
->>  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
->>  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
->>  __sb_start_write+0x1e9/0x300 fs/super.c:1387
->>  sb_start_intwrite include/linux/fs.h:1613 [inline]
->>  ext4_evict_inode+0x588/0x19b0 fs/ext4/inode.c:250
->>  evict+0x4ae/0x990 fs/inode.c:558
->>  iput_final fs/inode.c:1547 [inline]
->>  iput+0x5fa/0xa00 fs/inode.c:1573
->>  dentry_unlink_inode+0x461/0x5e0 fs/dcache.c:374
->>  __dentry_kill+0x44c/0x7a0 fs/dcache.c:566
->>  dentry_kill+0xc9/0x5a0 fs/dcache.c:685
->>  shrink_dentry_list+0x36c/0x7c0 fs/dcache.c:1090
->>  prune_dcache_sb+0x12f/0x1c0 fs/dcache.c:1171
->>  super_cache_scan+0x270/0x480 fs/super.c:102
->>  do_shrink_slab+0x4ba/0xbb0 mm/vmscan.c:536
->>  shrink_slab_memcg mm/vmscan.c:601 [inline]
->>  shrink_slab+0x6fe/0x8c0 mm/vmscan.c:674
->>  shrink_node+0x429/0x16a0 mm/vmscan.c:2735
->>  shrink_zones mm/vmscan.c:2964 [inline]
->>  do_try_to_free_pages+0x3e7/0x1290 mm/vmscan.c:3026
->>  try_to_free_pages+0x4b2/0xa60 mm/vmscan.c:3241
->>  __perform_reclaim mm/page_alloc.c:3769 [inline]
->>  __alloc_pages_direct_reclaim mm/page_alloc.c:3790 [inline]
->>  __alloc_pages_slowpath+0x95a/0x2cb0 mm/page_alloc.c:4191
->>  __alloc_pages_nodemask+0xa1b/0xd10 mm/page_alloc.c:4390
->>  __alloc_pages include/linux/gfp.h:473 [inline]
->>  __alloc_pages_node include/linux/gfp.h:486 [inline]
->>  kmem_getpages mm/slab.c:1409 [inline]
->>  cache_grow_begin+0x91/0x710 mm/slab.c:2677
->>  fallback_alloc+0x203/0x2c0 mm/slab.c:3219
->>  ____cache_alloc_node+0x1c7/0x1e0 mm/slab.c:3287
->>  slab_alloc_node mm/slab.c:3327 [inline]
->>  kmem_cache_alloc_node_trace+0xe9/0x720 mm/slab.c:3661
->>  __do_kmalloc_node mm/slab.c:3681 [inline]
->>  __kmalloc_node+0x33/0x70 mm/slab.c:3689
->>  kmalloc_node include/linux/slab.h:555 [inline]
->>  kvmalloc_node+0xb9/0xf0 mm/util.c:423
->>  kvmalloc include/linux/mm.h:577 [inline]
->>  sem_alloc ipc/sem.c:497 [inline]
->>  newary+0x244/0xb50 ipc/sem.c:527
->>  ipcget_new ipc/util.c:315 [inline]
->>  ipcget+0x15d/0x11d0 ipc/util.c:614
->>  ksys_semget+0x1c0/0x280 ipc/sem.c:604
->>  __do_sys_semget ipc/sem.c:609 [inline]
->>  __se_sys_semget ipc/sem.c:607 [inline]
->>  __x64_sys_semget+0x73/0xb0 ipc/sem.c:607
->>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x457099
->> Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
->> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
->> 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007fbecf217c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000040
->> RAX: ffffffffffffffda RBX: 00007fbecf2186d4 RCX: 0000000000457099
->> RDX: 0000000000000000 RSI: 0000000000004007 RDI: 0000000000000000
->> RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
->> R13: 00000000004d4740 R14: 00000000004c8d3e R15: 0000000000000000
->> syz-executor4 (11186) used greatest stack depth: 15080 bytes left
->> syz-executor7 (11171) used greatest stack depth: 14344 bytes left
->> syz-executor2 (11260) used greatest stack depth: 14296 bytes left
->> syz-executor0 invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),
->> nodemask=(null), order=0, oom_score_adj=0
->> syz-executor0 cpuset=syz0 mems_allowed=0
->> CPU: 0 PID: 11308 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #1
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->>  dump_header+0x27b/0xf70 mm/oom_kill.c:441
->>  oom_kill_process.cold.28+0x10/0x95a mm/oom_kill.c:953
->>  out_of_memory+0xa88/0x1430 mm/oom_kill.c:1120
->>  __alloc_pages_may_oom mm/page_alloc.c:3522 [inline]
->>  __alloc_pages_slowpath+0x223f/0x2cb0 mm/page_alloc.c:4235
->>  __alloc_pages_nodemask+0xa1b/0xd10 mm/page_alloc.c:4390
->>  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2093
->>  alloc_pages include/linux/gfp.h:509 [inline]
->>  __page_cache_alloc+0x398/0x5e0 mm/filemap.c:946
->>  page_cache_read mm/filemap.c:2385 [inline]
->>  filemap_fault+0x1458/0x2220 mm/filemap.c:2569
->>  ext4_filemap_fault+0x82/0xad fs/ext4/inode.c:6257
->>  __do_fault+0xee/0x450 mm/memory.c:3240
->>  do_read_fault mm/memory.c:3652 [inline]
->>  do_fault mm/memory.c:3752 [inline]
->>  handle_pte_fault mm/memory.c:3983 [inline]
->>  __handle_mm_fault+0x2b4a/0x4350 mm/memory.c:4107
->>  handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
->>  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
->>  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
->>  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1161
->> RIP: 0033:0x40a056
->> Code: Bad RIP value.
->> RSP: 002b:00007ffd766513d0 EFLAGS: 00010283
->> RAX: 0000000000730a08 RBX: 00000000009300a0 RCX: 0000000000000001
->> RDX: 0000000000000001 RSI: ffffffffffffffff RDI: 00000000004bce88
->> RBP: 00000000009300a0 R08: 0000000000000009 R09: 0000000000000001
->> R10: 00007ffd766514d0 R11: 0000000000000000 R12: 0000000000930aa0
->> R13: 000000000093014c R14: 000000000001f9ab R15: 000000000001f97e
->> Mem-Info:
->> active_anon:4715 inactive_anon:367 isolated_anon:0
->>  active_file:31 inactive_file:10 isolated_file:0
->>  unevictable:0 dirty:0 writeback:0 unstable:0
->>  slab_reclaimable:11145 slab_unreclaimable:1533913
->>  mapped:177 shmem:377 pagetables:511 bounce:0
->>  free:24282 free_pcp:0 free_cma:0
->> Node 0 active_anon:18860kB inactive_anon:1468kB active_file:116kB
->> inactive_file:0kB unevictable:0kB isolated(anon):0kB isolated(file):56kB
->> mapped:708kB dirty:0kB writeback:0kB shmem:1508kB shmem_thp: 0kB
->> shmem_pmdmapped: 0kB anon_thp: 6144kB writeback_tmp:0kB unstable:0kB
->> all_unreclaimable? yes
->> Node 0 DMA free:15908kB min:164kB low:204kB high:244kB active_anon:0kB
->> inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB
->> writepending:0kB present:15992kB managed:15908kB mlocked:0kB
->> kernel_stack:0kB pagetables:0kB bounce:0kB free_pcp:0kB local_pcp:0kB
->> free_cma:0kB
->> lowmem_reserve[]: 0 2842 6348 6348
->> Node 0 DMA32 free:44052kB min:30180kB low:37724kB high:45268kB
->> active_anon:2056kB inactive_anon:0kB active_file:40kB inactive_file:72kB
->> unevictable:0kB writepending:0kB present:3129292kB managed:2914192kB
->> mlocked:0kB kernel_stack:32kB pagetables:0kB bounce:0kB free_pcp:0kB
->> local_pcp:0kB free_cma:0kB
->> lowmem_reserve[]: 0 0 3506 3506
->> Node 0 Normal free:37168kB min:37236kB low:46544kB high:55852kB
->> active_anon:16804kB inactive_anon:1468kB active_file:176kB inactive_file:0kB
->> unevictable:0kB writepending:0kB present:4718592kB managed:3590864kB
->> mlocked:0kB kernel_stack:5216kB pagetables:2044kB bounce:0kB free_pcp:0kB
->> local_pcp:0kB free_cma:0kB
->> lowmem_reserve[]: 0 0 0 0
->> Node 0 DMA: 1*4kB (U) 0*8kB 0*16kB 1*32kB (U) 2*64kB (U) 1*128kB (U) 1*256kB
->> (U) 0*512kB 1*1024kB (U) 1*2048kB (M) 3*4096kB (M) = 15908kB
->> Node 0 DMA32: 5*4kB (ME) 7*8kB (UME) 4*16kB (ME) 4*32kB (ME) 4*64kB (ME)
->> 2*128kB (UE) 4*256kB (UME) 3*512kB (ME) 4*1024kB (UME) 4*2048kB (UME)
->> 7*4096kB (M) = 44300kB
->> Node 0 Normal: 867*4kB (UME) 448*8kB (M) 250*16kB (ME) 106*32kB (ME) 51*64kB
->> (ME) 46*128kB (ME) 20*256kB (M) 15*512kB (M) 1*1024kB (E) 0*2048kB 0*4096kB
->> = 37420kB
->> Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0
->> hugepages_size=2048kB
->> 424 total pagecache pages
->> 0 pages in swap cache
->> Swap cache stats: add 0, delete 0, find 0/0
->> Free swap  = 0kB
->> Total swap = 0kB
->> 1965969 pages RAM
->> 0 pages HighMem/MovableOnly
->> 335728 pages reserved
->> Unreclaimable slab info:
->> Name                      Used          Total
->> pid_2                    131KB        156KB
->> TIPC                      12KB         14KB
->> SCTPv6                    18KB         24KB
->> DCCPv6                    21KB         29KB
->> DCCP                      20KB         27KB
->> bridge_fdb_cache          15KB         19KB
->> fib6_nodes               103KB        108KB
->> ip6_dst_cache            113KB        300KB
->> RAWv6                     87KB         91KB
->> UDPv6                      3KB          3KB
->> TCPv6                     29KB         29KB
->> nf_conntrack               2KB          3KB
->> sd_ext_cdb                 0KB          3KB
->> scsi_sense_cache        1056KB       1060KB
->> virtio_scsi_cmd           16KB         16KB
->> sgpool-128                 8KB          8KB
->> sgpool-64                  4KB          6KB
->> sgpool-32                  2KB          7KB
->> sgpool-16                  1KB          3KB
->> sgpool-8                   0KB          3KB
->> mqueue_inode_cache         12KB         21KB
->> bio_post_read_ctx         14KB         15KB
->> bio-2                     14KB         15KB
->> jfs_mp                     7KB          7KB
->> nfs_commit_data            3KB          7KB
->> nfs_write_data            34KB         37KB
->> jbd2_inode                 2KB          3KB
->> ext4_system_zone           0KB          3KB
->> bio-1                      1KB          3KB
->> pid_namespace              2KB          7KB
->> rpc_buffers               17KB         19KB
->> rpc_tasks                  2KB          3KB
->> UNIX                      12KB         47KB
->> tcp_bind_bucket            1KB          4KB
->> ip_fib_trie               14KB         19KB
->> ip_fib_alias              69KB         71KB
->> ip_dst_cache               0KB          8KB
->> RAW                       51KB         57KB
->> UDP                       19KB         39KB
->> TCP                        5KB          5KB
->> hugetlbfs_inode_cache          1KB          7KB
->> fscache_cookie_jar          0KB          7KB
->> eventpoll_pwq             51KB         51KB
->> eventpoll_epi             90KB         90KB
->> inotify_inode_mark         90KB         90KB
->> request_queue            159KB        159KB
->> blkdev_requests            1KB          3KB
->> blkdev_ioc                23KB         23KB
->> bio-0                    536KB        536KB
->> biovec-max              1658KB       1658KB
->> biovec-64                401KB        401KB
->> biovec-16                127KB        127KB
->> bio_integrity_payload          1KB          4KB
->> khugepaged_mm_slot         27KB         27KB
->> dmaengine-unmap-2          0KB          3KB
->> skbuff_fclone_cache          1KB         18KB
->> skbuff_head_cache        673KB       1916KB
->> configfs_dir_cache          0KB          4KB
->> file_lock_cache            1KB          7KB
->> file_lock_ctx              0KB          3KB
->> fsnotify_mark_connector         51KB         51KB
->> net_namespace             69KB         69KB
->> shmem_inode_cache       3043KB       3043KB
->> task_delay_info          125KB        371KB
->> taskstats                176KB        176KB
->> proc_dir_entry           680KB        682KB
->> pde_opener                 0KB          3KB
->> seq_file                 362KB        362KB
->> sigqueue                 126KB        401KB
->> kernfs_node_cache      11279KB      11284KB
->> mnt_cache                 85KB        108KB
->> filp                    4848KB       8073KB
->> names_cache           121567KB     121567KB
->> inode_smack             4817KB       4817KB
->> key_jar                    3KB          7KB
->> uts_namespace              3KB          7KB
->> nsproxy                    1KB          7KB
->> vm_area_struct          8830KB      12970KB
->> mm_struct               1462KB       3614KB
->> fs_cache                 161KB        496KB
->> files_cache              538KB       1256KB
->> signal_cache             915KB       2185KB
->> sighand_cache            395KB        395KB
->> task_struct             3249KB       3304KB
->> cred_jar                 795KB       2348KB
->> anon_vma_chain          4757KB       6000KB
->> anon_vma                 237KB        392KB
->> pid                       73KB        228KB
->> Acpi-Operand             312KB        772KB
->> Acpi-Namespace           102KB        104KB
->> numa_policy                0KB          3KB
->> debug_objects_cache       1125KB       1126KB
->> trace_event_file         243KB        247KB
->> ftrace_event_field        348KB        350KB
->> pool_workqueue            67KB         72KB
->> task_group                 7KB          7KB
->> page->ptl               1564KB       3300KB
->> kmalloc-4194304      5713920KB    5713920KB
->> kmalloc-2097152         2050KB       2050KB
->> kmalloc-524288          2056KB       2056KB
->> kmalloc-262144          1290KB       1290KB
->> kmalloc-131072           650KB        650KB
->> kmalloc-65536            330KB        330KB
->> kmalloc-32768            891KB        990KB
->> kmalloc-16384            412KB        462KB
->> kmalloc-8192            2004KB       2004KB
->> kmalloc-4096           18670KB      18708KB
->> kmalloc-2048            6464KB       7764KB
->> kmalloc-1024            4572KB       5244KB
->> kmalloc-512             3885KB       5812KB
->> kmalloc-256             4762KB       4762KB
->> kmalloc-128              901KB        901KB
->> kmalloc-96              1935KB       2112KB
->> kmalloc-64              1843KB       1896KB
->> kmalloc-32              1849KB       1956KB
->> kmalloc-192             2706KB       4076KB
->> kmem_cache               221KB        221KB
->> Tasks state (memory values in pages):
->> [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents
->> oom_score_adj name
->> [   2347]     0  2347      278      186    32768        0             0 none
->> [   2539]     0  2539     5377      170    86016        0         -1000
->> udevd
->> [   2754]     0  2754     5376      171    81920        0         -1000
->> udevd
->> [   4381]     0  4381     2493      573    65536        0             0
->> dhclient
->> [   4544]     0  4544    14267      155   118784        0             0
->> rsyslogd
->> [   4587]     0  4587     4725       49    86016        0             0 cron
->> [   4613]     0  4613    12490      153   139264        0         -1000 sshd
->> [   4638]     0  4638     3694       42    69632        0             0
->> getty
->> [   4639]     0  4639     3694       39    77824        0             0
->> getty
->> [   4640]     0  4640     3694       41    77824        0             0
->> getty
->> [   4641]     0  4641     3694       41    77824        0             0
->> getty
->> [   4642]     0  4642     3694       39    73728        0             0
->> getty
->> [   4643]     0  4643     3694       40    77824        0             0
->> getty
->> [   4644]     0  4644     3649       41    73728        0             0
->> getty
->> [   4645]     0  4645     5310      115    81920        0         -1000
->> udevd
->> [   4663]     0  4663    17821      198   188416        0             0 sshd
->> [   4665]     0  4665    41970     1817   163840        0             0
->> syz-execprog
->> [   4676]     0  4676     9360       15    40960        0             0
->> syz-executor4
->> [   4678]     0  4678     9360       15    40960        0             0
->> syz-executor5
->> [   4677]     0  4677     9359       22    49152        0             0
->> syz-executor4
->> [   4681]     0  4681     9360       15    40960        0             0
->> syz-executor3
->> [   4682]     0  4682     9360       15    40960        0             0
->> syz-executor0
->> [   4683]     0  4683     9359       21    49152        0             0
->> syz-executor5
->> [   4685]     0  4685     9360       15    40960        0             0
->> syz-executor7
->> [   4686]     0  4686     9359       22    49152        0             0
->> syz-executor3
->> [   4687]     0  4687     9360       15    40960        0             0
->> syz-executor6
->> [   4688]     0  4688     9359       22    49152        0             0
->> syz-executor0
->> [   4689]     0  4689     9359       21    49152        0             0
->> syz-executor7
->> [   4690]     0  4690     9360       15    40960        0             0
->> syz-executor2
->> [   4691]     0  4691     9359       22    49152        0             0
->> syz-executor6
->> [   4692]     0  4692     9360       14    40960        0             0
->> syz-executor1
->> [   4693]     0  4693     9359       22    49152        0             0
->> syz-executor2
->> [   4694]     0  4694     9359       21    53248        0             0
->> syz-executor1
->> [   6704]     0  6704     5310      115    81920        0         -1000
->> udevd
->> [   6710]     0  6710     5310      115    81920        0         -1000
->> udevd
->> [   6737]     0  6737     5376      171    81920        0         -1000
->> udevd
->> [   6804]     0  6804     5376      172    81920        0         -1000
->> udevd
->> [   6819]     0  6819     5376      172    81920        0         -1000
->> udevd
->> [   7149]     0  7149     5376      172    81920        0         -1000
->> udevd
->> [  11308]     0 11308     9425       22    61440        0             0
->> syz-executor0
->> [  11311]     0 11311     9425      534    61440        0             0
->> syz-executor6
->> Out of memory: Kill process 4665 (syz-execprog) score 1 or sacrifice child
->> Killed process 4676 (syz-executor4) total-vm:37440kB, anon-rss:60kB,
->> file-rss:0kB, shmem-rss:0kB
->> syz-executor0 (11308) used greatest stack depth: 14040 bytes left
->> device bridge_slave_1 left promiscuous mode
->> bridge0: port 2(bridge_slave_1) entered disabled state
->> device bridge_slave_0 left promiscuous mode
->> bridge0: port 1(bridge_slave_0) entered disabled state
->> team0 (unregistering): Port device team_slave_1 removed
->> IPVS: ftp: loaded support on port[0] = 21
->> team0 (unregistering): Port device team_slave_0 removed
->> bond0 (unregistering): Releasing backup interface bond_slave_1
->> bond0 (unregistering): Releasing backup interface bond_slave_0
->> bond0 (unregistering): Released all slaves
->> bridge0: port 1(bridge_slave_0) entered blocking state
->> bridge0: port 1(bridge_slave_0) entered disabled state
->> device bridge_slave_0 entered promiscuous mode
->> bridge0: port 2(bridge_slave_1) entered blocking state
->> bridge0: port 2(bridge_slave_1) entered disabled state
->> device bridge_slave_1 entered promiscuous mode
->> IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
->> IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
->> bond0: Enslaving bond_slave_0 as an active interface with an up link
->> bond0: Enslaving bond_slave_1 as an active interface with an up link
->> IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
->> team0: Port device team_slave_0 added
->> IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
->> team0: Port device team_slave_1 added
->> IPv6: ADDRCONF(NETDEV_UP): veth0_to_team: link is not ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_team: link becomes ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link becomes ready
->> IPv6: ADDRCONF(NETDEV_UP): veth1_to_team: link is not ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_team: link becomes ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link becomes ready
->> IPv6: ADDRCONF(NETDEV_UP): bridge_slave_0: link is not ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_0: link becomes ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link becomes ready
->> IPv6: ADDRCONF(NETDEV_UP): bridge_slave_1: link is not ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_1: link becomes ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
->> bridge0: port 2(bridge_slave_1) entered blocking state
->> bridge0: port 2(bridge_slave_1) entered forwarding state
->> bridge0: port 1(bridge_slave_0) entered blocking state
->> bridge0: port 1(bridge_slave_0) entered forwarding state
->> IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
->> 8021q: adding VLAN 0 to HW filter on device bond0
->> IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
->> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
->> IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
->> 8021q: adding VLAN 0 to HW filter on device team0
->> IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes ready
->> IPv6: ADDRCONF(NETDEV_CHANGE): bridge0: link becomes ready
->>
->>
->> ---
->> This bug is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this bug report. See:
->> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
->> syzbot.
->> syzbot can test patches for this bug, for details see:
->> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180906193822.GG5098%40thunk.org.
-> For more options, visit https://groups.google.com/d/optout.
+YXQgMTI6NDAgUE0sIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9yZz4gd3JvdGU6
+DQoNCj4gT24gU3VuLCBTZXAgMDIsIDIwMTggYXQgMTA6MzI6MTlBTSAtMDcwMCwgTmFkYXYgQW1p
+dCB3cm90ZToNCj4+IHRleHRfbXV0ZXggaXMgZXhwZWN0ZWQgdG8gYmUgaGVsZCBiZWZvcmUgdGV4
+dF9wb2tlKCkgaXMgY2FsbGVkLCBidXQgd2UNCj4+IGNhbm5vdCBhZGQgYSBsb2NrZGVwIGFzc2Vy
+dGlvbiBzaW5jZSBrZ2RiIGRvZXMgbm90IHRha2UgaXQsIGFuZCBpbnN0ZWFkDQo+PiAqc3VwcG9z
+ZWRseSogZW5zdXJlcyB0aGUgbG9jayBpcyBub3QgdGFrZW4gYW5kIHdpbGwgbm90IGJlIGFjcXVp
+cmVkIGJ5DQo+PiBhbnkgb3RoZXIgY29yZSB3aGlsZSB0ZXh0X3Bva2UoKSBpcyBydW5uaW5nLg0K
+Pj4gDQo+PiBUaGUgcmVhc29uIGZvciB0aGUgInN1cHBvc2VkbHkiIGNvbW1lbnQgaXMgdGhhdCBp
+dCBpcyBub3QgZW50aXJlbHkgY2xlYXINCj4+IHRoYXQgdGhpcyB3b3VsZCBiZSB0aGUgY2FzZSBp
+ZiBnZGJfZG9fcm91bmR1cCBpcyB6ZXJvLg0KPiANCj4gQXJnaCwgdGhhdCdzIHByZXR0eSBzaGl0
+IGNvZGUuLi4NCj4gDQo+IE5vdCBvbmx5IGlzIHRoYXQgdGV4dF9tdXRleCBhYnVzZSB1Z2x5LCBz
+byB0b28gaXMgdGhlIGZpeG1hcCB1c2FnZSBmcm9tDQo+IElSUSBjb250ZXh0LiBJIHN1cHBvc2Ug
+dGhpcyByZWFsbHkgZG9lcyByZXF1aXJlIHlvdXIgYWx0ZXJuYXRpdmUgbW0NCj4gcGF0Y2hlcyBm
+b3IgdGV4dF9wb2tlKCkuDQoNClJpZ2h0LCBJIGZvcmdvdCBhYm91dCB0aGF04oCmDQoNCg==
