@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78BDC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D81C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFB42075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:54:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFB42075B
+	by mail.kernel.org (Postfix) with ESMTP id 129E820861
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129E820861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbeIFUa2 (ORCPT
+        id S1730467AbeIFUad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 16:30:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40690 "EHLO mail.kernel.org"
+        Thu, 6 Sep 2018 16:30:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730294AbeIFUa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730357AbeIFUa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Sep 2018 16:30:28 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E75F920857;
-        Thu,  6 Sep 2018 15:54:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 239382086C;
+        Thu,  6 Sep 2018 15:54:20 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fxwbr-0000In-0x; Thu, 06 Sep 2018 11:54:19 -0400
-Message-Id: <20180906155418.924762390@goodmis.org>
+        id 1fxwbr-0000JL-5o; Thu, 06 Sep 2018 11:54:19 -0400
+Message-Id: <20180906155419.072804610@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 06 Sep 2018 11:52:18 -0400
+Date:   Thu, 06 Sep 2018 11:52:19 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        x86-ml <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH 1/2] tracing: Add back in rcu_irq_enter/exit_irqson() for rcuidle
- tracepoints
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 2/2] printk/tracing: Do not trace printk_nmi_enter()
 References: <20180906155217.201016180@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -53,93 +52,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Borislav reported the following splat:
+I hit the following splat in my tests:
 
- =============================
- WARNING: suspicious RCU usage
- 4.19.0-rc1+ #1 Not tainted
- -----------------------------
- ./include/linux/rcupdate.h:631 rcu_read_lock() used illegally while idle!
- other info that might help us debug this:
+------------[ cut here ]------------
+IRQs not enabled as expected
+WARNING: CPU: 3 PID: 0 at kernel/time/tick-sched.c:982 tick_nohz_idle_enter+0x44/0x8c
+Modules linked in: ip6t_REJECT nf_reject_ipv6 ip6table_filter ip6_tables ipv6
+CPU: 3 PID: 0 Comm: swapper/3 Not tainted 4.19.0-rc2-test+ #2
+Hardware name: MSI MS-7823/CSM-H87M-G43 (MS-7823), BIOS V1.6 02/22/2014
+EIP: tick_nohz_idle_enter+0x44/0x8c
+Code: ec 05 00 00 00 75 26 83 b8 c0 05 00 00 00 75 1d 80 3d d0 36 3e c1 00
+75 14 68 94 63 12 c1 c6 05 d0 36 3e c1 01 e8 04 ee f8 ff <0f> 0b 58 fa bb a0
+e5 66 c1 e8 25 0f 04 00 64 03 1d 28 31 52 c1 8b
+EAX: 0000001c EBX: f26e7f8c ECX: 00000006 EDX: 00000007
+ESI: f26dd1c0 EDI: 00000000 EBP: f26e7f40 ESP: f26e7f38
+DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010296
+CR0: 80050033 CR2: 0813c6b0 CR3: 2f342000 CR4: 001406f0
+Call Trace:
+ do_idle+0x33/0x202
+ cpu_startup_entry+0x61/0x63
+ start_secondary+0x18e/0x1ed
+ startup_32_smp+0x164/0x168
+irq event stamp: 18773830
+hardirqs last  enabled at (18773829): [<c040150c>] trace_hardirqs_on_thunk+0xc/0x10
+hardirqs last disabled at (18773830): [<c040151c>] trace_hardirqs_off_thunk+0xc/0x10
+softirqs last  enabled at (18773824): [<c0ddaa6f>] __do_softirq+0x25f/0x2bf
+softirqs last disabled at (18773767): [<c0416bbe>] call_on_stack+0x45/0x4b
+---[ end trace b7c64aa79e17954a ]---
 
- RCU used illegally from idle CPU!
- rcu_scheduler_active = 2, debug_locks = 1
- RCU used illegally from extended quiescent state!
- 1 lock held by swapper/0/0:
-  #0: 000000004557ee0e (rcu_read_lock){....}, at: perf_event_output_forward+0x0/0x130
+After a bit of debugging, I found what was happening. This would trigger
+when performing "perf" with a high NMI interrupt rate, while enabling and
+disabling function tracer. Ftrace uses breakpoints to convert the nops at
+the start of functions to calls to the function trampolines. The breakpoint
+traps disable interrupts and this makes calls into lockdep via the
+trace_hardirqs_off_thunk in the entry.S code. What happens is the following:
 
- stack backtrace:
- CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0-rc1+ #1
- Hardware name: LENOVO 2320CTO/2320CTO, BIOS G2ET86WW (2.06 ) 11/13/2012
- Call Trace:
-  dump_stack+0x85/0xcb
-  perf_event_output_forward+0xf6/0x130
-  __perf_event_overflow+0x52/0xe0
-  perf_swevent_overflow+0x91/0xb0
-  perf_tp_event+0x11a/0x350
-  ? find_held_lock+0x2d/0x90
-  ? __lock_acquire+0x2ce/0x1350
-  ? __lock_acquire+0x2ce/0x1350
-  ? retint_kernel+0x2d/0x2d
-  ? find_held_lock+0x2d/0x90
-  ? tick_nohz_get_sleep_length+0x83/0xb0
-  ? perf_trace_cpu+0xbb/0xd0
-  ? perf_trace_buf_alloc+0x5a/0xa0
-  perf_trace_cpu+0xbb/0xd0
-  cpuidle_enter_state+0x185/0x340
-  do_idle+0x1eb/0x260
-  cpu_startup_entry+0x5f/0x70
-  start_kernel+0x49b/0x4a6
-  secondary_startup_64+0xa4/0xb0
+  do_idle {
 
-This is due to the tracepoints moving to SRCU usage which does not require
-RCU to be "watching". But perf uses these tracepoints with RCU and expects
-it to be. Hence, we still need to add in the rcu_irq_enter/exit_irqson()
-calls for "rcuidle" tracepoints. This is a temporary fix until we have SRCU
-working in NMI context, and then perf can be converted to use that instead
-of normal RCU.
+    [interrupts enabled]
 
-Link: http://lkml.kernel.org/r/20180904162611.6a120068@gandalf.local.home
+    <interrupt> [interrupts disabled]
+	TRACE_IRQS_OFF [lockdep says irqs off]
+	[...]
+	TRACE_IRQS_IRET
+	    test if pt_regs say return to interrupts enabled [yes]
+	    TRACE_IRQS_ON [lockdep says irqs are on]
 
-Cc: x86-ml <x86@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Reported-by: Borislav Petkov <bp@alien8.de>
-Tested-by: Borislav Petkov <bp@alien8.de>
-Reviewed-by: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Fixes: e6753f23d961d ("tracepoint: Make rcuidle tracepoint callers use SRCU")
+	    <nmi>
+		nmi_enter() {
+		    printk_nmi_enter() [traced by ftrace]
+		    [ hit ftrace breakpoint ]
+		    <breakpoint exception>
+			TRACE_IRQS_OFF [lockdep says irqs off]
+			[...]
+			TRACE_IRQS_IRET [return from breakpoint]
+			   test if pt_regs say interrupts enabled [no]
+			   [iret back to interrupt]
+	   [iret back to code]
+
+    tick_nohz_idle_enter() {
+
+	lockdep_assert_irqs_enabled() [lockdep say no!]
+
+Although interrupts are indeed enabled, lockdep thinks it is not, and since
+we now do asserts via lockdep, it gives a false warning. The issue here is
+that printk_nmi_enter() is called before lockdep_off(), which disables
+lockdep (for this reason) in NMIs. By simply not allowing ftrace to see
+printk_nmi_enter() (via notrace annotation) we keep lockdep from getting
+confused.
+
+Cc: stable@vger.kernel.org
+Fixes: 42a0bb3f71383 ("printk/nmi: generic solution for safe printk in NMI")
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Acked-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/tracepoint.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/printk/printk_safe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 7f2e16e76ac4..041f7e56a289 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -158,8 +158,10 @@ extern void syscall_unregfunc(void);
- 		 * For rcuidle callers, use srcu since sched-rcu	\
- 		 * doesn't work from the idle path.			\
- 		 */							\
--		if (rcuidle)						\
-+		if (rcuidle) {						\
- 			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-+			rcu_irq_enter_irqson();				\
-+		}							\
- 									\
- 		it_func_ptr = rcu_dereference_raw((tp)->funcs);		\
- 									\
-@@ -171,8 +173,10 @@ extern void syscall_unregfunc(void);
- 			} while ((++it_func_ptr)->func);		\
- 		}							\
- 									\
--		if (rcuidle)						\
-+		if (rcuidle) {						\
-+			rcu_irq_exit_irqson();				\
- 			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-+		}							\
- 									\
- 		preempt_enable_notrace();				\
- 	} while (0)
+diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+index a0a74c533e4b..0913b4d385de 100644
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -306,12 +306,12 @@ static __printf(1, 0) int vprintk_nmi(const char *fmt, va_list args)
+ 	return printk_safe_log_store(s, fmt, args);
+ }
+ 
+-void printk_nmi_enter(void)
++void notrace printk_nmi_enter(void)
+ {
+ 	this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
+ }
+ 
+-void printk_nmi_exit(void)
++void notrace printk_nmi_exit(void)
+ {
+ 	this_cpu_and(printk_context, ~PRINTK_NMI_CONTEXT_MASK);
+ }
 -- 
 2.18.0
 
