@@ -2,145 +2,241 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D5DC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975C9C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1B920876
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:11:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1B920876
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 52C4420878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:12:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C4420878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeIFNp5 (ORCPT
+        id S1728418AbeIFNqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:45:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11666 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727817AbeIFNp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:45:57 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id ECB658CFFD7F5;
-        Thu,  6 Sep 2018 17:11:23 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
- 17:11:18 +0800
-Date:   Thu, 6 Sep 2018 17:09:31 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH 6/7] crypto: add sdmdev support to Hisilicon QM
-Message-ID: <20180906090931.GD230707@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180903005204.26041-7-nek.in.cn@gmail.com>
- <46e57b2b-756e-e256-5b3c-30749d865512@infradead.org>
+        Thu, 6 Sep 2018 09:46:37 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:55286 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727817AbeIFNqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:46:37 -0400
+X-Greylist: delayed 357 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Sep 2018 09:46:36 EDT
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id 7F5E747707; Thu,  6 Sep 2018 11:06:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id 76D3D476FB;
+        Thu,  6 Sep 2018 11:06:06 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 11:06:06 +0200 (CEST)
+From:   Nikolaus Voss <nv@vosn.de>
+X-X-Sender: nv@fox.voss.local
+To:     Markus Pargmann <mpa@pengutronix.de>
+cc:     Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, Irina Tirdea <irina.tirdea@intel.com>,
+        nikolaus.voss@loewensteinmedical.de
+Subject: Re: [PATCH v3 4/4] regmap-i2c: Add smbus i2c block support
+In-Reply-To: <1440657872-24554-5-git-send-email-mpa@pengutronix.de>
+Message-ID: <alpine.DEB.2.20.1809061101560.24070@fox.voss.local>
+References: <1440657872-24554-1-git-send-email-mpa@pengutronix.de> <1440657872-24554-5-git-send-email-mpa@pengutronix.de>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <46e57b2b-756e-e256-5b3c-30749d865512@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; BOUNDARY="8323329-1313206152-1536224766=:24070"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 02, 2018 at 07:19:03PM -0700, Randy Dunlap wrote:
-> Date: Sun, 2 Sep 2018 19:19:03 -0700
-> From: Randy Dunlap <rdunlap@infradead.org>
-> To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
->  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
->  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Alex Williamson
->  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
->  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
->  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
->  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
->  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
->  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
->  Sanjay Kumar <sanjay.k.kumar@intel.com>
-> CC: linuxarm@huawei.com
-> Subject: Re: [PATCH 6/7] crypto: add sdmdev support to Hisilicon QM
-> User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
->  Thunderbird/52.9.1
-> Message-ID: <46e57b2b-756e-e256-5b3c-30749d865512@infradead.org>
-> 
-> On 09/02/2018 05:52 PM, Kenneth Lee wrote:
-> > diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-> > index 1d155708cd69..b85fab48fdab 100644
-> > --- a/drivers/crypto/hisilicon/Kconfig
-> > +++ b/drivers/crypto/hisilicon/Kconfig
-> > @@ -17,6 +17,16 @@ config CRYPTO_DEV_HISI_SEC
-> >  	  To compile this as a module, choose M here: the module
-> >  	  will be called hisi_sec.
-> >  
-> > +config CRYPTO_DEV_HISI_SDMDEV
-> > +	bool "Enable SDMDEV interface"
-> > +	depends on CRYPTO_DEV_HISILICON
-> > +	select VFIO_SDMDEV
-> > +	help
-> > +	  Enable this enable the SDMDEV, "shared IOMMU Domain Mediated Device"
-> 
-> At a minimum:
-> 	  Enable this to enable the SDMDEV,
-> 
-> although that could be done better.  Maybe just:
-> 	  Enable the SDMDEV "shared IOMMU Domain Mediated Device"
-> 
-> 	  
-> > +	  interface for all Hisilicon accelerators if they can. The SDMDEV
-> 
-> probably drop "if they can":          accelerators.  The SDMDEV interface
-> 
-> > +	  enable the WarpDrive user space accelerator driver to access the
-> 
-> 	  enables
+--8323329-1313206152-1536224766=:24070
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-Thank you, will change them all in the coming version.
+Hi Markus,
 
-> 
-> > +	  hardware function directly.
-> > +
-> 
-> 
-> -- 
-> ~Randy
+On Thu, 27 Aug 2015, Markus Pargmann wrote:
+> This allows to read/write up to 32 bytes of data and is to be prefered
+> if supported before the register read/write smbus support.
+>
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> ---
+> drivers/base/regmap/regmap-i2c.c | 49 ++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 49 insertions(+)
+>
+> diff --git a/drivers/base/regmap/regmap-i2c.c b/drivers/base/regmap/regmap-i2c.c
+> index 4b76e33110a2..ddb9b0efb724 100644
+> --- a/drivers/base/regmap/regmap-i2c.c
+> +++ b/drivers/base/regmap/regmap-i2c.c
+> @@ -209,11 +209,60 @@ static struct regmap_bus regmap_i2c = {
+> 	.val_format_endian_default = REGMAP_ENDIAN_BIG,
+> };
+>
+> +static int regmap_i2c_smbus_i2c_write(void *context, const void *data,
+> +				      size_t count)
+> +{
+> +	struct device *dev = context;
+> +	struct i2c_client *i2c = to_i2c_client(dev);
+> +
+> +	if (count < 1)
+> +		return -EINVAL;
+> +	if (count >= I2C_SMBUS_BLOCK_MAX)
+> +		return -E2BIG;
+> +
+> +	--count;
+> +	return i2c_smbus_write_i2c_block_data(i2c, ((u8 *)data)[0], count,
+> +					      ((u8 *)data + 1));
+> +}
+> +
+> +static int regmap_i2c_smbus_i2c_read(void *context, const void *reg,
+> +				     size_t reg_size, void *val,
+> +				     size_t val_size)
+> +{
+> +	struct device *dev = context;
+> +	struct i2c_client *i2c = to_i2c_client(dev);
+> +	int ret;
+> +
+> +	if (reg_size != 1 || val_size < 1)
+> +		return -EINVAL;
+> +	if (val_size >= I2C_SMBUS_BLOCK_MAX)
+> +		return -E2BIG;
+> +
+> +	ret = i2c_smbus_read_i2c_block_data(i2c, ((u8 *)reg)[0], val_size, val);
+> +	if (ret == val_size)
+> +		return 0;
+> +	else if (ret < 0)
+> +		return ret;
+> +	else
+> +		return -EIO;
+> +}
+> +
+> +static struct regmap_bus regmap_i2c_smbus_i2c_block = {
+> +	.write = regmap_i2c_smbus_i2c_write,
+> +	.read = regmap_i2c_smbus_i2c_read,
+> +	.max_raw_read = I2C_SMBUS_BLOCK_MAX,
+> +	.max_raw_write = I2C_SMBUS_BLOCK_MAX,
+> +};
+> +
+> static const struct regmap_bus *regmap_get_i2c_bus(struct i2c_client *i2c,
+> 					const struct regmap_config *config)
+> {
+> 	if (i2c_check_functionality(i2c->adapter, I2C_FUNC_I2C))
+> 		return &regmap_i2c;
+> +	else if (config->reg_bits == 8 &&
+> +		 i2c_check_functionality(i2c->adapter,
+> +					 I2C_FUNC_SMBUS_I2C_BLOCK))
+> +		return &regmap_i2c_smbus_i2c_block;
+> 	else if (config->val_bits == 16 && config->reg_bits == 8 &&
+> 		 i2c_check_functionality(i2c->adapter,
+> 					 I2C_FUNC_SMBUS_WORD_DATA))
+>
 
--- 
-			-Kenneth(Hisilicon)
+using i2c_smbus_read/write_i2c_block_data() instead of
+read/write_word_data() or i2c_transfer() actually changes what is
+transferred on the bus. SMBus block transfers have a different
+register model, they additionally read or write the byte count after
+transmitting the register/command code, see SMBus spec:
 
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
++---+-------------+---+--+-------------+--+---------------+--+------------+----+
+| S | Slave Addr  | Wr| A| Command Code| A| Byte Count = N| A| Data Byte 1| A  |
++---+-------------+---+--+-------------+--+---------------+--+------------+----+
+
+So a driver using regmap must implement different transfers depending on
+the i2c adapter capabilities, is this intentionally done so?
+
+Specifically, there is no way of getting rid of the additional byte count
+field if the adapter doesn't support I2C_FUNC_I2C although it would be
+technically possible.
+
+I would prefer regmap to always use the same register model (i.e. without
+the byte count field), can you explain the rationale for this?
+
+Niko
+
+--8323329-1313206152-1536224766=:24070
+Content-Type: application/pkcs7-signature; name=smime.p7s
+Content-Transfer-Encoding: BASE64
+Content-Description: S/MIME Cryptographic Signature
+Content-Disposition: attachment; filename=smime.p7s
+
+MIINoQYJKoZIhvcNAQcCoIINkjCCDY4CAQExDzANBglghkgBZQMEAgEFADAL
+BgkqhkiG9w0BBwGgggrJMIIE3zCCA8egAwIBAgIQYGqzALmCjqAD88NuNKMQ
+UzANBgkqhkiG9w0BAQsFADB1MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3Rh
+cnRDb20gTHRkLjEpMCcGA1UECxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBB
+dXRob3JpdHkxIzAhBgNVBAMTGlN0YXJ0Q29tIENsYXNzIDEgQ2xpZW50IENB
+MB4XDTE2MDkwOTExNTAwN1oXDTE5MTIwOTExNTAwN1owMDETMBEGA1UEAwwK
+bnZAdm9zbi5kZTEZMBcGCSqGSIb3DQEJARYKbnZAdm9zbi5kZTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBAONBT3u4AwedL3dLnihQFF1hn0/4
+99vYptx3pSw8mAOMdi7d+nDIUOIYRQUg5ylZcMGGEdN1Bps+KPntgB+wNpqV
+po4ZmLsTHlNQVWE2c1XiLXzDun/X0hY0NHqSj2Xgv+C1WBFO3FRPpqp3mX0D
+PyF1cKgympXb6E5w+bhmJzhWgW2466uFgu9zOLJPKrDR2sYhhLTF42F6FgnE
+iITj+uDagwKv4weOdmrtTHbNia/4iFOaBD8/taKjhmAPpuBpuQxNgyd4Znt6
+FWTQ91rO7BU/YD5vprcANLn5aNtQejBl/gm4gZgxH8N6G29P+PglLj6FeZkg
+ZucTYllBVUEhxe0CAwEAAaOCAa4wggGqMA4GA1UdDwEB/wQEAwIEsDAdBgNV
+HSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwCQYDVR0TBAIwADAdBgNVHQ4E
+FgQUgT5dDWr8NqTLpyvHRfq07G+hIMwwHwYDVR0jBBgwFoAUJIFsOWG+SQ+P
+txtGK8kotSdIbWgwbwYIKwYBBQUHAQEEYzBhMCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5zdGFydHNzbC5jb20wOQYIKwYBBQUHMAKGLWh0dHA6Ly9haWEu
+c3RhcnRzc2wuY29tL2NlcnRzL3NjYS5jbGllbnQxLmNydDA4BgNVHR8EMTAv
+MC2gK6AphidodHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9zY2EtY2xpZW50MS5j
+cmwwFQYDVR0RBA4wDIEKbnZAdm9zbi5kZTAjBgNVHRIEHDAahhhodHRwOi8v
+d3d3LnN0YXJ0c3NsLmNvbS8wRwYDVR0gBEAwPjA8BgsrBgEEAYG1NwECBTAt
+MCsGCCsGAQUFBwIBFh9odHRwczovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5
+MA0GCSqGSIb3DQEBCwUAA4IBAQAtE8S57y3K7EgclJmX7PEkuhAAjU/Tg3f4
+fFJ/BExCIDNofc2C8A20QTNVVp1/Zm7Lz+OJX36JRUo2q9NjIYaJ2Vdmpq2a
+qg1fVZz4LJcHl1pVCS636CjpEmgr9eQuuh0DpmpvG1kBagsuoQvqJ2DXmIh3
+iD1BvO7z+JF66Gy4GHbcfoA9G/a/blqkHVFpe+2O7O6rtXhxwFrP8fBXCCXZ
+4dB9MXYcTiKvglM/tZr1FtpywtfozDNnS3795uP17V+8WXRMmA6zGrcAcaWS
+fS7Is5ugGz3IPnysmSum4KNO9ofnWRI3GZB7UxuBEFIgB0bx0T7KaYnfsp8N
+fwd+MOtRMIIF4jCCA8qgAwIBAgIQa6eKfQrXiNZRCvlZ5Oe04TANBgkqhkiG
+9w0BAQsFADB9MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRk
+LjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmlu
+ZzEpMCcGA1UEAxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkw
+HhcNMTUxMjE2MDEwMDA1WhcNMzAxMjE2MDEwMDA1WjB1MQswCQYDVQQGEwJJ
+TDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjEpMCcGA1UECxMgU3RhcnRDb20g
+Q2VydGlmaWNhdGlvbiBBdXRob3JpdHkxIzAhBgNVBAMTGlN0YXJ0Q29tIENs
+YXNzIDEgQ2xpZW50IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAvX3a98OifYP2W4L921tfrh4bdcC1Ga+YJKy7V3nYNewJHnzMlBsK0Hb8
+Dm4Wo3FZpylcYa1MJGT10QMGWaLER3xCIuRR+8eklf/EqeZWRLojJ7zBRtjM
+ywPOCelrOU+DX12dKp+Ez4J6919rz1UudTO1GvZyCYJ/I7062uHsskM8b7gP
+xmcCoO1UHwwpgkvpCArJWGFoFzjLdsZbErJcS3HtAhlkbE/BKTMrdYg35Uo1
+2SLBO5tbk8h2imbKTC8iMs+pskrvI/AVlh6QoTTXk6xboVX6zgMgzxSVVLym
+QiygYYm0y5aMsvi2raFhC643SOGvErWWPPnSEfbeAD1xswIDAQABo4IBZDCC
+AWAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDASBgNVHRMBAf8ECDAGAQH/AgEAMDIGA1UdHwQrMCkwJ6AloCOGIWh0
+dHA6Ly9jcmwuc3RhcnRzc2wuY29tL3Nmc2NhLmNybDBmBggrBgEFBQcBAQRa
+MFgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLnN0YXJ0c3NsLmNvbTAwBggr
+BgEFBQcwAoYkaHR0cDovL2FpYS5zdGFydHNzbC5jb20vY2VydHMvY2EuY3J0
+MB0GA1UdDgQWBBQkgWw5Yb5JD4+3G0YrySi1J0htaDAfBgNVHSMEGDAWgBRO
+C+8apEBbpRdphzDKNGhD0EGu8jA/BgNVHSAEODA2MDQGBFUdIAAwLDAqBggr
+BgEFBQcCARYeaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5MA0GCSqG
+SIb3DQEBCwUAA4ICAQCL4/eH7AGLhK0PAQJbnOEjJyMEvTTwcAJuUh/bodjQ
+l06u4putYOxdSyIjSP/sKt+31LmjG8+IO1WqykE4H/Lm7NKezWVnCHuwb3pt
+gFmlwbMbGkU2MOZBtwzfKXdYUhFLhaE2uw5jXhXvLYitQay962wP5uPI6eAI
+hV4L8aaya1u4s7MnrTq0Rz25FuGNO79vTHYWj797tSRC8rM16js4yGKOLFpQ
+vIg0F8IElv57b1stp+C7omqM5Qn15dePbSnqr8Jb65WtmJJbnv6rlqfY/aLu
+E/zmNAlzLmPgfMDStKIXdg+EoYBZTEo8wBUaBxihfNbJ069ndQOxMNNqBelE
+MgpAtmjTbCuXFjqIwWq+XOx6ZV/Wh2FAmaLsSHlNvEjjSQMZwE4EeHCdo66Z
+mEs/5JYlCeOkulKVQ6P3m5/XOj2jP17Q2AgmjP+11+sHN7PvrG0OwrQp9QMe
+3X+rn0G8MjtFfqBWvR9CgLIxzM3MJNxFdgdjS2rYnShP5uxvqwfZvhZVYCIk
+qdJhpYON0DvSodfiar0wiM79mySZJjzC0CTbiisBzS/BeBhqeo2wFfli/iw3
+hn1XKvAx0ty6w/scmBF0AYqmRHYj1TjMSw0lAl7AztLglqWjUPI+sukvadMR
+PxmtKXlS2nVR4an/Z16imsZ69+fFYH68c1CK7zmjozGCApwwggKYAgEBMIGJ
+MHUxCzAJBgNVBAYTAklMMRYwFAYDVQQKEw1TdGFydENvbSBMdGQuMSkwJwYD
+VQQLEyBTdGFydENvbSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTEjMCEGA1UE
+AxMaU3RhcnRDb20gQ2xhc3MgMSBDbGllbnQgQ0ECEGBqswC5go6gA/PDbjSj
+EFMwDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
+ATAcBgkqhkiG9w0BCQUxDxcNMTgwOTA2MDkwNjA2WjAvBgkqhkiG9w0BCQQx
+IgQg7S0u68ICjWhrwKX5SpEXbtgCMq9fJjNhIUynEYNFb78weQYJKoZIhvcN
+AQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQB
+AjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAw
+BwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAE50g
+YC229V/WKw8ooZsUTUW3oFiSXQygArCVVcG+wXWNIOEAie+/Vfs9W78/Q97c
+y9Z1TZ1U6LoQ922jfnGH4s5r6pStJ4evIX1cg89Ik+1aYoViLnnB9HtuP2g7
+L20T6hJTgdvshln+LyHdxpckuci2Ro3wWmvUPXESqe0++hMf+oOub5vD9cfK
+PqOQpPUzA9EXNO/NOBEK9jmhMKrfp/+o1JoGmGDzXaidzrGvZCZ848/Ff0Cu
+CRd5fEC9Iu8k3lETidqXAnqQu09PRqWNRB3UcC6ACSl5puHZ/f/Y+io/2ozS
+mRY+mMpbIj3TBi8xu7cwTZAmZO/dHgNnxyFSEA==
+
+--8323329-1313206152-1536224766=:24070--
 
