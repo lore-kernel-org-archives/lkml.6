@@ -2,141 +2,230 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 505C5C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBFEC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DAA20861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FFB2083E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w/czHqeb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DAA20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QBPEf4FG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36FFB2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeIFFQF (ORCPT
+        id S1726506AbeIFFQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 01:16:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbeIFFQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 01:16:05 -0400
-Received: from mail-wm0-f45.google.com (mail-wm0-f45.google.com [74.125.82.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4AC82086C
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Sep 2018 00:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536194602;
-        bh=w8kUUAnmV58kQf7B7pTNmPrDU1fK+tzpRlvHYRVHCbA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=w/czHqebmzF4KXeOEyVlKo3ipEq8hVZ5VyYNrOOcDNyQ+eauhl2M5V5I9DC7ADTsd
-         WwK5AaciO5ni6OXzDP6vsSxVLZj0Wfv0O3n60Zd8IaQ3gdgKjsqxNfNxGN+lVgLHD4
-         7lPHuJf+DuC4SHdS0Nd40LZINWNfctO78dDPTwO8=
-Received: by mail-wm0-f45.google.com with SMTP id j25-v6so15248139wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:43:22 -0700 (PDT)
-X-Gm-Message-State: APzg51Du06Z3aeu4HEDORZXtweSSRF1Qjgq4nKAwxgflDxAbj+XTzcZ/
-        zsEN41AW0GBBI1hUss0L6EOeBsshk0iC4XPiNH0yIQ==
-X-Google-Smtp-Source: ANB0VdZQ2/5mCBMBFJaOWd9noBnSFzckJ6ujfYrqNJw4+hSI9yeXzw9/EoKS0E/KAJZgmen7k4BeheUKc+0miEgwksI=
-X-Received: by 2002:a1c:780c:: with SMTP id t12-v6mr457102wmc.133.1536194601132;
- Wed, 05 Sep 2018 17:43:21 -0700 (PDT)
+        Thu, 6 Sep 2018 01:16:35 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:33889 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeIFFQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 01:16:34 -0400
+Received: by mail-yb1-f194.google.com with SMTP id t10-v6so3470445ybb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=dcbdufUUopdJyOnOyV1Megizm7y5y5d7D3ot2iOfDZ4=;
+        b=QBPEf4FGRKhQLqGVa16a4JQt4rN/7vtEg/+v3tVZhSjvaNSrGflumjXj1l9FEroD97
+         N3i/ZRLmeFvFx1HvFZ4OuGD+6rQ6E6xQtWuLaM3aZ2YCIiPKZDKsylr+OiFGt45fAAcm
+         y+qD9rAScE2CFU9H6HkfhNApr60XYvSvhbzh8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=dcbdufUUopdJyOnOyV1Megizm7y5y5d7D3ot2iOfDZ4=;
+        b=VNsnA3UF1xBjqZhYuR6GtEoZptcZbc+kscFpVRYyNtOmIRmRYNlAGwga4RWL5FBZZa
+         yp1MPTb3FJcBOi07ybGH1/Z41xuY4Stn2tSlHLMe+P1wJvmz1zfQtK+i0s3VhSHYT2Ut
+         ATQJ0B899NHKca/G9UEOlrX2CUS7TT0MSuMJ3YzhMwB7fgqxql7bnCKjE/NApCs828Le
+         MAD0LziL/xLxoyASrfEAkNEZXexjh5dr9HlWhFc6qO4KwSVTsR8a3gocM/7DWZspl9t8
+         GwhNq1e87h/T2SJrxi6bI6um4LseCyQuisg6iP34fDYfU0XQYf3xyjiEIikLxOk/veq0
+         xDsg==
+X-Gm-Message-State: APzg51D+OrdxJXhiyrEhe8PVyTPbmXg2TTINu/lAdduuYNWAH3KLifk3
+        DNWXrjfnABwTTFAQKiNiPdUj59FRq68=
+X-Google-Smtp-Source: ANB0VdZZBjNiuL/hxX2Z5mrzoQqRyPIYi22PJB6Yw/XLq6UpqNMu/0tvToI1n+MZbl1LQo8jZ4U3ww==
+X-Received: by 2002:a25:ae0a:: with SMTP id a10-v6mr132641ybj.450.1536194632199;
+        Wed, 05 Sep 2018 17:43:52 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id o128-v6sm1122656ywe.110.2018.09.05.17.43.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 17:43:52 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id t71-v6so3462368ybi.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:43:51 -0700 (PDT)
+X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr125262ybh.209.1536194631062;
+ Wed, 05 Sep 2018 17:43:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com> <62dae1828ade759584bbf1507fe4a9e69d247a50.1536138304.git.ren_guo@c-sky.com>
-In-Reply-To: <62dae1828ade759584bbf1507fe4a9e69d247a50.1536138304.git.ren_guo@c-sky.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 5 Sep 2018 19:43:10 -0500
-X-Gmail-Original-Message-ID: <CABGGiswB5OUU7JDP+-s3s8ONkXZY2AAvSijQedsNtZ6p8LqZeA@mail.gmail.com>
-Message-ID: <CABGGiswB5OUU7JDP+-s3s8ONkXZY2AAvSijQedsNtZ6p8LqZeA@mail.gmail.com>
-Subject: Re: [PATCH V3 21/26] dt-bindings: interrupt-controller: C-SKY APB intc
-To:     ren_guo@c-sky.com
-Cc:     linux-arch@vger.kernel.org,
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 17:43:50 -0700 (PDT)
+In-Reply-To: <CAKv+Gu_0vWUqkUex45iW=pAfUbKVsqzP9MDf6OOwTg-nUVPZNg@mail.gmail.com>
+References: <20180904181629.20712-1-keescook@chromium.org> <20180904181629.20712-3-keescook@chromium.org>
+ <CAKv+Gu9uJ+ZjBSCM=aU0GDvYR72cy2k8reXdLV5on3dOVw8KdQ@mail.gmail.com>
+ <CAGXu5jKmcuhULMR=O9B_hJAxEK8uV36uoMxm4F3F8yYSuMzYNA@mail.gmail.com> <CAKv+Gu_0vWUqkUex45iW=pAfUbKVsqzP9MDf6OOwTg-nUVPZNg@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 5 Sep 2018 17:43:50 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+z8eQKu_3sm93pdo+bBZDFqkHNM3Y0tKTDbnHfUNzywg@mail.gmail.com>
+Message-ID: <CAGXu5j+z8eQKu_3sm93pdo+bBZDFqkHNM3Y0tKTDbnHfUNzywg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 7:10 AM Guo Ren <ren_guo@c-sky.com> wrote:
+On Wed, Sep 5, 2018 at 3:49 PM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 5 September 2018 at 23:05, Kees Cook <keescook@chromium.org> wrote:
+>> On Wed, Sep 5, 2018 at 2:18 AM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On 4 September 2018 at 20:16, Kees Cook <keescook@chromium.org> wrote:
+>>>> In the quest to remove all stack VLA usage from the kernel[1], this
+>>>> caps the skcipher request size similar to other limits and adds a sanity
+>>>> check at registration. Looking at instrumented tcrypt output, the largest
+>>>> is for lrw:
+>>>>
+>>>>         crypt: testing lrw(aes)
+>>>>         crypto_skcipher_set_reqsize: 8
+>>>>         crypto_skcipher_set_reqsize: 88
+>>>>         crypto_skcipher_set_reqsize: 472
+>>>>
+>>>
+>>> Are you sure this is a representative sampling? I haven't double
+>>> checked myself, but we have plenty of drivers for peripherals in
+>>> drivers/crypto that implement block ciphers, and they would not turn
+>>> up in tcrypt unless you are running on a platform that provides the
+>>> hardware in question.
+>>
+>> Hrm, excellent point. Looking at this again:
+>>
+>> The core part of the VLA is using this in the ON_STACK macro:
+>>
+>> static inline unsigned int crypto_skcipher_reqsize(struct crypto_skcipher *tfm)
+>> {
+>>         return tfm->reqsize;
+>> }
+>>
+>> I don't find any struct crypto_skcipher .reqsize static initializers,
+>> and the initial reqsize is here:
+>>
+>> static int crypto_init_skcipher_ops_ablkcipher(struct crypto_tfm *tfm)
+>> {
+>> ...
+>>         skcipher->reqsize = crypto_ablkcipher_reqsize(ablkcipher) +
+>>                             sizeof(struct ablkcipher_request);
+>>
+>> with updates via crypto_skcipher_set_reqsize().
+>>
+>> So I have to examine ablkcipher reqsize too:
+>>
+>> static inline unsigned int crypto_ablkcipher_reqsize(
+>>         struct crypto_ablkcipher *tfm)
+>> {
+>>         return crypto_ablkcipher_crt(tfm)->reqsize;
+>> }
+>>
+>> And of the crt_ablkcipher.reqsize assignments/initializers, I found:
+>>
+>> ablkcipher reqsize:
+>> 1       struct dcp_aes_req_ctx
+>> 8       struct atmel_tdes_reqctx
+>> 8       struct cryptd_blkcipher_request_ctx
+>> 8       struct mtk_aes_reqctx
+>> 8       struct omap_des_reqctx
+>> 8       struct s5p_aes_reqctx
+>> 8       struct sahara_aes_reqctx
+>> 8       struct stm32_cryp_reqctx
+>> 8       struct stm32_cryp_reqctx
+>> 16      struct ablk_ctx
+>> 24      struct atmel_aes_reqctx
+>> 48      struct omap_aes_reqctx
+>> 48      struct omap_aes_reqctx
+>> 48      struct qat_crypto_request
+>> 56      struct artpec6_crypto_request_context
+>> 64      struct chcr_blkcipher_req_ctx
+>> 80      struct spacc_req
+>> 80      struct virtio_crypto_sym_request
+>> 136     struct qce_cipher_reqctx
+>> 168     struct n2_request_context
+>> 328     struct ccp_des3_req_ctx
+>> 400     struct ccp_aes_req_ctx
+>> 536     struct hifn_request_context
+>> 992     struct cvm_req_ctx
+>> 2456    struct iproc_reqctx_s
+>>
+>> The base ablkcipher wrapper is:
+>> 80      struct ablkcipher_request
+>>
+>> And in my earlier skcipher wrapper analysis, lrw was the largest
+>> skcipher wrapper:
+>> 384     struct rctx
+>>
+>> iproc_reqctx_s is an extreme outlier, with cvm_req_ctx at a bit less than half.
+>>
+>> Making this a 2920 byte fixed array doesn't seem sensible at all
+>> (though that's what's already possible to use with existing
+>> SKCIPHER_REQUEST_ON_STACK users).
+>>
+>> What's the right path forward here?
+>>
 >
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> ---
->  .../interrupt-controller/csky,apb-intc.txt         | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> new file mode 100644
-> index 0000000..faa482c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> @@ -0,0 +1,45 @@
-> +==============================
-> +C-SKY APB Interrupt Controller
-> +==============================
-> +
-> +C-SKY APB Interrupt Controller is a simple soc interrupt controller
-> +on the apb bus and we only use it as root irq controller.
-> +
-> + - csky,apb-intc is used in a lot of csky fpgas and socs, it support 64 irq nums.
-> + - csky,dual-apb-intc consists of 2 apb-intc and 128 irq nums supported.
+> The skcipher implementations based on crypto IP blocks are typically
+> asynchronous, and I wouldn't be surprised if a fair number of
+> SKCIPHER_REQUEST_ON_STACK() users are limited to synchronous
+> skciphers.
 
-Can't this be described in DT as 2 csky,apb-intc nodes?
+Looks similar to ahash vs shash. :) Yes, so nearly all
+crypto_alloc_skcipher() users explicitly mask away ASYNC. What's left
+appears to be:
 
-> + - csky,gx6605s-intc is gx6605s soc internal irq interrupt controller, 64 irq nums.
-> +
-> +=============================
-> +intc node bindings definition
-> +=============================
-> +
-> +        Description: Describes APB interrupt controller
-> +
-> +        PROPERTIES
-> +
-> +        - compatible
-> +                Usage: required
-> +                Value type: <string>
-> +                Definition: must be "csky,apb-intc"
-> +                                   "csky,dual-apb-intc"
-> +                                   "csky,gx6605s-intc"
-> +        - interrupt-cells
+crypto/drbg.c:  sk_tfm = crypto_alloc_skcipher(ctr_name, 0, 0);
+crypto/tcrypt.c:        tfm = crypto_alloc_skcipher(algo, 0, async ? 0
+: CRYPTO_ALG_ASYNC);
+drivers/crypto/omap-aes.c:      ctx->ctr =
+crypto_alloc_skcipher("ecb(aes)", 0, 0);
+drivers/md/dm-crypt.c:          cc->cipher_tfm.tfms[i] =
+crypto_alloc_skcipher(ciphermode, 0, 0);
+drivers/md/dm-integrity.c:              ic->journal_crypt =
+crypto_alloc_skcipher(ic->journal_crypt_alg.alg_string, 0, 0);
+fs/crypto/keyinfo.c:    struct crypto_skcipher *tfm =
+crypto_alloc_skcipher("ecb(aes)", 0, 0);
+fs/crypto/keyinfo.c:    ctfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
+fs/ecryptfs/crypto.c:   crypt_stat->tfm =
+crypto_alloc_skcipher(full_alg_name, 0, 0);
 
-#interrupt-cells
+I'll cross-reference this with SKCIPHER_REQUEST_ON_STACK...
 
-> +                Usage: required
-> +                Value type: <u32>
-> +                Definition: must be <1>
+> So we could formalize this and limit SKCIPHER_REQUEST_ON_STACK() to
+> synchronous skciphers, which implies that the reqsize limit only has
+> to apply synchronous skciphers as well. But before we can do this, we
+> have to identify the remaining occurrences that allow asynchronous
+> skciphers to be used, and replace them with heap allocations.
 
-No edge or level configuration?
+Sounds good; thanks!
 
-> +       - reg
-> +               Usage: required
-> +               Value type: <u32 u32>
-> +                Definition: <phyaddr size> in soc from cpu view
-> +        - interrupt-controller:
-> +                Usage: required
-> +
-> +Examples:
-> +---------
-> +
-> +       intc: interrupt-controller {
+-Kees
 
-Needs a unit-address.
-
-> +               compatible = "csky,apb-intc";
-> +               #interrupt-cells = <1>;
-> +               reg = <0x00500000 0x400>;
-> +               interrupt-controller;
-> +       };
-> --
-> 2.7.4
->
+-- 
+Kees Cook
+Pixel Security
