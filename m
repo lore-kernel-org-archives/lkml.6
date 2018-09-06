@@ -2,153 +2,289 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34FAC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281F6C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F2520844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:14:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F2520844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CB17B20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:15:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LEDezd0/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB17B20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbeIFSul (ORCPT
+        id S1729839AbeIFSvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:50:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58954 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729073AbeIFSul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:50:41 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D865120726; Thu,  6 Sep 2018 16:14:54 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 28D6C2072B;
-        Thu,  6 Sep 2018 16:14:44 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 16:14:43 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     vitor <Vitor.Soares@synopsys.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Przemyslaw Gaj <pgaj@cadence.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        "Alicja Jurasik-Urbaniak" <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180906161443.0f76b246@bbrezillon>
-In-Reply-To: <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-        <20180824143934.6d6b6487@bbrezillon>
-        <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
-        <20180824201600.7d80bca9@bbrezillon>
-        <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
-        <20180828140209.29155d00@bbrezillon>
-        <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
-        <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
-        <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
-        <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
-        <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
-        <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
-        <20180906151437.4259d6fc@bbrezillon>
-        <20180906152055.5618d235@bbrezillon>
-        <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 6 Sep 2018 14:51:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729073AbeIFSvP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:51:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oxpfwXfAYyY/qM8/KJ845v67BOzcA/s7fuYR88b/h5Q=; b=LEDezd0/uKnQIXCuRG8Y9WwHX
+        NsmQNUmERc8Pf7+CPXx2UfUY1ygn/Sd4kkcCPgEg5gNsKhBqcacGvFKVjHC1Jhb0uIdvwFfTxCh+I
+        elRq6WMeaLnjt+mRpU1pvPq+ebVP4pFlmV1JhGJMxTnTHYDLiGiPtvW0S5+PU9TBgCbrgza6/K/KN
+        ZBUNJktI+1S+CfMWEz7N+OPa2FdC57P0E4WskWTBYSMIJjbPUsXbCin+S7gVm5AdHbicUT9Ni3gUS
+        7WB8guaOqY9PEhGjLPrGP5dweaQRPa55UTPXf+IkKvaO8kAE4srBX5LWJtOilWZp7c91NY6gtuYf7
+        8N/nxJ2kQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxv4A-0008C6-Il; Thu, 06 Sep 2018 14:15:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CA9D12018BF7D; Thu,  6 Sep 2018 16:15:24 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 16:15:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        mingo@redhat.com, acme@kernel.org, vikas.shivappa@linux.intel.com,
+        gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 5/6] x86/intel_rdt: Use perf infrastructure for
+ measurements
+Message-ID: <20180906141524.GF24106@hirez.programming.kicks-ass.net>
+References: <cover.1534450299.git.reinette.chatre@intel.com>
+ <30b32ebd826023ab88f3ab3122e4c414ea532722.1534450299.git.reinette.chatre@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30b32ebd826023ab88f3ab3122e4c414ea532722.1534450299.git.reinette.chatre@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 14:50:03 +0100
-vitor <Vitor.Soares@synopsys.com> wrote:
+On Thu, Aug 16, 2018 at 01:16:08PM -0700, Reinette Chatre wrote:
+> +	l2_miss_event = perf_event_create_kernel_counter(&perf_miss_attr,
+> +							 plr->cpu,
+> +							 NULL, NULL, NULL);
+> +	if (IS_ERR(l2_miss_event))
+> +		goto out;
+> +
+> +	l2_hit_event = perf_event_create_kernel_counter(&perf_hit_attr,
+> +							plr->cpu,
+> +							NULL, NULL, NULL);
+> +	if (IS_ERR(l2_hit_event))
+> +		goto out_l2_miss;
+> +
+> +	local_irq_disable();
+> +	/*
+> +	 * Check any possible error state of events used by performing
+> +	 * one local read.
+> +	 */
+> +	if (perf_event_read_local(l2_miss_event, &tmp, NULL, NULL)) {
+> +		local_irq_enable();
+> +		goto out_l2_hit;
+> +	}
+> +	if (perf_event_read_local(l2_hit_event, &tmp, NULL, NULL)) {
+> +		local_irq_enable();
+> +		goto out_l2_hit;
+> +	}
+> +
+> +	/*
+> +	 * Disable hardware prefetchers.
+>  	 *
+> +	 * Call wrmsr direcly to avoid the local register variables from
+> +	 * being overwritten due to reordering of their assignment with
+> +	 * the wrmsr calls.
+> +	 */
+> +	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
+> +
+> +	/* Initialize rest of local variables */
+> +	/*
+> +	 * Performance event has been validated right before this with
+> +	 * interrupts disabled - it is thus safe to read the counter index.
+> +	 */
+> +	l2_miss_pmcnum = x86_perf_rdpmc_ctr_get(l2_miss_event);
+> +	l2_hit_pmcnum = x86_perf_rdpmc_ctr_get(l2_hit_event);
+> +	line_size = plr->line_size;
+> +	mem_r = plr->kmem;
+> +	size = plr->size;
+> +
+> +	/*
+> +	 * Read counter variables twice - first to load the instructions
+> +	 * used in L1 cache, second to capture accurate value that does not
+> +	 * include cache misses incurred because of instruction loads.
+> +	 */
+> +	rdpmcl(l2_hit_pmcnum, l2_hits_before);
+> +	rdpmcl(l2_miss_pmcnum, l2_miss_before);
+> +	/*
+> +	 * From SDM: Performing back-to-back fast reads are not guaranteed
+> +	 * to be monotonic. To guarantee monotonicity on back-toback reads,
+> +	 * a serializing instruction must be placed between the two
+> +	 * RDPMC instructions
+> +	 */
+> +	rmb();
+> +	rdpmcl(l2_hit_pmcnum, l2_hits_before);
+> +	rdpmcl(l2_miss_pmcnum, l2_miss_before);
+> +	/*
+> +	 * rdpmc is not a serializing instruction. Add barrier to prevent
+> +	 * instructions that follow to begin executing before reading the
+> +	 * counter value.
+> +	 */
+> +	rmb();
+> +	for (i = 0; i < size; i += line_size) {
+> +		/*
+> +		 * Add a barrier to prevent speculative execution of this
+> +		 * loop reading beyond the end of the buffer.
+> +		 */
+> +		rmb();
+> +		asm volatile("mov (%0,%1,1), %%eax\n\t"
+> +			     :
+> +			     : "r" (mem_r), "r" (i)
+> +			     : "%eax", "memory");
+> +	}
+> +	rdpmcl(l2_hit_pmcnum, l2_hits_after);
+> +	rdpmcl(l2_miss_pmcnum, l2_miss_after);
+> +	/*
+> +	 * rdpmc is not a serializing instruction. Add barrier to ensure
+> +	 * events measured have completed and prevent instructions that
+> +	 * follow to begin executing before reading the counter value.
+> +	 */
+> +	rmb();
+> +	/* Re-enable hardware prefetchers */
+> +	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
+> +	local_irq_enable();
+> +	trace_pseudo_lock_l2(l2_hits_after - l2_hits_before,
+> +			     l2_miss_after - l2_miss_before);
+> +
+> +out_l2_hit:
+> +	perf_event_release_kernel(l2_hit_event);
+> +out_l2_miss:
+> +	perf_event_release_kernel(l2_miss_event);
+> +out:
+> +	plr->thread_done = 1;
+> +	wake_up_interruptible(&plr->lock_thread_wq);
+> +	return 0;
+> +}
+> +
 
-> Hi,
-> 
-> 
-> On 06-09-2018 14:20, Boris Brezillon wrote:
-> > On Thu, 6 Sep 2018 15:14:37 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> >  
-> >> On Thu, 6 Sep 2018 14:59:46 +0200
-> >> Arnd Bergmann <arnd@arndb.de> wrote:
-> >>  
-> >>> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:  
-> >>>> Hi Boris, Vitor,
-> >>>>
-> >>>> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
-> >>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=Q9DWw3KGmshGw0f5QTiffbpbESyUlPx6KmASuDBtX9Y&s=HHE_y1kyMszJvP_tSP9JkDlPYxDywBeHwkMGgCR11uI&e=
-> >>>>
-> >>>> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
-> >>>> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
-> >>>>
-> >>>> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)  
-> >>>
-> >>> Can you explain the reason for having a user space interface and DT property?
-> >>> I thought we had concluded earlier that we wouldn't need that, but it's possible
-> >>> that I missed something in the discussion since then.  
-> >> I don't think the sysfs knob is needed, this being said, after thinking
-> >> a bit more about mastership handover and the secondary master case, I
-> >> think we have something important to solve.
-> >>
-> >> When a master is not in control of the bus, it gets informed of devices
-> >> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
-> >> means the secondary master should populate the bus with I3C/I2C devices
-> >> on such events, but that's not enough, because DEFSLVS/DAA do not
-> >> provide all device info.Some of them (like read/write/ibi limitations)
-> >> require extra CCC commands, and, to send those CCC commands, the
-> >> secondary master must claim the bus. We could add a case where we
-> >> declare devices as partially discovered until the master acquires
-> >> ownership of the bus, but that means part of the data returned by
-> >> i3c_device_get_info() will be inaccurate, which might have an impact on
-> >> some i3c driver ->probe() functions.  
-> > Hm, one possible solution would be to register partially discovered
-> > devices to the device model and let i3c_device_get_info() claim the bus
-> > and request missing data when needed. This way, if the driver needs to
-> > call i3c_device_get_info() in its probe path, it should work just fine.  
-> 
-> Why don't use the i3c_master_add_i3c_dev_locked that job? It create, 
-> attach and retrieve the device info.
+The above, looks a _LOT_ like the below. And while C does suck a little,
+I'm sure there's something we can do about this.
 
-When will you call i3c_master_add_i3c_dev_locked()? After receiving a
-DEFSLVS interrupt/event? When that happens you're not in control of the
-bus, which means you'll have to force bus ownership handover. Is this
-really what we want?
-
-These are not rhetorical questions, I'm really asking for your opinion
-here.
-
-> This can be triggered after the secondary master receive ENEC MR until 
-> them is keep in the driver memory.
-
-But that means no-one will actually trigger a mastership request,
-because devices won't be registered until all info are available. If we
-take this path, we should have a way to explicitly trigger a mastership
-request (sysfs knob or any other means).
+> +	l3_miss_event = perf_event_create_kernel_counter(&perf_miss_attr,
+> +							 plr->cpu,
+> +							 NULL, NULL,
+> +							 NULL);
+> +	if (IS_ERR(l3_miss_event))
+> +		goto out;
+> +
+> +	l3_hit_event = perf_event_create_kernel_counter(&perf_hit_attr,
+> +							plr->cpu,
+> +							NULL, NULL,
+> +							NULL);
+> +	if (IS_ERR(l3_hit_event))
+> +		goto out_l3_miss;
+> +
+>  	local_irq_disable();
+>  	/*
+> +	 * Check any possible error state of events used by performing
+> +	 * one local read.
+> +	 */
+> +	if (perf_event_read_local(l3_miss_event, &tmp, NULL, NULL)) {
+> +		local_irq_enable();
+> +		goto out_l3_hit;
+> +	}
+> +	if (perf_event_read_local(l3_hit_event, &tmp, NULL, NULL)) {
+> +		local_irq_enable();
+> +		goto out_l3_hit;
+> +	}
+> +
+> +	/*
+> +	 * Disable hardware prefetchers.
+> +	 *
+>  	 * Call wrmsr direcly to avoid the local register variables from
+>  	 * being overwritten due to reordering of their assignment with
+>  	 * the wrmsr calls.
+>  	 */
+>  	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
+> +
+> +	/* Initialize rest of local variables */
+> +	/*
+> +	 * Performance event has been validated right before this with
+> +	 * interrupts disabled - it is thus safe to read the counter index.
+> +	 */
+> +	l3_hit_pmcnum = x86_perf_rdpmc_ctr_get(l3_hit_event);
+> +	l3_miss_pmcnum = x86_perf_rdpmc_ctr_get(l3_miss_event);
+> +	line_size = plr->line_size;
+>  	mem_r = plr->kmem;
+>  	size = plr->size;
+> +
+> +	/*
+> +	 * Read counter variables twice - first to load the instructions
+> +	 * used in L1 cache, second to capture accurate value that does not
+> +	 * include cache misses incurred because of instruction loads.
+> +	 */
+> +	rdpmcl(l3_hit_pmcnum, l3_hits_before);
+> +	rdpmcl(l3_miss_pmcnum, l3_miss_before);
+> +	/*
+> +	 * From SDM: Performing back-to-back fast reads are not guaranteed
+> +	 * to be monotonic. To guarantee monotonicity on back-toback reads,
+> +	 * a serializing instruction must be placed between the two
+> +	 * RDPMC instructions
+> +	 */
+> +	rmb();
+> +	rdpmcl(l3_hit_pmcnum, l3_hits_before);
+> +	rdpmcl(l3_miss_pmcnum, l3_miss_before);
+> +	/*
+> +	 * rdpmc is not a serializing instruction. Add barrier to prevent
+> +	 * instructions that follow to begin executing before reading the
+> +	 * counter value.
+> +	 */
+> +	rmb();
+>  	for (i = 0; i < size; i += line_size) {
+> +		/*
+> +		 * Add a barrier to prevent speculative execution of this
+> +		 * loop reading beyond the end of the buffer.
+> +		 */
+> +		rmb();
+>  		asm volatile("mov (%0,%1,1), %%eax\n\t"
+>  			     :
+>  			     : "r" (mem_r), "r" (i)
+>  			     : "%eax", "memory");
+>  	}
+> +	rdpmcl(l3_hit_pmcnum, l3_hits_after);
+> +	rdpmcl(l3_miss_pmcnum, l3_miss_after);
+>  	/*
+> +	 * rdpmc is not a serializing instruction. Add barrier to ensure
+> +	 * events measured have completed and prevent instructions that
+> +	 * follow to begin executing before reading the counter value.
+>  	 */
+> +	rmb();
+> +	/* Re-enable hardware prefetchers */
+>  	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
+>  	local_irq_enable();
+> +	l3_miss_after -= l3_miss_before;
+> +	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X) {
+> +		/*
+> +		 * On BDW references and misses are counted, need to adjust.
+> +		 * Sometimes the "hits" counter is a bit more than the
+> +		 * references, for example, x references but x + 1 hits.
+> +		 * To not report invalid hit values in this case we treat
+> +		 * that as misses equal to references.
+> +		 */
+> +		/* First compute the number of cache references measured */
+> +		l3_hits_after -= l3_hits_before;
+> +		/* Next convert references to cache hits */
+> +		l3_hits_after -= l3_miss_after > l3_hits_after ?
+> +					l3_hits_after : l3_miss_after;
+> +	} else {
+> +		l3_hits_after -= l3_hits_before;
+>  	}
+> +	trace_pseudo_lock_l3(l3_hits_after, l3_miss_after);
+>  
+> +out_l3_hit:
+> +	perf_event_release_kernel(l3_hit_event);
+> +out_l3_miss:
+> +	perf_event_release_kernel(l3_miss_event);
