@@ -2,121 +2,92 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4E1C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0067C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23B520659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:13:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23B520659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 7102D2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7102D2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbeIFMry (ORCPT
+        id S1728015AbeIFMs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:47:54 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:48371 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeIFMrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:47:53 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 49FE430002258;
-        Thu,  6 Sep 2018 10:13:37 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 214F854F8A9; Thu,  6 Sep 2018 10:13:37 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 10:13:37 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH 2/2] thunderbolt: Initialize after IOMMUs
-Message-ID: <20180906081337.3mosfpfggfmoj633@wunner.de>
-References: <20180903132012.23531-1-mika.westerberg@linux.intel.com>
- <20180903132012.23531-2-mika.westerberg@linux.intel.com>
- <20180905084746.xmckzskxzsdliz3e@wunner.de>
- <20180905094602.GH2283@lahna.fi.intel.com>
+        Thu, 6 Sep 2018 08:48:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34430 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725819AbeIFMs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:48:56 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AEBB940241EA;
+        Thu,  6 Sep 2018 08:14:40 +0000 (UTC)
+Received: from krava (unknown [10.43.17.49])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 65AABD93DF;
+        Thu,  6 Sep 2018 08:14:39 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 10:14:38 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 0/2]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+Message-ID: <20180906081438.GB8248@krava>
+References: <1fc1fc5b-a8cc-2b05-d43c-692e58855c81@linux.intel.com>
+ <20180905112851.GA29759@krava>
+ <34e2f944-f5f3-094a-5997-899cea92d206@linux.intel.com>
+ <20180905185141.GA2700@kernel.org>
+ <7d0d0d1e-4a9d-dc8d-343e-8a3a2d76870c@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180905094602.GH2283@lahna.fi.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <7d0d0d1e-4a9d-dc8d-343e-8a3a2d76870c@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 08:14:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 08:14:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 12:46:02PM +0300, Mika Westerberg wrote:
-> On Wed, Sep 05, 2018 at 10:47:46AM +0200, Lukas Wunner wrote:
-> > On Mon, Sep 03, 2018 at 04:20:12PM +0300, Mika Westerberg wrote:
-> > > If IOMMU is enabled and Thunderbolt driver is built into the kernel
-> > > image, it will be probed before IOMMUs are attached to the PCI bus.
-> > > Because of this DMA mappings the driver does will not go through IOMMU
-> > > and start failing right after IOMMUs are enabled.
-> > > 
-> > > For this reason move the Thunderbolt driver initialization happen at
-> > > rootfs level.
-> > > 
-> > > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > ---
-> > >  drivers/thunderbolt/nhi.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-> > > index 88cff05a1808..5cd6bdfa068f 100644
-> > > --- a/drivers/thunderbolt/nhi.c
-> > > +++ b/drivers/thunderbolt/nhi.c
-> > > @@ -1191,5 +1191,5 @@ static void __exit nhi_unload(void)
-> > >  	tb_domain_exit();
-> > >  }
-> > >  
-> > > -fs_initcall(nhi_init);
-> > > +rootfs_initcall(nhi_init);
-> > >  module_exit(nhi_unload);
+On Thu, Sep 06, 2018 at 09:03:17AM +0300, Alexey Budankov wrote:
+> Hi,
+> 
+> On 05.09.2018 21:51, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, Sep 05, 2018 at 08:37:32PM +0300, Alexey Budankov escreveu:
+> >> On 05.09.2018 14:28, Jiri Olsa wrote:
+> >>> can't apply this version on Arnaldo's perf/core...
+> >  
+> >> my git remote -v
+> >  
+> >> origin	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (fetch)
+> >> origin	git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (push)
+> >  
+> >> branch is perf/core, according to MAINTAINERS content.
+> >  
+> >> What is Arnaldo's perf/core? This one?
+> >  
+> >> git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux
+> >  
+> >> and branch is perf/core?
 > > 
-> > I think the dependency on the IOMMU should be open coded by returning
-> > -EPROBE_DEFER from the ->probe hook if it's not yet attached.
-> > Shuffling around initcall order is just applying duct tape.
+> > yes.
 > 
-> It is not a dependency. The same thing can happen with any other driver
-> if they happen to initialize any DMA with the device before IOMMUs are
-> initialized.
-> 
-> > Commit acb40d841257 already changed module_init() to fs_initcall()
-> > and now it has to be changed again.  Shows how fragile this is.
-> 
-> It is a bit fragile but I don't see any other way to handle this than
-> trusting on the link ordering. Both -EPROBE_DEFER and device_links are
-> out of the question AFAICT.
+> Is this the actual one for the tool development? Am I missing something?
 
-So with this patch, you rely on the linker ordering nhi_init() after
-ir_dev_scope_init(), however to the best of my knowledge the link
-order is not guaranteed.
+yep, Arnaldo takes all and pushes his perf/core to Ingo
+it's better to always rebase to it
 
-In that sense, commit acb40d841257 was already flawed because it
-executed nhi_init() at "fs" initcall level, the *same* level used by
-map_properties() in drivers/firmware/efi/apple-properties.c, which
-retrieves the DROM device property needed by tb_drom_copy_efi().
-
-That was arguably a regression which the above patch cures because
-"rootfs" is guaranteed to run after "fs".  Still, the fragility
-remains that ir_dev_scope_init() isn't guaranteed to run before
-nhi_init().
-
-Looking at commit acb40d841257, which started this, I'm wondering
-why you did not simply export tbnet_init() and call it from the
-thunderbolt driver after the property stuff has been fully set up?
-After all, thunderbolt-net is useless without thunderbolt or am I
-missing something?  Then you could revert back to module_init().
-
-Thanks,
-
-Lukas
+thanks,
+jirka
