@@ -2,368 +2,116 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C4DC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8168BC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975FE2083E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975FE2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 394A220857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:49:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u6MrGgh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394A220857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeIFHWU (ORCPT
+        id S1727695AbeIFHWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 03:22:20 -0400
-Received: from mga01.intel.com ([192.55.52.88]:3961 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725959AbeIFHWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 03:22:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:47:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="68741689"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Sep 2018 19:47:07 -0700
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v2 02/12] iommu/vt-d: Manage scalalble mode PASID tables
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-3-baolu.lu@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A85@SHSMSX101.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <44298d5c-5720-a382-07d1-a90a072ff24b@linux.intel.com>
-Date:   Thu, 6 Sep 2018 10:46:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 03:22:32 -0400
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:46654 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbeIFHWc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 03:22:32 -0400
+Received: by mail-pl1-f178.google.com with SMTP id t19-v6so4218563ply.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 19:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/LLln6zV0ZE8Fi0YboVCaQmsol/1HuDHktf8xMHjlFA=;
+        b=u6MrGgh+raigOk0fAdOZVFxz9/mJixBHULJva4ns6kSjts2Ty6KdS98UjoNc6J520X
+         28Q9fijBHrVA+mV+IHCVamd7lv2qbr/ABznClzqGiozCa4R2GNFs9bxnY0CAOVGNEtzG
+         ckgikJxCXvUrk7fLXnDvBUh2Kc1G4ia2fRNP2SbF8OKDHWgYo3QsgjaLXzyZFztFfh0x
+         Thd4I3WE8XrsQkh8j1wwmxEaGh1gVRhvb++6XJZNWabRTiY3EkwczWF0rRvHlsBGm8Ru
+         RHi3DjLnGt3hlxsVBgtItv/oMl5heRCw+w3Qna54mnKp8N2fPyRrLZhcmK2FSjXtOL6K
+         Tiog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/LLln6zV0ZE8Fi0YboVCaQmsol/1HuDHktf8xMHjlFA=;
+        b=m81vcowWDjcDMlN4VWE9+PdDY2DCglRo+4d+kQvLqA0cNKuwP2674po+OlDtlFDFSK
+         nn2dChMMJCKb14zCkgr4Q9SLRQoOweQ4TzhVKhI4/vHVuknHeev8D2/dP3rV8I7ndG5I
+         x7tlnzhUw55nISIZRoLEUpedsu6hR0Gp6kQ1GDVWLmG5rnlhGi6UDXFYWXVcmvrb82uE
+         9ZeiWTC7h5r9EUeUck4O5SkCvI3jWfG2jiVyp8vycpvn3uUs4fypsZw9/y9aWme2sb5s
+         yu1trdHnGe+0560v0hKSwq/Kw5ZWboMwQyURw2L6D5TsP+t8EY2bqBnE0soL3vybni7N
+         p6sA==
+X-Gm-Message-State: APzg51DI2j8v0r6kIc0lUXEiJqrbDpnikw1fEiOCLNp9GO7tv771dNwl
+        NkAxQY1Qr4CgTLaX/0JZv8E=
+X-Google-Smtp-Source: ANB0VdaxKF/+hgXpIjDrdak0slik8ZaGck9qQIHM6UKmitW6O285HFW2GlEBzuksGKjXDJXCSRKeVg==
+X-Received: by 2002:a17:902:8e86:: with SMTP id bg6-v6mr681484plb.108.1536202166320;
+        Wed, 05 Sep 2018 19:49:26 -0700 (PDT)
+Received: from localhost ([110.70.59.68])
+        by smtp.gmail.com with ESMTPSA id i3-v6sm3626382pgq.35.2018.09.05.19.49.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Sep 2018 19:49:25 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 11:49:21 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Ben Skeggs <bskeggs@redhat.com>
+Cc:     sergey.senozhatsky.work@gmail.com, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        torvalds@linux-foundation.org
+Subject: Re: [linux-next] DDC responded, but no EDID for %s errors
+Message-ID: <20180906024921.GC749@jagdpanzerIV>
+References: <20180802024648.GA499@jagdpanzerIV>
+ <20180906024243.GB749@jagdpanzerIV>
+ <CABDvA=kjVto=Wo1=K9o36mWkvnmG1ck8dPm--G5jQokqH7XGCA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A85@SHSMSX101.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABDvA=kjVto=Wo1=K9o36mWkvnmG1ck8dPm--G5jQokqH7XGCA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On (09/06/18 12:46), Ben Skeggs wrote:
+> On Thu, Sep 6, 2018 at 12:42 PM Sergey Senozhatsky
+> <sergey.senozhatsky.work@gmail.com> wrote:
+> >
+> > On (08/02/18 11:46), Sergey Senozhatsky wrote:
+> > > Hi,
+> > >
+> > > My dmesg is filled up with these errors
+> > >
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for HDMI-A-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for HDMI-A-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > > [..]
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > >  nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for VGA-1
+> > > [..]
+> > >
+> > > Basically, a message every 10s or so. Any chance we can make them
+> > > go away?
+> >
+> > A gentle ping?
+> I've got patches queued in my tree to resolve this, I will get them to
+> drm-fixes shortly.
 
-On 09/06/2018 10:14 AM, Tian, Kevin wrote:
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Thursday, August 30, 2018 9:35 AM
->>
->> In scalable mode, pasid structure is a two level table with
->> a pasid directory table and a pasid table. Any pasid entry
->> can be identified by a pasid value in below way.
->>
->>     1
->>     9                       6 5      0
->>      .-----------------------.-------.
->>      |              PASID    |       |
->>      '-----------------------'-------'    .-------------.
->>               |                    |      |             |
->>               |                    |      |             |
->>               |                    |      |             |
->>               |     .-----------.  |      .-------------.
->>               |     |           |  |----->| PASID Entry |
->>               |     |           |  |      '-------------'
->>               |     |           |  |Plus  |             |
->>               |     .-----------.  |      |             |
->>               |---->| DIR Entry |-------->|             |
->>               |     '-----------'         '-------------'
->> .---------.  |Plus |           |
->> | Context |  |     |           |
->> |  Entry  |------->|           |
->> '---------'        '-----------'
->>
->> This changes the pasid table APIs to support scalable mode
->> PASID directory and PASID table. It also adds a helper to
->> get the PASID table entry according to the pasid value.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> Reviewed-by: Ashok Raj <ashok.raj@intel.com>
->> ---
->>   drivers/iommu/intel-iommu.c |  2 +-
->>   drivers/iommu/intel-pasid.c | 72 ++++++++++++++++++++++++++++++++----
->> -
->>   drivers/iommu/intel-pasid.h | 10 +++++-
->>   drivers/iommu/intel-svm.c   |  6 +---
->>   4 files changed, 74 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index 5845edf4dcf9..b0da4f765274 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -2507,7 +2507,7 @@ static struct dmar_domain
->> *dmar_insert_one_dev_info(struct intel_iommu *iommu,
->>   	if (dev)
->>   		dev->archdata.iommu = info;
->>
->> -	if (dev && dev_is_pci(dev) && info->pasid_supported) {
->> +	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
-> 
-> worthy of a comment here that PASID table now is mandatory in
-> scalable mode, instead of optional for 1st level usage before.
+Thanks!
 
-Fair enough. Will add in the next version.
-
-> 
->>   		ret = intel_pasid_alloc_table(dev);
->>   		if (ret) {
->>   			__dmar_remove_one_dev_info(info);
->> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
->> index fe95c9bd4d33..d6e90cd5b062 100644
->> --- a/drivers/iommu/intel-pasid.c
->> +++ b/drivers/iommu/intel-pasid.c
->> @@ -127,8 +127,7 @@ int intel_pasid_alloc_table(struct device *dev)
->>   	int ret, order;
->>
->>   	info = dev->archdata.iommu;
->> -	if (WARN_ON(!info || !dev_is_pci(dev) ||
->> -		    !info->pasid_supported || info->pasid_table))
->> +	if (WARN_ON(!info || !dev_is_pci(dev) || info->pasid_table))
->>   		return -EINVAL;
-> 
-> following same logic should you check sm_supported here?
-
-If not sm_supported, info->pasid_table should be NULL. Checking
-info->pasid_table is better since even sm_supported, the pasid
-table pointer could still possible to be empty.
-
-> 
->>
->>   	/* DMA alias device already has a pasid table, use it: */
->> @@ -143,8 +142,9 @@ int intel_pasid_alloc_table(struct device *dev)
->>   		return -ENOMEM;
->>   	INIT_LIST_HEAD(&pasid_table->dev);
->>
->> -	size = sizeof(struct pasid_entry);
->> +	size = sizeof(struct pasid_dir_entry);
->>   	count = min_t(int, pci_max_pasids(to_pci_dev(dev)),
->> intel_pasid_max_id);
->> +	count >>= PASID_PDE_SHIFT;
->>   	order = get_order(size * count);
->>   	pages = alloc_pages_node(info->iommu->node,
->>   				 GFP_ATOMIC | __GFP_ZERO,
->> @@ -154,7 +154,7 @@ int intel_pasid_alloc_table(struct device *dev)
->>
->>   	pasid_table->table = page_address(pages);
->>   	pasid_table->order = order;
->> -	pasid_table->max_pasid = count;
->> +	pasid_table->max_pasid = count << PASID_PDE_SHIFT;
-> 
-> are you sure of that count is PDE_SHIFT aligned? otherwise >>
-> then << would lose some bits. If sure, then better add some check.
-
-I am making the max_pasid PDE_SHIFT aligned as the result of shift
-operations.
-
-> 
->>
->>   attach_out:
->>   	device_attach_pasid_table(info, pasid_table);
->> @@ -162,14 +162,33 @@ int intel_pasid_alloc_table(struct device *dev)
->>   	return 0;
->>   }
->>
->> +/* Get PRESENT bit of a PASID directory entry. */
->> +static inline bool
->> +pasid_pde_is_present(struct pasid_dir_entry *pde)
->> +{
->> +	return READ_ONCE(pde->val) & PASID_PTE_PRESENT;
-> 
-> curious why adding READ_ONCE specifically for PASID structure,
-> but not used for any other existing vtd structures? Is it to address
-> some specific requirement on PASID structure as defined in spec?
-
-READ/WRITE_ONCE are used in pasid entry read/write to prevent the
-compiler from merging, refetching or reordering successive instances of
-read/write.
-
-> 
->> +}
->> +
->> +/* Get PASID table from a PASID directory entry. */
->> +static inline struct pasid_entry *
->> +get_pasid_table_from_pde(struct pasid_dir_entry *pde)
->> +{
->> +	if (!pasid_pde_is_present(pde))
->> +		return NULL;
->> +
->> +	return phys_to_virt(READ_ONCE(pde->val) & PDE_PFN_MASK);
->> +}
->> +
->>   void intel_pasid_free_table(struct device *dev)
->>   {
->>   	struct device_domain_info *info;
->>   	struct pasid_table *pasid_table;
->> +	struct pasid_dir_entry *dir;
->> +	struct pasid_entry *table;
->> +	int i, max_pde;
->>
->>   	info = dev->archdata.iommu;
->> -	if (!info || !dev_is_pci(dev) ||
->> -	    !info->pasid_supported || !info->pasid_table)
->> +	if (!info || !dev_is_pci(dev) || !info->pasid_table)
->>   		return;
->>
->>   	pasid_table = info->pasid_table;
->> @@ -178,6 +197,14 @@ void intel_pasid_free_table(struct device *dev)
->>   	if (!list_empty(&pasid_table->dev))
->>   		return;
->>
->> +	/* Free scalable mode PASID directory tables: */
->> +	dir = pasid_table->table;
->> +	max_pde = pasid_table->max_pasid >> PASID_PDE_SHIFT;
->> +	for (i = 0; i < max_pde; i++) {
->> +		table = get_pasid_table_from_pde(&dir[i]);
->> +		free_pgtable_page(table);
->> +	}
->> +
->>   	free_pages((unsigned long)pasid_table->table, pasid_table->order);
->>   	kfree(pasid_table);
->>   }
->> @@ -206,17 +233,37 @@ int intel_pasid_get_dev_max_id(struct device
->> *dev)
->>
->>   struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid)
->>   {
->> +	struct device_domain_info *info;
->>   	struct pasid_table *pasid_table;
->> +	struct pasid_dir_entry *dir;
->>   	struct pasid_entry *entries;
->> +	int dir_index, index;
->>
->>   	pasid_table = intel_pasid_get_table(dev);
->>   	if (WARN_ON(!pasid_table || pasid < 0 ||
->>   		    pasid >= intel_pasid_get_dev_max_id(dev)))
->>   		return NULL;
->>
->> -	entries = pasid_table->table;
->> +	dir = pasid_table->table;
->> +	info = dev->archdata.iommu;
->> +	dir_index = pasid >> PASID_PDE_SHIFT;
->> +	index = pasid & PASID_PTE_MASK;
->> +
->> +	spin_lock(&pasid_lock);
->> +	entries = get_pasid_table_from_pde(&dir[dir_index]);
->> +	if (!entries) {
->> +		entries = alloc_pgtable_page(info->iommu->node);
->> +		if (!entries) {
->> +			spin_unlock(&pasid_lock);
->> +			return NULL;
->> +		}
->> +
->> +		WRITE_ONCE(dir[dir_index].val,
->> +			   (u64)virt_to_phys(entries) | PASID_PTE_PRESENT);
->> +	}
->> +	spin_unlock(&pasid_lock);
->>
->> -	return &entries[pasid];
->> +	return &entries[index];
->>   }
->>
->>   /*
->> @@ -224,7 +271,14 @@ struct pasid_entry *intel_pasid_get_entry(struct
->> device *dev, int pasid)
->>    */
->>   static inline void pasid_clear_entry(struct pasid_entry *pe)
->>   {
->> -	WRITE_ONCE(pe->val, 0);
->> +	WRITE_ONCE(pe->val[0], 0);
->> +	WRITE_ONCE(pe->val[1], 0);
->> +	WRITE_ONCE(pe->val[2], 0);
->> +	WRITE_ONCE(pe->val[3], 0);
->> +	WRITE_ONCE(pe->val[4], 0);
->> +	WRITE_ONCE(pe->val[5], 0);
->> +	WRITE_ONCE(pe->val[6], 0);
->> +	WRITE_ONCE(pe->val[7], 0);
-> 
-> memset?
-
-The order is important here. Otherwise, the PRESENT bit of this pasid
-entry might still set while other fields contains invalid values.
-
-> 
->>   }
->>
->>   void intel_pasid_clear_entry(struct device *dev, int pasid)
->> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
->> index 1c05ed6fc5a5..12f480c2bb8b 100644
->> --- a/drivers/iommu/intel-pasid.h
->> +++ b/drivers/iommu/intel-pasid.h
->> @@ -12,11 +12,19 @@
->>
->>   #define PASID_MIN			0x1
->>   #define PASID_MAX			0x100000
->> +#define PASID_PTE_MASK			0x3F
->> +#define PASID_PTE_PRESENT		1
->> +#define PDE_PFN_MASK			PAGE_MASK
->> +#define PASID_PDE_SHIFT			6
->>
->> -struct pasid_entry {
->> +struct pasid_dir_entry {
->>   	u64 val;
->>   };
->>
->> +struct pasid_entry {
->> +	u64 val[8];
->> +};
->> +
->>   /* The representative of a PASID table */
->>   struct pasid_table {
->>   	void			*table;		/* pasid table pointer */
->> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
->> index 4a03e5090952..6c0bd9ee9602 100644
->> --- a/drivers/iommu/intel-svm.c
->> +++ b/drivers/iommu/intel-svm.c
->> @@ -65,8 +65,6 @@ int intel_svm_init(struct intel_iommu *iommu)
->>
->>   	order = get_order(sizeof(struct pasid_entry) * iommu->pasid_max);
->>   	if (ecap_dis(iommu->ecap)) {
->> -		/* Just making it explicit... */
->> -		BUILD_BUG_ON(sizeof(struct pasid_entry) != sizeof(struct
->> pasid_state_entry));
->>   		pages = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
->>   		if (pages)
->>   			iommu->pasid_state_table = page_address(pages);
->> @@ -406,9 +404,7 @@ int intel_svm_bind_mm(struct device *dev, int
->> *pasid, int flags, struct svm_dev_
->>   			pasid_entry_val |= PASID_ENTRY_FLPM_5LP;
->>
->>   		entry = intel_pasid_get_entry(dev, svm->pasid);
->> -		entry->val = pasid_entry_val;
->> -
->> -		wmb();
->> +		WRITE_ONCE(entry->val[0], pasid_entry_val);
->>
->>   		/*
->>   		 * Flush PASID cache when a PASID table entry becomes
->> --
->> 2.17.1
-> 
-> 
-
-Best regards,
-Lu Baolu
+	-ss
