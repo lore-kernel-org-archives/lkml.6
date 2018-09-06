@@ -2,97 +2,109 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE6AC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 845AEC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA8220844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:58:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA8220844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 3A93F20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:00:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A93F20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbeIFReJ (ORCPT
+        id S1728773AbeIFRf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:34:09 -0400
-Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:33725 "EHLO
-        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728758AbeIFReJ (ORCPT
+        Thu, 6 Sep 2018 13:35:27 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39151 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727700AbeIFRf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:34:09 -0400
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id 2A29C1C1EDF
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Sep 2018 13:58:45 +0100 (IST)
-Received: (qmail 13244 invoked from network); 6 Sep 2018 12:58:45 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 6 Sep 2018 12:58:45 -0000
-Date:   Thu, 6 Sep 2018 13:58:43 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Jirka Hladky <jhladky@redhat.com>
-Cc:     Kamil Kolakowski <kkolakow@redhat.com>,
-        Jakub Racek <jracek@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
- Stream, Linpack and NAS parallel benchmarks
-Message-ID: <20180906125843.GC1719@techsingularity.net>
-References: <CAE4VaGA9KzX05rdfw2PhEATLisV-NVMc9rOyjzSg-rX1rug9Dw@mail.gmail.com>
- <CABuKy6MUNX85PBVchz_hqXy+FxXU2x0U9ZEZB13rVSLGpWOWvQ@mail.gmail.com>
- <CAE4VaGD12BLS_kk=pRwgTKL8YOU63Nowwa42cEdZObQ=P1MFnA@mail.gmail.com>
- <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
- <20180717100329.yfy7igdsrpk5ujf4@techsingularity.net>
- <CAE4VaGA_L1AEj+Un0oQEEqZp_jgaFLk+Z=vNoad08oXnU2T1nw@mail.gmail.com>
- <CAE4VaGDTNgu=JX=N7=uZu0Bz_vUdHszZQ9_SQuwrbjRvFjCwZw@mail.gmail.com>
- <20180904090053.GB1719@techsingularity.net>
- <CAE4VaGB-mFfAR_rKUbGx01HLDQtyjHQLNOrm3fc+aSq2D2O2Dg@mail.gmail.com>
- <CAE4VaGATB4M7-osmi0wqovGbZb7os+ukMHi+Lbum3tegpHxGNw@mail.gmail.com>
+        Thu, 6 Sep 2018 13:35:27 -0400
+Received: by mail-qt0-f196.google.com with SMTP id o15-v6so12057530qtk.6;
+        Thu, 06 Sep 2018 06:00:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nd6B9hBGPfUlsRQzvASpzMPsRipPR27aNpPGe9G44r8=;
+        b=jQrJF5XJFlDmoZJFY+RMlkj7ioN9azsZTgp7TToPYp8B+el8oAVd+2mYn6Se9NH527
+         zE0BRL36cvUDZ5AT1yVSqZvyrl/WsNLoipnbY/6dFSDW1gheyoJlg4rZtHqJnP4PBBpk
+         Y9c91bAsUTMdgC0pe2WiMhWekLx9BYOtpH7rqdmj2T7XU/a6RqJwdlMZJsmKbGUM3iW/
+         XrVKE0Umt6AZjijjYM8CRzGixVWXMSUBkNa4YgE4uPSSC4P5jeCdrIMIY98Hxpb5CUAY
+         cYsGuJk5t3S119XgaabsmoMQnytvmUYTE9bkWV9MtnujRJZk6DGPlrkcfY8S0W9CIVp4
+         ljmw==
+X-Gm-Message-State: APzg51B7gKY3GzcIxPu5CxBVjBrOglKJkpFMOcDOrU5LS50SIYYrsCSw
+        0ecag46fi4+Y0vUMLOp465P7/Eh0LXzK4SquJsA=
+X-Google-Smtp-Source: ANB0VdaV/UxVhnkkk4omB/k59mW/8BLHGoqFEu4f0WRwZC5S1fIJeK/sRglGQdh6+IytbGSB0JOFTyHmmwfS+QaMqEk=
+X-Received: by 2002:ac8:c9:: with SMTP id d9-v6mr1916187qtg.213.1536238802725;
+ Thu, 06 Sep 2018 06:00:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAE4VaGATB4M7-osmi0wqovGbZb7os+ukMHi+Lbum3tegpHxGNw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+ <20180719152930.3715-2-boris.brezillon@bootlin.com> <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+ <20180824143934.6d6b6487@bbrezillon> <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
+ <20180824201600.7d80bca9@bbrezillon> <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
+ <20180828140209.29155d00@bbrezillon> <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
+ <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com> <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
+ <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com> <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
+In-Reply-To: <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 6 Sep 2018 14:59:46 +0200
+Message-ID: <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+To:     Przemyslaw Gaj <pgaj@cadence.com>
+Cc:     Vitor Soares <Vitor.Soares@synopsys.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:16:28AM +0200, Jirka Hladky wrote:
-> Hi Mel,
-> 
-> we have results with 2d4056fafa196e1ab4e7161bae4df76f9602d56d reverted.
-> 
->   * Compared to 4.18, there is still performance regression -
-> especially with NAS (sp_C_x subtest) and SPECjvm2008. On 4 NUMA
-> systems, regression is around 10-15%
->   * Compared to 4.19rc1 there is a clear gain across all benchmarks around 20%
-> 
+On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:
+>
+> Hi Boris, Vitor,
+>
+> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
+> https://github.com/przemekgaj/i3c-linux/commit/d54fe68a9d3e573c0c454a2c6f1afafc20142ec5
+>
+> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
+> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
+>
+> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)
 
-Ok.
 
-> While reverting 2d4056fafa196e1ab4e7161bae4df76f9602d56d has helped a
-> lot there is another issue as well. Could you please recommend some
-> commit prior to 2d4056fafa196e1ab4e7161bae4df76f9602d56d to try?
-> 
+Can you explain the reason for having a user space interface and DT property?
+I thought we had concluded earlier that we wouldn't need that, but it's possible
+that I missed something in the discussion since then.
 
-Maybe 305c1fac3225dfa7eeb89bfe91b7335a6edd5172. That introduces a weird
-condition in terms of idle CPU handling that has been problematic.
-
-> Regarding the current results, how do we proceed? Could you please
-> contact Srikar and ask for the advice or should we contact him
-> directly?
-> 
-
-I would suggest contacting Srikar directly. While I'm working on a
-series that touches off some similar areas, there is no guarantee it'll
-be a success as I'm not primarily upstream focused at the moment.
-
-Restarting the thread would also end up with a much more sensible cc
-list.
-
--- 
-Mel Gorman
-SUSE Labs
+      Arnd
