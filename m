@@ -2,121 +2,131 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F53EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DE9C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF2A2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:47:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF2A2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id CEAF920844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:49:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EPoqbl88"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAF920844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeIGDYl (ORCPT
+        id S1728085AbeIGD0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 23:24:41 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61100 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbeIGDYl (ORCPT
+        Thu, 6 Sep 2018 23:26:55 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38924 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeIGD0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 23:24:41 -0400
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w86MkCAM009541;
-        Fri, 7 Sep 2018 07:46:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
- Fri, 07 Sep 2018 07:46:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w86MkBQJ009537
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 7 Sep 2018 07:46:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Doug Ledford <dledford@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
-        Leon Romanovsky <leonro@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Felix Kuehling <felix.kuehling@amd.com>
-References: <20180824120339.GL29735@dhcp22.suse.cz>
- <eb546bcb-9c5f-7d5d-43a7-bfde489f0e7f@amd.com>
- <20180824123341.GN29735@dhcp22.suse.cz>
- <b11df415-baf8-0a41-3c16-60dfe8d32bd3@amd.com>
- <20180824130132.GP29735@dhcp22.suse.cz>
- <23d071d2-82e4-9b78-1000-be44db5f6523@gmail.com>
- <20180824132442.GQ29735@dhcp22.suse.cz>
- <86bd94d5-0ce8-c67f-07a5-ca9ebf399cdd@gmail.com>
- <20180824134009.GS29735@dhcp22.suse.cz>
- <735b0a53-5237-8827-d20e-e57fa24d798f@amd.com>
- <20180824135257.GU29735@dhcp22.suse.cz>
- <b78f8b3a-7bc6-0dea-6752-5ea798eccb6b@i-love.sakura.ne.jp>
- <0e80c531-4e91-fb1d-e7eb-46a7aecc4c9d@amd.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <841ae1fb-bb5a-8b1e-6383-ca2e70b6e759@i-love.sakura.ne.jp>
-Date:   Fri, 7 Sep 2018 07:46:09 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 23:26:55 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i190-v6so5954955pgc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 15:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uGkOnj093PXjB4Lq1P50yDvsnC++VRGK5EVxrMjQze4=;
+        b=EPoqbl88M6C8PsOnqlFPctMR3jj+SwwUqOQiS0yFRKnTxLs1gDPzi21mXIR1KDZg21
+         01m3/RIxrnUglqTpg+NwVO0JPPgY+H2I2HfvcoJL2I/phFfVA7sxQfFulIhE5vFPrjeH
+         bOuGXlHngsBeRDg1DR0jXx0uW9IXIecJtVeHk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uGkOnj093PXjB4Lq1P50yDvsnC++VRGK5EVxrMjQze4=;
+        b=VKVF/VooIu3EG3jOIost0DMjAIkNYvlJRDA/6e73s7RB+te8pyPJnBgq54GENrkctX
+         b2LfkGdHAw8lsl8uLEvzc9Xq3G017yAXXxyKdfW/acBouxGfY30YNb0jsXzt1h9Dy5OD
+         DJOHVYTo9MebiCX7oYX1Gett2D3nv/kaFTx0pxfjgWh4qZlP+lF6Ymh4OcVYO9aBYDxZ
+         zx/DJPJ8qRbAkHitYwVh63xDaMTBE/YqwD4un77/O4lbXCR0KI1Xtq9q9NKQElZRxjQL
+         IVfzTTDiCpEI/Z1SN/lV1CITt0oZ6zE5neh7HL03lAtyPDnQvX5o/WGsK0pQXIAeebKz
+         MylA==
+X-Gm-Message-State: APzg51BhyytXcpAr2fqzhHV/ZLR4U6aObNUfZ71gox93UOdmji656Jmg
+        MkwQdrWyWflw+UQ21iBYhe32qQ==
+X-Google-Smtp-Source: ANB0VdYtH320QF6w7D6K8baTjB8zMmDKo/T88A+P7XFIVqnfBX9M2FObOFRNRbSvM8eYkE36aXsLlw==
+X-Received: by 2002:a62:8704:: with SMTP id i4-v6mr5330789pfe.62.1536274151360;
+        Thu, 06 Sep 2018 15:49:11 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id b21-v6sm13613622pfm.97.2018.09.06.15.49.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 15:49:10 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     mka@chromium.org, girishm@codeaurora.org, dkota@codeaurora.org,
+        evgreen@chromium.org, swboyd@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] soc: qcom: geni: Don't ignore clk_round_rate() errors in geni_se_clk_tbl_get()
+Date:   Thu,  6 Sep 2018 15:49:05 -0700
+Message-Id: <20180906224906.93752-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
 MIME-Version: 1.0
-In-Reply-To: <0e80c531-4e91-fb1d-e7eb-46a7aecc4c9d@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/27 16:41, Christian König wrote:
-> Am 26.08.2018 um 10:40 schrieb Tetsuo Handa:
->> I'm not following. Why don't we need to do like below (given that
->> nobody except amdgpu_mn_read_lock() holds ->read_lock) because e.g.
->> drm_sched_fence_create() from drm_sched_job_init() from amdgpu_cs_submit()
->> is doing GFP_KERNEL memory allocation with ->lock held for write?
-> 
-> That's a bug which needs to be fixed separately.
-> 
-> Allocating memory with GFP_KERNEL while holding a lock which is also taken in the reclaim code path is illegal not matter what you do.
-> 
-> Patches to fix this are already on the appropriate mailing list and will be pushed upstream today.
-> 
-> Regards,
-> Christian.
+The function clk_round_rate() is defined to return a "long", not an
+"unsigned long".  That's because it might return a negative error
+code.  Change the call in geni_se_clk_tbl_get() to check for errors.
 
-Commit 4a2de54dc1d7668f ("drm/amdgpu: fix holding mn_lock while allocating memory")
-seems to be calling amdgpu_mn_unlock() without amdgpu_mn_lock() when
-drm_sched_job_init() failed... 
+While we're at it, get rid of a useless init of "freq".
 
+NOTE: overall the idea that we should iterate over clk_round_rate() to
+try to reconstruct a table already present in the clock driver is
+questionable.  Specifically:
+- This method relies on "clk_round_rate()" rounding up.
+- This method only works if the table is sorted and has no duplicates.
+...this patch doesn't try to fix those problems, it just makes the
+error handling more correct.
 
+Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+---
 
-Michal, you are asking me to fix all bugs (including out of tree code) and prevent
-future bugs just because you want to avoid using timeout in order to avoid OOM lockup
-( https://marc.info/?i=55a3fb37-3246-73d7-0f45-5835a3f4831c@i-love.sakura.ne.jp ).
-That is a too much request which is impossible for even you. More you count on
-the OOM reaper, we exponentially complicates dependency and more likely to stumble
-over unreviewed/untested code...
+Changes in v3:
+- Init "freq" again since removing it was wrong (kbuild test robot).
+
+Changes in v2:
+- Get rid of unneeded init of "freq" (Matthias).
+- Add Matthias tag.
+
+ drivers/soc/qcom/qcom-geni-se.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+index feed3db21c10..1b19b8428c4a 100644
+--- a/drivers/soc/qcom/qcom-geni-se.c
++++ b/drivers/soc/qcom/qcom-geni-se.c
+@@ -513,7 +513,7 @@ EXPORT_SYMBOL(geni_se_resources_on);
+  */
+ int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
+ {
+-	unsigned long freq = 0;
++	long freq = 0;
+ 	int i;
+ 
+ 	if (se->clk_perf_tbl) {
+@@ -529,7 +529,7 @@ int geni_se_clk_tbl_get(struct geni_se *se, unsigned long **tbl)
+ 
+ 	for (i = 0; i < MAX_CLK_PERF_LEVEL; i++) {
+ 		freq = clk_round_rate(se->clk, freq + 1);
+-		if (!freq || freq == se->clk_perf_tbl[i - 1])
++		if (freq <= 0 || freq == se->clk_perf_tbl[i - 1])
+ 			break;
+ 		se->clk_perf_tbl[i] = freq;
+ 	}
+-- 
+2.19.0.rc2.392.g5ba43deb5a-goog
+
