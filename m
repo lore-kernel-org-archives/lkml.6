@@ -2,119 +2,177 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538D1C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882EEC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E05F2064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37F5B2064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="i7uAPNR8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E05F2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M24EhdVv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F5B2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbeIFOTx (ORCPT
+        id S1728399AbeIFOTx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 6 Sep 2018 10:19:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34031 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbeIFOTw (ORCPT
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35175 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728041AbeIFOTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:19:52 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g33-v6so10685245wrd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 02:45:13 -0700 (PDT)
+        Thu, 6 Sep 2018 10:19:53 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p12-v6so5013567pfh.2;
+        Thu, 06 Sep 2018 02:45:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WBe2mmYqkQNjBSbkWb/Y8vpyGXmraHJJ/eFrlSysUhg=;
-        b=i7uAPNR8zDYbikLuSbjN2Zs3X4FKH5FlAjjZrWb/0lqpcFDniRWiDqx6Fy7j+Py6BA
-         9Y/bG6bVKVMSBJqZz5nKwoD6nIPEyNUQkbSqmcq47+fdqDgpNjLUAp9Hs8l4BPYwS+Gy
-         wt2hObMe51lAiaRU3oZnQ2C7vMUDjmI4uO8PqZjLo7LLLAxH1LbfFCN2Mdf/U/d/VsZ2
-         +LGyrXJ6W+l669IkfUXL/Ej3rgT1wTsSvD6F0PvWbOoeThxL/TRtDNCMthVblEl3pJ3A
-         X5/zpGYst6qSW/z3dbk+HXBE8DPJPhB6w8fm9gzYYPmh1IayAIX+MDtl+fHYIdEe82iD
-         aDIQ==
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=g9NitHbdY9XvpL1q8gDvMf9EfQL6SfRM+JTZLKaWzGg=;
+        b=M24EhdVvZIlIdqX3vs0GB4GecjgP5n8OOWjqQYGO9ZjBF6VeZSnt0GNJoxoIowJi/C
+         NJlkP6dknGqBSliA9F6izZnRYNIkdFpPRTC46vV5OygTGIrRWZR+byNFIViphr0C2q7B
+         FLBnRImEkgIESDkaiKyb0bezNbWf4p9RkJ3BeVnqSQhNKQ3RX4pikyJ85QT0UYX7l477
+         iVAOJpFo9y31ts+tKvMGT9q7OuqvyfDHb3zZgdlfcn62RCrnzukW0914T2whEdg7JOD7
+         BwcwQv7yXp4Zb2E+XwjxFCIbEfexpFgg3YEjJRXCG8k5WPOSOReym77MuSm1oaHtPCdA
+         tCLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=WBe2mmYqkQNjBSbkWb/Y8vpyGXmraHJJ/eFrlSysUhg=;
-        b=pTj7L46nVDmWpZCeIx2n++58sAPCKrVY7Ekae/HdFTrpFVbi2jJDdmd0UBEP+zkPgd
-         PJMEfMWd0+Q5bqCSXDTBzdme83ZhDmTYYpnXAca8OjrDdyUyt+0l6UGLSimH1ORKxKLb
-         iO1mQeJ+uaXflU4Z1PgVrUWw1va0889E+WMxY5riYnIcL5EINZs4sUz3m+yHqaC7Agvz
-         ZQ/TR1ULAqRxHKf/q2B/VOVM7W25c4odSO+Swr/e70W56wDr5xn4BP611pKn4rGri8SH
-         TPmJHu2amUITq8wEeocOF9fGcNHJ1OxNacqRgmIpY/2eKRHeBacWsfWoFzdplTPIUoD/
-         iPTg==
-X-Gm-Message-State: APzg51BQgELsg4xEIv1tRL2LicyY1ITMmAJzMDGAUDThO4NlxkN+juzh
-        bSnCqjPd20/Zgwcu1bfgX2CHgpEAhYRbmQ==
-X-Google-Smtp-Source: ANB0VdZj0OTo3bAQIJEKAQbAhFHZDp/AQIj/UuAc7bn/xN9h7zy7Dj8klo3Bnb0o3zmEYb6J9Y4u5Q==
-X-Received: by 2002:a5d:6aca:: with SMTP id u10-v6mr1728026wrw.44.1536227112970;
-        Thu, 06 Sep 2018 02:45:12 -0700 (PDT)
-Received: from localhost (smb-adpcdg1-01.hotspot.hub-one.net. [213.174.99.129])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm5997565wrn.58.2018.09.06.02.45.11
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=g9NitHbdY9XvpL1q8gDvMf9EfQL6SfRM+JTZLKaWzGg=;
+        b=CGtiDU38fAG6qKyBiYFMtz2WHts7Zqy7YgeKZsenqlcF+lHV+/XX978p/27fRM2WPW
+         iW7YCCPwDCctLDZaXR6f3qFdkwPpV+LMGNjW7OBnmVx9lzRqJul5YYkoprF07qp/tBzp
+         XlxHX6441ptkoFPRuQn7XAmwOOe3etdw1nM1aNFSUQzSrF2qeZTtQ58K5h//Gsi2hdZb
+         smT4J6zGLUIacmVkYZFT51IqYQlYUhI7mj5MoP+KQJTX62mhOvtA+n3Kursty+SuL8xO
+         rOxL3a0ExvLG5Rx6NFVH4qWWaIj/a4iJTBaw47OS7URhoC4BSE/itM9ik1KzSL6rMKd0
+         LBOQ==
+X-Gm-Message-State: APzg51AMJ8WA4Ih5TOphhqG9OMpXBeg11Zlpti6xGEKUF13T7U/9Qel/
+        y8kBJgmAI/TFkPW8oYZ0hpXIeOOqSPw=
+X-Google-Smtp-Source: ANB0VdYnZjzJuO59bXRsuMLaS6nhD8PtulH4pQEZuPVgCaKmIt5HaOpiy9x+nSLdgBww87lLiM1gGQ==
+X-Received: by 2002:a63:7f06:: with SMTP id a6-v6mr1883030pgd.296.1536227113927;
+        Thu, 06 Sep 2018 02:45:13 -0700 (PDT)
+Received: from [10.144.12.201] ([122.146.92.136])
+        by smtp.googlemail.com with ESMTPSA id 5-v6sm6109259pgc.86.2018.09.06.02.45.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 02:45:11 -0700 (PDT)
-Date:   Thu, 06 Sep 2018 02:45:11 -0700 (PDT)
-X-Google-Original-Date: Wed, 05 Sep 2018 21:24:04 PDT (-0700)
-Subject:     Re: [PATCH 5/8] RISC-V: Rename im_okay_therefore_i_am to found_boot_cpu
-In-Reply-To: <f62e9466-bd77-096d-fcc7-f5750d0257bb@wdc.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com,
-        dmitriy@oss-tech.org, jeremy.linton@arm.com,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu,
-        Greg KH <gregkh@linuxfoundation.org>, tglx@linutronix.de
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     atish.patra@wdc.com
-Message-ID: <mhng-dd0dbcb8-790a-47a8-8c1f-ab1026a02624@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 06 Sep 2018 02:45:13 -0700 (PDT)
+Message-ID: <1536227104.68915.5.camel@gmail.com>
+Subject: Re: [PATCH] mac80211: fix TX status reporting for ieee80211s
+From:   Yuan-Chi Pang <fu3mo6goo@gmail.com>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 06 Sep 2018 17:45:04 +0800
+In-Reply-To: <1536224269-69350-1-git-send-email-fu3mo6goo@gmail.com>
+References: <1535963610.3437.10.camel@sipsolutions.net>
+         <1536224269-69350-1-git-send-email-fu3mo6goo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 Aug 2018 14:18:02 PDT (-0700), atish.patra@wdc.com wrote:
-> On 8/30/18 10:54 PM, Christoph Hellwig wrote:
->> On Thu, Aug 30, 2018 at 09:11:11AM -0700, Atish Patra wrote:
->>> On 8/30/18 7:41 AM, Christoph Hellwig wrote:
->>>>>    	struct device_node *dn = NULL;
->>>>> -	int hart, im_okay_therefore_i_am = 0;
->>>>> +	int hart, found_boot_cpu = 0;
->>>>
->>>> If you rename this anyway please switch to use a bool.
->>>>
->>>
->>> I can address the comment on this patch and fold it in my series to avoid
->>> unnecessary conflict.
->>>
->>> @Palmer: You can drop this patch.
->>
->> If Palmer is ok with it how about you include a respin of his whole
->> series?  There are some overlaps I think and having a single person
->> in charge might be helpful.
->>
->
-> Sure. I am fine with it. Palmer ?
 
-Ya, I have no problem with it.
+On Thu, 2018-09-06 at 16:57 +0800, Yuan-Chi Pang wrote:
+> TX status reporting to ieee80211s is through
+> ieee80211s_update_metric.
+> There are two problems about ieee80211s_update_metric:
+> 
+> 1. The purpose is to estimate the fail probability
+> to a specific link. No need to restrict to data frame.
+> 
+> 2. Current implementation does not work if wireless driver does not
+> pass tx_status with skb.
+> 
+> Fix this by removing ieee80211_is_data condition, passing
+> ieee80211_tx_status directly to ieee80211s_update_metric, and
+> putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
+> 
+> Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+> ---
+>  net/mac80211/mesh.h      | 2 +-
+>  net/mac80211/mesh_hwmp.c | 8 ++------
+>  net/mac80211/status.c    | 4 +++-
+>  3 files changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
+> index ee56f18..7ffe56a 100644
+> --- a/net/mac80211/mesh.h
+> +++ b/net/mac80211/mesh.h
+> @@ -217,7 +217,7 @@ void mesh_rmc_free(struct ieee80211_sub_if_data
+> *sdata);
+>  int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
+>  void ieee80211s_init(void);
+>  void ieee80211s_update_metric(struct ieee80211_local *local,
+> -			      struct sta_info *sta, struct sk_buff
+> *skb);
+> +			 struct sta_info *sta, struct
+> ieee80211_tx_status *st);
+>  void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
+>  void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data
+> *sdata);
+>  int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
 
->
->> Btw, I've found your series in my linux-kernel folder, but it did
->> not make it to linux-riscv or my personal inbox despite the CC.
->>
->
-> Thanks for the review.
-> I checked my scripts. I couldn't figure out what went wrong.
-> Not sure if there was some issue with infradead.org at that time.
->
-> Anyways, sorry again for the mess. I will keep a watch on this next time.
->
-> Regards,
-> Atish
+I received the comment of my previous submission that I should fix
+indentation. But if I use the same indentation as before, I got "line
+over 80 characters" warning by checkpatch. What should I do?
+
+> diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+> index daf9db3..4286673 100644
+> --- a/net/mac80211/mesh_hwmp.c
+> +++ b/net/mac80211/mesh_hwmp.c
+> @@ -295,15 +295,11 @@ int mesh_path_error_tx(struct
+> ieee80211_sub_if_data *sdata,
+>  }
+>  
+>  void ieee80211s_update_metric(struct ieee80211_local *local,
+> -		struct sta_info *sta, struct sk_buff *skb)
+> +		struct sta_info *sta, struct ieee80211_tx_status
+> *st)
+>  {
+> -	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
+> -	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb-
+> >data;
+> +	struct ieee80211_tx_info *txinfo = st->info;
+>  	int failed;
+>  
+> -	if (!ieee80211_is_data(hdr->frame_control))
+> -		return;
+> -
+>  	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
+>  
+>  	/* moving average, scaled to 100.
+> diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+> index 9a6d720..dfcd419 100644
+> --- a/net/mac80211/status.c
+> +++ b/net/mac80211/status.c
+> @@ -811,7 +811,7 @@ static void __ieee80211_tx_status(struct
+> ieee80211_hw *hw,
+>  
+>  		rate_control_tx_status(local, sband, status);
+>  		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
+> -			ieee80211s_update_metric(local, sta, skb);
+> +			ieee80211s_update_metric(local, sta,
+> status);
+>  
+>  		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) &&
+> acked)
+>  			ieee80211_frame_acked(sta, skb);
+> @@ -972,6 +972,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw
+> *hw,
+>  		}
+>  
+>  		rate_control_tx_status(local, sband, status);
+> +		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
+> +			ieee80211s_update_metric(local, sta,
+> status);
+>  	}
+>  
+>  	if (acked || noack_success) {
