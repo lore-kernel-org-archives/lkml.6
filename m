@@ -2,141 +2,162 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BFAC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95180C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD9D720844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9D720844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 559DC206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559DC206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbeIFSPr (ORCPT
+        id S1729788AbeIFSPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:15:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729404AbeIFSPq (ORCPT
+        Thu, 6 Sep 2018 14:15:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43553 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729518AbeIFSPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:15:46 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86DdK5T038803
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 09:40:11 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb31bprhb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:40:10 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Thu, 6 Sep 2018 14:40:08 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 14:40:02 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86De1wY18415812
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 13:40:01 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 198AB4C040;
-        Thu,  6 Sep 2018 16:39:56 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E54404C044;
-        Thu,  6 Sep 2018 16:39:54 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  6 Sep 2018 16:39:54 +0100 (BST)
-Date:   Thu, 6 Sep 2018 16:39:58 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        mingo@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
-        paul.burton@mips.com, Thomas Gleixner <tglx@linutronix.de>,
-        tony.luck@intel.com, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 07/29] memblock: remove _virt from APIs returning
- virtual address
-References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1536163184-26356-8-git-send-email-rppt@linux.vnet.ibm.com>
- <CABGGiswdb1x-=vqrgxZ9i2dnLdsgtXq4+5H9Y1JRd90YVMW69A@mail.gmail.com>
- <20180905172017.GA2203@rapoport-lnx>
- <20180906072800.GN14951@dhcp22.suse.cz>
- <20180906124321.GD27492@rapoport-lnx>
- <20180906130102.GY14951@dhcp22.suse.cz>
+        Thu, 6 Sep 2018 14:15:51 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DdrkW310038
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:39:53 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Ddr1s310035;
+        Thu, 6 Sep 2018 06:39:53 -0700
+Date:   Thu, 6 Sep 2018 06:39:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-8897a8916efb29fa8bbe9e5f6e5d56362aedf64e@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        acme@redhat.com, peterz@infradead.org, jolsa@kernel.org,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        dsahern@gmail.com, andi@firstfloor.org, namhyung@kernel.org
+Reply-To: dsahern@gmail.com, namhyung@kernel.org, andi@firstfloor.org,
+          tglx@linutronix.de, hpa@zytor.com, jolsa@kernel.org,
+          peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
+          linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
+In-Reply-To: <20180830063252.23729-36-jolsa@kernel.org>
+References: <20180830063252.23729-36-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Move ru_* data to 'struct
+ perf_stat_config'
+Git-Commit-ID: 8897a8916efb29fa8bbe9e5f6e5d56362aedf64e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180906130102.GY14951@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18090613-0028-0000-0000-000002F541AB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090613-0029-0000-0000-000023AEC7B6
-Message-Id: <20180906133958.GM27492@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 03:01:02PM +0200, Michal Hocko wrote:
-> On Thu 06-09-18 15:43:21, Mike Rapoport wrote:
-> > On Thu, Sep 06, 2018 at 09:28:00AM +0200, Michal Hocko wrote:
-> > > On Wed 05-09-18 20:20:18, Mike Rapoport wrote:
-> > > > On Wed, Sep 05, 2018 at 12:04:36PM -0500, Rob Herring wrote:
-> > > > > On Wed, Sep 5, 2018 at 11:00 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> > > > > >
-> > > > > > The conversion is done using
-> > > > > >
-> > > > > > sed -i 's@memblock_virt_alloc@memblock_alloc@g' \
-> > > > > >         $(git grep -l memblock_virt_alloc)
-> > > > > 
-> > > > > What's the reason to do this? It seems like a lot of churn even if a
-> > > > > mechanical change.
-> > > > 
-> > > > I felt that memblock_virt_alloc_ is too long for a prefix, e.g:
-> > > > memblock_virt_alloc_node_nopanic, memblock_virt_alloc_low_nopanic.
-> > > > 
-> > > > And for consistency I've changed the memblock_virt_alloc as well.
-> > > 
-> > > I would keep the current API unless the name is terribly misleading or
-> > > it can be improved a lot. Neither seems to be the case here. So I would
-> > > rather stick with the status quo.
-> > 
-> > I'm ok with the memblock_virt_alloc by itself, but having 'virt' in
-> > 'memblock_virt_alloc_try_nid_nopanic' and 'memblock_virt_alloc_low_nopanic'
-> > reduces code readability in my opinion.
-> 
-> Well, is _nopanic really really useful in the name. Do we even need/want
-> implicit panic/nopanic semantic? The code should rather check for the
-> return value and decide depending on the code path. I suspect removing
-> panic/nopanic would make the API slightly lighter.
+Commit-ID:  8897a8916efb29fa8bbe9e5f6e5d56362aedf64e
+Gitweb:     https://git.kernel.org/tip/8897a8916efb29fa8bbe9e5f6e5d56362aedf64e
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 30 Aug 2018 08:32:44 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:24 -0300
+
+perf stat: Move ru_* data to 'struct perf_stat_config'
+
+Move the 'ru_*' global variables to 'struct perf_stat_config', so that
+it can be passed around and used outside the 'perf stat' command.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180830063252.23729-36-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 12 +++++-------
+ tools/perf/util/stat.h    |  6 ++++++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index f61c2dc8c7e8..942ebfd8ef2e 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -171,8 +171,6 @@ static bool			interval_count;
+ static const char		*output_name;
+ static int			output_fd;
+ static u64			*walltime_run;
+-static bool			ru_display			= false;
+-static struct rusage		ru_data;
  
-I agree that panic/nopanic should be removed. But I prefer to start with
-equivalent replacement to make it as automated as possible and update
-memblock API when the dust settles a bit.
-
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+ struct perf_stat {
+ 	bool			 record;
+@@ -583,7 +581,7 @@ try_again:
+ 					break;
+ 			}
+ 		}
+-		wait4(child_pid, &status, 0, &ru_data);
++		wait4(child_pid, &status, 0, &stat_config.ru_data);
+ 
+ 		if (workload_exec_errno) {
+ 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
+@@ -1679,9 +1677,9 @@ static void print_footer(struct perf_stat_config *config)
+ 	if (config->run_count == 1) {
+ 		fprintf(output, " %17.9f seconds time elapsed", avg);
+ 
+-		if (ru_display) {
+-			double ru_utime = timeval2double(&ru_data.ru_utime);
+-			double ru_stime = timeval2double(&ru_data.ru_stime);
++		if (config->ru_display) {
++			double ru_utime = timeval2double(&config->ru_data.ru_utime);
++			double ru_stime = timeval2double(&config->ru_data.ru_stime);
+ 
+ 			fprintf(output, "\n\n");
+ 			fprintf(output, " %17.9f seconds user\n", ru_utime);
+@@ -2855,7 +2853,7 @@ int cmd_stat(int argc, const char **argv)
+ 	 * run and when there's specified tracee.
+ 	 */
+ 	if ((stat_config.run_count == 1) && target__none(&target))
+-		ru_display = true;
++		stat_config.ru_display = true;
+ 
+ 	if (stat_config.run_count < 0) {
+ 		pr_err("Run count must be a positive number\n");
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 6fb4dac26ccc..1fd0b7e196c6 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -4,6 +4,10 @@
+ 
+ #include <linux/types.h>
+ #include <stdio.h>
++#include <sys/types.h>
++#include <sys/time.h>
++#include <sys/resource.h>
++#include <sys/wait.h>
+ #include "xyarray.h"
+ #include "rblist.h"
+ #include "perf.h"
+@@ -95,6 +99,7 @@ struct perf_stat_config {
+ 	bool			 interval_clear;
+ 	bool			 metric_only;
+ 	bool			 null_run;
++	bool			 ru_display;
+ 	FILE			*output;
+ 	unsigned int		 interval;
+ 	unsigned int		 timeout;
+@@ -109,6 +114,7 @@ struct perf_stat_config {
+ 	int			 stats_num;
+ 	const char		*csv_sep;
+ 	struct stats		*walltime_nsecs_stats;
++	struct rusage		 ru_data;
+ };
+ 
+ void update_stats(struct stats *stats, u64 val);
