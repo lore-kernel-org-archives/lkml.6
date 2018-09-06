@@ -2,74 +2,149 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDBDC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44ECC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4170E20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4170E20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D5C4206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5C4206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbeIFOd3 (ORCPT
+        id S1728560AbeIFOdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:33:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45028 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbeIFOd3 (ORCPT
+        Thu, 6 Sep 2018 10:33:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725809AbeIFOdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:33:29 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fxr3l-00074z-2D; Thu, 06 Sep 2018 09:58:45 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cfg80211: remove redundant check of !scan_plan
-Date:   Thu,  6 Sep 2018 10:58:44 +0100
-Message-Id: <20180906095844.17071-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 6 Sep 2018 10:33:45 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w869wsiu007735
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 05:59:04 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mb1p3s0xq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 05:59:04 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 6 Sep 2018 10:59:02 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 10:58:59 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w869wwFn45219860
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 09:58:58 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27E6DAE051;
+        Thu,  6 Sep 2018 12:58:20 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 34488AE045;
+        Thu,  6 Sep 2018 12:58:18 +0100 (BST)
+Received: from skywalker (unknown [9.102.0.183])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Thu,  6 Sep 2018 12:58:17 +0100 (BST)
+Received: (nullmailer pid 6070 invoked by uid 1000);
+        Thu, 06 Sep 2018 09:58:55 -0000
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v1 00/17] ban the use of _PAGE_XXX flags outside platform specific code
+In-Reply-To: <cover.1535913369.git.christophe.leroy@c-s.fr>
+References: <cover.1535913369.git.christophe.leroy@c-s.fr>
+Date:   Thu, 06 Sep 2018 15:28:55 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18090609-0008-0000-0000-0000026D2103
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090609-0009-0000-0000-000021D54344
+Message-Id: <8736uneylc.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-The check for !scan_plan is redunant as this has been checked
-in the proceeding statement and the code returns -ENOBUFS if
-it is true. Remove the redundant check.
+> Today flags like for instance _PAGE_RW or _PAGE_USER are used through
+> common parts of code.
+> Using those directly in common parts of code have proven to lead to
+> mistakes or misbehaviour, because their use is not always as trivial
+> as one could think.
+>
+> For instance, (flags & _PAGE_USER) == 0 isn't enough to tell
+> that a page is a kernel page, because some targets are using
+> _PAGE_PRIVILEDGED and not _PAGE_USER, so the test has to be 
+> (flags & (_PAGE_USER | _PAGE_PRIVILEDGED)) == _PAGE_PRIVILEDGED
+> This has to (bad) consequences:
+>
+>  - All targets must define every bit, even the unsupported ones,
+>    leading to a lot of useless #define _PAGE_XXX 0
+>  - If someone forgets to take into account all possible _PAGE_XXX bits
+>    for the case, we can get unexpected behaviour on some targets.
+>
+> This becomes even more complex when we come to using _PAGE_RW.
+> Testing (flags & _PAGE_RW) is not enough to test whether a page
+> if writable or not, because:
+>
+>  - Some targets have _PAGE_RO instead, which has to be unset to tell
+>    a page is writable
+>  - Some targets have _PAGE_R and _PAGE_W, in which case
+>    _PAGE_RW = _PAGE_R | _PAGE_W
+>  - Even knowing whether a page is readable is not always trivial because:
+>    - Some targets requires to check that _PAGE_R is set to ensure page
+>    is readable
+>    - Some targets requires to check that _PAGE_NA is not set
+>    - Some targets requires to check that _PAGE_RO or _PAGE_RW is set
+>
+> Etc ....
+>
+> In order to work around all those issues and minimise the risks of errors,
+> this serie aims at removing all use of _PAGE_XXX flags from powerpc code
+> and always use pte_xxx() and pte_mkxxx() accessors instead. Those accessors
+> are then defined in target specific parts of the kernel code.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/wireless/nl80211.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The series is really good. It also helps in code readability. Few things
+i am not sure there is a way to reduce the overhead
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index d5f9b5235cdd..b4908bcb0d77 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -10690,8 +10690,7 @@ static int nl80211_send_wowlan_nd(struct sk_buff *msg,
- 		if (!scan_plan)
- 			return -ENOBUFS;
+-		access = _PAGE_EXEC;
++		access = pte_val(pte_mkexec(__pte(0)));
+
+Considering we have multiple big endian to little endian coversion there
+for book3s 64.
+
+Other thing is __ioremap_at where we do
+
++       pte_t pte = __pte(flags);
  
--		if (!scan_plan ||
--		    nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_INTERVAL,
-+		if (nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_INTERVAL,
- 				req->scan_plans[i].interval) ||
- 		    (req->scan_plans[i].iterations &&
- 		     nla_put_u32(msg, NL80211_SCHED_SCAN_PLAN_ITERATIONS,
--- 
-2.17.1
+        /* Make sure we have the base flags */
+-       if ((flags & _PAGE_PRESENT) == 0)
++       if (!pte_present(pte))
+
+-               err = map_kernel_page(v+i, p+i, flags);
++               err = map_kernel_page(v + i, p + i, pte_val(pte));
+
+
+But otherwise for the series.
+
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com> 
 
