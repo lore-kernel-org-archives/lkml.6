@@ -6,48 +6,50 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95180C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38553C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 559DC206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559DC206BA
+	by mail.kernel.org (Postfix) with ESMTP id CAF6E206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAF6E206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbeIFSPv (ORCPT
+        id S1729795AbeIFSQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:15:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43553 "EHLO
+        Thu, 6 Sep 2018 14:16:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49171 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729518AbeIFSPv (ORCPT
+        with ESMTP id S1729411AbeIFSQZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:15:51 -0400
+        Thu, 6 Sep 2018 14:16:25 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DdrkW310038
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DeNlU310091
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:39:53 -0700
+        Thu, 6 Sep 2018 06:40:23 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86Ddr1s310035;
-        Thu, 6 Sep 2018 06:39:53 -0700
-Date:   Thu, 6 Sep 2018 06:39:53 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DeNZh310088;
+        Thu, 6 Sep 2018 06:40:23 -0700
+Date:   Thu, 6 Sep 2018 06:40:23 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-8897a8916efb29fa8bbe9e5f6e5d56362aedf64e@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        acme@redhat.com, peterz@infradead.org, jolsa@kernel.org,
-        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        dsahern@gmail.com, andi@firstfloor.org, namhyung@kernel.org
-Reply-To: dsahern@gmail.com, namhyung@kernel.org, andi@firstfloor.org,
-          tglx@linutronix.de, hpa@zytor.com, jolsa@kernel.org,
-          peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
-          linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
-In-Reply-To: <20180830063252.23729-36-jolsa@kernel.org>
-References: <20180830063252.23729-36-jolsa@kernel.org>
+Message-ID: <tip-6f6b6594b5f380b0a972b66b275caa6c54bb1fea@git.kernel.org>
+Cc:     namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        hpa@zytor.com, andi@firstfloor.org, acme@redhat.com,
+        mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        dsahern@gmail.com
+Reply-To: peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
+          andi@firstfloor.org, hpa@zytor.com, dsahern@gmail.com,
+          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+          jolsa@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20180830063252.23729-37-jolsa@kernel.org>
+References: <20180830063252.23729-37-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Move ru_* data to 'struct
+Subject: [tip:perf/core] perf stat: Move *_aggr_* data to 'struct
  perf_stat_config'
-Git-Commit-ID: 8897a8916efb29fa8bbe9e5f6e5d56362aedf64e
+Git-Commit-ID: 6f6b6594b5f380b0a972b66b275caa6c54bb1fea
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,17 +63,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8897a8916efb29fa8bbe9e5f6e5d56362aedf64e
-Gitweb:     https://git.kernel.org/tip/8897a8916efb29fa8bbe9e5f6e5d56362aedf64e
+Commit-ID:  6f6b6594b5f380b0a972b66b275caa6c54bb1fea
+Gitweb:     https://git.kernel.org/tip/6f6b6594b5f380b0a972b66b275caa6c54bb1fea
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:44 +0200
+AuthorDate: Thu, 30 Aug 2018 08:32:45 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 30 Aug 2018 15:52:24 -0300
 
-perf stat: Move ru_* data to 'struct perf_stat_config'
+perf stat: Move *_aggr_* data to 'struct perf_stat_config'
 
-Move the 'ru_*' global variables to 'struct perf_stat_config', so that
-it can be passed around and used outside the 'perf stat' command.
+Move the *_aggr_* global variables to 'struct perf_stat_config', so that
+it can be passed around and used outside 'perf stat' command.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -79,85 +81,364 @@ Cc: Andi Kleen <andi@firstfloor.org>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-36-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180830063252.23729-37-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 12 +++++-------
- tools/perf/util/stat.h    |  6 ++++++
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ tools/perf/builtin-stat.c | 112 ++++++++++++++++++++++++----------------------
+ tools/perf/util/stat.h    |   6 +++
+ 2 files changed, 64 insertions(+), 54 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index f61c2dc8c7e8..942ebfd8ef2e 100644
+index 942ebfd8ef2e..2f606f76b66a 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -171,8 +171,6 @@ static bool			interval_count;
+@@ -143,8 +143,6 @@ static struct target target = {
+ 	.uid	= UINT_MAX,
+ };
+ 
+-typedef int (*aggr_get_id_t)(struct cpu_map *m, int cpu);
+-
+ #define METRIC_ONLY_LEN 20
+ 
+ static volatile pid_t		child_pid			= -1;
+@@ -164,8 +162,6 @@ static bool			force_metric_only		= false;
+ static bool			no_merge			= false;
+ static bool			walltime_run_table		= false;
+ static struct timespec		ref_time;
+-static struct cpu_map		*aggr_map;
+-static aggr_get_id_t		aggr_get_id;
+ static bool			append_file;
+ static bool			interval_count;
  static const char		*output_name;
- static int			output_fd;
- static u64			*walltime_run;
--static bool			ru_display			= false;
--static struct rusage		ru_data;
+@@ -920,7 +916,7 @@ static int first_shadow_cpu(struct perf_stat_config *config,
+ {
+ 	int i;
  
- struct perf_stat {
- 	bool			 record;
-@@ -583,7 +581,7 @@ try_again:
- 					break;
- 			}
- 		}
--		wait4(child_pid, &status, 0, &ru_data);
-+		wait4(child_pid, &status, 0, &stat_config.ru_data);
+-	if (!aggr_get_id)
++	if (!config->aggr_get_id)
+ 		return 0;
  
- 		if (workload_exec_errno) {
- 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
-@@ -1679,9 +1677,9 @@ static void print_footer(struct perf_stat_config *config)
- 	if (config->run_count == 1) {
- 		fprintf(output, " %17.9f seconds time elapsed", avg);
+ 	if (config->aggr_mode == AGGR_NONE)
+@@ -932,7 +928,7 @@ static int first_shadow_cpu(struct perf_stat_config *config,
+ 	for (i = 0; i < perf_evsel__nr_cpus(evsel); i++) {
+ 		int cpu2 = perf_evsel__cpus(evsel)->map[i];
  
--		if (ru_display) {
--			double ru_utime = timeval2double(&ru_data.ru_utime);
--			double ru_stime = timeval2double(&ru_data.ru_stime);
-+		if (config->ru_display) {
-+			double ru_utime = timeval2double(&config->ru_data.ru_utime);
-+			double ru_stime = timeval2double(&config->ru_data.ru_stime);
+-		if (aggr_get_id(evsel_list->cpus, cpu2) == id)
++		if (config->aggr_get_id(config, evsel_list->cpus, cpu2) == id)
+ 			return cpu2;
+ 	}
+ 	return 0;
+@@ -1102,12 +1098,12 @@ static void aggr_update_shadow(struct perf_stat_config *config,
+ 	u64 val;
+ 	struct perf_evsel *counter;
  
- 			fprintf(output, "\n\n");
- 			fprintf(output, " %17.9f seconds user\n", ru_utime);
-@@ -2855,7 +2853,7 @@ int cmd_stat(int argc, const char **argv)
- 	 * run and when there's specified tracee.
+-	for (s = 0; s < aggr_map->nr; s++) {
+-		id = aggr_map->map[s];
++	for (s = 0; s < config->aggr_map->nr; s++) {
++		id = config->aggr_map->map[s];
+ 		evlist__for_each_entry(evlist, counter) {
+ 			val = 0;
+ 			for (cpu = 0; cpu < perf_evsel__nr_cpus(counter); cpu++) {
+-				s2 = aggr_get_id(evsel_list->cpus, cpu);
++				s2 = config->aggr_get_id(config, evsel_list->cpus, cpu);
+ 				if (s2 != id)
+ 					continue;
+ 				val += perf_counts(counter->counts, cpu, 0)->val;
+@@ -1147,8 +1143,8 @@ static void uniquify_event_name(struct perf_evsel *counter)
+ 	counter->uniquified_name = true;
+ }
+ 
+-static void collect_all_aliases(struct perf_evsel *counter,
+-			    void (*cb)(struct perf_evsel *counter, void *data,
++static void collect_all_aliases(struct perf_stat_config *config, struct perf_evsel *counter,
++			    void (*cb)(struct perf_stat_config *config, struct perf_evsel *counter, void *data,
+ 				       bool first),
+ 			    void *data)
+ {
+@@ -1164,22 +1160,22 @@ static void collect_all_aliases(struct perf_evsel *counter,
+ 		    perf_evsel__is_clock(alias) != perf_evsel__is_clock(counter))
+ 			break;
+ 		alias->merged_stat = true;
+-		cb(alias, data, false);
++		cb(config, alias, data, false);
+ 	}
+ }
+ 
+-static bool collect_data(struct perf_evsel *counter,
+-			    void (*cb)(struct perf_evsel *counter, void *data,
++static bool collect_data(struct perf_stat_config *config, struct perf_evsel *counter,
++			    void (*cb)(struct perf_stat_config *config, struct perf_evsel *counter, void *data,
+ 				       bool first),
+ 			    void *data)
+ {
+ 	if (counter->merged_stat)
+ 		return false;
+-	cb(counter, data, true);
++	cb(config, counter, data, true);
+ 	if (no_merge)
+ 		uniquify_event_name(counter);
+ 	else if (counter->auto_merge_stats)
+-		collect_all_aliases(counter, cb, data);
++		collect_all_aliases(config, counter, cb, data);
+ 	return true;
+ }
+ 
+@@ -1190,7 +1186,8 @@ struct aggr_data {
+ 	int cpu;
+ };
+ 
+-static void aggr_cb(struct perf_evsel *counter, void *data, bool first)
++static void aggr_cb(struct perf_stat_config *config,
++		    struct perf_evsel *counter, void *data, bool first)
+ {
+ 	struct aggr_data *ad = data;
+ 	int cpu, s2;
+@@ -1198,7 +1195,7 @@ static void aggr_cb(struct perf_evsel *counter, void *data, bool first)
+ 	for (cpu = 0; cpu < perf_evsel__nr_cpus(counter); cpu++) {
+ 		struct perf_counts_values *counts;
+ 
+-		s2 = aggr_get_id(perf_evsel__cpus(counter), cpu);
++		s2 = config->aggr_get_id(config, perf_evsel__cpus(counter), cpu);
+ 		if (s2 != ad->id)
+ 			continue;
+ 		if (first)
+@@ -1232,7 +1229,7 @@ static void print_aggr(struct perf_stat_config *config,
+ 	u64 ena, run, val;
+ 	bool first;
+ 
+-	if (!(aggr_map || aggr_get_id))
++	if (!(config->aggr_map || config->aggr_get_id))
+ 		return;
+ 
+ 	aggr_update_shadow(config, evlist);
+@@ -1241,12 +1238,12 @@ static void print_aggr(struct perf_stat_config *config,
+ 	 * With metric_only everything is on a single line.
+ 	 * Without each counter has its own line.
  	 */
- 	if ((stat_config.run_count == 1) && target__none(&target))
--		ru_display = true;
-+		stat_config.ru_display = true;
+-	for (s = 0; s < aggr_map->nr; s++) {
++	for (s = 0; s < config->aggr_map->nr; s++) {
+ 		struct aggr_data ad;
+ 		if (prefix && metric_only)
+ 			fprintf(output, "%s", prefix);
  
- 	if (stat_config.run_count < 0) {
- 		pr_err("Run count must be a positive number\n");
+-		ad.id = id = aggr_map->map[s];
++		ad.id = id = config->aggr_map->map[s];
+ 		first = true;
+ 		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+@@ -1254,7 +1251,7 @@ static void print_aggr(struct perf_stat_config *config,
+ 
+ 			ad.val = ad.ena = ad.run = 0;
+ 			ad.nr = 0;
+-			if (!collect_data(counter, aggr_cb, &ad))
++			if (!collect_data(config, counter, aggr_cb, &ad))
+ 				continue;
+ 			nr = ad.nr;
+ 			ena = ad.ena;
+@@ -1370,7 +1367,8 @@ struct caggr_data {
+ 	double avg, avg_enabled, avg_running;
+ };
+ 
+-static void counter_aggr_cb(struct perf_evsel *counter, void *data,
++static void counter_aggr_cb(struct perf_stat_config *config __maybe_unused,
++			    struct perf_evsel *counter, void *data,
+ 			    bool first __maybe_unused)
+ {
+ 	struct caggr_data *cd = data;
+@@ -1393,7 +1391,7 @@ static void print_counter_aggr(struct perf_stat_config *config,
+ 	double uval;
+ 	struct caggr_data cd = { .avg = 0.0 };
+ 
+-	if (!collect_data(counter, counter_aggr_cb, &cd))
++	if (!collect_data(config, counter, counter_aggr_cb, &cd))
+ 		return;
+ 
+ 	if (prefix && !metric_only)
+@@ -1406,7 +1404,8 @@ static void print_counter_aggr(struct perf_stat_config *config,
+ 		fprintf(output, "\n");
+ }
+ 
+-static void counter_cb(struct perf_evsel *counter, void *data,
++static void counter_cb(struct perf_stat_config *config __maybe_unused,
++		       struct perf_evsel *counter, void *data,
+ 		       bool first __maybe_unused)
+ {
+ 	struct aggr_data *ad = data;
+@@ -1431,7 +1430,7 @@ static void print_counter(struct perf_stat_config *config,
+ 	for (cpu = 0; cpu < perf_evsel__nr_cpus(counter); cpu++) {
+ 		struct aggr_data ad = { .cpu = cpu };
+ 
+-		if (!collect_data(counter, counter_cb, &ad))
++		if (!collect_data(config, counter, counter_cb, &ad))
+ 			return;
+ 		val = ad.val;
+ 		ena = ad.ena;
+@@ -1944,12 +1943,14 @@ static const struct option stat_options[] = {
+ 	OPT_END()
+ };
+ 
+-static int perf_stat__get_socket(struct cpu_map *map, int cpu)
++static int perf_stat__get_socket(struct perf_stat_config *config __maybe_unused,
++				 struct cpu_map *map, int cpu)
+ {
+ 	return cpu_map__get_socket(map, cpu, NULL);
+ }
+ 
+-static int perf_stat__get_core(struct cpu_map *map, int cpu)
++static int perf_stat__get_core(struct perf_stat_config *config __maybe_unused,
++			       struct cpu_map *map, int cpu)
+ {
+ 	return cpu_map__get_core(map, cpu, NULL);
+ }
+@@ -1966,9 +1967,8 @@ static int cpu_map__get_max(struct cpu_map *map)
+ 	return max;
+ }
+ 
+-static struct cpu_map *cpus_aggr_map;
+-
+-static int perf_stat__get_aggr(aggr_get_id_t get_id, struct cpu_map *map, int idx)
++static int perf_stat__get_aggr(struct perf_stat_config *config,
++			       aggr_get_id_t get_id, struct cpu_map *map, int idx)
+ {
+ 	int cpu;
+ 
+@@ -1977,20 +1977,22 @@ static int perf_stat__get_aggr(aggr_get_id_t get_id, struct cpu_map *map, int id
+ 
+ 	cpu = map->map[idx];
+ 
+-	if (cpus_aggr_map->map[cpu] == -1)
+-		cpus_aggr_map->map[cpu] = get_id(map, idx);
++	if (config->cpus_aggr_map->map[cpu] == -1)
++		config->cpus_aggr_map->map[cpu] = get_id(config, map, idx);
+ 
+-	return cpus_aggr_map->map[cpu];
++	return config->cpus_aggr_map->map[cpu];
+ }
+ 
+-static int perf_stat__get_socket_cached(struct cpu_map *map, int idx)
++static int perf_stat__get_socket_cached(struct perf_stat_config *config,
++					struct cpu_map *map, int idx)
+ {
+-	return perf_stat__get_aggr(perf_stat__get_socket, map, idx);
++	return perf_stat__get_aggr(config, perf_stat__get_socket, map, idx);
+ }
+ 
+-static int perf_stat__get_core_cached(struct cpu_map *map, int idx)
++static int perf_stat__get_core_cached(struct perf_stat_config *config,
++				      struct cpu_map *map, int idx)
+ {
+-	return perf_stat__get_aggr(perf_stat__get_core, map, idx);
++	return perf_stat__get_aggr(config, perf_stat__get_core, map, idx);
+ }
+ 
+ static int perf_stat_init_aggr_mode(void)
+@@ -1999,18 +2001,18 @@ static int perf_stat_init_aggr_mode(void)
+ 
+ 	switch (stat_config.aggr_mode) {
+ 	case AGGR_SOCKET:
+-		if (cpu_map__build_socket_map(evsel_list->cpus, &aggr_map)) {
++		if (cpu_map__build_socket_map(evsel_list->cpus, &stat_config.aggr_map)) {
+ 			perror("cannot build socket map");
+ 			return -1;
+ 		}
+-		aggr_get_id = perf_stat__get_socket_cached;
++		stat_config.aggr_get_id = perf_stat__get_socket_cached;
+ 		break;
+ 	case AGGR_CORE:
+-		if (cpu_map__build_core_map(evsel_list->cpus, &aggr_map)) {
++		if (cpu_map__build_core_map(evsel_list->cpus, &stat_config.aggr_map)) {
+ 			perror("cannot build core map");
+ 			return -1;
+ 		}
+-		aggr_get_id = perf_stat__get_core_cached;
++		stat_config.aggr_get_id = perf_stat__get_core_cached;
+ 		break;
+ 	case AGGR_NONE:
+ 	case AGGR_GLOBAL:
+@@ -2026,16 +2028,16 @@ static int perf_stat_init_aggr_mode(void)
+ 	 * the aggregation translate cpumap.
+ 	 */
+ 	nr = cpu_map__get_max(evsel_list->cpus);
+-	cpus_aggr_map = cpu_map__empty_new(nr + 1);
+-	return cpus_aggr_map ? 0 : -ENOMEM;
++	stat_config.cpus_aggr_map = cpu_map__empty_new(nr + 1);
++	return stat_config.cpus_aggr_map ? 0 : -ENOMEM;
+ }
+ 
+ static void perf_stat__exit_aggr_mode(void)
+ {
+-	cpu_map__put(aggr_map);
+-	cpu_map__put(cpus_aggr_map);
+-	aggr_map = NULL;
+-	cpus_aggr_map = NULL;
++	cpu_map__put(stat_config.aggr_map);
++	cpu_map__put(stat_config.cpus_aggr_map);
++	stat_config.aggr_map = NULL;
++	stat_config.cpus_aggr_map = NULL;
+ }
+ 
+ static inline int perf_env__get_cpu(struct perf_env *env, struct cpu_map *map, int idx)
+@@ -2093,12 +2095,14 @@ static int perf_env__build_core_map(struct perf_env *env, struct cpu_map *cpus,
+ 	return cpu_map__build_map(cpus, corep, perf_env__get_core, env);
+ }
+ 
+-static int perf_stat__get_socket_file(struct cpu_map *map, int idx)
++static int perf_stat__get_socket_file(struct perf_stat_config *config __maybe_unused,
++				      struct cpu_map *map, int idx)
+ {
+ 	return perf_env__get_socket(map, idx, &perf_stat.session->header.env);
+ }
+ 
+-static int perf_stat__get_core_file(struct cpu_map *map, int idx)
++static int perf_stat__get_core_file(struct perf_stat_config *config __maybe_unused,
++				    struct cpu_map *map, int idx)
+ {
+ 	return perf_env__get_core(map, idx, &perf_stat.session->header.env);
+ }
+@@ -2109,18 +2113,18 @@ static int perf_stat_init_aggr_mode_file(struct perf_stat *st)
+ 
+ 	switch (stat_config.aggr_mode) {
+ 	case AGGR_SOCKET:
+-		if (perf_env__build_socket_map(env, evsel_list->cpus, &aggr_map)) {
++		if (perf_env__build_socket_map(env, evsel_list->cpus, &stat_config.aggr_map)) {
+ 			perror("cannot build socket map");
+ 			return -1;
+ 		}
+-		aggr_get_id = perf_stat__get_socket_file;
++		stat_config.aggr_get_id = perf_stat__get_socket_file;
+ 		break;
+ 	case AGGR_CORE:
+-		if (perf_env__build_core_map(env, evsel_list->cpus, &aggr_map)) {
++		if (perf_env__build_core_map(env, evsel_list->cpus, &stat_config.aggr_map)) {
+ 			perror("cannot build core map");
+ 			return -1;
+ 		}
+-		aggr_get_id = perf_stat__get_core_file;
++		stat_config.aggr_get_id = perf_stat__get_core_file;
+ 		break;
+ 	case AGGR_NONE:
+ 	case AGGR_GLOBAL:
 diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 6fb4dac26ccc..1fd0b7e196c6 100644
+index 1fd0b7e196c6..be202b066e62 100644
 --- a/tools/perf/util/stat.h
 +++ b/tools/perf/util/stat.h
-@@ -4,6 +4,10 @@
+@@ -90,6 +90,9 @@ struct runtime_stat {
+ 	struct rblist value_list;
+ };
  
- #include <linux/types.h>
- #include <stdio.h>
-+#include <sys/types.h>
-+#include <sys/time.h>
-+#include <sys/resource.h>
-+#include <sys/wait.h>
- #include "xyarray.h"
- #include "rblist.h"
- #include "perf.h"
-@@ -95,6 +99,7 @@ struct perf_stat_config {
- 	bool			 interval_clear;
- 	bool			 metric_only;
- 	bool			 null_run;
-+	bool			 ru_display;
- 	FILE			*output;
- 	unsigned int		 interval;
- 	unsigned int		 timeout;
-@@ -109,6 +114,7 @@ struct perf_stat_config {
- 	int			 stats_num;
++typedef int (*aggr_get_id_t)(struct perf_stat_config *config,
++			     struct cpu_map *m, int cpu);
++
+ struct perf_stat_config {
+ 	enum aggr_mode		 aggr_mode;
+ 	bool			 scale;
+@@ -115,6 +118,9 @@ struct perf_stat_config {
  	const char		*csv_sep;
  	struct stats		*walltime_nsecs_stats;
-+	struct rusage		 ru_data;
+ 	struct rusage		 ru_data;
++	struct cpu_map		*aggr_map;
++	aggr_get_id_t		 aggr_get_id;
++	struct cpu_map		*cpus_aggr_map;
  };
  
  void update_stats(struct stats *stats, u64 val);
