@@ -3,125 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B295FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033FBC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65D09206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D09206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id AF4982075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:12:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF4982075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbeIFSqu (ORCPT
+        id S1729478AbeIFSsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:46:50 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34829 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728929AbeIFSqu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:46:50 -0400
-Received: by mail-qt0-f193.google.com with SMTP id j7-v6so12404782qtp.2;
-        Thu, 06 Sep 2018 07:11:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z3oM06lmWNJgiB/R5oFcZh9AMqGJwo4dOOsATyJhVGo=;
-        b=qQlekQPG3q/l3XGdG0Av0YcGCsRtNXqozObYMGZGDV9dnlQcbNQYWdJ2D5Oag3Q8Lj
-         ii+iwWoAVqhgHzM6dsSdeFJSFdWXyqD2y63jAgZ6mBOnXarqVS+fykFwZsyjuftgvumq
-         BWynF7f7sEczOo6PfflJcHdbyoTYT/o4v3qMN67HVY46ink798hmEUTrh2dvAWkDVJYk
-         rDw5SlvK9HAOY3KnzoOWHiWQW1hgQ2j8wOuUkjGLPi++W2BxrgMKRmXjOwJ82WIoYfUL
-         Upp0FElAJ8dxdRWfng8wveJdwjUGGq8vl0GCQJkCVDDRtVTh0VLG49McwgwOfzDvPf/c
-         O4TQ==
-X-Gm-Message-State: APzg51AEAz3iFIVXZYcmt2BmpH2J2bwZCVo4PUsqopOYlMH3/5grr2Ud
-        3oJcY02z2kTvDlqkSz27fhaINLBwxMsyZ8FzqzwGhILa
-X-Google-Smtp-Source: ANB0Vdac+IiqzzY55VNt+/qlwznXAGJV8LuUQAjo8EYwtwjoiWf/z6VT/W6JkehgvRtIhqmjAFvt6PJFOWP/YpA6W6U=
-X-Received: by 2002:a0c:885b:: with SMTP id 27-v6mr2188732qvm.115.1536243065551;
- Thu, 06 Sep 2018 07:11:05 -0700 (PDT)
+        Thu, 6 Sep 2018 14:48:24 -0400
+Received: from mga01.intel.com ([192.55.52.88]:11172 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728905AbeIFSsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:48:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 07:12:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="230726428"
+Received: from sgowrisa-mobl2.amr.corp.intel.com (HELO [10.251.16.54]) ([10.251.16.54])
+  by orsmga004.jf.intel.com with ESMTP; 06 Sep 2018 07:12:39 -0700
+Subject: Re: [RFC][PATCH 2/5] [PATCH 2/5] proc: introduce
+ /proc/PID/idle_bitmap
+To:     Fengguang Wu <fengguang.wu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180901112818.126790961@intel.com>
+ <20180901124811.530300789@intel.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Peng DongX <dongx.peng@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <71597e5c-8a7c-3a74-5b6d-6293f07f9a34@intel.com>
+Date:   Thu, 6 Sep 2018 07:12:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com> <bff609c9d2c5f0085448cc7d4227614ab7b7116a.1536138304.git.ren_guo@c-sky.com>
-In-Reply-To: <bff609c9d2c5f0085448cc7d4227614ab7b7116a.1536138304.git.ren_guo@c-sky.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Sep 2018 16:10:49 +0200
-Message-ID: <CAK8P3a1W5yvymAHKLTP5EwLm_usUqVBBE_86pRp0TmxrTiTfjA@mail.gmail.com>
-Subject: Re: [PATCH V3 05/26] csky: System Call
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180901124811.530300789@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
+On 09/01/2018 04:28 AM, Fengguang Wu wrote:
+> To walk 1TB memory of 4k active pages, it costs 2s vs 15s system
+> time to scan the per-task/global idle bitmaps.
 
-> +SYSCALL_DEFINE6(mmap2,
-> +       unsigned long, addr,
-> +       unsigned long, len,
-> +       unsigned long, prot,
-> +       unsigned long, flags,
-> +       unsigned long, fd,
-> +       off_t, offset)
-> +{
-> +       if (unlikely(offset & (~PAGE_MASK >> 12)))
-> +               return -EINVAL;
-> +       return sys_mmap_pgoff(addr, len, prot, flags, fd,
-> +               offset >> (PAGE_SHIFT - 12));
-> +}
+To me, that says this interface simply won't work on large systems.  2s
+and 15s are both simply unacceptably long.
 
-Please call ksys_mmap_pgoff() instead of sys_mmap_pgoff() here.
+> OTOH, the per-task idle bitmap is not suitable in some situations:
+> 
+> - not accurate for shared pages
+> - don't work with non-mapped file pages
+> - don't perform well for sparse page tables (pointed out by Huang Ying)
 
-The prototype in include/asm-generic/syscalls.h uses 'unsigned long'
-for the last argument as well, not off_t.
+OK, so we have a new ABI that doesn't work on large systems, consumes
+lots of time and resources to query and isn't suitable in quite a few
+situations.
 
-> +struct mmap_arg_struct {
-> +       unsigned long addr;
-> +       unsigned long len;
-> +       unsigned long prot;
-> +       unsigned long flags;
-> +       unsigned long fd;
-> +       unsigned long offset;
-> +};
-> +
-> +SYSCALL_DEFINE1(mmap,
-> +       struct mmap_arg_struct *, arg)
-
-Something is still wrong here, there should be no way to
-call sys_mmap(), since it's not in the syscall table.
-
-> +/*
-> + * for abiv1 the 64bits args should be even th, So we need mov the advice forward.
-> + */
-> +SYSCALL_DEFINE4(csky_fadvise64_64,
-> +       int, fd,
-> +       int, advice,
-> +       loff_t, offset,
-> +       loff_t, len)
-> +{
-> +       return sys_fadvise64_64(fd, offset, len, advice);
-> +}
-
-And call ksys_fadvise64_64() here.
-
-> +#undef __SYSCALL
-> +#define __SYSCALL(nr, call) [nr] = (call),
-> +
-> +#define sys_fadvise64_64 sys_csky_fadvise64_64
-> +void * const sys_call_table[__NR_syscalls] __page_aligned_data = {
-> +       [0 ... __NR_syscalls - 1] = sys_ni_syscall,
-> +#include <asm/unistd.h>
-> +};
-
-This looks good now.
-
-       Arnd
