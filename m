@@ -2,156 +2,154 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE9CC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19959C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69DDC2083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3D2E2077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:00:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScYizKca"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69DDC2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RIKOKCfW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WIlIUl1i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3D2E2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbeIFNch (ORCPT
+        id S1728181AbeIFNfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:32:37 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43710 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbeIFNch (ORCPT
+        Thu, 6 Sep 2018 09:35:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60494 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeIFNfR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:32:37 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j26-v6so4940903pfi.10;
-        Thu, 06 Sep 2018 01:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ww6MeoaO70E/3i2L5ecT5nfX8TmRL7LA8ebcVLUJN6s=;
-        b=ScYizKcaxZKF7UA8N9Bl92BjVxkSGYHE4EMLa4hKM1TACqsN6Zu0isdUV6PFWky05T
-         FDnmzLiZDHadVP0Q7LsSy2QxJ/oskIytgw9FySj5alUQR1dfVMJxKQWEr5FTNAfHWgpn
-         4FzO/YhI067ZSq50lf/uiirZvUwPjEUvqmhhOr0a9BTEJStAfik7qFIFKrsryTCXhpEI
-         VfNtM+r5Lw12zhI5aH79rhrzuYsKZx4amNFZVhaCd/w8L5heo7MfLhGyEV7OeLr2sQW3
-         hWmR9mUmwyqmACaTibCMBcr3zdF6OELQ/V4NwM7f8ByqUGFI3XkT6jcRLRP0hCE7YQS/
-         Okqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ww6MeoaO70E/3i2L5ecT5nfX8TmRL7LA8ebcVLUJN6s=;
-        b=i+EEyU07Ylp2nZ/rtK/h+qk3GHjon6NJnRTW77Kz2jpmeMFOKciXoeCBoDiLjhXgJ8
-         BHS6H5hlDESy+KObPcg8oVI/Es3mNt71X8JzElRToEFOEoOFpLHRU8wOzfJXLALJKkDR
-         S5NDPcgo1OSMdttig7TX9J+cLQeB7bNhjOGSae6UF6BKSWTpkh2CCli4w8zcJDHfVls2
-         PCwWPY9wNRsOwP5op8fa+h1uj0vSt3tn5/rtLAjOqzMyodxuK3OEv78QqhNLsrja2UeU
-         2JN0fZc2B0BRysf6D+8cWhKakAWCEHNr0tXwqETaxyKK5KyaIbpafeHyccCg3OMTynBu
-         swfg==
-X-Gm-Message-State: APzg51CyAEYdJqYocXd4OJ3ijEcn3QwFM+I8VXTlet0DMaHmbW8+fHE4
-        Hptw20K2v61dEk7Avdf8QUU=
-X-Google-Smtp-Source: ANB0Vdblf6nMCyDzJBhIlLVybnQ9VA8DINvO1x+ZFEgHMTIalkSmRCP61XX9/5Y5h0WUfE6ME23eQQ==
-X-Received: by 2002:a63:f849:: with SMTP id v9-v6mr1700806pgj.71.1536224291042;
-        Thu, 06 Sep 2018 01:58:11 -0700 (PDT)
-Received: from localhost.localdomain ([122.146.92.136])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm5786251pgj.84.2018.09.06.01.58.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Sep 2018 01:58:10 -0700 (PDT)
-From:   Yuan-Chi Pang <fu3mo6goo@gmail.com>
-Cc:     fu3mo6goo@gmail.com, Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mac80211: fix TX status reporting for ieee80211s
-Date:   Thu,  6 Sep 2018 16:57:48 +0800
-Message-Id: <1536224269-69350-1-git-send-email-fu3mo6goo@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535963610.3437.10.camel@sipsolutions.net>
-References: <1535963610.3437.10.camel@sipsolutions.net>
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 6 Sep 2018 09:35:17 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5692E6081A; Thu,  6 Sep 2018 09:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536224450;
+        bh=AE++BEUB1fXydUyhHP1nZ4Dbp16C6/uEvaIfdiQ+spk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=RIKOKCfWQwdhl8hiw27so1WEuOcXwAgC9YcoK0uWs8b+swJ4RQEW7fB9GGefDjigc
+         9O5ySBbEsXzqp1ZK94odBr+e8+VrMzWv0TxR8EbscGpums4Ixrp6iny40u3E7W932E
+         Q7lv5dRoAgh7R9fviXEAZTH2gW0DQkEATkEhN9gw=
+Received: from [10.204.78.89] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: neeraju@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5A165607B5;
+        Thu,  6 Sep 2018 09:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536224447;
+        bh=AE++BEUB1fXydUyhHP1nZ4Dbp16C6/uEvaIfdiQ+spk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WIlIUl1ijJ4CRONvbVuPAIvY7q12cz13GYVIKlQgk436IGwdliYG8em1Ujwt/5OL5
+         DXTiqdcI2DEcw2TnM4FMiSp2kj+/3wfi7+P3JO2aV/hQKaNqrwPnTiXd/i3lavBujV
+         e/g3+5t2oh9PBxt3ndpV5bb17LTm+7/cdzpvJohM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A165607B5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
+Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in
+ takedown_cpu()
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     josh@joshtriplett.org, peterz@infradead.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dzickus@redhat.com,
+        brendan.jackman@arm.com, malat@debian.org,
+        linux-kernel@vger.kernel.org, sramana@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org>
+ <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de>
+ <5b0e528f-e597-9598-3ff6-b9e08ddb8165@codeaurora.org>
+ <alpine.DEB.2.21.1809051514070.1416@nanos.tec.linutronix.de>
+ <9cac90ff-1a43-8663-da2e-7191975b5e93@codeaurora.org>
+ <alpine.DEB.2.21.1809061016500.1416@nanos.tec.linutronix.de>
+From:   Neeraj Upadhyay <neeraju@codeaurora.org>
+Message-ID: <9b4609c6-284f-cfab-82ba-2f2bf7f1867a@codeaurora.org>
+Date:   Thu, 6 Sep 2018 14:30:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1809061016500.1416@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TX status reporting to ieee80211s is through ieee80211s_update_metric.
-There are two problems about ieee80211s_update_metric:
 
-1. The purpose is to estimate the fail probability
-to a specific link. No need to restrict to data frame.
 
-2. Current implementation does not work if wireless driver does not
-pass tx_status with skb.
+On 09/06/2018 01:48 PM, Thomas Gleixner wrote:
+> On Thu, 6 Sep 2018, Neeraj Upadhyay wrote:
+>> On 09/05/2018 06:47 PM, Thomas Gleixner wrote:
+>>> On Wed, 5 Sep 2018, Neeraj Upadhyay wrote:
+>>>> On 09/05/2018 05:53 PM, Thomas Gleixner wrote:
+>>>>> And looking closer this is a general issue. Just that the TEARDOWN state
+>>>>> makes it simple to observe. It's universaly broken, when the first
+>>>>> teardown
+>>>>> callback fails because, st->state is only decremented _AFTER_ the
+>>>>> callback
+>>>>> returns success, but undo_cpu_down() increments unconditionally.
+>>>>>
+>>>> As per my understanding, there are 2 problems here; one is fixed with your
+>>>> patch, and other is cpuhp_reset_state() is used during rollback from
+>>>> non-AP to
+>>>> AP state, which seem to result in 2 increments of st->state (one increment
+>>>> done by cpuhp_reset_state() and another by cpu_thread_fun()) .
+>>> And how did your hack fix that up magically? I'll have a look later today.
+>>>
+>>> Thanks,
+>>>
+>>> 	tglx
+>>
+>> The hack fixes it by not calling cpuhp_reset_state() and doing rollback state
+>> reset inline in  _cpu_down().
+> 
+> And how is that any different from the proper patch I sent? It ends up in
+> the same state. So I have a hard time to understand your blurb above where
+> you claim that my patch just solves one of two problems?
+> 
+> Thanks,
+> 
+> 	tglx
+>
 
-Fix this by removing ieee80211_is_data condition, passing
-ieee80211_tx_status directly to ieee80211s_update_metric, and
-putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
+Yes, your patch solves the problem related to smpboot unparking being 
+skipped during rollback and with the hack we end up in same state. The 
+second thing, which I am referring to, is that there is one additional 
+state increment. I missed the part that, it could be required, so that 
+we reach CPUHP_AP_ONLINE_IDLE before calling __cpuhp_kick_ap(). So, it's 
+not a problem.
 
-Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
----
- net/mac80211/mesh.h      | 2 +-
- net/mac80211/mesh_hwmp.c | 8 ++------
- net/mac80211/status.c    | 4 +++-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+* 	cpuhp_reset_state() does one state increment and we reach 
+CPUHP_AP_ONLINE_IDLE.
 
-diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
-index ee56f18..7ffe56a 100644
---- a/net/mac80211/mesh.h
-+++ b/net/mac80211/mesh.h
-@@ -217,7 +217,7 @@ void mesh_rmc_free(struct ieee80211_sub_if_data *sdata);
- int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
- void ieee80211s_init(void);
- void ieee80211s_update_metric(struct ieee80211_local *local,
--			      struct sta_info *sta, struct sk_buff *skb);
-+			 struct sta_info *sta, struct ieee80211_tx_status *st);
- void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
- void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data *sdata);
- int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
-diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-index daf9db3..4286673 100644
---- a/net/mac80211/mesh_hwmp.c
-+++ b/net/mac80211/mesh_hwmp.c
-@@ -295,15 +295,11 @@ int mesh_path_error_tx(struct ieee80211_sub_if_data *sdata,
- }
- 
- void ieee80211s_update_metric(struct ieee80211_local *local,
--		struct sta_info *sta, struct sk_buff *skb)
-+		struct sta_info *sta, struct ieee80211_tx_status *st)
- {
--	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
--	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb->data;
-+	struct ieee80211_tx_info *txinfo = st->info;
- 	int failed;
- 
--	if (!ieee80211_is_data(hdr->frame_control))
--		return;
--
- 	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
- 
- 	/* moving average, scaled to 100.
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index 9a6d720..dfcd419 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -811,7 +811,7 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
- 
- 		rate_control_tx_status(local, sband, status);
- 		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
--			ieee80211s_update_metric(local, sta, skb);
-+			ieee80211s_update_metric(local, sta, status);
- 
- 		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) && acked)
- 			ieee80211_frame_acked(sta, skb);
-@@ -972,6 +972,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw *hw,
- 		}
- 
- 		rate_control_tx_status(local, sband, status);
-+		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
-+			ieee80211s_update_metric(local, sta, status);
- 	}
- 
- 	if (acked || noack_success) {
+	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
+		cpuhp_reset_state(st, prev_state);
+		__cpuhp_kick_ap(st);
+	}
+
+         CPUHP_TEARDOWN_CPU,
+         CPUHP_AP_ONLINE_IDLE,
+         CPUHP_AP_SMPBOOT_THREADS,
+
+
+* cpuhp_thread_fun() does one more increment before invoking state 
+callback (so, we skip CPUHP_AP_ONLINE_IDLE) and we reach 
+CPUHP_AP_SMPBOOT_THREADS:
+
+	static void cpuhp_thread_fun(unsigned int cpu)
+	<snip>
+		if (bringup) {
+			st->state++;
+			state = st->state;
+	<snip>
+
+
 -- 
-2.7.4
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
+member of the Code Aurora Forum, hosted by The Linux Foundation
