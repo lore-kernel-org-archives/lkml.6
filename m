@@ -2,68 +2,85 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C993C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B56AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C72320857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C72320857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
+	by mail.kernel.org (Postfix) with ESMTP id 5AD6720844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:07:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AD6720844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbeIFRmi (ORCPT
+        id S1729014AbeIFRmz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:42:38 -0400
-Received: from viti.kaiser.cx ([85.214.81.225]:41236 "EHLO viti.kaiser.cx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727698AbeIFRmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:42:38 -0400
-Received: from dslb-094-222-221-043.094.222.pools.vodafone-ip.de ([94.222.221.43] helo=martin-debian-1.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1fxtzz-0000bV-GX; Thu, 06 Sep 2018 15:07:03 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Cc:     linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH] mt76: MT76x0U requires MT76_USB
-Date:   Thu,  6 Sep 2018 15:06:43 +0200
-Message-Id: <1536239203-21733-1-git-send-email-martin@kaiser.cx>
-X-Mailer: git-send-email 2.1.4
+        Thu, 6 Sep 2018 13:42:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43330 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728679AbeIFRmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:42:55 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 82F98402277F;
+        Thu,  6 Sep 2018 13:07:29 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B329C2027EA0;
+        Thu,  6 Sep 2018 13:07:21 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 21:07:16 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org, jsmart2021@gmail.com,
+        sagi@grimberg.me, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, keith.busch@intel.com,
+        jthumshirn@suse.de, bart.vanassche@wdc.com
+Subject: Re: [PATCH 3/3] nvme-pci: use queue close instead of queue freeze
+Message-ID: <20180906130715.GB31250@ming.t460p>
+References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1536120586-3378-4-git-send-email-jianchao.w.wang@oracle.com>
+ <20180905220910.GC21352@ming.t460p>
+ <8ba97c77-0c3b-75df-0259-3c97ef7b774e@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ba97c77-0c3b-75df-0259-3c97ef7b774e@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 13:07:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 13:07:29 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we're building MT76x0U, we must select MT76_USB. Otherwise,
-compilation fails because of undefined references.
+On Thu, Sep 06, 2018 at 09:28:46AM +0800, jianchao.wang wrote:
+> Hi Ming
+> 
+> On 09/06/2018 06:09 AM, Ming Lei wrote:
+> > nvme_dev_add() still may call freeze & unfreeze queue, so your patch
+> > can't avoid draining queue completely here.
+> 
+> Yes, I know this. We still need to freeze queue when update nr_hw_queues.
+> But we move forward a step at least. :)
+> We don't need to drain request queue in normal case of nvme_reset_work.
 
-MT76x2U already does this correctly, fix it for MT76x0U as well.
+It is hard to say who is the normal case. In case of CPU hotplug, it is quite
+easy to trigger updating nr_hw_queues.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- drivers/net/wireless/mediatek/mt76/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> As for updating nr_hw_queues, we could try some other method on it next.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/Kconfig b/drivers/net/wireless/mediatek/mt76/Kconfig
-index 6a270e759006..cec977b81305 100644
---- a/drivers/net/wireless/mediatek/mt76/Kconfig
-+++ b/drivers/net/wireless/mediatek/mt76/Kconfig
-@@ -17,6 +17,7 @@ config MT76x2_COMMON
- config MT76x0U
- 	tristate "MediaTek MT76x0U (USB) support"
- 	select MT76_CORE
-+	select MT76_USB
- 	depends on MAC80211
- 	depends on USB
- 	select MT76x02_LIB
--- 
-2.1.4
+The thing is that draining queue may be inevitable inside reset work
+function because of updating nr_hw_queues, that means the approach in
+this patchset is just a partial solution
 
+Or it may not make sense to do that because we may never remove the draining
+queue in the code path of updating nr_hw_queues.
+
+Given they belong to same issue, I suggest to solve them all.
+
+Thanks,
+Ming
