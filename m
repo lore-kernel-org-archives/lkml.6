@@ -1,79 +1,104 @@
 Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD948C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1DBC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761C02075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:19:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761C02075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id BE62A206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:22:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE62A206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeIFKxg convert rfc822-to-8bit (ORCPT
+        id S1726594AbeIFK4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 06:53:36 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:33938 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbeIFKxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:53:36 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 4DA3911C1AF;
-        Thu,  6 Sep 2018 06:19:37 +0000 (UTC)
-Date:   Thu, 06 Sep 2018 14:19:17 +0800
-In-Reply-To: <CAMty3ZDn=uj3buvJx93R1J7Swr3CyfjJJ=MgQTGvRZ01izbAAA@mail.gmail.com>
-References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-9-icenowy@aosc.io> <CAMty3ZDn=uj3buvJx93R1J7Swr3CyfjJJ=MgQTGvRZ01izbAAA@mail.gmail.com>
+        Thu, 6 Sep 2018 06:56:33 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:37763 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbeIFK4c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 06:56:32 -0400
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w866McQj056474;
+        Thu, 6 Sep 2018 15:22:39 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
+ Thu, 06 Sep 2018 15:22:38 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w866McqY056470;
+        Thu, 6 Sep 2018 15:22:38 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w866MchB056469;
+        Thu, 6 Sep 2018 15:22:38 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201809060622.w866MchB056469@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH] =?ISO-2022-JP?B?bW0scGFnZV9hbGxvYzogUEZfV1FfV09SS0VSIHRocmVh?=
+ =?ISO-2022-JP?B?ZHMgbXVzdCBzbGVlcCBhdCBzaG91bGRfcmVjbGFpbV9yZXRyeSgpLg==?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Rientjes <rientjes@google.com>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
-To:     jagan@amarulasolutions.com, Jagan Teki <jagan@amarulasolutions.com>
-CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <73ADC796-D8CE-417C-82E3-0CDAF710A2F3@aosc.io>
+Date:   Thu, 06 Sep 2018 15:22:38 +0900
+References: <201809060100.w86100i6060716@www262.sakura.ne.jp> <20180906055742.GL14951@dhcp22.suse.cz>
+In-Reply-To: <20180906055742.GL14951@dhcp22.suse.cz>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Michal Hocko wrote:
+> > I assert that we should fix af5679fbc669f31f.
+> 
+> If you can come up with reasonable patch which doesn't complicate the
+> code and it is a clear win for both this particular workload as well as
+> others then why not.
 
+Why can't we do "at least MMF_OOM_SKIP should be set under the lock to
+prevent from races" ?
 
-于 2018年9月6日 GMT+08:00 下午2:18:13, Jagan Teki <jagan@amarulasolutions.com> 写到:
->On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> From: Jagan Teki <jagan@amarulasolutions.com>
->>
->> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
->> TCON is connected to LCD and the second is to HDMI.
->>
->> The HDMI controller/PHY pair is similar to the one on H3/H5.
->>
->> Add all required device tree nodes of the display pipeline, including
->> the TCON0 LCD one and the TCON1 HDMI one.
->>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> [Icenowy: refactor commit message and add 1st pipeline]
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Changes for v4:
->> - Misc fixes
->> - Dropped second PLL from HDMI PHY clock
->
->Why? it was there in previous versions.
-
-Based on my experiments, the bit has no effect on A64, and the parent
-is always PLL-VIDEO0.
-
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 5f2b2b1..e096bb8 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3065,7 +3065,9 @@ void exit_mmap(struct mm_struct *mm)
+ 		 */
+ 		(void)__oom_reap_task_mm(mm);
+ 
++		mutex_lock(&oom_lock);
+ 		set_bit(MMF_OOM_SKIP, &mm->flags);
++		mutex_unlock(&oom_lock);
+ 		down_write(&mm->mmap_sem);
+ 		up_write(&mm->mmap_sem);
+ 	}
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..b2a94c1 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -606,7 +606,9 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	 * Hide this mm from OOM killer because it has been either reaped or
+ 	 * somebody can't call up_write(mmap_sem).
+ 	 */
++	mutex_lock(&oom_lock);
+ 	set_bit(MMF_OOM_SKIP, &mm->flags);
++	mutex_unlock(&oom_lock);		
+ 
+ 	/* Drop a reference taken by wake_oom_reaper */
+ 	put_task_struct(tsk);
