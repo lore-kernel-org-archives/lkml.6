@@ -2,116 +2,95 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DA2C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AB3C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F6202075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBF432075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:00:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PaCRsAxY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F6202075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RRVZU1rJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gEp/RoaM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF432075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbeIFUg6 (ORCPT
+        id S1730422AbeIFUhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 16:36:58 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:43717 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730278AbeIFUg6 (ORCPT
+        Thu, 6 Sep 2018 16:37:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59746 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730278AbeIFUhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 16:36:58 -0400
-Received: by mail-ua1-f66.google.com with SMTP id f4-v6so9220171uao.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=87iNoYSUfe/536EvXk8+5SiR5kVKsQLteihjzvJE/VQ=;
-        b=PaCRsAxYKcVm/VhawSeC6jdfpgujhPzEenQNTdeukh1qzf0LE4LUKt3nVK1qxi5pF/
-         5DM+LYcwmgNsWgy0fQm47N8IUKu+8TSxUFFr4WwB1BPFG+IzqSPZDpJfRKqaUqFAfKCK
-         n5gBbVldTIcE0wNjqBmr56O3kFwZuuxwOITN4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=87iNoYSUfe/536EvXk8+5SiR5kVKsQLteihjzvJE/VQ=;
-        b=BdK9WeI5yzyybrsiwgDDWC3u0bHBQ7PAI0EvlE+7wVsFZvDmdYLy0+43b8KGCuWRV2
-         bA4r8sFZYVjEK/J/5pK2vN+2aV6TAUsaij8FrkbXguZK8fokAGa+NUTMKVyVZu+0/31G
-         MDCKZUHLVEWy8LcdSZJNsBztHiSvQE97lbLZpnogUAVWJw+H0dp281ypa+vrDVFQu8kd
-         IXmvK3o75YgjUH6YxHkQCPuLrGif+VjonkyL4FvZRk+gnzSlQ75CNFGZlROuSODWIhvq
-         LiAdKYkLHfapb0Mq9lmV03qOmf24lGFY5mpL2ythwQpEYqkw+pg5aVTa1KrEZdM1TPKV
-         1g6g==
-X-Gm-Message-State: APzg51Dq4aHEf+1aR537eC36iszMNZcX97Y4xw0o9mLLLRQrA625UG+e
-        E7gIkSf2wDbFXAM93zpCSJyLzrBaTxk=
-X-Google-Smtp-Source: ANB0VdZDH7v8B3XAtkFv69f7EZ8moTxj9aKq0AXVakr7GQPeRVqcedK63TftnUBJqKPZtdEmzbVr2g==
-X-Received: by 2002:a67:f74a:: with SMTP id w10-v6mr1182994vso.85.1536249647361;
-        Thu, 06 Sep 2018 09:00:47 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id u15-v6sm1837621uaf.15.2018.09.06.09.00.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 09:00:46 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id 101-v6so9222914uav.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:00:46 -0700 (PDT)
-X-Received: by 2002:a1f:bc6:: with SMTP id 189-v6mr1162425vkl.69.1536249645719;
- Thu, 06 Sep 2018 09:00:45 -0700 (PDT)
+        Thu, 6 Sep 2018 16:37:01 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C81F76044E; Thu,  6 Sep 2018 16:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536249650;
+        bh=GOFmPO9eaa5FGNMeXEzEO8NA2+3K8Ylses+hiOxaeNg=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=RRVZU1rJbtHBO/pSEHtzXqCG0mOLpFTNogjMgw1YjpUb3asP5oDB3QRXRFRIT3jir
+         utofqXGITCmO3K/tJtAVr4gqR8rL0+KxX+oEkE7dvB/eZgjlKjPICxPYoJ38a6AOzd
+         laNgN7+cFW5MziAsu9G1Ei7hf3E9o0rgJmGrV27w=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 539CB601D9;
+        Thu,  6 Sep 2018 16:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536249650;
+        bh=GOFmPO9eaa5FGNMeXEzEO8NA2+3K8Ylses+hiOxaeNg=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=gEp/RoaMF5A/EbnHsbzJORqzhYzTUEwF6sMc8fNQuTSNPjCqPXB7Qhvh9C+gFYYs3
+         FYvlRmlc0Z/VHdJX0qzTHj/F+LtFK3zgrer8uvJh/X6LvvmLlnht1Fw0d64UsSurBW
+         6Cj6bZP3RSdJg84nQtot9vDezTu6uSkT4H6ix/CQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 539CB601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a1f:5e8e:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 09:00:45 -0700 (PDT)
-In-Reply-To: <20180901222355.21803-1-bjorn.andersson@linaro.org>
-References: <20180901222355.21803-1-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 6 Sep 2018 09:00:45 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UohTgZLG+Nymf6Rd0v7H9gssheYAxuH5m0QRN3TufJQA@mail.gmail.com>
-Message-ID: <CAD=FV=UohTgZLG+Nymf6Rd0v7H9gssheYAxuH5m0QRN3TufJQA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: Add AOSS reset driver node for SDM845
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wil6210: fix unsigned cid comparison with >= 0
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180829175018.GA3776@embeddedor.com>
+References: <20180829175018.GA3776@embeddedor.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Maya Erez <merez@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180906160050.C81F76044E@smtp.codeaurora.org>
+Date:   Thu,  6 Sep 2018 16:00:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-On Sat, Sep 1, 2018 at 3:23 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> From: Sibi Sankar <sibis@codeaurora.org>
->
-> This patch adds the node to support AOSS reset driver on
-> SDM845
->
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> [bjorn: Updated addresses to match the binding that was merged]
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 0c9a2aa6a1b5..077760792cf0 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -9,6 +9,7 @@
->  #include <dt-bindings/clock/qcom,rpmh.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-> +#include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> The comparison of cid >= 0 is always true because cid is of type u8
+> (8 bits, unsigned).
+> 
+> Fix this by removing such comparison and updating the type of
+> variable cid to u8 in the caller function.
+> 
+> Addresses-Coverity-ID: 1473079 ("Unsigned compared against 0")
+> Fixes: b9010f105f21 ("wil6210: add FT roam support for AP and station")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-nit: please sort alphabetically.  "reset" comes before "soc"
+Patch applied to ath-next branch of ath.git, thanks.
 
-...other than that this looks sane to me.  Feel free to add my Reviewed-by tag.
+49925f247016 wil6210: fix unsigned cid comparison with >= 0
 
+-- 
+https://patchwork.kernel.org/patch/10580739/
 
--Doug
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
