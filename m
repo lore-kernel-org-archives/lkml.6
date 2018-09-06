@@ -2,161 +2,117 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9667AC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06874C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA44206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:00:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA44206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id ABEBC206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:00:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TMZtOGLv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEBC206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbeIFOfW (ORCPT
+        id S1728598AbeIFOfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:35:22 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:60237 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725809AbeIFOfW (ORCPT
+        Thu, 6 Sep 2018 10:35:37 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38101 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728572AbeIFOfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:35:22 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="44559141"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 06 Sep 2018 18:00:37 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 7D3704B6AE18;
-        Thu,  6 Sep 2018 18:00:37 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 6 Sep 2018 18:00:45 +0800
-Date:   Thu, 6 Sep 2018 18:00:13 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>, <x86@kernel.org>
-Subject: Re: [PATCH 0/3] x86/boot/KASLR: enhance randomness of kernel load
- addr when using GiB hugepage
-Message-ID: <20180906100013.GD8555@localhost.localdomain>
-References: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
- <20180906040723.GC8555@localhost.localdomain>
- <CAFgQCTtafOH45aPZeLwi7bWoJTjjKq7dp2_VAF1hHVrwG0qRKA@mail.gmail.com>
+        Thu, 6 Sep 2018 10:35:37 -0400
+Received: by mail-qt0-f193.google.com with SMTP id x7-v6so11528052qtk.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 03:00:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9wh+8YnDEoo04B3rlzt4xT71a2v028q4zOps+fl7Qwk=;
+        b=TMZtOGLvb57EDNmxiGJr0Sku09YNygyeMc7Cee/MlZBYSzUfS6oViHD21BlY12Vaan
+         EuaKgOfcxBb3o5udEtJrZTIjjRB2S7u8OpMYNKFJ7Y+TpCTzKfzzid4Czecl4mJqzROV
+         t4CfRzOCwk/6Q+VMEkEHuvQed47gHe7gWx/w4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9wh+8YnDEoo04B3rlzt4xT71a2v028q4zOps+fl7Qwk=;
+        b=pqufpahk1fcpEmxgXsVVtTB9jFomJFgRx5OYYyY5lQjgP/tUhuXPC+9NLqJs0OMYfu
+         M955FsZmQeMed1VYNCLjjXVmc4A/7hsJmxGaCoNYDP3Nttb50nQiOcFVJEDd1Ipctcja
+         IOxHhmLp9tsMFgGVlV8KF0S9I3vGlTAGRNSHCkUqlCXMN2p1QkkxXCXRACkeNpAKGpF4
+         51/NuZMAO8bYA6AyUnz6FERaucd/sCZ/Du9oNsb/fbf5GzQLFS3WPhvZh7R9TvY6GIS6
+         R99P8aEu4zFznDaSVQr5ZZGbiwRBNEHd7QfiBEcKOwv95xK0NLJc86dxM6a9coCZ2dNY
+         mPYg==
+X-Gm-Message-State: APzg51B1+h7MtlgR80asKrqYcx2DQTqjm/6FCpiuYx+Gva2dROOAhou9
+        FcpLB/Se94Intf6jC1EdWwQNzrxVDZ0mS3GmvbAOPQ==
+X-Google-Smtp-Source: ANB0VdZESFGEokgT+rvVut9VuXKxl9m+Xuie9SukngtQpK/Xh1tKsNhf/10CM1VExptRd4DqaxradSrIIktf+xOS06Y=
+X-Received: by 2002:ac8:6989:: with SMTP id o9-v6mr1415266qtq.244.1536228054761;
+ Thu, 06 Sep 2018 03:00:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAFgQCTtafOH45aPZeLwi7bWoJTjjKq7dp2_VAF1hHVrwG0qRKA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 7D3704B6AE18.A8FFD
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+References: <cover.1535462942.git.amit.kucheria@linaro.org>
+ <35c332750fe1eddfa2eb53750b810256310866bd.1535462942.git.amit.kucheria@linaro.org>
+ <CAHLCerPF0U22XZ8kEBkXZYJHkL73K8_RFkArs9gXvc0Qmufr-g@mail.gmail.com> <20180903204855.GB1437@tuxbook-pro>
+In-Reply-To: <20180903204855.GB1437@tuxbook-pro>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 6 Sep 2018 15:30:43 +0530
+Message-ID: <CAP245DWdePT5LZ1Sk20eea5Nx76ESMSz3Yp9b-UbNajT7fsFvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] thermal: tsens: Check if the IP is correctly
+ enabled by firmware
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
+        Doug Anderson <dianders@chromium.org>, mka@chromium.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 01:58:08PM +0800, Pingfan Liu wrote:
->On Thu, Sep 6, 2018 at 12:07 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->>
->> On Thu, Sep 06, 2018 at 10:36:19AM +0800, Pingfan Liu wrote:
->>
->> Hi Pingfan,
->>
->> >commit 747ff6265db4 ("x86/boot/KASLR: Skip specified number of 1GB huge
->> >pages when doing physical randomization (KASLR)") and commit
->> >9b912485e0e7 ("x86/boot/KASLR: Add two new functions for 1GB huge pages
->> >handling") prevent the physical load addr of kernel from spoiling a good
->> >candidate of GiB page. But the algorithm deterministicly chooses the most
->> >front GiB page for hugetlb, and sacrifices the randomness, which
->> >is the heart of the KASLR. This patch tries to enlarge the randomness in
->> >the cases where hugepages=X < the num Y of good candidate of GiB
->>
->> Yes, in some situations, if Y > X, the patch would reduce the
->> randomness. And to reserve a fixed 1G for huge page is not perfect
->> enouth.
->> But the the size of slot is so small, the size of memory is so big.
->>
->Yes, but this is the sense of a human,. and normally, we are protected
->against the attack from a program.
+On Tue, Sep 4, 2018 at 2:15 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 30 Aug 12:23 PDT 2018, Amit Kucheria wrote:
+>
+> > On Tue, Aug 28, 2018 at 7:08 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> > > The SROT registers are initialised by the secure firmware at boot. We
+> > > don't have write access to the registers. Check if the block is enabled
+> > > before continuing.
+> > >
+> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > >  drivers/thermal/qcom/tsens-common.c | 17 +++++++++++++++++
+> > >  1 file changed, 17 insertions(+)
+> > >
+> > > diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+> > > index 0b8a793f15f4..d250b757d1f0 100644
+> > > --- a/drivers/thermal/qcom/tsens-common.c
+> > > +++ b/drivers/thermal/qcom/tsens-common.c
+> > > @@ -12,6 +12,11 @@
+> > >  #include <linux/regmap.h>
+> > >  #include "tsens.h"
+> > >
+> > > +/* SROT */
+> > > +#define CTRL_OFFSET            0x4
+> >
+> > This OFFSET is not constant across the TSENS family and breaks atleast
+> > one platform in the test below. I have a patch to fix this for all
+> > platforms, will post it after a bit more testing.
+> >
+>
+> Afaict the other 10 patches can be merged independently of this patch.
+>
+> So please make the minor updates and resend them as a separate series,
+> with the acks/reviews, to make it easier for Eduardo to just pick them.
 >
 
-Well, in my opinion, the problem that Baoquan tried to fix exists
-only when Y == X. If Y > X, I think the problem is not a big problem,
-even though kernel breaks a good 1G memory for huge page, there are still
-enough place left.
-
->> >page.
->> >To comparison, taking a typical KVM guest for example, the head 3GiB mem
->> >can not be used as GiB hugetlb. Denoting the total mem size as Z(GiB), when
->> >Z=5, then Y=2, assuming X=1, the randomness range before this patch is
->> >4GiB, after this patch is 5GiB, and get a 25% improvement of randomness.
->>
->> Such as your example,
->> in 4G, the probability every slot chosen is about 0.00049
->> in 5G, the probability every slot chosen is about 0.00039
->> Yes, you did improve 25% for randomness. But I wonder if it's worth to
->> improve from 0.00049 to 0.00039.
->>
->This is the case of least improvement.
->
->> If there is something wrong in my understanding, please let me know.
->>
->Yes, you get my idea. There are two factor worth to consider. The 1st
->one is the head 3GiB, if it can be reduce to 1GiB or 2GiB, then the
-
-Yes, as you said, from a human's feeling, I think if there are more
-than one thousand slots, the probability is small enough.
-In some situations, your patch improve the randomness much. As for whether
-it's worth to do, let's see how other people think.
-
-Thanks,
-Chao Fan
-
->randomness will have a great improvement. The 2nd one is the X, which
->also play a important role of the randomness.
->
->Thanks and regards,
->Pingfan
->
->> Thanks,
->> Chao Fan
->>
->> >If Z=6, then Y=3, assuming X=2, the improvement equals: 50%( 6/(6-2) - 1);
->> >assuming X=1, the improvement will be: 20% (6/(6-1) - 1)
->> >
->> >Cc: Thomas Gleixner <tglx@linutronix.de>
->> >Cc: Ingo Molnar <mingo@redhat.com>
->> >Cc: "H. Peter Anvin" <hpa@zytor.com>
->> >Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->> >Cc: Baoquan He <bhe@redhat.com>
->> >Cc: Chao Fan <fanc.fnst@cn.fujitsu.com> (authored:1/16=6%)
->> >Cc: x86@kernel.org
->> >
->> >Pingfan Liu (3):
->> >  x86/boot/KASLR: change the prototypes of
->> >    process_efi_entries/process_e820_entries
->> >  x86/boot/KASLR: change the prototype of process_mem_region() to meet
->> >    the align requirement
->> >  x86/boot/KASLR: enhance randomness when using GiB hugepage
->> >
->> > arch/x86/boot/compressed/kaslr.c | 228 ++++++++++++++++++++++++++-------------
->> > 1 file changed, 152 insertions(+), 76 deletions(-)
->> >
->> >--
->> >2.7.4
->> >
->> >
->> >
->>
->>
->
->
-
-
+Will do.
