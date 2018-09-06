@@ -2,206 +2,159 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23235C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCBDC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0F620659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:18:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="TZv30Ptv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0F620659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 03A402075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:18:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A402075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeIFTyG (ORCPT
+        id S1730246AbeIFTyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:54:06 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:51648 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeIFTyG (ORCPT
+        Thu, 6 Sep 2018 15:54:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51520 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbeIFTyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:54:06 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 5C29710C0622;
-        Thu,  6 Sep 2018 08:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1536247086; bh=PbdUXOXw/Uuf7IizhNBoT1u/GnVBawU6XBbSUaQMAfM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=TZv30PtvyxN2CbnmcbmuKCUMvCHoosKpkAmldZUrBsraI4FfW4yJV0uy5W1nT4nnG
-         ZmGFoBUxeWftOA3GHMTAmkZanPpqoeIA12R1vEmwyUFflFKjBL2feYo9wq0zCOCRZA
-         rhTU2VZb3CNLB3AHfVdry+4BrByh4XRed1PuMJ+G55vh9WekOh3sW4s4KL+CSpcmbZ
-         dc0F9EdEoe1SiAr6kfFLFLpsdLHt4D2cRbG85XtRxSjXeaON81sQEjSQWeBiP4ldK4
-         dcAXcyaIZpp3abe9GCCzBjrlqi9SeRAsTUBCwwdqd5yc+h6GF3xHSKKSqCnYMsed4B
-         Zu5iJNCpWOLDw==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 5882E3DB8;
-        Thu,  6 Sep 2018 08:18:04 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 6 Sep 2018 08:18:04 -0700
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 6 Sep 2018 17:18:01 +0200
-Received: from [10.0.2.15] (10.107.25.90) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 6 Sep
- 2018 17:18:01 +0200
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        vitor <Vitor.Soares@synopsys.com>
-CC:     Arnd Bergmann <arnd@arndb.de>, Przemyslaw Gaj <pgaj@cadence.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        "Alicja Jurasik-Urbaniak" <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Peter Rosin <peda@axentia.se>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
- <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
- <20180824143934.6d6b6487@bbrezillon>
- <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
- <20180824201600.7d80bca9@bbrezillon>
- <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
- <20180828140209.29155d00@bbrezillon>
- <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
- <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
- <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
- <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
- <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
- <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
- <20180906151437.4259d6fc@bbrezillon> <20180906152055.5618d235@bbrezillon>
- <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
- <20180906161443.0f76b246@bbrezillon>
-From:   vitor <Vitor.Soares@synopsys.com>
-Message-ID: <5a2ed122-b56f-421b-34e0-74ef551b76b8@synopsys.com>
-Date:   Thu, 6 Sep 2018 16:17:58 +0100
+        Thu, 6 Sep 2018 15:54:46 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fxw3Q-0001pO-Pd; Thu, 06 Sep 2018 15:18:44 +0000
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20180906133348.brzvqt53nzukn7n2@kili.mountain>
+ <21c6b967-f4b5-db68-89b4-a9caa4e76fda@canonical.com>
+ <20180906144838.2dtqexjqieqjdpub@mwanda>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [PATCH] gpio: ep93xx: fix test for end of loop
+Message-ID: <6098ff32-7f64-38db-8937-a9d257935c97@canonical.com>
+Date:   Thu, 6 Sep 2018 16:18:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180906161443.0f76b246@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180906144838.2dtqexjqieqjdpub@mwanda>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [10.107.25.90]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-
-On 06-09-2018 15:14, Boris Brezillon wrote:
-> On Thu, 6 Sep 2018 14:50:03 +0100
-> vitor <Vitor.Soares@synopsys.com> wrote:
->
->> Hi,
+On 06/09/18 15:48, Dan Carpenter wrote:
+> On Thu, Sep 06, 2018 at 02:50:44PM +0100, Colin Ian King wrote:
+>> On 06/09/18 14:33, Dan Carpenter wrote:
+>>> The problem is that if port == ARRAY_SIZE() and "gc == &epg->gc[port]"
+>>> then that should be treated as invalid.
+>>>
+>>> Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>
+>>> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+>>> index 68a416fc3141..b0699f57ddf5 100644
+>>> --- a/drivers/gpio/gpio-ep93xx.c
+>>> +++ b/drivers/gpio/gpio-ep93xx.c
+>>> @@ -80,7 +80,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
+>>>  		port++;
+>>>  
+>>>  	/* This should not happen but is there as a last safeguard */
+>>> -	if (gc != &epg->gc[port]) {
+>>> +	if (port == ARRAY_SIZE(epg->gc)) {
+>>>  		pr_crit("can't find the GPIO port\n");
+>>>  		return 0;
+>>>  	}
+>>>
 >>
->>
->> On 06-09-2018 14:20, Boris Brezillon wrote:
->>> On Thu, 6 Sep 2018 15:14:37 +0200
->>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
->>>   
->>>> On Thu, 6 Sep 2018 14:59:46 +0200
->>>> Arnd Bergmann <arnd@arndb.de> wrote:
->>>>   
->>>>> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:
->>>>>> Hi Boris, Vitor,
->>>>>>
->>>>>> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
->>>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=Q9DWw3KGmshGw0f5QTiffbpbESyUlPx6KmASuDBtX9Y&s=HHE_y1kyMszJvP_tSP9JkDlPYxDywBeHwkMGgCR11uI&e=
->>>>>>
->>>>>> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
->>>>>> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
->>>>>>
->>>>>> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)
->>>>> Can you explain the reason for having a user space interface and DT property?
->>>>> I thought we had concluded earlier that we wouldn't need that, but it's possible
->>>>> that I missed something in the discussion since then.
->>>> I don't think the sysfs knob is needed, this being said, after thinking
->>>> a bit more about mastership handover and the secondary master case, I
->>>> think we have something important to solve.
->>>>
->>>> When a master is not in control of the bus, it gets informed of devices
->>>> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
->>>> means the secondary master should populate the bus with I3C/I2C devices
->>>> on such events, but that's not enough, because DEFSLVS/DAA do not
->>>> provide all device info.Some of them (like read/write/ibi limitations)
->>>> require extra CCC commands, and, to send those CCC commands, the
->>>> secondary master must claim the bus. We could add a case where we
->>>> declare devices as partially discovered until the master acquires
->>>> ownership of the bus, but that means part of the data returned by
->>>> i3c_device_get_info() will be inaccurate, which might have an impact on
->>>> some i3c driver ->probe() functions.
->>> Hm, one possible solution would be to register partially discovered
->>> devices to the device model and let i3c_device_get_info() claim the bus
->>> and request missing data when needed. This way, if the driver needs to
->>> call i3c_device_get_info() in its probe path, it should work just fine.
->> Why don't use the i3c_master_add_i3c_dev_locked that job? It create,
->> attach and retrieve the device info.
-> When will you call i3c_master_add_i3c_dev_locked()? After receiving a
-> DEFSLVS interrupt/event? When that happens you're not in control of the
-> bus, which means you'll have to force bus ownership handover. Is this
-> really what we want?
->
-> These are not rhetorical questions, I'm really asking for your opinion
-> here.
-What I understand from last discussion was that every time that device 
-need to do something (private messages) on the bus and don't have the 
-bus control it should force ownership handover.
-If my understanding is correct this can be also applied to CCC commands.
+>> Good catch! I overlooked that one.
+> 
+> It's unfortunate but I don't think any of our static checkers would have
+> caught it.  You found this bug because of cppcheck, right?  I know it
+> warns about the bounds test after use.  Does it also warn about the out
+> of bounds?
 
->
->> This can be triggered after the secondary master receive ENEC MR until
->> them is keep in the driver memory.
-> But that means no-one will actually trigger a mastership request,
-> because devices won't be registered until all info are available. If we
-> take this path, we should have a way to explicitly trigger a mastership
-> request (sysfs knob or any other means).
-By the current flow that we have now, we enable the IBI events at the 
-end of .do_daa. At this time the main master bus is initialized with all 
-devices.
+It can catch these, not sure how well it compares to the other tools I use.
 
- From the point of view of secondary master, it first participate on DAA 
-process, next it send its info (Main master do 
-i3c_master_retrieve_dev_info()) and them receive DEFSLVS. In the stage 
-it cannot request the bus mastership it need the MR enable.
+> 
+> Smatch doesn't warn about the out of bounds read because Smatch has bad
+> handling of loops.  Smatch is supposed to warn about the test after use
+> but that code is buggy.  I will investigate what's going on.
+> 
+> I have an unpublished test so Smatch does warn that the port < sizeof()
+> means that port is in terms of bytes but we're using it as an array
+> offset.  That's how I noticed this code, but it only warns about the
+> first use, so it warns about the loop but not the post-loop test.
+> 
+> I should fix Smatch's handling of loops so that we know this function
+> originally could return 0-8 and you maybe get a warning in the caller.
+> Unfortunately, I'm not sure I would have paid very much attention to a
+> warning like that because they tend to be prone to false positives.  We
+> have a lot of loops that do:
+> 
+> 	for (i = 0; i < ARRAY_SIZE(array); i++) {
+> 		if (foo <= array[i])
+> 			break;
+> 	}
 
-So, what I would suggest is to keep DEFSLVS data in secondary master 
-driver memory . When secondary master receive the MR enable, it can get 
-the bus ownership and do i3c_master_add_i3c_dev_locked() and each device 
-in DEFSLVS command. After this step delegate the bus ownership to the 
-main master.
+..yep, the are a lot of these to fix up for sure.
 
-What do you think about this?
-
-
-Best regards,
-Vitor Soares
-
+> 
+> And the last element of the array[] is UINT_MAX so we always break.
+> It's a lot of work but not necessarily difficult work.
+> 
+> regards,
+> dan carpenter
+> 
 
