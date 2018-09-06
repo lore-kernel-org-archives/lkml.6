@@ -2,213 +2,95 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F65DC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B56C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A1A20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:18:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A1A20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B983C20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B983C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeIFMw7 (ORCPT
+        id S1728144AbeIFMxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:52:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36198 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728074AbeIFMw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:52:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DF782AE02;
-        Thu,  6 Sep 2018 08:18:40 +0000 (UTC)
+        Thu, 6 Sep 2018 08:53:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:32946 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbeIFMxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:53:11 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fxpUu-0000mz-Ts; Thu, 06 Sep 2018 10:18:41 +0200
 Date:   Thu, 6 Sep 2018 10:18:40 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v4 2/2] x86/speculation: Enable cross-hyperthread spectre v2
- STIBP mitigation
-Message-ID: <nycvar.YFH.7.76.1809061018140.15880@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Neeraj Upadhyay <neeraju@codeaurora.org>
+cc:     josh@joshtriplett.org, peterz@infradead.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dzickus@redhat.com,
+        brendan.jackman@arm.com, malat@debian.org,
+        linux-kernel@vger.kernel.org, sramana@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] cpu/hotplug: Fix rollback during error-out in
+ takedown_cpu()
+In-Reply-To: <9cac90ff-1a43-8663-da2e-7191975b5e93@codeaurora.org>
+Message-ID: <alpine.DEB.2.21.1809061016500.1416@nanos.tec.linutronix.de>
+References: <1536042803-6152-1-git-send-email-neeraju@codeaurora.org> <alpine.DEB.2.21.1809051244500.1416@nanos.tec.linutronix.de> <alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de> <5b0e528f-e597-9598-3ff6-b9e08ddb8165@codeaurora.org>
+ <alpine.DEB.2.21.1809051514070.1416@nanos.tec.linutronix.de> <9cac90ff-1a43-8663-da2e-7191975b5e93@codeaurora.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="8323329-975396822-1536221920=:1416"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
-(once enabled) prevents cross-hyperthread control of decisions made by
-indirect branch predictors.
+--8323329-975396822-1536221920=:1416
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Enable this feature if
+On Thu, 6 Sep 2018, Neeraj Upadhyay wrote:
+> On 09/05/2018 06:47 PM, Thomas Gleixner wrote:
+> > On Wed, 5 Sep 2018, Neeraj Upadhyay wrote:
+> > > On 09/05/2018 05:53 PM, Thomas Gleixner wrote:
+> > > > And looking closer this is a general issue. Just that the TEARDOWN state
+> > > > makes it simple to observe. It's universaly broken, when the first
+> > > > teardown
+> > > > callback fails because, st->state is only decremented _AFTER_ the
+> > > > callback
+> > > > returns success, but undo_cpu_down() increments unconditionally.
+> > > > 
+> > > As per my understanding, there are 2 problems here; one is fixed with your
+> > > patch, and other is cpuhp_reset_state() is used during rollback from
+> > > non-AP to
+> > > AP state, which seem to result in 2 increments of st->state (one increment
+> > > done by cpuhp_reset_state() and another by cpu_thread_fun()) .
+> > And how did your hack fix that up magically? I'll have a look later today.
+> > 
+> > Thanks,
+> > 
+> > 	tglx
+> 
+> The hack fixes it by not calling cpuhp_reset_state() and doing rollback state
+> reset inline in  _cpu_down().
 
-- the CPU is vulnerable to spectre v2
-- the CPU supports SMT and has SMT siblings online
-- spectre_v2 mitigation autoselection is enabled (default)
+And how is that any different from the proper patch I sent? It ends up in
+the same state. So I have a hard time to understand your blurb above where
+you claim that my patch just solves one of two problems?
 
-After some previous discussion, this patch leaves STIBP on all the time,
-as wrmsr on crossing kernel boundary is a no-no. This could perhaps later
-be a bit more optimized (like disabling it in NOHZ, experiment with
-disabling it in idle, etc) if needed.
+Thanks,
 
-Note: the code could be made less awkward if it'd be guaranteed that STIBP
-could be kept on on a primary thread with SMT sibling being offline, without
-potentially imposing performance penalty. This doesn't seem to be defined
-anywhere though, so let's better be safe then sorry and always flip STIBP
-both on primary and sibling threads on hotplug transitions.
+	tglx
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- arch/x86/kernel/cpu/bugs.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++
- kernel/cpu.c               | 13 +++++++++-
- 2 files changed, 75 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 40bdaea97fe7..ba3df0a49a2e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -325,6 +325,56 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 	return cmd;
- }
- 
-+static bool stibp_needed(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+		return false;
-+
-+	if (cpu_smt_control != CPU_SMT_ENABLED)
-+		return false;
-+
-+	if (!boot_cpu_has(X86_FEATURE_STIBP))
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * The read-modify-write of the MSR doesn't need any race protection here,
-+ * as we're running in atomic context.
-+ */
-+static void enable_stibp(void *info)
-+{
-+	u64 mask;
-+	rdmsrl(MSR_IA32_SPEC_CTRL, mask);
-+	mask |= SPEC_CTRL_STIBP;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, mask);
-+}
-+
-+static void disable_stibp(void *info)
-+{
-+	u64 mask;
-+	rdmsrl(MSR_IA32_SPEC_CTRL, mask);
-+	mask &= ~SPEC_CTRL_STIBP;
-+	wrmsrl(MSR_IA32_SPEC_CTRL, mask);
-+}
-+
-+void arch_smt_enable_errata(void)
-+{
-+	if (stibp_needed()) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: Enabling STIBP\n");
-+		on_each_cpu(enable_stibp, NULL, 1);
-+	}
-+}
-+
-+void arch_smt_disable_errata(void)
-+{
-+	if (stibp_needed()) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: Disabling STIBP\n");
-+		on_each_cpu(disable_stibp, NULL, 1);
-+	}
-+}
-+
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -424,6 +474,9 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-+
-+	/* Enable STIBP on BP if needed */
-+	arch_smt_enable_errata();
- }
- 
- #undef pr_fmt
-@@ -655,6 +708,16 @@ void x86_spec_ctrl_setup_ap(void)
- 
- 	if (ssb_mode == SPEC_STORE_BYPASS_DISABLE)
- 		x86_amd_ssb_disable();
-+
-+	/*
-+	 * If we are here during system bootup, enable STIBP.
-+	 *
-+	 * If we are here because of SMT hotplug, STIBP will be enabled by the
-+	 * SMT control code (enabling here would not be sufficient, as it
-+	 * needs to happen on primary threads as well).
-+	 */
-+	if (stibp_needed() && system_state < SYSTEM_RUNNING)
-+		enable_stibp(NULL);
- }
- 
- #undef pr_fmt
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index aa7fe85ad62e..d3613d546829 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2025,17 +2025,27 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
-+/*
-+ * Architectures that need SMT-specific errata handling during SMT hotplug
-+ * should override these.
-+ */
-+void __weak arch_smt_enable_errata(void) { };
-+void __weak arch_smt_disable_errata(void) { };
-+
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
- 
- 	cpu_maps_update_begin();
-+	arch_smt_disable_errata();
- 	for_each_online_cpu(cpu) {
- 		if (topology_is_primary_thread(cpu))
- 			continue;
- 		ret = cpu_down_maps_locked(cpu, CPUHP_OFFLINE);
--		if (ret)
-+		if (ret) {
-+			arch_smt_enable_errata();
- 			break;
-+		}
- 		/*
- 		 * As this needs to hold the cpu maps lock it's impossible
- 		 * to call device_offline() because that ends up calling
-@@ -2073,6 +2083,7 @@ static int cpuhp_smt_enable(void)
- 		/* See comment in cpuhp_smt_disable() */
- 		cpuhp_online_cpu_device(cpu);
- 	}
-+	arch_smt_enable_errata();
- 	cpu_maps_update_done();
- 	return ret;
- }
-
--- 
-Jiri Kosina
-SUSE Labs
-
+--8323329-975396822-1536221920=:1416--
