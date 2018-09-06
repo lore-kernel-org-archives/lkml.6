@@ -2,124 +2,176 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4525FC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BBCC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9D702075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:07:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D702075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id B4C132075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:13:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfumzHnn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4C132075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeIFIlM (ORCPT
+        id S1726086AbeIFIqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 04:41:12 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:35190 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725929AbeIFIlM (ORCPT
+        Thu, 6 Sep 2018 04:46:49 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44284 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeIFIqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 04:41:12 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="44538144"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 06 Sep 2018 12:07:45 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id DFF484B6EC75;
-        Thu,  6 Sep 2018 12:07:45 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 6 Sep 2018 12:07:52 +0800
-Date:   Thu, 6 Sep 2018 12:07:23 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>, <x86@kernel.org>
-Subject: Re: [PATCH 0/3] x86/boot/KASLR: enhance randomness of kernel load
- addr when using GiB hugepage
-Message-ID: <20180906040723.GC8555@localhost.localdomain>
-References: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
+        Thu, 6 Sep 2018 04:46:49 -0400
+Received: by mail-oi0-f65.google.com with SMTP id l82-v6so17963161oih.11;
+        Wed, 05 Sep 2018 21:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=w9EMJ5hlB0tQE4aTxBuQ7ct0sXdpup49OSdil/i1Dpw=;
+        b=gfumzHnnqMYWCGCvcHTBlWOOCjWXMUTXN9SbA6Ndwmvk7z4SZrT0bkacrHgm8SB/QZ
+         94aCsdr1AbmYrhzAx1oZhOQLKDOsZhFPWlor+troEFXBo7limkg5s76+wLvkkoWksHKt
+         5+gMdk0wd+oCktya4FGYMm82c7U1fxDqMpFHOEhqnZPLj9tqa0Fu5hJZttLVK0FrRoXc
+         w9WYsVXNMrBykBP2aBDJL+S/we3F8PvWrqWrw/oEy+kvkIzrt9uzKy68XlktneFPeKb2
+         XdYMIbmEe6kuCZhDqeDqx7w6LL8mw43Yk4oLXg2UJRFF/c3Tz8zzP2o9aVOm7VdiorFK
+         SPow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=w9EMJ5hlB0tQE4aTxBuQ7ct0sXdpup49OSdil/i1Dpw=;
+        b=n/UgO3BMzKhpjlDJM40S8k/bIcck7xbIEPF3nV1B4tNgU6YHr6Kift98Ww1fQwoRaE
+         J0eLDO+JU2WWEy5h0JwWxKw4raVx9H8Ya3bmWt06pnSBbR3kpTai/GyzdracXm48MWCI
+         mc+rES6hbpKPi1IplCUJXAnB4DB7UozF70pLQ0iJXkFx9c4y+d4UjyDJCc0diSURIXQs
+         4UlvQ3/cD9GNBz++9LAlSq3qYFOjC0jXhvlnBXAYicfPre/TdHnhjUXaIQP53vP4jZr2
+         E27L2Ru45tLCv+bQXQrtbp4HJ/jhJXDcc2AoRSpfZ0A2+CI08bHEojdObYDg4f8Mr34G
+         RQYg==
+X-Gm-Message-State: APzg51DgHGISOp5zg0T5Mqj9V9NIcaLT0KGQj4kEZLn5f8dLdbilpoTT
+        JvA1dwJ+q6CdRGZObFl+02sgSyPhdTDd0KFF5SA=
+X-Google-Smtp-Source: ANB0VdaZUJgq3YwTGx/xbTLwkOSxG6xMbqj6iCkMT0cFZlm2SknezD8bPhvJUy7kGh/gSIl/C0KTEY/L2C845ZxTJCw=
+X-Received: by 2002:aca:494b:: with SMTP id w72-v6mr933162oia.293.1536207201750;
+ Wed, 05 Sep 2018 21:13:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: DFF484B6EC75.AD5D5
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Received: by 2002:a9d:2e30:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 21:12:51 -0700 (PDT)
+In-Reply-To: <CA+E=qVdWXWztLj3989X+U+=4P5FpM4hs+6ByVmq8bf7mPeiWsA@mail.gmail.com>
+References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-12-icenowy@aosc.io>
+ <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
+ <20180905075136.chumwosx76o2n66l@flea> <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
+ <CA+E=qVdWXWztLj3989X+U+=4P5FpM4hs+6ByVmq8bf7mPeiWsA@mail.gmail.com>
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+Date:   Wed, 5 Sep 2018 21:12:51 -0700
+Message-ID: <CA+E=qVd4siJReWxbEeQ1DjFrTnewSGW=UJitduLT=52YfB-rag@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable
+ HDMI output on A64 boards w/ HDMI
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:36:19AM +0800, Pingfan Liu wrote:
+On Wed, Sep 5, 2018 at 3:53 PM, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> I can test it tonight.
 
-Hi Pingfan,
+It works fine for me on pine64-lts with HDMI monitor:
 
->commit 747ff6265db4 ("x86/boot/KASLR: Skip specified number of 1GB huge
->pages when doing physical randomization (KASLR)") and commit
->9b912485e0e7 ("x86/boot/KASLR: Add two new functions for 1GB huge pages
->handling") prevent the physical load addr of kernel from spoiling a good
->candidate of GiB page. But the algorithm deterministicly chooses the most
->front GiB page for hugetlb, and sacrifices the randomness, which
->is the heart of the KASLR. This patch tries to enlarge the randomness in
->the cases where hugepages=X < the num Y of good candidate of GiB
+[    1.969772] sun4i-drm display-engine: bound 1100000.mixer (ops
+sun8i_mixer_ops)
+[    1.979302] sun4i-drm display-engine: bound 1200000.mixer (ops
+sun8i_mixer_ops)
+[    1.979738] sun4i-drm display-engine: No panel or bridge found...
+RGB output disabled
+[    1.979755] sun4i-drm display-engine: bound 1c0c000.lcd-controller
+(ops sun4i_tcon_ops)
+[    1.979935] sun4i-drm display-engine: bound 1c0d000.lcd-controller
+(ops sun4i_tcon_ops)
+[    1.980017] sun4i-drm display-engine: failed to bind 1ee0000.hdmi
+(ops sun8i_dw_hdmi_ops): -517
+[    1.980306] sun4i-drm display-engine: Couldn't bind all pipelines components
+[    1.980446] sun4i-drm display-engine: master bind failed: -517
+[    4.230997] sun4i-drm display-engine: bound 1100000.mixer (ops
+sun8i_mixer_ops)
+[    4.247886] sun4i-drm display-engine: bound 1200000.mixer (ops
+sun8i_mixer_ops)
+[    4.255639] sun4i-drm display-engine: No panel or bridge found...
+RGB output disabled
+[    4.263482] sun4i-drm display-engine: bound 1c0c000.lcd-controller
+(ops sun4i_tcon_ops)
+[    4.283255] sun4i-drm display-engine: bound 1c0d000.lcd-controller
+(ops sun4i_tcon_ops)
+[    4.322055] sun4i-drm display-engine: bound 1ee0000.hdmi (ops
+sun8i_dw_hdmi_ops)
+[    4.342115] fb: switching to sun4i-drm-fb from simple
+[    5.001434] sun4i-drm display-engine: fb0: DRM emulated frame buffer device
+[    5.008933] [drm] Initialized sun4i-drm 1.0.0 20150629 for
+display-engine on minor 0
 
-Yes, in some situations, if Y > X, the patch would reduce the
-randomness. And to reserve a fixed 1G for huge page is not perfect
-enouth.
-But the the size of slot is so small, the size of memory is so big.
+I tested non-applied patches from this series on top of
+git://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git
+sunxi/for-next
 
->page.
->To comparison, taking a typical KVM guest for example, the head 3GiB mem
->can not be used as GiB hugetlb. Denoting the total mem size as Z(GiB), when
->Z=5, then Y=2, assuming X=1, the randomness range before this patch is
->4GiB, after this patch is 5GiB, and get a 25% improvement of randomness.
+Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-Such as your example,
-in 4G, the probability every slot chosen is about 0.00049
-in 5G, the probability every slot chosen is about 0.00039
-Yes, you did improve 25% for randomness. But I wonder if it's worth to
-improve from 0.00049 to 0.00039.
-
-If there is something wrong in my understanding, please let me know.
-
-Thanks,
-Chao Fan
-
->If Z=6, then Y=3, assuming X=2, the improvement equals: 50%( 6/(6-2) - 1);
->assuming X=1, the improvement will be: 20% (6/(6-1) - 1)
 >
->Cc: Thomas Gleixner <tglx@linutronix.de>
->Cc: Ingo Molnar <mingo@redhat.com>
->Cc: "H. Peter Anvin" <hpa@zytor.com>
->Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->Cc: Baoquan He <bhe@redhat.com>
->Cc: Chao Fan <fanc.fnst@cn.fujitsu.com> (authored:1/16=6%)
->Cc: x86@kernel.org
->
->Pingfan Liu (3):
->  x86/boot/KASLR: change the prototypes of
->    process_efi_entries/process_e820_entries
->  x86/boot/KASLR: change the prototype of process_mem_region() to meet
->    the align requirement
->  x86/boot/KASLR: enhance randomness when using GiB hugepage
->
-> arch/x86/boot/compressed/kaslr.c | 228 ++++++++++++++++++++++++++-------------
-> 1 file changed, 152 insertions(+), 76 deletions(-)
->
->-- 
->2.7.4
->
->
->
-
-
+> On Wed, Sep 5, 2018 at 12:57 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>> On Wed, Sep 5, 2018 at 1:21 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>>> On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
+>>>> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>>> > From: Jagan Teki <jagan@amarulasolutions.com>
+>>>> >
+>>>> > Enable all necessary device tree nodes and add connector node to device
+>>>> > trees for all supported A64 boards with HDMI.
+>>>> >
+>>>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>> > [Icenowy: squash all board patches altogether and change supply name]
+>>>> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>> > ---
+>>>> > Changes in v4:
+>>>> > - Rebase some device trees.
+>>>> > Changes in v3,1:
+>>>> > - Squash all enablement patches altogether.
+>>>> > - Change supply name to match DT binding & driver change.
+>>>> > Changes for v3:
+>>>> > - Enable all pipeline components
+>>>> > Changes for v2:
+>>>> > - none
+>>>> >
+>>>> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+>>>> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+>>>> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+>>>> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+>>>> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+>>>> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+>>>> >  6 files changed, 204 insertions(+)
+>>>>
+>>>> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
+>>>> A64-Olinuxino, NPI-A64
+>>>>
+>>>> Pine64 boards look unable by saying
+>>>> [drm] Cannot find any crtc or sizes
+>>>>
+>>>> May be someone can confirm, it.
+>>>
+>>> Then we should drop the pine64 additions until someone figures it out,
+>>> as it has been already discussed.
+>>
+>> That is fine, but If anyone have pine64 can confirm this.
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
