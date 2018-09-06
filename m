@@ -2,82 +2,143 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A8BC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 321FEC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83AA20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:56:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="26JkJPe/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83AA20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id DDAF520844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:57:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDAF520844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbeIFRcD (ORCPT
+        id S1728725AbeIFRcn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:32:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44896 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727785AbeIFRcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:32:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vNBcT9Tk9g5QhVj6Cf6Vh/U2nJjh2M2XFL0k4EV5HTo=; b=26JkJPe/gkG4gGlqQe2khzEbP
-        /p3P0UaZcOECiYnKbO1ZZl2SbjK5YFJjbnOVxS0b0TNGLxwDpCZtiFn4RW1+afYLw9EXecOefmeKI
-        A5D9Sct/dRCCQMQTvHoEUALzwHLyOBz307A8DxzKAlUOglSnxY0kgVK+Lbc3zZZiqhxoEWdoNSTmh
-        Ti4r1SeQKn6ya/GurMBtquujPHbBnLObOmd2wz+k3/sI9wgkBCkQXdkKmfJmVV3gKacCaNixCKNr5
-        62AdaGMgvXu2eBpYkfNk+4nW01z6/h+ZWZqsCxBcZ+yVvtkD6fYmyXSWETQ9p2Ejx2ghEHJjx1Kco
-        t9jRx+Cpg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxtpu-0002QS-S3; Thu, 06 Sep 2018 12:56:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8A1F220210301; Thu,  6 Sep 2018 14:56:37 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 14:56:37 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org
-Subject: Re: stop_machine() soft lockup
-Message-ID: <20180906125637.GJ24082@hirez.programming.kicks-ass.net>
-References: <20180904190322.GA21835@centauri.lan>
- <20180905084241.GS24082@hirez.programming.kicks-ass.net>
- <20180905114749.GA5345@centauri.lan>
- <20180905131410.GY24082@hirez.programming.kicks-ass.net>
- <20180905134553.GB5345@centauri.lan>
+        Thu, 6 Sep 2018 13:32:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727782AbeIFRcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:32:43 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D3ED402277F;
+        Thu,  6 Sep 2018 12:57:19 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 488A62166B41;
+        Thu,  6 Sep 2018 12:57:05 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 20:57:01 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org, jsmart2021@gmail.com,
+        sagi@grimberg.me, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, keith.busch@intel.com,
+        jthumshirn@suse.de, bart.vanassche@wdc.com
+Subject: Re: [PATCH 0/3] Introduce a light-weight queue close feature
+Message-ID: <20180906125659.GA31250@ming.t460p>
+References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180905212659.GB21352@ming.t460p>
+ <b7074098-ab79-53b2-5cc6-25f859c4c666@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180905134553.GB5345@centauri.lan>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <b7074098-ab79-53b2-5cc6-25f859c4c666@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 12:57:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 12:57:19 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 03:45:53PM +0200, Niklas Cassel wrote:
+On Thu, Sep 06, 2018 at 09:51:43AM +0800, jianchao.wang wrote:
+> Hi Ming
+> 
+> On 09/06/2018 05:27 AM, Ming Lei wrote:
+> > On Wed, Sep 05, 2018 at 12:09:43PM +0800, Jianchao Wang wrote:
+> >> Dear all
+> >>
+> >> As we know, queue freeze is used to stop new IO comming in and drain
+> >> the request queue. And the draining queue here is necessary, because
+> >> queue freeze kills the percpu-ref q_usage_counter and need to drain
+> >> the q_usage_counter before switch it back to percpu mode. This could
+> >> be a trouble when we just want to prevent new IO.
+> >>
+> >> In nvme-pci, nvme_dev_disable freezes queues to prevent new IO.
+> >> nvme_reset_work will unfreeze and wait to drain the queues. However,
+> >> if IO timeout at the moment, no body could do recovery as nvme_reset_work
+> >> is waiting. We will encounter IO hang.
+> > 
+> > As we discussed this nvme time issue before, I have pointed out that
+> > this is because of blk_mq_unfreeze_queue()'s limit which requires that
+> > unfreeze can only be done when this queue ref counter drops to zero.
+> > 
+> > For this nvme timeout case, we may relax the limit, for example,
+> > introducing another API of blk_freeze_queue_stop() as counter-pair of
+> > blk_freeze_queue_start(), and simply switch the percpu-ref to percpu mode
+> > from atomic mode inside the new API.
+> 
+> Looks like we cannot switch a percpu-ref to percpu mode directly w/o drain it.
+> Some references maybe lost.
+> 
+> static void __percpu_ref_switch_to_percpu(struct percpu_ref *ref)
+> {
+> 	unsigned long __percpu *percpu_count = percpu_count_ptr(ref);
+> 	int cpu;
+> 
+> 	BUG_ON(!percpu_count);
+> 
+> 	if (!(ref->percpu_count_ptr & __PERCPU_REF_ATOMIC))
+> 		return;
+> 
+> 	atomic_long_add(PERCPU_COUNT_BIAS, &ref->count);
+> 
+> 	/*
+> 	 * Restore per-cpu operation.  smp_store_release() is paired
+> 	 * with READ_ONCE() in __ref_is_percpu() and guarantees that the
+> 	 * zeroing is visible to all percpu accesses which can see the
+> 	 * following __PERCPU_REF_ATOMIC clearing.
+> 	 */
+> 	for_each_possible_cpu(cpu)
+> 		*per_cpu_ptr(percpu_count, cpu) = 0;
+> 
+> 	smp_store_release(&ref->percpu_count_ptr,
+> 			  ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC);
 
-> However, I just managed to get this lockdep splat when booting without
-> earlycon and ftrace=irqsoff
-> I'm not sure that it is related, but I'm planning on looking into it anyway:
+Before REF_ATOMIC is cleared, all counting is done on the atomic type
+of &ref->count, and it is easy to keep the reference counter at
+ATOMIC mode. Also the reference counter can only be READ at atomic mode.
 
-That looks like your generic printk is crap splat.
+So could you explain a bit how the lost may happen? And it is lost at
+atomic mode or percpu mode?
 
-I tend to use this patch-set:
+> }
+> 
+> > 
+> >>
+> >> So introduce a light-weight queue close feature in this patch set
+> >> which could prevent new IO and needn't drain the queue.
+> > 
+> > Frankly speaking, IMO, it may not be an good idea to mess up the fast path
+> > just for handling the extremely unusual timeout event. The same is true
+> > for doing the preemp only stuff, as you saw I have posted patchset for
+> > killing it.
+> > 
+> 
+> In normal case, it is just a judgment like 
+> 
+> 	if (unlikely(READ_ONCE(q->queue_gate))
+> 
+> It should not be a big deal.
 
-  https://lkml.kernel.org/r/20170928121823.430053219@infradead.org
+Adding this stuff in fast path is quite difficult to verify its correctness
+because it is really lockless, or even barrier-less.
 
-and have (on x86):
+Not to mention, READ_ONCE() implies one barrier of smp_read_barrier_depends().
 
-  earlyprintk=serial,ttyS0,115200 force_early_printk debug ignore_loglevel
-
-That results in a printk that does pure UART bit-banging and works from
-any context without issue.
+Thanks,
+Ming
