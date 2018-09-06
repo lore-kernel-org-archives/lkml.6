@@ -2,407 +2,237 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9896CC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A173C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D56020873
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:55:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D56020873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A9C52077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A9C52077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=caviumnetworks.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbeIFN3q (ORCPT
+        id S1728010AbeIFNaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:29:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41908 "EHLO mx1.suse.de"
+        Thu, 6 Sep 2018 09:30:14 -0400
+Received: from mail-bn3nam01on0058.outbound.protection.outlook.com ([104.47.33.58]:23369
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725894AbeIFN3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:29:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2EB5BACE1;
-        Thu,  6 Sep 2018 08:55:18 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 10:55:15 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 21/29] memblock: replace alloc_bootmem with
- memblock_alloc
-Message-ID: <20180906085515.GF14951@dhcp22.suse.cz>
-References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1536163184-26356-22-git-send-email-rppt@linux.vnet.ibm.com>
+        id S1727865AbeIFNaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:30:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fLaEbkodoT5l0AKF5txbf0LbRtz2RY6H8ygxfC5pei0=;
+ b=lFTH56fgUhWfGqsrvHCw0ju5UNyktvjyKJsCYiFIQ21TlUGCtjs56a8YMUo7vxVoNUQXCsaOBm+6tdkJVLpuXmzzp18oHl3nsjlWlIzUdNwQV0DDB/CcA6LsR+tpWPd6+ZyLQZsipoqyPMlNYmjwiCC7zhncMqFCKq2uo+dIr0s=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Tomasz.Nowicki@cavium.com; 
+Received: from [10.0.0.85] (31.172.191.173) by
+ SN6PR07MB5184.namprd07.prod.outlook.com (2603:10b6:805:6c::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.14; Thu, 6 Sep 2018 08:55:43 +0000
+Subject: Re: [PATCH 1/1] coresight: etm4x: Configure EL2 exception level when
+ kernel is running in HYP
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     alexander.shishkin@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org, Jayachandran.Nair@cavium.com,
+        linux@armlinux.org.uk
+References: <20180904142034.19116-1-tnowicki@caviumnetworks.com>
+ <20180905203436.GA16793@xps15>
+From:   Tomasz Nowicki <tnowicki@caviumnetworks.com>
+Message-ID: <43b83d91-8cec-9926-5856-a4a5655711cb@caviumnetworks.com>
+Date:   Thu, 6 Sep 2018 10:55:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Firefox/52.0 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536163184-26356-22-git-send-email-rppt@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180905203436.GA16793@xps15>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [31.172.191.173]
+X-ClientProxiedBy: VI1PR0202CA0030.eurprd02.prod.outlook.com
+ (2603:10a6:803:14::43) To SN6PR07MB5184.namprd07.prod.outlook.com
+ (2603:10b6:805:6c::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 339f1bec-3d95-4a60-0b9d-08d613d6886a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB5184;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5184;3:drl21vxe7Z7/f/9ARkRojGhqINPs21N7X8EQVh3y9oNGXmhx+S6BcqbYNMQX5XPGUgMYCWmX0UJatZoNUh6v7i8CVINYPcadpEV1Y1SqjyNKMf5W3PZ5exzU41STHXCLq/lxzsbDwTqea9TAGBf/uurAJxJ7d/tDIRN7EHGOIzq88+0QkaI08kh0h4vhku/sxOkN7dE3sNSzER9XNzGVud6+7hsfhZx1akjwKHSkP8D94JK6XlyPXyon/2rh1qD0;25:Qm/jM2Q3hEbtJQCJNYo6aPo9eKpANR6jez5hJ7LnSV9zQ5cblT6vTBzL+9ZSm81st1ArUqN+uoZ8F4mSSMUrxI5T4UxZRokJtC1DDhlgQFdsozU570uymxWvVYZUMyc/ZkkUcKuEE5JMSLTov4SdE04GAu66yNf2s1JSQ7Ri9ezLDREGK0OhRm0jON7iLYOJwp7+ls0g29mXD0GuVwMfHH7hcS8BJcaUqq+TcODRZ2w76pTVLAEPO7954lvsYv0Bv9nk8N2tSj1b6+gRVUbo5t1tiNNGbJqBmjDkgyYq8D93vbKZSOHvCrmXe7jG1OqOriUkZPhF3jeHVtwPv63Ojw==;31:d5NWSzfGNszm8f/4yCk1YHBF+A+pbhFFNPmnhS43j6W0WHj8tNGs8bHDBgKAvf+wnyhR8ll+BUBqEJSB3zRqFLdFuMUNfKGYUU/Qdp0GOIGAx1GL4eaXrMvRYMCHeZtxG8gsQ31yFzBcc4ZxsaiyiJnsEQYBcnjxcx/m57wugxllUMUdIvBTRIOkxkkb8uJO7ioz468tTYI4hMC4HpTbR5xdPMuYD4mZY30t+wnGZT0=
+X-MS-TrafficTypeDiagnostic: SN6PR07MB5184:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5184;20:oujtKiLF1Os9JLSNz3SMGV9l/H4gSL4fikgVeboPGyLGjjZddW5LPD33vCNj+29r88ROZj3f2FJr3gp+HILNxMdYliIlaaVOi/lommu78/o9nn6WKFT4S3Ihmjys0PHRV+moygo0zFeFHWTQ84dXATgcFJx8ZovV/XyTYF5Ru0a3GXqiiPKsePQgpQ2IKpfBsBhwyyYAlLIwN6K4XjpAgevFKja4KAY15zNI4YXwTGHJ0UflUFzBNP4WltIhu7JfOerxYZllxY0IY1LJE8m1la9zIcA1mmNEgPZJQHdREJpdU7+pE3QP7JtrSSAO+0h/fdb8g0D7l9XbpzxXGqLdmTIGcfPX9qGlFd0rvFqeP69oAeK3XjaYIyoSIl4GzL64iq+GCNVnDYwZ0jMYpD8WLz/ct0G3YQ3w7vhavHbB3YMP8jfgRbcPq72m9jIusBsdH5d1XT6iiE3485WIRG2beVJNDjiuE8bMGWRnn6rXf/RE3i3RiJC6CGximZt2G+KjZqSiWMIonxefPVlcBBfJvNcXRZDnnMaSikFraOXBWcKxaG2ypsImxuNEZmaWNs+Ek2hkcJLFb7xRqVIHJFDcR2N6gBviNqABp0rpyNADkiQ=;4:F/fLNapvhCBN8zW0Hx8EKYAN9xFRKfxkOttgUPBFacAor94dXr7zN3rqn2p0hAIaCWM0f8XAOV7siTfy7xfos8L9HMVzg9tOaCTC4XvyDI0EK8+a55VwNesu5NSM5JZzgwL5byGPbYdL9gzk5/sOE7wQVihUQ15dqeDFtwZhVRezBm9CTdgQDwLVBpH9WpDCk+lY04GXCn4bmbGgvFgTeDsv3hwubT512gFW6x18fuGhNZ6aaMH5LpIZp6da44rilgsqCv+r471N3YrRS03QrA==
+X-Microsoft-Antispam-PRVS: <SN6PR07MB5184D66D76EC2D3D4658B33BFE010@SN6PR07MB5184.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:SN6PR07MB5184;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB5184;
+X-Forefront-PRVS: 0787459938
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(39860400002)(396003)(376002)(346002)(136003)(199004)(189003)(25786009)(7736002)(305945005)(4326008)(476003)(67846002)(486006)(2616005)(229853002)(31686004)(53936002)(16576012)(316002)(14444005)(58126008)(105586002)(81156014)(446003)(81166006)(8676002)(11346002)(106356001)(36756003)(956004)(6246003)(50466002)(97736004)(53546011)(5660300001)(478600001)(72206003)(6116002)(64126003)(3846002)(575784001)(47776003)(31696002)(26005)(386003)(68736007)(6916009)(52116002)(23676004)(52146003)(77096007)(2486003)(42882007)(6666003)(2906002)(8936002)(230700001)(76176011)(16526019)(66066001)(65956001)(6486002)(345774005)(186003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB5184;H:[10.0.0.85];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjZQUjA3TUI1MTg0OzIzOnlqTnM3eVRKM3pjc2EzdGx4TzBwOURNT1lC?=
+ =?utf-8?B?T0hyYlBRdngzdENmeXd1V21JL05LSWpweFRwZUxKTElOM1dwVlQvemJ1Uk9z?=
+ =?utf-8?B?TlRMK1VIb2tES2hhZXN3UlBOS3J1UWpyeUhYdGhwOGl0OGEzNzgvMFQ3c3NC?=
+ =?utf-8?B?bXFMeUFFbURVajdkWHB6a0NFRDZFaHpzR2pnRE5LNlp3NGQzaTNMOVRETk1M?=
+ =?utf-8?B?M053QjA0SU9LZlJRTUhMYjA0UWsza0g0M2ljSjJyRnd3cEpJSldnSjlrdWxp?=
+ =?utf-8?B?eUJ2TEIvTnk0MitIN1l1QmJ5V0J1aU5FU1RIZC8vR0NjN2lnaCtoWVNYTVNO?=
+ =?utf-8?B?OVpLZHlSaXZGK3M0L2JoeWFEVCt0d2dSUy84VzJub1F3ZlNhWUZ5ZHFEZytW?=
+ =?utf-8?B?U0VlamRSWmZqQnBMSTMrY3NiWjBOdWJMSWhNK2dWeHpRRkE0YUUwdHB4cUlr?=
+ =?utf-8?B?bFRnQnBPMVF6Q05iS1NyN3FFdmZnRjgySjBZSW5EZjZTSXhCYjFYQW5UN3Fj?=
+ =?utf-8?B?aUg3aENRWmxZcFlJNkRqclRuZWxxditzZ0t6dkxXWWNtdHdNVEZYWVYzQjFY?=
+ =?utf-8?B?V00xT0ZFRC9PeS9jQ1ExcllYODNjRFZleEk2R2dhdW81ZjNsSDNweklrQmZC?=
+ =?utf-8?B?VlB4ZHozakcyUm1yMi83L05FMmZRb1Zod2c4SDJ4VC8va1lMbUdUZ054RW1v?=
+ =?utf-8?B?Q3hTZGtlSkkyUk1LVFRQQXVUQklBS3lPcitZQ0FrbTBKMzNkdE1kR0p4OGN5?=
+ =?utf-8?B?K0JLNVQ5aTVkdG1VTG1BUW1LMHFPWVhFcjB3SEhGQmZ0clJXdzBENlBlK01O?=
+ =?utf-8?B?SjBmaFNTVFhRV1ZNQUdzVk1SaGlrSnp0VkRCcTc5ZEk3VjdYVG1VbUVVWmhG?=
+ =?utf-8?B?V1dCY1ZxMEFRNy9EWWZmU3NLNjlYVm5oVjVEUGwvV0UzMmpMcSsyQy9XbVpl?=
+ =?utf-8?B?bXZZWVJtTi9RNDBBTG02R1dBOWlkb0owQ1o3S0JDQ1crN1pWTG40cjd0eHhI?=
+ =?utf-8?B?UEN6VjNKV3FBSGQ5OUlDb1ZxZWNKeWkxZFhoaENCem9WbXowUTBDYmF3SEE4?=
+ =?utf-8?B?aVV3YVYwUEpmZlN4TlVHZzNLSnZFQUFlN3RHbVlMbmkrVkJYZHhFN0lrUXpT?=
+ =?utf-8?B?U1RKRW04TG1tcUczRE5UMUl2bUwvSlVNZTVlbkdENFBDZk9JYzBXMm5YSGo4?=
+ =?utf-8?B?bFBrMVBZR3kyMnR0Y1Rpbk1taXNKVndEMEZGZ1JNcDk2Tkt4Ri95eWswRWVV?=
+ =?utf-8?B?b2I5TEdRYzUrY1pjMXJYY2o5dzk3Q2h1UHdCdit5MVpUV0xFdVRTZ2pTL2RG?=
+ =?utf-8?B?Y3pCQkV0cjFqMDJoVFkyUU9SZko3NjBRdG5LQytzL3JLbXl0Tjl0OE9udXlU?=
+ =?utf-8?B?L0NSTlNKLzBLclBnR3FRb1Q4VEF5RlF3RnR0dDZuV04wcStyVGlBd3NGejFu?=
+ =?utf-8?B?RDkxMmsxeFBKVVp1MWZYbWVoaE4ybE9nR2tKVHFOUGROMWxoakZ1SWdMeUU5?=
+ =?utf-8?B?ay9xVGNTQU9pbVZHTHRySEN4QlRvT0tTMklHOUtsQVpxcHVRbjFkNmtpRXdF?=
+ =?utf-8?B?S09XemFNb2l1WEdBOTJVY09laUZVYnl4c3JHYW5NVXkwNGMxanFWOHlEeDFn?=
+ =?utf-8?B?VlR4SXUvZkVXaXhSRmdqTUJPSSsvUlI3dHV5V1BCS1dZYXlaOGxaWkNoYWpI?=
+ =?utf-8?B?dEh5U2J2aDhIUGIxaWpjZEJJYUliWTFaTDdlRTNCa1liY1pHTmltOFBlR2RG?=
+ =?utf-8?B?L0ZLZlR6czkvbmhWQ200NXFPeUlGUmxEaUFlWmZVZnJCdnVMeFc5YVRiQmlI?=
+ =?utf-8?B?Y3MrdkJ5bC9Fb2xFWEFpVTFWejhJOTl6N1FXN1NlNXRJL3NDRTNURDBMUUxu?=
+ =?utf-8?B?UzcvS2FkdlkwdGZBS2U0WWREeGdXWFdQYlhMcmlvaXR1L3NURnZVY1ptTlNy?=
+ =?utf-8?B?SERSUlI0eWhOWVdhL1pCc3d6UUs1bU9ySGZWMGVNcm1Eb0hvbVl2QmZ4UUZt?=
+ =?utf-8?B?em5qZGt6bURnY2NaUm1NUG1yU0h4ZEJOWWJ5UT09?=
+X-Microsoft-Antispam-Message-Info: t3hP6U/UpHqz+AgDI0B4/YC9aP/x2UoN5kEr3iPq/Xi4JPAla6O2zrqfKyKjuW2f/LpD4DwT/cv3+FbocMmN6VtgwC5cLI1TRghXISEQ5z9TU8fwpdkQ4pa0+yPI2CUmI8ZeO2SIoqx2Cpx5tKQD8Um7pFdkVK26QvJij6ePBBEnb7ZHH2kdY5aMxyhlds7rR6IQyReowRodHAEtDzg8G9n5C/qrF8IAPN5TvYG+Moz8zWbsmrLrSm+GEnBVRlY0AHgnJy2ISZHSh3RV++CpxFUGr+wnPjcRNB/p/grhqBaxFVpt1At6u5ioVVBqa7K1loZyBPNSPn79yk5WL7hKSNa5MPjSqxE377nGUxNRunM=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5184;6:I4i6lgDUaIpBB4cOaLoAW3cJ5T7HTfpiKGOfL8JlRarIFC5NTsDiWbIYCRqYHumPq9QKCOH0YRtHjs/QW2gdmaVW6CT2kE7ZZriNJkZlP0dLyr5AiFkVjBM74xbYWh0T1BB/xKcMa74RFh/WJiH24pQKLXNK8D8XGebTpTsoixI+O4nceyj4e2Zxe8aXoi2EZgCwN4AJlf8dXMIRF04pJeD/WB+Hb0h1G1KtGk714yGBkkPMhTuFlRkRKqaz8zucm2U4KVwKPtOu2HVOOJ4RuRmfPLgv31boIOChKQkswsbgSvHsZE3BCpBziwm5TZYi45RLhRkCfuQphrEzZMHGbbcCX0F8gj7mD3av24pn8w5fQSIfnoLn5W4Wy5Ks8BizrvotPn6JQyMjJPk/TZe6LxnubDhHI6/kltrO3Fc5/dfLEGuetr/0TmLmRJRTIWR+fd4BFHK0M0SXMgeclqW8mw==;5:TqdAnmTs/AWbwv31jXmYqqkcL1xzrNC2svelBzmDynOEtqwFjgVunZJOHQ1dvrWlDAbyc18z+O7k8kZGkiYkOA2Ak3ERrNfefM/hrqQkQ0zDjslS+gVnrJRGG8BOW5YD+DFCxz5yg/YLEI6k8E1sy+7ReKRg/UWDwIWitAUqFMQ=;7:bS2Vm8zIhnfY9MTJhLUHrCjZFWm9SnlZ+8RP2Mvt5JdzjHxHYhHTLf1aaQksvKWwyiuVxyLSVTVL55PRh1whEyp1mZdvmELtaN1PF309rRv1fLjhATE/7DQrS+xsQW73N2yt9YvFIEVn6W1kxseiIJlig6r9/bJEtVn2ip0OXZwA8izb/NAj1cMKWFMEdkCKLAQFHh7JJLtA8eIzjmCjOX9et2ltoen0b6+aER1ov1OK2uhLsNKuJmo7npITZe1v
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: caviumnetworks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2018 08:55:43.8674 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 339f1bec-3d95-4a60-0b9d-08d613d6886a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB5184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-09-18 18:59:36, Mike Rapoport wrote:
-> The conversion is done using the following semantic patch:
-> 
-> @@
-> expression e;
-> @@
-> - __alloc_bootmem(e)
+Hi Mathieu,
 
-Did you mean alloc_bottmem? Anyway the only difference from
-_alloc_bootmem is SMP_CACHE_BYTES and so you can use 0 alignment for
-memblock_virt_alloc. Why do we need memblock_alloc_from at all?
-
-> + memblock_alloc_from(e, 0)
-
+On 05.09.2018 22:34, Mathieu Poirier wrote:
+> Hi Tomasz,
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> ---
->  arch/alpha/kernel/core_marvel.c     | 4 ++--
->  arch/alpha/kernel/pci-noop.c        | 4 ++--
->  arch/alpha/kernel/pci.c             | 4 ++--
->  arch/alpha/kernel/pci_iommu.c       | 4 ++--
->  arch/ia64/kernel/mca.c              | 4 ++--
->  arch/ia64/mm/tlb.c                  | 4 ++--
->  arch/m68k/sun3/sun3dvma.c           | 3 ++-
->  arch/microblaze/mm/init.c           | 2 +-
->  arch/mips/kernel/setup.c            | 2 +-
->  arch/um/drivers/net_kern.c          | 2 +-
->  arch/um/drivers/vector_kern.c       | 2 +-
->  arch/um/kernel/initrd.c             | 2 +-
->  arch/x86/kernel/acpi/boot.c         | 3 ++-
->  arch/x86/kernel/apic/io_apic.c      | 2 +-
->  arch/x86/kernel/e820.c              | 2 +-
->  arch/x86/platform/olpc/olpc_dt.c    | 2 +-
->  arch/xtensa/platforms/iss/network.c | 2 +-
->  arch/xtensa/platforms/iss/setup.c   | 4 ++--
->  drivers/macintosh/smu.c             | 2 +-
->  init/main.c                         | 4 ++--
->  20 files changed, 30 insertions(+), 28 deletions(-)
+> On Tue, Sep 04, 2018 at 04:20:34PM +0200, Tomasz Nowicki wrote:
+>> For non-VHE systems host kernel runs at EL1 and jumps to EL2 whenever
+>> hypervisor code should be executed. In this case ETM4x driver must
+>> restrict configuration to EL1 when it setups kernel tracing.
+>> However, there is no separate hypervisor privilege level when VHE
+>> is enabled, the host kernel runs at EL2.
+>>
+>> This patch fixes configuration of TRCACATRn register for VHE systems
+>> so that ETM_EXLEVEL_NS_HYP bit is used instead of ETM_EXLEVEL_NS_OS
+>> to on/off kernel tracing. At the same time, it moves common code
+>> to new helper.
+>>
+>> Signed-off-by: Tomasz Nowicki <tnowicki@caviumnetworks.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-etm4x.c | 39 ++++++++++---------
+>>   1 file changed, 20 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+>> index f79b0ea85d76..5f495c942f99 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+>> @@ -28,6 +28,7 @@
+>>   #include <linux/pm_runtime.h>
+>>   #include <asm/sections.h>
+>>   #include <asm/local.h>
+>> +#include <asm/virt.h>
+>>
+>>   #include "coresight-etm4x.h"
+>>   #include "coresight-etm-perf.h"
+>> @@ -606,7 +607,7 @@ static void etm4_set_default_config(struct etmv4_config *config)
+>>        config->vinst_ctrl |= BIT(0);
+>>   }
+>>
+>> -static u64 etm4_get_access_type(struct etmv4_config *config)
+>> +static u64 etm4_get_ns_access_type(struct etmv4_config *config)
+>>   {
+>>        u64 access_type = 0;
+>>
+>> @@ -617,17 +618,27 @@ static u64 etm4_get_access_type(struct etmv4_config *config)
+>>         *   Bit[13] Exception level 1 - OS
+>>         *   Bit[14] Exception level 2 - Hypervisor
+>>         *   Bit[15] Never implemented
+>> -      *
+>> -      * Always stay away from hypervisor mode.
+>>         */
+>> -     access_type = ETM_EXLEVEL_NS_HYP;
+>>
 > 
-> diff --git a/arch/alpha/kernel/core_marvel.c b/arch/alpha/kernel/core_marvel.c
-> index bdebb8c2..1f00c94 100644
-> --- a/arch/alpha/kernel/core_marvel.c
-> +++ b/arch/alpha/kernel/core_marvel.c
-> @@ -82,7 +82,7 @@ mk_resource_name(int pe, int port, char *str)
->  	char *name;
->  	
->  	sprintf(tmp, "PCI %s PE %d PORT %d", str, pe, port);
-> -	name = alloc_bootmem(strlen(tmp) + 1);
-> +	name = memblock_alloc(strlen(tmp) + 1, 0);
->  	strcpy(name, tmp);
->  
->  	return name;
-> @@ -117,7 +117,7 @@ alloc_io7(unsigned int pe)
->  		return NULL;
->  	}
->  
-> -	io7 = alloc_bootmem(sizeof(*io7));
-> +	io7 = memblock_alloc(sizeof(*io7), 0);
->  	io7->pe = pe;
->  	raw_spin_lock_init(&io7->irq_lock);
->  
-> diff --git a/arch/alpha/kernel/pci-noop.c b/arch/alpha/kernel/pci-noop.c
-> index c7c5879..59cbfc2 100644
-> --- a/arch/alpha/kernel/pci-noop.c
-> +++ b/arch/alpha/kernel/pci-noop.c
-> @@ -33,7 +33,7 @@ alloc_pci_controller(void)
->  {
->  	struct pci_controller *hose;
->  
-> -	hose = alloc_bootmem(sizeof(*hose));
-> +	hose = memblock_alloc(sizeof(*hose), 0);
->  
->  	*hose_tail = hose;
->  	hose_tail = &hose->next;
-> @@ -44,7 +44,7 @@ alloc_pci_controller(void)
->  struct resource * __init
->  alloc_resource(void)
->  {
-> -	return alloc_bootmem(sizeof(struct resource));
-> +	return memblock_alloc(sizeof(struct resource), 0);
->  }
->  
->  SYSCALL_DEFINE3(pciconfig_iobase, long, which, unsigned long, bus,
-> diff --git a/arch/alpha/kernel/pci.c b/arch/alpha/kernel/pci.c
-> index c668c3b..4cc3eb9 100644
-> --- a/arch/alpha/kernel/pci.c
-> +++ b/arch/alpha/kernel/pci.c
-> @@ -392,7 +392,7 @@ alloc_pci_controller(void)
->  {
->  	struct pci_controller *hose;
->  
-> -	hose = alloc_bootmem(sizeof(*hose));
-> +	hose = memblock_alloc(sizeof(*hose), 0);
->  
->  	*hose_tail = hose;
->  	hose_tail = &hose->next;
-> @@ -403,7 +403,7 @@ alloc_pci_controller(void)
->  struct resource * __init
->  alloc_resource(void)
->  {
-> -	return alloc_bootmem(sizeof(struct resource));
-> +	return memblock_alloc(sizeof(struct resource), 0);
->  }
->  
->  
-> diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
-> index 0c05493..5d178c7 100644
-> --- a/arch/alpha/kernel/pci_iommu.c
-> +++ b/arch/alpha/kernel/pci_iommu.c
-> @@ -79,7 +79,7 @@ iommu_arena_new_node(int nid, struct pci_controller *hose, dma_addr_t base,
->  		printk("%s: couldn't allocate arena from node %d\n"
->  		       "    falling back to system-wide allocation\n",
->  		       __func__, nid);
-> -		arena = alloc_bootmem(sizeof(*arena));
-> +		arena = memblock_alloc(sizeof(*arena), 0);
->  	}
->  
->  	arena->ptes = memblock_alloc_node(sizeof(*arena), align, nid);
-> @@ -92,7 +92,7 @@ iommu_arena_new_node(int nid, struct pci_controller *hose, dma_addr_t base,
->  
->  #else /* CONFIG_DISCONTIGMEM */
->  
-> -	arena = alloc_bootmem(sizeof(*arena));
-> +	arena = memblock_alloc(sizeof(*arena), 0);
->  	arena->ptes = memblock_alloc_from(mem_size, align, 0);
->  
->  #endif /* CONFIG_DISCONTIGMEM */
-> diff --git a/arch/ia64/kernel/mca.c b/arch/ia64/kernel/mca.c
-> index 5586926..7120976 100644
-> --- a/arch/ia64/kernel/mca.c
-> +++ b/arch/ia64/kernel/mca.c
-> @@ -361,9 +361,9 @@ static ia64_state_log_t ia64_state_log[IA64_MAX_LOG_TYPES];
->  
->  #define IA64_LOG_ALLOCATE(it, size) \
->  	{ia64_state_log[it].isl_log[IA64_LOG_CURR_INDEX(it)] = \
-> -		(ia64_err_rec_t *)alloc_bootmem(size); \
-> +		(ia64_err_rec_t *)memblock_alloc(size, 0); \
->  	ia64_state_log[it].isl_log[IA64_LOG_NEXT_INDEX(it)] = \
-> -		(ia64_err_rec_t *)alloc_bootmem(size);}
-> +		(ia64_err_rec_t *)memblock_alloc(size, 0);}
->  #define IA64_LOG_LOCK_INIT(it) spin_lock_init(&ia64_state_log[it].isl_lock)
->  #define IA64_LOG_LOCK(it)      spin_lock_irqsave(&ia64_state_log[it].isl_lock, s)
->  #define IA64_LOG_UNLOCK(it)    spin_unlock_irqrestore(&ia64_state_log[it].isl_lock,s)
-> diff --git a/arch/ia64/mm/tlb.c b/arch/ia64/mm/tlb.c
-> index acf10eb..5554863 100644
-> --- a/arch/ia64/mm/tlb.c
-> +++ b/arch/ia64/mm/tlb.c
-> @@ -59,8 +59,8 @@ struct ia64_tr_entry *ia64_idtrs[NR_CPUS];
->  void __init
->  mmu_context_init (void)
->  {
-> -	ia64_ctx.bitmap = alloc_bootmem((ia64_ctx.max_ctx+1)>>3);
-> -	ia64_ctx.flushmap = alloc_bootmem((ia64_ctx.max_ctx+1)>>3);
-> +	ia64_ctx.bitmap = memblock_alloc((ia64_ctx.max_ctx + 1) >> 3, 0);
-> +	ia64_ctx.flushmap = memblock_alloc((ia64_ctx.max_ctx + 1) >> 3, 0);
->  }
->  
->  /*
-> diff --git a/arch/m68k/sun3/sun3dvma.c b/arch/m68k/sun3/sun3dvma.c
-> index 8546922..72d9458 100644
-> --- a/arch/m68k/sun3/sun3dvma.c
-> +++ b/arch/m68k/sun3/sun3dvma.c
-> @@ -267,7 +267,8 @@ void __init dvma_init(void)
->  
->  	list_add(&(hole->list), &hole_list);
->  
-> -	iommu_use = alloc_bootmem(IOMMU_TOTAL_ENTRIES * sizeof(unsigned long));
-> +	iommu_use = memblock_alloc(IOMMU_TOTAL_ENTRIES * sizeof(unsigned long),
-> +				   0);
->  
->  	dvma_unmap_iommu(DVMA_START, DVMA_SIZE);
->  
-> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-> index df6de7c..8c7f074 100644
-> --- a/arch/microblaze/mm/init.c
-> +++ b/arch/microblaze/mm/init.c
-> @@ -377,7 +377,7 @@ void * __ref zalloc_maybe_bootmem(size_t size, gfp_t mask)
->  	if (mem_init_done)
->  		p = kzalloc(size, mask);
->  	else {
-> -		p = alloc_bootmem(size);
-> +		p = memblock_alloc(size, 0);
->  		if (p)
->  			memset(p, 0, size);
->  	}
-> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-> index 08f8251..419dfc42 100644
-> --- a/arch/mips/kernel/setup.c
-> +++ b/arch/mips/kernel/setup.c
-> @@ -901,7 +901,7 @@ static void __init resource_init(void)
->  		if (end >= HIGHMEM_START)
->  			end = HIGHMEM_START - 1;
->  
-> -		res = alloc_bootmem(sizeof(struct resource));
-> +		res = memblock_alloc(sizeof(struct resource), 0);
->  
->  		res->start = start;
->  		res->end = end;
-> diff --git a/arch/um/drivers/net_kern.c b/arch/um/drivers/net_kern.c
-> index 3ef1b48..ef19a39 100644
-> --- a/arch/um/drivers/net_kern.c
-> +++ b/arch/um/drivers/net_kern.c
-> @@ -650,7 +650,7 @@ static int __init eth_setup(char *str)
->  		return 1;
->  	}
->  
-> -	new = alloc_bootmem(sizeof(*new));
-> +	new = memblock_alloc(sizeof(*new), 0);
->  
->  	INIT_LIST_HEAD(&new->list);
->  	new->index = n;
-> diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-> index c84133c..9d77579 100644
-> --- a/arch/um/drivers/vector_kern.c
-> +++ b/arch/um/drivers/vector_kern.c
-> @@ -1575,7 +1575,7 @@ static int __init vector_setup(char *str)
->  				 str, error);
->  		return 1;
->  	}
-> -	new = alloc_bootmem(sizeof(*new));
-> +	new = memblock_alloc(sizeof(*new), 0);
->  	INIT_LIST_HEAD(&new->list);
->  	new->unit = n;
->  	new->arguments = str;
-> diff --git a/arch/um/kernel/initrd.c b/arch/um/kernel/initrd.c
-> index 6f6e789..844056c 100644
-> --- a/arch/um/kernel/initrd.c
-> +++ b/arch/um/kernel/initrd.c
-> @@ -36,7 +36,7 @@ int __init read_initrd(void)
->  		return 0;
->  	}
->  
-> -	area = alloc_bootmem(size);
-> +	area = memblock_alloc(size, 0);
->  
->  	if (load_initrd(initrd, area, size) == -1)
->  		return 0;
-> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> index 3b20607..fd887c1 100644
-> --- a/arch/x86/kernel/acpi/boot.c
-> +++ b/arch/x86/kernel/acpi/boot.c
-> @@ -932,7 +932,8 @@ static int __init acpi_parse_hpet(struct acpi_table_header *table)
->  	 * the resource tree during the lateinit timeframe.
->  	 */
->  #define HPET_RESOURCE_NAME_SIZE 9
-> -	hpet_res = alloc_bootmem(sizeof(*hpet_res) + HPET_RESOURCE_NAME_SIZE);
-> +	hpet_res = memblock_alloc(sizeof(*hpet_res) + HPET_RESOURCE_NAME_SIZE,
-> +				  0);
->  
->  	hpet_res->name = (void *)&hpet_res[1];
->  	hpet_res->flags = IORESOURCE_MEM;
-> diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-> index e25118f..8c74509 100644
-> --- a/arch/x86/kernel/apic/io_apic.c
-> +++ b/arch/x86/kernel/apic/io_apic.c
-> @@ -2578,7 +2578,7 @@ static struct resource * __init ioapic_setup_resources(void)
->  	n = IOAPIC_RESOURCE_NAME_SIZE + sizeof(struct resource);
->  	n *= nr_ioapics;
->  
-> -	mem = alloc_bootmem(n);
-> +	mem = memblock_alloc(n, 0);
->  	res = (void *)mem;
->  
->  	mem += sizeof(struct resource) * nr_ioapics;
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index c88c23c..7ea8748 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -1094,7 +1094,7 @@ void __init e820__reserve_resources(void)
->  	struct resource *res;
->  	u64 end;
->  
-> -	res = alloc_bootmem(sizeof(*res) * e820_table->nr_entries);
-> +	res = memblock_alloc(sizeof(*res) * e820_table->nr_entries, 0);
->  	e820_res = res;
->  
->  	for (i = 0; i < e820_table->nr_entries; i++) {
-> diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
-> index d6ee929..140cd76 100644
-> --- a/arch/x86/platform/olpc/olpc_dt.c
-> +++ b/arch/x86/platform/olpc/olpc_dt.c
-> @@ -141,7 +141,7 @@ void * __init prom_early_alloc(unsigned long size)
->  		 * fast enough on the platforms we care about while minimizing
->  		 * wasted bootmem) and hand off chunks of it to callers.
->  		 */
-> -		res = alloc_bootmem(chunk_size);
-> +		res = memblock_alloc(chunk_size, 0);
->  		BUG_ON(!res);
->  		prom_early_allocated += chunk_size;
->  		memset(res, 0, chunk_size);
-> diff --git a/arch/xtensa/platforms/iss/network.c b/arch/xtensa/platforms/iss/network.c
-> index d027ddd..206b9d4 100644
-> --- a/arch/xtensa/platforms/iss/network.c
-> +++ b/arch/xtensa/platforms/iss/network.c
-> @@ -646,7 +646,7 @@ static int __init iss_net_setup(char *str)
->  		return 1;
->  	}
->  
-> -	new = alloc_bootmem(sizeof(*new));
-> +	new = memblock_alloc(sizeof(*new), 0);
->  	if (new == NULL) {
->  		pr_err("Alloc_bootmem failed\n");
->  		return 1;
-> diff --git a/arch/xtensa/platforms/iss/setup.c b/arch/xtensa/platforms/iss/setup.c
-> index f4bbb28..a922511 100644
-> --- a/arch/xtensa/platforms/iss/setup.c
-> +++ b/arch/xtensa/platforms/iss/setup.c
-> @@ -82,8 +82,8 @@ void __init platform_setup(char **p_cmdline)
->  	int argv_size = simc_argv_size();
->  
->  	if (argc > 1) {
-> -		void **argv = alloc_bootmem(argv_size);
-> -		char *cmdline = alloc_bootmem(argv_size);
-> +		void **argv = memblock_alloc(argv_size, 0);
-> +		char *cmdline = memblock_alloc(argv_size, 0);
->  		int i;
->  
->  		cmdline[0] = 0;
-> diff --git a/drivers/macintosh/smu.c b/drivers/macintosh/smu.c
-> index e8ae2e5..332fcca 100644
-> --- a/drivers/macintosh/smu.c
-> +++ b/drivers/macintosh/smu.c
-> @@ -493,7 +493,7 @@ int __init smu_init (void)
->  		goto fail_np;
->  	}
->  
-> -	smu = alloc_bootmem(sizeof(struct smu_device));
-> +	smu = memblock_alloc(sizeof(struct smu_device), 0);
->  
->  	spin_lock_init(&smu->lock);
->  	INIT_LIST_HEAD(&smu->cmd_list);
-> diff --git a/init/main.c b/init/main.c
-> index d0b92bd..99a9e99 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -768,8 +768,8 @@ static int __init initcall_blacklist(char *str)
->  		str_entry = strsep(&str, ",");
->  		if (str_entry) {
->  			pr_debug("blacklisting initcall %s\n", str_entry);
-> -			entry = alloc_bootmem(sizeof(*entry));
-> -			entry->buf = alloc_bootmem(strlen(str_entry) + 1);
-> +			entry = memblock_alloc(sizeof(*entry), 0);
-> +			entry->buf = memblock_alloc(strlen(str_entry) + 1, 0);
->  			strcpy(entry->buf, str_entry);
->  			list_add(&entry->next, &blacklisted_initcalls);
->  		}
-> -- 
-> 2.7.4
+> Extra space
+> 
+>> -     if (config->mode & ETM_MODE_EXCL_KERN)
+>> -             access_type |= ETM_EXLEVEL_NS_OS;
+>> +     if (!is_kernel_in_hyp_mode()) {
+>> +             /* Stay away from hypervisor mode for non-VHE */
+>> +             access_type =  ETM_EXLEVEL_NS_HYP;
+>> +             if (config->mode & ETM_MODE_EXCL_KERN)
+>> +                     access_type |= ETM_EXLEVEL_NS_OS;
+>> +     } else if (config->mode & ETM_MODE_EXCL_KERN) {
+>> +             access_type = ETM_EXLEVEL_NS_HYP;
+>> +     }
+>>
+>>        if (config->mode & ETM_MODE_EXCL_USER)
+>>                access_type |= ETM_EXLEVEL_NS_APP;
+>>
+>> +     return access_type;
+>> +}
+>> +
+>> +static u64 etm4_get_access_type(struct etmv4_config *config)
+>> +{
+>> +     u64 access_type = etm4_get_ns_access_type(config);
+>> +
+>>        /*
+>>         * EXLEVEL_S, bits[11:8], don't trace anything happening
+>>         * in secure state.
+>> @@ -881,20 +892,10 @@ void etm4_config_trace_mode(struct etmv4_config *config)
+>>
+>>        addr_acc = config->addr_acc[ETM_DEFAULT_ADDR_COMP];
+>>        /* clear default config */
+>> -     addr_acc &= ~(ETM_EXLEVEL_NS_APP | ETM_EXLEVEL_NS_OS);
+>> +     addr_acc &= ~(ETM_EXLEVEL_NS_APP | ETM_EXLEVEL_NS_OS |
+>> +                     ETM_EXLEVEL_NS_HYP);
+> 
+> Indentation problems
+> 
+>>
+>> -     /*
+>> -      * EXLEVEL_NS, bits[15:12]
+>> -      * The Exception levels are:
+>> -      *   Bit[12] Exception level 0 - Application
+>> -      *   Bit[13] Exception level 1 - OS
+>> -      *   Bit[14] Exception level 2 - Hypervisor
+>> -      *   Bit[15] Never implemented
+>> -      */
+>> -     if (mode & ETM_MODE_EXCL_KERN)
+>> -             addr_acc |= ETM_EXLEVEL_NS_OS;
+>> -     else
+>> -             addr_acc |= ETM_EXLEVEL_NS_APP;
+>> +     addr_acc |= etm4_get_ns_access_type(config);
+>>
+>>        config->addr_acc[ETM_DEFAULT_ADDR_COMP] = addr_acc;
+>>        config->addr_acc[ETM_DEFAULT_ADDR_COMP + 1] = addr_acc;
+> 
+> I tested your patch on my side and it didn't break kernel space decoding.
+> 
+> Since it would have taken longer to ask you to respin than to make the changes
+> myself, I applied your patch with the above modifications.
 > 
 
--- 
-Michal Hocko
-SUSE Labs
+Thank you for comments and corresponding fixes in the patch.
+
+Tomasz
