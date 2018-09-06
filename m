@@ -2,146 +2,164 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE8CC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBC5C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE47206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:18:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vyaWZPbF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE47206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 45684206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:18:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45684206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbeIFNws (ORCPT
+        id S1728425AbeIFNw6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:52:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42066 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeIFNws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:52:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0sS0K9TCyWm1tUOsTc2aOT+DhgslpdldEI0F1z2jUg8=; b=vyaWZPbFrl5cvUnVjHDTp6R7L
-        AT6ZVG2cFO6I1wYPCttBaYocdt5DASYviizmbvcKwsuu0G55BXgNXR360gNKhw9GhPZrN3ibeTq0S
-        pmB804HQ6/AbCMIzxFq5ZjhbpPDhj8xr3pzlmmDswjyTbc8Ly/0Zlxyy8z5tHaZeb2GNPXC3YQb1l
-        uDV7ReFh4qyEXp+WotEDTqRBfaK1tuFmITuy16JQWmdIdPvMrNSiIsPgcFbF6kYIf6U5dZCi6cPg8
-        nh/cXRvtETBFDxXXtF3DgDmPZzgezi1vKHLucqOdeGzTO4HUwD+scaHM89gTcGqp7PLmBz/c7mD50
-        6hJyKQ7eg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxqQR-00016c-Hb; Thu, 06 Sep 2018 09:18:07 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3287020210309; Thu,  6 Sep 2018 11:18:05 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 11:18:05 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
-Message-ID: <20180906091805.GF24142@hirez.programming.kicks-ass.net>
-References: <20180902173224.30606-1-namit@vmware.com>
- <20180905185617.GC24082@hirez.programming.kicks-ass.net>
- <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
- <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
- <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+        Thu, 6 Sep 2018 09:52:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49886 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726541AbeIFNw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:52:57 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 431A9402332F;
+        Thu,  6 Sep 2018 09:18:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B8C2D94646;
+        Thu,  6 Sep 2018 09:18:17 +0000 (UTC)
+Subject: [RFC] UAPI: Check headers by compiling all together as C++
+From:   David Howells <dhowells@redhat.com>
+To:     linux-api@vger.kernel.org, linux-kbuild@vger.kernel.org
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        keyrings@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-nilfs@vger.kernel.org, linux-nvdimm@lists.01.org,
+        "Michael S. Tsirkin" <mst@redhat.com>, codalist@coda.cs.cmu.edu,
+        coda@cs.cmu.edu, coreteam@netfilter.org,
+        Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-bcache@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Yann Droneaud <ydroneaud@opteya.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        netfilter-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com
+Date:   Thu, 06 Sep 2018 10:18:17 +0100
+Message-ID: <153622549721.14298.8116794954073122489.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906081300.GF24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 06 Sep 2018 09:18:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 06 Sep 2018 09:18:24 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:13:00AM +0200, Peter Zijlstra wrote:
-> No, you got it the first time. There are in fact more fixmap abusers;
-> see drivers/acpi/apei/ghes.c.  Also, as long as set_fixmap() allows
-> overwriting a _PAGE_PRESENT pte and has that dodgy
-> __flush_tlb_one_kernel() in it, the broken remains (and can return).
-> 
-> So we need to fix fixmap, to either disallow overwriting a _PAGE_PRESENT
-> pte, or to issue a full TLB invalidate.
-> 
-> Either fix will terminally break GHES, but that's OK, they've known
-> about this issue since 2015 and haven't cared, so I can't be bothered
-> about them.
 
-The below, combined with your text_poke() patches (text_poke disabled
-IRQs, so the below still complains, and I was lazy) makes my machine
-(mostly) happy.
+Here's a set of patches that inserts a step into the build process to make
+sure that the UAPI headers can all be built together with C++ (if the
+compiler being used supports C++).
 
-There's still some complaining before the poking_mm exists. Let me see
-if I can't cure that.
+Note that it's based on a commit from the sound tree to fix usage of u32
+and co..
 
+Most of the patches perform fixups, including:
+
+ (1) Fix member names that conflict with C++ reserved words by providing
+     alternates that can be used anywhere.  An anonymous union is used so
+     that that the conflicting name is still available outside of C++.
+
+ (2) Fix the use of flexible arrays in structs that get embedded (which is
+     illegal in C++).
+
+ (3) Remove the use of internal kernel structs in UAPI structures.
+
+ (4) Fix symbol collisions.
+
+ (5) Fix use of sparsely initialised arrays (which g++ doesn't implement).
+
+ (6) Remove some use of PAGE_SIZE since this isn't valid outside of the
+     kernel.
+
+There's also:
+
+ (7) Move the coda_psdev.h header file to fs/coda/.
+
+And lastly:
+
+ (8) Compile all of the UAPI headers (with a few exceptions) together as
+     C++ to catch new errors occurring as part of the regular build
+     process.
+
+Changes for v2:
+
+ - Merge commit from sound tree to fix u32 usage issues
+ - Use a switch to fix sparse array initialisation
+ - Simplify nilfs2 by performing bitwise ops in LE space not CPU space
+ - Handle conflicting fix to use of 'private' in keyctl.h
+ - Move kernel internal coda bits to coda internal headers
+ - Move coda_psdev.h header to fs/coda/.
+
+The patches can also be found here:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=uapi-check
+
+Thanks,
+David
 ---
+David Howells (11):
+      UAPI: drm: Fix use of C++ keywords as structural members
+      UAPI: keys: Fix use of C++ keywords as structural members
+      UAPI: virtio_net: Fix use of C++ keywords as structural members
+      UAPI: bcache: Fix use of embedded flexible array
+      UAPI: coda: Move kernel internals out of public view
+      coda: Move internal defs out of include/linux/
+      UAPI: netfilter: Fix symbol collision issues
+      UAPI: nilfs2: Fix use of undefined byteswapping functions
+      UAPI: ndctl: Fix g++-unsupported initialisation in headers
+      UAPI: ndctl: Remove use of PAGE_SIZE
+      UAPI: Check headers build for C++
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index dd519f372169..8df85fe66332 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -259,15 +260,27 @@ static pte_t *fill_pte(pmd_t *pmd, unsigned long vaddr)
- static void __set_pte_vaddr(pud_t *pud, unsigned long vaddr, pte_t new_pte)
- {
- 	pmd_t *pmd = fill_pmd(pud, vaddr);
--	pte_t *pte = fill_pte(pmd, vaddr);
-+	pte_t *ptep = fill_pte(pmd, vaddr);
- 
--	set_pte(pte, new_pte);
-+	pte_t pte = *ptep;
- 
--	/*
--	 * It's enough to flush this one mapping.
--	 * (PGE mappings get flushed as well)
--	 */
--	__flush_tlb_one_kernel(vaddr);
-+	set_pte(ptep, new_pte);
-+
-+	if (irqs_disabled()) {
-+		WARN((pte_val(pte) & _PAGE_PRESENT) && (pte_val(pte) != pte_val(new_pte)),
-+				"set_fixmap(%d, %lx), was: %lx",
-+				(int)__virt_to_fix(vaddr),
-+				pte_val(new_pte), pte_val(pte));
-+
-+		/*
-+		 * It is _NOT_ enough to flush just the local mapping;
-+		 * it might mostly work, but there is no guarantee a remote
-+		 * CPU didn't load this entry into its TLB.
-+		 */
-+		__flush_tlb_one_kernel(vaddr);
-+	} else {
-+		flush_tlb_kernel_range(vaddr, vaddr + PAGE_SIZE);
-+	}
- }
- 
- void set_pte_vaddr_p4d(p4d_t *p4d_page, unsigned long vaddr, pte_t new_pte)
-diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
-index 52ae5438edeb..e3c415bdbfbf 100644
---- a/drivers/acpi/apei/Kconfig
-+++ b/drivers/acpi/apei/Kconfig
-@@ -19,6 +19,7 @@ config ACPI_APEI
- 
- config ACPI_APEI_GHES
- 	bool "APEI Generic Hardware Error Source"
-+	depends on BROKEN
- 	depends on ACPI_APEI
- 	select ACPI_HED
- 	select IRQ_WORK
+
+ Makefile                                          |    1 
+ fs/coda/cache.c                                   |    2 
+ fs/coda/cnode.c                                   |    2 
+ fs/coda/coda_linux.c                              |    2 
+ fs/coda/coda_psdev.h                              |   88 +++++++++++++++
+ fs/coda/dir.c                                     |    2 
+ fs/coda/file.c                                    |    3 -
+ fs/coda/inode.c                                   |    2 
+ fs/coda/pioctl.c                                  |    3 -
+ fs/coda/psdev.c                                   |    3 -
+ fs/coda/symlink.c                                 |    3 -
+ fs/coda/upcall.c                                  |    2 
+ include/linux/coda_psdev.h                        |   72 ------------
+ include/linux/ndctl.h                             |   22 ++++
+ include/uapi/drm/i810_drm.h                       |    7 +
+ include/uapi/drm/msm_drm.h                        |    7 +
+ include/uapi/linux/bcache.h                       |    2 
+ include/uapi/linux/coda_psdev.h                   |   18 ---
+ include/uapi/linux/keyctl.h                       |    7 +
+ include/uapi/linux/ndctl.h                        |   52 ++++-----
+ include/uapi/linux/netfilter/nfnetlink_cthelper.h |    2 
+ include/uapi/linux/netfilter_ipv4/ipt_ECN.h       |    9 --
+ include/uapi/linux/nilfs2_ondisk.h                |   28 ++---
+ include/uapi/linux/virtio_net.h                   |    7 +
+ scripts/headers-c++.sh                            |  124 +++++++++++++++++++++
+ 25 files changed, 304 insertions(+), 166 deletions(-)
+ create mode 100644 fs/coda/coda_psdev.h
+ delete mode 100644 include/linux/coda_psdev.h
+ create mode 100644 include/linux/ndctl.h
+ create mode 100755 scripts/headers-c++.sh
+
