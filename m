@@ -2,90 +2,100 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFD7C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3D5C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59EAA205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:44:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="csC9MP8g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59EAA205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 36B17205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B17205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeIFRTe (ORCPT
+        id S1728626AbeIFRUK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:19:34 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43038 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbeIFRTd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:19:33 -0400
-Received: by mail-io0-f194.google.com with SMTP id y10-v6so8681464ioa.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 05:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iyoOiMh8n/n2Swbj7nokhtSH0jWSuvVY1+mh282a2NY=;
-        b=csC9MP8g77NsR0mjfueWdBTDFLMsflYEwOSm2xSVdCdTYHlcHO6v47nxB/+CtIWsMJ
-         OK90Opr7kJBAty9JeXLqoB6X1svyiGYvzMDsbA4Jg+AvSDCIIfzWkLtkOg98Qap/8U3f
-         Yh30QUCoiF7MgTQX2XND7uNwY+1bmcZFwG9eg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iyoOiMh8n/n2Swbj7nokhtSH0jWSuvVY1+mh282a2NY=;
-        b=POJp8lrGXTusViO0K7fQrl9t754rMDdBD8WUzyRrZIN7p6gGjvqrsJ34jIIwSOJ5g8
-         /feEsIxIXd8jmWoNrM01EsSkE5/zl84gnOS0JP4xMJHaVOlfjH3xufw5D60p2HQ8h2UV
-         dxQDg1zBdxEgfVBIw0VTZj6h4YLECq94cuENaesvjdjU10ze1Q797syPiB8+sOqipw7S
-         /Ae35VzRXhn1S3GkK92pbQDq+rqkfGm4v4c541ExJtYyvfWq7RHVeWQI8rWcmfJXGnxj
-         HKDfO4+Z6zICuj1GLhdjROCh+n9Qb/gw8diScf+EOUXo3lcs7U3MUOr+hFmBwwyZCNq6
-         Sc3g==
-X-Gm-Message-State: APzg51Add0/umOUneuwiq2PAAJs7g4TYv0DMpeHqH1SszTix0R3vKzzI
-        Veps/D5FkLRPMmkJodKs9ib4Sm4LV0r0txW7NxwXMw==
-X-Google-Smtp-Source: ANB0VdbzFxYU7VZZPsg7lA9QlrQPWkUTMtrL/BObyzeeJsObbGh5MOadRZI67TNOw+9mt+vEg1lyG+iyGDqzMHZNj0E=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr1613890iof.304.1536237853846;
- Thu, 06 Sep 2018 05:44:13 -0700 (PDT)
+        Thu, 6 Sep 2018 13:20:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33677 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727609AbeIFRUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:20:10 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E507945ACAF13;
+        Thu,  6 Sep 2018 20:44:47 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 6 Sep 2018 20:44:40 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to avoid quota inode leak in ->put_super
+Date:   Thu, 6 Sep 2018 20:44:36 +0800
+Message-ID: <20180906124436.89193-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20180906124436.89193-1-yuchao0@huawei.com>
+References: <20180906124436.89193-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-References: <20180906115830.19386-1-colin.king@canonical.com>
-In-Reply-To: <20180906115830.19386-1-colin.king@canonical.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 6 Sep 2018 14:44:01 +0200
-Message-ID: <CACRpkdaHabhD_pW3XtDh+XzQ3d--r=qNRZVnhx44RV82p0boMA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: ep93xx: fix incorrect array element size check
-To:     Colin King <colin.king@canonical.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 1:58 PM Colin King <colin.king@canonical.com> wrote:
+generic/019 reports below error:
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently the while loop checks for the end of the array using
-> the size of egp->gc rather that the number of elements in the array,
-> so fix this. Also, perform the array size check first as stylistically
-> it is always good to bounds check on an array first before referencing
-> the array (in this case, we're just computing the address of an
-> element in an array so this is a moot point).
->
-> Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ __quota_error: 1160 callbacks suppressed
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
 
-Oh that was really neat code! Thanks a lot.
+If we failed in below path due to fail to write dquot block, we will miss
+to release quota inode, fix it.
 
-Patch applied.
+- f2fs_put_super
+ - f2fs_quota_off_umount
+  - f2fs_quota_off
+   - f2fs_quota_sync   <-- failed
+   - dquot_quota_off   <-- missed to call
 
-Yours,
-Linus Walleij
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c026aaccf218..328f58647f4c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1900,10 +1900,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	for (type = 0; type < MAXQUOTAS; type++) {
+ 		err = f2fs_quota_off(sb, type);
+ 		if (err) {
++			int ret = dquot_quota_off(sb, type);
++
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Fail to turn off disk quota "
+-				"(type: %d, err: %d), Please "
+-				"run fsck to fix it.", type, err);
++				"(type: %d, err: %d, ret:%d), Please "
++				"run fsck to fix it.", type, err, ret);
+ 			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ 		}
+ 	}
+-- 
+2.18.0.rc1
+
