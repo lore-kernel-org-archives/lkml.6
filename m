@@ -2,123 +2,522 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7A1C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6763EC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47A302075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A302075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EB5C620844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:30:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5C620844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbeIFSGI (ORCPT
+        id S1729505AbeIFSGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:06:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54074 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728828AbeIFSGI (ORCPT
+        Thu, 6 Sep 2018 14:06:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46849 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728776AbeIFSGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:06:08 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86DUQhh070279
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 09:30:34 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mb4suh6e2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:30:33 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Thu, 6 Sep 2018 14:30:31 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 14:30:27 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86DUQI640108108
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 13:30:26 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D677242045;
-        Thu,  6 Sep 2018 16:30:20 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B71CE4204D;
-        Thu,  6 Sep 2018 16:30:19 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.92])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  6 Sep 2018 16:30:19 +0100 (BST)
-Date:   Thu, 6 Sep 2018 16:30:23 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Greentime Hu <green.hu@gmail.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>, gregkh@linuxfoundation.org,
-        mingo@redhat.com, mpe@ellerman.id.au, mhocko@suse.com,
-        paul.burton@mips.com, Thomas Gleixner <tglx@linutronix.de>,
-        tony.luck@intel.com, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 00/29] mm: remove bootmem allocator
-References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
- <CAEbi=3dKL1zOYc0DC3yXm=7srw6tUfx-JR=o9n4pVrGp+Sosug@mail.gmail.com>
+        Thu, 6 Sep 2018 14:06:23 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DULuj308582
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:30:21 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DULxX308578;
+        Thu, 6 Sep 2018 06:30:21 -0700
+Date:   Thu, 6 Sep 2018 06:30:21 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-f3ca50e61ff4aebfbefc666be2e064d277ad524c@git.kernel.org>
+Cc:     namhyung@kernel.org, acme@redhat.com, dsahern@gmail.com,
+        mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, andi@firstfloor.org, jolsa@kernel.org
+Reply-To: andi@firstfloor.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          tglx@linutronix.de, jolsa@kernel.org, dsahern@gmail.com,
+          acme@redhat.com, namhyung@kernel.org, peterz@infradead.org,
+          alexander.shishkin@linux.intel.com, mingo@kernel.org
+In-Reply-To: <20180830063252.23729-19-jolsa@kernel.org>
+References: <20180830063252.23729-19-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Pass 'struct perf_stat_config' argument
+ to local print functions
+Git-Commit-ID: f3ca50e61ff4aebfbefc666be2e064d277ad524c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEbi=3dKL1zOYc0DC3yXm=7srw6tUfx-JR=o9n4pVrGp+Sosug@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18090613-0016-0000-0000-000002014513
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090613-0017-0000-0000-00003257EF73
-Message-Id: <20180906133023.GL27492@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060137
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:33:48AM +0800, Greentime Hu wrote:
-> Mike Rapoport <rppt@linux.vnet.ibm.com> 於 2018年9月6日 週四 上午12:04寫道：
-> >
-> > Hi,
-> >
-> > These patches switch early memory managment to use memblock directly
-> > without any bootmem compatibility wrappers. As the result both bootmem and
-> > nobootmem are removed.
-> >
-> > There are still a couple of things to sort out, the most important is the
-> > removal of bootmem usage in MIPS.
-> >
-> > Still, IMHO, the series is in sufficient state to post and get the early
-> > feedback.
-> >
-> > The patches are build-tested with defconfig for most architectures (I
-> > couldn't find a compiler for nds32 and unicore32) and boot-tested on x86
-> > VM.
-> >
-> Hi Mike,
-> 
-> There are nds32 toolchains.
-> https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/x86_64-gcc-8.1.0-nolibc-nds32le-linux.tar.gz
-> https://github.com/vincentzwc/prebuilt-nds32-toolchain/releases/download/20180521/nds32le-linux-glibc-v3-upstream.tar.gz
+Commit-ID:  f3ca50e61ff4aebfbefc666be2e064d277ad524c
+Gitweb:     https://git.kernel.org/tip/f3ca50e61ff4aebfbefc666be2e064d277ad524c
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 30 Aug 2018 08:32:27 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
 
-Thanks!
+perf stat: Pass 'struct perf_stat_config' argument to local print functions
+
+Add 'struct perf_stat_config' argument to print functions, so that those
+functions can be moved out of the 'perf stat' command to a generic class
+in the following patches.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180830063252.23729-19-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 149 +++++++++++++++++++++++++---------------------
+ 1 file changed, 80 insertions(+), 69 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index f340641fe63a..f56da22abccc 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -660,30 +660,33 @@ static int run_perf_stat(int argc, const char **argv, int run_idx)
+ 	return ret;
+ }
  
-> Sorry, we have no qemu yet.
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+-static void print_running(u64 run, u64 ena)
++static void print_running(struct perf_stat_config *config,
++			  u64 run, u64 ena)
+ {
+ 	if (csv_output) {
+-		fprintf(stat_config.output, "%s%" PRIu64 "%s%.2f",
++		fprintf(config->output, "%s%" PRIu64 "%s%.2f",
+ 					csv_sep,
+ 					run,
+ 					csv_sep,
+ 					ena ? 100.0 * run / ena : 100.0);
+ 	} else if (run != ena) {
+-		fprintf(stat_config.output, "  (%.2f%%)", 100.0 * run / ena);
++		fprintf(config->output, "  (%.2f%%)", 100.0 * run / ena);
+ 	}
+ }
+ 
+-static void print_noise_pct(double total, double avg)
++static void print_noise_pct(struct perf_stat_config *config,
++			    double total, double avg)
+ {
+ 	double pct = rel_stddev_stats(total, avg);
+ 
+ 	if (csv_output)
+-		fprintf(stat_config.output, "%s%.2f%%", csv_sep, pct);
++		fprintf(config->output, "%s%.2f%%", csv_sep, pct);
+ 	else if (pct)
+-		fprintf(stat_config.output, "  ( +-%6.2f%% )", pct);
++		fprintf(config->output, "  ( +-%6.2f%% )", pct);
+ }
+ 
+-static void print_noise(struct perf_evsel *evsel, double avg)
++static void print_noise(struct perf_stat_config *config,
++			struct perf_evsel *evsel, double avg)
+ {
+ 	struct perf_stat_evsel *ps;
+ 
+@@ -691,7 +694,7 @@ static void print_noise(struct perf_evsel *evsel, double avg)
+ 		return;
+ 
+ 	ps = evsel->stats;
+-	print_noise_pct(stddev_stats(&ps->res_stats[0]), avg);
++	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
+ }
+ 
+ static void aggr_printout(struct perf_evsel *evsel, int id, int nr)
+@@ -987,13 +990,14 @@ static bool is_mixed_hw_group(struct perf_evsel *counter)
+ 	return false;
+ }
+ 
+-static void printout(int id, int nr, struct perf_evsel *counter, double uval,
++static void printout(struct perf_stat_config *config, int id, int nr,
++		     struct perf_evsel *counter, double uval,
+ 		     char *prefix, u64 run, u64 ena, double noise,
+ 		     struct runtime_stat *st)
+ {
+ 	struct perf_stat_output_ctx out;
+ 	struct outstate os = {
+-		.fh = stat_config.output,
++		.fh = config->output,
+ 		.prefix = prefix ? prefix : "",
+ 		.id = id,
+ 		.nr = nr,
+@@ -1023,7 +1027,7 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
+ 		pm = print_metric_csv;
+ 		nl = new_line_csv;
+ 		os.nfields = 3;
+-		os.nfields += aggr_fields[stat_config.aggr_mode];
++		os.nfields += aggr_fields[config->aggr_mode];
+ 		if (counter->cgrp)
+ 			os.nfields++;
+ 	}
+@@ -1034,7 +1038,7 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
+ 		}
+ 		aggr_printout(counter, id, nr);
+ 
+-		fprintf(stat_config.output, "%*s%s",
++		fprintf(config->output, "%*s%s",
+ 			csv_output ? 0 : 18,
+ 			counter->supported ? CNTR_NOT_COUNTED : CNTR_NOT_SUPPORTED,
+ 			csv_sep);
+@@ -1045,22 +1049,22 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
+ 				print_mixed_hw_group_error = 1;
+ 		}
+ 
+-		fprintf(stat_config.output, "%-*s%s",
++		fprintf(config->output, "%-*s%s",
+ 			csv_output ? 0 : unit_width,
+ 			counter->unit, csv_sep);
+ 
+-		fprintf(stat_config.output, "%*s",
++		fprintf(config->output, "%*s",
+ 			csv_output ? 0 : -25,
+ 			perf_evsel__name(counter));
+ 
+ 		if (counter->cgrp)
+-			fprintf(stat_config.output, "%s%s",
++			fprintf(config->output, "%s%s",
+ 				csv_sep, counter->cgrp->name);
+ 
+ 		if (!csv_output)
+ 			pm(&os, NULL, NULL, "", 0);
+-		print_noise(counter, noise);
+-		print_running(run, ena);
++		print_noise(config, counter, noise);
++		print_running(config, run, ena);
+ 		if (csv_output)
+ 			pm(&os, NULL, NULL, "", 0);
+ 		return;
+@@ -1075,16 +1079,16 @@ static void printout(int id, int nr, struct perf_evsel *counter, double uval,
+ 	out.force_header = false;
+ 
+ 	if (csv_output && !metric_only) {
+-		print_noise(counter, noise);
+-		print_running(run, ena);
++		print_noise(config, counter, noise);
++		print_running(config, run, ena);
+ 	}
+ 
+ 	perf_stat__print_shadow_stats(counter, uval,
+ 				first_shadow_cpu(counter, id),
+ 				&out, &metric_events, st);
+ 	if (!csv_output && !metric_only) {
+-		print_noise(counter, noise);
+-		print_running(run, ena);
++		print_noise(config, counter, noise);
++		print_running(config, run, ena);
+ 	}
+ }
+ 
+@@ -1211,9 +1215,10 @@ static void aggr_cb(struct perf_evsel *counter, void *data, bool first)
+ 	}
+ }
+ 
+-static void print_aggr(char *prefix)
++static void print_aggr(struct perf_stat_config *config,
++		       char *prefix)
+ {
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	struct perf_evsel *counter;
+ 	int s, id, nr;
+ 	double uval;
+@@ -1256,8 +1261,8 @@ static void print_aggr(char *prefix)
+ 				fprintf(output, "%s", prefix);
+ 
+ 			uval = val * counter->scale;
+-			printout(id, nr, counter, uval, prefix, run, ena, 1.0,
+-				 &rt_stat);
++			printout(config, id, nr, counter, uval, prefix,
++				 run, ena, 1.0, &rt_stat);
+ 			if (!metric_only)
+ 				fputc('\n', output);
+ 		}
+@@ -1320,9 +1325,10 @@ static struct perf_aggr_thread_value *sort_aggr_thread(
+ 	return buf;
+ }
+ 
+-static void print_aggr_thread(struct perf_evsel *counter, char *prefix)
++static void print_aggr_thread(struct perf_stat_config *config,
++			      struct perf_evsel *counter, char *prefix)
+ {
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	int nthreads = thread_map__nr(counter->threads);
+ 	int ncpus = cpu_map__nr(counter->cpus);
+ 	int thread, sorted_threads, id;
+@@ -1339,12 +1345,12 @@ static void print_aggr_thread(struct perf_evsel *counter, char *prefix)
+ 			fprintf(output, "%s", prefix);
+ 
+ 		id = buf[thread].id;
+-		if (stat_config.stats)
+-			printout(id, 0, buf[thread].counter, buf[thread].uval,
++		if (config->stats)
++			printout(config, id, 0, buf[thread].counter, buf[thread].uval,
+ 				 prefix, buf[thread].run, buf[thread].ena, 1.0,
+-				 &stat_config.stats[id]);
++				 &config->stats[id]);
+ 		else
+-			printout(id, 0, buf[thread].counter, buf[thread].uval,
++			printout(config, id, 0, buf[thread].counter, buf[thread].uval,
+ 				 prefix, buf[thread].run, buf[thread].ena, 1.0,
+ 				 &rt_stat);
+ 		fputc('\n', output);
+@@ -1372,9 +1378,10 @@ static void counter_aggr_cb(struct perf_evsel *counter, void *data,
+  * Print out the results of a single counter:
+  * aggregated counts in system-wide mode
+  */
+-static void print_counter_aggr(struct perf_evsel *counter, char *prefix)
++static void print_counter_aggr(struct perf_stat_config *config,
++			       struct perf_evsel *counter, char *prefix)
+ {
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	double uval;
+ 	struct caggr_data cd = { .avg = 0.0 };
+ 
+@@ -1385,7 +1392,7 @@ static void print_counter_aggr(struct perf_evsel *counter, char *prefix)
+ 		fprintf(output, "%s", prefix);
+ 
+ 	uval = cd.avg * counter->scale;
+-	printout(-1, 0, counter, uval, prefix, cd.avg_running, cd.avg_enabled,
++	printout(config, -1, 0, counter, uval, prefix, cd.avg_running, cd.avg_enabled,
+ 		 cd.avg, &rt_stat);
+ 	if (!metric_only)
+ 		fprintf(output, "\n");
+@@ -1405,9 +1412,10 @@ static void counter_cb(struct perf_evsel *counter, void *data,
+  * Print out the results of a single counter:
+  * does not use aggregated count in system-wide
+  */
+-static void print_counter(struct perf_evsel *counter, char *prefix)
++static void print_counter(struct perf_stat_config *config,
++			  struct perf_evsel *counter, char *prefix)
+ {
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	u64 ena, run, val;
+ 	double uval;
+ 	int cpu;
+@@ -1425,14 +1433,15 @@ static void print_counter(struct perf_evsel *counter, char *prefix)
+ 			fprintf(output, "%s", prefix);
+ 
+ 		uval = val * counter->scale;
+-		printout(cpu, 0, counter, uval, prefix, run, ena, 1.0,
++		printout(config, cpu, 0, counter, uval, prefix, run, ena, 1.0,
+ 			 &rt_stat);
+ 
+ 		fputc('\n', output);
+ 	}
+ }
+ 
+-static void print_no_aggr_metric(char *prefix)
++static void print_no_aggr_metric(struct perf_stat_config *config,
++				 char *prefix)
+ {
+ 	int cpu;
+ 	int nrcpus = 0;
+@@ -1445,7 +1454,7 @@ static void print_no_aggr_metric(char *prefix)
+ 		bool first = true;
+ 
+ 		if (prefix)
+-			fputs(prefix, stat_config.output);
++			fputs(prefix, config->output);
+ 		evlist__for_each_entry(evsel_list, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+@@ -1458,10 +1467,10 @@ static void print_no_aggr_metric(char *prefix)
+ 			run = perf_counts(counter->counts, cpu, 0)->run;
+ 
+ 			uval = val * counter->scale;
+-			printout(cpu, 0, counter, uval, prefix, run, ena, 1.0,
++			printout(config, cpu, 0, counter, uval, prefix, run, ena, 1.0,
+ 				 &rt_stat);
+ 		}
+-		fputc('\n', stat_config.output);
++		fputc('\n', config->output);
+ 	}
+ }
+ 
+@@ -1481,25 +1490,25 @@ static const char *aggr_header_csv[] = {
+ 	[AGGR_GLOBAL] 	=	""
+ };
+ 
+-static void print_metric_headers(const char *prefix, bool no_indent)
++static void print_metric_headers(struct perf_stat_config *config,
++				 const char *prefix, bool no_indent)
+ {
+ 	struct perf_stat_output_ctx out;
+ 	struct perf_evsel *counter;
+ 	struct outstate os = {
+-		.fh = stat_config.output
++		.fh = config->output
+ 	};
+ 
+ 	if (prefix)
+-		fprintf(stat_config.output, "%s", prefix);
++		fprintf(config->output, "%s", prefix);
+ 
+ 	if (!csv_output && !no_indent)
+-		fprintf(stat_config.output, "%*s",
+-			aggr_header_lens[stat_config.aggr_mode], "");
++		fprintf(config->output, "%*s",
++			aggr_header_lens[config->aggr_mode], "");
+ 	if (csv_output) {
+-		if (stat_config.interval)
+-			fputs("time,", stat_config.output);
+-		fputs(aggr_header_csv[stat_config.aggr_mode],
+-			stat_config.output);
++		if (config->interval)
++			fputs("time,", config->output);
++		fputs(aggr_header_csv[config->aggr_mode], config->output);
+ 	}
+ 
+ 	/* Print metrics headers only */
+@@ -1518,12 +1527,13 @@ static void print_metric_headers(const char *prefix, bool no_indent)
+ 					      &metric_events,
+ 					      &rt_stat);
+ 	}
+-	fputc('\n', stat_config.output);
++	fputc('\n', config->output);
+ }
+ 
+-static void print_interval(char *prefix, struct timespec *ts)
++static void print_interval(struct perf_stat_config *config,
++			   char *prefix, struct timespec *ts)
+ {
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	static int num_print_interval;
+ 
+ 	if (interval_clear)
+@@ -1532,7 +1542,7 @@ static void print_interval(char *prefix, struct timespec *ts)
+ 	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
+ 
+ 	if ((num_print_interval == 0 && !csv_output) || interval_clear) {
+-		switch (stat_config.aggr_mode) {
++		switch (config->aggr_mode) {
+ 		case AGGR_SOCKET:
+ 			fprintf(output, "#           time socket cpus");
+ 			if (!metric_only)
+@@ -1564,14 +1574,15 @@ static void print_interval(char *prefix, struct timespec *ts)
+ 	}
+ 
+ 	if ((num_print_interval == 0 || interval_clear) && metric_only)
+-		print_metric_headers(" ", true);
++		print_metric_headers(config, " ", true);
+ 	if (++num_print_interval == 25)
+ 		num_print_interval = 0;
+ }
+ 
+-static void print_header(int argc, const char **argv)
++static void print_header(struct perf_stat_config *config,
++			 int argc, const char **argv)
+ {
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	int i;
+ 
+ 	fflush(stdout);
+@@ -1639,10 +1650,10 @@ static double timeval2double(struct timeval *t)
+ 	return t->tv_sec + (double) t->tv_usec/USEC_PER_SEC;
+ }
+ 
+-static void print_footer(void)
++static void print_footer(struct perf_stat_config *config)
+ {
+ 	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
+-	FILE *output = stat_config.output;
++	FILE *output = config->output;
+ 	int n;
+ 
+ 	if (!null_run)
+@@ -1673,7 +1684,7 @@ static void print_footer(void)
+ 		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
+ 			precision, avg, precision, sd);
+ 
+-		print_noise_pct(sd, avg);
++		print_noise_pct(config, sd, avg);
+ 	}
+ 	fprintf(output, "\n\n");
+ 
+@@ -1703,15 +1714,15 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 	char buf[64], *prefix = NULL;
+ 
+ 	if (interval)
+-		print_interval(prefix = buf, ts);
++		print_interval(config, prefix = buf, ts);
+ 	else
+-		print_header(argc, argv);
++		print_header(config, argc, argv);
+ 
+ 	if (metric_only) {
+ 		static int num_print_iv;
+ 
+ 		if (num_print_iv == 0 && !interval)
+-			print_metric_headers(prefix, false);
++			print_metric_headers(config, prefix, false);
+ 		if (num_print_iv++ == 25)
+ 			num_print_iv = 0;
+ 		if (config->aggr_mode == AGGR_GLOBAL && prefix)
+@@ -1721,32 +1732,32 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 	switch (config->aggr_mode) {
+ 	case AGGR_CORE:
+ 	case AGGR_SOCKET:
+-		print_aggr(prefix);
++		print_aggr(config, prefix);
+ 		break;
+ 	case AGGR_THREAD:
+ 		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+-			print_aggr_thread(counter, prefix);
++			print_aggr_thread(config, counter, prefix);
+ 		}
+ 		break;
+ 	case AGGR_GLOBAL:
+ 		evlist__for_each_entry(evlist, counter) {
+ 			if (is_duration_time(counter))
+ 				continue;
+-			print_counter_aggr(counter, prefix);
++			print_counter_aggr(config, counter, prefix);
+ 		}
+ 		if (metric_only)
+ 			fputc('\n', config->output);
+ 		break;
+ 	case AGGR_NONE:
+ 		if (metric_only)
+-			print_no_aggr_metric(prefix);
++			print_no_aggr_metric(config, prefix);
+ 		else {
+ 			evlist__for_each_entry(evlist, counter) {
+ 				if (is_duration_time(counter))
+ 					continue;
+-				print_counter(counter, prefix);
++				print_counter(config, counter, prefix);
+ 			}
+ 		}
+ 		break;
+@@ -1756,7 +1767,7 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 	}
+ 
+ 	if (!interval && !csv_output)
+-		print_footer();
++		print_footer(config);
+ 
+ 	fflush(config->output);
+ }
