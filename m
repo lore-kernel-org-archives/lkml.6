@@ -2,169 +2,154 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C36BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66B1C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D05B2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D05B2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8918D2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lOOPOYfP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8918D2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730485AbeIFXLJ (ORCPT
+        id S1730500AbeIFXLU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:11:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51820 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726308AbeIFXLJ (ORCPT
+        Thu, 6 Sep 2018 19:11:20 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39081 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbeIFXLT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:11:09 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86ISmwt058195
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 14:34:25 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb9etrcqc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 14:34:25 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 6 Sep 2018 14:34:24 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 14:34:18 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86IYHAc4784446
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 18:34:17 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41BB4B2065;
-        Thu,  6 Sep 2018 14:33:03 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 22151B205F;
-        Thu,  6 Sep 2018 14:33:03 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Sep 2018 14:33:03 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 90FE916C29D3; Thu,  6 Sep 2018 11:34:17 -0700 (PDT)
-Date:   Thu, 6 Sep 2018 11:34:17 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Andrea Parri <parri.andrea@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com
-Subject: Re: [PATCH RFC LKMM 3/7] EXP tools/memory-model: Add more LKMM
- limitations
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180829211018.GA19646@linux.vnet.ibm.com>
- <20180829211053.20531-3-paulmck@linux.vnet.ibm.com>
- <20180830091713.GA4617@andrea>
- <20180830221814.GQ4225@linux.vnet.ibm.com>
- <20180831094341.GA4634@andrea>
+        Thu, 6 Sep 2018 19:11:19 -0400
+Received: by mail-ua1-f66.google.com with SMTP id g18-v6so9822930uam.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 11:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kaOl//CCJ6TM2qLUZQtDDpU/llgYGkt3l6Xkuf1eeQ4=;
+        b=lOOPOYfPzhu4EtaFAzi+hmcAxCqZPPv4/9qLMaytJvep6gIGHgCxNq/3m6/Dcvwf5E
+         KTvZxvR4fjwKu99paR3VbwRM7mYNoEbGxWPfrzjM1WJ4zvEuhTdkYJveiaPWqqZvWysg
+         ocabv+Ws49/jznMmf9RQ8RzjxaZJU6WitiNHs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kaOl//CCJ6TM2qLUZQtDDpU/llgYGkt3l6Xkuf1eeQ4=;
+        b=k8flSYXVV9xVTxMYd1X8APqvo9faM/s1bNceC9pqkNyWgucN3GZEejL8eov3ri/qI/
+         lH/Okp8Nd6Qcwg0sFBJSeopBe/VP+rLSU21wAMLtq+L3Rz1+C8TnQLLq/AOy58kdZXhp
+         78kN4xPSkUo8XEoOmSMfML6rFrLARsutCs3cUs/2W/nIdsMGwXUrnhcsAXbk3+V31QMA
+         M9wN5YY03QNpGhJJoyODIDgvQmDYE5BkNrFKBbnctIVDIjxvtNL64b/y9t32aJzeHl18
+         Lrl1SbLTsK/ErtpbIbAzrw8VZ05w1jSTXypDYXAI1KOnKe9/jDGrvjXbPPpabh8nUWXm
+         7hZg==
+X-Gm-Message-State: APzg51BczFbxhlG4kJMLgWOss3xu73S3M5+XLr/zznU8vcjGlmK3Qs1H
+        UplPqXR5noFom0KOmhHbyuCreuV7Nrs=
+X-Google-Smtp-Source: ANB0VdY6CLgmizNA08yhVAdEIKFVt+g0TLgtGjdGJtyY+PByORnoo7dVtPzs4LM0W8m0wW3sYK3rUA==
+X-Received: by 2002:a9f:3b69:: with SMTP id j41-v6mr1563678uah.37.1536258875498;
+        Thu, 06 Sep 2018 11:34:35 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id g86-v6sm1804614vkc.36.2018.09.06.11.34.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 11:34:34 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id 101-v6so9802776uav.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 11:34:34 -0700 (PDT)
+X-Received: by 2002:a1f:ebc7:: with SMTP id j190-v6mr1419244vkh.114.1536258873515;
+ Thu, 06 Sep 2018 11:34:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831094341.GA4634@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18090618-0052-0000-0000-0000032C59E5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01084483; UDB=6.00559750; IPR=6.00864483;
- MB=3.00023148; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-06 18:34:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090618-0053-0000-0000-00005DFBEB85
-Message-Id: <20180906183417.GA4225@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060179
+Received: by 2002:a1f:5e8e:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 11:34:32 -0700 (PDT)
+In-Reply-To: <20180827171003.GU160295@google.com>
+References: <20180808191339.16875-1-mka@chromium.org> <20180808191339.16875-3-mka@chromium.org>
+ <CAD=FV=Ug3oiHOLxYRXtr0LbBUyXjBB=92fAYfpfhEQ8Xih6PNA@mail.gmail.com> <20180827171003.GU160295@google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 6 Sep 2018 11:34:32 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Vvhjcs9UwLkyHJ+nxwRCk70SBC3eVxBXwK7DFcPeu8wQ@mail.gmail.com>
+Message-ID: <CAD=FV=Vvhjcs9UwLkyHJ+nxwRCk70SBC3eVxBXwK7DFcPeu8wQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: pm8998: Add adc node
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 11:43:42AM +0200, Andrea Parri wrote:
-> > > > +	b.	The "unless" RMW operations are not currently modeled:
-> > > > +		atomic_long_add_unless(), atomic_add_unless(),
-> > > > +		atomic_inc_unless_negative(), and
-> > > > +		atomic_dec_unless_positive().  These can be emulated
-> > > > +		in litmus tests, for example, by using atomic_cmpxchg().
-> > > 
-> > > There is a prototype atomic_add_unless(): with current herd7,
-> > > 
-> > > $ cat atomic_add_unless.litmus
-> > > C atomic_add_unless
-> > > 
-> > > {}
-> > > 
-> > > P0(atomic_t *u, atomic_t *v)
-> > > {
-> > > 	int r0;
-> > > 	int r1;
-> > > 
-> > > 	r0 = atomic_add_unless(u, 1, 2);
-> > > 	r1 = atomic_read(v);
-> > > }
-> > > 
-> > > P1(atomic_t *u, atomic_t *v)
-> > > {
-> > > 	int r0;
-> > > 	int r1;
-> > > 
-> > > 	r0 = atomic_add_unless(v, 1, 2);
-> > > 	r1 = atomic_read(u);
-> > > }
-> > > 
-> > > exists (0:r1=0 /\ 1:r1=0)
-> > > 
-> > > $ herd7 -conf linux-kernel.cfg atomic_add_unless.litmus
-> > > Test atomic_add_unless Allowed
-> > > States 3
-> > > 0:r1=0; 1:r1=1;
-> > > 0:r1=1; 1:r1=0;
-> > > 0:r1=1; 1:r1=1;
-> > > No
-> > > Witnesses
-> > > Positive: 0 Negative: 3
-> > > Condition exists (0:r1=0 /\ 1:r1=0)
-> > > Observation atomic_add_unless Never 0 3
-> > > Time atomic_add_unless 0.00
-> > > Hash=fa37a2359831690299e4cc394e45d966
-> > > 
-> > > The last commit in the herdtools7 repo. related to this implementation
-> > > (AFAICT) is:
-> > > 
-> > >   9523c340917b6a ("herd/linux: make atomic_add_unless a primitive, so as to yield more precise dependencies for the returned boolean.")
-> > > 
-> > > but I can only vaguely remember those dependencies issues now :/  ...;
-> > > maybe we can now solve these issues?  or should we change herd7 to re-
-> > > turn a warning?  (Notice that this primitive is currently not exported
-> > > to the linux-kernel.def file.)
-> > 
-> > Cool!  It would be good to add this to the .def file once the underlying
-> > herd7 machinery is ready.  And then I would update the documentation
-> > accordingly.  Or happily accept a patch updating the documentation,
-> > as the case might be.  ;-)
-> 
-> Fair enough, ;-)  Please feel free to add:
-> 
-> Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Hi,
 
-Thank you!  Applied and pushed out, updating the lkmm branch in the
-process.
+On Mon, Aug 27, 2018 at 10:10 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> On Fri, Aug 10, 2018 at 05:09:17PM -0700, Doug Anderson wrote:
+>> Hi,
+>>
+>> On Wed, Aug 8, 2018 at 12:13 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+>> > This adds the adc node to pm8998 based on the examples in the
+>> > bindings. It also fixes the order of the included headers.
+>> >
+>> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>> > ---
+>> >  arch/arm64/boot/dts/qcom/pm8998.dtsi | 13 ++++++++++++-
+>> >  1 file changed, 12 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+>> > index 92bed1e7d4bb..f70f6101bceb 100644
+>> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
+>> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+>> > @@ -1,8 +1,9 @@
+>> >  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> >  /* Copyright 2018 Google LLC. */
+>> >
+>> > -#include <dt-bindings/spmi/spmi.h>
+>> > +#include <dt-bindings/iio/qcom,spmi-vadc.h>
+>> >  #include <dt-bindings/interrupt-controller/irq.h>
+>> > +#include <dt-bindings/spmi/spmi.h>
+>> >
+>> >  &spmi_bus {
+>> >         pm8998_lsid0: pmic@0 {
+>> > @@ -11,6 +12,16 @@
+>> >                 #address-cells = <1>;
+>> >                 #size-cells = <0>;
+>> >
+>> > +               pm8998_adc: adc@3100 {
+>> > +                       compatible = "qcom,spmi-adc-rev2";
+>> > +                       reg = <0x3100>;
+>> > +                       interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
+>> > +                       #address-cells = <1>;
+>> > +                       #size-cells = <0>;
+>> > +                       #io-channel-cells = <1>;
+>> > +                       io-channel-ranges;
+>> > +               };
+>>
+>> I'm a little confused about what the "io-channel-ranges" does here.
+>> The documentation isn't clear at all to me for it.  If I'm reading it
+>> right it's also supposed to be for iio-consumers, but you're using it
+>> in a provider.  I see you copied this from the example.  Maybe the
+>> example is wrong?  ...or I'm just confused...
+>
+> Yes, I copied it from the example, its use here is also not clear to
+> me, other ADC providers like adc@126c0000 in exynos3250.dtsi or
+> adc@180a6000 in bcm-cygnus.dtsi also specify it ...
+>
+> Siddartha/Jonathan, could you help to clarify if "io-channel-ranges"
+> should really be specified here as the DT example suggests?
 
-							Thanx, Paul
+Does everything work if you just remove the "io-channel-ranges"?  We
+could remove it and always add it back in later if someone could
+explain what it's for or if we find a reason why it was needed?  ...or
+we have any other ideas for how to get this resolved?  :(
 
+-Doug
