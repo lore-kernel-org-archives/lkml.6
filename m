@@ -2,147 +2,118 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0156DC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31F9C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9729220659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:36:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9729220659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E0F320659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0F320659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbeIFKKV (ORCPT
+        id S1726561AbeIFKLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 06:10:21 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49674 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725880AbeIFKKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:10:21 -0400
-X-UUID: f80560a10989408f826dc4cac2addfb7-20180906
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1366531604; Thu, 06 Sep 2018 13:36:25 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 6 Sep 2018 13:36:23 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 6 Sep 2018 13:36:22 +0800
-Message-ID: <1536212182.4618.36.camel@mtksdaap41>
-Subject: Re: [PATCH v2 08/13] drm/mediatek: register hdmi codec more earlier
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date:   Thu, 6 Sep 2018 13:36:22 +0800
-In-Reply-To: <20180905083146.14727-9-bibby.hsieh@mediatek.com>
-References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
-         <20180905083146.14727-9-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 6 Sep 2018 06:11:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45104 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725880AbeIFKLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 06:11:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 63FB9ADA9;
+        Thu,  6 Sep 2018 05:38:08 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 07:38:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        pavel.tatashin@microsoft.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH 1/2] mm: Move page struct poisoning from CONFIG_DEBUG_VM
+ to CONFIG_DEBUG_VM_PGFLAGS
+Message-ID: <20180906053807.GH14951@dhcp22.suse.cz>
+References: <20180904181550.4416.50701.stgit@localhost.localdomain>
+ <20180904183339.4416.44582.stgit@localhost.localdomain>
+ <20180905061044.GT14951@dhcp22.suse.cz>
+ <CAKgT0Uc3vV_knsA6rcbD2m02--+QGVZA=_=mJnTyB8b+xpUCAw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0Uc3vV_knsA6rcbD2m02--+QGVZA=_=mJnTyB8b+xpUCAw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
-
-On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
+On Wed 05-09-18 08:32:05, Alexander Duyck wrote:
+> On Tue, Sep 4, 2018 at 11:10 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Tue 04-09-18 11:33:39, Alexander Duyck wrote:
+> > > From: Alexander Duyck <alexander.h.duyck@intel.com>
+> > >
+> > > On systems with a large amount of memory it can take a significant amount
+> > > of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+> > > value. I have seen it take over 2 minutes to initialize a system with
+> > > over 12GB of RAM.
+> > >
+> > > In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+> > > the boot time returned to something much more reasonable as the
+> > > arch_add_memory call completed in milliseconds versus seconds. However in
+> > > doing that I had to disable all of the other VM debugging on the system.
+> >
+> > I agree that CONFIG_DEBUG_VM is a big hammer but the primary point of
+> > this check is to catch uninitialized struct pages after the early mem
+> > init rework so the intention was to make it enabled on as many systems
+> > with debugging enabled as possible. DEBUG_VM is not free already so it
+> > sounded like a good idea to sneak it there.
+> >
+> > > I did a bit of research and it seems like the only function that checks
+> > > for this poison value is the PagePoisoned function, and it is only called
+> > > in two spots. One is the PF_POISONED_CHECK macro that is only in use when
+> > > CONFIG_DEBUG_VM_PGFLAGS is defined, and the other is as a part of the
+> > > __dump_page function which is using the check to prevent a recursive
+> > > failure in the event of discovering a poisoned page.
+> >
+> > Hmm, I have missed the dependency on CONFIG_DEBUG_VM_PGFLAGS when
+> > reviewing the patch. My debugging kernel config doesn't have it enabled
+> > for example. I know that Fedora configs have CONFIG_DEBUG_VM enabled
+> > but I cannot find their config right now to double check for the
+> > CONFIG_DEBUG_VM_PGFLAGS right now.
+> >
+> > I am not really sure this dependency was intentional but I strongly
+> > suspect Pavel really wanted to have it DEBUG_VM scoped.
 > 
-> sometimes hdmi reprobe due to encoder probe late,
-> but audio dai probe earlier than hdmi. it would make
-> audio dai cannot find the hdmi codec. we need to
-> register hdmi codec earlier, and the base name which
-> used in the register should be PLATFORM_DEVID_NONE,
-> otherwise some audio dai dirver could not match it.
+> So I think the idea as per the earlier discussion with Pavel is that
+> by preloading it with all 1's anything that is expecting all 0's will
+> blow up one way or another. We just aren't explicitly checking for the
+> value, but it is still possibly going to be discovered via something
+> like a GPF when we try to access an invalid pointer or counter.
 > 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_hdmi.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> index 7c022f3f53ec..2cb33098ec1a 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-> @@ -1669,15 +1669,14 @@ static void mtk_hdmi_register_audio_driver(struct device *dev)
->  		.max_i2s_channels = 2,
->  		.i2s = 1,
->  	};
-> -	struct platform_device *pdev;
-> +	static struct platform_device *pdev;
->  
-> -	pdev = platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
-> -					     PLATFORM_DEVID_AUTO, &codec_data,
-> -					     sizeof(codec_data));
-> -	if (IS_ERR(pdev))
-> +	if (!pdev) {
-> +		pdev = platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
-> +						     PLATFORM_DEVID_NONE,
-> +						     &codec_data,
-> +						     sizeof(codec_data));
-> +		DRM_INFO("%s driver bound to HDMI\n", HDMI_CODEC_DRV_NAME);
-> +	}
+> What I think I can do to address some of the concern is make this
+> something that depends on CONFIG_DEBUG_VM and defaults to Y. That way
+> for systems that are defaulting their config they should maintain the
+> same behavior, however for those systems that are running a large
+> amount of memory they can optionally turn off
+> CONFIG_DEBUG_VM_PAGE_INIT_POISON instead of having to switch off all
+> the virtual memory debugging via CONFIG_DEBUG_VM. I guess it would
+> become more of a peer to CONFIG_DEBUG_VM_PGFLAGS as the poison check
+> wouldn't really apply after init anyway.
 
-In the original code, it only register device but not unregister device.
-This looks like a bug in hdmi driver. So we need to register and
-unregister. You define a 'static' variable here would make
-register/unregister asymmetric. And how do you make sure that hdmi
-driver is probed before audio dai driver? By the device tree order?
-Device tree older may vary for each SoC. I would like more general
-solution to make sure that hdmi driver is probed before audio dai
-driver. There are some method to make drivers probe in order, so try to
-use the better method.
+So the most obvious question is, why don't you simply disable DEBUG_VM?
+It is not aimed at production workloads because it adds asserts at many
+places and it is quite likely to come up with performance penalty
+already.
 
-Regards,
-CK
-
->  		return;
-> -
-> -	DRM_INFO("%s driver bound to HDMI\n", HDMI_CODEC_DRV_NAME);
->  }
->  
->  static int mtk_drm_hdmi_probe(struct platform_device *pdev)
-> @@ -1691,6 +1690,7 @@ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	hdmi->dev = dev;
-> +	mtk_hdmi_register_audio_driver(dev);
->  
->  	ret = mtk_hdmi_dt_parse_pdata(hdmi, pdev);
->  	if (ret)
-> @@ -1704,8 +1704,6 @@ static int mtk_drm_hdmi_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	mtk_hdmi_register_audio_driver(dev);
-> -
->  	hdmi->bridge.funcs = &mtk_hdmi_bridge_funcs;
->  	hdmi->bridge.of_node = pdev->dev.of_node;
->  	drm_bridge_add(&hdmi->bridge);
-
-
+Besides that, Initializing memory to all ones is not much different to
+initializing it to all zeroes which we have been doing until recently
+when Pavel has removed that. So why do we need to add yet another
+debugging config option. We have way too many of config options already.
+-- 
+Michal Hocko
+SUSE Labs
