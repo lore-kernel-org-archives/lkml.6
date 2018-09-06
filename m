@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EB6C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55278C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFB8C20861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB8C20861
+	by mail.kernel.org (Postfix) with ESMTP id 085612077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085612077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeIFNn0 (ORCPT
+        id S1728502AbeIFNn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:43:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:41168 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728446AbeIFNnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:43:25 -0400
+        Thu, 6 Sep 2018 09:43:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41188 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728474AbeIFNn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:43:27 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE0AA1B55;
-        Thu,  6 Sep 2018 02:08:56 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BCF580D;
+        Thu,  6 Sep 2018 02:08:58 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 79A4B3F575;
-        Thu,  6 Sep 2018 02:08:55 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 17A8F3F575;
+        Thu,  6 Sep 2018 02:08:56 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, suzuki.poulose@arm.com,
         robert.walker@arm.com, al.grant@arm.com
-Subject: [PATCH v2 08/14] coresight: dynamic-replicator: Handle multiple connections
-Date:   Thu,  6 Sep 2018 10:08:29 +0100
-Message-Id: <1536224915-31766-9-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 09/14] coresight: Add support for CLAIM tag protocol
+Date:   Thu,  6 Sep 2018 10:08:30 +0100
+Message-Id: <1536224915-31766-10-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
 References: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,141 +44,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a replicator port is enabled, we block the traffic
-on the other port and route all traffic to the new enabled
-port. If there are two active trace sessions each targeting
-the two different paths from the replicator, the second session
-will disable the first session and route all the data to the
-second path.
-                    ETR
-                 /
-e.g, replicator
-                 \
-                    ETB
+Coresight architecture defines CLAIM tags for a device to negotiate
+control of the components (external agent vs self-hosted). Each device
+has a pair of registers (CLAIMSET & CLAIMCLR) for managing the CLAIM
+tags. However, the protocol for the CLAIM tags is IMPLEMENTATION DEFINED.
+PSCI has recommendations for the use of the CLAIM tags to negotiate
+controls for external agent vs self-hosted use. This patch implements
+the recommended protocol by PSCI.
 
-If CPU0 is operated in sysfs mode to ETR and CPU1 is operated
-in perf mode to ETB, depending on the order in which the
-replicator is enabled one device is blocked.
-
-Ideally we need trace-id for the session to make the
-right choice. That implies we need a trace-id allocation
-logic for the coresight subsystem and use that to route
-the traffic. The short term solution is to only manage
-the "target port" and leave the other port untouched.
-That leaves both the paths unaffected, except that some
-unwanted traffic may be pushed to the paths (if the Trace-IDs
-are not far enough), which is still fine and can be filtered
-out while processing rather than silently blocking the data.
+The claim/disclaim operations are performed from the device specific
+drivers. The disadvantage is that the calls are sprinkled in each driver,
+but this makes the operation much simpler.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- .../coresight/coresight-dynamic-replicator.c       | 66 ++++++++++++++++------
- 1 file changed, 48 insertions(+), 18 deletions(-)
+ drivers/hwtracing/coresight/coresight-priv.h |  7 +++
+ drivers/hwtracing/coresight/coresight.c      | 86 ++++++++++++++++++++++++++++
+ include/linux/coresight.h                    | 20 +++++++
+ 3 files changed, 113 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
-index ebb8043..97f4673 100644
---- a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
-@@ -34,26 +34,42 @@ struct replicator_state {
- 	struct coresight_device	*csdev;
- };
+diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+index c11da55..579f349 100644
+--- a/drivers/hwtracing/coresight/coresight-priv.h
++++ b/drivers/hwtracing/coresight/coresight-priv.h
+@@ -25,6 +25,13 @@
+ #define CORESIGHT_DEVID		0xfc8
+ #define CORESIGHT_DEVTYPE	0xfcc
  
++
 +/*
-+ * replicator_reset : Reset the replicator configuration to sane values.
++ * Coresight device CLAIM protocol.
++ * See PSCI - ARM DEN 0022D, Section: 6.8.1 Debug and Trace save and restore.
 + */
-+static void replicator_reset(struct replicator_state *drvdata)
-+{
-+	CS_UNLOCK(drvdata->base);
++#define CORESIGHT_CLAIM_SELF_HOSTED	BIT(1)
 +
-+	writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
-+	writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
-+
-+	CS_LOCK(drvdata->base);
-+}
-+
- static int replicator_enable(struct coresight_device *csdev, int inport,
- 			      int outport)
- {
-+	u32 reg;
- 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
+ #define TIMEOUT_US		100
+ #define BMVAL(val, lsb, msb)	((val & GENMASK(msb, lsb)) >> lsb)
  
--	CS_UNLOCK(drvdata->base);
--
--	/*
--	 * Ensure that the other port is disabled
--	 * 0x00 - passing through the replicator unimpeded
--	 * 0xff - disable (or impede) the flow of ATB data
--	 */
--	if (outport == 0) {
--		writel_relaxed(0x00, drvdata->base + REPLICATOR_IDFILTER0);
--		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
--	} else {
--		writel_relaxed(0x00, drvdata->base + REPLICATOR_IDFILTER1);
--		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
-+	switch (outport) {
-+	case 0:
-+		reg = REPLICATOR_IDFILTER0;
-+		break;
-+	case 1:
-+		reg = REPLICATOR_IDFILTER1;
-+		break;
-+	default:
-+		WARN_ON(1);
-+		return -EINVAL;
- 	}
- 
-+	CS_UNLOCK(drvdata->base);
-+
-+
-+	/* Ensure that the outport is enabled. */
-+	writel_relaxed(0x00, drvdata->base + reg);
- 	CS_LOCK(drvdata->base);
- 
- 	dev_dbg(drvdata->dev, "REPLICATOR enabled\n");
-@@ -63,15 +79,25 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
- static void replicator_disable(struct coresight_device *csdev, int inport,
- 				int outport)
- {
-+	u32 reg;
- 	struct replicator_state *drvdata = dev_get_drvdata(csdev->dev.parent);
- 
-+	switch (outport) {
-+	case 0:
-+		reg = REPLICATOR_IDFILTER0;
-+		break;
-+	case 1:
-+		reg = REPLICATOR_IDFILTER1;
-+		break;
-+	default:
-+		WARN_ON(1);
-+		return;
-+	}
-+
- 	CS_UNLOCK(drvdata->base);
- 
- 	/* disable the flow of ATB data through port */
--	if (outport == 0)
--		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER0);
--	else
--		writel_relaxed(0xff, drvdata->base + REPLICATOR_IDFILTER1);
-+	writel_relaxed(0xff, drvdata->base + reg);
- 
- 	CS_LOCK(drvdata->base);
- 
-@@ -156,7 +182,11 @@ static int replicator_probe(struct amba_device *adev, const struct amba_id *id)
- 	desc.groups = replicator_groups;
- 	drvdata->csdev = coresight_register(&desc);
- 
--	return PTR_ERR_OR_ZERO(drvdata->csdev);
-+	if (!IS_ERR(drvdata->csdev)) {
-+		replicator_reset(drvdata);
-+		return 0;
-+	}
-+	return PTR_ERR(drvdata->csdev);
+diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+index f4f5075..2b0df1a 100644
+--- a/drivers/hwtracing/coresight/coresight.c
++++ b/drivers/hwtracing/coresight/coresight.c
+@@ -128,6 +128,92 @@ static int coresight_find_link_outport(struct coresight_device *csdev,
+ 	return -ENODEV;
  }
  
- #ifdef CONFIG_PM
++static inline u32 coresight_read_claim_tags(void __iomem *base)
++{
++	return readl_relaxed(base + CORESIGHT_CLAIMCLR);
++}
++
++static inline bool coresight_is_claimed_self_hosted(void __iomem *base)
++{
++	return coresight_read_claim_tags(base) == CORESIGHT_CLAIM_SELF_HOSTED;
++}
++
++static inline bool coresight_is_claimed_any(void __iomem *base)
++{
++	return coresight_read_claim_tags(base) != 0;
++}
++
++static inline void coresight_set_claim_tags(void __iomem *base)
++{
++	writel_relaxed(CORESIGHT_CLAIM_SELF_HOSTED, base + CORESIGHT_CLAIMSET);
++	isb();
++}
++
++static inline void coresight_clear_claim_tags(void __iomem *base)
++{
++	writel_relaxed(CORESIGHT_CLAIM_SELF_HOSTED, base + CORESIGHT_CLAIMCLR);
++	isb();
++}
++
++/*
++ * coresight_claim_device_unlocked : Claim the device for self-hosted usage
++ * to prevent an external tool from touching this device. As per PSCI
++ * standards, section "Preserving the execution context" => "Debug and Trace
++ * save and Restore", DBGCLAIM[1] is reserved for Self-hosted debug/trace and
++ * DBGCLAIM[0] is reserved for external tools.
++ *
++ * Called with CS_UNLOCKed for the component.
++ * Returns : 0 on success
++ */
++int coresight_claim_device_unlocked(void __iomem *base)
++{
++	if (coresight_is_claimed_any(base))
++		return -EBUSY;
++
++	coresight_set_claim_tags(base);
++	if (coresight_is_claimed_self_hosted(base))
++		return 0;
++	/* There was a race setting the tags, clean up and fail */
++	coresight_clear_claim_tags(base);
++	return -EBUSY;
++}
++
++int coresight_claim_device(void __iomem *base)
++{
++	int rc;
++
++	CS_UNLOCK(base);
++	rc = coresight_claim_device_unlocked(base);
++	CS_LOCK(base);
++
++	return rc;
++}
++
++/*
++ * coresight_disclaim_device_unlocked : Clear the claim tags for the device.
++ * Called with CS_UNLOCKed for the component.
++ */
++void coresight_disclaim_device_unlocked(void __iomem *base)
++{
++
++	if (coresight_is_claimed_self_hosted(base))
++		coresight_clear_claim_tags(base);
++	else
++		/*
++		 * The external agent may have not honoured our claim
++		 * and has manipulated it. Or something else has seriously
++		 * gone wrong in our driver.
++		 */
++		WARN_ON_ONCE(1);
++}
++
++void coresight_disclaim_device(void __iomem *base)
++{
++	CS_UNLOCK(base);
++	coresight_disclaim_device_unlocked(base);
++	CS_LOCK(base);
++}
++
+ static int coresight_enable_sink(struct coresight_device *csdev,
+ 				 u32 mode, void *data)
+ {
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 5353582..46c67a7 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -257,6 +257,13 @@ extern int coresight_enable(struct coresight_device *csdev);
+ extern void coresight_disable(struct coresight_device *csdev);
+ extern int coresight_timeout(void __iomem *addr, u32 offset,
+ 			     int position, int value);
++
++extern int coresight_claim_device(void __iomem *base);
++extern int coresight_claim_device_unlocked(void __iomem *base);
++
++extern void coresight_disclaim_device(void __iomem *base);
++extern void coresight_disclaim_device_unlocked(void __iomem *base);
++
+ #else
+ static inline struct coresight_device *
+ coresight_register(struct coresight_desc *desc) { return NULL; }
+@@ -266,6 +273,19 @@ coresight_enable(struct coresight_device *csdev) { return -ENOSYS; }
+ static inline void coresight_disable(struct coresight_device *csdev) {}
+ static inline int coresight_timeout(void __iomem *addr, u32 offset,
+ 				     int position, int value) { return 1; }
++static inline int coresight_claim_device_unlocked(void __iomem *base)
++{
++	return -EINVAL;
++}
++
++static inline int coresight_claim_device(void __iomem *base)
++{
++	return -EINVAL;
++}
++
++static inline void coresight_disclaim_device(void __iomem *base) {}
++static inline void coresight_disclaim_device_unlocked(void __iomem *base) {}
++
+ #endif
+ 
+ #ifdef CONFIG_OF
 -- 
 2.7.4
 
