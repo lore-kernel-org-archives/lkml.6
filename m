@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D7AC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6214C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3995B2064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:40:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3995B2064D
+	by mail.kernel.org (Postfix) with ESMTP id 86EE62064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:40:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EE62064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeIFOPV (ORCPT
+        id S1728357AbeIFOPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:15:21 -0400
+        Thu, 6 Sep 2018 10:15:23 -0400
 Received: from mx.socionext.com ([202.248.49.38]:11897 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbeIFOPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:15:20 -0400
+        id S1727793AbeIFOPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 10:15:22 -0400
 Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 06 Sep 2018 18:40:41 +0900
+  by mx.socionext.com with ESMTP; 06 Sep 2018 18:40:43 +0900
 Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id D90EC600AA;
-        Thu,  6 Sep 2018 18:40:41 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 6 Sep 2018 18:40:41 +0900
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id ED362600AA;
+        Thu,  6 Sep 2018 18:40:43 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 6 Sep 2018 18:40:43 +0900
 Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 2EA5C1A03A2;
-        Thu,  6 Sep 2018 18:40:41 +0900 (JST)
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 1B0961A03A2;
+        Thu,  6 Sep 2018 18:40:43 +0900 (JST)
 From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
@@ -42,9 +42,9 @@ Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH v2 1/2] dt-bindings: PCI: add UniPhier PCIe host controller description
-Date:   Thu,  6 Sep 2018 18:40:31 +0900
-Message-Id: <1536226832-5089-2-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host controller support
+Date:   Thu,  6 Sep 2018 18:40:32 +0900
+Message-Id: <1536226832-5089-3-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536226832-5089-1-git-send-email-hayashi.kunihiko@socionext.com>
 References: <1536226832-5089-1-git-send-email-hayashi.kunihiko@socionext.com>
@@ -53,100 +53,519 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DT bindings for PCIe controller implemented in UniPhier SoCs when
-configured in Root Complex (host) mode. This controller is based on
-the DesignWare PCIe core.
+This introduces specific glue layer for UniPhier platform to support
+PCIe host controller that is based on the DesignWare PCIe core, and
+this driver supports Root Complex (host) mode.
 
 Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
- .../devicetree/bindings/pci/uniphier-pcie.txt      | 78 ++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+ drivers/pci/controller/dwc/Kconfig         |   9 +
+ drivers/pci/controller/dwc/Makefile        |   1 +
+ drivers/pci/controller/dwc/pcie-uniphier.c | 465 +++++++++++++++++++++++++++++
+ 3 files changed, 475 insertions(+)
+ create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
 
-diff --git a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 91b0194..d8fdb02 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -193,4 +193,13 @@ config PCIE_HISI_STB
+ 	help
+           Say Y here if you want PCIe controller support on HiSilicon STB SoCs
+ 
++config PCIE_UNIPHIER
++	bool "Socionext UniPhier PCIe controllers"
++	depends on OF && (ARCH_UNIPHIER || COMPILE_TEST)
++	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIE_DW_HOST
++	help
++	  Say Y here if you want PCIe controller support on UniPhier SoCs.
++	  This driver supports LD20 and PXs3 SoCs.
++
+ endmenu
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index 5d2ce72..cbde733 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+ obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+ obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
+ obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
++obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+ 
+ # The following drivers are for devices that use the generic ACPI
+ # pci_root.c driver but don't support standard ECAM config access.
+diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
 new file mode 100644
-index 0000000..a34e167
+index 0000000..4090967
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-@@ -0,0 +1,78 @@
-+Socionext UniPhier PCIe host controller bindings
++++ b/drivers/pci/controller/dwc/pcie-uniphier.c
+@@ -0,0 +1,465 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PCIe host controller driver for UniPhier SoCs
++ * Copyright 2018 Socionext Inc.
++ * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
++ */
 +
-+This describes the devicetree bindings for PCIe host controller implemented
-+on Socionext UniPhier SoCs.
++#include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/iopoll.h>
++#include <linux/irqdomain.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
 +
-+UniPhier PCIe host controller is based on the Synopsys DesignWare PCI core.
-+It shares common functions with the PCIe DesignWare core driver and inherits
-+common properties defined in
-+Documentation/devicetree/bindings/pci/designware-pcie.txt.
++#include "pcie-designware.h"
 +
-+Required properties:
-+- compatible: Should be "socionext,uniphier-pcie".
-+- reg: Specifies offset and length of the register set for the device.
-+	According to the reg-names, appropriate register sets are required.
-+- reg-names: Must include the following entries:
-+    "dbi"    - controller configuration registers
-+    "link"   - SoC-specific glue layer registers
-+    "config" - PCIe configuration space
-+- clocks: A phandle to the clock gate for PCIe glue layer including
-+	the host controller.
-+- resets: A phandle to the reset line for PCIe glue layer including
-+	the host controller.
-+- interrupts: A list of interrupt specifiers. According to the
-+	interrupt-names, appropriate interrupts are required.
-+- interrupt-names: Must include the following entries:
-+    "dma"    - DMA interrupt
-+    "msi"    - MSI interrupt
-+    "intx"   - Legacy INTA/B/C/D interrupt
++#define PCL_PINCTRL0			0x002c
++#define PCL_PERST_PLDN_REGEN		BIT(12)
++#define PCL_PERST_NOE_REGEN		BIT(11)
++#define PCL_PERST_OUT_REGEN		BIT(8)
++#define PCL_PERST_PLDN_REGVAL		BIT(4)
++#define PCL_PERST_NOE_REGVAL		BIT(3)
++#define PCL_PERST_OUT_REGVAL		BIT(0)
 +
-+Optional properties:
-+- phys: A phandle to generic PCIe PHY. According to the phy-names, appropriate
-+	phys are required.
-+- phy-names: Must be "pcie-phy".
++#define PCL_PIPEMON			0x0044
++#define PCL_PCLK_ALIVE			BIT(15)
 +
-+Required sub-node:
-+- interrupt-controller: Specifies interrupt controller for legacy PCI
-+	interrupts. The node name isn't important.
++#define PCL_APP_READY_CTRL		0x8008
++#define PCL_APP_LTSSM_ENABLE		BIT(0)
 +
-+Required properties for interrupt-controller:
-+- interrupt-controller: identifies the node as an interrupt controller.
-+- #interrupt-cells: specifies the number of cells needed to encode an
-+	interrupt source. The value must be 1.
++#define PCL_APP_PM0			0x8078
++#define PCL_SYS_AUX_PWR_DET		BIT(8)
 +
-+Example:
++#define PCL_RCV_INT			0x8108
++#define PCL_CFG_BW_MGT_ENABLE		BIT(20)
++#define PCL_CFG_LINK_AUTO_BW_ENABLE	BIT(19)
++#define PCL_CFG_AER_RC_ERR_MSI_ENABLE	BIT(18)
++#define PCL_CFG_PME_MSI_ENABLE		BIT(17)
++#define PCL_CFG_BW_MGT_STATUS		BIT(4)
++#define PCL_CFG_LINK_AUTO_BW_STATUS	BIT(3)
++#define PCL_CFG_AER_RC_ERR_MSI_STATUS	BIT(2)
++#define PCL_CFG_PME_MSI_STATUS		BIT(1)
++#define PCL_RCV_INT_ALL_ENABLE			\
++	(PCL_CFG_BW_MGT_ENABLE | PCL_CFG_LINK_AUTO_BW_ENABLE \
++	 | PCL_CFG_AER_RC_ERR_MSI_ENABLE | PCL_CFG_PME_MSI_ENABLE)
 +
-+	pcie: pcie@66000000 {
-+		compatible = "socionext,uniphier-pcie", "snps,dw-pcie";
-+		status = "disabled";
-+		reg-names = "dbi", "link", "config";
-+		reg = <0x66000000 0x1000>, <0x66010000 0x10000>,
-+		      <0x2fff0000 0x10000>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		clocks = <&sys_clk 24>;
-+		resets = <&sys_rst 24>;
-+		num-lanes = <1>;
-+		num-viewport = <1>;
-+		bus-range = <0x0 0xff>;
-+		device_type = "pci";
-+		ranges =
-+		/* downstream I/O */
-+			<0x81000000 0 0x00000000  0x2ffe0000  0 0x00010000
-+		/* non-prefetchable memory */
-+			 0x82000000 0 0x00000000  0x20000000  0 0x0ffe0000>;
-+		#interrupt-cells = <1>;
-+		interrupt-names = "dma", "msi", "intx";
-+		interrupts = <0 224 4>, <0 225 4>, <0 226 4>;
-+		interrupt-map-mask = <0 0 0  7>;
-+		interrupt-map = <0 0 0  1  &pcie_intc 0>,	/* INTA */
-+				<0 0 0  2  &pcie_intc 1>,	/* INTB */
-+				<0 0 0  3  &pcie_intc 2>,	/* INTC */
-+				<0 0 0  4  &pcie_intc 3>;	/* INTD */
++#define PCL_RCV_INTX			0x810c
++#define PCL_RADM_INTD_ENABLE		BIT(19)
++#define PCL_RADM_INTC_ENABLE		BIT(18)
++#define PCL_RADM_INTB_ENABLE		BIT(17)
++#define PCL_RADM_INTA_ENABLE		BIT(16)
++#define PCL_RADM_INTD_STATUS		BIT(3)
++#define PCL_RADM_INTC_STATUS		BIT(2)
++#define PCL_RADM_INTB_STATUS		BIT(1)
++#define PCL_RADM_INTA_STATUS		BIT(0)
++#define PCL_RCV_INTX_ALL_ENABLE			\
++	(PCL_RADM_INTD_ENABLE | PCL_RADM_INTC_ENABLE \
++	 | PCL_RADM_INTB_ENABLE	| PCL_RADM_INTA_ENABLE)
 +
-+		pcie_intc: interrupt-controller {
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
-+	};
++#define PCL_STATUS_LINK			0x8140
++#define PCL_RDLH_LINK_UP		BIT(1)
++#define PCL_XMLH_LINK_UP		BIT(0)
++
++struct uniphier_pcie_priv {
++	void __iomem *base;
++	struct dw_pcie pci;
++	struct clk *clk;
++	struct reset_control *rst;
++	struct phy *phy;
++	struct irq_domain *irq_domain;
++};
++
++#define to_uniphier_pcie(x)	dev_get_drvdata((x)->dev)
++
++static void uniphier_pcie_ltssm_enable(struct uniphier_pcie_priv *priv)
++{
++	u32 val;
++
++	val = readl(priv->base + PCL_APP_READY_CTRL);
++	val |= PCL_APP_LTSSM_ENABLE;
++	writel(val, priv->base + PCL_APP_READY_CTRL);
++}
++
++static void uniphier_pcie_ltssm_disable(struct uniphier_pcie_priv *priv)
++{
++	u32 val;
++
++	val = readl(priv->base + PCL_APP_READY_CTRL);
++	val &= ~PCL_APP_LTSSM_ENABLE;
++	writel(val, priv->base + PCL_APP_READY_CTRL);
++}
++
++static void uniphier_pcie_init_rc(struct uniphier_pcie_priv *priv)
++{
++	u32 val;
++
++	/* use auxiliary power detection */
++	val = readl(priv->base + PCL_APP_PM0);
++	val |= PCL_SYS_AUX_PWR_DET;
++	writel(val, priv->base + PCL_APP_PM0);
++
++	/* assert PERST# */
++	val = readl(priv->base + PCL_PINCTRL0);
++	val &= ~(PCL_PERST_NOE_REGVAL | PCL_PERST_OUT_REGVAL
++		 | PCL_PERST_PLDN_REGVAL);
++	val |= PCL_PERST_NOE_REGEN | PCL_PERST_OUT_REGEN
++		| PCL_PERST_PLDN_REGEN;
++	writel(val, priv->base + PCL_PINCTRL0);
++
++	uniphier_pcie_ltssm_disable(priv);
++
++	usleep_range(100000, 200000);
++
++	/* deassert PERST# */
++	val = readl(priv->base + PCL_PINCTRL0);
++	val |= PCL_PERST_OUT_REGVAL | PCL_PERST_OUT_REGEN;
++	writel(val, priv->base + PCL_PINCTRL0);
++}
++
++static int uniphier_pcie_wait_rc(struct uniphier_pcie_priv *priv)
++{
++	u32 status;
++	int ret;
++
++	/* wait PIPE clock */
++	ret = readl_poll_timeout(priv->base + PCL_PIPEMON, status,
++				 status & PCL_PCLK_ALIVE, 100000, 1000000);
++	if (ret) {
++		dev_err(priv->pci.dev,
++			"Failed to initialize controller in RC mode\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int uniphier_pcie_link_up(struct dw_pcie *pci)
++{
++	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
++	u32 val, mask;
++
++	val = readl(priv->base + PCL_STATUS_LINK);
++	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
++
++	return (val & mask) == mask;
++}
++
++static int uniphier_pcie_establish_link(struct dw_pcie *pci)
++{
++	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
++	int ret;
++
++	if (dw_pcie_link_up(pci))
++		return 0;
++
++	uniphier_pcie_ltssm_enable(priv);
++
++	ret = dw_pcie_wait_for_link(pci);
++	if (ret == -ETIMEDOUT) {
++		dev_warn(pci->dev, "Link not up\n");
++		ret = 0;
++	}
++
++	return ret;
++}
++
++static void uniphier_pcie_stop_link(struct dw_pcie *pci)
++{
++	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
++
++	uniphier_pcie_ltssm_disable(priv);
++}
++
++static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
++				  irq_hw_number_t hwirq)
++{
++	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
++	irq_set_chip_data(irq, domain->host_data);
++
++	return 0;
++}
++
++static const struct irq_domain_ops uniphier_intx_domain_ops = {
++	.map = uniphier_pcie_intx_map,
++};
++
++static int uniphier_pcie_init_irq_domain(struct pcie_port *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
++	struct device_node *np = pci->dev->of_node;
++	struct device_node *np_intc = of_get_next_child(np, NULL);
++
++	if (!np_intc) {
++		dev_err(pci->dev, "Failed to get child node\n");
++		return -ENODEV;
++	}
++
++	priv->irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
++						 &uniphier_intx_domain_ops,
++						 pp);
++	if (!priv->irq_domain) {
++		dev_err(pci->dev, "Failed to get INTx domain\n");
++		return -ENODEV;
++	}
++
++	return 0;
++}
++
++static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
++{
++	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
++	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
++}
++
++static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
++{
++	writel(0, priv->base + PCL_RCV_INT);
++	writel(0, priv->base + PCL_RCV_INTX);
++}
++
++static irqreturn_t uniphier_pcie_irq_handler(int irq, void *arg)
++{
++	struct uniphier_pcie_priv *priv = arg;
++	struct dw_pcie *pci = &priv->pci;
++	u32 val;
++
++	/* INT for debug */
++	val = readl(priv->base + PCL_RCV_INT);
++
++	if (val & PCL_CFG_BW_MGT_STATUS)
++		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
++	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
++		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
++	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
++		dev_dbg(pci->dev, "Root Error\n");
++	if (val & PCL_CFG_PME_MSI_STATUS)
++		dev_dbg(pci->dev, "PME Interrupt\n");
++
++	writel(val, priv->base + PCL_RCV_INT);
++
++	/* INTx */
++	val = readl(priv->base + PCL_RCV_INTX);
++
++	if (val & PCL_RADM_INTA_STATUS)
++		generic_handle_irq(irq_find_mapping(priv->irq_domain, 0));
++	if (val & PCL_RADM_INTB_STATUS)
++		generic_handle_irq(irq_find_mapping(priv->irq_domain, 1));
++	if (val & PCL_RADM_INTC_STATUS)
++		generic_handle_irq(irq_find_mapping(priv->irq_domain, 2));
++	if (val & PCL_RADM_INTD_STATUS)
++		generic_handle_irq(irq_find_mapping(priv->irq_domain, 3));
++
++	writel(val, priv->base + PCL_RCV_INTX);
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t uniphier_pcie_msi_irq_handler(int irq, void *arg)
++{
++	struct pcie_port *pp = arg;
++
++	return dw_handle_msi_irq(pp);
++}
++
++static int uniphier_pcie_host_init(struct pcie_port *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	int ret;
++
++	dw_pcie_setup_rc(pp);
++	ret = uniphier_pcie_establish_link(pci);
++	if (ret)
++		return ret;
++
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		dw_pcie_msi_init(pp);
++
++	return 0;
++}
++
++static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
++	.host_init = uniphier_pcie_host_init,
++};
++
++static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
++				  struct platform_device *pdev)
++{
++	struct dw_pcie *pci = &priv->pci;
++	struct pcie_port *pp = &pci->pp;
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	pp->root_bus_nr = -1;
++	pp->ops = &uniphier_pcie_host_ops;
++
++	pp->irq = platform_get_irq_byname(pdev, "intx");
++	if (pp->irq < 0) {
++		dev_err(dev, "Failed to get intx irq\n");
++		return pp->irq;
++	}
++
++	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
++			       IRQF_SHARED, "pcie", priv);
++	if (ret) {
++		dev_err(dev, "Failed to request irq %d\n", pp->irq);
++		return ret;
++	}
++
++	ret = uniphier_pcie_init_irq_domain(pp);
++	if (ret)
++		return ret;
++
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
++		if (pp->msi_irq < 0)
++			return pp->msi_irq;
++
++		ret = devm_request_irq(dev, pp->msi_irq,
++				       uniphier_pcie_msi_irq_handler,
++				       IRQF_SHARED, "pcie-msi", pp);
++		if (ret) {
++			dev_err(dev, "failed to request msi_irq %d\n",
++				pp->msi_irq);
++			return ret;
++		}
++	}
++
++	ret = dw_pcie_host_init(pp);
++	if (ret) {
++		dev_err(dev, "Failed to initialize host (%d)\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int uniphier_pcie_host_enable(struct uniphier_pcie_priv *priv)
++{
++	int ret;
++
++	ret = clk_prepare_enable(priv->clk);
++	if (ret)
++		return ret;
++
++	ret = reset_control_deassert(priv->rst);
++	if (ret)
++		goto out_clk_disable;
++
++	uniphier_pcie_init_rc(priv);
++
++	ret = phy_init(priv->phy);
++	if (ret)
++		goto out_rst_assert;
++
++	ret = uniphier_pcie_wait_rc(priv);
++	if (ret)
++		goto out_phy_exit;
++
++	uniphier_pcie_irq_enable(priv);
++
++	return 0;
++
++out_phy_exit:
++	phy_exit(priv->phy);
++out_rst_assert:
++	reset_control_assert(priv->rst);
++out_clk_disable:
++	clk_disable_unprepare(priv->clk);
++
++	return ret;
++}
++
++static void uniphier_pcie_host_disable(struct uniphier_pcie_priv *priv)
++{
++	uniphier_pcie_irq_disable(priv);
++	phy_exit(priv->phy);
++	reset_control_assert(priv->rst);
++	clk_disable_unprepare(priv->clk);
++}
++
++static const struct dw_pcie_ops dw_pcie_ops = {
++	.start_link = uniphier_pcie_establish_link,
++	.stop_link = uniphier_pcie_stop_link,
++	.link_up = uniphier_pcie_link_up,
++};
++
++static int uniphier_pcie_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct uniphier_pcie_priv *priv;
++	struct resource *res;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->pci.dev = dev;
++	priv->pci.ops = &dw_pcie_ops;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
++	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
++	if (IS_ERR(priv->pci.dbi_base))
++		return PTR_ERR(priv->pci.dbi_base);
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
++	priv->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	priv->clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(priv->clk))
++		return PTR_ERR(priv->clk);
++
++	priv->rst = devm_reset_control_get_shared(dev, NULL);
++	if (IS_ERR(priv->rst))
++		return PTR_ERR(priv->rst);
++
++	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
++	if (IS_ERR(priv->phy))
++		return PTR_ERR(priv->phy);
++
++	platform_set_drvdata(pdev, priv);
++
++	ret = uniphier_pcie_host_enable(priv);
++	if (ret)
++		return ret;
++
++	return uniphier_add_pcie_port(priv, pdev);
++}
++
++static int uniphier_pcie_remove(struct platform_device *pdev)
++{
++	struct uniphier_pcie_priv *priv = platform_get_drvdata(pdev);
++
++	uniphier_pcie_host_disable(priv);
++
++	return 0;
++}
++
++static const struct of_device_id uniphier_pcie_match[] = {
++	{ .compatible = "socionext,uniphier-pcie", },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, uniphier_pcie_match);
++
++static struct platform_driver uniphier_pcie_driver = {
++	.probe  = uniphier_pcie_probe,
++	.remove = uniphier_pcie_remove,
++	.driver = {
++		.name = "uniphier-pcie",
++		.of_match_table = uniphier_pcie_match,
++	},
++};
++builtin_platform_driver(uniphier_pcie_driver);
++
++MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PCIe host controller driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
