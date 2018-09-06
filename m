@@ -2,110 +2,150 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C74EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFE8C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D295206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:24:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D295206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F406206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:33:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bKMe1fRm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F406206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeIFK6Q (ORCPT
+        id S1726747AbeIFLHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 06:58:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53384 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725940AbeIFK6Q (ORCPT
+        Thu, 6 Sep 2018 07:07:05 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:32978 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeIFLHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:58:16 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w866NsbV119483
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 02:24:23 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2masq32g6u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 02:24:23 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 6 Sep 2018 07:24:21 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 07:24:19 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w866OG1B35127358
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 06:24:16 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E4454C058;
-        Thu,  6 Sep 2018 09:24:11 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CD07C4C040;
-        Thu,  6 Sep 2018 09:24:10 +0100 (BST)
-Received: from osiris (unknown [9.152.212.24])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  6 Sep 2018 09:24:10 +0100 (BST)
-Date:   Thu, 6 Sep 2018 08:24:14 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
-Cc:     schwidefsky@de.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>
-Subject: Re: [PATCH] scsi: zfcp: remove redundant put_device
-References: <1536214587-32500-1-git-send-email-dingxiang@cmss.chinamobile.com>
+        Thu, 6 Sep 2018 07:07:04 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4455410C1166;
+        Wed,  5 Sep 2018 23:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1536215591; bh=f9OeV60tVDrP8ZrrbUe8JyqYAAnUEFOfk0YM2Ms5Rj4=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=bKMe1fRm7ux7pTyBs6KW7tajqDQRdAuktLerssH9GYIJsnv118oD4lDzbVrHYTYk6
+         2H6sZZemifsxsZEcA/AlHva7nntgolJGruOey0CYzrQ1Vz2PdmN2xU5ImOlaL9lLUg
+         X/vOtMciyZd2YUjRb1DaDoe5ss5JLon7dJ9QRc6iP76oSL/C6aY6qnf+/XbdbJUag0
+         duUA9aZY2zQe/YdHFre1WNyIXL66waNGPVMU4Cq3Gcuqv6C8aVCfvPzqu5004GLopH
+         jPImq/inYxDX4GGXBJl8y54RhBCf6BXUzTI+Ugl8cXGFhzCHsrznUECwGREnHjwht4
+         E59GEZ39gsspQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id DDABB4DCA;
+        Wed,  5 Sep 2018 23:33:10 -0700 (PDT)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 5 Sep 2018 23:33:10 -0700
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
+ 6 Sep 2018 10:33:07 +0400
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] usb: dwc2: power off during shutdown
+Thread-Topic: [PATCH RFC] usb: dwc2: power off during shutdown
+Thread-Index: AQHUQdnrerw4ENQnyUeZCj/DHLE7ag==
+Date:   Thu, 6 Sep 2018 06:33:07 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7646E0@am04wembxa.internal.synopsys.com>
+References: <1535795683-3788-1-git-send-email-stefan.wahren@i2se.com>
+ <410670D7E743164D87FA6160E7907A56013A761B2B@am04wembxa.internal.synopsys.com>
+ <470783016.30183.1536172949193@email.1und1.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.57]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <1536214587-32500-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18090606-4275-0000-0000-000002B60908
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090606-4276-0000-0000-000037BF2614
-Message-Id: <20180906062414.GA3598@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=949 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 02:16:27PM +0800, Ding Xiang wrote:
-> device_unregister will put device, do not need to do it one more time
-> 
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
-> ---
->  drivers/s390/scsi/zfcp_unit.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/s390/scsi/zfcp_unit.c b/drivers/s390/scsi/zfcp_unit.c
-> index 1bf0a09..6b50084 100644
-> --- a/drivers/s390/scsi/zfcp_unit.c
-> +++ b/drivers/s390/scsi/zfcp_unit.c
-> @@ -249,8 +249,6 @@ int zfcp_unit_remove(struct zfcp_port *port, u64 fcp_lun)
->  		scsi_device_put(sdev);
->  	}
-> 
-> -	put_device(&unit->dev);
-> -
->  	device_unregister(&unit->dev);
-> 
->  	return 0;
-
-I'm quite sure this change is wrong, since the put_device() here seems to
-pair with the get_device() in _zfcp_unit_find(). So we would end up with a
-memory leak.
-
-Adding Steffen and Benjamin.
-
+Hi Stefan,=0A=
+=0A=
+On 9/5/2018 10:42 PM, Stefan Wahren wrote:=0A=
+> Hi Minas,=0A=
+> =0A=
+>> Minas Harutyunyan <Minas.Harutyunyan@synopsys.com> hat am 5. September 2=
+018 um 10:37 geschrieben:=0A=
+>>=0A=
+>>=0A=
+>> Hi Stefan,=0A=
+>>=0A=
+>> On 9/1/2018 1:55 PM, Stefan Wahren wrote:=0A=
+>>> Currently USB consumes a lot of power after shutting down a Raspberry P=
+i 3=0A=
+>>> (example setup with Ethernet and a keyboard connected). So power off=0A=
+>>> USB on shutdown.=0A=
+>>>=0A=
+>>> Measured on Raspberry Pi 3B with 4.19rc1/multi_v7_defconfig (HDMI, Ethe=
+rnet=0A=
+>>> and a keyboard connected)=0A=
+>>>=0A=
+>>> Before patch: 2.450 W=0A=
+>>> After patch:  2.090 W=0A=
+>>>=0A=
+>>=0A=
+>> Could you please elaborate. Power measurements done after shutdown?=0A=
+> =0A=
+> I did the following:=0A=
+> =0A=
+> sudo halt=0A=
+> wait until "System halted" appears on the screen=0A=
+> "measured" the current value displayed on my PSU=0A=
+> =0A=
+> You are right that not the same as poweroff. But in even in poweroff the =
+board consumes 0.6 W, but in this case USB is powered down.=0A=
+> =0A=
+>> Why=0A=
+>> your setup continue consume power after shutdown?=0A=
+> =0A=
+> The BCM2835 SoC has a GPU and a ARM core. Linux is running only on the AR=
+M core. The GPU is usually running a close source firmware, which is starte=
+d at first during boot und runs all the time.=0A=
+> =0A=
+>> Maybe its=0A=
+>> sleep/hibernation mode?=0A=
+> =0A=
+> There isn't much implementation of power management for BCM2835 yet. So i=
+ wanted to start with USB.=0A=
+> Even for sleep/hibernation the consumption is much too high. Because the =
+system consumes in idle 1.6 W.=0A=
+> =0A=
+>>=0A=
+>> dwc2 core in your platform which type of power optimization supports:=0A=
+>> partial power down, hibernation or extended hibernation? Please provide=
+=0A=
+>> me GHWCFG4 register value of your core.=0A=
+> =0A=
+> AFAIK all RPis use the same USB IP core:=0A=
+> =0A=
+> GHWCFG4 =3D 0x1ff00020=0A=
+=0A=
+Ok, your core doesn't support any power optimization mode.=0A=
+=0A=
+=0A=
+> =0A=
+> Stefan=0A=
+> =0A=
+=0A=
+1. Could you please explain what is real/physical cause of power saving =0A=
+after your patch: VBUS off, PHY clock stop or any other?=0A=
+2. Can USB detect remote wake-up signaling from connected =0A=
+keyboard/ethernet before and after your patch?=0A=
+=0A=
+Thanks,=0A=
+Minas=0A=
