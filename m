@@ -2,94 +2,86 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126C5C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF43EC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C738420857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:36:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C738420857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 548EE2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:38:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D91UAdzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548EE2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbeIFFJS (ORCPT
+        id S1726551AbeIFFKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 01:09:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:62427 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbeIFFJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 01:09:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 17:36:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="86376567"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.4]) ([10.239.13.4])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Sep 2018 17:36:35 -0700
-Subject: Re: [LKP] 3f906ba236 [ 71.192813] WARNING: possible circular locking
- dependency detected
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, LKP <lkp@01.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180905090553.GA6655@shao2-debian>
- <alpine.DEB.2.21.1809051459130.1416@nanos.tec.linutronix.de>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <7f0deb2e-f946-75fb-8ca9-5308fd5e5a9c@intel.com>
-Date:   Thu, 6 Sep 2018 08:37:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Thu, 6 Sep 2018 01:10:44 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45376 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbeIFFKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 01:10:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so9416648wrb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qW/LP2qYlFpItMwBZQEls8h5Jq8RZdvDdQB2xyA8m/4=;
+        b=D91UAdzdA+89BdCHfd01q2jYzln878WaFyamxr8QU+O34Lv01MIHKpUa9XH4ad+njA
+         y+SdDdyJFsvxAJuNCgLgeJGyRaJff6v8T7YjSoRC2jy03S/dFSoQW0KpE0g6mCA5uT5C
+         bBHaiz3LqILLzR2EaCcqrv11klszyrJnnB2M0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qW/LP2qYlFpItMwBZQEls8h5Jq8RZdvDdQB2xyA8m/4=;
+        b=k4LiZSnneYEF4ipNWBu3E99Zi0esQzblc1d01XDXTBOnikjJHB741g2Yeub4dYrLO9
+         hyxKURjwvk/E7fM5FZ4Operyvov9fLE9sZCGIv5KBmDyp2uuw8wvdSBPMzP8sAbRH75D
+         tbpPomFlb4XNWVTd29xUalOStZwIf5w7f1LN403AkXdXiHcJ4fwlYyhk3J5o4nooaP1a
+         abfZKAecCRKoHl+VfgZJTpbbN45IzS438SmXlfHoaav9F2u9XqOp+0E5p1yOvlkVIQU3
+         JC7GbMOfEZDbZOCtVomMmpS7yMCtFoQQiNp+wFjINW+LYAqIVq/hW2pTpr4VVsxyTW9S
+         HFWw==
+X-Gm-Message-State: APzg51Dp1hZiZjGXo45LewFd668U4COT663+zZ/3uWCCQVgMFeHNZOqt
+        1ctMMzyrhQ0SlvCMRUGVqOcIo0vz4Wg3pXvwmIY13g==
+X-Google-Smtp-Source: ANB0VdYIJk21GRiV6/wz9l+VNH2i2/Yxzvw/kzk+HeIJG4+C9hjU13kJ1ezwlim/Zs84/9NaViBAGFrsAfOJwDnHi9w=
+X-Received: by 2002:adf:9f13:: with SMTP id l19-v6mr185712wrf.206.1536194281911;
+ Wed, 05 Sep 2018 17:38:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809051459130.1416@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <cover.1536138304.git.ren_guo@c-sky.com> <aab0c4b467f69c693ed1e24e9fc47ba20b3f9f4a.1536138304.git.ren_guo@c-sky.com>
+In-Reply-To: <aab0c4b467f69c693ed1e24e9fc47ba20b3f9f4a.1536138304.git.ren_guo@c-sky.com>
+From:   Rob Herring <rob.herring@linaro.org>
+Date:   Wed, 5 Sep 2018 19:37:50 -0500
+Message-ID: <CABGGiszyQpJCB+QAoYwNwsDAhgdWQ3Ud1eR7U1xh9BMYzMKzjw@mail.gmail.com>
+Subject: Re: [PATCH V3 18/26] dt-bindings: csky CPU Bindings
+To:     ren_guo@c-sky.com
+Cc:     linux-arch@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/05/2018 09:02 PM, Thomas Gleixner wrote:
-> On Wed, 5 Sep 2018, kernel test robot wrote:
+On Wed, Sep 5, 2018 at 7:08 AM Guo Ren <ren_guo@c-sky.com> wrote:
 >
->> Greetings,
->>
->> 0day kernel testing robot got the below dmesg and the first bad commit is
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->>
->> commit 3f906ba23689a3f824424c50f3ae937c2c70f676
->> Author:     Thomas Gleixner <tglx@linutronix.de>
->> AuthorDate: Mon Jul 10 15:50:09 2017 -0700
->> Commit:     Linus Torvalds <torvalds@linux-foundation.org>
->> CommitDate: Mon Jul 10 16:32:33 2017 -0700
-> So it identified a more than one year old commit. Great.
->
->> vm86 returned ENOSYS, marking as inactive. 20044 iterations. [F:14867 S:5032 HI:3700] [ 57.651003] synth uevent: /module/pcmcia_core: unknown uevent action string [ 71.189062] [ 71.191953] ====================================================== [ 71.192813] WARNING: possible circular locking dependency detected [ 71.193664] 4.12.0-10480-g3f906ba #1 Not tainted [ 71.194355] ------------------------------------------------------ [ 71.195211] trinity-c0/1666 is trying to acquire lock: [ 71.195958] (mem_hotplug_lock.rw_sem){.+.+.+}, at: show_slab_objects+0x14b/0x440 [ 71.197284] [ 71.197284] but task is already holding lock:
-> along with completely unparseable information. What am I supposed to do
-> with this mail?
-Hi,
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  Documentation/devicetree/bindings/csky/cpus.txt | 70 +++++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/csky/cpus.txt
 
-Attached please find the dmesg/reproduce files in previous mail.
-please ignore the report if it's a false positive.
+Please make sure DT bindings are sent to DT list.
 
-Best Regards,
-Rong Chen
-
->
-> Thanks,
->
-> 	tglx
-> _______________________________________________
-> LKP mailing list
-> LKP@lists.01.org
-> https://lists.01.org/mailman/listinfo/lkp
-
+Thanks,
+Rob
