@@ -2,105 +2,85 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D196DC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2D3C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B701205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:10:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B701205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 43204206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43204206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeIFJnv (ORCPT
+        id S1726444AbeIFJpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 05:43:51 -0400
-Received: from mailoutvs43.siol.net ([185.57.226.234]:48763 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725851AbeIFJnv (ORCPT
+        Thu, 6 Sep 2018 05:45:36 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55430 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbeIFJpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 05:43:51 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id D7EA7520396;
-        Thu,  6 Sep 2018 07:10:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id I7K_M70Ue4Zj; Thu,  6 Sep 2018 07:10:11 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 4CD5A52034C;
-        Thu,  6 Sep 2018 07:10:11 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id A22A3520396;
-        Thu,  6 Sep 2018 07:10:07 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH v4 1/4] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
-Date:   Thu, 06 Sep 2018 07:10:06 +0200
-Message-ID: <2955967.qdhifWMYUT@jernej-laptop>
-In-Reply-To: <20180905070335.dclhpxjld4vdkdu4@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com> <20180905070335.dclhpxjld4vdkdu4@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 6 Sep 2018 05:45:35 -0400
+Received: from localhost (unknown [172.58.40.71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6EFBB142A5A33;
+        Wed,  5 Sep 2018 22:11:57 -0700 (PDT)
+Date:   Wed, 05 Sep 2018 22:11:56 -0700 (PDT)
+Message-Id: <20180905.221156.794134129220434079.davem@davemloft.net>
+To:     dima@arista.com
+Cc:     linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        torvalds@linux-foundation.org, herbert@gondor.apana.org.au,
+        steffen.klassert@secunet.com, netdev@vger.kernel.org
+Subject: Re: [PATCH] netlink: Make groups check less stupid in
+ netlink_bind()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180903214051.4433-1-dima@arista.com>
+References: <20180903214051.4433-1-dima@arista.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 05 Sep 2018 22:11:57 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sreda, 05. september 2018 ob 09:03:35 CEST je Maxime Ripard napisal(a):
-> On Tue, Sep 04, 2018 at 10:06:06PM +0530, Jagan Teki wrote:
-> > Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
-> > as default.
-> > 
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> > Changes for v4, v3:
-> > - none
-> > Changes for v2:
-> > - Enable for MACH_SUN8I
-> > 
-> >  drivers/clk/sunxi-ng/Kconfig | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-> > index 826674d090fd..e20182aa9748 100644
-> > --- a/drivers/clk/sunxi-ng/Kconfig
-> > +++ b/drivers/clk/sunxi-ng/Kconfig
-> > @@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
-> > 
-> >  config SUN8I_DE2_CCU
-> >  
-> >  	bool "Support for the Allwinner SoCs DE2 CCU"
-> > 
-> > +	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
-> > +	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
+From: Dmitry Safonov <dima@arista.com>
+Date: Mon,  3 Sep 2018 22:40:51 +0100
+
+> As Linus noted, the test for 0 is needless, groups type can follow the
+> usual kernel style and 8*sizeof(unsigned long) is BITS_PER_LONG:
 > 
-> I don't see why there's a dependency on the DRM driver. I'm pretty
-> sure this would even break simplefb.
+>> The code [..] isn't technically incorrect...
+>> But it is stupid.
+>> Why stupid? Because the test for 0 is pointless.
+>>
+>> Just doing
+>>        if (nlk->ngroups < 8*sizeof(groups))
+>>                groups &= (1UL << nlk->ngroups) - 1;
+>>
+>> would have been fine and more understandable, since the "mask by shift
+>> count" already does the right thing for a ngroups value of 0. Now that
+>> test for zero makes me go "what's special about zero?". It turns out
+>> that the answer to that is "nothing".
+> [..]
+>> The type of "groups" is kind of silly too.
+>>
+>> Yeah, "long unsigned int" isn't _technically_ wrong. But we normally
+>> call that type "unsigned long".
+> 
+> Cleanup my piece of pointlessness.
+> 
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Steffen Klassert <steffen.klassert@secunet.com>
+> Cc: netdev@vger.kernel.org
+> Fairly-blamed-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
 
-I think best approach would be that SUN8I_MIXER selects (or depends on?) this 
-symbol, since it can't work if there is no DE2 CCU clock present.
-
-Best regards,
-Jernej
-
-
-
+Applied to net-next, thanks.
