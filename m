@@ -2,93 +2,151 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F49C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4866C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2ACE20861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:12:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2ACE20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 8800720861
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:12:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="L4RTKpoh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8800720861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729074AbeIFRrt (ORCPT
+        id S1729093AbeIFRrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:47:49 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:42002 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbeIFRrt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:47:49 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fxu4m-00064A-LX; Thu, 06 Sep 2018 21:12:00 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fxu4b-000820-4F; Thu, 06 Sep 2018 21:11:49 +0800
-Date:   Thu, 6 Sep 2018 21:11:49 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] crypto: skcipher: Remove VLA usage for
- SKCIPHER_REQUEST_ON_STACK
-Message-ID: <20180906131149.ge2db74nxffs2tbz@gondor.apana.org.au>
-References: <20180904181629.20712-1-keescook@chromium.org>
- <20180904181629.20712-3-keescook@chromium.org>
- <CAKv+Gu9uJ+ZjBSCM=aU0GDvYR72cy2k8reXdLV5on3dOVw8KdQ@mail.gmail.com>
- <CAGXu5jKmcuhULMR=O9B_hJAxEK8uV36uoMxm4F3F8yYSuMzYNA@mail.gmail.com>
- <CAKv+Gu_0vWUqkUex45iW=pAfUbKVsqzP9MDf6OOwTg-nUVPZNg@mail.gmail.com>
- <CAOtvUMfu4-DWD4n4c5itjArAYWhGaBnPBEnkh6cbCubG-k9cCA@mail.gmail.com>
- <CAKv+Gu8bKcPksgoryaVjoD9G5KeCYrqWOCgVhqrBqGw5dCzXag@mail.gmail.com>
- <CAKv+Gu-QkCE0pY4+5anEZ0eWv-FTH1QJtOQfPcTVLcvNf7XNiA@mail.gmail.com>
- <20180906085100.xcqqftgqg4sizkec@gondor.apana.org.au>
- <CAKv+Gu_0ehX9sLCtUYR00D4iQw+ytwmsLKmG6dgq9EnLjidKFw@mail.gmail.com>
+        Thu, 6 Sep 2018 13:47:55 -0400
+Received: from imap.thunk.org ([74.207.234.97]:58182 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727790AbeIFRrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:47:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=JtY9XPC66iJFToFxlDLwX9Ev05MTMKFGKTf8qx8bpLw=; b=L4RTKpoh4LLhE54jTQ8cE/hGUq
+        8mi3nulAejHECfXxxDnyDHkiV5CCIBYdwWza6cm0+M5XB+zorbduYPq/i1/JANeUTA3fpvf96q86L
+        Msm/YIGnyneyr/FFTzmlkJ7P2lFHuXOJx/9skeAU/jLtV7KXOZSqgYwRhHFihK9X/PnY=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fxu4z-0003Jh-I8; Thu, 06 Sep 2018 13:12:13 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7D96F7A5670; Thu,  6 Sep 2018 09:12:12 -0400 (EDT)
+Date:   Thu, 6 Sep 2018 09:12:12 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com, zwisler@kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: linux-next test error
+Message-ID: <20180906131212.GG2331@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Souptick Joarder <jrdr.linux@gmail.com>, Jan Kara <jack@suse.cz>,
+        syzbot+87a05ae4accd500f5242@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com, zwisler@kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+References: <0000000000004f6b5805751a8189@google.com>
+ <20180905085545.GD24902@quack2.suse.cz>
+ <CAFqt6zZtjPFdfAGxp43oqN3=z9+vAGzdOvDcgFaU+05ffCGu7A@mail.gmail.com>
+ <20180905133459.GF23909@thunk.org>
+ <CAFqt6za5OvHgONOgpmhxS+YsYZyiXUhzpmOgZYyHWPHEO34QwQ@mail.gmail.com>
+ <20180906083800.GC19319@quack2.suse.cz>
+ <CAFqt6zZ=uaArS0hrbgZGLe38HgSPhZBHzsGEJOZiQGm4Y2N0yw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_0ehX9sLCtUYR00D4iQw+ytwmsLKmG6dgq9EnLjidKFw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAFqt6zZ=uaArS0hrbgZGLe38HgSPhZBHzsGEJOZiQGm4Y2N0yw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 11:29:41AM +0200, Ard Biesheuvel wrote:
->
-> Perhaps not, but it is not enforced atm.
-> 
-> In any case, limiting the reqsize is going to break things, so that
-> needs to occur based on the sync/async nature of the algo. That also
-> means we'll corrupt the stack if we ever end up using
-> SKCIPHER_REQUEST_ON_STACK() with an async algo whose reqsize is
-> greater than the sync reqsize limit, so I do think some additional
-> sanity check is appropriate.
+On Thu, Sep 06, 2018 at 05:56:31PM +0530, Souptick Joarder wrote:
+> > Yes, I'd start with converting ext4_page_mkwrite() - that should be pretty
+> > straightforward - and we can leave block_page_mkwrite() as is for now. I
+> > don't think allocating other VM_FAULT_ codes is going to cut it as
+> > generally the filesystem may need to communicate different error codes back
+> > and you don't know in advance which are interesting.
 
-I'd prefer compile-time based checks.  Perhaps we can introduce
-a wrapper around crypto_skcipher, say crypto_skcipher_sync which
-could then be used by SKCIPHER_REQUEST_ON_STACK to ensure that
-only sync algorithms can use this construct.
+Changing the return values of ext4_page_mkwrite() and
+ext4_filemap_fault() is definitely safe.  If you want to start
+changing the type of "ret" to vm_fault_t and introduce a new variable
+"err", now you have to be super careful not to screw things up.  (I
+believe one of the earlier patches didn't get that right.)
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> As block_page_mkwrite() is getting called from 2 places in ext4 and nilfs and
+> both places fault handler code convert errno to VM_FAULT_CODE using
+> block_page_mkwrite_return(), is it required to migrate block_page_mkwrite()
+> to use vm_fault_t return type and further complicate the API or better to
+> leave this API in current state ??
+
+So I don't see the point of changing return value block_page_mkwrite()
+(although to be honest I haven't see the value of the vm_fault_t
+change at all in the first place, at least not compared to the pain it
+has caused) but no, I don't think it's worth it.
+
+The API for block_page_mkwrite() can simply be defined as "0 on
+success, < 0 on error".  You can add documentation that it's up to
+caller of block_page_mkwrite() to call block_page_mkwrite_return() to
+translate the error to a vm_fault_t.
+
+> > One solution for passing error codes we could use with vm_fault_t is a
+> > scheme similar to ERR_PTR. So we can store full error code in vm_fault_t
+> > and still have a plenty of space for the special VM_FAULT_ return codes...
+> > With that scheme converting block_page_mkwrite() would be trivial.
+> >
+> I didn't get this part. Any reference code will be helpful ?
+
+So what we do for functions that need to either return an error or a
+pointer is to call encode the error as a "pointer" by using ERR_PTR(),
+and the caller can determine whether or not it is a valid pointer or
+an error code by using IS_ERR_VALUE() and turning it back into an
+error by using PTR_ERR().   See include/linux/err.h.
+
+Similarly, all valid vm_fault_t's composed of VM_FAULT_xxx are
+positive integers, and all errors are passed using the kernel's
+convention of using a negative error code.  So going through lots of
+machinations to return both an error code and a vm_fault_t *really*
+wasn't necessary.
+
+The issue, as near as I can understand things, for why we're going
+through all of this churn, was there was a concern that in the mm
+code, that all of the places which received a vm_fault_t would
+sometimes see a negative error code.  The proposal here is to just
+*accept* that this will happen, and just simply have them *check* to
+see if it's a negative error code, and convert it to the appropriate
+vm_fault_t in that case.  It puts the onus of the change on the mm
+layer, where as the "blast radius" of the vm_fault_t "cleanup" is
+spread out across a large number of subsystems.
+
+Which I wouldn't mind, if it wasn't causing pain.  But it *is* causing
+pain.
+
+And it's common kernel convention to overload an error and a pointer
+using the exact same trick.  We do it *all* over the place, and quite
+frankly, it's less error prone than changing functions to return a
+pointer and an error.  No one has said, "let's do to the ERR_PTR
+convention what we've done to the vm_fault_t -- it's too confusing
+that a pointer might be an error, since people might forget to check
+for it."  If they did that, it would be NACK'ed right, left and
+center.  But yet it's a good idea for vm_fault_t?
+
+	     	      	     	      - Ted
