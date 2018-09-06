@@ -2,177 +2,146 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882EEC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDA1C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F5B2064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 966C820857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:45:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M24EhdVv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F5B2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fAZ8awyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966C820857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbeIFOTx (ORCPT
+        id S1728423AbeIFOT5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:19:53 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35175 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbeIFOTx (ORCPT
+        Thu, 6 Sep 2018 10:19:57 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33597 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728041AbeIFOTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:19:53 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p12-v6so5013567pfh.2;
-        Thu, 06 Sep 2018 02:45:14 -0700 (PDT)
+        Thu, 6 Sep 2018 10:19:55 -0400
+Received: by mail-wm0-f67.google.com with SMTP id r1-v6so13909808wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 02:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=g9NitHbdY9XvpL1q8gDvMf9EfQL6SfRM+JTZLKaWzGg=;
-        b=M24EhdVvZIlIdqX3vs0GB4GecjgP5n8OOWjqQYGO9ZjBF6VeZSnt0GNJoxoIowJi/C
-         NJlkP6dknGqBSliA9F6izZnRYNIkdFpPRTC46vV5OygTGIrRWZR+byNFIViphr0C2q7B
-         FLBnRImEkgIESDkaiKyb0bezNbWf4p9RkJ3BeVnqSQhNKQ3RX4pikyJ85QT0UYX7l477
-         iVAOJpFo9y31ts+tKvMGT9q7OuqvyfDHb3zZgdlfcn62RCrnzukW0914T2whEdg7JOD7
-         BwcwQv7yXp4Zb2E+XwjxFCIbEfexpFgg3YEjJRXCG8k5WPOSOReym77MuSm1oaHtPCdA
-         tCLw==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GdDoGGGCnDzwoVBcTkzvGUgTIWTGiOZCABgdNN8twlc=;
+        b=fAZ8awyfPTfYxIfY7+BEHeT1wILEQ9TmvGEp9CxcokFhDQoIDe3UwPVyWDOP0NA7AQ
+         fDLNWgWUM+OG0W02LjAcUeXUTulZk6idxbEcCX00vHfKe98cD+c/9T9qUsw7vxLhK1AL
+         U39FBX5uXWukCQ9qNYN2cqlBm+EWjL6w4NZwMi9bY+GhqeVxQYorTJPiApkL/sVHUbFi
+         QZrCf1arub5zkIN439iPg5PgZzgRjXH/4gTWWV+GHL72/WtYlNmgCGjE6OKmtxZD1Zxq
+         NPfF9Sl90NTL2mcpME0bBoXBDFEdCUOPqQzVV16C5AeZC/xE7wSoHpQTZGbuPo5MH1iI
+         g1vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=g9NitHbdY9XvpL1q8gDvMf9EfQL6SfRM+JTZLKaWzGg=;
-        b=CGtiDU38fAG6qKyBiYFMtz2WHts7Zqy7YgeKZsenqlcF+lHV+/XX978p/27fRM2WPW
-         iW7YCCPwDCctLDZaXR6f3qFdkwPpV+LMGNjW7OBnmVx9lzRqJul5YYkoprF07qp/tBzp
-         XlxHX6441ptkoFPRuQn7XAmwOOe3etdw1nM1aNFSUQzSrF2qeZTtQ58K5h//Gsi2hdZb
-         smT4J6zGLUIacmVkYZFT51IqYQlYUhI7mj5MoP+KQJTX62mhOvtA+n3Kursty+SuL8xO
-         rOxL3a0ExvLG5Rx6NFVH4qWWaIj/a4iJTBaw47OS7URhoC4BSE/itM9ik1KzSL6rMKd0
-         LBOQ==
-X-Gm-Message-State: APzg51AMJ8WA4Ih5TOphhqG9OMpXBeg11Zlpti6xGEKUF13T7U/9Qel/
-        y8kBJgmAI/TFkPW8oYZ0hpXIeOOqSPw=
-X-Google-Smtp-Source: ANB0VdYnZjzJuO59bXRsuMLaS6nhD8PtulH4pQEZuPVgCaKmIt5HaOpiy9x+nSLdgBww87lLiM1gGQ==
-X-Received: by 2002:a63:7f06:: with SMTP id a6-v6mr1883030pgd.296.1536227113927;
-        Thu, 06 Sep 2018 02:45:13 -0700 (PDT)
-Received: from [10.144.12.201] ([122.146.92.136])
-        by smtp.googlemail.com with ESMTPSA id 5-v6sm6109259pgc.86.2018.09.06.02.45.12
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=GdDoGGGCnDzwoVBcTkzvGUgTIWTGiOZCABgdNN8twlc=;
+        b=LCdNSCM8VNANc+FujzYDwa3wrdqFWRAx5kL5B9lAK4GLM7SLKBovkS0KTrT6YB9J8E
+         Zwy+DHd6Dcj29lmeJnSug4E5vrdzzvS6tvr01IY8l4ucVy2IGdhPqRgwXzsUQhEnlQjw
+         U7buoouzvxPWOc9s4Q2vYLNBcL4ubTKBVXEM72oabJGRTqpbpnEDWWtjcQwNZGUFlzQk
+         kM1QNkF88Jb4FEN6EjIcQpBdVpN16G3WY/f0/QPZN+4kQBtLC4LjFY1FiDcD8w2nC2tA
+         Cuj/0bmIs4PxSD+3hk9PNN6HcaKleFvVEpfgs+fdEANbjHdbaBukJxzeD3kj0NXdzHwC
+         BZCw==
+X-Gm-Message-State: APzg51De4nwgRN0TcBsEJr95MhgspkXaptehqOkJUnMvKcUlki5WGS5j
+        3uX3tZDKQ3Q4SOhgym1E5pcmjLDNUR/3Nw==
+X-Google-Smtp-Source: ANB0VdbmAm/5rl+HdX3tkoJvA4vA1ADOOQm+jEhU7Mmoyq5FRhnTr0ysF6UN9rzfT4AtWDSGzXcbEg==
+X-Received: by 2002:a1c:b157:: with SMTP id a84-v6mr1521959wmf.18.1536227116047;
+        Thu, 06 Sep 2018 02:45:16 -0700 (PDT)
+Received: from localhost (smb-adpcdg1-01.hotspot.hub-one.net. [213.174.99.129])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm3425599wrq.7.2018.09.06.02.45.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 02:45:13 -0700 (PDT)
-Message-ID: <1536227104.68915.5.camel@gmail.com>
-Subject: Re: [PATCH] mac80211: fix TX status reporting for ieee80211s
-From:   Yuan-Chi Pang <fu3mo6goo@gmail.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 06 Sep 2018 17:45:04 +0800
-In-Reply-To: <1536224269-69350-1-git-send-email-fu3mo6goo@gmail.com>
-References: <1535963610.3437.10.camel@sipsolutions.net>
-         <1536224269-69350-1-git-send-email-fu3mo6goo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
+        Thu, 06 Sep 2018 02:45:15 -0700 (PDT)
+Date:   Thu, 06 Sep 2018 02:45:15 -0700 (PDT)
+X-Google-Original-Date: Wed, 05 Sep 2018 22:27:13 PDT (-0700)
+Subject:     Re: [PATCH] y2038: Remove newstat family from default syscall set
+In-Reply-To: <20180901174353.GA14271@roeck-us.net>
+CC:     Arnd Bergmann <arnd@arndb.de>, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     linux@roeck-us.net
+Message-ID: <mhng-a047b20f-8546-4762-bcf0-f884be595b92@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 01 Sep 2018 10:43:53 PDT (-0700), linux@roeck-us.net wrote:
+> Hi Arnd,
+>
+> On Fri, Apr 13, 2018 at 11:50:12AM +0200, Arnd Bergmann wrote:
+>> We have four generations of stat() syscalls:
+>> - the oldstat syscalls that are only used on the older architectures
+>> - the newstat family that is used on all 64-bit architectures but
+>>   lacked support for large files on 32-bit architectures.
+>> - the stat64 family that is used mostly on 32-bit architectures to
+>>   replace newstat
+>> - statx() to replace all of the above, adding 64-bit timestamps among
+>>   other things.
+>>
+>> We already compile stat64 only on those architectures that need it,
+>> but newstat is always built, including on those that don't reference
+>> it. This adds a new __ARCH_WANT_NEW_STAT symbol along the lines of
+>> __ARCH_WANT_OLD_STAT and __ARCH_WANT_STAT64 to control compilation of
+>> newstat. All architectures that need it use an explict define, the
+>> others now get a little bit smaller, and future architecture (including
+>> 64-bit targets) won't ever see it.
+>>
+>
+> This patch causes my riscv boot tests to crash in -next
 
-On Thu, 2018-09-06 at 16:57 +0800, Yuan-Chi Pang wrote:
-> TX status reporting to ieee80211s is through
-> ieee80211s_update_metric.
-> There are two problems about ieee80211s_update_metric:
-> 
-> 1. The purpose is to estimate the fail probability
-> to a specific link. No need to restrict to data frame.
-> 
-> 2. Current implementation does not work if wireless driver does not
-> pass tx_status with skb.
-> 
-> Fix this by removing ieee80211_is_data condition, passing
-> ieee80211_tx_status directly to ieee80211s_update_metric, and
-> putting it in both __ieee80211_tx_status and ieee80211_tx_status_ext.
-> 
-> Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
+Ah, thanks for running these!
+
+> sbin/init: error while loading shared libraries: libc.so.6: cannot stat shared object: Error 38
+> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00007f00
+>
+> The following change fixes the problem for me, but of course I have no idea
+> if it is correct. Copying RISC-V maintainers for input.
+>
+> Guenter
+>
 > ---
->  net/mac80211/mesh.h      | 2 +-
->  net/mac80211/mesh_hwmp.c | 8 ++------
->  net/mac80211/status.c    | 4 +++-
->  3 files changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/net/mac80211/mesh.h b/net/mac80211/mesh.h
-> index ee56f18..7ffe56a 100644
-> --- a/net/mac80211/mesh.h
-> +++ b/net/mac80211/mesh.h
-> @@ -217,7 +217,7 @@ void mesh_rmc_free(struct ieee80211_sub_if_data
-> *sdata);
->  int mesh_rmc_init(struct ieee80211_sub_if_data *sdata);
->  void ieee80211s_init(void);
->  void ieee80211s_update_metric(struct ieee80211_local *local,
-> -			      struct sta_info *sta, struct sk_buff
-> *skb);
-> +			 struct sta_info *sta, struct
-> ieee80211_tx_status *st);
->  void ieee80211_mesh_init_sdata(struct ieee80211_sub_if_data *sdata);
->  void ieee80211_mesh_teardown_sdata(struct ieee80211_sub_if_data
-> *sdata);
->  int ieee80211_start_mesh(struct ieee80211_sub_if_data *sdata);
+> diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
+> index 0caea01d5cca..eff7aa9aa163 100644
+> --- a/arch/riscv/include/asm/unistd.h
+> +++ b/arch/riscv/include/asm/unistd.h
+> @@ -16,6 +16,7 @@
+>   * be included multiple times.  See uapi/asm/syscalls.h for more info.
+>   */
+>
+> +#define __ARCH_WANT_NEW_STAT
+>  #define __ARCH_WANT_SYS_CLONE
+>  #include <uapi/asm/unistd.h>
+>  #include <uapi/asm/syscalls.h>
 
-I received the comment of my previous submission that I should fix
-indentation. But if I use the same indentation as before, I got "line
-over 80 characters" warning by checkpatch. What should I do?
+I'm afraid I'm not sure what the right thing to do here is either, but from the 
+patch description it does seem like we should have this guarded by an "#ifdef 
+CONFIG_32BIT" so we can keep it out of our 32-bit ABI (which isn't in glibc 
+yet, so isn't stable) in favor of statx() (or maybe stat64()?).  The one 
+problem here is that I can't find "newstat" anywhere in glibc to verify it's 
+actually supposed to be part of our 64-bit ABI, though I can find a bunch of 
+references to "statx" that seem to indicate it's meant to be present.
 
-> diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-> index daf9db3..4286673 100644
-> --- a/net/mac80211/mesh_hwmp.c
-> +++ b/net/mac80211/mesh_hwmp.c
-> @@ -295,15 +295,11 @@ int mesh_path_error_tx(struct
-> ieee80211_sub_if_data *sdata,
->  }
->  
->  void ieee80211s_update_metric(struct ieee80211_local *local,
-> -		struct sta_info *sta, struct sk_buff *skb)
-> +		struct sta_info *sta, struct ieee80211_tx_status
-> *st)
->  {
-> -	struct ieee80211_tx_info *txinfo = IEEE80211_SKB_CB(skb);
-> -	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *) skb-
-> >data;
-> +	struct ieee80211_tx_info *txinfo = st->info;
->  	int failed;
->  
-> -	if (!ieee80211_is_data(hdr->frame_control))
-> -		return;
-> -
->  	failed = !(txinfo->flags & IEEE80211_TX_STAT_ACK);
->  
->  	/* moving average, scaled to 100.
-> diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-> index 9a6d720..dfcd419 100644
-> --- a/net/mac80211/status.c
-> +++ b/net/mac80211/status.c
-> @@ -811,7 +811,7 @@ static void __ieee80211_tx_status(struct
-> ieee80211_hw *hw,
->  
->  		rate_control_tx_status(local, sband, status);
->  		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
-> -			ieee80211s_update_metric(local, sta, skb);
-> +			ieee80211s_update_metric(local, sta,
-> status);
->  
->  		if (!(info->flags & IEEE80211_TX_CTL_INJECTED) &&
-> acked)
->  			ieee80211_frame_acked(sta, skb);
-> @@ -972,6 +972,8 @@ void ieee80211_tx_status_ext(struct ieee80211_hw
-> *hw,
->  		}
->  
->  		rate_control_tx_status(local, sband, status);
-> +		if (ieee80211_vif_is_mesh(&sta->sdata->vif))
-> +			ieee80211s_update_metric(local, sta,
-> status);
->  	}
->  
->  	if (acked || noack_success) {
+That said, assuming you don't have anything wacky going on in userspace if this 
+breaks the ABI then it breaks the ABI, so however newstat got into a binary we 
+still need to keep it around.  Poking around my Fedora glibc image I see
+
+    000000000009b040 <__xstat>:
+       9b040:       e51d                    bnez    a0,9b06e <__xstat+0x2e>
+       9b042:       04f00893                li      a7,79
+       9b046:       f9c00513                li      a0,-100
+       9b04a:       4681                    li      a3,0
+       9b04c:       00000073                ecall
+
+which seems to coorespond with sys_newfstatat, which indicates to me we should 
+have it in the 64-bit ABI.
