@@ -2,90 +2,103 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EBAC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A00C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D845C2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D845C2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D4D822075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:12:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="humain+2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D822075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbeIFQrB (ORCPT
+        id S1728010AbeIFQro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 12:47:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:44402 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbeIFQrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 12:47:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A33FB1596;
-        Thu,  6 Sep 2018 05:11:49 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B5F43F575;
-        Thu,  6 Sep 2018 05:11:48 -0700 (PDT)
-Subject: Re: [PATCH 1/4] arm-nommu: don't define arch_teardown_dma_ops
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180827084711.23407-1-hch@lst.de>
- <20180827084711.23407-2-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f40b7384-293d-5bad-77c3-7e0391e530fe@arm.com>
-Date:   Thu, 6 Sep 2018 13:11:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180827084711.23407-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Sep 2018 12:47:44 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51240 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeIFQro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 12:47:44 -0400
+Received: by mail-wm0-f67.google.com with SMTP id y2-v6so11185283wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 05:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=hAQltCDob1QT626+UKow4KSqmQCSsrkxJvuvO272vb0=;
+        b=humain+2xZy441dmpqZhn4rerDs+bhxkgBZo8FM3GX1Kj+T8c3iZNFOszIPAI/3VGU
+         l8KbfNg6UScAJ0LLUFw2vW4IXV66d89sFJEBwSrhsNVBzHVvraaLaJyY0QEaRyn/bQcF
+         oTV7V0Qx/MzbtmUQDet8aIY/H+YotcI5FMmeo3ZFgB8ob82vWqP2qabrfO1JOkw/eOOS
+         /IbJ15piia+Gbkv/i/NM2+BLPJJnLMCAuWDHk3vA7nTBfW+jOsqHbNm3x5CGGwxqpI/b
+         R2TZZkjCOxPOnTAp/5hMpT6LZWFnTkv7XG5f4hJgJoUPkfQECbT8rYtUAJjoQds0+kQg
+         yOQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hAQltCDob1QT626+UKow4KSqmQCSsrkxJvuvO272vb0=;
+        b=IMA3OtsWjlv921YVqnZqqT+X6vUovCrw5R7iWQLlk2mo571i4EYWhmqGRn8bX6Ym5x
+         5gNwqbBzCE55GjFsxPeyevP0btImoRLL/o2T428IX/r9QX3s8dKOSrj/H8sUstJttyew
+         EbkHHXGweUz42xITS9GqV71DaUwC0scW9cT3yFL84XiHj52BZ1VyfNqdyuQeGR4ts9pv
+         94Xp0afaNjpUIkOu22fg1DkmBiy56reKrTnniQdDIMij6y32NQTSLaTYdEBhnxAEPJoM
+         TdeFt6NlKQ74KaF8jjBy2xFNvdCnr8sMamLngdHs2n/w7lVpbX1ULnzFHjiVF2xkVM5T
+         3ZLA==
+X-Gm-Message-State: APzg51DX6L7sJS2tnAzfIHDLrbarM1kJ5HPcOHJpHvdh7SxMoPB7QSyK
+        ++Vmeqkr+VLfxZwWrtj/kUZroA==
+X-Google-Smtp-Source: ANB0VdY02+wGej9m5GnL7wS40mNFbi5RiwHIwUQz8wHje0P2XS7zmd0HShCRPHzaVdaghSz7F0IAOA==
+X-Received: by 2002:a1c:82c8:: with SMTP id e191-v6mr1858952wmd.35.1536235951353;
+        Thu, 06 Sep 2018 05:12:31 -0700 (PDT)
+Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
+        by smtp.gmail.com with ESMTPSA id h15-v6sm2922770wmb.21.2018.09.06.05.12.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 05:12:30 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Santosh Shilimkar <ssantosh@kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] memory: ti-aemif: fix a potential NULL-pointer dereference
+Date:   Thu,  6 Sep 2018 14:12:19 +0200
+Message-Id: <20180906121219.23948-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/18 09:47, Christoph Hellwig wrote:
-> We can just use the default implementation.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Platform data pointer may be NULL. We check it everywhere but in one
+place. Fix it.
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/arm/include/asm/dma-mapping.h | 2 ++
->   arch/arm/mm/dma-mapping-nommu.c    | 4 ----
->   2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
-> index 8436f6ade57d..965b7c846ecb 100644
-> --- a/arch/arm/include/asm/dma-mapping.h
-> +++ b/arch/arm/include/asm/dma-mapping.h
-> @@ -100,8 +100,10 @@ static inline unsigned long dma_max_pfn(struct device *dev)
->   extern void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->   			       const struct iommu_ops *iommu, bool coherent);
->   
-> +#ifdef CONFIG_MMU
->   #define arch_teardown_dma_ops arch_teardown_dma_ops
->   extern void arch_teardown_dma_ops(struct device *dev);
-> +#endif
->   
->   /* do not use this function in a driver */
->   static inline bool is_device_dma_coherent(struct device *dev)
-> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
-> index f448a0663b10..aa7aba302e76 100644
-> --- a/arch/arm/mm/dma-mapping-nommu.c
-> +++ b/arch/arm/mm/dma-mapping-nommu.c
-> @@ -237,7 +237,3 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
->   
->   	set_dma_ops(dev, dma_ops);
->   }
-> -
-> -void arch_teardown_dma_ops(struct device *dev)
-> -{
-> -}
-> 
+Fixes: 8af70cd2ca50 ("memory: aemif: add support for board files")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/memory/ti-aemif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+index 31112f622b88..475e5b3790ed 100644
+--- a/drivers/memory/ti-aemif.c
++++ b/drivers/memory/ti-aemif.c
+@@ -411,7 +411,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 			if (ret < 0)
+ 				goto error;
+ 		}
+-	} else {
++	} else if (pdata) {
+ 		for (i = 0; i < pdata->num_sub_devices; i++) {
+ 			pdata->sub_devices[i].dev.parent = dev;
+ 			ret = platform_device_register(&pdata->sub_devices[i]);
+-- 
+2.18.0
+
