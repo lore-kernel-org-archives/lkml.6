@@ -2,120 +2,142 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3CFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260D3C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D87206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:11:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oUUHyH2h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91D87206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D44C420861
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D44C420861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbeIFRq3 (ORCPT
+        id S1729067AbeIFRq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:46:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40380 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727698AbeIFRq2 (ORCPT
+        Thu, 6 Sep 2018 13:46:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49199 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728536AbeIFRq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:46:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l63-v6so5213317pga.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 06:11:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rO1PSP1fUVLt++p6MAZgQFBqzMDQO8wzKiZsa+LYKFA=;
-        b=oUUHyH2ht3jeu0iPEegLMeG6aHVuCH/i1AnZPiS/bmftKk1mJ0O/LJmObyDDGms1fI
-         SjBhyyBS7/+Y+hb127dJwsyd/FIuho5miMhzzE2fTHtxP9xMOnKh2e2qD5VeRKGZ5/QK
-         /qHm9cXSfjQZrZQX5zY/UzF+pgYsdOtIlx1Tdm1/otz92bSUDsnoa2tq/eQwXqjeNS85
-         cl89qaYNIkmy9nqnwPXBqyz51Fnie3tHOPKy35qPBfH9LjigFYS9Qzax1Rel2KcAtTem
-         Ap+5a0ku7xbRjl9GkDj1w6lP2nMFce2UpcBTDBjiNqNrIuj9PA2Aob6xbyxUbPpiEnLH
-         GV1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rO1PSP1fUVLt++p6MAZgQFBqzMDQO8wzKiZsa+LYKFA=;
-        b=LY1s8o9pynA3TTrCjppLElp11b233rxbxJH7VpLgZ4w1zf7f37z8OgFyCuDmvTWgjs
-         lt4In3wM5X1B15LOU/JGJx7fzpgRkmO1Ppfm2IVz5iQItdijAwVdYHN0Uz75zP2hvMsk
-         XxbGc8vbht7qEbKYn7x4a/jS4hHgvi1aaWu60971JrRWyNxdpBjer7X74zF2KJH25tuc
-         rRiwfbZ7UDnQChOarceZoBagtknIWeDwmX3NUu4Zyc6ZW2xF6u+2vE/XUhXx3SvF2Kto
-         IDYn3fH1ojsrPeA5UTGGXxU++jvkssBFjYdUEN4Bt8D6vCShqYadi7/8lQM5e678p6BQ
-         VtpQ==
-X-Gm-Message-State: APzg51D9D1MxNjIw7r7hLILaDa7zg7oN2kgkqWD7kI8xcHpflkOCgWcZ
-        7SBvjXu0rHuCiCKBkwc4vhc=
-X-Google-Smtp-Source: ANB0VdYLYVSxrEqXHF11l0q75thM+Pe9RhvPwkZic2nCZPz/mdshNu33yqgq9sPtaOMpfznrE5AWDg==
-X-Received: by 2002:aa7:8713:: with SMTP id b19-v6mr2691409pfo.151.1536239461066;
-        Thu, 06 Sep 2018 06:11:01 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (115-64-249-220.tpgi.com.au. [115.64.249.220])
-        by smtp.gmail.com with ESMTPSA id l9-v6sm6214786pgg.79.2018.09.06.06.10.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Sep 2018 06:11:00 -0700 (PDT)
-Date:   Thu, 6 Sep 2018 23:10:39 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Matteo Croce <mcroce@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org (op)
-Subject: Re: [PATCH 3/3] tty: hvc: hvc_write() fix break condition
-Message-ID: <20180906231039.7b71186a@roar.ozlabs.ibm.com>
-In-Reply-To: <20180905121439.23809-4-npiggin@gmail.com>
-References: <20180905121439.23809-1-npiggin@gmail.com>
-        <20180905121439.23809-4-npiggin@gmail.com>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 6 Sep 2018 13:46:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DBL4g304205
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:11:21 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DBLni304202;
+        Thu, 6 Sep 2018 06:11:21 -0700
+Date:   Thu, 6 Sep 2018 06:11:21 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-ol83juin2cht9vzquynec5hz@git.kernel.org>
+Cc:     adrian.hunter@intel.com, dsahern@gmail.com, hpa@zytor.com,
+        mingo@kernel.org, jolsa@kernel.org, tglx@linutronix.de,
+        namhyung@kernel.org, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com
+Reply-To: hpa@zytor.com, adrian.hunter@intel.com, dsahern@gmail.com,
+          mingo@kernel.org, jolsa@kernel.org, namhyung@kernel.org,
+          tglx@linutronix.de, acme@redhat.com, wangnan0@huawei.com,
+          linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace: Augment inotify_add_watch pathname
+ syscall arg
+Git-Commit-ID: 9779fc021410e7d8433d923a2202dac7e1384b05
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  5 Sep 2018 22:14:39 +1000
-Nicholas Piggin <npiggin@gmail.com> wrote:
+Commit-ID:  9779fc021410e7d8433d923a2202dac7e1384b05
+Gitweb:     https://git.kernel.org/tip/9779fc021410e7d8433d923a2202dac7e1384b05
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 21 Aug 2018 13:21:36 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:19 -0300
 
-> Commit 550ddadcc758 ("tty: hvc: hvc_write() may sleep") broke the
-> termination condition in case the driver stops accepting characters.
-> This can result in unnecessary polling of the busy driver.
-> 
-> Restore it by testing the hvc_push return code.
-> 
-> Fixes: 550ddadcc758 ("tty: hvc: hvc_write() may sleep")
-> Tested-by: Matteo Croce <mcroce@redhat.com>
-> Tested-by: Leon Romanovsky <leonro@mellanox.com>
-> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-> ---
->  drivers/tty/hvc/hvc_console.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-> index bacf9b73ec98..c09a38fb0d66 100644
-> --- a/drivers/tty/hvc/hvc_console.c
-> +++ b/drivers/tty/hvc/hvc_console.c
-> @@ -522,6 +522,8 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
->  		return -EIO;
->  
->  	while (count > 0) {
-> +		int ret;
-> +
->  		spin_lock_irqsave(&hp->lock, flags);
->  
->  		rsize = hp->outbuf_size - hp->n_outbuf;
+perf trace: Augment inotify_add_watch pathname syscall arg
 
-That needs to be 'int ret = 0;' to avoid used uninitialized.
+Again, just changing tools/perf/examples/bpf/augmented_syscalls.c, that
+is starting to have too much boilerplate, some macro will come to the
+rescue.
 
-Let me know if I should resend the patches.
+  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c
+     0.000 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /var/cache/app-info/yaml, mask: 16789454)
+     0.023 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /var/lib/app-info/xmls, mask: 16789454)
+     0.028 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /var/lib/app-info/yaml, mask: 16789454)
+     0.032 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /usr/share/app-info/yaml, mask: 16789454)
+     0.039 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /usr/local/share/app-info/xmls, mask: 16789454)
+     0.045 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /usr/local/share/app-info/yaml, mask: 16789454)
+     0.049 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /home/acme/.local/share/app-info/yaml, mask: 16789454)
+     0.056 gmain/2590 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: , mask: 16789454)
+     0.010 gmain/2245 inotify_add_watch(fd: 7<anon_inode:inotify>, pathname: /home/acme/~, mask: 16789454)
+     0.087 perf/20116 openat(dfd: CWD, filename: /sys/kernel/debug/tracing/events/syscalls/sys_enter_inotify_add)
+     0.436 perf/20116 openat(dfd: CWD, filename: /sys/kernel/debug/tracing/events/syscalls/sys_enter_openat/form)
+    56.042 gmain/2791 inotify_add_watch(fd: 4<anon_inode:inotify>, pathname: /var/lib/fwupd/remotes.d/lvfs-testing, mask: 16789454)
+   113.986 gmain/1721 inotify_add_watch(fd: 3<anon_inode:inotify>, pathname: /var/lib/gdm/~, mask: 16789454)
+  3777.265 gsd-color/2408 openat(dfd: CWD, filename: /etc/localtime)
+  3777.550 gsd-color/2408 openat(dfd: CWD, filename: /etc/localtime)
+^C[root@jouet perf]#
 
-Thanks,
-Nick
+Still not combining raw_syscalls:sys_enter + raw_syscalls:sys_exit, to
+get it strace-like, but that probably will come very naturally with some
+more wiring up...
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-ol83juin2cht9vzquynec5hz@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/examples/bpf/augmented_syscalls.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
+index 154379463c95..6ec327850a15 100644
+--- a/tools/perf/examples/bpf/augmented_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_syscalls.c
+@@ -88,4 +88,31 @@ int syscall_enter(open)(struct syscall_enter_open_args *args)
+ 	return 0;
+ }
+ 
++struct syscall_enter_inotify_add_watch_args {
++	unsigned long long common_tp_fields;
++	long		   syscall_nr;
++	long		   fd;
++	char		   *pathname_ptr;
++	long		   mask;
++};
++
++struct augmented_enter_inotify_add_watch_args {
++	struct syscall_enter_inotify_add_watch_args args;
++	struct augmented_filename		    pathname;
++};
++
++int syscall_enter(inotify_add_watch)(struct syscall_enter_inotify_add_watch_args *args)
++{
++	struct augmented_enter_inotify_add_watch_args augmented_args = { .pathname.reserved = 0, };
++
++	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);
++	augmented_args.pathname.size = probe_read_str(&augmented_args.pathname.value,
++						      sizeof(augmented_args.pathname.value),
++						      args->pathname_ptr);
++	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU,
++			  &augmented_args,
++			  sizeof(augmented_args) - sizeof(augmented_args.pathname.value) + augmented_args.pathname.size);
++	return 0;
++}
++
+ license(GPL);
