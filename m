@@ -2,134 +2,77 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C4DC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C85FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B17220857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:42:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B17220857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id DED26206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED26206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbeIFPQv (ORCPT
+        id S1728621AbeIFPQx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:16:51 -0400
-Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:58872 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727738AbeIFPQv (ORCPT
+        Thu, 6 Sep 2018 11:16:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46118 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727840AbeIFPQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:16:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id CA1F545BC;
-        Thu,  6 Sep 2018 10:41:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: humor71_4b7af303c3e0c
-X-Filterd-Recvd-Size: 3639
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  6 Sep 2018 10:41:58 +0000 (UTC)
-Message-ID: <f0dd985b91258f1990e77a2731a59e007dd8a0e0.camel@perches.com>
-Subject: Re: [PATCH v2 1/2] staging: rtl8188eu: remove empty if statement in
- rtw_led.c
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Michael Straube <straube.linux@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 06 Sep 2018 03:41:57 -0700
-In-Reply-To: <20180906103248.oxo655vyfmwgwgj4@mwanda>
-References: <20180905184408.31175-1-straube.linux@gmail.com>
-         <20180906103248.oxo655vyfmwgwgj4@mwanda>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Sep 2018 11:16:52 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fxrjV-0001Bk-8r; Thu, 06 Sep 2018 10:41:53 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: sgtl5000: avoid division by zero if lo_vag is zero
+Date:   Thu,  6 Sep 2018 11:41:52 +0100
+Message-Id: <20180906104152.17977-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-06 at 13:32 +0300, Dan Carpenter wrote:
-> Thanks.
-> 
-> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Trivial, but these case statement blocks should prefer
-unindented blocks instead of reformatting the test.
+In the case where lo_vag <= SGTL5000_LINE_OUT_GND_BASE, lo_vag
+is set to zero and later vol_quot is computed by dividing by
+lo_vag causing a division by zero error.  Fix this by avoiding
+a zero division and set vol_quot to zero in this specific case
+so that the lowest setting for i is correctly set.
 
-Perhaps similar to the below for each of the cases:
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_led.c | 53 ++++++++++++++++----------------
- 1 file changed, 27 insertions(+), 26 deletions(-)
+ sound/soc/codecs/sgtl5000.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_led.c b/drivers/staging/rtl8188eu/core/rtw_led.c
-index cbef871a7679..d9c19c1cda16 100644
---- a/drivers/staging/rtl8188eu/core/rtw_led.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_led.c
-@@ -290,33 +290,34 @@ static void SwLedControlMode1(struct adapter *padapter, enum LED_CTL_MODE LedAct
- 		}
- 		break;
- 	case LED_CTL_SITE_SURVEY:
--		if ((pmlmepriv->LinkDetectInfo.bBusyTraffic) && (check_fwstate(pmlmepriv, _FW_LINKED))) {
--			;
--		} else if (!pLed->bLedScanBlinkInProgress) {
--			if (IS_LED_WPS_BLINKING(pLed))
--				return;
--			if (pLed->bLedNoLinkBlinkInProgress) {
--				del_timer_sync(&pLed->BlinkTimer);
--				pLed->bLedNoLinkBlinkInProgress = false;
--			}
--			if (pLed->bLedLinkBlinkInProgress) {
--				del_timer_sync(&pLed->BlinkTimer);
--				 pLed->bLedLinkBlinkInProgress = false;
--			}
--			if (pLed->bLedBlinkInProgress) {
--				del_timer_sync(&pLed->BlinkTimer);
--				pLed->bLedBlinkInProgress = false;
--			}
--			pLed->bLedScanBlinkInProgress = true;
--			pLed->CurrLedState = LED_BLINK_SCAN;
--			pLed->BlinkTimes = 24;
--			if (pLed->bLedOn)
--				pLed->BlinkingLedState = RTW_LED_OFF;
--			else
--				pLed->BlinkingLedState = RTW_LED_ON;
--			mod_timer(&pLed->BlinkTimer, jiffies +
--				  msecs_to_jiffies(LED_BLINK_SCAN_INTERVAL_ALPHA));
-+		if (pmlmepriv->LinkDetectInfo.bBusyTraffic &&
-+		    check_fwstate(pmlmepriv, _FW_LINKED))
-+			break;
-+		if (pLed->bLedScanBlinkInProgress)
-+			break;
-+		if (IS_LED_WPS_BLINKING(pLed))
-+			return;
-+		if (pLed->bLedNoLinkBlinkInProgress) {
-+			del_timer_sync(&pLed->BlinkTimer);
-+			pLed->bLedNoLinkBlinkInProgress = false;
-+		}
-+		if (pLed->bLedLinkBlinkInProgress) {
-+			del_timer_sync(&pLed->BlinkTimer);
-+			pLed->bLedLinkBlinkInProgress = false;
-+		}
-+		if (pLed->bLedBlinkInProgress) {
-+			del_timer_sync(&pLed->BlinkTimer);
-+			pLed->bLedBlinkInProgress = false;
- 		}
-+		pLed->bLedScanBlinkInProgress = true;
-+		pLed->CurrLedState = LED_BLINK_SCAN;
-+		pLed->BlinkTimes = 24;
-+		if (pLed->bLedOn)
-+			pLed->BlinkingLedState = RTW_LED_OFF;
-+		else
-+			pLed->BlinkingLedState = RTW_LED_ON;
-+		mod_timer(&pLed->BlinkTimer, jiffies +
-+			  msecs_to_jiffies(LED_BLINK_SCAN_INTERVAL_ALPHA));
- 		break;
- 	case LED_CTL_TX:
- 	case LED_CTL_RX:
+diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+index 60764f6201b1..add18d6d77da 100644
+--- a/sound/soc/codecs/sgtl5000.c
++++ b/sound/soc/codecs/sgtl5000.c
+@@ -1218,7 +1218,7 @@ static int sgtl5000_set_power_regs(struct snd_soc_component *component)
+ 	 * Searching for a suitable index solving this formula:
+ 	 * idx = 40 * log10(vag_val / lo_cagcntrl) + 15
+ 	 */
+-	vol_quot = (vag * 100) / lo_vag;
++	vol_quot = lo_vag ? (vag * 100) / lo_vag : 0;
+ 	lo_vol = 0;
+ 	for (i = 0; i < ARRAY_SIZE(vol_quot_table); i++) {
+ 		if (vol_quot >= vol_quot_table[i])
+-- 
+2.17.1
 
