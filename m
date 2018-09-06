@@ -2,143 +2,83 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D80C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43868C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BFA52083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFA52083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E1D35205F4
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:55:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D35205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeIGB3f convert rfc822-to-8bit (ORCPT
+        id S1728193AbeIGBck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 21:29:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41739 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbeIGB3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 21:29:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6948F2072F; Thu,  6 Sep 2018 22:52:21 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 70924207B0;
-        Thu,  6 Sep 2018 22:52:00 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 22:51:58 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
-        linux-mtd@lists.infradead.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 2/2] mtd: nand: esmt: retrieve ecc requirements from 5th
- id byte
-Message-ID: <20180906225158.1a209c56@xps13>
-In-Reply-To: <20180906224422.4be710c8@bbrezillon>
-References: <20180906084922.14845-1-marcel@ziswiler.com>
-        <20180906084922.14845-2-marcel@ziswiler.com>
-        <20180906224422.4be710c8@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 6 Sep 2018 21:32:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53388 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727770AbeIGBck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 21:32:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1DD26ABEF;
+        Thu,  6 Sep 2018 20:55:25 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 13:55:17 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, jbaron@akamai.com,
+        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH -next 0/2] fs/epoll: loosen irq safety when possible
+Message-ID: <20180906205517.GC31080@linux-r8p5>
+References: <20180720172956.2883-1-dave@stgolabs.net>
+ <20180720124212.7260d76d83e2b8e5e3349ea5@linux-foundation.org>
+ <20180720200559.27nc7j2rrxpy5p3n@linux-r8p5>
+ <20180906191140.GA4816@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180906191140.GA4816@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
+On Thu, 06 Sep 2018, Peter Zijlstra wrote:
 
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Thu, 6 Sep 2018
-22:44:22 +0200:
+>On Fri, Jul 20, 2018 at 01:05:59PM -0700, Davidlohr Bueso wrote:
+>> On Fri, 20 Jul 2018, Andrew Morton wrote:
+>
+>> >I'm surprised.  Is spin_lock_irqsave() significantly more expensive
+>> >than spin_lock_irq()?  Relative to all the other stuff those functions
+>> >are doing?  If so, how come?  Some architectural thing makes
+>> >local_irq_save() much more costly than local_irq_disable()?
+>>
+>> For example, if you compare x86 native_restore_fl() to xen_restore_fl(),
+>> the cost of Xen is much higher.
+>
+>Xen is a moot argument. IIRC the point is that POPF (as used by
+>*irqrestore()) is a very expensive operation because it changes all
+>flags and thus has very 'difficult' instruction dependencies, killing
+>the front end reorder and generating a giant bubble in the pipeline.
+>
+>Similarly, I suppose PUSHF is an expensive instruction because it needs
+>all the flags 'stable' and thus needs to wait for a fair number of prior
+>instructions to retire before it can get on with it.
+>
+>Combined the whole PUSHF + POPF is _far_ more expensive than STI + CLI,
+>because the latter only has dependencies on instructions that muck about
+>with IF -- not that many.
 
-> On Thu,  6 Sep 2018 10:49:22 +0200
-> Marcel Ziswiler <marcel@ziswiler.com> wrote:
-> 
-> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > 
-> > This patch enables support to read the ECC level from the NAND flash
-> > using ESMT SLC NAND ID byte 5 information as documented e.g. in the
-> > following data sheet:
-> > 
-> > https://www.esmt.com.tw/upload/pdf/ESMT/datasheets/F59L1G81LA(2Y).pdf
-> > 
-> > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > 
-> > ---
-> > 
-> >  drivers/mtd/nand/raw/nand_esmt.c | 46 ++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 46 insertions(+)
-> >  create mode 100644 drivers/mtd/nand/raw/nand_esmt.c
-> > 
-> > diff --git a/drivers/mtd/nand/raw/nand_esmt.c b/drivers/mtd/nand/raw/nand_esmt.c
-> > new file mode 100644
-> > index 000000000000..360d351ac043
-> > --- /dev/null
-> > +++ b/drivers/mtd/nand/raw/nand_esmt.c
-> > @@ -0,0 +1,46 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2018 Toradex AG
-> > + *
-> > + * Author: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > + */
-> > +
-> > +#include <linux/mtd/rawnand.h>
-> > +
-> > +static void esmt_nand_decode_id(struct nand_chip *chip)
-> > +{
-> > +	nand_decode_ext_id(chip);
-> > +
-> > +	/* Extract ECC requirements from 5th id byte. */
-> > +	if (chip->id.len >= 5 && nand_is_slc(chip)) {
-> > +		chip->ecc_step_ds = 512;
-> > +		switch (chip->id.data[4] & 0x3) {
-> > +		case 0x0:
-> > +			chip->ecc_strength_ds = 4;
-> > +			break;
-> > +		case 0x1:
-> > +			chip->ecc_strength_ds = 2;
-> > +			break;
-> > +		case 0x2:
-> > +			chip->ecc_strength_ds = 1;
-> > +			break;
-> > +		default:
-> > +			WARN(1, "Could not get ECC info");
-> > +			chip->ecc_step_ds = 0;
-> > +			break;
-> > +		}
-> > +	}
-> > +}
-> > +
-> > +static int esmt_nand_init(struct nand_chip *chip)
-> > +{
-> > +	if (nand_is_slc(chip))
-> > +		chip->bbt_options |= NAND_BBT_SCAN2NDPAGE;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +const struct nand_manufacturer_ops esmt_nand_manuf_ops = {
-> > +	.detect = esmt_nand_decode_id,
-> > +	.init = esmt_nand_init,
-> > +};  
-> 
-> Looks like you forgot to hook the new esmt_nand_manuf_ops to the ESMT
-> entry (in the nand_manufacturer table), so as is, the patch is not
-> exactly adding support for ECC req parsing ;-).
+ack.
 
-I missed that.
-
-Will drop both patches from nand/next, waiting for a v2 (please also
-reorder the macros in patch 1 as suggested).
+In fact it turns out that my Xen numbers for this patch were actually
+native (popf), and not the xen_restore_fl() as it was using hvm and
+not paravirt.
 
 Thanks,
-Miquèl
+Davidlohr
