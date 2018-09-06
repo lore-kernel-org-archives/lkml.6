@@ -2,231 +2,91 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD05C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EDCC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1008720857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A972B2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:13:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lYzsiyxC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1008720857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d915Tg8r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A972B2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbeIFPpv (ORCPT
+        id S1728526AbeIFPsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:45:51 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44076 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728050AbeIFPpv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:45:51 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l82-v6so19658793oih.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 04:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LFxLnnxk7xpPzb1PXu/5FWlCYbDPmJP3mHeWMmqBiZQ=;
-        b=lYzsiyxCwO3zR/TEJsccex15Xt7vvpQCfUXeuI46JE9EOjxtj68Jlp2dDD10kx3xC1
-         E+wlBvhQpudSJ0Unix8TLpq2bw8HBfMY0NHGNevohN0k+BLpBlJMetakOIcrsiaBNjGE
-         1gAZvBzp7o0wWLusS8CrGLZL3sX5puAA8aal1WMWh/Tr28BnQERxY570DMqyvZr9AmPs
-         HhSHVusrtQHcZl+P7ocZTZXN6WVBNo0X8axqwGDxAiGWgx/0nxWMrbkepIaHr7GoPphB
-         QbK8kFl6zYQM5MGywSXRRAO24yOk6EeNO58FIefgHz42C4vJUt0rLElvU9pM3V1DBCXG
-         xffQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LFxLnnxk7xpPzb1PXu/5FWlCYbDPmJP3mHeWMmqBiZQ=;
-        b=D4GZ1FXT14AXLvU/0RBzDzIHBjUFhRuDZfEN0y1tyZENMSc4W7ZWXhku0bFuus/yFD
-         aTHRe3f4/E4YuUv67jjSpwHyeJjdtpnAOy+7NQWzx4lVVpLspKee6S3SclEP1SpyPGpH
-         udrImScWGAKOa/bDXm5PYREnfC/LgeMKLk8Z67uy3QIx8qJcFGCLzO3Xi1v/lVRVkc5x
-         dB48sZ9s+6zSnDWx5onQKNzRNANgYDLW/X540tSQAG5Rm6dD4liIw/4erS/AuGJyr5X6
-         lKyr6T0VeKRloiLQJ9t2JvJiYAEPjxMccjumGTyca3cmhf9PCWa9hRtiqT+2+ae0V76E
-         myZA==
-X-Gm-Message-State: APzg51AOnVNPF5DUvjz+tceKbW7y5Gc6aQaXmSSmxyIxhAceCNPTzhgx
-        oilkgDUxtO6DeenDsqUPgqpiPfdGG6hcXJjVLAYrhg==
-X-Google-Smtp-Source: ANB0VdbH7dd+dM/Fc7UJvTTLoq/eXG6VShiIlTeJ9O7W1qvAUsIQz/cVYDTuoVmOg1JeZouaGJ3SC2ovivL6Vm/tJZY=
-X-Received: by 2002:aca:e504:: with SMTP id c4-v6mr2196975oih.246.1536232253466;
- Thu, 06 Sep 2018 04:10:53 -0700 (PDT)
+        Thu, 6 Sep 2018 11:48:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727665AbeIFPsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 11:48:01 -0400
+Received: from mail-qt0-f169.google.com (mail-qt0-f169.google.com [209.85.216.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D55D20857;
+        Thu,  6 Sep 2018 11:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536232384;
+        bh=flz+0719QiJsdJbk83y9AaUb8jRz8QeOKqh6ieJYj6Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=d915Tg8rkJVzxdJkiYphVOW4p00aBMLQzvcJNeXwqjmVlSd2UUduPfDoH1A71nHDg
+         4PT+X/RoEIa6tHlbbJT14M7wudnCYqWaNvcSXQR4jgLA34BOv1SejcSUW5ZcTWborZ
+         h8Wn4uDl36F/AVaULKzUm+fQj8CotH5RO+AJ3fQA=
+Received: by mail-qt0-f169.google.com with SMTP id x7-v6so11713147qtk.5;
+        Thu, 06 Sep 2018 04:13:04 -0700 (PDT)
+X-Gm-Message-State: APzg51AsbBY2BwNPIZnXnP8R7cPLVA9StMDR35H6c6M0ChfBYn6EeDFt
+        sMn5uczZvHT8SXJK1RFW6IaqlEVjY2GyezyK0w==
+X-Google-Smtp-Source: ANB0VdaJWjhEWqihAwwIYmoBq6HY2sWe24a/d8uqV4u/rBe1prcNJgC/lvbL/R8t6tGOSSZYz3l6bkRaVNwxFKYFBds=
+X-Received: by 2002:aed:2aa1:: with SMTP id t30-v6mr1576509qtd.101.1536232383452;
+ Thu, 06 Sep 2018 04:13:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180831194151.123586-1-jannh@google.com> <CALCETrUMhg8nxeMr0VtBEveKDKAMk+16amDWGFduhAJWaU3O6A@mail.gmail.com>
-In-Reply-To: <CALCETrUMhg8nxeMr0VtBEveKDKAMk+16amDWGFduhAJWaU3O6A@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 6 Sep 2018 13:10:27 +0200
-Message-ID: <CAG48ez03ujGFDOFCsiWFYk2caGvg0ak3GpTHKLKS7-dahC_F5Q@mail.gmail.com>
-Subject: Re: [PATCH] x86/process: don't mix user/kernel regs in 64bit __show_regs
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, bpetkov@suse.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>
+References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-19-robh@kernel.org>
+ <20180906083506.GA10768@zn.tnic>
+In-Reply-To: <20180906083506.GA10768@zn.tnic>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 6 Sep 2018 06:12:51 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKNh+89dRef3RNx1YUfhD0yJ8BHsanUaGMfrF_EGPCHcA@mail.gmail.com>
+Message-ID: <CAL_JsqKNh+89dRef3RNx1YUfhD0yJ8BHsanUaGMfrF_EGPCHcA@mail.gmail.com>
+Subject: Re: [PATCH 18/21] edac: cpc925: use for_each_of_cpu_node iterator
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 10:12 PM Andy Lutomirski <luto@kernel.org> wrote:
+On Thu, Sep 6, 2018 at 3:35 AM Borislav Petkov <bp@alien8.de> wrote:
 >
-> On Fri, Aug 31, 2018 at 12:41 PM, Jann Horn <jannh@google.com> wrote:
-> > When the kernel.print-fatal-signals sysctl has been enabled (I don't know
-> > whether anyone actually enables it), a simple userspace crash will cause
-> > the kernel to write a crash dump that contains, among other things, the
-> > kernel gsbase into dmesg.
+> On Wed, Sep 05, 2018 at 02:37:35PM -0500, Rob Herring wrote:
+> > Use the for_each_of_cpu_node iterator to iterate over cpu nodes. This
+> > has the side effect of defaulting to iterating using "cpu" node names in
+> > preference to the deprecated (for FDT) device_type == "cpu".
 > >
-> > As suggested by Andy, limit output to pt_regs, FS_BASE and KERNEL_GS_BASE
-> > in this case.
-> >
-> > This also moves the bitness-specific logic from show_regs() into
-> > process_{32,64}.c.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > Fixes: 45807a1df9f5 ("vdso: print fatal signals")
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> > Cc: linux-edac@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
 > > ---
-> > @Andy: Does this look like what you had in mind?
+> > Please ack and I will take via the DT tree. This is dependent on the
+> > first 2 patches.
 >
-> Yes.
->
-> Although there's another option: remove print-fatal-signals.
+> Completely unknown territory for me so I'd trust your judgement. Staring
+> at 1/21, the conversion looks ok except the removal of those prints that
+> a cpu nodes are not present - I wonder if they even meant anything or
+> were just there during driver development...
 
-Who wants to decide? Ingo, it's your feature - what do you think?
+I should have noted this. It's not the kernel's job to validate the DT
+and certainly not some driver's job to validate cpu nodes. It's bad
+enough that some random driver is parsing cpu nodes. If they are
+missing or are crap, you should get warnings or messages well before
+this point.
 
-> > Does this need a CC stable tag? I haven't put one on it for now.
->
-> Probably.
->
-> >
-> >  arch/x86/include/asm/kdebug.h | 12 +++++++++++-
-> >  arch/x86/kernel/dumpstack.c   | 11 +++--------
-> >  arch/x86/kernel/process_32.c  |  4 ++--
-> >  arch/x86/kernel/process_64.c  | 12 ++++++++++--
-> >  4 files changed, 26 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/kdebug.h b/arch/x86/include/asm/kdebug.h
-> > index 395c9631e000..75f1e35e7c15 100644
-> > --- a/arch/x86/include/asm/kdebug.h
-> > +++ b/arch/x86/include/asm/kdebug.h
-> > @@ -22,10 +22,20 @@ enum die_val {
-> >         DIE_NMIUNKNOWN,
-> >  };
-> >
-> > +enum show_regs_mode {
-> > +       SHOW_REGS_SHORT,
-> > +       /*
-> > +        * For when userspace crashed, but we don't think it's our fault, and
-> > +        * therefore don't print kernel registers.
-> > +        */
-> > +       SHOW_REGS_USER,
-> > +       SHOW_REGS_ALL
-> > +};
-> > +
-> >  extern void die(const char *, struct pt_regs *,long);
-> >  extern int __must_check __die(const char *, struct pt_regs *, long);
-> >  extern void show_stack_regs(struct pt_regs *regs);
-> > -extern void __show_regs(struct pt_regs *regs, int all);
-> > +extern void __show_regs(struct pt_regs *regs, enum show_regs_mode);
-> >  extern void show_iret_regs(struct pt_regs *regs);
-> >  extern unsigned long oops_begin(void);
-> >  extern void oops_end(unsigned long, struct pt_regs *, int signr);
-> > diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-> > index 9c8652974f8e..574fe5d97ba2 100644
-> > --- a/arch/x86/kernel/dumpstack.c
-> > +++ b/arch/x86/kernel/dumpstack.c
-> > @@ -135,7 +135,7 @@ static void show_regs_if_on_stack(struct stack_info *info, struct pt_regs *regs,
-> >          * they can be printed in the right context.
-> >          */
-> >         if (!partial && on_stack(info, regs, sizeof(*regs))) {
-> > -               __show_regs(regs, 0);
-> > +               __show_regs(regs, SHOW_REGS_SHORT);
-> >
-> >         } else if (partial && on_stack(info, (void *)regs + IRET_FRAME_OFFSET,
-> >                                        IRET_FRAME_SIZE)) {
-> > @@ -333,7 +333,7 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
-> >         oops_exit();
-> >
-> >         /* Executive summary in case the oops scrolled away */
-> > -       __show_regs(&exec_summary_regs, true);
-> > +       __show_regs(&exec_summary_regs, SHOW_REGS_ALL);
-> >
-> >         if (!signr)
-> >                 return;
-> > @@ -393,14 +393,9 @@ void die(const char *str, struct pt_regs *regs, long err)
-> >
-> >  void show_regs(struct pt_regs *regs)
-> >  {
-> > -       bool all = true;
-> > -
-> >         show_regs_print_info(KERN_DEFAULT);
-> >
-> > -       if (IS_ENABLED(CONFIG_X86_32))
-> > -               all = !user_mode(regs);
-> > -
-> > -       __show_regs(regs, all);
-> > +       __show_regs(regs, user_mode(regs) ? SHOW_REGS_USER : SHOW_REGS_ALL);
-> >
-> >         /*
-> >          * When in-kernel, we also print out the stack at the time of the fault..
-> > diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-> > index 2924fd447e61..5046a3c9dec2 100644
-> > --- a/arch/x86/kernel/process_32.c
-> > +++ b/arch/x86/kernel/process_32.c
-> > @@ -59,7 +59,7 @@
-> >  #include <asm/intel_rdt_sched.h>
-> >  #include <asm/proto.h>
-> >
-> > -void __show_regs(struct pt_regs *regs, int all)
-> > +void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
-> >  {
-> >         unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
-> >         unsigned long d0, d1, d2, d3, d6, d7;
-> > @@ -85,7 +85,7 @@ void __show_regs(struct pt_regs *regs, int all)
-> >         printk(KERN_DEFAULT "DS: %04x ES: %04x FS: %04x GS: %04x SS: %04x EFLAGS: %08lx\n",
-> >                (u16)regs->ds, (u16)regs->es, (u16)regs->fs, gs, ss, regs->flags);
-> >
-> > -       if (!all)
-> > +       if (mode != SHOW_REGS_ALL)
-> >                 return;
-> >
-> >         cr0 = read_cr0();
-> > diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-> > index a451bc374b9b..ea5ea850348d 100644
-> > --- a/arch/x86/kernel/process_64.c
-> > +++ b/arch/x86/kernel/process_64.c
-> > @@ -62,7 +62,7 @@
-> >  __visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
-> >
-> >  /* Prints also some state that isn't saved in the pt_regs */
-> > -void __show_regs(struct pt_regs *regs, int all)
-> > +void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
-> >  {
-> >         unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L, fs, gs, shadowgs;
-> >         unsigned long d0, d1, d2, d3, d6, d7;
-> > @@ -87,9 +87,17 @@ void __show_regs(struct pt_regs *regs, int all)
-> >         printk(KERN_DEFAULT "R13: %016lx R14: %016lx R15: %016lx\n",
-> >                regs->r13, regs->r14, regs->r15);
-> >
-> > -       if (!all)
-> > +       if (mode == SHOW_REGS_SHORT)
-> >                 return;
-> >
-> > +       if (mode == SHOW_REGS_USER) {
-> > +               rdmsrl(MSR_FS_BASE, fs);
-> > +               rdmsrl(MSR_KERNEL_GS_BASE, shadowgs);
-> > +               printk(KERN_DEFAULT "FS:  %016lx GS:  %016lx\n",
-> > +                      fs, shadowgs);
-> > +               return;
-> > +       }
-> > +
-> >         asm("movl %%ds,%0" : "=r" (ds));
-> >         asm("movl %%cs,%0" : "=r" (cs));
-> >         asm("movl %%es,%0" : "=r" (es));
-> > --
-> > 2.19.0.rc1.350.ge57e33dbd1-goog
-> >
+Rob
