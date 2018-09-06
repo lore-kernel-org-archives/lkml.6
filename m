@@ -2,127 +2,139 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60C9C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73311C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB31206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:48:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB31206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 364AC206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:48:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364AC206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbeIFSYW (ORCPT
+        id S1730002AbeIFSYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:24:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35425 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbeIFSYV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:24:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DmXL1311406
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:48:33 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DmXUW311403;
-        Thu, 6 Sep 2018 06:48:33 -0700
-Date:   Thu, 6 Sep 2018 06:48:33 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-t3684lkugnf1w4lwcmpj9ivm@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        adrian.hunter@intel.com, hpa@zytor.com, wangnan0@huawei.com,
-        acme@redhat.com, tglx@linutronix.de, mingo@kernel.org,
-        dsahern@gmail.com, namhyung@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, namhyung@kernel.org,
-          dsahern@gmail.com, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, adrian.hunter@intel.com, acme@redhat.com,
-          wangnan0@huawei.com, hpa@zytor.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf map: Turn some pr_warning() to pr_debug()
-Git-Commit-ID: d8e75a110df7e3318990c9fb207ae0aa7812895a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 14:24:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46024 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726837AbeIFSYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:24:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1099B80D;
+        Thu,  6 Sep 2018 06:48:52 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41A9B3F614;
+        Thu,  6 Sep 2018 06:48:49 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 14:48:46 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
+ into CPU's clamp groups
+Message-ID: <20180906134846.GB25636@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-3-patrick.bellasi@arm.com>
+ <20180905104545.GB20267@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180905104545.GB20267@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d8e75a110df7e3318990c9fb207ae0aa7812895a
-Gitweb:     https://git.kernel.org/tip/d8e75a110df7e3318990c9fb207ae0aa7812895a
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 4 Sep 2018 10:43:07 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 4 Sep 2018 16:51:12 -0300
+Hi Juri!
 
-perf map: Turn some pr_warning() to pr_debug()
+On 05-Sep 12:45, Juri Lelli wrote:
+> Hi,
+> 
+> On 28/08/18 14:53, Patrick Bellasi wrote:
+> 
+> [...]
+> 
+> >  static inline int __setscheduler_uclamp(struct task_struct *p,
+> >  					const struct sched_attr *attr)
+> >  {
+> > -	if (attr->sched_util_min > attr->sched_util_max)
+> > -		return -EINVAL;
+> > -	if (attr->sched_util_max > SCHED_CAPACITY_SCALE)
+> > -		return -EINVAL;
+> > +	int group_id[UCLAMP_CNT] = { UCLAMP_NOT_VALID };
+> > +	int lower_bound, upper_bound;
+> > +	struct uclamp_se *uc_se;
+> > +	int result = 0;
+> >  
+> > -	p->uclamp[UCLAMP_MIN] = attr->sched_util_min;
+> > -	p->uclamp[UCLAMP_MAX] = attr->sched_util_max;
+> > +	mutex_lock(&uclamp_mutex);
+> 
+> This is going to get called from an rcu_read_lock() section, which is a
+> no-go for using mutexes:
+> 
+>  sys_sched_setattr ->
+>    rcu_read_lock()
+>    ...
+>    sched_setattr() ->
+>      __sched_setscheduler() ->
+>        ...
+>        __setscheduler_uclamp() ->
+>          ...
+> 	 mutex_lock()
 
-Annoying when using it with --stdio/--stdio2, so just turn them debug,
-we can get those using -v.
+Rightm, great catch, thanks!
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-t3684lkugnf1w4lwcmpj9ivm@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/map.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+> Guess you could fix the issue by getting the task struct after find_
+> process_by_pid() in sys_sched_attr() and then calling sched_setattr()
+> after rcu_read_lock() (putting the task struct at the end). Peter
+> actually suggested this mod to solve a different issue.
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 36d0763311ef..3f07a587c8e6 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -320,12 +320,11 @@ int map__load(struct map *map)
- 			build_id__sprintf(map->dso->build_id,
- 					  sizeof(map->dso->build_id),
- 					  sbuild_id);
--			pr_warning("%s with build id %s not found",
--				   name, sbuild_id);
-+			pr_debug("%s with build id %s not found", name, sbuild_id);
- 		} else
--			pr_warning("Failed to open %s", name);
-+			pr_debug("Failed to open %s", name);
+I guess you mean something like this ?
+
+---8<---
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5792,10 +5792,15 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
+        rcu_read_lock();
+        retval = -ESRCH;
+        p = find_process_by_pid(pid);
+-       if (p != NULL)
+-               retval = sched_setattr(p, &attr);
++       if (likely(p))
++               get_task_struct(p);
+        rcu_read_unlock();
  
--		pr_warning(", continuing without symbols\n");
-+		pr_debug(", continuing without symbols\n");
- 		return -1;
- 	} else if (nr == 0) {
- #ifdef HAVE_LIBELF_SUPPORT
-@@ -334,12 +333,11 @@ int map__load(struct map *map)
- 
- 		if (len > sizeof(DSO__DELETED) &&
- 		    strcmp(name + real_len + 1, DSO__DELETED) == 0) {
--			pr_warning("%.*s was updated (is prelink enabled?). "
-+			pr_debug("%.*s was updated (is prelink enabled?). "
- 				"Restart the long running apps that use it!\n",
- 				   (int)real_len, name);
- 		} else {
--			pr_warning("no symbols found in %s, maybe install "
--				   "a debug package?\n", name);
-+			pr_debug("no symbols found in %s, maybe install a debug package?\n", name);
- 		}
- #endif
- 		return -1;
-@@ -701,8 +699,7 @@ static int maps__fixup_overlappings(struct maps *maps, struct map *map, FILE *fp
- 		if (verbose >= 2) {
- 
- 			if (use_browser) {
--				pr_warning("overlapping maps in %s "
--					   "(disable tui for more info)\n",
-+				pr_debug("overlapping maps in %s (disable tui for more info)\n",
- 					   map->dso->name);
- 			} else {
- 				fputs("overlapping maps:\n", fp);
++       if (likely(p)) {
++               retval = sched_setattr(p, &attr);
++               put_task_struct(p);
++       }
++
+        return retval;
+ }
+---8<---
+
+Cheers,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
