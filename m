@@ -2,136 +2,112 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D80C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C05C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E096120861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:22:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E096120861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 6588D2075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:24:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ax6Mr7Ss"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6588D2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbeIFT6g (ORCPT
+        id S1730253AbeIFUAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:58:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729991AbeIFT6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:58:36 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E304420659;
-        Thu,  6 Sep 2018 15:22:34 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 11:22:33 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
-Message-ID: <20180906112233.068d45a7@gandalf.local.home>
-In-Reply-To: <20180906023151.GA749@jagdpanzerIV>
-References: <20180905213334.03375777@vmware.local.home>
-        <20180906023151.GA749@jagdpanzerIV>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 6 Sep 2018 16:00:01 -0400
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:39679 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729991AbeIFUAB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 16:00:01 -0400
+Received: by mail-pg1-f181.google.com with SMTP id i190-v6so5407399pgc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 08:24:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EZ7qwTQPzySCPhznfiKJQLnEiIYCnZy8+g/df4Qxwl8=;
+        b=Ax6Mr7SsCwyS2Y17kG4LLyvBq9OjiqTOwvZK1p43lmkvN+TKi9P4gi1Zubw6YSqAP0
+         LbfAvP0Nvb1Z2jFTxwG09zTJA6wUnRZyDP6IvQUAP3ZKDyJX88IrpjvsS/Dltb9jsWRV
+         Oo5mCGsGnr17ng3OOQt+uftonqFRweQo7Ng27kO9z4U/WaesE4sRS0zGM5xkKzKu3sWN
+         HSi/RgO5pM+YQ2WKzoxoGplRyMrRPLmWxlkWKalDflO1EkdEnk/O8jXkW3Dz2zxn4Ljs
+         8obmJWitRew/Z/oA+dmcw4+a3B0JRXlNdw5C/dC61lexufJizZQthsijF1tmZ22Hn3eN
+         C43g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EZ7qwTQPzySCPhznfiKJQLnEiIYCnZy8+g/df4Qxwl8=;
+        b=F+ORIuVRcxL87smTeLC0wGQd0a/wDpY38NVyCIAnASXV+a9fbweptshFw9sIVz31sL
+         It0mqcQ96SvElteBTHU6Qp3y8W8XXSlUscjwu460b2NZXuKFAQ5YX9xB5FB4IKnknKIA
+         K+KXMbB8+HdjebNNIsWssABSCVxzE+aqrCY3Rou3fWXYzybUXCXn3m4/ilS/qx/fYi6A
+         s5vhpT0hRAeTtE+3W09LMGbLSSj3BxOT2476vwOWSpHx0hCtmK+24J0klY4ExGeIpSzD
+         VvKBdxJnP0kCAX51t2a9jXZaGimRQ0kCGYBJyrOkH4SLi4naeXLg/Q9U31cYGYO4zwiN
+         esvA==
+X-Gm-Message-State: APzg51C1IZN4fDKekB3lmTffVBH1xPzK319GUU7nx8tmX8fy7RaX065c
+        91OLhARMwD+lnvMdNiRVQ1k=
+X-Google-Smtp-Source: ANB0VdZbWh66M3VUP3cUscRSk+eTpELa6Sqz4ZGuRrhD5W4JiT4sez2laWJXIIcK7RA4SYadA5Bxxw==
+X-Received: by 2002:a62:b604:: with SMTP id j4-v6mr3375801pff.199.1536247440228;
+        Thu, 06 Sep 2018 08:24:00 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id t21-v6sm9524784pfi.73.2018.09.06.08.23.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 08:23:59 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 08:23:57 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Matt Hart <matthew.hart@linaro.org>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Widespread crashes in next-20180906
+Message-ID: <20180906152357.GA13389@roeck-us.net>
+References: <2e8e31f5-4db5-4907-2d09-f6444bc78ede@roeck-us.net>
+ <20180906140413.GA5098@thunk.org>
+ <CAH+k93Fgk2yZ3OzBOL2uxSVuOqEJB5wS1Zfny8bDkbuQ3sM6Jw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH+k93Fgk2yZ3OzBOL2uxSVuOqEJB5wS1Zfny8bDkbuQ3sM6Jw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 11:31:51 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+On Thu, Sep 06, 2018 at 03:13:23PM +0100, Matt Hart wrote:
+> On 6 September 2018 at 15:04, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> > On Thu, Sep 06, 2018 at 06:45:15AM -0700, Guenter Roeck wrote:
+> >> Build results:
+> >>       total: 134 pass: 133 fail: 1
+> 
+> Do you build arm64? Because KernelCI is seeing build failures in arm64
+> defconfig for next-20180906
+> Clearly it's a module build problem for sunxi but I'm not sure who to
+> CC about this.
+> 
+I do, but as part of the boot tests, not as explicit build test,
+to save a bit of time. Maybe I should run a build test as well.
 
-> Hello,
+> https://kernelci.org/build/next/branch/master/kernel/next-20180906/
+> https://storage.kernelci.org/next/master/next-20180906/arm64/defconfig/build.log
 > 
-> On (09/05/18 21:33), Steven Rostedt wrote:
-> >   do_idle {
-> > 
-> >     [interrupts enabled]
-> > 
-> >     <interrupt> [interrupts disabled]
-> > 	TRACE_IRQS_OFF [lockdep says irqs off]
-> > 	[...]
-> > 	TRACE_IRQS_IRET
-> > 	    test if pt_regs say return to interrupts enabled [yes]
-> > 	    TRACE_IRQS_ON [lockdep says irqs are on]
-> > 
-> > 	    <nmi>
-> > 		nmi_enter() {
-> > 		    printk_nmi_enter() [traced by ftrace]
-> > 		    [ hit ftrace breakpoint ]
-> > 		    <breakpoint exception>
-> > 			TRACE_IRQS_OFF [lockdep says irqs off]
-> > 			[...]
-> > 			TRACE_IRQS_IRET [return from breakpoint]
-> > 			   test if pt_regs say interrupts enabled [no]
-> > 			   [iret back to interrupt]
-> > 	   [iret back to code]
-> > 
-> >     tick_nohz_idle_enter() {
-> > 
-> > 	lockdep_assert_irqs_enabled() [lockdep say no!]
-> > 
-> > Although interrupts are indeed enabled, lockdep thinks it is not, and since
-> > we now do asserts via lockdep, it gives a false warning. The issue here is
-> > that printk_nmi_enter() is called before lockdep_off(), which disables
-> > lockdep (for this reason) in NMIs. By simply not allowing ftrace to see
-> > printk_nmi_enter() (via notrace annotation) we keep lockdep from getting
-> > confused.  
-> 
-> Great catch and I like the patch!
-> 
-> Indeed, with printk_nmi we changed the "everything that nmi_enter does
-> should happen after lockdep_off" to "everything that nmi_enter does should
-> happen after printk_nmi_enter" // +similar change to nmi_exit.
-> 
-> An alternative option, thus, could be re-instating back the rule that
-> lockdep_off/on should be the first and the last thing we do in
-> nmi_enter/nmi_exit. E.g.
-> 
-> nmi_enter()
-> 	lockdep_off();
-> 	printk_nmi_enter();
-> 
-> nmi_exit()
-> 	printk_nmi_exit();
-> 	lockdep_on();
-> 
-> I guess that we can keep printk_nmi_enter/printk_nmi_exit at the top
-> and at the bottom of nmi_enter/nmi_exit correspondingly just in case
-> if lockdep_off/lockdep_on sometime in the future starts invoking printk(),
-> which would deadlock us. Hence
+> ERROR: "sun8i_tcon_top_de_config"
+> [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_set_hdmi_src"
+> [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko]
+> undefined!
 
-I thought about doing the move first, but figured it wasn't needed, as
-Petr said, it's before ftrace_nmi_enter() and should be notrace
-regrardless.
+Same error here, in the boot tests. Sorry, there are just too many
+failures there, and I didn't go through all the logs.
 
-> 
-> Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> 
-> 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 099f1c84c0052 ("printk: introduce per-cpu safe_print seq buffer")  
-> 
-> A minor nitpick,
-> 
-> printk_nmi was introduced by 42a0bb3f71383b457 ("printk/nmi: generic
-> solution for safe printk in NMI") - in that commit we declared a new
-> printk_nmi_enter/exit should be the first and the last thing we do in
-> nmi_enter/nmi_exit rule.
+Do you have bisect results ? Otherwise I can run bisect later today;
+that should hopefully identify the culprit.
 
-Thanks I'll update the change log. Grumble, my git blame foo is getting
-rusty.
-
--- Steve
+Thanks,
+Guenter
