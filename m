@@ -2,40 +2,40 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14774C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E024EC43334
 	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A488D2083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A488D2083D
+	by mail.kernel.org (Postfix) with ESMTP id 9EBD92083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBD92083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbeIFNn3 (ORCPT
+        id S1728532AbeIFNna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 6 Sep 2018 09:43:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:41206 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728474AbeIFNn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Sep 2018 09:43:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41194 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728474AbeIFNn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:43:28 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A63115B2;
-        Thu,  6 Sep 2018 02:09:00 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C2431596;
+        Thu,  6 Sep 2018 02:09:01 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A9FAD3F575;
-        Thu,  6 Sep 2018 02:08:58 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 47D693F575;
+        Thu,  6 Sep 2018 02:09:00 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, suzuki.poulose@arm.com,
         robert.walker@arm.com, al.grant@arm.com
-Subject: [PATCH v2 10/14] coresight: etmx: Claim devices before use
-Date:   Thu,  6 Sep 2018 10:08:31 +0100
-Message-Id: <1536224915-31766-11-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 11/14] coresight: funnel: Claim devices before use
+Date:   Thu,  6 Sep 2018 10:08:32 +0100
+Message-Id: <1536224915-31766-12-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
 References: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,112 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the CLAIM tags to grab the device for self-hosted usage.
+Use the CLAIM protocol to grab the ownership of the component.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-etm3x.c | 16 +++++++++++++---
- drivers/hwtracing/coresight/coresight-etm4x.c | 14 +++++++++++---
- 2 files changed, 24 insertions(+), 6 deletions(-)
+ drivers/hwtracing/coresight/coresight-funnel.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
-index 206c238..fd5c4cc 100644
---- a/drivers/hwtracing/coresight/coresight-etm3x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm3x.c
-@@ -357,7 +357,7 @@ static int etm_parse_event_config(struct etm_drvdata *drvdata,
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index ee7a30b..9279251 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -25,6 +25,7 @@
+ #define FUNNEL_HOLDTIME_MASK	0xf00
+ #define FUNNEL_HOLDTIME_SHFT	0x8
+ #define FUNNEL_HOLDTIME		(0x7 << FUNNEL_HOLDTIME_SHFT)
++#define FUNNEL_ENSx_MASK	0xff
  
- static int etm_enable_hw(struct etm_drvdata *drvdata)
+ /**
+  * struct funnel_drvdata - specifics associated to a funnel component
+@@ -42,31 +43,42 @@ struct funnel_drvdata {
+ 	unsigned long		priority;
+ };
+ 
+-static void funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
++static int funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
  {
--	int i;
-+	int i, rc;
- 	u32 etmcr;
- 	struct etm_config *config = &drvdata->config;
- 
-@@ -369,6 +369,9 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
- 	etm_set_pwrup(drvdata);
- 	/* Make sure all registers are accessible */
- 	etm_os_unlock(drvdata);
-+	rc = coresight_claim_device_unlocked(drvdata->base);
-+	if (rc)
-+		goto done;
- 
- 	etm_set_prog(drvdata);
- 
-@@ -417,10 +420,15 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
- 	etm_writel(drvdata, 0x0, ETMVMIDCVR);
- 
- 	etm_clr_prog(drvdata);
-+
-+done:
-+	if (rc)
-+		etm_set_pwrdwn(drvdata);
- 	CS_LOCK(drvdata->base);
- 
--	dev_dbg(drvdata->dev, "cpu: %d enable smp call done\n", drvdata->cpu);
--	return 0;
-+	dev_dbg(drvdata->dev, "cpu: %d enable smp call done: %d\n",
-+		drvdata->cpu, rc);
-+	return rc;
- }
- 
- struct etm_enable_arg {
-@@ -569,6 +577,8 @@ static void etm_disable_hw(void *info)
- 	for (i = 0; i < drvdata->nr_cntr; i++)
- 		config->cntr_val[i] = etm_readl(drvdata, ETMCNTVRn(i));
- 
-+	coresight_disclaim_device_unlocked(drvdata->base);
-+
- 	etm_set_pwrdwn(drvdata);
- 	CS_LOCK(drvdata->base);
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index 4f9e6bb..ac311e5 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -84,13 +84,17 @@ struct etm4_enable_arg {
- 
- static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
- {
--	int i;
-+	int i, rc;
- 	struct etmv4_config *config = &drvdata->config;
+ 	u32 functl;
++	int rc = 0;
  
  	CS_UNLOCK(drvdata->base);
  
- 	etm4_os_unlock(drvdata);
- 
-+	rc = coresight_claim_device_unlocked(drvdata->base);
-+	if (rc)
-+		goto done;
+ 	functl = readl_relaxed(drvdata->base + FUNNEL_FUNCTL);
++	/* Claim the device only when we enable the first slave */
++	if (!(functl & FUNNEL_ENSx_MASK)) {
++		rc = coresight_claim_device_unlocked(drvdata->base);
++		if (rc)
++			goto done;
++	}
 +
- 	/* Disable the trace unit before programming trace registers */
- 	writel_relaxed(0, drvdata->base + TRCPRGCTLR);
- 
-@@ -178,10 +182,12 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
- 		dev_err(drvdata->dev,
- 			"timeout while waiting for Idle Trace Status\n");
- 
+ 	functl &= ~FUNNEL_HOLDTIME_MASK;
+ 	functl |= FUNNEL_HOLDTIME;
+ 	functl |= (1 << port);
+ 	writel_relaxed(functl, drvdata->base + FUNNEL_FUNCTL);
+ 	writel_relaxed(drvdata->priority, drvdata->base + FUNNEL_PRICTL);
+-
 +done:
  	CS_LOCK(drvdata->base);
- 
--	dev_dbg(drvdata->dev, "cpu: %d enable smp call done\n", drvdata->cpu);
--	return 0;
-+	dev_dbg(drvdata->dev, "cpu: %d enable smp call done: %d\n",
-+		drvdata->cpu, rc);
 +	return rc;
  }
  
- static void etm4_enable_hw_smp_call(void *info)
-@@ -341,6 +347,8 @@ static void etm4_disable_hw(void *info)
- 	isb();
- 	writel_relaxed(control, drvdata->base + TRCPRGCTLR);
+ static int funnel_enable(struct coresight_device *csdev, int inport,
+ 			 int outport)
+ {
++	int rc;
+ 	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
  
-+	coresight_disclaim_device_unlocked(drvdata->base);
+-	funnel_enable_hw(drvdata, inport);
++	rc = funnel_enable_hw(drvdata, inport);
+ 
+-	dev_dbg(drvdata->dev, "FUNNEL inport %d enabled\n", inport);
+-	return 0;
++	if (!rc)
++		dev_dbg(drvdata->dev, "FUNNEL inport %d enabled\n", inport);
++	return rc;
+ }
+ 
+ static void funnel_disable_hw(struct funnel_drvdata *drvdata, int inport)
+@@ -79,6 +91,10 @@ static void funnel_disable_hw(struct funnel_drvdata *drvdata, int inport)
+ 	functl &= ~(1 << inport);
+ 	writel_relaxed(functl, drvdata->base + FUNNEL_FUNCTL);
+ 
++	/* Disclaim the device if none of the slaves are now active */
++	if (!(functl & FUNNEL_ENSx_MASK))
++		coresight_disclaim_device_unlocked(drvdata->base);
 +
  	CS_LOCK(drvdata->base);
+ }
  
- 	dev_dbg(drvdata->dev, "cpu: %d disable smp call done\n", drvdata->cpu);
 -- 
 2.7.4
 
