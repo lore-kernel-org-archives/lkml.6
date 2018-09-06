@@ -2,122 +2,120 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0FDC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD39C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893702083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:41:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893702083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 0AC602075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:43:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j+NR29/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC602075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbeIFNQG (ORCPT
+        id S1728180AbeIFNR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:16:06 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:57219 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728127AbeIFNQG (ORCPT
+        Thu, 6 Sep 2018 09:17:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37012 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbeIFNR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:16:06 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 7ED5D3000253B;
-        Thu,  6 Sep 2018 10:41:43 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 5A403216617; Thu,  6 Sep 2018 10:41:43 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 10:41:43 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>
-Subject: Re: [PATCH 1/3] thunderbolt: Make the driver less verbose
-Message-ID: <20180906084143.sah4njyft7z5squb@wunner.de>
-References: <20180903133304.70362-1-mika.westerberg@linux.intel.com>
- <20180903133304.70362-2-mika.westerberg@linux.intel.com>
- <20180905090510.fvryu6ivxagdzoyx@wunner.de>
- <20180905095451.GI2283@lahna.fi.intel.com>
+        Thu, 6 Sep 2018 09:17:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=I2m1nJpxwolK6Ba/t22GmwAF/t69Hse/lOxUqR6MY4o=; b=j+NR29/ux8yOkc6iH/+tknb/W
+        f+BW7V0QOoy8oXCSPm6DimqxSHFuFRgC8YpdOtcuHsD3drlkQdMZu94K+9ctY9EDVcW7XV7L6b8SN
+        EHqY5AqoPeb/ctjZr8ntO95pTBR7Z2KsGkHKmTIS/yFjNZ9gkAQfJC0RNIMwiuw7uAESpfFQvmN2V
+        QFwq9BftK46rTHWarkVpLi1pKQ0yPmY3l8sOBIdduHiHz7doBtFO55L7yg3jklsNyCwa648obMC2Y
+        pkoJWO4tCRFsyEvzx/cFS4eMC3Pb9pOBe0pxRtHsRlcwKfgh0IG5yl002V/qSYLqKRS20JPfbCgMo
+        frVkP61SQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxpsR-0002rE-Cv; Thu, 06 Sep 2018 08:42:59 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F184A202547F9; Thu,  6 Sep 2018 10:42:56 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 10:42:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Message-ID: <20180906084256.GE24142@hirez.programming.kicks-ass.net>
+References: <20180902173224.30606-1-namit@vmware.com>
+ <20180905185617.GC24082@hirez.programming.kicks-ass.net>
+ <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+ <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
+ <20180906081300.GF24082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180905095451.GI2283@lahna.fi.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 12:54:51PM +0300, Mika Westerberg wrote:
-> On Wed, Sep 05, 2018 at 11:05:10AM +0200, Lukas Wunner wrote:
-> > On Mon, Sep 03, 2018 at 04:33:02PM +0300, Mika Westerberg wrote:
-> > > Currently the driver logs quite a lot to the system message buffer even
-> > > when doing normal operations. This information is not useful for
-> > > ordinary users and might even annoy some.
-> > 
-> > No, the verbose logging is done on purpose to aid us in reverse-engineering
-> > the protocol.  For example ...
-> > 
-> > > -	tb_port_info(port, "  Unknown1: %#x Unknown2: %#x Unknown3: %#x\n",
-> > > -		     hop->unknown1, hop->unknown2, hop->unknown3);
-> > 
-> > ... why do you think we're logging these seemingly stupid unknown
-> > bitfields?  Because whenever someone posts dmesg output they
-> > inadvertantly post the contents of those unknown fields and we can
-> > then google the value of those fields on various controllers and
-> > machines and deduce their possible meaning.
+On Thu, Sep 06, 2018 at 10:13:00AM +0200, Peter Zijlstra wrote:
+
+> No, you got it the first time. There are in fact more fixmap abusers;
+> see drivers/acpi/apei/ghes.c.  Also, as long as set_fixmap() allows
+> overwriting a _PAGE_PRESENT pte and has that dodgy
+> __flush_tlb_one_kernel() in it, the broken remains (and can return).
 > 
-> And the majority of people get tons of completely useless messages
-> filling their dmesgs? No, I don't think that's a good thing.
+> So we need to fix fixmap, to either disallow overwriting a _PAGE_PRESENT
+> pte, or to issue a full TLB invalidate.
+> 
+> Either fix will terminally break GHES, but that's OK, they've known
+> about this issue since 2015 and haven't cared, so I can't be bothered
+> about them.
 
-As you know the OS-controlled tunnel manager is far from feature
-complete.  I think the "majority of people" are perfectly willing
-to accept verbose logging if it helps us fill in those gaps.
+Worse, when I boot with the below patch in, I get hits on text_poke (we
+knew about this), but I also get hits from:
 
-You make it sound like logfiles are spammed all the time, but
-messages are in fact only logged on driver initialization and hotplug.
+  release_ds_buffer()
 
-We wouldn't be in this situation if we had a proper Thunderbolt spec.
-It wasn't *my* idea to keep it under wraps.
+Because PEBS/BTS hardware write through the page-tables (I know right),
+their buffers need to be in the PTI user map, and we do that by mapping
+the pages in the CAE, and that uses fixmap.
 
-So please leave the messages at info level so as not to hinder our work.
-
-As for your claim that the "majority of people" find the messages
-useless", I rather suspect that you, personally, find them useless
-because you complained about noisiness of the driver before:
-
-   "I don't think we want to log anything with info level to be honest.
-    The driver currently already is pretty noisy so adding even more
-    information there just makes it worse ;-)
-    I would rather convert debugging information to use tracepoints and
-    get rid of the tb_*_info() things completely."
-    https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1401181.html
-
-And guess what I responded:
-
-   "The noisiness has value in that it helps with reverse-engineering:
-    Just google for dmesg output and check what other machines are
-    reporting for unknown registers. :-)
-    If there was public documentation available or Intel would be okay
-    with answering specific questions (as you've done with the 0x30
-    attribute id), then the value obviously diminishes."
-
-
-> Anything running on Alpine Ridge and higher does
-> not require reverse-engineering (even on Apple systems) because those
-> are already supported in the driver.
-
-Long term it may be worthwhile to move to OS-controlled tunnel management
-even when ICM-controlled tunnel management is available as the latter
-might not support features of the former, e.g. correlation of PCI devices
-with Thunderbolt ports:
-https://github.com/l1k/linux/commit/d024c6e7e80e
-
-Thanks,
-
-Lukas
+---
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index dd519f372169..20dcd6fa690e 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -259,9 +259,16 @@ static pte_t *fill_pte(pmd_t *pmd, unsigned long vaddr)
+ static void __set_pte_vaddr(pud_t *pud, unsigned long vaddr, pte_t new_pte)
+ {
+ 	pmd_t *pmd = fill_pmd(pud, vaddr);
+-	pte_t *pte = fill_pte(pmd, vaddr);
++	pte_t *ptep = fill_pte(pmd, vaddr);
+ 
+-	set_pte(pte, new_pte);
++	pte_t pte = *ptep;
++
++	set_pte(ptep, new_pte);
++
++	WARN((pte_val(pte) & _PAGE_PRESENT) && (pte_val(pte) != pte_val(new_pte)),
++		"set_fixmap(%d, %lx), was: %lx",
++		(int)__virt_to_fix(vaddr),
++		pte_val(new_pte), pte_val(pte));
+ 
+ 	/*
+ 	 * It's enough to flush this one mapping.
