@@ -2,99 +2,113 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5429C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD643C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B4D92075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D712075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 15:45:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fp6odfYx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B4D92075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aa57Wlz1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D712075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbeIFUSg (ORCPT
+        id S1730284AbeIFUV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 16:18:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39842 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730342AbeIFUSf (ORCPT
+        Thu, 6 Sep 2018 16:21:58 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33854 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728047AbeIFUV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 16:18:35 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so5484170pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 08:42:30 -0700 (PDT)
+        Thu, 6 Sep 2018 16:21:58 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 13-v6so21494064ois.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 08:45:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TdOEH/ArQN/TM8QP7eG0uNP+WJggPMoEBy/TP4J47fY=;
-        b=fp6odfYxdqP470ks4HaHYwYpZXhtZ83HEue6uQETfb0WAr6Jfnkw1/naiW8GsBb4Ba
-         KDeSpzDjYleJw0zHpAD15At52mc8rt6kEIrZ6izRrPxajqeQfcqoNS6yClcXOHVwk57C
-         OrO5DQ9SSaYtQ4jlyiPDGP/46k80OL1cAq/h8=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SCF/qGOGTlsPnERb2AnClt8bZvvrNKHSZvr5ZA3FL0k=;
+        b=aa57Wlz1qcEqmNezU9oMI1c4IduE1+jZlS4oLQi3GhO8k0luazSwPnf/itreCnQuWC
+         YvBc6yxiLs7EXup3uizv3vOekIITSlftGLa17iQXpH/qiqG8PCSvh50H5psGWi99LR+8
+         HdVivpK1pcFozuqMzOTsyJLdAwbSw2wl+Fwl9rgjvMvwi6qnDrzIFU/4D9dn2mrb2A/p
+         d8ub7R/71qIZX92wWBLNURWs6h6la6dS2Z9YA+K1nEDJZeGtzLkRlMsi6mjS/u45g+MV
+         rQo1QkOvTZXB2kqehGeOC85po2j8QsLDmBhXUy3mU/EfaRm5j1IJzNw+EYvwjymRwWuf
+         ELxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TdOEH/ArQN/TM8QP7eG0uNP+WJggPMoEBy/TP4J47fY=;
-        b=MhFWoaqzgKH0ki9c7+yoZYRR7GJHSdmjnlsrR7v7rxSvuIWldProlg2MVMdoBK2TAe
-         QDxP4G+NBzWOLdzCmdnaOSzR8HTxcT8rYj80okyUpOGigA2THXKSWHqlP1gwTuONmT8y
-         kcD17qtK3+o/ZC4eqY29Jg26scSRc80ojoWbqo7Xgk5h0JlFVETFwsM8H66IRRtS6MiO
-         P+ysoz+WADTaJqzH7gjQYJgHmR+fenHpKxUh2eulT71vfM67rE/Mn9DUvuYlevMV+63W
-         0OKY9ifsfPc9nf7vyEhUXNskAf0z196cHZPxtQ7G7vcS5xyB5fJgKC1n6C/cFTSZ9zaQ
-         a3BQ==
-X-Gm-Message-State: APzg51ChqcmD8iDmgfRDQCVIltAE8pQtz1Y1qAB0+YwCUieXo5E0Zyom
-        nisRN27CIRF26VyZsL3axeRT2Q==
-X-Google-Smtp-Source: ANB0VdaE2kgiU9K/vxG/GxQ7NMH+IcwwZK0IfX83BTv6029TlihL3T3tQ2SK5Z93UJ+ljHFDyfggmg==
-X-Received: by 2002:a62:46c8:: with SMTP id o69-v6mr3518485pfi.21.1536248550534;
-        Thu, 06 Sep 2018 08:42:30 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j27-v6sm10438334pfj.91.2018.09.06.08.42.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Sep 2018 08:42:29 -0700 (PDT)
-Date:   Thu, 6 Sep 2018 08:46:27 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@verdurent.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/8] arm64: dts: qcom: msm8998: Add tsens and
- thermal-zones
-Message-ID: <20180906154627.GA3286@tuxbook-pro>
-References: <20180904050123.26601-1-bjorn.andersson@linaro.org>
- <20180904050123.26601-4-bjorn.andersson@linaro.org>
- <CAHLCerM2por+ES+OhH2nUOOPF_tmYjk6zGdw-2dr=JRu5Jfrbg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SCF/qGOGTlsPnERb2AnClt8bZvvrNKHSZvr5ZA3FL0k=;
+        b=RsnKFwaqAVN0XeEWjg9czWIMyxrb4PnCssH5kRlH0BMArKA8d4yx6GK4pY5Z9taKcL
+         rtq61q8HrVExBAzripsdkPVxj8oQIvN+AP8eNX1exxWyO02L5voUUHet0rBeYaf6tX4Z
+         Yn2X0M4Wq+A16SqQ7SjfW6lgH7YD1AYdpz36ffGwpBOz1Zu8KKQZRZ1/uiWozjpHUMom
+         1kdmkvKixpCDgT/CdBBYGrfLF2s/cE2YcDouEQcAkpcfT8nJNqvmN8knGgqmZ0PYUgsA
+         T6DRS5xBt+BFaqL4yb+jG6BQyhsrM9jBoGRxPoVfoQ8G4eDLl7X6L7bnxVvs+3RbbMOu
+         Ws2w==
+X-Gm-Message-State: APzg51C+EbS7qmB4WHx2v1Qi7TyIbXAwaGep5IdzSMc3fDChi9pZDt4z
+        dptIgEuDIv2dWdothJwF9vIXOWnGFG7ohbdwSA9BYA==
+X-Google-Smtp-Source: ANB0VdZnZ5IzqRwr29PPnWagZEt+JFJXf5cTrL0IpHw6BbSWedX58v1ysRQWamQ8EcxSHrEvcuBHlE9kvBwZjJjZuIw=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr3501091oia.229.1536248751783;
+ Thu, 06 Sep 2018 08:45:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHLCerM2por+ES+OhH2nUOOPF_tmYjk6zGdw-2dr=JRu5Jfrbg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-4-tycho@tycho.ws>
+In-Reply-To: <20180906152859.7810-4-tycho@tycho.ws>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 6 Sep 2018 17:45:25 +0200
+Message-ID: <CAG48ez3gRpGZT4Vk7ZZXk5dkYeVfnGsaqeFZeOio0GpqFd=Vow@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] seccomp: add a way to get a listener fd from ptrace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>, suda.akihiro@lab.ntt.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 06 Sep 06:53 PDT 2018, Amit Kucheria wrote:
-> On Tue, Sep 4, 2018 at 10:31 AM, Bjorn Andersson
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-[..]
-> > +               tsens0: thermal@10aa000 {
-> > +                       compatible = "qcom,msm8998-tsens", "qcom,tsens-v2";
-> > +                       reg = <0x10aa000 0x2000>;
-> > +
-> 
-> use the SROT and TM split for v2?
-> 
+On Thu, Sep 6, 2018 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+> version which can acquire filters is useful. There are at least two reasons
+> this is preferable, even though it uses ptrace:
+>
+> 1. You can control tasks that aren't cooperating with you
+> 2. You can control tasks whose filters block sendmsg() and socket(); if the
+>    task installs a filter which blocks these calls, there's no way with
+>    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+[...]
+> +long seccomp_new_listener(struct task_struct *task,
+> +                         unsigned long filter_off)
+> +{
+> +       struct seccomp_filter *filter;
+> +       struct file *listener;
+> +       int fd;
+> +
+> +       if (!capable(CAP_SYS_ADMIN))
+> +               return -EACCES;
+> +
+> +       filter = get_nth_filter(task, filter_off);
+> +       if (IS_ERR(filter))
+> +               return PTR_ERR(filter);
+> +
+> +       fd = get_unused_fd_flags(0);
+> +       if (fd < 0) {
+> +               __put_seccomp_filter(filter);
+> +               return fd;
+> +       }
+> +
+> +       listener = init_listener(task, task->seccomp.filter);
 
-You're right, lets use the new style from the beginning.
-
-Thanks,
-Bjorn
+Did you mean to write something like `init_listener(task, filter)` here?
