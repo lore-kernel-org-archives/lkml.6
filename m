@@ -2,200 +2,89 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A3EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B46C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472992075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:03:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472992075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id F230F2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:06:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F230F2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeIFKhS (ORCPT
+        id S1726456AbeIFKkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 06:37:18 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13088 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725850AbeIFKhS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:37:18 -0400
-X-UUID: 1e947c1b6f924520a6b88ab85bf6e66a-20180906
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1075598207; Thu, 06 Sep 2018 14:03:25 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 6 Sep 2018 14:03:23 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 6 Sep 2018 14:03:23 +0800
-Message-ID: <1536213802.4618.41.camel@mtksdaap41>
-Subject: Re: [PATCH v2 13/13] drm/mediatek: config component output by
- device node port
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>
-Date:   Thu, 6 Sep 2018 14:03:22 +0800
-In-Reply-To: <20180905083146.14727-14-bibby.hsieh@mediatek.com>
-References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
-         <20180905083146.14727-14-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 6 Sep 2018 06:40:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39046 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbeIFKkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 06:40:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF2C17A9;
+        Wed,  5 Sep 2018 23:06:52 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.Emea.Arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C0643F557;
+        Wed,  5 Sep 2018 23:06:42 -0700 (PDT)
+Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
+ static key
+To:     Quentin Perret <quentin.perret@arm.com>, peterz@infradead.org,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-8-quentin.perret@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <f206f192-1bbf-f868-c8c6-8215334639db@arm.com>
+Date:   Wed, 5 Sep 2018 23:06:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180820094420.26590-8-quentin.perret@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
-
-On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
-> We can select output component by decive node port.
-> Main path default output component is DSI.
-> External path default output component is DPI.
+On 08/20/2018 02:44 AM, Quentin Perret wrote:
+> In order to ensure a minimal performance impact on non-energy-aware
+> systems, introduce a static_key guarding the access to Energy-Aware
+> Scheduling (EAS) code.
 > 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 37 ++++++++++++++++++++++++++++++----
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  4 ++--
->  2 files changed, 35 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index d961112fa2f5..a477fb878c06 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -21,7 +21,9 @@
->  #include <drm/drm_of.h>
->  #include <linux/component.h>
->  #include <linux/iommu.h>
-> +#include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_graph.h>
->  #include <linux/of_platform.h>
->  #include <linux/pm_runtime.h>
->  
-> @@ -133,7 +135,7 @@ static const struct drm_mode_config_funcs mtk_drm_mode_config_funcs = {
->  	.atomic_commit = mtk_atomic_commit,
->  };
->  
-> -static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
-> +static enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
->  	DDP_COMPONENT_OVL0,
->  	DDP_COMPONENT_RDMA0,
->  	DDP_COMPONENT_COLOR0,
-> @@ -141,7 +143,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
->  	DDP_COMPONENT_DSI0,
->  };
->  
-> -static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
-> +static enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
->  	DDP_COMPONENT_RDMA1,
->  	DDP_COMPONENT_DPI0,
->  };
-> @@ -172,7 +174,7 @@ static const enum mtk_ddp_comp_id mt2712_mtk_ddp_third[] = {
->  	DDP_COMPONENT_PWM2,
->  };
->  
-> -static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
-> +static enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
->  	DDP_COMPONENT_OVL0,
->  	DDP_COMPONENT_COLOR0,
->  	DDP_COMPONENT_AAL0,
-> @@ -183,7 +185,7 @@ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
->  	DDP_COMPONENT_PWM0,
->  };
->  
-> -static const enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
-> +static enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
->  	DDP_COMPONENT_OVL1,
->  	DDP_COMPONENT_COLOR1,
->  	DDP_COMPONENT_GAMMA,
-> @@ -472,6 +474,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  
->  	/* Iterate over sibling DISP function blocks */
->  	for_each_child_of_node(dev->of_node->parent, node) {
-> +		struct device_node *port, *ep, *remote;
->  		const struct of_device_id *of_id;
->  		enum mtk_ddp_comp_type comp_type;
->  		int comp_id;
-> @@ -531,6 +534,32 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  
->  			private->ddp_comp[comp_id] = comp;
->  		}
-> +
-> +		if (comp_type != MTK_DSI && comp_type != MTK_DPI) {
-> +			port = of_graph_get_port_by_id(node, 0);
-> +			if (!port)
-> +				continue;
-> +			ep = of_get_child_by_name(port, "endpoint");
-> +			of_node_put(port);
-> +			if (!ep)
-> +				continue;
-> +			remote = of_graph_get_remote_port_parent(ep);
-> +			of_node_put(ep);
-> +			if (!remote)
-> +				continue;
-> +			of_id = of_match_node(mtk_ddp_comp_dt_ids, remote);
-> +			if (!of_id)
-> +				continue;
-> +			comp_type = (enum mtk_ddp_comp_type)of_id->data;
-> +			for (i = 0; i < private->data->main_len - 1; i++)
-> +				if (private->data->main_path[i] == comp_id)
-> +					private->data->main_path[i + 1] =
-> +					mtk_ddp_comp_get_id(node, comp_type);
-> +			for (i = 0; i < private->data->ext_len - 1; i++)
-> +				if (private->data->ext_path[i] == comp_id)
-> +					private->data->ext_path[i + 1] =
-> +					mtk_ddp_comp_get_id(node, comp_type);
-> +		}
+> The static key is set iff all the following conditions are met for at
+> least one root domain:
+>    1. all online CPUs of the root domain are covered by the Energy
+>       Model (EM);
+>    2. the complexity of the root domain's EM is low enough to keep
+>       scheduling overheads low;
+>    3. the root domain has an asymmetric CPU capacity topology (detected
+>       by looking for the SD_ASYM_CPUCAPACITY flag in the sched_domain
+>       hierarchy).
 
-I think you should add description in binding document
-(Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt)
-for this. After the binding document is fully reviewed, we could start
-to review this patch.
+This is pretty much the list (+ is schedutil running) of conditions to 
+set rd->pd != NULL in build_perf_domains().
 
-Regards,
-CK
+So when testing 'static_branch_unlikely(&sched_energy_present) && 
+rcu_dereference(rd->pd)' don't you test two times the same thing?
 
->  	}
->  
->  	if (!private->mutex_node) {
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> index ecc00ca3221d..256a3ff2e66e 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> @@ -29,9 +29,9 @@ struct drm_property;
->  struct regmap;
->  
->  struct mtk_mmsys_driver_data {
-> -	const enum mtk_ddp_comp_id *main_path;
-> +	enum mtk_ddp_comp_id *main_path;
->  	unsigned int main_len;
-> -	const enum mtk_ddp_comp_id *ext_path;
-> +	enum mtk_ddp_comp_id *ext_path;
->  	unsigned int ext_len;
->  	const enum mtk_ddp_comp_id *third_path;
->  	unsigned int third_len;
+Also, if let's say somebody wants to run another EM user (e.g. a thermal 
+governor, like IPA) but not EAS on a asymmetric CPU capacity system. 
+This can't be achieved with the current static branch approach
 
+So what about using a (disabled by default ?) sched_feature + rd->pd != 
+NULL instead?
 
+[...]
