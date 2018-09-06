@@ -2,105 +2,108 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD3FC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318B7C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D1A2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:29:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DEGQx61v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3D1A2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B8DCC20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DCC20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeIFTFg (ORCPT
+        id S1730034AbeIFTHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 15:05:36 -0400
-Received: from mail-vk0-f73.google.com ([209.85.213.73]:50384 "EHLO
-        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729401AbeIFTFg (ORCPT
+        Thu, 6 Sep 2018 15:07:22 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34567 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729937AbeIFTHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 15:05:36 -0400
-Received: by mail-vk0-f73.google.com with SMTP id n135-v6so3772868vke.17
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 07:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=HGp0kMaMTlvqs08pLn4mkIkxA0/YTHUf7uHJuW9/Rc4=;
-        b=DEGQx61vVlvXh+p4JQPgROXPHEUUq0LMPlBYintVPzZvTmSzy1xW7qrgMLAF2ZqG1Q
-         Pxft8Ihn5pfeAgU02fymYRzRByKTQ3KnMvhUZsruLJNWT/MevXbp1V17h7zQHqKKc9se
-         H6YjcJDYcSNmnQLsFKap7OcU8zAY6uYwZ/drLRAOtDdoUFjMR5YH0XVHG3Xm59MNBCKV
-         NBVaREj3JotndA5co4WLeQAo3D/Y0lTSNwrmw4/h88J7j8dhfXwivVtV1VkexQcfh1BG
-         xLcYc9/FFVSBsiPR+Ike7n4Ctf0xnMUb7Ob+E/OCGbbR7naqiKICTaAqOf9uoUqiBP0r
-         eUWg==
+        Thu, 6 Sep 2018 15:07:22 -0400
+Received: by mail-qt0-f195.google.com with SMTP id m13-v6so12523197qth.1;
+        Thu, 06 Sep 2018 07:31:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=HGp0kMaMTlvqs08pLn4mkIkxA0/YTHUf7uHJuW9/Rc4=;
-        b=MolaG0Yf5ESMkqyxhe5jwUFaOKg0CapAzY5gLfQ2y1UnbaaAMCdZN5hLXEKGmf6Vms
-         1t0rNhQ9tmMv6SghIbbDLsD/siVdIQiWi40yV3a/n6s4sEWrpMEyxADVgu0MbudEVSLz
-         1dIVCJTPo6P/T/2BPW7th6LymNShyNAAWwVPo2k76GgNDDAHP83mTFBYw/c43it5hiNr
-         jb29SaOfti8ZDmA3LbzwFYWNsfuV9pVHJ8EwjHmZJjXMspmPVlMRvrXkxK/J32APuKQa
-         GK7O6ASErF/zXOriQ42WogdWem/IVkzhwfRs04xqVpcGDnAv/9tBa6XjsjocEgczEMu3
-         5Qkw==
-X-Gm-Message-State: APzg51DJPmvPVYDBPnLFvZyy8s1XTflUopLQhGD5lgjVvK6yJKo6oHp1
-        GhifKB1lgjEfahs/WVbac9vym7Tc0Q==
-X-Google-Smtp-Source: ANB0Vdau57VrzvPf++Ee/9Fnqhs96uPWj13PUp4VLtiX7ev0BZ6uu3qlyaKPCXm/c8ToCPwv70vqy0CWsA==
-X-Received: by 2002:a1f:fe07:: with SMTP id l7-v6mr564096vki.59.1536244187306;
- Thu, 06 Sep 2018 07:29:47 -0700 (PDT)
-Date:   Thu,  6 Sep 2018 16:29:35 +0200
-Message-Id: <20180906142935.230597-1-jannh@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.rc1.350.ge57e33dbd1-goog
-Subject: [PATCH] Yama: use READ_ONCE() when reading ptrace_scope
-From:   Jann Horn <jannh@google.com>
-To:     Kees Cook <keescook@chromium.org>, jannh@google.com
-Cc:     linux-kernel@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/dTnNXbG7AJ3uOEcFPlRh3sJWKocXIpEXNe+XKnoXLs=;
+        b=dUDoB1TKr/o3a4AG//35ZYAfIbDtAgGAxsaHfB8qLUxUrAzXMYP7WOuOpv6RTUiqjP
+         O36r7oZtrb/vWXNGatBoERo78QFbpzQhdZVOkS5CjqMTlQ237tQHHWcvbKtnz9g3x/Pz
+         2QW5ok2/ECGIPxYXwJRUVr7/QAtxKmBthqgKfoKa/subTgtFUZLG/UZ/FZfLw3g6chIf
+         5gbSYj10GANSTIQS/HEJdU0i5dapiCPbZSvAfrnxBN9ie6Tzl0JfsJmNzUb9oarUMZBw
+         FuceygILQ24oZ1ZbFoGjHpE/fouUaKMS68gTsFoQQZYFtw39BskOheEtVbx9qbh29zBy
+         E/tw==
+X-Gm-Message-State: APzg51DC9Y3Nkq6NsaVsrhgd+gHw5pWwcNx/5d3AAsATCCUGIexug3dD
+        jLkFJOBR4CNyuIWLtx0EIvXcoeh1EvrZ4DIR4f4=
+X-Google-Smtp-Source: ANB0VdY8j/AuofxpDy2wzUMKVc4/XVNUAgnelbrw/nkbzsLRiJdYFKJvYzhU6vg3SDoLQzBfY1njwl8c6lLmb7fjQcA=
+X-Received: by 2002:aed:2b47:: with SMTP id p65-v6mr2331145qtd.132.1536244292864;
+ Thu, 06 Sep 2018 07:31:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1536138304.git.ren_guo@c-sky.com> <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
+In-Reply-To: <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 6 Sep 2018 16:31:16 +0200
+Message-ID: <CAK8P3a1fYM0X=F+9yD6BVLq=57eJeFWXCvywjQOFwEHz7oAhcg@mail.gmail.com>
+Subject: Re: [PATCH V3 06/26] csky: Cache and TLB routines
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ptrace_scope can be modified concurrently. To ensure that the compiler only
-reads ptrace_scope once, use READ_ONCE() here. (In practice, at least the
-version of gcc on my machine only generates a single read anyway, and it
-seems unlikely that a compiler would do something different.)
+On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
 
-This also serves as documentation for the reader.
+> diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
+> new file mode 100644
+> index 0000000..fcb2142
+> --- /dev/null
+> +++ b/arch/csky/include/asm/io.h
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +#ifndef __ASM_CSKY_IO_H
+> +#define __ASM_CSKY_IO_H
+> +
+> +#include <abi/pgtable-bits.h>
+> +#include <linux/types.h>
+> +#include <linux/version.h>
+> +
+> +extern void __iomem *ioremap(phys_addr_t offset, size_t size);
+> +
+> +extern void iounmap(void *addr);
+> +
+> +extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
+> +               size_t size, unsigned long flags);
+> +
+> +#define ioremap_nocache(phy, sz)       ioremap(phy, sz)
+> +#define ioremap_wc ioremap_nocache
+> +#define ioremap_wt ioremap_nocache
+> +
+> +#include <asm-generic/io.h>
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- security/yama/yama_lsm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It is very unusual for an architecture to not need special handling in asm/io.h,
+to do the proper barriers etc.
 
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index ffda91a4a1aa..3b18e4455f53 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -362,7 +362,7 @@ static int yama_ptrace_access_check(struct task_struct *child,
- 
- 	/* require ptrace target be a child of ptracer on attach */
- 	if (mode & PTRACE_MODE_ATTACH) {
--		switch (ptrace_scope) {
-+		switch (READ_ONCE(ptrace_scope)) {
- 		case YAMA_SCOPE_DISABLED:
- 			/* No additional restrictions. */
- 			break;
-@@ -404,7 +404,7 @@ int yama_ptrace_traceme(struct task_struct *parent)
- 	int rc = 0;
- 
- 	/* Only disallow PTRACE_TRACEME on more aggressive settings. */
--	switch (ptrace_scope) {
-+	switch (READ_ONCE(ptrace_scope)) {
- 	case YAMA_SCOPE_CAPABILITY:
- 		if (!has_ns_capability(parent, current_user_ns(), CAP_SYS_PTRACE))
- 			rc = -EPERM;
--- 
-2.19.0.rc1.350.ge57e33dbd1-goog
+Can you describe how C-Sky hardware implements MMIO?
 
+In particular:
+
+- Is a read from uncached memory always serialized with DMA, and with
+  other CPUs doing MMIO access to a different address?
+
+- How does endianess work? Are there any buses that flip bytes around
+  when running big-endian, or do you always do that in software?
+
+        Arnd
