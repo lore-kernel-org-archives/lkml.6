@@ -2,190 +2,89 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB1EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A80C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28C7E2075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:52:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="at7RrH8/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bnejXsH5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28C7E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A666A2075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 03:53:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A666A2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbeIFI0A (ORCPT
+        id S1726594AbeIFI02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 04:26:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49304 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbeIFI0A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 04:26:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9C892606AC; Thu,  6 Sep 2018 03:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536205957;
-        bh=Up90DKzkJc+Tn0BLBBk8ck1qVbZkMiDUL2vrw6Ub27I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=at7RrH8/1EN6OcrnucduUNjtvLdsfoYrI184yXD/mPg4RXzIuBSlBO7DDNjk09VC4
-         /uU3GWU4Vb+Zi3yxBt/K9UwLPIPdiiFimE6q63EXKvYJnuMjITtGK9xZ1SKVjVDdr5
-         ku42JUtJtFKNVgW7fzIAkzzY61Tne22N0FhFg7UY=
-Received: from mail-qt0-f170.google.com (mail-qt0-f170.google.com [209.85.216.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E6490606AC;
-        Thu,  6 Sep 2018 03:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536205950;
-        bh=Up90DKzkJc+Tn0BLBBk8ck1qVbZkMiDUL2vrw6Ub27I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bnejXsH5fGfpT520f5mC1IvIaLzzD++ZlCC9yTIYFfxPyddFphq9yiqYaEpl3+puF
-         BR6hz0EXszyPDrpFJT+E0TaKVETnHM6E8BV4crwRj9i+Uepu3wt0RH7R70O+ko3j0m
-         Q8Fd7N3COn8DVUmSGIkrYNQH3rCyz73XpgkYe9tw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6490606AC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f170.google.com with SMTP id m13-v6so10821107qth.1;
-        Wed, 05 Sep 2018 20:52:29 -0700 (PDT)
-X-Gm-Message-State: APzg51DyUP6EiYVrP7BSX37D1UdeOP6bfsGJvCgPV9HWvL+ugI3HFH1d
-        jwaTO3oYau7EK8uhUSnzSM9fvUqGN7VupoCmH6Q=
-X-Google-Smtp-Source: ANB0Vdb4xAnF9PLTptIbcqXpQi8dUzV10hAy1osmjOje4kh+vBCqPXuID964oyxWXVrHhfZC113jrYVufkcNT15NGP4=
-X-Received: by 2002:a0c:8563:: with SMTP id n90-v6mr585067qva.93.1536205949151;
- Wed, 05 Sep 2018 20:52:29 -0700 (PDT)
+        Thu, 6 Sep 2018 04:26:28 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:54228 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725804AbeIFI02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 04:26:28 -0400
+Received: from [172.20.20.131] (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowAB3We6LpJBb3JIuBw--.22962S2;
+        Thu, 06 Sep 2018 11:52:44 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v5 10/16] x86/mce: enable Hygon support to MCE
+ infrastructure
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, pbonzini@redhat.com,
+        tony.luck@intel.com, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-edac@vger.kernel.org
+References: <cover.1535459012.git.puwen@hygon.cn>
+ <c1e803bc54984e54ca67278930588e85b65bb26f.1535459013.git.puwen@hygon.cn>
+ <20180905092234.GC2237@zn.tnic>
+ <01604799-b993-e530-817c-ad097d343fc4@hygon.cn>
+ <20180905131427.GI2237@zn.tnic>
+Message-ID: <a9b7aa87-c99a-42ee-48df-69bec64bb468@hygon.cn>
+Date:   Thu, 6 Sep 2018 11:52:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org> <20180830144541.17740-5-vivek.gautam@codeaurora.org>
-In-Reply-To: <20180830144541.17740-5-vivek.gautam@codeaurora.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Thu, 6 Sep 2018 09:22:16 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iFstfn1LXh6m_XFZr8LfdUA7Yd3-bx+43-SM4TU3kPqXg@mail.gmail.com>
-Message-ID: <CAFp+6iFstfn1LXh6m_XFZr8LfdUA7Yd3-bx+43-SM4TU3kPqXg@mail.gmail.com>
-Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
-To:     "robh+dt" <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        alex.williamson@redhat.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180905131427.GI2237@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: swCowAB3We6LpJBb3JIuBw--.22962S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFyDGrykAF4DZFy3Kw45ZFb_yoWxuFX_ur
+        4xC3s7u3W5Aw4kWw4fKw1FgrW2gayjqr9Yk3s8XFW5Ka4Ik3sI9Fn0ya4jvw48KFsIvwsa
+        9FyF9F17t342vjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbVkYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z2
+        80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMc
+        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+        jI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+        4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+        67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+        x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAI
+        cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+        nxnUUI43ZEXa7IU86VbDUUUUU==
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On 2018/9/5 21:15, Borislav Petkov wrote:
+> On Wed, Sep 05, 2018 at 08:59:24PM +0800, Pu Wen wrote:
+>> If CONFIG_X86_MCE_AMD=n, mce_hygon_feature_init will call the other
+>> one mce_amd_feature_init which is a null function and located in the
+>> else branch of "#ifdef CONFIG_X86_MCE_AMD". The compilation is OK and
+>> the kernel will run without MCE support.
+> 
+> So my question was rather ironic but I guess irony can't travel through
+> mail. So let me paraphrase: is that a use case you wanna support?
+> Because I'd advise very strongly against !MCE kernels.
 
-On Thu, Aug 30, 2018 at 8:16 PM Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
->
-> Add bindings doc for Qcom's smmu-v2 implementation.
->
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-
-I removed your reviewed-by for this particular patch.
-Can you please consider giving your review if you find the changes okay now.
-Thanks.
-
-Best regards
-Vivek
-
->  .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 8a6ffce12af5..a6504b37cc21 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -17,10 +17,16 @@ conditions.
->                          "arm,mmu-401"
->                          "arm,mmu-500"
->                          "cavium,smmu-v2"
-> +                        "qcom,smmu-v2"
->
->                    depending on the particular implementation and/or the
->                    version of the architecture implemented.
->
-> +                  Qcom SoCs must contain, as below, SoC-specific compatibles
-> +                  along with "qcom,smmu-v2":
-> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2",
-> +                  "qcom,sdm845-smmu-v2", "qcom,smmu-v2".
-> +
->  - reg           : Base address and size of the SMMU.
->
->  - #global-interrupts : The number of global interrupts exposed by the
-> @@ -71,6 +77,22 @@ conditions.
->                    or using stream matching with #iommu-cells = <2>, and
->                    may be ignored if present in such cases.
->
-> +- clock-names:    List of the names of clocks input to the device. The
-> +                  required list depends on particular implementation and
-> +                  is as follows:
-> +                  - for "qcom,smmu-v2":
-> +                    - "bus": clock required for downstream bus access and
-> +                             for the smmu ptw,
-> +                    - "iface": clock required to access smmu's registers
-> +                               through the TCU's programming interface.
-> +                  - unspecified for other implementations.
-> +
-> +- clocks:         Specifiers for all clocks listed in the clock-names property,
-> +                  as per generic clock bindings.
-> +
-> +- power-domains:  Specifiers for power domains required to be powered on for
-> +                  the SMMU to operate, as per generic power domain bindings.
-> +
->  ** Deprecated properties:
->
->  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-> @@ -137,3 +159,20 @@ conditions.
->                  iommu-map = <0 &smmu3 0 0x400>;
->                  ...
->          };
-> +
-> +       /* Qcom's arm,smmu-v2 implementation */
-> +       smmu4: iommu@d00000 {
-> +               compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-> +               reg = <0xd00000 0x10000>;
-> +
-> +               #global-interrupts = <1>;
-> +               interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-> +               #iommu-cells = <1>;
-> +               power-domains = <&mmcc MDSS_GDSC>;
-> +
-> +               clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-> +                        <&mmcc SMMU_MDP_AHB_CLK>;
-> +               clock-names = "bus", "iface";
-> +       };
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-
-
+In most of the normal use cases MCE is necessary. Rarely in some cases
+such as for test purpose MCE may be unselected.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Regards,
+Pu Wen
+
