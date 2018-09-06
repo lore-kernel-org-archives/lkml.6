@@ -2,120 +2,219 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD39C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EB4C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC602075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:43:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j+NR29/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC602075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 213C92075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:43:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213C92075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeIFNR0 (ORCPT
+        id S1728227AbeIFNRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:17:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37012 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeIFNR0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:17:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=I2m1nJpxwolK6Ba/t22GmwAF/t69Hse/lOxUqR6MY4o=; b=j+NR29/ux8yOkc6iH/+tknb/W
-        f+BW7V0QOoy8oXCSPm6DimqxSHFuFRgC8YpdOtcuHsD3drlkQdMZu94K+9ctY9EDVcW7XV7L6b8SN
-        EHqY5AqoPeb/ctjZr8ntO95pTBR7Z2KsGkHKmTIS/yFjNZ9gkAQfJC0RNIMwiuw7uAESpfFQvmN2V
-        QFwq9BftK46rTHWarkVpLi1pKQ0yPmY3l8sOBIdduHiHz7doBtFO55L7yg3jklsNyCwa648obMC2Y
-        pkoJWO4tCRFsyEvzx/cFS4eMC3Pb9pOBe0pxRtHsRlcwKfgh0IG5yl002V/qSYLqKRS20JPfbCgMo
-        frVkP61SQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxpsR-0002rE-Cv; Thu, 06 Sep 2018 08:42:59 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F184A202547F9; Thu,  6 Sep 2018 10:42:56 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 10:42:56 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
-Message-ID: <20180906084256.GE24142@hirez.programming.kicks-ass.net>
-References: <20180902173224.30606-1-namit@vmware.com>
- <20180905185617.GC24082@hirez.programming.kicks-ass.net>
- <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
- <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
- <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+        Thu, 6 Sep 2018 09:17:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40082 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728034AbeIFNRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:17:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 727CCAE39;
+        Thu,  6 Sep 2018 08:43:08 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 10:43:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 18/29] memblock: replace alloc_bootmem_low_pages with
+ memblock_alloc_low
+Message-ID: <20180906084308.GC14951@dhcp22.suse.cz>
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-19-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180906081300.GF24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1536163184-26356-19-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:13:00AM +0200, Peter Zijlstra wrote:
-
-> No, you got it the first time. There are in fact more fixmap abusers;
-> see drivers/acpi/apei/ghes.c.  Also, as long as set_fixmap() allows
-> overwriting a _PAGE_PRESENT pte and has that dodgy
-> __flush_tlb_one_kernel() in it, the broken remains (and can return).
+On Wed 05-09-18 18:59:33, Mike Rapoport wrote:
+> The conversion is done using the following semantic patch:
 > 
-> So we need to fix fixmap, to either disallow overwriting a _PAGE_PRESENT
-> pte, or to issue a full TLB invalidate.
+> @@
+> expression e;
+> @@
+> - alloc_bootmem_low_pages(e)
+> + memblock_alloc_low(e, PAGE_SIZE)
 > 
-> Either fix will terminally break GHES, but that's OK, they've known
-> about this issue since 2015 and haven't cared, so I can't be bothered
-> about them.
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Worse, when I boot with the below patch in, I get hits on text_poke (we
-knew about this), but I also get hits from:
+Again, I trust Coccinelle to do the right thing and from a quick glance
+it looks sane (modulo _virt naming)
 
-  release_ds_buffer()
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Because PEBS/BTS hardware write through the page-tables (I know right),
-their buffers need to be in the PTI user map, and we do that by mapping
-the pages in the CAE, and that uses fixmap.
+> ---
+>  arch/arc/mm/highmem.c                |  2 +-
+>  arch/m68k/atari/stram.c              |  3 ++-
+>  arch/m68k/mm/motorola.c              |  5 +++--
+>  arch/mips/cavium-octeon/dma-octeon.c |  2 +-
+>  arch/mips/mm/init.c                  |  3 ++-
+>  arch/um/kernel/mem.c                 | 10 ++++++----
+>  arch/xtensa/mm/mmu.c                 |  2 +-
+>  7 files changed, 16 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arc/mm/highmem.c b/arch/arc/mm/highmem.c
+> index 77ff64a..f582dc8 100644
+> --- a/arch/arc/mm/highmem.c
+> +++ b/arch/arc/mm/highmem.c
+> @@ -123,7 +123,7 @@ static noinline pte_t * __init alloc_kmap_pgtable(unsigned long kvaddr)
+>  	pud_k = pud_offset(pgd_k, kvaddr);
+>  	pmd_k = pmd_offset(pud_k, kvaddr);
+>  
+> -	pte_k = (pte_t *)alloc_bootmem_low_pages(PAGE_SIZE);
+> +	pte_k = (pte_t *)memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
+>  	pmd_populate_kernel(&init_mm, pmd_k, pte_k);
+>  	return pte_k;
+>  }
+> diff --git a/arch/m68k/atari/stram.c b/arch/m68k/atari/stram.c
+> index c83d664..1089d67 100644
+> --- a/arch/m68k/atari/stram.c
+> +++ b/arch/m68k/atari/stram.c
+> @@ -95,7 +95,8 @@ void __init atari_stram_reserve_pages(void *start_mem)
+>  {
+>  	if (kernel_in_stram) {
+>  		pr_debug("atari_stram pool: kernel in ST-RAM, using alloc_bootmem!\n");
+> -		stram_pool.start = (resource_size_t)alloc_bootmem_low_pages(pool_size);
+> +		stram_pool.start = (resource_size_t)memblock_alloc_low(pool_size,
+> +								       PAGE_SIZE);
+>  		stram_pool.end = stram_pool.start + pool_size - 1;
+>  		request_resource(&iomem_resource, &stram_pool);
+>  		stram_virt_offset = 0;
+> diff --git a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
+> index 4e17ecb..8bcf57e 100644
+> --- a/arch/m68k/mm/motorola.c
+> +++ b/arch/m68k/mm/motorola.c
+> @@ -55,7 +55,7 @@ static pte_t * __init kernel_page_table(void)
+>  {
+>  	pte_t *ptablep;
+>  
+> -	ptablep = (pte_t *)alloc_bootmem_low_pages(PAGE_SIZE);
+> +	ptablep = (pte_t *)memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
+>  
+>  	clear_page(ptablep);
+>  	__flush_page_to_ram(ptablep);
+> @@ -95,7 +95,8 @@ static pmd_t * __init kernel_ptr_table(void)
+>  
+>  	last_pgtable += PTRS_PER_PMD;
+>  	if (((unsigned long)last_pgtable & ~PAGE_MASK) == 0) {
+> -		last_pgtable = (pmd_t *)alloc_bootmem_low_pages(PAGE_SIZE);
+> +		last_pgtable = (pmd_t *)memblock_alloc_low(PAGE_SIZE,
+> +							   PAGE_SIZE);
+>  
+>  		clear_page(last_pgtable);
+>  		__flush_page_to_ram(last_pgtable);
+> diff --git a/arch/mips/cavium-octeon/dma-octeon.c b/arch/mips/cavium-octeon/dma-octeon.c
+> index 236833b..c44c1a6 100644
+> --- a/arch/mips/cavium-octeon/dma-octeon.c
+> +++ b/arch/mips/cavium-octeon/dma-octeon.c
+> @@ -244,7 +244,7 @@ void __init plat_swiotlb_setup(void)
+>  	swiotlb_nslabs = ALIGN(swiotlb_nslabs, IO_TLB_SEGSIZE);
+>  	swiotlbsize = swiotlb_nslabs << IO_TLB_SHIFT;
+>  
+> -	octeon_swiotlb = alloc_bootmem_low_pages(swiotlbsize);
+> +	octeon_swiotlb = memblock_alloc_low(swiotlbsize, PAGE_SIZE);
+>  
+>  	if (swiotlb_init_with_tbl(octeon_swiotlb, swiotlb_nslabs, 1) == -ENOMEM)
+>  		panic("Cannot allocate SWIOTLB buffer");
+> diff --git a/arch/mips/mm/init.c b/arch/mips/mm/init.c
+> index 400676c..a010fba7 100644
+> --- a/arch/mips/mm/init.c
+> +++ b/arch/mips/mm/init.c
+> @@ -244,7 +244,8 @@ void __init fixrange_init(unsigned long start, unsigned long end,
+>  			pmd = (pmd_t *)pud;
+>  			for (; (k < PTRS_PER_PMD) && (vaddr < end); pmd++, k++) {
+>  				if (pmd_none(*pmd)) {
+> -					pte = (pte_t *) alloc_bootmem_low_pages(PAGE_SIZE);
+> +					pte = (pte_t *) memblock_alloc_low(PAGE_SIZE,
+> +									   PAGE_SIZE);
+>  					set_pmd(pmd, __pmd((unsigned long)pte));
+>  					BUG_ON(pte != pte_offset_kernel(pmd, 0));
+>  				}
+> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
+> index 3c0e470..185f6bb 100644
+> --- a/arch/um/kernel/mem.c
+> +++ b/arch/um/kernel/mem.c
+> @@ -64,7 +64,8 @@ void __init mem_init(void)
+>  static void __init one_page_table_init(pmd_t *pmd)
+>  {
+>  	if (pmd_none(*pmd)) {
+> -		pte_t *pte = (pte_t *) alloc_bootmem_low_pages(PAGE_SIZE);
+> +		pte_t *pte = (pte_t *) memblock_alloc_low(PAGE_SIZE,
+> +							  PAGE_SIZE);
+>  		set_pmd(pmd, __pmd(_KERNPG_TABLE +
+>  					   (unsigned long) __pa(pte)));
+>  		if (pte != pte_offset_kernel(pmd, 0))
+> @@ -75,7 +76,7 @@ static void __init one_page_table_init(pmd_t *pmd)
+>  static void __init one_md_table_init(pud_t *pud)
+>  {
+>  #ifdef CONFIG_3_LEVEL_PGTABLES
+> -	pmd_t *pmd_table = (pmd_t *) alloc_bootmem_low_pages(PAGE_SIZE);
+> +	pmd_t *pmd_table = (pmd_t *) memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
+>  	set_pud(pud, __pud(_KERNPG_TABLE + (unsigned long) __pa(pmd_table)));
+>  	if (pmd_table != pmd_offset(pud, 0))
+>  		BUG();
+> @@ -124,7 +125,7 @@ static void __init fixaddr_user_init( void)
+>  		return;
+>  
+>  	fixrange_init( FIXADDR_USER_START, FIXADDR_USER_END, swapper_pg_dir);
+> -	v = (unsigned long) alloc_bootmem_low_pages(size);
+> +	v = (unsigned long) memblock_alloc_low(size, PAGE_SIZE);
+>  	memcpy((void *) v , (void *) FIXADDR_USER_START, size);
+>  	p = __pa(v);
+>  	for ( ; size > 0; size -= PAGE_SIZE, vaddr += PAGE_SIZE,
+> @@ -143,7 +144,8 @@ void __init paging_init(void)
+>  	unsigned long zones_size[MAX_NR_ZONES], vaddr;
+>  	int i;
+>  
+> -	empty_zero_page = (unsigned long *) alloc_bootmem_low_pages(PAGE_SIZE);
+> +	empty_zero_page = (unsigned long *) memblock_alloc_low(PAGE_SIZE,
+> +							       PAGE_SIZE);
+>  	for (i = 0; i < ARRAY_SIZE(zones_size); i++)
+>  		zones_size[i] = 0;
+>  
+> diff --git a/arch/xtensa/mm/mmu.c b/arch/xtensa/mm/mmu.c
+> index 9d1ecfc..f33a1ff 100644
+> --- a/arch/xtensa/mm/mmu.c
+> +++ b/arch/xtensa/mm/mmu.c
+> @@ -31,7 +31,7 @@ static void * __init init_pmd(unsigned long vaddr, unsigned long n_pages)
+>  	pr_debug("%s: vaddr: 0x%08lx, n_pages: %ld\n",
+>  		 __func__, vaddr, n_pages);
+>  
+> -	pte = alloc_bootmem_low_pages(n_pages * sizeof(pte_t));
+> +	pte = memblock_alloc_low(n_pages * sizeof(pte_t), PAGE_SIZE);
+>  
+>  	for (i = 0; i < n_pages; ++i)
+>  		pte_clear(NULL, 0, pte + i);
+> -- 
+> 2.7.4
+> 
 
----
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index dd519f372169..20dcd6fa690e 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -259,9 +259,16 @@ static pte_t *fill_pte(pmd_t *pmd, unsigned long vaddr)
- static void __set_pte_vaddr(pud_t *pud, unsigned long vaddr, pte_t new_pte)
- {
- 	pmd_t *pmd = fill_pmd(pud, vaddr);
--	pte_t *pte = fill_pte(pmd, vaddr);
-+	pte_t *ptep = fill_pte(pmd, vaddr);
- 
--	set_pte(pte, new_pte);
-+	pte_t pte = *ptep;
-+
-+	set_pte(ptep, new_pte);
-+
-+	WARN((pte_val(pte) & _PAGE_PRESENT) && (pte_val(pte) != pte_val(new_pte)),
-+		"set_fixmap(%d, %lx), was: %lx",
-+		(int)__virt_to_fix(vaddr),
-+		pte_val(new_pte), pte_val(pte));
- 
- 	/*
- 	 * It's enough to flush this one mapping.
+-- 
+Michal Hocko
+SUSE Labs
