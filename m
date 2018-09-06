@@ -2,99 +2,175 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF55C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3E1C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3572077C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3572077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id 6FE432077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE432077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbeIFRIv (ORCPT
+        id S1728558AbeIFRJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:08:51 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:64234 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727757AbeIFRIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:08:51 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 41A414982D;
-        Thu,  6 Sep 2018 14:33:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id ufJwe_3rw0wZ; Thu,  6 Sep 2018 14:33:30 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 14:33:12 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        pombredanne@nexb.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, dsahern@gmail.com, fw@strlen.de,
-        ktkhai@virtuozzo.com, lucien.xin@gmail.com,
-        jakub.kicinski@netronome.com, jbenc@redhat.com,
-        nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net-next v2 0/9] rtnetlink: add IFA_TARGET_NETNSID for
- RTM_GETADDR
-Message-ID: <20180906123304.l2b3vftqti3wtf3z@mailbox.org>
-References: <20180904195355.4695-1-christian@brauner.io>
- <20180905.222750.249661617396939609.davem@davemloft.net>
+        Thu, 6 Sep 2018 13:09:43 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57006 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727757AbeIFRJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:09:43 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 607B87223C8DD;
+        Thu,  6 Sep 2018 20:34:22 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 6 Sep 2018 20:34:15 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to do sanity check with current segment number
+Date:   Thu, 6 Sep 2018 20:34:12 +0800
+Message-ID: <20180906123412.87812-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qaevyjii3mgfpezm"
-Content-Disposition: inline
-In-Reply-To: <20180905.222750.249661617396939609.davem@davemloft.net>
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+https://bugzilla.kernel.org/show_bug.cgi?id=200219
 
---qaevyjii3mgfpezm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reproduction way:
+- mount image
+- run poc code
+- umount image
 
-On Wed, Sep 05, 2018 at 10:27:50PM -0700, David Miller wrote:
-> From: Christian Brauner <christian@brauner.io>
-> Date: Tue,  4 Sep 2018 21:53:46 +0200
->=20
-> > # v2 introduction:
->  ...
->=20
-> This looks good to me, series applied.
->=20
-> Thank you!
+F2FS-fs (loop1): Bitmap was wrongly set, blk:15364
+------------[ cut here ]------------
+kernel BUG at /home/yuchao/git/devf2fs/segment.c:2061!
+invalid opcode: 0000 [#1] PREEMPT SMP
+CPU: 2 PID: 17686 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+EIP: update_sit_entry+0x459/0x4e0 [f2fs]
+Code: e8 1c b5 fd ff 0f 0b 0f 0b 8b 45 e4 c7 44 24 08 9c 7a 6c f8 c7 44 24 04 bc 4a 6c f8 89 44 24 0c 8b 06 89 04 24 e8 f7 b4 fd ff <0f> 0b 8b 45 e4 0f b6 d2 89 54 24 10 c7 44 24 08 60 7a 6c f8 c7 44
+EAX: 00000032 EBX: 000000f8 ECX: 00000002 EDX: 00000001
+ESI: d7177000 EDI: f520fe68 EBP: d6477c6c ESP: d6477c34
+DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010282
+CR0: 80050033 CR2: b7fbe000 CR3: 2a99b3c0 CR4: 000406f0
+Call Trace:
+ f2fs_allocate_data_block+0x124/0x580 [f2fs]
+ do_write_page+0x78/0x150 [f2fs]
+ f2fs_do_write_node_page+0x25/0xa0 [f2fs]
+ __write_node_page+0x2bf/0x550 [f2fs]
+ f2fs_sync_node_pages+0x60e/0x6d0 [f2fs]
+ ? sync_inode_metadata+0x2f/0x40
+ ? f2fs_write_checkpoint+0x28f/0x7d0 [f2fs]
+ ? up_write+0x1e/0x80
+ f2fs_write_checkpoint+0x2a9/0x7d0 [f2fs]
+ ? mark_held_locks+0x5d/0x80
+ ? _raw_spin_unlock_irq+0x27/0x50
+ kill_f2fs_super+0x68/0x90 [f2fs]
+ deactivate_locked_super+0x3d/0x70
+ deactivate_super+0x40/0x60
+ cleanup_mnt+0x39/0x70
+ __cleanup_mnt+0x10/0x20
+ task_work_run+0x81/0xa0
+ exit_to_usermode_loop+0x59/0xa7
+ do_fast_syscall_32+0x1f5/0x22c
+ entry_SYSENTER_32+0x53/0x86
+EIP: 0xb7f95c51
+Code: c1 1e f7 ff ff 89 e5 8b 55 08 85 d2 8b 81 64 cd ff ff 74 02 89 02 5d c3 8b 0c 24 c3 8b 1c 24 c3 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
+EAX: 00000000 EBX: 0871ab90 ECX: bfb2cd00 EDX: 00000000
+ESI: 00000000 EDI: 0871ab90 EBP: 0871ab90 ESP: bfb2cd7c
+DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000246
+Modules linked in: f2fs(O) crc32_generic bnep rfcomm bluetooth ecdh_generic snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq pcbc joydev aesni_intel snd_seq_device aes_i586 snd_timer crypto_simd snd cryptd soundcore mac_hid serio_raw video i2c_piix4 parport_pc ppdev lp parport hid_generic psmouse usbhid hid e1000 [last unloaded: f2fs]
+---[ end trace d423f83982cfcdc5 ]---
 
-Thanks you!
+The reason is, different log headers using the same segment, once
+one log's next block address is used by another log, it will cause
+panic as above.
 
-Christian
+Main area: 24 segs, 24 secs 24 zones
+  - COLD  data: 0, 0, 0
+  - WARM  data: 1, 1, 1
+  - HOT   data: 20, 20, 20
+  - Dir   dnode: 22, 22, 22
+  - File   dnode: 22, 22, 22
+  - Indir nodes: 21, 21, 21
 
---qaevyjii3mgfpezm
-Content-Type: application/pgp-signature; name="signature.asc"
+So this patch adds sanity check to detect such condition to avoid
+this issue.
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-iQIzBAEBCgAdFiEE7btrcuORLb1XUhEwjrBW1T7ssS0FAluRHoAACgkQjrBW1T7s
-sS1W8Q/8Dn/TLjxpm6c81QVA6yRMe9CG/vxA+13qlyurVvC0eo1aQuMAugU4CXsh
-G3AqJwYg5RBrU+OF3h40zEWcj7w5QfmiplMxsyQtKUqFTJqKu/g2uJmhHYujJ1Yl
-XVxGgM1kIXDQc3IrHTOQ2RF09yYbfy0G6Q7wlbD7XxN/LvrwfKKaihqjfWgZjxZm
-js86s8cpCjYcD3AJ14YmTC1TCO/YCFHVfOGC0acuV8ItjhaCJ+zvDNwSPIRolEv+
-lywWL/n7epGruE0LUTvAI0Tb8Ng/OAZOo68cldLknSPYecjlmIo2EtYlC8tp7mr2
-5RPmjR/KO3D5kYXCwko/sMxCQjBjDTbr08R3FyonNz5opsfp/bZ8gFaeS4K+0+GL
-9tnZ5ZNuufs8TJTgPyMUuOKFKb6wjFfK97AFJCA2eDII0u6uucrJFaMWwLexd4dj
-YIHj9gt3mpMgzQw3eIAw/qdqobbjdYBjMEgeWcoFjF6g0mRb/+sll4infoD+qmFX
-QayY3qYOy+r+yFElGGt1BB1jZ+5KD6TEpLZ8IuLfEX0PTHlI3tqi/pClZnfEbA1T
-3VJg+0FMiIzxIPGq/9PDCPzCLqVaWQIRzXgysErmFVMKl9KihYp60Fn8a06MuFOU
-c4DqoOnKlsMt0/yaXgGFSbUg95cOyj7w+jQUYBZOnbuVXU5bWZE=
-=541F
------END PGP SIGNATURE-----
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 65775428ec2f..ad77994f47fa 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2312,7 +2312,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	unsigned int segment_count_main;
+ 	unsigned int cp_pack_start_sum, cp_payload;
+ 	block_t user_block_count;
+-	int i;
++	int i, j;
+ 
+ 	total = le32_to_cpu(raw_super->segment_count);
+ 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
+@@ -2353,11 +2353,43 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
+ 			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
+ 			return 1;
++		for (j = i + 1; j < NR_CURSEG_NODE_TYPE; j++) {
++			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
++				le32_to_cpu(ckpt->cur_node_segno[j])) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Node segment (%u, %u) has the same "
++					"segno: %u", i, j,
++					le32_to_cpu(ckpt->cur_node_segno[i]));
++				return 1;
++			}
++		}
+ 	}
+ 	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
+ 		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
+ 			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
+ 			return 1;
++		for (j = i + 1; j < NR_CURSEG_DATA_TYPE; j++) {
++			if (le32_to_cpu(ckpt->cur_data_segno[i]) ==
++				le32_to_cpu(ckpt->cur_data_segno[j])) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Data segment (%u, %u) has the same "
++					"segno: %u", i, j,
++					le32_to_cpu(ckpt->cur_data_segno[i]));
++				return 1;
++			}
++		}
++	}
++	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
++		for (j = i; j < NR_CURSEG_DATA_TYPE; j++) {
++			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
++				le32_to_cpu(ckpt->cur_data_segno[j])) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Data segment (%u) and Data segment (%u)"
++					" has the same segno: %u", i, j,
++					le32_to_cpu(ckpt->cur_node_segno[i]));
++				return 1;
++			}
++		}
+ 	}
+ 
+ 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
+-- 
+2.18.0.rc1
 
---qaevyjii3mgfpezm--
