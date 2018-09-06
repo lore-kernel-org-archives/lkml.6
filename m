@@ -2,119 +2,96 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702D9C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 01:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60B1C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 01:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15DAB2083E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 01:25:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15DAB2083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 7B7082083E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 01:28:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X3/HUmP2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7082083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbeIFF6a (ORCPT
+        id S1725937AbeIFGBT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 01:58:30 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:49597 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1725850AbeIFF6a (ORCPT
+        Thu, 6 Sep 2018 02:01:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51516 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeIFGBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 01:58:30 -0400
-Received: (qmail 3211 invoked by uid 500); 5 Sep 2018 21:25:40 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 5 Sep 2018 21:25:40 -0400
-Date:   Wed, 5 Sep 2018 21:25:40 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-cc:     Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <mingo@kernel.org>, <peterz@infradead.org>, <boqun.feng@gmail.com>,
-        <npiggin@gmail.com>, <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>,
-        <luc.maranget@inria.fr>, <akiyks@gmail.com>
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-In-Reply-To: <20180903090153.GA4560@andrea>
-Message-ID: <Pine.LNX.4.44L0.1809052115490.2261-100000@netrider.rowland.org>
+        Thu, 6 Sep 2018 02:01:18 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w861JGSM148421;
+        Thu, 6 Sep 2018 01:28:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=1P0chGSb3rxKccYuX/YKV+R7iMMbzgCoaJvV3WErQm0=;
+ b=X3/HUmP2cXmooAN+3G1f+klmtOiDIfpgk8K5EutsqY+b4AP69ju1OKOXYb3cXLBpEsfy
+ q8H74LKhYo+GG2trYfvWEmLWiCEidFBhvQeDSnpEAKVlXzB9eQgmjzGuBEnUtzqU6tqn
+ gSpJM9VE8CJDG7GrEcE/blN6EySI7ij6b3hqmstvlQocbstohlsmdSyBVZj7I5CIIraC
+ w7F53pp8vI1waml+nYsKxfZxNwdv74kiEozEif4FuuS74yyhWck2mDYYNjbsX4RN2T21
+ wEsZecBo5+dLfiNcYvHyAWuGVM0ApuRgtrURA8B5zAyH4Zx02fAHRx2nkWZhcXTuxxyK gQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2m7kdqqaaa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Sep 2018 01:28:04 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w861Rwxl021516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Sep 2018 01:27:58 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w861Ruc9017112;
+        Thu, 6 Sep 2018 01:27:56 GMT
+Received: from [10.182.69.224] (/10.182.69.224)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Sep 2018 18:27:56 -0700
+Subject: Re: [PATCH 3/3] nvme-pci: use queue close instead of queue freeze
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     axboe@kernel.dk, bart.vanassche@wdc.com, sagi@grimberg.me,
+        keith.busch@intel.com, jthumshirn@suse.de, jsmart2021@gmail.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1536120586-3378-4-git-send-email-jianchao.w.wang@oracle.com>
+ <20180905220910.GC21352@ming.t460p>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <8ba97c77-0c3b-75df-0259-3c97ef7b774e@oracle.com>
+Date:   Thu, 6 Sep 2018 09:28:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180905220910.GC21352@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=985
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809060012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018, Andrea Parri wrote:
+Hi Ming
 
-> I take this opportunity to summarize my viewpoint on these matters:
-> 
-> Someone would have to write the commit message for the above diff ...
-> that is, to describe -why- we should go RCtso (and update the documen-
-> tation accordingly); by now, the only argument for this appears to be:
-> "(most) people expect strong ordering" _and they will be "lazy enough"
-> to not check their expectations by using the LKMM tool (paraphrasing
-> from [1]); IAC, Linux "might work" better if we add this ordering to
-> the LKMM.  Agreeing on such an approach would mean agreeing that this
-> argument "wins" over:
-> 
->   "We want new architectures to implement acquire/release efficiently,
->    and it's not unlikely that they will have acquire loads that are
->    similar in semantics to LDAPR." [2]
-> 
->   "RISC-V probably would have been RCpc [...]  it takes extra fences
->    to go from RCpc to either "RCtso" or RCsc." [3]
-> 
-> (or similar instances) since, of course, there is no such thing as a
-> "free strong ordering"; and I'm not only talking about "efficiency",
-> I'm also thinking at the fact that someone will have to maintain that
-> ordering across all the architectures and in the LKMM.
-> 
-> If, OTOH, we agree that the above "win"/assumption is valid only for
-> locks or, in other/better words, if we agree that we should maintain
-> _two_ distinct release-acquire orderings (a first one for unlock-lock
-> sequences and a second one for ordinary/atomic release-acquire, say,
-> as proposed in the patch under RFC),
+On 09/06/2018 06:09 AM, Ming Lei wrote:
+> nvme_dev_add() still may call freeze & unfreeze queue, so your patch
+> can't avoid draining queue completely here.
 
-In fact, there have have been _two_ proposals along this line.  One as
-you describe here (which is what the 1/7 patch under discussion does),
-and another in which unlock-lock sequences and atomic acquire-release
-sequences both have "RCtso" semantics while ordinary acquire/release
-sequences have RCpc semantics.  You should consider the second
-proposal.  It could be put into the LKMM quite easily by building upon
-this 1/7 patch.
+Yes, I know this. We still need to freeze queue when update nr_hw_queues.
+But we move forward a step at least. :)
+We don't need to drain request queue in normal case of nvme_reset_work.
 
->  I ask that we audit and modify
-> the generic code accordingly/as suggested in other posts _before_ we
-> upstream the changes for the LKMM: we should identify those places
-> where (the newly introduced) _gap_ between unlock-lock and the other
-> release-acquire is not admissible and fix those places (notice that
-> this entails, in part., agreeing on what/where the generic code is).
+As for updating nr_hw_queues, we could try some other method on it next.
 
-Have you noticed any part of the generic code that relies on ordinary 
-acquire-release (rather than atomic RMW acquire-release) in order to 
-implement locking constructs?
 
-> Finally, if we don't agree with the above assumption at all (that is,
-> no matter if we are considering unlock-lock or other release-acquire
-> sequences), then we should go RCpc [4].
-> 
-> I described three different approaches (which are NOT "independent",
-> clearly; let us find an agreement...); even though some of them look
-> insane to me, I'm currently open to all of them: thoughts?
-
-How about this fourth approach?
-
-Alan
-
->   Andrea
-> 
-> [1] http://lkml.kernel.org/r/20180712134821.GT2494@hirez.programming.kicks-ass.net
->     http://lkml.kernel.org/r/CA+55aFwKpkU5C23OYt1HCiD3X5bJHVh1jz5G2dSnF1+kVrOCTA@mail.gmail.com
-> [2] http://lkml.kernel.org/r/20180622183007.GD1802@arm.com
-> [3] http://lkml.kernel.org/r/11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com
-> [4] http://lkml.kernel.org/r/20180711123421.GA9673@andrea
->     http://lkml.kernel.org/r/Pine.LNX.4.44L0.1807132133330.26947-100000@netrider.rowland.org
-
+Thanks
+Jianchao
