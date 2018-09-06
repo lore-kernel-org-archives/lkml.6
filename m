@@ -2,79 +2,95 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E9FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C698FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F334F20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:06:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F334F20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 78B2C20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:08:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B2C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbeIFWn0 (ORCPT
+        id S1730335AbeIFWpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 18:43:26 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:9376 "EHLO
-        mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728478AbeIFWnZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 18:43:25 -0400
-X-IronPort-AV: E=Sophos;i="5.53,339,1531778400"; 
-   d="scan'208";a="278027505"
-Received: from lneuilly-657-1-24-134.w92-154.abo.wanadoo.fr (HELO hadrien) ([92.154.38.134])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 20:06:45 +0200
-Date:   Thu, 6 Sep 2018 20:06:45 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Karol Herbst <karolherbst@gmail.com>
-cc:     Ben Skeggs <bskeggs@redhat.com>,
-        Martin Peres <martin.peres@free.fr>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kbuild-all@01.org, nm@ti.com
-Subject: [PATCH] drm/nouveau/debugfs: fix pm_runtime.cocci warnings
-Message-ID: <alpine.DEB.2.20.1809062004110.3318@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 6 Sep 2018 18:45:20 -0400
+Received: from sauhun.de ([88.99.104.3]:47900 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728354AbeIFWpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 18:45:20 -0400
+Received: from localhost (i577A6E95.versanet.de [87.122.110.149])
+        by pokefinder.org (Postfix) with ESMTPSA id E697A2C058F;
+        Thu,  6 Sep 2018 20:08:39 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 20:08:37 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
+        vernon.mauery@linux.intel.com
+Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined
+ irq events properly
+Message-ID: <20180906180837.GA8607@kunai>
+References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
+ <CAFd5g46fRrYW8E8FsPB=5fWSGxemgc4ENc4D2fT7yBfH6p4ERg@mail.gmail.com>
+ <eab56d58-0703-d201-dc9a-f9fd257e96cf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Content-Disposition: inline
+In-Reply-To: <eab56d58-0703-d201-dc9a-f9fd257e96cf@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
 
-pm_runtime_get_sync returns < 0 as error. Unecessary IS_ERR_VALUE at line 164
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Generated by: scripts/coccinelle/api/pm_runtime.cocci
 
-Fixes: eaeb9010bb4b ("drm/nouveau/debugfs: Wake up GPU before doing any reclocking")
-CC: Karol Herbst <karolherbst@gmail.com>
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
----
+> > Looks awesome! Thanks!
+> >=20
+> > Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> >=20
+>=20
+> Thanks a lot for your review Brendan!
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b36fdc6853a38a6f8749897a33435635019e0647
-commit: eaeb9010bb4bcdc20e58254fa42f3fe730a7f908 drm/nouveau/debugfs: Wake up GPU before doing any reclocking
-:::::: branch date: 21 hours ago
-:::::: commit date: 7 weeks ago
+Please don't quote the whole message. Everyone else has to scroll down
+a lot to find the relevant information. Thanks!
 
- nouveau_debugfs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-@@ -161,7 +161,7 @@ nouveau_debugfs_pstate_set(struct file *
- 	}
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
 
- 	ret = pm_runtime_get_sync(drm->dev);
--	if (IS_ERR_VALUE(ret) && ret != -EACCES)
-+	if (ret < 0 && ret != -EACCES)
- 		return ret;
- 	ret = nvif_mthd(ctrl, NVIF_CONTROL_PSTATE_USER, &args, sizeof(args));
- 	pm_runtime_put_autosuspend(drm->dev);
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluRbSEACgkQFA3kzBSg
+Kbbkfg/9HrorkqAdlIbkynR938MGcOFlN13CAr2gRHmQHJMx/9fJDYj6ycLklFzb
+U+n1QiKIMiyVIBvuIkqQn9wGFu0tITOoN1dGDruHn5gc9QxHNmb7VLsPN2/EeJXf
+01bQ/j7btHubwXVM58tcdRVlmXyBRVgRgA87IWH/Uc+s/TarRcj3kDmgyRQ5o9Vf
+D+JuguURS5SrfH3pJzFRO/Dr3gilORnK/SapmNRqrvvhDdSgLNHdpwfC+ZFJmOsC
+B1JEgxXKUke9G+Fi9fIdGH2ZKmtgKRWvkrKVwwPko3TVjMNf/s8ep4Oh6q7oTy6/
+x1qD8No+MDHcIPJ/y8ca+1T9Wcmsc3kNpk6PE64DorCL68iNtoru7xkM/dhFvnLe
+Fmr6lYTmOBlCX/xCd8h8tvXvVzDJIbcdZdKXRAaJFPIbVa00ySIUhHup87QyJLQw
+aE9h+Urin6qbMtxkiwYLs6RbP6p5bXRX6t4ENudZb8UQz4QgWioSqZqZjBfmci4/
+vjEkGxzzE3W8DIUxsET+Tdt/qPNwGOtyj/fQzz4leD6o0tw+gy1uE3eN+IDIkbuo
+bufG9nmpQF6zZBPC9+lC9Sf0ewRILPMZ+BDjZhtts3rQa6MKStRLgE9/W2PR4zNa
+jUFY5ioJnDp78Dm8jafFT+5aVh4/rUa5Bqp1DaLsdOQd0M0v4kw=
+=iVNz
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
