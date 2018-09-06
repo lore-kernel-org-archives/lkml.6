@@ -2,104 +2,109 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7526EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6130CC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD4D2075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F3C2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:15:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kbCgnzq8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD4D2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Ov7gOdrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F3C2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeIFOuQ (ORCPT
+        id S1728495AbeIFOug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:50:16 -0400
-Received: from m12-13.163.com ([220.181.12.13]:49338 "EHLO m12-13.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727753AbeIFOuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:50:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=q+E43
-        1o3NMLjxkTMQ6dbM95VNMH3rFUn+KLt95/vyag=; b=kbCgnzq88dSWjQRUHuyfM
-        FiNXOWAlbOeL6RQK29Xof30tm9gzJqYWcwgBW4Gx9ygKIsWuvGFesD6AeiFwGUUG
-        u23gpAAJIxUeysknAoHGlwkqFnQ67p9JxWjHIgW0gCdGDD16AJwUWc+9oncVjsOW
-        Mix+LXEfITL+/HdZ6+ZZBg=
-Received: from localhost.localdomain (unknown [49.65.59.196])
-        by smtp9 (Coremail) with SMTP id DcCowADHSX4a_pBbMYdbIg--.61270S2;
-        Thu, 06 Sep 2018 18:14:51 +0800 (CST)
-Subject: Re: Affinity managed interrupts vs non-managed interrupts
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Kashyap Desai <kashyap.desai@broadcom.com>
-Cc:     Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
- <20180829084618.GA24765@ming.t460p>
- <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
- <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com>
- <615d78004495aebc53807156d04d988c@mail.gmail.com>
- <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de>
- <486f94a563d63c4779498fe8829a546c@mail.gmail.com>
- <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de>
- <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com>
- <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
- <66256272c020be186becdd7a3f049302@mail.gmail.com>
- <alpine.DEB.2.21.1809031719460.1383@nanos.tec.linutronix.de>
- <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com>
- <f436fa6a-b865-fadb-4f77-44309ff84405@163.com>
- <c0f779f1d5ef131c39f9397f97d453e8@mail.gmail.com>
- <alpine.DEB.2.21.1809051235180.1416@nanos.tec.linutronix.de>
-From:   Dou Liyang <dou_liyang@163.com>
-Message-ID: <d2a6f7cf-31df-de17-82e3-eccb9cc73ed8@163.com>
-Date:   Thu, 6 Sep 2018 18:14:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 6 Sep 2018 10:50:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36018 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbeIFOuf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 10:50:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oNwk6Ug0sOTdhF8+xw4FGpIKYeE2/tGou53mkYclrOM=; b=Ov7gOdrJLKUJCtb63h5R/04r8
+        DvFfEUgtC4QDxA0zxJ916Z4VaJvGNfWPCO4MXnLVgULxSoHDdrGXtrowv6oIQ/uyiA36ViP7sW/Od
+        Pu7Iim3p6GqRjrU3oi7YZX+k1xISo1QXdPd/CCRyWlZWyboYF3I33euj/xJwnVm9BVep8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fxrJl-00046t-Ee; Thu, 06 Sep 2018 10:15:17 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 084D91122A1F; Thu,  6 Sep 2018 11:15:17 +0100 (BST)
+Date:   Thu, 6 Sep 2018 11:15:17 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180906101516.GA5360@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
+ <20180827014815.GD29208@dragon>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809051235180.1416@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: DcCowADHSX4a_pBbMYdbIg--.61270S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUDEfOUUUUU
-X-Originating-IP: [49.65.59.196]
-X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiOQ64olXlg2nwawABst
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
+Content-Disposition: inline
+In-Reply-To: <20180827014815.GD29208@dragon>
+X-Cookie: You will lose an important disk file.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
 
-At 09/05/2018 06:38 PM, Thomas Gleixner wrote:
-> Oh well. This was not intended to magically provide the solution you want
-> to have. It merily changed the behaviour of the managed interrupt
-> selection, which is a valid thing to do independent of the stuff you want
-> to see.
-> 
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you for clarifying it, I will send the patch independently.
+On Mon, Aug 27, 2018 at 09:48:16AM +0800, Shawn Guo wrote:
 
-> As I said that needs more thought and I really can't tell when I have a
-> time slot to look at that.
-> 
+> Can you ACK on those two regulator patches, so that I can queue this
+> series up on IMX tree?
 
-In this period, I am willing to be a volunteer to try to do that you
-said in the previous reply. May I?
+I was expecting to get a pull request with the precursor patches in it -
+the regulator driver seems to get a moderate amount of development so
+there's a reasonable risk of conflicts.
 
+--X1bOJ3K7DJ5YkBrT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks
-	dou
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluQ/jQACgkQJNaLcl1U
+h9Dbpwf+MZa+AjERwuP4i++2zvh8VAZqhxPFy+ijMGRaJATDNumhfGA/bycWyDdN
+r1Lp0EhBmeGqiMtrhDoqw+4kjF5H03mhTvrjG0U4C8vOUainMOEWSSpBeq9ST42t
+wvScVpuLON1EZUt6n23wPMmc4fDlvKbhlY2QRTl3NP6eIAafaym7CzC49rS0PdnI
+Pi5qCQrlt9X8eChyKmUkD6oENeFAvUAZLlf8Elxz8Is3bB7lNIzaIrlImSoGRMUQ
+TZx37KNyvsEcCrzq47ALMySZe5auC1fc97ghqmIpxIcL2hmmGPYY8U86i6UOsXyq
+a0AnQkQOjdWb4Dm+IHQD3tT4vgsIoQ==
+=Ytj1
+-----END PGP SIGNATURE-----
+
+--X1bOJ3K7DJ5YkBrT--
