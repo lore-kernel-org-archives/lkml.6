@@ -2,375 +2,124 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E399C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4525FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0D92075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:06:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0D92075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E9D702075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:07:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D702075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbeIFIjv (ORCPT
+        id S1727808AbeIFIlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 04:39:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36722 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725957AbeIFIju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 04:39:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6CDBC8010FDF;
-        Thu,  6 Sep 2018 04:06:24 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-125.pek2.redhat.com [10.72.12.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5417A10545C8;
-        Thu,  6 Sep 2018 04:06:20 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        mst@redhat.com, jasowang@redhat.com
-Subject: [PATCH net-next 11/11] vhost_net: batch submitting XDP buffers to underlayer sockets
-Date:   Thu,  6 Sep 2018 12:05:26 +0800
-Message-Id: <20180906040526.22518-12-jasowang@redhat.com>
-In-Reply-To: <20180906040526.22518-1-jasowang@redhat.com>
-References: <20180906040526.22518-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 04:06:24 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 04:06:24 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+        Thu, 6 Sep 2018 04:41:12 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:35190 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725929AbeIFIlM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 04:41:12 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="44538144"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 06 Sep 2018 12:07:45 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id DFF484B6EC75;
+        Thu,  6 Sep 2018 12:07:45 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 6 Sep 2018 12:07:52 +0800
+Date:   Thu, 6 Sep 2018 12:07:23 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Baoquan He <bhe@redhat.com>, <x86@kernel.org>
+Subject: Re: [PATCH 0/3] x86/boot/KASLR: enhance randomness of kernel load
+ addr when using GiB hugepage
+Message-ID: <20180906040723.GC8555@localhost.localdomain>
+References: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: DFF484B6EC75.AD5D5
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements XDP batching for vhost_net. The idea is first to
-try to do userspace copy and build XDP buff directly in vhost. Instead
-of submitting the packet immediately, vhost_net will batch them in an
-array and submit every 64 (VHOST_NET_BATCH) packets to the under layer
-sockets through msg_control of sendmsg().
+On Thu, Sep 06, 2018 at 10:36:19AM +0800, Pingfan Liu wrote:
 
-When XDP is enabled on the TUN/TAP, TUN/TAP can process XDP inside a
-loop without caring GUP thus it can do batch map flushing. When XDP is
-not enabled or not supported, the underlayer socket need to build skb
-and pass it to network core. The batched packet submission allows us
-to do batching like netif_receive_skb_list() in the future.
+Hi Pingfan,
 
-This saves lots of indirect calls for better cache utilization. For
-the case that we can't so batching e.g when sndbuf is limited or
-packet size is too large, we will go for usual one packet per
-sendmsg() way.
+>commit 747ff6265db4 ("x86/boot/KASLR: Skip specified number of 1GB huge
+>pages when doing physical randomization (KASLR)") and commit
+>9b912485e0e7 ("x86/boot/KASLR: Add two new functions for 1GB huge pages
+>handling") prevent the physical load addr of kernel from spoiling a good
+>candidate of GiB page. But the algorithm deterministicly chooses the most
+>front GiB page for hugetlb, and sacrifices the randomness, which
+>is the heart of the KASLR. This patch tries to enlarge the randomness in
+>the cases where hugepages=X < the num Y of good candidate of GiB
 
-Doing testpmd on various setups gives us:
+Yes, in some situations, if Y > X, the patch would reduce the
+randomness. And to reserve a fixed 1G for huge page is not perfect
+enouth.
+But the the size of slot is so small, the size of memory is so big.
 
-Test                /+pps%
-XDP_DROP on TAP     /+44.8%
-XDP_REDIRECT on TAP /+29%
-macvtap (skb)       /+26%
+>page.
+>To comparison, taking a typical KVM guest for example, the head 3GiB mem
+>can not be used as GiB hugetlb. Denoting the total mem size as Z(GiB), when
+>Z=5, then Y=2, assuming X=1, the randomness range before this patch is
+>4GiB, after this patch is 5GiB, and get a 25% improvement of randomness.
 
-Netperf tests shows obvious improvements for small packet transmission:
+Such as your example,
+in 4G, the probability every slot chosen is about 0.00049
+in 5G, the probability every slot chosen is about 0.00039
+Yes, you did improve 25% for randomness. But I wonder if it's worth to
+improve from 0.00049 to 0.00039.
 
-size/session/+thu%/+normalize%
-   64/     1/   +2%/    0%
-   64/     2/   +3%/   +1%
-   64/     4/   +7%/   +5%
-   64/     8/   +8%/   +6%
-  256/     1/   +3%/    0%
-  256/     2/  +10%/   +7%
-  256/     4/  +26%/  +22%
-  256/     8/  +27%/  +23%
-  512/     1/   +3%/   +2%
-  512/     2/  +19%/  +14%
-  512/     4/  +43%/  +40%
-  512/     8/  +45%/  +41%
- 1024/     1/   +4%/    0%
- 1024/     2/  +27%/  +21%
- 1024/     4/  +38%/  +73%
- 1024/     8/  +15%/  +24%
- 2048/     1/  +10%/   +7%
- 2048/     2/  +16%/  +12%
- 2048/     4/    0%/   +2%
- 2048/     8/    0%/   +2%
- 4096/     1/  +36%/  +60%
- 4096/     2/  -11%/  -26%
- 4096/     4/    0%/  +14%
- 4096/     8/    0%/   +4%
-16384/     1/   -1%/   +5%
-16384/     2/    0%/   +2%
-16384/     4/    0%/   -3%
-16384/     8/    0%/   +4%
-65535/     1/    0%/  +10%
-65535/     2/    0%/   +8%
-65535/     4/    0%/   +1%
-65535/     8/    0%/   +3%
+If there is something wrong in my understanding, please let me know.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 164 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 151 insertions(+), 13 deletions(-)
+Thanks,
+Chao Fan
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index fb01ce6d981c..1dd4239cbff8 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -116,6 +116,7 @@ struct vhost_net_virtqueue {
- 	 * For RX, number of batched heads
- 	 */
- 	int done_idx;
-+	int batched_xdp;
- 	/* an array of userspace buffers info */
- 	struct ubuf_info *ubuf_info;
- 	/* Reference counting for outstanding ubufs.
-@@ -123,6 +124,7 @@ struct vhost_net_virtqueue {
- 	struct vhost_net_ubuf_ref *ubufs;
- 	struct ptr_ring *rx_ring;
- 	struct vhost_net_buf rxq;
-+	struct xdp_buff xdp[VHOST_NET_BATCH];
- };
- 
- struct vhost_net {
-@@ -338,6 +340,11 @@ static bool vhost_sock_zcopy(struct socket *sock)
- 		sock_flag(sock->sk, SOCK_ZEROCOPY);
- }
- 
-+static bool vhost_sock_xdp(struct socket *sock)
-+{
-+	return sock_flag(sock->sk, SOCK_XDP);
-+}
-+
- /* In case of DMA done not in order in lower device driver for some reason.
-  * upend_idx is used to track end of used idx, done_idx is used to track head
-  * of used idx. Once lower device DMA done contiguously, we will signal KVM
-@@ -444,10 +451,36 @@ static void vhost_net_signal_used(struct vhost_net_virtqueue *nvq)
- 	nvq->done_idx = 0;
- }
- 
-+static void vhost_tx_batch(struct vhost_net *net,
-+			   struct vhost_net_virtqueue *nvq,
-+			   struct socket *sock,
-+			   struct msghdr *msghdr)
-+{
-+	struct tun_msg_ctl ctl = {
-+		.type = nvq->batched_xdp << 16 | TUN_MSG_PTR,
-+		.ptr = nvq->xdp,
-+	};
-+	int err;
-+
-+	if (nvq->batched_xdp == 0)
-+		goto signal_used;
-+
-+	msghdr->msg_control = &ctl;
-+	err = sock->ops->sendmsg(sock, msghdr, 0);
-+	if (unlikely(err < 0)) {
-+		vq_err(&nvq->vq, "Fail to batch sending packets\n");
-+		return;
-+	}
-+
-+signal_used:
-+	vhost_net_signal_used(nvq);
-+	nvq->batched_xdp = 0;
-+}
-+
- static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
- 				    struct vhost_net_virtqueue *nvq,
- 				    unsigned int *out_num, unsigned int *in_num,
--				    bool *busyloop_intr)
-+				    struct msghdr *msghdr, bool *busyloop_intr)
- {
- 	struct vhost_virtqueue *vq = &nvq->vq;
- 	unsigned long uninitialized_var(endtime);
-@@ -455,8 +488,9 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
- 				  out_num, in_num, NULL, NULL);
- 
- 	if (r == vq->num && vq->busyloop_timeout) {
-+		/* Flush batched packets first */
- 		if (!vhost_sock_zcopy(vq->private_data))
--			vhost_net_signal_used(nvq);
-+			vhost_tx_batch(net, nvq, vq->private_data, msghdr);
- 		preempt_disable();
- 		endtime = busy_clock() + vq->busyloop_timeout;
- 		while (vhost_can_busy_poll(endtime)) {
-@@ -512,7 +546,7 @@ static int get_tx_bufs(struct vhost_net *net,
- 	struct vhost_virtqueue *vq = &nvq->vq;
- 	int ret;
- 
--	ret = vhost_net_tx_get_vq_desc(net, nvq, out, in, busyloop_intr);
-+	ret = vhost_net_tx_get_vq_desc(net, nvq, out, in, msg, busyloop_intr);
- 
- 	if (ret < 0 || ret == vq->num)
- 		return ret;
-@@ -540,6 +574,83 @@ static bool tx_can_batch(struct vhost_virtqueue *vq, size_t total_len)
- 	       !vhost_vq_avail_empty(vq->dev, vq);
- }
- 
-+#define VHOST_NET_RX_PAD (NET_IP_ALIGN + NET_SKB_PAD)
-+
-+static int vhost_net_build_xdp(struct vhost_net_virtqueue *nvq,
-+			       struct iov_iter *from)
-+{
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	struct socket *sock = vq->private_data;
-+	struct page_frag *alloc_frag = &current->task_frag;
-+	struct virtio_net_hdr *gso;
-+	struct xdp_buff *xdp = &nvq->xdp[nvq->batched_xdp];
-+	size_t len = iov_iter_count(from);
-+	int headroom = vhost_sock_xdp(sock) ? XDP_PACKET_HEADROOM : 0;
-+	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-+	int pad = SKB_DATA_ALIGN(VHOST_NET_RX_PAD + headroom + nvq->sock_hlen);
-+	int sock_hlen = nvq->sock_hlen;
-+	void *buf;
-+	int copied;
-+
-+	if (unlikely(len < nvq->sock_hlen))
-+		return -EFAULT;
-+
-+	if (SKB_DATA_ALIGN(len + pad) +
-+	    SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) > PAGE_SIZE)
-+		return -ENOSPC;
-+
-+	buflen += SKB_DATA_ALIGN(len + pad);
-+	alloc_frag->offset = ALIGN((u64)alloc_frag->offset, SMP_CACHE_BYTES);
-+	if (unlikely(!skb_page_frag_refill(buflen, alloc_frag, GFP_KERNEL)))
-+		return -ENOMEM;
-+
-+	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
-+
-+	/* We store two kinds of metadata in the header which will be
-+	 * used for XDP_PASS to do build_skb():
-+	 * offset 0: buflen
-+	 * offset sizeof(int): vnet header
-+	 */
-+	copied = copy_page_from_iter(alloc_frag->page,
-+				     alloc_frag->offset + sizeof(int),
-+				     sock_hlen, from);
-+	if (copied != sock_hlen)
-+		return -EFAULT;
-+
-+	gso = (struct virtio_net_hdr *)(buf + sizeof(int));
-+
-+	if ((gso->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM) &&
-+	    vhost16_to_cpu(vq, gso->csum_start) +
-+	    vhost16_to_cpu(vq, gso->csum_offset) + 2 >
-+	    vhost16_to_cpu(vq, gso->hdr_len)) {
-+		gso->hdr_len = cpu_to_vhost16(vq,
-+			       vhost16_to_cpu(vq, gso->csum_start) +
-+			       vhost16_to_cpu(vq, gso->csum_offset) + 2);
-+
-+		if (vhost16_to_cpu(vq, gso->hdr_len) > len)
-+			return -EINVAL;
-+	}
-+
-+	len -= sock_hlen;
-+	copied = copy_page_from_iter(alloc_frag->page,
-+				     alloc_frag->offset + pad,
-+				     len, from);
-+	if (copied != len)
-+		return -EFAULT;
-+
-+	xdp->data_hard_start = buf;
-+	xdp->data = buf + pad;
-+	xdp->data_end = xdp->data + len;
-+	*(int *)(xdp->data_hard_start) = buflen;
-+
-+	get_page(alloc_frag->page);
-+	alloc_frag->offset += buflen;
-+
-+	++nvq->batched_xdp;
-+
-+	return 0;
-+}
-+
- static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- {
- 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
-@@ -556,10 +667,14 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 	size_t len, total_len = 0;
- 	int err;
- 	int sent_pkts = 0;
-+	bool bulking = (sock->sk->sk_sndbuf == INT_MAX);
- 
- 	for (;;) {
- 		bool busyloop_intr = false;
- 
-+		if (nvq->done_idx == VHOST_NET_BATCH)
-+			vhost_tx_batch(net, nvq, sock, &msg);
-+
- 		head = get_tx_bufs(net, nvq, &msg, &out, &in, &len,
- 				   &busyloop_intr);
- 		/* On error, stop handling until the next kick. */
-@@ -577,14 +692,34 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 			break;
- 		}
- 
--		vq->heads[nvq->done_idx].id = cpu_to_vhost32(vq, head);
--		vq->heads[nvq->done_idx].len = 0;
--
- 		total_len += len;
--		if (tx_can_batch(vq, total_len))
--			msg.msg_flags |= MSG_MORE;
--		else
--			msg.msg_flags &= ~MSG_MORE;
-+
-+		/* For simplicity, TX batching is only enabled if
-+		 * sndbuf is unlimited.
-+		 */
-+		if (bulking) {
-+			err = vhost_net_build_xdp(nvq, &msg.msg_iter);
-+			if (!err) {
-+				goto done;
-+			} else if (unlikely(err != -ENOSPC)) {
-+				vhost_tx_batch(net, nvq, sock, &msg);
-+				vhost_discard_vq_desc(vq, 1);
-+				vhost_net_enable_vq(net, vq);
-+				break;
-+			}
-+
-+			/* We can't build XDP buff, go for single
-+			 * packet path but let's flush batched
-+			 * packets.
-+			 */
-+			vhost_tx_batch(net, nvq, sock, &msg);
-+			msg.msg_control = NULL;
-+		} else {
-+			if (tx_can_batch(vq, total_len))
-+				msg.msg_flags |= MSG_MORE;
-+			else
-+				msg.msg_flags &= ~MSG_MORE;
-+		}
- 
- 		/* TODO: Check specific error and bomb out unless ENOBUFS? */
- 		err = sock->ops->sendmsg(sock, &msg, len);
-@@ -596,15 +731,17 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 		if (err != len)
- 			pr_debug("Truncated TX packet: len %d != %zd\n",
- 				 err, len);
--		if (++nvq->done_idx >= VHOST_NET_BATCH)
--			vhost_net_signal_used(nvq);
-+done:
-+		vq->heads[nvq->done_idx].id = cpu_to_vhost32(vq, head);
-+		vq->heads[nvq->done_idx].len = 0;
-+		++nvq->done_idx;
- 		if (vhost_exceeds_weight(++sent_pkts, total_len)) {
- 			vhost_poll_queue(&vq->poll);
- 			break;
- 		}
- 	}
- 
--	vhost_net_signal_used(nvq);
-+	vhost_tx_batch(net, nvq, sock, &msg);
- }
- 
- static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
-@@ -1111,6 +1248,7 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 		n->vqs[i].ubuf_info = NULL;
- 		n->vqs[i].upend_idx = 0;
- 		n->vqs[i].done_idx = 0;
-+		n->vqs[i].batched_xdp = 0;
- 		n->vqs[i].vhost_hlen = 0;
- 		n->vqs[i].sock_hlen = 0;
- 		n->vqs[i].rx_ring = NULL;
--- 
-2.17.1
+>If Z=6, then Y=3, assuming X=2, the improvement equals: 50%( 6/(6-2) - 1);
+>assuming X=1, the improvement will be: 20% (6/(6-1) - 1)
+>
+>Cc: Thomas Gleixner <tglx@linutronix.de>
+>Cc: Ingo Molnar <mingo@redhat.com>
+>Cc: "H. Peter Anvin" <hpa@zytor.com>
+>Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>Cc: Baoquan He <bhe@redhat.com>
+>Cc: Chao Fan <fanc.fnst@cn.fujitsu.com> (authored:1/16=6%)
+>Cc: x86@kernel.org
+>
+>Pingfan Liu (3):
+>  x86/boot/KASLR: change the prototypes of
+>    process_efi_entries/process_e820_entries
+>  x86/boot/KASLR: change the prototype of process_mem_region() to meet
+>    the align requirement
+>  x86/boot/KASLR: enhance randomness when using GiB hugepage
+>
+> arch/x86/boot/compressed/kaslr.c | 228 ++++++++++++++++++++++++++-------------
+> 1 file changed, 152 insertions(+), 76 deletions(-)
+>
+>-- 
+>2.7.4
+>
+>
+>
+
 
