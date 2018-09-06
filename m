@@ -2,67 +2,169 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291E9C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C36BC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E70902075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70902075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D05B2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D05B2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730483AbeIFXKi (ORCPT
+        id S1730485AbeIFXLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:10:38 -0400
-Received: from mga05.intel.com ([192.55.52.43]:59814 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728767AbeIFXKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:10:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 11:33:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="261330520"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2018 11:33:47 -0700
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-aspeed@lists.ozlabs.org, james.feist@linux.intel.com,
-        Andrew Jeffery <andrew@aj.id.au>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com, vernon.mauery@linux.intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c@vger.kernel.org
-References: <20180823225731.19063-1-jae.hyun.yoo@linux.intel.com>
- <CAFd5g46fRrYW8E8FsPB=5fWSGxemgc4ENc4D2fT7yBfH6p4ERg@mail.gmail.com>
- <eab56d58-0703-d201-dc9a-f9fd257e96cf@linux.intel.com>
- <20180906180837.GA8607@kunai>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <0e844fc2-777b-7aee-2402-9fe579cbcf51@linux.intel.com>
-Date:   Thu, 6 Sep 2018 11:33:47 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 19:11:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726308AbeIFXLJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:11:09 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86ISmwt058195
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 14:34:25 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb9etrcqc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 14:34:25 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 6 Sep 2018 14:34:24 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 14:34:18 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86IYHAc4784446
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 18:34:17 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 41BB4B2065;
+        Thu,  6 Sep 2018 14:33:03 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22151B205F;
+        Thu,  6 Sep 2018 14:33:03 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Sep 2018 14:33:03 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 90FE916C29D3; Thu,  6 Sep 2018 11:34:17 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 11:34:17 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Andrea Parri <parri.andrea@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com
+Subject: Re: [PATCH RFC LKMM 3/7] EXP tools/memory-model: Add more LKMM
+ limitations
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180829211018.GA19646@linux.vnet.ibm.com>
+ <20180829211053.20531-3-paulmck@linux.vnet.ibm.com>
+ <20180830091713.GA4617@andrea>
+ <20180830221814.GQ4225@linux.vnet.ibm.com>
+ <20180831094341.GA4634@andrea>
 MIME-Version: 1.0
-In-Reply-To: <20180906180837.GA8607@kunai>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831094341.GA4634@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18090618-0052-0000-0000-0000032C59E5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01084483; UDB=6.00559750; IPR=6.00864483;
+ MB=3.00023148; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-06 18:34:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090618-0053-0000-0000-00005DFBEB85
+Message-Id: <20180906183417.GA4225@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 31, 2018 at 11:43:42AM +0200, Andrea Parri wrote:
+> > > > +	b.	The "unless" RMW operations are not currently modeled:
+> > > > +		atomic_long_add_unless(), atomic_add_unless(),
+> > > > +		atomic_inc_unless_negative(), and
+> > > > +		atomic_dec_unless_positive().  These can be emulated
+> > > > +		in litmus tests, for example, by using atomic_cmpxchg().
+> > > 
+> > > There is a prototype atomic_add_unless(): with current herd7,
+> > > 
+> > > $ cat atomic_add_unless.litmus
+> > > C atomic_add_unless
+> > > 
+> > > {}
+> > > 
+> > > P0(atomic_t *u, atomic_t *v)
+> > > {
+> > > 	int r0;
+> > > 	int r1;
+> > > 
+> > > 	r0 = atomic_add_unless(u, 1, 2);
+> > > 	r1 = atomic_read(v);
+> > > }
+> > > 
+> > > P1(atomic_t *u, atomic_t *v)
+> > > {
+> > > 	int r0;
+> > > 	int r1;
+> > > 
+> > > 	r0 = atomic_add_unless(v, 1, 2);
+> > > 	r1 = atomic_read(u);
+> > > }
+> > > 
+> > > exists (0:r1=0 /\ 1:r1=0)
+> > > 
+> > > $ herd7 -conf linux-kernel.cfg atomic_add_unless.litmus
+> > > Test atomic_add_unless Allowed
+> > > States 3
+> > > 0:r1=0; 1:r1=1;
+> > > 0:r1=1; 1:r1=0;
+> > > 0:r1=1; 1:r1=1;
+> > > No
+> > > Witnesses
+> > > Positive: 0 Negative: 3
+> > > Condition exists (0:r1=0 /\ 1:r1=0)
+> > > Observation atomic_add_unless Never 0 3
+> > > Time atomic_add_unless 0.00
+> > > Hash=fa37a2359831690299e4cc394e45d966
+> > > 
+> > > The last commit in the herdtools7 repo. related to this implementation
+> > > (AFAICT) is:
+> > > 
+> > >   9523c340917b6a ("herd/linux: make atomic_add_unless a primitive, so as to yield more precise dependencies for the returned boolean.")
+> > > 
+> > > but I can only vaguely remember those dependencies issues now :/  ...;
+> > > maybe we can now solve these issues?  or should we change herd7 to re-
+> > > turn a warning?  (Notice that this primitive is currently not exported
+> > > to the linux-kernel.def file.)
+> > 
+> > Cool!  It would be good to add this to the .def file once the underlying
+> > herd7 machinery is ready.  And then I would update the documentation
+> > accordingly.  Or happily accept a patch updating the documentation,
+> > as the case might be.  ;-)
 > 
-> Please don't quote the whole message. Everyone else has to scroll down
-> a lot to find the relevant information. Thanks!
+> Fair enough, ;-)  Please feel free to add:
 > 
+> Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-Will keep that in mind. Thanks Wolfram!
+Thank you!  Applied and pushed out, updating the lkmm branch in the
+process.
+
+							Thanx, Paul
+
