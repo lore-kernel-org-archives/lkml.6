@@ -2,127 +2,73 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEADDC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16018C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826542075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826542075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id CD90B2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD90B2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbeIFRvU (ORCPT
+        id S1729184AbeIFRvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:51:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43809 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbeIFRvT (ORCPT
+        Thu, 6 Sep 2018 13:51:12 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:40017 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727650AbeIFRvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:51:19 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DFcHZ304960
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:15:38 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DFbH3304957;
-        Thu, 6 Sep 2018 06:15:37 -0700
-Date:   Thu, 6 Sep 2018 06:15:37 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-a2drqpahpmc7uwb3n3gj2plu@git.kernel.org>
-Cc:     jolsa@kernel.org, namhyung@kernel.org, dsahern@gmail.com,
-        mingo@kernel.org, acme@redhat.com, wangnan0@huawei.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        adrian.hunter@intel.com
-Reply-To: jolsa@kernel.org, namhyung@kernel.org, dsahern@gmail.com,
-          mingo@kernel.org, acme@redhat.com, wangnan0@huawei.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          adrian.hunter@intel.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace augmented_syscalls: Augment bind's
- 'myaddr' sockaddr arg
-Git-Commit-ID: 02ef288420775542316e41dc610a6a88725aa83a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 13:51:12 -0400
+X-UUID: 6be8ff8de3ce4f3190b13aea803eb0e7-20180906
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <jun.gao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 459858057; Thu, 06 Sep 2018 21:15:38 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 6 Sep 2018 21:15:36 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 6 Sep 2018 21:15:35 +0800
+From:   Jun Gao <jun.gao@mediatek.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     <srv_heupstream@mediatek.com>, <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH v3 0/2] Register i2c adapter driver earlier and use DMA safe buffers
+Date:   Thu, 6 Sep 2018 21:15:27 +0800
+Message-ID: <1536239729-10008-1-git-send-email-jun.gao@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  02ef288420775542316e41dc610a6a88725aa83a
-Gitweb:     https://git.kernel.org/tip/02ef288420775542316e41dc610a6a88725aa83a
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 28 Aug 2018 17:03:53 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:20 -0300
+This patch series based on v4.19-rc2, include i2c adapter driver register time
+modification and DMA safe buffers used for i2c transactions.
 
-perf trace augmented_syscalls: Augment bind's 'myaddr' sockaddr arg
+changes since v2:
+- Remove the patch i2c: Add helper to ease DMA handling
+- Use i2c refactor function to release a DMA safe buffer
 
-One more, to reuse the augmented_sockaddr_syscall_enter() macro
-introduced from the augmentation of connect's sockaddr arg, also to get
-a subset of the struct arg augmentations done using the manual method,
-before switching to something automatic, using tracefs's format file or,
-even better, BTF containing the syscall args structs.
+changes since v1:
+- Add the initializations for DMA safe buffer pointers
 
-  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c
-     0.000 sshd/11479 bind(fd: 3<socket:[170336]>, umyaddr: { .family: NETLINK }, addrlen: 12)
-     1.752 sshd/11479 bind(fd: 3<socket:[170336]>, umyaddr: { .family: INET, port: 22, addr: 0.0.0.0 }, addrlen: 16)
-     1.924 sshd/11479 bind(fd: 4<socket:[170338]>, umyaddr: { .family: INET6, port: 22, addr: :: }, addrlen: 28)
-  ^C#
+Jun Gao (2):
+  i2c: mediatek: Register i2c adapter driver earlier
+  i2c: mediatek: Use DMA safe buffers for i2c transactions
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-a2drqpahpmc7uwb3n3gj2plu@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c                   |  2 ++
- tools/perf/examples/bpf/augmented_syscalls.c | 10 ++++++++++
- 2 files changed, 12 insertions(+)
+ drivers/i2c/busses/i2c-mt65xx.c | 74 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 66 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index ab2ed30b8dcc..537bb30895df 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -621,6 +621,8 @@ static struct syscall_fmt {
- } syscall_fmts[] = {
- 	{ .name	    = "access",
- 	  .arg = { [1] = { .scnprintf = SCA_ACCMODE,  /* mode */ }, }, },
-+	{ .name	    = "bind",
-+	  .arg = { [1] = { .scnprintf = SCA_SOCKADDR, /* umyaddr */ }, }, },
- 	{ .name	    = "bpf",
- 	  .arg = { [0] = STRARRAY(cmd, bpf_cmd), }, },
- 	{ .name	    = "brk",	    .hexret = true,
-diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index 5f417e528419..71edb7ad8698 100644
---- a/tools/perf/examples/bpf/augmented_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -122,6 +122,16 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
- 
- struct sockaddr;
- 
-+struct syscall_enter_bind_args {
-+	unsigned long long common_tp_fields;
-+	long		   syscall_nr;
-+	long		   fd;
-+	struct sockaddr	   *addr_ptr;
-+	unsigned long	   addrlen;
-+};
-+
-+augmented_sockaddr_syscall_enter(bind);
-+
- struct syscall_enter_connect_args {
- 	unsigned long long common_tp_fields;
- 	long		   syscall_nr;
+--
+1.8.1.1
+
