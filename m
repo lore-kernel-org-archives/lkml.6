@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2333C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 288D0C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7A02075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:35:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7A02075B
+	by mail.kernel.org (Postfix) with ESMTP id D22B32064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:36:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22B32064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729686AbeIFSLQ (ORCPT
+        id S1729654AbeIFSLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:11:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38823 "EHLO
+        Thu, 6 Sep 2018 14:11:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51639 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729404AbeIFSLQ (ORCPT
+        with ESMTP id S1727708AbeIFSLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:11:16 -0400
+        Thu, 6 Sep 2018 14:11:54 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DZGip309294
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DZq4x309356
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:35:16 -0700
+        Thu, 6 Sep 2018 06:35:52 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DZG7D309291;
-        Thu, 6 Sep 2018 06:35:16 -0700
-Date:   Thu, 6 Sep 2018 06:35:16 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DZqrU309353;
+        Thu, 6 Sep 2018 06:35:52 -0700
+Date:   Thu, 6 Sep 2018 06:35:52 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-d97ae04b3d5263be242a6a9f9eef6422fc86326a@git.kernel.org>
-Cc:     hpa@zytor.com, peterz@infradead.org, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        andi@firstfloor.org, tglx@linutronix.de, acme@redhat.com,
-        jolsa@kernel.org, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: hpa@zytor.com, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, dsahern@gmail.com,
-          namhyung@kernel.org, andi@firstfloor.org, jolsa@kernel.org,
-          acme@redhat.com, tglx@linutronix.de, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com
-In-Reply-To: <20180830063252.23729-28-jolsa@kernel.org>
-References: <20180830063252.23729-28-jolsa@kernel.org>
+Message-ID: <tip-ee1760e2cf623bc6834fc3e4e89c6ad030a25dfd@git.kernel.org>
+Cc:     andi@firstfloor.org, mingo@kernel.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        jolsa@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        dsahern@gmail.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org,
+          dsahern@gmail.com, hpa@zytor.com, tglx@linutronix.de,
+          jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+          acme@redhat.com, andi@firstfloor.org, mingo@kernel.org,
+          namhyung@kernel.org
+In-Reply-To: <20180830063252.23729-29-jolsa@kernel.org>
+References: <20180830063252.23729-29-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Move 'run_count' to 'struct
+Subject: [tip:perf/core] perf stat: Move 'metric_only_len' to 'struct
  perf_stat_config'
-Git-Commit-ID: d97ae04b3d5263be242a6a9f9eef6422fc86326a
+Git-Commit-ID: ee1760e2cf623bc6834fc3e4e89c6ad030a25dfd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,17 +63,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d97ae04b3d5263be242a6a9f9eef6422fc86326a
-Gitweb:     https://git.kernel.org/tip/d97ae04b3d5263be242a6a9f9eef6422fc86326a
+Commit-ID:  ee1760e2cf623bc6834fc3e4e89c6ad030a25dfd
+Gitweb:     https://git.kernel.org/tip/ee1760e2cf623bc6834fc3e4e89c6ad030a25dfd
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:36 +0200
+AuthorDate: Thu, 30 Aug 2018 08:32:37 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
 
-perf stat: Move 'run_count' to 'struct perf_stat_config'
+perf stat: Move 'metric_only_len' to 'struct perf_stat_config'
 
-Move the static 'run_count' variable to 'struct perf_stat_config', so
-that it can be passed around and used outside the 'perf stat' command.
+Move the static 'metric_only_len' variable to 'struct perf_stat_config',
+so that it can be passed around and used outside the 'perf stat' command.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -81,169 +81,77 @@ Cc: Andi Kleen <andi@firstfloor.org>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-28-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180830063252.23729-29-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 39 ++++++++++++++++++++-------------------
+ tools/perf/builtin-stat.c | 10 +++++-----
  tools/perf/util/stat.h    |  1 +
- 2 files changed, 21 insertions(+), 19 deletions(-)
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 11741f3a8342..1276596840c9 100644
+index 1276596840c9..e96cef526ef0 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -147,7 +147,6 @@ typedef int (*aggr_get_id_t)(struct cpu_map *m, int cpu);
+@@ -176,7 +176,6 @@ static int			print_mixed_hw_group_error;
+ static u64			*walltime_run;
+ static bool			ru_display			= false;
+ static struct rusage		ru_data;
+-static unsigned int		metric_only_len			= METRIC_ONLY_LEN;
  
- #define METRIC_ONLY_LEN 20
- 
--static int			run_count			=  1;
- static volatile pid_t		child_pid			= -1;
- static bool			null_run			=  false;
- static int			detailed_run			=  0;
+ struct perf_stat {
+ 	bool			 record;
 @@ -200,6 +199,7 @@ static struct perf_stat_config stat_config = {
- 	.aggr_mode	= AGGR_GLOBAL,
  	.scale		= true,
  	.unit_width	= 4, /* strlen("unit") */
-+	.run_count	= 1,
+ 	.run_count	= 1,
++	.metric_only_len = METRIC_ONLY_LEN,
  };
  
  static bool is_duration_time(struct perf_evsel *evsel)
-@@ -686,7 +686,7 @@ static void print_noise(struct perf_stat_config *config,
- {
- 	struct perf_stat_evsel *ps;
+@@ -854,14 +854,14 @@ static const char *fixunit(char *buf, struct perf_evsel *evsel,
+ 	return unit;
+ }
  
--	if (run_count == 1)
-+	if (config->run_count == 1)
+-static void print_metric_only(struct perf_stat_config *config __maybe_unused,
++static void print_metric_only(struct perf_stat_config *config,
+ 			      void *ctx, const char *color, const char *fmt,
+ 			      const char *unit, double val)
+ {
+ 	struct outstate *os = ctx;
+ 	FILE *out = os->fh;
+ 	char buf[1024], str[1024];
+-	unsigned mlen = metric_only_len;
++	unsigned mlen = config->metric_only_len;
+ 
+ 	if (!valid_only_metric(unit))
  		return;
- 
- 	ps = evsel->stats;
-@@ -1620,8 +1620,8 @@ static void print_header(struct perf_stat_config *config,
- 			fprintf(output, "thread id \'%s", _target->tid);
- 
- 		fprintf(output, "\'");
--		if (run_count > 1)
--			fprintf(output, " (%d runs)", run_count);
-+		if (config->run_count > 1)
-+			fprintf(output, " (%d runs)", config->run_count);
- 		fprintf(output, ":\n\n");
- 	}
- }
-@@ -1634,7 +1634,8 @@ static int get_precision(double num)
- 	return lround(ceil(-log10(num)));
- }
- 
--static void print_table(FILE *output, int precision, double avg)
-+static void print_table(struct perf_stat_config *config,
-+			FILE *output, int precision, double avg)
+@@ -902,7 +902,7 @@ static void new_line_metric(struct perf_stat_config *config __maybe_unused,
  {
- 	char tmp[64];
- 	int idx, indent = 0;
-@@ -1645,7 +1646,7 @@ static void print_table(FILE *output, int precision, double avg)
+ }
  
- 	fprintf(output, "%*s# Table of individual measurements:\n", indent, "");
+-static void print_metric_header(struct perf_stat_config *config __maybe_unused,
++static void print_metric_header(struct perf_stat_config *config,
+ 				void *ctx, const char *color __maybe_unused,
+ 				const char *fmt __maybe_unused,
+ 				const char *unit, double val __maybe_unused)
+@@ -916,7 +916,7 @@ static void print_metric_header(struct perf_stat_config *config __maybe_unused,
+ 	if (config->csv_output)
+ 		fprintf(os->fh, "%s%s", unit, config->csv_sep);
+ 	else
+-		fprintf(os->fh, "%*s ", metric_only_len, unit);
++		fprintf(os->fh, "%*s ", config->metric_only_len, unit);
+ }
  
--	for (idx = 0; idx < run_count; idx++) {
-+	for (idx = 0; idx < config->run_count; idx++) {
- 		double run = (double) walltime_run[idx] / NSEC_PER_SEC;
- 		int h, n = 1 + abs((int) (100.0 * (run - avg)/run) / 5);
- 
-@@ -1675,7 +1676,7 @@ static void print_footer(struct perf_stat_config *config)
- 	if (!null_run)
- 		fprintf(output, "\n");
- 
--	if (run_count == 1) {
-+	if (config->run_count == 1) {
- 		fprintf(output, " %17.9f seconds time elapsed", avg);
- 
- 		if (ru_display) {
-@@ -1695,7 +1696,7 @@ static void print_footer(struct perf_stat_config *config)
- 		int precision = get_precision(sd) + 2;
- 
- 		if (walltime_run_table)
--			print_table(output, precision, avg);
-+			print_table(config, output, precision, avg);
- 
- 		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
- 			precision, avg, precision, sd);
-@@ -1886,7 +1887,7 @@ static const struct option stat_options[] = {
- 	OPT_BOOLEAN('c', "scale", &stat_config.scale, "scale/normalize counters"),
- 	OPT_INCR('v', "verbose", &verbose,
- 		    "be more verbose (show counter open errors, etc)"),
--	OPT_INTEGER('r', "repeat", &run_count,
-+	OPT_INTEGER('r', "repeat", &stat_config.run_count,
- 		    "repeat command and print average + stddev (max: 100, forever: 0)"),
- 	OPT_BOOLEAN(0, "table", &walltime_run_table,
- 		    "display details about each run (only with -r option)"),
-@@ -2484,7 +2485,7 @@ static int __cmd_record(int argc, const char **argv)
- 	if (output_name)
- 		data->file.path = output_name;
- 
--	if (run_count != 1 || forever) {
-+	if (stat_config.run_count != 1 || forever) {
- 		pr_err("Cannot use -r option with perf stat record.\n");
- 		return -1;
- 	}
-@@ -2792,12 +2793,12 @@ int cmd_stat(int argc, const char **argv)
- 		goto out;
- 	}
- 
--	if (stat_config.metric_only && run_count > 1) {
-+	if (stat_config.metric_only && stat_config.run_count > 1) {
- 		fprintf(stderr, "--metric-only is not supported with -r\n");
- 		goto out;
- 	}
- 
--	if (walltime_run_table && run_count <= 1) {
-+	if (walltime_run_table && stat_config.run_count <= 1) {
- 		fprintf(stderr, "--table is only supported with -r\n");
- 		parse_options_usage(stat_usage, stat_options, "r", 1);
- 		parse_options_usage(NULL, stat_options, "table", 0);
-@@ -2853,20 +2854,20 @@ int cmd_stat(int argc, const char **argv)
- 	 * Display user/system times only for single
- 	 * run and when there's specified tracee.
- 	 */
--	if ((run_count == 1) && target__none(&target))
-+	if ((stat_config.run_count == 1) && target__none(&target))
- 		ru_display = true;
- 
--	if (run_count < 0) {
-+	if (stat_config.run_count < 0) {
- 		pr_err("Run count must be a positive number\n");
- 		parse_options_usage(stat_usage, stat_options, "r", 1);
- 		goto out;
--	} else if (run_count == 0) {
-+	} else if (stat_config.run_count == 0) {
- 		forever = true;
--		run_count = 1;
-+		stat_config.run_count = 1;
- 	}
- 
- 	if (walltime_run_table) {
--		walltime_run = zalloc(run_count * sizeof(walltime_run[0]));
-+		walltime_run = zalloc(stat_config.run_count * sizeof(walltime_run[0]));
- 		if (!walltime_run) {
- 			pr_err("failed to setup -r option");
- 			goto out;
-@@ -2994,8 +2995,8 @@ int cmd_stat(int argc, const char **argv)
- 	signal(SIGABRT, skip_signal);
- 
- 	status = 0;
--	for (run_idx = 0; forever || run_idx < run_count; run_idx++) {
--		if (run_count != 1 && verbose > 0)
-+	for (run_idx = 0; forever || run_idx < stat_config.run_count; run_idx++) {
-+		if (stat_config.run_count != 1 && verbose > 0)
- 			fprintf(output, "[ perf stat: executing run #%d ... ]\n",
- 				run_idx + 1);
- 
+ static int first_shadow_cpu(struct perf_evsel *evsel, int id)
 diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 2dc66e0ba4b8..351a36f5f5b0 100644
+index 351a36f5f5b0..e70e6d93ee1b 100644
 --- a/tools/perf/util/stat.h
 +++ b/tools/perf/util/stat.h
-@@ -100,6 +100,7 @@ struct perf_stat_config {
+@@ -99,6 +99,7 @@ struct perf_stat_config {
+ 	unsigned int		 timeout;
  	unsigned int		 initial_delay;
  	unsigned int		 unit_width;
++	unsigned int		 metric_only_len;
  	int			 times;
-+	int			 run_count;
+ 	int			 run_count;
  	struct runtime_stat	*stats;
- 	int			 stats_num;
- 	const char		*csv_sep;
