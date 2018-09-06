@@ -2,108 +2,143 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1381C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D2CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5AF620659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:29:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5AF620659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7232620659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 07:29:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2rnZ3XI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7232620659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeIFMDG (ORCPT
+        id S1727852AbeIFMDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:03:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53286 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725929AbeIFMDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:03:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 107B68780F;
-        Thu,  6 Sep 2018 07:29:01 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-66.ams2.redhat.com [10.36.116.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0BD5BED145;
-        Thu,  6 Sep 2018 07:28:58 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 3D0234F268; Thu,  6 Sep 2018 09:28:57 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm: refuse ADDFB2 ioctl for broken bigendian drivers
-Date:   Thu,  6 Sep 2018 09:28:50 +0200
-Message-Id: <20180906072850.11150-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 06 Sep 2018 07:29:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 06 Sep 2018 07:29:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
+        Thu, 6 Sep 2018 08:03:51 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38729 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeIFMDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:03:50 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so4834862pfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 00:29:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Dbx56dCi3L7H51x5Sc712gHMJOuLiIs9bbvf5MYsWEI=;
+        b=R2rnZ3XIGNA0y7MfPFXazgVeSUJBYkToxKG4h9k2e/xndSYCMgUNTR9TwRazrPg1CO
+         eQEyS56ucKLus4BorxKB8bAp+x3nZq+IkvUG3F0BHt9CdMhcQ9DebvBtuP7ejJkp9PXy
+         dUHyAQXb3rBtWC+CUHEXL1q5oySmA2sgMdqwidxtbqKHLYnw9T+vhaqe9VKpUwwKDTgA
+         WIMo5P9SAv9IPCh2qzF6OtYRPg7ss/RDivaB8lyGNkKFMFv1bHk3T9/eV3p6VDEL4Pgx
+         cg0QERPaDoPU8aOW82JF6KuytoAad8CDYQvy21L5kpaM7Vb9u3sqgxCmMIsTBuDzWu/z
+         nX3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dbx56dCi3L7H51x5Sc712gHMJOuLiIs9bbvf5MYsWEI=;
+        b=snpcFah1c2fkrR+jMbSeQZOUAxWTfwyQHms4Ia4ysm96QWQOBwBz4nRxzLVIsMgM/h
+         zjLCcvnSNwrnoWzaV/AMvJyXXHPETWDfJ1yzaTSzrQ6fsLp55d38FTzWftUNAP9MwFJA
+         7Phw7EO8B0VLXnL9XFaEPPEEBXzkgZaqzkc+Mzx+lUUt5R9jxo3Lb2E22h98fkEVrL8H
+         RILo976cH/ztDTA0U3rIhUie47epkIlfPj08OCP9iBf1f1M9jaOdHHJdIrbaVtX+5yXT
+         IuKB9XB3LpOt6n6EwFQV4BZQokwptEwkU/j2dDGnMcFLn91HwDev1i08sNc4TEY9bbxm
+         9XMw==
+X-Gm-Message-State: APzg51D4DEJmIya7YVEbASl00r7nAfBta1ggUHi+9zph2/NwKE8X6vLj
+        lfIq3uz6lYXPq0zigKraFRg=
+X-Google-Smtp-Source: ANB0VdauFavNEizutbg2CJmcEM1H6h/SBX/SlXm44ZsWIVyJ117LU/8AYxSSs/mITJdC9VE9UByOIg==
+X-Received: by 2002:a62:7e93:: with SMTP id z141-v6mr1555101pfc.14.1536218985698;
+        Thu, 06 Sep 2018 00:29:45 -0700 (PDT)
+Received: from localhost ([110.70.59.68])
+        by smtp.gmail.com with ESMTPSA id y86-v6sm6014613pfk.84.2018.09.06.00.29.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Sep 2018 00:29:44 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 16:29:40 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: Re: [PATCH 4.19 regression fix] printk: For early boot messages
+ check loglevel when flushing the buffer
+Message-ID: <20180906072940.GA382@jagdpanzerIV>
+References: <20180904180154.845-1-hdegoede@redhat.com>
+ <20180905023522.GA1444@jagdpanzerIV>
+ <93901f2b-91ad-a910-7031-0040b827a3af@redhat.com>
+ <20180905053609.GA19936@jagdpanzerIV>
+ <20180905083326.GC19936@jagdpanzerIV>
+ <20180905110207.rxy3upplgkjbk5oi@pathway.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905110207.rxy3upplgkjbk5oi@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drivers must set the quirk_addfb_prefer_host_byte_order quirk to make
-the drm_mode_addfb() compat code work correctly on bigendian machines.
+On (09/05/18 13:02), Petr Mladek wrote:
+> Note that the first registered console prints all messages
+> even without this flag.
 
-If they don't they interpret pixel_format values incorrectly for bug
-compatibility, which in turn implies the ADDFB2 ioctl does not work
-correctly then.  So block it to make userspace fallback to ADDFB.
+Hmm, OK, interesting point.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/drm_ioctl.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+I assumed that the first console usually has CON_PRINTBUFFER bit set.
+Or even a CON_PRINTBUFFER | CON_ANYTIME combo. E.g. 8250. It sort of
+makes sense to have CON_PRINTBUFFER for the first console. Any later
+consoles [e.g. fbcon, netcon] don't necessarily have CON_PRINTBUFFER.
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index ea10e9a26a..08e48bda23 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -469,6 +469,29 @@ static int drm_copy_field(char __user *buf, size_t *buf_len, const char *value)
- 	return 0;
- }
- 
-+static int drm_mode_addfb2_check(struct drm_device *dev,
-+				 void *data, struct drm_file *file_priv)
-+{
-+#ifdef __BIG_ENDIAN
-+	if (!dev->mode_config.quirk_addfb_prefer_host_byte_order) {
-+		/*
-+		 * Drivers must set the
-+		 * quirk_addfb_prefer_host_byte_order quirk to make
-+		 * the drm_mode_addfb() compat code work correctly on
-+		 * bigendian machines.
-+		 *
-+		 * If they don't they interpret pixel_format values
-+		 * incorrectly for bug compatibility, which in turn
-+		 * implies the ADDFB2 ioctl does not work correctly
-+		 * then.  So block it to make userspace fallback to
-+		 * ADDFB.
-+		 */
-+		return -EINVAL;
-+	}
-+#endif
-+	return drm_mode_addfb2(dev, data, file_priv);
-+}
-+
- /*
-  * Get version information
-  *
-@@ -645,7 +668,7 @@ static const struct drm_ioctl_desc drm_ioctls[] = {
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_GETPROPBLOB, drm_mode_getblob_ioctl, DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_GETFB, drm_mode_getfb, DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_ADDFB, drm_mode_addfb_ioctl, DRM_UNLOCKED),
--	DRM_IOCTL_DEF(DRM_IOCTL_MODE_ADDFB2, drm_mode_addfb2, DRM_UNLOCKED),
-+	DRM_IOCTL_DEF(DRM_IOCTL_MODE_ADDFB2, drm_mode_addfb2_check, DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_RMFB, drm_mode_rmfb_ioctl, DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_PAGE_FLIP, drm_mode_page_flip_ioctl, DRM_MASTER|DRM_UNLOCKED),
- 	DRM_IOCTL_DEF(DRM_IOCTL_MODE_DIRTYFB, drm_mode_dirtyfb_ioctl, DRM_MASTER|DRM_UNLOCKED),
--- 
-2.9.3
+So by the time we have callable console "quite" param should be already
+parsed [except the earlycon case perhaps]:
 
+	kernel_init_freeable
+	 do_one_initcall
+	  register_console
+happens after
+	setup_arch
+	 parse_early_param
+	  quiet_kernel/debug_kernel.
+
+And
+	setup_arch
+	 parse_early_param
+	  quiet_kernel/debug_kernel
+happens before
+	console_init
+	 con_init
+	  register_console.
+
+And the first console has CON_PRINTBUFFER bit set. Well, just because
+it sounds reasonable. Those were the main assumptions behind my code
+snippet. Was any of those assumptions wrong?
+
+> I played with another solution, see the patch below. It defines
+> which messages have a valid NOCONS flag according to the msg_seq
+> number. IMHO, it is a bit more straightforward but it is still
+> a hack. I am not super happy about it.
+
+I just skimmed through it, and probably missed some parts. But I sort
+of expected to see some console_valid_nocons_seq manipulations in
+register_console(), when we register a new CON_PRINTBUFFER console
+on already running system.
+
+> Hmm, I seriously think about reverting the commit 375899cddcbb
+> ("printk: make sure to print log on console.") and solving it
+> another way.
+
+I can agree, definitely. That's one of the options.
+
+	-ss
