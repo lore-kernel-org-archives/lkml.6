@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B96EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10F6C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD08220659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:17:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD08220659
+	by mail.kernel.org (Postfix) with ESMTP id 86A8820659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:17:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A8820659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbeIFXy2 (ORCPT
+        id S1729684AbeIFXyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:54:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:18886 "EHLO mga03.intel.com"
+        Thu, 6 Sep 2018 19:54:35 -0400
+Received: from mga04.intel.com ([192.55.52.120]:59190 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729560AbeIFXy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:54:28 -0400
+        id S1729560AbeIFXye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:54:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 12:17:35 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 12:17:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="68939744"
+   d="scan'208";a="68939787"
 Received: from marshy.an.intel.com ([10.122.105.159])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2018 12:17:28 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2018 12:17:38 -0700
 From:   richard.gong@linux.intel.com
 To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
         will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
@@ -40,13 +40,12 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
         linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
         richard.gong@intel.com
-Subject: [PATCHv9 0/8] Add Intel Stratix10 FPGA manager and service layer 
-Date:   Thu,  6 Sep 2018 14:25:02 -0500
-Message-Id: <1536261910-16426-1-git-send-email-richard.gong@linux.intel.com>
+Subject: [PATCHv9 1/8] dt-bindings, firmware: add Intel Stratix10 service layer binding
+Date:   Thu,  6 Sep 2018 14:25:03 -0500
+Message-Id: <1536261910-16426-2-git-send-email-richard.gong@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1536261910-16426-1-git-send-email-richard.gong@linux.intel.com>
+References: <1536261910-16426-1-git-send-email-richard.gong@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -54,135 +53,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Gong <richard.gong@intel.com>
 
-This is the 9th submission of Intel Stratix10 service layer and FPGA
-manager driver patches. This submission includes one patch for supporting
-remote status update, the second Stratix10 service layer client. Intel
-Stratix10 FPGA manager, which is 1st Stratix10 service layer client, is
-included in this submission.
+Add a device tree binding for the Intel Stratix10 service layer driver
 
-The patch on defconfig for enabling service layer and FPGA manager was
-removed in this submission, since FPGA is not enabled currently in the
-upstream kernel. 
-
-I have moved the stratix10-smc.h to include/linux since it is being reused.
-Header stratix10-smc.h defines a secure messaging protocol that used by
-Stratix10 service layer and EDAC/DWMAC drivers for:
-1. FPGA programming.
-2. RSU (remote status update). This updates some booting parameters that
-   happen on reboot, before the kernel boots the next time.
-3. reading and writing the secure registers.
-
-Stratix10 service layer patches have been reviewed internally by Alan Tull
-and other colleagues at Intel.
-
-Some features of the Intel Stratix10 SoC require a level of privilege
-higher than the kernel is granted. Such secure features include
-FPGA programming, remote status update, read and write the secure
-registers. In terms of the ARMv8 architecture, the kernel runs at Exception
-Level 1 (EL1), access to the features requires Exception Level 3 (EL3).
-
-The Intel Stratix10 service layer provides kernel APIs for drivers to
-request access to the secure features. The requests are queued and
-processed one by one. ARM’s SMCCC is used to pass the execution of the
-requests on to a secure monitor (EL3).
-
-Later the Intel Stratix10 service layer driver will be extended to provide
-services for QSPI, Crypto and warm reset.
-
-v2: add patches for FPGA manager, FPGA manager binding, dts and defconfig
-    remove intel-service subdirectory and intel-service.h, move intel-smc.h
-    and intel-service.c to driver/misc subdirectory.
-    remove global variables.
-    change service layer driver be 'default n'.
-    correct SPDX markers.
-    add timeout for do..while() loop.
-    add kernel-doc for the functions and structs, correct multiline
-    comments.
-    replace kfifo_in and kfifo_out with kfifo_in_spinlocked and
-    kfifo_out_spinlocked.
-    rename struct intel_svc_data (at client header) to intel_svc_client_msg.
-    rename struct intel_svc_private_mem to intel_svc_data.
-    other corrections/changes from Intel internal code reviews.
-v3: change all exported functions with "intel_svc_" as the prefix.
-    increase timeout values for claiming back submitted buffer(s).
-    rename struct intel_command_reconfig_payload to
-    struct intel_svc_command_reconfig_payload.
-    add pr_err() to provide the error return value.
-    change to put fpga_mgr node under firmware/svc node.
-    change to FPGA manager to align the update of service client APIs, and
-    the update of fpga_mgr device node.
-    Other corrections/changes.
-v4: s/intel/stratix10/ on some variables, structs, functions, and file
-    names intel-service.c -> stratix10-svc.c
-    intel-smc.h -> stratix10-smc.h
-    intel-service-client.h -> stratix10-svc-client.h.
-    remove non-kernel-doc formatting.
-    s/fpga-mgr@0/fpga-mgr/ to remove unit_address at fpga_mgr node.
-    add Rob's Reviewed-by.
-    add Richard's signed-off-by.
-v5: add a new API statix10_svc_done() which is called by service client
-    when client request is completed or error occurs during request
-    process. Which allows service layer to free its resources.
-    remove dummy client from service layer client header and service layer
-    source file.
-    add Rob's Reviewed-by.
-    add a new file stratix10-svc.rst and add that to driver-api/index.rst.
-    kernel-doc fixes.
-v6: replace kthread_create_on_cpu() with kthread_create_on_node().
-    extend stratix_svc_send() to support service client which doesn't use
-    memory allocated by service layer.
-    add S10_RECONFIG_TIMEOUT.
-    rename s/S10_BUF_TIMEOUT/S10_BUFFER_TIMEOUT/.
-    fix service layer and FPGA manager Klocwork errors.
-v7: add remote status update client support.
-    s/pr_debug/dev_dbg, s/dev_info/dev_dbg.
-    add unlock buffer if s10_svc_send_msg() fails.
-    add release channel if fpga_mgr_create() fails.
-    handle invalid pointer at svc if the client passed an invalid name.
-v8: move stratix10-smc.h to include/linux from driver/misc.
-    revert version 7 error code & smc function ID value changes at
-    stratix10-smc.h.
-    add a goto and common error handling at the end of fpga driver's.
-    probe function.
-v9: remove a patch on defconfig for enable service layer and FPGA manager.
-    resolve a issue found at git-bisect test.
-    remove kernel-doc markups that aren't being built.
-
-Alan Tull (3):
-  dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
-  arm64: dts: stratix10: add fpga manager and region
-  fpga: add intel stratix10 soc fpga manager driver
-
-Richard Gong (5):
-  dt-bindings, firmware: add Intel Stratix10 service layer binding
-  arm64: dts: stratix10: add stratix10 service driver binding to base
-    dtsi
-  misc: add Intel Stratix10 service layer driver
-  Documentation: driver-api: add stratix10 service layer
-  misc: add remote status update client support
-
- .../bindings/firmware/intel,stratix10-svc.txt      |   57 ++
- .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt |   17 +
- Documentation/driver-api/index.rst                 |    1 +
- Documentation/driver-api/stratix10-svc.rst         |   32 +
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |   33 +
- drivers/fpga/Kconfig                               |    6 +
- drivers/fpga/Makefile                              |    1 +
- drivers/fpga/stratix10-soc.c                       |  535 ++++++++++
- drivers/misc/Kconfig                               |   12 +
- drivers/misc/Makefile                              |    1 +
- drivers/misc/stratix10-svc.c                       | 1066 ++++++++++++++++++++
- include/linux/stratix10-smc.h                      |  312 ++++++
- include/linux/stratix10-svc-client.h               |  217 ++++
- 13 files changed, 2290 insertions(+)
+Signed-off-by: Richard Gong <richard.gong@intel.com>
+Signed-off-by: Alan Tull <atull@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+---
+v2: change to put service layer driver node under the firmware node
+    change compatible to "intel, stratix10-svc"
+v3: no change
+v4: add Rob's Reviewed-by
+v5: no change
+v6: add Moritz's Acked-by
+v7: no change
+v8: no change
+v9: no chnage
+---
+ .../bindings/firmware/intel,stratix10-svc.txt      | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
- create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
- create mode 100644 Documentation/driver-api/stratix10-svc.rst
- create mode 100644 drivers/fpga/stratix10-soc.c
- create mode 100644 drivers/misc/stratix10-svc.c
- create mode 100644 include/linux/stratix10-smc.h
- create mode 100644 include/linux/stratix10-svc-client.h
 
+diff --git a/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+new file mode 100644
+index 0000000..1fa6606
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+@@ -0,0 +1,57 @@
++Intel Service Layer Driver for Stratix10 SoC
++============================================
++Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
++processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
++configured from HPS, there needs to be a way for HPS to notify SDM the
++location and size of the configuration data. Then SDM will get the
++configuration data from that location and perform the FPGA configuration.
++
++To meet the whole system security needs and support virtual machine requesting
++communication with SDM, only the secure world of software (EL3, Exception
++Layer 3) can interface with SDM. All software entities running on other
++exception layers must channel through the EL3 software whenever it needs
++service from SDM.
++
++Intel Stratix10 service layer driver, running at privileged exception level
++(EL1, Exception Layer 1), interfaces with the service providers and provides
++the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
++driver also manages secure monitor call (SMC) to communicate with secure monitor
++code running in EL3.
++
++Required properties:
++-------------------
++The svc node has the following mandatory properties, must be located under
++the firmware node.
++
++- compatible: "intel,stratix10-svc"
++- method: smc or hvc
++        smc - Secure Monitor Call
++        hvc - Hypervisor Call
++- memory-region:
++	phandle to the reserved memory node. See
++	Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++	for details
++
++Example:
++-------
++
++	reserved-memory {
++                #address-cells = <2>;
++                #size-cells = <2>;
++                ranges;
++
++                service_reserved: svcbuffer@0 {
++                        compatible = "shared-dma-pool";
++                        reg = <0x0 0x0 0x0 0x1000000>;
++                        alignment = <0x1000>;
++                        no-map;
++                };
++        };
++
++	firmware {
++		svc {
++			compatible = "intel,stratix10-svc";
++			method = "smc";
++			memory-region = <&service_reserved>;
++		};
++	};
 -- 
 2.7.4
 
