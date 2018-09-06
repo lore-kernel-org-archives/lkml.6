@@ -2,130 +2,200 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4FFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A3EC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0081820659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:03:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0081820659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 472992075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 06:03:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472992075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbeIFKhM (ORCPT
+        id S1727593AbeIFKhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 06:37:12 -0400
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:7525 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeIFKhL (ORCPT
+        Thu, 6 Sep 2018 06:37:18 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:13088 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725850AbeIFKhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:37:11 -0400
-Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 33ADF1A3;
-        Thu,  6 Sep 2018 06:03:23 +0000 (UTC)
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 3B14881;
-        Thu,  6 Sep 2018 06:03:22 +0000 (UTC)
-Received: from anatevka.americas.hpqcorp.net (anatevka.americas.hpqcorp.net [10.34.81.6])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id E9F8B3F;
-        Thu,  6 Sep 2018 06:03:21 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 00:03:21 -0600
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] watchdog: hpwdt: Bug Fixes/Enhancement
-Message-ID: <20180906060321.GA14264@anatevka.americas.hpqcorp.net>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <1533755607-71418-1-git-send-email-jerry.hoemann@hpe.com>
+        Thu, 6 Sep 2018 06:37:18 -0400
+X-UUID: 1e947c1b6f924520a6b88ab85bf6e66a-20180906
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1075598207; Thu, 06 Sep 2018 14:03:25 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 6 Sep 2018 14:03:23 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 6 Sep 2018 14:03:23 +0800
+Message-ID: <1536213802.4618.41.camel@mtksdaap41>
+Subject: Re: [PATCH v2 13/13] drm/mediatek: config component output by
+ device node port
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>
+Date:   Thu, 6 Sep 2018 14:03:22 +0800
+In-Reply-To: <20180905083146.14727-14-bibby.hsieh@mediatek.com>
+References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
+         <20180905083146.14727-14-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1533755607-71418-1-git-send-email-jerry.hoemann@hpe.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 01:13:22PM -0600, Jerry Hoemann wrote:
-> Changes for v2
-> 
-> 1) Patch 0001: Simplify initialization of pretimeout removing #ifdef.
-> 2) Patch 0002: Loosen check on mynmi to accommodate potential FW issue.
-> 3) Patch 0003: Split dev_info into mulitple calls as output was getting long.
-> 4) Patch 0004: New: Add alias to module parameter soft_margin.
-> 
+Hi, Bibby:
 
-Wim,
+On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
+> We can select output component by decive node port.
+> Main path default output component is DSI.
+> External path default output component is DPI.
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 37 ++++++++++++++++++++++++++++++----
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  4 ++--
+>  2 files changed, 35 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> index d961112fa2f5..a477fb878c06 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -21,7 +21,9 @@
+>  #include <drm/drm_of.h>
+>  #include <linux/component.h>
+>  #include <linux/iommu.h>
+> +#include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_graph.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/pm_runtime.h>
+>  
+> @@ -133,7 +135,7 @@ static const struct drm_mode_config_funcs mtk_drm_mode_config_funcs = {
+>  	.atomic_commit = mtk_atomic_commit,
+>  };
+>  
+> -static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+> +static enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+>  	DDP_COMPONENT_OVL0,
+>  	DDP_COMPONENT_RDMA0,
+>  	DDP_COMPONENT_COLOR0,
+> @@ -141,7 +143,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+>  	DDP_COMPONENT_DSI0,
+>  };
+>  
+> -static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+> +static enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+>  	DDP_COMPONENT_RDMA1,
+>  	DDP_COMPONENT_DPI0,
+>  };
+> @@ -172,7 +174,7 @@ static const enum mtk_ddp_comp_id mt2712_mtk_ddp_third[] = {
+>  	DDP_COMPONENT_PWM2,
+>  };
+>  
+> -static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+> +static enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+>  	DDP_COMPONENT_OVL0,
+>  	DDP_COMPONENT_COLOR0,
+>  	DDP_COMPONENT_AAL0,
+> @@ -183,7 +185,7 @@ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+>  	DDP_COMPONENT_PWM0,
+>  };
+>  
+> -static const enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
+> +static enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
+>  	DDP_COMPONENT_OVL1,
+>  	DDP_COMPONENT_COLOR1,
+>  	DDP_COMPONENT_GAMMA,
+> @@ -472,6 +474,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  
+>  	/* Iterate over sibling DISP function blocks */
+>  	for_each_child_of_node(dev->of_node->parent, node) {
+> +		struct device_node *port, *ep, *remote;
+>  		const struct of_device_id *of_id;
+>  		enum mtk_ddp_comp_type comp_type;
+>  		int comp_id;
+> @@ -531,6 +534,32 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  
+>  			private->ddp_comp[comp_id] = comp;
+>  		}
+> +
+> +		if (comp_type != MTK_DSI && comp_type != MTK_DPI) {
+> +			port = of_graph_get_port_by_id(node, 0);
+> +			if (!port)
+> +				continue;
+> +			ep = of_get_child_by_name(port, "endpoint");
+> +			of_node_put(port);
+> +			if (!ep)
+> +				continue;
+> +			remote = of_graph_get_remote_port_parent(ep);
+> +			of_node_put(ep);
+> +			if (!remote)
+> +				continue;
+> +			of_id = of_match_node(mtk_ddp_comp_dt_ids, remote);
+> +			if (!of_id)
+> +				continue;
+> +			comp_type = (enum mtk_ddp_comp_type)of_id->data;
+> +			for (i = 0; i < private->data->main_len - 1; i++)
+> +				if (private->data->main_path[i] == comp_id)
+> +					private->data->main_path[i + 1] =
+> +					mtk_ddp_comp_get_id(node, comp_type);
+> +			for (i = 0; i < private->data->ext_len - 1; i++)
+> +				if (private->data->ext_path[i] == comp_id)
+> +					private->data->ext_path[i + 1] =
+> +					mtk_ddp_comp_get_id(node, comp_type);
+> +		}
 
-I would like to get our Distro partners to back port these changes,
-but they must first be upstream.  :)
+I think you should add description in binding document
+(Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt)
+for this. After the binding document is fully reviewed, we could start
+to review this patch.
 
-Do you know when you will include these in a pull request so that I can
-pass on to them when to schedule the work?
+Regards,
+CK
 
-Thanks
+>  	}
+>  
+>  	if (!private->mutex_node) {
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> index ecc00ca3221d..256a3ff2e66e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> @@ -29,9 +29,9 @@ struct drm_property;
+>  struct regmap;
+>  
+>  struct mtk_mmsys_driver_data {
+> -	const enum mtk_ddp_comp_id *main_path;
+> +	enum mtk_ddp_comp_id *main_path;
+>  	unsigned int main_len;
+> -	const enum mtk_ddp_comp_id *ext_path;
+> +	enum mtk_ddp_comp_id *ext_path;
+>  	unsigned int ext_len;
+>  	const enum mtk_ddp_comp_id *third_path;
+>  	unsigned int third_len;
 
-The patch e-mails are at:
-	https://lkml.org/lkml/2018/8/8/769
 
-Jerry
-
-> 
-> -----------------------------
-> 
-> Two defect fixes and one enhancement.  
-> 
-> 0001: Initialize pretimeout from module parameter.
-> 
-> Bug Fix.
-> 
-> Pretimeout was getting programmed correctly in the hardware,
-> but this issue caused it to not be displayed correctly
-> in sysfs.
-> 
-> 
-> 
-> 0002: Claim NMI from iLO
-> 
-> Bug Fix.
-> 
-> Default configuration worked, but if user were to disable the
-> pretimeout for the watchdog, then an explicit request to NMI
-> the system from the iLO virutal button would fail.
-> 
-> 
-> 0003: Display module parameters
-> 
-> Enhancement.
-> 
-> Display all the module parameters when loading the driver.
-> Makes it easier to diagnose problems.
-> 
-> 
-> Jerry
-> 
-> 
-> Jerry Hoemann (5):
->   watchdog: hpwdt: Initialize pretimeout from module parameter.
->   watchdog: hpwdt: Claim NMI from iLO
->   watchdog: hpwdt: Display module parameters.
->   watchdog: hpwdt: Module paramerter alias.
->   watchdog: hpwdt: Update version number.
-> 
->  drivers/watchdog/hpwdt.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 1.8.3.1
-
--- 
-
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
