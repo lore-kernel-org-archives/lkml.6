@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7383FC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F710C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7E22077C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC8EF2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:06:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="p0wmvMcM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7E22077C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="EVt2PaVF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8EF2075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbeIFMkx (ORCPT
+        id S1728030AbeIFMjt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:40:53 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53549 "EHLO
+        Thu, 6 Sep 2018 08:39:49 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53554 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbeIFMjt (ORCPT
+        with ESMTP id S1725819AbeIFMjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Sep 2018 08:39:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1536221194; x=1567757194;
+  t=1536221193; x=1567757193;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=Sz9aiXUeol0D5G2xGuxSOpv8o7m6ObTOOiPVmWa1qF4=;
-  b=p0wmvMcMcol351tr/RarOdxiiqMubC6w6wtOp+dPjS8NDAulQeKAsNte
-   MjQjoIdzL9RXJ8433sKWM2wYnsLf4+n+ngm+LMTiHIUS9D5i3ZQAScloN
-   q0/f1SOy+RqUfAEE68/O7CbQiFZBr4vDTS7QQcGli3FRof7WFfWCta+pG
-   wKX9bK7lhNKuDI86lPDsl67IeBoIHG+g5wUD2g1maZyb3LIGMgQprsrLZ
-   32+RqCOd/o/4K1WxiRaC0Egqm5P77AsLqnOTiD5xCSyfMlzOJioyhB5OG
-   i1mwRDB8532afTWEQcTPNJub/M9RXVD7lcg/fegKpgr1GInyGs2Qpc4Xj
-   A==;
+  bh=bfVTp7cnxr5hnNuRr8+ZprlpDsamHWYPA+p2uCLMvek=;
+  b=EVt2PaVFkAHH40J4Y8LRXXdOSv8huHIaYKntaDeIF/58PStS3E7/v4qL
+   /pY2C12vLp2dZfKULiXcCqzi/YYgcQ8H9bsDrO4OiY51eoAwQNM2Sx0Ed
+   re0h4uyrncUre70FPpoibndrUnGI9ne6cQ273I8+B+iCrCSbWKSURbpvs
+   bqI8ieBmRLSaAc2bsVHX/TnjZCHFM3taNvr/NQeRi/orghwSbrZYIOMtB
+   uLbI8QLHGT0usKFpMGzbiErgXOkHgpD+Ccu6MoFThR9j+hkLFfn9GdVo2
+   YUin4nhIbQRwoPzDOpBNmcmGpqzm8WQLdctwdRzfSjsZkL1RWwGzahqbp
+   g==;
 X-IronPort-AV: E=Sophos;i="5.53,337,1531756800"; 
-   d="scan'208";a="186673943"
+   d="scan'208";a="186673940"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Sep 2018 16:06:33 +0800
+  by ob1.hgst.iphmx.com with ESMTP; 06 Sep 2018 16:06:32 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
   by uls-op-cesaep02.wdc.com with ESMTP; 06 Sep 2018 00:52:12 -0700
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 06 Sep 2018 01:05:37 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 06 Sep 2018 01:05:36 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
         hch@infradead.org, anup@brainfault.org
@@ -55,9 +55,9 @@ Cc:     mark.rutland@arm.com, atish.patra@wdc.com, tglx@linutronix.de,
         gregkh@linuxfoundation.org, jason@lakedaemon.net,
         catalin.marinas@arm.com, dmitriy@oss-tech.org,
         ard.biesheuvel@linaro.org
-Subject: [PATCH v3 03/12] RISC-V: Comment on the TLB flush in smp_callin()
-Date:   Thu,  6 Sep 2018 01:05:26 -0700
-Message-Id: <1536221135-182613-4-git-send-email-atish.patra@wdc.com>
+Subject: [PATCH v3 02/12] RISC-V: Filter ISA and MMU values in cpuinfo
+Date:   Thu,  6 Sep 2018 01:05:25 -0700
+Message-Id: <1536221135-182613-3-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536221135-182613-1-git-send-email-atish.patra@wdc.com>
 References: <1536221135-182613-1-git-send-email-atish.patra@wdc.com>
@@ -68,30 +68,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Palmer Dabbelt <palmer@sifive.com>
 
-This isn't readily apparent from reading the code.
+We shouldn't be directly passing device tree values to userspace, both
+because there could be mistakes in device trees and because the kernel
+doesn't support arbitrary ISAs.
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-[Atish: code comment formatting update]
+[Atish: checkpatch fix and code comment formatting update]
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- arch/riscv/kernel/smpboot.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/riscv/kernel/cpu.c | 68 ++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 7 deletions(-)
 
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 56abab6a..712e9ca8 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -106,6 +106,10 @@ asmlinkage void __init smp_callin(void)
- 	trap_init();
- 	notify_cpu_starting(smp_processor_id());
- 	set_cpu_online(smp_processor_id(), 1);
+diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+index ca6c81e5..b10cf054 100644
+--- a/arch/riscv/kernel/cpu.c
++++ b/arch/riscv/kernel/cpu.c
+@@ -58,6 +58,63 @@ int riscv_of_processor_hart(struct device_node *node)
+ 
+ #ifdef CONFIG_PROC_FS
+ 
++static void print_isa(struct seq_file *f, const char *orig_isa)
++{
++	static const char *ext = "mafdc";
++	const char *isa = orig_isa;
++	const char *e;
++
 +	/*
-+	 * Remote TLB flushes are ignored while the CPU is offline, so emit
-+	 * a local TLB flush right now just in case.
++	 * Linux doesn't support rv32e or rv128i, and we only support booting
++	 * kernels on harts with the same ISA that the kernel is compiled for.
 +	 */
- 	local_flush_tlb_all();
- 	local_irq_enable();
- 	preempt_disable();
++#if defined(CONFIG_32BIT)
++	if (strncmp(isa, "rv32i", 5) != 0)
++		return;
++#elif defined(CONFIG_64BIT)
++	if (strncmp(isa, "rv64i", 5) != 0)
++		return;
++#endif
++
++	/* Print the base ISA, as we already know it's legal. */
++	seq_puts(f, "isa\t: ");
++	seq_write(f, isa, 5);
++	isa += 5;
++
++	/*
++	 * Check the rest of the ISA string for valid extensions, printing those
++	 * we find.  RISC-V ISA strings define an order, so we only print the
++	 * extension bits when they're in order.
++	 */
++	for (e = ext; *e != '\0'; ++e) {
++		if (isa[0] == e[0]) {
++			seq_write(f, isa, 1);
++			isa++;
++		}
++	}
++
++	/*
++	 * If we were given an unsupported ISA in the device tree then print
++	 * a bit of info describing what went wrong.
++	 */
++	if (isa[0] != '\0')
++		pr_info("unsupported ISA \"%s\" in device tree", orig_isa);
++}
++
++static void print_mmu(struct seq_file *f, const char *mmu_type)
++{
++#if defined(CONFIG_32BIT)
++	if (strcmp(mmu_type, "riscv,sv32") != 0)
++		return;
++#elif defined(CONFIG_64BIT)
++	if ((strcmp(mmu_type, "riscv,sv39") != 0)
++	    && (strcmp(mmu_type, "riscv,sv48") != 0))
++		return;
++#endif
++
++	seq_printf(f, "mmu\t: %s\n", mmu_type+6);
++}
++
+ static void *c_start(struct seq_file *m, loff_t *pos)
+ {
+ 	*pos = cpumask_next(*pos - 1, cpu_online_mask);
+@@ -83,13 +140,10 @@ static int c_show(struct seq_file *m, void *v)
+ 	const char *compat, *isa, *mmu;
+ 
+ 	seq_printf(m, "hart\t: %lu\n", hart_id);
+-	if (!of_property_read_string(node, "riscv,isa", &isa)
+-	    && isa[0] == 'r'
+-	    && isa[1] == 'v')
+-		seq_printf(m, "isa\t: %s\n", isa);
+-	if (!of_property_read_string(node, "mmu-type", &mmu)
+-	    && !strncmp(mmu, "riscv,", 6))
+-		seq_printf(m, "mmu\t: %s\n", mmu+6);
++	if (!of_property_read_string(node, "riscv,isa", &isa))
++		print_isa(m, isa);
++	if (!of_property_read_string(node, "mmu-type", &mmu))
++		print_mmu(m, mmu);
+ 	if (!of_property_read_string(node, "compatible", &compat)
+ 	    && strcmp(compat, "riscv"))
+ 		seq_printf(m, "uarch\t: %s\n", compat);
 -- 
 2.7.4
 
