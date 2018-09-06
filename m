@@ -2,92 +2,103 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37844C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7103C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E382420857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E382420857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FB0E20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:01:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QmIeab5U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB0E20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbeIFRg3 (ORCPT
+        id S1728818AbeIFRgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:36:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33240 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727700AbeIFRg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:36:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F34AFAE70;
-        Thu,  6 Sep 2018 13:01:03 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 15:01:02 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Rob Herring <robh@kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        mingo@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
-        paul.burton@mips.com, Thomas Gleixner <tglx@linutronix.de>,
-        tony.luck@intel.com, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 07/29] memblock: remove _virt from APIs returning
- virtual address
-Message-ID: <20180906130102.GY14951@dhcp22.suse.cz>
-References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1536163184-26356-8-git-send-email-rppt@linux.vnet.ibm.com>
- <CABGGiswdb1x-=vqrgxZ9i2dnLdsgtXq4+5H9Y1JRd90YVMW69A@mail.gmail.com>
- <20180905172017.GA2203@rapoport-lnx>
- <20180906072800.GN14951@dhcp22.suse.cz>
- <20180906124321.GD27492@rapoport-lnx>
+        Thu, 6 Sep 2018 13:36:39 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51670 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728803AbeIFRgi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:36:38 -0400
+Received: by mail-it0-f65.google.com with SMTP id e14-v6so14587701itf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 06:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xI4pb01POVYyYfifY/Nw/wjK5kaIjPidd8bHfuORLtA=;
+        b=QmIeab5UuE6tqApc/KxxwaRSRP/rBf4qRwrDW7j8rYakSoz2e0l5JCSHCfOjci5EPT
+         bYfk7FP20HVYvmabObbQHhvm8fisbnePjl06/OMfzQFBR6aaXfh9zFAZ7JvoVZht9XtH
+         pbzhqlGNR+qlF/j2OYfoe6QKI4ljJ3YTQ/Xuw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xI4pb01POVYyYfifY/Nw/wjK5kaIjPidd8bHfuORLtA=;
+        b=UdDSiwYtKpSkye06fS9QGUFn1qjEpnBvOMZ6R99pKKewlNol7iqYOL6IelLm6SU3iw
+         OwiJqAgr8K2lZoLfFOWcfsbbV+azXKIIhxOyUfvpACv7vfNV8sms16jcWSH/1OHvLGVb
+         SmE/JPrkD2AivOAtQqBLvgPczjAcHzXaS+bPqsXO+3OYmQ8BWlCKOUoDm5Edq7sGhnuZ
+         dBxGqpE1nQ85xOxDzleYKJCfqk9cmkh2gLDpuTX9vhO2NBN24gLUP/eC7bBONE5cUQfe
+         D9wuozq+HIQ0U86yF+B95kHMob60IKqD7t1YnL/TvaMuRXQqAwYcp5QtSjOZlf6AWeH4
+         JJ1Q==
+X-Gm-Message-State: APzg51DuApQCBqdji2Lg4aEbB/soDI/62DIISNmv75XpHZv/omcMXOki
+        bFUcVV0QQWtdOkin75Dg3NZrHY4BZlfGXSoqwVgDLA==
+X-Google-Smtp-Source: ANB0VdY2RGG+wEONcGehZLuaHPzHDGohFL+3Y9vNlOkWnOl5haLvqc/EbaGEqn5v9f+kkBL60SHWNkNQJ1CDf5WIxZQ=
+X-Received: by 2002:a02:5916:: with SMTP id p22-v6mr1841916jab.113.1536238874472;
+ Thu, 06 Sep 2018 06:01:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906124321.GD27492@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180905090555.9888-1-geert+renesas@glider.be>
+In-Reply-To: <20180905090555.9888-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 6 Sep 2018 15:01:02 +0200
+Message-ID: <CACRpkdZMD-GJUtcSiP30Rb-XAR6OHXZvdmEgOY-CxgauDGvViQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpio: Fix VLA removal fallout
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 06-09-18 15:43:21, Mike Rapoport wrote:
-> On Thu, Sep 06, 2018 at 09:28:00AM +0200, Michal Hocko wrote:
-> > On Wed 05-09-18 20:20:18, Mike Rapoport wrote:
-> > > On Wed, Sep 05, 2018 at 12:04:36PM -0500, Rob Herring wrote:
-> > > > On Wed, Sep 5, 2018 at 11:00 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> > > > >
-> > > > > The conversion is done using
-> > > > >
-> > > > > sed -i 's@memblock_virt_alloc@memblock_alloc@g' \
-> > > > >         $(git grep -l memblock_virt_alloc)
-> > > > 
-> > > > What's the reason to do this? It seems like a lot of churn even if a
-> > > > mechanical change.
-> > > 
-> > > I felt that memblock_virt_alloc_ is too long for a prefix, e.g:
-> > > memblock_virt_alloc_node_nopanic, memblock_virt_alloc_low_nopanic.
-> > > 
-> > > And for consistency I've changed the memblock_virt_alloc as well.
-> > 
-> > I would keep the current API unless the name is terribly misleading or
-> > it can be improved a lot. Neither seems to be the case here. So I would
-> > rather stick with the status quo.
-> 
-> I'm ok with the memblock_virt_alloc by itself, but having 'virt' in
-> 'memblock_virt_alloc_try_nid_nopanic' and 'memblock_virt_alloc_low_nopanic'
-> reduces code readability in my opinion.
+Hi Geert,
 
-Well, is _nopanic really really useful in the name. Do we even need/want
-implicit panic/nopanic semantic? The code should rather check for the
-return value and decide depending on the code path. I suspect removing
-panic/nopanic would make the API slightly lighter.
+Thanks for the patches!
 
--- 
-Michal Hocko
-SUSE Labs
+On Wed, Sep 5, 2018 at 11:23 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+
+> This patch series fixes various (mostly harmless) issues introduced by
+> commit 3027743f83f867d8 ("gpio: Remove VLA from gpiolib").
+>
+> As per the "one patch should fix one issue"-policy, this series contains 3
+> patches, although they all have the same Fixes: tag.
+>
+> W.r.t. propagating errors: while gpiod_set_array_value_complex() and its
+> callers can now return an error code, this is currently limited to -ENOMEM.
+> Actual failures setting a GPIO output value cannot be propagated, as
+> gpio_chip.set() still returns void.  Do you want to change that?
+> E.g. gen_74x164_set_value() can fail.
+>
+> Feel free to fold patches if deemed appropriate.
+
+What I want to know is if these patches drive a truck through Janusz patch
+set augmenting the array functions that I definately also plan to merge for
+this kernel cycle.
+
+Issues should be fixed of course, but if some of them already disappear
+if I apply Janusz patches, I'd rather postpone ... is it going to be hard
+to redo the cleanups on top of his patches?
+
+Yours,
+Linus Walleij
