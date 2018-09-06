@@ -2,206 +2,433 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD038C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9396CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881D32064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881D32064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 431F72064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431F72064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbeIFSHQ (ORCPT
+        id S1729567AbeIFSHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:07:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728776AbeIFSHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:07:16 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50FD340216F6;
-        Thu,  6 Sep 2018 13:31:41 +0000 (UTC)
-Received: from redhat.com (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D8132027EA0;
-        Thu,  6 Sep 2018 13:31:35 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 09:31:33 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <liguozhu@hisilicon.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180906133133.GA3830@redhat.com>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180904150019.GA4024@redhat.com>
- <20180904101509.62314b67@t450s.home>
- <20180906094532.GG230707@Turing-Arch-b>
+        Thu, 6 Sep 2018 14:07:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35583 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728776AbeIFSHV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:07:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DVNK0308669
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:31:23 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DVNBl308666;
+        Thu, 6 Sep 2018 06:31:23 -0700
+Date:   Thu, 6 Sep 2018 06:31:23 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-fa7070a38676d660c0a71ab6981bfdca3b340ccd@git.kernel.org>
+Cc:     acme@redhat.com, hpa@zytor.com, mingo@kernel.org,
+        andi@firstfloor.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, dsahern@gmail.com,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, dsahern@gmail.com,
+          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+          jolsa@kernel.org, tglx@linutronix.de, andi@firstfloor.org,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+          acme@redhat.com
+In-Reply-To: <20180830063252.23729-21-jolsa@kernel.org>
+References: <20180830063252.23729-21-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Move csv_* to 'struct perf_stat_config'
+Git-Commit-ID: fa7070a38676d660c0a71ab6981bfdca3b340ccd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180906094532.GG230707@Turing-Arch-b>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 06 Sep 2018 13:31:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 06 Sep 2018 13:31:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 05:45:32PM +0800, Kenneth Lee wrote:
-> On Tue, Sep 04, 2018 at 10:15:09AM -0600, Alex Williamson wrote:
-> > Date: Tue, 4 Sep 2018 10:15:09 -0600
-> > From: Alex Williamson <alex.williamson@redhat.com>
-> > To: Jerome Glisse <jglisse@redhat.com>
-> > CC: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-> >  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
-> >  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Kenneth Lee
-> >  <liguozhu@hisilicon.com>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
-> >  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
-> >  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
-> >  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-> >  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-> >  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-> >  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
-> >  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
-> >  linuxarm@huawei.com
-> > Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> > Message-ID: <20180904101509.62314b67@t450s.home>
-> > 
-> > On Tue, 4 Sep 2018 11:00:19 -0400
-> > Jerome Glisse <jglisse@redhat.com> wrote:
-> > 
-> > > On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
-> > > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > 
-> > > > WarpDrive is an accelerator framework to expose the hardware capabilities
-> > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
-> > > > facilities. So the user application can send request and DMA to the
-> > > > hardware without interaction with the kernel. This removes the latency
-> > > > of syscall.
-> > > > 
-> > > > WarpDrive is the name for the whole framework. The component in kernel
-> > > > is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
-> > > > hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
-> > > > library of WarpDrive can access it via VFIO interface.
-> > > > 
-> > > > The patchset contains document for the detail. Please refer to it for more
-> > > > information.
-> > > > 
-> > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
-> > > > patch [1], which enables not only IO side page fault, but also PASID
-> > > > support to IOMMU and VFIO.
-> > > > 
-> > > > With these features, WarpDrive can support non-pinned memory and
-> > > > multi-process in the same accelerator device.  We tested it in our SoC
-> > > > integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
-> > > > tree can be found here: [2].
-> > > > 
-> > > > But it is not mandatory. This patchset is tested in the latest mainline
-> > > > kernel without the SVA patches.  So it supports only one process for each
-> > > > accelerator.
-> > > > 
-> > > > We have noticed the IOMMU aware mdev RFC announced recently [3].
-> > > > 
-> > > > The IOMMU aware mdev has similar idea but different intention comparing to
-> > > > WarpDrive. It intends to dedicate part of the hardware resource to a VM.
-> > > > And the design is supposed to be used with Scalable I/O Virtualization.
-> > > > While sdmdev is intended to share the hardware resource with a big amount
-> > > > of processes.  It just requires the hardware supporting address
-> > > > translation per process (PCIE's PASID or ARM SMMU's substream ID).
-> > > > 
-> > > > But we don't see serious confliction on both design. We believe they can be
-> > > > normalized as one.
-> > > >   
-> > > 
-> > > So once again i do not understand why you are trying to do things
-> > > this way. Kernel already have tons of example of everything you
-> > > want to do without a new framework. Moreover i believe you are
-> > > confuse by VFIO. To me VFIO is for VM not to create general device
-> > > driver frame work.
-> > 
-> > VFIO is a userspace driver framework, the VM use case just happens to
-> > be a rather prolific one.  VFIO was never intended to be solely a VM
-> > device interface and has several other userspace users, notably DPDK
-> > and SPDK, an NVMe backend in QEMU, a userspace NVMe driver, a ruby
-> > wrapper, and perhaps others that I'm not aware of.  Whether vfio is
-> > appropriate interface here might certainly still be a debatable topic,
-> > but I would strongly disagree with your last sentence above.  Thanks,
-> > 
-> > Alex
-> > 
-> 
-> Yes, that is also my standpoint here.
-> 
-> > > So here is your use case as i understand it. You have a device
-> > > with a limited number of command queues (can be just one) and in
-> > > some case it can support SVA/SVM (when hardware support it and it
-> > > is not disabled). Final requirement is being able to schedule cmds
-> > > from userspace without ioctl. All of this exists already exists
-> > > upstream in few device drivers.
-> > > 
-> > > 
-> > > So here is how every body else is doing it. Please explain why
-> > > this does not work.
-> > > 
-> > > 1 Userspace open device file driver. Kernel device driver create
-> > >   a context and associate it with on open. This context can be
-> > >   uniq to the process and can bind hardware resources (like a
-> > >   command queue) to the process.
-> > > 2 Userspace bind/acquire a commands queue and initialize it with
-> > >   an ioctl on the device file. Through that ioctl userspace can
-> > >   be inform wether either SVA/SVM works for the device. If SVA/
-> > >   SVM works then kernel device driver bind the process to the
-> > >   device as part of this ioctl.
-> > > 3 If SVM/SVA does not work userspace do an ioctl to create dma
-> > >   buffer or something that does exactly the same thing.
-> > > 4 Userspace mmap the command queue (mmap of the device file by
-> > >   using informations gather at step 2)
-> > > 5 Userspace can write commands into the queue it mapped
-> > > 6 When userspace close the device file all resources are release
-> > >   just like any existing device drivers.
-> 
-> Hi, Jerome,
-> 
-> Just one thing, as I said in the cover letter, dma-buf requires the application
-> to use memory created by the driver for DMA. I did try the dma-buf way in
-> WrapDrive (refer to [4] in the cover letter), it is a good backup for NOIOMMU
-> mode or we cannot solve the problem in VFIO.
-> 
-> But, in many of my application scenario, the application already has some memory
-> in hand, maybe allocated by the framework or libraries. Anyway, they don't get
-> memory from my library, and they pass the poiter for data operation. And they
-> may also have pointer in the buffer. Those pointer may be used by the
-> accelerator. So I need hardware fully share the address space with the
-> application. That is what dmabuf cannot do.
+Commit-ID:  fa7070a38676d660c0a71ab6981bfdca3b340ccd
+Gitweb:     https://git.kernel.org/tip/fa7070a38676d660c0a71ab6981bfdca3b340ccd
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 30 Aug 2018 08:32:29 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
 
-dmabuf can do that ... it is call uptr you can look at i915 for
-instance. Still this does not answer my question above, why do
-you need to be in VFIO to do any of the above thing ? Kernel has
-tons of examples that does all of the above and are not in VFIO
-(including usinng existing user pointer with device).
+perf stat: Move csv_* to 'struct perf_stat_config'
 
-Cheers,
-Jérôme
+Move the static csv_* variables to 'struct perf_stat_config', so that it
+can be passed around and used outside the 'perf stat' command.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180830063252.23729-21-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 114 +++++++++++++++++++++++-----------------------
+ tools/perf/util/stat.h    |   2 +
+ 2 files changed, 58 insertions(+), 58 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 7a3361308e61..4c29e5065e02 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -157,8 +157,6 @@ static bool			smi_cost			= false;
+ static bool			smi_reset			= false;
+ static bool			big_num				=  true;
+ static int			big_num_opt			=  -1;
+-static const char		*csv_sep			= NULL;
+-static bool			csv_output			= false;
+ static bool			group				= false;
+ static const char		*pre_cmd			= NULL;
+ static const char		*post_cmd			= NULL;
+@@ -663,11 +661,11 @@ static int run_perf_stat(int argc, const char **argv, int run_idx)
+ static void print_running(struct perf_stat_config *config,
+ 			  u64 run, u64 ena)
+ {
+-	if (csv_output) {
++	if (config->csv_output) {
+ 		fprintf(config->output, "%s%" PRIu64 "%s%.2f",
+-					csv_sep,
++					config->csv_sep,
+ 					run,
+-					csv_sep,
++					config->csv_sep,
+ 					ena ? 100.0 * run / ena : 100.0);
+ 	} else if (run != ena) {
+ 		fprintf(config->output, "  (%.2f%%)", 100.0 * run / ena);
+@@ -679,8 +677,8 @@ static void print_noise_pct(struct perf_stat_config *config,
+ {
+ 	double pct = rel_stddev_stats(total, avg);
+ 
+-	if (csv_output)
+-		fprintf(config->output, "%s%.2f%%", csv_sep, pct);
++	if (config->csv_output)
++		fprintf(config->output, "%s%.2f%%", config->csv_sep, pct);
+ 	else if (pct)
+ 		fprintf(config->output, "  ( +-%6.2f%% )", pct);
+ }
+@@ -704,34 +702,34 @@ static void aggr_printout(struct perf_stat_config *config,
+ 	case AGGR_CORE:
+ 		fprintf(config->output, "S%d-C%*d%s%*d%s",
+ 			cpu_map__id_to_socket(id),
+-			csv_output ? 0 : -8,
++			config->csv_output ? 0 : -8,
+ 			cpu_map__id_to_cpu(id),
+-			csv_sep,
+-			csv_output ? 0 : 4,
++			config->csv_sep,
++			config->csv_output ? 0 : 4,
+ 			nr,
+-			csv_sep);
++			config->csv_sep);
+ 		break;
+ 	case AGGR_SOCKET:
+ 		fprintf(config->output, "S%*d%s%*d%s",
+-			csv_output ? 0 : -5,
++			config->csv_output ? 0 : -5,
+ 			id,
+-			csv_sep,
+-			csv_output ? 0 : 4,
++			config->csv_sep,
++			config->csv_output ? 0 : 4,
+ 			nr,
+-			csv_sep);
++			config->csv_sep);
+ 			break;
+ 	case AGGR_NONE:
+ 		fprintf(config->output, "CPU%*d%s",
+-			csv_output ? 0 : -4,
+-			perf_evsel__cpus(evsel)->map[id], csv_sep);
++			config->csv_output ? 0 : -4,
++			perf_evsel__cpus(evsel)->map[id], config->csv_sep);
+ 		break;
+ 	case AGGR_THREAD:
+ 		fprintf(config->output, "%*s-%*d%s",
+-			csv_output ? 0 : 16,
++			config->csv_output ? 0 : 16,
+ 			thread_map__comm(evsel->threads, id),
+-			csv_output ? 0 : -8,
++			config->csv_output ? 0 : -8,
+ 			thread_map__pid(evsel->threads, id),
+-			csv_sep);
++			config->csv_sep);
+ 		break;
+ 	case AGGR_GLOBAL:
+ 	case AGGR_UNSET:
+@@ -804,10 +802,10 @@ static void new_line_csv(struct perf_stat_config *config, void *ctx)
+ 
+ 	fputc('\n', os->fh);
+ 	if (os->prefix)
+-		fprintf(os->fh, "%s%s", os->prefix, csv_sep);
++		fprintf(os->fh, "%s%s", os->prefix, config->csv_sep);
+ 	aggr_printout(config, os->evsel, os->id, os->nr);
+ 	for (i = 0; i < os->nfields; i++)
+-		fputs(csv_sep, os->fh);
++		fputs(config->csv_sep, os->fh);
+ }
+ 
+ static void print_metric_csv(struct perf_stat_config *config __maybe_unused,
+@@ -820,7 +818,7 @@ static void print_metric_csv(struct perf_stat_config *config __maybe_unused,
+ 	char buf[64], *vals, *ends;
+ 
+ 	if (unit == NULL || fmt == NULL) {
+-		fprintf(out, "%s%s", csv_sep, csv_sep);
++		fprintf(out, "%s%s", config->csv_sep, config->csv_sep);
+ 		return;
+ 	}
+ 	snprintf(buf, sizeof(buf), fmt, val);
+@@ -830,7 +828,7 @@ static void print_metric_csv(struct perf_stat_config *config __maybe_unused,
+ 	*ends = 0;
+ 	while (isspace(*unit))
+ 		unit++;
+-	fprintf(out, "%s%s%s%s", csv_sep, vals, csv_sep, unit);
++	fprintf(out, "%s%s%s%s", config->csv_sep, vals, config->csv_sep, unit);
+ }
+ 
+ /* Filter out some columns that don't work well in metrics only mode */
+@@ -898,7 +896,7 @@ static void print_metric_only_csv(struct perf_stat_config *config __maybe_unused
+ 	while (isdigit(*ends) || *ends == '.')
+ 		ends++;
+ 	*ends = 0;
+-	fprintf(out, "%s%s", vals, csv_sep);
++	fprintf(out, "%s%s", vals, config->csv_sep);
+ }
+ 
+ static void new_line_metric(struct perf_stat_config *config __maybe_unused,
+@@ -917,8 +915,8 @@ static void print_metric_header(struct perf_stat_config *config __maybe_unused,
+ 	if (!valid_only_metric(unit))
+ 		return;
+ 	unit = fixunit(tbuf, os->evsel, unit);
+-	if (csv_output)
+-		fprintf(os->fh, "%s%s", unit, csv_sep);
++	if (config->csv_output)
++		fprintf(os->fh, "%s%s", unit, config->csv_sep);
+ 	else
+ 		fprintf(os->fh, "%*s ", metric_only_len, unit);
+ }
+@@ -952,7 +950,7 @@ static void abs_printout(struct perf_stat_config *config,
+ 	double sc =  evsel->scale;
+ 	const char *fmt;
+ 
+-	if (csv_output) {
++	if (config->csv_output) {
+ 		fmt = floor(sc) != sc ?  "%.2f%s" : "%.0f%s";
+ 	} else {
+ 		if (big_num)
+@@ -963,17 +961,17 @@ static void abs_printout(struct perf_stat_config *config,
+ 
+ 	aggr_printout(config, evsel, id, nr);
+ 
+-	fprintf(output, fmt, avg, csv_sep);
++	fprintf(output, fmt, avg, config->csv_sep);
+ 
+ 	if (evsel->unit)
+ 		fprintf(output, "%-*s%s",
+-			csv_output ? 0 : unit_width,
+-			evsel->unit, csv_sep);
++			config->csv_output ? 0 : unit_width,
++			evsel->unit, config->csv_sep);
+ 
+-	fprintf(output, "%-*s", csv_output ? 0 : 25, perf_evsel__name(evsel));
++	fprintf(output, "%-*s", config->csv_output ? 0 : 25, perf_evsel__name(evsel));
+ 
+ 	if (evsel->cgrp)
+-		fprintf(output, "%s%s", csv_sep, evsel->cgrp->name);
++		fprintf(output, "%s%s", config->csv_sep, evsel->cgrp->name);
+ }
+ 
+ static bool is_mixed_hw_group(struct perf_evsel *counter)
+@@ -1018,14 +1016,14 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 
+ 	if (metric_only) {
+ 		nl = new_line_metric;
+-		if (csv_output)
++		if (config->csv_output)
+ 			pm = print_metric_only_csv;
+ 		else
+ 			pm = print_metric_only;
+ 	} else
+ 		nl = new_line_std;
+ 
+-	if (csv_output && !metric_only) {
++	if (config->csv_output && !metric_only) {
+ 		static int aggr_fields[] = {
+ 			[AGGR_GLOBAL] = 0,
+ 			[AGGR_THREAD] = 1,
+@@ -1049,9 +1047,9 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 		aggr_printout(config, counter, id, nr);
+ 
+ 		fprintf(config->output, "%*s%s",
+-			csv_output ? 0 : 18,
++			config->csv_output ? 0 : 18,
+ 			counter->supported ? CNTR_NOT_COUNTED : CNTR_NOT_SUPPORTED,
+-			csv_sep);
++			config->csv_sep);
+ 
+ 		if (counter->supported) {
+ 			print_free_counters_hint = 1;
+@@ -1060,22 +1058,22 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 		}
+ 
+ 		fprintf(config->output, "%-*s%s",
+-			csv_output ? 0 : unit_width,
+-			counter->unit, csv_sep);
++			config->csv_output ? 0 : unit_width,
++			counter->unit, config->csv_sep);
+ 
+ 		fprintf(config->output, "%*s",
+-			csv_output ? 0 : -25,
++			config->csv_output ? 0 : -25,
+ 			perf_evsel__name(counter));
+ 
+ 		if (counter->cgrp)
+ 			fprintf(config->output, "%s%s",
+-				csv_sep, counter->cgrp->name);
++				config->csv_sep, counter->cgrp->name);
+ 
+-		if (!csv_output)
++		if (!config->csv_output)
+ 			pm(config, &os, NULL, NULL, "", 0);
+ 		print_noise(config, counter, noise);
+ 		print_running(config, run, ena);
+-		if (csv_output)
++		if (config->csv_output)
+ 			pm(config, &os, NULL, NULL, "", 0);
+ 		return;
+ 	}
+@@ -1088,7 +1086,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 	out.ctx = &os;
+ 	out.force_header = false;
+ 
+-	if (csv_output && !metric_only) {
++	if (config->csv_output && !metric_only) {
+ 		print_noise(config, counter, noise);
+ 		print_running(config, run, ena);
+ 	}
+@@ -1096,7 +1094,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 	perf_stat__print_shadow_stats(config, counter, uval,
+ 				first_shadow_cpu(counter, id),
+ 				&out, &metric_events, st);
+-	if (!csv_output && !metric_only) {
++	if (!config->csv_output && !metric_only) {
+ 		print_noise(config, counter, noise);
+ 		print_running(config, run, ena);
+ 	}
+@@ -1512,10 +1510,10 @@ static void print_metric_headers(struct perf_stat_config *config,
+ 	if (prefix)
+ 		fprintf(config->output, "%s", prefix);
+ 
+-	if (!csv_output && !no_indent)
++	if (!config->csv_output && !no_indent)
+ 		fprintf(config->output, "%*s",
+ 			aggr_header_lens[config->aggr_mode], "");
+-	if (csv_output) {
++	if (config->csv_output) {
+ 		if (config->interval)
+ 			fputs("time,", config->output);
+ 		fputs(aggr_header_csv[config->aggr_mode], config->output);
+@@ -1549,9 +1547,9 @@ static void print_interval(struct perf_stat_config *config,
+ 	if (interval_clear)
+ 		puts(CONSOLE_CLEAR);
+ 
+-	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
++	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, config->csv_sep);
+ 
+-	if ((num_print_interval == 0 && !csv_output) || interval_clear) {
++	if ((num_print_interval == 0 && !config->csv_output) || interval_clear) {
+ 		switch (config->aggr_mode) {
+ 		case AGGR_SOCKET:
+ 			fprintf(output, "#           time socket cpus");
+@@ -1597,7 +1595,7 @@ static void print_header(struct perf_stat_config *config,
+ 
+ 	fflush(stdout);
+ 
+-	if (!csv_output) {
++	if (!config->csv_output) {
+ 		fprintf(output, "\n");
+ 		fprintf(output, " Performance counter stats for ");
+ 		if (target.system_wide)
+@@ -1776,7 +1774,7 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 		break;
+ 	}
+ 
+-	if (!interval && !csv_output)
++	if (!interval && !config->csv_output)
+ 		print_footer(config);
+ 
+ 	fflush(config->output);
+@@ -1896,7 +1894,7 @@ static const struct option stat_options[] = {
+ 	OPT_SET_UINT('A', "no-aggr", &stat_config.aggr_mode,
+ 		    "disable CPU count aggregation", AGGR_NONE),
+ 	OPT_BOOLEAN(0, "no-merge", &no_merge, "Do not merge identical named events"),
+-	OPT_STRING('x', "field-separator", &csv_sep, "separator",
++	OPT_STRING('x', "field-separator", &stat_config.csv_sep, "separator",
+ 		   "print counts with custom separator"),
+ 	OPT_CALLBACK('G', "cgroup", &evsel_list, "name",
+ 		     "monitor event in cgroup name only", parse_cgroups),
+@@ -2749,12 +2747,12 @@ int cmd_stat(int argc, const char **argv)
+ 	perf_stat__collect_metric_expr(evsel_list);
+ 	perf_stat__init_shadow_stats();
+ 
+-	if (csv_sep) {
+-		csv_output = true;
+-		if (!strcmp(csv_sep, "\\t"))
+-			csv_sep = "\t";
++	if (stat_config.csv_sep) {
++		stat_config.csv_output = true;
++		if (!strcmp(stat_config.csv_sep, "\\t"))
++			stat_config.csv_sep = "\t";
+ 	} else
+-		csv_sep = DEFAULT_SEPARATOR;
++		stat_config.csv_sep = DEFAULT_SEPARATOR;
+ 
+ 	if (argc && !strncmp(argv[0], "rec", 3)) {
+ 		argc = __cmd_record(argc, argv);
+@@ -2827,7 +2825,7 @@ int cmd_stat(int argc, const char **argv)
+ 	/*
+ 	 * let the spreadsheet do the pretty-printing
+ 	 */
+-	if (csv_output) {
++	if (stat_config.csv_output) {
+ 		/* User explicitly passed -B? */
+ 		if (big_num_opt == 1) {
+ 			fprintf(stderr, "-B option not supported with -x\n");
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index dffcf2110706..18546d8b0279 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -91,6 +91,7 @@ struct perf_stat_config {
+ 	bool			 scale;
+ 	bool			 no_inherit;
+ 	bool			 identifier;
++	bool			 csv_output;
+ 	FILE			*output;
+ 	unsigned int		 interval;
+ 	unsigned int		 timeout;
+@@ -98,6 +99,7 @@ struct perf_stat_config {
+ 	int			 times;
+ 	struct runtime_stat	*stats;
+ 	int			 stats_num;
++	const char		*csv_sep;
+ };
+ 
+ void update_stats(struct stats *stats, u64 val);
