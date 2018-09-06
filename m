@@ -2,149 +2,161 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44ECC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9667AC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5C4206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5C4206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EA44206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:00:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA44206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeIFOdq (ORCPT
+        id S1728569AbeIFOfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:33:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33394 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725809AbeIFOdp (ORCPT
+        Thu, 6 Sep 2018 10:35:22 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:60237 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725809AbeIFOfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:33:45 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w869wsiu007735
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 05:59:04 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mb1p3s0xq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 05:59:04 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Thu, 6 Sep 2018 10:59:02 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 10:58:59 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w869wwFn45219860
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 09:58:58 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27E6DAE051;
-        Thu,  6 Sep 2018 12:58:20 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34488AE045;
-        Thu,  6 Sep 2018 12:58:18 +0100 (BST)
-Received: from skywalker (unknown [9.102.0.183])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Thu,  6 Sep 2018 12:58:17 +0100 (BST)
-Received: (nullmailer pid 6070 invoked by uid 1000);
-        Thu, 06 Sep 2018 09:58:55 -0000
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v1 00/17] ban the use of _PAGE_XXX flags outside platform specific code
-In-Reply-To: <cover.1535913369.git.christophe.leroy@c-s.fr>
-References: <cover.1535913369.git.christophe.leroy@c-s.fr>
-Date:   Thu, 06 Sep 2018 15:28:55 +0530
+        Thu, 6 Sep 2018 10:35:22 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="44559141"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 06 Sep 2018 18:00:37 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 7D3704B6AE18;
+        Thu,  6 Sep 2018 18:00:37 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 6 Sep 2018 18:00:45 +0800
+Date:   Thu, 6 Sep 2018 18:00:13 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Baoquan He <bhe@redhat.com>, <x86@kernel.org>
+Subject: Re: [PATCH 0/3] x86/boot/KASLR: enhance randomness of kernel load
+ addr when using GiB hugepage
+Message-ID: <20180906100013.GD8555@localhost.localdomain>
+References: <1536201382-13133-1-git-send-email-kernelfans@gmail.com>
+ <20180906040723.GC8555@localhost.localdomain>
+ <CAFgQCTtafOH45aPZeLwi7bWoJTjjKq7dp2_VAF1hHVrwG0qRKA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18090609-0008-0000-0000-0000026D2103
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090609-0009-0000-0000-000021D54344
-Message-Id: <8736uneylc.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060104
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTtafOH45aPZeLwi7bWoJTjjKq7dp2_VAF1hHVrwG0qRKA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 7D3704B6AE18.A8FFD
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-
-> Today flags like for instance _PAGE_RW or _PAGE_USER are used through
-> common parts of code.
-> Using those directly in common parts of code have proven to lead to
-> mistakes or misbehaviour, because their use is not always as trivial
-> as one could think.
+On Thu, Sep 06, 2018 at 01:58:08PM +0800, Pingfan Liu wrote:
+>On Thu, Sep 6, 2018 at 12:07 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>>
+>> On Thu, Sep 06, 2018 at 10:36:19AM +0800, Pingfan Liu wrote:
+>>
+>> Hi Pingfan,
+>>
+>> >commit 747ff6265db4 ("x86/boot/KASLR: Skip specified number of 1GB huge
+>> >pages when doing physical randomization (KASLR)") and commit
+>> >9b912485e0e7 ("x86/boot/KASLR: Add two new functions for 1GB huge pages
+>> >handling") prevent the physical load addr of kernel from spoiling a good
+>> >candidate of GiB page. But the algorithm deterministicly chooses the most
+>> >front GiB page for hugetlb, and sacrifices the randomness, which
+>> >is the heart of the KASLR. This patch tries to enlarge the randomness in
+>> >the cases where hugepages=X < the num Y of good candidate of GiB
+>>
+>> Yes, in some situations, if Y > X, the patch would reduce the
+>> randomness. And to reserve a fixed 1G for huge page is not perfect
+>> enouth.
+>> But the the size of slot is so small, the size of memory is so big.
+>>
+>Yes, but this is the sense of a human,. and normally, we are protected
+>against the attack from a program.
 >
-> For instance, (flags & _PAGE_USER) == 0 isn't enough to tell
-> that a page is a kernel page, because some targets are using
-> _PAGE_PRIVILEDGED and not _PAGE_USER, so the test has to be 
-> (flags & (_PAGE_USER | _PAGE_PRIVILEDGED)) == _PAGE_PRIVILEDGED
-> This has to (bad) consequences:
+
+Well, in my opinion, the problem that Baoquan tried to fix exists
+only when Y == X. If Y > X, I think the problem is not a big problem,
+even though kernel breaks a good 1G memory for huge page, there are still
+enough place left.
+
+>> >page.
+>> >To comparison, taking a typical KVM guest for example, the head 3GiB mem
+>> >can not be used as GiB hugetlb. Denoting the total mem size as Z(GiB), when
+>> >Z=5, then Y=2, assuming X=1, the randomness range before this patch is
+>> >4GiB, after this patch is 5GiB, and get a 25% improvement of randomness.
+>>
+>> Such as your example,
+>> in 4G, the probability every slot chosen is about 0.00049
+>> in 5G, the probability every slot chosen is about 0.00039
+>> Yes, you did improve 25% for randomness. But I wonder if it's worth to
+>> improve from 0.00049 to 0.00039.
+>>
+>This is the case of least improvement.
 >
->  - All targets must define every bit, even the unsupported ones,
->    leading to a lot of useless #define _PAGE_XXX 0
->  - If someone forgets to take into account all possible _PAGE_XXX bits
->    for the case, we can get unexpected behaviour on some targets.
+>> If there is something wrong in my understanding, please let me know.
+>>
+>Yes, you get my idea. There are two factor worth to consider. The 1st
+>one is the head 3GiB, if it can be reduce to 1GiB or 2GiB, then the
+
+Yes, as you said, from a human's feeling, I think if there are more
+than one thousand slots, the probability is small enough.
+In some situations, your patch improve the randomness much. As for whether
+it's worth to do, let's see how other people think.
+
+Thanks,
+Chao Fan
+
+>randomness will have a great improvement. The 2nd one is the X, which
+>also play a important role of the randomness.
 >
-> This becomes even more complex when we come to using _PAGE_RW.
-> Testing (flags & _PAGE_RW) is not enough to test whether a page
-> if writable or not, because:
+>Thanks and regards,
+>Pingfan
 >
->  - Some targets have _PAGE_RO instead, which has to be unset to tell
->    a page is writable
->  - Some targets have _PAGE_R and _PAGE_W, in which case
->    _PAGE_RW = _PAGE_R | _PAGE_W
->  - Even knowing whether a page is readable is not always trivial because:
->    - Some targets requires to check that _PAGE_R is set to ensure page
->    is readable
->    - Some targets requires to check that _PAGE_NA is not set
->    - Some targets requires to check that _PAGE_RO or _PAGE_RW is set
+>> Thanks,
+>> Chao Fan
+>>
+>> >If Z=6, then Y=3, assuming X=2, the improvement equals: 50%( 6/(6-2) - 1);
+>> >assuming X=1, the improvement will be: 20% (6/(6-1) - 1)
+>> >
+>> >Cc: Thomas Gleixner <tglx@linutronix.de>
+>> >Cc: Ingo Molnar <mingo@redhat.com>
+>> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> >Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>> >Cc: Baoquan He <bhe@redhat.com>
+>> >Cc: Chao Fan <fanc.fnst@cn.fujitsu.com> (authored:1/16=6%)
+>> >Cc: x86@kernel.org
+>> >
+>> >Pingfan Liu (3):
+>> >  x86/boot/KASLR: change the prototypes of
+>> >    process_efi_entries/process_e820_entries
+>> >  x86/boot/KASLR: change the prototype of process_mem_region() to meet
+>> >    the align requirement
+>> >  x86/boot/KASLR: enhance randomness when using GiB hugepage
+>> >
+>> > arch/x86/boot/compressed/kaslr.c | 228 ++++++++++++++++++++++++++-------------
+>> > 1 file changed, 152 insertions(+), 76 deletions(-)
+>> >
+>> >--
+>> >2.7.4
+>> >
+>> >
+>> >
+>>
+>>
 >
-> Etc ....
 >
-> In order to work around all those issues and minimise the risks of errors,
-> this serie aims at removing all use of _PAGE_XXX flags from powerpc code
-> and always use pte_xxx() and pte_mkxxx() accessors instead. Those accessors
-> are then defined in target specific parts of the kernel code.
 
-The series is really good. It also helps in code readability. Few things
-i am not sure there is a way to reduce the overhead
-
--		access = _PAGE_EXEC;
-+		access = pte_val(pte_mkexec(__pte(0)));
-
-Considering we have multiple big endian to little endian coversion there
-for book3s 64.
-
-Other thing is __ioremap_at where we do
-
-+       pte_t pte = __pte(flags);
- 
-        /* Make sure we have the base flags */
--       if ((flags & _PAGE_PRESENT) == 0)
-+       if (!pte_present(pte))
-
--               err = map_kernel_page(v+i, p+i, flags);
-+               err = map_kernel_page(v + i, p + i, pte_val(pte));
-
-
-But otherwise for the series.
-
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com> 
 
