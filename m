@@ -2,202 +2,122 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54746C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD28C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B16620659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:51:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B16620659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 82BA820659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:52:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SVVPg+LE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82BA820659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeIFW1l (ORCPT
+        id S1729882AbeIFW2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 18:27:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56864 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728055AbeIFW1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 18:27:39 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 58DA726346;
-        Thu,  6 Sep 2018 17:51:04 +0000 (UTC)
-Received: from redhat.com (ovpn-120-232.rdu2.redhat.com [10.10.120.232])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0E0ADA30B8;
-        Thu,  6 Sep 2018 17:51:04 +0000 (UTC)
-Date:   Thu, 6 Sep 2018 13:51:03 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH net-next 09/11] tuntap: accept an array of XDP buffs
- through sendmsg()
-Message-ID: <20180906134834-mutt-send-email-mst@kernel.org>
-References: <20180906040526.22518-1-jasowang@redhat.com>
- <20180906040526.22518-10-jasowang@redhat.com>
+        Thu, 6 Sep 2018 18:28:44 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:43590 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeIFW2o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 18:28:44 -0400
+Received: by mail-ua1-f65.google.com with SMTP id f4-v6so9654209uao.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 10:52:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=j0KTUpMbzck7Ek6EJZ6GN1mWsI/9/nrLWHUUGC+8dV8=;
+        b=SVVPg+LE4ocHNKU4uB4eOtdu34765KVb2V5vMbm/o+cnlwW6uJlxNOXlCxxERQGxm5
+         kloKWbsgK6NgjHLyqYcg+JDXPQ1LqXsEgsCs8xQD1RDr/aU5g7egOZV4L27scwnUGzAg
+         xEeKg0dWePb1Ih1xEjZPtWiiJbuciag2k3W3E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=j0KTUpMbzck7Ek6EJZ6GN1mWsI/9/nrLWHUUGC+8dV8=;
+        b=djE2X/+1Rucsy8u45pTxpLwoU0K4tbXOI1TSAetyMQdAvsLW0sCdnWrCa5Rqv0jLxu
+         3Sbf2fEhyvP/AzqxJxmPlO0ed9qevW8/BJvagedIWlYZ0SkuUujFt9DBUqoQ8g5rTXSe
+         Ohs9l97N3Ft/jHDCs0DPEE+xHfhH9L5UjA76OsZIZoS+qyy0Qgg3k8PkxCWE7gvkf+/l
+         5W6pI2jLoVw4imcwyJqvOU8nqaK6W0PR1mzQL3dNrCZr1Fa/VgoghVf9INz0Xd+uNq/N
+         Fs3bHN/MiiseCIIvtl8Iz5AHhi1b4KCqhe2GnvXCwpYerJFYrrLdCmroiiyVS4C2N/GL
+         FsjQ==
+X-Gm-Message-State: APzg51BGJQLaOkhub6vHtU127i6MNSVU93KwXYbo/Isuo7JnE7QMcyOl
+        Cu7/kYvF3K6UtAAPdFL0g+WRyVMTxxo=
+X-Google-Smtp-Source: ANB0VdYd5isR55dAWStq5aeqw36RLDF1dAJF+gVqCIL5hiXPrT4qRQq71+0CfXUfyVWy/qjT+6j1DQ==
+X-Received: by 2002:a67:9814:: with SMTP id a20-v6mr1480333vse.54.1536256328930;
+        Thu, 06 Sep 2018 10:52:08 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 13-v6sm1222057vkf.34.2018.09.06.10.52.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 10:52:08 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id m11-v6so9634066uao.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 10:52:07 -0700 (PDT)
+X-Received: by 2002:a1f:ac08:: with SMTP id v8-v6mr1318266vke.32.1536256327401;
+ Thu, 06 Sep 2018 10:52:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906040526.22518-10-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 17:51:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 06 Sep 2018 17:51:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Received: by 2002:a1f:5e8e:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 10:52:06 -0700 (PDT)
+In-Reply-To: <20180901221953.21666-1-bjorn.andersson@linaro.org>
+References: <20180901221953.21666-1-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 6 Sep 2018 10:52:06 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VE5gYyivgy=OrZV6g0UrtYfZZ+CGv7DV+v5be3teVSdw@mail.gmail.com>
+Message-ID: <CAD=FV=VE5gYyivgy=OrZV6g0UrtYfZZ+CGv7DV+v5be3teVSdw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: pm8998 and pmi8998 regulators
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 12:05:24PM +0800, Jason Wang wrote:
-> This patch implement TUN_MSG_PTR msg_control type. This type allows
-> the caller to pass an array of XDP buffs to tuntap through ptr field
-> of the tun_msg_control. If an XDP program is attached, tuntap can run
-> XDP program directly. If not, tuntap will build skb and do a fast
-> receiving since part of the work has been done by vhost_net.
-> 
-> This will avoid lots of indirect calls thus improves the icache
-> utilization and allows to do XDP batched flushing when doing XDP
-> redirection.
-> 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Bjorn,
 
-Is most of the benefit in batched flushing or skipping
-indirect calls? Because if it's flushing we can gain
-most of it easily by adding an analog of xmit_more.
-
+On Sat, Sep 1, 2018 at 3:19 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> Add regulator definitions for pm8998 and pmi8998 regulators on the MTP.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/net/tun.c | 103 ++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 100 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index c839a4bdcbd9..069db2e5dd08 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -2424,22 +2424,119 @@ static void tun_sock_write_space(struct sock *sk)
->  	kill_fasync(&tfile->fasync, SIGIO, POLL_OUT);
->  }
->  
-> +static int tun_xdp_one(struct tun_struct *tun,
-> +		       struct tun_file *tfile,
-> +		       struct xdp_buff *xdp, int *flush)
-> +{
-> +	struct virtio_net_hdr *gso = xdp->data_hard_start + sizeof(int);
-> +	struct tun_pcpu_stats *stats;
-> +	struct bpf_prog *xdp_prog;
-> +	struct sk_buff *skb = NULL;
-> +	u32 rxhash = 0, act;
-> +	int buflen = *(int *)xdp->data_hard_start;
-> +	int err = 0;
-> +	bool skb_xdp = false;
-> +
-> +	xdp_prog = rcu_dereference(tun->xdp_prog);
-> +	if (xdp_prog) {
-> +		if (gso->gso_type) {
-> +			skb_xdp = true;
-> +			goto build;
-> +		}
-> +		xdp_set_data_meta_invalid(xdp);
-> +		xdp->rxq = &tfile->xdp_rxq;
-> +		act = tun_do_xdp(tun, tfile, xdp_prog, xdp, &err);
-> +		if (err)
-> +			goto out;
-> +		if (act == XDP_REDIRECT)
-> +			*flush = true;
-> +		if (act != XDP_PASS)
-> +			goto out;
-> +	}
-> +
-> +build:
-> +	skb = build_skb(xdp->data_hard_start, buflen);
-> +	if (!skb) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	skb_reserve(skb, xdp->data - xdp->data_hard_start);
-> +	skb_put(skb, xdp->data_end - xdp->data);
-> +
-> +	if (virtio_net_hdr_to_skb(skb, gso, tun_is_little_endian(tun))) {
-> +		this_cpu_inc(tun->pcpu_stats->rx_frame_errors);
-> +		kfree_skb(skb);
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	skb->protocol = eth_type_trans(skb, tun->dev);
-> +	skb_reset_network_header(skb);
-> +	skb_probe_transport_header(skb, 0);
-> +
-> +	if (skb_xdp) {
-> +		err = do_xdp_generic(xdp_prog, skb);
-> +		if (err != XDP_PASS)
-> +			goto out;
-> +	}
-> +
-> +	if (!rcu_dereference(tun->steering_prog))
-> +		rxhash = __skb_get_hash_symmetric(skb);
-> +
-> +	netif_receive_skb(skb);
-> +
-> +	stats = get_cpu_ptr(tun->pcpu_stats);
-> +	u64_stats_update_begin(&stats->syncp);
-> +	stats->rx_packets++;
-> +	stats->rx_bytes += skb->len;
-> +	u64_stats_update_end(&stats->syncp);
-> +	put_cpu_ptr(stats);
-> +
-> +	if (rxhash)
-> +		tun_flow_update(tun, rxhash, tfile);
-> +
-> +out:
-> +	return err;
-> +}
-> +
->  static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
->  {
-> -	int ret;
-> +	int ret, i;
->  	struct tun_file *tfile = container_of(sock, struct tun_file, socket);
->  	struct tun_struct *tun = tun_get(tfile);
->  	struct tun_msg_ctl *ctl = m->msg_control;
-> +	struct xdp_buff *xdp;
->  
->  	if (!tun)
->  		return -EBADFD;
->  
-> -	if (ctl && ctl->type != TUN_MSG_UBUF)
-> -		return -EINVAL;
-> +	if (ctl && ((ctl->type & 0xF) == TUN_MSG_PTR)) {
-> +		int n = ctl->type >> 16;
-> +		int flush = 0;
-> +
-> +		local_bh_disable();
-> +		rcu_read_lock();
-> +
-> +		for (i = 0; i < n; i++) {
-> +			xdp = &((struct xdp_buff *)ctl->ptr)[i];
-> +			tun_xdp_one(tun, tfile, xdp, &flush);
-> +		}
-> +
-> +		if (flush)
-> +			xdp_do_flush_map();
-> +
-> +		rcu_read_unlock();
-> +		local_bh_enable();
-> +
-> +		ret = total_len;
-> +		goto out;
-> +	}
->  
->  	ret = tun_get_user(tun, tfile, ctl ? ctl->ptr : NULL, &m->msg_iter,
->  			   m->msg_flags & MSG_DONTWAIT,
->  			   m->msg_flags & MSG_MORE);
-> +out:
->  	tun_put(tun);
->  	return ret;
->  }
-> -- 
-> 2.17.1
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 216 ++++++++++++++++++++++++
+>  1 file changed, 216 insertions(+)
+
+I'm curious why you chose to post this instead of reviewing and/or
+building upon the patch I sent up at
+<https://lkml.kernel.org/r/20180822173629.202885-3-dianders@chromium.org>.
+Compared to mine, yours:
+
+* Seems to have a few rails named differently LDO22 is named
+"vreg_l22a_2p95" in your DTS but "vreg_l22a_2p85" in mine as one
+example.  The schematics I have (from Dec 5, 2017) show it as 2p85.
+
+* Is missing "regulator-initial-mode".  We can debate this if you want.
+
+* Is lacking many alternate names for rails.  We can debate this also
+if you want.
+
+* Have a few voltage values different.  If you have better info than
+me we should update to yours.  Diffing against yours does make me
+believe that perhaps LDO14 should be listed as 1.88 V in my patch.
+
+* Is lacking pm8005.
+
+Anyway, let me know.  If you provide a review of my patch I'm happy to
+spin it with your feedback.
+
+
+Thanks!
+
+-Doug
