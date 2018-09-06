@@ -2,70 +2,111 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21213C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 745F2C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6DDB20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DDB20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 1C1562064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:50:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1562064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbeIFOWh (ORCPT
+        id S1728229AbeIFOZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 10:22:37 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:43696 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbeIFOWh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 10:22:37 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fxqtH-0001v2-EK; Thu, 06 Sep 2018 11:47:55 +0200
-Message-ID: <1536227267.4015.2.camel@sipsolutions.net>
-Subject: Re: [PATCH] mac80211: fix TX status reporting for ieee80211s
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Yuan-Chi Pang <fu3mo6goo@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 06 Sep 2018 11:47:47 +0200
-In-Reply-To: <1536227104.68915.5.camel@gmail.com> (sfid-20180906_114516_051319_173379BB)
-References: <1535963610.3437.10.camel@sipsolutions.net>
-         <1536224269-69350-1-git-send-email-fu3mo6goo@gmail.com>
-         <1536227104.68915.5.camel@gmail.com> (sfid-20180906_114516_051319_173379BB)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Sep 2018 10:25:10 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:45696 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728001AbeIFOZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 10:25:10 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id gqeSp7fZXRYG; Thu,  6 Sep 2018 11:50:12 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCBB900329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b900:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C612E1EC02C1;
+        Thu,  6 Sep 2018 11:50:11 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 11:50:05 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 1/3] x86/entry/64: Document idtentry
+Message-ID: <20180906095005.GC10768@zn.tnic>
+References: <cover.1536015544.git.luto@kernel.org>
+ <6e56c3ad94879e41afe345750bc28ccc0e820ea8.1536015544.git.luto@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6e56c3ad94879e41afe345750bc28ccc0e820ea8.1536015544.git.luto@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-06 at 17:45 +0800, Yuan-Chi Pang wrote:
+On Mon, Sep 03, 2018 at 03:59:42PM -0700, Andy Lutomirski wrote:
+> The idtentry macro is complicated and magical.  Document what it
+> does to help future readers and to allow future patches to adjust
+> the code and docs at the same time.
 > 
-> I received the comment of my previous submission that I should fix
-> indentation. But if I use the same indentation as before, I got "line
-> over 80 characters" warning by checkpatch. What should I do?
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> ---
+>  arch/x86/entry/entry_64.S | 35 +++++++++++++++++++++++++++++++++++
+>  arch/x86/kernel/traps.c   |  4 ++++
+>  2 files changed, 39 insertions(+)
 > 
-> > diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
-> > index daf9db3..4286673 100644
-> > --- a/net/mac80211/mesh_hwmp.c
-> > +++ b/net/mac80211/mesh_hwmp.c
-> > @@ -295,15 +295,11 @@ int mesh_path_error_tx(struct
-> > ieee80211_sub_if_data *sdata,
-> >  }
-> >  
-> >  void ieee80211s_update_metric(struct ieee80211_local *local,
-> > -		struct sta_info *sta, struct sk_buff *skb)
-> > +		struct sta_info *sta, struct ieee80211_tx_status
-> > *st)
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index 957dfb693ecc..1796c42e08af 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -900,6 +900,41 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
+>   */
+>  #define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
+>  
+> +/**
+> + * idtentry - Generate an IDT entry stub
+> + * @sym: Name of the generated entry point
+> + * @do_sym: C function to be called
+> + * @has_error_code: True if this IDT vector has an error code on the stack
+> + * @paranoid: non-zero means that this vector may be invoked from kernel
+> + *            mode with user GSBASE and/or user CR3.  2 is special -- see below.
+> + * @shift_ist: Set to an IST index if entries from kernel mode should
+> + *             decrement the IST stack so that nested entries get a fresh
+> + *             stack.  (This is for #DB, which has a nasty habit of
+> + *             recursing.)
+> + *
+> + * idtentry generates an IDT stub that sets up a usable kernel context,
+> + * creates struct pt_regs, and calls @do_sym.  The stub has the following
+> + * special behaviors:
+> + *
+> + * On an entry from user mode, the stub switches from the trampoline or
+> + * IST stack to the normal thread stack.  On an exit to user mode, the
+> + * normal exit-to-usermode path is invoked.
+> + *
+> + * On an exit to kernel mode, if paranoid == 0, we check for preemption,
 
-Here? Seems easy - add a linebreak between sta and status?
+				   @paranoid
 
-johannes
+Otherwise, documenting our entry maze is always a good idea!
+
+Reviewed-by: Borislav Petkov <bp@suse.de>
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
