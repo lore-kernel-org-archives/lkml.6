@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE70C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB99CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618002075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:19:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618002075B
+	by mail.kernel.org (Postfix) with ESMTP id 72B792075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B792075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbeIFRyg (ORCPT
+        id S1729319AbeIFRzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:54:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56429 "EHLO
+        Thu, 6 Sep 2018 13:55:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33323 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbeIFRyg (ORCPT
+        with ESMTP id S1727708AbeIFRzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:54:36 -0400
+        Thu, 6 Sep 2018 13:55:08 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DItGL305441
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DJSC7305486
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:18:55 -0700
+        Thu, 6 Sep 2018 06:19:29 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DIsIn305438;
-        Thu, 6 Sep 2018 06:18:54 -0700
-Date:   Thu, 6 Sep 2018 06:18:54 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DJSC2305483;
+        Thu, 6 Sep 2018 06:19:28 -0700
+Date:   Thu, 6 Sep 2018 06:19:28 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-ybskanehmdilj5fs7080nz1g@git.kernel.org>
-Cc:     jolsa@kernel.org, tglx@linutronix.de, wangnan0@huawei.com,
-        dsahern@gmail.com, acme@redhat.com, hpa@zytor.com,
-        namhyung@kernel.org, mingo@kernel.org, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: acme@redhat.com, hpa@zytor.com, dsahern@gmail.com,
-          tglx@linutronix.de, wangnan0@huawei.com, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-          mingo@kernel.org, namhyung@kernel.org
+Message-ID: <tip-cl1xyghwb1usp500354mv37h@git.kernel.org>
+Cc:     wangnan0@huawei.com, mingo@kernel.org, tglx@linutronix.de,
+        dsahern@gmail.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, jolsa@kernel.org, namhyung@kernel.org,
+        adrian.hunter@intel.com
+Reply-To: dsahern@gmail.com, tglx@linutronix.de, acme@redhat.com,
+          wangnan0@huawei.com, mingo@kernel.org, jolsa@kernel.org,
+          namhyung@kernel.org, adrian.hunter@intel.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf augmented_syscalls: Update the header comments
-Git-Commit-ID: 5e2d8a5acc99e7b9df9be216f0a73855e865f9a5
+Subject: [tip:perf/core] perf trace augmented_syscalls: Rename
+ augmented_*_syscall__enter to just *_syscall
+Git-Commit-ID: 4c8f0a726ef808244788a237e52ce3c612bff8c3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,58 +59,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5e2d8a5acc99e7b9df9be216f0a73855e865f9a5
-Gitweb:     https://git.kernel.org/tip/5e2d8a5acc99e7b9df9be216f0a73855e865f9a5
+Commit-ID:  4c8f0a726ef808244788a237e52ce3c612bff8c3
+Gitweb:     https://git.kernel.org/tip/4c8f0a726ef808244788a237e52ce3c612bff8c3
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 30 Aug 2018 10:02:23 -0300
+AuthorDate: Thu, 30 Aug 2018 11:50:21 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:20 -0300
+CommitDate: Thu, 30 Aug 2018 15:52:21 -0300
 
-perf augmented_syscalls: Update the header comments
+perf trace augmented_syscalls: Rename augmented_*_syscall__enter to just *_syscall
 
-Reflecting the fact that it now augments more than syscalls:sys_enter_SYSCALL
-tracepoints that have filename strings as args. Also mention how the
-extra data is handled by the by now modified 'perf trace' beautifiers,
-that will use special "augmented" beautifiers when extra data is found
-after the expected syscall enter/exit tracepoints.
+As we'll also hook into the syscalls:sys_exit_SYSCALL for which there
+are enter hooks.
+
+This way we'll be able to iterate the ELF file for the eBPF program,
+find the syscalls that have hooks and filter them out from the general
+raw_syscalls:sys_{enter,exit} tracepoint for not-yet-augmented (the ones
+with pointer arguments not yet being attached to the usual syscalls
+tracepoint payload) and non augmentable syscalls (syscalls without
+pointer arguments).
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ybskanehmdilj5fs7080nz1g@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-cl1xyghwb1usp500354mv37h@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_syscalls.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ tools/perf/examples/bpf/augmented_syscalls.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index be06d2c9e8c9..bfa28eaf27b3 100644
+index bfa28eaf27b3..253b3ccbd17d 100644
 --- a/tools/perf/examples/bpf/augmented_syscalls.c
 +++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Augment the openat syscall with the contents of the filename pointer argument.
-+ * Augment syscalls with the contents of the pointer arguments.
-  *
-  * Test it with:
-  *
-@@ -10,12 +10,10 @@
-  * the last one should be the one for '/etc/passwd'.
-  *
-  * This matches what is marshalled into the raw_syscall:sys_enter payload
-- * expected by the 'perf trace' beautifiers, and can be used by them unmodified,
-- * which will be done as that feature is implemented in the next csets, for now
-- * it will appear in a dump done by the default tracepoint handler in 'perf trace',
-- * that uses bpf_output__fprintf() to just dump those contents, as done with
-- * the bpf-output event associated with the __bpf_output__ map declared in
-- * tools/perf/include/bpf/stdio.h.
-+ * expected by the 'perf trace' beautifiers, and can be used by them, that will
-+ * check if perf_sample->raw_data is more than what is expected for each
-+ * syscalls:sys_{enter,exit}_SYSCALL tracepoint, uing the extra data as the
-+ * contents of pointer arguments.
-  */
+@@ -32,7 +32,7 @@ struct augmented_filename {
+ 	char	value[256];
+ };
  
- #include <stdio.h>
+-#define augmented_filename_syscall_enter(syscall)						\
++#define augmented_filename_syscall(syscall)							\
+ struct augmented_enter_##syscall##_args {			 				\
+ 	struct syscall_enter_##syscall##_args	args;				 		\
+ 	struct augmented_filename		filename;				 	\
+@@ -60,7 +60,7 @@ struct syscall_enter_openat_args {
+ 	long		   mode;
+ };
+ 
+-augmented_filename_syscall_enter(openat);
++augmented_filename_syscall(openat);
+ 
+ struct syscall_enter_open_args {
+ 	unsigned long long common_tp_fields;
+@@ -70,7 +70,7 @@ struct syscall_enter_open_args {
+ 	long		   mode;
+ };
+ 
+-augmented_filename_syscall_enter(open);
++augmented_filename_syscall(open);
+ 
+ struct syscall_enter_inotify_add_watch_args {
+ 	unsigned long long common_tp_fields;
+@@ -80,7 +80,7 @@ struct syscall_enter_inotify_add_watch_args {
+ 	long		   mask;
+ };
+ 
+-augmented_filename_syscall_enter(inotify_add_watch);
++augmented_filename_syscall(inotify_add_watch);
+ 
+ struct statbuf;
+ 
+@@ -91,13 +91,13 @@ struct syscall_enter_newstat_args {
+ 	struct stat	   *statbuf;
+ };
+ 
+-augmented_filename_syscall_enter(newstat);
++augmented_filename_syscall(newstat);
+ 
+ #ifndef _K_SS_MAXSIZE
+ #define _K_SS_MAXSIZE 128
+ #endif
+ 
+-#define augmented_sockaddr_syscall_enter(syscall)						\
++#define augmented_sockaddr_syscall(syscall)						\
+ struct augmented_enter_##syscall##_args {			 				\
+ 	struct syscall_enter_##syscall##_args	args;				 		\
+ 	struct sockaddr_storage			addr;						\
+@@ -128,7 +128,7 @@ struct syscall_enter_bind_args {
+ 	unsigned long	   addrlen;
+ };
+ 
+-augmented_sockaddr_syscall_enter(bind);
++augmented_sockaddr_syscall(bind);
+ 
+ struct syscall_enter_connect_args {
+ 	unsigned long long common_tp_fields;
+@@ -138,7 +138,7 @@ struct syscall_enter_connect_args {
+ 	unsigned long	   addrlen;
+ };
+ 
+-augmented_sockaddr_syscall_enter(connect);
++augmented_sockaddr_syscall(connect);
+ 
+ struct syscall_enter_sendto_args {
+ 	unsigned long long common_tp_fields;
+@@ -151,6 +151,6 @@ struct syscall_enter_sendto_args {
+ 	long		   addr_len;
+ };
+ 
+-augmented_sockaddr_syscall_enter(sendto);
++augmented_sockaddr_syscall(sendto);
+ 
+ license(GPL);
