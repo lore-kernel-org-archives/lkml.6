@@ -2,67 +2,204 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B970C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E44C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E496D20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:17:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E496D20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 671B620659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:18:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 671B620659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeIFMvw (ORCPT
+        id S1728035AbeIFMw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:51:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43430 "EHLO mx1.redhat.com"
+        Thu, 6 Sep 2018 08:52:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36142 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725819AbeIFMvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:51:51 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7BA4C8010FDF;
-        Thu,  6 Sep 2018 08:17:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF5B0D93CB;
-        Thu,  6 Sep 2018 08:17:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <ce6ac597-751c-8881-160d-28d62a898a3e@sakamocchi.jp>
-References: <ce6ac597-751c-8881-160d-28d62a898a3e@sakamocchi.jp> <153616286704.23468.584491117180383924.stgit@warthog.procyon.org.uk> <153616293089.23468.13515059526628668970.stgit@warthog.procyon.org.uk>
-To:     Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc:     dhowells@redhat.com, linux-api@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH 08/11] UAPI: sound: Fix use of u32 and co. in UAPI headers
+        id S1725819AbeIFMw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:52:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 144C5AE02;
+        Thu,  6 Sep 2018 08:18:10 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 10:18:07 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v4 1/2] x86/speculation: apply IBPB more strictly to avoid
+ cross-process data leak
+Message-ID: <nycvar.YFH.7.76.1809061017350.15880@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <21301.1536221853.1@warthog.procyon.org.uk>
-Date:   Thu, 06 Sep 2018 09:17:33 +0100
-Message-ID: <21302.1536221853@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 08:17:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 08:17:35 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Takashi Sakamoto <o-takashi@sakamocchi.jp> wrote:
+From: Jiri Kosina <jkosina@suse.cz>
 
-> A similar patch was already proposed[1] and has been applied by Mark to
-> his tree[2]. Your issue (3) is going to be solved soon for v4.19
-> kernel.
+Currently, we are issuing IBPB only in cases when switching into a non-dumpable
+process, the rationale being to protect such 'important and security sensitive'
+processess (such as GPG) from data leak into a different userspace process via
+spectre v2.
 
-Thanks, I've pulled the branch leading up to that commit into the base of
-mine.  It seems the changes were identical:-)
+This is however completely insufficient to provide proper userspace-to-userpace
+spectrev2 protection, as any process can poison branch buffers before being
+scheduled out, and the newly scheduled process immediately becomes spectrev2
+victim.
 
-David
+In order to minimize the performance impact (for usecases that do require
+spectrev2 protection), issue the barrier only in cases when switching between
+processess where the victim can't be ptraced by the potential attacker (as in
+such cases, the attacker doesn't have to bother with branch buffers at all).
+
+Fixes: 18bf3c3ea8 ("x86/speculation: Use Indirect Branch Prediction Barrier in context switch")
+Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+ arch/x86/mm/tlb.c      | 31 ++++++++++++++++++++-----------
+ include/linux/ptrace.h |  4 ++++
+ kernel/ptrace.c        | 12 ++++++++----
+ 3 files changed, 32 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index e96b99eb800c..ed4444402441 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/ptrace.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -180,6 +181,19 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
+ 	}
+ }
+ 
++static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
++{
++	/*
++	 * Check if the current (previous) task has access to the memory
++	 * of the @tsk (next) task. If access is denied, make sure to
++	 * issue a IBPB to stop user->user Spectre-v2 attacks.
++	 *
++	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
++	 */
++	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
++			__ptrace_may_access(tsk, PTRACE_MODE_IBPB));
++}
++
+ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 			struct task_struct *tsk)
+ {
+@@ -262,18 +276,13 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * one process from doing Spectre-v2 attacks on another.
+ 		 *
+ 		 * As an optimization, flush indirect branches only when
+-		 * switching into processes that disable dumping. This
+-		 * protects high value processes like gpg, without having
+-		 * too high performance overhead. IBPB is *expensive*!
+-		 *
+-		 * This will not flush branches when switching into kernel
+-		 * threads. It will also not flush if we switch to idle
+-		 * thread and back to the same process. It will flush if we
+-		 * switch to a different non-dumpable process.
++		 * switching into a processes that can't be ptrace by the
++		 * current one (as in such case, attacker has much more
++		 * convenient way how to tamper with the next process than
++		 * branch buffer poisoning).
+ 		 */
+-		if (tsk && tsk->mm &&
+-		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
++		if (static_cpu_has(X86_FEATURE_USE_IBPB) &&
++				ibpb_needed(tsk, last_ctx_id))
+ 			indirect_branch_prediction_barrier();
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index 4f36431c380b..983d3f5545a8 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -64,12 +64,15 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
+ #define PTRACE_MODE_NOAUDIT	0x04
+ #define PTRACE_MODE_FSCREDS 0x08
+ #define PTRACE_MODE_REALCREDS 0x10
++#define PTRACE_MODE_NOACCESS_CHK 0x20
+ 
+ /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
+ #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
+ #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
+ #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
+ #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
++#define PTRACE_MODE_IBPB (PTRACE_MODE_ATTACH | PTRACE_MODE_NOAUDIT \
++			  | PTRACE_MODE_NOACCESS_CHK | PTRACE_MODE_REALCREDS)
+ 
+ /**
+  * ptrace_may_access - check whether the caller is permitted to access
+@@ -86,6 +89,7 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
+  * process_vm_writev or ptrace (and should use the real credentials).
+  */
+ extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
++extern int __ptrace_may_access(struct task_struct *task, unsigned int mode);
+ 
+ static inline int ptrace_reparented(struct task_struct *child)
+ {
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 21fec73d45d4..5c5e7cb597cd 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -268,7 +268,7 @@ static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
+ }
+ 
+ /* Returns 0 on success, -errno on denial. */
+-static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
++int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+ {
+ 	const struct cred *cred = current_cred(), *tcred;
+ 	struct mm_struct *mm;
+@@ -316,7 +316,8 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+ 	    gid_eq(caller_gid, tcred->sgid) &&
+ 	    gid_eq(caller_gid, tcred->gid))
+ 		goto ok;
+-	if (ptrace_has_cap(tcred->user_ns, mode))
++	if (!(mode & PTRACE_MODE_NOACCESS_CHK) &&
++	     ptrace_has_cap(tcred->user_ns, mode))
+ 		goto ok;
+ 	rcu_read_unlock();
+ 	return -EPERM;
+@@ -325,10 +326,13 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+ 	mm = task->mm;
+ 	if (mm &&
+ 	    ((get_dumpable(mm) != SUID_DUMP_USER) &&
+-	     !ptrace_has_cap(mm->user_ns, mode)))
++	     ((mode & PTRACE_MODE_NOACCESS_CHK) ||
++	       !ptrace_has_cap(mm->user_ns, mode))))
+ 	    return -EPERM;
+ 
+-	return security_ptrace_access_check(task, mode);
++	if (!(mode & PTRACE_MODE_NOACCESS_CHK))
++		return security_ptrace_access_check(task, mode);
++	return 0;
+ }
+ 
+ bool ptrace_may_access(struct task_struct *task, unsigned int mode)
+
+-- 
+Jiri Kosina
+SUSE Labs
+
