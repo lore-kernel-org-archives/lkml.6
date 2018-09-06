@@ -2,88 +2,97 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2388AC4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9071DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850AF206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:18:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lekensteyn.nl header.i=@lekensteyn.nl header.b="MBBHoXAO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850AF206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lekensteyn.nl
+	by mail.kernel.org (Postfix) with ESMTP id 4E5D22083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:18:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5D22083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbeIGCzx (ORCPT
+        id S1728491AbeIGCzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 22:55:53 -0400
-Received: from lekensteyn.nl ([178.21.112.251]:43855 "EHLO lekensteyn.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728089AbeIGCzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 22:55:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lekensteyn.nl; s=s2048-2015-q1;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From; bh=MFbflLwNRU5WISREwEFNq/SoarHy9028ZMj0YzXF0MU=;
-        b=MBBHoXAO+B/5pwf8jSKkvqnWjumaxyxebZ1mGrLVACLc/rFp/EylFfpzuSKd+P1RGGee7srVKgamjh0cp4vvntMolaGus2ts2Bl5xr0nhUE4bMBCBpklSzrMS8LITgO3IhtKgomnaeuscCEPACgYu4H1DH/NEBeAGZRqmrwameW7ztC8LyQRqTlV+L56RNjJ2g5SAattUqJcjHUJ7/2R4Ig8+pOQc7lEu14SqAjzO3VohfFZa9oNnXMgAtYaOEk1hqyZVwjdp/mx0bsuQhA5FBOiQtlLy5xk5O/VAX9on2O7pKKuDhosjdaiM7UM3967srzu1oyyftfqZJ9pMlXajA==;
-Received: by lekensteyn.nl with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <peter@lekensteyn.nl>)
-        id 1fy2bM-0005Us-DR; Fri, 07 Sep 2018 00:18:12 +0200
-From:   Peter Wu <peter@lekensteyn.nl>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] bochs: use drm_fb_helper_set_suspend_unlocked in suspend/resume
-Date:   Fri,  7 Sep 2018 00:18:07 +0200
-Message-Id: <20180906221810.20170-2-peter@lekensteyn.nl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180906221810.20170-1-peter@lekensteyn.nl>
-References: <20180906221810.20170-1-peter@lekensteyn.nl>
+        Thu, 6 Sep 2018 22:55:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42782 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728241AbeIGCzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 22:55:54 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4E1268010FDF;
+        Thu,  6 Sep 2018 22:18:18 +0000 (UTC)
+Received: from hp-dl360pgen8-07.khw.lab.eng.bos.redhat.com (hp-dl360pgen8-07.khw.lab.eng.bos.redhat.com [10.16.184.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 244547D4D4;
+        Thu,  6 Sep 2018 22:18:16 +0000 (UTC)
+From:   Jarod Wilson <jarod@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jarod Wilson <jarod@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH] tools/perf: fix use of alternatives to find JDIR
+Date:   Thu,  6 Sep 2018 18:18:12 -0400
+Message-Id: <20180906221812.11167-1-jarod@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 22:18:18 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 22:18:18 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jarod@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "initialized" member is going away. suspend/resume still works (even
-if bochsfb_create is forced to fail).
+When a build is run from something like a cron job, the user's $PATH is
+rather minimal, of note, not including /usr/sbin in my own case. Because
+of that, an automated rpm package build ultimately fails to find
+libperf-jvmti.so, because somewhere within the build, this happens...
 
-Signed-off-by: Peter Wu <peter@lekensteyn.nl>
+/bin/sh: alternatives: command not found
+/bin/sh: alternatives: command not found
+Makefile.config:849: No openjdk development package found, please install
+JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+
+...and while the build continues, libperf-jvmti.so isn't built, and things
+fall down when rpm tries to find all the %files specified. Exact same
+system builds everything just fine when the job is launched from a login
+shell instead of a cron job, since alternatives is in $PATH, so openjdk is
+actually found.
+
+The test required to get into this section of code actually specifies the
+full path, as does a block just above it, so let's do that here too.
+
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Arnaldo Carvalho de Melo <acme@kernel.org>
+CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: Jiri Olsa <jolsa@redhat.com>
+CC: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
 ---
- drivers/gpu/drm/bochs/bochs_drv.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ tools/perf/Makefile.config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index c61b40c72b62..0e79d9acf89e 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -107,11 +107,7 @@ static int bochs_pm_suspend(struct device *dev)
- 
- 	drm_kms_helper_poll_disable(drm_dev);
- 
--	if (bochs->fb.initialized) {
--		console_lock();
--		drm_fb_helper_set_suspend(&bochs->fb.helper, 1);
--		console_unlock();
--	}
-+	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 1);
- 
- 	return 0;
- }
-@@ -124,11 +120,7 @@ static int bochs_pm_resume(struct device *dev)
- 
- 	drm_helper_resume_force_mode(drm_dev);
- 
--	if (bochs->fb.initialized) {
--		console_lock();
--		drm_fb_helper_set_suspend(&bochs->fb.helper, 0);
--		console_unlock();
--	}
-+	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 0);
- 
- 	drm_kms_helper_poll_enable(drm_dev);
- 	return 0;
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index f6d1a03c7523..e30d20fb482d 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -833,7 +833,7 @@ ifndef NO_JVMTI
+     JDIR=$(shell /usr/sbin/update-java-alternatives -l | head -1 | awk '{print $$3}')
+   else
+     ifneq (,$(wildcard /usr/sbin/alternatives))
+-      JDIR=$(shell alternatives --display java | tail -1 | cut -d' ' -f 5 | sed 's%/jre/bin/java.%%g')
++      JDIR=$(shell /usr/sbin/alternatives --display java | tail -1 | cut -d' ' -f 5 | sed 's%/jre/bin/java.%%g')
+     endif
+   endif
+   ifndef JDIR
 -- 
-2.18.0
+2.16.1
 
