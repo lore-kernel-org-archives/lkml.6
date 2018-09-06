@@ -2,85 +2,92 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA85C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E98A6C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B12420861
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B12420861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EF9C2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:29:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF9C2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeIFVF5 (ORCPT
+        id S1728066AbeIFVF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 6 Sep 2018 17:05:57 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:18731 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbeIFVF4 (ORCPT
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:14753 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbeIFVF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:05:56 -0400
-X-IronPort-AV: E=Sophos;i="5.53,338,1531785600"; 
-   d="scan'208";a="78658170"
-Date:   Thu, 6 Sep 2018 18:29:32 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
-CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <drbd-user@lists.linbit.com>
-Subject: Re: [PATCH] xen-blkback: Switch to closed state after releasing the
- backing device
-Message-ID: <20180906162932.7qge5dmrgyqbmbbj@mac.bytemobile.com>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905113515.GU26705@gavran.carpriv.carnet.hr>
- <20180905162801.GB26705@gavran.carpriv.carnet.hr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180905162801.GB26705@gavran.carpriv.carnet.hr>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Thu, 6 Sep 2018 17:05:57 -0400
+X-Greylist: delayed 2970 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Sep 2018 17:05:56 EDT
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w86Fdx0u003201;
+        Fri, 7 Sep 2018 00:39:59 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Fri, 07 Sep 2018 00:39:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from localhost.localdomain (7.161.151.153.ap.dti.ne.jp [153.151.161.7])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w86FdsXZ003194
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 7 Sep 2018 00:39:59 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH] arm64: dts: rockchip: fix vcc_host1_5v pin assign
+Date:   Fri,  7 Sep 2018 00:39:47 +0900
+Message-Id: <20180906153947.19495-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 06:28:01PM +0200, Valentin Vidic wrote:
-> On Wed, Sep 05, 2018 at 01:35:15PM +0200, Valentin Vidic wrote:
-> > > AFAICT, this will cause the backend to never switch to 'Closed' state
-> > > until the toolstack sets online to 0, which is not good IMO.
-> > > 
-> > > If for example a frontend decides to close a device, the backend will
-> > > stay in state 'Closing' until the toolstack actually removes the disk
-> > > by setting online to 0.
-> > > 
-> > > This will prevent resetting blk connections, as blkback will refuse to
-> > > switch to state XenbusStateInitWait unless it's at XenbusStateClosed
-> > > (see the XenbusStateInitialising case in frontend_changed), which will
-> > > never be reached with your patch.
-> 
-> Would it be possible to call xen_vbd_free before the state change?
-> 
->         case XenbusStateClosed:
->                 xen_blkif_disconnect(be->blkif);
->                 xen_vbd_free(&be->blkif->vbd);
->                 xenbus_switch_state(dev, XenbusStateClosed);
+This patch fixes pin assign of vcc_host1_5v. This regulator is
+controlled by USB20_HOST_DRV signal.
 
-I think that will break reconnection, since xen_vbd_create is only
-called after hotplug script execution is performed (which happens only
-once at device attachment), but not when DomU changes frontend
-state.
+ROCK64 schematic says that GPIO0_A2 pin is used as USB20_HOST_DRV.
+GPIO0_D3 pin is for SPDIF_TX_M0.
 
-If you want to perform this xen_vbd_free you will also have to move
-the xen_vbd_create call AFAICT, to a place that's also called when
-reconnecting a device. Note that I could be wrong, so it might be
-worth a shot to try different approaches since the blkback code is
-quite tangled and I might miss something.
+ROCK64 schematic:
+http://files.pine64.org/doc/rock64/ROCK64_Schematic_v2.0_20171019.pdf
 
-Thanks, Roger.
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+index 5272e887a434..5852061e497b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+@@ -46,7 +46,7 @@
+ 	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
+-		gpio = <&gpio0 RK_PD3 GPIO_ACTIVE_HIGH>;
++		gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&usb20_host_drv>;
+ 		regulator-name = "vcc_host1_5v";
+@@ -238,7 +238,7 @@
+ 
+ 	usb2 {
+ 		usb20_host_drv: usb20-host-drv {
+-			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
++			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
+ 
+-- 
+2.18.0
+
