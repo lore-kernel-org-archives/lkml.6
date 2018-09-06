@@ -2,91 +2,106 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB43C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B88F2C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC09206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D75720652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EnTn8+hK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC09206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gJNgR6Tv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D75720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbeIFP30 (ORCPT
+        id S1728246AbeIFPes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:29:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44638 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbeIFP30 (ORCPT
+        Thu, 6 Sep 2018 11:34:48 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35078 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeIFPer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:29:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W/I06th6YvDkgLmeUl8yN0cOTZng2tYVJ39bvjVZ0iU=; b=EnTn8+hKvnDVpsc5anJlTbH+J
-        Ey4tyizHJpTTFwrR0Pfnv8QW1h0F7Gn5FLzW04cQzjEB9XefMVswQK3QCONm9rE0OoFivDEHrmbE+
-        v5On282+52AJPHP1/gdSS3qz0gTOfciRQcVu9+P/uBsm/KS2y/gB0L7Cbg3yVa8O67FxQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fxrvd-00049T-Ht; Thu, 06 Sep 2018 10:54:25 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 409491122A1F; Thu,  6 Sep 2018 11:54:25 +0100 (BST)
-Date:   Thu, 6 Sep 2018 11:54:25 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     lgirdwood@gmail.com, alsa-devel@alsa-project.org, perex@perex.cz,
-        tiwai@suse.com, vkoul@kernel.org, linux-kernel@vger.kernel.org,
-        rohitkr@codeaurora.org, bgoswami@codeaurora.org
-Subject: Re: [PATCH] ASoC: core: add support to card rebind
-Message-ID: <20180906105425.GE5360@sirena.org.uk>
-References: <20180810093708.13290-1-srinivas.kandagatla@linaro.org>
+        Thu, 6 Sep 2018 11:34:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 7-v6so5054706pgf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 03:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=SbxAfneVOh4m/VEpJ89KknkWcsQrFUSObn45Y1o0IqA=;
+        b=gJNgR6TveZZoEywjzrWUJsNatfeYLz4i2BO6m9kFO3ryISyoJKLHlHHeOUDxdAR7so
+         wJUY6UUq0BwRFvaE5JiHe+5336G+d5NwIu2skpbD78BIJZkSFzIqm1JS24iBQYdyVZF6
+         WcEU7PvVe3fFIlfTN6PsNQi0M6YT90N0zS9fWuYKhe7Md7PrpF5zXQKQCjDZrSttL+TI
+         88UXcxPNVnxtMRthTUOroRmf21mpjSxYiHkcViL1w/3bsoJFpOcrxSlBEM40/sEqDFmi
+         xJFdb22hInfKHMjJaUwb4d8GSZkE7uiqDb5zejKE2Gq9Bd93gHD3zB71MYeahDkwx1pT
+         vZNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=SbxAfneVOh4m/VEpJ89KknkWcsQrFUSObn45Y1o0IqA=;
+        b=fu2LyVCMpdBuYHumjna/pf9UzJEBg8rNE7xkE/dPBdRrZFLf5nz7F5hfgortLZuKbl
+         oh93bagPBwYZreszjtM3FrIDh5IHG+TMgfARY5Ama/7Ra2nku4jmIsNx+WB7IlDhxhxp
+         BXs5Ak/Cm86cKEJou91NtV9Jk0whenJ2cPvsGvj+AscEkBG5HEypnGOpkKWthsC9io92
+         FX37XQo9HQFWZKdPZwCspIs7XUyYH5BO9CSUV2hZO5jGSCXU2OJHZYljRXAQIeqMoXr0
+         X65Ghdy0di6aqcGCp0VzUl86GhmZ7XE6WUxxY/Xg1aWEA1bZ2Xw3u1EtJfc5KPkZzOTh
+         MijA==
+X-Gm-Message-State: APzg51CHIxvhMwbEkjUcPJ1vipxyToABVJiCtak/eq7uuHtWZD9BWZ+W
+        pKvJmlRfZUu4dPEJ064FKbAZAOcHdGFxFYRK8vMweg==
+X-Google-Smtp-Source: ANB0VdZPhgNMq5k/+3YNyVY6DKtUuyf2y+3voqtCZ01s6F6gm1hcqYVdv7ajM4e1r3euRO2MJIJ7P1W1PsSGQxeuSGU=
+X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr2184393pfb.29.1536231592965;
+ Thu, 06 Sep 2018 03:59:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zjcmjzIkjQU2rmur"
-Content-Disposition: inline
-In-Reply-To: <20180810093708.13290-1-srinivas.kandagatla@linaro.org>
-X-Cookie: You will lose an important disk file.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Thu, 6 Sep 2018 03:59:32
+ -0700 (PDT)
+In-Reply-To: <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+References: <000000000000c178e305749daba4@google.com> <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+ <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov> <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov> <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov> <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com> <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 6 Sep 2018 12:59:32 +0200
+Message-ID: <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
+>> Thanks! I've re-enabled selinux on syzbot:
+>> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
+>> Now we will have instances with apparmor and with selinux.
+>
+> Any chance we could get a Smack instance as well?
 
---zjcmjzIkjQU2rmur
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Casey,
 
-On Fri, Aug 10, 2018 at 10:37:08AM +0100, Srinivas Kandagatla wrote:
-> Current behaviour of ASoC core w.r.t to component removal is that it
-> unregisters dependent sound card totally. There is no support to
-> rebind the card if the component comes back.
-> Typical use case is DSP restart or kernel modules itself.
-
-This looks OK but needs rebasing against current code.
-
---zjcmjzIkjQU2rmur
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluRB2AACgkQJNaLcl1U
-h9A8Cwf9G6hpkdHnQwsmGfH2s5rENsm0BYYZ/JhSMetKbDBXHNMXJ54GCY2cLyl5
-7amwYyqqeeqRS+Db+o60kHDT88TZI2lmEt1wSh/zUvdmZWWWE+1QkYeQWVdIr7Et
-FNURDaLlRODnSTMXnmIEYWUPLid+10DYOrAMTRtDJJoTusCAZLYZS4q6MJKVbCb1
-LdBDumZigcTVuMPeIYu4NpOVlH0sd6sU6HX6ADNiZRrvcx2laxU5NQAKE25vkyhL
-hScv6PByaYu7EZ4Nu6Zc+MsqBoOWNfD9hNL0DCgEp07ioAdPen48C+av7czAH0OC
-OoG/pElugXqWZC+2omOlrTGumoFY7Q==
-=JhVK
------END PGP SIGNATURE-----
-
---zjcmjzIkjQU2rmur--
+Sure!
+Provided you want to fix bugs ;)
+I've setup an instance with smack enabled:
+https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
