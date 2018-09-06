@@ -2,824 +2,206 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E5CC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD038C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7E92064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7E92064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 881D32064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881D32064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbeIFSGz (ORCPT
+        id S1729552AbeIFSHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:06:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55503 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbeIFSGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:06:55 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DUrpo308631
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:30:53 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DUrrf308628;
-        Thu, 6 Sep 2018 06:30:53 -0700
-Date:   Thu, 6 Sep 2018 06:30:53 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-6ca9a082b1908ff7f8adedf08166043b83b266f6@git.kernel.org>
-Cc:     namhyung@kernel.org, jolsa@kernel.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        andi@firstfloor.org, dsahern@gmail.com, acme@redhat.com,
-        peterz@infradead.org
-Reply-To: jolsa@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, mingo@kernel.org, acme@redhat.com,
-          peterz@infradead.org, andi@firstfloor.org, dsahern@gmail.com,
-          hpa@zytor.com, alexander.shishkin@linux.intel.com
-In-Reply-To: <20180830063252.23729-20-jolsa@kernel.org>
-References: <20180830063252.23729-20-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Pass a 'struct perf_stat_config'
- argument to global print functions
-Git-Commit-ID: 6ca9a082b1908ff7f8adedf08166043b83b266f6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 14:07:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728776AbeIFSHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:07:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 50FD340216F6;
+        Thu,  6 Sep 2018 13:31:41 +0000 (UTC)
+Received: from redhat.com (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2D8132027EA0;
+        Thu,  6 Sep 2018 13:31:35 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 09:31:33 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180906133133.GA3830@redhat.com>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180904150019.GA4024@redhat.com>
+ <20180904101509.62314b67@t450s.home>
+ <20180906094532.GG230707@Turing-Arch-b>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180906094532.GG230707@Turing-Arch-b>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 06 Sep 2018 13:31:41 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 06 Sep 2018 13:31:41 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6ca9a082b1908ff7f8adedf08166043b83b266f6
-Gitweb:     https://git.kernel.org/tip/6ca9a082b1908ff7f8adedf08166043b83b266f6
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:28 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
+On Thu, Sep 06, 2018 at 05:45:32PM +0800, Kenneth Lee wrote:
+> On Tue, Sep 04, 2018 at 10:15:09AM -0600, Alex Williamson wrote:
+> > Date: Tue, 4 Sep 2018 10:15:09 -0600
+> > From: Alex Williamson <alex.williamson@redhat.com>
+> > To: Jerome Glisse <jglisse@redhat.com>
+> > CC: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+> >  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
+> >  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Kenneth Lee
+> >  <liguozhu@hisilicon.com>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
+> >  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
+> >  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
+> >  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
+> >  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+> >  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
+> >  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
+> >  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
+> >  linuxarm@huawei.com
+> > Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+> > Message-ID: <20180904101509.62314b67@t450s.home>
+> > 
+> > On Tue, 4 Sep 2018 11:00:19 -0400
+> > Jerome Glisse <jglisse@redhat.com> wrote:
+> > 
+> > > On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
+> > > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > 
+> > > > WarpDrive is an accelerator framework to expose the hardware capabilities
+> > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
+> > > > facilities. So the user application can send request and DMA to the
+> > > > hardware without interaction with the kernel. This removes the latency
+> > > > of syscall.
+> > > > 
+> > > > WarpDrive is the name for the whole framework. The component in kernel
+> > > > is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
+> > > > hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
+> > > > library of WarpDrive can access it via VFIO interface.
+> > > > 
+> > > > The patchset contains document for the detail. Please refer to it for more
+> > > > information.
+> > > > 
+> > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
+> > > > patch [1], which enables not only IO side page fault, but also PASID
+> > > > support to IOMMU and VFIO.
+> > > > 
+> > > > With these features, WarpDrive can support non-pinned memory and
+> > > > multi-process in the same accelerator device.  We tested it in our SoC
+> > > > integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
+> > > > tree can be found here: [2].
+> > > > 
+> > > > But it is not mandatory. This patchset is tested in the latest mainline
+> > > > kernel without the SVA patches.  So it supports only one process for each
+> > > > accelerator.
+> > > > 
+> > > > We have noticed the IOMMU aware mdev RFC announced recently [3].
+> > > > 
+> > > > The IOMMU aware mdev has similar idea but different intention comparing to
+> > > > WarpDrive. It intends to dedicate part of the hardware resource to a VM.
+> > > > And the design is supposed to be used with Scalable I/O Virtualization.
+> > > > While sdmdev is intended to share the hardware resource with a big amount
+> > > > of processes.  It just requires the hardware supporting address
+> > > > translation per process (PCIE's PASID or ARM SMMU's substream ID).
+> > > > 
+> > > > But we don't see serious confliction on both design. We believe they can be
+> > > > normalized as one.
+> > > >   
+> > > 
+> > > So once again i do not understand why you are trying to do things
+> > > this way. Kernel already have tons of example of everything you
+> > > want to do without a new framework. Moreover i believe you are
+> > > confuse by VFIO. To me VFIO is for VM not to create general device
+> > > driver frame work.
+> > 
+> > VFIO is a userspace driver framework, the VM use case just happens to
+> > be a rather prolific one.  VFIO was never intended to be solely a VM
+> > device interface and has several other userspace users, notably DPDK
+> > and SPDK, an NVMe backend in QEMU, a userspace NVMe driver, a ruby
+> > wrapper, and perhaps others that I'm not aware of.  Whether vfio is
+> > appropriate interface here might certainly still be a debatable topic,
+> > but I would strongly disagree with your last sentence above.  Thanks,
+> > 
+> > Alex
+> > 
+> 
+> Yes, that is also my standpoint here.
+> 
+> > > So here is your use case as i understand it. You have a device
+> > > with a limited number of command queues (can be just one) and in
+> > > some case it can support SVA/SVM (when hardware support it and it
+> > > is not disabled). Final requirement is being able to schedule cmds
+> > > from userspace without ioctl. All of this exists already exists
+> > > upstream in few device drivers.
+> > > 
+> > > 
+> > > So here is how every body else is doing it. Please explain why
+> > > this does not work.
+> > > 
+> > > 1 Userspace open device file driver. Kernel device driver create
+> > >   a context and associate it with on open. This context can be
+> > >   uniq to the process and can bind hardware resources (like a
+> > >   command queue) to the process.
+> > > 2 Userspace bind/acquire a commands queue and initialize it with
+> > >   an ioctl on the device file. Through that ioctl userspace can
+> > >   be inform wether either SVA/SVM works for the device. If SVA/
+> > >   SVM works then kernel device driver bind the process to the
+> > >   device as part of this ioctl.
+> > > 3 If SVM/SVA does not work userspace do an ioctl to create dma
+> > >   buffer or something that does exactly the same thing.
+> > > 4 Userspace mmap the command queue (mmap of the device file by
+> > >   using informations gather at step 2)
+> > > 5 Userspace can write commands into the queue it mapped
+> > > 6 When userspace close the device file all resources are release
+> > >   just like any existing device drivers.
+> 
+> Hi, Jerome,
+> 
+> Just one thing, as I said in the cover letter, dma-buf requires the application
+> to use memory created by the driver for DMA. I did try the dma-buf way in
+> WrapDrive (refer to [4] in the cover letter), it is a good backup for NOIOMMU
+> mode or we cannot solve the problem in VFIO.
+> 
+> But, in many of my application scenario, the application already has some memory
+> in hand, maybe allocated by the framework or libraries. Anyway, they don't get
+> memory from my library, and they pass the poiter for data operation. And they
+> may also have pointer in the buffer. Those pointer may be used by the
+> accelerator. So I need hardware fully share the address space with the
+> application. That is what dmabuf cannot do.
 
-perf stat: Pass a 'struct perf_stat_config' argument to global print functions
+dmabuf can do that ... it is call uptr you can look at i915 for
+instance. Still this does not answer my question above, why do
+you need to be in VFIO to do any of the above thing ? Kernel has
+tons of examples that does all of the above and are not in VFIO
+(including usinng existing user pointer with device).
 
-Add 'struct perf_stat_config' argument to the global print functions, so
-that these functions can be used out of the 'perf stat' command code.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-20-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-script.c   |   8 ++-
- tools/perf/builtin-stat.c     |  74 ++++++++++++---------
- tools/perf/util/stat-shadow.c | 147 +++++++++++++++++++++++-------------------
- tools/perf/util/stat.h        |   8 ++-
- 4 files changed, 131 insertions(+), 106 deletions(-)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index ba481d73f910..6176bae177c2 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1544,7 +1544,8 @@ struct metric_ctx {
- 	FILE 			*fp;
- };
- 
--static void script_print_metric(void *ctx, const char *color,
-+static void script_print_metric(struct perf_stat_config *config __maybe_unused,
-+				void *ctx, const char *color,
- 			        const char *fmt,
- 			        const char *unit, double val)
- {
-@@ -1562,7 +1563,8 @@ static void script_print_metric(void *ctx, const char *color,
- 	fprintf(mctx->fp, " %s\n", unit);
- }
- 
--static void script_new_line(void *ctx)
-+static void script_new_line(struct perf_stat_config *config __maybe_unused,
-+			    void *ctx)
- {
- 	struct metric_ctx *mctx = ctx;
- 
-@@ -1608,7 +1610,7 @@ static void perf_sample__fprint_metric(struct perf_script *script,
- 	evsel_script(evsel)->val = val;
- 	if (evsel_script(evsel->leader)->gnum == evsel->leader->nr_members) {
- 		for_each_group_member (ev2, evsel->leader) {
--			perf_stat__print_shadow_stats(ev2,
-+			perf_stat__print_shadow_stats(&stat_config, ev2,
- 						      evsel_script(ev2)->val,
- 						      sample->cpu,
- 						      &ctx,
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index f56da22abccc..7a3361308e61 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -697,11 +697,12 @@ static void print_noise(struct perf_stat_config *config,
- 	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
- }
- 
--static void aggr_printout(struct perf_evsel *evsel, int id, int nr)
-+static void aggr_printout(struct perf_stat_config *config,
-+			  struct perf_evsel *evsel, int id, int nr)
- {
--	switch (stat_config.aggr_mode) {
-+	switch (config->aggr_mode) {
- 	case AGGR_CORE:
--		fprintf(stat_config.output, "S%d-C%*d%s%*d%s",
-+		fprintf(config->output, "S%d-C%*d%s%*d%s",
- 			cpu_map__id_to_socket(id),
- 			csv_output ? 0 : -8,
- 			cpu_map__id_to_cpu(id),
-@@ -711,7 +712,7 @@ static void aggr_printout(struct perf_evsel *evsel, int id, int nr)
- 			csv_sep);
- 		break;
- 	case AGGR_SOCKET:
--		fprintf(stat_config.output, "S%*d%s%*d%s",
-+		fprintf(config->output, "S%*d%s%*d%s",
- 			csv_output ? 0 : -5,
- 			id,
- 			csv_sep,
-@@ -720,12 +721,12 @@ static void aggr_printout(struct perf_evsel *evsel, int id, int nr)
- 			csv_sep);
- 			break;
- 	case AGGR_NONE:
--		fprintf(stat_config.output, "CPU%*d%s",
-+		fprintf(config->output, "CPU%*d%s",
- 			csv_output ? 0 : -4,
- 			perf_evsel__cpus(evsel)->map[id], csv_sep);
- 		break;
- 	case AGGR_THREAD:
--		fprintf(stat_config.output, "%*s-%*d%s",
-+		fprintf(config->output, "%*s-%*d%s",
- 			csv_output ? 0 : 16,
- 			thread_map__comm(evsel->threads, id),
- 			csv_output ? 0 : -8,
-@@ -750,24 +751,27 @@ struct outstate {
- 
- #define METRIC_LEN  35
- 
--static void new_line_std(void *ctx)
-+static void new_line_std(struct perf_stat_config *config __maybe_unused,
-+			 void *ctx)
- {
- 	struct outstate *os = ctx;
- 
- 	os->newline = true;
- }
- 
--static void do_new_line_std(struct outstate *os)
-+static void do_new_line_std(struct perf_stat_config *config,
-+			    struct outstate *os)
- {
- 	fputc('\n', os->fh);
- 	fputs(os->prefix, os->fh);
--	aggr_printout(os->evsel, os->id, os->nr);
--	if (stat_config.aggr_mode == AGGR_NONE)
-+	aggr_printout(config, os->evsel, os->id, os->nr);
-+	if (config->aggr_mode == AGGR_NONE)
- 		fprintf(os->fh, "        ");
- 	fprintf(os->fh, "                                                 ");
- }
- 
--static void print_metric_std(void *ctx, const char *color, const char *fmt,
-+static void print_metric_std(struct perf_stat_config *config,
-+			     void *ctx, const char *color, const char *fmt,
- 			     const char *unit, double val)
- {
- 	struct outstate *os = ctx;
-@@ -783,7 +787,7 @@ static void print_metric_std(void *ctx, const char *color, const char *fmt,
- 	}
- 
- 	if (newline)
--		do_new_line_std(os);
-+		do_new_line_std(config, os);
- 
- 	n = fprintf(out, " # ");
- 	if (color)
-@@ -793,7 +797,7 @@ static void print_metric_std(void *ctx, const char *color, const char *fmt,
- 	fprintf(out, " %-*s", METRIC_LEN - n - 1, unit);
- }
- 
--static void new_line_csv(void *ctx)
-+static void new_line_csv(struct perf_stat_config *config, void *ctx)
- {
- 	struct outstate *os = ctx;
- 	int i;
-@@ -801,12 +805,13 @@ static void new_line_csv(void *ctx)
- 	fputc('\n', os->fh);
- 	if (os->prefix)
- 		fprintf(os->fh, "%s%s", os->prefix, csv_sep);
--	aggr_printout(os->evsel, os->id, os->nr);
-+	aggr_printout(config, os->evsel, os->id, os->nr);
- 	for (i = 0; i < os->nfields; i++)
- 		fputs(csv_sep, os->fh);
- }
- 
--static void print_metric_csv(void *ctx,
-+static void print_metric_csv(struct perf_stat_config *config __maybe_unused,
-+			     void *ctx,
- 			     const char *color __maybe_unused,
- 			     const char *fmt, const char *unit, double val)
- {
-@@ -853,7 +858,8 @@ static const char *fixunit(char *buf, struct perf_evsel *evsel,
- 	return unit;
- }
- 
--static void print_metric_only(void *ctx, const char *color, const char *fmt,
-+static void print_metric_only(struct perf_stat_config *config __maybe_unused,
-+			      void *ctx, const char *color, const char *fmt,
- 			      const char *unit, double val)
- {
- 	struct outstate *os = ctx;
-@@ -874,7 +880,8 @@ static void print_metric_only(void *ctx, const char *color, const char *fmt,
- 	fprintf(out, "%*s ", mlen, str);
- }
- 
--static void print_metric_only_csv(void *ctx, const char *color __maybe_unused,
-+static void print_metric_only_csv(struct perf_stat_config *config __maybe_unused,
-+				  void *ctx, const char *color __maybe_unused,
- 				  const char *fmt,
- 				  const char *unit, double val)
- {
-@@ -894,11 +901,13 @@ static void print_metric_only_csv(void *ctx, const char *color __maybe_unused,
- 	fprintf(out, "%s%s", vals, csv_sep);
- }
- 
--static void new_line_metric(void *ctx __maybe_unused)
-+static void new_line_metric(struct perf_stat_config *config __maybe_unused,
-+			    void *ctx __maybe_unused)
- {
- }
- 
--static void print_metric_header(void *ctx, const char *color __maybe_unused,
-+static void print_metric_header(struct perf_stat_config *config __maybe_unused,
-+				void *ctx, const char *color __maybe_unused,
- 				const char *fmt __maybe_unused,
- 				const char *unit, double val __maybe_unused)
- {
-@@ -936,9 +945,10 @@ static int first_shadow_cpu(struct perf_evsel *evsel, int id)
- 	return 0;
- }
- 
--static void abs_printout(int id, int nr, struct perf_evsel *evsel, double avg)
-+static void abs_printout(struct perf_stat_config *config,
-+			 int id, int nr, struct perf_evsel *evsel, double avg)
- {
--	FILE *output = stat_config.output;
-+	FILE *output = config->output;
- 	double sc =  evsel->scale;
- 	const char *fmt;
- 
-@@ -951,7 +961,7 @@ static void abs_printout(int id, int nr, struct perf_evsel *evsel, double avg)
- 			fmt = floor(sc) != sc ? "%18.2f%s" : "%18.0f%s";
- 	}
- 
--	aggr_printout(evsel, id, nr);
-+	aggr_printout(config, evsel, id, nr);
- 
- 	fprintf(output, fmt, avg, csv_sep);
- 
-@@ -1004,7 +1014,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 		.evsel = counter,
- 	};
- 	print_metric_t pm = print_metric_std;
--	void (*nl)(void *);
-+	new_line_t nl;
- 
- 	if (metric_only) {
- 		nl = new_line_metric;
-@@ -1033,10 +1043,10 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 	}
- 	if (run == 0 || ena == 0 || counter->counts->scaled == -1) {
- 		if (metric_only) {
--			pm(&os, NULL, "", "", 0);
-+			pm(config, &os, NULL, "", "", 0);
- 			return;
- 		}
--		aggr_printout(counter, id, nr);
-+		aggr_printout(config, counter, id, nr);
- 
- 		fprintf(config->output, "%*s%s",
- 			csv_output ? 0 : 18,
-@@ -1062,16 +1072,16 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 				csv_sep, counter->cgrp->name);
- 
- 		if (!csv_output)
--			pm(&os, NULL, NULL, "", 0);
-+			pm(config, &os, NULL, NULL, "", 0);
- 		print_noise(config, counter, noise);
- 		print_running(config, run, ena);
- 		if (csv_output)
--			pm(&os, NULL, NULL, "", 0);
-+			pm(config, &os, NULL, NULL, "", 0);
- 		return;
- 	}
- 
- 	if (!metric_only)
--		abs_printout(id, nr, counter, uval);
-+		abs_printout(config, id, nr, counter, uval);
- 
- 	out.print_metric = pm;
- 	out.new_line = nl;
-@@ -1083,7 +1093,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 		print_running(config, run, ena);
- 	}
- 
--	perf_stat__print_shadow_stats(counter, uval,
-+	perf_stat__print_shadow_stats(config, counter, uval,
- 				first_shadow_cpu(counter, id),
- 				&out, &metric_events, st);
- 	if (!csv_output && !metric_only) {
-@@ -1255,7 +1265,7 @@ static void print_aggr(struct perf_stat_config *config,
- 			val = ad.val;
- 			if (first && metric_only) {
- 				first = false;
--				aggr_printout(counter, id, nr);
-+				aggr_printout(config, counter, id, nr);
- 			}
- 			if (prefix && !metric_only)
- 				fprintf(output, "%s", prefix);
-@@ -1459,7 +1469,7 @@ static void print_no_aggr_metric(struct perf_stat_config *config,
- 			if (is_duration_time(counter))
- 				continue;
- 			if (first) {
--				aggr_printout(counter, cpu, 0);
-+				aggr_printout(config, counter, cpu, 0);
- 				first = false;
- 			}
- 			val = perf_counts(counter->counts, cpu, 0)->val;
-@@ -1521,7 +1531,7 @@ static void print_metric_headers(struct perf_stat_config *config,
- 		out.new_line = new_line_metric;
- 		out.force_header = true;
- 		os.evsel = counter;
--		perf_stat__print_shadow_stats(counter, 0,
-+		perf_stat__print_shadow_stats(config, counter, 0,
- 					      0,
- 					      &out,
- 					      &metric_events,
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 99990f5f2512..8ad32763cfff 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -410,7 +410,8 @@ static double runtime_stat_n(struct runtime_stat *st,
- 	return v->stats.n;
- }
- 
--static void print_stalled_cycles_frontend(int cpu,
-+static void print_stalled_cycles_frontend(struct perf_stat_config *config,
-+					  int cpu,
- 					  struct perf_evsel *evsel, double avg,
- 					  struct perf_stat_output_ctx *out,
- 					  struct runtime_stat *st)
-@@ -427,13 +428,14 @@ static void print_stalled_cycles_frontend(int cpu,
- 	color = get_ratio_color(GRC_STALLED_CYCLES_FE, ratio);
- 
- 	if (ratio)
--		out->print_metric(out->ctx, color, "%7.2f%%", "frontend cycles idle",
-+		out->print_metric(config, out->ctx, color, "%7.2f%%", "frontend cycles idle",
- 				  ratio);
- 	else
--		out->print_metric(out->ctx, NULL, NULL, "frontend cycles idle", 0);
-+		out->print_metric(config, out->ctx, NULL, NULL, "frontend cycles idle", 0);
- }
- 
--static void print_stalled_cycles_backend(int cpu,
-+static void print_stalled_cycles_backend(struct perf_stat_config *config,
-+					 int cpu,
- 					 struct perf_evsel *evsel, double avg,
- 					 struct perf_stat_output_ctx *out,
- 					 struct runtime_stat *st)
-@@ -449,10 +451,11 @@ static void print_stalled_cycles_backend(int cpu,
- 
- 	color = get_ratio_color(GRC_STALLED_CYCLES_BE, ratio);
- 
--	out->print_metric(out->ctx, color, "%7.2f%%", "backend cycles idle", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "backend cycles idle", ratio);
- }
- 
--static void print_branch_misses(int cpu,
-+static void print_branch_misses(struct perf_stat_config *config,
-+				int cpu,
- 				struct perf_evsel *evsel,
- 				double avg,
- 				struct perf_stat_output_ctx *out,
-@@ -469,10 +472,11 @@ static void print_branch_misses(int cpu,
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
- 
--	out->print_metric(out->ctx, color, "%7.2f%%", "of all branches", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all branches", ratio);
- }
- 
--static void print_l1_dcache_misses(int cpu,
-+static void print_l1_dcache_misses(struct perf_stat_config *config,
-+				   int cpu,
- 				   struct perf_evsel *evsel,
- 				   double avg,
- 				   struct perf_stat_output_ctx *out,
-@@ -490,10 +494,11 @@ static void print_l1_dcache_misses(int cpu,
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
- 
--	out->print_metric(out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-dcache hits", ratio);
- }
- 
--static void print_l1_icache_misses(int cpu,
-+static void print_l1_icache_misses(struct perf_stat_config *config,
-+				   int cpu,
- 				   struct perf_evsel *evsel,
- 				   double avg,
- 				   struct perf_stat_output_ctx *out,
-@@ -510,10 +515,11 @@ static void print_l1_icache_misses(int cpu,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(out->ctx, color, "%7.2f%%", "of all L1-icache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all L1-icache hits", ratio);
- }
- 
--static void print_dtlb_cache_misses(int cpu,
-+static void print_dtlb_cache_misses(struct perf_stat_config *config,
-+				    int cpu,
- 				    struct perf_evsel *evsel,
- 				    double avg,
- 				    struct perf_stat_output_ctx *out,
-@@ -529,10 +535,11 @@ static void print_dtlb_cache_misses(int cpu,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(out->ctx, color, "%7.2f%%", "of all dTLB cache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all dTLB cache hits", ratio);
- }
- 
--static void print_itlb_cache_misses(int cpu,
-+static void print_itlb_cache_misses(struct perf_stat_config *config,
-+				    int cpu,
- 				    struct perf_evsel *evsel,
- 				    double avg,
- 				    struct perf_stat_output_ctx *out,
-@@ -548,10 +555,11 @@ static void print_itlb_cache_misses(int cpu,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(out->ctx, color, "%7.2f%%", "of all iTLB cache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all iTLB cache hits", ratio);
- }
- 
--static void print_ll_cache_misses(int cpu,
-+static void print_ll_cache_misses(struct perf_stat_config *config,
-+				  int cpu,
- 				  struct perf_evsel *evsel,
- 				  double avg,
- 				  struct perf_stat_output_ctx *out,
-@@ -567,7 +575,7 @@ static void print_ll_cache_misses(int cpu,
- 		ratio = avg / total * 100.0;
- 
- 	color = get_ratio_color(GRC_CACHE_MISSES, ratio);
--	out->print_metric(out->ctx, color, "%7.2f%%", "of all LL-cache hits", ratio);
-+	out->print_metric(config, out->ctx, color, "%7.2f%%", "of all LL-cache hits", ratio);
- }
- 
- /*
-@@ -674,7 +682,8 @@ static double td_be_bound(int ctx, int cpu, struct runtime_stat *st)
- 	return sanitize_val(1.0 - sum);
- }
- 
--static void print_smi_cost(int cpu, struct perf_evsel *evsel,
-+static void print_smi_cost(struct perf_stat_config *config,
-+			   int cpu, struct perf_evsel *evsel,
- 			   struct perf_stat_output_ctx *out,
- 			   struct runtime_stat *st)
- {
-@@ -694,11 +703,12 @@ static void print_smi_cost(int cpu, struct perf_evsel *evsel,
- 
- 	if (cost > 10)
- 		color = PERF_COLOR_RED;
--	out->print_metric(out->ctx, color, "%8.1f%%", "SMI cycles%", cost);
--	out->print_metric(out->ctx, NULL, "%4.0f", "SMI#", smi_num);
-+	out->print_metric(config, out->ctx, color, "%8.1f%%", "SMI cycles%", cost);
-+	out->print_metric(config, out->ctx, NULL, "%4.0f", "SMI#", smi_num);
- }
- 
--static void generic_metric(const char *metric_expr,
-+static void generic_metric(struct perf_stat_config *config,
-+			   const char *metric_expr,
- 			   struct perf_evsel **metric_events,
- 			   char *name,
- 			   const char *metric_name,
-@@ -737,20 +747,21 @@ static void generic_metric(const char *metric_expr,
- 		const char *p = metric_expr;
- 
- 		if (expr__parse(&ratio, &pctx, &p) == 0)
--			print_metric(ctxp, NULL, "%8.1f",
-+			print_metric(config, ctxp, NULL, "%8.1f",
- 				metric_name ?
- 				metric_name :
- 				out->force_header ?  name : "",
- 				ratio);
- 		else
--			print_metric(ctxp, NULL, NULL,
-+			print_metric(config, ctxp, NULL, NULL,
- 				     out->force_header ?
- 				     (metric_name ? metric_name : name) : "", 0);
- 	} else
--		print_metric(ctxp, NULL, NULL, "", 0);
-+		print_metric(config, ctxp, NULL, NULL, "", 0);
- }
- 
--void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
-+void perf_stat__print_shadow_stats(struct perf_stat_config *config,
-+				   struct perf_evsel *evsel,
- 				   double avg, int cpu,
- 				   struct perf_stat_output_ctx *out,
- 				   struct rblist *metric_events,
-@@ -769,10 +780,10 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 
- 		if (total) {
- 			ratio = avg / total;
--			print_metric(ctxp, NULL, "%7.2f ",
-+			print_metric(config, ctxp, NULL, "%7.2f ",
- 					"insn per cycle", ratio);
- 		} else {
--			print_metric(ctxp, NULL, NULL, "insn per cycle", 0);
-+			print_metric(config, ctxp, NULL, NULL, "insn per cycle", 0);
- 		}
- 
- 		total = runtime_stat_avg(st, STAT_STALLED_CYCLES_FRONT,
-@@ -783,20 +794,20 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 						    ctx, cpu));
- 
- 		if (total && avg) {
--			out->new_line(ctxp);
-+			out->new_line(config, ctxp);
- 			ratio = total / avg;
--			print_metric(ctxp, NULL, "%7.2f ",
-+			print_metric(config, ctxp, NULL, "%7.2f ",
- 					"stalled cycles per insn",
- 					ratio);
- 		} else if (have_frontend_stalled) {
--			print_metric(ctxp, NULL, NULL,
-+			print_metric(config, ctxp, NULL, NULL,
- 				     "stalled cycles per insn", 0);
- 		}
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_BRANCH_MISSES)) {
- 		if (runtime_stat_n(st, STAT_BRANCHES, ctx, cpu) != 0)
--			print_branch_misses(cpu, evsel, avg, out, st);
-+			print_branch_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all branches", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all branches", 0);
- 	} else if (
- 		evsel->attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->attr.config ==  ( PERF_COUNT_HW_CACHE_L1D |
-@@ -804,9 +815,9 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 					 ((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16))) {
- 
- 		if (runtime_stat_n(st, STAT_L1_DCACHE, ctx, cpu) != 0)
--			print_l1_dcache_misses(cpu, evsel, avg, out, st);
-+			print_l1_dcache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all L1-dcache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all L1-dcache hits", 0);
- 	} else if (
- 		evsel->attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->attr.config ==  ( PERF_COUNT_HW_CACHE_L1I |
-@@ -814,9 +825,9 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 					 ((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16))) {
- 
- 		if (runtime_stat_n(st, STAT_L1_ICACHE, ctx, cpu) != 0)
--			print_l1_icache_misses(cpu, evsel, avg, out, st);
-+			print_l1_icache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all L1-icache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all L1-icache hits", 0);
- 	} else if (
- 		evsel->attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->attr.config ==  ( PERF_COUNT_HW_CACHE_DTLB |
-@@ -824,9 +835,9 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 					 ((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16))) {
- 
- 		if (runtime_stat_n(st, STAT_DTLB_CACHE, ctx, cpu) != 0)
--			print_dtlb_cache_misses(cpu, evsel, avg, out, st);
-+			print_dtlb_cache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all dTLB cache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all dTLB cache hits", 0);
- 	} else if (
- 		evsel->attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->attr.config ==  ( PERF_COUNT_HW_CACHE_ITLB |
-@@ -834,9 +845,9 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 					 ((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16))) {
- 
- 		if (runtime_stat_n(st, STAT_ITLB_CACHE, ctx, cpu) != 0)
--			print_itlb_cache_misses(cpu, evsel, avg, out, st);
-+			print_itlb_cache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all iTLB cache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all iTLB cache hits", 0);
- 	} else if (
- 		evsel->attr.type == PERF_TYPE_HW_CACHE &&
- 		evsel->attr.config ==  ( PERF_COUNT_HW_CACHE_LL |
-@@ -844,9 +855,9 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 					 ((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16))) {
- 
- 		if (runtime_stat_n(st, STAT_LL_CACHE, ctx, cpu) != 0)
--			print_ll_cache_misses(cpu, evsel, avg, out, st);
-+			print_ll_cache_misses(config, cpu, evsel, avg, out, st);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all LL-cache hits", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all LL-cache hits", 0);
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_CACHE_MISSES)) {
- 		total = runtime_stat_avg(st, STAT_CACHEREFS, ctx, cpu);
- 
-@@ -854,32 +865,32 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 			ratio = avg * 100 / total;
- 
- 		if (runtime_stat_n(st, STAT_CACHEREFS, ctx, cpu) != 0)
--			print_metric(ctxp, NULL, "%8.3f %%",
-+			print_metric(config, ctxp, NULL, "%8.3f %%",
- 				     "of all cache refs", ratio);
- 		else
--			print_metric(ctxp, NULL, NULL, "of all cache refs", 0);
-+			print_metric(config, ctxp, NULL, NULL, "of all cache refs", 0);
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_STALLED_CYCLES_FRONTEND)) {
--		print_stalled_cycles_frontend(cpu, evsel, avg, out, st);
-+		print_stalled_cycles_frontend(config, cpu, evsel, avg, out, st);
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_STALLED_CYCLES_BACKEND)) {
--		print_stalled_cycles_backend(cpu, evsel, avg, out, st);
-+		print_stalled_cycles_backend(config, cpu, evsel, avg, out, st);
- 	} else if (perf_evsel__match(evsel, HARDWARE, HW_CPU_CYCLES)) {
- 		total = runtime_stat_avg(st, STAT_NSECS, 0, cpu);
- 
- 		if (total) {
- 			ratio = avg / total;
--			print_metric(ctxp, NULL, "%8.3f", "GHz", ratio);
-+			print_metric(config, ctxp, NULL, "%8.3f", "GHz", ratio);
- 		} else {
--			print_metric(ctxp, NULL, NULL, "Ghz", 0);
-+			print_metric(config, ctxp, NULL, NULL, "Ghz", 0);
- 		}
- 	} else if (perf_stat_evsel__is(evsel, CYCLES_IN_TX)) {
- 		total = runtime_stat_avg(st, STAT_CYCLES, ctx, cpu);
- 
- 		if (total)
--			print_metric(ctxp, NULL,
-+			print_metric(config, ctxp, NULL,
- 					"%7.2f%%", "transactional cycles",
- 					100.0 * (avg / total));
- 		else
--			print_metric(ctxp, NULL, NULL, "transactional cycles",
-+			print_metric(config, ctxp, NULL, NULL, "transactional cycles",
- 				     0);
- 	} else if (perf_stat_evsel__is(evsel, CYCLES_IN_TX_CP)) {
- 		total = runtime_stat_avg(st, STAT_CYCLES, ctx, cpu);
-@@ -888,10 +899,10 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 		if (total2 < avg)
- 			total2 = avg;
- 		if (total)
--			print_metric(ctxp, NULL, "%7.2f%%", "aborted cycles",
-+			print_metric(config, ctxp, NULL, "%7.2f%%", "aborted cycles",
- 				100.0 * ((total2-avg) / total));
- 		else
--			print_metric(ctxp, NULL, NULL, "aborted cycles", 0);
-+			print_metric(config, ctxp, NULL, NULL, "aborted cycles", 0);
- 	} else if (perf_stat_evsel__is(evsel, TRANSACTION_START)) {
- 		total = runtime_stat_avg(st, STAT_CYCLES_IN_TX,
- 					 ctx, cpu);
-@@ -900,10 +911,10 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 			ratio = total / avg;
- 
- 		if (runtime_stat_n(st, STAT_CYCLES_IN_TX, ctx, cpu) != 0)
--			print_metric(ctxp, NULL, "%8.0f",
-+			print_metric(config, ctxp, NULL, "%8.0f",
- 				     "cycles / transaction", ratio);
- 		else
--			print_metric(ctxp, NULL, NULL, "cycles / transaction",
-+			print_metric(config, ctxp, NULL, NULL, "cycles / transaction",
- 				      0);
- 	} else if (perf_stat_evsel__is(evsel, ELISION_START)) {
- 		total = runtime_stat_avg(st, STAT_CYCLES_IN_TX,
-@@ -912,33 +923,33 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 		if (avg)
- 			ratio = total / avg;
- 
--		print_metric(ctxp, NULL, "%8.0f", "cycles / elision", ratio);
-+		print_metric(config, ctxp, NULL, "%8.0f", "cycles / elision", ratio);
- 	} else if (perf_evsel__is_clock(evsel)) {
- 		if ((ratio = avg_stats(&walltime_nsecs_stats)) != 0)
--			print_metric(ctxp, NULL, "%8.3f", "CPUs utilized",
-+			print_metric(config, ctxp, NULL, "%8.3f", "CPUs utilized",
- 				     avg / (ratio * evsel->scale));
- 		else
--			print_metric(ctxp, NULL, NULL, "CPUs utilized", 0);
-+			print_metric(config, ctxp, NULL, NULL, "CPUs utilized", 0);
- 	} else if (perf_stat_evsel__is(evsel, TOPDOWN_FETCH_BUBBLES)) {
- 		double fe_bound = td_fe_bound(ctx, cpu, st);
- 
- 		if (fe_bound > 0.2)
- 			color = PERF_COLOR_RED;
--		print_metric(ctxp, color, "%8.1f%%", "frontend bound",
-+		print_metric(config, ctxp, color, "%8.1f%%", "frontend bound",
- 				fe_bound * 100.);
- 	} else if (perf_stat_evsel__is(evsel, TOPDOWN_SLOTS_RETIRED)) {
- 		double retiring = td_retiring(ctx, cpu, st);
- 
- 		if (retiring > 0.7)
- 			color = PERF_COLOR_GREEN;
--		print_metric(ctxp, color, "%8.1f%%", "retiring",
-+		print_metric(config, ctxp, color, "%8.1f%%", "retiring",
- 				retiring * 100.);
- 	} else if (perf_stat_evsel__is(evsel, TOPDOWN_RECOVERY_BUBBLES)) {
- 		double bad_spec = td_bad_spec(ctx, cpu, st);
- 
- 		if (bad_spec > 0.1)
- 			color = PERF_COLOR_RED;
--		print_metric(ctxp, color, "%8.1f%%", "bad speculation",
-+		print_metric(config, ctxp, color, "%8.1f%%", "bad speculation",
- 				bad_spec * 100.);
- 	} else if (perf_stat_evsel__is(evsel, TOPDOWN_SLOTS_ISSUED)) {
- 		double be_bound = td_be_bound(ctx, cpu, st);
-@@ -955,12 +966,12 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 		if (be_bound > 0.2)
- 			color = PERF_COLOR_RED;
- 		if (td_total_slots(ctx, cpu, st) > 0)
--			print_metric(ctxp, color, "%8.1f%%", name,
-+			print_metric(config, ctxp, color, "%8.1f%%", name,
- 					be_bound * 100.);
- 		else
--			print_metric(ctxp, NULL, NULL, name, 0);
-+			print_metric(config, ctxp, NULL, NULL, name, 0);
- 	} else if (evsel->metric_expr) {
--		generic_metric(evsel->metric_expr, evsel->metric_events, evsel->name,
-+		generic_metric(config, evsel->metric_expr, evsel->metric_events, evsel->name,
- 				evsel->metric_name, avg, cpu, out, st);
- 	} else if (runtime_stat_n(st, STAT_NSECS, 0, cpu) != 0) {
- 		char unit = 'M';
-@@ -975,9 +986,9 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 			unit = 'K';
- 		}
- 		snprintf(unit_buf, sizeof(unit_buf), "%c/sec", unit);
--		print_metric(ctxp, NULL, "%8.3f", unit_buf, ratio);
-+		print_metric(config, ctxp, NULL, "%8.3f", unit_buf, ratio);
- 	} else if (perf_stat_evsel__is(evsel, SMI_NUM)) {
--		print_smi_cost(cpu, evsel, out, st);
-+		print_smi_cost(config, cpu, evsel, out, st);
- 	} else {
- 		num = 0;
- 	}
-@@ -987,12 +998,12 @@ void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
- 
- 		list_for_each_entry (mexp, &me->head, nd) {
- 			if (num++ > 0)
--				out->new_line(ctxp);
--			generic_metric(mexp->metric_expr, mexp->metric_events,
-+				out->new_line(config, ctxp);
-+			generic_metric(config, mexp->metric_expr, mexp->metric_events,
- 					evsel->name, mexp->metric_name,
- 					avg, cpu, out, st);
- 		}
- 	}
- 	if (num == 0)
--		print_metric(ctxp, NULL, NULL, NULL, 0);
-+		print_metric(config, ctxp, NULL, NULL, NULL, 0);
- }
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index da6a706daecc..dffcf2110706 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -135,9 +135,10 @@ bool __perf_evsel_stat__is(struct perf_evsel *evsel,
- extern struct runtime_stat rt_stat;
- extern struct stats walltime_nsecs_stats;
- 
--typedef void (*print_metric_t)(void *ctx, const char *color, const char *unit,
-+typedef void (*print_metric_t)(struct perf_stat_config *config,
-+			       void *ctx, const char *color, const char *unit,
- 			       const char *fmt, double val);
--typedef void (*new_line_t )(void *ctx);
-+typedef void (*new_line_t)(struct perf_stat_config *config, void *ctx);
- 
- void runtime_stat__init(struct runtime_stat *st);
- void runtime_stat__exit(struct runtime_stat *st);
-@@ -153,7 +154,8 @@ struct perf_stat_output_ctx {
- 	bool force_header;
- };
- 
--void perf_stat__print_shadow_stats(struct perf_evsel *evsel,
-+void perf_stat__print_shadow_stats(struct perf_stat_config *config,
-+				   struct perf_evsel *evsel,
- 				   double avg, int cpu,
- 				   struct perf_stat_output_ctx *out,
- 				   struct rblist *metric_events,
+Cheers,
+Jérôme
