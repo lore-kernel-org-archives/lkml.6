@@ -2,110 +2,88 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB53EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9E3C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CF1620844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:46:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7bYLw4o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF1620844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A3FD520659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:48:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FD520659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeIFWXE (ORCPT
+        id S1728967AbeIFWYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 18:23:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727705AbeIFWXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 18:23:04 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 6 Sep 2018 18:24:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54020 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725978AbeIFWYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 18:24:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BFF620659;
-        Thu,  6 Sep 2018 17:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536255990;
-        bh=XuCDO0EVX3UpbyFbM6zUYmH41lJPIlg6MV187IMN7mE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I7bYLw4oUWp+YdUmro5XbHawxZ0PCL/RPU0ea5biS+HSHHXPbnb2m17w8gn7fz/S1
-         1N6JgqOVGhgptT3tLFKmmdLjtBsYmSBFZEeXEj7hmbgwozEPNRQxSxhAMpe4oLfgVA
-         YJGJBpooBT/TsZumO78SbUkPGT+sKDwBWJ3nkNvY=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id A8D15141FFC; Thu,  6 Sep 2018 14:46:27 -0300 (-03)
-Date:   Thu, 6 Sep 2018 14:46:27 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf tools: use PTR_ERR_OR_ZERO inetead of return code
-Message-ID: <20180906174627.GA6853@kernel.org>
-References: <1536234171-15970-1-git-send-email-dingxiang@cmss.chinamobile.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 7D53E40241E9;
+        Thu,  6 Sep 2018 17:48:10 +0000 (UTC)
+Received: from redhat.com (ovpn-120-232.rdu2.redhat.com [10.10.120.232])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 23C842166B41;
+        Thu,  6 Sep 2018 17:48:10 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 13:48:09 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH net-next 07/11] tuntap: move XDP flushing out of
+ tun_do_xdp()
+Message-ID: <20180906132209-mutt-send-email-mst@kernel.org>
+References: <20180906040526.22518-1-jasowang@redhat.com>
+ <20180906040526.22518-8-jasowang@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536234171-15970-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180906040526.22518-8-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 17:48:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 06 Sep 2018 17:48:10 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Sep 06, 2018 at 07:42:51PM +0800, Ding Xiang escreveu:
-> use PTR_ERR_OR_ZERO for bpf__setup_stdout return code
+On Thu, Sep 06, 2018 at 12:05:22PM +0800, Jason Wang wrote:
+> This will allow adding batch flushing on top.
 > 
-> v2: add macro PTR_ERR_OR_ZERO to err.h
-
-This really should be done in two patches, one introducing the
-PTR_ERR_OR_ZERO() macro, and then the use of it in bpf-loader.c.
-
-Thanks,
-
-- Arnaldo
- 
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 > ---
->  tools/include/linux/err.h    | 7 +++++++
->  tools/perf/util/bpf-loader.c | 2 +-
->  2 files changed, 8 insertions(+), 1 deletion(-)
+>  drivers/net/tun.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/include/linux/err.h b/tools/include/linux/err.h
-> index 7a8b61a..0946496 100644
-> --- a/tools/include/linux/err.h
-> +++ b/tools/include/linux/err.h
-> @@ -52,4 +52,11 @@ static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
->  	return unlikely(!ptr) || IS_ERR_VALUE((unsigned long)ptr);
->  }
->  
-> +static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
-> +{
-> +	if (IS_ERR(ptr))
-> +		return PTR_ERR(ptr);
-> +	else
-> +		return 0;
-> +}
->  #endif /* _LINUX_ERR_H */
-> diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-> index 47aac41..f9ae1a9 100644
-> --- a/tools/perf/util/bpf-loader.c
-> +++ b/tools/perf/util/bpf-loader.c
-> @@ -1615,7 +1615,7 @@ struct perf_evsel *bpf__setup_output_event(struct perf_evlist *evlist, const cha
->  int bpf__setup_stdout(struct perf_evlist *evlist)
->  {
->  	struct perf_evsel *evsel = bpf__setup_output_event(evlist, "__bpf_stdout__");
-> -	return IS_ERR(evsel) ? PTR_ERR(evsel) : 0;
-> +	return PTR_ERR_OR_ZERO(evsel);
->  }
->  
->  #define ERRNO_OFFSET(e)		((e) - __BPF_LOADER_ERRNO__START)
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index 21b125020b3b..ff1cbf3ebd50 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -1646,7 +1646,6 @@ static u32 tun_do_xdp(struct tun_struct *tun,
+>  	switch (act) {
+>  	case XDP_REDIRECT:
+>  		*err = xdp_do_redirect(tun->dev, xdp, xdp_prog);
+> -		xdp_do_flush_map();
+>  		if (*err)
+>  			break;
+>  		goto out;
+> @@ -1735,6 +1734,9 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>  		act = tun_do_xdp(tun, tfile, xdp_prog, &xdp, &err);
+>  		if (err)
+>  			goto err_xdp;
+> +
+> +		if (act == XDP_REDIRECT)
+> +			xdp_do_flush_map();
+>  		if (act != XDP_PASS)
+>  			goto out;
+
+At this point the switch statement which used to contain all XDP things
+seems to be gone completely. Just rewrite with a bunch of if statements
+and all xdp handling spread out to where it makes sense?
+
 > -- 
-> 1.9.1
-> 
-> 
+> 2.17.1
