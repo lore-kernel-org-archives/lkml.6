@@ -2,103 +2,146 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACAFC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC06C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E652075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:30:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4E652075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 83FC32075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 20:31:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PuSsu5Ol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83FC32075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=invisiblethingslab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729860AbeIGBHS (ORCPT
+        id S1729901AbeIGBIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 21:07:18 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:43984 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729826AbeIGBHS (ORCPT
+        Thu, 6 Sep 2018 21:08:41 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35325 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726116AbeIGBIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 21:07:18 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fy0ue-000096-1v; Thu, 06 Sep 2018 16:30:00 -0400
-Message-ID: <fa7c625dfbbe103b37bc3ab5ea4b7283fd13b998.camel@surriel.com>
-Subject: Re: [RFC PATCH 1/2] mm: move tlb_table_flush to tlb_flush_mmu_free
-From:   Rik van Riel <riel@surriel.com>
-To:     Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, will.deacon@arm.com, jannh@google.com,
-        ascannell@google.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch@vger.kernel.org
-Date:   Thu, 06 Sep 2018 16:29:59 -0400
-In-Reply-To: <20180823084709.19717-2-npiggin@gmail.com>
-References: <20180823084709.19717-1-npiggin@gmail.com>
-         <20180823084709.19717-2-npiggin@gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-QttmgVvdlWOXMEILqZsq"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Thu, 6 Sep 2018 21:08:41 -0400
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id A1DB821751;
+        Thu,  6 Sep 2018 16:31:32 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Thu, 06 Sep 2018 16:31:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=DtqIiWdt4Wso9Rj6StRRr9L7ZYHci
+        wFsrrxZJLUKl6Y=; b=PuSsu5OlRdRtdfeez6JgQBrs/y3krezGAwia9L+uKr/CL
+        rEDDn2cJgr+fBLdzSM4iZkRI8YlxcJjJUFrP3Oqze1P7VGkkA+zmgXsxUw5ZXuxW
+        cmjwOieLl8xt2TTb+XTDq8b4QvYftEqvz+AsFanu9rmyBiiRsjEkhtzvTRkX7RTI
+        ek8j06g8ff/aQCT1ZW5dzrdO/bDhJb2ocGxU90kuIuS99dOyqaSpItzwe2Rb8OQ9
+        Kqe/d210lO/L5ObuelWz99Uqr1zkTL05NvNARRCNCM6mMS40DPppcfsVjixmnzvr
+        KfK+eoD2vPXArzE63FyflvEA0Yc/K7NBOHa+qVSiQ==
+X-ME-Proxy: <xmx:pI6RW-fFVPxFghvPOZsajOqlULSxXFHVVFhDO0l0K3At_E0YEd440A>
+    <xmx:pI6RW2Db-TXiGfJ5_P-Yuy-TaXhH8R2SUsTTBRPVAAGKfACwC80C9w>
+    <xmx:pI6RW5_dO6DO0YOrdi929uc1m4pzCC1TXjeC7egEBpzaU2WVTcTNmg>
+    <xmx:pI6RW5KExIHC2TEsq8XMwE0LPvNBayvNaelQ_GiJrcePEA23hSWEdA>
+    <xmx:pI6RW6ixSioHee2bmoh9jZIZuZ0YeHO_hEwxE-T43oci9UwAYTUykw>
+    <xmx:pI6RW8LBC_52lOLfshz7NLc2PMhtSt78ioTW5PkAppNQoUrmPy0EkA>
+X-ME-Sender: <xms:pI6RW4Y1WNhpLt8Fe54DBh1Fot9uALRpkyQGsIg1BqlhrM3DHBU0cA>
+Received: from mail-itl (ip5b40bfaa.dynamic.kabel-deutschland.de [91.64.191.170])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5D9FEE4015;
+        Thu,  6 Sep 2018 16:31:31 -0400 (EDT)
+Date:   Thu, 6 Sep 2018 22:31:28 +0200
+From:   Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xen/balloon: add runtime control for scrubbing ballooned
+ out pages
+Message-ID: <20180906203128.GJ1353@mail-itl>
+References: <20180906153355.25363-1-marmarek@invisiblethingslab.com>
+ <bf287a28-5e40-1ea2-a983-3d6a8e9a9869@oracle.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+Z7/5fzWRHDJ0o7Q"
+Content-Disposition: inline
+In-Reply-To: <bf287a28-5e40-1ea2-a983-3d6a8e9a9869@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-QttmgVvdlWOXMEILqZsq
-Content-Type: text/plain; charset="UTF-8"
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2018-08-23 at 18:47 +1000, Nicholas Piggin wrote:
-> There is no need to call this from tlb_flush_mmu_tlbonly, it
-> logically belongs with tlb_flush_mmu_free. This allows some
-> code consolidation with a subsequent fix.
+On Thu, Sep 06, 2018 at 04:14:50PM -0400, Boris Ostrovsky wrote:
+> On 09/06/2018 11:33 AM, Marek Marczykowski-G=C3=B3recki wrote:
+> > Scrubbing pages on initial balloon down can take some time, especially
+> > in nested virtualization case (nested EPT is slow). When HVM/PVH guest =
+is
+> > started with memory=3D significantly lower than maxmem=3D, all the extra
+> > pages will be scrubbed before returning to Xen. But since most of them
+> > weren't used at all at that point, Xen needs to populate them first
+> > (from populate-on-demand pool). In nested virt case (Xen inside KVM)
+> > this slows down the guest boot by 15-30s with just 1.5GB needed to be
+> > returned to Xen.
+> >
+> > Add runtime parameter to enable/disable it, to allow initially disabling
+> > scrubbing, then enable it back during boot (for example in initramfs).
+> > Such usage relies on assumption that a) most pages ballooned out during
+> > initial boot weren't used at all, and b) even if they were, very few
+> > secrets are in the guest at that time (before any serious userspace
+> > kicks in).
+> >
+> > Default behaviour is unchanged.
+> >
+> > Signed-off-by: Marek Marczykowski-G=C3=B3recki <marmarek@invisiblething=
+slab.com>
+> >
+> > ---
+> > Is module_param() a good thing for this? Other xen-balloon parameters a=
+re
+> > in /sys/devices/system/xen_memory, so maybe it would make sense to put
+> > this one there too? But then, cmdline parameter would need to be added
+> > separately and comment about core_param() suggests it shouldn't be used
+> > if not absolutely necessary (is it?).
 >=20
-> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+>=20
+> You can also use cmdline_find_option() in the balloon driver.
+>=20
+> I would prefer that all tunables for the balloon driver live in the same
+> place. (Note that in that case
+> Documentation/ABI/stable/sysfs-devices-system-xen_memory will need to be
+> updated).
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
-
-This patch also fixes an infinite recursion bug
-with CONFIG_HAVE_RCU_TABLE_FREE enabled, which
-has this call trace:
-
-tlb_table_flush
-  -> tlb_table_invalidate
-     -> tlb_flush_mmu_tlbonly
-        -> tlb_table_flush
-           -> ... (infinite recursion)
-
-This should probably be applied sooner rather than
-later.
+Ok, will move that. This will also mean that it will affect only balloon
+driver, not other users of mem-reservation.c (grant allocator). But
+given the reason for this tunable, I think that's fine.
 
 --=20
-All Rights Reversed.
+Best Regards,
+Marek Marczykowski-G=C3=B3recki
+Invisible Things Lab
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
 
---=-QttmgVvdlWOXMEILqZsq
+--+Z7/5fzWRHDJ0o7Q
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluRjkcACgkQznnekoTE
-3oOfdAgAgn63e88Lj0I9lDDOx5WKhEfgPfWM7o5JhGZg8FxNA8lfLlgA3tFPYd4+
-mYWwbBpKSf+yLLRvy4V7V4pv7b0gk7jYTvxir3iOfFcFZ0OQVKYrbr2+txZJb6Xj
-tosM9v5SsYMwJHGw+1cD0DQsvR/6uio0TthxchcpV4bNVvW1X8HlzFarPY32kpf8
-HRU7NF/7gS2sxPQLPC/i+m4YgnuIq5xfseMOVVFp7H+uNI5BLCyrDm74zbFbtj1A
-HtFG9Yp4pj0KX/Bq7oiLOQ9suEtcJUI46sERyergDvFFRhTwoBGRxJ/wbKRQkxIF
-elqWT6jifgV0u6aRFHPPkEIuIUdTbg==
-=/CHW
+iQEzBAEBCAAdFiEEhrpukzGPukRmQqkK24/THMrX1ywFAluRjqAACgkQ24/THMrX
+1ywXoQf9GslZ5mNMyTDoXZE1lz+20hZnloXps/YwcnK2/Ay5c3SGIrEmnd6vPDah
+c4VUpATzbvRIDWgtkVlAohA1dunJXxEiG0kQfjPAkoPFbwtuY/O1/JW9m9vjnf4B
+e9TBJ+IuN713Sh+6+AaBIfsNliiBnH6TCBL56v7EA3vi4t49oVPZ5Dp0xYjj7Tug
+PmIL73QI99yol51gpGw0FZZTULlH7WqP2INzVsLhAQlhVyC7fN4wdskfBWnn9rao
+aQpw6vIRu5TExGJn4hD8XjxIrfkkIGebvKVWATFHDHE/e1Z2lV0a++AitAg1l4zs
+6vSnfcAZO8cVRQqD4SIPhDWGKtJJ1A==
+=IoZO
 -----END PGP SIGNATURE-----
 
---=-QttmgVvdlWOXMEILqZsq--
-
+--+Z7/5fzWRHDJ0o7Q--
