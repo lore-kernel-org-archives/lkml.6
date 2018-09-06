@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AE3C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA96C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64275206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64275206BA
+	by mail.kernel.org (Postfix) with ESMTP id 01686206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01686206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbeIFNrC (ORCPT
+        id S1728370AbeIFNsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:47:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11646 "EHLO huawei.com"
+        Thu, 6 Sep 2018 09:48:01 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11667 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728262AbeIFNrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:47:01 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E36316073E78D;
-        Thu,  6 Sep 2018 17:12:28 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
- 17:12:20 +0800
-Date:   Thu, 6 Sep 2018 17:10:32 +0800
+        id S1728035AbeIFNsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:48:01 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0CBEB5BDB6669;
+        Thu,  6 Sep 2018 17:13:28 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
+ 17:13:23 +0800
+Date:   Thu, 6 Sep 2018 17:11:35 +0800
 From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
 CC:     Kenneth Lee <nek.in.cn@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -46,18 +46,16 @@ CC:     Kenneth Lee <nek.in.cn@gmail.com>,
         <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
         <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
         Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH 7/7] vfio/sdmdev: add user sample
-Message-ID: <20180906091032.GE230707@Turing-Arch-b>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180906091135.GF230707@Turing-Arch-b>
 References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180903005204.26041-8-nek.in.cn@gmail.com>
- <ff75ff6a-2cd8-b25e-8d19-52e8f57141da@infradead.org>
+ <81edb8ff-d046-34e5-aee7-d8564e2517c2@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff75ff6a-2cd8-b25e-8d19-52e8f57141da@infradead.org>
+In-Reply-To: <81edb8ff-d046-34e5-aee7-d8564e2517c2@linux.intel.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
@@ -66,9 +64,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 02, 2018 at 07:25:12PM -0700, Randy Dunlap wrote:
-> Date: Sun, 2 Sep 2018 19:25:12 -0700
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Mon, Sep 03, 2018 at 10:32:16AM +0800, Lu Baolu wrote:
+> Date: Mon, 3 Sep 2018 10:32:16 +0800
+> From: Lu Baolu <baolu.lu@linux.intel.com>
 > To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
 >  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
 >  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Alex Williamson
@@ -79,129 +77,99 @@ On Sun, Sep 02, 2018 at 07:25:12PM -0700, Randy Dunlap wrote:
 >  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
 >  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
 >  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
->  Sanjay Kumar <sanjay.k.kumar@intel.com>
-> CC: linuxarm@huawei.com
-> Subject: Re: [PATCH 7/7] vfio/sdmdev: add user sample
+>  linux-accelerators@lists.ozlabs.org, Sanjay Kumar
+>  <sanjay.k.kumar@intel.com>
+> CC: baolu.lu@linux.intel.com, linuxarm@huawei.com
+> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
 > User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
 >  Thunderbird/52.9.1
-> Message-ID: <ff75ff6a-2cd8-b25e-8d19-52e8f57141da@infradead.org>
+> Message-ID: <81edb8ff-d046-34e5-aee7-d8564e2517c2@linux.intel.com>
 > 
-> On 09/02/2018 05:52 PM, Kenneth Lee wrote:
-> > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > 
-> > This is the sample code to demostrate how WrapDrive user application
-> > should be.
-> > 
-> > It contains:
-> > 
-> > 1. wd.[ch], the common library to provide WrapDrive interface.
+> Hi,
 > 
->                                             WarpDrive
+> On 09/03/2018 08:51 AM, Kenneth Lee wrote:
+> >From: Kenneth Lee <liguozhu@hisilicon.com>
+> >
+> >WarpDrive is an accelerator framework to expose the hardware capabilities
+> >directly to the user space. It makes use of the exist vfio and vfio-mdev
+> >facilities. So the user application can send request and DMA to the
+> >hardware without interaction with the kernel. This removes the latency
+> >of syscall.
+> >
+> >WarpDrive is the name for the whole framework. The component in kernel
+> >is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
+> >hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
+> >library of WarpDrive can access it via VFIO interface.
+> >
+> >The patchset contains document for the detail. Please refer to it for more
+> >information.
+> >
+> >This patchset is intended to be used with Jean Philippe Brucker's SVA
+> >patch [1], which enables not only IO side page fault, but also PASID
+> >support to IOMMU and VFIO.
+> >
+> >With these features, WarpDrive can support non-pinned memory and
+> >multi-process in the same accelerator device.  We tested it in our SoC
+> >integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
+> >tree can be found here: [2].
+> >
+> >But it is not mandatory. This patchset is tested in the latest mainline
+> >kernel without the SVA patches.  So it supports only one process for each
+> >accelerator.
+> >
+> >We have noticed the IOMMU aware mdev RFC announced recently [3].
+> >
+> >The IOMMU aware mdev has similar idea but different intention comparing to
+> >WarpDrive. It intends to dedicate part of the hardware resource to a VM.
+> >And the design is supposed to be used with Scalable I/O Virtualization.
+> >While sdmdev is intended to share the hardware resource with a big amount
+> >of processes.  It just requires the hardware supporting address
+> >translation per process (PCIE's PASID or ARM SMMU's substream ID).
+> >
+> >But we don't see serious confliction on both design. We believe they can be
+> >normalized as one.
+> >
+> >The patch 1 is document of the framework. The patch 2 and 3 add sdmdev
+> >support. The patch 4, 5 and 6 is drivers for Hislicon's ZIP Accelerator
+> >which is registered to both crypto and warpdrive(sdmdev) and can be
+> >used from kernel or user space at the same time. The patch 7 is a user
+> >space sample demonstrating how WarpDrive works.
+> >
+> >
+> >Change History:
+> >V2 changed from V1:
+> >	1. Change kernel framework name from SPIMDEV (Share Parent IOMMU
+> >	   Mdev) to SDMDEV (Share Domain Mdev).
+> >	2. Allocate Hardware Resource when a new mdev is created (While
+> >	   it is allocated when the mdev is openned)
+> >	3. Unmap pages from the shared domain when the sdmdev iommu group is
+> >	   detached. (This procedure is necessary, but missed in V1)
+> >	4. Update document accordingly.
+> >	5. Rebase to the latest kernel (4.19.0-rc1)
+> >	
+> >	According the review comment on RFCv1, We did try to use dma-buf
+> >	as back end of WarpDrive. It can work properly with the current
+> >	solution [4], but it cannot make use of process's
+> >	own memory address space directly. This is important to many
+> >	acceleration scenario. So dma-buf will be taken as a backup
+> >	alternative for noiommu scenario, it will be added in the future
+> >	version.
+> >
+> >
+> >Refernces:
+> >[1] https://www.spinics.net/lists/kernel/msg2651481.html
+> >[2] https://github.com/Kenneth-Lee/linux-kernel-warpdrive/tree/warpdrive-sva-v0.5
+> >[3] https://lkml.org/lkml/2018/7/22/34
 > 
-> > 2. drv/*, the user driver to access the hardware upon spimdev
-> > 3. test/*, the test application to use WrapDrive interface to access the
+> Please refer to the latest version posted here for discussion.
 > 
->                                          WarpDrive
-> 
-> >    hardware queue(s) of the accelerator.
-> > 
-> > The Hisilicon HIP08 ZIP accelerator is used in this sample.
-> > 
-> > Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
-> > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-> > Signed-off-by: Hao Fang <fanghao11@huawei.com>
-> > Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-> > ---
-> >  samples/warpdrive/AUTHORS              |   2 +
-> >  samples/warpdrive/ChangeLog            |   1 +
-> >  samples/warpdrive/Makefile.am          |   9 +
-> >  samples/warpdrive/NEWS                 |   1 +
-> >  samples/warpdrive/README               |  32 +++
-> >  samples/warpdrive/autogen.sh           |   3 +
-> >  samples/warpdrive/cleanup.sh           |  13 ++
-> >  samples/warpdrive/configure.ac         |  52 +++++
-> >  samples/warpdrive/drv/hisi_qm_udrv.c   | 223 ++++++++++++++++++
-> >  samples/warpdrive/drv/hisi_qm_udrv.h   |  53 +++++
-> >  samples/warpdrive/test/Makefile.am     |   7 +
-> >  samples/warpdrive/test/comp_hw.h       |  23 ++
-> >  samples/warpdrive/test/test_hisi_zip.c | 206 +++++++++++++++++
-> >  samples/warpdrive/wd.c                 | 309 +++++++++++++++++++++++++
-> >  samples/warpdrive/wd.h                 | 154 ++++++++++++
-> >  samples/warpdrive/wd_adapter.c         |  74 ++++++
-> >  samples/warpdrive/wd_adapter.h         |  43 ++++
-> >  17 files changed, 1205 insertions(+)
-> >  create mode 100644 samples/warpdrive/AUTHORS
-> >  create mode 100644 samples/warpdrive/ChangeLog
-> >  create mode 100644 samples/warpdrive/Makefile.am
-> >  create mode 100644 samples/warpdrive/NEWS
-> >  create mode 100644 samples/warpdrive/README
-> >  create mode 100755 samples/warpdrive/autogen.sh
-> >  create mode 100755 samples/warpdrive/cleanup.sh
-> >  create mode 100644 samples/warpdrive/configure.ac
-> >  create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.c
-> >  create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.h
-> >  create mode 100644 samples/warpdrive/test/Makefile.am
-> >  create mode 100644 samples/warpdrive/test/comp_hw.h
-> >  create mode 100644 samples/warpdrive/test/test_hisi_zip.c
-> >  create mode 100644 samples/warpdrive/wd.c
-> >  create mode 100644 samples/warpdrive/wd.h
-> >  create mode 100644 samples/warpdrive/wd_adapter.c
-> >  create mode 100644 samples/warpdrive/wd_adapter.h
-> 
-> > diff --git a/samples/warpdrive/README b/samples/warpdrive/README
-> > new file mode 100644
-> > index 000000000000..3adf66b112fc
-> > --- /dev/null
-> > +++ b/samples/warpdrive/README
-> > @@ -0,0 +1,32 @@
-> > +WD User Land Demonstration
-> > +==========================
-> > +
-> > +This directory contains some applications and libraries to demonstrate how a
-> > +
-> > +WrapDrive application can be constructed.
-> 
->    WarpDrive
-> 
-> > +
-> > +
-> > +As a demo, we try to make it simple and clear for understanding. It is not
-> > +
-> > +supposed to be used in business scenario.
-> > +
-> > +
-> > +The directory contains the following elements:
-> > +
-> > +wd.[ch]
-> > +	A demonstration WrapDrive fundamental library which wraps the basic
-> 
-> 	                WarpDrive
-> 
-> > +	operations to the WrapDrive-ed device.
-> 
->                           WarpDrive
-> 
-> > +
-> > +wd_adapter.[ch]
-> > +	User driver adaptor for wd.[ch]
-> > +
-> > +wd_utils.[ch]
-> > +	Some utitlities function used by WD and its drivers
-> > +
-> > +drv/*
-> > +	User drivers. It helps to fulfill the semantic of wd.[ch] for
-> > +	particular hardware
-> > +
-> > +test/*
-> > +	Test applications to use the wrapdrive library
-> 
-> 	                             warpdrive
-> 
-> -- 
-> ~Randy
+> https://lkml.org/lkml/2018/8/30/107
 
-Thank you, will change them all in the coming version.
+Sure. Thank you.
+
+> 
+> Best regards,
+> Lu Baolu
 
 -- 
 			-Kenneth(Hisilicon)
