@@ -5,284 +5,121 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F71C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97F8C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE99206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE99206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6580820857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:14:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6580820857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbeIFRuM (ORCPT
+        id S1729173AbeIFRuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:50:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40699 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728692AbeIFRuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:50:12 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DEW6q304659
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:14:32 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DEWgg304655;
-        Thu, 6 Sep 2018 06:14:32 -0700
-Date:   Thu, 6 Sep 2018 06:14:32 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-s7l541cbiqb22ifio6z7dpf6@git.kernel.org>
-Cc:     dsahern@gmail.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        adrian.hunter@intel.com, hpa@zytor.com, mingo@kernel.org,
-        wangnan0@huawei.com, jolsa@kernel.org, tglx@linutronix.de,
-        namhyung@kernel.org
-Reply-To: namhyung@kernel.org, adrian.hunter@intel.com, acme@redhat.com,
-          hpa@zytor.com, mingo@kernel.org, wangnan0@huawei.com,
-          jolsa@kernel.org, tglx@linutronix.de, dsahern@gmail.com,
-          linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace augmented_syscalls: Augment connect's
- 'sockaddr' arg
-Git-Commit-ID: d5a7e6613b00d46a4971e8b69e18e2cfd7b00df3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Sep 2018 13:50:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56785 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729143AbeIFRuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:50:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EA7AF20763; Thu,  6 Sep 2018 15:14:48 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 29E942072B;
+        Thu,  6 Sep 2018 15:14:38 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 15:14:37 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Przemyslaw Gaj <pgaj@cadence.com>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+Message-ID: <20180906151437.4259d6fc@bbrezillon>
+In-Reply-To: <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <20180719152930.3715-2-boris.brezillon@bootlin.com>
+        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+        <20180824143934.6d6b6487@bbrezillon>
+        <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
+        <20180824201600.7d80bca9@bbrezillon>
+        <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
+        <20180828140209.29155d00@bbrezillon>
+        <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
+        <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
+        <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
+        <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
+        <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
+        <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d5a7e6613b00d46a4971e8b69e18e2cfd7b00df3
-Gitweb:     https://git.kernel.org/tip/d5a7e6613b00d46a4971e8b69e18e2cfd7b00df3
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 28 Aug 2018 16:24:44 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 30 Aug 2018 15:52:20 -0300
+On Thu, 6 Sep 2018 14:59:46 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-perf trace augmented_syscalls: Augment connect's 'sockaddr' arg
+> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:
+> >
+> > Hi Boris, Vitor,
+> >
+> > This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
+> > https://github.com/przemekgaj/i3c-linux/commit/d54fe68a9d3e573c0c454a2c6f1afafc20142ec5
+> >
+> > Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
+> > It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
+> >
+> > I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)  
+> 
+> 
+> Can you explain the reason for having a user space interface and DT property?
+> I thought we had concluded earlier that we wouldn't need that, but it's possible
+> that I missed something in the discussion since then.
 
-As the first example of augmenting something other than a 'filename',
-augment the 'struct sockaddr' argument for the 'connect' syscall:
+I don't think the sysfs knob is needed, this being said, after thinking
+a bit more about mastership handover and the secondary master case, I
+think we have something important to solve.
 
-  # perf trace -e tools/perf/examples/bpf/augmented_syscalls.c ssh -6 fedorapeople.org
-     0.000 ssh/29669 connect(fd: 3, uservaddr: { .family: LOCAL, path: /var/run/nscd/socket }, addrlen: 110)
-     0.042 ssh/29669 connect(fd: 3, uservaddr: { .family: LOCAL, path: /var/run/nscd/socket }, addrlen: 110)
-     1.329 ssh/29669 connect(fd: 3, uservaddr: { .family: LOCAL, path: /var/run/nscd/socket }, addrlen: 110)
-     1.362 ssh/29669 connect(fd: 3, uservaddr: { .family: LOCAL, path: /var/run/nscd/socket }, addrlen: 110)
-     1.458 ssh/29669 connect(fd: 3, uservaddr: { .family: LOCAL, path: /var/run/nscd/socket }, addrlen: 110)
-     1.478 ssh/29669 connect(fd: 3, uservaddr: { .family: LOCAL, path: /var/run/nscd/socket }, addrlen: 110)
-     1.683 ssh/29669 connect(fd: 3<socket:[125942]>, uservaddr: { .family: INET, port: 53, addr: 192.168.43.1 }, addrlen: 16)
-     4.710 ssh/29669 connect(fd: 3<socket:[125942]>, uservaddr: { .family: INET6, port: 22, addr: 2610:28:3090:3001:5054:ff:fea7:9474 }, addrlen: 28)
-  root@fedorapeople.org: Permission denied (publickey).
-  #
+When a master is not in control of the bus, it gets informed of devices
+present on the bus by monitoring DAA or DEFSLVS broadcast events. That
+means the secondary master should populate the bus with I3C/I2C devices
+on such events, but that's not enough, because DEFSLVS/DAA do not
+provide all device info. Some of them (like read/write/ibi limitations)
+require extra CCC commands, and, to send those CCC commands, the
+secondary master must claim the bus. We could add a case where we
+declare devices as partially discovered until the master acquires
+ownership of the bus, but that means part of the data returned by
+i3c_device_get_info() will be inaccurate, which might have an impact on
+some i3c driver ->probe() functions.
 
-This is still just augmenting the syscalls:sys_enter_connect part, later
-we'll wire this up to augment the enter+exit combo, like in the
-tradicional 'perf trace' and 'strace' outputs.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-s7l541cbiqb22ifio6z7dpf6@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c                   | 12 +-----
- tools/perf/examples/bpf/augmented_syscalls.c | 34 +++++++++++++++-
- tools/perf/trace/beauty/Build                |  1 +
- tools/perf/trace/beauty/beauty.h             |  5 +++
- tools/perf/trace/beauty/sockaddr.c           | 58 ++++++++++++++++++++++++++++
- 5 files changed, 99 insertions(+), 11 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 5d841114a745..ab2ed30b8dcc 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -498,16 +498,6 @@ static const char *clockid[] = {
- };
- static DEFINE_STRARRAY(clockid);
- 
--static const char *socket_families[] = {
--	"UNSPEC", "LOCAL", "INET", "AX25", "IPX", "APPLETALK", "NETROM",
--	"BRIDGE", "ATMPVC", "X25", "INET6", "ROSE", "DECnet", "NETBEUI",
--	"SECURITY", "KEY", "NETLINK", "PACKET", "ASH", "ECONET", "ATMSVC",
--	"RDS", "SNA", "IRDA", "PPPOX", "WANPIPE", "LLC", "IB", "CAN", "TIPC",
--	"BLUETOOTH", "IUCV", "RXRPC", "ISDN", "PHONET", "IEEE802154", "CAIF",
--	"ALG", "NFC", "VSOCK",
--};
--static DEFINE_STRARRAY(socket_families);
--
- static size_t syscall_arg__scnprintf_access_mode(char *bf, size_t size,
- 						 struct syscall_arg *arg)
- {
-@@ -645,6 +635,8 @@ static struct syscall_fmt {
- 		   [4] = { .name = "tls",	    .scnprintf = SCA_HEX, }, }, },
- 	{ .name	    = "close",
- 	  .arg = { [0] = { .scnprintf = SCA_CLOSE_FD, /* fd */ }, }, },
-+	{ .name	    = "connect",
-+	  .arg = { [1] = { .scnprintf = SCA_SOCKADDR, /* servaddr */ }, }, },
- 	{ .name	    = "epoll_ctl",
- 	  .arg = { [1] = STRARRAY(op, epoll_ctl_ops), }, },
- 	{ .name	    = "eventfd2",
-diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index a9695c7f7aab..6dfead0be74e 100644
---- a/tools/perf/examples/bpf/augmented_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -19,6 +19,7 @@
-  */
- 
- #include <stdio.h>
-+#include <linux/socket.h>
- 
- struct bpf_map SEC("maps") __augmented_syscalls__ = {
-        .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
-@@ -33,7 +34,7 @@ struct augmented_filename {
- 	char	value[256];
- };
- 
--#define augmented_filename_syscall_enter(syscall) 							\
-+#define augmented_filename_syscall_enter(syscall)						\
- struct augmented_enter_##syscall##_args {			 				\
- 	struct syscall_enter_##syscall##_args	args;				 		\
- 	struct augmented_filename		filename;				 	\
-@@ -94,4 +95,35 @@ struct syscall_enter_newstat_args {
- 
- augmented_filename_syscall_enter(newstat);
- 
-+struct sockaddr;
-+
-+struct syscall_enter_connect_args {
-+	unsigned long long common_tp_fields;
-+	long		   syscall_nr;
-+	long		   fd;
-+	struct sockaddr	   *addr_ptr;
-+	unsigned long	   addrlen;
-+};
-+
-+struct augmented_enter_connect_args {
-+	struct syscall_enter_connect_args args;
-+	struct sockaddr_storage		  addr;
-+};
-+
-+int syscall_enter(connect)(struct syscall_enter_connect_args *args)
-+{
-+	struct augmented_enter_connect_args augmented_args;
-+	unsigned long addrlen = sizeof(augmented_args.addr);
-+
-+	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);
-+#ifdef FIXME_CLANG_OPTIMIZATION_THAT_ACCESSES_USER_CONTROLLED_ADDRLEN_DESPITE_THIS_CHECK
-+	if (addrlen > augmented_args.args.addrlen)
-+		addrlen = augmented_args.args.addrlen;
-+#endif
-+	probe_read(&augmented_args.addr, addrlen, args->addr_ptr); 
-+	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, 
-+			  sizeof(augmented_args) - sizeof(augmented_args.addr) + addrlen);
-+	return 0;
-+}
-+
- license(GPL);
-diff --git a/tools/perf/trace/beauty/Build b/tools/perf/trace/beauty/Build
-index f528ba35e140..c3b0afd67760 100644
---- a/tools/perf/trace/beauty/Build
-+++ b/tools/perf/trace/beauty/Build
-@@ -7,5 +7,6 @@ endif
- libperf-y += kcmp.o
- libperf-y += pkey_alloc.o
- libperf-y += prctl.o
-+libperf-y += sockaddr.o
- libperf-y += socket.o
- libperf-y += statx.o
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 6ca044d3d851..2570152d3909 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -30,6 +30,8 @@ struct thread;
- 
- size_t pid__scnprintf_fd(struct trace *trace, pid_t pid, int fd, char *bf, size_t size);
- 
-+extern struct strarray strarray__socket_families;
-+
- /**
-  * augmented_arg: extra payload for syscall pointer arguments
-  
-@@ -135,6 +137,9 @@ size_t syscall_arg__scnprintf_prctl_arg2(char *bf, size_t size, struct syscall_a
- size_t syscall_arg__scnprintf_prctl_arg3(char *bf, size_t size, struct syscall_arg *arg);
- #define SCA_PRCTL_ARG3 syscall_arg__scnprintf_prctl_arg3
- 
-+size_t syscall_arg__scnprintf_sockaddr(char *bf, size_t size, struct syscall_arg *arg);
-+#define SCA_SOCKADDR syscall_arg__scnprintf_sockaddr
-+
- size_t syscall_arg__scnprintf_socket_protocol(char *bf, size_t size, struct syscall_arg *arg);
- #define SCA_SK_PROTO syscall_arg__scnprintf_socket_protocol
- 
-diff --git a/tools/perf/trace/beauty/sockaddr.c b/tools/perf/trace/beauty/sockaddr.c
-new file mode 100644
-index 000000000000..3944a7d54d3c
---- /dev/null
-+++ b/tools/perf/trace/beauty/sockaddr.c
-@@ -0,0 +1,58 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
-+
-+#include "trace/beauty/beauty.h"
-+#include <sys/socket.h>
-+#include <sys/types.h>
-+#include <sys/un.h>
-+#include <arpa/inet.h>
-+
-+static const char *socket_families[] = {
-+	"UNSPEC", "LOCAL", "INET", "AX25", "IPX", "APPLETALK", "NETROM",
-+	"BRIDGE", "ATMPVC", "X25", "INET6", "ROSE", "DECnet", "NETBEUI",
-+	"SECURITY", "KEY", "NETLINK", "PACKET", "ASH", "ECONET", "ATMSVC",
-+	"RDS", "SNA", "IRDA", "PPPOX", "WANPIPE", "LLC", "IB", "CAN", "TIPC",
-+	"BLUETOOTH", "IUCV", "RXRPC", "ISDN", "PHONET", "IEEE802154", "CAIF",
-+	"ALG", "NFC", "VSOCK",
-+};
-+DEFINE_STRARRAY(socket_families);
-+
-+static size_t syscall_arg__scnprintf_augmented_sockaddr(struct syscall_arg *arg, char *bf, size_t size)
-+{
-+	struct sockaddr_in *sin = (struct sockaddr_in *)arg->augmented.args;
-+	char family[32];
-+	size_t printed;
-+
-+	strarray__scnprintf(&strarray__socket_families, family, sizeof(family), "%d", sin->sin_family);
-+	printed = scnprintf(bf, size, "{ .family: %s", family);
-+
-+	if (sin->sin_family == AF_INET) {
-+		char tmp[512];
-+		printed += scnprintf(bf + printed, size - printed, ", port: %d, addr: %s", ntohs(sin->sin_port),
-+				     inet_ntop(sin->sin_family, &sin->sin_addr, tmp, sizeof(tmp)));
-+	} else if (sin->sin_family == AF_INET6) {
-+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sin;
-+		u32 flowinfo = ntohl(sin6->sin6_flowinfo);
-+		char tmp[512];
-+
-+		printed += scnprintf(bf + printed, size - printed, ", port: %d, addr: %s", ntohs(sin6->sin6_port),
-+				     inet_ntop(sin6->sin6_family, &sin6->sin6_addr, tmp, sizeof(tmp)));
-+		if (flowinfo != 0)
-+			printed += scnprintf(bf + printed, size - printed, ", flowinfo: %lu", flowinfo);
-+		if (sin6->sin6_scope_id != 0)
-+			printed += scnprintf(bf + printed, size - printed, ", scope_id: %lu", sin6->sin6_scope_id);
-+	} else if (sin->sin_family == AF_LOCAL) {
-+		struct sockaddr_un *sun = (struct sockaddr_un *)sin;
-+		printed += scnprintf(bf + printed, size - printed, ", path: %s", sun->sun_path);
-+	}
-+
-+	return printed + scnprintf(bf + printed, size - printed, " }");
-+}
-+
-+size_t syscall_arg__scnprintf_sockaddr(char *bf, size_t size, struct syscall_arg *arg)
-+{
-+	if (arg->augmented.args)
-+		return syscall_arg__scnprintf_augmented_sockaddr(arg, bf, size);
-+
-+	return scnprintf(bf, size, "%#x", arg->val);
-+}
+We could also say that partially discovered devices should not be
+registered to the device model, but we then hit the problem of "who can
+force the secondary master to claim the bus if there's no users?".
