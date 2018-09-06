@@ -2,276 +2,546 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B285C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20609C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 971662083E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:38:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QpLBuSh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 971662083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AF6AF20857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:39:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6AF20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbeIFHL2 (ORCPT
+        id S1727627AbeIFHMi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 03:11:28 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38818 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbeIFHL2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 03:11:28 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so4473426pfh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 19:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gPboSrlXdIzLgvl4Chn/fhusL/z1wvAcqa5/SUBDf4s=;
-        b=QpLBuSh4O6hCasgd+hnAb+X0EzDT5HMGMvA/Y22ATTftE36Isd2/rTATkgz1AndTg4
-         uk4v4a2KgNSZUf2imccGoNISgNz3LCOWuMbDsLlrweescfhaYpAuEoP47xPzmkFnpOib
-         p+LQhtcjOrQPqsQsUivAvVJZ+IcOcxj80JR/A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gPboSrlXdIzLgvl4Chn/fhusL/z1wvAcqa5/SUBDf4s=;
-        b=FWtNEgK1nadAcCcra7fomxcbz/wA6/mi5cQ2bRTUrbO1dEUjLHTTHbNWT9nDQCtY0x
-         RPooVymDFJuddPgkXYGSXUP3GNn+dSQw9pe2xVwSxytdIygR53/4Mi71oPvIs52uX4hV
-         5Wm6w7omDu3VtT9PvYUIggw6pmEhN4f1eGB+gSNFEsatwfEkeWWRkxOdkha1OD+gD6TP
-         6PmnD4Cp3Zd/g75kSo8gapBdUQHw+4l7WqBCXHst5oqsy2mHe8c3PpipTX9ZI/c5Udj9
-         0/MmYIoqUkpiWyk7tQHPmI2U5+Z9iA36UNAJ6KCdpQTtZ5m1AotqT2aQDfFr3JoBt2+3
-         zOKA==
-X-Gm-Message-State: APzg51Bw9pP1c3wgxBeJ/uf6vt8zuiDckqFPfTztl2Gwc70dZYD5x3GT
-        hGohMGmfK3JbrDUOa73TFuyuwA==
-X-Google-Smtp-Source: ANB0Vdbgy6OlqN/w8O2JUvBbeHOk8jzZj8sxjXLs5pg6iLIszoK2wyP2GAH6kZZuTL6l5yMU0qrQPg==
-X-Received: by 2002:a63:e516:: with SMTP id r22-v6mr659805pgh.170.1536201503976;
-        Wed, 05 Sep 2018 19:38:23 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm6637450pfd.155.2018.09.05.19.38.21
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Sep 2018 19:38:23 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
-Cc:     rteysseyre@gmail.com, bjorn.andersson@linaro.org,
-        baolin.wang@linaro.org, broonie@kernel.org,
-        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v10 2/2] leds: sc27xx: Add pattern_set/clear interfaces for LED controller
-Date:   Thu,  6 Sep 2018 10:37:52 +0800
-Message-Id: <975a9570c75fb4469c0cef55cc9ed42266f933af.1536200860.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536200860.git.baolin.wang@linaro.org>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536200860.git.baolin.wang@linaro.org>
+        Thu, 6 Sep 2018 03:12:38 -0400
+Received: from mga07.intel.com ([134.134.136.100]:10761 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726031AbeIFHMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 03:12:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:39:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
+   d="scan'208";a="230590280"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga004.jf.intel.com with ESMTP; 05 Sep 2018 19:39:17 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 5 Sep 2018 19:39:17 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
+ Thu, 6 Sep 2018 10:39:13 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "David Woodhouse" <dwmw2@infradead.org>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: RE: [PATCH v2 04/12] iommu/vt-d: Add 256-bit invalidation
+ descriptor support
+Thread-Topic: [PATCH v2 04/12] iommu/vt-d: Add 256-bit invalidation
+ descriptor support
+Thread-Index: AQHUQAHuihxPsX6UqkW6Id94H54OSKTij3DA
+Date:   Thu, 6 Sep 2018 02:39:12 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2B3B@SHSMSX101.ccr.corp.intel.com>
+References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
+ <20180830013524.28743-5-baolu.lu@linux.intel.com>
+In-Reply-To: <20180830013524.28743-5-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzY2ZGMxMmItYTc1Ny00ZDljLWE5ZWItMWY5MzgzMmE3YTZlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYVI3Y3drNkcrQ0tYemVNSmVMS3cwOXVmSldidWVaSFwvXC9IdzZnSkYyZ1wvd0RIZzN4d2NTZFJ4OTdiZGd2ZWdzRCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the 'pattern_set'and 'pattern_clear'
-interfaces to support SC27XX LED breathing mode.
+> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+> Sent: Thursday, August 30, 2018 9:35 AM
+> 
+> Intel vt-d spec rev3.0 requires software to use 256-bit
+> descriptors in invalidation queue. As the spec reads in
+> section 6.5.2:
+> 
+> Remapping hardware supporting Scalable Mode Translations
+> (ECAP_REG.SMTS=1) allow software to additionally program
+> the width of the descriptors (128-bits or 256-bits) that
+> will be written into the Queue. Software should setup the
+> Invalidation Queue for 256-bit descriptors before progra-
+> mming remapping hardware for scalable-mode translation as
+> 128-bit descriptors are treated as invalid descriptors
+> (see Table 21 in Section 6.5.2.10) in scalable-mode.
+> 
+> This patch adds 256-bit invalidation descriptor support
+> if the hardware presents scalable mode capability.
+> 
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Liu Yi L <yi.l.liu@intel.com>
+> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
+>  drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
+>  drivers/iommu/intel_irq_remapping.c |  6 ++-
+>  include/linux/intel-iommu.h         |  7 ++-
+>  4 files changed, 113 insertions(+), 59 deletions(-)
+> 
+> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> index d9c748b6f9e4..b1429fa2cf29 100644
+> --- a/drivers/iommu/dmar.c
+> +++ b/drivers/iommu/dmar.c
+> @@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu
+> *iommu, int index)
+>  	int head, tail;
+>  	struct q_inval *qi = iommu->qi;
+>  	int wait_index = (index + 1) % QI_LENGTH;
+> +	int shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v9:
- - Optimize the ABI documentation file.
- - Update the brightness value in hardware pattern mode.
+could add a new macro: qi_shift()
 
-Changes from v8:
- - Optimize the ABI documentation file.
+> 
+>  	if (qi->desc_status[wait_index] == QI_ABORT)
+>  		return -EAGAIN;
+> @@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu
+> *iommu, int index)
+>  	 */
+>  	if (fault & DMA_FSTS_IQE) {
+>  		head = readl(iommu->reg + DMAR_IQH_REG);
+> -		if ((head >> DMAR_IQ_SHIFT) == index) {
+> +		if ((head >> shift) == index) {
 
-Changes from v7:
- - Add its own ABI documentation file.
+could be another macro: qi_index(head)
 
-Changes from v6:
- - None.
+> +			struct qi_desc *desc = qi->desc + head;
+> +
+>  			pr_err("VT-d detected invalid descriptor: "
+>  				"low=%llx, high=%llx\n",
+> -				(unsigned long long)qi->desc[index].low,
+> -				(unsigned long long)qi->desc[index].high);
+> -			memcpy(&qi->desc[index], &qi->desc[wait_index],
+> -					sizeof(struct qi_desc));
+> +				(unsigned long long)desc->qw0,
+> +				(unsigned long long)desc->qw1);
 
-Changes from v5:
- - None.
+what about qw2 and qw3 in 256-bit case?
 
-Changes from v4:
- - None.
-
-Changes from v3:
- - None.
-
-Changes from v2:
- - None.
-
-Changes from v1:
- - Remove pattern_get interface.
----
- .../ABI/testing/sysfs-class-led-driver-sc27xx      |   22 +++++
- drivers/leds/leds-sc27xx-bltc.c                    |  103 ++++++++++++++++++++
- 2 files changed, 125 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-
-diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-new file mode 100644
-index 0000000..d8056d5
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-@@ -0,0 +1,22 @@
-+What:		/sys/class/leds/<led>/hw_pattern
-+Date:		September 2018
-+KernelVersion:	4.20
-+Description:
-+		Specify a hardware pattern for the SC27XX LED. For the SC27XX
-+		LED controller, it only supports 4 stages to make a single
-+		hardware pattern, which is used to configure the rise time,
-+		high time, fall time and low time for the breathing mode.
-+
-+		For the breathing mode, the SC27XX LED only expects one brightness
-+		for the high stage. To be compatible with the hardware pattern
-+		format, we should set brightness as 0 for rise stage, fall
-+		stage and low stage.
-+
-+		Min stage duration: 125 ms
-+		Max stage duration: 31875 ms
-+
-+		Since the stage duration step is 125 ms, the duration must be
-+		a multiplier of 125, like 125ms, 250ms, 375ms, 500ms ... 31875ms.
-+
-+		Thus the format of the hardware pattern values should be:
-+		"0 rise_duration brightness high_duration 0 fall_duration 0 low_duration".
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index 9d9b7aa..558a325 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -32,8 +32,15 @@
- #define SC27XX_DUTY_MASK	GENMASK(15, 0)
- #define SC27XX_MOD_MASK		GENMASK(7, 0)
- 
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
-+
- #define SC27XX_LEDS_OFFSET	0x10
- #define SC27XX_LEDS_MAX		3
-+#define SC27XX_LEDS_PATTERN_CNT	4
-+/* Stage duration step, in milliseconds */
-+#define SC27XX_LEDS_STEP	125
- 
- struct sc27xx_led {
- 	char name[LED_MAX_NAME_SIZE];
-@@ -122,6 +129,98 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
- 	return err;
- }
- 
-+static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	struct regmap *regmap = leds->priv->regmap;
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	int err;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	/* Reset the rise, high, fall and low time to zero. */
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
-+	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
-+
-+	err = regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+
-+	ldev->brightness = LED_OFF;
-+
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
-+static int sc27xx_led_pattern_set(struct led_classdev *ldev,
-+				  struct led_pattern *pattern,
-+				  int len, u32 repeat)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	/*
-+	 * Must contain 4 tuples to configure the rise time, high time, fall
-+	 * time and low time to enable the breathing mode.
-+	 */
-+	if (len != SC27XX_LEDS_PATTERN_CNT)
-+		return -EINVAL;
-+
-+	mutex_lock(&leds->priv->lock);
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_L_MASK,
-+				 pattern[0].delta_t / SC27XX_LEDS_STEP);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_L_MASK,
-+				 pattern[1].delta_t / SC27XX_LEDS_STEP);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+				 SC27XX_CURVE_H_MASK,
-+				 (pattern[2].delta_t / SC27XX_LEDS_STEP) <<
-+				 SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+				 SC27XX_CURVE_H_MASK,
-+				 (pattern[3].delta_t / SC27XX_LEDS_STEP) <<
-+				 SC27XX_CURVE_SHIFT);
-+	if (err)
-+		goto out;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (pattern[1].brightness << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		goto out;
-+
-+	/* Enable the LED breathing mode */
-+	err = regmap_update_bits(regmap, ctrl_base,
-+				 SC27XX_LED_RUN << ctrl_shift,
-+				 SC27XX_LED_RUN << ctrl_shift);
-+	if (!err)
-+		ldev->brightness = pattern[1].brightness;
-+
-+out:
-+	mutex_unlock(&leds->priv->lock);
-+
-+	return err;
-+}
-+
- static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- {
- 	int i, err;
-@@ -140,6 +239,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- 		led->priv = priv;
- 		led->ldev.name = led->name;
- 		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.pattern_set = sc27xx_led_pattern_set;
-+		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
-+		led->ldev.default_trigger = "pattern";
- 
- 		err = devm_led_classdev_register(dev, &led->ldev);
- 		if (err)
-@@ -241,4 +343,5 @@ static int sc27xx_led_remove(struct platform_device *pdev)
- 
- MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
- MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+> +			memcpy(desc, qi->desc + (wait_index << shift),
+> +			       1 << shift);
+>  			writel(DMA_FSTS_IQE, iommu->reg +
+> DMAR_FSTS_REG);
+>  			return -EINVAL;
+>  		}
+> @@ -1191,10 +1194,10 @@ static int qi_check_fault(struct intel_iommu
+> *iommu, int index)
+>  	 */
+>  	if (fault & DMA_FSTS_ITE) {
+>  		head = readl(iommu->reg + DMAR_IQH_REG);
+> -		head = ((head >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) %
+> QI_LENGTH;
+> +		head = ((head >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
+>  		head |= 1;
+>  		tail = readl(iommu->reg + DMAR_IQT_REG);
+> -		tail = ((tail >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) %
+> QI_LENGTH;
+> +		tail = ((tail >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
+> 
+>  		writel(DMA_FSTS_ITE, iommu->reg + DMAR_FSTS_REG);
+> 
+> @@ -1222,15 +1225,14 @@ int qi_submit_sync(struct qi_desc *desc, struct
+> intel_iommu *iommu)
+>  {
+>  	int rc;
+>  	struct q_inval *qi = iommu->qi;
+> -	struct qi_desc *hw, wait_desc;
+> +	int offset, shift, length;
+> +	struct qi_desc wait_desc;
+>  	int wait_index, index;
+>  	unsigned long flags;
+> 
+>  	if (!qi)
+>  		return 0;
+> 
+> -	hw = qi->desc;
+> -
+>  restart:
+>  	rc = 0;
+> 
+> @@ -1243,16 +1245,21 @@ int qi_submit_sync(struct qi_desc *desc, struct
+> intel_iommu *iommu)
+> 
+>  	index = qi->free_head;
+>  	wait_index = (index + 1) % QI_LENGTH;
+> +	shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
+> +	length = 1 << shift;
+> 
+>  	qi->desc_status[index] = qi->desc_status[wait_index] = QI_IN_USE;
+> 
+> -	hw[index] = *desc;
+> -
+> -	wait_desc.low = QI_IWD_STATUS_DATA(QI_DONE) |
+> +	offset = index << shift;
+> +	memcpy(qi->desc + offset, desc, length);
+> +	wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
+>  			QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
+> -	wait_desc.high = virt_to_phys(&qi->desc_status[wait_index]);
+> +	wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
+> +	wait_desc.qw2 = 0;
+> +	wait_desc.qw3 = 0;
+> 
+> -	hw[wait_index] = wait_desc;
+> +	offset = wait_index << shift;
+> +	memcpy(qi->desc + offset, &wait_desc, length);
+> 
+>  	qi->free_head = (qi->free_head + 2) % QI_LENGTH;
+>  	qi->free_cnt -= 2;
+> @@ -1261,7 +1268,7 @@ int qi_submit_sync(struct qi_desc *desc, struct
+> intel_iommu *iommu)
+>  	 * update the HW tail register indicating the presence of
+>  	 * new descriptors.
+>  	 */
+> -	writel(qi->free_head << DMAR_IQ_SHIFT, iommu->reg +
+> DMAR_IQT_REG);
+> +	writel(qi->free_head << shift, iommu->reg + DMAR_IQT_REG);
+> 
+>  	while (qi->desc_status[wait_index] != QI_DONE) {
+>  		/*
+> @@ -1298,8 +1305,10 @@ void qi_global_iec(struct intel_iommu *iommu)
+>  {
+>  	struct qi_desc desc;
+> 
+> -	desc.low = QI_IEC_TYPE;
+> -	desc.high = 0;
+> +	desc.qw0 = QI_IEC_TYPE;
+> +	desc.qw1 = 0;
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+> 
+>  	/* should never fail */
+>  	qi_submit_sync(&desc, iommu);
+> @@ -1310,9 +1319,11 @@ void qi_flush_context(struct intel_iommu
+> *iommu, u16 did, u16 sid, u8 fm,
+>  {
+>  	struct qi_desc desc;
+> 
+> -	desc.low = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
+> +	desc.qw0 = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
+>  			| QI_CC_GRAN(type) | QI_CC_TYPE;
+> -	desc.high = 0;
+> +	desc.qw1 = 0;
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+> 
+>  	qi_submit_sync(&desc, iommu);
+>  }
+> @@ -1331,10 +1342,12 @@ void qi_flush_iotlb(struct intel_iommu
+> *iommu, u16 did, u64 addr,
+>  	if (cap_read_drain(iommu->cap))
+>  		dr = 1;
+> 
+> -	desc.low = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) |
+> QI_IOTLB_DW(dw)
+> +	desc.qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) |
+> QI_IOTLB_DW(dw)
+>  		| QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
+> -	desc.high = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
+> +	desc.qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
+>  		| QI_IOTLB_AM(size_order);
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+> 
+>  	qi_submit_sync(&desc, iommu);
+>  }
+> @@ -1347,15 +1360,17 @@ void qi_flush_dev_iotlb(struct intel_iommu
+> *iommu, u16 sid, u16 pfsid,
+>  	if (mask) {
+>  		WARN_ON_ONCE(addr & ((1ULL << (VTD_PAGE_SHIFT +
+> mask)) - 1));
+>  		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
+> -		desc.high = QI_DEV_IOTLB_ADDR(addr) |
+> QI_DEV_IOTLB_SIZE;
+> +		desc.qw1 = QI_DEV_IOTLB_ADDR(addr) |
+> QI_DEV_IOTLB_SIZE;
+>  	} else
+> -		desc.high = QI_DEV_IOTLB_ADDR(addr);
+> +		desc.qw1 = QI_DEV_IOTLB_ADDR(addr);
+> 
+>  	if (qdep >= QI_DEV_IOTLB_MAX_INVS)
+>  		qdep = 0;
+> 
+> -	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
+> +	desc.qw0 = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
+>  		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+> 
+>  	qi_submit_sync(&desc, iommu);
+>  }
+> @@ -1403,16 +1418,24 @@ static void __dmar_enable_qi(struct
+> intel_iommu *iommu)
+>  	u32 sts;
+>  	unsigned long flags;
+>  	struct q_inval *qi = iommu->qi;
+> +	u64 val = virt_to_phys(qi->desc);
+> 
+>  	qi->free_head = qi->free_tail = 0;
+>  	qi->free_cnt = QI_LENGTH;
+> 
+> +	/*
+> +	 * Set DW=1 and QS=1 in IQA_REG when Scalable Mode capability
+> +	 * is present.
+> +	 */
+> +	if (ecap_smts(iommu->ecap))
+> +		val |= (1 << 11) | 1;
+> +
+>  	raw_spin_lock_irqsave(&iommu->register_lock, flags);
+> 
+>  	/* write zero to the tail reg */
+>  	writel(0, iommu->reg + DMAR_IQT_REG);
+> 
+> -	dmar_writeq(iommu->reg + DMAR_IQA_REG, virt_to_phys(qi-
+> >desc));
+> +	dmar_writeq(iommu->reg + DMAR_IQA_REG, val);
+> 
+>  	iommu->gcmd |= DMA_GCMD_QIE;
+>  	writel(iommu->gcmd, iommu->reg + DMAR_GCMD_REG);
+> @@ -1448,8 +1471,12 @@ int dmar_enable_qi(struct intel_iommu
+> *iommu)
+> 
+>  	qi = iommu->qi;
+> 
+> -
+> -	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC |
+> __GFP_ZERO, 0);
+> +	/*
+> +	 * Need two pages to accommodate 256 descriptors of 256 bits each
+> +	 * if the remapping hardware supports scalable mode translation.
+> +	 */
+> +	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC |
+> __GFP_ZERO,
+> +				     !!ecap_smts(iommu->ecap));
+>  	if (!desc_page) {
+>  		kfree(qi);
+>  		iommu->qi = NULL;
+> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> index 6c0bd9ee9602..a06ed098e928 100644
+> --- a/drivers/iommu/intel-svm.c
+> +++ b/drivers/iommu/intel-svm.c
+> @@ -161,27 +161,40 @@ static void intel_flush_svm_range_dev (struct
+> intel_svm *svm, struct intel_svm_d
+>  		 * because that's the only option the hardware gives us.
+> Despite
+>  		 * the fact that they are actually only accessible through one.
+> */
+>  		if (gl)
+> -			desc.low = QI_EIOTLB_PASID(svm->pasid) |
+> QI_EIOTLB_DID(sdev->did) |
+> -				QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
+> QI_EIOTLB_TYPE;
+> +			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+> +					QI_EIOTLB_DID(sdev->did) |
+> +
+> 	QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
+> +					QI_EIOTLB_TYPE;
+>  		else
+> -			desc.low = QI_EIOTLB_PASID(svm->pasid) |
+> QI_EIOTLB_DID(sdev->did) |
+> -				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID)
+> | QI_EIOTLB_TYPE;
+> -		desc.high = 0;
+> +			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+> +					QI_EIOTLB_DID(sdev->did) |
+> +
+> 	QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+> +					QI_EIOTLB_TYPE;
+> +		desc.qw1 = 0;
+>  	} else {
+>  		int mask = ilog2(__roundup_pow_of_two(pages));
+> 
+> -		desc.low = QI_EIOTLB_PASID(svm->pasid) |
+> QI_EIOTLB_DID(sdev->did) |
+> -			QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
+> QI_EIOTLB_TYPE;
+> -		desc.high = QI_EIOTLB_ADDR(address) | QI_EIOTLB_GL(gl) |
+> -			QI_EIOTLB_IH(ih) | QI_EIOTLB_AM(mask);
+> +		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+> +				QI_EIOTLB_DID(sdev->did) |
+> +				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
+> +				QI_EIOTLB_TYPE;
+> +		desc.qw1 = QI_EIOTLB_ADDR(address) |
+> +				QI_EIOTLB_GL(gl) |
+> +				QI_EIOTLB_IH(ih) |
+> +				QI_EIOTLB_AM(mask);
+>  	}
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+>  	qi_submit_sync(&desc, svm->iommu);
+> 
+>  	if (sdev->dev_iotlb) {
+> -		desc.low = QI_DEV_EIOTLB_PASID(svm->pasid) |
+> QI_DEV_EIOTLB_SID(sdev->sid) |
+> -			QI_DEV_EIOTLB_QDEP(sdev->qdep) |
+> QI_DEIOTLB_TYPE;
+> +		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
+> +				QI_DEV_EIOTLB_SID(sdev->sid) |
+> +				QI_DEV_EIOTLB_QDEP(sdev->qdep) |
+> +				QI_DEIOTLB_TYPE;
+>  		if (pages == -1) {
+> -			desc.high = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
+> QI_DEV_EIOTLB_SIZE;
+> +			desc.qw1 = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
+> +					QI_DEV_EIOTLB_SIZE;
+>  		} else if (pages > 1) {
+>  			/* The least significant zero bit indicates the size. So,
+>  			 * for example, an "address" value of 0x12345f000
+> will
+> @@ -189,10 +202,13 @@ static void intel_flush_svm_range_dev (struct
+> intel_svm *svm, struct intel_svm_d
+>  			unsigned long last = address + ((unsigned
+> long)(pages - 1) << VTD_PAGE_SHIFT);
+>  			unsigned long mask =
+> __rounddown_pow_of_two(address ^ last);
+> 
+> -			desc.high = QI_DEV_EIOTLB_ADDR((address &
+> ~mask) | (mask - 1)) | QI_DEV_EIOTLB_SIZE;
+> +			desc.qw1 = QI_DEV_EIOTLB_ADDR((address &
+> ~mask) |
+> +					(mask - 1)) | QI_DEV_EIOTLB_SIZE;
+>  		} else {
+> -			desc.high = QI_DEV_EIOTLB_ADDR(address);
+> +			desc.qw1 = QI_DEV_EIOTLB_ADDR(address);
+>  		}
+> +		desc.qw2 = 0;
+> +		desc.qw3 = 0;
+>  		qi_submit_sync(&desc, svm->iommu);
+>  	}
+>  }
+> @@ -237,8 +253,11 @@ static void intel_flush_pasid_dev(struct intel_svm
+> *svm, struct intel_svm_dev *s
+>  {
+>  	struct qi_desc desc;
+> 
+> -	desc.high = 0;
+> -	desc.low = QI_PC_TYPE | QI_PC_DID(sdev->did) | QI_PC_PASID_SEL
+> | QI_PC_PASID(pasid);
+> +	desc.qw0 = QI_PC_TYPE | QI_PC_DID(sdev->did) |
+> +			QI_PC_PASID_SEL | QI_PC_PASID(pasid);
+> +	desc.qw1 = 0;
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+> 
+>  	qi_submit_sync(&desc, svm->iommu);
+>  }
+> @@ -668,24 +687,27 @@ static irqreturn_t prq_event_thread(int irq, void
+> *d)
+>  	no_pasid:
+>  		if (req->lpig) {
+>  			/* Page Group Response */
+> -			resp.low = QI_PGRP_PASID(req->pasid) |
+> +			resp.qw0 = QI_PGRP_PASID(req->pasid) |
+>  				QI_PGRP_DID((req->bus << 8) | req->devfn)
+> |
+>  				QI_PGRP_PASID_P(req->pasid_present) |
+>  				QI_PGRP_RESP_TYPE;
+> -			resp.high = QI_PGRP_IDX(req->prg_index) |
+> -				QI_PGRP_PRIV(req->private) |
+> QI_PGRP_RESP_CODE(result);
+> -
+> -			qi_submit_sync(&resp, iommu);
+> +			resp.qw1 = QI_PGRP_IDX(req->prg_index) |
+> +				QI_PGRP_PRIV(req->private) |
+> +				QI_PGRP_RESP_CODE(result);
+>  		} else if (req->srr) {
+>  			/* Page Stream Response */
+> -			resp.low = QI_PSTRM_IDX(req->prg_index) |
+> -				QI_PSTRM_PRIV(req->private) |
+> QI_PSTRM_BUS(req->bus) |
+> -				QI_PSTRM_PASID(req->pasid) |
+> QI_PSTRM_RESP_TYPE;
+> -			resp.high = QI_PSTRM_ADDR(address) |
+> QI_PSTRM_DEVFN(req->devfn) |
+> +			resp.qw0 = QI_PSTRM_IDX(req->prg_index) |
+> +				QI_PSTRM_PRIV(req->private) |
+> +				QI_PSTRM_BUS(req->bus) |
+> +				QI_PSTRM_PASID(req->pasid) |
+> +				QI_PSTRM_RESP_TYPE;
+> +			resp.qw1 = QI_PSTRM_ADDR(address) |
+> +				QI_PSTRM_DEVFN(req->devfn) |
+>  				QI_PSTRM_RESP_CODE(result);
+> -
+> -			qi_submit_sync(&resp, iommu);
+>  		}
+> +		resp.qw2 = 0;
+> +		resp.qw3 = 0;
+> +		qi_submit_sync(&resp, iommu);
+> 
+>  		head = (head + sizeof(*req)) & PRQ_RING_MASK;
+>  	}
+> diff --git a/drivers/iommu/intel_irq_remapping.c
+> b/drivers/iommu/intel_irq_remapping.c
+> index 967450bd421a..916391f33ca6 100644
+> --- a/drivers/iommu/intel_irq_remapping.c
+> +++ b/drivers/iommu/intel_irq_remapping.c
+> @@ -145,9 +145,11 @@ static int qi_flush_iec(struct intel_iommu *iommu,
+> int index, int mask)
+>  {
+>  	struct qi_desc desc;
+> 
+> -	desc.low = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
+> +	desc.qw0 = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
+>  		   | QI_IEC_SELECTIVE;
+> -	desc.high = 0;
+> +	desc.qw1 = 0;
+> +	desc.qw2 = 0;
+> +	desc.qw3 = 0;
+> 
+>  	return qi_submit_sync(&desc, iommu);
+>  }
+> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> index 41791903a5e3..72aff482b293 100644
+> --- a/include/linux/intel-iommu.h
+> +++ b/include/linux/intel-iommu.h
+> @@ -340,12 +340,15 @@ enum {
+>  #define QI_GRAN_PSI_PASID		3
+> 
+>  struct qi_desc {
+> -	u64 low, high;
+> +	u64 qw0;
+> +	u64 qw1;
+> +	u64 qw2;
+> +	u64 qw3;
+>  };
+> 
+>  struct q_inval {
+>  	raw_spinlock_t  q_lock;
+> -	struct qi_desc  *desc;          /* invalidation queue */
+> +	void		*desc;          /* invalidation queue */
+>  	int             *desc_status;   /* desc status */
+>  	int             free_head;      /* first free entry */
+>  	int             free_tail;      /* last free entry */
+> --
+> 2.17.1
 
