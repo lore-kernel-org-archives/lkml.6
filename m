@@ -2,99 +2,139 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 537C7C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7463C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD852075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:16:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD852075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 52B5B2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 17:18:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MSGyRVoQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B5B2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbeIFVxO convert rfc822-to-8bit (ORCPT
+        id S1728714AbeIFVy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:53:14 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40156 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbeIFVxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:53:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 10:16:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
-   d="scan'208";a="68077034"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Sep 2018 10:16:26 -0700
-Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 6 Sep 2018 10:16:25 -0700
-Received: from orsmsx115.amr.corp.intel.com ([169.254.4.230]) by
- ORSMSX113.amr.corp.intel.com ([169.254.9.72]) with mapi id 14.03.0319.002;
- Thu, 6 Sep 2018 10:16:25 -0700
-From:   "Keller, Jacob E" <jacob.e.keller@intel.com>
-To:     "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "sergei.shtylyov@cogentembedded.com" 
-        <sergei.shtylyov@cogentembedded.com>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 1/2] net: ethernet: i40e: fix build error
-Thread-Topic: [PATCH v2 1/2] net: ethernet: i40e: fix build error
-Thread-Index: AQHURMAOHuyMEikkN06R2JwEV2/dyqTjf3nw
-Date:   Thu, 6 Sep 2018 17:16:24 +0000
-Message-ID: <02874ECE860811409154E81DA85FBB5884C7AC01@ORSMSX115.amr.corp.intel.com>
-References: <1536114430-21356-1-git-send-email-dongsheng.wang@hxt-semitech.com>
- <02874ECE860811409154E81DA85FBB5884C78D88@ORSMSX115.amr.corp.intel.com>
- <eab442369533452a9fc138e310aa57b9@HXTBJIDCEMVIW02.hxtcorp.net>
-In-Reply-To: <eab442369533452a9fc138e310aa57b9@HXTBJIDCEMVIW02.hxtcorp.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGJhMTJkNWQtMjY4ZC00ZWY1LWEwMDMtNzhjNTUxNDI2NGY0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYkJzN2x6b1ZPWjVhUFwvOFZVSDFiNEhpSjNnQVdMVHJpajdyaW1DdEpTNGRNbXgwZmZZUGdRUUhzK1wvUFNCdW1cLyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Sep 2018 17:54:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49460 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728074AbeIFVy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 17:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=92kLe+ZA7i8xLr9KM09UIIhtHm4W5k0v9LZceprp9Eo=; b=MSGyRVoQPrXpUAPOGoWn0DRRvz
+        wtV94A7p+Rh1qfEKvgegFAsHiOuo0nwprJjOmw1TkjfSvippYSAHq+/CvImZBhSzBO++QetqpO7rt
+        Cd8+qKGKnSmN4ABB0ERnHxvqlnDzqYU/wUMHKEg5gg1m9xb+X0BwwnqXfXDfj6fYPGaZjoR2/W7y+
+        USglgCg2MwNtfhQfe3Xb73Rx/96ObE0QWaWpn2hN020ChyCCr9NvLJxicHcDYUjmCt0c8x6ESHds3
+        BZYmhwMGdANAAP4nQx8OWJGr9LFIQO0IyaFnwYDOlt98Z03I+EgudlmdOrZ/NaEve5xRTI4YZa3/t
+        3hbUqXdA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxxul-0001uD-PG; Thu, 06 Sep 2018 17:17:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 24A7D2018BF7D; Thu,  6 Sep 2018 19:17:54 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 19:17:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Message-ID: <20180906171754.GJ24106@hirez.programming.kicks-ass.net>
+References: <20180902173224.30606-1-namit@vmware.com>
+ <20180905185617.GC24082@hirez.programming.kicks-ass.net>
+ <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+ <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
+ <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+ <20180906101641.GG24142@hirez.programming.kicks-ass.net>
+ <6703CD9F-2D84-4449-A423-A4DC24677673@vmware.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6703CD9F-2D84-4449-A423-A4DC24677673@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 06, 2018 at 05:01:25PM +0000, Nadav Amit wrote:
+> In addition, there might be a couple of issues with your fix:
 
+It boots on my box ;-)
 
-> -----Original Message-----
-> From: Wang, Dongsheng [mailto:dongsheng.wang@hxt-semitech.com]
-> Sent: Wednesday, September 05, 2018 8:36 PM
-> To: Keller, Jacob E <jacob.e.keller@intel.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; sergei.shtylyov@cogentembedded.com
-> Cc: davem@davemloft.net; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2 1/2] net: ethernet: i40e: fix build error
-> 
-> Yes,  but not only i40e. igb/vf, ixgb/vf also share same code. If we change any of
-> them, means we need to broken the whole layout of driver/net/ethernet/intel/ .
-> Obviously we can't put header files to $src/include/net. $B!'(B|
-> 
-> Cheers,
-> Dongsheng
-> 
-> 
+> 1. __set_pte_vaddr() is not used exclusive by set_fixmap(). This means
+> the warning might be wrong, but also means that these code patches (Xen’s
+> set_pte_mfn(), CPU-entry-area setup) needs to be checked. And as you said
+> before, someone might use this function for other purposes as well.
 
-I'm more worried about how it interacts with modules. For example, we could have i40e and i40evf share some code, but then wouldn't one of them become dependent on the other? i.e. you'd have to load i40e in order to successfully load i40evf? Or you'd have to have some sort of common glue module which you load first, and then load i40e and i40evf after? This also creates some interactions with out-of-tree modules which make it difficult. It would be nice if we could share the code in some way that still resulted in allowing each module to be separate...
+CEA is fine, that actually needs it too.
 
-And yes, I igb/vf and ixgbe/vf and i40e/vf all share some code though i40e is the most shared, comparatively. It's not an easy undertaking, which is why it's not been done before. For fm10k, the same driver handles both the PF and VF, but I know that users weren't happy about having the driver change a lot when fixing/changing the PF, and thus thinking they might need to update their VF too much.
+The one thing I missed out on earlier is the below chunk, that is no
+longer needed now that cea_set_pte() actually does the right thing.
 
-Thanks,
-Jake
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index b7b01d762d32..14ad97fa0749 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -293,12 +293,6 @@ static void ds_update_cea(void *cea, void *addr, size_t size, pgprot_t prot)
+ 	preempt_disable();
+ 	for (; msz < size; msz += PAGE_SIZE, pa += PAGE_SIZE, cea += PAGE_SIZE)
+ 		cea_set_pte(cea, pa, prot);
+-
+-	/*
+-	 * This is a cross-CPU update of the cpu_entry_area, we must shoot down
+-	 * all TLB entries for it.
+-	 */
+-	flush_tlb_kernel_range(start, start + size);
+ 	preempt_enable();
+ }
+ 
+@@ -310,8 +304,6 @@ static void ds_clear_cea(void *cea, size_t size)
+ 	preempt_disable();
+ 	for (; msz < size; msz += PAGE_SIZE, cea += PAGE_SIZE)
+ 		cea_set_pte(cea, 0, PAGE_NONE);
+-
+-	flush_tlb_kernel_range(start, start + size);
+ 	preempt_enable();
+ }
+ 
+
+> 2. Printing the virtual address can break KASLR.
+
+Local KASLR is a myth.. but sure, we can fix the print.
+
+> 3. The WARN() can introduce some overhead since checking if IRQs are
+> disabled takes considerably long time. Perhaps VM_WARN() or something is
+> better. I realize this code-path is not on the hot-path though...
+
+Yeah, if it triggers you have bigger problems. We can make it
+WARN_ONCE() I suppose.
+
+> 4. I guess flush_tlb_kernel_range() should also have something like
+> VM_WARN_ON(irqs_disabled()), just as an additional general sanity check.
+
+It has, it's hidden in kernel/smp.c:smp_call_function_many().
+
+> Let me know if you want me to make these changes and include your patch in
+> the set.
+
+The set is no longer needed. text_poke() is fine and correct with this
+one patch.
