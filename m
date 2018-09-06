@@ -5,105 +5,135 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6072DC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FA5C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115542075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:03:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115542075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0119F2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 04:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0119F2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726161AbeIFIhT (ORCPT
+        id S1726565AbeIFIjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 04:37:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55290 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725885AbeIFIhT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 04:37:19 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w863sPTW046790
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 00:03:54 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mauu3t0af-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 00:03:54 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 5 Sep 2018 22:03:53 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Sep 2018 22:03:50 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8643ntP20512844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Sep 2018 21:03:49 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 198E178063;
-        Wed,  5 Sep 2018 22:03:49 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29E8878060;
-        Wed,  5 Sep 2018 22:03:47 -0600 (MDT)
-Received: from [9.102.0.183] (unknown [9.102.0.183])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Sep 2018 22:03:46 -0600 (MDT)
-Subject: Re: [RFC PATCH] mm/hugetlb: make hugetlb_lock irq safe
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20180905112341.21355-1-aneesh.kumar@linux.ibm.com>
- <20180905130440.GA3729@bombadil.infradead.org>
- <d76771e6-1664-5d38-a5a0-e98f1120494c@linux.ibm.com>
- <20180905134848.GB3729@bombadil.infradead.org>
- <20180905125846.eb0a9ed907b293c1b4c23c23@linux-foundation.org>
- <78b08258-14c8-0e90-97c7-d647a11acb30@oracle.com>
- <20180905150008.59d477c1f78f966a8f9c3cc8@linux-foundation.org>
- <20180905230737.GA14977@bombadil.infradead.org>
- <c03c8851-ce18-56c6-3f37-47f585d70b19@oracle.com>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Thu, 6 Sep 2018 09:33:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <c03c8851-ce18-56c6-3f37-47f585d70b19@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18090604-0004-0000-0000-00001484D3D0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01084193; UDB=6.00559576; IPR=6.00864193;
- MB=3.00023137; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-06 04:03:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090604-0005-0000-0000-000088B6E302
-Message-Id: <bb3054c8-3bf3-ba54-793c-a6939bc0acb4@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=684 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060041
+        Thu, 6 Sep 2018 04:39:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725781AbeIFIjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 04:39:02 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E14728151D46;
+        Thu,  6 Sep 2018 04:05:36 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-125.pek2.redhat.com [10.72.12.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B612101041E;
+        Thu,  6 Sep 2018 04:05:31 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        mst@redhat.com, jasowang@redhat.com
+Subject: [PATCH net-next 00/11] Vhost_net TX batching
+Date:   Thu,  6 Sep 2018 12:05:15 +0800
+Message-Id: <20180906040526.22518-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 04:05:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 06 Sep 2018 04:05:36 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 05:21 AM, Mike Kravetz wrote:
+Hi all:
 
-> 
-> BTW, free_huge_page called by put_page for hugetlbfs pages may also take
-> a subpool specific lock via spin_lock().  See hugepage_subpool_put_pages.
-> So, this would also need to take irq context into account.
-> 
+This series tries to batch submitting packets to underlayer socket
+through msg_control during sendmsg(). This is done by:
 
-I missed that. I can take care of that in next patch update based on 
-what we decide w.r.t this patch.
+1) Doing userspace copy inside vhost_net
+2) Build XDP buff
+3) Batch at most 64 (VHOST_NET_BATCH) XDP buffs and submit them once
+   through msg_control during sendmsg().
+4) Underlayer sockets can use XDP buffs directly when XDP is enalbed,
+   or build skb based on XDP buff.
 
--aneesh
+For the packet that can not be built easily with XDP or for the case
+that batch submission is hard (e.g sndbuf is limited). We will go for
+the previous slow path, passing iov iterator to underlayer socket
+through sendmsg() once per packet.
+
+This can help to improve cache utilization and avoid lots of indirect
+calls with sendmsg(). It can also co-operate with the batching support
+of the underlayer sockets (e.g the case of XDP redirection through
+maps).
+
+Testpmd(txonly) in guest shows obvious improvements:
+
+Test                /+pps%
+XDP_DROP on TAP     /+44.8%
+XDP_REDIRECT on TAP /+29%
+macvtap (skb)       /+26%
+
+Netperf TCP_STREAM TX from guest shows obvious improvements on small
+packet:
+
+    size/session/+thu%/+normalize%
+       64/     1/   +2%/    0%
+       64/     2/   +3%/   +1%
+       64/     4/   +7%/   +5%
+       64/     8/   +8%/   +6%
+      256/     1/   +3%/    0%
+      256/     2/  +10%/   +7%
+      256/     4/  +26%/  +22%
+      256/     8/  +27%/  +23%
+      512/     1/   +3%/   +2%
+      512/     2/  +19%/  +14%
+      512/     4/  +43%/  +40%
+      512/     8/  +45%/  +41%
+     1024/     1/   +4%/    0%
+     1024/     2/  +27%/  +21%
+     1024/     4/  +38%/  +73%
+     1024/     8/  +15%/  +24%
+     2048/     1/  +10%/   +7%
+     2048/     2/  +16%/  +12%
+     2048/     4/    0%/   +2%
+     2048/     8/    0%/   +2%
+     4096/     1/  +36%/  +60%
+     4096/     2/  -11%/  -26%
+     4096/     4/    0%/  +14%
+     4096/     8/    0%/   +4%
+    16384/     1/   -1%/   +5%
+    16384/     2/    0%/   +2%
+    16384/     4/    0%/   -3%
+    16384/     8/    0%/   +4%
+    65535/     1/    0%/  +10%
+    65535/     2/    0%/   +8%
+    65535/     4/    0%/   +1%
+    65535/     8/    0%/   +3%
+
+Please review.
+
+Thanks
+
+Jason Wang (11):
+  net: sock: introduce SOCK_XDP
+  tuntap: switch to use XDP_PACKET_HEADROOM
+  tuntap: enable bh early during processing XDP
+  tuntap: simplify error handling in tun_build_skb()
+  tuntap: tweak on the path of non-xdp case in tun_build_skb()
+  tuntap: split out XDP logic
+  tuntap: move XDP flushing out of tun_do_xdp()
+  tun: switch to new type of msg_control
+  tuntap: accept an array of XDP buffs through sendmsg()
+  tap: accept an array of XDP buffs through sendmsg()
+  vhost_net: batch submitting XDP buffers to underlayer sockets
+
+ drivers/net/tap.c      |  87 +++++++++++++-
+ drivers/net/tun.c      | 251 +++++++++++++++++++++++++++++++----------
+ drivers/vhost/net.c    | 171 +++++++++++++++++++++++++---
+ include/linux/if_tun.h |   7 ++
+ include/net/sock.h     |   1 +
+ 5 files changed, 437 insertions(+), 80 deletions(-)
+
+-- 
+2.17.1
 
