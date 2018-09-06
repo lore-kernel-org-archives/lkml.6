@@ -6,66 +6,125 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EBBC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF19C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE11206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:44:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE11206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BB6A820659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 21:50:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6A820659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbeIGCVI (ORCPT
+        id S1727378AbeIGC1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 22:21:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57970 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726086AbeIGCVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 22:21:07 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E17E402170B;
-        Thu,  6 Sep 2018 21:43:40 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3662A30BB;
-        Thu,  6 Sep 2018 21:43:37 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     "David Airlie" <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, "Ben Skeggs" <bskeggs@redhat.com>
-Subject: [PATCH v4 0/6] Backlight fixes and cleanup
-Date:   Thu,  6 Sep 2018 17:43:20 -0400
-Message-Id: <20180906214328.24012-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 06 Sep 2018 21:43:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 06 Sep 2018 21:43:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Thu, 6 Sep 2018 22:27:39 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:15841 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726361AbeIGC1j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 22:27:39 -0400
+X-IronPort-AV: E=Sophos;i="5.53,339,1531778400"; 
+   d="scan'208";a="345310021"
+Received: from lneuilly-657-1-24-134.w92-154.abo.wanadoo.fr (HELO hadrien) ([92.154.38.134])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 23:50:07 +0200
+Date:   Thu, 6 Sep 2018 23:50:07 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Mikita Lipski <mikita.lipski@amd.com>
+cc:     linux-kernel@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Hersen Wu <hersenxs.wu@amd.com>, kbuild-all@01.org
+Subject: drivers/gpu/drm/amd/display/dc/core/dc_resource.c:352:1-14: code
+ aligned with following code on line 354 (fwd)
+Message-ID: <alpine.DEB.2.20.1809062349170.25742@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor for Ben, hopefully this time this should apply to his tree.
-Next version of https://patchwork.freedesktop.org/series/48596/
+It looks like line 352 needs to be indented more.
 
-No changes otherwise.
+julia
 
-Lyude Paul (6):
-  drm/nouveau: Check backlight IDs are >= 0, not > 0
-  drm/nouveau: Add NV_PRINTK_ONCE and variants
-  drm/nouveau: Move backlight device into nouveau_connector
-  drm/nouveau: s/nouveau_backlight_exit/nouveau_backlight_fini/
-  drm/nouveau: Cleanup indenting in nouveau_backlight.c
-  drm/nouveau: Refactor nvXX_backlight_init()
+---------- Forwarded message ----------
+Date: Fri, 7 Sep 2018 05:47:25 +0800
+From: kbuild test robot <lkp@intel.com>
+To: kbuild@01.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Subject: drivers/gpu/drm/amd/display/dc/core/dc_resource.c:352:1-14: code
+    aligned with following code on line 354
 
- drivers/gpu/drm/nouveau/nouveau_backlight.c | 220 ++++++++++----------
- drivers/gpu/drm/nouveau/nouveau_connector.c |  20 ++
- drivers/gpu/drm/nouveau/nouveau_connector.h |  33 +++
- drivers/gpu/drm/nouveau/nouveau_display.c   |   2 -
- drivers/gpu/drm/nouveau/nouveau_display.h   |  25 ---
- drivers/gpu/drm/nouveau/nouveau_drv.h       |  10 +-
- 6 files changed, 168 insertions(+), 142 deletions(-)
+CC: kbuild-all@01.org
+CC: linux-kernel@vger.kernel.org
+TO: Mikita Lipski <mikita.lipski@amd.com>
+CC: Alex Deucher <alexander.deucher@amd.com>
+CC: Hersen Wu <hersenxs.wu@amd.com>
 
--- 
-2.17.1
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   db44bf4b4768a0664d3c9d9000ecb747de31ded8
+commit: 3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c drm/amd/display: Don't share clk source between DP and HDMI
+date:   4 weeks ago
+:::::: branch date: 5 hours ago
+:::::: commit date: 4 weeks ago
 
+>> drivers/gpu/drm/amd/display/dc/core/dc_resource.c:352:1-14: code aligned with following code on line 354
+
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c
+git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+git remote update linus
+git checkout 3e27e10e2ecee0d3a0083f8ae76354ac9c6ad15c
+vim +352 drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+
+4562236b Harry Wentland   2017-09-12  310
+4562236b Harry Wentland   2017-09-12  311  bool resource_are_streams_timing_synchronizable(
+0971c40e Harry Wentland   2017-07-27  312  	struct dc_stream_state *stream1,
+0971c40e Harry Wentland   2017-07-27  313  	struct dc_stream_state *stream2)
+4562236b Harry Wentland   2017-09-12  314  {
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  315) 	if (stream1->timing.h_total != stream2->timing.h_total)
+4562236b Harry Wentland   2017-09-12  316  		return false;
+4562236b Harry Wentland   2017-09-12  317
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  318) 	if (stream1->timing.v_total != stream2->timing.v_total)
+4562236b Harry Wentland   2017-09-12  319  		return false;
+4562236b Harry Wentland   2017-09-12  320
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  321) 	if (stream1->timing.h_addressable
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  322) 				!= stream2->timing.h_addressable)
+4562236b Harry Wentland   2017-09-12  323  		return false;
+4562236b Harry Wentland   2017-09-12  324
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  325) 	if (stream1->timing.v_addressable
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  326) 				!= stream2->timing.v_addressable)
+4562236b Harry Wentland   2017-09-12  327  		return false;
+4562236b Harry Wentland   2017-09-12  328
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  329) 	if (stream1->timing.pix_clk_khz
+4fa086b9 Leo (Sunpeng  Li 2017-07-25  330) 				!= stream2->timing.pix_clk_khz)
+4562236b Harry Wentland   2017-09-12  331  		return false;
+4562236b Harry Wentland   2017-09-12  332
+3e27e10e Mikita Lipski    2018-07-12  333  	if (stream1->clamping.c_depth != stream2->clamping.c_depth)
+3e27e10e Mikita Lipski    2018-07-12  334  		return false;
+3e27e10e Mikita Lipski    2018-07-12  335
+4562236b Harry Wentland   2017-09-12  336  	if (stream1->phy_pix_clk != stream2->phy_pix_clk
+7e2fe319 Charlene Liu     2017-03-17  337  			&& (!dc_is_dp_signal(stream1->signal)
+7e2fe319 Charlene Liu     2017-03-17  338  			|| !dc_is_dp_signal(stream2->signal)))
+4562236b Harry Wentland   2017-09-12  339  		return false;
+4562236b Harry Wentland   2017-09-12  340
+4562236b Harry Wentland   2017-09-12  341  	return true;
+4562236b Harry Wentland   2017-09-12  342  }
+3e27e10e Mikita Lipski    2018-07-12  343  static bool is_dp_and_hdmi_sharable(
+3e27e10e Mikita Lipski    2018-07-12  344  		struct dc_stream_state *stream1,
+3e27e10e Mikita Lipski    2018-07-12  345  		struct dc_stream_state *stream2)
+3e27e10e Mikita Lipski    2018-07-12  346  {
+3e27e10e Mikita Lipski    2018-07-12  347  	if (stream1->ctx->dc->caps.disable_dp_clk_share)
+3e27e10e Mikita Lipski    2018-07-12  348  		return false;
+3e27e10e Mikita Lipski    2018-07-12  349
+3e27e10e Mikita Lipski    2018-07-12  350  	if (stream1->clamping.c_depth != COLOR_DEPTH_888 ||
+3e27e10e Mikita Lipski    2018-07-12  351  	    stream2->clamping.c_depth != COLOR_DEPTH_888)
+3e27e10e Mikita Lipski    2018-07-12 @352  	return false;
+3e27e10e Mikita Lipski    2018-07-12  353
+3e27e10e Mikita Lipski    2018-07-12 @354  	return true;
+3e27e10e Mikita Lipski    2018-07-12  355
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
