@@ -2,100 +2,85 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB7EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F47C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98AEC20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98AEC20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 551E720659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:19:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YVEYxnRB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 551E720659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730636AbeIFXzh (ORCPT
+        id S1729333AbeIFX4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:55:37 -0400
-Received: from mga05.intel.com ([192.55.52.43]:64803 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729886AbeIFXy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:54:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 12:18:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="68939841"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2018 12:17:54 -0700
-From:   richard.gong@linux.intel.com
-To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
-        arnd@arndb.de, corbet@lwn.net
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
-        richard.gong@intel.com
-Subject: [PATCHv9 4/8] dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
-Date:   Thu,  6 Sep 2018 14:25:06 -0500
-Message-Id: <1536261910-16426-5-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536261910-16426-1-git-send-email-richard.gong@linux.intel.com>
-References: <1536261910-16426-1-git-send-email-richard.gong@linux.intel.com>
+        Thu, 6 Sep 2018 19:56:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48254 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727346AbeIFX4r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:56:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TbCJemBeYn2d/PcRK+9PCtc9GPZqjR9OEk8bVqA6j4Q=; b=YVEYxnRB3SoGJgi3ew9sexrPK
+        D96c5L++n4FcObvJwhwTjt6JZ3S3RttUva7sI430qxxtCbkbXOPLpxuHyl8FFqhQyf/GZCzmgVItl
+        5t4hE2QVTvsmcY4nh1+wCw7RevQWxoas6h2W22WLH2unqLPCKCkaKYgCGRefmhpf9QcEmZUWwjHf0
+        9752M7C3U8cKeBQnoKtCrL+llSC9klW7Mga1MvMDuelW71pnrHLV78Q4PkVPQMg/zsKH4FSKwoTar
+        HX83tRdyrPyGxeuBo/6R7BYbv7roAJa4jD6pmTKq8MWMnU2u+1S/zX+MGJSL1krdCE/REZui8HL21
+        n+k/+Gqwg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fxzoP-0004WZ-7d; Thu, 06 Sep 2018 19:19:39 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 130EC6E0AA9; Thu,  6 Sep 2018 21:19:22 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 21:19:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2 0/6] x86/alternatives: text_poke() fixes
+Message-ID: <20180906191922.GB4816@worktop.programming.kicks-ass.net>
+References: <8D3CE999-6D3A-4984-934A-634BDD8AC25A@vmware.com>
+ <6B256AB7-0158-47DF-B2D5-4C835579F3A3@vmware.com>
+ <20180906081300.GF24082@hirez.programming.kicks-ass.net>
+ <20180906101641.GG24142@hirez.programming.kicks-ass.net>
+ <6703CD9F-2D84-4449-A423-A4DC24677673@vmware.com>
+ <20180906171754.GJ24106@hirez.programming.kicks-ass.net>
+ <9AF220A3-D783-442E-8E5B-AD0150628347@vmware.com>
+ <32902EEE-FF64-4C12-A043-1848CC927C88@amacapital.net>
+ <20180906183157.GK24106@hirez.programming.kicks-ass.net>
+ <9F76711C-393C-4F8D-B460-26D400458690@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9F76711C-393C-4F8D-B460-26D400458690@vmware.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Tull <atull@kernel.org>
+On Thu, Sep 06, 2018 at 06:38:30PM +0000, Nadav Amit wrote:
+> Note that patch 1/6 is still needed to fix false lockdep shoutouts due to a
+> recent patch.
 
-Add a Device Tree binding for the Intel Stratix10 SoC FPGA manager.
-
-Signed-off-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Richard Gong <richard.gong@intel.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-v2: this patch is added in patch set version 2
-v3: change to put fpga_mgr node under firmware/svc node
-v4: s/fpga-mgr@0/fpga-mgr/ to remove unit_address
-    add Richard's signed-off-by
-v5: add Reviewed-by Rob Herring
-v6: no change
-v7: no change
-v8: no change
-v9: no change
----
- .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
-
-diff --git a/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
-new file mode 100644
-index 0000000..6e03f79
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
-@@ -0,0 +1,17 @@
-+Intel Stratix10 SoC FPGA Manager
-+
-+Required properties:
-+The fpga_mgr node has the following mandatory property, must be located under
-+firmware/svc node.
-+
-+- compatible : should contain "intel,stratix10-soc-fpga-mgr"
-+
-+Example:
-+
-+	firmware {
-+		svc {
-+			fpga_mgr: fpga-mgr {
-+				compatible = "intel,stratix10-soc-fpga-mgr";
-+			};
-+		};
-+	};
--- 
-2.7.4
-
+For some reason I do not appear to have 1/6 in my inbox. Let me dig
+through lkml.
