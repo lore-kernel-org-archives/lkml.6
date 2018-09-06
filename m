@@ -6,41 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5FEC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CA0C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8BA120652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:15:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8BA120652
+	by mail.kernel.org (Postfix) with ESMTP id 68F2920652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 02:17:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F2920652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbeIFGsq convert rfc822-to-8bit (ORCPT
+        id S1726295AbeIFGuW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 02:48:46 -0400
-Received: from mga07.intel.com ([134.134.136.100]:8427 "EHLO mga07.intel.com"
+        Thu, 6 Sep 2018 02:50:22 -0400
+Received: from mga07.intel.com ([134.134.136.100]:8615 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbeIFGsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 02:48:46 -0400
+        id S1725781AbeIFGuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 02:50:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:15:46 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Sep 2018 19:17:22 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,334,1531810800"; 
-   d="scan'208";a="87583336"
+   d="scan'208";a="87583677"
 Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Sep 2018 19:14:02 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+  by fmsmga001.fm.intel.com with ESMTP; 05 Sep 2018 19:15:31 -0700
+Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
  fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 5 Sep 2018 19:14:02 -0700
+ id 14.3.319.2; Wed, 5 Sep 2018 19:15:31 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 5 Sep 2018 19:15:30 -0700
 Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
  SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
- Thu, 6 Sep 2018 10:14:00 +0800
+ Thu, 6 Sep 2018 10:15:28 +0800
 From:   "Tian, Kevin" <kevin.tian@intel.com>
 To:     Lu Baolu <baolu.lu@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
+        "David Woodhouse" <dwmw2@infradead.org>
 CC:     "Raj, Ashok" <ashok.raj@intel.com>,
         "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
         "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
@@ -50,20 +53,21 @@ CC:     "Raj, Ashok" <ashok.raj@intel.com>,
         "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [PATCH v2 02/12] iommu/vt-d: Manage scalalble mode PASID tables
-Thread-Topic: [PATCH v2 02/12] iommu/vt-d: Manage scalalble mode PASID tables
-Thread-Index: AQHUQAHs3HUDSv3XyUCGZgqDJ7RwY6TiiUeg
-Date:   Thu, 6 Sep 2018 02:14:00 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A85@SHSMSX101.ccr.corp.intel.com>
+Subject: RE: [PATCH v2 03/12] iommu/vt-d: Move page table helpers into header
+Thread-Topic: [PATCH v2 03/12] iommu/vt-d: Move page table helpers into
+ header
+Thread-Index: AQHUQAHvQ6+D9j7BN0OKWrCwSnidcqTijsnA
+Date:   Thu, 6 Sep 2018 02:15:27 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A9F@SHSMSX101.ccr.corp.intel.com>
 References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-3-baolu.lu@linux.intel.com>
-In-Reply-To: <20180830013524.28743-3-baolu.lu@linux.intel.com>
+ <20180830013524.28743-4-baolu.lu@linux.intel.com>
+In-Reply-To: <20180830013524.28743-4-baolu.lu@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmM3NTIxNmYtNGNjYS00NDJlLTgxZDEtNTM4MDI5Y2M3ZjY4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoialBDRWZvN1JQOW9yVDlLVUhKRllHejRQSUZkcFh0bGdrcmNEK2JMbDZyZ1JndjFwcEVkcmFwN3VpeUpubHlWaiJ9
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzViYWViNWMtMGVhOS00ZWM1LTkyOGItMjQ1MTVjNWNiM2UyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTFRuV1wvb3BMV05jUnJET0l5dFwvZjd6NjNqNXYzQVUwSlF1U0Y0eHpNK3lmKzFVXC9uWkRxUWJqMzF1bklEREdUWiJ9
 dlp-product: dlpe-windows
 dlp-version: 11.0.400.15
 dlp-reaction: no-action
@@ -79,277 +83,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 > From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
 > Sent: Thursday, August 30, 2018 9:35 AM
 > 
-> In scalable mode, pasid structure is a two level table with
-> a pasid directory table and a pasid table. Any pasid entry
-> can be identified by a pasid value in below way.
-> 
->    1
->    9                       6 5      0
->     .-----------------------.-------.
->     |              PASID    |       |
->     '-----------------------'-------'    .-------------.
->              |                    |      |             |
->              |                    |      |             |
->              |                    |      |             |
->              |     .-----------.  |      .-------------.
->              |     |           |  |----->| PASID Entry |
->              |     |           |  |      '-------------'
->              |     |           |  |Plus  |             |
->              |     .-----------.  |      |             |
->              |---->| DIR Entry |-------->|             |
->              |     '-----------'         '-------------'
-> .---------.  |Plus |           |
-> | Context |  |     |           |
-> |  Entry  |------->|           |
-> '---------'        '-----------'
-> 
-> This changes the pasid table APIs to support scalable mode
-> PASID directory and PASID table. It also adds a helper to
-> get the PASID table entry according to the pasid value.
+> So that they could also be used in other source files.
 > 
 > Cc: Ashok Raj <ashok.raj@intel.com>
 > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 > Cc: Kevin Tian <kevin.tian@intel.com>
 > Cc: Liu Yi L <yi.l.liu@intel.com>
-> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
 > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
 > ---
->  drivers/iommu/intel-iommu.c |  2 +-
->  drivers/iommu/intel-pasid.c | 72 ++++++++++++++++++++++++++++++++----
-> -
->  drivers/iommu/intel-pasid.h | 10 +++++-
->  drivers/iommu/intel-svm.c   |  6 +---
->  4 files changed, 74 insertions(+), 16 deletions(-)
+>  drivers/iommu/intel-iommu.c | 43 -------------------------------------
+>  include/linux/intel-iommu.h | 43
+> +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 43 insertions(+), 43 deletions(-)
 > 
 > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 5845edf4dcf9..b0da4f765274 100644
+> index b0da4f765274..93cde957adc7 100644
 > --- a/drivers/iommu/intel-iommu.c
 > +++ b/drivers/iommu/intel-iommu.c
-> @@ -2507,7 +2507,7 @@ static struct dmar_domain
-> *dmar_insert_one_dev_info(struct intel_iommu *iommu,
->  	if (dev)
->  		dev->archdata.iommu = info;
-> 
-> -	if (dev && dev_is_pci(dev) && info->pasid_supported) {
-> +	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
-
-worthy of a comment here that PASID table now is mandatory in
-scalable mode, instead of optional for 1st level usage before.
-
->  		ret = intel_pasid_alloc_table(dev);
->  		if (ret) {
->  			__dmar_remove_one_dev_info(info);
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index fe95c9bd4d33..d6e90cd5b062 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -127,8 +127,7 @@ int intel_pasid_alloc_table(struct device *dev)
->  	int ret, order;
-> 
->  	info = dev->archdata.iommu;
-> -	if (WARN_ON(!info || !dev_is_pci(dev) ||
-> -		    !info->pasid_supported || info->pasid_table))
-> +	if (WARN_ON(!info || !dev_is_pci(dev) || info->pasid_table))
->  		return -EINVAL;
-
-following same logic should you check sm_supported here?
-
-> 
->  	/* DMA alias device already has a pasid table, use it: */
-> @@ -143,8 +142,9 @@ int intel_pasid_alloc_table(struct device *dev)
->  		return -ENOMEM;
->  	INIT_LIST_HEAD(&pasid_table->dev);
-> 
-> -	size = sizeof(struct pasid_entry);
-> +	size = sizeof(struct pasid_dir_entry);
->  	count = min_t(int, pci_max_pasids(to_pci_dev(dev)),
-> intel_pasid_max_id);
-> +	count >>= PASID_PDE_SHIFT;
->  	order = get_order(size * count);
->  	pages = alloc_pages_node(info->iommu->node,
->  				 GFP_ATOMIC | __GFP_ZERO,
-> @@ -154,7 +154,7 @@ int intel_pasid_alloc_table(struct device *dev)
-> 
->  	pasid_table->table = page_address(pages);
->  	pasid_table->order = order;
-> -	pasid_table->max_pasid = count;
-> +	pasid_table->max_pasid = count << PASID_PDE_SHIFT;
-
-are you sure of that count is PDE_SHIFT aligned? otherwise >>
-then << would lose some bits. If sure, then better add some check.
-
-> 
->  attach_out:
->  	device_attach_pasid_table(info, pasid_table);
-> @@ -162,14 +162,33 @@ int intel_pasid_alloc_table(struct device *dev)
->  	return 0;
+> @@ -315,49 +315,6 @@ static inline void context_clear_entry(struct
+> context_entry *context)
+>  	context->hi = 0;
 >  }
 > 
-> +/* Get PRESENT bit of a PASID directory entry. */
-> +static inline bool
-> +pasid_pde_is_present(struct pasid_dir_entry *pde)
-> +{
-> +	return READ_ONCE(pde->val) & PASID_PTE_PRESENT;
-
-curious why adding READ_ONCE specifically for PASID structure,
-but not used for any other existing vtd structures? Is it to address
-some specific requirement on PASID structure as defined in spec?
-
-> +}
-> +
-> +/* Get PASID table from a PASID directory entry. */
-> +static inline struct pasid_entry *
-> +get_pasid_table_from_pde(struct pasid_dir_entry *pde)
-> +{
-> +	if (!pasid_pde_is_present(pde))
-> +		return NULL;
-> +
-> +	return phys_to_virt(READ_ONCE(pde->val) & PDE_PFN_MASK);
-> +}
-> +
->  void intel_pasid_free_table(struct device *dev)
->  {
->  	struct device_domain_info *info;
->  	struct pasid_table *pasid_table;
-> +	struct pasid_dir_entry *dir;
-> +	struct pasid_entry *table;
-> +	int i, max_pde;
-> 
->  	info = dev->archdata.iommu;
-> -	if (!info || !dev_is_pci(dev) ||
-> -	    !info->pasid_supported || !info->pasid_table)
-> +	if (!info || !dev_is_pci(dev) || !info->pasid_table)
->  		return;
-> 
->  	pasid_table = info->pasid_table;
-> @@ -178,6 +197,14 @@ void intel_pasid_free_table(struct device *dev)
->  	if (!list_empty(&pasid_table->dev))
->  		return;
-> 
-> +	/* Free scalable mode PASID directory tables: */
-> +	dir = pasid_table->table;
-> +	max_pde = pasid_table->max_pasid >> PASID_PDE_SHIFT;
-> +	for (i = 0; i < max_pde; i++) {
-> +		table = get_pasid_table_from_pde(&dir[i]);
-> +		free_pgtable_page(table);
-> +	}
-> +
->  	free_pages((unsigned long)pasid_table->table, pasid_table->order);
->  	kfree(pasid_table);
->  }
-> @@ -206,17 +233,37 @@ int intel_pasid_get_dev_max_id(struct device
-> *dev)
-> 
->  struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid)
->  {
-> +	struct device_domain_info *info;
->  	struct pasid_table *pasid_table;
-> +	struct pasid_dir_entry *dir;
->  	struct pasid_entry *entries;
-> +	int dir_index, index;
-> 
->  	pasid_table = intel_pasid_get_table(dev);
->  	if (WARN_ON(!pasid_table || pasid < 0 ||
->  		    pasid >= intel_pasid_get_dev_max_id(dev)))
->  		return NULL;
-> 
-> -	entries = pasid_table->table;
-> +	dir = pasid_table->table;
-> +	info = dev->archdata.iommu;
-> +	dir_index = pasid >> PASID_PDE_SHIFT;
-> +	index = pasid & PASID_PTE_MASK;
-> +
-> +	spin_lock(&pasid_lock);
-> +	entries = get_pasid_table_from_pde(&dir[dir_index]);
-> +	if (!entries) {
-> +		entries = alloc_pgtable_page(info->iommu->node);
-> +		if (!entries) {
-> +			spin_unlock(&pasid_lock);
-> +			return NULL;
-> +		}
-> +
-> +		WRITE_ONCE(dir[dir_index].val,
-> +			   (u64)virt_to_phys(entries) | PASID_PTE_PRESENT);
-> +	}
-> +	spin_unlock(&pasid_lock);
-> 
-> -	return &entries[pasid];
-> +	return &entries[index];
->  }
-> 
+> -/*
+> - * 0: readable
+> - * 1: writable
+> - * 2-6: reserved
+> - * 7: super page
+> - * 8-10: available
+> - * 11: snoop behavior
+> - * 12-63: Host physcial address
+> - */
+> -struct dma_pte {
+> -	u64 val;
+> -};
+> -
+> -static inline void dma_clear_pte(struct dma_pte *pte)
+> -{
+> -	pte->val = 0;
+> -}
+> -
+> -static inline u64 dma_pte_addr(struct dma_pte *pte)
+> -{
+> -#ifdef CONFIG_64BIT
+> -	return pte->val & VTD_PAGE_MASK;
+> -#else
+> -	/* Must have a full atomic 64-bit read */
+> -	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
+> -#endif
+> -}
+> -
+> -static inline bool dma_pte_present(struct dma_pte *pte)
+> -{
+> -	return (pte->val & 3) != 0;
+> -}
+> -
+> -static inline bool dma_pte_superpage(struct dma_pte *pte)
+> -{
+> -	return (pte->val & DMA_PTE_LARGE_PAGE);
+> -}
+> -
+> -static inline int first_pte_in_page(struct dma_pte *pte)
+> -{
+> -	return !((unsigned long)pte & ~VTD_PAGE_MASK);
+> -}
+> -
 >  /*
-> @@ -224,7 +271,14 @@ struct pasid_entry *intel_pasid_get_entry(struct
-> device *dev, int pasid)
->   */
->  static inline void pasid_clear_entry(struct pasid_entry *pe)
->  {
-> -	WRITE_ONCE(pe->val, 0);
-> +	WRITE_ONCE(pe->val[0], 0);
-> +	WRITE_ONCE(pe->val[1], 0);
-> +	WRITE_ONCE(pe->val[2], 0);
-> +	WRITE_ONCE(pe->val[3], 0);
-> +	WRITE_ONCE(pe->val[4], 0);
-> +	WRITE_ONCE(pe->val[5], 0);
-> +	WRITE_ONCE(pe->val[6], 0);
-> +	WRITE_ONCE(pe->val[7], 0);
-
-memset?
-
+>   * This domain is a statically identity mapping domain.
+>   *	1. This domain creats a static 1:1 mapping to all usable memory.
+> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> index 2173ae35f1dc..41791903a5e3 100644
+> --- a/include/linux/intel-iommu.h
+> +++ b/include/linux/intel-iommu.h
+> @@ -501,6 +501,49 @@ static inline void __iommu_flush_cache(
+>  		clflush_cache_range(addr, size);
 >  }
 > 
->  void intel_pasid_clear_entry(struct device *dev, int pasid)
-> diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
-> index 1c05ed6fc5a5..12f480c2bb8b 100644
-> --- a/drivers/iommu/intel-pasid.h
-> +++ b/drivers/iommu/intel-pasid.h
-> @@ -12,11 +12,19 @@
-> 
->  #define PASID_MIN			0x1
->  #define PASID_MAX			0x100000
-> +#define PASID_PTE_MASK			0x3F
-> +#define PASID_PTE_PRESENT		1
-> +#define PDE_PFN_MASK			PAGE_MASK
-> +#define PASID_PDE_SHIFT			6
-> 
-> -struct pasid_entry {
-> +struct pasid_dir_entry {
->  	u64 val;
->  };
-> 
-> +struct pasid_entry {
-> +	u64 val[8];
+> +/*
+> + * 0: readable
+> + * 1: writable
+> + * 2-6: reserved
+> + * 7: super page
+> + * 8-10: available
+> + * 11: snoop behavior
+> + * 12-63: Host physcial address
+> + */
+> +struct dma_pte {
+> +	u64 val;
 > +};
 > +
->  /* The representative of a PASID table */
->  struct pasid_table {
->  	void			*table;		/* pasid table pointer */
-> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-> index 4a03e5090952..6c0bd9ee9602 100644
-> --- a/drivers/iommu/intel-svm.c
-> +++ b/drivers/iommu/intel-svm.c
-> @@ -65,8 +65,6 @@ int intel_svm_init(struct intel_iommu *iommu)
+> +static inline void dma_clear_pte(struct dma_pte *pte)
+> +{
+> +	pte->val = 0;
+> +}
+> +
+> +static inline u64 dma_pte_addr(struct dma_pte *pte)
+> +{
+> +#ifdef CONFIG_64BIT
+> +	return pte->val & VTD_PAGE_MASK;
+> +#else
+> +	/* Must have a full atomic 64-bit read */
+> +	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
+> +#endif
+> +}
+> +
+> +static inline bool dma_pte_present(struct dma_pte *pte)
+> +{
+> +	return (pte->val & 3) != 0;
+> +}
+> +
+> +static inline bool dma_pte_superpage(struct dma_pte *pte)
+> +{
+> +	return (pte->val & DMA_PTE_LARGE_PAGE);
+> +}
+> +
+> +static inline int first_pte_in_page(struct dma_pte *pte)
+> +{
+> +	return !((unsigned long)pte & ~VTD_PAGE_MASK);
+> +}
+> +
+>  extern struct dmar_drhd_unit * dmar_find_matched_drhd_unit(struct
+> pci_dev *dev);
+>  extern int dmar_find_matched_atsr_unit(struct pci_dev *dev);
 > 
->  	order = get_order(sizeof(struct pasid_entry) * iommu->pasid_max);
->  	if (ecap_dis(iommu->ecap)) {
-> -		/* Just making it explicit... */
-> -		BUILD_BUG_ON(sizeof(struct pasid_entry) != sizeof(struct
-> pasid_state_entry));
->  		pages = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
->  		if (pages)
->  			iommu->pasid_state_table = page_address(pages);
-> @@ -406,9 +404,7 @@ int intel_svm_bind_mm(struct device *dev, int
-> *pasid, int flags, struct svm_dev_
->  			pasid_entry_val |= PASID_ENTRY_FLPM_5LP;
-> 
->  		entry = intel_pasid_get_entry(dev, svm->pasid);
-> -		entry->val = pasid_entry_val;
-> -
-> -		wmb();
-> +		WRITE_ONCE(entry->val[0], pasid_entry_val);
-> 
->  		/*
->  		 * Flush PASID cache when a PASID table entry becomes
 > --
 > 2.17.1
 
