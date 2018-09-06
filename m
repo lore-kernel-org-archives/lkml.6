@@ -2,98 +2,115 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2989C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0F6C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4604D20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:46:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4604D20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A92C720857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 11:47:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92C720857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeIFQWA (ORCPT
+        id S1727677AbeIFQWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 12:22:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:33564 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbeIFQWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 12:22:00 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fxskI-0005Zh-EW; Thu, 06 Sep 2018 13:46:46 +0200
-Date:   Thu, 6 Sep 2018 13:46:46 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <dou_liyang@163.com>
-cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Ming Lei <tom.leiming@gmail.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: Re: Affinity managed interrupts vs non-managed interrupts
-In-Reply-To: <d2a6f7cf-31df-de17-82e3-eccb9cc73ed8@163.com>
-Message-ID: <alpine.DEB.2.21.1809061244151.1570@nanos.tec.linutronix.de>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p> <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com> <CACVXFVM7nGxpyq0_jfshgBOTx5B+PuCDmN43SfPTCkENJRLpMg@mail.gmail.com> <615d78004495aebc53807156d04d988c@mail.gmail.com>
- <alpine.DEB.2.21.1808312207390.1349@nanos.tec.linutronix.de> <486f94a563d63c4779498fe8829a546c@mail.gmail.com> <alpine.DEB.2.21.1809010020520.1349@nanos.tec.linutronix.de> <602cee6381b9f435a938bbaf852d07f9@mail.gmail.com> <alpine.DEB.2.21.1809021357000.1349@nanos.tec.linutronix.de>
- <66256272c020be186becdd7a3f049302@mail.gmail.com> <alpine.DEB.2.21.1809031719460.1383@nanos.tec.linutronix.de> <dd1c5df55aa99cf4a37bcc58e77e840a@mail.gmail.com> <f436fa6a-b865-fadb-4f77-44309ff84405@163.com> <c0f779f1d5ef131c39f9397f97d453e8@mail.gmail.com>
- <alpine.DEB.2.21.1809051235180.1416@nanos.tec.linutronix.de> <d2a6f7cf-31df-de17-82e3-eccb9cc73ed8@163.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 6 Sep 2018 12:22:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:27971 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725929AbeIFQWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 12:22:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 04:47:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,338,1531810800"; 
+   d="scan'208";a="72078596"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga006.jf.intel.com with SMTP; 06 Sep 2018 04:46:53 -0700
+Received: by lahna (sSMTP sendmail emulation); Thu, 06 Sep 2018 14:46:52 +0300
+Date:   Thu, 6 Sep 2018 14:46:52 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH 2/2] thunderbolt: Initialize after IOMMUs
+Message-ID: <20180906114652.GK2283@lahna.fi.intel.com>
+References: <20180903132012.23531-1-mika.westerberg@linux.intel.com>
+ <20180903132012.23531-2-mika.westerberg@linux.intel.com>
+ <20180905084746.xmckzskxzsdliz3e@wunner.de>
+ <20180905094602.GH2283@lahna.fi.intel.com>
+ <20180906081337.3mosfpfggfmoj633@wunner.de>
+ <20180906103602.GV2283@lahna.fi.intel.com>
+ <20180906110049.gfdhurvkvvdjw7zh@wunner.de>
+ <20180906110756.GY2283@lahna.fi.intel.com>
+ <20180906112101.qmhkcqx73zmmko3q@wunner.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906112101.qmhkcqx73zmmko3q@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018, Dou Liyang wrote:
-> At 09/05/2018 06:38 PM, Thomas Gleixner wrote:
-> > Oh well. This was not intended to magically provide the solution you want
-> > to have. It merily changed the behaviour of the managed interrupt
-> > selection, which is a valid thing to do independent of the stuff you want
-> > to see.
+On Thu, Sep 06, 2018 at 01:21:01PM +0200, Lukas Wunner wrote:
+> On Thu, Sep 06, 2018 at 02:07:56PM +0300, Mika Westerberg wrote:
+> > On Thu, Sep 06, 2018 at 01:00:49PM +0200, Lukas Wunner wrote:
+> > > On Thu, Sep 06, 2018 at 01:36:02PM +0300, Mika Westerberg wrote:
+> > > > On Thu, Sep 06, 2018 at 10:13:37AM +0200, Lukas Wunner wrote:
+> > > > > So with this patch, you rely on the linker ordering nhi_init() after
+> > > > > ir_dev_scope_init(), however to the best of my knowledge the link
+> > > > > order is not guaranteed.
+> > > > 
+> > > > What says that?
+> > > 
+> > > Within the same initcall level, the ordering is determined by the Makefile
+> > > AFAIK.  Someone changes the Makefile, your dependency scheme falls apart.
 > > 
+> > There are other drivers doing the same so they would fail as well. It is
+> > common practice AFAIK.
 > 
-> Thank you for clarifying it, I will send the patch independently.
-> 
-> > As I said that needs more thought and I really can't tell when I have a
-> > time slot to look at that.
+> That doesn't make it a *good* practice.
+
+It is good enough for our case.
+
+> > > > > Looking at commit acb40d841257, which started this, I'm wondering
+> > > > > why you did not simply export tbnet_init() and call it from the
+> > > > > thunderbolt driver after the property stuff has been fully set up?
+> > > > > After all, thunderbolt-net is useless without thunderbolt or am I
+> > > > > missing something?  Then you could revert back to module_init().
+> > > > 
+> > > > The same reason you don't call PCI driver functions from PCI core. It
+> > > > makes absolutely zero sense.
+> > > > 
+> > > > Thunderbolt is bus and provides driver API to drivers. We hopefully are
+> > > > getting other service drivers (say SCSI over TBT) that are going to be
+> > > > use the same interfaces.
+> > > 
+> > > Then add a blocking notifier chain into which these service drivers can
+> > > hook.  Other buses have that as well.
 > > 
+> > It is really too complex to add notifier just for that. This works fine
+> > and is not against any kernel principles I am aware of.
 > 
-> In this period, I am willing to be a volunteer to try to do that you
-> said in the previous reply. May I?
+> Well, there's a difference between "it works and gets the job done,
+> let's move on" and "let's try to find a solution that fixes not just
+> this use case but potentially benefits others as well".
+> 
+> FWIW, what I had in mind is a blocking notifier chain that gets called
+> when a bus registers or unregisters.  TB service drivers would then check
+> if it's tb_bus_type and start initialization.
 
-You don't have to ask for permission. It's Open Source :)
+Like I said, I think it is too complex.
 
-There are a few things we need to clarify upfront:
-
-Right now the pre and post vectors are marked managed and their
-affinity mask is set to the irq default affinity mask.
-
-The default affinity mask is by default ALL cpus, but it can be tweaked
-both on the kernel command line and via proc.
-
-If that mask is only a subset of CPUs and all of them go offline
-then these vectors are shutdown in managed mode.
-
-That means we need to set the affinity mask of the pre and post vectors to
-possible mask, but that doesn't make much sense either, unless there is a
-reason to have them marked managed.
-
-I think the right solution for these pre/post vectors is to _NOT_ mark
-them managed and leave them as regular interrupts which can be affinity
-controlled and also can move freely on hotplug.
-
-Christoph?
-
-Thanks,
-
-	Thomas
+If we ever need to change the initcall level third time (which I doubt)
+we can start thinking about more complex solutions.
