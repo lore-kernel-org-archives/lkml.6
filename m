@@ -2,95 +2,92 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FFCC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC2DC4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BACF22075B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:37:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D+WgThQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACF22075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 31F7C2075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 23:41:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F7C2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeIGEPS (ORCPT
+        id S1727748AbeIGETN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 00:15:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48370 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeIGEPS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 00:15:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+fNmr2U3/50TYgKUmR325SPC2sikD+JHOs96VKIEg/4=; b=D+WgThQeloxXsL8dGLgVLNSFt
-        qTd3A8eCKH/aVYSlb9rUOdb7UEf6EwYrRLW30sV0/g4mr/6SIbPnwZMoBkujbdcLX4PBSWplw4LYU
-        lLqSAHuGAXcVSasWZDw1EDtJf/IvI7MC2c6u4WdhE5stbcPJde5s57wFOlcR6plPMuTwKf9oWpIed
-        nUVOdNJB1ercuJ0wzlCn93SjdPjd6sLIWY34lC3HqWoPQDH4wTi7FpQc5he3aW+JO263XS+dWUjxM
-        DHzrRyY9+nxBVxtigEaj/uvJ7tbRlOzpAl8zo59sRyOjbqLz80HIuQYHjXCpN2T14t5dBd7RJsN9Z
-        nK7Tm2ijA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fy3q1-0003zg-7E; Thu, 06 Sep 2018 23:37:25 +0000
-To:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] modules_install: warn when missing System.map file
-Message-ID: <dde798fd-9fef-6ac0-a3bc-6aa7193c5d89@infradead.org>
-Date:   Thu, 6 Sep 2018 16:37:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 00:19:13 -0400
+Received: from mga18.intel.com ([134.134.136.126]:8981 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725926AbeIGETN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 00:19:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 16:41:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
+   d="scan'208";a="89648597"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga002.jf.intel.com with ESMTP; 06 Sep 2018 16:41:17 -0700
+Date:   Thu, 6 Sep 2018 16:43:17 -0700
+From:   Jacob Pan <jacob.jun.pan@intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        jacob.jun.pan@intel.com
+Subject: Re: [PATCH v2 02/12] iommu/vt-d: Manage scalalble mode PASID tables
+Message-ID: <20180906164317.786bbdda@jacob-builder>
+In-Reply-To: <44298d5c-5720-a382-07d1-a90a072ff24b@linux.intel.com>
+References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
+        <20180830013524.28743-3-baolu.lu@linux.intel.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1912F2A85@SHSMSX101.ccr.corp.intel.com>
+        <44298d5c-5720-a382-07d1-a90a072ff24b@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, 6 Sep 2018 10:46:03 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-If there is no System.map file for "make modules_install",
-scripts/depmod.sh will silently exit with success, having done
-nothing.  Since this is an unexpected situation, change it to
-report a Warning for the missing file.  The behavior is not
-changed except for the Warning message.
+> >> @@ -224,7 +271,14 @@ struct pasid_entry
+> >> *intel_pasid_get_entry(struct device *dev, int pasid)
+> >>    */
+> >>   static inline void pasid_clear_entry(struct pasid_entry *pe)
+> >>   {
+> >> -	WRITE_ONCE(pe->val, 0);
+> >> +	WRITE_ONCE(pe->val[0], 0);
+> >> +	WRITE_ONCE(pe->val[1], 0);
+> >> +	WRITE_ONCE(pe->val[2], 0);
+> >> +	WRITE_ONCE(pe->val[3], 0);
+> >> +	WRITE_ONCE(pe->val[4], 0);
+> >> +	WRITE_ONCE(pe->val[5], 0);
+> >> +	WRITE_ONCE(pe->val[6], 0);
+> >> +	WRITE_ONCE(pe->val[7], 0);  
+> > 
+> > memset?  
+> 
+> The order is important here. Otherwise, the PRESENT bit of this pasid
+> entry might still set while other fields contains invalid values.
 
-The (previous) silent success and new Warning can be reproduced
-by:
-$ make mrproper; make defconfig
-$ make modules; make modules_install
-
-and since System.map is produced by "make vmlinux", the steps
-above omit producing the System.map file.
-
-Reported-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-v2: add Yamada-san's suggestions for >&2 and Skipping depmod.
-
- scripts/depmod.sh |    1 +
- 1 file changed, 1 insertion(+)
-
---- lnx-419-rc1.orig/scripts/depmod.sh
-+++ lnx-419-rc1/scripts/depmod.sh
-@@ -11,6 +11,7 @@ DEPMOD=$1
- KERNELRELEASE=$2
- 
- if ! test -r System.map ; then
-+	echo "Warning: modules_install: missing 'System.map' file. Skipping depmod." >&2
- 	exit 0
- fi
- 
+WRITE_ONCE/READ_ONCE will switch to __builtin_memcpy() in if the size
+exceeds word size, ie. 64bit in this case. I don;t think compiler will
+reorder built-in function. Beside, we only need to clear present and
+FDP bit, right?
 
