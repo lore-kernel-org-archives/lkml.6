@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC360C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB0FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E73A20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E73A20659
+	by mail.kernel.org (Postfix) with ESMTP id 2E48D20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 18:48:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E48D20659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbeIFXWU (ORCPT
+        id S1730526AbeIFXYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 19:22:20 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7763 "EHLO mga06.intel.com"
+        Thu, 6 Sep 2018 19:24:45 -0400
+Received: from mga05.intel.com ([192.55.52.43]:61319 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbeIFXWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 19:22:20 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1727126AbeIFXYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 19:24:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 11:45:32 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 11:47:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,339,1531810800"; 
-   d="scan'208";a="71152763"
+   d="scan'208";a="261333616"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by orsmga008.jf.intel.com with ESMTP; 06 Sep 2018 11:45:03 -0700
-Date:   Thu, 6 Sep 2018 11:45:03 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 06 Sep 2018 11:47:50 -0700
+Date:   Thu, 6 Sep 2018 11:47:50 -0700
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Brijesh Singh <brijesh.singh@amd.com>, x86@kernel.org,
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     Borislav Petkov <bp@suse.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         Tom Lendacky <thomas.lendacky@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,48 +44,58 @@ Cc:     Brijesh Singh <brijesh.singh@amd.com>, x86@kernel.org,
         Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Subject: Re: [PATCH v5 5/5] x86/kvm: Avoid dynamic allocation of pvclock data
  when SEV is active
-Message-ID: <20180906184503.GA4570@linux.intel.com>
+Message-ID: <20180906184750.GB4570@linux.intel.com>
 References: <1536234182-2809-1-git-send-email-brijesh.singh@amd.com>
  <1536234182-2809-6-git-send-email-brijesh.singh@amd.com>
  <20180906122423.GA11144@zn.tnic>
  <20180906135041.GB32336@linux.intel.com>
- <20180906144342.GB11144@zn.tnic>
- <20180906145639.GA1522@linux.intel.com>
- <20180906151938.GD11144@zn.tnic>
- <20180906155452.GC1522@linux.intel.com>
- <20180906183334.GF11144@zn.tnic>
+ <20180906141825.GB370@linux.intel.com>
+ <fcd5efe9-3e26-3aff-9173-9f8c3f3183f1@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180906183334.GF11144@zn.tnic>
+In-Reply-To: <fcd5efe9-3e26-3aff-9173-9f8c3f3183f1@amd.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 08:33:34PM +0200, Borislav Petkov wrote:
-> On Thu, Sep 06, 2018 at 08:54:52AM -0700, Sean Christopherson wrote:
-> > My thought was that we could simply define a second array for the SEV
-> > case to statically allocate for NR_CPUS since __decrypted has a big
-> > chunk of memory that would be ununsed anyways[1]. And since the second
-> > array is only used for SEV it can be freed if !SEV.
+On Thu, Sep 06, 2018 at 01:37:50PM -0500, Brijesh Singh wrote:
 > 
-> Lemme see if I get it straight:
 > 
-> __decrypted:
+> On 09/06/2018 09:18 AM, Sean Christopherson wrote:
+> ....
 > 
->  4K
+> >>>
+> >>>So are we going to be defining a decrypted section for every piece of
+> >>>machinery now?
+> >>>
+> >>>That's a bit too much in my book.
+> >>>
+> >>>Why can't you simply free everything in .data..decrypted on !SVE guests?
+> >>
+> >>That would prevent adding __decrypted to existing declarations, e.g.
+> >>hv_clock_boot, which would be ugly in its own right.  A more generic
+> >>solution would be to add something like __decrypted_exclusive to mark
+> >>data that is used if and only if SEV is active, and then free the
+> >>SEV-only data when SEV is disabled.
+> >
+> >Oh, and we'd need to make sure __decrypted_exclusive is freed when
+> >!CONFIG_AMD_MEM_ENCRYPT, and preferably !sev_active() since the big
+> >array is used only if SEV is active.  This patch unconditionally
+> >defines hv_clock_dec but only frees it if CONFIG_AMD_MEM_ENCRYPT=y &&
+> >!mem_encrypt_active().
+> >
 > 
-> __decrypted_XXX:
+> Again we have to consider the bare metal scenario while doing this. The
+> aux array you proposed will be added in decrypted section only when
+> CONFIG_AMD_MEM_ENCRYPT=y.  If CONFIG_AMD_MEM_ENCRYPT=n then nothng
+> gets put in .data.decrypted section. At the runtime, if memory
+> encryption is active then .data.decrypted_hvclock will contains useful
+> data.
 > 
->  ((num_possible_cpus() * 32) / 4K) pages
-> 
-> __decrypted_end:
-> 
-> Am I close?
+> The __decrypted attribute in "" when CONFIG_AMD_MEM_ENCRYPT=n.
 
-Yep, though because the 4k chunk in __decrypted is @hv_clock_boot 
-that's used for cpus 0-127, __decrypted_XXX would effectively be:
-
-   (((num_possible_cpus() * 32) / 4k) - 1) pages
+Right, but won't the data get dumped into the regular .bss in that
+case, i.e. needs to be freed?
