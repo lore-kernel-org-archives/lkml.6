@@ -2,89 +2,136 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73A0C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A1CC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7182A20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:02:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7182A20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 34A3D20652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 08:05:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Q+wEZBVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A3D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeIFMgj (ORCPT
+        id S1727942AbeIFMjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 08:36:39 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:38954 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbeIFMgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 08:36:39 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id B337999253F060502F3D;
-        Thu,  6 Sep 2018 16:02:22 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w8682CnL089915;
-        Thu, 6 Sep 2018 16:02:13 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018090616022007-7466155 ;
-          Thu, 6 Sep 2018 16:02:20 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     pbonzini@redhat.com
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wang.yi59@zte.com.cn,
-        zhong.weidong@zte.com.cn, xu.xi8@zte.com.cn
-Subject: [PATCH] KVM: x86: fix failure of injecting exceptions in x86_emulate_instruction
-Date:   Thu, 6 Sep 2018 16:02:44 +0800
-Message-Id: <1536220964-8412-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-09-06 16:02:20,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-09-06 16:02:01,
-        Serialize complete at 2018-09-06 16:02:01
-X-MAIL: mse01.zte.com.cn w8682CnL089915
+        Thu, 6 Sep 2018 08:39:48 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53549 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeIFMjs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 08:39:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1536221192; x=1567757192;
+  h=from:to:cc:subject:date:message-id;
+  bh=4oo6+SbMmSOSFb/2H4GxBqrHEoNLI+kFgM9/hsbh9Tk=;
+  b=Q+wEZBVKqewO5ZwCDRJto9Dh4VrAAUFWPLKYdnYMyftSJL1eOe0ia6sS
+   dG1dHEbqbjkMTYxGtRkxUwvqxUkZfj3uVAVFxqBH6f2f63Uofl19uIWyJ
+   9VrhVVD10NtJ7MPhBrOLk4vg7EEyET1idoKeG2sOoh6FBtHtFbb6wQQyo
+   kd3SYHdKoPHaK8eNVdb2SjV4Fjxggl41D4SO33zWGdoSSxaaNFtIOqYMH
+   SuiXZC61XuPEgvzqonrUb3mHKVIHmBSfSfIiUwWswMwl22LYNWGV1wCA6
+   ivpZj6kmyvkRtOh771pQY8ErG2wFundOA4tpTfBPW6UIY7dWFcpLy6GlA
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,337,1531756800"; 
+   d="scan'208";a="186673934"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Sep 2018 16:06:32 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 06 Sep 2018 00:52:11 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 06 Sep 2018 01:05:36 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        hch@infradead.org, anup@brainfault.org
+Cc:     mark.rutland@arm.com, atish.patra@wdc.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, Damien.LeMoal@wdc.com,
+        marc.zyngier@arm.com, jeremy.linton@arm.com,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        catalin.marinas@arm.com, dmitriy@oss-tech.org,
+        ard.biesheuvel@linaro.org
+Subject: [PATCH v3 00/12] SMP cleanup and new features 
+Date:   Thu,  6 Sep 2018 01:05:23 -0700
+Message-Id: <1536221135-182613-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to fix a page table walk issue, commit 6ea6e84309ca
-("KVM: x86: inject exceptions produced by x86_decode_insn") check
-if variable ctxt->have_exception true and inject the exception.
-Unfortunately, ctxt->have_exception is set to true only in function
-x86_emulate_insn(), which won't be called before invoking
-inject_emulated_exception() in the 6ea6e84309ca.
-This patch fix this issue.
+This patch series has updated the assorted cleanup series by palmer.
+The original cleanup patch series can be found here.
+http://lists.infradead.org/pipermail/linux-riscv/2018-August/001232.html
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Reviewed-by: Xi Xu <xu.xi8@zte.com.cn>
----
- arch/x86/kvm/emulate.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+It also implemented following smp related features.
+Some of the work has been inspired from ARM64.
 
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 106482d..aecf9a72 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -5105,8 +5105,11 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
- 		memcpy(ctxt->fetch.data, insn, insn_len);
- 	else {
- 		rc = __do_insn_fetch_bytes(ctxt, 1);
--		if (rc != X86EMUL_CONTINUE)
-+		if (rc != X86EMUL_CONTINUE) {
-+			if (rc == X86EMUL_PROPAGATE_FAULT)
-+				ctxt->have_exception = true;
- 			return rc;
-+		}
- 	}
- 
- 	switch (mode) {
+1. Decouple linux logical cpu ids from hardware cpu id
+2. Support cpu hotplug.
+
+Tested on QEMU & HighFive Unleashed board with/without SMP enabled.
+
+Both the patch series have been combined to avoid conflicts as a lot
+of common code is changed in both the series. I have mostly addressed
+review comments and fixed checkpatch errors from palmer's series.
+
+Palmer: I hope it's not a problem. I would be happy to drop the patches
+if you want to take over.
+
+v1->v2:
+
+1. Dropped cpu_ops patch.
+2. Moved back IRQ cause definitions to irq.h
+3. Keep boot cpu hart id and assign zero as the cpu id for boot cpu.
+4. Renamed cpu id and hart id correctly.
+
+v2-v3:
+
+1. Added cleanup patches from palmer.
+2. Moved the hotplug related functions to it's own file.
+3. Updated stub functions as per coding guidelines.
+4. Renamed __cpu_logical_map to a more coherent name.
+
+Atish Patra (5):
+  RISC-V: Disable preemption before enabling interrupts
+  RISC-V: User WRITE_ONCE instead of direct access
+  RISC-V: Add logical CPU indexing for RISC-V
+  RISC-V: Use Linux logical cpu number instead of hartid
+  RISC-V: Support cpu hotplug.
+
+Palmer Dabbelt (7):
+  RISC-V: Don't set cacheinfo.{physical_line_partition,attributes}
+  RISC-V: Filter ISA and MMU values in cpuinfo
+  RISC-V: Comment on the TLB flush in smp_callin()
+  RISC-V: Provide a cleaner raw_smp_processor_id()
+  RISC-V: Rename riscv_of_processor_hart to riscv_of_processor_hartid
+  RISC-V: Rename im_okay_therefore_i_am to found_boot_cpu
+  RISC-V: Use mmgrab()
+
+ arch/riscv/Kconfig                 | 12 +++++-
+ arch/riscv/include/asm/irq.h       |  1 +
+ arch/riscv/include/asm/processor.h |  2 +-
+ arch/riscv/include/asm/smp.h       | 66 +++++++++++++++++++++++++-----
+ arch/riscv/include/asm/tlbflush.h  | 16 ++++++--
+ arch/riscv/kernel/Makefile         |  1 +
+ arch/riscv/kernel/cacheinfo.c      |  7 ----
+ arch/riscv/kernel/cpu-hotplug.c    | 72 +++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/cpu.c            | 83 ++++++++++++++++++++++++++++++++------
+ arch/riscv/kernel/head.S           | 17 +++++++-
+ arch/riscv/kernel/irq.c            | 24 +++++++++++
+ arch/riscv/kernel/setup.c          | 27 ++++++++++++-
+ arch/riscv/kernel/smp.c            | 49 +++++++++++++++-------
+ arch/riscv/kernel/smpboot.c        | 53 ++++++++++++++++--------
+ arch/riscv/kernel/traps.c          |  6 +--
+ drivers/clocksource/riscv_timer.c  | 12 ++++--
+ drivers/irqchip/irq-sifive-plic.c  | 10 +++--
+ 17 files changed, 379 insertions(+), 79 deletions(-)
+ create mode 100644 arch/riscv/kernel/cpu-hotplug.c
+
 -- 
-1.8.3.1
+2.7.4
 
