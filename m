@@ -6,129 +6,116 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4DBC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BC9C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8132920645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98CBD20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 00:13:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KByBXbZf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8132920645
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gHvdcBo5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CBD20659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeIFEmF (ORCPT
+        id S1726151AbeIFEpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 00:42:05 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44021 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeIFEmF (ORCPT
+        Thu, 6 Sep 2018 00:45:45 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40318 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbeIFEpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 00:42:05 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v66-v6so4215202pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:09:29 -0700 (PDT)
+        Thu, 6 Sep 2018 00:45:45 -0400
+Received: by mail-yw1-f67.google.com with SMTP id z143-v6so3389466ywa.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:13:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=OzKPlDZfR8Vr1kKmSH0Nsx1XZridXjep+sI/nooV+yQ=;
-        b=KByBXbZffgwesCqwARNqNdFf/pGn3Jl0w4dqoyzGIaf7U7PkGay1LXdPl3ZUged0Jn
-         /sSmXDiGPtSWGfMjnPWZHmqLO04RhWT1qznkCEZ8pUB++95RLHuGXmK2Wwen06AhDzhx
-         h1H1mQYPuLbgRyG6PXd6IwByCeAr2N6ybLfxg=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=24pYI4KddXJnrAcu6s0pb76+kLW85+ssqvzp2xeeESI=;
+        b=gHvdcBo5VWqbBoKG1aDZRFdvL3zV+mHuWdANPt1IcU+DeNl19BwIf+tqL5oAC9WT+m
+         BmVCv3tqPBH3nCvoT6TmDaIAUtxOnA3l08cHF/zA6IdH+w9ebusP0o1avwH5MpMAlwDK
+         LV7y4NeaImbONd/GOa35KAVHk+gyd5wnHYyxg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=OzKPlDZfR8Vr1kKmSH0Nsx1XZridXjep+sI/nooV+yQ=;
-        b=gnJR6eIhToraTrOw1vOGqJ5i5jeQoeFF8cCzwxIu+yS0JXubw8VLkWi3as+VZTUjCz
-         NEpsT6QU7Yot4MI8MBTLEoaElfj56ojvt0ABnnQiy3FibK6oBbclOwFJhEkZAfqZUGpF
-         IFq7HyykeJ0jFpmQ4acLlbtrGO4FIBCsxfc/g/a+M+KglknjW/5eRVmElQ+Rej1nNgXJ
-         vEOdP7QUv5C59LJL3/LOvwuaORiRmKs1xYqtevcQ1RROUv9o1zM3jSohht+KlIy/Dg7a
-         rPE10zJW/LGTG8aM83Eqi9UDMEyhIa8qBRvCOltIZFdZMGfBhxCB1amf0NoFG1yofnVz
-         6bwg==
-X-Gm-Message-State: APzg51CId+5nW8Nw5XnGm0Yv09dCzhmi3DbY+6WSV+kDN9SaeeYNs96R
-        lW/hl2mvmkxh5StQ3gaLyv1hVA==
-X-Google-Smtp-Source: ANB0VdZtRISAiHpZjLLDY1tVxIvJiU7Ni5b/5qaJIPrTMEWRnCs0B65UNxlW2RExcZ4T6zs3Bn2vPw==
-X-Received: by 2002:a63:fd52:: with SMTP id m18-v6mr185998pgj.304.1536192569151;
-        Wed, 05 Sep 2018 17:09:29 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id d24-v6sm3541273pgv.23.2018.09.05.17.09.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Sep 2018 17:09:27 -0700 (PDT)
-Date:   Wed, 5 Sep 2018 17:09:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] sunvdc: Remove VLA usage
-Message-ID: <20180906000926.GA18830@beast>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=24pYI4KddXJnrAcu6s0pb76+kLW85+ssqvzp2xeeESI=;
+        b=R97YPJXHFZ3M/eJK1s0THcZg3meFd3uZFK1D7X8DvOsgqRlA8DKe67B9X/IqigSF1B
+         e7X/DLJkA0b2PYgK4+e2OJvMZsJWJZr6OFpMh4qNpF6UKOhzi/+8J2g1VhFLhYO21i6x
+         cjZWN61sXbpvO8zNB0UHu/R8OT1ffV2nHf+zuarborvPYEQbYlEBreSdzo72/oeJxCMk
+         hQ4ARJVkP0m/X0e2zOCCbt/W9EXwOMGZQlG6u91Ue7jFdllOyNrDwrIxHDerCuBtNeSv
+         n2KP/4fPEQ2RZlyKHbMEZ9sKKmNgHQdtessypGQ5OsLPrJsWzLY869dfdzafZ/J5Hhei
+         Cmcg==
+X-Gm-Message-State: APzg51AX7XKDKsQ6ZIb2TCHJ17Qt3h2dMtB3GbXpZyHameV+7QEK4BM/
+        4/zEFfbbRVR2fuM1NpfSVPDRgXHFjfA=
+X-Google-Smtp-Source: ANB0VdaSxDYtNYvw8gqk/7G9G7hMjJ0j5CA0HUquozC3TpgSjifv1SWR1ndVurwzNc7y38jEYK3c1g==
+X-Received: by 2002:a81:b65f:: with SMTP id h31-v6mr96995ywk.144.1536192788104;
+        Wed, 05 Sep 2018 17:13:08 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id n187-v6sm2492933ywn.76.2018.09.05.17.13.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Sep 2018 17:13:06 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id x83-v6so3398071ywd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Sep 2018 17:13:06 -0700 (PDT)
+X-Received: by 2002:a81:4418:: with SMTP id r24-v6mr76623ywa.407.1536192786105;
+ Wed, 05 Sep 2018 17:13:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Wed, 5 Sep 2018 17:13:05 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.21.1809061008210.23269@namei.org>
+References: <20180905203443.32289-1-igor.stoppa@huawei.com>
+ <CAGXu5j+e2n6pUW+40ZNm5qifd8dVEEryN-Qfqe7ok-KZHP1Hyw@mail.gmail.com>
+ <2192189d-b8bb-3233-c9f3-14cbeeddaf34@gmail.com> <CAGXu5jKoKsj=qbKrcYGiQWJnSrLwfoBHL40RK37qZyLgXWk=DQ@mail.gmail.com>
+ <alpine.LRH.2.21.1809061008210.23269@namei.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 5 Sep 2018 17:13:05 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJKovNX9SMEPrawx=BqzkPHXay-WSfidQF830hqAGZ-eg@mail.gmail.com>
+Message-ID: <CAGXu5jJKovNX9SMEPrawx=BqzkPHXay-WSfidQF830hqAGZ-eg@mail.gmail.com>
+Subject: Re: [PATCH] seccomp: remove unnecessary unlikely()
+To:     James Morris <jmorris@namei.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-moves the math for cookie calculation into macros and allocates a fixed
-size array for the maximum number of cookies and adds a runtime sanity check.
-(Note that the size was always fixed, but just hidden from the compiler.)
+On Wed, Sep 5, 2018 at 5:08 PM, James Morris <jmorris@namei.org> wrote:
+> On Wed, 5 Sep 2018, Kees Cook wrote:
+>
+>> On Wed, Sep 5, 2018 at 3:49 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>> >
+>> >
+>> > On 06/09/18 01:23, Kees Cook wrote:
+>> >
+>> >> Should I take this, or is it part of your series going somewhere else?
+>> >
+>> >
+>> > It turned out it doesn't really work to have a generic series against 20
+>> > trees :-/
+>>
+>> I know that pain very well!
+>>
+>> > I'm submitting them individually to each subsystem.
+>> > So this one is just for security.
+>>
+>> Sounds good.
+>>
+>> James, can you take this directly, or would you prefer a pull request from me?
+>
+> I'll take it with your ack.
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Already included! :) (This was a v2, split from a separate series, so
+Igor already included my Ack from the other thread.)
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/block/sunvdc.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+But, for completeness:
 
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index 5ca56bfae63c..f68e9baffad7 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -36,6 +36,10 @@ MODULE_VERSION(DRV_MODULE_VERSION);
- #define VDC_TX_RING_SIZE	512
- #define VDC_DEFAULT_BLK_SIZE	512
- 
-+#define MAX_XFER_BLKS		(128 * 1024)
-+#define MAX_XFER_SIZE		(MAX_XFER_BLKS / VDC_DEFAULT_BLK_SIZE)
-+#define MAX_RING_COOKIES	((MAX_XFER_BLKS / PAGE_SIZE) + 2)
-+
- #define WAITING_FOR_LINK_UP	0x01
- #define WAITING_FOR_TX_SPACE	0x02
- #define WAITING_FOR_GEN_CMD	0x04
-@@ -450,7 +454,7 @@ static int __send_request(struct request *req)
- {
- 	struct vdc_port *port = req->rq_disk->private_data;
- 	struct vio_dring_state *dr = &port->vio.drings[VIO_DRIVER_TX_RING];
--	struct scatterlist sg[port->ring_cookies];
-+	struct scatterlist sg[MAX_RING_COOKIES];
- 	struct vdc_req_entry *rqe;
- 	struct vio_disk_desc *desc;
- 	unsigned int map_perm;
-@@ -458,6 +462,9 @@ static int __send_request(struct request *req)
- 	u64 len;
- 	u8 op;
- 
-+	if (WARN_ON(port->ring_cookies > MAX_RING_COOKIES))
-+		return -EINVAL;
-+
- 	map_perm = LDC_MAP_SHADOW | LDC_MAP_DIRECT | LDC_MAP_IO;
- 
- 	if (rq_data_dir(req) == READ) {
-@@ -984,9 +991,8 @@ static int vdc_port_probe(struct vio_dev *vdev, const struct vio_device_id *id)
- 		goto err_out_free_port;
- 
- 	port->vdisk_block_size = VDC_DEFAULT_BLK_SIZE;
--	port->max_xfer_size = ((128 * 1024) / port->vdisk_block_size);
--	port->ring_cookies = ((port->max_xfer_size *
--			       port->vdisk_block_size) / PAGE_SIZE) + 2;
-+	port->max_xfer_size = MAX_XFER_SIZE;
-+	port->ring_cookies = MAX_RING_COOKIES;
- 
- 	err = vio_ldc_alloc(&port->vio, &vdc_ldc_cfg, port);
- 	if (err)
--- 
-2.17.1
+Acked-by: Kees Cook <keescook@chromium.org>
 
+-Kees
 
 -- 
 Kees Cook
