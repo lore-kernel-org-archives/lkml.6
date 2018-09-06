@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E024EC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A62C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBD92083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBD92083D
+	by mail.kernel.org (Postfix) with ESMTP id 0F6742083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6742083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbeIFNna (ORCPT
+        id S1728546AbeIFNnc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:43:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:41206 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728474AbeIFNn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:43:29 -0400
+        Thu, 6 Sep 2018 09:43:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41216 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728283AbeIFNnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:43:31 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C2431596;
-        Thu,  6 Sep 2018 02:09:01 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A5D315BE;
+        Thu,  6 Sep 2018 02:09:03 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 47D693F575;
-        Thu,  6 Sep 2018 02:09:00 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D9D803F575;
+        Thu,  6 Sep 2018 02:09:01 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, suzuki.poulose@arm.com,
         robert.walker@arm.com, al.grant@arm.com
-Subject: [PATCH v2 11/14] coresight: funnel: Claim devices before use
-Date:   Thu,  6 Sep 2018 10:08:32 +0100
-Message-Id: <1536224915-31766-12-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 12/14] coresight: catu: Claim device before use
+Date:   Thu,  6 Sep 2018 10:08:33 +0100
+Message-Id: <1536224915-31766-13-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
 References: <1536224915-31766-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,85 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the CLAIM protocol to grab the ownership of the component.
+Use the CLAIM protocol to grab the ownership of the component when
+in use.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-funnel.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-catu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index ee7a30b..9279251 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -25,6 +25,7 @@
- #define FUNNEL_HOLDTIME_MASK	0xf00
- #define FUNNEL_HOLDTIME_SHFT	0x8
- #define FUNNEL_HOLDTIME		(0x7 << FUNNEL_HOLDTIME_SHFT)
-+#define FUNNEL_ENSx_MASK	0xff
+diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+index ff94e58..170fbb6 100644
+--- a/drivers/hwtracing/coresight/coresight-catu.c
++++ b/drivers/hwtracing/coresight/coresight-catu.c
+@@ -406,6 +406,7 @@ static inline int catu_wait_for_ready(struct catu_drvdata *drvdata)
  
- /**
-  * struct funnel_drvdata - specifics associated to a funnel component
-@@ -42,31 +43,42 @@ struct funnel_drvdata {
- 	unsigned long		priority;
- };
- 
--static void funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
-+static int funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
- {
- 	u32 functl;
-+	int rc = 0;
- 
- 	CS_UNLOCK(drvdata->base);
- 
- 	functl = readl_relaxed(drvdata->base + FUNNEL_FUNCTL);
-+	/* Claim the device only when we enable the first slave */
-+	if (!(functl & FUNNEL_ENSx_MASK)) {
-+		rc = coresight_claim_device_unlocked(drvdata->base);
-+		if (rc)
-+			goto done;
-+	}
-+
- 	functl &= ~FUNNEL_HOLDTIME_MASK;
- 	functl |= FUNNEL_HOLDTIME;
- 	functl |= (1 << port);
- 	writel_relaxed(functl, drvdata->base + FUNNEL_FUNCTL);
- 	writel_relaxed(drvdata->priority, drvdata->base + FUNNEL_PRICTL);
--
-+done:
- 	CS_LOCK(drvdata->base);
-+	return rc;
- }
- 
- static int funnel_enable(struct coresight_device *csdev, int inport,
- 			 int outport)
+ static int catu_enable_hw(struct catu_drvdata *drvdata, void *data)
  {
 +	int rc;
- 	struct funnel_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 	u32 control, mode;
+ 	struct etr_buf *etr_buf = data;
  
--	funnel_enable_hw(drvdata, inport);
-+	rc = funnel_enable_hw(drvdata, inport);
+@@ -418,6 +419,10 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, void *data)
+ 		return -EBUSY;
+ 	}
  
--	dev_dbg(drvdata->dev, "FUNNEL inport %d enabled\n", inport);
--	return 0;
-+	if (!rc)
-+		dev_dbg(drvdata->dev, "FUNNEL inport %d enabled\n", inport);
-+	return rc;
- }
- 
- static void funnel_disable_hw(struct funnel_drvdata *drvdata, int inport)
-@@ -79,6 +91,10 @@ static void funnel_disable_hw(struct funnel_drvdata *drvdata, int inport)
- 	functl &= ~(1 << inport);
- 	writel_relaxed(functl, drvdata->base + FUNNEL_FUNCTL);
- 
-+	/* Disclaim the device if none of the slaves are now active */
-+	if (!(functl & FUNNEL_ENSx_MASK))
-+		coresight_disclaim_device_unlocked(drvdata->base);
++	rc = coresight_claim_device_unlocked(drvdata->base);
++	if (rc)
++		return rc;
 +
- 	CS_LOCK(drvdata->base);
- }
+ 	control |= BIT(CATU_CONTROL_ENABLE);
  
+ 	if (etr_buf && etr_buf->mode == ETR_MODE_CATU) {
+@@ -459,6 +464,7 @@ static int catu_disable_hw(struct catu_drvdata *drvdata)
+ 	int rc = 0;
+ 
+ 	catu_write_control(drvdata, 0);
++	coresight_disclaim_device_unlocked(drvdata->base);
+ 	if (catu_wait_for_ready(drvdata)) {
+ 		dev_info(drvdata->dev, "Timeout while waiting for READY\n");
+ 		rc = -EAGAIN;
 -- 
 2.7.4
 
