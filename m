@@ -3,108 +3,248 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9F0C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C659CC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F502064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:32:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F502064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D45F2064D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:32:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D45F2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729591AbeIFSH7 (ORCPT
+        id S1729604AbeIFSIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:07:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33626 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729104AbeIFSH7 (ORCPT
+        Thu, 6 Sep 2018 14:08:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41067 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbeIFSIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:07:59 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86DUAG9142014
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 09:32:25 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb3jw4uy0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:32:24 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Thu, 6 Sep 2018 07:32:24 -0600
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Sep 2018 07:32:21 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86DWKkU51970066
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Sep 2018 06:32:20 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5722D7805F;
-        Thu,  6 Sep 2018 07:32:20 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D82107805E;
-        Thu,  6 Sep 2018 07:32:17 -0600 (MDT)
-Received: from [9.102.0.183] (unknown [9.102.0.183])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Sep 2018 07:32:17 -0600 (MDT)
-Subject: Re: [RFC PATCH V2 1/4] mm: Export alloc_migrate_huge_page
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        mpe@ellerman.id.au, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <20180906054342.25094-1-aneesh.kumar@linux.ibm.com>
- <20180906123111.GC26069@dhcp22.suse.cz>
- <20180906123539.GV14951@dhcp22.suse.cz>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Thu, 6 Sep 2018 19:02:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 6 Sep 2018 14:08:24 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DWR6p308815
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Sep 2018 06:32:27 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DWQrw308812;
+        Thu, 6 Sep 2018 06:32:26 -0700
+Date:   Thu, 6 Sep 2018 06:32:26 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-0ce5aa0266604c77ee64882b70c980e843629177@git.kernel.org>
+Cc:     peterz@infradead.org, andi@firstfloor.org, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        dsahern@gmail.com, hpa@zytor.com, acme@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, namhyung@kernel.org,
+          andi@firstfloor.org, peterz@infradead.org, acme@redhat.com,
+          hpa@zytor.com, dsahern@gmail.com, mingo@kernel.org,
+          tglx@linutronix.de, jolsa@kernel.org,
+          alexander.shishkin@linux.intel.com
+In-Reply-To: <20180830063252.23729-23-jolsa@kernel.org>
+References: <20180830063252.23729-23-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Move 'metric_only' to 'struct
+ perf_stat_config'
+Git-Commit-ID: 0ce5aa0266604c77ee64882b70c980e843629177
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180906123539.GV14951@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18090613-0012-0000-0000-000016AE33A9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009676; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01084383; UDB=6.00559689; IPR=6.00864382;
- MB=3.00023143; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-06 13:32:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090613-0013-0000-0000-0000544EAB15
-Message-Id: <50682adc-5be9-1fac-fd84-abc6bbea7549@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=935 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809060137
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 06:05 PM, Michal Hocko wrote:
-> On Thu 06-09-18 14:31:11, Michal Hocko wrote:
->> On Thu 06-09-18 11:13:39, Aneesh Kumar K.V wrote:
->>> We want to use this to support customized huge page migration.
->>
->> Please be much more specific. Ideally including the user. Btw. why do
->> you want to skip the hugetlb pools? In other words alloc_huge_page_node*
->> which are intended to an external use?
-> 
-> Ups, I have now found http://lkml.kernel.org/r/20180906054342.25094-2-aneesh.kumar@linux.ibm.com
-> which ended up in a different email folder so I have missed it. It would
-> be much better to merge those two to make the user immediately obvious.
-> There is a good reason to keep newly added functions closer to their
-> users.
-> 
+Commit-ID:  0ce5aa0266604c77ee64882b70c980e843629177
+Gitweb:     https://git.kernel.org/tip/0ce5aa0266604c77ee64882b70c980e843629177
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 30 Aug 2018 08:32:31 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
 
-It is the same series. I will fold the patch 1 and 2.
+perf stat: Move 'metric_only' to 'struct perf_stat_config'
 
--aneesh
+Move the static 'metric_only' variable to 'struct perf_stat_config', so
+it can be passed around and used outside the 'perf stat' command.
 
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180830063252.23729-23-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 29 ++++++++++++++++-------------
+ tools/perf/util/stat.h    |  1 +
+ 2 files changed, 17 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 89297ab77d21..397cb4f28d7f 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -163,7 +163,6 @@ static const char		*post_cmd			= NULL;
+ static bool			sync_run			= false;
+ static unsigned int		unit_width			= 4; /* strlen("unit") */
+ static bool			forever				= false;
+-static bool			metric_only			= false;
+ static bool			force_metric_only		= false;
+ static bool			no_merge			= false;
+ static bool			walltime_run_table		= false;
+@@ -1013,7 +1012,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 	print_metric_t pm = print_metric_std;
+ 	new_line_t nl;
+ 
+-	if (metric_only) {
++	if (config->metric_only) {
+ 		nl = new_line_metric;
+ 		if (config->csv_output)
+ 			pm = print_metric_only_csv;
+@@ -1022,7 +1021,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 	} else
+ 		nl = new_line_std;
+ 
+-	if (config->csv_output && !metric_only) {
++	if (config->csv_output && !config->metric_only) {
+ 		static int aggr_fields[] = {
+ 			[AGGR_GLOBAL] = 0,
+ 			[AGGR_THREAD] = 1,
+@@ -1039,7 +1038,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 			os.nfields++;
+ 	}
+ 	if (run == 0 || ena == 0 || counter->counts->scaled == -1) {
+-		if (metric_only) {
++		if (config->metric_only) {
+ 			pm(config, &os, NULL, "", "", 0);
+ 			return;
+ 		}
+@@ -1077,7 +1076,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 		return;
+ 	}
+ 
+-	if (!metric_only)
++	if (!config->metric_only)
+ 		abs_printout(config, id, nr, counter, uval);
+ 
+ 	out.print_metric = pm;
+@@ -1085,7 +1084,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 	out.ctx = &os;
+ 	out.force_header = false;
+ 
+-	if (config->csv_output && !metric_only) {
++	if (config->csv_output && !config->metric_only) {
+ 		print_noise(config, counter, noise);
+ 		print_running(config, run, ena);
+ 	}
+@@ -1093,7 +1092,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+ 	perf_stat__print_shadow_stats(config, counter, uval,
+ 				first_shadow_cpu(counter, id),
+ 				&out, &metric_events, st);
+-	if (!config->csv_output && !metric_only) {
++	if (!config->csv_output && !config->metric_only) {
+ 		print_noise(config, counter, noise);
+ 		print_running(config, run, ena);
+ 	}
+@@ -1225,6 +1224,7 @@ static void aggr_cb(struct perf_evsel *counter, void *data, bool first)
+ static void print_aggr(struct perf_stat_config *config,
+ 		       char *prefix)
+ {
++	bool metric_only = config->metric_only;
+ 	FILE *output = config->output;
+ 	struct perf_evsel *counter;
+ 	int s, id, nr;
+@@ -1388,6 +1388,7 @@ static void counter_aggr_cb(struct perf_evsel *counter, void *data,
+ static void print_counter_aggr(struct perf_stat_config *config,
+ 			       struct perf_evsel *counter, char *prefix)
+ {
++	bool metric_only = config->metric_only;
+ 	FILE *output = config->output;
+ 	double uval;
+ 	struct caggr_data cd = { .avg = 0.0 };
+@@ -1540,6 +1541,7 @@ static void print_metric_headers(struct perf_stat_config *config,
+ static void print_interval(struct perf_stat_config *config,
+ 			   char *prefix, struct timespec *ts)
+ {
++	bool metric_only = config->metric_only;
+ 	FILE *output = config->output;
+ 	static int num_print_interval;
+ 
+@@ -1716,6 +1718,7 @@ perf_evlist__print_counters(struct perf_evlist *evlist,
+ 			    struct timespec *ts,
+ 			    int argc, const char **argv)
+ {
++	bool metric_only = config->metric_only;
+ 	int interval = config->interval;
+ 	struct perf_evsel *counter;
+ 	char buf[64], *prefix = NULL;
+@@ -1843,7 +1846,7 @@ static int enable_metric_only(const struct option *opt __maybe_unused,
+ 			      const char *s __maybe_unused, int unset)
+ {
+ 	force_metric_only = true;
+-	metric_only = !unset;
++	stat_config.metric_only = !unset;
+ 	return 0;
+ }
+ 
+@@ -1922,7 +1925,7 @@ static const struct option stat_options[] = {
+ 		     "aggregate counts per thread", AGGR_THREAD),
+ 	OPT_UINTEGER('D', "delay", &stat_config.initial_delay,
+ 		     "ms to wait before starting measurement after program start"),
+-	OPT_CALLBACK_NOOPT(0, "metric-only", &metric_only, NULL,
++	OPT_CALLBACK_NOOPT(0, "metric-only", &stat_config.metric_only, NULL,
+ 			"Only print computed metrics. No raw values", enable_metric_only),
+ 	OPT_BOOLEAN(0, "topdown", &topdown_run,
+ 			"measure topdown level 1 statistics"),
+@@ -2345,7 +2348,7 @@ static int add_default_attributes(void)
+ 		if (pmu_have_event("msr", "aperf") &&
+ 		    pmu_have_event("msr", "smi")) {
+ 			if (!force_metric_only)
+-				metric_only = true;
++				stat_config.metric_only = true;
+ 			err = parse_events(evsel_list, smi_cost_attrs, &errinfo);
+ 		} else {
+ 			fprintf(stderr, "To measure SMI cost, it needs "
+@@ -2376,7 +2379,7 @@ static int add_default_attributes(void)
+ 		}
+ 
+ 		if (!force_metric_only)
+-			metric_only = true;
++			stat_config.metric_only = true;
+ 		if (topdown_filter_events(topdown_attrs, &str,
+ 				arch_topdown_check_group(&warn)) < 0) {
+ 			pr_err("Out of memory\n");
+@@ -2776,12 +2779,12 @@ int cmd_stat(int argc, const char **argv)
+ 		goto out;
+ 	}
+ 
+-	if (metric_only && stat_config.aggr_mode == AGGR_THREAD) {
++	if (stat_config.metric_only && stat_config.aggr_mode == AGGR_THREAD) {
+ 		fprintf(stderr, "--metric-only is not supported with --per-thread\n");
+ 		goto out;
+ 	}
+ 
+-	if (metric_only && run_count > 1) {
++	if (stat_config.metric_only && run_count > 1) {
+ 		fprintf(stderr, "--metric-only is not supported with -r\n");
+ 		goto out;
+ 	}
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 470ab37601be..da838182b99c 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -93,6 +93,7 @@ struct perf_stat_config {
+ 	bool			 identifier;
+ 	bool			 csv_output;
+ 	bool			 interval_clear;
++	bool			 metric_only;
+ 	FILE			*output;
+ 	unsigned int		 interval;
+ 	unsigned int		 timeout;
