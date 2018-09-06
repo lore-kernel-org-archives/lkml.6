@@ -2,160 +2,188 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C853C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76B3C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F72A206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:54:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F72A206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8882B20645
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:55:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4E/lmG4p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8882B20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbeIFS3u (ORCPT
+        id S1729979AbeIFSav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:29:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46068 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726949AbeIFS3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:29:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DC8BBABEF;
-        Thu,  6 Sep 2018 13:54:07 +0000 (UTC)
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, x86@kernel.org
-References: <alpine.DEB.2.21.1808312122300.1349@nanos.tec.linutronix.de>
-Subject: =?UTF-8?Q?Re:_cmpxchg.h:245:2:_error:_=e2=80=98asm=e2=80=99_operand?=
- =?UTF-8?Q?_has_impossible_constraints?=
-To:     mroos@linux.ee
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <cfc3163c-40f2-ad5e-b303-bb8dc4288022@suse.com>
-Date:   Thu, 6 Sep 2018 15:54:06 +0200
+        Thu, 6 Sep 2018 14:30:51 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53350 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbeIFSav (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:30:51 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w86Dmi8J086823;
+        Thu, 6 Sep 2018 13:54:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=SHwC4gFiBR9oL2bQhEYndf0K0ioWACrbe84zjfgML1M=;
+ b=4E/lmG4pPMLb4VCuRQjpw3lFzuhxfyN2JGkJhR4sOUXAg5ywp2D9XifImLQAddm/iwte
+ hzfyuJ3dewy8tsjdFVlTUhgHR21cjBT575G9vi9XSzEKWKbdtBrcehSGG2e3fidBT7eD
+ 63jGfBK3uuqimkCJhPmM6x+q3yL4iywApD1/XQrUz9ibmtWNxFH+USOaeZ5q15gZ1K5g
+ +IJaeX67SkxNX7YviBWuy0vIUWO+Y17o/UnwRL+uIVU0W3ZU4MM3VaHYpi8ccFx/AfJb
+ Kl+IywUT9kUI89uyArqg4mN/AksgVqHMTYuHctRp937jSh89CrAJzzyf1pyHvqjTXXOf 7A== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2m7j6tva5v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Sep 2018 13:54:38 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w86DsWbI021689
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Sep 2018 13:54:32 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w86DsW5R006790;
+        Thu, 6 Sep 2018 13:54:32 GMT
+Received: from [10.191.31.201] (/10.191.31.201)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Sep 2018 06:54:32 -0700
+Subject: Re: [PATCH 0/3] Introduce a light-weight queue close feature
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     axboe@kernel.dk, keith.busch@intel.com, jsmart2021@gmail.com,
+        sagi@grimberg.me, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        jthumshirn@suse.de, bart.vanassche@wdc.com
+References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180905212659.GB21352@ming.t460p>
+ <b7074098-ab79-53b2-5cc6-25f859c4c666@oracle.com>
+ <20180906125659.GA31250@ming.t460p>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <51b4019b-8773-b76d-ee00-4399a86dbf16@oracle.com>
+Date:   Thu, 6 Sep 2018 21:55:21 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1808312122300.1349@nanos.tec.linutronix.de>
-Content-Type: multipart/mixed;
- boundary="------------F7AC99E4326795D3F57926D8"
-Content-Language: de-DE
+In-Reply-To: <20180906125659.GA31250@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9007 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809060139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------F7AC99E4326795D3F57926D8
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-
-Hey Meelis,
-
-On Mon, 27 Aug 2018, Meelis Roos wrote:
-
-> While trying to compile v4.18-13105-gaba16dc5cf93 with gcc 5.3.1 on a
-> 32-bit x86 configured for AMD K6
->   CC      mm/slub.o
-> In file included from ./arch/x86/include/asm/atomic.h:8:0,
->                  from ./include/linux/atomic.h:7,
->                  from ./arch/x86/include/asm/thread_info.h:54,
->                  from ./include/linux/thread_info.h:38,
->                  from ./arch/x86/include/asm/preempt.h:7,
->                  from ./include/linux/preempt.h:81,
->                  from ./include/linux/spinlock.h:51,
->                  from ./include/linux/mmzone.h:8,
->                  from ./include/linux/gfp.h:6,
->                  from ./include/linux/mm.h:10,
->                  from mm/slub.c:13:
-> mm/slub.c: In function ‘__slab_free’:
-> ./arch/x86/include/asm/cmpxchg.h:245:2: error: ‘asm’ operand has
-impossible constraints
->   asm volatile(pfx "cmpxchg%c4b %2; sete %0"   \
-
-Could you give the attched patch a try? I've been hit by this issue
-via kbuild robot complaining about one of my patches which didn't
-touch the asm stuff above.
-
-I suspect the "=a" contraint of the outputs and "a" of the inputs
-are the culprit. You could save me from having to search through
-all the debian repos for a gcc showing that issue...
 
 
-Juergen
+On 09/06/2018 08:57 PM, Ming Lei wrote:
+> On Thu, Sep 06, 2018 at 09:51:43AM +0800, jianchao.wang wrote:
+>> Hi Ming
+>>
+>> On 09/06/2018 05:27 AM, Ming Lei wrote:
+>>> On Wed, Sep 05, 2018 at 12:09:43PM +0800, Jianchao Wang wrote:
+>>>> Dear all
+>>>>
+>>>> As we know, queue freeze is used to stop new IO comming in and drain
+>>>> the request queue. And the draining queue here is necessary, because
+>>>> queue freeze kills the percpu-ref q_usage_counter and need to drain
+>>>> the q_usage_counter before switch it back to percpu mode. This could
+>>>> be a trouble when we just want to prevent new IO.
+>>>>
+>>>> In nvme-pci, nvme_dev_disable freezes queues to prevent new IO.
+>>>> nvme_reset_work will unfreeze and wait to drain the queues. However,
+>>>> if IO timeout at the moment, no body could do recovery as nvme_reset_work
+>>>> is waiting. We will encounter IO hang.
+>>>
+>>> As we discussed this nvme time issue before, I have pointed out that
+>>> this is because of blk_mq_unfreeze_queue()'s limit which requires that
+>>> unfreeze can only be done when this queue ref counter drops to zero.
+>>>
+>>> For this nvme timeout case, we may relax the limit, for example,
+>>> introducing another API of blk_freeze_queue_stop() as counter-pair of
+>>> blk_freeze_queue_start(), and simply switch the percpu-ref to percpu mode
+>>> from atomic mode inside the new API.
+>>
+>> Looks like we cannot switch a percpu-ref to percpu mode directly w/o drain it.
+>> Some references maybe lost.
+>>
+>> static void __percpu_ref_switch_to_percpu(struct percpu_ref *ref)
+>> {
+>> 	unsigned long __percpu *percpu_count = percpu_count_ptr(ref);
+>> 	int cpu;
+>>
+>> 	BUG_ON(!percpu_count);
+>>
+>> 	if (!(ref->percpu_count_ptr & __PERCPU_REF_ATOMIC))
+>> 		return;
+>>
+>> 	atomic_long_add(PERCPU_COUNT_BIAS, &ref->count);
+>>
+>> 	/*
+>> 	 * Restore per-cpu operation.  smp_store_release() is paired
+>> 	 * with READ_ONCE() in __ref_is_percpu() and guarantees that the
+>> 	 * zeroing is visible to all percpu accesses which can see the
+>> 	 * following __PERCPU_REF_ATOMIC clearing.i
+>> 	 */
+>> 	for_each_possible_cpu(cpu)
+>> 		*per_cpu_ptr(percpu_count, cpu) = 0;
+>>
+>> 	smp_store_release(&ref->percpu_count_ptr,
+>> 			  ref->percpu_count_ptr & ~__PERCPU_REF_ATOMIC);
+> 
+> Before REF_ATOMIC is cleared, all counting is done on the atomic type
+> of &ref->count, and it is easy to keep the reference counter at
+> ATOMIC mode. Also the reference counter can only be READ at atomic mode.
+> 
+> So could you explain a bit how the lost may happen? And it is lost at
+> atomic mode or percpu mode?
 
---------------F7AC99E4326795D3F57926D8
-Content-Type: text/x-patch;
- name="0001-x86-correct-inline-asm-constraints-in-__cmpxchg_doub.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-x86-correct-inline-asm-constraints-in-__cmpxchg_doub.pa";
- filename*1="tch"
+I just mean __percpu_ref_switch_percpu just zeros the percpu_count.
+It doesn't give the original values back to the percpu_count from atomic count
 
-From 252450d28ffc8fbfd5b332d0b97990ae12a207d9 Mon Sep 17 00:00:00 2001
-From: Juergen Gross <jgross@suse.com>
-Date: Wed, 5 Sep 2018 11:32:26 +0200
-Subject: [PATCH] x86: correct inline asm constraints in __cmpxchg_double()
+> 
+>> }
+>>
+>>>
+>>>>
+>>>> So introduce a light-weight queue close feature in this patch set
+>>>> which could prevent new IO and needn't drain the queue.
+>>>
+>>> Frankly speaking, IMO, it may not be an good idea to mess up the fast path
+>>> just for handling the extremely unusual timeout event. The same is true
+>>> for doing the preemp only stuff, as you saw I have posted patchset for
+>>> killing it.
+>>>
+>>
+>> In normal case, it is just a judgment like 
+>>
+>> 	if (unlikely(READ_ONCE(q->queue_gate))
+>>
+>> It should not be a big deal.> 
+> Adding this stuff in fast path is quite difficult to verify its correctness
+> because it is really lockless, or even barrier-less.
+> 
+> Not to mention, READ_ONCE() implies one barrier of smp_read_barrier_depends().
 
-Specifying "=a" for output constraints and "a" for input seems to be
-wrong. Instead "0" should be used for the input constraint.
+The checking is under rcu lock, the write side could use synchonize_rcu to ensure
+the updating is globally visible.t
+As for the READ_ONCE, it could be discarded.
 
-Fixes: cdcd629869fab ("x86: Fix and improve cmpxchg_double{,_local}()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/cmpxchg.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index a55d79b233d3..b3b4d61a8969 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -245,7 +245,7 @@ extern void __add_wrong_size(void)
- 	asm volatile(pfx "cmpxchg%c4b %2; sete %0"			\
- 		     : "=a" (__ret), "+d" (__old2),			\
- 		       "+m" (*(p1)), "+m" (*(p2))			\
--		     : "i" (2 * sizeof(long)), "a" (__old1),		\
-+		     : "i" (2 * sizeof(long)), "0" (__old1),		\
- 		       "b" (__new1), "c" (__new2));			\
- 	__ret;								\
- })
--- 
-2.16.4
-
-
---------------F7AC99E4326795D3F57926D8--
+Thanks
+Jianchao
+> 
+> Thanks,
+> Ming
+> 
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> https://urldefense.proofpoint.com/v2/url?u=http-3A__lists.infradead.org_mailman_listinfo_linux-2Dnvme&d=DwICAg&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=BQVCMSSS6lYwogr6CE82oIlpLu5ReP8c4lHGgnvswV4&s=rZLfbqzKKXjlCpY1Sy6ocaQjAKZoJq_A49gvSucohNk&e=
+> 
