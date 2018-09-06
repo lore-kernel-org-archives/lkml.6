@@ -2,126 +2,94 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301EBC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6756C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D65B820652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E61520652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="xsgnA0zq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65B820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lgxopUkC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lgxopUkC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E61520652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbeIFRNF (ORCPT
+        id S1728632AbeIFROM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:13:05 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45735 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbeIFRNE (ORCPT
+        Thu, 6 Sep 2018 13:14:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43232 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728174AbeIFROM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:13:04 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x26-v6so5160424pge.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 05:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5dC5MkcLBlwXZcIQ9w9cv0hXXu3tn7yMycSWCbmjdsc=;
-        b=xsgnA0zq70y4wpmWZ/7WewrGDXcvhJmY/ZgiiA+QkDk3c+upTPpRUvhp1O1cd4FhjB
-         DaCVODNZfEgWn8hsV1eTsMTr8o2i9eWpL7sqo1VjlMa2/2f0gubQ3Yae3OswqGPxXmUc
-         cDJdsxmZ+EjPEwHAxxfZR+fu2jcc7hIOhPqrrto5F6vp74ywZg40AVCktl0z1W4G8U+s
-         8FaXmyMwUsbPRFE209VBA59q5TB80Vp+Fw+43mQlnfFzGGlg/3SCQoN6VFF4h750lZ78
-         5rzFcVEg4pCFeHOAcMKaZOHqczSsZfu1spiYVjwdJtyj3KP70T48sAYOs1fTb4Ighsm1
-         6kdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5dC5MkcLBlwXZcIQ9w9cv0hXXu3tn7yMycSWCbmjdsc=;
-        b=pBY52DAXJNzZbPV+V/HhCzrBYm0MUB0pTfmgK+0dzmgmQL4cORk0jwc2JMDTqboWwo
-         ZlQoG93oriXw5U0xgo/kTV4/qWuwyl8wPvjjy4v7ieBe75WkTUQvG4PMvuegahpcCSqD
-         fsP3kxVOQ91X8AZYz74tVshKJMTesTtspgq4GWOVrI+fGgPr/pc26zH+mRwHOU4tjL9q
-         2BSEZt/a8iOuYcvfbGOXMdqo8LQkk7BTvceP6bybfyjTMIH/J+B03NSJZPhOEHwWqMGL
-         PKxTmg6uN7Oser5UsLYQWAmLHMwCe0bFTxG3B10iIAtjK7Hi/LRj+41heYqMVRoEtug+
-         Owrg==
-X-Gm-Message-State: APzg51DtEFJ2CQdaXik8Zv3wNKsJgN87RijaXY/+E+RtCaFD4iJLBcmi
-        fjE4/Wez7dvDDJ1oT27G1koOFzrhKP0=
-X-Google-Smtp-Source: ANB0VdYrAXvYWBvPbb0ceKeiMfprYdXSq28IyIiMrGPT93a5tV0eYdCu3ItcbtpQGUEC89dIhlNw+A==
-X-Received: by 2002:a63:d54e:: with SMTP id v14-v6mr2556270pgi.264.1536237466569;
-        Thu, 06 Sep 2018 05:37:46 -0700 (PDT)
-Received: from anup-ubuntu64.wlan.qualcomm.com ([106.51.30.16])
-        by smtp.googlemail.com with ESMTPSA id 193-v6sm11446165pgh.47.2018.09.06.05.37.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 05:37:45 -0700 (PDT)
-From:   Anup Patel <anup@brainfault.org>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2 5/5] RISC-V: Remove do_IRQ() function
-Date:   Thu,  6 Sep 2018 18:06:51 +0530
-Message-Id: <20180906123651.28500-6-anup@brainfault.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180906123651.28500-1-anup@brainfault.org>
-References: <20180906123651.28500-1-anup@brainfault.org>
+        Thu, 6 Sep 2018 13:14:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C0FDF60159; Thu,  6 Sep 2018 12:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536237533;
+        bh=ftzMcvbLBTKhM/nAjn1p7eLwJM8HWDqn6JcW/12QqLg=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=lgxopUkC/ZM/PktcNgk93gRVnV3OgQTonYQulK1OR9cki2Nb09NJTc0Qf/jndcy32
+         SzOg9nFjIh2d0NnX5oDkW0XiztQjrmMjJZ/l6etR3LyCuwi9JWqS/5kSMusJVzS6iL
+         hnhXnL+w6c8iwcuVo/erdzsQqe1oOenvzwNyXVGk=
+Received: from [10.79.128.227] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E4A1560159;
+        Thu,  6 Sep 2018 12:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536237533;
+        bh=ftzMcvbLBTKhM/nAjn1p7eLwJM8HWDqn6JcW/12QqLg=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=lgxopUkC/ZM/PktcNgk93gRVnV3OgQTonYQulK1OR9cki2Nb09NJTc0Qf/jndcy32
+         SzOg9nFjIh2d0NnX5oDkW0XiztQjrmMjJZ/l6etR3LyCuwi9JWqS/5kSMusJVzS6iL
+         hnhXnL+w6c8iwcuVo/erdzsQqe1oOenvzwNyXVGk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4A1560159
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH v4 3/4] drivers: edac: Add EDAC driver support for QCOM
+ SoCs
+To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>,
+        Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
+        robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, tsoni@codeaurora.org,
+        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
+        swboyd@chromium.org, bjorn.andersson@linaro.org
+References: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
+ <1536103345-1919-4-git-send-email-vnkgutta@codeaurora.org>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <105f8339-61bc-072e-0498-ed44470a5fb8@codeaurora.org>
+Date:   Thu, 6 Sep 2018 18:08:45 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1536103345-1919-4-git-send-email-vnkgutta@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only thing do_IRQ() does is call handle_arch_irq function
-pointer. We can very well call handle_arch_irq function pointer
-directly from assembly and remove do_IRQ() function hence this
-patch.
+On 9/5/2018 4:52 AM, Venkata Narendra Kumar Gutta wrote:
+> +static const struct of_device_id qcom_llcc_edac_match_table[] = {
+> +	{ .compatible = "qcom,llcc-edac" },
+> +	{ },
+> +};
+> +
+> 
+Hi Venkata,
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
----
- arch/riscv/kernel/entry.S | 4 +++-
- arch/riscv/kernel/irq.c   | 6 ------
- 2 files changed, 3 insertions(+), 7 deletions(-)
+Devicetree binding for llcc is updated, but what about this compatible?
 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 6eaacfa5b63d..69fbe9dd9e0c 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -168,7 +168,9 @@ ENTRY(handle_exception)
- 
- 	/* Handle interrupts */
- 	move a0, sp /* pt_regs */
--	tail do_IRQ
-+	la a1, handle_arch_irq
-+	REG_L a1, (a1)
-+	jr a1
- 1:
- 	/* Exceptions run with interrupts enabled */
- 	csrs sstatus, SR_SIE
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index 9ced284da30b..695e241d0402 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -8,12 +8,6 @@
- #include <linux/interrupt.h>
- #include <linux/irqchip.h>
- 
--asmlinkage void __irq_entry do_IRQ(struct pt_regs *regs)
--{
--	if (handle_arch_irq)
--		handle_arch_irq(regs);
--}
--
- /*
-  * This function doesn't return until a software interrupt is sent via IPI.
-  * Obviously, all the interrupts except software interrupt should be disabled
--- 
-2.17.1
-
+Regards,
+Sai
