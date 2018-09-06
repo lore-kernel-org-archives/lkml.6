@@ -6,51 +6,50 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EE2C433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B46C43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FDE20652
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:59:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FDE20652
+	by mail.kernel.org (Postfix) with ESMTP id D6C1A20652
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 16:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C1A20652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeIFVfZ (ORCPT
+        id S1729312AbeIFVf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 17:35:25 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:41322 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbeIFVfZ (ORCPT
+        Thu, 6 Sep 2018 17:35:27 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:38349 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727944AbeIFVf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 17:35:25 -0400
-Received: by mail-it0-f71.google.com with SMTP id w132-v6so13045542ita.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:59:02 -0700 (PDT)
+        Thu, 6 Sep 2018 17:35:26 -0400
+Received: by mail-it0-f72.google.com with SMTP id h5-v6so13039633itb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 09:59:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=i5SPC8qS98PeCJ8gi54OY8xyETlxjJaQDw7sIuuNgg8=;
-        b=LEWbVZEDCrZo+mgKgjH1fWQ5l7w94sMmhn32xA6PtlGhC1m5zyjKREPPEsgVTywXep
-         IQ2NoE+UtZPWnRbdKl+qMETtFXwu0c9NpGbycuEyxz3xot/bbPYM6PdK6qomzr1l+m2P
-         UCquuaZBNtnv3kNa7jG2U+U6DuFA4ABx0Y52O8vpG1BIF1cmYMT9rDzc6V31tRylM9b4
-         VDPXBzkN8mZF+WHP800JthwNylQkcMh0jb9JhkyuRwPhEj64wbBf2YXwESei7NGP60Uv
-         70vTNJwNKkX0f//aA3t+by4sgGmlGf1vQ32wpBWNlT40I/QsiqQ6qkaY8F70ViwvTIaF
-         ZYrQ==
-X-Gm-Message-State: APzg51DDQu8PWIFtP/C6JCLqGvkoacBZIPclceIy7zqWSYTEDTepNS2+
-        5u5nXvpoIANvGB5t7Qlq4VdzOiPpxDl5j3YnUlcuTl1XsKfb
-X-Google-Smtp-Source: ANB0VdaILy9lZl34dXvxf8swCN5w4/QGtkr1mD5B3L1guXPJI7mHqCJbBbDKoREV+njCfz3DWPOLGcRhUlYTfs3RVy1nW3l94kQu
+        bh=P1uZWXXHopg1q6Vp/tW1BXXwjNbCyJjUXasdbrYQQM8=;
+        b=gn6KxP/SgsJlTvf5/ED/VtjVhn95xwqNsRvJ9h4dXvbHVNUVOmh2zXJOvsNkXGui9E
+         x2XbUZ8hZ7CHCbXwUp86Fd9a6CaAfZToTYuxgcnBENlPwVOTW9tYbUZGCORJ5LgSq3i1
+         REAqVUh2QtjYVe4Wl7oYvN4JmJhX1WwTDRQe2hI4ZkTtHV/a35kLgruHUnMJJOT20Q57
+         2nTxHEcYUJN8OyAkVscawYSYhlcoNmIeWAKihxk9gvwuleOqmkSafegF4AAvU5jVDrHe
+         dxsu2ftz0wjlzPRoabu2IVsxUMREvAnNUJV3o2TfsPOTm7BHSuyR6SMTWdJIbVqIWAgO
+         GCuQ==
+X-Gm-Message-State: APzg51D631slon600S6D+ocT3Kf6lnP31mMpdzlT71rMduC4cQBgBniZ
+        iEh/7yLB53/smxjnN2CjXFODIdcgjyc3Ug/X9PEzUFfea08f
+X-Google-Smtp-Source: ANB0VdbJ2vOUct2B/g4MFdJUy6/ddG3WP/6PPjrVSeqjwBYOOczYc7WDFc/Ct/6Aia+am7GQWqsR7hM4UTe4BwRPZffwdKSGW99h
 MIME-Version: 1.0
-X-Received: by 2002:a6b:d210:: with SMTP id q16-v6mr2813269iob.137.1536253142216;
+X-Received: by 2002:a24:ac14:: with SMTP id s20-v6mr3663126ite.14.1536253142509;
  Thu, 06 Sep 2018 09:59:02 -0700 (PDT)
 Date:   Thu, 06 Sep 2018 09:59:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d3c499057536ce86@google.com>
-Subject: INFO: task hung in usb_bulk_msg
-From:   syzbot <syzbot+7a7613e5ba9ae7bd15f9@syzkaller.appspotmail.com>
-To:     bigeasy@linutronix.de, felipe.balbi@linux.intel.com,
-        gregkh@linuxfoundation.org, joe@perches.com, johan@kernel.org,
-        kai.heng.feng@canonical.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+Message-ID: <000000000000d83699057536ce5b@google.com>
+Subject: INFO: task hung in uprobe_start_dup_mmap
+From:   syzbot <syzbot+cad3df271fa4d88da051@syzkaller.appspotmail.com>
+To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        namhyung@kernel.org, peterz@infradead.org,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,99 +61,545 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    b36fdc6853a3 Merge tag 'gpio-v4.19-2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=143a64d1400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c9564cd177daf0c
-dashboard link: https://syzkaller.appspot.com/bug?extid=7a7613e5ba9ae7bd15f9
+HEAD commit:    f2b6e66e9885 Add linux-next specific files for 20180904
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=175217e1400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=15ad48400e39c1b3
+dashboard link: https://syzkaller.appspot.com/bug?extid=cad3df271fa4d88da051
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7a7613e5ba9ae7bd15f9@syzkaller.appspotmail.com
+Reported-by: syzbot+cad3df271fa4d88da051@syzkaller.appspotmail.com
 
-INFO: task syz-executor3:10234 blocked for more than 140 seconds.
-       Not tainted 4.19.0-rc2+ #3
+hfs: can't find a HFS filesystem on dev loop3
+INFO: task udevd:4711 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor3   D23224 10234   7516 0x00000004
+udevd           D22488  4711   2538 0x00000000
 Call Trace:
   context_switch kernel/sched/core.c:2825 [inline]
   __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
   schedule+0xfb/0x450 kernel/sched/core.c:3517
-  schedule_timeout+0x1cc/0x260 kernel/time/timer.c:1780
-  do_wait_for_common kernel/sched/completion.c:83 [inline]
-  __wait_for_common kernel/sched/completion.c:104 [inline]
-  wait_for_common kernel/sched/completion.c:115 [inline]
-  wait_for_completion_timeout+0x45f/0x960 kernel/sched/completion.c:155
-  usb_start_wait_urb+0x18b/0x360 drivers/usb/core/message.c:62
-  usb_bulk_msg+0x22e/0x550 drivers/usb/core/message.c:253
-  proc_bulk+0x590/0xaa0 drivers/usb/core/devio.c:1193
-  usbdev_do_ioctl+0x19fc/0x3b30 drivers/usb/core/devio.c:2401
-  usbdev_ioctl+0x25/0x30 drivers/usb/core/devio.c:2551
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457099
+RIP: 0033:0x7f78fd4a8f46
 Code: Bad RIP value.
-RSP: 002b:00007f408a01ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f408a01f6d4 RCX: 0000000000457099
-RDX: 0000000020000240 RSI: 00000000c0185502 RDI: 0000000000000003
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004cebc0 R14: 00000000004c503e R15: 0000000000000000
+RSP: 002b:00007ffcefe84b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffcefe84b40 RCX: 00007f78fd4a8f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffcefe84ba0 R08: 0000000000001267 R09: 0000000000001267
+R10: 00007f78fddc5a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcefe84b60 R14: 0000000000000005 R15: 0000000000000005
+INFO: task udevd:4712 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+udevd           D22488  4712   2538 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f78fd4a8f46
+Code: Bad RIP value.
+RSP: 002b:00007ffcefe84b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffcefe84b40 RCX: 00007f78fd4a8f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffcefe84ba0 R08: 0000000000001268 R09: 0000000000001268
+R10: 00007f78fddc5a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcefe84b60 R14: 0000000000000005 R15: 0000000000000005
+INFO: task syz-executor0:4752 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor0   D21560  4752      1 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45574a
+Code: Bad RIP value.
+RSP: 002b:00007ffdcdf7a290 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffdcdf7a290 RCX: 000000000045574a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffdcdf7a2d0 R08: 0000000000000001 R09: 00000000011d9940
+R10: 00000000011d9c10 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: badc0ffeebadface
+INFO: task syz-executor1:4754 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor1   D21032  4754      1 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45574a
+Code: Bad RIP value.
+RSP: 002b:00007fff590938d0 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007fff590938d0 RCX: 000000000045574a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007fff59093910 R08: 0000000000000001 R09: 0000000001d2a940
+R10: 0000000001d2ac10 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: badc0ffeebadface
+INFO: task syz-executor6:4756 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor6   D21184  4756      1 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45574a
+Code: Bad RIP value.
+RSP: 002b:00007ffce5b71030 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffce5b71030 RCX: 000000000045574a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffce5b71070 R08: 0000000000000001 R09: 0000000002588940
+R10: 0000000002588c10 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: badc0ffeebadface
+INFO: task syz-executor7:4758 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D21184  4758      1 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45574a
+Code: Bad RIP value.
+RSP: 002b:00007ffc193b1590 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffc193b1590 RCX: 000000000045574a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffc193b15d0 R08: 0000000000000001 R09: 0000000001c79940
+R10: 0000000001c79c10 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: badc0ffeebadface
+INFO: task udevd:6793 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+udevd           D22488  6793   2538 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f78fd4a8f46
+Code: Bad RIP value.
+RSP: 002b:00007ffcefe84b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffcefe84b40 RCX: 00007f78fd4a8f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffcefe84ba0 R08: 0000000000001a89 R09: 0000000000001a89
+R10: 00007f78fddc5a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcefe84b60 R14: 0000000000000005 R15: 0000000000000005
+INFO: task udevd:6805 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+udevd           D22488  6805   2538 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f78fd4a8f46
+Code: Bad RIP value.
+RSP: 002b:00007ffcefe84b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffcefe84b40 RCX: 00007f78fd4a8f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffcefe84ba0 R08: 0000000000001a95 R09: 0000000000001a95
+R10: 00007f78fddc5a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcefe84b60 R14: 0000000000000005 R15: 0000000000000005
+INFO: task udevd:6813 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+udevd           D22488  6813   2538 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f78fd4a8f46
+Code: Bad RIP value.
+RSP: 002b:00007ffcefe84b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffcefe84b40 RCX: 00007f78fd4a8f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffcefe84ba0 R08: 0000000000001a9d R09: 0000000000001a9d
+R10: 00007f78fddc5a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcefe84b60 R14: 0000000000000005 R15: 0000000000000005
+INFO: task udevd:7279 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc2-next-20180904+ #55
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+udevd           D22944  7279   2538 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2825 [inline]
+  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
+  schedule+0xfb/0x450 kernel/sched/core.c:3517
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x362/0x610 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x16e/0x210 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  uprobe_start_dup_mmap+0x99/0xa0 kernel/events/uprobes.c:1259
+  dup_mmap kernel/fork.c:431 [inline]
+  dup_mm kernel/fork.c:1275 [inline]
+  copy_mm kernel/fork.c:1330 [inline]
+  copy_process+0x2b3d/0x7af0 kernel/fork.c:1870
+  _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+  __do_sys_clone kernel/fork.c:2276 [inline]
+  __se_sys_clone kernel/fork.c:2270 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2270
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f78fd4a8f46
+Code: Bad RIP value.
+RSP: 002b:00007ffcefe84b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffcefe84b40 RCX: 00007f78fd4a8f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffcefe84ba0 R08: 0000000000001c6f R09: 0000000000001c6f
+R10: 00007f78fddc5a70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffcefe84b60 R14: 0000000000000005 R15: 0000000000000005
 
 Showing all locks held in the system:
 1 lock held by khungtaskd/792:
-  #0: 00000000935370f1 (rcu_read_lock){....}, at:  
+  #0: 00000000010c3b8a (rcu_read_lock){....}, at:  
 debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4436
-1 lock held by rsyslogd/4545:
-2 locks held by getty/4666:
-  #0: 000000001c78bb1f (&tty->ldisc_sem){++++}, at:  
+1 lock held by rsyslogd/4614:
+2 locks held by getty/4704:
+  #0: 000000007272e650 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000fd476690 (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 00000000d0ad5199 (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4667:
-  #0: 000000003636bd05 (&tty->ldisc_sem){++++}, at:  
+2 locks held by getty/4705:
+  #0: 00000000ee01b3d2 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000080b0e131 (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 00000000cb4b72e0 (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4668:
-  #0: 00000000784da20e (&tty->ldisc_sem){++++}, at:  
+2 locks held by getty/4706:
+  #0: 00000000b1d1bfa1 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000f35d11ec (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 00000000d8a1ad0c (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4669:
-  #0: 0000000050e62864 (&tty->ldisc_sem){++++}, at:  
+2 locks held by getty/4707:
+  #0: 00000000d748ecc1 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000013be2de2 (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 000000003e534095 (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4670:
-  #0: 0000000076405ad8 (&tty->ldisc_sem){++++}, at:  
+2 locks held by getty/4708:
+  #0: 000000008ec58632 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000006c5d932d (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 00000000f247898c (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4671:
-  #0: 00000000a94de6ea (&tty->ldisc_sem){++++}, at:  
+2 locks held by getty/4709:
+  #0: 000000001ebc9104 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000004906f867 (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 00000000c5deaf68 (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4672:
-  #0: 00000000664d51ab (&tty->ldisc_sem){++++}, at:  
+2 locks held by getty/4710:
+  #0: 00000000da7ef2b1 (&tty->ldisc_sem){++++}, at:  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000cdc5bd8f (&ldata->atomic_read_lock){+.+.}, at:  
+  #1: 000000003a231089 (&ldata->atomic_read_lock){+.+.}, at:  
 n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+1 lock held by udevd/4711:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by udevd/4712:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by syz-executor0/4752:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by syz-executor1/4754:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by syz-executor6/4756:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by syz-executor7/4758:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by udevd/6793:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by udevd/6805:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by udevd/6813:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by udevd/7279:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by syz-executor0/18570:
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mmap kernel/fork.c:431  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: dup_mm kernel/fork.c:1275  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_mm kernel/fork.c:1330  
+[inline]
+  #0: 00000000077431f3 (&dup_mmap_sem){++++}, at: copy_process+0x2b3d/0x7af0  
+kernel/fork.c:1870
+1 lock held by syz-executor5/30110:
+  #0: 00000000df7208fd (event_mutex){+.+.}, at:  
+perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:236
+5 locks held by syz-executor5/30115:
+  #0: 00000000432a4d43 (&sig->cred_guard_mutex){+.+.}, at:  
+__do_sys_perf_event_open+0x12fe/0x2f30 kernel/events/core.c:10480
+  #1: 0000000043990672 (&pmus_srcu){....}, at:  
+perf_event_alloc.part.93+0xffc/0x33c0 kernel/events/core.c:10039
+  #2: 00000000df7208fd (event_mutex){+.+.}, at: perf_uprobe_init+0x1da/0x280  
+kernel/trace/trace_event_perf.c:327
+  #3: 00000000eb6356ce (&uprobe->register_rwsem){+.+.}, at:  
+__uprobe_register kernel/events/uprobes.c:922 [inline]
+  #3: 00000000eb6356ce (&uprobe->register_rwsem){+.+.}, at:  
+uprobe_register+0x3dd/0x7c0 kernel/events/uprobes.c:941
+  #4: 00000000077431f3 (&dup_mmap_sem){++++}, at:  
+percpu_down_write+0xaf/0x540 kernel/locking/percpu-rwsem.c:145
+1 lock held by syz-executor4/30114:
+  #0: 00000000df7208fd (event_mutex){+.+.}, at:  
+perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:236
+3 locks held by syz-executor4/30117:
+  #0: 000000007654572a (&sig->cred_guard_mutex){+.+.}, at:  
+__do_sys_perf_event_open+0x12fe/0x2f30 kernel/events/core.c:10480
+  #1: 0000000043990672 (&pmus_srcu){....}, at:  
+perf_event_alloc.part.93+0xffc/0x33c0 kernel/events/core.c:10039
+kworker/dying (7) used greatest stack depth: 11432 bytes left
+  #2: 00000000df7208fd (event_mutex){+.+.}, at: perf_trace_init+0x50/0x250  
+kernel/trace/trace_event_perf.c:218
+3 locks held by syz-executor3/30125:
+  #0: 00000000fc87ade4 (&sig->cred_guard_mutex){+.+.}, at:  
+__do_sys_perf_event_open+0x12fe/0x2f30 kernel/events/core.c:10480
+  #1: 0000000043990672 (&pmus_srcu){....}, at:  
+perf_event_alloc.part.93+0xffc/0x33c0 kernel/events/core.c:10039
+  #2: 00000000df7208fd (event_mutex){+.+.}, at: perf_trace_init+0x50/0x250  
+kernel/trace/trace_event_perf.c:218
+3 locks held by syz-executor2/30129:
+  #0: 00000000d282122d (&sig->cred_guard_mutex){+.+.}, at:  
+__do_sys_perf_event_open+0x12fe/0x2f30 kernel/events/core.c:10480
+  #1: 0000000043990672 (&pmus_srcu){....}, at:  
+perf_event_alloc.part.93+0xffc/0x33c0 kernel/events/core.c:10039
+  #2: 00000000df7208fd (event_mutex){+.+.}, at: perf_trace_init+0x50/0x250  
+kernel/trace/trace_event_perf.c:218
 
 =============================================
 
 NMI backtrace for cpu 0
-CPU: 0 PID: 792 Comm: khungtaskd Not tainted 4.19.0-rc2+ #3
+CPU: 0 PID: 792 Comm: khungtaskd Not tainted 4.19.0-rc2-next-20180904+ #55
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -167,54 +612,10 @@ Call Trace:
   check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
   watchdog+0xb39/0x1040 kernel/hung_task.c:265
   kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
 Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.19.0-rc2+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__wrmsr arch/x86/include/asm/msr.h:105 [inline]
-RIP: 0010:native_apic_msr_eoi_write+0xf/0x20 arch/x86/include/asm/apic.h:214
-Code: ff ff e9 13 ff ff ff e8 9f 8f 87 00 e9 de fe ff ff e8 35 58 13 00 90  
-90 90 90 90 55 31 c0 b9 0b 08 00 00 89 c2 48 89 e5 0f 30 <5d> c3 0f 1f 44  
-00 00 66 2e 0f 1f 84 00 00 00 00 00 c3 0f 1f 44 00
-RSP: 0018:ffff8801db107e90 EFLAGS: 00000046
-RAX: 0000000000000000 RBX: 1ffff1003b620fd4 RCX: 000000000000080b
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000b0
-RBP: ffff8801db107e90 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff87f2d300
-R13: ffff8801db107fc0 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001b7c96000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  apic_eoi arch/x86/include/asm/apic.h:402 [inline]
-  ack_APIC_irq arch/x86/include/asm/apic.h:448 [inline]
-  smp_reschedule_interrupt+0xe4/0x5e0 arch/x86/kernel/smp.c:262
-  reschedule_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:888
-  </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
-Code: c7 48 89 45 d8 e8 fa fc e4 fa 48 8b 45 d8 e9 d2 fe ff ff 48 89 df e8  
-e9 fc e4 fa eb 8a 90 90 90 90 90 90 90 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
-00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
-RSP: 0018:ffff8801d9f27c30 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff02
-RAX: dffffc0000000000 RBX: 1ffff1003b3e4f8a RCX: 0000000000000000
-RDX: 1ffffffff10237c8 RSI: 0000000000000001 RDI: ffffffff8811be40
-RBP: ffff8801d9f27c30 R08: ffff8801d9f1a380 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff8801d9f27cf0 R14: 0000000000000001 R15: 0000000000000000
-  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
-  default_idle+0xc2/0x410 arch/x86/kernel/process.c:498
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x3aa/0x580 kernel/sched/idle.c:262
-  cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
-  start_secondary+0x433/0x5d0 arch/x86/kernel/smpboot.c:271
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10  
+arch/x86/include/asm/irqflags.h:57
 
 
 ---
