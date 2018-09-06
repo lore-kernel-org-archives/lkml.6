@@ -2,115 +2,175 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFC4C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A868FC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4B82086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:46:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4B82086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 10A5220869
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 05:47:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A5220869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeIFKUD (ORCPT
+        id S1726453AbeIFKVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 06:20:03 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:46427 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeIFKUD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 06:20:03 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w865k4EQ016554
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Wed, 5 Sep 2018 22:46:04 -0700 (PDT)
-Received: from [128.224.162.194] (128.224.162.194) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 5 Sep
- 2018 22:46:03 -0700
-Subject: Re: [PATCH] sysctl: kselftests: use kernel module instead of built-in
-To:     Shuah Khan <shuah@kernel.org>, <mcgrof@kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1536114044-31236-1-git-send-email-Lei.Yang@windriver.com>
- <8aeffc5f-ed8c-b418-5db3-ef0299456002@kernel.org>
-From:   lei yang <lei.yang@windriver.com>
-Message-ID: <9bbc49fe-5043-d03e-a359-215e71ed3a42@windriver.com>
-Date:   Thu, 6 Sep 2018 13:48:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Thu, 6 Sep 2018 06:21:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46000 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725850AbeIFKVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 06:21:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 72A6AB00F;
+        Thu,  6 Sep 2018 05:47:36 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 07:47:35 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        alexander.h.duyck@intel.com, pavel.tatashin@microsoft.com,
+        dave.hansen@intel.com, akpm@linux-foundation.org, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v2 1/2] mm: Move page struct poisoning to
+ CONFIG_DEBUG_VM_PAGE_INIT_POISON
+Message-ID: <20180906054735.GJ14951@dhcp22.suse.cz>
+References: <20180905211041.3286.19083.stgit@localhost.localdomain>
+ <20180905211328.3286.71674.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <8aeffc5f-ed8c-b418-5db3-ef0299456002@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [128.224.162.194]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905211328.3286.71674.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 05-09-18 14:13:28, Alexander Duyck wrote:
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> 
+> On systems with a large amount of memory it can take a significant amount
+> of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+> value. I have seen it take over 2 minutes to initialize a system with
+> over 12GB of RAM.
+> 
+> In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+> the boot time returned to something much more reasonable as the
+> arch_add_memory call completed in milliseconds versus seconds. However in
+> doing that I had to disable all of the other VM debugging on the system.
+> 
+> Instead of keeping the value in CONFIG_DEBUG_VM I am adding a new CONFIG
+> value called CONFIG_DEBUG_VM_PAGE_INIT_POISON that will control the page
+> poisoning independent of the CONFIG_DEBUG_VM option.
 
+As explained in other thread (please slow down when posting a new
+version until the previous discussion reaches a consensus next time), I
+really detest a new config. We have way too many of those. If you really
+have to then make sure to describe _why_ it is needed. Sure
+initialization takes some time and that is one-off overhead. So why does
+it matter at all for somebody willing to pat runtime overhead all over
+the MM code paths. In other words, why do you have to keep DEBUG_VM
+enabled for workloads where the boot time matters so much that few
+seconds matter?
 
-On 2018年09月06日 00:47, Shuah Khan wrote:
-> On 09/04/2018 08:20 PM, Lei Yang wrote:
->> It uses modprobe $TEST_DRIVER in sysctl.sh, so update
->> config to use "m" instead
->>
->> Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
->> ---
->>   tools/testing/selftests/sysctl/config | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/sysctl/config b/tools/testing/selftests/sysctl/config
->> index 6ca1480..fc263ef 100644
->> --- a/tools/testing/selftests/sysctl/config
->> +++ b/tools/testing/selftests/sysctl/config
->> @@ -1 +1 @@
->> -CONFIG_TEST_SYSCTL=y
->> +CONFIG_TEST_SYSCTL=m
->>
-> What happens if it is a built-in? Can you elaborate in the changelog
->
-> On that note we might have other cases that do modprobe in scripts and
-> run into the same issue you are trying to solve. :)
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> ---
+>  include/linux/page-flags.h |    8 ++++++++
+>  lib/Kconfig.debug          |   14 ++++++++++++++
+>  mm/memblock.c              |    5 ++---
+>  mm/sparse.c                |    4 +---
+>  4 files changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index 74bee8cecf4c..0e95ca63375a 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -13,6 +13,7 @@
+>  #include <linux/mm_types.h>
+>  #include <generated/bounds.h>
+>  #endif /* !__GENERATING_BOUNDS_H */
+> +#include <linux/string.h>
+>  
+>  /*
+>   * Various page->flags bits:
+> @@ -162,6 +163,13 @@ static inline int PagePoisoned(const struct page *page)
+>  	return page->flags == PAGE_POISON_PATTERN;
+>  }
+>  
+> +static inline void page_init_poison(struct page *page, size_t size)
+> +{
+> +#ifdef CONFIG_DEBUG_VM_PAGE_INIT_POISON
+> +	memset(page, PAGE_POISON_PATTERN, size);
+> +#endif
+> +}
+> +
+>  /*
+>   * Page flags policies wrt compound pages
+>   *
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 613316724c6a..3b1277c52fed 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -637,6 +637,20 @@ config DEBUG_VM_PGFLAGS
+>  
+>  	  If unsure, say N.
+>  
+> +config DEBUG_VM_PAGE_INIT_POISON
+> +	bool "Enable early page metadata poisoning"
+> +	default y
+> +	depends on DEBUG_VM
+> +	help
+> +	  Seed the page metadata with a poison pattern to improve the
+> +	  likelihood of detecting attempts to access the page prior to
+> +	  initialization by the memory subsystem.
+> +
+> +	  This initialization can result in a longer boot time for systems
+> +	  with a large amount of memory.
+> +
+> +	  If unsure, say Y.
+> +
+>  config ARCH_HAS_DEBUG_VIRTUAL
+>  	bool
+>  
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 237944479d25..a85315083b5a 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1444,10 +1444,9 @@ void * __init memblock_virt_alloc_try_nid_raw(
+>  
+>  	ptr = memblock_virt_alloc_internal(size, align,
+>  					   min_addr, max_addr, nid);
+> -#ifdef CONFIG_DEBUG_VM
+>  	if (ptr && size > 0)
+> -		memset(ptr, PAGE_POISON_PATTERN, size);
+> -#endif
+> +		page_init_poison(ptr, size);
+> +
+>  	return ptr;
+>  }
+>  
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 10b07eea9a6e..67ad061f7fb8 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -696,13 +696,11 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+>  		goto out;
+>  	}
+>  
+> -#ifdef CONFIG_DEBUG_VM
+>  	/*
+>  	 * Poison uninitialized struct pages in order to catch invalid flags
+>  	 * combinations.
+>  	 */
+> -	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
+> -#endif
+> +	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
+>  
+>  	section_mark_present(ms);
+>  	sparse_init_one_section(ms, section_nr, memmap, usemap);
+> 
 
-I double-checked again, found that it doesn't work on either with 
-built-in or kernel module
-if it's built-in, modprobe test_sysctl still return 0, so it doesn't 
-matter it's a built-in or module.
-
-but the problem is that test_modprobe check module load before modprobe 
-execute , I'll sent a V2 patch to fix this and keep its build-in config 
-untouched
-
-
-if changes nothing
-
-1) when  CONFIG_TEST_SYSCTL=y
-root@intel-x86-64:/tmp/sysctl# ./sysctl.sh
-Checking production write strict setting ... ok
-./sysctl.sh: /sys/module/test_sysctl/ not present
-You must have the following enabled in your kernel:
-CONFIG_TEST_SYSCTL=y
-root@intel-x86-64:/tmp/sysctl# zcat /proc/config.gz |grep TEST_SYS
-CONFIG_TEST_SYSCTL=y
-
-
-
-2) when CONFIG_TEST_SYSCTL=m
-root@intel-x86-64:/tmp/sysctl# ./sysctl.sh
-Checking production write strict setting ... ok
-./sysctl.sh: /sys/module/test_sysctl/ not present
-You must have the following enabled in your kernel:
-CONFIG_TEST_SYSCTL=y
-root@intel-x86-64:/tmp/sysctl# zcat /proc/config.gz |grep TEST_SYS
-CONFIG_TEST_SYSCTL=m
-
-
-Lei
-
-> thanks,
-
-> -- Shuah
-
+-- 
+Michal Hocko
+SUSE Labs
