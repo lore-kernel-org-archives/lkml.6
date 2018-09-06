@@ -2,84 +2,130 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D561CC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C46C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1422083D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:06:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1422083D
+	by mail.kernel.org (Postfix) with ESMTP id AA0D120861
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 09:06:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0D120861
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbeIFNk2 (ORCPT
+        id S1728324AbeIFNlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 09:40:28 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35639 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727951AbeIFNk1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 09:40:27 -0400
-Received: by mail-oi0-f65.google.com with SMTP id m11-v6so19162883oic.2;
-        Thu, 06 Sep 2018 02:06:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V70Q4ZLLcaibRVB7EYsFSnYCRxkAB7V7OnzE3w66NZ4=;
-        b=azQKpzWMB/c+zGAUrr1ysy0DoOd67Lz6tS8gmNnLIOCMall8qnnmxqzmEhg3pz1a2s
-         ZYZtQSGTVe/qwkcaa71qGgnf+HvA4aGU62s8PhkteYX14VLf8colEwOS0nwOtg9nwTTX
-         +Pt48jgsnP9BAcw/IGOakyFEuU2iCTX/RYfCNoHxaw3G4AaczurNneMticYbJLPP+/dm
-         sA7QSJqIGYNbZJVoTQyCzULQM0Vij0YhNJV6jDumRsfsCMsknlr1AINsc54apcO7acuG
-         ghKuckb7KclNsUNoxCU3cMFCr4koob8uUq9nYJzQHFDG1avMrs0fx6k8Bp+dL4RElvxz
-         7Utg==
-X-Gm-Message-State: APzg51B7oFB8/ZE3Loy+Gq0FdpHl55MLl+IwZFzvGxftkgVFHcRFCRpL
-        b/rcgEfvVTyZsOQ2ntamGfNYS5ftbL/SIxDn83Y=
-X-Google-Smtp-Source: ANB0VdZGoaLAblg4BOQtXYWiEtzoFm34bhRX3ppE+VG7vZCGo1VhEO+N1fN4DqSSW84lqBTspkN3jHlKNA4DcB98InE=
-X-Received: by 2002:aca:b844:: with SMTP id i65-v6mr1941082oif.177.1536224759848;
- Thu, 06 Sep 2018 02:05:59 -0700 (PDT)
+        Thu, 6 Sep 2018 09:41:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43704 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725894AbeIFNlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 09:41:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 20D98AF75;
+        Thu,  6 Sep 2018 09:06:43 +0000 (UTC)
+Date:   Thu, 6 Sep 2018 11:06:42 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 26/29] memblock: rename __free_pages_bootmem to
+ memblock_free_pages
+Message-ID: <20180906090642.GK14951@dhcp22.suse.cz>
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-27-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <1533875532-24954-1-git-send-email-okaya@kernel.org> <20180905212028.GS107892@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180905212028.GS107892@bhelgaas-glaptop.roam.corp.google.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 6 Sep 2018 11:05:48 +0200
-Message-ID: <CAJZ5v0jA5ibsHseygjOrG_Azw_Xj7y0=TAMks7x-i-yT4+E9QQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] PCI/ACPI: correct error message for ASPM disabling
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     okaya@kernel.org, Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536163184-26356-27-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 5, 2018 at 11:20 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Fri, Aug 10, 2018 at 04:32:11AM +0000, Sinan Kaya wrote:
-> > If _OSC execution fails today for platforms without an _OSC
-> > entry, code is printing a misleading message saying disabling
-> > ASPM as follows:
-> >
-> > acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
-> >
-> > We need to ensure that platform supports ASPM to begin with.
-> >
-> > Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> > Reported-by: Michael Kelley <mikelley@microsoft.com>
->
-> Tentatively applied both to pci/aspm for v4.20, thanks!
->
-> Rafael, let me know if you object or would rather put these through your tree.
+On Wed 05-09-18 18:59:41, Mike Rapoport wrote:
+> The conversion is done using
+> 
+> sed -i 's@__free_pages_bootmem@memblock_free_pages@' \
+>     $(git grep -l __free_pages_bootmem)
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-I have no problems with these and they can go in via the PCI tree as
-far as I'm concerned.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Thanks,
-Rafael
+> ---
+>  mm/internal.h   | 2 +-
+>  mm/memblock.c   | 2 +-
+>  mm/nobootmem.c  | 2 +-
+>  mm/page_alloc.c | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 87256ae..291eb2b 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -161,7 +161,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
+>  }
+>  
+>  extern int __isolate_free_page(struct page *page, unsigned int order);
+> -extern void __free_pages_bootmem(struct page *page, unsigned long pfn,
+> +extern void memblock_free_pages(struct page *page, unsigned long pfn,
+>  					unsigned int order);
+>  extern void prep_compound_page(struct page *page, unsigned int order);
+>  extern void post_alloc_hook(struct page *page, unsigned int order,
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 63df68b..55d7d50 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1639,7 +1639,7 @@ void __init __memblock_free_late(phys_addr_t base, phys_addr_t size)
+>  	end = PFN_DOWN(base + size);
+>  
+>  	for (; cursor < end; cursor++) {
+> -		__free_pages_bootmem(pfn_to_page(cursor), cursor, 0);
+> +		memblock_free_pages(pfn_to_page(cursor), cursor, 0);
+>  		totalram_pages++;
+>  	}
+>  }
+> diff --git a/mm/nobootmem.c b/mm/nobootmem.c
+> index bb64b09..9608bc5 100644
+> --- a/mm/nobootmem.c
+> +++ b/mm/nobootmem.c
+> @@ -43,7 +43,7 @@ static void __init __free_pages_memory(unsigned long start, unsigned long end)
+>  		while (start + (1UL << order) > end)
+>  			order--;
+>  
+> -		__free_pages_bootmem(pfn_to_page(start), start, order);
+> +		memblock_free_pages(pfn_to_page(start), start, order);
+>  
+>  		start += (1UL << order);
+>  	}
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 33c9e27..e143fae 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1333,7 +1333,7 @@ meminit_pfn_in_nid(unsigned long pfn, int node,
+>  #endif
+>  
+>  
+> -void __init __free_pages_bootmem(struct page *page, unsigned long pfn,
+> +void __init memblock_free_pages(struct page *page, unsigned long pfn,
+>  							unsigned int order)
+>  {
+>  	if (early_page_uninitialised(pfn))
+> -- 
+> 2.7.4
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
