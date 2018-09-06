@@ -2,105 +2,135 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F90BC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B7BC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C638E205F4
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:42:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C638E205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CBD422077C
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 12:43:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD422077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbeIFRSK (ORCPT
+        id S1728642AbeIFRSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 13:18:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:44952 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbeIFRSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 13:18:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2A7380D;
-        Thu,  6 Sep 2018 05:42:50 -0700 (PDT)
-Received: from [10.4.12.111] (ostrya.emea.arm.com [10.4.12.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 206BF3F575;
-        Thu,  6 Sep 2018 05:42:48 -0700 (PDT)
-Subject: Re: [PATCH v5 13/23] iommu: introduce device fault report API
-To:     Auger Eric <eric.auger@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
+        Thu, 6 Sep 2018 13:18:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727514AbeIFRSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 13:18:54 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w86CcnqW021261
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Sep 2018 08:43:34 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mb2y9mf4q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 08:43:33 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 6 Sep 2018 13:43:31 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Sep 2018 13:43:25 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w86ChOYp43319318
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Sep 2018 12:43:24 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A977FA4055;
+        Thu,  6 Sep 2018 15:43:16 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80CFEA4040;
+        Thu,  6 Sep 2018 15:43:15 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.92])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  6 Sep 2018 15:43:15 +0100 (BST)
+Date:   Thu, 6 Sep 2018 15:43:21 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     Jean Delvare <khali@linux-fr.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>
-References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1526072055-86990-14-git-send-email-jacob.jun.pan@linux.intel.com>
- <2094d667-5dbf-b4b8-8e19-c76d67b82362@redhat.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <e19eb88b-b24b-66bc-8d5b-6196b26f1456@arm.com>
-Date:   Thu, 6 Sep 2018 13:42:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        mingo@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
+        paul.burton@mips.com, Thomas Gleixner <tglx@linutronix.de>,
+        tony.luck@intel.com, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 07/29] memblock: remove _virt from APIs returning
+ virtual address
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-8-git-send-email-rppt@linux.vnet.ibm.com>
+ <CABGGiswdb1x-=vqrgxZ9i2dnLdsgtXq4+5H9Y1JRd90YVMW69A@mail.gmail.com>
+ <20180905172017.GA2203@rapoport-lnx>
+ <20180906072800.GN14951@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <2094d667-5dbf-b4b8-8e19-c76d67b82362@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906072800.GN14951@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18090612-4275-0000-0000-000002B63863
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090612-4276-0000-0000-000037BF5782
+Message-Id: <20180906124321.GD27492@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809060129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/09/2018 10:25, Auger Eric wrote:
->> +		mutex_lock(&fparam->lock);
->> +		list_add_tail(&evt_pending->list, &fparam->faults);
-> same doubt as Yi Liu. You cannot rely on the userspace willingness to
-> void the queue and deallocate this memory.
+On Thu, Sep 06, 2018 at 09:28:00AM +0200, Michal Hocko wrote:
+> On Wed 05-09-18 20:20:18, Mike Rapoport wrote:
+> > On Wed, Sep 05, 2018 at 12:04:36PM -0500, Rob Herring wrote:
+> > > On Wed, Sep 5, 2018 at 11:00 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+> > > >
+> > > > The conversion is done using
+> > > >
+> > > > sed -i 's@memblock_virt_alloc@memblock_alloc@g' \
+> > > >         $(git grep -l memblock_virt_alloc)
+> > > 
+> > > What's the reason to do this? It seems like a lot of churn even if a
+> > > mechanical change.
+> > 
+> > I felt that memblock_virt_alloc_ is too long for a prefix, e.g:
+> > memblock_virt_alloc_node_nopanic, memblock_virt_alloc_low_nopanic.
+> > 
+> > And for consistency I've changed the memblock_virt_alloc as well.
 > 
-> SMMUv3 holds a queue of events whose size is implementation dependent.
-> I think such a queue should be available at SW level and its size should
-> be negotiated.
+> I would keep the current API unless the name is terribly misleading or
+> it can be improved a lot. Neither seems to be the case here. So I would
+> rather stick with the status quo.
 
-Note that this fault API can also be used by host device drivers that
-want to be notified on fault, in which case a direct callback seems
-easier to use, and perhaps more efficient than an intermediate queue.
+I'm ok with the memblock_virt_alloc by itself, but having 'virt' in
+'memblock_virt_alloc_try_nid_nopanic' and 'memblock_virt_alloc_low_nopanic'
+reduces code readability in my opinion.
 
-When injecting faults into userspace it makes sense to batch events, to
-avoid context switches. Even though that queue management should
-probably be done by VFIO, the IOMMU API has to help in some way, at
-least to tell VFIO when the IOMMU driver is done processing a batch of
-event.
+Besides, from what I've seen, many users of memblock_phys_alloc can be
+converted to the virtual variant and then we can just have memblock_alloc
+everywhere in the end.
 
-> Note SMMU has separate queues for PRI and fault events. Here you use the
-> same queue for all events. I don't know if it would make sense to have
-> separate APIs?
+Currently there are ~70 users of memblock_virt_alloc*, but with the
+bootmem -> memblock conversion we'll be adding ~140 more.
 
-Host device drivers that use this API to be notified on fault can't deal
-with arch-specific event formats (SMMU event, Vt-d fault event, etc), so
-the APIs should be arch-agnostic. Given that requirement, using a single
-iommu_fault_event structure for both PRI and event queues made sense,
-especially since the even queue can have stall events that look a lot
-like PRI page requests.
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
 
-Or do you mean separate APIs for recoverable and non-recoverable faults?
-Using the same queue for PRI and stall event, and a separate one for
-non-recoverable events?
+-- 
+Sincerely yours,
+Mike.
 
-Separate queues may be useful for the device driver scenario
-(non-virtualization), where recoverable faults are handled by
-io-pgfaults while non-recoverable ones could be reported directly to the
-device driver. For this case I was thinking of adding a
-multiple-consumer thing: both io-pgfaults and the device driver register
-a fault handler. io-pgfault handles recoverable ones and what's left
-goes to the device driver. This could also allow the device driver to be
-notified when io-pgfault doesn't successfully handle a fault
-(handle_mm_fault returns an error).
-
-Thanks,
-Jean
