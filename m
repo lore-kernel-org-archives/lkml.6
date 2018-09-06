@@ -2,141 +2,134 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDF5C4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4E4C4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80628206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:29:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="KAUGPfMO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80628206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id D71E520659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:29:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D71E520659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeIGDGl (ORCPT
+        id S1728798AbeIGDHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 23:06:41 -0400
-Received: from com-out001.mailprotect.be ([83.217.72.83]:34481 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeIGDGk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 23:06:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:Mime-Version:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:
-        reply-to:sender:bcc; bh=w2URl6XFYSrmWtyjBiuKWDlXpzEAnzkGVY9D5gogAYA=; b=KAUGP
-        fMOoijh0McbXPVcbXOpdC2Wa+LoEzfJgwtC32MdekPxCXMxL6uWPVa9iFT42LRrVhbDxIBE6dVfyg
-        Ol+KQUWhxfCJpiJkQMAENCFc1tfGMS30YZ26V48zbE4NrHyeVffY+cCaEu6TZrM88WhjbvTnzegot
-        d0+tVlKPGB6XzFygPjanqE+2hmAqPNlDR7TRyUmHXtC589gu/eyDFQxSOEN+1eaDobOCltNsKHsVy
-        ir9/KUPjT7NjHzZcM+xENS87KAilHqsGSOOEUks2JUGY8NdMf/9EtH3l5f+Zj6292b0aXi7R9baNj
-        XIX0ibT0fXOR3BowJqRSXJnnK6dCg==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1fy2ld-0002Zy-UB; Fri, 07 Sep 2018 00:28:50 +0200
-Received: from [100.110.80.9] (unknown [104.132.0.105])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id F1DADC1A2D;
-        Fri,  7 Sep 2018 00:27:51 +0200 (CEST)
-Message-ID: <1536272873.26747.11.camel@acm.org>
-Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
- rotational device
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Xuewei Zhang <xueweiz@google.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Ming Lei <ming.lei@redhat.com>, Hannes Reinecke <hare@suse.de>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aditya Kali <adityakali@google.com>,
-        tytso@mit.edu, Guenter Roeck <groeck@chromium.org>, maze@google.com
-Date:   Thu, 06 Sep 2018 15:27:53 -0700
-In-Reply-To: <20180906203719.209399-1-xueweiz@google.com>
-References: <20180906203719.209399-1-xueweiz@google.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 178.208.39.155
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.06)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5haRi3fSQbdpGJk/+dzZLrV602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO6vKcmAs6CbufrvwgXALYJ2A5LiDfh3lq6IyugVpruaU7sA8c0G8vPgpF/mOUR3AbCXA
- rInbZ6qIwLyBZyJW/YCT9Ui8ESSPXhfBI/CVeVpLWv7L6YAFQCVyuHTI87HxBfWpAw+3oS8eQJ1j
- rvdLDWC8eVP+pWyk8IQQ1lL3EHX54FFwuzjqg0YMSb5Z0gwwMsQa9E0mv5W8tg6akrbeq2/q3gKP
- YN4pDx6T+Gom7LQv3fOjRDD9OGUKRZmyo9aj/eZNohDx+e40Z/8DK3FY6+L//vWhll9ubWTAaTwX
- JtFJvdePI8pMO8g15dV4F8DQ+QgXAmY3WV/PikYBtj1zgVj/gbuP7hnUK8NQdLwsVWKI5h95nPh9
- a549uEJDlX2zbVNiLZt/QXQnOBRD+jq1HsIsPYYqgCE9VHi2RrGTOb8LhakTPTmcFbPlFqk6vwQX
- 6xjisIUymzDZZZVpKet7jIJvhPVU8VsnjvDKPRgDOuBhdnrLabUgNzEO/QU0BfnnNN0e4JZGLi4N
- 7z34dRW8He8OS36jJS0vGLHCMBZ8qZbSH5hAeUS9cQyvi5qmSFkUknN5Z0HND1jmKFhIjcMZ2Hzp
- D59QdM/f9KJhSSfjTAUyLIywuTEI0kISK7u1AZUYswhRnz2TBlRANbxfwyKJau9SJCaCv74Yh1P8
- 2G5a6FUfCqKyMMr9DC5xv10I1RUEoMex+02z+OLc6JgtScTK+tB+krcu2EUkcwJAT4fgYEF9hqUv
- gugTwCBLPD4olaNxG1Uzhk3emVQ3gGhRNfbGmn/DPdxtH4YeHcdUG7t52t8IQOrYSw1F+nigO8Hc
- zQSiYxqZR3KVQgqF/fPYYAfEfshY5+rKdpQX0JCawTpXLsZHDi5vUxN7tsrs2aYakAmICYctZ3oQ
- Q+5COuHUJqi4YtG2OdWr+Or9P0IHyk2pZXI5Aop9L1WAXCZ22036WHg8viWNUl/fumlD47sXPQEl
- p1YRFZ4oobg8BBg3Jq+ntzj0/GqJg4E/KNK41fXYWiMK3hUu9uwJu0VOx5JgxLZ/jzE0W0tXqNpM
- nBA6RYf5L0Fe/whJRtf29za4rlun4XgebHLYM3A6BXfvel8OEFDbU53Bgg0jWhcETmPWhuXbFcbm
- /oZH2lvlQsC8AzMlaaDx/cdXogrgAlIbNoRIs8zFcDjnShMu2z+YCLdt1O36QJzT4QKoDPA69FJ5
- 6j6TBEeRw33i5WSyISiVtdP1UgGt/UpwRJ/eXhAiot4MY812nNgiJt0ptDwHWmhqaO2WHXIzPWeB
- 6FPJK/BpIbQy+VVErox5P1XXf9064N+GSqYoBRs3
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+        Thu, 6 Sep 2018 23:07:19 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:56624 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727770AbeIGDHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 23:07:18 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 2CACCC025E;
+        Fri,  7 Sep 2018 00:29:39 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id CABA6C0F74; Fri,  7 Sep 2018 00:29:37 +0200 (CEST)
+Received: from localhost.localdomain (collins [192.168.1.129])
+        by gagarine.paulk.fr (Postfix) with ESMTP id 96487C0F5A;
+        Fri,  7 Sep 2018 00:25:06 +0200 (CEST)
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v9 3/9] media: v4l: Add definition for the Sunxi tiled NV12 format
+Date:   Fri,  7 Sep 2018 00:24:36 +0200
+Message-Id: <20180906222442.14825-4-contact@paulk.fr>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180906222442.14825-1-contact@paulk.fr>
+References: <20180906222442.14825-1-contact@paulk.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-06 at 13:37 -0700, Xuewei Zhang wrote:
-+AD4 Currently a scsi device won't contribute to kernel randomness when it
-+AD4 uses blk-mq. Since we commonly use scsi on rotational device with
-+AD4 blk-mq, it make sense to keep contributing to kernel randomness in these
-+AD4 cases. This is especially important for virtual machines.
-+AD4 
-+AD4 commit b5b6e8c8d3b4 (+ACI-scsi: virtio+AF8-scsi: fix IO hang caused by automatic
-+AD4 irq vector affinity+ACI) made all virtio-scsi device to use blk-mq, which
-+AD4 does not contribute to randomness today. So for a virtual machine only
-+AD4 having virtio-scsi disk (which is common), it will simple stop getting
-+AD4 randomness from its disks in today's implementation.
-+AD4 
-+AD4 With this patch, if the above VM has rotational virtio-scsi device, then
-+AD4 it can still benefit from the entropy generated from the disk.
-+AD4 
-+AD4 Reported-by: Xuewei Zhang +ADw-xueweiz+AEA-google.com+AD4
-+AD4 Signed-off-by: Xuewei Zhang +ADw-xueweiz+AEA-google.com+AD4
-+AD4 ---
-+AD4  drivers/scsi/sd.c +AHw 3 +-+-+-
-+AD4  1 file changed, 3 insertions(+-)
-+AD4 
-+AD4 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-+AD4 index b79b366a94f7..5e4f10d28065 100644
-+AD4 --- a/drivers/scsi/sd.c
-+AD4 +-+-+- b/drivers/scsi/sd.c
-+AD4 +AEAAQA -2959,6 +-2959,9 +AEAAQA static void sd+AF8-read+AF8-block+AF8-characteristics(struct
-+AD4 scsi+AF8-disk +ACo-sdkp)
-+AD4  	if (rot +AD0APQ 1) +AHs
-+AD4  		blk+AF8-queue+AF8-flag+AF8-set(QUEUE+AF8-FLAG+AF8-NONROT, q)+ADs
-+AD4  		blk+AF8-queue+AF8-flag+AF8-clear(QUEUE+AF8-FLAG+AF8-ADD+AF8-RANDOM, q)+ADs
-+AD4 +-	+AH0 else +AHs
-+AD4 +-		blk+AF8-queue+AF8-flag+AF8-clear(QUEUE+AF8-FLAG+AF8-NONROT, q)+ADs
-+AD4 +-		blk+AF8-queue+AF8-flag+AF8-set(QUEUE+AF8-FLAG+AF8-ADD+AF8-RANDOM, q)+ADs
-+AD4  	+AH0
-+AD4  
-+AD4  	if (sdkp-+AD4-device-+AD4-type +AD0APQ TYPE+AF8-ZBC) +AHs
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Although this patch looks fine to me, seeing this patch makes me wonder
-whether the default should be changed (QUEUE+AF8-FLAG+AF8-MQ+AF8-DEFAULT) instead of
-modifying the sd driver. Can anyone remind me why QUEUE+AF8-FLAG+AF8-MQ+AF8-DEFAULT does
-not include QUEUE+AF8-FLAG+AF8-ADD+AF8-RANDOM?
+This introduces support for the Sunxi tiled NV12 format, where each
+component of the YUV frame is divided into macroblocks. Hence, the size
+of each plane requires specific alignment. The pixels inside each
+macroblock are coded in linear order (line after line from top to
+bottom).
 
-Thanks,
+This tiled NV12 format is used by the video engine on Allwinner
+platforms: it is the default format for decoded frames (and the only
+one available in the oldest supported platforms).
 
-Bart.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ Documentation/media/uapi/v4l/pixfmt-reserved.rst | 15 ++++++++++++++-
+ drivers/media/v4l2-core/v4l2-ioctl.c             |  1 +
+ include/uapi/linux/videodev2.h                   |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/media/uapi/v4l/pixfmt-reserved.rst b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
+index 38af1472a4b4..0c399858bda2 100644
+--- a/Documentation/media/uapi/v4l/pixfmt-reserved.rst
++++ b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
+@@ -243,7 +243,20 @@ please make a proposal on the linux-media mailing list.
+ 	It is an opaque intermediate format and the MDP hardware must be
+ 	used to convert ``V4L2_PIX_FMT_MT21C`` to ``V4L2_PIX_FMT_NV12M``,
+ 	``V4L2_PIX_FMT_YUV420M`` or ``V4L2_PIX_FMT_YVU420``.
+-
++    * .. _V4L2-PIX-FMT-SUNXI-TILED-NV12:
++
++      - ``V4L2_PIX_FMT_SUNXI_TILED_NV12``
++      - 'ST12'
++      - Two-planar NV12-based format used by the video engine found on Allwinner
++	(codenamed sunxi) platforms, with 32x32 tiles for the luminance plane
++	and 32x64 tiles for the chrominance plane. The data in each tile is
++	stored in linear order, within the tile bounds. Each tile follows the
++	previous one linearly in memory (from left to right, top to bottom).
++
++	The associated buffer dimensions are aligned to match an integer number
++	of tiles, resulting in 32-aligned resolutions for the luminance plane
++	and 16-aligned resolutions for the chrominance plane (with 2x2
++	subsampling).
+ 
+ .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
+ 
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 1a8feaf6c3f7..c148c44caffb 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1337,6 +1337,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 		case V4L2_PIX_FMT_SE401:	descr = "GSPCA SE401"; break;
+ 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
+ 		case V4L2_PIX_FMT_MT21C:	descr = "Mediatek Compressed Format"; break;
++		case V4L2_PIX_FMT_SUNXI_TILED_NV12: descr = "Sunxi Tiled NV12 Format"; break;
+ 		default:
+ 			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
+ 			if (fmt->description[0])
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 314ec7a5f046..7412a255d9ce 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -677,6 +677,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
+ #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
+ #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
++#define V4L2_PIX_FMT_SUNXI_TILED_NV12 v4l2_fourcc('S', 'T', '1', '2') /* Sunxi Tiled NV12 Format */
+ 
+ /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
+ #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
+-- 
+2.18.0
 
