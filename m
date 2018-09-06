@@ -2,88 +2,92 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DD1C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E4CC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0982075E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:30:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0982075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 43C2B2075E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 19:33:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="VL9jg9H+";
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="pysE7kyT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C2B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=akkea.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeIGAHc (ORCPT
+        id S1728434AbeIGAKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 20:07:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34610 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbeIGAHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 20:07:32 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fxzz3-0005mY-4S; Thu, 06 Sep 2018 21:30:29 +0200
-Date:   Thu, 6 Sep 2018 21:30:29 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com
-Subject: Re: [PATCH RT 00/22] Linux 4.14.63-rt41-rc1
-Message-ID: <20180906193028.jvyp2dj3rto4ax7s@linutronix.de>
-References: <20180905122754.443196118@goodmis.org>
- <20180906075434.xa64dy7d6p4yolyi@linutronix.de>
- <20180906124349.56b89024@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180906124349.56b89024@gandalf.local.home>
-User-Agent: NeoMutt/20180716
+        Thu, 6 Sep 2018 20:10:38 -0400
+Received: from node.akkea.ca ([192.155.83.177]:40694 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728011AbeIGAKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 20:10:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 1BE145420F0;
+        Thu,  6 Sep 2018 19:27:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1536262023; bh=pl8iQv5Xs8vqp2I/bTrbJRdWs0RmqcAX9AMOI1isexs=;
+        h=From:To:Cc:Subject:Date;
+        b=VL9jg9H+OwOUyklxa3z0FKhASmM4+MSttC5FOGcCB9N+W8N2uTLz1eg8Kef/b9vMq
+         /SATYMgMeweMw+cvJ88gzPOACr2yWo4J0WRNkcERc3vNWaxTyq5Dt2SAyRRARFk0pN
+         iN63/vPWdVkPKAGjZsoCPWRYneQWtKX0IqUm9pjE=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TrWbLe468vYm; Thu,  6 Sep 2018 19:27:02 +0000 (UTC)
+Received: from localhost.localdomain (S010614dae980e3b8.cg.shawcable.net [68.147.236.72])
+        by node.akkea.ca (Postfix) with ESMTPSA id 4B6F45420EE;
+        Thu,  6 Sep 2018 19:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1536262022; bh=pl8iQv5Xs8vqp2I/bTrbJRdWs0RmqcAX9AMOI1isexs=;
+        h=From:To:Cc:Subject:Date;
+        b=pysE7kyT3weFKa5CX3ngo3RsB06CwlH4Ga5JMR9Lh0iehRrQIfhj/I+5A4cJ2QZN1
+         BVyZWhyw8pe94KfSVnTJHRCE/IRiSRB/UHGB8NKMOeGYAynrszO/mMQSHbAgmbS5Om
+         2G2ompKUGbekpeWoIZhwfrWeCg8A78cd3vlyfp/4=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>
+Subject: [PATCH] usb: typec: don't disable sink or source on initialization
+Date:   Thu,  6 Sep 2018 13:26:44 -0600
+Message-Id: <20180906192644.24587-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-06 12:43:49 [-0400], Steven Rostedt wrote:
-> > Your tree (v4.14.63) has
-> >   80d20d35af1ed ("nohz: Fix local_timer_softirq_pending()")
-> >   0a0e0829f9901 ("nohz: Fix missing tick reprogram when interrupting an
-> >                  inline softirq")
-> > 
-> > which means that the patch "nohz: Prevent erroneous tick stop
-> > invocations" can be reverted / dropped. It might have clashed during the
-> > emerge of the stable tree.
-> >
-> 
-> My tree also has this:
-> 
-> commit 5536f5491a2e098 
-> 
->     softirq: keep the 'softirq pending' check RT-only
->     
->     The patch "nohz: Prevent erroneous tick stop invocations" was merged
->     differently upstream. The original issue where a slow box could lock up
->     with a pending timer remained. I currently assume that this is a RT only
->     issue and keep the patch as RT only.
->     
->     Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> 
-> What needs to be done?
+If the board is being powered by USB disabling the source and sink
+can remove power from the board. Default to source and sink enabled.
 
-This commit can be removed / reverted. The two commits (80d20d35af1ed
-and 0a0e0829f9901) fix the issue and this duct-tape commit
-(5536f5491a2e098) is no longer required.
+Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+---
+ drivers/usb/typec/tcpm.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> -- Steve
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index ca7bedb46f7f..a1b819cf31da 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -2462,9 +2462,11 @@ static int tcpm_init_vbus(struct tcpm_port *port)
+ {
+ 	int ret;
+ 
+-	ret = port->tcpc->set_vbus(port->tcpc, false, false);
+-	port->vbus_source = false;
+-	port->vbus_charge = false;
++	/* default to source and sink enabled in case USB is our only power
++	 * source */
++	ret = port->tcpc->set_vbus(port->tcpc, true, true);
++	port->vbus_source = true;
++	port->vbus_charge = true;
+ 	return ret;
+ }
+ 
+-- 
+2.17.1
 
-Sebastian
