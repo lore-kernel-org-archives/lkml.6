@@ -2,94 +2,126 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0683AC4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7326DC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0E7520659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:31:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KPb+9j16";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ApNvNCmH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0E7520659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C68B2083D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:34:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C68B2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbeIGDJQ (ORCPT
+        id S1728366AbeIGDM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 23:09:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49006 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbeIGDJQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 23:09:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 638D06029D; Thu,  6 Sep 2018 22:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536273097;
-        bh=wR04+f4Fc/Bwj57JlbTjkLiGK3lT1+KRkjYu6+0g5Xk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KPb+9j16d/PUSeClI3pi2PNsbeUPEt4KD8kmmDabBgIKe1QBZGG1Z5PGwI832s0UV
-         ly2YZ6ItbJluQxn4hqnKcXxtxMKNT7qQFPKDS4/BhvOEhVYMFFDst/Q0s12CA8LlOU
-         y/NNAwuI2kyu+BNgfsCXSw28/eud5Zz/lK9INxak=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id DCEC9601D9;
-        Thu,  6 Sep 2018 22:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536273096;
-        bh=wR04+f4Fc/Bwj57JlbTjkLiGK3lT1+KRkjYu6+0g5Xk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ApNvNCmHXxhmaqkecEgHpwNWqk+6SkqT5XW5Az6YyGEVs6XkHnCQ00/mjEdv32G7l
-         lRKpFNvqqSjaCYhIM31hRBYH66y/59QY0hGuW2apVe8Hxo5IeBv/OOlgXS12/lYpWt
-         psNdf5HyFstCZRSHLU6fEQnMDKSvqGbfg30tZsnI=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 06 Sep 2018 15:31:36 -0700
-From:   vnkgutta@codeaurora.org
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Borislav Petkov <bp@alien8.de>, evgreen@chromium.org,
-        robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org
-Subject: Re: [PATCH v4 3/4] drivers: edac: Add EDAC driver support for QCOM
- SoCs
-In-Reply-To: <105f8339-61bc-072e-0498-ed44470a5fb8@codeaurora.org>
-References: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
- <1536103345-1919-4-git-send-email-vnkgutta@codeaurora.org>
- <105f8339-61bc-072e-0498-ed44470a5fb8@codeaurora.org>
-Message-ID: <5d8f92b480e1b53e7e04da965d44f7ea@codeaurora.org>
-X-Sender: vnkgutta@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Thu, 6 Sep 2018 23:12:29 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:56728 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726031AbeIGDM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 23:12:28 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 602E4BFD9A;
+        Fri,  7 Sep 2018 00:34:48 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 13DE0C0F7E; Fri,  7 Sep 2018 00:34:47 +0200 (CEST)
+Received: from localhost.localdomain (collins [192.168.1.129])
+        by gagarine.paulk.fr (Postfix) with ESMTP id 03002C0F60;
+        Fri,  7 Sep 2018 00:25:07 +0200 (CEST)
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH v9 6/9] ARM: dts: sun5i: Add Video Engine and reserved memory nodes
+Date:   Fri,  7 Sep 2018 00:24:39 +0200
+Message-Id: <20180906222442.14825-7-contact@paulk.fr>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180906222442.14825-1-contact@paulk.fr>
+References: <20180906222442.14825-1-contact@paulk.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-06 05:38, Sai Prakash Ranjan wrote:
-> On 9/5/2018 4:52 AM, Venkata Narendra Kumar Gutta wrote:
->> +static const struct of_device_id qcom_llcc_edac_match_table[] = {
->> +	{ .compatible = "qcom,llcc-edac" },
->> +	{ },
->> +};
->> +
->> 
-> Hi Venkata,
-> 
-> Devicetree binding for llcc is updated, but what about this compatible?
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Does it need documentation too? I was not sure if I should add 
-documentation for this or not!
+This adds nodes for the Video Engine and the associated reserved memory
+for sun5i-based platforms. Up to 96 MiB of memory are dedicated to the
+CMA pool.
 
-> 
-> Regards,
-> Sai
+The VPU can only map the first 256 MiB of DRAM, so the reserved memory
+pool has to be located in that area. Following Allwinner's decision in
+downstream software, the last 96 MiB of the first 256 MiB of RAM are
+reserved for this purpose.
+
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ arch/arm/boot/dts/sun5i.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 8bfb36651177..9cd65c46720b 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -108,6 +108,21 @@
+ 		};
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
++		cma_pool: cma@4a000000 {
++			compatible = "shared-dma-pool";
++			size = <0x6000000>;
++			alloc-ranges = <0x4a000000 0x6000000>;
++			reusable;
++			linux,cma-default;
++		};
++	};
++
+ 	soc@1c00000 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -294,6 +309,17 @@
+ 			};
+ 		};
+ 
++		video-codec@1c0e000 {
++			compatible = "allwinner,sun5i-a13-video-engine";
++			reg = <0x01c0e000 0x1000>;
++			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
++				 <&ccu CLK_DRAM_VE>;
++			clock-names = "ahb", "mod", "ram";
++			resets = <&ccu RST_VE>;
++			interrupts = <53>;
++			allwinner,sram = <&ve_sram 1>;
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun5i-a13-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+-- 
+2.18.0
+
