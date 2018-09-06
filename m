@@ -6,83 +6,130 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C3FC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C4DC43334
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D7420857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03D7420857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B17220857
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 10:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B17220857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbeIFPOU (ORCPT
+        id S1728570AbeIFPQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 11:14:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11668 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727738AbeIFPOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 11:14:19 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 241947449EE;
-        Thu,  6 Sep 2018 18:39:25 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 6 Sep 2018
- 18:39:16 +0800
-Subject: Re: [PATCH 1/2 dhowells/mount-api] staging: erofs: rename superblock
- flags (MS_xyz -> SB_xyz)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        <weidu.du@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-References: <1536224508-66168-1-git-send-email-gaoxiang25@huawei.com>
- <17402.1536228489@warthog.procyon.org.uk>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <1643231b-7538-0f43-1670-7fddadd7ca87@huawei.com>
-Date:   Thu, 6 Sep 2018 18:37:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <17402.1536228489@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 6 Sep 2018 11:16:51 -0400
+Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:58872 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727738AbeIFPQv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 11:16:51 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id CA1F545BC;
+        Thu,  6 Sep 2018 10:41:59 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: humor71_4b7af303c3e0c
+X-Filterd-Recvd-Size: 3639
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  6 Sep 2018 10:41:58 +0000 (UTC)
+Message-ID: <f0dd985b91258f1990e77a2731a59e007dd8a0e0.camel@perches.com>
+Subject: Re: [PATCH v2 1/2] staging: rtl8188eu: remove empty if statement in
+ rtw_led.c
+From:   Joe Perches <joe@perches.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Michael Straube <straube.linux@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 06 Sep 2018 03:41:57 -0700
+In-Reply-To: <20180906103248.oxo655vyfmwgwgj4@mwanda>
+References: <20180905184408.31175-1-straube.linux@gmail.com>
+         <20180906103248.oxo655vyfmwgwgj4@mwanda>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/9/6 18:08, David Howells wrote:
-> Gao Xiang <gaoxiang25@huawei.com> wrote:
+On Thu, 2018-09-06 at 13:32 +0300, Dan Carpenter wrote:
+> Thanks.
 > 
->> This patch follows commit 1751e8a6cb93 ("Rename superblock
->> flags (MS_xyz -> SB_xyz)") and after commit ("vfs: Suppress
->> MS_* flag defs within the kernel unless explicitly enabled"),
->> there is no MS_RDONLY and MS_NOATIME at all.
->>
->> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> I recommend pushing this one to Linus now.  It's trivial enough.
+> Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi David,
-I personally think that is fine, but I'd like to get Greg's idea and agreement, too...
+Trivial, but these case statement blocks should prefer
+unindented blocks instead of reformatting the test.
 
-> 
-> Reviewed-by: David Howells <dhowells@redhat.com>
+Perhaps similar to the below for each of the cases:
+---
+ drivers/staging/rtl8188eu/core/rtw_led.c | 53 ++++++++++++++++----------------
+ 1 file changed, 27 insertions(+), 26 deletions(-)
 
-Hi Greg,
+diff --git a/drivers/staging/rtl8188eu/core/rtw_led.c b/drivers/staging/rtl8188eu/core/rtw_led.c
+index cbef871a7679..d9c19c1cda16 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_led.c
++++ b/drivers/staging/rtl8188eu/core/rtw_led.c
+@@ -290,33 +290,34 @@ static void SwLedControlMode1(struct adapter *padapter, enum LED_CTL_MODE LedAct
+ 		}
+ 		break;
+ 	case LED_CTL_SITE_SURVEY:
+-		if ((pmlmepriv->LinkDetectInfo.bBusyTraffic) && (check_fwstate(pmlmepriv, _FW_LINKED))) {
+-			;
+-		} else if (!pLed->bLedScanBlinkInProgress) {
+-			if (IS_LED_WPS_BLINKING(pLed))
+-				return;
+-			if (pLed->bLedNoLinkBlinkInProgress) {
+-				del_timer_sync(&pLed->BlinkTimer);
+-				pLed->bLedNoLinkBlinkInProgress = false;
+-			}
+-			if (pLed->bLedLinkBlinkInProgress) {
+-				del_timer_sync(&pLed->BlinkTimer);
+-				 pLed->bLedLinkBlinkInProgress = false;
+-			}
+-			if (pLed->bLedBlinkInProgress) {
+-				del_timer_sync(&pLed->BlinkTimer);
+-				pLed->bLedBlinkInProgress = false;
+-			}
+-			pLed->bLedScanBlinkInProgress = true;
+-			pLed->CurrLedState = LED_BLINK_SCAN;
+-			pLed->BlinkTimes = 24;
+-			if (pLed->bLedOn)
+-				pLed->BlinkingLedState = RTW_LED_OFF;
+-			else
+-				pLed->BlinkingLedState = RTW_LED_ON;
+-			mod_timer(&pLed->BlinkTimer, jiffies +
+-				  msecs_to_jiffies(LED_BLINK_SCAN_INTERVAL_ALPHA));
++		if (pmlmepriv->LinkDetectInfo.bBusyTraffic &&
++		    check_fwstate(pmlmepriv, _FW_LINKED))
++			break;
++		if (pLed->bLedScanBlinkInProgress)
++			break;
++		if (IS_LED_WPS_BLINKING(pLed))
++			return;
++		if (pLed->bLedNoLinkBlinkInProgress) {
++			del_timer_sync(&pLed->BlinkTimer);
++			pLed->bLedNoLinkBlinkInProgress = false;
++		}
++		if (pLed->bLedLinkBlinkInProgress) {
++			del_timer_sync(&pLed->BlinkTimer);
++			pLed->bLedLinkBlinkInProgress = false;
++		}
++		if (pLed->bLedBlinkInProgress) {
++			del_timer_sync(&pLed->BlinkTimer);
++			pLed->bLedBlinkInProgress = false;
+ 		}
++		pLed->bLedScanBlinkInProgress = true;
++		pLed->CurrLedState = LED_BLINK_SCAN;
++		pLed->BlinkTimes = 24;
++		if (pLed->bLedOn)
++			pLed->BlinkingLedState = RTW_LED_OFF;
++		else
++			pLed->BlinkingLedState = RTW_LED_ON;
++		mod_timer(&pLed->BlinkTimer, jiffies +
++			  msecs_to_jiffies(LED_BLINK_SCAN_INTERVAL_ALPHA));
+ 		break;
+ 	case LED_CTL_TX:
+ 	case LED_CTL_RX:
 
-As David suggested above, could you please help merge this patch to Linus?
-It's trivial enough (since the commit 1751e8a6cb93) and MS_xyz will be removed
-in the new mount apis patchset...
-
-Thanks in advance...
-
-Thanks,
-Gao Xiang
