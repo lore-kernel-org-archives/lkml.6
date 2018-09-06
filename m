@@ -2,128 +2,153 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A495EC433F5
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F34FAC433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 512C020857
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:13:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A6ovPMPP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 512C020857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A1F2520844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F2520844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbeIFSta (ORCPT
+        id S1729795AbeIFSul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:49:30 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45510 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728905AbeIFSta (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:49:30 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u83-v6so9423734lje.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 07:13:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=BuMxjxZ+2MvmTLTZqSQIbnuGHXcgd8YbQtM3hlMRd4s=;
-        b=A6ovPMPPdt0ecYJKpqTXVF9igCaWarjk+W36Hne7yYTavkVdiogx5O+RTxm2O/8kbc
-         K/GlClVKpb13ahb94qGOvRoXrIc6NPyoF8wQe9Gpq7UGe1oF2Z/EYZYCsJ/9H80BwavZ
-         Ras2Cn4ts1ppDdkzjq8eHBS71fr8zDm5/5WaA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=BuMxjxZ+2MvmTLTZqSQIbnuGHXcgd8YbQtM3hlMRd4s=;
-        b=bDk38eeDMTKAZ5+vb01MGDlnluzckR7XmLx+UjDKn31jku+Dncvz6+wETTLarI4Ki7
-         bnoa0YgM1Dm2MW3f0P+IoHWRvOQ19GZdYA+eUntNsXxpmTOXi3uffQwUbFIb8Zn5dKI6
-         OF9TjalAEzCLWrn3HjkCyLo2VsmgFCjOza7Ph3KkDl5yXJu2w1U7XolloWj5+ec/7M33
-         1WKy3bK8zJ60y9m66a+l/QQ6Jy9MUzzenoK6lRKQZZdoVKxqVyMtwl5Y7KH4RnhdWlL/
-         Jb/nUmSPJ/jhcEl6U6sclSBk5PqAn3GDkCGAWTXZynxtmlRHgE/2BOmycKWUDviA3JZ/
-         aGSQ==
-X-Gm-Message-State: APzg51ArxURq8SUmhxAPigReU2WymZDpaVxjnvxbiZ5y4gFCEzOtjqdB
-        Bs82PNnIKx3V6Oi2pNq5Ktwk2rcrVrXzyZrNOEpuhQ==
-X-Google-Smtp-Source: ANB0VdahyMxnmBj0lYLyiutT3PuIwLe7VAF1UN4nRRiGlJLJd/14jYlswhJOVq3uyaF2uPdfA2kVCcuIDvfOU3dVBjk=
-X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr2058162ljh.45.1536243223976;
- Thu, 06 Sep 2018 07:13:43 -0700 (PDT)
+        Thu, 6 Sep 2018 14:50:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58954 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729073AbeIFSul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:50:41 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D865120726; Thu,  6 Sep 2018 16:14:54 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 28D6C2072B;
+        Thu,  6 Sep 2018 16:14:44 +0200 (CEST)
+Date:   Thu, 6 Sep 2018 16:14:43 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     vitor <Vitor.Soares@synopsys.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Przemyslaw Gaj <pgaj@cadence.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        "Alicja Jurasik-Urbaniak" <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+Message-ID: <20180906161443.0f76b246@bbrezillon>
+In-Reply-To: <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <20180719152930.3715-2-boris.brezillon@bootlin.com>
+        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+        <20180824143934.6d6b6487@bbrezillon>
+        <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
+        <20180824201600.7d80bca9@bbrezillon>
+        <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
+        <20180828140209.29155d00@bbrezillon>
+        <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
+        <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
+        <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
+        <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
+        <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
+        <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
+        <20180906151437.4259d6fc@bbrezillon>
+        <20180906152055.5618d235@bbrezillon>
+        <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a19:8fd3:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 07:13:23 -0700 (PDT)
-In-Reply-To: <20180906140413.GA5098@thunk.org>
-References: <2e8e31f5-4db5-4907-2d09-f6444bc78ede@roeck-us.net> <20180906140413.GA5098@thunk.org>
-From:   Matt Hart <matthew.hart@linaro.org>
-Date:   Thu, 6 Sep 2018 15:13:23 +0100
-Message-ID: <CAH+k93Fgk2yZ3OzBOL2uxSVuOqEJB5wS1Zfny8bDkbuQ3sM6Jw@mail.gmail.com>
-Subject: Re: Widespread crashes in next-20180906
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Guenter Roeck <linux@roeck-us.net>,
-        David Howells <dhowells@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6 September 2018 at 15:04, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> On Thu, Sep 06, 2018 at 06:45:15AM -0700, Guenter Roeck wrote:
->> Build results:
->>       total: 134 pass: 133 fail: 1
+On Thu, 6 Sep 2018 14:50:03 +0100
+vitor <Vitor.Soares@synopsys.com> wrote:
 
-Do you build arm64? Because KernelCI is seeing build failures in arm64
-defconfig for next-20180906
-Clearly it's a module build problem for sunxi but I'm not sure who to
-CC about this.
+> Hi,
+> 
+> 
+> On 06-09-2018 14:20, Boris Brezillon wrote:
+> > On Thu, 6 Sep 2018 15:14:37 +0200
+> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> >  
+> >> On Thu, 6 Sep 2018 14:59:46 +0200
+> >> Arnd Bergmann <arnd@arndb.de> wrote:
+> >>  
+> >>> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:  
+> >>>> Hi Boris, Vitor,
+> >>>>
+> >>>> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
+> >>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=Q9DWw3KGmshGw0f5QTiffbpbESyUlPx6KmASuDBtX9Y&s=HHE_y1kyMszJvP_tSP9JkDlPYxDywBeHwkMGgCR11uI&e=
+> >>>>
+> >>>> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
+> >>>> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
+> >>>>
+> >>>> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)  
+> >>>
+> >>> Can you explain the reason for having a user space interface and DT property?
+> >>> I thought we had concluded earlier that we wouldn't need that, but it's possible
+> >>> that I missed something in the discussion since then.  
+> >> I don't think the sysfs knob is needed, this being said, after thinking
+> >> a bit more about mastership handover and the secondary master case, I
+> >> think we have something important to solve.
+> >>
+> >> When a master is not in control of the bus, it gets informed of devices
+> >> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
+> >> means the secondary master should populate the bus with I3C/I2C devices
+> >> on such events, but that's not enough, because DEFSLVS/DAA do not
+> >> provide all device info.Some of them (like read/write/ibi limitations)
+> >> require extra CCC commands, and, to send those CCC commands, the
+> >> secondary master must claim the bus. We could add a case where we
+> >> declare devices as partially discovered until the master acquires
+> >> ownership of the bus, but that means part of the data returned by
+> >> i3c_device_get_info() will be inaccurate, which might have an impact on
+> >> some i3c driver ->probe() functions.  
+> > Hm, one possible solution would be to register partially discovered
+> > devices to the device model and let i3c_device_get_info() claim the bus
+> > and request missing data when needed. This way, if the driver needs to
+> > call i3c_device_get_info() in its probe path, it should work just fine.  
+> 
+> Why don't use the i3c_master_add_i3c_dev_locked that job? It create, 
+> attach and retrieve the device info.
 
-https://kernelci.org/build/next/branch/master/kernel/next-20180906/
-https://storage.kernelci.org/next/master/next-20180906/arm64/defconfig/build.log
+When will you call i3c_master_add_i3c_dev_locked()? After receiving a
+DEFSLVS interrupt/event? When that happens you're not in control of the
+bus, which means you'll have to force bus ownership handover. Is this
+really what we want?
 
-ERROR: "sun8i_tcon_top_de_config"
-[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
-ERROR: "sun8i_tcon_top_set_hdmi_src"
-[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
-ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko]
-undefined!
-../scripts/Makefile.modpost:92: recipe for target '__modpost' failed
-make[2]: *** [__modpost] Error 1
-make[2]: Target '_modpost' not remade because of errors.
-/home/buildslave/workspace/kernel-build/linux/Makefile:1223: recipe
-for target 'modules' failed
-make[1]: *** [modules] Error 2
-make[1]: Target '_all' not remade because of errors.
-Makefile:146: recipe for target 'sub-make' failed
-make: *** [sub-make] Error 2
-make: Target '_all' not remade because of errors.
+These are not rhetorical questions, I'm really asking for your opinion
+here.
 
->> Failed builds:
->>       sparc32:allmodconfig
->> Qemu test results:
->>       total: 311 pass: 76 fail: 235
->> Failed builds:
->>       <pretty much everything trying to boot from disk>
->>
->> Error message is always something like
->>
->> Filesystem requires source device
->> VFS: Cannot open root device "hda" or unknown-block(3,0): error -2
->>
->> The only variance is the boot device. Logs in full glory are available
->> at https://kerneltests.org/builders/, in the "next" column.
->>
->> I did not run bisect, but the recent filesystem changes are a definite suspect.
->
-> Yes, this is the vm_fault_t changes.  See the other thread on LKML.
-> The guilty commit was: 83c0adddcc6e: fs: convert return type int to
-> vm_fault_t
->
-> This is the *second* time vm_fault_t patches have broken things.  The
-> first time it went through the ext4 tree, and I NACK'ed it after
-> running a 60 second smoke test showed it was broken.  The seocnd time
-> the problem was supposedly fixed, but it went through the mm tree, and
-> so I didn't have a chance regression test or stop it...
->
->                                                      - Ted
+> This can be triggered after the secondary master receive ENEC MR until 
+> them is keep in the driver memory.
+
+But that means no-one will actually trigger a mastership request,
+because devices won't be registered until all info are available. If we
+take this path, we should have a way to explicitly trigger a mastership
+request (sysfs knob or any other means).
