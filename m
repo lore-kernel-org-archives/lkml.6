@@ -1,55 +1,55 @@
 Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C360DC43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2333C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FD62064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79FD62064D
+	by mail.kernel.org (Postfix) with ESMTP id 9B7A02075B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 13:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7A02075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbeIFSKn (ORCPT
+        id S1729686AbeIFSLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:10:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39095 "EHLO
+        Thu, 6 Sep 2018 14:11:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38823 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbeIFSKn (ORCPT
+        with ESMTP id S1729404AbeIFSLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:10:43 -0400
+        Thu, 6 Sep 2018 14:11:16 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DYgsx309240
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w86DZGip309294
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Sep 2018 06:34:42 -0700
+        Thu, 6 Sep 2018 06:35:16 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DYfLF309236;
-        Thu, 6 Sep 2018 06:34:41 -0700
-Date:   Thu, 6 Sep 2018 06:34:41 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w86DZG7D309291;
+        Thu, 6 Sep 2018 06:35:16 -0700
+Date:   Thu, 6 Sep 2018 06:35:16 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-0c538a9462953dfcde2fe961aca2cf75c2747040@git.kernel.org>
-Cc:     namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, dsahern@gmail.com, jolsa@kernel.org,
-        mingo@kernel.org, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, andi@firstfloor.org,
-        peterz@infradead.org
-Reply-To: namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+Message-ID: <tip-d97ae04b3d5263be242a6a9f9eef6422fc86326a@git.kernel.org>
+Cc:     hpa@zytor.com, peterz@infradead.org, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        andi@firstfloor.org, tglx@linutronix.de, acme@redhat.com,
+        jolsa@kernel.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com
+Reply-To: hpa@zytor.com, peterz@infradead.org,
           linux-kernel@vger.kernel.org, dsahern@gmail.com,
-          jolsa@kernel.org, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          andi@firstfloor.org, peterz@infradead.org
-In-Reply-To: <20180830063252.23729-27-jolsa@kernel.org>
-References: <20180830063252.23729-27-jolsa@kernel.org>
+          namhyung@kernel.org, andi@firstfloor.org, jolsa@kernel.org,
+          acme@redhat.com, tglx@linutronix.de, mingo@kernel.org,
+          alexander.shishkin@linux.intel.com
+In-Reply-To: <20180830063252.23729-28-jolsa@kernel.org>
+References: <20180830063252.23729-28-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Use 'evsel->evlist' instead of
- 'evsel_list' in collect_all_aliases()
-Git-Commit-ID: 0c538a9462953dfcde2fe961aca2cf75c2747040
+Subject: [tip:perf/core] perf stat: Move 'run_count' to 'struct
+ perf_stat_config'
+Git-Commit-ID: d97ae04b3d5263be242a6a9f9eef6422fc86326a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,17 +63,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0c538a9462953dfcde2fe961aca2cf75c2747040
-Gitweb:     https://git.kernel.org/tip/0c538a9462953dfcde2fe961aca2cf75c2747040
+Commit-ID:  d97ae04b3d5263be242a6a9f9eef6422fc86326a
+Gitweb:     https://git.kernel.org/tip/d97ae04b3d5263be242a6a9f9eef6422fc86326a
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 30 Aug 2018 08:32:35 +0200
+AuthorDate: Thu, 30 Aug 2018 08:32:36 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 30 Aug 2018 15:52:23 -0300
 
-perf stat: Use 'evsel->evlist' instead of 'evsel_list' in collect_all_aliases()
+perf stat: Move 'run_count' to 'struct perf_stat_config'
 
-Use 'evsel->evlist' instead of 'evsel_list' in collect_all_aliases(), to
-get rid of the global 'evsel_list' variable dependency.
+Move the static 'run_count' variable to 'struct perf_stat_config', so
+that it can be passed around and used outside the 'perf stat' command.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -81,27 +81,169 @@ Cc: Andi Kleen <andi@firstfloor.org>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180830063252.23729-27-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180830063252.23729-28-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/builtin-stat.c | 39 ++++++++++++++++++++-------------------
+ tools/perf/util/stat.h    |  1 +
+ 2 files changed, 21 insertions(+), 19 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 46181ac492c5..11741f3a8342 100644
+index 11741f3a8342..1276596840c9 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -1154,10 +1154,11 @@ static void collect_all_aliases(struct perf_evsel *counter,
- 				       bool first),
- 			    void *data)
- {
-+	struct perf_evlist *evlist = counter->evlist;
- 	struct perf_evsel *alias;
+@@ -147,7 +147,6 @@ typedef int (*aggr_get_id_t)(struct cpu_map *m, int cpu);
  
--	alias = list_prepare_entry(counter, &(evsel_list->entries), node);
--	list_for_each_entry_continue (alias, &evsel_list->entries, node) {
-+	alias = list_prepare_entry(counter, &(evlist->entries), node);
-+	list_for_each_entry_continue (alias, &evlist->entries, node) {
- 		if (strcmp(perf_evsel__name(alias), perf_evsel__name(counter)) ||
- 		    alias->scale != counter->scale ||
- 		    alias->cgrp != counter->cgrp ||
+ #define METRIC_ONLY_LEN 20
+ 
+-static int			run_count			=  1;
+ static volatile pid_t		child_pid			= -1;
+ static bool			null_run			=  false;
+ static int			detailed_run			=  0;
+@@ -200,6 +199,7 @@ static struct perf_stat_config stat_config = {
+ 	.aggr_mode	= AGGR_GLOBAL,
+ 	.scale		= true,
+ 	.unit_width	= 4, /* strlen("unit") */
++	.run_count	= 1,
+ };
+ 
+ static bool is_duration_time(struct perf_evsel *evsel)
+@@ -686,7 +686,7 @@ static void print_noise(struct perf_stat_config *config,
+ {
+ 	struct perf_stat_evsel *ps;
+ 
+-	if (run_count == 1)
++	if (config->run_count == 1)
+ 		return;
+ 
+ 	ps = evsel->stats;
+@@ -1620,8 +1620,8 @@ static void print_header(struct perf_stat_config *config,
+ 			fprintf(output, "thread id \'%s", _target->tid);
+ 
+ 		fprintf(output, "\'");
+-		if (run_count > 1)
+-			fprintf(output, " (%d runs)", run_count);
++		if (config->run_count > 1)
++			fprintf(output, " (%d runs)", config->run_count);
+ 		fprintf(output, ":\n\n");
+ 	}
+ }
+@@ -1634,7 +1634,8 @@ static int get_precision(double num)
+ 	return lround(ceil(-log10(num)));
+ }
+ 
+-static void print_table(FILE *output, int precision, double avg)
++static void print_table(struct perf_stat_config *config,
++			FILE *output, int precision, double avg)
+ {
+ 	char tmp[64];
+ 	int idx, indent = 0;
+@@ -1645,7 +1646,7 @@ static void print_table(FILE *output, int precision, double avg)
+ 
+ 	fprintf(output, "%*s# Table of individual measurements:\n", indent, "");
+ 
+-	for (idx = 0; idx < run_count; idx++) {
++	for (idx = 0; idx < config->run_count; idx++) {
+ 		double run = (double) walltime_run[idx] / NSEC_PER_SEC;
+ 		int h, n = 1 + abs((int) (100.0 * (run - avg)/run) / 5);
+ 
+@@ -1675,7 +1676,7 @@ static void print_footer(struct perf_stat_config *config)
+ 	if (!null_run)
+ 		fprintf(output, "\n");
+ 
+-	if (run_count == 1) {
++	if (config->run_count == 1) {
+ 		fprintf(output, " %17.9f seconds time elapsed", avg);
+ 
+ 		if (ru_display) {
+@@ -1695,7 +1696,7 @@ static void print_footer(struct perf_stat_config *config)
+ 		int precision = get_precision(sd) + 2;
+ 
+ 		if (walltime_run_table)
+-			print_table(output, precision, avg);
++			print_table(config, output, precision, avg);
+ 
+ 		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
+ 			precision, avg, precision, sd);
+@@ -1886,7 +1887,7 @@ static const struct option stat_options[] = {
+ 	OPT_BOOLEAN('c', "scale", &stat_config.scale, "scale/normalize counters"),
+ 	OPT_INCR('v', "verbose", &verbose,
+ 		    "be more verbose (show counter open errors, etc)"),
+-	OPT_INTEGER('r', "repeat", &run_count,
++	OPT_INTEGER('r', "repeat", &stat_config.run_count,
+ 		    "repeat command and print average + stddev (max: 100, forever: 0)"),
+ 	OPT_BOOLEAN(0, "table", &walltime_run_table,
+ 		    "display details about each run (only with -r option)"),
+@@ -2484,7 +2485,7 @@ static int __cmd_record(int argc, const char **argv)
+ 	if (output_name)
+ 		data->file.path = output_name;
+ 
+-	if (run_count != 1 || forever) {
++	if (stat_config.run_count != 1 || forever) {
+ 		pr_err("Cannot use -r option with perf stat record.\n");
+ 		return -1;
+ 	}
+@@ -2792,12 +2793,12 @@ int cmd_stat(int argc, const char **argv)
+ 		goto out;
+ 	}
+ 
+-	if (stat_config.metric_only && run_count > 1) {
++	if (stat_config.metric_only && stat_config.run_count > 1) {
+ 		fprintf(stderr, "--metric-only is not supported with -r\n");
+ 		goto out;
+ 	}
+ 
+-	if (walltime_run_table && run_count <= 1) {
++	if (walltime_run_table && stat_config.run_count <= 1) {
+ 		fprintf(stderr, "--table is only supported with -r\n");
+ 		parse_options_usage(stat_usage, stat_options, "r", 1);
+ 		parse_options_usage(NULL, stat_options, "table", 0);
+@@ -2853,20 +2854,20 @@ int cmd_stat(int argc, const char **argv)
+ 	 * Display user/system times only for single
+ 	 * run and when there's specified tracee.
+ 	 */
+-	if ((run_count == 1) && target__none(&target))
++	if ((stat_config.run_count == 1) && target__none(&target))
+ 		ru_display = true;
+ 
+-	if (run_count < 0) {
++	if (stat_config.run_count < 0) {
+ 		pr_err("Run count must be a positive number\n");
+ 		parse_options_usage(stat_usage, stat_options, "r", 1);
+ 		goto out;
+-	} else if (run_count == 0) {
++	} else if (stat_config.run_count == 0) {
+ 		forever = true;
+-		run_count = 1;
++		stat_config.run_count = 1;
+ 	}
+ 
+ 	if (walltime_run_table) {
+-		walltime_run = zalloc(run_count * sizeof(walltime_run[0]));
++		walltime_run = zalloc(stat_config.run_count * sizeof(walltime_run[0]));
+ 		if (!walltime_run) {
+ 			pr_err("failed to setup -r option");
+ 			goto out;
+@@ -2994,8 +2995,8 @@ int cmd_stat(int argc, const char **argv)
+ 	signal(SIGABRT, skip_signal);
+ 
+ 	status = 0;
+-	for (run_idx = 0; forever || run_idx < run_count; run_idx++) {
+-		if (run_count != 1 && verbose > 0)
++	for (run_idx = 0; forever || run_idx < stat_config.run_count; run_idx++) {
++		if (stat_config.run_count != 1 && verbose > 0)
+ 			fprintf(output, "[ perf stat: executing run #%d ... ]\n",
+ 				run_idx + 1);
+ 
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 2dc66e0ba4b8..351a36f5f5b0 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -100,6 +100,7 @@ struct perf_stat_config {
+ 	unsigned int		 initial_delay;
+ 	unsigned int		 unit_width;
+ 	int			 times;
++	int			 run_count;
+ 	struct runtime_stat	*stats;
+ 	int			 stats_num;
+ 	const char		*csv_sep;
