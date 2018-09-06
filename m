@@ -2,152 +2,113 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE3FC4321E
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EA4C4321E
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68189206BA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:18:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lekensteyn.nl header.i=@lekensteyn.nl header.b="yPKsMqIB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68189206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lekensteyn.nl
+	by mail.kernel.org (Postfix) with ESMTP id 5E3A4206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 22:19:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3A4206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=CARNet.hr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeIGCzy (ORCPT
+        id S1728560AbeIGC5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 22:55:54 -0400
-Received: from lekensteyn.nl ([178.21.112.251]:47253 "EHLO lekensteyn.nl"
+        Thu, 6 Sep 2018 22:57:10 -0400
+Received: from mail.CARNet.hr ([161.53.123.6]:49517 "EHLO mail.carnet.hr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728170AbeIGCzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 22:55:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lekensteyn.nl; s=s2048-2015-q1;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From; bh=1aZbXxiFoDDSHnKHZSWLhkTST3t+hkEUs5imDri/IRQ=;
-        b=yPKsMqIB8CFC0VC+7VPUVvNu8ofFefpDWx3DXBvBrVtVdr3H0O4GK3UFmLc7GzyfIio5HbmkhqI2eJoRmR8eF4FjdP36QnrXmrn5D/apb//ZqAtzjmnY3UERpYzEYVGesII/MY7Rhz59KFwGJ7ya1kvkFCcurFS/xVdjj8iKCPGJiaVG2vuxbX94mkOdGG+7zv9d/f/F+v8XnCNc7u7m0XFhUqUsXc5coSWWOpnwtGOpK9R8a72T1/AswUgli0ICdApiNAWWHEK9El46wxQ+yizqH+iaUq4UnFgzBR5Rv9SF4bp2ZY/1Hav4EFQCwDkBdPTt6sNzUOlruxbDN2L4FA==;
-Received: by lekensteyn.nl with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <peter@lekensteyn.nl>)
-        id 1fy2bO-0005Us-IX; Fri, 07 Sep 2018 00:18:15 +0200
-From:   Peter Wu <peter@lekensteyn.nl>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] drm/fb-helper: improve documentation and print warnings
-Date:   Fri,  7 Sep 2018 00:18:10 +0200
-Message-Id: <20180906221810.20170-5-peter@lekensteyn.nl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180906221810.20170-1-peter@lekensteyn.nl>
-References: <20180906221810.20170-1-peter@lekensteyn.nl>
+        id S1727261AbeIGC5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Sep 2018 22:57:10 -0400
+Received: from cnzgrivvl-t440p.carpriv.carnet.hr ([161.53.12.131]:58854 helo=gavran.carpriv.carnet.hr)
+        by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <Valentin.Vidic@CARNet.hr>)
+        id 1fy2cb-0008Fm-Iu; Fri, 07 Sep 2018 00:19:30 +0200
+Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
+        id 57B93201A2; Fri,  7 Sep 2018 00:19:29 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 00:19:29 +0200
+From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
+To:     Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, drbd-user@lists.linbit.com
+Message-ID: <20180906221929.GZ26705@gavran.carpriv.carnet.hr>
+References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
+ <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
+ <20180905113515.GU26705@gavran.carpriv.carnet.hr>
+ <20180905162801.GB26705@gavran.carpriv.carnet.hr>
+ <20180906162932.7qge5dmrgyqbmbbj@mac.bytemobile.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180906162932.7qge5dmrgyqbmbbj@mac.bytemobile.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 161.53.12.131
+Subject: Re: [PATCH] xen-blkback: Switch to closed state after releasing the
+ backing device
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clarify the relation between drm_fb_helper_fbdev_setup/teardown. Clarify
-requirements for the new generic fbdev emulation API and log some more
-details in case the driver does something wrong. Fix related typos.
+On Thu, Sep 06, 2018 at 06:29:32PM +0200, Roger Pau MonnÈ wrote:
+> On Wed, Sep 05, 2018 at 06:28:01PM +0200, Valentin Vidic wrote:
+> > On Wed, Sep 05, 2018 at 01:35:15PM +0200, Valentin Vidic wrote:
+> > > > AFAICT, this will cause the backend to never switch to 'Closed' state
+> > > > until the toolstack sets online to 0, which is not good IMO.
+> > > > 
+> > > > If for example a frontend decides to close a device, the backend will
+> > > > stay in state 'Closing' until the toolstack actually removes the disk
+> > > > by setting online to 0.
+> > > > 
+> > > > This will prevent resetting blk connections, as blkback will refuse to
+> > > > switch to state XenbusStateInitWait unless it's at XenbusStateClosed
+> > > > (see the XenbusStateInitialising case in frontend_changed), which will
+> > > > never be reached with your patch.
+> > 
+> > Would it be possible to call xen_vbd_free before the state change?
+> > 
+> >         case XenbusStateClosed:
+> >                 xen_blkif_disconnect(be->blkif);
+> >                 xen_vbd_free(&be->blkif->vbd);
+> >                 xenbus_switch_state(dev, XenbusStateClosed);
+> 
+> I think that will break reconnection, since xen_vbd_create is only
+> called after hotplug script execution is performed (which happens only
+> once at device attachment), but not when DomU changes frontend
+> state.
+> 
+> If you want to perform this xen_vbd_free you will also have to move
+> the xen_vbd_create call AFAICT, to a place that's also called when
+> reconnecting a device. Note that I could be wrong, so it might be
+> worth a shot to try different approaches since the blkback code is
+> quite tangled and I might miss something.
 
-Cc: Noralf Tr√∏nnes <noralf@tronnes.org>
-Signed-off-by: Peter Wu <peter@lekensteyn.nl>
----
- drivers/gpu/drm/drm_fb_helper.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+It seems like the Closed state is not a good point to call the remove
+script since the device could go back from Closed to Connected.
 
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 4b0dd20bccb8..7f92ff173986 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -2821,7 +2821,9 @@ EXPORT_SYMBOL(drm_fb_helper_hotplug_event);
-  * The caller must to provide a &drm_fb_helper_funcs->fb_probe callback
-  * function.
-  *
-- * See also: drm_fb_helper_initial_config()
-+ * Use drm_fb_helper_fbdev_teardown() to destroy the fbdev.
-+ *
-+ * See also: drm_fb_helper_initial_config(), drm_fbdev_generic_setup().
-  *
-  * Returns:
-  * Zero on success or negative error code on failure.
-@@ -3037,7 +3039,7 @@ static struct fb_deferred_io drm_fbdev_defio = {
-  * @fb_helper: fbdev helper structure
-  * @sizes: describes fbdev size and scanout surface size
-  *
-- * This function uses the client API to crate a framebuffer backed by a dumb buffer.
-+ * This function uses the client API to create a framebuffer backed by a dumb buffer.
-  *
-  * The _sys_ versions are used for &fb_ops.fb_read, fb_write, fb_fillrect,
-  * fb_copyarea, fb_imageblit.
-@@ -3165,8 +3167,10 @@ static int drm_fbdev_client_hotplug(struct drm_client_dev *client)
- 	if (dev->fb_helper)
- 		return drm_fb_helper_hotplug_event(dev->fb_helper);
- 
--	if (!dev->mode_config.num_connector)
-+	if (!dev->mode_config.num_connector) {
-+		DRM_DEV_DEBUG(dev->dev, "No connectors found, will not create framebuffer!\n");
- 		return 0;
-+	}
- 
- 	ret = drm_fb_helper_fbdev_setup(dev, fb_helper, &drm_fb_helper_generic_funcs,
- 					fb_helper->preferred_bpp, 0);
-@@ -3187,13 +3191,15 @@ static const struct drm_client_funcs drm_fbdev_client_funcs = {
- };
- 
- /**
-- * drm_fb_helper_generic_fbdev_setup() - Setup generic fbdev emulation
-+ * drm_fbdev_generic_setup() - Setup generic fbdev emulation
-  * @dev: DRM device
-  * @preferred_bpp: Preferred bits per pixel for the device.
-  *                 @dev->mode_config.preferred_depth is used if this is zero.
-  *
-  * This function sets up generic fbdev emulation for drivers that supports
-- * dumb buffers with a virtual address and that can be mmap'ed.
-+ * dumb buffers with a virtual address and that can be mmap'ed. If the driver
-+ * does not support these functions, it could use drm_fb_helper_fbdev_setup().
-+ * This function can only be used with devices created using drm_dev_register().
-  *
-  * Restore, hotplug events and teardown are all taken care of. Drivers that do
-  * suspend/resume need to call drm_fb_helper_set_suspend_unlocked() themselves.
-@@ -3206,6 +3212,8 @@ static const struct drm_client_funcs drm_fbdev_client_funcs = {
-  * This function is safe to call even when there are no connectors present.
-  * Setup will be retried on the next hotplug event.
-  *
-+ * The fbdev is destroyed by drm_dev_unregister().
-+ *
-  * Returns:
-  * Zero on success or negative error code on failure.
-  */
-@@ -3214,6 +3222,8 @@ int drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
- 	struct drm_fb_helper *fb_helper;
- 	int ret;
- 
-+	WARN(dev->fb_helper, "fb_helper is already set!\n");
-+
- 	if (!drm_fbdev_emulation)
- 		return 0;
- 
-@@ -3224,12 +3234,15 @@ int drm_fbdev_generic_setup(struct drm_device *dev, unsigned int preferred_bpp)
- 	ret = drm_client_new(dev, &fb_helper->client, "fbdev", &drm_fbdev_client_funcs);
- 	if (ret) {
- 		kfree(fb_helper);
-+		DRM_DEV_ERROR(dev->dev, "Failed to register client: %d\n", ret);
- 		return ret;
- 	}
- 
- 	fb_helper->preferred_bpp = preferred_bpp;
- 
--	drm_fbdev_client_hotplug(&fb_helper->client);
-+	ret = drm_fbdev_client_hotplug(&fb_helper->client);
-+	if (ret)
-+		DRM_DEV_DEBUG(dev->dev, "client hotplug ret=%d\n", ret);
- 
- 	return 0;
- }
+Maybe it would help to introduce a new final state (7 = XenbusStateFree
+or XenbusStateRemove) that would be set after xen_vbd_free to let the
+userspace know it is safe to run the remove script?
+
+static void xen_blkif_free(struct xen_blkif *blkif)
+{
+
+        WARN_ON(xen_blkif_disconnect(blkif));
+        xen_vbd_free(&blkif->vbd);
+        xenbus_switch_state(blkif->be->dev, XenbusStateFree);
+        kfree(blkif->be->mode);
+        kfree(blkif->be);
+
+        /* Make sure everything is drained before shutting down */
+        kmem_cache_free(xen_blkif_cachep, blkif);
+}
+
 -- 
-2.18.0
-
+Valentin
