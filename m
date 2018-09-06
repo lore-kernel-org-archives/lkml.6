@@ -2,289 +2,128 @@ Return-Path: <SRS0=QnR0=LU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281F6C43334
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0847C433F5
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB17B20844
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9473420844
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Sep 2018 14:16:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LEDezd0/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB17B20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LD0Wh+dt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9473420844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbeIFSvP (ORCPT
+        id S1729858AbeIFSwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Sep 2018 14:51:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43618 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729073AbeIFSvP (ORCPT
+        Thu, 6 Sep 2018 14:52:10 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:50372 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729066AbeIFSwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Sep 2018 14:51:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oxpfwXfAYyY/qM8/KJ845v67BOzcA/s7fuYR88b/h5Q=; b=LEDezd0/uKnQIXCuRG8Y9WwHX
-        NsmQNUmERc8Pf7+CPXx2UfUY1ygn/Sd4kkcCPgEg5gNsKhBqcacGvFKVjHC1Jhb0uIdvwFfTxCh+I
-        elRq6WMeaLnjt+mRpU1pvPq+ebVP4pFlmV1JhGJMxTnTHYDLiGiPtvW0S5+PU9TBgCbrgza6/K/KN
-        ZBUNJktI+1S+CfMWEz7N+OPa2FdC57P0E4WskWTBYSMIJjbPUsXbCin+S7gVm5AdHbicUT9Ni3gUS
-        7WB8guaOqY9PEhGjLPrGP5dweaQRPa55UTPXf+IkKvaO8kAE4srBX5LWJtOilWZp7c91NY6gtuYf7
-        8N/nxJ2kQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fxv4A-0008C6-Il; Thu, 06 Sep 2018 14:15:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CA9D12018BF7D; Thu,  6 Sep 2018 16:15:24 +0200 (CEST)
-Date:   Thu, 6 Sep 2018 16:15:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        mingo@redhat.com, acme@kernel.org, vikas.shivappa@linux.intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 5/6] x86/intel_rdt: Use perf infrastructure for
- measurements
-Message-ID: <20180906141524.GF24106@hirez.programming.kicks-ass.net>
-References: <cover.1534450299.git.reinette.chatre@intel.com>
- <30b32ebd826023ab88f3ab3122e4c414ea532722.1534450299.git.reinette.chatre@intel.com>
+        Thu, 6 Sep 2018 14:52:10 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w86EGN8R044747;
+        Thu, 6 Sep 2018 09:16:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1536243383;
+        bh=U/+i6isDzSJuK2a9L7iYRx7wkh4B6Dk3Zw+v8Mlmq6U=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LD0Wh+dtaAF3A6t2m/7wWPr4Fao+ufGMZF+m/wsXjE9GYkRJZIn8GP8xyKqpRA379
+         vTpu6IQ5SwgAQIh5/d0CWwQ9CdI0aBXt3B1h1UKQq0CHbQpKksyp86EYcSgz1hi0Yn
+         X7rYjnPqQe07g7qTNn+F2KwaJyjatmZcWUd0DznQ=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w86EGNFr003753;
+        Thu, 6 Sep 2018 09:16:23 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 6 Sep
+ 2018 09:16:22 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 6 Sep 2018 09:16:23 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w86EGK7P008362;
+        Thu, 6 Sep 2018 09:16:21 -0500
+Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
+ base selection
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     "Andrew F. Davis" <afd@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180831191326.25106-1-afd@ti.com>
+ <20180831191326.25106-2-afd@ti.com>
+ <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com>
+ <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <040ce524-f6e2-81a2-68db-57a645de22ea@ti.com>
+Date:   Thu, 6 Sep 2018 19:46:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30b32ebd826023ab88f3ab3122e4c414ea532722.1534450299.git.reinette.chatre@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 01:16:08PM -0700, Reinette Chatre wrote:
-> +	l2_miss_event = perf_event_create_kernel_counter(&perf_miss_attr,
-> +							 plr->cpu,
-> +							 NULL, NULL, NULL);
-> +	if (IS_ERR(l2_miss_event))
-> +		goto out;
-> +
-> +	l2_hit_event = perf_event_create_kernel_counter(&perf_hit_attr,
-> +							plr->cpu,
-> +							NULL, NULL, NULL);
-> +	if (IS_ERR(l2_hit_event))
-> +		goto out_l2_miss;
-> +
-> +	local_irq_disable();
-> +	/*
-> +	 * Check any possible error state of events used by performing
-> +	 * one local read.
-> +	 */
-> +	if (perf_event_read_local(l2_miss_event, &tmp, NULL, NULL)) {
-> +		local_irq_enable();
-> +		goto out_l2_hit;
-> +	}
-> +	if (perf_event_read_local(l2_hit_event, &tmp, NULL, NULL)) {
-> +		local_irq_enable();
-> +		goto out_l2_hit;
-> +	}
-> +
-> +	/*
-> +	 * Disable hardware prefetchers.
->  	 *
-> +	 * Call wrmsr direcly to avoid the local register variables from
-> +	 * being overwritten due to reordering of their assignment with
-> +	 * the wrmsr calls.
-> +	 */
-> +	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-> +
-> +	/* Initialize rest of local variables */
-> +	/*
-> +	 * Performance event has been validated right before this with
-> +	 * interrupts disabled - it is thus safe to read the counter index.
-> +	 */
-> +	l2_miss_pmcnum = x86_perf_rdpmc_ctr_get(l2_miss_event);
-> +	l2_hit_pmcnum = x86_perf_rdpmc_ctr_get(l2_hit_event);
-> +	line_size = plr->line_size;
-> +	mem_r = plr->kmem;
-> +	size = plr->size;
-> +
-> +	/*
-> +	 * Read counter variables twice - first to load the instructions
-> +	 * used in L1 cache, second to capture accurate value that does not
-> +	 * include cache misses incurred because of instruction loads.
-> +	 */
-> +	rdpmcl(l2_hit_pmcnum, l2_hits_before);
-> +	rdpmcl(l2_miss_pmcnum, l2_miss_before);
-> +	/*
-> +	 * From SDM: Performing back-to-back fast reads are not guaranteed
-> +	 * to be monotonic. To guarantee monotonicity on back-toback reads,
-> +	 * a serializing instruction must be placed between the two
-> +	 * RDPMC instructions
-> +	 */
-> +	rmb();
-> +	rdpmcl(l2_hit_pmcnum, l2_hits_before);
-> +	rdpmcl(l2_miss_pmcnum, l2_miss_before);
-> +	/*
-> +	 * rdpmc is not a serializing instruction. Add barrier to prevent
-> +	 * instructions that follow to begin executing before reading the
-> +	 * counter value.
-> +	 */
-> +	rmb();
-> +	for (i = 0; i < size; i += line_size) {
-> +		/*
-> +		 * Add a barrier to prevent speculative execution of this
-> +		 * loop reading beyond the end of the buffer.
-> +		 */
-> +		rmb();
-> +		asm volatile("mov (%0,%1,1), %%eax\n\t"
-> +			     :
-> +			     : "r" (mem_r), "r" (i)
-> +			     : "%eax", "memory");
-> +	}
-> +	rdpmcl(l2_hit_pmcnum, l2_hits_after);
-> +	rdpmcl(l2_miss_pmcnum, l2_miss_after);
-> +	/*
-> +	 * rdpmc is not a serializing instruction. Add barrier to ensure
-> +	 * events measured have completed and prevent instructions that
-> +	 * follow to begin executing before reading the counter value.
-> +	 */
-> +	rmb();
-> +	/* Re-enable hardware prefetchers */
-> +	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
-> +	local_irq_enable();
-> +	trace_pseudo_lock_l2(l2_hits_after - l2_hits_before,
-> +			     l2_miss_after - l2_miss_before);
-> +
-> +out_l2_hit:
-> +	perf_event_release_kernel(l2_hit_event);
-> +out_l2_miss:
-> +	perf_event_release_kernel(l2_miss_event);
-> +out:
-> +	plr->thread_done = 1;
-> +	wake_up_interruptible(&plr->lock_thread_wq);
-> +	return 0;
-> +}
-> +
 
-The above, looks a _LOT_ like the below. And while C does suck a little,
-I'm sure there's something we can do about this.
 
-> +	l3_miss_event = perf_event_create_kernel_counter(&perf_miss_attr,
-> +							 plr->cpu,
-> +							 NULL, NULL,
-> +							 NULL);
-> +	if (IS_ERR(l3_miss_event))
-> +		goto out;
-> +
-> +	l3_hit_event = perf_event_create_kernel_counter(&perf_hit_attr,
-> +							plr->cpu,
-> +							NULL, NULL,
-> +							NULL);
-> +	if (IS_ERR(l3_hit_event))
-> +		goto out_l3_miss;
-> +
->  	local_irq_disable();
->  	/*
-> +	 * Check any possible error state of events used by performing
-> +	 * one local read.
-> +	 */
-> +	if (perf_event_read_local(l3_miss_event, &tmp, NULL, NULL)) {
-> +		local_irq_enable();
-> +		goto out_l3_hit;
-> +	}
-> +	if (perf_event_read_local(l3_hit_event, &tmp, NULL, NULL)) {
-> +		local_irq_enable();
-> +		goto out_l3_hit;
-> +	}
-> +
-> +	/*
-> +	 * Disable hardware prefetchers.
-> +	 *
->  	 * Call wrmsr direcly to avoid the local register variables from
->  	 * being overwritten due to reordering of their assignment with
->  	 * the wrmsr calls.
->  	 */
->  	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
-> +
-> +	/* Initialize rest of local variables */
-> +	/*
-> +	 * Performance event has been validated right before this with
-> +	 * interrupts disabled - it is thus safe to read the counter index.
-> +	 */
-> +	l3_hit_pmcnum = x86_perf_rdpmc_ctr_get(l3_hit_event);
-> +	l3_miss_pmcnum = x86_perf_rdpmc_ctr_get(l3_miss_event);
-> +	line_size = plr->line_size;
->  	mem_r = plr->kmem;
->  	size = plr->size;
-> +
-> +	/*
-> +	 * Read counter variables twice - first to load the instructions
-> +	 * used in L1 cache, second to capture accurate value that does not
-> +	 * include cache misses incurred because of instruction loads.
-> +	 */
-> +	rdpmcl(l3_hit_pmcnum, l3_hits_before);
-> +	rdpmcl(l3_miss_pmcnum, l3_miss_before);
-> +	/*
-> +	 * From SDM: Performing back-to-back fast reads are not guaranteed
-> +	 * to be monotonic. To guarantee monotonicity on back-toback reads,
-> +	 * a serializing instruction must be placed between the two
-> +	 * RDPMC instructions
-> +	 */
-> +	rmb();
-> +	rdpmcl(l3_hit_pmcnum, l3_hits_before);
-> +	rdpmcl(l3_miss_pmcnum, l3_miss_before);
-> +	/*
-> +	 * rdpmc is not a serializing instruction. Add barrier to prevent
-> +	 * instructions that follow to begin executing before reading the
-> +	 * counter value.
-> +	 */
-> +	rmb();
->  	for (i = 0; i < size; i += line_size) {
-> +		/*
-> +		 * Add a barrier to prevent speculative execution of this
-> +		 * loop reading beyond the end of the buffer.
-> +		 */
-> +		rmb();
->  		asm volatile("mov (%0,%1,1), %%eax\n\t"
->  			     :
->  			     : "r" (mem_r), "r" (i)
->  			     : "%eax", "memory");
->  	}
-> +	rdpmcl(l3_hit_pmcnum, l3_hits_after);
-> +	rdpmcl(l3_miss_pmcnum, l3_miss_after);
->  	/*
-> +	 * rdpmc is not a serializing instruction. Add barrier to ensure
-> +	 * events measured have completed and prevent instructions that
-> +	 * follow to begin executing before reading the counter value.
->  	 */
-> +	rmb();
-> +	/* Re-enable hardware prefetchers */
->  	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
->  	local_irq_enable();
-> +	l3_miss_after -= l3_miss_before;
-> +	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X) {
-> +		/*
-> +		 * On BDW references and misses are counted, need to adjust.
-> +		 * Sometimes the "hits" counter is a bit more than the
-> +		 * references, for example, x references but x + 1 hits.
-> +		 * To not report invalid hit values in this case we treat
-> +		 * that as misses equal to references.
-> +		 */
-> +		/* First compute the number of cache references measured */
-> +		l3_hits_after -= l3_hits_before;
-> +		/* Next convert references to cache hits */
-> +		l3_hits_after -= l3_miss_after > l3_hits_after ?
-> +					l3_hits_after : l3_miss_after;
-> +	} else {
-> +		l3_hits_after -= l3_hits_before;
->  	}
-> +	trace_pseudo_lock_l3(l3_hits_after, l3_miss_after);
->  
-> +out_l3_hit:
-> +	perf_event_release_kernel(l3_hit_event);
-> +out_l3_miss:
-> +	perf_event_release_kernel(l3_miss_event);
+On Wednesday 05 September 2018 04:07 PM, Linus Walleij wrote:
+> On Mon, Sep 3, 2018 at 7:40 AM Keerthy <j-keerthy@ti.com> wrote:
+>> On Saturday 01 September 2018 12:43 AM, Andrew F. Davis wrote:
+>>> Use dev_name to get a unique label and use -1 for a base to get our
+>>> selection automatically. We pull in all GPIOs per chip now so this
+>>> does not have the effect of out of order labels like before.
+>>>
+>>> We do these both together so we can drop all the static data in one
+>>> patch. This also lets us normalize the return paths as we don't need
+>>> any cleanup after this change.
+>>
+>> echo 28 > /sys/class/gpio/export
+>> / # echo 28 > /sys/class/gpi[   12.839205] export_store: invalid GPIO 28
+>> o/export
+>> echo 2 > /sys/class/gp[   22.165728] export_store: invalid GPIO 2
+>> io/export
+>> / # echo 1 > /sys/class/gp[   25.961392] export_store: invalid GPIO 1
+>> io/export
+>> / # echo 3 > /sys/class/gp[   29.981918] export_store: invalid GPIO 3
+>> io/export
+>>
+>> Export fails with this patch. I am testing this on keystone-k2g-evm.
+> 
+> I think the GPIO got a new number didn't it?
+> 
+> Did you check the gpio file in debugfs to see which number
+> it got.
+
+Okay now its numbered differently:
+
+cat /sys/class/gpio/gpiochip340/ngpio
+144
+
+cat /sys/class/gpio/gpiochip272/ngpio
+68
+
+So gpio bank2 and bank1 have different gpio numbers. Is that acceptable?
+
+> 
+> This is sadly the global numberspace that we are tying to
+> get rid of (new apps/scripts should use the chardev).
+> 
+> Are there applications that rely on the sysfs ABI on DaVinci?
+> 
+> In that case base needs to be prerseved.
+> 
+> Yours,
+> Linus Walleij
+> 
