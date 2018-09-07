@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C5AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D97C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8BF20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8BF20645
+	by mail.kernel.org (Postfix) with ESMTP id 22ECB20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22ECB20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbeIHB7R (ORCPT
+        id S1728897AbeIHB7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:59:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42720 "EHLO
+        Fri, 7 Sep 2018 21:59:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728365AbeIHB7Q (ORCPT
+        with ESMTP id S1728102AbeIHB7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:59:16 -0400
+        Fri, 7 Sep 2018 21:59:20 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB6E3FA4;
-        Fri,  7 Sep 2018 21:16:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ED31F07;
+        Fri,  7 Sep 2018 21:16:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
+        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 082/145] ACPICA: AML Parser: skip opcodes that open a scope upon parse failure
-Date:   Fri,  7 Sep 2018 23:09:08 +0200
-Message-Id: <20180907210910.994587838@linuxfoundation.org>
+Subject: [PATCH 4.18 083/145] ACPICA: Clear status of all events when entering sleep states
+Date:   Fri,  7 Sep 2018 23:09:09 +0200
+Message-Id: <20180907210911.051367559@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,67 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erik Schmauss <erik.schmauss@intel.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 4a7c94c721074eafb27298d93dbcc339aa28e745 upstream.
+commit f317c7dc12b73eb9d67fdae404563deb907dcfb7 upstream.
 
-This change skips the entire length of opcodes that open a scope
-(Device, Scope, Processor, etc) if the creation of the op fails. The
-failure could be caused by various errors including AE_ALREADY_EXISTS
-and AE_NOT_FOUND.
+Commit fa85015c0d95 (ACPICA: Clear status of all events when entering
+S5) made the sleep state entry code in ACPICA clear the status of all
+ACPI events when entering S5 to fix a functional regression reported
+against commit 18996f2db918 (ACPICA: Events: Stop unconditionally
+clearing ACPI IRQs during suspend/resume).  However, it is reported
+now that the regression also affects system states other than S5 on
+some systems and causes them to wake up from sleep prematurely.
 
-Reported-by: Jeremy Linton <jeremy.linton@arm.com>
-Tested-by: Jeremy Linton <jeremy.linton@arm.com>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
+For this reason, make the code in question clear the status of all
+ACPI events when entering all sleep states (in addition to S5) to
+avoid the premature wakeups (this may cause some wakeup events to
+be missed in theory, but the likelihood of that is small and the
+change here simply restores the previous behavior of the code).
+
+Fixes: 18996f2db918 (ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume)
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: 4.17+ <stable@vger.kernel.org> # 4.17+: fa85015c0d95 ACPICA: Clear status ...
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/psloop.c |   17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/acpi/acpica/hwsleep.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
---- a/drivers/acpi/acpica/psloop.c
-+++ b/drivers/acpi/acpica/psloop.c
-@@ -22,6 +22,7 @@
- #include "acdispat.h"
- #include "amlcode.h"
- #include "acconvert.h"
-+#include "acnamesp.h"
+--- a/drivers/acpi/acpica/hwsleep.c
++++ b/drivers/acpi/acpica/hwsleep.c
+@@ -56,14 +56,9 @@ acpi_status acpi_hw_legacy_sleep(u8 slee
+ 	if (ACPI_FAILURE(status)) {
+ 		return_ACPI_STATUS(status);
+ 	}
+-	/*
+-	 * If the target sleep state is S5, clear all GPEs and fixed events too
+-	 */
+-	if (sleep_state == ACPI_STATE_S5) {
+-		status = acpi_hw_clear_acpi_status();
+-		if (ACPI_FAILURE(status)) {
+-			return_ACPI_STATUS(status);
+-		}
++	status = acpi_hw_clear_acpi_status();
++	if (ACPI_FAILURE(status)) {
++		return_ACPI_STATUS(status);
+ 	}
+ 	acpi_gbl_system_awake_and_running = FALSE;
  
- #define _COMPONENT          ACPI_PARSER
- ACPI_MODULE_NAME("psloop")
-@@ -527,12 +528,18 @@ acpi_status acpi_ps_parse_loop(struct ac
- 				if (ACPI_FAILURE(status)) {
- 					return_ACPI_STATUS(status);
- 				}
--				if (walk_state->opcode == AML_SCOPE_OP) {
-+				if (acpi_ns_opens_scope
-+				    (acpi_ps_get_opcode_info
-+				     (walk_state->opcode)->object_type)) {
- 					/*
--					 * If the scope op fails to parse, skip the body of the
--					 * scope op because the parse failure indicates that the
--					 * device may not exist.
-+					 * If the scope/device op fails to parse, skip the body of
-+					 * the scope op because the parse failure indicates that
-+					 * the device may not exist.
- 					 */
-+					ACPI_ERROR((AE_INFO,
-+						    "Skip parsing opcode %s",
-+						    acpi_ps_get_opcode_name
-+						    (walk_state->opcode)));
- 					walk_state->parser_state.aml =
- 					    walk_state->aml + 1;
- 					walk_state->parser_state.aml =
-@@ -540,8 +547,6 @@ acpi_status acpi_ps_parse_loop(struct ac
- 					    (&walk_state->parser_state);
- 					walk_state->aml =
- 					    walk_state->parser_state.aml;
--					ACPI_ERROR((AE_INFO,
--						    "Skipping Scope block"));
- 				}
- 
- 				continue;
 
 
