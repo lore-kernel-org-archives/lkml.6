@@ -2,130 +2,185 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B23F7C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A42C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 676F220861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:35:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfnyUlFc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676F220861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CFEE4206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:38:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFEE4206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbeIGNPg (ORCPT
+        id S1728156AbeIGNR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:15:36 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33433 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeIGNPg (ORCPT
+        Fri, 7 Sep 2018 09:17:57 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:39418 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbeIGNR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:15:36 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so6690932pfn.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:35:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ky5On3ReD2fuZx9WaBUFqA6SF4E7UU9Nl8NEhnQKo6M=;
-        b=hfnyUlFcYqctSJW8St/opYFiPi+w9rDZn4sXzLYINb5uwKXOg7ZRNdtCWFiU+qS59V
-         1ynK3VC95jJhUemOqCACSVf80oCcjgCVyaCNUSeGpMvSG6u5JTCLYSEfp2d+BusARFpL
-         a+BE8p9vU4BmIHrsEz189oORGHcpCCsC+wFL5OiPyWDUa+udAX6egtfrLWnZSMuxGc6n
-         p5XxJDKdR4+VdL6T7W/hnzFfCh2uiT3PZGS6HQzzgQza3kmKz01Nync4CsZGeNxPoYaY
-         k/sWPIJdCyQ18gbcBpA400P56vx+TEs/3Kn0Og1eB0csQHSZA3zN8hf1a3VzRMUzHMsa
-         8QPw==
+        Fri, 7 Sep 2018 09:17:56 -0400
+Received: by mail-it0-f70.google.com with SMTP id w196-v6so18701241itb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:38:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ky5On3ReD2fuZx9WaBUFqA6SF4E7UU9Nl8NEhnQKo6M=;
-        b=t+/a7nQw3osiXth7ikqpxsfsrIx2zSnzb3DbJs2Oo20Kiqo63XodOGOUqn40rDhAX2
-         Fci1S3/HgrlPyYlKn1eGB5ptrh6VnFQKpndie256EvseYpvbznKYIT12aU75bSsnduPa
-         fBxGaz8SV3iH2w0GTsjH0j30xzg+YJND163UeMJlQ9KfAps39AQ6eHKhRGK6/0Biwa/x
-         LVoERUCIHjzCpEW5euqueGjHezvM7VArf88yeY3/qT2X5xyM1HID9Ouw/9PyM4maGOTF
-         7RJCD01kEG352JAkscoG0M4hTtAqptDo49eKwZgEEIMWkrNCC9gcexymBM2VJkXKmaIx
-         um5w==
-X-Gm-Message-State: APzg51AINdJcae/hOajinh0hebTPvZRskMZRtIctqKnDiahrvQdR9BN5
-        GGSCjhd0+NhszxNFFugZ8LA=
-X-Google-Smtp-Source: ANB0Vda494QKeT6O9Fpt+H7/AUgpDaET0R+gG93QvUHPEvYme8alFw5PV8urE5/8M7Q+SIOe1HNJPg==
-X-Received: by 2002:a62:3c7:: with SMTP id 190-v6mr7211141pfd.145.1536309343555;
-        Fri, 07 Sep 2018 01:35:43 -0700 (PDT)
-Received: from localhost ([39.7.51.34])
-        by smtp.gmail.com with ESMTPSA id j27-v6sm14626139pfj.91.2018.09.07.01.35.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 01:35:42 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 17:35:38 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
-Message-ID: <20180907083538.GA2279@jagdpanzerIV>
-References: <20180905213334.03375777@vmware.local.home>
- <20180906023151.GA749@jagdpanzerIV>
- <20180907074531.GM24106@hirez.programming.kicks-ass.net>
- <20180907082834.vjycyvt6nddpb4la@pathway.suse.cz>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=7ABnmAd5zyZxB/9Q3Turs7e+vlK3CYX7hf5YIylZu8g=;
+        b=ImTs3/0dEX8J1mxNWtie9Qo3Y0xSs+NbAd14X6brYFRXSgMZLBIEDY5X3nOmPA5Jqy
+         F0S5qH+F9hZ2CpV3MYaJKLShLrDzAZ1V7f3bJd7VszPr7lJ81vEyYM00qHRvELVxhrUk
+         k4nYBvXD/Y7Wd4VvOxN/pRoBin1OoGI780LM8FX8tHo2tQTMHXlangs2MGRcqvlms115
+         iAlr1dmwnT1sjhUFDXYIVQsuAwQvyHaiaVaOWJNB6LSCYSj7CFYI4er+kUY78Gk/vs6P
+         nlh8JNQnZDjUwl5mP5hdjwUVy4vcslu0uz9D+UeGkRkawOO3excUrM/5WTvMSCICL6Ne
+         FKOA==
+X-Gm-Message-State: APzg51BCCeUEhaoRRzHFAsGfRWSr1eVM8XmRLcpXelp2fsG0m0coGF/k
+        1JiYBwie2XCmY+Dv0qdvC84kU3ui+1CT6YceITqo0IlqCLvY
+X-Google-Smtp-Source: ANB0VdZ5/Li3bL7KbhwHXl0Zsw5NE2p1y8kbZi8GekKEuCUCHQAgMw1vPDv1o5BCmfr002m5fU2MkqgoPlYl+4eaj6d1AkZ9M9rl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907082834.vjycyvt6nddpb4la@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:783:: with SMTP id f125-v6mr5865668itf.50.1536309482789;
+ Fri, 07 Sep 2018 01:38:02 -0700 (PDT)
+Date:   Fri, 07 Sep 2018 01:38:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fca96a057543ecea@google.com>
+Subject: KASAN: use-after-free Read in cma_bind_port
+From:   syzbot <syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com>
+To:     danielj@mellanox.com, dledford@redhat.com, jgg@ziepe.ca,
+        leon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, parav@mellanox.com,
+        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/07/18 10:28), Petr Mladek wrote:
-> On Fri 2018-09-07 09:45:31, Peter Zijlstra wrote:
-> > On Thu, Sep 06, 2018 at 11:31:51AM +0900, Sergey Senozhatsky wrote:
-> > > An alternative option, thus, could be re-instating back the rule that
-> > > lockdep_off/on should be the first and the last thing we do in
-> > > nmi_enter/nmi_exit. E.g.
-> > > 
-> > > nmi_enter()
-> > > 	lockdep_off();
-> > > 	printk_nmi_enter();
-> > > 
-> > > nmi_exit()
-> > > 	printk_nmi_exit();
-> > > 	lockdep_on();
-> > 
-> > Yes that. Also, those should probably be inline functions.
-> > 
-> > ---
-> > Subject: locking/lockdep: Fix NMI handling
-> > 
-> > Someone put code in the NMI handler before lockdep_off(). Since lockdep
-> > is not NMI safe, this wrecks stuff.
-> 
-> My view is that nmi_enter() has to switch several features into
-> NMI-safe mode. The code must not trigger the other features when
-> they are still in the unsafe mode.
-> 
-> It is a chicken&egg problem. And it is hard to completely prevent
-> regressions caused by future changes.
-> 
-> I though that printk_nmi_enter() should never need any lockdep-related
-> code. On the other hand, people might want to printk debug messages
-> when lockdep_off() is called. This is why I put it in the current order.
-> 
-> That said, I am not against this change. Especially the inlining
-> is a good move. Note that lockdep_off()/lockdep_on() must not
-> be traced as well.
+Hello,
 
-Should't printk_nmi_enter()/printk_nmi_exit() still be notrace?
-Like you and Steven said - it's still before ftrace_nmi_enter()
-and should be notrace regardless.
+syzbot found the following crash on:
 
-	-ss
+HEAD commit:    b36fdc6853a3 Merge tag 'gpio-v4.19-2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1660c266400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6c9564cd177daf0c
+dashboard link: https://syzkaller.appspot.com/bug?extid=da2591e115d57a9cbb8b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in cma_bind_port+0x35d/0x3f0  
+drivers/infiniband/core/cma.c:3059
+Read of size 2 at addr ffff8801b89fb320 by task syz-executor3/7584
+
+CPU: 1 PID: 7584 Comm: syz-executor3 Not tainted 4.19.0-rc2+ #224
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:431
+  cma_bind_port+0x35d/0x3f0 drivers/infiniband/core/cma.c:3059
+  cma_alloc_port+0x115/0x180 drivers/infiniband/core/cma.c:3095
+  cma_alloc_any_port drivers/infiniband/core/cma.c:3160 [inline]
+  cma_get_port drivers/infiniband/core/cma.c:3314 [inline]
+  rdma_bind_addr+0x1765/0x23d0 drivers/infiniband/core/cma.c:3434
+  cma_bind_addr drivers/infiniband/core/cma.c:2963 [inline]
+  rdma_resolve_addr+0x4fa/0x27a0 drivers/infiniband/core/cma.c:2974
+  ucma_resolve_ip+0x242/0x2a0 drivers/infiniband/core/ucma.c:711
+  ucma_write+0x336/0x420 drivers/infiniband/core/ucma.c:1680
+  __vfs_write+0x117/0x9d0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457099
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f47da18ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f47da18b6d4 RCX: 0000000000457099
+RDX: 0000000000000048 RSI: 0000000020000240 RDI: 0000000000000005
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d8100 R14: 00000000004c1c28 R15: 0000000000000000
+
+Allocated by task 7601:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x730 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  __rdma_create_id+0xdf/0x7a0 drivers/infiniband/core/cma.c:782
+  ucma_create_id+0x399/0x9d0 drivers/infiniband/core/ucma.c:502
+  ucma_write+0x336/0x420 drivers/infiniband/core/ucma.c:1680
+  __vfs_write+0x117/0x9d0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 7583:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x210 mm/slab.c:3813
+  rdma_destroy_id+0x848/0xce0 drivers/infiniband/core/cma.c:1737
+  ucma_close+0x100/0x300 drivers/infiniband/core/ucma.c:1759
+  __fput+0x38a/0xa40 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801b89fb300
+  which belongs to the cache kmalloc-2048 of size 2048
+The buggy address is located 32 bytes inside of
+  2048-byte region [ffff8801b89fb300, ffff8801b89fbb00)
+The buggy address belongs to the page:
+page:ffffea0006e27e80 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea0006ec8108 ffffea0006e90288 ffff8801dac00c40
+raw: 0000000000000000 ffff8801b89fa200 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b89fb200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b89fb280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801b89fb300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                ^
+  ffff8801b89fb380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b89fb400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
