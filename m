@@ -6,200 +6,213 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B74AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E000C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C6A2086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C6A2086B
+	by mail.kernel.org (Postfix) with ESMTP id AE0DA20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:43:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE0DA20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbeIGUZA (ORCPT
+        id S1730320AbeIGUY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:25:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36690 "EHLO
+        Fri, 7 Sep 2018 16:24:57 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36647 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728931AbeIGUY7 (ORCPT
+        with ESMTP id S1728572AbeIGUYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:24:59 -0400
+        Fri, 7 Sep 2018 16:24:55 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1fyIuw-00056g-2e; Fri, 07 Sep 2018 17:43:30 +0200
-Message-Id: <20180907152055.248101027@linutronix.de>
+        id 1fyIuq-00055e-7z; Fri, 07 Sep 2018 17:43:24 +0200
+Message-Id: <20180907152054.639278518@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 17:01:29 +0200
+Date:   Fri, 07 Sep 2018 17:01:22 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Bin Yang <bin.yang@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Mark Gross <mark.gross@intel.com>
-Subject: [patch 10/10] x86/mm/cpa: Avoid the 4k pages check completely
+Subject: [patch 03/10] x86/mm/cpa: Allow range check for static protections
 References: <20180907150119.325866892@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-mm-cpa--Avoid-the-4k-pages-check-completely.patch
+ filename=x86-mm-cpa--Allow-range-check-for-static-protections.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The extra loop which tries hard to preserve large pages in case of conflicts
-with static protection regions turns out to be not preserving anything, at
-least not in the experiments which have been conducted.
+Checking static protections only page by page is slow especially for huge
+pages. To allow quick checks over a complete range, add the ability to do
+that.
 
-There might be corner cases in which the code would be able to preserve a
-large page oaccsionally, but it's really not worth the extra code and the
-cycles wasted in the common case.
+Make the checks inclusive so the ranges can be directly used for debug output
+later.
 
-Before:
-
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  541
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages checked:                  514
- 4K pages set-checked:             7668
-
-After:
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  538
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages set-checked:             7668
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/mm/pageattr.c |   66 ++++++++++++-------------------------------------
- 1 file changed, 17 insertions(+), 49 deletions(-)
+ arch/x86/mm/pageattr.c |   67 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 43 insertions(+), 24 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -111,7 +111,6 @@ static unsigned long cpa_1g_preserved;
- static unsigned long cpa_2m_checked;
- static unsigned long cpa_2m_sameprot;
- static unsigned long cpa_2m_preserved;
--static unsigned long cpa_4k_checked;
- static unsigned long cpa_4k_install;
- 
- static inline void cpa_inc_1g_checked(void)
-@@ -124,11 +123,6 @@ static inline void cpa_inc_2m_checked(vo
- 	cpa_2m_checked++;
+@@ -286,22 +286,29 @@ static void cpa_flush_array(unsigned lon
+ 	}
  }
  
--static inline void cpa_inc_4k_checked(void)
--{
--	cpa_4k_checked++;
--}
--
- static inline void cpa_inc_4k_install(void)
++static bool overlaps(unsigned long r1_start, unsigned long r1_end,
++		     unsigned long r2_start, unsigned long r2_end)
++{
++	return (r1_start <= r2_end && r1_end >= r2_start) ||
++		(r2_start <= r1_end && r2_end >= r1_start);
++}
++
+ #ifdef CONFIG_PCI_BIOS
+ /*
+  * The BIOS area between 640k and 1Mb needs to be executable for PCI BIOS
+  * based config access (CONFIG_PCI_GOBIOS) support.
+  */
+ #define BIOS_PFN	PFN_DOWN(BIOS_BEGIN)
+-#define BIOS_PFN_END	PFN_DOWN(BIOS_END)
++#define BIOS_PFN_END	PFN_DOWN(BIOS_END - 1)
+ 
+-static pgprotval_t protect_pci_bios(unsigned long pfn)
++static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
  {
- 	cpa_4k_install++;
-@@ -158,7 +152,6 @@ static int cpastats_show(struct seq_file
- 	seq_printf(m, "2M pages checked:     %16lu\n", cpa_2m_checked);
- 	seq_printf(m, "2M pages sameprot:    %16lu\n", cpa_2m_sameprot);
- 	seq_printf(m, "2M pages preserved:   %16lu\n", cpa_2m_preserved);
--	seq_printf(m, "4K pages checked:     %16lu\n", cpa_4k_checked);
- 	seq_printf(m, "4K pages set-checked: %16lu\n", cpa_4k_install);
+-	if (pcibios_enabled && within(pfn, BIOS_PFN, BIOS_PFN_END))
++	if (pcibios_enabled && overlaps(spfn, epfn, BIOS_PFN, BIOS_PFN_END))
+ 		return _PAGE_NX;
  	return 0;
  }
-@@ -185,7 +178,6 @@ late_initcall(cpa_stats_init);
  #else
- static inline void cpa_inc_1g_checked(void) { }
- static inline void cpa_inc_2m_checked(void) { }
--static inline void cpa_inc_4k_checked(void) { }
- static inline void cpa_inc_4k_install(void) { }
- static inline void cpa_inc_lp_sameprot(int level) { }
- static inline void cpa_inc_lp_preserved(int level) { }
-@@ -741,11 +733,10 @@ static pgprot_t pgprot_clear_protnone_bi
- static int __should_split_large_page(pte_t *kpte, unsigned long address,
- 				     struct cpa_data *cpa)
+-static pgprotval_t protect_pci_bios(unsigned long pfn)
++static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
  {
--	unsigned long numpages, pmask, psize, lpaddr, addr, pfn, old_pfn;
-+	unsigned long numpages, pmask, psize, lpaddr, pfn, old_pfn;
- 	pgprot_t old_prot, new_prot, req_prot, chk_prot;
- 	pte_t new_pte, old_pte, *tmp;
- 	enum pg_level level;
--	int i;
- 
- 	/*
- 	 * Check for races, another CPU might have split this page
-@@ -850,53 +841,30 @@ static int __should_split_large_page(pte
- 	}
- 
- 	/*
--	 * Optimization: Check whether the requested pgprot is conflicting
--	 * with a static protection requirement in the large page. If not,
--	 * then checking whether the requested range is fully covering the
--	 * large page can be done right here.
-+	 * If the requested range does not cover the full page, split it up
- 	 */
--	new_prot = static_protections(req_prot, lpaddr, old_pfn, numpages,
--				      CPA_DETECT);
--
--	if (pgprot_val(req_prot) == pgprot_val(new_prot)) {
--		if (address != lpaddr || cpa->numpages != numpages)
--			return 1;
--		goto setlp;
--	}
-+	if (address != lpaddr || cpa->numpages != numpages)
-+		return 1;
- 
- 	/*
--	 * Slow path. The full large page check above established that the
--	 * requested pgprot cannot be applied to the full large page due to
--	 * conflicting requirements of static protection regions. It might
--	 * turn out that the whole requested range is covered by the
--	 * modified protection of the first 4k segment at @address. This
--	 * might result in the ability to preserve the large page
--	 * nevertheless.
--	 */
--	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
--	pfn = old_pfn;
--	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
--		chk_prot = static_protections(req_prot, addr, pfn, 1,
--					      CPA_DETECT);
--		cpa_inc_4k_checked();
--		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
--			return 1;
--	}
--
--	/* If there are no changes, return. */
--	if (pgprot_val(new_prot) == pgprot_val(old_prot)) {
--		cpa_inc_lp_sameprot(level);
--		return 0;
--	}
-+	 * Check whether the requested pgprot is conflicting with a static
-+	 * protection requirement in the large page.
+ 	return 0;
+ }
+@@ -312,12 +319,17 @@ static pgprotval_t protect_pci_bios(unsi
+  * aliases.  This also includes __ro_after_init, so do not enforce until
+  * kernel_set_to_readonly is true.
+  */
+-static pgprotval_t protect_rodata(unsigned long pfn)
++static pgprotval_t protect_rodata(unsigned long spfn, unsigned long epfn)
+ {
+-	unsigned long start_pfn = __pa_symbol(__start_rodata) >> PAGE_SHIFT;
+-	unsigned long end_pfn = __pa_symbol(__end_rodata) >> PAGE_SHIFT;
++	unsigned long epfn_ro, spfn_ro = PFN_DOWN(__pa_symbol(__start_rodata));
++
++	/*
++	 * Note: __end_rodata is at page aligned and not inclusive, so
++	 * subtract 1 to get the last enforced PFN in the rodata area.
 +	 */
-+	new_prot = static_protections(req_prot, lpaddr, old_pfn, numpages,
-+				      CPA_DETECT);
++	epfn_ro = PFN_DOWN(__pa_symbol(__end_rodata)) - 1;
  
+-	if (kernel_set_to_readonly && within(pfn, start_pfn, end_pfn))
++	if (kernel_set_to_readonly && overlaps(spfn, epfn, spfn_ro, epfn_ro))
+ 		return _PAGE_RW;
+ 	return 0;
+ }
+@@ -327,9 +339,12 @@ static pgprotval_t protect_rodata(unsign
+  * not cover __inittext since that is gone after boot. On 64bit we do not
+  * enforce !NX on the low mapping
+  */
+-static pgprotval_t protect_kernel_text(unsigned long address)
++static pgprotval_t protect_kernel_text(unsigned long start, unsigned long end)
+ {
+-	if (within(address, (unsigned long)_text, (unsigned long)_etext))
++	unsigned long t_end = (unsigned long)_etext - 1;
++	unsigned long t_start = (unsigned long)_text;
++
++	if (overlaps(start, end, t_start, t_end))
+ 		return _PAGE_NX;
+ 	return 0;
+ }
+@@ -344,13 +359,14 @@ static pgprotval_t protect_kernel_text(u
+  * This will preserve the large page mappings for kernel text/data at no
+  * extra cost.
+  */
+-static pgprotval_t protect_kernel_text_ro(unsigned long address)
++static pgprotval_t protect_kernel_text_ro(unsigned long start,
++					  unsigned long end)
+ {
+-	unsigned long end = (unsigned long)__end_rodata_hpage_align;
+-	unsigned long start = (unsigned long)_text;
++	unsigned long t_end = (unsigned long)__end_rodata_hpage_align - 1;
++	unsigned long t_start = (unsigned long)_text;
+ 	unsigned int level;
+ 
+-	if (!kernel_set_to_readonly || !within(address, start, end))
++	if (!kernel_set_to_readonly || !overlaps(start, end, t_start, t_end))
+ 		return 0;
  	/*
--	 * Verify that the address is aligned and the number of pages
--	 * covers the full page.
-+	 * If there is a conflict, split the large page.
-+	 *
-+	 * There used to be a 4k wise evaluation trying really hard to
-+	 * preserve the large pages, but experimentation has shown, that this
-+	 * does not help at all. There might be corner cases which would
-+	 * preserve one large page occasionally, but it's really not worth the
-+	 * extra code and cycles for the common case.
+ 	 * Don't enforce the !RW mapping for the kernel text mapping, if
+@@ -364,12 +380,13 @@ static pgprotval_t protect_kernel_text_r
+ 	 * so the protections for kernel text and identity mappings have to
+ 	 * be the same.
  	 */
--	if (address != lpaddr || cpa->numpages != numpages)
-+	if (pgprot_val(req_prot) != pgprot_val(new_prot))
- 		return 1;
+-	if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
++	if (lookup_address(start, &level) && (level != PG_LEVEL_4K))
+ 		return _PAGE_RW;
+ 	return 0;
+ }
+ #else
+-static pgprotval_t protect_kernel_text_ro(unsigned long address)
++static pgprotval_t protect_kernel_text_ro(unsigned long start,
++					  unsigned long end)
+ {
+ 	return 0;
+ }
+@@ -381,18 +398,20 @@ static pgprotval_t protect_kernel_text_r
+  * right (again, ioremap() on BIOS memory is not uncommon) so this function
+  * checks and fixes these known static required protection bits.
+  */
+-static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
+-					  unsigned long pfn)
++static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
++					  unsigned long pfn, unsigned long npg)
+ {
+ 	pgprotval_t forbidden;
++	unsigned long end;
  
--setlp:
- 	/* All checks passed. Update the large page mapping. */
- 	new_pte = pfn_pte(old_pfn, new_prot);
- 	__set_pmd_pte(kpte, address, new_pte);
+ 	/* Operate on the virtual address */
+-	forbidden  = protect_kernel_text(address);
+-	forbidden |= protect_kernel_text_ro(address);
++	end = start + npg * PAGE_SIZE - 1;
++	forbidden  = protect_kernel_text(start, end);
++	forbidden |= protect_kernel_text_ro(start, end);
+ 
+ 	/* Check the PFN directly */
+-	forbidden |= protect_pci_bios(pfn);
+-	forbidden |= protect_rodata(pfn);
++	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
++	forbidden |= protect_rodata(pfn, pfn + npg - 1);
+ 
+ 	return __pgprot(pgprot_val(prot) & ~forbidden);
+ }
+@@ -667,7 +686,7 @@ static int __should_split_large_page(pte
+ 	new_prot = static_protections(req_prot, address, pfn, 1);
+ 	pfn = old_pfn;
+ 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
++		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
+ 
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			return 1;
+@@ -1277,7 +1296,7 @@ static int __change_page_attr(struct cpa
+ 		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+ 		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
+ 
+-		new_prot = static_protections(new_prot, address, pfn);
++		new_prot = static_protections(new_prot, address, pfn, 1);
+ 
+ 		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
 
 
