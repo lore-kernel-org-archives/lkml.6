@@ -2,302 +2,233 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5C6C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165C72083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165C72083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B85F02083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="FysMSi5U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B85F02083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbeIHC1F (ORCPT
+        id S1730919AbeIHC1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:27:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57362 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeIHC1E (ORCPT
+        Fri, 7 Sep 2018 22:27:07 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:20095 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730514AbeIHC1G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:27:04 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC27E100B;
-        Fri,  7 Sep 2018 21:44:07 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 02/29] powerpc/fadump: handle crash memory ranges array index overflow
-Date:   Fri,  7 Sep 2018 23:10:23 +0200
-Message-Id: <20180907210909.716786483@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
-References: <20180907210909.523240901@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 7 Sep 2018 22:27:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1536356650; x=1567892650;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ipAECLih7CepDqAomzNw17Micat2prinpA6B6Pe+8po=;
+  b=FysMSi5UqVApVp1ue/aUxe5HEY8T6qH4CtAgGA+IplL/jvXVVWMIVh7o
+   GDtJ5VRBmW4nX1lOhe30tPLViYtM4MnSWyOb7H0tTLQST5YSFId3SA4gl
+   +w/j8g9aeOhpJT1S6B+78+BgZiPQeMVGfBrc9Ft6m9xwu2lMGUhA6aUfE
+   g=;
+X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
+   d="scan'208";a="696510135"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-69849ee2.us-west-2.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:44:09 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2a-69849ee2.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LgYBX107341
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Fri, 7 Sep 2018 21:42:37 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LgXGt027633
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 7 Sep 2018 23:42:33 +0200
+Received: (from jschoenh@localhost)
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LgWKQ027629;
+        Fri, 7 Sep 2018 23:42:32 +0200
+From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC 41/60] cosched: Introduce locking for leader activities
+Date:   Fri,  7 Sep 2018 23:40:28 +0200
+Message-Id: <20180907214047.26914-42-jschoenh@amazon.de>
+X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
+In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+With hierarchical runqueues and locks at each level, it is often
+necessary to get multiple locks. Introduce the first of two locking
+strategies, which is suitable for typical leader activities.
 
-------------------
+To avoid deadlocks the general rule is that multiple locks have to be
+taken from bottom to top. Leaders make scheduling decisions and the
+necessary maintenance for their part of the runqueue hierarchy.  Hence,
+they need to gather locks for all runqueues they own to operate freely
+on them.
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+Provide two functions that do that: rq_lock_owned() and
+rq_unlock_owned(). Typically, they walk from the already locked per-CPU
+runqueue upwards, locking/unlocking runqueues as they go along, stopping
+when they would leave their area of responsibility.
 
-commit 1bd6a1c4b80a28d975287630644e6b47d0f977a5 upstream.
-
-Crash memory ranges is an array of memory ranges of the crashing kernel
-to be exported as a dump via /proc/vmcore file. The size of the array
-is set based on INIT_MEMBLOCK_REGIONS, which works alright in most cases
-where memblock memory regions count is less than INIT_MEMBLOCK_REGIONS
-value. But this count can grow beyond INIT_MEMBLOCK_REGIONS value since
-commit 142b45a72e22 ("memblock: Add array resizing support").
-
-On large memory systems with a few DLPAR operations, the memblock memory
-regions count could be larger than INIT_MEMBLOCK_REGIONS value. On such
-systems, registering fadump results in crash or other system failures
-like below:
-
-  task: c00007f39a290010 ti: c00000000b738000 task.ti: c00000000b738000
-  NIP: c000000000047df4 LR: c0000000000f9e58 CTR: c00000000010f180
-  REGS: c00000000b73b570 TRAP: 0300   Tainted: G          L   X  (4.4.140+)
-  MSR: 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22004484  XER: 20000000
-  CFAR: c000000000008500 DAR: 000007a450000000 DSISR: 40000000 SOFTE: 0
-  ...
-  NIP [c000000000047df4] smp_send_reschedule+0x24/0x80
-  LR [c0000000000f9e58] resched_curr+0x138/0x160
-  Call Trace:
-    resched_curr+0x138/0x160 (unreliable)
-    check_preempt_curr+0xc8/0xf0
-    ttwu_do_wakeup+0x38/0x150
-    try_to_wake_up+0x224/0x4d0
-    __wake_up_common+0x94/0x100
-    ep_poll_callback+0xac/0x1c0
-    __wake_up_common+0x94/0x100
-    __wake_up_sync_key+0x70/0xa0
-    sock_def_readable+0x58/0xa0
-    unix_stream_sendmsg+0x2dc/0x4c0
-    sock_sendmsg+0x68/0xa0
-    ___sys_sendmsg+0x2cc/0x2e0
-    __sys_sendmsg+0x5c/0xc0
-    SyS_socketcall+0x36c/0x3f0
-    system_call+0x3c/0x100
-
-as array index overflow is not checked for while setting up crash memory
-ranges causing memory corruption. To resolve this issue, dynamically
-allocate memory for crash memory ranges and resize it incrementally,
-in units of pagesize, on hitting array size limit.
-
-Fixes: 2df173d9e85d ("fadump: Initialize elfcore header and add PT_LOAD program headers.")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-[mpe: Just use PAGE_SIZE directly, fixup variable placement]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- arch/powerpc/include/asm/fadump.h |    3 -
- arch/powerpc/kernel/fadump.c      |   91 ++++++++++++++++++++++++++++++++------
- 2 files changed, 77 insertions(+), 17 deletions(-)
+ kernel/sched/cosched.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h   | 11 ++++++
+ 2 files changed, 105 insertions(+)
 
---- a/arch/powerpc/include/asm/fadump.h
-+++ b/arch/powerpc/include/asm/fadump.h
-@@ -194,9 +194,6 @@ struct fadump_crash_info_header {
- 	struct cpumask	cpu_online_mask;
- };
- 
--/* Crash memory ranges */
--#define INIT_CRASHMEM_RANGES	(INIT_MEMBLOCK_REGIONS + 2)
--
- struct fad_crash_memory_ranges {
- 	unsigned long long	base;
- 	unsigned long long	size;
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -48,8 +48,10 @@ static struct fadump_mem_struct fdm;
- static const struct fadump_mem_struct *fdm_active;
- 
- static DEFINE_MUTEX(fadump_mutex);
--struct fad_crash_memory_ranges crash_memory_ranges[INIT_CRASHMEM_RANGES];
-+struct fad_crash_memory_ranges *crash_memory_ranges;
-+int crash_memory_ranges_size;
- int crash_mem_ranges;
-+int max_crash_mem_ranges;
- 
- /* Scan the Firmware Assisted dump configuration details. */
- int __init early_init_dt_scan_fw_dump(unsigned long node,
-@@ -726,38 +728,88 @@ static int __init process_fadump(const s
- 	return 0;
+diff --git a/kernel/sched/cosched.c b/kernel/sched/cosched.c
+index 1b442e20faad..df62ee6d0520 100644
+--- a/kernel/sched/cosched.c
++++ b/kernel/sched/cosched.c
+@@ -514,3 +514,97 @@ void cosched_offline_group(struct task_group *tg)
+ 	taskgroup_for_each_cfsrq(tg, cfs)
+ 		list_del_rcu(&cfs->sdrq.tg_siblings);
  }
- 
--static inline void fadump_add_crash_memory(unsigned long long base,
--					unsigned long long end)
-+static void free_crash_memory_ranges(void)
-+{
-+	kfree(crash_memory_ranges);
-+	crash_memory_ranges = NULL;
-+	crash_memory_ranges_size = 0;
-+	max_crash_mem_ranges = 0;
-+}
++
++/*****************************************************************************
++ * Locking related functions
++ *****************************************************************************/
 +
 +/*
-+ * Allocate or reallocate crash memory ranges array in incremental units
-+ * of PAGE_SIZE.
++ * Lock owned part of the runqueue hierarchy from the specified runqueue
++ * upwards.
++ *
++ * You may call rq_lock_owned() again in some nested code path. Currently, this
++ * is needed for put_prev_task(), which is sometimes called from within
++ * pick_next_task_fair(), and for throttle_cfs_rq(), which is sometimes called
++ * during enqueuing and dequeuing.
++ *
++ * When not called nested, returns the uppermost locked runqueue; used by
++ * pick_next_task_fair() to avoid going up the hierarchy again.
 + */
-+static int allocate_crash_memory_ranges(void)
++struct rq *rq_lock_owned(struct rq *rq, struct rq_owner_flags *orf)
 +{
-+	struct fad_crash_memory_ranges *new_array;
-+	u64 new_size;
++	int cpu = rq->sdrq_data.leader;
++	struct rq *ret = rq;
 +
-+	new_size = crash_memory_ranges_size + PAGE_SIZE;
-+	pr_debug("Allocating %llu bytes of memory for crash memory ranges\n",
-+		 new_size);
++	lockdep_assert_held(&rq->lock);
 +
-+	new_array = krealloc(crash_memory_ranges, new_size, GFP_KERNEL);
-+	if (new_array == NULL) {
-+		pr_err("Insufficient memory for setting up crash memory ranges\n");
-+		free_crash_memory_ranges();
-+		return -ENOMEM;
++	orf->nested = rq->sdrq_data.parent_locked;
++	if (orf->nested)
++		return NULL;
++
++	orf->cookie = lockdep_cookie();
++
++	WARN_ON_ONCE(!irqs_disabled());
++
++	/* Lowest level is already locked, begin with next level */
++	rq = parent_rq(rq);
++
++	while (rq) {
++		/*
++		 * FIXME: This avoids ascending the hierarchy, if upper
++		 * levels are not in use. Can we do this with leader==-1
++		 * instead?
++		 */
++		if (root_task_group.scheduled < rq->sdrq_data.level)
++			break;
++
++		/*
++		 * Leadership is always taken, never given; if we're not
++		 * already the leader, we won't be after taking the lock.
++		 */
++		if (cpu != READ_ONCE(rq->sdrq_data.leader))
++			break;
++
++		rq_lock(rq, &rq->sdrq_data.rf);
++
++		/* Did we race with a leadership change? */
++		if (cpu != READ_ONCE(rq->sdrq_data.leader)) {
++			rq_unlock(rq, &rq->sdrq_data.rf);
++			break;
++		}
++
++		/* Apply the cookie that's not stored with the data structure */
++		lockdep_repin_lock(&rq->lock, orf->cookie);
++
++		ret->sdrq_data.parent_locked = true;
++		update_rq_clock(rq);
++		ret = rq;
++
++		rq = parent_rq(rq);
 +	}
-+
-+	crash_memory_ranges = new_array;
-+	crash_memory_ranges_size = new_size;
-+	max_crash_mem_ranges = (new_size /
-+				sizeof(struct fad_crash_memory_ranges));
-+	return 0;
-+}
-+
-+static inline int fadump_add_crash_memory(unsigned long long base,
-+					  unsigned long long end)
- {
- 	if (base == end)
--		return;
-+		return 0;
-+
-+	if (crash_mem_ranges == max_crash_mem_ranges) {
-+		int ret;
-+
-+		ret = allocate_crash_memory_ranges();
-+		if (ret)
-+			return ret;
-+	}
- 
- 	pr_debug("crash_memory_range[%d] [%#016llx-%#016llx], %#llx bytes\n",
- 		crash_mem_ranges, base, end - 1, (end - base));
- 	crash_memory_ranges[crash_mem_ranges].base = base;
- 	crash_memory_ranges[crash_mem_ranges].size = end - base;
- 	crash_mem_ranges++;
-+	return 0;
- }
- 
--static void fadump_exclude_reserved_area(unsigned long long start,
-+static int fadump_exclude_reserved_area(unsigned long long start,
- 					unsigned long long end)
- {
- 	unsigned long long ra_start, ra_end;
-+	int ret = 0;
- 
- 	ra_start = fw_dump.reserve_dump_area_start;
- 	ra_end = ra_start + fw_dump.reserve_dump_area_size;
- 
- 	if ((ra_start < end) && (ra_end > start)) {
- 		if ((start < ra_start) && (end > ra_end)) {
--			fadump_add_crash_memory(start, ra_start);
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(start, ra_start);
-+			if (ret)
-+				return ret;
-+
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		} else if (start < ra_start) {
--			fadump_add_crash_memory(start, ra_start);
-+			ret = fadump_add_crash_memory(start, ra_start);
- 		} else if (ra_end < end) {
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		}
- 	} else
--		fadump_add_crash_memory(start, end);
-+		ret = fadump_add_crash_memory(start, end);
 +
 +	return ret;
- }
- 
- static int fadump_init_elfcore_header(char *bufp)
-@@ -793,10 +845,11 @@ static int fadump_init_elfcore_header(ch
-  * Traverse through memblock structure and setup crash memory ranges. These
-  * ranges will be used create PT_LOAD program headers in elfcore header.
-  */
--static void fadump_setup_crash_memory_ranges(void)
-+static int fadump_setup_crash_memory_ranges(void)
- {
- 	struct memblock_region *reg;
- 	unsigned long long start, end;
-+	int ret;
- 
- 	pr_debug("Setup crash memory ranges.\n");
- 	crash_mem_ranges = 0;
-@@ -807,7 +860,9 @@ static void fadump_setup_crash_memory_ra
- 	 * specified during fadump registration. We need to create a separate
- 	 * program header for this chunk with the correct offset.
- 	 */
--	fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	ret = fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	if (ret)
-+		return ret;
- 
- 	for_each_memblock(memory, reg) {
- 		start = (unsigned long long)reg->base;
-@@ -816,8 +871,12 @@ static void fadump_setup_crash_memory_ra
- 			start = fw_dump.boot_memory_size;
- 
- 		/* add this range excluding the reserved dump area. */
--		fadump_exclude_reserved_area(start, end);
-+		ret = fadump_exclude_reserved_area(start, end);
-+		if (ret)
-+			return ret;
- 	}
++}
 +
-+	return 0;
- }
++void rq_unlock_owned(struct rq *rq, struct rq_owner_flags *orf)
++{
++	bool parent_locked = rq->sdrq_data.parent_locked;
++
++	if (orf->nested)
++		return;
++
++	/* Lowest level must stay locked, begin with next level */
++	lockdep_assert_held(&rq->lock);
++	rq->sdrq_data.parent_locked = false;
++
++	while (parent_locked) {
++		rq = parent_rq(rq);
++		lockdep_assert_held(&rq->lock);
++
++		parent_locked = rq->sdrq_data.parent_locked;
++		rq->sdrq_data.parent_locked = false;
++
++		lockdep_unpin_lock(&rq->lock, orf->cookie);
++		rq_unlock(rq, &rq->sdrq_data.rf);
++	}
++}
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 0dfefa31704e..7dba8fdc48c7 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -506,6 +506,13 @@ struct rq_flags {
+ #endif
+ };
  
- /*
-@@ -941,6 +1000,7 @@ static void register_fadump(void)
- {
- 	unsigned long addr;
- 	void *vaddr;
-+	int ret;
- 
++struct rq_owner_flags {
++#ifdef CONFIG_COSCHEDULING
++	bool nested;
++	struct pin_cookie cookie;
++#endif
++};
++
+ #ifdef CONFIG_COSCHEDULING
+ struct sdrq_data {
  	/*
- 	 * If no memory is reserved then we can not register for firmware-
-@@ -949,7 +1009,9 @@ static void register_fadump(void)
- 	if (!fw_dump.reserve_dump_area_size)
- 		return;
+@@ -1197,6 +1204,8 @@ void cosched_init_sdrq(struct task_group *tg, struct cfs_rq *cfs,
+ 		       struct cfs_rq *sd_parent, struct cfs_rq *tg_parent);
+ void cosched_online_group(struct task_group *tg);
+ void cosched_offline_group(struct task_group *tg);
++struct rq *rq_lock_owned(struct rq *rq, struct rq_owner_flags *orf);
++void rq_unlock_owned(struct rq *rq, struct rq_owner_flags *orf);
+ #else /* !CONFIG_COSCHEDULING */
+ static inline void cosched_init_bottom(void) { }
+ static inline void cosched_init_topology(void) { }
+@@ -1206,6 +1215,8 @@ static inline void cosched_init_sdrq(struct task_group *tg, struct cfs_rq *cfs,
+ 				     struct cfs_rq *tg_parent) { }
+ static inline void cosched_online_group(struct task_group *tg) { }
+ static inline void cosched_offline_group(struct task_group *tg) { }
++static inline struct rq *rq_lock_owned(struct rq *rq, struct rq_owner_flags *orf) { return rq; }
++static inline void rq_unlock_owned(struct rq *rq, struct rq_owner_flags *orf) { }
+ #endif /* !CONFIG_COSCHEDULING */
  
--	fadump_setup_crash_memory_ranges();
-+	ret = fadump_setup_crash_memory_ranges();
-+	if (ret)
-+		return ret;
- 
- 	addr = be64_to_cpu(fdm.rmr_region.destination_address) + be64_to_cpu(fdm.rmr_region.source_len);
- 	/* Initialize fadump crash info header. */
-@@ -1028,6 +1090,7 @@ void fadump_cleanup(void)
- 	} else if (fw_dump.dump_registered) {
- 		/* Un-register Firmware-assisted dump if it was registered. */
- 		fadump_unregister_dump(&fdm);
-+		free_crash_memory_ranges();
- 	}
- }
- 
-
+ #ifdef CONFIG_SCHED_SMT
+-- 
+2.9.3.1.gcba166c.dirty
 
