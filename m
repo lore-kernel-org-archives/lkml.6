@@ -2,125 +2,150 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C12FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D466C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E4922083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:02:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q1McUyFW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4922083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4390D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:04:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4390D2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeIGUo3 (ORCPT
+        id S1727993AbeIGUpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:44:29 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:45105 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbeIGUo3 (ORCPT
+        Fri, 7 Sep 2018 16:45:35 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:56518 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727751AbeIGUpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:44:29 -0400
-Received: by mail-yb1-f193.google.com with SMTP id h22-v6so5616008ybg.12
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:02:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GclgBvFrVu0raBIwVIf48JNcf1SgxjZVhfDXfihyusc=;
-        b=Q1McUyFWOr7DEgKJec3j+BZfo4pZe5Znw801IzuFJxVKToicpFFkcl4BYrrtZoFaxl
-         UGSyxT+TDG/PdpCp9LYGXd1r+8A7sbzK7qkQACpr8svYg0RVl1z4qEQ6S9q/KmBala4N
-         klS6scCnYKpIkcOcQzPGlPU3e1741e7OVGOY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GclgBvFrVu0raBIwVIf48JNcf1SgxjZVhfDXfihyusc=;
-        b=lj9Wakl2s5WOX5XzEvfCIWPQnGgOXTVqZq+UUAjsIrbMkW0W02wU2/MQXh45g5Zqe2
-         6cFjhSsYF0vOWQG4Jg1Lx0BKoF+jRSVv968Qdj0ZoSn594lBkCjwLQaxiacLwvmfVmfH
-         SPdD/xLLouWvRNoBKFxL5yZWT23a9aBBngnJB1oqUHekAyG//5Isa9cBe9jCPOlIsjzJ
-         lUASn/3UrTgTr8JLdekF//BEwVkng6wX6tcGfGiUKDe4M2FhHWa6f04pIZTchmavrOEj
-         sXTagYNQ8GLTJvLLcaUiSlrv0MYVY3yw/4AoLB3Gr8kmG8PO/nwXp+MNeQ3sMIfLHUxW
-         76qg==
-X-Gm-Message-State: APzg51BFSYwjyjBptNzo8/1uz9Z+DydpnWb4sICPPk8crKuobb74UhGY
-        +GCzncHWRdE2cuugxqMfeGwOSuQ/gPo=
-X-Google-Smtp-Source: ANB0VdanAKAnGZmieQqomRaBHBg9TpLtn2L1jYfgM8XKeSHfeFMrxYD2GcoA5WqP/3JXl0smosFkOQ==
-X-Received: by 2002:a25:c89:: with SMTP id 131-v6mr4386840ybm.35.1536336173496;
-        Fri, 07 Sep 2018 09:02:53 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id p126-v6sm2998644ywf.22.2018.09.07.09.02.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 09:02:53 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id c4-v6so5631367ybl.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:02:52 -0700 (PDT)
-X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr4331177ybh.209.1536336166057;
- Fri, 07 Sep 2018 09:02:46 -0700 (PDT)
+        Fri, 7 Sep 2018 16:45:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 0D1224193D;
+        Fri,  7 Sep 2018 16:03:59 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yt-sB-2_xY1O; Fri,  7 Sep 2018 16:03:59 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id A43DE4193A;
+        Fri,  7 Sep 2018 16:03:45 +0000 (UTC)
+Subject: Re: WARNING: ODEBUG bug in vudc_probe
+To:     Dmitry Vyukov <dvyukov@google.com>, valentina.manea.m@gmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, khlebnikov@yandex-team.ru,
+        paolo.valente@linaro.org, axboe@kernel.dk
+References: <CACT4Y+Ywimrr3_oD2r=u0-Sz-PFXL2tpXA4q0odKDMM_Tvw0AA@mail.gmail.com>
+From:   Shuah Khan <shuah@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>
+Message-ID: <8e8f8ac1-8b72-a21c-f504-74a5ce12b625@kernel.org>
+Date:   Fri, 7 Sep 2018 10:03:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 09:02:45 -0700 (PDT)
-In-Reply-To: <20180907034242.zhm4dglzkldhvh3x@gondor.apana.org.au>
-References: <20180906225854.40989-1-keescook@chromium.org> <20180906225854.40989-3-keescook@chromium.org>
- <20180907034242.zhm4dglzkldhvh3x@gondor.apana.org.au>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 7 Sep 2018 09:02:45 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLx8bdr+Ld7QE1LxttPB-LOs-H96kyx0O0MXq9MzX2vNw@mail.gmail.com>
-Message-ID: <CAGXu5jLx8bdr+Ld7QE1LxttPB-LOs-H96kyx0O0MXq9MzX2vNw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] crypto: skcipher - Enforce non-ASYNC for on-stack requests
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACT4Y+Ywimrr3_oD2r=u0-Sz-PFXL2tpXA4q0odKDMM_Tvw0AA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 8:42 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Thu, Sep 06, 2018 at 03:58:52PM -0700, Kees Cook wrote:
->>
->> @@ -437,6 +442,12 @@ static inline struct crypto_skcipher *crypto_skcipher_reqtfm_check(
->>  {
->>       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
->>
->> +     if (req->__onstack) {
->> +             if (WARN_ON(crypto_skcipher_alg(tfm)->base.cra_flags &
->> +                             CRYPTO_ALG_ASYNC))
->> +                     return ERR_PTR(-EINVAL);
->> +     }
->
-> Sorry but I don't like imposing a run-time check on everybody when
-> stack-based requests are the odd ones out.  If we're going to make
-> this a run-time check (I'd much prefer a compile-time check, but I
-> understand that this may involve too much churn), then please do it
-> for stack-based request users only.
+Hi Dmitry,
 
-I'll continue to investigate alternatives, but I wanted to point out
-that the struct change actually fills an existing padding byte (so no
-change in memory usage) and marking this as an unlikely() test means
-it wouldn't even be measurable due to the branch predictor (so no
-change in speed). encrypt/decrypt entry is a tiny tiny fraction of the
-actual work done during encryption/decryption, etc.
+On 09/07/2018 04:54 AM, Dmitry Vyukov wrote:
+> Hi,
+> 
+> I am getting the following error while booting kernel on upstream
+> commit a49a9dcce802b3651013f659813df1361d306172, config is attached.
+> Seems there is some kind of resource leak.
+> 
+> Thanks
 
--Kees
+Odd. This commit has nothing to do with vudc. I am adding developers
+that are associated with this commit to the thread.
 
+diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
+index 58c6efa9f9a9..9fe5952d117d 100644
+--- a/block/bfq-cgroup.c
++++ b/block/bfq-cgroup.c
+@@ -275,9 +275,9 @@ static void bfqg_and_blkg_get(struct bfq_group *bfqg)
+
+ void bfqg_and_blkg_put(struct bfq_group *bfqg)
+ {
+-       bfqg_put(bfqg);
+-
+        blkg_put(bfqg_to_blkg(bfqg));
++
++       bfqg_put(bfqg);
+ }
+
+ /* @stats = 0 */
 -- 
-Kees Cook
-Pixel Security
+
+> 
+> ------------[ cut here ]------------
+> ODEBUG: free active (active state 0) object type: timer_list hint:
+> delayed_work_timer_fn+0x0/0x6e kernel/workqueue.c:4923
+> WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:329
+> debug_print_object+0x164/0x17c lib/debugobjects.c:326
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc2-00205-ga49a9dcce802 #6
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1a5/0x28b lib/dump_stack.c:113
+>  panic+0x239/0x4e8 kernel/panic.c:184
+>  __warn+0x16f/0x1c5 kernel/panic.c:536
+>  report_bug+0x163/0x1c9 lib/bug.c:186
+>  fixup_bug+0x43/0x7c arch/x86/kernel/traps.c:178
+>  do_error_trap+0xee/0x2ac arch/x86/kernel/traps.c:296
+>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+> RIP: 0010:debug_print_object+0x164/0x17c lib/debugobjects.c:326
+> Code: 3c 02 00 74 05 e8 06 12 cc fe 48 8b 14 dd 60 9c c8 86 4d 89 e9
+> 49 89 e8 44 89 f1 4c 89 e6 48 c7 c7 a0 90 c8 86 e8 5e a7 7a fe <0f> 0b
+> 5b ff 05 b1 92 45 06 5d 41 5c 41 5d 41 5e c3 ff 05 a3 92 45
+> RSP: 0000:ffff88006bbaf510 EFLAGS: 00010086
+> RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffff88006bba2900
+> RDX: 000000616bba2900 RSI: ffffffff8148ef03 RDI: ffffed000d775e76
+> RBP: ffffffff868e66a0 R08: fffffbfff0ff8ff1 R09: 0000000000000001
+> R10: ffff88006bba2900 R11: fffffbfff0ff8ff0 R12: ffffffff86c89580
+> R13: ffffffff813c4247 R14: 0000000000000000 R15: ffff88006a131208
+>  __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+>  debug_check_no_obj_freed+0x176/0x2a1 lib/debugobjects.c:818
+>  slab_free_hook mm/slub.c:1368 [inline]
+>  slab_free_freelist_hook+0x8a/0xed mm/slub.c:1398
+>  slab_free mm/slub.c:2953 [inline]
+>  kfree+0x187/0x222 mm/slub.c:3906
+
+I am a bit stumped. The memory vudc is trying to free is valid. I am
+looking into this more. Please send me the full dmesg.
+
+>  vudc_probe+0x9d9/0xa24 drivers/usb/usbip/vudc_dev.c:633
+>  platform_drv_probe+0xdd/0x181 drivers/base/platform.c:579
+>  really_probe+0x590/0xb2a drivers/base/dd.c:500
+>  driver_probe_device+0x2a8/0x313 drivers/base/dd.c:662
+>  __device_attach_driver+0x220/0x27b drivers/base/dd.c:758
+>  bus_for_each_drv+0x177/0x1b8 drivers/base/bus.c:461
+>  __device_attach+0x203/0x36d drivers/base/dd.c:815
+>  bus_probe_device+0xc8/0x22d drivers/base/bus.c:521
+>  device_add+0x5b6/0x1273 drivers/base/core.c:1927
+>  platform_device_add+0x53a/0x68d drivers/base/platform.c:417
+>  init+0x13e/0x3c4 arch/x86/crypto/blowfish_glue.c:444
+>  do_one_initcall+0x2d8/0x63f init/main.c:885
+>  do_initcall_level init/main.c:953 [inline]
+>  do_initcalls init/main.c:961 [inline]
+>  do_basic_setup init/main.c:979 [inline]
+>  kernel_init_freeable+0x4bb/0x5ac init/main.c:1144
+>  kernel_init+0x11/0x1b6 init/main.c:1063
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+> 
+
+thanks,
+-- Shuah
