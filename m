@@ -2,181 +2,536 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAD5C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81D6C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 23:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAF120652
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:58:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="cSmNPpap"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEAF120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 650DD2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 23:24:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 650DD2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeIHDlg (ORCPT
+        id S1726291AbeIHEGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:41:36 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44826 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeIHDlf (ORCPT
+        Sat, 8 Sep 2018 00:06:23 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:43521 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbeIHEGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:41:35 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k21-v6so7654671pff.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 15:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+CkIIU1FDMQ+9nxoiDmvGoKQtYlxKl/Ujcn3S4w9bvs=;
-        b=cSmNPpapKZNR4O/Yd7d9NxRMxfbAzUtdUcoNHknmJ335S5BnEasZHceBjgGgWffmD4
-         nPVG+FtpLCHsZ5gycRV98rRHAVrSZHAOrZtK4jE7baHO3mJXKQJS3M750hl7edbZNtjK
-         8R6pjt9o0nqouwf4l4O4/2d7bjdLEsfrHIsgZLSsSeybZeZHu6fzxQwsIUgWIJvleZmJ
-         xzUbgwZ8hTmqBPkLF/Xlg6/NI7+PJLWaST79GoSDVCo9fFpEcSAx4r7mCFLRsQYucnYW
-         nhzZWwP1jhQXcHP+Yg+0Sr0HO0QecjoO9dk0o+K89UKbpQeJkbjNfQ5XKYdPc2NhoUBM
-         pf7Q==
+        Sat, 8 Sep 2018 00:06:22 -0400
+Received: by mail-it0-f70.google.com with SMTP id z72-v6so25540655itc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 16:23:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+CkIIU1FDMQ+9nxoiDmvGoKQtYlxKl/Ujcn3S4w9bvs=;
-        b=U1bt6wcRfuk3IffkRLZ1cAyGmZWQQRR0dCFuM1RKHxOLkyaPbQD/ggrhkor3s3N1UN
-         HYo2LRyNo7scH3RRiYObz99+eQAmpP6YJKa8Lz3fEEt68GVtmG2O8HqDxYPmo4/VDKb7
-         ERbXrumUNPNagGdZGGcheN5BAuqBZn8jtmwKMwC2IvRapdbXVgEOmdxqwHd5pbR3KRbt
-         hk4BHvvt5OOOJQkBev4fNVrFUpc9GCphiVUsCb/PEWeZfeIoGIPT6xnpRhmagCHHPGqu
-         DEOGghrUNmdZJGN8jYjKxGDLSJ2Fs1wzL0GmfXJiXePORYWJ9T7bNveULtI+fM4Lsb5T
-         A4jQ==
-X-Gm-Message-State: APzg51A8Wlf1mYANJljB/wgFgqEY0zEXLBy7BGdPMs5ZG1Uzxwv7IljZ
-        GYqaGBXhK696XDW5fhe0ayxlHQ==
-X-Google-Smtp-Source: ANB0VdY3lil0u4iMvD3JUy61xYeGrfJctj68J4Hax/7SEWrQ4A5IuoyMmWyxXV6434BauVrq5m7g0A==
-X-Received: by 2002:a63:2043:: with SMTP id r3-v6mr10585936pgm.105.1536361102490;
-        Fri, 07 Sep 2018 15:58:22 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b062:3446:55bd:a895:1fd7:cbdb? ([2600:1010:b062:3446:55bd:a895:1fd7:cbdb])
-        by smtp.gmail.com with ESMTPSA id i5-v6sm19056171pfe.140.2018.09.07.15.58.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 15:58:21 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC][PATCH 7/8] x86/mm/vsyscall: consider vsyscall page part of user address space
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <20180907194902.63F36CFE@viggo.jf.intel.com>
-Date:   Fri, 7 Sep 2018 15:58:19 -0700
-Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
-        luto@kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <17109C42-4679-4042-A22E-E686FCB96012@amacapital.net>
-References: <20180907194852.3C351B82@viggo.jf.intel.com> <20180907194902.63F36CFE@viggo.jf.intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=TQrxDiz6oYsOtKcSUEChKZ5OeL87pklypyXGOTWqkQs=;
+        b=qiJrQj3aSR3dgGRIhGG4lcqbfLuvDb5Suc6hcWyamqhTRqDvIANzIhvmt0mPPmewnH
+         hBcgfv1BHRR/TZEq0LF+GSDtWBP3zOeruCcjPN0h9qkUuu+kt1bTc2OW3z8ajEyP0fgy
+         BfzQqp0A7zBxDIlJw3Tn7YkkG5aJQe6fMzhPtqbM2pb0FKTju3oxAoyH8EEQJHieCgPx
+         O6RGkiMzPVpBdc+223sXJ4Hnr+HVz+J1COgB4ZvkHyyGcDanW02IoXjHFg5xiF0UvNSS
+         VSbuPRaI8WFEPjjoX5exF8irllKhggguBXOGLZjgx+kp5Y6q/J7TDo1EfWECLwX4y87R
+         s1kw==
+X-Gm-Message-State: APzg51ALzivzN99ijHG910wcehMvrjUuEsrzI5opHDFURuGZ7mrG+MkH
+        yOFmhLu7bS4LKDflIq1xVHZThbxT8yVsUpSemod/4fNpm4cv
+X-Google-Smtp-Source: ANB0VdYJy8yr8pvMY3q0eujMq+VggmxNc8AOyHP8+hMLPHicQHyJ0bGuEb7+M24DUW2UPXOGPoMjU2SP9N5v6r3Pc8CRxfHEQm++
+MIME-Version: 1.0
+X-Received: by 2002:a02:7e0a:: with SMTP id h10-v6mr8752200jac.4.1536362583414;
+ Fri, 07 Sep 2018 16:23:03 -0700 (PDT)
+Date:   Fri, 07 Sep 2018 16:23:03 -0700
+In-Reply-To: <000000000000e92d1805711f5552@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000007ec480575504af2@google.com>
+Subject: Re: WARNING in bpf_jit_free
+From:   syzbot <syzbot+2ff1e7cb738fd3c41113@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+syzbot has found a reproducer for the following crash on:
 
+HEAD commit:    28619527b8a7 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=1339498e400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62e9b447c16085cf
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ff1e7cb738fd3c41113
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163cc149400000
 
-> On Sep 7, 2018, at 12:49 PM, Dave Hansen <dave.hansen@linux.intel.com> wro=
-te:
->=20
->=20
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->=20
-> The vsyscall page is weird.  It is in what is traditionally part of the
-> kernel address space.  But, it has user permissions and we handle faults
-> on it like we would on a user page: interrupts on.
->=20
-> Right now, we handle vsyscall emulation in the "bad_area" code, which
-> is used for both user-address-space and kernel-address-space faults.  Move=
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2ff1e7cb738fd3c41113@syzkaller.appspotmail.com
 
-> the handling to the user-address-space code *only* and ensure we get there=
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+WARNING: CPU: 0 PID: 5391 at kernel/bpf/core.c:628 bpf_jit_free+0x2e5/0x3f0
+Kernel panic - not syncing: panic_on_warn set ...
 
-> by "excluding" the vsyscall page from the kernel address space via a check=
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+RIP: 0010:bpf_jit_free+0x2e5/0x3f0
+Code: 07 38 c8 7f 08 84 c0 0f 85 85 00 00 00 48 b8 00 02 00 00 00 00 ad de  
+44 0f b6 63 02 48 39 c2 0f 84 d9 fd ff ff e8 8b 4b f3 ff <0f> 0b e9 cd fd  
+ff ff e8 7f 4b f3 ff 4c 89 f0 48 ba 00 00 00 00 00
+RSP: 0018:ffff8801b77bf648 EFLAGS: 00010293
+RAX: ffff8801d8730500 RBX: ffffc9000192c000 RCX: 0000000000000002
+RDX: 0000000000000000 RSI: ffffffff818b83a5 RDI: ffff8801cdcea6e8
+RBP: ffff8801b77bf6e0 R08: ffff8801d8730dc8 R09: 0000000000000006
+R10: 0000000000000000 R11: ffff8801d8730500 R12: 000000000000000f
+R13: 1ffff10036ef7ecb R14: ffffc9000192c002 R15: ffffc9000192c020
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bef80 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bf0f8 R08: ffff8801d8730500 R09: ffffed003b5c4732
+R10: ffffed003b5c4732 R11: ffff8801dae23993 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#2] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77be828 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77be9a0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#3] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77be0c8 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77be240 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#4] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bd968 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bdae0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#5] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bd208 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bd380 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#6] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bcaa8 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bcc20 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#7] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bc348 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bc4c0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#8] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bbbe8 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bbd60 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#9] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bb488 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bb600 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#10] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bad28 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77baea0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#11] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77ba5c8 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77ba740 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#12] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77b9e68 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77b9fe0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Oops: 0000 [#13] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77b9708 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77b9880 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Thread overran stack, or stack corrupted
+Oops: 0000 [#14] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77b8fa8 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77b9120 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Thread overran stack, or stack corrupted
+Oops: 0000 [#15] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77b8848 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77b89c0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+==================================================================
+BUG: KASAN: slab-out-of-bounds in do_error_trap+0x3b6/0x4d0  
+arch/x86/kernel/traps.c:296
+Read of size 8 at addr ffff8801b77b7430 by task kworker/0:0/5391
 
-> in fault_in_kernel_space().
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+BUG: unable to handle kernel paging request at fffffbfff4004000
+PGD 21ffec067 P4D 21ffec067 PUD 21fe60067 PMD 1c1a04067 PTE 0
+Thread overran stack, or stack corrupted
+Oops: 0000 [#16] PREEMPT SMP KASAN
+CPU: 0 PID: 5391 Comm: kworker/0:0 Not tainted 4.19.0-rc2+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events bpf_prog_free_deferred
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77b6e58 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77b6fd0 R08: ffff8801d8730500 R09: 0000000000000001
+R10: ffffed003b5c4732 R11: 0000000000000000 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+CR2: fffffbfff4004000
+---[ end trace 89eec6ca57f730dc ]---
+RIP: 0010:bpf_get_prog_addr_region kernel/bpf/core.c:384 [inline]
+RIP: 0010:bpf_tree_comp kernel/bpf/core.c:435 [inline]
+RIP: 0010:__lt_find include/linux/rbtree_latch.h:115 [inline]
+RIP: 0010:latch_tree_find include/linux/rbtree_latch.h:208 [inline]
+RIP: 0010:bpf_prog_kallsyms_find+0x2fe/0x4a0 kernel/bpf/core.c:509
+Code: 8e f3 ff 4c 8b ad b0 fe ff ff 4c 89 e6 4c 89 ef e8 47 8f f3 ff 4d 39  
+e5 0f 82 a7 00 00 00 e8 89 8e f3 ff 4c 89 e0 48 c1 e8 03 <42> 0f b6 04 30  
+84 c0 74 08 3c 03 0f 8e 35 01 00 00 41 8b 04 24 4c
+RSP: 0018:ffff8801b77bef80 EFLAGS: 00010806
+RAX: 1ffffffff4004000 RBX: ffff8801cdcea6b0 RCX: ffffffff818b4099
+RDX: 0000000000000000 RSI: ffffffff818b40a7 RDI: 0000000000000006
+RBP: ffff8801b77bf0f8 R08: ffff8801d8730500 R09: ffffed003b5c4732
+R10: ffffed003b5c4732 R11: ffff8801dae23993 R12: ffffffffa0020000
+R13: ffffffffffffffff R14: dffffc0000000000 R15: ffff8801cdcea6b0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff4004000 CR3: 000000000946a000 CR4: 00000000001406f0
 
-I assume the motivation is that you want to simplify the kernel error path. I=
-f so, can you mention this?
-
-The patch itself is Reviewed-by: Andy Lutomirski <luto@kernel.org>, although=
- adding an unlikely() somewhere might be nice.=20
-
->=20
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: x86@kernel.org
-> Cc: Andy Lutomirski <luto@kernel.org>
-> ---
->=20
-> b/arch/x86/mm/fault.c |   36 ++++++++++++++++++++++++------------
-> 1 file changed, 24 insertions(+), 12 deletions(-)
->=20
-> diff -puN arch/x86/mm/fault.c~vsyscall-is-user-address-space arch/x86/mm/f=
-ault.c
-> --- a/arch/x86/mm/fault.c~vsyscall-is-user-address-space    2018-09-07 11:=
-21:48.720751896 -0700
-> +++ b/arch/x86/mm/fault.c    2018-09-07 11:21:48.724751896 -0700
-> @@ -873,18 +873,6 @@ __bad_area_nosemaphore(struct pt_regs *r
->        if (is_errata100(regs, address))
->            return;
->=20
-> -#ifdef CONFIG_X86_64
-> -        /*
-> -         * Instruction fetch faults in the vsyscall page might need
-> -         * emulation.
-> -         */
-> -        if (unlikely((error_code & X86_PF_INSTR) &&
-> -                 is_vsyscall_vaddr(address))) {
-> -            if (emulate_vsyscall(regs, address))
-> -                return;
-> -        }
-> -#endif
-> -
->        /*
->         * To avoid leaking information about the kernel page table
->         * layout, pretend that user-mode accesses to kernel addresses
-> @@ -1192,6 +1180,13 @@ access_error(unsigned long error_code, s
->=20
-> static int fault_in_kernel_space(unsigned long address)
-> {
-> +    /*
-> +     * The vsyscall page is at an address above TASK_SIZE_MAX,
-> +     * but is not considered part of the kernel address space.
-> +     */
-> +    if (is_vsyscall_vaddr(address))
-> +        return false;
-> +
->    return address >=3D TASK_SIZE_MAX;
-> }
->=20
-> @@ -1357,6 +1352,23 @@ void do_user_addr_space_fault(struct pt_
->    if (sw_error_code & X86_PF_INSTR)
->        flags |=3D FAULT_FLAG_INSTRUCTION;
->=20
-> +#ifdef CONFIG_X86_64
-> +    /*
-> +     * Instruction fetch faults in the vsyscall page might need
-> +     * emulation.  The vsyscall page is at a high address
-> +     * (>PAGE_OFFSET), but is considered to be part of the user
-> +     * address space.
-> +     *
-> +     * The vsyscall page does not have a "real" VMA, so do this
-> +     * emulation before we go searching for VMAse
-> +     */
-> +    if (unlikely((sw_error_code & X86_PF_INSTR) &&
-> +             is_vsyscall_vaddr(address))) {
-> +        if (emulate_vsyscall(regs, address))
-> +            return;
-> +    }
-> +#endif
-> +
->    /*
->     * Kernel-mode access to the user address space should only occur
->     * inside well-defined areas of code listed in the exception
-> _
