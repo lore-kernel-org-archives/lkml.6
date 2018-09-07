@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1564CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C407DC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB8982077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:34:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB8982077C
+	by mail.kernel.org (Postfix) with ESMTP id 7B0AB2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0AB2077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbeIGVQF (ORCPT
+        id S1726632AbeIGVQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:16:05 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:60412 "EHLO leonov.paulk.fr"
+        Fri, 7 Sep 2018 17:16:34 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:60444 "EHLO leonov.paulk.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbeIGVQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:16:04 -0400
+        id S1725999AbeIGVQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:16:34 -0400
 Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id CBB41C025E;
-        Fri,  7 Sep 2018 18:34:21 +0200 (CEST)
+        by leonov.paulk.fr (Postfix) with ESMTPS id 3803EC025F;
+        Fri,  7 Sep 2018 18:34:51 +0200 (CEST)
 Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 3D974C0F67; Fri,  7 Sep 2018 18:34:20 +0200 (CEST)
+        id A5080C0F69; Fri,  7 Sep 2018 18:34:49 +0200 (CEST)
 Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id 14BF8C0F44;
+        by gagarine.paulk.fr (Postfix) with ESMTP id BA84EC0F5E;
         Fri,  7 Sep 2018 18:33:55 +0200 (CEST)
 From:   Paul Kocialkowski <contact@paulk.fr>
 To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
@@ -48,28 +48,69 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH 0/2] Follow-up patches for Cedrus v9
-Date:   Fri,  7 Sep 2018 18:33:45 +0200
-Message-Id: <20180907163347.32312-1-contact@paulk.fr>
+Subject: [PATCH 1/2] media: cedrus: Fix error reporting in request validation
+Date:   Fri,  7 Sep 2018 18:33:46 +0200
+Message-Id: <20180907163347.32312-2-contact@paulk.fr>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907163347.32312-1-contact@paulk.fr>
+References: <20180907163347.32312-1-contact@paulk.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This brings the requested modifications on top of version 9 of the
-Cedrus VPU driver, that implements stateless video decoding using the
-Request API.
+This fixes error reporting by using the appropriate logging helpers and
+return codes, while introducing new messages when there are not enough
+or too many buffers associated with the request.
 
-Paul Kocialkowski (2):
-  media: cedrus: Fix error reporting in request validation
-  media: cedrus: Add TODO file with tasks to complete before unstaging
-
- drivers/staging/media/sunxi/cedrus/TODO     |  7 +++++++
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+---
  drivers/staging/media/sunxi/cedrus/cedrus.c | 15 ++++++++++++---
- 2 files changed, 19 insertions(+), 3 deletions(-)
- create mode 100644 drivers/staging/media/sunxi/cedrus/TODO
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
+index 09ab1b732c31..0a9363c7db06 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+@@ -105,10 +105,19 @@ static int cedrus_request_validate(struct media_request *req)
+ 	struct v4l2_ctrl_handler *parent_hdl, *hdl;
+ 	struct cedrus_ctx *ctx = NULL;
+ 	struct v4l2_ctrl *ctrl_test;
++	unsigned int count;
+ 	unsigned int i;
+ 
+-	if (vb2_request_buffer_cnt(req) != 1)
++	count = vb2_request_buffer_cnt(req);
++	if (!count) {
++		v4l2_info(&ctx->dev->v4l2_dev,
++			  "No buffer was provided with the request\n");
+ 		return -ENOENT;
++	} else if (count > 1) {
++		v4l2_info(&ctx->dev->v4l2_dev,
++			  "More than one buffer was provided with the request\n");
++		return -EINVAL;
++	}
+ 
+ 	list_for_each_entry(obj, &req->objects, list) {
+ 		struct vb2_buffer *vb;
+@@ -128,7 +137,7 @@ static int cedrus_request_validate(struct media_request *req)
+ 
+ 	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
+ 	if (!hdl) {
+-		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
++		v4l2_info(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
+ 		return -ENOENT;
+ 	}
+ 
+@@ -140,7 +149,7 @@ static int cedrus_request_validate(struct media_request *req)
+ 		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
+ 			cedrus_controls[i].id);
+ 		if (!ctrl_test) {
+-			v4l2_err(&ctx->dev->v4l2_dev,
++			v4l2_info(&ctx->dev->v4l2_dev,
+ 				 "Missing required codec control\n");
+ 			return -ENOENT;
+ 		}
 -- 
 2.18.0
 
