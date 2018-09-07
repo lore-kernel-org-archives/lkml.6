@@ -2,112 +2,92 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656BBC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B5FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C53D2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C53D2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 793F62075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:54:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 793F62075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeIGNc5 (ORCPT
+        id S1727848AbeIGNed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:32:57 -0400
-Received: from mga07.intel.com ([134.134.136.100]:61320 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726354AbeIGNc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:32:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 01:53:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
-   d="scan'208";a="83865380"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.98])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Sep 2018 01:52:58 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2] perf tools: Fix maps__find_symbol_by_name()
-Date:   Fri,  7 Sep 2018 11:51:16 +0300
-Message-Id: <20180907085116.25782-1-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        Fri, 7 Sep 2018 09:34:33 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44497 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbeIGNec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:34:32 -0400
+Received: from 79.184.254.186.ipv4.supernova.orange.pl (79.184.254.186) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.123)
+ id 13b05f37a05d7823; Fri, 7 Sep 2018 10:54:34 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling depend on schedutil
+Date:   Fri, 07 Sep 2018 10:52:01 +0200
+Message-ID: <1545744.fI5ZvP8FO0@aspire.rjw.lan>
+In-Reply-To: <20180906143842.xlxcg5notwdaflww@queper01-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com> <CAJZ5v0jL_k36RPc6e8yUHxAYGXp7HHWK+hLnBZWnu5Oi__7j3w@mail.gmail.com> <20180906143842.xlxcg5notwdaflww@queper01-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1c5aae7710bb ("perf machine: Create maps for x86 PTI entry
-trampolines") revealed a problem with maps__find_symbol_by_name() that
-resulted in probes not being found e.g.
+On Thursday, September 6, 2018 4:38:44 PM CEST Quentin Perret wrote:
+> Hi Rafael,
+> 
+> On Thursday 06 Sep 2018 at 11:18:55 (+0200), Rafael J. Wysocki wrote:
+> > I'm not a particular fan of notifiers to be honest and you don't need
+> > to add an extra chain just in order to be able to register a callback
+> > from a single user.
+> 
+> Right. I agree there are alternatives to using notifiers. I used them
+> because they're existing infrastructure, and because they let me do what
+> I want without too much troubles, which are two important points.
+> 
+> > That can be achieved with a single callback
+> > pointer too, but also you could just call a function exported by the
+> > scheduler directly from where in the cpufreq code it needs to be
+> > called.
+> 
+> Are you thinking about something comparable to what is done in
+> cpufreq_add_update_util_hook() (kernel/sched/cpufreq.c) for example ?
+> That would probably have the same drawback as my current implementation,
+> that is that the scheduler is notified of _all_ governor changes, not
+> only changes to/from sugov although this is the only thing we care about
+> for EAS.
 
-	$ sudo perf probe xsk_mmap
-	xsk_mmap is out of .text, skip it.
-	Probe point 'xsk_mmap' not found.
-	   Error: Failed to add events.
-
-maps__find_symbol_by_name() can optionally return the map of the found
-symbol. It can get the map wrong because, in fact, the symbol is found
-on the map's dso, not allowing for the possibility that the dso has more
-than one map. Fix by always checking the map contains the symbol.
-
-Reported-by: Björn Töpel <bjorn.topel@intel.com>
-Tested-by: Björn Töpel <bjorn.topel@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
-
-
-Changes in V2:
-
-	Expanded commit message
-	Corrected email address
-
-
- tools/perf/util/map.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 3f07a587c8e6..354e54550d2b 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -574,6 +574,13 @@ struct symbol *map_groups__find_symbol(struct map_groups *mg,
- 	return NULL;
- }
- 
-+static bool map__contains_symbol(struct map *map, struct symbol *sym)
-+{
-+	u64 ip = map->unmap_ip(map, sym->start);
-+
-+	return ip >= map->start && ip < map->end;
-+}
-+
- struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
- 					 struct map **mapp)
- {
-@@ -589,6 +596,10 @@ struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
- 
- 		if (sym == NULL)
- 			continue;
-+		if (!map__contains_symbol(pos, sym)) {
-+			sym = NULL;
-+			continue;
-+		}
- 		if (mapp != NULL)
- 			*mapp = pos;
- 		goto out;
--- 
-2.17.1
+Well, why don't you implement it as something like "if the governor changes
+from sugov to something else (or the other way around), call this function
+from the scheduler"?
 
