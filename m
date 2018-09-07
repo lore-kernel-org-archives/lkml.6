@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8FAC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DD0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C8B2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C8B2075E
+	by mail.kernel.org (Postfix) with ESMTP id 710CD2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710CD2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeIHBz1 (ORCPT
+        id S1727742AbeIHBze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:55:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40088 "EHLO
+        Fri, 7 Sep 2018 21:55:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40498 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIHBz0 (ORCPT
+        with ESMTP id S1726002AbeIHBze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:55:26 -0400
+        Fri, 7 Sep 2018 21:55:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44968FAE;
-        Fri,  7 Sep 2018 21:12:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56DF9FA4;
+        Fri,  7 Sep 2018 21:12:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.18 011/145] mmc: renesas_sdhi_internal_dmac: fix #define RST_RESERVED_BITS
-Date:   Fri,  7 Sep 2018 23:07:57 +0200
-Message-Id: <20180907210904.529097262@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        xiao jin <jin.xiao@intel.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 014/145] block: blk_init_allocated_queue() set q->fq as NULL in the fail case
+Date:   Fri,  7 Sep 2018 23:08:00 +0200
+Message-Id: <20180907210904.755615746@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,34 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: xiao jin <jin.xiao@intel.com>
 
-commit 9faf870e559a710c44e747ba20383ea82d8ac5d2 upstream.
+commit 54648cf1ec2d7f4b6a71767799c45676a138ca24 upstream.
 
-The DM_CM_RST register actually has bits 0-31 defaulting to 1s and bits
-32-63 defaulting to 0s -- fix off-by-one in #define RST_RESERVED_BITS.
+We find the memory use-after-free issue in __blk_drain_queue()
+on the kernel 4.14. After read the latest kernel 4.18-rc6 we
+think it has the same problem.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Memory is allocated for q->fq in the blk_init_allocated_queue().
+If the elevator init function called with error return, it will
+run into the fail case to free the q->fq.
+
+Then the __blk_drain_queue() uses the same memory after the free
+of the q->fq, it will lead to the unpredictable event.
+
+The patch is to set q->fq as NULL in the fail case of
+blk_init_allocated_queue().
+
+Fixes: commit 7c94e1c157a2 ("block: introduce blk_flush_queue to drive flush machinery")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: xiao jin <jin.xiao@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -45,7 +45,7 @@
- /* DM_CM_RST */
- #define RST_DTRANRST1		BIT(9)
- #define RST_DTRANRST0		BIT(8)
--#define RST_RESERVED_BITS	GENMASK_ULL(32, 0)
-+#define RST_RESERVED_BITS	GENMASK_ULL(31, 0)
- 
- /* DM_CM_INFO1 and DM_CM_INFO1_MASK */
- #define INFO1_CLEAR		0
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1180,6 +1180,7 @@ out_exit_flush_rq:
+ 		q->exit_rq_fn(q, q->fq->flush_rq);
+ out_free_flush_queue:
+ 	blk_free_flush_queue(q->fq);
++	q->fq = NULL;
+ 	return -ENOMEM;
+ }
+ EXPORT_SYMBOL(blk_init_allocated_queue);
 
 
