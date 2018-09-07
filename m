@@ -2,77 +2,119 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D361C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C20C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD509206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:55:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD509206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 1EDB52086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:56:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W27v7XWF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EDB52086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbeIGMer (ORCPT
+        id S1727987AbeIGMf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:34:47 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:8585 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727956AbeIGMer (ORCPT
+        Fri, 7 Sep 2018 08:35:59 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54104 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeIGMf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:34:47 -0400
-X-IronPort-AV: E=Sophos;i="5.53,341,1531785600"; 
-   d="scan'208";a="78688784"
-Date:   Fri, 7 Sep 2018 09:54:55 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
-CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <drbd-user@lists.linbit.com>
-Subject: Re: [PATCH] xen-blkback: Switch to closed state after releasing the
- backing device
-Message-ID: <20180907075455.szxahgevvlmfjvwy@mac.bytemobile.com>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905113515.GU26705@gavran.carpriv.carnet.hr>
- <20180905162801.GB26705@gavran.carpriv.carnet.hr>
- <20180906162932.7qge5dmrgyqbmbbj@mac.bytemobile.com>
- <20180906221929.GZ26705@gavran.carpriv.carnet.hr>
- <20180907071530.te5dxdvg4zqgqscj@mac.bytemobile.com>
- <20180907072319.GA26705@gavran.carpriv.carnet.hr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180907072319.GA26705@gavran.carpriv.carnet.hr>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Fri, 7 Sep 2018 08:35:59 -0400
+Received: by mail-wm0-f65.google.com with SMTP id b19-v6so13784157wme.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vL2Bgk50GqR5ByoZy/GCah93JMbsotFIKZyvg3a2tJU=;
+        b=W27v7XWFN/34UXoC53P3vXbcAM3WmdhPMh3N8q2lnQ5VDOs9y6wcmCSaDPVNyxgo3Z
+         HZ8LRENaId0hwlbxCox8D9OEotYo5fttiRal59nMnMaTb4GucRRslSNyP7Q09Up0BlQF
+         jwyZFKilQN8enbjaWeNrjJx1IQSGrfzQ31VE1CJMk1XnlwAt5/LIvOpnWA88xwZrMhX+
+         ePTnBru1J5J4D7wY6zvezvNO5u1QgdagBCvnyAqIAczzfHTlJ87ItpGvrXctSuDbXF/O
+         /Gn+dNWiRDnTA6ZBQGbI/k3lMuy8AQaiWsxpwyx2E4+QWBdElrNA3KHz1NlmjHI+S426
+         SP+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vL2Bgk50GqR5ByoZy/GCah93JMbsotFIKZyvg3a2tJU=;
+        b=o+2Zks+JHrx9Bfh4zLXAAeMvcLQGPe6SvunXeJqY4Qv61W1ljU1RaD5N0qMWF1jhqB
+         EL6wtPmcDlF3Tq+ItzxZF89tumpclorNmWQ2AGjksLaZzYqSWY0C3BIWHmkxhogppvlA
+         IR/C8TdZAbgXeWTfkvZGX1HyHijZy6+M38RXDal1hBgisgVs+c2YESZ3c9Wuxvw6kgva
+         0fl+PlYMI3R3ubK478XxKJyE+Gy+r90IOqDu5KOug73LfBu7zLpikBstNagguURGkyXH
+         ksxGvMmhcKR4qM7XLNmy4UV2xsSMtlmlXxSLF0TazVZ8BjTcZPR7jbJ04GXKvD8geoFO
+         jUzA==
+X-Gm-Message-State: APzg51AwyrU8vWFPp4+qSCmXCcu66irjTkfG06kZ63NuCoQHB0NCLF/X
+        EmAX6osPyNdgeH8LdPfh1mCHhg==
+X-Google-Smtp-Source: ANB0VdYePLKm3ub3hiJcEbqlh4g7SjxOclP26/QJI9nOHKucMUSQ4OVbv7rbQ7mNp5L92gwmWPuYkw==
+X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr4131577wmd.135.1536306974636;
+        Fri, 07 Sep 2018 00:56:14 -0700 (PDT)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id h8-v6sm10833483wre.15.2018.09.07.00.56.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 00:56:14 -0700 (PDT)
+Message-ID: <1053e423d4ba8c1dd65468d278c79d2b7159401f.camel@baylibre.com>
+Subject: Re: [PATCH] leds: pwm: silently error out on EPROBE_DEFER
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Pavel Machek <pavel@ucw.cz>, sre@kernel.org
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 07 Sep 2018 09:56:12 +0200
+In-Reply-To: <20180906153548.GA10088@amd>
+References: <20180906135904.13803-1-jbrunet@baylibre.com>
+         <20180906153548.GA10088@amd>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 09:23:19AM +0200, Valentin Vidic wrote:
-> On Fri, Sep 07, 2018 at 09:15:30AM +0200, Roger Pau Monné wrote:
-> > I'm not sure that's a good idea, there are a lot of backends (apart
-> > from blkback), and the tools won't know whether a specific backend
-> > supports such state or not. Also the current protocol and states are
-> > shared between all the Xen PV devices, so new additions should be
-> > considered very carefully.
+On Thu, 2018-09-06 at 17:35 +0200, Pavel Machek wrote:
+> On Thu 2018-09-06 15:59:04, Jerome Brunet wrote:
+> > When probing, if we fail to get the pwm due to probe deferal, we shouldn't
+> > print an error message. Just be silent in this case.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/leds/leds-pwm.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> > index df80c89ebe7f..5d3faae51d59 100644
+> > --- a/drivers/leds/leds-pwm.c
+> > +++ b/drivers/leds/leds-pwm.c
+> > @@ -100,8 +100,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+> >  		led_data->pwm = devm_pwm_get(dev, led->name);
+> >  	if (IS_ERR(led_data->pwm)) {
+> >  		ret = PTR_ERR(led_data->pwm);
+> > -		dev_err(dev, "unable to request PWM for %s: %d\n",
+> > -			led->name, ret);
+> > +		if (ret != -EPROBE_DEFER)
+> > +			dev_err(dev, "unable to request PWM for %s: %d\n",
+> > +				led->name, ret);
+> >  		return ret;
+> >  	}
 > 
-> Sure, I understand.
+> Hmm, sometimes probing is deffered forever, and in such case debug
+> message is useful.
 > 
-> > IMO the best options are either calling vbd_free/vbd_create at proper
-> > stages in blkback or changing the hotplug script so it waits for the
-> > device to have no open clients.
-> 
-> Changing the block-drbd script would be ideal for me too, but I don't
-> think that piece of DRBD state is exposed at the moment.
+> Do you see excessive number of these?
 
-Then I'm afraid you will have to look into the vbd_free/create fix.
+About 10 but displaying an error which is not error is already excessive IMO.
 
-Thanks, Roger.
+There is nothing out of the ordinary here. Feel free to grep git log for
+EPROBE_DEFER. Many drivers take this into account from the beginning now and
+we've been fixing others in most subsystem.
+
+> 									
+> 									Pavel
+
+
