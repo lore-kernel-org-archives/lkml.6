@@ -2,93 +2,100 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3DBC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E211C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF7820844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:04:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yzZHaAUk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF7820844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B67FE20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:04:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67FE20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=whitequark.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbeIGPoy (ORCPT
+        id S1728806AbeIGPo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:44:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55286 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727978AbeIGPoy (ORCPT
+        Fri, 7 Sep 2018 11:44:56 -0400
+Received: from uruz.whitequark.org ([188.166.218.19]:35904 "EHLO
+        uruz.whitequark.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbeIGPo4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:44:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Zj9m3bL7/GgZO6pd5S6/GDfgJpek/j4NHkhjpGW5ueg=; b=yzZHaAUklP+KBx3mEVEfW/ZMY
-        vXFpwnbTFa85MRnCiD5xEt7/JkNQRFdeVjiDTEbgwoYWKG+4KyLCo4K2uM3rL+0tcAkeNRDioOpe8
-        C5QbbmQ/iF7OyOrgqdjEKvM2ayJZKh7rX49/A1CS7//fQRCcsTP3hdmZsC86biJlwipQlWGp4hPGa
-        5z+iT6cMkXuvfP7TaWJHOFK25JDinH83ZOWYgj7JqIJZdYtpYMTfdJmJjy4MXP09G626dIC7khjoR
-        dNxQiBI8tCDiEqi0+BUbBj1KELBV78HL2v5Kh9O4ngzC/PCs2ZkWhOMxwSMiDvInRoWNcmqc1o4In
-        lL2SfuVrw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fyEYb-0001GO-Mh; Fri, 07 Sep 2018 11:04:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 447A3201F9C46; Fri,  7 Sep 2018 13:04:07 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 13:04:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
- IO v4
-Message-ID: <20180907110407.GQ24106@hirez.programming.kicks-ass.net>
-References: <20180828172258.3185-1-hannes@cmpxchg.org>
- <20180905214303.GA30178@cmpxchg.org>
+        Fri, 7 Sep 2018 11:44:56 -0400
+Received: by uruz.whitequark.org (Postfix, from userid 1002)
+        id C483320ADF; Fri,  7 Sep 2018 11:04:27 +0000 (UTC)
+To:     Mario.Limonciello@dell.com
+Subject: Re: USB type-C altmode support for UCSI
+X-PHP-Originating-Script: 0:rcube.php
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905214303.GA30178@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 07 Sep 2018 11:04:27 +0000
+From:   whitequark <whitequark@whitequark.org>
+Cc:     heikki.krogerus@linux.intel.com, mika.westerberg@linux.intel.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
+References: <1e8398f2c1790890f40b69f12e2934e3@whitequark.org>
+ <20180903140623.GD15112@kuha.fi.intel.com>
+ <28522bb57c5d8f49416b9174b19b1625@whitequark.org>
+ <20180905132429.GB25121@kuha.fi.intel.com>
+ <4df3faaee8904d81bf7737b5f2daaff5@ausx13mpc120.AMER.DELL.COM>
+ <a2f79cc4d9a0aab4a832de31b7ddc52d@whitequark.org>
+Message-ID: <3a666f66d6e342e2971b800caae7c889@whitequark.org>
+X-Sender: whitequark@whitequark.org
+User-Agent: Roundcube Webmail/1.2.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 05:43:03PM -0400, Johannes Weiner wrote:
-> On Tue, Aug 28, 2018 at 01:22:49PM -0400, Johannes Weiner wrote:
-> > This version 4 of the PSI series incorporates feedback from Peter and
-> > fixes two races in the lockless aggregator that Suren found in his
-> > testing and which caused the sample calculation to sometimes underflow
-> > and record bogusly large samples; details at the bottom of this email.
+On 2018-09-05 14:13, whitequark wrote:
+> On 2018-09-05 13:50, Mario.Limonciello@dell.com wrote:
+>> Some Dell XPS systems do not support that TBT2<->TBT3 adapter. I think 
+>> I
+>> tried this on XPS 15 9550 and XPS 13 9365 and in both cases it is
+>> rejected. I think it has something to do with the PD controller
+>> firmware. Same goes if you Plug TB16 dock and to that dock then 
+>> connect
+>> the adapter + device.
 > 
-> Peter, do the changes from v3 look sane to you?
+> This is my understanding as well, however I'd like to fix this issue.
+> From looking at the BIOS image I can see that the 9360 uses a TPS65982
+> USB PD controller. The adapter uses a TPS65983A (confusingly remarked
+> by Apple as CD3215B). I've seen reports on the web that there is some
+> inherent incompatibility between TPS65982 and TPS65983, however TI is
+> for some reason extremely secretive about TPS65983 and I wasn't able
+> to get anything definitive about it.
 > 
-> If there aren't any further objections, I was hoping we could get this
-> lined up for 4.20.
+> Anyway, I've reverse engineered a nontrivial part of the TI TPS6598x
+> firmware and register layout, however my understanding of Thunderbolt
+> and USB PD is not sufficient to proceed.
+> 
+> Mario, do you think you could get in touch with the people at Dell who
+> work with USB PD and ask if:
+> 
+>   (a) the adapter advertising an altmode with SVID:0x8087 
+> VDO:0x00010001
+>       is the problem here, and
+>   (b) whether configuring the register 0x52 Intel VID Configuration in
+>       the adapter's USB PD controller to set TBTModeDataTXSOP=0x0000
+>       would help.
 
-I suppose it looks ok, there's a few small nits, but nothing big.
+I have been able to verify two things by reflashing the adapter with 
+upstream
+(non-Apple) firmware and experimenting with the configuration:
 
-I still hate psi_ttwu_dequeue(), but I don't really know what to about
-that.
+(a) the altmode with SVID:0x8087 VDO:0x00010001 (16th bit set) means 
+that
+     this is an altmode advertised by a legacy Thunderbolt (3 to 2) 
+adapter.
+     So the adapter is fine here.
 
-So yeah, grudingly acked. Did you want me to pick this up through the
-scheduler tree since most of this lives there?
+(b) the Dell USB PD controller doesn't try to negotiate the altmode even 
+with
+     advertised VDO:0x00000001. Something else is missing in the 
+configuration.
+
+-- 
+whitequark
