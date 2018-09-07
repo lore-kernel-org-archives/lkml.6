@@ -2,136 +2,171 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A8DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D24BC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710652075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:36:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="XkczJYvP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710652075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id 0BAB82075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BAB82075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeIGWSN (ORCPT
+        id S1727164AbeIGWUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:18:13 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:44674 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeIGWSN (ORCPT
+        Fri, 7 Sep 2018 18:20:32 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:56760 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726614AbeIGWUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:18:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=c7TxYZ63c4qq6s0x3cSkaJES7fzhCWB32Jffi7RcnEc=; b=XkczJYvPUn3DaVjhB8QGmQGE8
-        km+UdouUd4vsXaKQxgmS72K+Tb4ygvQFv/ndkU9bLCI+lxvUQQQOUHyRFjI4rhl0AG0bJXUxG+mMt
-        MhMcPYMDoVLxUJeUu/EEjDIIDVKaijX62b6CA1hAEr19TPqlMrnQt8zOeDB5u5nD6ruuc=;
-Received: from p5dcc3012.dip0.t-ipconnect.de ([93.204.48.18] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1fyKfu-0004UG-Em; Fri, 07 Sep 2018 19:36:06 +0200
-Date:   Fri, 7 Sep 2018 19:35:57 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Regression in next with filesystem context concept
-Message-ID: <20180907193522.1a98d410@aktux>
-In-Reply-To: <20180907161023.GF5662@atomide.com>
-References: <20180906164358.GI5659@atomide.com>
-        <9053.1536310046@warthog.procyon.org.uk>
-        <20180907161023.GF5662@atomide.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 7 Sep 2018 18:20:32 -0400
+Received: (qmail 4939 invoked by uid 2102); 7 Sep 2018 13:38:33 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 7 Sep 2018 13:38:33 -0400
+Date:   Fri, 7 Sep 2018 13:38:33 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Daniel Lustig <dlustig@nvidia.com>
+cc:     Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <mingo@kernel.org>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+In-Reply-To: <20990a3f-1507-c98b-f14e-2f5241319d8c@nvidia.com>
+Message-ID: <Pine.LNX.4.44L0.1809071256340.1547-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JwFDSM5zShD/p=h26a5lGM7"; protocol="application/pgp-signature"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JwFDSM5zShD/p=h26a5lGM7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 7 Sep 2018, Daniel Lustig wrote:
 
-Hi,
+> On 9/7/2018 9:09 AM, Will Deacon wrote:
+> > On Fri, Sep 07, 2018 at 12:00:19PM -0400, Alan Stern wrote:
+> >> On Thu, 6 Sep 2018, Andrea Parri wrote:
+> >>
+> >>>> Have you noticed any part of the generic code that relies on ordinary 
+> >>>> acquire-release (rather than atomic RMW acquire-release) in order to 
+> >>>> implement locking constructs?
+> >>>
+> >>> There are several places in code where the "lock-acquire" seems to be
+> >>> provided by an atomic_cond_read_acquire/smp_cond_load_acquire: I have
+> >>> mentioned one in qspinlock in this thread; qrwlock and mcs_spinlock
+> >>> provide other examples (grep for the primitives...).
+> >>>
+> >>> As long as we don't consider these primitive as RMW (which would seem
+> >>> odd...) or as acquire for which "most people expect strong ordering"
+> >>> (see above), these provides other examples for the _gap_ I mentioned.
+> >>
+> >> Okay, now I understand your objection.  It does appear that on RISC-V,
+> >> if nowhere else, the current implementations of qspinlock, qrwlock,
+> >> etc. will not provide "RCtso" ordering.
+> >>
+> >> The discussions surrounding this topic have been so lengthy and 
+> >> confusing that I have lost track of any comments Palmer or Daniel may 
+> >> have made concerning this potential problem.
+> >>
+> >> One possible resolution would be to define smp_cond_load_acquire() 
+> >> specially on RISC-V so that it provided the same ordering guarantees as 
+> >> RMW-acquire.  (Plus adding a comment in the asm-generic/barrier.h 
+> >> pointing out the necessity for the stronger guarantee on all 
+> >> architectures.)
+> >>
+> >> Another would be to replace the usages of atomic/smp_cond_load_acquire 
+> >> in the locking constructs with a new function that would otherwise be 
+> >> the same but would provide the ordering guarantee we want.
+> >>
+> >> Do you think either of these would be an adequate fix?
+> > 
+> > I didn't think RISC-V used qspinlock or qrwlock, so I'm not sure there's
+> > actually anything to fix, is there?
+> > 
+> > Will
+> 
+> I've also lost track of whether the current preference is or is not for
+> RCtso, or in which subset of cases RCtso is currently preferred.  For
+> whichever cases do in fact need to be RCtso, the RISC-V approach would
+> still be the same as what I've written in the past, as far as I can
+> tell [1].
 
-On Fri, 7 Sep 2018 09:10:23 -0700
-Tony Lindgren <tony@atomide.com> wrote:
+The patch which Paul plans to send in for the next merge window makes 
+the LKMM require RCtso ordering for spinlocks, and by extension, for 
+all locking operations.  As I understand it, the current RISC-V 
+implementation of spinlocks does provide this ordering.
 
-> * David Howells <dhowells@redhat.com> [180907 08:51]:
-> > Tony Lindgren <tony@atomide.com> wrote:
-> >  =20
-> > > Looks like next-20180906 now has a regression where mounting
-> > > root won't work with commit fd0002870b45 ("vfs: Implement a
-> > > filesystem superblock creation/configuration context"). =20
-> >=20
-> > Am I right in thinking you're not using any of the LSMs? =20
->=20
-> Assuming LSM as in Documentation/lsm.txt, right not using any.
->=20
-> BTW, I don't think this issue shows up with ramdisk either,
-> so that's probably why for example kernelci.org does not
-> show errors.
->=20
+We have discussed creating another patch for the LKMM which would
+require RMW-acquire/ordinary-release also to have RCtso ordering.  
+Nobody has written the patch yet, but it would be straightfoward.  The
+rationale is that many types of locks are implemented in terms of
+RMW-acquire, so if the locks are required to be RCtso then so should
+the lower-level operations they are built from.
 
-I have also similar experience with my automated tests (automated
-alarming does not work yet ;-)), I am still in the beginning.
-I do there a ramdisk boot to create an overlay mount with the fresh
-modules on top of an ordinary rootfs. initramfs mount is
-ok, but the microsd card fails.
+Will feels strongly (and Linus agrees) that the LKMM should not require
+ordinary acquire and release to be any stronger than RCpc.
 
-Testing from a ramdisk I get:
-/ # ls -l /dev/mmcblk0p2=20
-brw-------    1 0        0         179,   2 Jan  1  1970 /dev/mmcblk0p2
-/ # mount /dev/mmcblk0p2 /mnt/
-[  682.819061] Filesystem requires source device
-[  682.825103] Filesystem requires source device
-[  682.830810] Filesystem requires source device
-[  682.836303] Filesystem requires source device
-[  682.843078] Filesystem requires source device
-[  682.847991] Filesystem requires source device
-[  682.853149] Filesystem requires source device
-mount: mounting /dev/mmcblk0p2 on /mnt/ failed: No such file or directory
+The issue that Andrea raised has to do with qspinlock, qrwlock, and
+mcs_spinlock, which are implemented using smp_cond_load_acquire()  
+instead of RMW-acquire.  This provides only the ordering properties of
+smp_load_acquire(), namely RCpc, which means that qspinlocks etc. might
+not be RCtso.
 
-64GB microsd at omap_hsmmc correcly recognized.=20
-Last known successful boot: next-20180830
+Since we do want locks to be RCtso, the question is how to resolve this 
+discrepancy.
 
-so you are not alone with such problems.
-will investigate further
+> In a nutshell, if a data structure uses only atomics with .aq/.rl,
+> RISC-V provides RCtso already anyway.  If a data structure uses fences,
+> or mixes fences and atomics, we can replace a "fence r,rw" or a
+> "fence rw,w" with a "fence.tso" (== fence r,rw + fence rw,w) as
+> necessary, at the cost of some amount of performance.
+> 
+> I suppose the answer to the question of whether smp_cond_load_acquire()
+> needs to change depends on where exactly RCtso is needed, and which
+> data structures actually use that vs. some other macro. 
+> 
+> Does that answer your question Alan?  Does it make sense?
 
-Regards,
-Andreas
+On all other architectures, as far as I know, smp_cond_load_acquire() 
+is in fact RCtso.  Any changes would only be needed on RISC-V.
 
---Sig_/JwFDSM5zShD/p=h26a5lGM7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+A quick grep of the kernel source (not quite up-to-date, unfortunately)  
+turns up only the following additional usages of 
+smp_cond_load_acquire():
 
------BEGIN PGP SIGNATURE-----
+	It is used in kernel/smp.c for csd_lock(); I don't know what 
+	that is meant for.
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAluStv0ACgkQfb1qx03i
-kySW4xAAhKea/3ncoKAloypGwknJoJjnLjX2eeUxdMhY6iQ9RQwJpRvv9Dp5soIt
-v+g2uSt4jHnGZ7coADGAk2VDJDqZ09/kmxOUJRTo8Ndqn2X2fAz/SMJ9mJYv6gp/
-5FvBh7RBeDifNZh2FBfN+08w869NcGCZ7hQeTnv1LregpAfVdGzn5rZuGbwflMLK
-ErFiyxatzzRlDvG1PBxuqmbu4xYf15OWDdCiEPMgfdjDUgv5wNEMO0t7RHYfW3Po
-HlMlmDY4soCAIYdhJEPc1WQANafFdjauKPhfTNpmgiiKLmnuSa0Slgv+Lh12S/nA
-T3e/JH3ikFmlB25RaHrHWKlAT04Hp9SGiJ3f2eFX9voOtHZEdd9p6KSkDVEc2DaO
-JZhrg44xOrXvdzKe6u8KOfkSSqXKt6QMbCCuwPLxSEUWBzUHQXlO1Cs/+2X3aWf2
-XocgxtzaMajzIrwC4HNRosY3prejyvg6mcP9mPQZjW6+NOTOKktWJrIb9lw1eWND
-EEz01x0oQJjzJz1dLfG0veH4p/nt6FYdrFeyoSwJd4oPXmUP8qkvENshjbS4Fx+3
-hN8BF2WhL9+XLjKMFolNIiVumNrP1WuLZZcknRZfd15VBAp05Htd6kUdHHC9areT
-6Gi786e0bnEpgG/Od/CsohMXjYVaao6tCLzzwyyLAtqoD3nEfuU=
-=nwXd
------END PGP SIGNATURE-----
+	It is also used in the scheduler core (kernel/sched/core.c).  I 
+	don't know what ordering requirements the scheduler has for it,
+	but Peter does.
 
---Sig_/JwFDSM5zShD/p=h26a5lGM7--
+	There's a usage in drivers/iommu/arm-smmu-v3.c, but no comment 
+	to explain why it is needed.
+
+To tell the truth, I'm not aware of any code in the kernel that
+actually _needs_ RCtso ordering for locks, but Peter and Will are quite
+firm that it should be required.  Linus would actually like locks to be
+RCsc, but he recognizes that this would incur a noticeable performance
+penalty on Power so he'll settle for RCtso.
+
+I'm not in a position to say whether smp_cond_load_acquire() should be 
+changed, but hopefully this information will help others to make that 
+determination.
+
+Alan
+
+> [1] https://lore.kernel.org/lkml/11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com/
+> 
+> Dan
+
