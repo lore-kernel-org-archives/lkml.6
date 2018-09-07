@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 005A0C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 456F2C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC655204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC655204FD
+	by mail.kernel.org (Postfix) with ESMTP id F37AC2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37AC2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730133AbeIHCXO (ORCPT
+        id S1730143AbeIHCXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:23:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54472 "EHLO
+        Fri, 7 Sep 2018 22:23:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54500 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729532AbeIHCXO (ORCPT
+        with ESMTP id S1729657AbeIHCXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:23:14 -0400
+        Fri, 7 Sep 2018 22:23:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2381FF6;
-        Fri,  7 Sep 2018 21:40:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 106D91010;
+        Fri,  7 Sep 2018 21:40:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>
-Subject: [PATCH 4.4 25/47] 9p: fix multiple NULL-pointer-dereferences
-Date:   Fri,  7 Sep 2018 23:10:21 +0200
-Message-Id: <20180907210907.415159218@linuxfoundation.org>
+        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.4 26/47] PM / sleep: wakeup: Fix build error caused by missing SRCU support
+Date:   Fri,  7 Sep 2018 23:10:22 +0200
+Message-Id: <20180907210907.494096257@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -51,69 +50,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: zhangyi (F) <yi.zhang@huawei.com>
 
-commit 10aa14527f458e9867cf3d2cc6b8cb0f6704448b upstream.
+commit 3df6f61fff49632492490fb6e42646b803a9958a upstream.
 
-Added checks to prevent GPFs from raising.
+Commit ea0212f40c6 (power: auto select CONFIG_SRCU) made the code in
+drivers/base/power/wakeup.c use SRCU instead of RCU, but it forgot to
+select CONFIG_SRCU in Kconfig, which leads to the following build
+error if CONFIG_SRCU is not selected somewhere else:
 
-Link: http://lkml.kernel.org/r/20180727110558.5479-1-tomasbortoli@gmail.com
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+drivers/built-in.o: In function `wakeup_source_remove':
+(.text+0x3c6fc): undefined reference to `synchronize_srcu'
+drivers/built-in.o: In function `pm_print_active_wakeup_sources':
+(.text+0x3c7a8): undefined reference to `__srcu_read_lock'
+drivers/built-in.o: In function `pm_print_active_wakeup_sources':
+(.text+0x3c84c): undefined reference to `__srcu_read_unlock'
+drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
+(.text+0x3d1d8): undefined reference to `__srcu_read_lock'
+drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
+(.text+0x3d228): undefined reference to `__srcu_read_unlock'
+drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
+(.text+0x3d24c): undefined reference to `__srcu_read_lock'
+drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
+(.text+0x3d29c): undefined reference to `__srcu_read_unlock'
+drivers/built-in.o:(.data+0x4158): undefined reference to `process_srcu'
+
+Fix this error by selecting CONFIG_SRCU when PM_SLEEP is enabled.
+
+Fixes: ea0212f40c6 (power: auto select CONFIG_SRCU)
+Cc: 4.2+ <stable@vger.kernel.org> # 4.2+
+Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+[ rjw: Minor subject/changelog fixups ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/trans_fd.c     |    5 ++++-
- net/9p/trans_rdma.c   |    3 +++
- net/9p/trans_virtio.c |    3 +++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ kernel/power/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -935,7 +935,7 @@ p9_fd_create_tcp(struct p9_client *clien
- 	if (err < 0)
- 		return err;
+--- a/kernel/power/Kconfig
++++ b/kernel/power/Kconfig
+@@ -105,6 +105,7 @@ config PM_SLEEP
+ 	def_bool y
+ 	depends on SUSPEND || HIBERNATE_CALLBACKS
+ 	select PM
++	select SRCU
  
--	if (valid_ipaddr4(addr) < 0)
-+	if (addr == NULL || valid_ipaddr4(addr) < 0)
- 		return -EINVAL;
- 
- 	csocket = NULL;
-@@ -983,6 +983,9 @@ p9_fd_create_unix(struct p9_client *clie
- 
- 	csocket = NULL;
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	if (strlen(addr) >= UNIX_PATH_MAX) {
- 		pr_err("%s (%d): address too long: %s\n",
- 		       __func__, task_pid_nr(current), addr);
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -644,6 +644,9 @@ rdma_create_trans(struct p9_client *clie
- 	struct ib_qp_init_attr qp_attr;
- 	struct ib_cq_init_attr cq_attr = {};
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	/* Parse the transport specific mount options */
- 	err = parse_opts(args, &opts);
- 	if (err < 0)
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -654,6 +654,9 @@ p9_virtio_create(struct p9_client *clien
- 	int ret = -ENOENT;
- 	int found = 0;
- 
-+	if (devname == NULL)
-+		return -EINVAL;
-+
- 	mutex_lock(&virtio_9p_lock);
- 	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
- 		if (!strncmp(devname, chan->tag, chan->tag_len) &&
+ config PM_SLEEP_SMP
+ 	def_bool y
 
 
