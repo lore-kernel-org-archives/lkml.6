@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456F2C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D013C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F37AC2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37AC2083D
+	by mail.kernel.org (Postfix) with ESMTP id 19FE22083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19FE22083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbeIHCXR (ORCPT
+        id S1729890AbeIHCXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:23:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54500 "EHLO
+        Fri, 7 Sep 2018 22:23:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54600 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729657AbeIHCXQ (ORCPT
+        with ESMTP id S1728033AbeIHCXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:23:16 -0400
+        Fri, 7 Sep 2018 22:23:35 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 106D91010;
-        Fri,  7 Sep 2018 21:40:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7AC7EFF6;
+        Fri,  7 Sep 2018 21:40:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 26/47] PM / sleep: wakeup: Fix build error caused by missing SRCU support
-Date:   Fri,  7 Sep 2018 23:10:22 +0200
-Message-Id: <20180907210907.494096257@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.4 27/47] pnfs/blocklayout: off by one in bl_map_stripe()
+Date:   Fri,  7 Sep 2018 23:10:23 +0200
+Message-Id: <20180907210907.651606371@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -50,53 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 3df6f61fff49632492490fb6e42646b803a9958a upstream.
+commit 0914bb965e38a055e9245637aed117efbe976e91 upstream.
 
-Commit ea0212f40c6 (power: auto select CONFIG_SRCU) made the code in
-drivers/base/power/wakeup.c use SRCU instead of RCU, but it forgot to
-select CONFIG_SRCU in Kconfig, which leads to the following build
-error if CONFIG_SRCU is not selected somewhere else:
+"dev->nr_children" is the number of children which were parsed
+successfully in bl_parse_stripe().  It could be all of them and then, in
+that case, it is equal to v->stripe.volumes_count.  Either way, the >
+should be >= so that we don't go beyond the end of what we're supposed
+to.
 
-drivers/built-in.o: In function `wakeup_source_remove':
-(.text+0x3c6fc): undefined reference to `synchronize_srcu'
-drivers/built-in.o: In function `pm_print_active_wakeup_sources':
-(.text+0x3c7a8): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `pm_print_active_wakeup_sources':
-(.text+0x3c84c): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
-(.text+0x3d1d8): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
-(.text+0x3d228): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
-(.text+0x3d24c): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
-(.text+0x3d29c): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o:(.data+0x4158): undefined reference to `process_srcu'
-
-Fix this error by selecting CONFIG_SRCU when PM_SLEEP is enabled.
-
-Fixes: ea0212f40c6 (power: auto select CONFIG_SRCU)
-Cc: 4.2+ <stable@vger.kernel.org> # 4.2+
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-[ rjw: Minor subject/changelog fixups ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # 3.17+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/power/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/blocklayout/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -105,6 +105,7 @@ config PM_SLEEP
- 	def_bool y
- 	depends on SUSPEND || HIBERNATE_CALLBACKS
- 	select PM
-+	select SRCU
+--- a/fs/nfs/blocklayout/dev.c
++++ b/fs/nfs/blocklayout/dev.c
+@@ -162,7 +162,7 @@ static bool bl_map_stripe(struct pnfs_bl
+ 	chunk = div_u64(offset, dev->chunk_size);
+ 	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
  
- config PM_SLEEP_SMP
- 	def_bool y
+-	if (chunk_idx > dev->nr_children) {
++	if (chunk_idx >= dev->nr_children) {
+ 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
+ 			__func__, chunk_idx, offset, dev->chunk_size);
+ 		/* error, should not happen */
 
 
