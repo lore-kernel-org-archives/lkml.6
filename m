@@ -2,96 +2,82 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1D5C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392F9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0F7220861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0F7220861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DBD02075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:30:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="TSfYknbS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBD02075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeIGMJK (ORCPT
+        id S1727681AbeIGMJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:09:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:16059 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725843AbeIGMJK (ORCPT
+        Fri, 7 Sep 2018 08:09:55 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:51330 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726539AbeIGMJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:09:10 -0400
-X-UUID: a04a13ae6b03418fbd411adcd3ec253b-20180907
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1687779140; Fri, 07 Sep 2018 15:29:28 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 7 Sep 2018 15:29:26 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 7 Sep 2018 15:29:26 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Mathias Nyman <mathias.nyman@intel.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <stable@vger.kernel.org>
-Subject: [PATCH v2] usb: xhci: fix interrupt transfer error happened on MTK platforms
-Date:   Fri, 7 Sep 2018 15:29:12 +0800
-Message-ID: <e8698cc5710a9d1f25e33e2201e2177bfbfec75c.1536305256.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Fri, 7 Sep 2018 08:09:55 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w877Sg3w001106;
+        Fri, 7 Sep 2018 16:28:42 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w877Sg3w001106
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1536305322;
+        bh=w2891XBKV6Ssrq9nY3OI6Rt3LrHzKS8vYx4VJKEsWKI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TSfYknbSovNizDAGTUL68rJA5+NNL9xHNMDUDdjbR2tjIVDBCeCTM2hhOgL9CmdnH
+         qRts+1mGkGwiphvkH9eRwcq2+khgkqBdbpxi7EOFM82Q8ySjBZ/v9KJyQjMkdQLBOa
+         KrnDJM5WZqLPoHeyB4MbjsoX4zRe3yg6aGcSE6KoG4GQuaJR76eekkVkai9xYrZC6K
+         l1WhlSVEMFd9VtKXpI8DUmWJ5961k6fjwIV48KxSzhrk2vww5PNHToK57LQqCgU4TX
+         DnoG4iJh952+jpN4+GpLddl5VxIY3nBbuNTMTMhwhakARc4M8EQIxXpGGry0s4i++v
+         NeKPkdjnUNMog==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH 0/2] mtd: rawnand: denali: clean-up unnecessary hook and device reset
+Date:   Fri,  7 Sep 2018 16:28:27 +0900
+Message-Id: <1536305309-28026-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MTK xHCI controller use some reserved bytes in endpoint context for
-bandwidth scheduling, so need keep them in xhci_endpoint_copy();
 
-The issue is introduced by:
-commit f5249461b504 ("xhci: Clear the host side toggle manually when
-endpoint is soft reset")
-It resets endpoints and will drop bandwidth scheduling parameters used
-by interrupt or isochronous endpoints on MTK xHCI controller.
-Fixes: f5249461b504 ("xhci: Clear the host side toggle manually when
-endpoint is soft reset")
+As I replied to Boris [1],
+I took a closer look for further cleanups.
+I test this series on my board.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Tested-by: Sean Wang <sean.wang@mediatek.com>
----
-v2: add fix tag, Cc and Tested-by
----
- drivers/usb/host/xhci-mem.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Remove mis-implemented ->dev_ready hook.
+Remove unnecessary device resetting because
+nand_scan_ident() reset devices anyway.
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index ef350c3..b1f27aa 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1613,6 +1613,10 @@ void xhci_endpoint_copy(struct xhci_hcd *xhci,
- 	in_ep_ctx->ep_info2 = out_ep_ctx->ep_info2;
- 	in_ep_ctx->deq = out_ep_ctx->deq;
- 	in_ep_ctx->tx_info = out_ep_ctx->tx_info;
-+	if (xhci->quirks & XHCI_MTK_HOST) {
-+		in_ep_ctx->reserved[0] = out_ep_ctx->reserved[0];
-+		in_ep_ctx->reserved[1] = out_ep_ctx->reserved[1];
-+	}
- }
- 
- /* Copy output xhci_slot_ctx to the input xhci_slot_ctx.
+[1] http://patchwork.ozlabs.org/patch/960160/
+
+
+
+Masahiro Yamada (2):
+  mtd: rawnand: denali: remove ->dev_ready() hook
+  mtd: rawnand: denali: remove denali_reset_banks()
+
+ drivers/mtd/nand/raw/denali.c | 51 +------------------------------------------
+ 1 file changed, 1 insertion(+), 50 deletions(-)
+
 -- 
-1.9.1
+2.7.4
 
