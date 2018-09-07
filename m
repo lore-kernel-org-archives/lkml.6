@@ -2,154 +2,166 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93062C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB28C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F04020652
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:05:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F04020652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id D530A20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:07:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwL8G+5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D530A20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbeIHCsd (ORCPT
+        id S1726598AbeIHCuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:48:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33686 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726237AbeIHCsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:48:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ADACFAEF4;
-        Fri,  7 Sep 2018 22:05:28 +0000 (UTC)
-Subject: Re: [RFC PATCH 0/3] kbuild: support syncing .config non-interactively
- and record ARCH in spec file
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        =?UTF-8?B?TWljaGFsIFN1Y2jvv73vv73vv71uZWs=?= <msuchanek@suse.de>,
-        Takashi Iwai <tiwai@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-References: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Jeff Mahoney <jeffm@suse.com>
-Message-ID: <130981b1-436c-d3e3-d22b-c1cd8cba374c@suse.com>
-Date:   Fri, 7 Sep 2018 18:05:23 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:63.0)
- Gecko/20100101 Thunderbird/63.0a1
+        Fri, 7 Sep 2018 22:50:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726129AbeIHCuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 22:50:46 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 819A820869;
+        Fri,  7 Sep 2018 22:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536358063;
+        bh=8z+Xx8SgBvvGl935GEc5JSaT8p9oVJI9X+PffIMEYtc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lwL8G+5oVRSK9Ypvtx2YVgj5dgwu3pDHyfUGxY3WVN7magcKxo9CWmykUJZTrR8sK
+         OlY8LeRuww3TV91qn47e/WfCbXW2OqavWyCGDB93eVU+OS3LXGzpoifWzjQUVpKfJg
+         eMt575Wp4+b2bRMwqlaBmsTFhqjA7oz+GE/cTUPU=
+Received: by mail-qk1-f178.google.com with SMTP id c126-v6so10637878qkd.7;
+        Fri, 07 Sep 2018 15:07:43 -0700 (PDT)
+X-Gm-Message-State: APzg51DuWscersrV5KH9pPg4UaFQoGXoLbr19d/nqIbbKsE0Wik7xiKq
+        Ev6zn1sVaHu9l7buX5uDppNX58VPqOKPAyK4rw==
+X-Google-Smtp-Source: ANB0Vdaft2fKJMJMZoEp21SV9aY0UIcbmyrBRu0WuHWK6YS+9FtsBbbK/jMM+W+HDdMHDaaizT5c6goXzWmJ0ipwcvg=
+X-Received: by 2002:a37:56c7:: with SMTP id k190-v6mr6959020qkb.29.1536358062637;
+ Fri, 07 Sep 2018 15:07:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="4h8woEc4Tu8MoRajYynmXFCksSXXoY89k"
+References: <20180907185414.2630-1-paul.burton@mips.com> <CAL_Jsq+n4e5_ptuh89CJibViGS_bgHz0A+Ki-uwtcGU38+mHXQ@mail.gmail.com>
+ <20180907210124.rrqbexp423igxbsr@pburton-laptop>
+In-Reply-To: <20180907210124.rrqbexp423igxbsr@pburton-laptop>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 7 Sep 2018 17:07:30 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKZYiDpH8900Mw+ADiUx--GbqF7j1MYoqbcJYCmbjvY4g@mail.gmail.com>
+Message-ID: <CAL_JsqKZYiDpH8900Mw+ADiUx--GbqF7j1MYoqbcJYCmbjvY4g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] of/fdt: Allow architectures to override
+ CONFIG_CMDLINE logic
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Linux-MIPS <linux-mips@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---4h8woEc4Tu8MoRajYynmXFCksSXXoY89k
-Content-Type: multipart/mixed; boundary="7D1l3XnUHvhPuSEN52aaqgGqHVU9MDQZ9";
- protected-headers="v1"
-From: Jeff Mahoney <jeffm@suse.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
- linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Laura Abbott <labbott@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
- Ben Hutchings <ben.hutchings@codethink.co.uk>,
- =?UTF-8?B?TWljaGFsIFN1Y2jvv73vv73vv71uZWs=?= <msuchanek@suse.de>,
- Takashi Iwai <tiwai@suse.de>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Michal Marek <michal.lkml@markovi.net>
-Message-ID: <130981b1-436c-d3e3-d22b-c1cd8cba374c@suse.com>
-Subject: Re: [RFC PATCH 0/3] kbuild: support syncing .config non-interactively
- and record ARCH in spec file
-References: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1535968916-9159-1-git-send-email-yamada.masahiro@socionext.com>
+On Fri, Sep 7, 2018 at 4:01 PM Paul Burton <paul.burton@mips.com> wrote:
+>
+> Hi Rob,
+>
+> On Fri, Sep 07, 2018 at 03:29:03PM -0500, Rob Herring wrote:
+> > On Fri, Sep 7, 2018 at 1:55 PM Paul Burton <paul.burton@mips.com> wrote:
+> > > The CONFIG_CMDLINE-related logic in early_init_dt_scan_chosen() falls
+> > > back to copying CONFIG_CMDLINE into boot_command_line/data if the DT has
+> > > a /chosen node but that node has no bootargs property or a bootargs
+> > > property of length zero.
+> >
+> > The Risc-V guys found a similar issue if chosen is missing[1]. I
+> > started a patch[2] to address that, but then looking at the different
+> > arches wasn't sure if I'd break something. I don't recall for sure,
+> > but it may have been MIPS that worried me.
+> >
+> > > This is problematic for the MIPS architecture because we support
+> > > concatenating arguments from either the DT or the bootloader with those
+> > > from CONFIG_CMDLINE, but the behaviour of early_init_dt_scan_chosen()
+> > > gives us no way of knowing whether boot_command_line contains arguments
+> > > from DT or already contains CONFIG_CMDLINE. This can lead to us
+> > > concatenating CONFIG_CMDLINE with itself, duplicating command line
+> > > arguments which can be problematic (eg. for earlycon which will attempt
+> > > to register the same console twice & warn about it).
+> >
+> > If CONFIG_CMDLINE_EXTEND is set, you know it contains CONFIG_CMDLINE.
+> > But I guess part of the problem is MIPS using its own kconfig options.
+>
+> Yes, that's part of the problem but there's more:
+>
+>   - We can also take arguments from the bootloader/prom, so it's not
+>     just DT or CONFIG_CMDLINE as taken into account by
+>     early_init_dt_scan_chosen(). MIPS has options to concatenate various
+>     combinations of DT, bootloader & CONFIG_CMDLINE arguments & there's
+>     no mapping to move all of them to just CONFIG_CMDLINE_EXTEND &
+>     CONFIG_CMDLINE_OVERRIDE.
+>
+>   - Some MIPS systems don't use DT, so don't run
+>     early_init_dt_scan_chosen() at all. Thus the architecture code still
+>     needs to deal with the bootloader/prom & CONFIG_CMDLINE cases
+>     anyway. In a perfect world we'd migrate all systems to use DT but in
+>     this world I don't see that happening until we kill off support for
+>     some of the older systems, which always seems contentious. Even then
+>     there'd be a lot of work for some of the remaining systems. I guess
+>     we could enable DT for these systems & only use it for the command
+>     line, it just feels like overkill.
 
---7D1l3XnUHvhPuSEN52aaqgGqHVU9MDQZ9
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+We have the same thing with old systems on ARM. I think the big
+difference is the code paths are well separated. We have support for
+old bootloaders which populates old boot parameters (atags) into DT
+(and can replace or extend DT bootargs). That's all in the zImage
+decompressor wrapper. Then in the kernel, there are 2 separate paths
+depending whether you have atags or DT (setup_machine_tags and
+setup_machine_fdt). I think the difference is we've imposed rules such
+as the bootloader can only pass parameters one of 2 ways and if DT is
+used then the bootargs must come from DT.
 
-On 9/3/18 6:01 AM, Masahiro Yamada wrote:
-> This work was prompted by the criticism about the recent Kconfig change=
-:
-> https://lkml.org/lkml/2018/6/27/254
->=20
-> I may not fully understand his concern, though.
+> > > Move the CONFIG_CMDLINE-related logic to a weak function that
+> > > architectures can provide their own version of, such that we continue to
+> > > use the existing logic for architectures where it's suitable but also
+> > > allow MIPS to override this behaviour such that the architecture code
+> > > knows when CONFIG_CMDLINE is used.
+> >
+> > More arch specific functions is not what I want. Really, all the
+> > cmdline manipulating logic doesn't belong in DT code, but it shouldn't
+> > be in the arch specific code either IMO. Really it should be some
+> > common kernel function which calls into the DT code to retrieve the DT
+> > bootargs and that's it. Then you can skip calling that kernel function
+> > if you really need non-standard handling.
+>
+> That would make sense.
+>
+> > Perhaps you should consider filling DT bootargs with the cmdline from
+> > bootloader. IOW, make the legacy case look like the non-legacy case
+> > early, and then the kernel doesn't have to deal with both cases later
+> > on.
+>
+> That could work, but would force us to use DT universally & is a larger
+> change than this, which I was hoping to get in 4.19 to fix the
+> regression described in patch 2 that happened back in 4.16. But if
+> you're unhappy with this perhaps we just have to live with it a little
+> longer...
 
-I don't think you do.
+You should probably at least do just the revert as that was what
+worked for some platforms. But I guess you enabled some platforms and
+just reverting would break them after working for a couple of cycles.
 
-Here's the use case for us and, I expect, most distro kernel maintainers
-out there.  We build kernels on 8 architectures, with 3 or more configs
-for each architecture.  Each product release uses a different build
-environment.  Between SLE and openSUSE we have 6 build environments at
-the moment.  Our update process for configs is to run a script that adds
-the change to every affected config and then run a script that does a
-'make oldconfig' on every architecture/config combination to sync them
-up and ensure options that may have been enabled by the change are
-synced up.  Those changes are also automatically propagated to other
-configs.  The config updates can be done on pretty much any linux system
-capable of building a kernel.  This is a process that has worked for us
-for at least 15 years.  It doesn't now with the GCC_VERSION changes.
-Today, I went to do a simple config change: disable an option on every
-arch/config combination for a single branch (that wasn't the one that
-matched the build environment of the running system) and instead of it
-running more or less silently as it has for years, it wanted to change
-all the compiler options.  Of course, those changes shouldn't be pushed
-to the repository because they'll be wrong for the build environment.
-In this simple example it was easy to just modify the option in-place,
-but it would've been painful if I was enabling an option that guarded
-other new options instead.
+> An alternative workaround to this that would contain the regression fix
+> within arch/mips/ would be to initialize boot_command_line to a single
+> space character prior to early_init_dt_scan_chosen(), which would
+> prevent early_init_dt_scan_chosen() from copying CONFIG_CMDLINE there.
+> That smells much more like a hack to me than this patch though, so I'd
+> rather not.
 
-Lastly, we fail our builds if there are unresolved config options.  A
-build that silently ignored them and accepted defaults isn't something
-we'd use.  Otherwise, we could start our builds with yes '' | make
-oldconfig and be done with it.
+That doesn't seem that bad to me. If you want to put an "if
+(IS_ENABLED(CONFIG_MIPS)) return;" in the chosen scan as a short term
+fix, I'd be fine with that.
 
-Requiring the config to be generated using the same environment that
-will ultimately build the kernel is a huge usability regression for us
-and, I would assume, others.
-
--Jeff
---=20
-Jeff Mahoney
-SUSE Labs
-
-
-
---7D1l3XnUHvhPuSEN52aaqgGqHVU9MDQZ9--
-
---4h8woEc4Tu8MoRajYynmXFCksSXXoY89k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAluS9iMACgkQHntLYyF5
-5bKU1A//RDi1hqWJ+0cqtWsJhWYxz2UV1tKAQWy/O5lMHfzuoVF7Su75+nAJuZSn
-E+qRRGpBIs94reX716zt+9eKEsOAH2DZ0bvGEuL+/TdnBuqMxT3BehFVHEXdW6pt
-wwirNm5L0wX9jPC0XXOxBr9z+wCw4uAizNTaqcQD/6BPOSIEKtlxTctnOip5F7BP
-OECzZj854Aiu48uRU84aLFrSYKcDbfA8yzDRHcdb31SBzhtYxYMs/+AwXqlJQTrj
-PTdB4LeZcnx/Y/8TR0t8j8wYsPYjHcx+u2k78mkn+zNN17sCFiHE9h6hHtVQIf6Q
-XoTEPWUOXOccekz/u4+7x6BgJRznNIBkd5FryeRrriALHKfAK0Lw9ROxItRlZdYC
-EZ3xwGFyr7mlr+dov6++4rj1kqwxfdzO+mUfGsD6G6DO3GojA0HciKT831cVJpE3
-pOExlQOWFwtMGzOG9W3Im0g6jxGG68acpjuZme8E8uFh7nnxwE6ZjoM6ND18m4vo
-YOKP9nkPX7xT0nPksPouFpQ6zPcjzwlIxJ9iUWy+rle4iPeHHCd+DmyJpnb+z4Pg
-iGMAxV5Ml/i+rRfL9CV37crM0grRJUH3MPVhgIIUZJHpz5B3GbFAtPmUORAr6lOR
-JCXsqb+2b5VNcQc+r7Zt6aTsYLcA3Fgj49GW3YMoLVOm6tezo78=
-=rG0d
------END PGP SIGNATURE-----
-
---4h8woEc4Tu8MoRajYynmXFCksSXXoY89k--
+Rob
