@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C343DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7DBC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71EB52083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6248420857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="OCpy1fOW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71EB52083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="hA24LuZn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6248420857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbeIGFPW (ORCPT
+        id S1729295AbeIGFPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 7 Sep 2018 01:15:22 -0400
-Received: from mail-eopbgr690126.outbound.protection.outlook.com ([40.107.69.126]:51988
+Received: from mail-eopbgr690129.outbound.protection.outlook.com ([40.107.69.129]:53565
         "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729261AbeIGFPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:15:15 -0400
+        id S1729190AbeIGFPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:15:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pVTHh4bKwe0mFrMFnYXebTHMvYG2FyptkEtlIiS0VXw=;
- b=OCpy1fOWSDlmkcCDnvBhdDnU5cJAQBZ3kO8uYp7IjPHnTA5NEcmNkpnL5MV5x/tLAF7lMgz9SdX9yhRWmkycjOajAB7bMqEYhDuJXHB/4K+cuUobTttfB6YDm1m4qiurCEGrzeNLpUMuhmpKM9jHLE93suYX2AoqIgBDPJHD9a4=
+ bh=LXT3XZV6AUnsB18enhcviLDF/LwY6/A2H4hMZPHyoPM=;
+ b=hA24LuZnpv1rg0onnEPB1fSAlZGckO6vh3UzOTvP3U8dKNeFujcJ56n6pa1CmZR/7sF0uSwmIoAr6KJwq19oWHtsOaqRq/NSGiwdQNW/cphjGhAOVZuQzLZCbAFnt+i9JWkdMWUYT2+yWzi+ppoZZhQu6yVsAsouZCak4w37A8A=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -41,16 +41,17 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+CC:     Fredrik Noring <noring@nocrew.org>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 49/88] omapfb: rename omap2 module to omap2fb.ko
-Thread-Topic: [PATCH AUTOSEL 4.18 49/88] omapfb: rename omap2 module to
- omap2fb.ko
-Thread-Index: AQHURkLQZhwRaaFQ5EOvyjNMl7xWsA==
-Date:   Fri, 7 Sep 2018 00:36:28 +0000
-Message-ID: <20180907003547.57567-49-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 48/88] fbdev: Distinguish between interlaced and
+ progressive modes
+Thread-Topic: [PATCH AUTOSEL 4.18 48/88] fbdev: Distinguish between interlaced
+ and progressive modes
+Thread-Index: AQHURkLQc4byHgYxm0y45sUeZ3V2YQ==
+Date:   Fri, 7 Sep 2018 00:36:27 +0000
+Message-ID: <20180907003547.57567-48-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:4Ko34xsj1nXv8CUAkem+8GTCm1MxEWQaMn9Pw3phoLZRKdvK9PfZoKnsO099bK/x10dsx2UNrCpWsiQEW7Og+ggOJAKTySG2pa2s7QMP+1NTOL1uqswheTzkKhdX6E3dSfJu8arMkM5Puey/dQs44r0bTXuWehz5na+KMArAkvD3FpNSm9gsehQBSipYuEyY2fV7CSoO5ryEHHXb5kRaJMDqw8uIAdV8xgkbSaL7zn9oSU5Va1oSBdT/DKPgqncvl9ZMEMfofJfsYGOY3lWCaW5qI0c3meuRvL4rah/bBAvGTR1NU426dFJlheqPgVvU8QmgwOLFGKfq3kV6/ojwvZgp2+p6u6+z/3ci506yMjT64h37gqf9ENsEHYX3rSLT2jrkrfiXjSa8yUx4JuwGXSmMdrIBsPF0vnvKEAdD6ewJUOGzfdQFg+KD3mboJm3HnHs+CzmfHNtvrUIPotKVkg==;5:t24sPJ6wZG2zT5GIgTVGHY2NkSWnwAkG+T7aBwSdQMB48ILmA2KKNr8q8Z3ZBPQ3LBcXnenIvYLabylbtPfOawmB9zeTkSx+YSh2AcZpMPeeIKTCSVo3o157AOWtQh4QL9NbJXX5p+BLXFzM3Io08N1tSwounzXrhUAkh0py3B8=;7:5StPTAjFxEGU7TE3kLHdThlps1gOgOh5fMustQsQ88zBr3XPx4YqBAM6/R3PvJN2sQ9YYWmZoU3FkxVIVMwDwFfrTVeVS7rBPWRGE4VgzEUEiNO9tTZXy2LjvWlxBJRDWhpzMoff3haB+dQK4t0cyJMm3wacZznqOZhEkm6JyS+rgy/qQf0nT1RYUGuWiH88MIX3fL7iigGDxTyONIpJqGw39CnFM9uvJxfaL/JF7xFtJotLI1c8v7dVLSlwzsQ0
-x-ms-office365-filtering-correlation-id: 3c7dcb81-68a4-46ac-9c7a-08d6145a024b
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:Aca+yruX4zZKfXB0OzI4/t2LoJIEUNz7Pdo7ibclilnmu6INLcWouzg0QpgrwjfIo29vjXWz4ngboOpShEqO2inKGIuHrQ+Ya7psxHo+4pl4ssWhwX3LtWDLVQMDdr0wdJADPjoD/AVvwgAp8iZdyvWsxhMJhjnP1U59tv8fuGDvXscVTOmY1i8P5jhS3r9t35O8CBAFDgfm9yYn5a7c5zytKnua9aGO/Qypf+JHgY3fMPuPDRQb0XJBw8ivWdGMpoP4SBHahRZfMqwk1ReOntPDCPUpyplyHFz0JMWBtns7d6gGjbG/R7i/8FCpmijfp3lkctIWQ1N+9A2zDGRNCKsxKPkrdq+FOJDHHhqkxCiGofAjgd8WZLBD4Cv3gw/fjoC0V9cfi99tGisU9A1IxdnZEzKYHl5KBAYChqX7JFyiLh6eRKY6GoTzleIVjElGu8oCPK3qLp5d+TxMaKKVfw==;5:fkdOT2A8S7ThgFdprMSgeNZd4c0eAU5zzSOPflicbfAbiE51wUlWQ+9K3QqRULu2lH7kLDUHD9NJ3QSjCEksfOm9BYsglHgABcqIn8jwnpaPgIm3Tkh07zuP76s2mlmTicqFK+xAlTkQfvO3IYe4AZ85rDZQvm2kxqznCEYYBlE=;7:3f0T6gF0r6FXiQCnm9SkFtbcRk4/dguKV1tUt61ya2JutADKybZOsUw0zVZoUo7L6YyMImXYxQLI8se0ARQgRV13akwSIkao7MTVXyFvKeHXZV9GEwgDRX16P07VOVFrCvImHc1wmOtDhWGez97UoZUgUyh1SmoXVsDhlaFFJ523sZFsV5ArvGO8q5T18PqR1lguFhfp3Jot50ey8uqimnVt8NwO0nTtgEfJKIz76IEWGYP7La2iZZJiCjsnODK5
+x-ms-office365-filtering-correlation-id: 097c0f32-8325-49ce-44ce-08d6145a01f4
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
 x-ms-traffictypediagnostic: CY4PR21MB0773:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0773C20A8CC90E82E1C2AFA3FB000@CY4PR21MB0773.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0773422571EA191178EC0C8FFB000@CY4PR21MB0773.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(8676002)(5660300001)(106356001)(6436002)(25786009)(110136005)(54906003)(6506007)(105586002)(2906002)(486006)(53936002)(446003)(2616005)(476003)(4326008)(6666003)(11346002)(5250100002)(107886003)(2501003)(86612001)(97736004)(6512007)(478600001)(3846002)(72206003)(6116002)(10290500003)(76176011)(68736007)(14454004)(1076002)(66066001)(26005)(575784001)(6486002)(99286004)(8936002)(36756003)(81166006)(86362001)(256004)(102836004)(81156014)(305945005)(186003)(22452003)(2900100001)(7736002)(10090500001)(316002)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(8676002)(5660300001)(106356001)(6436002)(25786009)(110136005)(54906003)(6506007)(105586002)(2906002)(486006)(53936002)(446003)(2616005)(476003)(4326008)(6666003)(11346002)(5250100002)(107886003)(2501003)(86612001)(97736004)(6512007)(478600001)(3846002)(72206003)(6116002)(10290500003)(76176011)(68736007)(14454004)(1076002)(66066001)(26005)(575784001)(6486002)(99286004)(8936002)(36756003)(81166006)(86362001)(14444005)(256004)(102836004)(81156014)(305945005)(186003)(22452003)(2900100001)(7736002)(10090500001)(316002)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: H2PX1P3OtdXm7Mr0jz4oBRlAVGcib8iYsdEsTaqWh9vMREOqfdvyDVIdT9Vh0/ayaeIvOJrt147baxn8S23PrfYXdrFdHXpO58PRWHlXXeUO7bck5KHy7M60mk6X+y/jpbLCQ/BwvCqxdEFVYf7P5xN3JOSsouBv/HcyaUyzAo+744ADLLpWxdokXMXlX87A0VN0+XhJf6nIV0EZTeVzrRSm60nvcn3D6ZSDkkvRSBQ6u4fdhxw/52bOT30aBeO9Eypx1KCoG1Fn/TDj2c8evCoftklCd9zg/0aPCOGu6ufQ405oEW1CNVZOiYji5qJRID8lQ6DXeEti5Gw8sIb2bBZA+18SinsVYsDTHszpp/g=
+x-microsoft-antispam-message-info: eJLlf9UWpPmK5pzufK+1Qt9x9v3WjdklO2mxa7GJxzWmT5fJgs9rgv35NMa+JeUx8MyDu+wtHXFoBI1AfgGxTzlDVGTddjZyvIDjv+9ZJbpRV2dy9P4slbmvKz2REpo9BvM4Nz/h1dRwkEoeWuns9cZi90nobyYJseXh6zGWoHTyepEAJGWWbTFa8bc3vLb8kfV2g9BY4Jq5b+OqYe+g5rPkQftoF39wuEkTwhVUndWmvY62JXpKprvjCF4thxP5/T0aBn5i72GZ+j9u0VGy7XwHf4ecMqyEcwv0LPrT0banJpqK8BMz0bMsrETwLgI50baPeB2dd/dRVKr+hbpuGarO/iCgGTk8BBTpjwndYXA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c7dcb81-68a4-46ac-9c7a-08d6145a024b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:28.6839
+X-MS-Exchange-CrossTenant-Network-Message-Id: 097c0f32-8325-49ce-44ce-08d6145a01f4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:28.0393
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,50 +93,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Fredrik Noring <noring@nocrew.org>
 
-[ Upstream commit 4bcd8c90ac0f27d3d76fcfc50582ff3685059de9 ]
+[ Upstream commit 1ba0a59cea41ea05fda92daaf2a2958a2246b9cf ]
 
-In a kernel configuration with both CONFIG_FB_OMAP=3Dm and CONFIG_FB_OMAP2=
-=3Dm,
-Kbuild fails to point out that we have two modules with the same name (omap=
-fb.ko),
-but instead fails with a cryptic error message like:
+I discovered the problem when developing a frame buffer driver for the
+PlayStation 2 (not yet merged), using the following video modes for the
+PlayStation 3 in drivers/video/fbdev/ps3fb.c:
 
-ERROR: "omapfb_register_panel" [drivers/video/fbdev/omap/lcd_osk.ko] undefi=
-ned!
+    }, {
+        /* 1080if */
+        "1080if", 50, 1920, 1080, 13468, 148, 484, 36, 4, 88, 5,
+        FB_SYNC_BROADCAST, FB_VMODE_INTERLACED
+    }, {
+        /* 1080pf */
+        "1080pf", 50, 1920, 1080, 6734, 148, 484, 36, 4, 88, 5,
+        FB_SYNC_BROADCAST, FB_VMODE_NONINTERLACED
+    },
 
-This can now happen when building a randconfig kernel with CONFIG_ARCH_OMAP=
-1,
-as the omap1 fbdev driver depends on that, whiel the omap2 fbdev driver can
-now be built anywhere with CONFIG_COMPILE_TEST.
+In ps3fb_probe, the mode_option module parameter is used with fb_find_mode
+but it can only select the interlaced variant of 1920x1080 since the loop
+matching the modes does not take the difference between interlaced and
+progressive modes into account.
 
-The solution is to rename one of the two modules, so for consistency with
-the directory naming I decided to rename the omap2 version to omap2fb.ko.
+In short, without the patch, progressive 1920x1080 cannot be chosen as a
+mode_option parameter since fb_find_mode (falsely) thinks interlace is a
+perfect match.
 
-Fixes: 7378f1149884 ("media: omap2: omapfb: allow building it with COMPILE_=
-TEST")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Fredrik Noring <noring@nocrew.org>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>
+[b.zolnierkie: updated patch description]
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/video/fbdev/omap2/omapfb/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/core/modedb.c | 41 ++++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/Makefile b/drivers/video/fbde=
-v/omap2/omapfb/Makefile
-index 602edfed09df..f54c3f56b641 100644
---- a/drivers/video/fbdev/omap2/omapfb/Makefile
-+++ b/drivers/video/fbdev/omap2/omapfb/Makefile
-@@ -2,5 +2,5 @@
- obj-$(CONFIG_OMAP2_VRFB) +=3D vrfb.o
- obj-y +=3D dss/
- obj-y +=3D displays/
--obj-$(CONFIG_FB_OMAP2) +=3D omapfb.o
--omapfb-y :=3D omapfb-main.o omapfb-sysfs.o omapfb-ioctl.o
-+obj-$(CONFIG_FB_OMAP2) +=3D omap2fb.o
-+omap2fb-y :=3D omapfb-main.o omapfb-sysfs.o omapfb-ioctl.o
+diff --git a/drivers/video/fbdev/core/modedb.c b/drivers/video/fbdev/core/m=
+odedb.c
+index 2510fa728d77..de119f11b78f 100644
+--- a/drivers/video/fbdev/core/modedb.c
++++ b/drivers/video/fbdev/core/modedb.c
+@@ -644,7 +644,7 @@ static int fb_try_mode(struct fb_var_screeninfo *var, s=
+truct fb_info *info,
+  *
+  *     Valid mode specifiers for @mode_option:
+  *
+- *     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m] or
++ *     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][p][m] or
+  *     <name>[-<bpp>][@<refresh>]
+  *
+  *     with <xres>, <yres>, <bpp> and <refresh> decimal numbers and
+@@ -653,10 +653,10 @@ static int fb_try_mode(struct fb_var_screeninfo *var,=
+ struct fb_info *info,
+  *      If 'M' is present after yres (and before refresh/bpp if present),
+  *      the function will compute the timings using VESA(tm) Coordinated
+  *      Video Timings (CVT).  If 'R' is present after 'M', will compute wi=
+th
+- *      reduced blanking (for flatpanels).  If 'i' is present, compute
+- *      interlaced mode.  If 'm' is present, add margins equal to 1.8%
+- *      of xres rounded down to 8 pixels, and 1.8% of yres. The char
+- *      'i' and 'm' must be after 'M' and 'R'. Example:
++ *      reduced blanking (for flatpanels).  If 'i' or 'p' are present, com=
+pute
++ *      interlaced or progressive mode.  If 'm' is present, add margins eq=
+ual
++ *      to 1.8% of xres rounded down to 8 pixels, and 1.8% of yres. The ch=
+ars
++ *      'i', 'p' and 'm' must be after 'M' and 'R'. Example:
+  *
+  *      1024x768MR-8@60m - Reduced blank with margins at 60Hz.
+  *
+@@ -697,7 +697,8 @@ int fb_find_mode(struct fb_var_screeninfo *var,
+ 		unsigned int namelen =3D strlen(name);
+ 		int res_specified =3D 0, bpp_specified =3D 0, refresh_specified =3D 0;
+ 		unsigned int xres =3D 0, yres =3D 0, bpp =3D default_bpp, refresh =3D 0;
+-		int yres_specified =3D 0, cvt =3D 0, rb =3D 0, interlace =3D 0;
++		int yres_specified =3D 0, cvt =3D 0, rb =3D 0;
++		int interlace_specified =3D 0, interlace =3D 0;
+ 		int margins =3D 0;
+ 		u32 best, diff, tdiff;
+=20
+@@ -748,9 +749,17 @@ int fb_find_mode(struct fb_var_screeninfo *var,
+ 				if (!cvt)
+ 					margins =3D 1;
+ 				break;
++			case 'p':
++				if (!cvt) {
++					interlace =3D 0;
++					interlace_specified =3D 1;
++				}
++				break;
+ 			case 'i':
+-				if (!cvt)
++				if (!cvt) {
+ 					interlace =3D 1;
++					interlace_specified =3D 1;
++				}
+ 				break;
+ 			default:
+ 				goto done;
+@@ -819,11 +828,21 @@ int fb_find_mode(struct fb_var_screeninfo *var,
+ 			if ((name_matches(db[i], name, namelen) ||
+ 			     (res_specified && res_matches(db[i], xres, yres))) &&
+ 			    !fb_try_mode(var, info, &db[i], bpp)) {
+-				if (refresh_specified && db[i].refresh =3D=3D refresh)
+-					return 1;
++				const int db_interlace =3D (db[i].vmode &
++					FB_VMODE_INTERLACED ? 1 : 0);
++				int score =3D abs(db[i].refresh - refresh);
++
++				if (interlace_specified)
++					score +=3D abs(db_interlace - interlace);
++
++				if (!interlace_specified ||
++				    db_interlace =3D=3D interlace)
++					if (refresh_specified &&
++					    db[i].refresh =3D=3D refresh)
++						return 1;
+=20
+-				if (abs(db[i].refresh - refresh) < diff) {
+-					diff =3D abs(db[i].refresh - refresh);
++				if (score < diff) {
++					diff =3D score;
+ 					best =3D i;
+ 				}
+ 			}
 --=20
 2.17.1
