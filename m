@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62ABDC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0352AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E0E20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E0E20645
+	by mail.kernel.org (Postfix) with ESMTP id B982E20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B982E20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729475AbeIHCL2 (ORCPT
+        id S1729489AbeIHCLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:11:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48826 "EHLO
+        Fri, 7 Sep 2018 22:11:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48832 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbeIHCL2 (ORCPT
+        with ESMTP id S1728212AbeIHCLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:11:28 -0400
+        Fri, 7 Sep 2018 22:11:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14E02ACC;
-        Fri,  7 Sep 2018 21:28:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37BDDACC;
+        Fri,  7 Sep 2018 21:28:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bandan Das <bsd@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 55/89] KVM: VMX: fixes for vmentry_l1d_flush module parameter
-Date:   Fri,  7 Sep 2018 23:09:49 +0200
-Message-Id: <20180907210858.955193543@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 56/89] KVM: PPC: Book3S: Fix guest DMA when guest partially backed by THP pages
+Date:   Fri,  7 Sep 2018 23:09:50 +0200
+Message-Id: <20180907210859.082538107@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -50,94 +50,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit 0027ff2a75f9dcf0537ac0a65c5840b0e21a4950 upstream.
+commit 8cfbdbdc24815417a3ab35101ccf706b9a23ff17 upstream.
 
-Two bug fixes:
+Commit 76fa4975f3ed ("KVM: PPC: Check if IOMMU page is contained in
+the pinned physical page", 2018-07-17) added some checks to ensure
+that guest DMA mappings don't attempt to map more than the guest is
+entitled to access. However, errors in the logic mean that legitimate
+guest requests to map pages for DMA are being denied in some
+situations. Specifically, if the first page of the range passed to
+mm_iommu_get() is mapped with a normal page, and subsequent pages are
+mapped with transparent huge pages, we end up with mem->pageshift ==
+0. That means that the page size checks in mm_iommu_ua_to_hpa() and
+mm_iommu_up_to_hpa_rm() will always fail for every page in that
+region, and thus the guest can never map any memory in that region for
+DMA, typically leading to a flood of error messages like this:
 
-1) missing entries in the l1d_param array; this can cause a host crash
-if an access attempts to reach the missing entry. Future-proof the get
-function against any overflows as well.  However, the two entries
-VMENTER_L1D_FLUSH_EPT_DISABLED and VMENTER_L1D_FLUSH_NOT_REQUIRED must
-not be accepted by the parse function, so disable them there.
+  qemu-system-ppc64: VFIO_MAP_DMA: -22
+  qemu-system-ppc64: vfio_dma_map(0x10005f47780, 0x800000000000000, 0x10000, 0x7fff63ff0000) = -22 (Invalid argument)
 
-2) invalid values must be rejected even if the CPU does not have the
-bug, so test for them before checking boot_cpu_has(X86_BUG_L1TF)
+The logic errors in mm_iommu_get() are:
 
-... and a small refactoring, since the .cmd field is redundant with
-the index in the array.
+  (a) use of 'ua' not 'ua + (i << PAGE_SHIFT)' in the find_linux_pte()
+      call (meaning that find_linux_pte() returns the pte for the
+      first address in the range, not the address we are currently up
+      to);
+  (b) use of 'pageshift' as the variable to receive the hugepage shift
+      returned by find_linux_pte() - for a normal page this gets set
+      to 0, leading to us setting mem->pageshift to 0 when we conclude
+      that the pte returned by find_linux_pte() didn't match the page
+      we were looking at;
+  (c) comparing 'compshift', which is a page order, i.e. log base 2 of
+      the number of pages, with 'pageshift', which is a log base 2 of
+      the number of bytes.
 
-Reported-by: Bandan Das <bsd@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+To fix these problems, this patch introduces 'cur_ua' to hold the
+current user address and uses that in the find_linux_pte() call;
+introduces 'pteshift' to hold the hugepage shift found by
+find_linux_pte(); and compares 'pteshift' with 'compshift +
+PAGE_SHIFT' rather than 'compshift'.
+
+The patch also moves the local_irq_restore to the point after the PTE
+pointer returned by find_linux_pte() has been dereferenced because
+otherwise the PTE could change underneath us, and adds a check to
+avoid doing the find_linux_pte() call once mem->pageshift has been
+reduced to PAGE_SHIFT, as an optimization.
+
+Fixes: 76fa4975f3ed ("KVM: PPC: Check if IOMMU page is contained in the pinned physical page")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ arch/powerpc/mm/mmu_context_iommu.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -200,12 +200,14 @@ static enum vmx_l1d_flush_state __read_m
+--- a/arch/powerpc/mm/mmu_context_iommu.c
++++ b/arch/powerpc/mm/mmu_context_iommu.c
+@@ -130,6 +130,7 @@ long mm_iommu_get(struct mm_struct *mm,
+ 	long i, j, ret = 0, locked_entries = 0;
+ 	unsigned int pageshift;
+ 	unsigned long flags;
++	unsigned long cur_ua;
+ 	struct page *page = NULL;
  
- static const struct {
- 	const char *option;
--	enum vmx_l1d_flush_state cmd;
-+	bool for_parse;
- } vmentry_l1d_param[] = {
--	{"auto",	VMENTER_L1D_FLUSH_AUTO},
--	{"never",	VMENTER_L1D_FLUSH_NEVER},
--	{"cond",	VMENTER_L1D_FLUSH_COND},
--	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
-+	[VMENTER_L1D_FLUSH_AUTO]	 = {"auto", true},
-+	[VMENTER_L1D_FLUSH_NEVER]	 = {"never", true},
-+	[VMENTER_L1D_FLUSH_COND]	 = {"cond", true},
-+	[VMENTER_L1D_FLUSH_ALWAYS]	 = {"always", true},
-+	[VMENTER_L1D_FLUSH_EPT_DISABLED] = {"EPT disabled", false},
-+	[VMENTER_L1D_FLUSH_NOT_REQUIRED] = {"not required", false},
- };
- 
- #define L1D_CACHE_ORDER 4
-@@ -289,8 +291,9 @@ static int vmentry_l1d_flush_parse(const
- 
- 	if (s) {
- 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
--			if (sysfs_streq(s, vmentry_l1d_param[i].option))
--				return vmentry_l1d_param[i].cmd;
-+			if (vmentry_l1d_param[i].for_parse &&
-+			    sysfs_streq(s, vmentry_l1d_param[i].option))
-+				return i;
- 		}
+ 	mutex_lock(&mem_list_mutex);
+@@ -178,7 +179,8 @@ long mm_iommu_get(struct mm_struct *mm,
  	}
- 	return -EINVAL;
-@@ -300,13 +303,13 @@ static int vmentry_l1d_flush_set(const c
- {
- 	int l1tf, ret;
  
--	if (!boot_cpu_has(X86_BUG_L1TF))
--		return 0;
--
- 	l1tf = vmentry_l1d_flush_parse(s);
- 	if (l1tf < 0)
- 		return l1tf;
+ 	for (i = 0; i < entries; ++i) {
+-		if (1 != get_user_pages_fast(ua + (i << PAGE_SHIFT),
++		cur_ua = ua + (i << PAGE_SHIFT);
++		if (1 != get_user_pages_fast(cur_ua,
+ 					1/* pages */, 1/* iswrite */, &page)) {
+ 			ret = -EFAULT;
+ 			for (j = 0; j < i; ++j)
+@@ -197,7 +199,7 @@ long mm_iommu_get(struct mm_struct *mm,
+ 		if (is_migrate_cma_page(page)) {
+ 			if (mm_iommu_move_page_from_cma(page))
+ 				goto populate;
+-			if (1 != get_user_pages_fast(ua + (i << PAGE_SHIFT),
++			if (1 != get_user_pages_fast(cur_ua,
+ 						1/* pages */, 1/* iswrite */,
+ 						&page)) {
+ 				ret = -EFAULT;
+@@ -211,20 +213,21 @@ long mm_iommu_get(struct mm_struct *mm,
+ 		}
+ populate:
+ 		pageshift = PAGE_SHIFT;
+-		if (PageCompound(page)) {
++		if (mem->pageshift > PAGE_SHIFT && PageCompound(page)) {
+ 			pte_t *pte;
+ 			struct page *head = compound_head(page);
+ 			unsigned int compshift = compound_order(head);
++			unsigned int pteshift;
  
-+	if (!boot_cpu_has(X86_BUG_L1TF))
-+		return 0;
-+
- 	/*
- 	 * Has vmx_init() run already? If not then this is the pre init
- 	 * parameter parsing. In that case just store the value and let
-@@ -326,6 +329,9 @@ static int vmentry_l1d_flush_set(const c
+ 			local_irq_save(flags); /* disables as well */
+-			pte = find_linux_pte(mm->pgd, ua, NULL, &pageshift);
+-			local_irq_restore(flags);
++			pte = find_linux_pte(mm->pgd, cur_ua, NULL, &pteshift);
  
- static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
- {
-+	if (WARN_ON_ONCE(l1tf_vmx_mitigation >= ARRAY_SIZE(vmentry_l1d_param)))
-+		return sprintf(s, "???\n");
-+
- 	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
- }
- 
+ 			/* Double check it is still the same pinned page */
+ 			if (pte && pte_page(*pte) == head &&
+-					pageshift == compshift)
+-				pageshift = max_t(unsigned int, pageshift,
++			    pteshift == compshift + PAGE_SHIFT)
++				pageshift = max_t(unsigned int, pteshift,
+ 						PAGE_SHIFT);
++			local_irq_restore(flags);
+ 		}
+ 		mem->pageshift = min(mem->pageshift, pageshift);
+ 		mem->hpas[i] = page_to_pfn(page) << PAGE_SHIFT;
 
 
