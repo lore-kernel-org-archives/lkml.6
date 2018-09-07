@@ -2,89 +2,167 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FD3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E7FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DBBA2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBBA2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 6721520879
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6721520879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbeIGM6T (ORCPT
+        id S1728175AbeIGM6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:58:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35354 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbeIGM6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:58:19 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id hTZoLgfwIPaq; Fri,  7 Sep 2018 10:18:29 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCC4300329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:4300:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 7 Sep 2018 08:58:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45652 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728132AbeIGM6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 08:58:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E5AF1EC0432;
-        Fri,  7 Sep 2018 10:18:29 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 10:18:21 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Cc:     evgreen@chromium.org, robh@kernel.org, mchehab@kernel.org,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org,
-        swboyd@chromium.org, bjorn.andersson@linaro.org
-Subject: Re: [PATCH v4 3/4] drivers: edac: Add EDAC driver support for QCOM
- SoCs
-Message-ID: <20180907081820.GB12849@zn.tnic>
-References: <1536103345-1919-1-git-send-email-vnkgutta@codeaurora.org>
- <1536103345-1919-4-git-send-email-vnkgutta@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1536103345-1919-4-git-send-email-vnkgutta@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4622A401CC41;
+        Fri,  7 Sep 2018 08:18:31 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-85.pek2.redhat.com [10.72.12.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A92B10FFE51;
+        Fri,  7 Sep 2018 08:18:21 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        ebiederm@xmission.com, joro@8bytes.org, thomas.lendacky@amd.com,
+        dyoung@redhat.com, kexec@lists.infradead.org,
+        iommu@lists.linux-foundation.org, bhe@redhat.com
+Subject: [PATCH 1/4 v7] x86/ioremap: add a function ioremap_encrypted() to remap kdump old memory
+Date:   Fri,  7 Sep 2018 16:18:02 +0800
+Message-Id: <20180907081805.368-2-lijiang@redhat.com>
+In-Reply-To: <20180907081805.368-1-lijiang@redhat.com>
+References: <20180907081805.368-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 07 Sep 2018 08:18:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 07 Sep 2018 08:18:31 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 04:22:24PM -0700, Venkata Narendra Kumar Gutta wrote:
-> From: Channagoud Kadabi <ckadabi@codeaurora.org>
-> 
-> Add error reporting driver for Single Bit Errors (SBEs) and Double Bit
-> Errors (DBEs). As of now, this driver supports error reporting for
-> Last Level Cache Controller (LLCC) of Tag RAM and Data RAM. Interrupts
-> are triggered when the errors happen in the cache, the driver handles
-> those interrupts and dumps the syndrome registers.
-> 
-> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> Co-developed-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> ---
->  MAINTAINERS                        |   8 +
->  drivers/edac/Kconfig               |  14 ++
->  drivers/edac/Makefile              |   1 +
->  drivers/edac/qcom_edac.c           | 420 +++++++++++++++++++++++++++++++++++++
->  include/linux/soc/qcom/llcc-qcom.h |  24 +++
->  5 files changed, 467 insertions(+)
->  create mode 100644 drivers/edac/qcom_edac.c
+When SME is enabled on AMD machine, the memory is encrypted in the first
+kernel. In this case, SME also needs to be enabled in kdump kernel, and
+we have to remap the old memory with the memory encryption mask.
 
-EDAC bits look ok now, feel free to carry it through the qualcomm tree:
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+---
+ arch/x86/include/asm/io.h |  3 +++
+ arch/x86/mm/ioremap.c     | 25 +++++++++++++++++--------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
-Acked-by: Borislav Petkov <bp@suse.de>
-
+diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
+index 6de64840dd22..f8795f9581c7 100644
+--- a/arch/x86/include/asm/io.h
++++ b/arch/x86/include/asm/io.h
+@@ -192,6 +192,9 @@ extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
+ #define ioremap_cache ioremap_cache
+ extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
+ #define ioremap_prot ioremap_prot
++extern void __iomem *ioremap_encrypted(resource_size_t phys_addr,
++					unsigned long size);
++#define ioremap_encrypted ioremap_encrypted
+ 
+ /**
+  * ioremap     -   map bus memory into CPU space
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index c63a545ec199..e01e6c695add 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -24,6 +24,7 @@
+ #include <asm/pgalloc.h>
+ #include <asm/pat.h>
+ #include <asm/setup.h>
++#include <linux/crash_dump.h>
+ 
+ #include "physaddr.h"
+ 
+@@ -131,7 +132,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+  * caller shouldn't need to know that small detail.
+  */
+ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+-		unsigned long size, enum page_cache_mode pcm, void *caller)
++		unsigned long size, enum page_cache_mode pcm,
++		void *caller, bool encrypted)
+ {
+ 	unsigned long offset, vaddr;
+ 	resource_size_t last_addr;
+@@ -199,7 +201,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+ 	 * resulting mapping.
+ 	 */
+ 	prot = PAGE_KERNEL_IO;
+-	if (sev_active() && mem_flags.desc_other)
++	if ((sev_active() && mem_flags.desc_other) || encrypted)
+ 		prot = pgprot_encrypted(prot);
+ 
+ 	switch (pcm) {
+@@ -291,7 +293,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
+ 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
+ 
+ 	return __ioremap_caller(phys_addr, size, pcm,
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_nocache);
+ 
+@@ -324,7 +326,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
+ 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
+ 
+ 	return __ioremap_caller(phys_addr, size, pcm,
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL_GPL(ioremap_uc);
+ 
+@@ -341,7 +343,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
+ void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
+ {
+ 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
+-					__builtin_return_address(0));
++					__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_wc);
+ 
+@@ -358,14 +360,21 @@ EXPORT_SYMBOL(ioremap_wc);
+ void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
+ {
+ 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
+-					__builtin_return_address(0));
++					__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_wt);
+ 
++void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
++{
++	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
++				__builtin_return_address(0), true);
++}
++EXPORT_SYMBOL(ioremap_encrypted);
++
+ void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
+ {
+ 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_cache);
+ 
+@@ -374,7 +383,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
+ {
+ 	return __ioremap_caller(phys_addr, size,
+ 				pgprot2cachemode(__pgprot(prot_val)),
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_prot);
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
