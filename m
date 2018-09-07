@@ -2,112 +2,86 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF631C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F9CC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 864E72075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:21:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864E72075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C33A2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C33A2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbeIGNBO (ORCPT
+        id S1727529AbeIGNBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:01:14 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57903 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbeIGNBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:01:14 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DFDF120799; Fri,  7 Sep 2018 10:21:23 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B287420728;
-        Fri,  7 Sep 2018 10:21:23 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 10:21:22 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
-Message-ID: <20180907082122.bcylf2jpf6eq6dgq@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-9-icenowy@aosc.io>
- <20180905075056.tob7itg3judccooe@flea>
- <CAMty3ZBo+X5o22i1=HR9d1VjkEWQ7=DHHPL9RLtbzbyzCZLyFw@mail.gmail.com>
+        Fri, 7 Sep 2018 09:01:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35670 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbeIGNBs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:01:48 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fyC1d-0001Ww-Ax; Fri, 07 Sep 2018 10:21:57 +0200
+Date:   Fri, 7 Sep 2018 10:21:56 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Yang, Bin" <bin.yang@intel.com>
+cc:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
+ overlap()
+In-Reply-To: <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
+Message-ID: <alpine.DEB.2.21.1809071019020.1402@nanos.tec.linutronix.de>
+References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>  <1534814186-37067-5-git-send-email-bin.yang@intel.com>  <alpine.DEB.2.21.1809041413070.3395@nanos.tec.linutronix.de>  <82fc8d80749f920c4a5107469924205d92037785.camel@intel.com> 
+ <alpine.DEB.2.21.1809070943490.1402@nanos.tec.linutronix.de> <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="oztiuxukmzniiijw"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBo+X5o22i1=HR9d1VjkEWQ7=DHHPL9RLtbzbyzCZLyFw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 7 Sep 2018, Yang, Bin wrote:
+> On Fri, 2018-09-07 at 09:49 +0200, Thomas Gleixner wrote:
+> > On Fri, 7 Sep 2018, Yang, Bin wrote:
+> > > On Tue, 2018-09-04 at 14:22 +0200, Thomas Gleixner wrote:
+> > > 
+> > > I just write a test.c to compare the result between overlap() and
+> > > original within().
+> > 
+> > You are right. Your version of doing the overlap exclusive works. I misread
+> > the conditions. I still prefer doing inclusive checks because they are way
+> > more obvious.
+> 
+> I am sorry for my poor english. What is "inclusive checks"?
 
---oztiuxukmzniiijw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Exlusive:    val >= start && val < end
 
-On Fri, Sep 07, 2018 at 09:43:29AM +0530, Jagan Teki wrote:
-> On Wed, Sep 5, 2018 at 1:20 PM, Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> > On Tue, Sep 04, 2018 at 12:40:50PM +0800, Icenowy Zheng wrote:
-> >> +             hdmi_phy: hdmi-phy@1ef0000 {
-> >> +                     compatible =3D "allwinner,sun8i-h3-hdmi-phy";
-> >> +                     reg =3D <0x01ef0000 0x10000>;
-> >> +                     clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_D=
-DC>,
-> >> +                              <&ccu 7>;
-> >> +                     clock-names =3D "bus", "mod", "pll-0";
-> >> +                     resets =3D <&ccu RST_BUS_HDMI0>;
-> >> +                     reset-names =3D "phy";
-> >> +                     #phy-cells =3D <0>;
-> >> +             };
-> >
-> > This needs to use the bindings we have for that phy.
->=20
-> You mean allwinner,sun50i-a64-hdmi-phy ?
+Inclusive:   val >= start && val <= end
 
-Yes
+So the difference is that you feed exclusive with:
 
-Maxime
+   end = start + size
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+and inclusive with
 
---oztiuxukmzniiijw
-Content-Type: application/pgp-signature; name="signature.asc"
+  end = start + size - 1
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSNQIACgkQ0rTAlCFN
-r3S5WA//eNCGuZAzWXacEDnqAJ0gjLsV/r+sM+X9md3xgNEAUrTNl4VPRIbSK88V
-KJ216U3ihjhLdG6yRRaao5h7ubhuKr2xkZNN9SfEErE4riKZ1MVtj1st51xl1VrF
-uocv3nB7f+SLfwOYOB99nOmewnwighDb0aH76Qhyp4m5OfPBTUGDODfF8vdwDeMH
-tgZ88284P4DbTrRw7GzbmzArxF2KR/eGNkCrEU01o++hL9+CSG5qjFj+5G/iDEFn
-zD2jAklWiXndDFYobQxDgjzAmK8pzHB9tAK7wuKARZsZdWxZqkdxwVpEGt3hPXGk
-nLkY0MEB7CEArhiyiJZCXxkxt2bhxpUtYou/O85K68crRtD8d+3X/zQkdwwcW/SQ
-Z7zSBhEqu0rbXHuIoOMOHjiHwtr3j//0/WQJjBfv7OHVlT34fP08hZ9hmjDEpNFf
-S8O5rBv7m+skEr0ef3siIe6OGHk6z8n3vfQz9YETCjBq0K8Vf62B3zfR/jlv+GWy
-hwCCwkEIFC1qk1VcyDWAdpCF9T/NsJSB8yNS/e6ZLTGx7X+RwE+2Xal201qlIKBX
-eQcXbin9FS1fM7+7tK8I0oCvkKWofUiS43yRILCzOKayIGo1wBY91qpgIMv9Nh+m
-OHYRYbMiPBtNHNcpdFFkMeHnSCi8qQfMOO0v+gu7K5ppXRBHO8g=
-=XDhe
------END PGP SIGNATURE-----
+	tglx
 
---oztiuxukmzniiijw--
+
