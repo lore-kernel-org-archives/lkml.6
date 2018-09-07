@@ -2,124 +2,71 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43242C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8469BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B51206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:22:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hyvk9ab7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B51206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 45CBB2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:22:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CBB2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbeIGMBf (ORCPT
+        id S1727593AbeIGMC0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:01:35 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39660 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeIGMBe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:01:34 -0400
-Received: by mail-io1-f66.google.com with SMTP id l7-v6so809095iok.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bQdvSyJjL7kdNmZznzkwVVDEJIzKHOjKsLidaYwNZSA=;
-        b=Hyvk9ab7mcDbLaBQbIHx31rllq1u2zxShTyIG/i+ng9dY6LeYxZHtqnRm3dV++cZnN
-         68VLQBkpfX8ximN8yfudWYUwn7bqwnHzsHHHJScLuJJEAjVolZaCnvMYMmDNjT0iGM9h
-         +tAPwr3W4QOEkQDiqIwgbqXn+YELtu4Q/Ic2DLbwBlV41lNbSC9h4f+1bH+oTP7QVYNS
-         sHa/CzlJrIVzwuzJAoVWut++CIwjPG4LGUG/VWcPC16YrVwTZAKOSFbORP1mkJOxds98
-         fJAjFto7Vu/N8FXFKxKcH9kKwYIZv5fr+3pcgCtboCJy4eizzXb/KiYgECIvSxYdQrOV
-         WtYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bQdvSyJjL7kdNmZznzkwVVDEJIzKHOjKsLidaYwNZSA=;
-        b=lk7Pp3Gmw/RfWBjqWeMmkELLax6ofyMKLNuTjbCYVzCUdJhoS0DQw0A/Gfn2ChTtp3
-         OlRaOvh5SIzohiPniS8JgZ9NIAnToaXuTHUbn/8pdb6zWnMHlF1ndM32BPdl0BrlJHgm
-         oMfbpxQWc/0NwNQoBlFR8hgaOor6zozsG+a9zDEJMz7voh9WwI0wgP+U1FYpnDg17FNK
-         luRiVM2+YXh0Wh0Uo8F7SebLqfo/JhbfdZArAKBrJ/cpJnNze8MPqHh5WPtWri9otEd4
-         xUGLiCxbbanMTLiCTpQU5eZg9M+MfQfy0koFsGH4Vyn975el/MXydk8rdQ/31mIq3+oc
-         CKOg==
-X-Gm-Message-State: APzg51CVrBrh3hdTR74VW+8cg733LweqdI3URvoAoH6fhBTQlQ1cdWHZ
-        kSBAa5gyn5Q6A+2SewGJ1CHhSH+5lgJvR4jNBLG9oQ==
-X-Google-Smtp-Source: ANB0VdZKYR30v7D2o3OQw5Ee1L+Fpt6P37VtR8JbS/v7cyCEsbZx9GtjZigT3Uh8hdzrlsOUjrY/Ua1oA7e5lwEG/dk=
-X-Received: by 2002:a6b:8fd0:: with SMTP id r199-v6mr4912079iod.118.1536304919347;
- Fri, 07 Sep 2018 00:21:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180906192034.8467-1-olof@lixom.net> <CANn89i+akEWrHELBkZJQOxok-ZfYy+FNPUWdPEfB6c4YyWLqJA@mail.gmail.com>
- <20180907033257.2nlgiqm2t4jiwhzc@gondor.apana.org.au> <CAOesGMgRrb4D2S_qWwgo00iNxbCL9EEGfhD5Ji-2HMWuZeq0Yw@mail.gmail.com>
- <CANn89iKJcgMWb2Kmk6L9k=NkfBUKZ6BwriWr3O+N5Y0u5dy=9g@mail.gmail.com>
-In-Reply-To: <CANn89iKJcgMWb2Kmk6L9k=NkfBUKZ6BwriWr3O+N5Y0u5dy=9g@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 7 Sep 2018 00:21:46 -0700
-Message-ID: <CANn89iKgZkfwQ8nAGEfOzubOh69y285TNKB5Q518Wf_phbq2Yg@mail.gmail.com>
-Subject: Re: [PATCH] net/sock: move memory_allocated over to percpu_counter variables
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        linux-decnet-user@lists.sourceforge.net,
-        kernel-team <kernel-team@fb.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 7 Sep 2018 08:02:26 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:44237 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726033AbeIGMC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 08:02:26 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id D31455768C;
+        Fri,  7 Sep 2018 07:22:46 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 0/5] Fix A64 HDMI PHY device tree binding
+Date:   Fri,  7 Sep 2018 15:22:29 +0800
+Message-Id: <20180907072234.48282-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 12:03 AM Eric Dumazet <edumazet@google.com> wrote:
+When adding support for A64 HDMI PHY in 4.19, we assumed that the two
+PLL-VIDEOs can both feed the HDMI PHY clock. However experiments show
+that the mux bit discovered in R40 blob is not applicable on A64. This
+is not discovered, as normally with a single display pipeline only
+PLL-VIDEO0 will be used.
 
-> Problem is : we have platforms with more than 100 cpus, and
-> sk_memory_allocated() cost will be too expensive,
-> especially if the host is under memory pressure, since all cpus will
-> touch their private counter.
->
-> per cpu variables do not really scale, they were ok 10 years ago when
-> no more than 16 cpus were the norm.
->
-> I would prefer change TCP to not aggressively call
-> __sk_mem_reduce_allocated() from tcp_write_timer()
->
-> Ideally only tcp_retransmit_timer() should attempt to reduce forward
-> allocations, after recurring timeout.
->
-> Note that after 20c64d5cd5a2bdcdc8982a06cb05e5e1bd851a3d ("net: avoid
-> sk_forward_alloc overflows")
-> we have better control over sockets having huge forward allocations.
->
-> Something like :
+In this patchset the second PLL is dropped, and a binding specially for
+R40 HDMI PHY is added (which seems to have the mux).
 
-Or something less risky :
+PATCH 1 and 2 are dropping second PLL for A64 HDMI PHY, and PATCH 3 to 5
+are adding R40 HDMI PHY binding.
 
-diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-index 7fdf222a0bdfe9775970082f6b5dcdcc82b2ae1a..0aee80b6966cb2898e46350c761f9eb431ff1206
-100644
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -604,7 +604,8 @@ void tcp_write_timer_handler(struct sock *sk)
-        }
+This patchset targets v4.19 fixes tree, because the binding is
+introduced in v4.19, and if we don't fix it there a wrong binding will
+be left in a stable version released.
 
- out:
--       sk_mem_reclaim(sk);
-+       if (tcp_under_memory_pressure(sk))
-+               sk_mem_reclaim(sk);
- }
+Icenowy Zheng (5):
+  dt-bindings: sun4i-drm: drop second PLL from A64 HDMI PHY binding
+  drm: sun4i: drop second PLL from A64 HDMI PHY
+  dt-bindings: sun4i-drm: add compatible for R40 HDMI PHY
+  drm/sun4i: add support for R40 HDMI PHY
+  ARM: sun8i: dts: drop A64 HDMI PHY fallback compatible from R40 DT
 
- static void tcp_write_timer(struct timer_list *t)
+ .../devicetree/bindings/display/sunxi/sun4i-drm.txt |  5 +++--
+ arch/arm/boot/dts/sun8i-r40.dtsi                    |  3 +--
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c              | 13 ++++++++++++-
+ 3 files changed, 16 insertions(+), 5 deletions(-)
+
+-- 
+2.18.0
+
