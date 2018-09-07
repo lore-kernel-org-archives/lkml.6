@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA261C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D17C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABEF32083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEF32083D
+	by mail.kernel.org (Postfix) with ESMTP id 47FE820844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FE820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729458AbeIHCQg (ORCPT
+        id S1729678AbeIHCQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:16:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51768 "EHLO
+        Fri, 7 Sep 2018 22:16:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbeIHCQf (ORCPT
+        with ESMTP id S1727203AbeIHCQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:16:35 -0400
+        Fri, 7 Sep 2018 22:16:41 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9F01D6B;
-        Fri,  7 Sep 2018 21:33:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DC4EF54;
+        Fri,  7 Sep 2018 21:33:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexandru Ardelean <alexandru.ardelean@analog.com>,
         Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.9 22/63] iio: ad9523: Fix displayed phase
-Date:   Fri,  7 Sep 2018 23:09:53 +0200
-Message-Id: <20180907211014.218452040@linuxfoundation.org>
+Subject: [PATCH 4.9 23/63] iio: ad9523: Fix return value for ad952x_store()
+Date:   Fri,  7 Sep 2018 23:09:54 +0200
+Message-Id: <20180907211014.267935461@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -54,16 +54,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lars-Peter Clausen <lars@metafoo.de>
 
-commit 5a4e33c1c53ae7d4425f7d94e60e4458a37b349e upstream.
+commit 9a5094ca29ea9b1da301b31fd377c0c0c4c23034 upstream.
 
-Fix the displayed phase for the ad9523 driver. Currently the most
-significant decimal place is dropped and all other digits are shifted one
-to the left. This is due to a multiplication by 10, which is not necessary,
-so remove it.
+A sysfs write callback function needs to either return the number of
+consumed characters or an error.
+
+The ad952x_store() function currently returns 0 if the input value was "0",
+this will signal that no characters have been consumed and the function
+will be called repeatedly in a loop indefinitely. Fix this by returning
+number of supplied characters to indicate that the whole input string has
+been consumed.
 
 Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Fixes: cd1678f9632 ("iio: frequency: New driver for AD9523 SPI Low Jitter Clock Generator")
+Fixes: cd1678f96329 ("iio: frequency: New driver for AD9523 SPI Low Jitter Clock Generator")
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -74,14 +78,14 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/iio/frequency/ad9523.c
 +++ b/drivers/iio/frequency/ad9523.c
-@@ -642,7 +642,7 @@ static int ad9523_read_raw(struct iio_de
- 		code = (AD9523_CLK_DIST_DIV_PHASE_REV(ret) * 3141592) /
- 			AD9523_CLK_DIST_DIV_REV(ret);
- 		*val = code / 1000000;
--		*val2 = (code % 1000000) * 10;
-+		*val2 = code % 1000000;
- 		return IIO_VAL_INT_PLUS_MICRO;
- 	default:
- 		return -EINVAL;
+@@ -508,7 +508,7 @@ static ssize_t ad9523_store(struct devic
+ 		return ret;
+ 
+ 	if (!state)
+-		return 0;
++		return len;
+ 
+ 	mutex_lock(&indio_dev->mlock);
+ 	switch ((u32)this_attr->address) {
 
 
