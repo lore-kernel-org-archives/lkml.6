@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D30EDC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D2CC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39AEA2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 641262075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:51:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="NLyYnxIZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39AEA2075B
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="JMhp+3S2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 641262075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbeIGG3T (ORCPT
+        id S1728747AbeIGG32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:29:19 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:28322 "EHLO
+        Fri, 7 Sep 2018 02:29:28 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:25054 "EHLO
         relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728691AbeIGG3T (ORCPT
+        by vger.kernel.org with ESMTP id S1728691AbeIGG32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:29:19 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie3.idc.renesas.com with ESMTP; 07 Sep 2018 10:50:51 +0900
+        Fri, 7 Sep 2018 02:29:28 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie3.idc.renesas.com with ESMTP; 07 Sep 2018 10:51:04 +0900
 Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 51EBB6E993;
-        Fri,  7 Sep 2018 10:50:51 +0900 (JST)
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 1DDEA73497;
+        Fri,  7 Sep 2018 10:51:04 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.53,340,1531753200"; 
-   d="scan'208";a="290234331"
-Received: from mail-os2jpn01lp0149.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.149])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 07 Sep 2018 10:50:51 +0900
+   d="scan'208";a="290234361"
+Received: from mail-ty1jpn01lp0177.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.177])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Sep 2018 10:51:03 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RR4FDGFCX0nr5aH4fiQ8mqjOTC9c9HXf9bt21Hnbdy0=;
- b=NLyYnxIZZIKONpPwrpYK0hmeQYJdaGuMmnZ9BZ6oYJafrLcZAzwo7hzvsH6oKRfVSJmgYukPn2mQFVHRGod/ta4t5RL8ui4rqDFNNBzkqU+CDXVJ5Wb4uQJcKMYtpVhTErLWgyjvKEJ+DMX68g30h729n1qN7UduL9TWwhMm53Q=
+ bh=2wFzVhaPzQpE6FTtGcBd8gfV3nCspN5Wzhfi+aCYK9g=;
+ b=JMhp+3S21ce9+UsbmmeDUQszweYMjCWFnfYnZh3E59rFWj2tHbL3AqhybAjBqaX1J7LS0X8C4ud1oAum113s+mbvhfs9RWvB1wpPTOtVyl8LzvvCVo3mWPor1Xrk0l4jKuFwli1gpwBY+yhNeCQ2YpIRpK0VM3Go3900pY6gfRE=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
 Received: from morimoto-PC.renesas.com (211.11.155.130) by
- TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21) with Microsoft
+ OSBPR01MB1861.jpnprd01.prod.outlook.com (2603:1096:603:2::14) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.17; Fri, 7 Sep 2018 01:50:48 +0000
-Message-ID: <87efe6qdyj.wl-kuninori.morimoto.gx@renesas.com>
+ 15.20.1122.15; Fri, 7 Sep 2018 01:51:02 +0000
+Message-ID: <87d0tqqdy6.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH resend 1/2] pinctrl: sh-pfc: convert to SPDX identifiers
+Subject: [PATCH resend 2/2] pinctrl: rza1: convert to SPDX identifiers
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -57,60 +57,60 @@ Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 In-Reply-To: <87ftymqdzh.wl-kuninori.morimoto.gx@renesas.com>
 References: <87ftymqdzh.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 7 Sep 2018 01:50:48 +0000
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 7 Sep 2018 01:51:02 +0000
 X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: OS2PR01CA0120.jpnprd01.prod.outlook.com (2603:1096:602::14)
- To TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21)
+X-ClientProxiedBy: KAXPR01CA0043.jpnprd01.prod.outlook.com
+ (2603:1096:402:1a::29) To OSBPR01MB1861.jpnprd01.prod.outlook.com
+ (2603:1096:603:2::14)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5d51cc40-9783-4b12-0d0b-08d614645591
+X-MS-Office365-Filtering-Correlation-Id: 27c4ae36-2620-4465-ffd1-08d614645dd6
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1865;
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;3:GXxyKYvskNG0EK9QpaI/9Oh5WH3ErGZdER0x4SkL1tRuMln4VNnb8f8dqlZ/9zsh1b9bwcuBEEXSvoC9A80XyqLJj/IfEC2zW24esZ6fvrXFIulExjHQKSVMguxuIFPRQCEdHRslRAC/8N2qgAHELlRF9/Qea6xqJWU8p4JhbOwe0EznjjvTqKzL42u8Sf69UVZ2nw4Iqa8KTnRDWZe4KKJ7ytn2xrvh0+lHQH66QRQHENvBLFJ6/hV+NMMTQzow;25:GBopRz7sR4ajytzNweiuKThN6xmvoFAfOfmHkp+29LsP/eVghm0Tckv6M1ctF+H7hLOgNhH9vF8AQvcZKBI18sJIHkOiEFckeixNhEgpL6NvQ0Ip8L2bfvrmEewAI4BA0usnGzZaU58lanIrQNx+7Xf3wLhVMoM3XGq8i7XHXxtc+s69mfA6idZybvXcgcskYlJZU2QSOzoDW96nab5JL7XV6dnYGo5bTyv0jobkOAfkKp1wRFWgZKWYgm2zzzZifblBxoK+lmbSn/aubEdCbWCcLBP9gMlhUGObUADAF2bBAKy7NpVYjh/t8bUBVqfQBFhLCKwZ2fSZbSQQzMibMg==;31:Qt7ak6FbXKM2LWdba2acBqojI8AwndrNu3uCfX9+7UYKNoOqstb4bAu4wYNMsMDItVTy5xq54JWg44D9u75CXzzeZ6FrJfx/MeB+BpJkoT+FhpBnMQfb6mp9v5LTt5NLdNyKdcutZzsFUWCsRIUKUQVg+wuUGi2CJkQyFNz61GfXGIyry3dCNyLPArsHOtmL3izEOgIrxiw/AUPyNoaPExFbpI4kUQKsGP1RPKWk9EA=
-X-MS-TrafficTypeDiagnostic: TY1PR01MB1865:
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:mPNOk6HFoXHnqL7zdOwOBhx4mTz33Pz0hLQvZE5X1nxVBiku3zsQFMgoUf0Xabl312nZx+uPoHznhHHOiEQpkL9oTHmb7qG0IccSG+vfe1fKnUf7sEj6IWN6dGy7rLeQcsBYbUQLky0febwoVqrxIEqarzpm2wL5EVpZ2TQkrIh4GiI+REfIhvzuiBMe+Fa2hKLypWHe9HVYo5MH0OgWHtXCTPabBQXCOkczZ5dXewAAKAMBTdFwXTz8WDUvIqq5xrwJQhK7ArWaobQnsn07IasB4o1cyUjbU8dxiO2xow71WeyZJ1i5cCjNn+BeNVuAhTRoJwjvn6ZQyFovRH/vcsSBAncQxtXjh0ygQZz/0aPVbc8XkmwRrTKa2bEQJuwu80ORga4JLEmBsmPCHkVf76QImXOQ1v2fMDdNhVtSUaK3U46w4AHyV4km6KtO/JEJrg0QYkAW9cD8xWCjNX7712vpoEgcMa1EOc3v3uM1ebnSoJkceWI9OniNtei4jH1/;4:652kWjpMxsO9823B5Euuvd6RNqsl1hzvW6EjmC5OJ4FUNmVj2wI0K77ZU665tW601ChAQhmmJxOht+FW68DVjX/9DtJkc3LjVW1e30Tz/VH9iAxKgza/ffW2MUpan1apQ+mxJKQ/KxSLgaIzA0VVRhagF24I9nptfrJ+aA8aX2QHnTwyT909zbBAv6Jl2DjGDr+xddkSbk3Mp19dYuQnU+4F+ggwxQF/tJOhGO2t1l3v6QF4NwRCFW2T1nI3y5U5yVjArBevQv3yi8vVRH6cgA==
-X-Microsoft-Antispam-PRVS: <TY1PR01MB18652BDA29468C8408E76B1ED4000@TY1PR01MB1865.jpnprd01.prod.outlook.com>
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1861;
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;3:lSlog8buGJoV0kBb0ygxUQEIrigqv3C3dYvCD67PNrffk0EUoyKEn65HSQMNu8Q16lfawxQIQp6YVtZp6VNZH00afSbMfb36lc3wk362i/qc0+2eOGv6sq9Z/WDCSGU84WjBgJ2Q3gYtCTZ/RGYshdC9JHTo1g6pC4npEL7q8L/V0ojGF0URCpUphQplQO2Ws0p4LMwDpYavzctpbtvb0I4YesxxxIOENOCy5k+OTPc8GLB19YzEvDAu8kq692HO;25:4hjtvFM5Eh1hFA6zdJVt2OsAESBlazw/keEBjFsRagWX5OIEz2ca1eHZMMXUTUAFx6rQ1jHOTWzv7Yf/0gqylDvJratOTYEftzOfE+WkR1bavAYaWsDUb9/d0JMN/Nmi8+/cQ32eTyMblvEz+ayRXQRgneA8gODg81iDj5DuROK5Kv1YAgtTTPVGWheAHrP7ESCKcrD2htO8T26lO5B78CxJB5iKR3BU4m3h1OiWF2PbB4jhIue6v3b01LsscjuZBN6aaORyZb9owilIVBg3WIYj77LkcdDxFD6QtzdGcP6K+9dMYLKX/drAXoWyO8U6pDlng3yQ16S2bgh4Rxc9JQ==;31:uKwYQAS/e0nJTiU+GtjM2u8tKHMOV+8iFRCTDgQVEV0c80OxAzJEt3vVJUDfjaxoOBk9y4RnzU8+2/mQ2Zf0fQNhaw4hhRfOTLcb5CBaRUZx9WFmNWCpMibKvCeoUqt9LdFBoPpH9Oq97MhTWLsWkgOJZKAhenRaHzLI7gt1CZaeo4by+OB3WBnAOmRoBNnclkEKKuH5V2Tn59I9dcJfMXLSwLFB1GBh0uAB3jPuv+I=
+X-MS-TrafficTypeDiagnostic: OSBPR01MB1861:
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;20:5eP/Cf9MRDqI/IjR4syRGp8j71T4szuFNtdGXzUEVf3cWqXENimKjl/tVbPzk/Vyas1zsrP5F34v07KWrNiUzLkIpgSdbq6TNw16MD7SOYoIRn3+jw1B5IA15A1JerhYAKJYdONzrDp72exfdjDUTlkgeznyY9TV0Rws8Da26IWRM3kNsmA3UWeL5Mq5wRQoKAsW6FbBpkBoV5GEfyiJQAdbH8TMKE/1b02TAFFhkCkAG0AdaiRr4giYmWDtvxQmy6ujGy1Q3tJX/TAcaA8D5F1jMVxEzkVPRu54oWnUuT8ndNBtU9EYt8ZvC4vCK/e6DeRF8hUr87/6a99Qd0hT2MsSZ/9oGgyNauIwb2N3CFZASXWhIe1leMSDuVV8lh1mH/4RWHUFLnG0Mznnic9EI1Lo48O8BMtSam9i3L/e8cTp1Lxkz0fUjD6dHj5xD1oX1CqAhbN5oyUaKm+fciC9w7PuuwnQIwNuYydFhHzPYnMJEipztdRZu8Yn0xinAnbl;4:szhfwGjMU7hU8IUciMlNQ0lavNmiW0SEUnEkp1cxpwtn7EMk0LhXweERhbW9X3b4juqYtPphN7tQtufPXIqHcff4skbYcLuG6At1ZnU3uWSSrIGsAQm+JGIV55aejbMEM3mwNXqd2CvDr/1rff4UAMFdaEE5RMD4QUlrviKt+oAzkov2n1jNNgI8qdJtrnQsNSrxHSI197vYu6IeGsqBMdL0TWvJJAnLEz+mnFfsDMgjebkzUy5Ue7BTY/DDuyHOm8lESOxOrwnlAxbxq2zQXg==
+X-Microsoft-Antispam-PRVS: <OSBPR01MB1861B5CC69695290DE9D54D3D4000@OSBPR01MB1861.jpnprd01.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699050);SRVR:TY1PR01MB1865;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1865;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699050);SRVR:OSBPR01MB1861;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1861;
 X-Forefront-PRVS: 07880C4932
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(346002)(376002)(396003)(199004)(189003)(76176011)(81156014)(86362001)(8746002)(3846002)(6116002)(47776003)(52116002)(316002)(7736002)(66066001)(68736007)(53416004)(97736004)(106356001)(25786009)(4326008)(69596002)(105586002)(8936002)(81166006)(386003)(36756003)(186003)(2906002)(5660300001)(23756003)(26005)(16526019)(956004)(11346002)(6486002)(486006)(2616005)(476003)(50466002)(53936002)(7696005)(478600001)(110136005)(305945005)(446003)(8676002)(54906003)(58126008)(2004002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1865;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(396003)(346002)(376002)(39860400002)(366004)(199004)(189003)(23726003)(6116002)(3846002)(25786009)(58126008)(110136005)(54906003)(105586002)(16586007)(316002)(8676002)(53416004)(76176011)(36756003)(386003)(69596002)(66066001)(47776003)(2906002)(7696005)(97736004)(68736007)(52116002)(5660300001)(6486002)(53936002)(81166006)(8936002)(478600001)(106356001)(4326008)(81156014)(7736002)(305945005)(50466002)(2616005)(486006)(956004)(11346002)(16526019)(186003)(476003)(26005)(575784001)(446003)(86362001)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1861;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?iso-8859-1?Q?1;TY1PR01MB1865;23:jF8IpGHyYHdZMVg5Myx1Dn3JN8UK1WH+Ygr5kgK?=
- =?iso-8859-1?Q?HIzDRBRrtkXWCAS0fI0Dibnalkm5X+RaBwh1N2IJhxJ6t/2I9VaUPDbo4T?=
- =?iso-8859-1?Q?xs8ZNlCbO4k+TLVDdxeTK34SZj8/q53gX8HyIBPm20JRhksmH21Yu8Rr2j?=
- =?iso-8859-1?Q?DXTtmTmg2ZMUAVTT6k6fexjKJ9TpsvHahqHJ6qiWroV9OeqynLmWn/xp8l?=
- =?iso-8859-1?Q?z6qaLit/HNSHWvS6WW94D2QBBPu6mdJOGic7skmmSubgjDjmDkP85pfrv3?=
- =?iso-8859-1?Q?fOFIByqBIFRYvyUlBxwtd+Sp3ZT2SoJh053WfYWiyrMAkD3kDZmBOJTZqg?=
- =?iso-8859-1?Q?z0m74pYoJxjjPrBUP2g14CYoBW84EB4Cs+Ynq2UxJ73a57HiZkT9U0SCFt?=
- =?iso-8859-1?Q?iYjOlhd2V9KdDFGP9gNgosLzcVV9fjAsucvD6zRRw5VogY9QeiSaUyNKJn?=
- =?iso-8859-1?Q?GwHrVoKQ1A0Sx+w6AQdn6MT7VR+duMDV85XRAqiMsO5oV0jQm6llipsYXb?=
- =?iso-8859-1?Q?AeaoIiCMxrKeV3FocpDErAY0FCEPweSVEwqp0Gfm1RdHKauaHhMwcxqQ2r?=
- =?iso-8859-1?Q?11ogwUgDBXFvaiDAB2s7xdc1KY5d8u9s9fvstUKgiaHaREtjJKUEw23DvX?=
- =?iso-8859-1?Q?6H7blFuSSipm/q+uBUnWfYA7IAsUnFtGPMogOuRQBFXrH084fCrIl2jSKl?=
- =?iso-8859-1?Q?uXbcubUyuwwXutPNpa1Z/sHuhGTR1HpKprW3K3nBQg3OeoL5H9USlSX2U7?=
- =?iso-8859-1?Q?Tcej1zB9iE5CrZiy2Mzze9lZEdO0mE9IxWmh0/i9SdtikLHuhsfYFaFOlU?=
- =?iso-8859-1?Q?5In+fwahWcwa0CsgGzk2zfPISTe7lQUuzwRGjfu6GjmyayWpcYL1Zkf9b/?=
- =?iso-8859-1?Q?co5Cffa96D2b+IdGiqvnYo8FgopIqNY+CSRf7Q61KfIz3UCCE9Krso0VZI?=
- =?iso-8859-1?Q?4bwQfxD46BnKRKBDcysAxyM/sieXrJXBqPELiHvcNGV4eBQ/kQ/QHNbRYb?=
- =?iso-8859-1?Q?r8ZCzDD2qoTebuvHwsoRE5qQPSJnRkyAFVcTh/l1mCiOrRr4E9NjJ/dEcS?=
- =?iso-8859-1?Q?KqYWWgU9EpzSD6YKvHZ97GYF6MC1L6Ap1eT8C7+78yykzuyviM/EsnZEJ0?=
- =?iso-8859-1?Q?NvlfYMfzCsIxCOnJqopE8XvwICE4u2XqIjknOalcLfl7lgjWHqJpB5F/ae?=
- =?iso-8859-1?Q?p9IhjV95t+g4GNpgDXTAEpNcuFJEHsYxL+PVOXkSJg3u/m2iGvOWts8nb3?=
- =?iso-8859-1?Q?41s1A5+5FRyhnZCJlSu6pgo2moGa4/HHWOdsvFw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: rmTgL3RKU/j7E8TAjW8qbeWdM6E4Z0fhgwkdBLI8clkqgsEiqnh1IJyK24oVFTn7nECrcb+eDNufdps1nVOCatv9WlJwwtqa6UQ8HO77aMFc340Rv1Dr038f8KYPXPIMtO0msiBKf9/ayrrkAA4SSAxllpf42XJb3BNwmq3hDLTSAn+4e44DaSDU9naGag75pxQxwVuNLYWVzrugAkEFBQ+A2tMg/u6khWDqbSoCvfGlx1qbhIGVeCSdjgaO24MXK40MjkNEKnuGtp0ifQSAWoIsAef+fmMhtFQNyqhTZtGiSsWBO1d5Yd0XtOwRaCMQADKPdmPSYIZKW84P6vQ5FQExkZLIX0hfADOUymM/F60=
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;6:+ZP7oiRbgxAlp4BDmao1/CGR7982f+sDKUPzbSpssL0imMh9FnRIGxS23I82wPdR8KiuBHJH0zJJdvVG0T1v+abjSOcwlhI0RhDJGcrvHHPN+IlowKrdqrqqjfTv89SjsvtXIphdMtlmSAiahIkHXwBJ8dEoB7THHFBhkqD5dJuUvPDHZWohhH6Cd4e1gytwTCSD1xcsuj2q9PcvFocQjTy5i+32NdYgYXozQFnD4v2LnAf4m+nqsDRJyAM0w4Zs6oJs85qk6zcQd3Fz0c2XG7crG5XHSEBhkJNNB2227HJ2+1zKA78R3jNamHq1PEelZXiJ+dF5Y7/DfTLcjktw2+/UuAFUsf4sI+Cn7pHHrV0GeY6hjspBVg1TJoNV9+9i3nzhQqUAcu5Ymbq1CnLccIBjyWH545shDpbIOnggXZqH6czdoRnjFP9g4j4AAoc9diykWF6mU7gEEq3AELiXKg==;5:nge8GsmweoQnjZymQa0drNWzQeUfLBFXBhYZ64d35QRGXS2geGVqIHmX95pXVKxe/+78ui2FmKgi5UE0ysDQ9Vc1KZYpG74sDOZR2V7ZQ/+NYElUO25caPImEj3aXsl4oFFN8uLv+6UuoTthYvq4m8axNx7SBtymqZIGTbVTQ30=;7:wisp/r3dLcfk7dp+1RGtuqmV6ISTMWM44BFhtuhpO8SsQ2iWEayAi8l1SI2bqVJ7MBP/6iq31xwTxNWZySovBZWY3V/OmynzCFtrTSUnEkwuzq/PJWFa5C276Zf7hh99hOjBig9rfrwnoSZKNVV8OmqUTigfedplnPNs6JjKdnM9rQbHwZWb2JbuW/cRllhW3/AExWJcShP1BTuAy/+xt9mTNZUyB9U8Bj3wD56a/KHzmreY6IOrlK9aGVJ8lRZ5
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB1861;23:AjkfkxQerVuFsYymwPPVVdijHeedF9Uf8Ad2FnLl0?=
+ =?us-ascii?Q?6DLYwXcyXMMxaqZt7IpwjNHC0gnC+aiPzXiwm4WmUE2ewynIs6lo6SMOaK1y?=
+ =?us-ascii?Q?PAsrVBrW05nsQvioyuB2EoQTXxjBiK0hERYWKSOwGwarHh6F9OYvpbIlmeq0?=
+ =?us-ascii?Q?Fau02v+WScLF3Ac2e6pHbGLH9Am5LsbS9TslM7VvGFE4+8+U5OSceaC+3vOB?=
+ =?us-ascii?Q?YyhDHW/TrNcFbRTnU+ko2yQhMvbKRwdWCbdWJ0bfy93AfbxB7k/NcTZaNizy?=
+ =?us-ascii?Q?6l1JXGIEYeKzuNasKOiPZtMRQ/ygyZ8inKRoXckakOFiOtIYgxTvYDfg3ayZ?=
+ =?us-ascii?Q?YfcdMt9l4EEShHeYNFJ8zCS26Xy4GCt/ezQI0iVrTxvxG9PVsm7EyQXQrbEF?=
+ =?us-ascii?Q?fSxyHCo0TUSYgIyMFL3Vqu6kqSpYUoZezSmQIq9DT7Bs/Ki3D66fmb8tH7wm?=
+ =?us-ascii?Q?3T3jOC8HOe4htqTyE3fH0JniqtpqqaP8GCklg928a/W0X/vh1KPX56FJZpRv?=
+ =?us-ascii?Q?Tvf5UfUw6ptj5lwg4NbkuGKwY1tpPT2Z0UKClTRg+jl8AhGiPLr21j+WAAHu?=
+ =?us-ascii?Q?UKtD7wULLqQcFkBYygN5ZYGWuy1eOnrCaHHI+eLF6mjWNBHlveGKD5D8eyI/?=
+ =?us-ascii?Q?tEWdNxeD8G3A/JGGlC71l1fcEqQedy8GnNzlhpkjdKHDgRmOHIDNshTWlHLV?=
+ =?us-ascii?Q?VsMDJz4r+EqBitCd/GTgEnqIlpYotCotT9FliZCR7fEgRIzMS72WrvdHbQM7?=
+ =?us-ascii?Q?l/79x+v7crEmiDzhz/wBJ/OsN87P7RSIyZMI6Hr2YEDxQ792o50rbdAXyx+e?=
+ =?us-ascii?Q?iaYx7nHJyamt4KizzyKrFk6gGD6/XRYDTwm+VeiWplvdF55o1ZOHZ3uJFM5G?=
+ =?us-ascii?Q?gDAIDupblNBOXIyFGBTu8/0Mn4dfA6Is5V+Rn/Hhiw2vIrCQj5fEhOi7v3cu?=
+ =?us-ascii?Q?ui2sjWnidoHLyqSWd28meFbMszuv8GSWgmjZQReOnSUOGCjhZEzKX644sTq2?=
+ =?us-ascii?Q?eNE2mZOSZogmdwNtg/mMy7MMkR34BQDsTlEnK7E6ZA36iWeB3keXQej7rwKt?=
+ =?us-ascii?Q?7ywJqssZesREciDdEJGqgfYK4PVeOOfkR2GRfj3tqlwC79KrwvjH6P6GCV6+?=
+ =?us-ascii?Q?N++u5dP188U9dPYUKfkP6hc0FA3gv6qzCQya63dqOs7ELFbbX0ohvXCgA6Fi?=
+ =?us-ascii?Q?DyCpbRPs+zLGaf8/EQ8WyhOUhrru/2cBPfsJgQ13MwFZbNKUfD0KxMxEw=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: aDP7BcFZv2Vf2/co6vImYIRLpVMaDps1uqn9cb4rPSnDihTPXOGkwkVR0yDDvp65Knsq2f2KWqpGuSWKPcnil2fv3EtrqSRCLM6JCJuBZRCBlCM4caBWOoqdAVKXl6FMECC3Rb25qeM4SLy9ADGpLt9RjROHAoS6a+z+7O+wj3/wcJ//T3W213JIKTJqaouKfp01cwO06xfz8QupzO46o6J99mrp/bzxE//Dz4kZxWpBNn/yyh848TTZs370BHxeXug/ObJRRsmx/kCkwORjW2dFXdwvBvuWlNAP3NgfEBD/PkW47psEW0+oJzir0q9Z+NsIxiJz2kAJcrV3zBDnrT//CNPEm/iuciB4Iy7188E=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;6:2/UgS9Y3PHUvsNNoqwOuyvbY22CNNvOJPKoxkz0Tg7b8du9eF31opJ72KBq+zqXUj+nDZ0HLiiSiYBtQpv0xoFhWbbYCk4BKIjt3qabLiNIafj2UefCCh3qUX6TOnUZ9gihmX3gnfN1uOW0znFmFS0A1ezucG4XgDynH5qDT8UVHM/+qoFzw7Ox3vICe6md9EnR8WIg3EEMZPqB87gAHkMBosMGFEFwB89PgZQgLZTMCsPv4P2VqHsTO5vuLnkYYMatviSuG+GJVU1ILqinFrVr0iUJEvqYFAVQvdA9/yqrkRR97wPN+RN20cFvyvSKRXHMzIP7Sfz3K2I6WqKqOcJrXnPIkePeKB61ikMgVh/BKI0Cs1l6o45s1KvsHDvyeu2oL9Z/3rRvzbokdBUtfKIWryXcaYLbgoM2qJ1HxU8halPRwNHIOK2XRIUnqTTTM/U+T0qT6UgDLxETrJd528Q==;5:OPNyq0avz6JnaMO26mZIbOcA6K0pldM9tZWjUFlsUXnHfC3HqNrBK+9rM6p1zd4YYV+SIuV39TyoRTdKerHl9H3oQaiGBNJ4hpTs1tp+PXArOqF17bj9yhmp7m3ZYqDoZYHINuMP8dqEig+nuerdPR3XUGthEsQn987YjSaO0Bk=;7:kiXtf0u7E5fO3MZIUdMhbJ2BT1iXiwgq9afHVggU4EcGosuO5CAJrq79fTGFcUWhnKLGP/8U3nz9M661BLypylVfQuLtNV4gpVib8gShjI+BIetr36BZnsMk72h3Tdv7w1nVsbejKxznV7O3XUYz9wEl1w28l3qJ5T6a/l/1QNGqGwLVG2LrDuRfMZDP+uacQrs6+cJv12MHLuWTiZ9dPP4+HhmoYyeIU5dQ2eAr5LLumjXFx1uATUO3fpU2H/z8
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:p9LrxrP7F2V5ubbS5TehuOH1usA8dQe4o+BqBpW8laCRDmD4czE0F9ubdDxIX0FNjGnUH1niXcOjFVosG7prV0vMzjqhKGQ9aqvZMp+fT8MoOHUUvEpC5khzHtRXm3lYlT/tL/IMCWT5MRJHc1LN9v32ld8K0TKA9QNMlDuNdFo=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1861;20:/2cDCgEoNq2UsYSMhJuMZiXW13MHMyesNxa7CzBI0Mw3fkfeClE8L2CwL7hzo3EAv9OkKSyRgxXfu43ImjXOYVvY9QjmJ7Q+Y7XrlnmjrtefTlSNb9LH0bbKnG8bTPssrtTCgNWZW/OYxSAmy+vMP5ohioQO3ZmWrls8myX2eos=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 01:50:48.2327 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d51cc40-9783-4b12-0d0b-08d614645591
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 01:51:02.1754 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27c4ae36-2620-4465-ffd1-08d614645dd6
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1865
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1861
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -124,721 +124,26 @@ instead of verbose license text.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- drivers/pinctrl/sh-pfc/Kconfig           |  1 +
- drivers/pinctrl/sh-pfc/core.c            |  5 +----
- drivers/pinctrl/sh-pfc/core.h            |  7 ++-----
- drivers/pinctrl/sh-pfc/gpio.c            |  5 +----
- drivers/pinctrl/sh-pfc/pfc-emev2.c       |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c     | 15 +--------------
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c     | 15 +--------------
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 10 +---------
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c     | 14 +-------------
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 15 +--------------
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c     |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c     |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c     |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c    |  5 +----
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c    |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7203.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7264.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7269.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c      | 15 +--------------
- drivers/pinctrl/sh-pfc/pfc-sh7720.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7723.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7724.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7734.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7757.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7785.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-sh7786.c      |  5 +----
- drivers/pinctrl/sh-pfc/pfc-shx3.c        |  5 +----
- drivers/pinctrl/sh-pfc/pinctrl.c         |  5 +----
- drivers/pinctrl/sh-pfc/sh_pfc.h          |  7 ++-----
- 32 files changed, 34 insertions(+), 180 deletions(-)
+ drivers/pinctrl/pinctrl-rza1.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
-index 6a7254c..6683a30 100644
---- a/drivers/pinctrl/sh-pfc/Kconfig
-+++ b/drivers/pinctrl/sh-pfc/Kconfig
-@@ -1,3 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
- #
- # Renesas SH and SH Mobile PINCTRL drivers
- #
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 0122471..a222c74 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Pin Control and GPIO driver for SuperH Pin Function Controller.
-  *
-@@ -5,10 +6,6 @@
-  *
-  * Copyright (C) 2008 Magnus Damm
-  * Copyright (C) 2009 - 2012 Paul Mundt
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #define DRV_NAME "sh-pfc"
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 5af8ee2..b5b1d16 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -1,11 +1,8 @@
--/*
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-  * SuperH Pin Function Controller support.
-  *
-  * Copyright (C) 2012  Renesas Solutions Corp.
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
- #ifndef __SH_PFC_CORE_H__
- #define __SH_PFC_CORE_H__
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index 6ffdc6b..4f3a34e 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SuperH Pin Function Controller GPIO driver.
-  *
-  * Copyright (C) 2008 Magnus Damm
-  * Copyright (C) 2009 - 2012 Paul Mundt
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/device.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pf=
-c-emev2.c
-index 1cbbe04..dc271c3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index f76edf6..a0c3d28 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
 @@ -1,11 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Pin Function Controller Support
+  * Combined GPIO and pin controller support for Renesas RZ/A1 (r7s72100) SoC
   *
-  * Copyright (C) 2015 Niklas S=F6derlund
+  * Copyright (C) 2017 Jacopo Mondi
 - *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2. This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
   */
- #include <linux/init.h>
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a73a4.c
-index ff5655d..5acbacb 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-@@ -1,21 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
+ 
  /*
-  * Copyright (C) 2012-2013  Renesas Solutions Corp.
-  * Copyright (C) 2013  Magnus Damm
-  * Copyright (C) 2012  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation; version 2 of the
-- * License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  =
-USA
-  */
- #include <linux/io.h>
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7740.c
-index 35f436b..d4f8149 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -1,22 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A7740 processor support
-  *
-  * Copyright (C) 2011  Renesas Solutions Corp.
-  * Copyright (C) 2011  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation; version 2 of the
-- * License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  =
-USA
-  */
- #include <linux/io.h>
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7778.c
-index 00d61d1..6bcdb4b 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7778 processor support - PFC hardware block
-  *
-@@ -9,15 +10,6 @@
-  * based on
-  * Copyright (C) 2011  Renesas Solutions Corp.
-  * Copyright (C) 2011  Magnus Damm
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
-=20
- #include <linux/io.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7779.c
-index 5bef934..64bace1 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -1,22 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7779 processor support - PFC hardware block
-  *
-  * Copyright (C) 2011, 2013  Renesas Solutions Corp.
-  * Copyright (C) 2011  Magnus Damm
-  * Copyright (C) 2013  Cogent Embedded, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  =
-USA
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7790.c
-index f6332f2..ab7a353 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A7790 processor support
-  *
-@@ -5,20 +6,6 @@
-  * Copyright (C) 2013  Magnus Damm
-  * Copyright (C) 2012  Renesas Solutions Corp.
-  * Copyright (C) 2012  Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation; version 2 of the
-- * License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  =
-USA
-  */
-=20
- #include <linux/io.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7791.c
-index 5811784..2ca9cd0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7791/r8a7743 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2013 Renesas Electronics Corporation
-  * Copyright (C) 2014-2017 Cogent Embedded, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2
-- * as published by the Free Software Foundation.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7792.c
-index cc3597f..bf0681b 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7792 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2013-2014 Renesas Electronics Corporation
-  * Copyright (C) 2016 Cogent Embedded, Inc., <source@cogentembedded.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2
-- * as published by the Free Software Foundation.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7794.c
-index 1640024..6d1e5fd 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * r8a7794/r8a7745 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2014-2015 Renesas Electronics Corporation
-  * Copyright (C) 2015 Renesas Solutions Corp.
-  * Copyright (C) 2015-2017 Cogent Embedded, Inc. <source@cogentembedded.co=
-m>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2
-- * as published by the Free Software Foundation.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-=
-pfc/pfc-r8a7795-es1.c
-index a6c5d50..8c7de44 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A7795 ES1.x processor support - PFC hardware block.
-  *
-  * Copyright (C) 2015-2017  Renesas Electronics Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7795.c
-index 4f55b15..0af737d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A7795 ES2.0+ processor support - PFC hardware block.
-  *
-  * Copyright (C) 2015-2017 Renesas Electronics Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7796.c
-index 067a79e..c896e99 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A7796 processor support - PFC hardware block.
-  *
-@@ -8,10 +9,6 @@
-  * R-Car Gen3 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2015  Renesas Electronics Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc=
-/pfc-r8a77970.c
-index eeb58b3..44f9eef 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A77970 processor support - PFC hardware block.
-  *
-@@ -9,10 +10,6 @@
-  * R-Car Gen3 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2015  Renesas Electronics Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
-=20
- #include <linux/io.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc=
-/pfc-r8a77995.c
-index adade5b..29304b0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * R8A77995 processor support - PFC hardware block.
-  *
-@@ -8,10 +9,6 @@
-  * R-Car Gen3 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2015  Renesas Electronics Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7203.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7203.c
-index 61b27ec..9ee468a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7203.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7203.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7203 Pinmux
-  *
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7264.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7264.c
-index 8070765..4f44ce0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7264 Pinmux
-  *
-  *  Copyright (C) 2012  Renesas Electronics Europe Ltd
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7269.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7269.c
-index a50d22b..5b48a03 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7269 Pinmux
-  *
-  * Copyright (C) 2012  Renesas Electronics Europe Ltd
-  * Copyright (C) 2012  Phil Edworthy
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh73a0.c
-index d25e6f6..654029f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-@@ -1,22 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * sh73a0 processor support - PFC hardware block
-  *
-  * Copyright (C) 2010 Renesas Solutions Corp.
-  * Copyright (C) 2010 NISHIMOTO Hiroki
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation; version 2 of the
-- * License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  =
-USA
-  */
- #include <linux/io.h>
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7720.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7720.c
-index e07a82d..65694bf 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7720.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7720.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7720 Pinmux
-  *
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7723.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7723.c
-index 8ea18df..86f9a88 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7723.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7723.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7723 Pinmux
-  *
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7724.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7724.c
-index 7f6c36c..2cc4aa7 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7724.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7724.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7724 Pinmux
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Based on SH7723 Pinmux
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7734.c
-index 6502e67..b0533c8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7734 processor support - PFC hardware block
-  *
-  * Copyright (C) 2012  Renesas Solutions Corp.
-  * Copyright (C) 2012  Nobuhiro Iwamatsu <nobuhiro.iwamatsu.yj@renesas.com>
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
- #include <linux/init.h>
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7757.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7757.c
-index 6d8c31c..b160906 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7757 (B0 step) Pinmux
-  *
-@@ -7,10 +8,6 @@
-  *
-  * Based on SH7723 Pinmux
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7785.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7785.c
-index 1934cbe..193179f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7785.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7785.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7785 Pinmux
-  *
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7786.c b/drivers/pinctrl/sh-pfc/p=
-fc-sh7786.c
-index c98585d..cc2657c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7786.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7786.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7786 Pinmux
-  *
-@@ -7,10 +8,6 @@
-  *  Based on SH7785 pinmux
-  *
-  *  Copyright (C) 2008  Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/sh-pfc/pfc-shx3.c b/drivers/pinctrl/sh-pfc/pfc=
--shx3.c
-index 3f60c90..905ae00 100644
---- a/drivers/pinctrl/sh-pfc/pfc-shx3.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-shx3.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH-X3 prototype CPU pinmux
-  *
-  * Copyright (C) 2010  Paul Mundt
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
- #include <linux/init.h>
- #include <linux/kernel.h>
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinc=
-trl.c
-index 654dc20..274d5ff 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SuperH Pin Function Controller pinmux support.
-  *
-  * Copyright (C) 2012  Paul Mundt
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #define DRV_NAME "sh-pfc"
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pf=
-c.h
-index 1d491d1..4d1f364 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -1,11 +1,8 @@
--/*
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-  * SuperH Pin Function Controller Support
-  *
-  * Copyright (c) 2008 Magnus Damm
-- *
-- * This file is subject to the terms and conditions of the GNU General Pub=
-lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-  */
-=20
- #ifndef __SH_PFC_H
---=20
+-- 
 2.7.4
 
