@@ -2,63 +2,91 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A388C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4ADFC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2DB42077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:55:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2DB42077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 7624E20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:58:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m9UYVjJC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7624E20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbeIGSgk (ORCPT
+        id S1728691AbeIGSj3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:36:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbeIGSgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:36:40 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 236F82075E;
-        Fri,  7 Sep 2018 13:55:35 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 09:55:33 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
-Message-ID: <20180907095533.5b5febc2@gandalf.local.home>
-In-Reply-To: <20180907134532.GD24106@hirez.programming.kicks-ass.net>
-References: <20180905213334.03375777@vmware.local.home>
-        <20180907073448.GL24106@hirez.programming.kicks-ass.net>
-        <20180907094148.2444acc6@gandalf.local.home>
-        <20180907134532.GD24106@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 7 Sep 2018 14:39:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46638 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbeIGSj2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:39:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TCnKgmT5DcseuwWIzumYqCQNmDAnfRFSpzpGJJq83FE=; b=m9UYVjJC7BOildnlrC9Y1iYfy
+        gaVSq+THbUAmz1RUHjMQ/teWNL1jIVpv2ywbLB1RS+XkWobeWkgePM1mcDzZb7V5maWOr5LPOeN2X
+        kMSh8XotOOUZ0fRjOCafsUrwNr3JZltyvbnjzt5scna75sNzic9VV9S8Ezy8B5m2urNz/+HBPJDba
+        7pyO6BTXV7TH/Ul2Y1cBRpDIhVOUC57mVkZyamfZ4+EGCGZUWaBTL2tYJdSaqiMxeWttw2B3se00m
+        iAnd0/P+tP50MHKwewcP4RqBI0/E40vLdg8QExwP77oKusLIn7x4f5OVMdZQ17xf0hN/K7/CFlC6J
+        qD18o2oKA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyHH8-00085K-T6; Fri, 07 Sep 2018 13:58:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 66CAA2024DB84; Fri,  7 Sep 2018 15:58:17 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 15:58:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] perf: enum overflow in uapi/linux/perf_event.h
+Message-ID: <20180907135817.GF24106@hirez.programming.kicks-ass.net>
+References: <a70172863fa7d3c138f788b18d36524bd45b0a73.1536326078.git.christophe.leroy@c-s.fr>
+ <20180907134246.GC24106@hirez.programming.kicks-ass.net>
+ <ae32181d-37b2-1a13-3c72-66775e05ff88@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae32181d-37b2-1a13-3c72-66775e05ff88@c-s.fr>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018 15:45:32 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Fri, Sep 07, 2018 at 01:50:18PM +0000, Christophe Leroy wrote:
+> 
+> 
+> On 09/07/2018 01:42 PM, Peter Zijlstra wrote:
+> > On Fri, Sep 07, 2018 at 01:27:19PM +0000, Christophe Leroy wrote:
+> > > On PPC32, enums are 32 bits, so __PERF_SAMPLE_CALLCHAIN_EARLY is
+> > > out of scope. The following sparse warning is encountered:
+> > > 
+> > >    CHECK   arch/powerpc/kernel/process.c
+> > > ./include/uapi/linux/perf_event.h:147:56: warning: cast truncates bits from constant value (8000000000000000 becomes 0)
+> > 
+> > Urgh... what compiler is that? I've not seen anything like that from the
+> > build bots.
+> > 
+> 
+> [root@pc16082vm linux-powerpc]# sparse --version
+> 0.5.2
+> 
+> [root@pc16082vm linux-powerpc]# ppc-linux-gcc --version
+> ppc-linux-gcc (GCC) 5.4.0
 
-> Yes really, we should not muck with the IRQ state from NMI context.
-
-Right, and we didn't. Your patch didn't change anything, but allow for
-printk_nmi_enter/exit() to be traced by ftrace, but that's wrong to
-begin with because it ftrace_nmi_enter() hasn't been called yet.
-
--- Steve
+Ah, that's a sparse warning. But does your GCC agree? The thing is,
+sparse uses the C enum spec, but I suspect GCC uses the C++ enum spec
+and it all works fine.
