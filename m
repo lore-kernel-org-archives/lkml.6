@@ -2,256 +2,160 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA79FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E662C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6616E2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:12:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="M6tZWC/T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6616E2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id B418F2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:15:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B418F2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbeIGPwk (ORCPT
+        id S1728732AbeIGPzt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:52:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33746 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeIGPwk (ORCPT
+        Fri, 7 Sep 2018 11:55:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34938 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727427AbeIGPzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:52:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id d8-v6so11285175edv.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 04:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lJ1b8oDYuqnyKXjPHvRTWs7zSA5DsNYYe8sviNyyVMI=;
-        b=M6tZWC/TWn5poqk0W7JAyOeTdsFd4k+KqjoU8u46UUc5EBsG9nPacShNhdnsGwvY5Y
-         eUAW2QU1Kr8h0CZsnQaICdaUlg1+sGF3awtICi2YJfvLqYQnhoM9yP4HJSZal8ctjwV9
-         8Zgi0YXHuFQAhTjR/sEwKO2EnpEeBf/GRmXFpg/aYt+Gg7byyBcZ5G5+jJW2/i2Rqrgf
-         wfVg3dLfW6RtFOm0vurK9M5PAGaxDuuRHSUTkVFgdI+GvByBCQoyGVehA/+G0QzOfj3a
-         tKrmJvqvS/NVvh6W9KHVDK+zk0ms2+jG6GUi1YMolbH1/jajTfxkm4vl7LfJirEB2eYD
-         0F4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lJ1b8oDYuqnyKXjPHvRTWs7zSA5DsNYYe8sviNyyVMI=;
-        b=WTSl+qpwGuliFC6bqO2Ph/cV5/uOReMv5RhyQboR2wjaFS8ELmhO/Jk0F76ilQw34N
-         dQ2Kq+QWVNm8H3zqpTZOcfKFDgTMj+fExkYGD4uZTIgE1l/j3LgamiEJUgeTzcRbhdVO
-         4qyU7Ycn+qhDaOnUOrxfmYyIhxkdVGATYFpV8QphQBAadAPNRkzDxvu90dV1MIrSm8+2
-         /6F/By1Ym+3C+Jd4vREC6zOsNQrKgpFwllAqfQiuk4yOU8ZwGyl5urJcQVwD4vng5K11
-         2nLDPQ0k13Fj3urdAg+CA/r4QMUkW7yUIoAJIivldFbESSM+rhYWrMnFC7TzdPulLIFF
-         4Kig==
-X-Gm-Message-State: APzg51DM+e7Pg7asBFNVS0RwOqMaQAoYtiUC3fyY0luK/uDbYiw3guSa
-        yaJOjl7fk9F6LipgxR3eIaiRJA==
-X-Google-Smtp-Source: ANB0VdZ94PHeesyenj+aGTHPRVzuRk42pjLLSN9WphEWKKRHCCra2AuWrkaZgNzccwC5BFSNy+J5og==
-X-Received: by 2002:a50:a267:: with SMTP id 94-v6mr8480754edl.189.1536318730281;
-        Fri, 07 Sep 2018 04:12:10 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id w22-v6sm4509732eda.34.2018.09.07.04.12.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 04:12:09 -0700 (PDT)
-Message-ID: <1536318728.23560.98.camel@arista.com>
-Subject: Re: [LKP] [tty] 0b4f83d510: INFO:task_blocked_for_more_than#seconds
-From:   Dmitry Safonov <dima@arista.com>
-To:     Jiri Slaby <jslaby@suse.cz>,
-        kernel test robot <rong.a.chen@intel.com>
-Cc:     lkp@01.org, Daniel Axtens <dja@axtens.net>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Pasi =?ISO-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date:   Fri, 07 Sep 2018 12:12:08 +0100
-In-Reply-To: <d5d23bc5-0e11-5cee-6d66-514dfc4fc25b@suse.cz>
-References: <20180907045041.GF1110@shao2-debian>
-         <d5d23bc5-0e11-5cee-6d66-514dfc4fc25b@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
+        Fri, 7 Sep 2018 11:55:49 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w87BEjeD048236
+        for <linux-kernel@vger.kernel.org>; Fri, 7 Sep 2018 07:15:20 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mbnseedf3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 07:15:19 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Fri, 7 Sep 2018 05:15:18 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Sep 2018 05:15:14 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w87BFD8U52691034
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Sep 2018 04:15:14 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E57B56E04E;
+        Fri,  7 Sep 2018 05:15:13 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 21FFA6E053;
+        Fri,  7 Sep 2018 05:15:11 -0600 (MDT)
+Received: from [9.85.73.254] (unknown [9.85.73.254])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Sep 2018 05:15:10 -0600 (MDT)
+Subject: Re: [RFC PATCH V2 4/4] powerpc/mm/iommu: Allow migration of cma
+ allocated pages during mm_iommu_get
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        mpe@ellerman.id.au, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20180906054342.25094-1-aneesh.kumar@linux.ibm.com>
+ <20180906054342.25094-4-aneesh.kumar@linux.ibm.com>
+ <20180906125356.GX14951@dhcp22.suse.cz>
+ <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
+ <20180907090312.GF19621@dhcp22.suse.cz>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Fri, 7 Sep 2018 16:45:09 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180907090312.GF19621@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18090711-0012-0000-0000-000016AEC080
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009677; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01084816; UDB=6.00559948; IPR=6.00864817;
+ MB=3.00023160; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-07 11:15:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090711-0013-0000-0000-000054514B51
+Message-Id: <8337fdcc-3344-04dd-ddb2-68f86912f333@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809070115
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-09-07 at 08:39 +0200, Jiri Slaby wrote:
-> On 09/07/2018, 06:50 AM, kernel test robot wrote:
-> > FYI, we noticed the following commit (built with gcc-7):
-> > 
-> > commit: 0b4f83d510f6fef6bb9da25f122c8d733d50516f ("[PATCH 2/4] tty:
-> > Hold tty_ldisc_lock() during tty_reopen()")
-> > url: https://github.com/0day-ci/linux/commits/Dmitry-Safonov/tty-Ho
-> > ld-write-ldisc-sem-in-tty_reopen/20180829-165618
-> > base: https://git.kernel.org/cgit/linux/kernel/git/gregkh/tty.git
-> > tty-testing
-> > 
-> > in testcase: trinity
-> > with following parameters:
-> > 
-> > 	runtime: 300s
-> > 
-> > test-description: Trinity is a linux system call fuzz tester.
-> > test-url: http://codemonkey.org.uk/projects/trinity/
-> > 
-> > 
-> > on test machine: qemu-system-x86_64 -enable-kvm -m 256M
-> > 
-> > caused below changes (please refer to attached dmesg/kmsg for
-> > entire log/backtrace):
-> > 
-> > 
-> > +--------------------------------------------------+------------+
-> > ------------+
-> > >                                                  | 58dd163974 |
-> > > 0b4f83d510 |
-> > 
-> > +--------------------------------------------------+------------+
-> > ------------+
-> > > boot_successes                                   | 14         |
-> > > 4          |
-> > > boot_failures                                    | 0          |
-> > > 6          |
-> > > INFO:task_blocked_for_more_than#seconds          | 0          |
-> > > 6          |
-> > > Kernel_panic-not_syncing:hung_task:blocked_tasks | 0          |
-> > > 6          |
-> > 
-> > +--------------------------------------------------+------------+
-> > ------------+
-> > 
-> > 
-> > 
-> > [  244.816801] INFO: task validate_data:655 blocked for more than
-> > 120 seconds.
-> > [  244.818833]       Not tainted 4.18.0-11684-g0b4f83d #1
-> > [  244.820028] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> > disables this message.
-> > [  244.826965] validate_data   D    0   655    623 0x20020000
-> > [  244.828279] Call Trace:
-> > [  244.828958]  ? __schedule+0x843/0x950
-> > [  244.830173]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.834903]  schedule+0x31/0x70
-> > [  244.835665]  schedule_timeout+0x34/0x760
-> > [  244.836613]  ? ftrace_likely_update+0x35/0x60
-> > [  244.837683]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.838818]  ? ftrace_likely_update+0x35/0x60
-> > [  244.840127]  ? ftrace_likely_update+0x35/0x60
-> > [  244.845947]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.847882]  __ldsem_down_read_nested+0x23a/0x3b0
-> > [  244.849886]  ? tty_ldisc_ref_wait+0x25/0x50
-> > [  244.853807]  tty_ldisc_ref_wait+0x25/0x50
-> > [  244.854946]  tty_compat_ioctl+0x8a/0x120
-> > [  244.855928]  ? this_tty+0x80/0x80
-> > [  244.856742]  __ia32_compat_sys_ioctl+0xc28/0x1ce0
-> > [  244.857981]  do_int80_syscall_32+0x1d2/0x5f0
-> > [  244.859003]  entry_INT80_compat+0x88/0xa0
-> > [  244.859972] INFO: task dnsmasq:668 blocked for more than 120
-> > seconds.
-> > [  244.868315]       Not tainted 4.18.0-11684-g0b4f83d #1
-> > [  244.869583] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> > disables this message.
-> > [  244.871744] dnsmasq         D    0   668      1 0x20020000
-> > [  244.873063] Call Trace:
-> > [  244.873697]  ? __schedule+0x843/0x950
-> > [  244.874572]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.875725]  schedule+0x31/0x70
-> > [  244.876576]  schedule_timeout+0x34/0x760
-> > [  244.877573]  ? ftrace_likely_update+0x35/0x60
-> > [  244.878660]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.879872]  ? ftrace_likely_update+0x35/0x60
-> > [  244.890522]  ? ftrace_likely_update+0x35/0x60
-> > [  244.891572]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.892746]  __ldsem_down_read_nested+0x23a/0x3b0
-> > [  244.893861]  ? tty_ldisc_ref_wait+0x25/0x50
-> > [  244.894841]  tty_ldisc_ref_wait+0x25/0x50
-> > [  244.895911]  tty_compat_ioctl+0x8a/0x120
-> > [  244.896916]  ? this_tty+0x80/0x80
-> > [  244.897717]  __ia32_compat_sys_ioctl+0xc28/0x1ce0
-> > [  244.898821]  do_int80_syscall_32+0x1d2/0x5f0
-> > [  244.899830]  entry_INT80_compat+0x88/0xa0
-> > [  244.909466] INFO: task dropbear:734 blocked for more than 120
-> > seconds.
-> > [  244.911173]       Not tainted 4.18.0-11684-g0b4f83d #1
-> > [  244.912394] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> > disables this message.
-> > [  244.914176] dropbear        D    0   734      1 0x20020000
-> > [  244.915446] Call Trace:
-> > [  244.916068]  ? __schedule+0x843/0x950
-> > [  244.916945]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.918076]  schedule+0x31/0x70
-> > [  244.918832]  schedule_timeout+0x34/0x760
-> > [  244.919781]  ? ftrace_likely_update+0x35/0x60
-> > [  244.921104]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.922304]  ? ftrace_likely_update+0x35/0x60
-> > [  244.923347]  ? ftrace_likely_update+0x35/0x60
-> > [  244.924369]  ? __ldsem_down_read_nested+0x1c4/0x3b0
-> > [  244.925496]  __ldsem_down_read_nested+0x23a/0x3b0
-> > [  244.926598]  ? tty_ldisc_ref_wait+0x25/0x50
-> > [  244.927578]  tty_ldisc_ref_wait+0x25/0x50
-> > [  244.928526]  tty_compat_ioctl+0x8a/0x120
-> > [  244.929449]  ? this_tty+0x80/0x80
-> > [  244.930240]  __ia32_compat_sys_ioctl+0xc28/0x1ce0
-> > [  244.940083]  do_int80_syscall_32+0x1d2/0x5f0
-> > [  244.941310]  entry_INT80_compat+0x88/0xa0
-> > [  244.944070] 
-> > [  244.944070] Showing all locks held in the system:
-> > [  244.945558] 1 lock held by khungtaskd/18:
-> > [  244.946495]  #0: (____ptrval____) (rcu_read_lock){....}, at:
-> > debug_show_all_locks+0x16/0x190
-> > [  244.948503] 2 locks held by askfirst/235:
-> > [  244.949439]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at:
-> > tty_ldisc_ref_wait+0x25/0x50
-> > [  244.951762]  #1: (____ptrval____) (&ldata-
-> > >atomic_read_lock){+.+.}, at: n_tty_read+0x13d/0xa00
+On 09/07/2018 02:33 PM, Michal Hocko wrote:
+> On Thu 06-09-18 19:00:43, Aneesh Kumar K.V wrote:
+>> On 09/06/2018 06:23 PM, Michal Hocko wrote:
+>>> On Thu 06-09-18 11:13:42, Aneesh Kumar K.V wrote:
+>>>> Current code doesn't do page migration if the page allocated is a compound page.
+>>>> With HugeTLB migration support, we can end up allocating hugetlb pages from
+>>>> CMA region. Also THP pages can be allocated from CMA region. This patch updates
+>>>> the code to handle compound pages correctly.
+>>>>
+>>>> This use the new helper get_user_pages_cma_migrate. It does one get_user_pages
+>>>> with right count, instead of doing one get_user_pages per page. That avoids
+>>>> reading page table multiple times.
+>>>>
+>>>> The patch also convert the hpas member of mm_iommu_table_group_mem_t to a union.
+>>>> We use the same storage location to store pointers to struct page. We cannot
+>>>> update alll the code path use struct page *, because we access hpas in real mode
+>>>> and we can't do that struct page * to pfn conversion in real mode.
+>>>
+>>> I am not fmailiar with this code so bear with me. I am completely
+>>> missing the purpose of this patch. The changelog doesn't really explain
+>>> that AFAICS. I can only guess that you do not want to establish long
+>>> pins on CMA pages, right? So whenever you are about to pin a page that
+>>> is in CMA you migrate it away to a different !__GFP_MOVABLE page, right?
+>>
+>> That is right.
+>>
+>>> If that is the case then how do you handle pins which are already in
+>>> zone_movable? I do not see any specific check for those.
+>>
+>>
+>>>
+>>> Btw. why is this a proper thing to do? Problems with longterm pins are
+>>> not only for CMA/ZONE_MOVABLE pages. Pinned pages are not reclaimable as
+>>> well so there is a risk of OOMs if there are too many of them. We have
+>>> discussed approaches that would allow to force pin invalidation/revocation
+>>> at LSF/MM. Isn't that a more appropriate solution to the problem you are
+>>> seeing?
+>>>
+>>
+>> The CMA area is used on powerpc platforms to allocate guest specific page
+>> table (hash page table). If we don't have sufficient free pages we fail to
+>> allocate hash page table that result in failure to start guest.
+>>
+>> Now with vfio, we end up pinning the entire guest RAM. There is a
+>> possibility that these guest RAM  pages got allocated from CMA region. We
+>> already do supporting migrating those pages out except for compound pages.
+>> What this patch does is to start supporting compound page migration that got
+>> allocated out of CMA region (ie, THP pages and hugetlb pages if platform
+>> supported hugetlb migration).
 > 
-> Here, it just seems to wait for input from the user.
+> This definitely belongs to the changelog.
 > 
-> > [  244.953799] 1 lock held by validate_data/655:
-> > [  244.954814]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at:
-> > tty_ldisc_ref_wait+0x25/0x50
-> > [  244.956764] 1 lock held by dnsmasq/668:
-> > [  244.957649]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at:
-> > tty_ldisc_ref_wait+0x25/0x50
-> > [  244.959598] 1 lock held by dropbear/734:
-> > [  244.967564]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at:
-> > tty_ldisc_ref_wait+0x25/0x50
+>> Now to do that I added a helper get_user_pages_cma_migrate().
+>>
+>> I agree that long term pinned pages do have other issues. The patchset is
+>> not solving that issue.
 > 
-> Hmm, I assume there is another task waiting for write_ldsem and that
-> one
-> prevents these readers to proceed. Unfortunately, due to the defunct
-> __ptrval__ pointer hashing crap, we do not see who is waiting for
-> what.
-> But I am guessing all are the same locks.
+> It would be great to note why a generic approach is not viable. I assume
+> the main reason is that those pins are pretty much permanent for the
+> guest lifetime so the situation has to be handled in advance. In other
+> words, more information please.
+> 
 
-Hmm, and the writer is not able to grab it because there is already
-reader who uses console, I suppose.
-I wonder if we can add re-acquiring for the reader side..
-That will make write acquire less likely to fail under the load.
-I'll try to reproduce it.
+That is correct. I will add these details to commit message. And will 
+also do a cover letter for the patch series.
 
-> 
-> So I think, we are forced to limit the waiting to 5 seconds in reopen
-> in
-> the end too (the same as we do for new open in tty_init_dev).
-> 
-> Dmitry, could you add the limit and handle the return value of
-> tty_ldisc_lock now?
+-aneesh
 
-Yeah, will do.
-
--- 
-Thanks,
-             Dmitry
