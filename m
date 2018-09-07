@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584A5C04ABB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25360C2BC8D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1D320844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1D320844
+	by mail.kernel.org (Postfix) with ESMTP id D0D6E2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D6E2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeIHBmQ (ORCPT
+        id S1727807AbeIHBmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 7 Sep 2018 21:42:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:39352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727521AbeIHBmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727739AbeIHBmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 21:42:15 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23B012087A;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C02C2087E;
         Fri,  7 Sep 2018 20:59:33 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fyNqm-0001pz-1Z; Fri, 07 Sep 2018 16:59:32 -0400
-Message-Id: <20180907205931.925916531@goodmis.org>
+        id 1fyNqm-0001rf-Ko; Fri, 07 Sep 2018 16:59:32 -0400
+Message-Id: <20180907205932.529511011@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:59:11 -0400
+Date:   Fri, 07 Sep 2018 16:59:14 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -44,8 +44,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         tom.zanussi@linux.intel.com
-Subject: [PATCH RT 14/24] x86/ioapic: Dont let setaffinity unmask threaded EOI interrupt too
- early
+Subject: [PATCH RT 17/24] crypto: cryptd - add a lock instead preempt_disable/local_bh_disable
 References: <20180907205857.262840394@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -59,115 +58,86 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit ac14002317721910204b82b9d8611dadb1cec2bb ]
+[ Upstream commit 21aedb30d85979697f79a72a084e5d781e323663 ]
 
-There is an issue with threaded interrupts which are marked ONESHOT
-and using the fasteoi handler.
+cryptd has a per-CPU lock which protected with local_bh_disable() and
+preempt_disable().
+Add an explicit spin_lock to make the locking context more obvious and
+visible to lockdep. Since it is a per-CPU lock, there should be no lock
+contention on the actual spinlock.
+There is a small race-window where we could be migrated to another CPU
+after the cpu_queue has been obtain. This is not a problem because the
+actual ressource is protected by the spinlock.
 
-    if (IS_ONESHOT())
-        mask_irq();
-
-    ....
-    ....
-
-    cond_unmask_eoi_irq()
-        chip->irq_eoi();
-
-So if setaffinity is pending then the interrupt will be moved and then
-unmasked, which is wrong as it should be kept masked up to the point where
-the threaded handler finished. It's not a real problem, the interrupt will
-just be able to fire before the threaded handler has finished, though the irq
-masked state will be wrong for a bit.
-
-The patch below should cure the issue. It also renames the horribly
-misnomed functions so it becomes clear what they are supposed to do.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-[bigeasy: add the body of the patch, use the same functions in both
-          ifdef paths (spotted by Andy Shevchenko)]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/kernel/apic/io_apic.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ crypto/cryptd.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 5832a9d657f2..c9af5afebc4a 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -1688,20 +1688,20 @@ static bool io_apic_level_ack_pending(struct mp_chip_data *data)
- 	return false;
- }
+diff --git a/crypto/cryptd.c b/crypto/cryptd.c
+index 248f6ba41688..54b7985c8caa 100644
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -37,6 +37,7 @@
+ struct cryptd_cpu_queue {
+ 	struct crypto_queue queue;
+ 	struct work_struct work;
++	spinlock_t qlock;
+ };
  
--static inline bool ioapic_irqd_mask(struct irq_data *data)
-+static inline bool ioapic_prepare_move(struct irq_data *data)
- {
- 	/* If we are moving the irq we need to mask it */
--	if (unlikely(irqd_is_setaffinity_pending(data) &&
--		     !irqd_irq_inprogress(data))) {
--		mask_ioapic_irq(data);
-+	if (unlikely(irqd_is_setaffinity_pending(data))) {
-+		if (!irqd_irq_masked(data))
-+			mask_ioapic_irq(data);
- 		return true;
+ struct cryptd_queue {
+@@ -115,6 +116,7 @@ static int cryptd_init_queue(struct cryptd_queue *queue,
+ 		cpu_queue = per_cpu_ptr(queue->cpu_queue, cpu);
+ 		crypto_init_queue(&cpu_queue->queue, max_cpu_qlen);
+ 		INIT_WORK(&cpu_queue->work, cryptd_queue_worker);
++		spin_lock_init(&cpu_queue->qlock);
  	}
- 	return false;
+ 	return 0;
  }
+@@ -139,8 +141,10 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
+ 	atomic_t *refcnt;
+ 	bool may_backlog;
  
--static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
-+static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
--	if (unlikely(masked)) {
-+	if (unlikely(moveit)) {
- 		/* Only migrate the irq if the ack has been received.
- 		 *
- 		 * On rare occasions the broadcast level triggered ack gets
-@@ -1730,15 +1730,17 @@ static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
- 		 */
- 		if (!io_apic_level_ack_pending(data->chip_data))
- 			irq_move_masked_irq(data);
--		unmask_ioapic_irq(data);
-+		/* If the irq is masked in the core, leave it */
-+		if (!irqd_irq_masked(data))
-+			unmask_ioapic_irq(data);
- 	}
- }
- #else
--static inline bool ioapic_irqd_mask(struct irq_data *data)
-+static inline bool ioapic_prepare_move(struct irq_data *data)
- {
- 	return false;
- }
--static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
-+static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
- }
- #endif
-@@ -1747,11 +1749,11 @@ static void ioapic_ack_level(struct irq_data *irq_data)
- {
- 	struct irq_cfg *cfg = irqd_cfg(irq_data);
- 	unsigned long v;
--	bool masked;
-+	bool moveit;
- 	int i;
+-	cpu = get_cpu();
+-	cpu_queue = this_cpu_ptr(queue->cpu_queue);
++	cpu_queue = raw_cpu_ptr(queue->cpu_queue);
++	spin_lock_bh(&cpu_queue->qlock);
++	cpu = smp_processor_id();
++
+ 	err = crypto_enqueue_request(&cpu_queue->queue, request);
  
- 	irq_complete_move(cfg);
--	masked = ioapic_irqd_mask(irq_data);
-+	moveit = ioapic_prepare_move(irq_data);
+ 	refcnt = crypto_tfm_ctx(request->tfm);
+@@ -157,7 +161,7 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
+ 	atomic_inc(refcnt);
  
+ out_put_cpu:
+-	put_cpu();
++	spin_unlock_bh(&cpu_queue->qlock);
+ 
+ 	return err;
+ }
+@@ -173,16 +177,11 @@ static void cryptd_queue_worker(struct work_struct *work)
+ 	cpu_queue = container_of(work, struct cryptd_cpu_queue, work);
  	/*
- 	 * It appears there is an erratum which affects at least version 0x11
-@@ -1806,7 +1808,7 @@ static void ioapic_ack_level(struct irq_data *irq_data)
- 		eoi_ioapic_pin(cfg->vector, irq_data->chip_data);
- 	}
+ 	 * Only handle one request at a time to avoid hogging crypto workqueue.
+-	 * preempt_disable/enable is used to prevent being preempted by
+-	 * cryptd_enqueue_request(). local_bh_disable/enable is used to prevent
+-	 * cryptd_enqueue_request() being accessed from software interrupts.
+ 	 */
+-	local_bh_disable();
+-	preempt_disable();
++	spin_lock_bh(&cpu_queue->qlock);
+ 	backlog = crypto_get_backlog(&cpu_queue->queue);
+ 	req = crypto_dequeue_request(&cpu_queue->queue);
+-	preempt_enable();
+-	local_bh_enable();
++	spin_unlock_bh(&cpu_queue->qlock);
  
--	ioapic_irqd_unmask(irq_data, masked);
-+	ioapic_finish_move(irq_data, moveit);
- }
- 
- static void ioapic_ir_ack_level(struct irq_data *irq_data)
+ 	if (!req)
+ 		return;
 -- 
 2.18.0
 
