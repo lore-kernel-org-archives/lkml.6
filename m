@@ -6,129 +6,138 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A19CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6684C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3896820876
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75A9D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:46:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="R7iDH10k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3896820876
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="M+M2AxVW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A9D2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbeIGFY2 (ORCPT
+        id S1730997AbeIGFTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:24:28 -0400
-Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:11972
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:19:37 -0400
+Received: from mail-dm3nam03on0102.outbound.protection.outlook.com ([104.47.41.102]:49926
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730499AbeIGFTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:19:38 -0400
+        id S1728144AbeIGFTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:19:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lIKgLxZqgjslImYEWHdzQaL10r7b51aVc/HwxkPKA2o=;
- b=R7iDH10kccc3Sk9KFAvuVAyeOSBZA/U6UOHEdpBUPZ/Gi+VxzGpnV2rHIuurlGyOklSDCMUaKWpOXPeYauFzmG0+VjeCEU41sqL35otVQTqGREcXiI10MJKX9R0apFstB/iR5EuPKiXkX/efYJftbfoZNtUv+M5/91ONSv+PF3s=
+ bh=Ysfh6/HCLKDDdVXJYMpJq9yib0kFiCQtXWsUMnp/Wj8=;
+ b=M+M2AxVWJHNtQcNvQ44CZbboXpke1bW3CHPZmIYk8XL3plgnWjtRxHSttL3KjyHv75k58ueofz7bs0c/v+CzNna7V255mWJowV4CV/gRIF2ds2ciSE7+fTqYqw/QFeijGzS/l0i3rSmTbgbQhg8rugTovADGfFvGTI1Y2tdUdMY=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0757.namprd21.prod.outlook.com (10.173.192.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
- 15.20.1143.1; Fri, 7 Sep 2018 00:41:29 +0000
+ CY4PR21MB0694.namprd21.prod.outlook.com (10.175.121.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.1; Fri, 7 Sep 2018 00:41:22 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:41:29 +0000
+ 00:41:22 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Azael Avalos <coproscefalo@gmail.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 11/30] media: videobuf2-core: check for q->error
- in vb2_core_qbuf()
-Thread-Topic: [PATCH AUTOSEL 4.4 11/30] media: videobuf2-core: check for
- q->error in vb2_core_qbuf()
-Thread-Index: AQHURkMtY8qyerApHUqWeRRjUaenGQ==
-Date:   Fri, 7 Sep 2018 00:39:03 +0000
-Message-ID: <20180907003853.57942-11-alexander.levin@microsoft.com>
-References: <20180907003853.57942-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180907003853.57942-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 39/43] platform/x86: toshiba_acpi: Fix defined but
+ not used build warnings
+Thread-Topic: [PATCH AUTOSEL 4.9 39/43] platform/x86: toshiba_acpi: Fix
+ defined but not used build warnings
+Thread-Index: AQHURkMim0CNx7ijHUaSuXiA2HtJLQ==
+Date:   Fri, 7 Sep 2018 00:38:45 +0000
+Message-ID: <20180907003816.57852-39-alexander.levin@microsoft.com>
+References: <20180907003816.57852-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180907003816.57852-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0757;6:0kfLPE8881Lxd3eI4e6nwxUM2gjn5P33LGpTpXPl+tlhfN2Q1nXgKBtB4FmP5kFJe585uCjnA3g5LIehwb/6XLZExNO1wJwv78hk9KKNd4+85RFqV9BNaOru6cmJlvls+nH3KHE7BJmivc+GU1wJ4BYtE+Kiv/Pa8JUoWNDJYxYbfYj25GAa7JNHAWR+Jv3Huy3j2m2F8BRQRWKMBdSL0lzPDsIFfCt18CnkLy+0dyDA6/OgOh+6KaN3FYh+CuY5T6/orsQLwil4MI/2EWt/IODzcEtsD3M04oKombhYYqst59W52H2RJfyoHYh52auFD8SZxWLMFxZSRXqyRyQHmaE2xp1rg6YVtO/jxLC+c6tVUeTdOEUqTAr3AoO9q2orr5/Bn63bqpfQmMVdNWVADdIZc9V4ogsxHnZg/MKOKTEArM6QmdD5y/l8gAnw6YPlbGaVGw4PI6e0ZO4uMWIt+g==;5:R0/eOYbbQUg6b6eltroiEF+xw1f6dt4c7I+N/r3vIOGK+Ehu9o84R6jV12vR+C2I6jlmEb+CqK1VqXXnSgOmLCNDMVGSsr2uea9kO/7DltX3foAYIkEj1DIVOaF7OTAH4wxDq0rsT+dgFiRhQa+bEAj0FyO9geEj26pIuSfOu40=;7:9eVVe0KQHYrE6mNDYdTDGnQmYKWq+spJ0BlSuiM8/8SjzYVCYKYZMTGbQOgfJmzraiyEp6kwYzb+rjVCh7dr6b0ew24Ci3W3OZi1Ov5uyvunvxXtcR6EHOJYKGm3fieWYAf/ORrSGE/BF1DzY2rSUTw+nvp0VFJBVO4mQxzhNuEf6xuzh0ON4hVhsgY1bF0DFG4jQIKxq7P9lR256CAznNHhVEjth9AFsyeIoESurOrpkpKNfNgPTpxRAE1WZL5T
-x-ms-office365-filtering-correlation-id: 674f7653-1a20-498f-24d5-08d6145aa6a6
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0694;6:6U94SE4N+u6vQIWS9bagBzfVkiERtNLK1xNijr3VBhwTq68cz+7irm1+QllSa2LUNe+HwcYEmHi8GmvKdUQO+SPEypWvwuPUZhKO/H37JSzhlI4iD4y/7nDK5ct6W1b/bM/lXrDC5en8M1wyVeSPrXeG3rC6d8Cn1qC5nPx19cXyjEfn+Msv6zFoLmO1GosplTJYgiIWiq3lhSH4vcvTvPARr+dUWE8XPfO7Bls0CD0Nh8ROCmgDLqYg9aw9E3znbJGq0WUlMrdtfd0FMmBeewqAMNV6Asq9ZzZBHYWyl9O0b2Or40IIOXtmjP/b2drM2vIUqFY576zYVXUN4ByzHWI3drgn7mtsP41Iv0eXK6vzYmuRU4B32wLqXLFqCbNvAZHXaSO49C0N4wnMhCaq252kv3ZaccThIBTm43WZ/CasXjcmRTp2cBhwsvbUnCXTiNFVvOcezO3F6wHIK43xlA==;5:CVbC8df5Oi0wOFMULC6B4/pIJeB3gy4E9BdBOGMQpU0uUHix0gTOFjyawq4zBESUI21WXYX47w6xhv1+VZ24dmkZNEojKLsY2jAD3PqdaC0n0ev7+L/9zHTduhglc88SQv7UjArqX1cmXmKNHv1o2wfMKFIrMw6jIy7FNixBHfQ=;7:MVghFbbK838unpgm5PCHbn2vXZua6icwZfCY9WWih/J6PxvbR3AvqMqYPRvMyjnOIGhm8ago1SBlVTbMsodYFHOW27XVqk6/f/2cSm5QGE5BKRUwhhZw86RupqL+MVxjZEOK1m1NEVo16Z0bshid+F1R3+zmkpVTONo+LmHwAWO2OE82eZP+L3x5pDta1HATtglt7B20UQoqBxnSn+ozKJRPbpnOdNucmNfo04JeDJKuqytT1xUpG6w/XpJ98Xz/
+x-ms-office365-filtering-correlation-id: 5d82b735-ce79-4f50-b781-08d6145aa28a
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0757;
-x-ms-traffictypediagnostic: CY4PR21MB0757:
-x-microsoft-antispam-prvs: <CY4PR21MB0757CE732CF567B1B55AF232FB000@CY4PR21MB0757.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(95692535739014)(228905959029699);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0694;
+x-ms-traffictypediagnostic: CY4PR21MB0694:
+x-microsoft-antispam-prvs: <CY4PR21MB06945EB28BC159BD697C8FE7FB000@CY4PR21MB0694.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0757;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0757;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231344)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0694;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0694;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(136003)(346002)(376002)(199004)(189003)(8936002)(3846002)(81166006)(86612001)(6666003)(5250100002)(81156014)(486006)(99286004)(6486002)(106356001)(10290500003)(107886003)(256004)(26005)(11346002)(14454004)(446003)(76176011)(6346003)(5660300001)(10090500001)(110136005)(2616005)(66066001)(186003)(476003)(72206003)(2501003)(54906003)(316002)(6436002)(86362001)(97736004)(53936002)(22452003)(6506007)(102836004)(8676002)(6512007)(2900100001)(68736007)(305945005)(7736002)(217873002)(6116002)(1076002)(25786009)(2906002)(36756003)(4326008)(105586002)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0757;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(366004)(136003)(346002)(189003)(199004)(39060400002)(2906002)(186003)(86362001)(6666003)(110136005)(107886003)(54906003)(36756003)(25786009)(4326008)(256004)(14444005)(2616005)(6506007)(6486002)(6346003)(6436002)(6512007)(446003)(476003)(11346002)(486006)(86612001)(2900100001)(5660300001)(102836004)(26005)(66066001)(53936002)(68736007)(7736002)(81166006)(81156014)(8676002)(10090500001)(8936002)(6116002)(3846002)(99286004)(105586002)(76176011)(106356001)(5250100002)(22452003)(14454004)(316002)(1076002)(2501003)(305945005)(217873002)(97736004)(10290500003)(72206003)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0694;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: ViAZnthzSEpfND7iZbw+QLUF5wR6QyRiQJY2OHLbwPzfsSDJmDcWZb0Tmf7K4JyFm1dd7f1kfDf9hGeBA+Rwzwfb2GUAf9mmqHQrDPa8iGnGcNAbqRIaMOhOSyAGYF+Bp0y+8QNEGgGOCYw/IwR0r2PF8i1Ov7tK76p6NdMbfr9LM7TwI5JBOPZkc7w+dC0ZWOqGvZtJvqSs7Ndf9vqF4y0Kmyw2H4OvAc6KUIAReJ4+wfOx6TpiKQIqoUEH98Ue30k5yR1kmluFJc9AaP1O6s/pf+9TCKRKGgI8ATu4os9EQM3ZWoIYA1l84fn99g7LENemwZzSfroCo/Q8q4I4Y0JrnrHuFbubYMYNDQwKuy0=
+x-microsoft-antispam-message-info: pjyjr6m44MFwlR0p5UHRCQdP46H+tBDHXeuNioaBo/Joklxq4rLDDhMiHz8PRrWpV1+0JQzktfHd/6R4983nh8jvc4mYWg7AhmFGYJv+aq+T1MEr92G6tRioZaN1WirGka2ngZhfq8afH33glKMlRryi833qvCq7u8ts6T3PRUmEHVQSrpVFX8cdOHEeUBS2F1/e/kVH/dALrYdlu1/Zr3gvF2yeCfSRAtj56wAzLaninTiGxQdZPLpOBZtnM6xsR4e6VCa9YQU5MCqUT34rP+AIYoZyEnSf00oN2LgLma9BZ7Uv5Qh15gK9i+Q7XQ6tgCbXmaPi3me1C9Up7Lrp9YgxqLm9LeoXZQ98cctnAr4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 674f7653-1a20-498f-24d5-08d6145aa6a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:39:03.5877
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d82b735-ce79-4f50-b781-08d6145aa28a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:38:45.8628
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0757
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0694
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit b509d733d337417bcb7fa4a35be3b9a49332b724 ]
+[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
 
-The vb2_core_qbuf() function didn't check if q->error was set. It is
-checked in __buf_prepare(), but that function isn't called if the buffer
-was already prepared before with VIDIOC_PREPARE_BUF.
+Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
 
-So check it at the start of vb2_core_qbuf() as well.
+../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show=
+' defined but not used [-Wunused-function]
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Azael Avalos <coproscefalo@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/v4l2-core/videobuf2-core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/platform/x86/toshiba_acpi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-=
-core/videobuf2-core.c
-index 0c1a42bf27fd..1c37d5a78822 100644
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -1366,6 +1366,11 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int =
-index, void *pb)
- 	struct vb2_buffer *vb;
- 	int ret;
+diff --git a/drivers/platform/x86/toshiba_acpi.c b/drivers/platform/x86/tos=
+hiba_acpi.c
+index 074bf2fa1c55..79a228937072 100644
+--- a/drivers/platform/x86/toshiba_acpi.c
++++ b/drivers/platform/x86/toshiba_acpi.c
+@@ -34,6 +34,7 @@
+ #define TOSHIBA_ACPI_VERSION	"0.24"
+ #define PROC_INTERFACE_VERSION	1
 =20
-+	if (q->error) {
-+		dprintk(1, "fatal error occurred on queue\n");
-+		return -EIO;
-+	}
-+
- 	vb =3D q->bufs[index];
++#include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -1687,7 +1688,7 @@ static const struct file_operations keys_proc_fops =
+=3D {
+ 	.write		=3D keys_proc_write,
+ };
 =20
- 	switch (vb->state) {
+-static int version_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
+ 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
 --=20
 2.17.1
