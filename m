@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B2AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D977C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097F42083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:42:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163D52083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:42:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FL67JfrK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097F42083D
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c634xKmc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163D52083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeIHAYr (ORCPT
+        id S1727597AbeIHAYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:24:47 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52353 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIHAYq (ORCPT
+        Fri, 7 Sep 2018 20:24:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34803 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbeIHAYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:24:46 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y139-v6so15632272wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:42:19 -0700 (PDT)
+        Fri, 7 Sep 2018 20:24:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g33-v6so16056573wrd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=vcze1pYGJmRre+gqBos2+YZh6l7eutC3oO5Gb+shdGM=;
-        b=FL67JfrK0ODDs5HLs+TbZp0kZOogIDm2vrOwBcTGxeir06+H2YAgOomiWkbNtPMfda
-         R695fjU7hU31QDiPJtjf0S5WXA7vkp6ngIEuS+E1ic612D8y1AwBehb27GDBQ94H9CVc
-         /PAm5ukHC2kTwtO1oVHJ1itu8ID7ipNGaC95OdAQcUE69B/a0PfCkLvByHVmLZkIHJoS
-         iPcqDQAK7cxN0KxPCMoKyWxXQdPwBXBPNTVcoMddzf+3wqGMLs5UWYquUZUFSmNyTyHC
-         XD+kuscKC1886VCOQ6wCTsrP+p2KlavuKp+7/m92baFF30iO170WRaSD1/fxJSKR243S
-         Q2VA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2l74md6LznTHAsjuH/uiqb0LV7fWiM8r5go9RaD1BPM=;
+        b=c634xKmcenpEagyGYVBflAnAt3EK/E3qb+wj5Qf0K2xDgWFjh2n2stKkcIscV/hWWT
+         pSQfTGRcH7uvwdn0ex3mBdGLKW5iwXhxwxbfMeIy//gxEdBBQI00u7LTS4pl+mfTqXD4
+         SC9Yk7ejEtnOlXvaMMr7LdIgQ62WwmRnfn27YgMPrEB8ihhDW4Wd1vMyMPRP6Y2gAG5a
+         /13QyDGW6+wxgc6bNDys/08usvYodRdUwMf/D29rKLhnq9fQ0tWWhRFa3mvBiItHp7fc
+         MDZwo/jA1/iYTxSIyMjaNoZWhGEWP4n/s6P8Twv75yn25IxBbdClGFkFJtjzpLWKJ9lZ
+         u8Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vcze1pYGJmRre+gqBos2+YZh6l7eutC3oO5Gb+shdGM=;
-        b=FMT7UwjzcELlcV++3LH07o/Wcu/vFHqn2GMNXu7yodpV0JUKZRrR823EvtvVNjGCI3
-         Vj0LfzUua0hzri7NMMYvdwvLAuzXun61X1yHz3eO6FK7+GSlSv9Oc1N2QWQ726MGOQTg
-         KyEUxhfOi8E1RTQhRxVdqmePZ6EFpylQF791fIDP23yeO6mOsK5oU5wNUF3oJDm5Kuxh
-         ze0mqOLrywhekaiKj5D8ymyPcR+Q6K5SKtncDmKM0k+fQGFFKD3zQQWSF4bLepmw6sDU
-         2hD6QgKzyHMF+VuvfhW6mI0/ICW17e8OyrVE/Qfi1jlVMY6qQaBDFqjFpuXgqKExkVQd
-         PuMw==
-X-Gm-Message-State: APzg51DDU0/Esjr/QHsTlKXJqKrxkdFapuDvfGOav5NVFQ40SoG0Xcdh
-        b505Vx/8TThGe7bNIVFZAzTA4Q==
-X-Google-Smtp-Source: ANB0VdYdj+Cy5q69Wxlex6Hhpbp7EmucrJPP4seuhZfgTyJjyOoew3QOv2OKbYBGb5FzHRD+/swzjw==
-X-Received: by 2002:a1c:7015:: with SMTP id l21-v6mr5923035wmc.81.1536349339071;
-        Fri, 07 Sep 2018 12:42:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2l74md6LznTHAsjuH/uiqb0LV7fWiM8r5go9RaD1BPM=;
+        b=SDYdfgEcg6lb1I9ZTnb+FvAHoniCWFETyCRqKtx7VlCiU4JD+g5Sr+hXghLxLHkgVd
+         kwiNARzQfPxsIbt77l59CxkxUBlQBwsndgC8naWoYrqbp1PcVurb4z+qiZJsNK1fgrYB
+         YH35wMnII/S5duaaOO00iqruD28lbLsLegrggurFDm57COiNo2Bty2GS4xqG1iKMATER
+         UKOznOqEdtssNEOuSrCQZSadmU3YKp5v4ZkXjSTEibhpYQfHNMkjpw8xt0NAdOFAu1Xa
+         qkwt6Yqi5F4gq4cpAJgm5At/yEI7BXDnNLsDEIR7hvbSVq334jMbh7XRJeBhXWlc7TB0
+         U7Rg==
+X-Gm-Message-State: APzg51AqZle/d7AAvwP6NDukQKglIO5BB3JtaKKKtcgCAzVes0FHQ1xk
+        cXPzGUEdAMzYqHQ/ry2uYlsnlA==
+X-Google-Smtp-Source: ANB0VdZiNgvjVcIOyD/2xlLy2Ect491kSZ4/NRZvxFeVqApoNcxtSFXOFyTI9cjihi3Vi4xf5yrCrQ==
+X-Received: by 2002:adf:fe06:: with SMTP id n6-v6mr1273149wrr.171.1536349343713;
+        Fri, 07 Sep 2018 12:42:23 -0700 (PDT)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id y17-v6sm11700133wrh.49.2018.09.07.12.42.17
+        by smtp.googlemail.com with ESMTPSA id y17-v6sm11700133wrh.49.2018.09.07.12.42.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 07 Sep 2018 12:42:18 -0700 (PDT)
+        Fri, 07 Sep 2018 12:42:23 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     Gilles.Muller@lip6.fr, Julia.Lawall@lip6.fr, agust@denx.de,
         alexandre.torgue@st.com, alistair@popple.id.au,
@@ -71,106 +72,912 @@ Cc:     cocci@systeme.lip6.fr, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         netdev@vger.kernel.org, linux-sunxi@googlegroups.com,
         Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 0/5] introduce setbits32/clrbits32/clrsetbits32/setbits64/clrbits64/clrsetbits64 functions
-Date:   Fri,  7 Sep 2018 19:41:42 +0000
-Message-Id: <1536349307-20714-1-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH 4/5] net: ethernet: stmmac: use xxxsetbits32
+Date:   Fri,  7 Sep 2018 19:41:46 +0000
+Message-Id: <1536349307-20714-5-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536349307-20714-1-git-send-email-clabbe@baylibre.com>
+References: <1536349307-20714-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+This patch convert stmmac driver to use all xxxsetbits32 functions.
 
-This patchset adds a new set of functions which are open-coded in lot of
-place.
-Basicly the pattern is always the same, "read, modify a bit, write"
-some driver already have thoses pattern them as functions. (like ahci_sunxi.c or dwmac-meson8b)
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ .../net/ethernet/stmicro/stmmac/dwmac-meson8b.c    | 54 +++++++----------
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  | 55 ++++-------------
+ .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   | 21 +++----
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  | 51 ++++++----------
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   | 13 ++--
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   | 42 +++----------
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c       | 11 +---
+ drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c    | 17 ++----
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 30 ++++------
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 69 +++++-----------------
+ .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  | 11 +---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |  7 +--
+ 12 files changed, 108 insertions(+), 273 deletions(-)
 
-The first patch rename some powerpc funtions which already use the same name (xxxbits32)
-but with only bigendian values.
-
-The second patch adds the header.
-The third patch is an ugly try to implement a coccinelle semantic patch to
-find all place where xxxbits function could be used.
-Probably this spatch could be better written and I didnt found an easy way to add the "linux/setbits" header.
-
-The two last patch are example of convertion of two drivers.
-Thoses patchs give an example of the reduction of code won by using xxxbits32.
-
-This patchset is tested with the ahci_sunxi and dwmac-sun8i drivers.
-
-Regards
-
-Corentin Labbe (5):
-  powerpc: rename setbits32/clrbits32 to setbits32_be/clrbits32_be
-  include: add
-    setbits32/clrbits32/clrsetbits32/setbits64/clrbits64/clrsetbits64 in
-    linux/setbits.h
-  coccinelle: add xxxsetbitsXX converting spatch
-  net: ethernet: stmmac: use xxxsetbits32
-  ata: ahci_sunxi: use xxxsetbits32 functions
-
- arch/powerpc/include/asm/fsl_lbc.h                 |   2 +-
- arch/powerpc/include/asm/io.h                      |   5 +-
- arch/powerpc/platforms/44x/canyonlands.c           |   4 +-
- arch/powerpc/platforms/4xx/gpio.c                  |  28 +-
- arch/powerpc/platforms/512x/pdm360ng.c             |   6 +-
- arch/powerpc/platforms/52xx/mpc52xx_common.c       |   6 +-
- arch/powerpc/platforms/52xx/mpc52xx_gpt.c          |  10 +-
- arch/powerpc/platforms/82xx/ep8248e.c              |   2 +-
- arch/powerpc/platforms/82xx/km82xx.c               |   6 +-
- arch/powerpc/platforms/82xx/mpc8272_ads.c          |  10 +-
- arch/powerpc/platforms/82xx/pq2.c                  |   2 +-
- arch/powerpc/platforms/82xx/pq2ads-pci-pic.c       |   4 +-
- arch/powerpc/platforms/82xx/pq2fads.c              |  10 +-
- arch/powerpc/platforms/83xx/km83xx.c               |   6 +-
- arch/powerpc/platforms/83xx/mpc836x_mds.c          |   2 +-
- arch/powerpc/platforms/85xx/mpc85xx_mds.c          |   2 +-
- arch/powerpc/platforms/85xx/mpc85xx_pm_ops.c       |   4 +-
- arch/powerpc/platforms/85xx/mpc85xx_rdb.c          |   2 +-
- arch/powerpc/platforms/85xx/p1022_ds.c             |   4 +-
- arch/powerpc/platforms/85xx/p1022_rdk.c            |   4 +-
- arch/powerpc/platforms/85xx/t1042rdb_diu.c         |   4 +-
- arch/powerpc/platforms/85xx/twr_p102x.c            |   2 +-
- arch/powerpc/platforms/86xx/mpc8610_hpcd.c         |   4 +-
- arch/powerpc/platforms/8xx/adder875.c              |   2 +-
- arch/powerpc/platforms/8xx/m8xx_setup.c            |   4 +-
- arch/powerpc/platforms/8xx/mpc86xads_setup.c       |   4 +-
- arch/powerpc/platforms/8xx/mpc885ads_setup.c       |  28 +-
- arch/powerpc/platforms/embedded6xx/flipper-pic.c   |   6 +-
- arch/powerpc/platforms/embedded6xx/hlwd-pic.c      |   8 +-
- arch/powerpc/platforms/embedded6xx/wii.c           |  10 +-
- arch/powerpc/sysdev/cpm1.c                         |  26 +-
- arch/powerpc/sysdev/cpm2.c                         |  16 +-
- arch/powerpc/sysdev/cpm_common.c                   |   4 +-
- arch/powerpc/sysdev/fsl_85xx_l2ctlr.c              |   8 +-
- arch/powerpc/sysdev/fsl_lbc.c                      |   2 +-
- arch/powerpc/sysdev/fsl_pci.c                      |   8 +-
- arch/powerpc/sysdev/fsl_pmc.c                      |   2 +-
- arch/powerpc/sysdev/fsl_rcpm.c                     |  74 ++--
- arch/powerpc/sysdev/fsl_rio.c                      |   4 +-
- arch/powerpc/sysdev/fsl_rmu.c                      |   8 +-
- arch/powerpc/sysdev/mpic_timer.c                   |  12 +-
- drivers/ata/ahci_sunxi.c                           |  51 +--
- .../net/ethernet/stmicro/stmmac/dwmac-meson8b.c    |  54 +--
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  55 +--
- .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   |  21 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  51 +--
- drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |  13 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |  42 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac5.c       |  11 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c    |  17 +-
- .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  30 +-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  69 +---
- .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  |  11 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |   7 +-
- include/linux/setbits.h                            |  55 +++
- scripts/coccinelle/misc/setbits.cocci              | 423 +++++++++++++++++++++
- 56 files changed, 776 insertions(+), 489 deletions(-)
- create mode 100644 include/linux/setbits.h
- create mode 100644 scripts/coccinelle/misc/setbits.cocci
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+index c5979569fd60..035a2ab7b479 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_net.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
++#include <linux/setbits.h>
+ #include <linux/stmmac.h>
+ 
+ #include "stmmac_platform.h"
+@@ -75,18 +76,6 @@ struct meson8b_dwmac_clk_configs {
+ 	struct clk_gate		rgmii_tx_en;
+ };
+ 
+-static void meson8b_dwmac_mask_bits(struct meson8b_dwmac *dwmac, u32 reg,
+-				    u32 mask, u32 value)
+-{
+-	u32 data;
+-
+-	data = readl(dwmac->regs + reg);
+-	data &= ~mask;
+-	data |= (value & mask);
+-
+-	writel(data, dwmac->regs + reg);
+-}
+-
+ static struct clk *meson8b_dwmac_register_clk(struct meson8b_dwmac *dwmac,
+ 					      const char *name_suffix,
+ 					      const char **parent_names,
+@@ -192,14 +181,12 @@ static int meson8b_set_phy_mode(struct meson8b_dwmac *dwmac)
+ 	case PHY_INTERFACE_MODE_RGMII_ID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		/* enable RGMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+-					PRG_ETH0_RGMII_MODE,
+-					PRG_ETH0_RGMII_MODE);
++		clrsetbits32(dwmac->regs + PRG_ETH0, PRG_ETH0_RGMII_MODE,
++			     PRG_ETH0_RGMII_MODE);
+ 		break;
+ 	case PHY_INTERFACE_MODE_RMII:
+ 		/* disable RGMII mode -> enables RMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+-					PRG_ETH0_RGMII_MODE, 0);
++		clrsetbits32(dwmac->regs + PRG_ETH0, PRG_ETH0_RGMII_MODE, 0);
+ 		break;
+ 	default:
+ 		dev_err(dwmac->dev, "fail to set phy-mode %s\n",
+@@ -218,15 +205,15 @@ static int meson_axg_set_phy_mode(struct meson8b_dwmac *dwmac)
+ 	case PHY_INTERFACE_MODE_RGMII_ID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		/* enable RGMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+-					PRG_ETH0_EXT_PHY_MODE_MASK,
+-					PRG_ETH0_EXT_RGMII_MODE);
++		clrsetbits32(dwmac->regs + PRG_ETH0,
++			     PRG_ETH0_EXT_PHY_MODE_MASK,
++			     PRG_ETH0_EXT_RGMII_MODE);
+ 		break;
+ 	case PHY_INTERFACE_MODE_RMII:
+ 		/* disable RGMII mode -> enables RMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+-					PRG_ETH0_EXT_PHY_MODE_MASK,
+-					PRG_ETH0_EXT_RMII_MODE);
++		clrsetbits32(dwmac->regs + PRG_ETH0,
++			     PRG_ETH0_EXT_PHY_MODE_MASK,
++			     PRG_ETH0_EXT_RMII_MODE);
+ 		break;
+ 	default:
+ 		dev_err(dwmac->dev, "fail to set phy-mode %s\n",
+@@ -255,11 +242,11 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+ 	case PHY_INTERFACE_MODE_RGMII_ID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		/* only relevant for RMII mode -> disable in RGMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+-					PRG_ETH0_INVERTED_RMII_CLK, 0);
++		clrsetbits32(dwmac->regs + PRG_ETH0,
++			     PRG_ETH0_INVERTED_RMII_CLK, 0);
+ 
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_TXDLY_MASK,
+-					tx_dly_val << PRG_ETH0_TXDLY_SHIFT);
++		clrsetbits32(dwmac->regs + PRG_ETH0, PRG_ETH0_TXDLY_MASK,
++			     tx_dly_val << PRG_ETH0_TXDLY_SHIFT);
+ 
+ 		/* Configure the 125MHz RGMII TX clock, the IP block changes
+ 		 * the output automatically (= without us having to configure
+@@ -287,13 +274,12 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+ 
+ 	case PHY_INTERFACE_MODE_RMII:
+ 		/* invert internal clk_rmii_i to generate 25/2.5 tx_rx_clk */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+-					PRG_ETH0_INVERTED_RMII_CLK,
+-					PRG_ETH0_INVERTED_RMII_CLK);
++		clrsetbits32(dwmac->regs + PRG_ETH0,
++			     PRG_ETH0_INVERTED_RMII_CLK,
++			     PRG_ETH0_INVERTED_RMII_CLK);
+ 
+ 		/* TX clock delay cannot be configured in RMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_TXDLY_MASK,
+-					0);
++		clrsetbits32(dwmac->regs + PRG_ETH0, PRG_ETH0_TXDLY_MASK, 0);
+ 
+ 		break;
+ 
+@@ -304,8 +290,8 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+ 	}
+ 
+ 	/* enable TX_CLK and PHY_REF_CLK generator */
+-	meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_TX_AND_PHY_REF_CLK,
+-				PRG_ETH0_TX_AND_PHY_REF_CLK);
++	clrsetbits32(dwmac->regs + PRG_ETH0, PRG_ETH0_TX_AND_PHY_REF_CLK,
++		     PRG_ETH0_TX_AND_PHY_REF_CLK);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index 0f660af01a4b..3c7f531feadf 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -27,6 +27,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/regmap.h>
++#include <linux/setbits.h>
+ #include <linux/stmmac.h>
+ 
+ #include "stmmac.h"
+@@ -342,50 +343,27 @@ static void sun8i_dwmac_disable_dma_irq(void __iomem *ioaddr, u32 chan)
+ 
+ static void sun8i_dwmac_dma_start_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_TX_CTL1);
+-	v |= EMAC_TX_DMA_START;
+-	v |= EMAC_TX_DMA_EN;
+-	writel(v, ioaddr + EMAC_TX_CTL1);
++	setbits32(ioaddr + EMAC_TX_CTL1, EMAC_TX_DMA_START | EMAC_TX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_enable_dma_transmission(void __iomem *ioaddr)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_TX_CTL1);
+-	v |= EMAC_TX_DMA_START;
+-	v |= EMAC_TX_DMA_EN;
+-	writel(v, ioaddr + EMAC_TX_CTL1);
++	setbits32(ioaddr + EMAC_TX_CTL1, EMAC_TX_DMA_START | EMAC_TX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_dma_stop_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_TX_CTL1);
+-	v &= ~EMAC_TX_DMA_EN;
+-	writel(v, ioaddr + EMAC_TX_CTL1);
++	clrbits32(ioaddr + EMAC_TX_CTL1, EMAC_TX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_dma_start_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_RX_CTL1);
+-	v |= EMAC_RX_DMA_START;
+-	v |= EMAC_RX_DMA_EN;
+-	writel(v, ioaddr + EMAC_RX_CTL1);
++	setbits32(ioaddr + EMAC_RX_CTL1, EMAC_RX_DMA_START | EMAC_RX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_dma_stop_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_RX_CTL1);
+-	v &= ~EMAC_RX_DMA_EN;
+-	writel(v, ioaddr + EMAC_RX_CTL1);
++	clrbits32(ioaddr + EMAC_RX_CTL1, EMAC_RX_DMA_EN);
+ }
+ 
+ static int sun8i_dwmac_dma_interrupt(void __iomem *ioaddr,
+@@ -608,11 +586,8 @@ static void sun8i_dwmac_get_umac_addr(struct mac_device_info *hw,
+ static int sun8i_dwmac_rx_ipc_enable(struct mac_device_info *hw)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 v;
+ 
+-	v = readl(ioaddr + EMAC_RX_CTL0);
+-	v |= EMAC_RX_DO_CRC;
+-	writel(v, ioaddr + EMAC_RX_CTL0);
++	setbits32(ioaddr + EMAC_RX_CTL0, EMAC_RX_DO_CRC);
+ 
+ 	return 1;
+ }
+@@ -662,21 +637,16 @@ static void sun8i_dwmac_flow_ctrl(struct mac_device_info *hw,
+ 				  unsigned int pause_time, u32 tx_cnt)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 v;
+ 
+-	v = readl(ioaddr + EMAC_RX_CTL0);
+ 	if (fc == FLOW_AUTO)
+-		v |= EMAC_RX_FLOW_CTL_EN;
++		setbits32(ioaddr + EMAC_RX_CTL0, EMAC_RX_FLOW_CTL_EN);
+ 	else
+-		v &= ~EMAC_RX_FLOW_CTL_EN;
+-	writel(v, ioaddr + EMAC_RX_CTL0);
++		clrbits32(ioaddr + EMAC_RX_CTL0, EMAC_RX_FLOW_CTL_EN);
+ 
+-	v = readl(ioaddr + EMAC_TX_FLOW_CTL);
+ 	if (fc == FLOW_AUTO)
+-		v |= EMAC_TX_FLOW_CTL_EN;
++		setbits32(ioaddr + EMAC_TX_FLOW_CTL, EMAC_TX_FLOW_CTL_EN);
+ 	else
+-		v &= ~EMAC_TX_FLOW_CTL_EN;
+-	writel(v, ioaddr + EMAC_TX_FLOW_CTL);
++		clrbits32(ioaddr + EMAC_TX_FLOW_CTL, EMAC_TX_FLOW_CTL_EN);
+ }
+ 
+ static int sun8i_dwmac_reset(struct stmmac_priv *priv)
+@@ -684,8 +654,7 @@ static int sun8i_dwmac_reset(struct stmmac_priv *priv)
+ 	u32 v;
+ 	int err;
+ 
+-	v = readl(priv->ioaddr + EMAC_BASIC_CTL1);
+-	writel(v | 0x01, priv->ioaddr + EMAC_BASIC_CTL1);
++	setbits32(priv->ioaddr + EMAC_BASIC_CTL1, 0x01);
+ 
+ 	/* The timeout was previoulsy set to 10ms, but some board (OrangePI0)
+ 	 * need more if no cable plugged. 100ms seems OK
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+index 0877bde6e860..ca864c3d7ff3 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+@@ -25,6 +25,7 @@
+ #include <linux/crc32.h>
+ #include <linux/slab.h>
+ #include <linux/ethtool.h>
++#include <linux/setbits.h>
+ #include <net/dsa.h>
+ #include <asm/io.h>
+ #include "stmmac.h"
+@@ -355,7 +356,6 @@ static void dwmac1000_set_eee_mode(struct mac_device_info *hw,
+ 				   bool en_tx_lpi_clockgating)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 value;
+ 
+ 	/*TODO - en_tx_lpi_clockgating treatment */
+ 
+@@ -363,19 +363,16 @@ static void dwmac1000_set_eee_mode(struct mac_device_info *hw,
+ 	 * receive path and instruct the transmit to enter in LPI
+ 	 * state.
+ 	 */
+-	value = readl(ioaddr + LPI_CTRL_STATUS);
+-	value |= LPI_CTRL_STATUS_LPIEN | LPI_CTRL_STATUS_LPITXA;
+-	writel(value, ioaddr + LPI_CTRL_STATUS);
++	setbits32(ioaddr + LPI_CTRL_STATUS,
++		  LPI_CTRL_STATUS_LPIEN | LPI_CTRL_STATUS_LPITXA);
+ }
+ 
+ static void dwmac1000_reset_eee_mode(struct mac_device_info *hw)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 value;
+ 
+-	value = readl(ioaddr + LPI_CTRL_STATUS);
+-	value &= ~(LPI_CTRL_STATUS_LPIEN | LPI_CTRL_STATUS_LPITXA);
+-	writel(value, ioaddr + LPI_CTRL_STATUS);
++	clrbits32(ioaddr + LPI_CTRL_STATUS,
++		  (LPI_CTRL_STATUS_LPIEN | LPI_CTRL_STATUS_LPITXA));
+ }
+ 
+ static void dwmac1000_set_eee_pls(struct mac_device_info *hw, int link)
+@@ -383,14 +380,10 @@ static void dwmac1000_set_eee_pls(struct mac_device_info *hw, int link)
+ 	void __iomem *ioaddr = hw->pcsr;
+ 	u32 value;
+ 
+-	value = readl(ioaddr + LPI_CTRL_STATUS);
+-
+ 	if (link)
+-		value |= LPI_CTRL_STATUS_PLS;
++		setbits32(ioaddr + LPI_CTRL_STATUS, LPI_CTRL_STATUS_PLS);
+ 	else
+-		value &= ~LPI_CTRL_STATUS_PLS;
+-
+-	writel(value, ioaddr + LPI_CTRL_STATUS);
++		clrbits32(ioaddr + LPI_CTRL_STATUS, LPI_CTRL_STATUS_PLS);
+ }
+ 
+ static void dwmac1000_set_eee_timer(struct mac_device_info *hw, int ls, int tw)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index 7e5d5db0d516..998695cbf3c2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -17,6 +17,8 @@
+ #include <linux/slab.h>
+ #include <linux/ethtool.h>
+ #include <linux/io.h>
++#include <linux/setbits.h>
++#include <linux/setbits.h>
+ #include <net/dsa.h>
+ #include "stmmac.h"
+ #include "stmmac_pcs.h"
+@@ -85,16 +87,11 @@ static void dwmac4_rx_queue_priority(struct mac_device_info *hw,
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+ 	u32 base_register;
+-	u32 value;
+ 
+ 	base_register = (queue < 4) ? GMAC_RXQ_CTRL2 : GMAC_RXQ_CTRL3;
+ 
+-	value = readl(ioaddr + base_register);
+-
+-	value &= ~GMAC_RXQCTRL_PSRQX_MASK(queue);
+-	value |= (prio << GMAC_RXQCTRL_PSRQX_SHIFT(queue)) &
+-						GMAC_RXQCTRL_PSRQX_MASK(queue);
+-	writel(value, ioaddr + base_register);
++	clrsetbits32(ioaddr + base_register, GMAC_RXQCTRL_PSRQX_MASK(queue),
++		     (prio << GMAC_RXQCTRL_PSRQX_SHIFT(queue)) & GMAC_RXQCTRL_PSRQX_MASK(queue));
+ }
+ 
+ static void dwmac4_tx_queue_priority(struct mac_device_info *hw,
+@@ -102,17 +99,11 @@ static void dwmac4_tx_queue_priority(struct mac_device_info *hw,
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+ 	u32 base_register;
+-	u32 value;
+ 
+ 	base_register = (queue < 4) ? GMAC_TXQ_PRTY_MAP0 : GMAC_TXQ_PRTY_MAP1;
+ 
+-	value = readl(ioaddr + base_register);
+-
+-	value &= ~GMAC_TXQCTRL_PSTQX_MASK(queue);
+-	value |= (prio << GMAC_TXQCTRL_PSTQX_SHIFT(queue)) &
+-						GMAC_TXQCTRL_PSTQX_MASK(queue);
+-
+-	writel(value, ioaddr + base_register);
++	clrsetbits32(ioaddr + base_register, GMAC_TXQCTRL_PSTQX_MASK(queue),
++		     (prio << GMAC_TXQCTRL_PSTQX_SHIFT(queue)) & GMAC_TXQCTRL_PSTQX_MASK(queue));
+ }
+ 
+ static void dwmac4_rx_queue_routing(struct mac_device_info *hw,
+@@ -198,11 +189,9 @@ static void dwmac4_set_mtl_tx_queue_weight(struct mac_device_info *hw,
+ 					   u32 weight, u32 queue)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 value = readl(ioaddr + MTL_TXQX_WEIGHT_BASE_ADDR(queue));
+-
+-	value &= ~MTL_TXQ_WEIGHT_ISCQW_MASK;
+-	value |= weight & MTL_TXQ_WEIGHT_ISCQW_MASK;
+-	writel(value, ioaddr + MTL_TXQX_WEIGHT_BASE_ADDR(queue));
++	clrsetbits32(ioaddr + MTL_TXQX_WEIGHT_BASE_ADDR(queue),
++		     MTL_TXQ_WEIGHT_ISCQW_MASK,
++		     weight & MTL_TXQ_WEIGHT_ISCQW_MASK);
+ }
+ 
+ static void dwmac4_map_mtl_dma(struct mac_device_info *hw, u32 queue, u32 chan)
+@@ -243,10 +232,8 @@ static void dwmac4_config_cbs(struct mac_device_info *hw,
+ 	pr_debug("\tlow_credit: 0x%08x\n", low_credit);
+ 
+ 	/* enable AV algorithm */
+-	value = readl(ioaddr + MTL_ETSX_CTRL_BASE_ADDR(queue));
+-	value |= MTL_ETS_CTRL_AVALG;
+-	value |= MTL_ETS_CTRL_CC;
+-	writel(value, ioaddr + MTL_ETSX_CTRL_BASE_ADDR(queue));
++	setbits32(ioaddr + MTL_ETSX_CTRL_BASE_ADDR(queue),
++		  MTL_ETS_CTRL_AVALG | MTL_ETS_CTRL_CC);
+ 
+ 	/* configure send slope */
+ 	value = readl(ioaddr + MTL_SEND_SLP_CREDX_BASE_ADDR(queue));
+@@ -360,11 +347,9 @@ static void dwmac4_set_eee_mode(struct mac_device_info *hw,
+ static void dwmac4_reset_eee_mode(struct mac_device_info *hw)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 value;
+ 
+-	value = readl(ioaddr + GMAC4_LPI_CTRL_STATUS);
+-	value &= ~(GMAC4_LPI_CTRL_STATUS_LPIEN | GMAC4_LPI_CTRL_STATUS_LPITXA);
+-	writel(value, ioaddr + GMAC4_LPI_CTRL_STATUS);
++	clrbits32(ioaddr + GMAC4_LPI_CTRL_STATUS,
++		  (GMAC4_LPI_CTRL_STATUS_LPIEN | GMAC4_LPI_CTRL_STATUS_LPITXA));
+ }
+ 
+ static void dwmac4_set_eee_pls(struct mac_device_info *hw, int link)
+@@ -372,14 +357,12 @@ static void dwmac4_set_eee_pls(struct mac_device_info *hw, int link)
+ 	void __iomem *ioaddr = hw->pcsr;
+ 	u32 value;
+ 
+-	value = readl(ioaddr + GMAC4_LPI_CTRL_STATUS);
+-
+ 	if (link)
+-		value |= GMAC4_LPI_CTRL_STATUS_PLS;
++		setbits32(ioaddr + GMAC4_LPI_CTRL_STATUS,
++			  GMAC4_LPI_CTRL_STATUS_PLS);
+ 	else
+-		value &= ~GMAC4_LPI_CTRL_STATUS_PLS;
+-
+-	writel(value, ioaddr + GMAC4_LPI_CTRL_STATUS);
++		clrbits32(ioaddr + GMAC4_LPI_CTRL_STATUS,
++			  GMAC4_LPI_CTRL_STATUS_PLS);
+ }
+ 
+ static void dwmac4_set_eee_timer(struct mac_device_info *hw, int ls, int tw)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+index edb6053bd980..63c582ff24a1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include <linux/io.h>
++#include <linux/setbits.h>
+ #include "dwmac4.h"
+ #include "dwmac4_dma.h"
+ 
+@@ -270,9 +271,7 @@ static void dwmac4_dma_rx_chan_op_mode(void __iomem *ioaddr, int mode,
+ 	writel(mtl_rx_op, ioaddr + MTL_CHAN_RX_OP_MODE(channel));
+ 
+ 	/* Enable MTL RX overflow */
+-	mtl_rx_int = readl(ioaddr + MTL_CHAN_INT_CTRL(channel));
+-	writel(mtl_rx_int | MTL_RX_OVERFLOW_INT_EN,
+-	       ioaddr + MTL_CHAN_INT_CTRL(channel));
++	setbits32(ioaddr + MTL_CHAN_INT_CTRL(channel), MTL_RX_OVERFLOW_INT_EN);
+ }
+ 
+ static void dwmac4_dma_tx_chan_op_mode(void __iomem *ioaddr, int mode,
+@@ -422,12 +421,8 @@ static void dwmac4_qmode(void __iomem *ioaddr, u32 channel, u8 qmode)
+ 
+ static void dwmac4_set_bfsize(void __iomem *ioaddr, int bfsize, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CHAN_RX_CONTROL(chan));
+-
+-	value &= ~DMA_RBSZ_MASK;
+-	value |= (bfsize << DMA_RBSZ_SHIFT) & DMA_RBSZ_MASK;
+-
+-	writel(value, ioaddr + DMA_CHAN_RX_CONTROL(chan));
++	clrsetbits32(ioaddr + DMA_CHAN_RX_CONTROL(chan), DMA_RBSZ_MASK,
++		     (bfsize << DMA_RBSZ_SHIFT) & DMA_RBSZ_MASK);
+ }
+ 
+ const struct stmmac_dma_ops dwmac4_dma_ops = {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
+index 49f5687879df..5f699cf54e17 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/delay.h>
++#include <linux/setbits.h>
+ #include "common.h"
+ #include "dwmac4_dma.h"
+ #include "dwmac4.h"
+@@ -47,51 +48,26 @@ void dwmac4_set_tx_tail_ptr(void __iomem *ioaddr, u32 tail_ptr, u32 chan)
+ 
+ void dwmac4_dma_start_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CHAN_TX_CONTROL(chan));
+-
+-	value |= DMA_CONTROL_ST;
+-	writel(value, ioaddr + DMA_CHAN_TX_CONTROL(chan));
+-
+-	value = readl(ioaddr + GMAC_CONFIG);
+-	value |= GMAC_CONFIG_TE;
+-	writel(value, ioaddr + GMAC_CONFIG);
++	setbits32(ioaddr + DMA_CHAN_TX_CONTROL(chan), DMA_CONTROL_ST);
++	setbits32(ioaddr + GMAC_CONFIG, GMAC_CONFIG_TE);
+ }
+ 
+ void dwmac4_dma_stop_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CHAN_TX_CONTROL(chan));
+-
+-	value &= ~DMA_CONTROL_ST;
+-	writel(value, ioaddr + DMA_CHAN_TX_CONTROL(chan));
+-
+-	value = readl(ioaddr + GMAC_CONFIG);
+-	value &= ~GMAC_CONFIG_TE;
+-	writel(value, ioaddr + GMAC_CONFIG);
++	clrbits32(ioaddr + DMA_CHAN_TX_CONTROL(chan), DMA_CONTROL_ST);
++	clrbits32(ioaddr + GMAC_CONFIG, GMAC_CONFIG_TE);
+ }
+ 
+ void dwmac4_dma_start_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CHAN_RX_CONTROL(chan));
+-
+-	value |= DMA_CONTROL_SR;
+-
+-	writel(value, ioaddr + DMA_CHAN_RX_CONTROL(chan));
+-
+-	value = readl(ioaddr + GMAC_CONFIG);
+-	value |= GMAC_CONFIG_RE;
+-	writel(value, ioaddr + GMAC_CONFIG);
++	setbits32(ioaddr + DMA_CHAN_RX_CONTROL(chan), DMA_CONTROL_SR);
++	setbits32(ioaddr + GMAC_CONFIG, GMAC_CONFIG_RE);
+ }
+ 
+ void dwmac4_dma_stop_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CHAN_RX_CONTROL(chan));
+-
+-	value &= ~DMA_CONTROL_SR;
+-	writel(value, ioaddr + DMA_CHAN_RX_CONTROL(chan));
+-
+-	value = readl(ioaddr + GMAC_CONFIG);
+-	value &= ~GMAC_CONFIG_RE;
+-	writel(value, ioaddr + GMAC_CONFIG);
++	clrbits32(ioaddr + DMA_CHAN_RX_CONTROL(chan), DMA_CONTROL_SR);
++	clrbits32(ioaddr + GMAC_CONFIG, GMAC_CONFIG_RE);
+ }
+ 
+ void dwmac4_set_tx_ring_len(void __iomem *ioaddr, u32 len, u32 chan)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+index 3f4f3132e16b..aec2fb884477 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/iopoll.h>
++#include <linux/setbits.h>
+ #include "common.h"
+ #include "dwmac4.h"
+ #include "dwmac5.h"
+@@ -307,9 +308,7 @@ static int dwmac5_rxp_disable(void __iomem *ioaddr)
+ 	u32 val;
+ 	int ret;
+ 
+-	val = readl(ioaddr + MTL_OPERATION_MODE);
+-	val &= ~MTL_FRPE;
+-	writel(val, ioaddr + MTL_OPERATION_MODE);
++	clrbits32(ioaddr + MTL_OPERATION_MODE, MTL_FRPE);
+ 
+ 	ret = readl_poll_timeout(ioaddr + MTL_RXP_CONTROL_STATUS, val,
+ 			val & RXPI, 1, 10000);
+@@ -320,11 +319,7 @@ static int dwmac5_rxp_disable(void __iomem *ioaddr)
+ 
+ static void dwmac5_rxp_enable(void __iomem *ioaddr)
+ {
+-	u32 val;
+-
+-	val = readl(ioaddr + MTL_OPERATION_MODE);
+-	val |= MTL_FRPE;
+-	writel(val, ioaddr + MTL_OPERATION_MODE);
++	setbits32(ioaddr + MTL_OPERATION_MODE, MTL_FRPE);
+ }
+ 
+ static int dwmac5_rxp_update_single_entry(void __iomem *ioaddr,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
+index 7516ca210855..acecb9f0ee4b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
+@@ -18,6 +18,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
++#include <linux/setbits.h>
+ #include "common.h"
+ #include "dwmac_dma.h"
+ 
+@@ -59,30 +60,22 @@ void dwmac_disable_dma_irq(void __iomem *ioaddr, u32 chan)
+ 
+ void dwmac_dma_start_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CONTROL);
+-	value |= DMA_CONTROL_ST;
+-	writel(value, ioaddr + DMA_CONTROL);
++	setbits32(ioaddr + DMA_CONTROL, DMA_CONTROL_ST);
+ }
+ 
+ void dwmac_dma_stop_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CONTROL);
+-	value &= ~DMA_CONTROL_ST;
+-	writel(value, ioaddr + DMA_CONTROL);
++	clrbits32(ioaddr + DMA_CONTROL, DMA_CONTROL_ST);
+ }
+ 
+ void dwmac_dma_start_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CONTROL);
+-	value |= DMA_CONTROL_SR;
+-	writel(value, ioaddr + DMA_CONTROL);
++	setbits32(ioaddr + DMA_CONTROL, DMA_CONTROL_SR);
+ }
+ 
+ void dwmac_dma_stop_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value = readl(ioaddr + DMA_CONTROL);
+-	value &= ~DMA_CONTROL_SR;
+-	writel(value, ioaddr + DMA_CONTROL);
++	clrbits32(ioaddr + DMA_CONTROL, DMA_CONTROL_SR);
+ }
+ 
+ #ifdef DWMAC_DMA_DEBUG
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+index 64b8cb88ea45..fc7df8de2ba7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+@@ -4,6 +4,7 @@
+  * stmmac XGMAC support.
+  */
+ 
++#include <linux/setbits.h>
+ #include "stmmac.h"
+ #include "dwxgmac2.h"
+ 
+@@ -75,12 +76,10 @@ static int dwxgmac2_rx_ipc(struct mac_device_info *hw)
+ 	void __iomem *ioaddr = hw->pcsr;
+ 	u32 value;
+ 
+-	value = readl(ioaddr + XGMAC_RX_CONFIG);
+ 	if (hw->rx_csum)
+-		value |= XGMAC_CONFIG_IPC;
++		setbits32(ioaddr + XGMAC_RX_CONFIG, XGMAC_CONFIG_IPC);
+ 	else
+-		value &= ~XGMAC_CONFIG_IPC;
+-	writel(value, ioaddr + XGMAC_RX_CONFIG);
++		clrbits32(ioaddr + XGMAC_RX_CONFIG, XGMAC_CONFIG_IPC);
+ 
+ 	return !!(readl(ioaddr + XGMAC_RX_CONFIG) & XGMAC_CONFIG_IPC);
+ }
+@@ -107,11 +106,8 @@ static void dwxgmac2_rx_queue_prio(struct mac_device_info *hw, u32 prio,
+ 
+ 	reg = (queue < 4) ? XGMAC_RXQ_CTRL2 : XGMAC_RXQ_CTRL3;
+ 
+-	value = readl(ioaddr + reg);
+-	value &= ~XGMAC_PSRQ(queue);
+-	value |= (prio << XGMAC_PSRQ_SHIFT(queue)) & XGMAC_PSRQ(queue);
+-
+-	writel(value, ioaddr + reg);
++	clrsetbits32(ioaddr + reg, XGMAC_PSRQ(queue),
++		     (prio << XGMAC_PSRQ_SHIFT(queue)) & XGMAC_PSRQ(queue));
+ }
+ 
+ static void dwxgmac2_prog_mtl_rx_algorithms(struct mac_device_info *hw,
+@@ -170,11 +166,8 @@ static void dwxgmac2_map_mtl_to_dma(struct mac_device_info *hw, u32 queue,
+ 
+ 	reg = (queue < 4) ? XGMAC_MTL_RXQ_DMA_MAP0 : XGMAC_MTL_RXQ_DMA_MAP1;
+ 
+-	value = readl(ioaddr + reg);
+-	value &= ~XGMAC_QxMDMACH(queue);
+-	value |= (chan << XGMAC_QxMDMACH_SHIFT(queue)) & XGMAC_QxMDMACH(queue);
+-
+-	writel(value, ioaddr + reg);
++	clrsetbits32(ioaddr + reg, XGMAC_QxMDMACH(queue),
++		     (chan << XGMAC_QxMDMACH_SHIFT(queue)) & XGMAC_QxMDMACH(queue));
+ }
+ 
+ static void dwxgmac2_config_cbs(struct mac_device_info *hw,
+@@ -189,9 +182,8 @@ static void dwxgmac2_config_cbs(struct mac_device_info *hw,
+ 	writel(high_credit, ioaddr + XGMAC_MTL_TCx_HICREDIT(queue));
+ 	writel(low_credit, ioaddr + XGMAC_MTL_TCx_LOCREDIT(queue));
+ 
+-	value = readl(ioaddr + XGMAC_MTL_TCx_ETS_CONTROL(queue));
+-	value |= XGMAC_CC | XGMAC_CBS;
+-	writel(value, ioaddr + XGMAC_MTL_TCx_ETS_CONTROL(queue));
++	setbits32(ioaddr + XGMAC_MTL_TCx_ETS_CONTROL(queue),
++		  XGMAC_CC | XGMAC_CBS);
+ }
+ 
+ static int dwxgmac2_host_irq_status(struct mac_device_info *hw,
+@@ -263,9 +255,7 @@ static void dwxgmac2_pmt(struct mac_device_info *hw, unsigned long mode)
+ 	if (mode & WAKE_UCAST)
+ 		val |= XGMAC_PWRDWN | XGMAC_GLBLUCAST | XGMAC_RWKPKTEN;
+ 	if (val) {
+-		u32 cfg = readl(ioaddr + XGMAC_RX_CONFIG);
+-		cfg |= XGMAC_CONFIG_RE;
+-		writel(cfg, ioaddr + XGMAC_RX_CONFIG);
++		setbits32(ioaddr + XGMAC_RX_CONFIG, XGMAC_CONFIG_RE);
+ 	}
+ 
+ 	writel(val, ioaddr + XGMAC_PMT);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+index 6c5092e7771c..7a7d584211e9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/iopoll.h>
++#include <linux/setbits.h>
+ #include "stmmac.h"
+ #include "dwxgmac2.h"
+ 
+@@ -47,12 +48,9 @@ static void dwxgmac2_dma_init_rx_chan(void __iomem *ioaddr,
+ 				      u32 dma_rx_phy, u32 chan)
+ {
+ 	u32 rxpbl = dma_cfg->rxpbl ?: dma_cfg->pbl;
+-	u32 value;
+ 
+-	value = readl(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-	value &= ~XGMAC_RxPBL;
+-	value |= (rxpbl << XGMAC_RxPBL_SHIFT) & XGMAC_RxPBL;
+-	writel(value, ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
++	clrsetbits32(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan), XGMAC_RxPBL,
++		     (rxpbl << XGMAC_RxPBL_SHIFT) & XGMAC_RxPBL);
+ 
+ 	writel(dma_rx_phy, ioaddr + XGMAC_DMA_CH_RxDESC_LADDR(chan));
+ }
+@@ -150,8 +148,7 @@ static void dwxgmac2_dma_rx_mode(void __iomem *ioaddr, int mode,
+ 	writel(value, ioaddr + XGMAC_MTL_RXQ_OPMODE(channel));
+ 
+ 	/* Enable MTL RX overflow */
+-	value = readl(ioaddr + XGMAC_MTL_QINTEN(channel));
+-	writel(value | XGMAC_RXOIE, ioaddr + XGMAC_MTL_QINTEN(channel));
++	setbits32(ioaddr + XGMAC_MTL_QINTEN(channel), XGMAC_RXOIE);
+ }
+ 
+ static void dwxgmac2_dma_tx_mode(void __iomem *ioaddr, int mode,
+@@ -209,54 +206,26 @@ static void dwxgmac2_disable_dma_irq(void __iomem *ioaddr, u32 chan)
+ 
+ static void dwxgmac2_dma_start_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value;
+-
+-	value = readl(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-	value |= XGMAC_TXST;
+-	writel(value, ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_TX_CONFIG);
+-	value |= XGMAC_CONFIG_TE;
+-	writel(value, ioaddr + XGMAC_TX_CONFIG);
++	setbits32(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan), XGMAC_TXST);
++	setbits32(ioaddr + XGMAC_TX_CONFIG, XGMAC_CONFIG_TE);
+ }
+ 
+ static void dwxgmac2_dma_stop_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value;
+-
+-	value = readl(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-	value &= ~XGMAC_TXST;
+-	writel(value, ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_TX_CONFIG);
+-	value &= ~XGMAC_CONFIG_TE;
+-	writel(value, ioaddr + XGMAC_TX_CONFIG);
++	clrbits32(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan), XGMAC_TXST);
++	clrbits32(ioaddr + XGMAC_TX_CONFIG, XGMAC_CONFIG_TE);
+ }
+ 
+ static void dwxgmac2_dma_start_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value;
+-
+-	value = readl(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-	value |= XGMAC_RXST;
+-	writel(value, ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_RX_CONFIG);
+-	value |= XGMAC_CONFIG_RE;
+-	writel(value, ioaddr + XGMAC_RX_CONFIG);
++	setbits32(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan), XGMAC_RXST);
++	setbits32(ioaddr + XGMAC_RX_CONFIG, XGMAC_CONFIG_RE);
+ }
+ 
+ static void dwxgmac2_dma_stop_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 value;
+-
+-	value = readl(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-	value &= ~XGMAC_RXST;
+-	writel(value, ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_RX_CONFIG);
+-	value &= ~XGMAC_CONFIG_RE;
+-	writel(value, ioaddr + XGMAC_RX_CONFIG);
++	clrbits32(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan), XGMAC_RXST);
++	clrbits32(ioaddr + XGMAC_RX_CONFIG, XGMAC_CONFIG_RE);
+ }
+ 
+ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+@@ -367,14 +336,10 @@ static void dwxgmac2_set_tx_tail_ptr(void __iomem *ioaddr, u32 ptr, u32 chan)
+ 
+ static void dwxgmac2_enable_tso(void __iomem *ioaddr, bool en, u32 chan)
+ {
+-	u32 value = readl(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-
+ 	if (en)
+-		value |= XGMAC_TSE;
++		setbits32(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan), XGMAC_TSE);
+ 	else
+-		value &= ~XGMAC_TSE;
+-
+-	writel(value, ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
++		clrbits32(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan), XGMAC_TSE);
+ }
+ 
+ static void dwxgmac2_qmode(void __iomem *ioaddr, u32 channel, u8 qmode)
+@@ -394,11 +359,7 @@ static void dwxgmac2_qmode(void __iomem *ioaddr, u32 channel, u8 qmode)
+ 
+ static void dwxgmac2_set_bfsize(void __iomem *ioaddr, int bfsize, u32 chan)
+ {
+-	u32 value;
+-
+-	value = readl(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-	value |= bfsize << 1;
+-	writel(value, ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
++	setbits32(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan), bfsize << 1);
+ }
+ 
+ const struct stmmac_dma_ops dwxgmac210_dma_ops = {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
+index 8d9cc2157afd..8680fb4b1fa8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/delay.h>
++#include <linux/setbits.h>
+ #include "common.h"
+ #include "stmmac_ptp.h"
+ 
+@@ -64,14 +65,11 @@ static void config_sub_second_increment(void __iomem *ioaddr,
+ static int init_systime(void __iomem *ioaddr, u32 sec, u32 nsec)
+ {
+ 	int limit;
+-	u32 value;
+ 
+ 	writel(sec, ioaddr + PTP_STSUR);
+ 	writel(nsec, ioaddr + PTP_STNSUR);
+ 	/* issue command to initialize the system time value */
+-	value = readl(ioaddr + PTP_TCR);
+-	value |= PTP_TCR_TSINIT;
+-	writel(value, ioaddr + PTP_TCR);
++	setbits32(ioaddr + PTP_TCR, PTP_TCR_TSINIT);
+ 
+ 	/* wait for present system time initialize to complete */
+ 	limit = 10;
+@@ -88,14 +86,11 @@ static int init_systime(void __iomem *ioaddr, u32 sec, u32 nsec)
+ 
+ static int config_addend(void __iomem *ioaddr, u32 addend)
+ {
+-	u32 value;
+ 	int limit;
+ 
+ 	writel(addend, ioaddr + PTP_TAR);
+ 	/* issue command to update the addend value */
+-	value = readl(ioaddr + PTP_TCR);
+-	value |= PTP_TCR_TSADDREG;
+-	writel(value, ioaddr + PTP_TCR);
++	setbits32(ioaddr + PTP_TCR, PTP_TCR_TSADDREG);
+ 
+ 	/* wait for present addend update to complete */
+ 	limit = 10;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+index b72ef171477e..b9cdf951eda6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+@@ -27,6 +27,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/of_mdio.h>
+ #include <linux/phy.h>
++#include <linux/setbits.h>
+ #include <linux/slab.h>
+ 
+ #include "dwxgmac2.h"
+@@ -64,10 +65,8 @@ static int stmmac_xgmac2_c22_format(struct stmmac_priv *priv, int phyaddr,
+ 		return -EBUSY;
+ 
+ 	/* Set port as Clause 22 */
+-	tmp = readl(priv->ioaddr + XGMAC_MDIO_C22P);
+-	tmp &= ~MII_XGMAC_C22P_MASK;
+-	tmp |= BIT(phyaddr);
+-	writel(tmp, priv->ioaddr + XGMAC_MDIO_C22P);
++	clrsetbits32(priv->ioaddr + XGMAC_MDIO_C22P, MII_XGMAC_C22P_MASK,
++		     BIT(phyaddr));
+ 
+ 	*hw_addr = (phyaddr << 16) | (phyreg & 0x1f);
+ 	return 0;
 -- 
 2.16.4
 
