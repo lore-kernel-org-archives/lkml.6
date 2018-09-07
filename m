@@ -2,90 +2,392 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881F0C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3FBC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4232220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E6820652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:28:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PnNoc9Ic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4232220855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YPk9Zdc2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E6820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeIHALD (ORCPT
+        id S1727223AbeIHALT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:11:03 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:56205 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeIHALD (ORCPT
+        Fri, 7 Sep 2018 20:11:19 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43401 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbeIHALT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:11:03 -0400
-Received: by mail-it0-f66.google.com with SMTP id d10-v6so22040051itj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:28:41 -0700 (PDT)
+        Fri, 7 Sep 2018 20:11:19 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z27-v6so12286270edb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:28:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7grtWJf3vQi4tLEkAvNvFqDRZa/5m64d3+8Vy/udT1c=;
-        b=PnNoc9Icuohsk4q3p8Pygi0SEoM5XS3Cxs9STx7x+nYXypR+Y5oXeb1Vb8BO5BDprU
-         29y+3qbxDm4eRGjHqCgpbS5ojUYVBeDr8cyZVORFh0UyaxK1u4Tdi8NZ0CAMnz8rs56K
-         6Natb8M1r6TC2WMb2w7mv9tT0DD6SftOux/8k=
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jHrSvlSamlkwByLBZ29Mhp19Uk7uEeF0gMVxqRWOdxQ=;
+        b=YPk9Zdc2U+5EPgJoHmWbPwNIy+GlCYfAI04L60V3jW1NeTI2Ao5GqpT4BsZH+Zla4u
+         u25VaG3OnQ+VCc9vDXTZCEhydDWurKGERaJ4tdV8aubmCvF/uYwdA42aj4boc97wZFyO
+         WEoWYJPugfr+c0CZ/vXGnOY4HrzHHTNa4JxAY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7grtWJf3vQi4tLEkAvNvFqDRZa/5m64d3+8Vy/udT1c=;
-        b=AEuc4WM5TKL2J25RSF8+LzeVfpGVR1F49MgP+SVjInff9oSbnsI4jVTtPU3EVMiH/s
-         zMR1vUBFClIzpWF2UXvkz7fOgj0YUnZ6e7VIQxEOAVS5luea336hS5cgNZO/l92tedtZ
-         1HwO+9fO9kuB8oWZqUaVzpHBVlOtq/dz9rTRLPlOIwHYHweoD+GwVTLWLStcPpDUDRLf
-         IEG8KU5k/1krti5rmu8ktPdYg16ntH6FvtRbVPgDsBkIL7UMSjgZioRt8EbrkKlVFIfk
-         wW86S3KZIe6E/uyiv0hy54yY/6wJJCf5rGfPQ8xcqTVh0hzvjZq1NBGmfUo2v/+X8SgE
-         jHlg==
-X-Gm-Message-State: APzg51CSiM98T94RnyggfKm8XnmL4c5YmEyH4T06hScMD5GpRajP4SSx
-        Eavg/hrlD+QJoNx2ZruUNmzAumDYbbUm4+/FkUoR2g==
-X-Google-Smtp-Source: ANB0VdadtV0FUCLG4KeAXPDJMhgVmEB0SQ2tbSX1FQzuoagUUihQijhrQYKML2+7h2GFafuLa30trlLdZwyLO4AX6Kc=
-X-Received: by 2002:a24:b611:: with SMTP id g17-v6mr8855284itf.98.1536348520215;
- Fri, 07 Sep 2018 12:28:40 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=jHrSvlSamlkwByLBZ29Mhp19Uk7uEeF0gMVxqRWOdxQ=;
+        b=lJmAf+IX03chai7ZCgYM4MvHN8VyFZ1p1WEK6W6Vj3vtqa9mQYKInYGSnOI6mvyH0a
+         OEwEC2CPXIoJxp2wBrmI/uibmjAVx3km0NrELjQ5lM7NMkhPsRFsCwjwmb2EYfhTk847
+         Nlt/+T4N//OKflzwS3mdIszdJi19V6H97935sVMrcbV0Xp23548KAuObHCsE+s2atbOX
+         hKQXAwlJErsFAo0bSrtkRwbEyE38aQEMEZpdJ6X+IJaSB3VVAOMr2zaPmaltkvXyb8NF
+         rsHae1LdcII9O8M8MxBKxDDQU9X/MtAC0JaObCvcNEcauISdLpfQeD4UyeVE9BUxYKOc
+         DjWQ==
+X-Gm-Message-State: APzg51CgRFvWfaQIH3lo53htdjF6vamNAPzM7aA4OEhJrpCEEPEFBSHl
+        8t4i3gAnm3XmVgpSKV9Ikur5Mw==
+X-Google-Smtp-Source: ANB0VdbVZ91Kg+oWnD9HlDJ1bhXzYi93tBCc5Qv5JIZcAFHPvimKC/JgNM49hXThOhEga6nGa0hwrQ==
+X-Received: by 2002:a50:95dd:: with SMTP id x29-v6mr10586315eda.3.1536348533957;
+        Fri, 07 Sep 2018 12:28:53 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id d11-v6sm8330637edo.39.2018.09.07.12.28.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 12:28:52 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 21:28:44 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Brian Starkey <brian.starkey@arm.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+        daniel.vetter@ffwll.ch, daniel@fooishbar.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, linux-kernel@vger.kernel.org,
+        alexandru-cosmin.gheorghe@arm.com, liviu.dudau@arm.com,
+        ayan.halder@arm.com, tfiga@chromium.org, hoegsberg@chromium.org
+Subject: Re: [RFC PATCH v2 1/3] drm/fourcc: Add 'bpp' field for formats with
+ non-integer bytes-per-pixel
+Message-ID: <20180907192626.GA7176@phenom.ffwll.local>
+Mail-Followup-To: Brian Starkey <brian.starkey@arm.com>,
+        dri-devel@lists.freedesktop.org, daniel@fooishbar.org,
+        airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
+        liviu.dudau@arm.com, ayan.halder@arm.com, tfiga@chromium.org,
+        hoegsberg@chromium.org
+References: <20180823152343.6474-1-brian.starkey@arm.com>
+ <20180823152343.6474-2-brian.starkey@arm.com>
+ <20180831081730.GM21634@phenom.ffwll.local>
+ <20180907124535.GA3461@DESKTOP-E1NTVVP.localdomain>
 MIME-Version: 1.0
-References: <20180907002728.112770-1-grundler@chromium.org>
- <20180907121128.GH17459@sirena.org.uk> <CANEJEGv0A8LO1znHToYOkddzr_JmHpogvYewVrMpK+ZB6SJX5w@mail.gmail.com>
- <20180907175620.GL17459@sirena.org.uk>
-In-Reply-To: <20180907175620.GL17459@sirena.org.uk>
-From:   Grant Grundler <grundler@chromium.org>
-Date:   Fri, 7 Sep 2018 12:28:28 -0700
-Message-ID: <CANEJEGteyDV2pWjC=z_btexMOcYnRER8ScqVTYqxZQO6DOsNTQ@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: max98373: usleep_range() needs include/delay.h
-To:     broonie@kernel.org
-Cc:     Grant Grundler <grundler@chromium.org>,
-        ryans.lee@maximintegrated.com, lgirdwood@gmail.com,
-        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907124535.GA3461@DESKTOP-E1NTVVP.localdomain>
+X-Operating-System: Linux phenom 4.17.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 10:56 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Fri, Sep 07, 2018 at 10:52:24AM -0700, Grant Grundler wrote:
-> > On Fri, Sep 7, 2018 at 5:11 AM Mark Brown <broonie@kernel.org> wrote:
->
-> > > Note that this isn't causing a warning upstream, presumably due to an
-> > > implicit inclusion that isn't present in the v4.4 kernel that you appear
-> > > to be using, or gets missed due to config differences.
->
-> > Ok. Is this just an observation or are these reasons to not accept the
-> > change?
->
-> An observation, you should already have a mail about it being applied.
+On Fri, Sep 07, 2018 at 01:45:36PM +0100, Brian Starkey wrote:
+> Hi Daniel,
+> 
+> On Fri, Aug 31, 2018 at 10:17:30AM +0200, Daniel Vetter wrote:
+> > On Thu, Aug 23, 2018 at 04:23:41PM +0100, Brian Starkey wrote:
+> > > Some formats have a non-integer number of bytes per pixel, which can't
+> > > be handled with the existing 'cpp' field in drm_format_info. To handle
+> > > these formats, add a 'bpp' field, which is only used if cpp[0] == 0.
+> > > 
+> > > This updates all the users of format->cpp in the core DRM code,
+> > > converting them to use a new function to get the bits-per-pixel for any
+> > > format.
+> > > 
+> > > It's assumed that drivers will use the 'bpp' field when they add support
+> > > for pixel formats with non-integer bytes-per-pixel.
+> > > 
+> > > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
+> > 
+> > I assume you still require that stuff is eventually aligned to bytes? In
+> > that case, can we subsume this into the tile work Alex is doing? It's
+> > essentially just another special case of having storage-size units
+> > measured in bytes which span more than 1x1 pixel. And I kinda don't want a
+> > metric pile of special cases here in the format code, because that just
+> > means every driver handles a different subset, with different bugs.
+> > -Daniel
+> 
+> Sorry for the delay, been struggling to free some cycles to think
+> about this.
+> 
+> I'm not sure how to pull this in with the tiling stuff. In the AFBC
+> case then our AFBC superblocks are always nice round numbers (256
+> pixels), and so it does end up being a multiple of bytes.
+> 
+> However, AFBC supports different superblock sizes, so picking just one
+> doesn't really work out, and putting AFBC in the core format table
+> which reflects AFBC doesn't seem good.
+> 
+> We could make something up (e.g. call these formats "tiled" with 2x4
+> tiles, which guarantees a multiple of 8), but it would be an
+> arbitrarily-selected lie, which often seems to spell trouble. If we
+> did do that, would you re-define cpp as "bytes-per-tile"? Otherwise
+> we still need to add a new field anyway.
+> 
+> What's the pile of special cases you're worried about? The helper I've
+> added here means that drivers which need to care can use one API and
+> not implement their own bugs.
 
-Ah ok! Thanks for pointing that out (and for reviewing/accepting the patch).
+I'm confused ... the new bits-per-pixel stuff you're adding here is for
+yuv formats, not afbc. I'm just suggesting we have only 1 way of
+describing such formats that need more descriptive power than cpp, whether
+they have some kind of pixel-groups or small tiles.
 
-cheers,
-grant
+For very special stuff like afbc you need to validate in the driver
+anyway, too complicated. So I have no idea why you bring this up here?
+-Daniel
+
+> 
+> Cheers,
+> -Brian
+> 
+> > 
+> > > ---
+> > >  drivers/gpu/drm/drm_fb_cma_helper.c          |  6 +++-
+> > >  drivers/gpu/drm/drm_fb_helper.c              |  8 +++--
+> > >  drivers/gpu/drm/drm_fourcc.c                 | 50 ++++++++++++++++++++++++++++
+> > >  drivers/gpu/drm/drm_framebuffer.c            |  8 ++---
+> > >  drivers/gpu/drm/drm_gem_framebuffer_helper.c |  3 +-
+> > >  include/drm/drm_fourcc.h                     |  4 +++
+> > >  6 files changed, 70 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > index 186d00adfb5f..e279d70d3e60 100644
+> > > --- a/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
+> > > @@ -118,13 +118,17 @@ dma_addr_t drm_fb_cma_get_gem_addr(struct drm_framebuffer *fb,
+> > >  {
+> > >  	struct drm_gem_cma_object *obj;
+> > >  	dma_addr_t paddr;
+> > > +	u8 bpp = drm_format_info_plane_bpp(fb->format, plane);
+> > > +
+> > > +	/* This can't work for non-integer bytes-per-pixel */
+> > > +	WARN_ON(bpp % 8);
+> > > 
+> > >  	obj = drm_fb_cma_get_gem_obj(fb, plane);
+> > >  	if (!obj)
+> > >  		return 0;
+> > > 
+> > >  	paddr = obj->paddr + fb->offsets[plane];
+> > > -	paddr += fb->format->cpp[plane] * (state->src_x >> 16);
+> > > +	paddr += (bpp / 8) * (state->src_x >> 16);
+> > >  	paddr += fb->pitches[plane] * (state->src_y >> 16);
+> > > 
+> > >  	return paddr;
+> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> > > index 0646b108030b..ab369f250af4 100644
+> > > --- a/drivers/gpu/drm/drm_fb_helper.c
+> > > +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > > @@ -1572,6 +1572,7 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+> > >  	struct drm_fb_helper *fb_helper = info->par;
+> > >  	struct drm_framebuffer *fb = fb_helper->fb;
+> > >  	int depth;
+> > > +	u8 bpp = drm_format_info_plane_bpp(fb->format, 0);
+> > > 
+> > >  	if (var->pixclock != 0 || in_dbg_master())
+> > >  		return -EINVAL;
+> > > @@ -1580,14 +1581,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+> > >  	 * Changes struct fb_var_screeninfo are currently not pushed back
+> > >  	 * to KMS, hence fail if different settings are requested.
+> > >  	 */
+> > > -	if (var->bits_per_pixel != fb->format->cpp[0] * 8 ||
+> > > +	if (var->bits_per_pixel != bpp ||
+> > >  	    var->xres > fb->width || var->yres > fb->height ||
+> > >  	    var->xres_virtual > fb->width || var->yres_virtual > fb->height) {
+> > >  		DRM_DEBUG("fb requested width/height/bpp can't fit in current fb "
+> > >  			  "request %dx%d-%d (virtual %dx%d) > %dx%d-%d\n",
+> > >  			  var->xres, var->yres, var->bits_per_pixel,
+> > >  			  var->xres_virtual, var->yres_virtual,
+> > > -			  fb->width, fb->height, fb->format->cpp[0] * 8);
+> > > +			  fb->width, fb->height, bpp);
+> > >  		return -EINVAL;
+> > >  	}
+> > > 
+> > > @@ -1949,11 +1950,12 @@ void drm_fb_helper_fill_var(struct fb_info *info, struct drm_fb_helper *fb_helpe
+> > >  			    uint32_t fb_width, uint32_t fb_height)
+> > >  {
+> > >  	struct drm_framebuffer *fb = fb_helper->fb;
+> > > +	u8 bpp = drm_format_info_plane_bpp(fb->format, 0);
+> > > 
+> > >  	info->pseudo_palette = fb_helper->pseudo_palette;
+> > >  	info->var.xres_virtual = fb->width;
+> > >  	info->var.yres_virtual = fb->height;
+> > > -	info->var.bits_per_pixel = fb->format->cpp[0] * 8;
+> > > +	info->var.bits_per_pixel = bpp;
+> > >  	info->var.accel_flags = FB_ACCELF_TEXT;
+> > >  	info->var.xoffset = 0;
+> > >  	info->var.yoffset = 0;
+> > > diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+> > > index 3b42c25bd58d..bb28919c32f3 100644
+> > > --- a/drivers/gpu/drm/drm_fourcc.c
+> > > +++ b/drivers/gpu/drm/drm_fourcc.c
+> > > @@ -272,10 +272,60 @@ int drm_format_plane_cpp(uint32_t format, int plane)
+> > >  	if (!info || plane >= info->num_planes)
+> > >  		return 0;
+> > > 
+> > > +	/*
+> > > +	 * Not valid for formats with non-integer cpp,
+> > > +	 * use drm_format{_info}_plane_bpp instead
+> > > +	 */
+> > > +	WARN_ON(!info->cpp[0]);
+> > > +
+> > >  	return info->cpp[plane];
+> > >  }
+> > >  EXPORT_SYMBOL(drm_format_plane_cpp);
+> > > 
+> > > +/**
+> > > + * drm_format_plane_bpp - determine the bits per pixel value
+> > > + * @format: pixel format (DRM_FORMAT_*)
+> > > + * @plane: plane index
+> > > + *
+> > > + * Returns:
+> > > + * The bits per pixel value for the specified plane.
+> > > + */
+> > > +int drm_format_plane_bpp(uint32_t format, int plane)
+> > > +{
+> > > +	const struct drm_format_info *info;
+> > > +
+> > > +	info = drm_format_info(format);
+> > > +	if (!info)
+> > > +		return 0;
+> > > +
+> > > +	return drm_format_info_plane_bpp(info, plane);
+> > > +}
+> > > +EXPORT_SYMBOL(drm_format_plane_bpp);
+> > > +
+> > > +/**
+> > > + * drm_format_info_plane_bpp - determine the bits per pixel value
+> > > + *
+> > > + * Convenience function which handles formats with both integer
+> > > + * and non-integer bytes-per-pixel.
+> > > + *
+> > > + * @format: pixel format info structure
+> > > + * @plane: plane index
+> > > + *
+> > > + * Returns:
+> > > + * The bits per pixel value for the specified plane.
+> > > + */
+> > > +int drm_format_info_plane_bpp(const struct drm_format_info *info, int plane)
+> > > +{
+> > > +	if (plane >= info->num_planes)
+> > > +		return 0;
+> > > +
+> > > +	if (info->cpp[0])
+> > > +		return info->cpp[plane] * 8;
+> > > +
+> > > +	return info->bpp[plane];
+> > > +}
+> > > +EXPORT_SYMBOL(drm_format_info_plane_bpp);
+> > > +
+> > >  /**
+> > >   * drm_format_horz_chroma_subsampling - get the horizontal chroma subsampling factor
+> > >   * @format: pixel format (DRM_FORMAT_*)
+> > > diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
+> > > index 8c4d32adcc17..7e00360ff70d 100644
+> > > --- a/drivers/gpu/drm/drm_framebuffer.c
+> > > +++ b/drivers/gpu/drm/drm_framebuffer.c
+> > > @@ -185,20 +185,20 @@ static int framebuffer_check(struct drm_device *dev,
+> > >  	for (i = 0; i < info->num_planes; i++) {
+> > >  		unsigned int width = fb_plane_width(r->width, info, i);
+> > >  		unsigned int height = fb_plane_height(r->height, info, i);
+> > > -		unsigned int cpp = info->cpp[i];
+> > > +		unsigned int bpp = drm_format_info_plane_bpp(info, i);
+> > > 
+> > >  		if (!r->handles[i]) {
+> > >  			DRM_DEBUG_KMS("no buffer object handle for plane %d\n", i);
+> > >  			return -EINVAL;
+> > >  		}
+> > > 
+> > > -		if ((uint64_t) width * cpp > UINT_MAX)
+> > > +		if ((uint64_t) DIV_ROUND_UP(width * bpp, 8) > UINT_MAX)
+> > >  			return -ERANGE;
+> > > 
+> > >  		if ((uint64_t) height * r->pitches[i] + r->offsets[i] > UINT_MAX)
+> > >  			return -ERANGE;
+> > > 
+> > > -		if (r->pitches[i] < width * cpp) {
+> > > +		if ((uint64_t) r->pitches[i] * 8 < (uint64_t) width * bpp) {
+> > >  			DRM_DEBUG_KMS("bad pitch %u for plane %d\n", r->pitches[i], i);
+> > >  			return -EINVAL;
+> > >  		}
+> > > @@ -476,7 +476,7 @@ int drm_mode_getfb(struct drm_device *dev,
+> > >  	r->height = fb->height;
+> > >  	r->width = fb->width;
+> > >  	r->depth = fb->format->depth;
+> > > -	r->bpp = fb->format->cpp[0] * 8;
+> > > +	r->bpp = drm_format_info_plane_bpp(fb->format, 0);
+> > >  	r->pitch = fb->pitches[0];
+> > > 
+> > >  	/* GET_FB() is an unprivileged ioctl so we must not return a
+> > > diff --git a/drivers/gpu/drm/drm_gem_framebuffer_helper.c b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+> > > index acfbc0641a06..dfe224ccaeba 100644
+> > > --- a/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+> > > +++ b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+> > > @@ -161,6 +161,7 @@ drm_gem_fb_create_with_funcs(struct drm_device *dev, struct drm_file *file,
+> > >  		unsigned int width = mode_cmd->width / (i ? info->hsub : 1);
+> > >  		unsigned int height = mode_cmd->height / (i ? info->vsub : 1);
+> > >  		unsigned int min_size;
+> > > +		u8 bpp = drm_format_info_plane_bpp(fb->format, i);
+> > > 
+> > >  		objs[i] = drm_gem_object_lookup(file, mode_cmd->handles[i]);
+> > >  		if (!objs[i]) {
+> > > @@ -170,7 +171,7 @@ drm_gem_fb_create_with_funcs(struct drm_device *dev, struct drm_file *file,
+> > >  		}
+> > > 
+> > >  		min_size = (height - 1) * mode_cmd->pitches[i]
+> > > -			 + width * info->cpp[i]
+> > > +			 + DIV_ROUND_UP(width * bpp, 8)
+> > >  			 + mode_cmd->offsets[i];
+> > > 
+> > >  		if (objs[i]->size < min_size) {
+> > > diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+> > > index 3e86408dac9f..d4af4dab1623 100644
+> > > --- a/include/drm/drm_fourcc.h
+> > > +++ b/include/drm/drm_fourcc.h
+> > > @@ -36,6 +36,7 @@ struct drm_mode_fb_cmd2;
+> > >   *	use in new code and set to 0 for new formats.
+> > >   * @num_planes: Number of color planes (1 to 3)
+> > >   * @cpp: Number of bytes per pixel (per plane)
+> > > + * @bpp: Number of bits per pixel (per plane), only valid if cpp[0] == 0.
+> > >   * @hsub: Horizontal chroma subsampling factor
+> > >   * @vsub: Vertical chroma subsampling factor
+> > >   * @has_alpha: Does the format embeds an alpha component?
+> > > @@ -45,6 +46,7 @@ struct drm_format_info {
+> > >  	u8 depth;
+> > >  	u8 num_planes;
+> > >  	u8 cpp[3];
+> > > +	u8 bpp[3];
+> > >  	u8 hsub;
+> > >  	u8 vsub;
+> > >  	bool has_alpha;
+> > > @@ -66,6 +68,8 @@ drm_get_format_info(struct drm_device *dev,
+> > >  uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
+> > >  int drm_format_num_planes(uint32_t format);
+> > >  int drm_format_plane_cpp(uint32_t format, int plane);
+> > > +int drm_format_plane_bpp(uint32_t format, int plane);
+> > > +int drm_format_info_plane_bpp(const struct drm_format_info *format, int plane);
+> > >  int drm_format_horz_chroma_subsampling(uint32_t format);
+> > >  int drm_format_vert_chroma_subsampling(uint32_t format);
+> > >  int drm_format_plane_width(int width, uint32_t format, int plane);
+> > > --
+> > > 2.16.1
+> > > 
+> > 
+> > -- 
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
