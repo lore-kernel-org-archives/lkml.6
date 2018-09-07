@@ -2,96 +2,106 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6294CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2183D20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:25:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2183D20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id C768C20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:26:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zqp1SGab"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C768C20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbeIHBHo (ORCPT
+        id S1726598AbeIHBJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:07:44 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:48620 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbeIHBHo (ORCPT
+        Fri, 7 Sep 2018 21:09:12 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:45880 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeIHBJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:07:44 -0400
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1fyNJR-0007Sx-DR; Fri, 07 Sep 2018 15:25:06 -0500
-Message-ID: <86101ce0f4201d05510e57d74cafe8c665b8e5d4.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Ran Wang <ran.wang_1@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date:   Fri, 07 Sep 2018 15:25:04 -0500
-In-Reply-To: <20180831035219.31619-3-ran.wang_1@nxp.com>
-References: <20180831035219.31619-1-ran.wang_1@nxp.com>
-         <20180831035219.31619-3-ran.wang_1@nxp.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
+        Fri, 7 Sep 2018 21:09:12 -0400
+Received: by mail-pg1-f202.google.com with SMTP id 186-v6so7627273pgc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 13:26:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=HPeS88KNIjQVlbvUr7jP09u90T8uU//QpUwSNI1RzRs=;
+        b=Zqp1SGabBIHAg7e/rC0NyUUFXDZE0UjIA0BzorcSjGmpA4fkREYhT8KuaPFDj2S95B
+         RjWoNs426NWUePhol4xuCOU76cqu4AAYk1d162dVaBWCSYLY3Kfal8aOzEbxLctbg2FI
+         Osk+0P41AZoNvmwQEucR1ABTCvbo5ICdlLbHFL4y5z9KE3alTPk+R1JdQkvPADOBcEP8
+         mAoFjHwVtgL1ukxmtkoqzSf9+wqZ375thEUwXJmogg/SBXhTJ1/qou8pIAVsWpOw7GVV
+         66iWcfKpyzsU2koHckzsb0mfmbXetuywq48v7dtWs6NalX76q+UaC5AjM1jS+WxxUNoW
+         Qviw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=HPeS88KNIjQVlbvUr7jP09u90T8uU//QpUwSNI1RzRs=;
+        b=XuaojxcF6NJeeJOAfIEn7nHQLoJ3C/3I3aWz5uMqySVyb7wq+i89uj+kcKylBReGEB
+         keaY5thigEQiFIoOyYLJP5y15Bn+0Rsw8yPSMi2FavDH4aE8KGHgPgxSpddaDzfM/PxQ
+         XOoZjFq6O/D7xpZRu1w0PZS06HwLZE4xWfKkOhfKDq0vP5Emj1aHHi9/YEaJYcCYjl8c
+         IxYRGc+Y6eB8HxxOO7U7NQyVw/CVCevqr7dhrrR8N2zypkC9IvzO5UWczcpT6+TQBnWL
+         0ZlrGFWZyQtcwqSXIygPM6QKEYbiNQApZYq4lwN3h5PtYFYf3Bq3StchuXeFVSHtROja
+         tXYA==
+X-Gm-Message-State: APzg51D1O7o+8DA0qHTVm/A/CKuVUvWoepiO4pgK5lpdxYf9ojdfxXbQ
+        mMSdLO7YFSMKnlU7pYb4pAgbuA1nebOSOfjPxgM=
+X-Google-Smtp-Source: ANB0VdapJIpg9AjZ67qlFdbFK5jZ8iDoeXkLaR1F/Ca2cS4joAdlXWRMExp8sbf5UbPtyDwLGXmZxFCM7+G+voefBOs=
+X-Received: by 2002:a63:a505:: with SMTP id n5-v6mr715951pgf.31.1536351997128;
+ Fri, 07 Sep 2018 13:26:37 -0700 (PDT)
+Date:   Fri,  7 Sep 2018 13:26:16 -0700
+Message-Id: <20180907202618.258569-1-ndesaulniers@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: ran.wang_1@nxp.com, leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 3/3] soc: fsl: add RCPM driver
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
+Subject: [PATCH] x86/boot: define CC_HAVE_ASM_GOTO
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Borislav Petkov <bp@suse.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-31 at 11:52 +0800, Ran Wang wrote:
-> The NXP's QorIQ Processors based on ARM Core have RCPM module (Run
-> Control and Power Management), which performs all device-level
-> tasks associated with power management such as wakeup source control.
-> 
-> This driver depends on FSL platform PM driver framework which help to
-> isolate user and PM service provider (such as RCPM driver).
-> 
-> Signed-off-by: Chenhui Zhao <chenhui.zhao@nxp.com>
-> Signed-off-by: Ying Zhang <ying.zhang22455@nxp.com>
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> ---
->  drivers/soc/fsl/Kconfig   |    6 ++
->  drivers/soc/fsl/Makefile  |    1 +
->  drivers/soc/fsl/ls-rcpm.c |  153
-> +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 160 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/soc/fsl/ls-rcpm.c
+Since this file steamrolls KBUILD_CFLAGS, we have to redefine these
+symbols. This will prevent warnings in source files in this directory
+when Clang supports asm goto.
 
-Is there a reason why this is LS-specific, or could it be used with PPC RCPM
-blocks?
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+ arch/x86/boot/compressed/Makefile | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig
-> index 6517412..882330d 100644
-> --- a/drivers/soc/fsl/Kconfig
-> +++ b/drivers/soc/fsl/Kconfig
-> @@ -30,3 +30,9 @@ config FSL_PLAT_PM
->  	  have to know the implement details of wakeup function it require.
->  	  Besides, it is also easy for service side to upgrade its logic
-> when
->  	  design changed and remain user side unchanged.
-> +
-> +config LS_RCPM
-> +	bool "Freescale RCPM support"
-> +	depends on (FSL_PLAT_PM)
-
-Why is this parenthesized?
-
--Scott
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 28764dacf018..158c0b4e178a 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -56,6 +56,13 @@ KBUILD_LDFLAGS += $(shell $(LD) --help 2>&1 | grep -q "\-z noreloc-overflow" \
+ endif
+ LDFLAGS_vmlinux := -T
+ 
++# check for 'asm goto'
++ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
++  CC_HAVE_ASM_GOTO := 1
++  KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
++  KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
++endif
++
+ hostprogs-y	:= mkpiggy
+ HOST_EXTRACFLAGS += -I$(srctree)/tools/include
+ 
+-- 
+2.19.0.rc2.392.g5ba43deb5a-goog
 
