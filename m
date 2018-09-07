@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050D2C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53954C43143
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCAB420844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAB420844
+	by mail.kernel.org (Postfix) with ESMTP id 1917F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:51:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1917F2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbeIGVdA (ORCPT
+        id S1727175AbeIGVdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:33:00 -0400
-Received: from nautica.notk.org ([91.121.71.147]:38082 "EHLO nautica.notk.org"
+        Fri, 7 Sep 2018 17:33:02 -0400
+Received: from nautica.notk.org ([91.121.71.147]:38087 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbeIGVc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:32:59 -0400
+        id S1726171AbeIGVdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:33:00 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 3478AC01A; Fri,  7 Sep 2018 18:51:12 +0200 (CEST)
+        id 5C884C01B; Fri,  7 Sep 2018 18:51:13 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 To:     v9fs-developer@lists.sourceforge.net,
         Eric Van Hensbergen <ericvh@gmail.com>,
         Latchesar Ionkov <lucho@ionkov.net>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Dominique Martinet <dominique.martinet@cea.fr>
-Subject: [PATCH 1/4] 9p: acl: fix uninitialized iattr access
-Date:   Fri,  7 Sep 2018 18:50:54 +0200
-Message-Id: <1536339057-21974-2-git-send-email-asmadeus@codewreck.org>
+Subject: [PATCH 2/4] 9p/rdma: remove useless check in cm_event_handler
+Date:   Fri,  7 Sep 2018 18:50:55 +0200
+Message-Id: <1536339057-21974-3-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1536339057-21974-1-git-send-email-asmadeus@codewreck.org>
 References: <1536339057-21974-1-git-send-email-asmadeus@codewreck.org>
@@ -43,29 +43,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dominique Martinet <dominique.martinet@cea.fr>
 
-iattr is passed to v9fs_vfs_setattr_dotl which does send various
-values from iattr over the wire, even if it tells the server to
-only look at iattr.ia_valid fields this could leak some stack data.
+the client c is always dereferenced to get the rdma struct, so c has to
+be a valid pointer at this point.
+Gcc would optimize that away but let's make coverity happy...
 
-Addresses-Coverity-ID: 1195601 ("Uninitalized scalar variable")
+Addresses-Coverity-ID: 102778 ("Dereference before null check")
 Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 ---
- fs/9p/acl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/9p/trans_rdma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-index 082d227fa56b..6261719f6f2a 100644
---- a/fs/9p/acl.c
-+++ b/fs/9p/acl.c
-@@ -276,7 +276,7 @@ static int v9fs_xattr_set_acl(const struct xattr_handler *handler,
- 	switch (handler->flags) {
- 	case ACL_TYPE_ACCESS:
- 		if (acl) {
--			struct iattr iattr;
-+			struct iattr iattr = { 0 };
- 			struct posix_acl *old_acl = acl;
+diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+index 9719bc4d9424..119103bfa82e 100644
+--- a/net/9p/trans_rdma.c
++++ b/net/9p/trans_rdma.c
+@@ -274,8 +274,7 @@ p9_cm_event_handler(struct rdma_cm_id *id, struct rdma_cm_event *event)
+ 	case RDMA_CM_EVENT_DISCONNECTED:
+ 		if (rdma)
+ 			rdma->state = P9_RDMA_CLOSED;
+-		if (c)
+-			c->status = Disconnected;
++		c->status = Disconnected;
+ 		break;
  
- 			retval = posix_acl_update_mode(inode, &iattr.ia_mode, &acl);
+ 	case RDMA_CM_EVENT_TIMEWAIT_EXIT:
 -- 
 2.17.1
 
