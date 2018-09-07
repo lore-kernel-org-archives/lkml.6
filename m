@@ -2,267 +2,487 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A57AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AEDC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 864BB2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864BB2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 84C2E20857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C2E20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729089AbeIGHBn (ORCPT
+        id S1729121AbeIGHHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 03:01:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41321 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726293AbeIGHBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 03:01:43 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 799F2EC87F2AA;
-        Fri,  7 Sep 2018 10:23:09 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 7 Sep 2018
- 10:23:03 +0800
-Date:   Fri, 7 Sep 2018 10:21:15 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH 1/7] vfio/sdmdev: Add documents for WarpDrive framework
-Message-ID: <20180907022115.GH230707@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180903005204.26041-2-nek.in.cn@gmail.com>
- <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
+        Fri, 7 Sep 2018 03:07:20 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:39955 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728031AbeIGHHU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 03:07:20 -0400
+X-UUID: c0b9e816c6794bb8b1d6e0e0f1f28e37-20180907
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1014987525; Fri, 07 Sep 2018 10:28:43 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 7 Sep 2018 10:28:41 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 7 Sep 2018 10:28:41 +0800
+Message-ID: <1536287321.25853.19.camel@mtksdaap41>
+Subject: Re: [PATCH v2 10/13] drm/mediatek: add hdmi driver for MT2701 and
+ MT7623
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Fri, 7 Sep 2018 10:28:41 +0800
+In-Reply-To: <20180905083146.14727-11-bibby.hsieh@mediatek.com>
+References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
+         <20180905083146.14727-11-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 11:36:36AM -0700, Randy Dunlap wrote:
-> Date: Thu, 6 Sep 2018 11:36:36 -0700
-> From: Randy Dunlap <rdunlap@infradead.org>
-> To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
->  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
->  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Alex Williamson
->  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
->  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
->  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
->  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
->  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
->  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
->  Sanjay Kumar <sanjay.k.kumar@intel.com>
-> CC: linuxarm@huawei.com
-> Subject: Re: [PATCH 1/7] vfio/sdmdev: Add documents for WarpDrive framework
-> User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
->  Thunderbird/52.9.1
-> Message-ID: <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
-> 
-> Hi,
-> 
-> On 09/02/2018 05:51 PM, Kenneth Lee wrote:
-> > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > 
-> > WarpDrive is a common user space accelerator framework.  Its main component
-> > in Kernel is called sdmdev, Share Domain Mediated Device. It exposes
-> > the hardware capabilities to the user space via vfio-mdev. So processes in
-> > user land can obtain a "queue" by open the device and direct access the
-> > hardware MMIO space or do DMA operation via VFIO interface.
-> > 
-> > WarpDrive is intended to be used with Jean Philippe Brucker's SVA
-> > patchset to support multi-process. But This is not a must.  Without the
-> > SVA patches, WarpDrive can still work for one process for every hardware
-> > device.
-> > 
-> > This patch add detail documents for the framework.
-> > 
-> > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-> > ---
-> >  Documentation/00-INDEX                |   2 +
-> >  Documentation/warpdrive/warpdrive.rst | 100 ++++
-> >  Documentation/warpdrive/wd-arch.svg   | 728 ++++++++++++++++++++++++++
-> >  3 files changed, 830 insertions(+)
-> >  create mode 100644 Documentation/warpdrive/warpdrive.rst
-> >  create mode 100644 Documentation/warpdrive/wd-arch.svg
-> 
-> > diff --git a/Documentation/warpdrive/warpdrive.rst b/Documentation/warpdrive/warpdrive.rst
-> > new file mode 100644
-> > index 000000000000..6d2a5d1e08c4
-> > --- /dev/null
-> > +++ b/Documentation/warpdrive/warpdrive.rst
-> > @@ -0,0 +1,100 @@
-> > +Introduction of WarpDrive
-> > +=========================
-> > +
-> > +*WarpDrive* is a general accelerator framework for user space. It intends to
-> > +provide interface for the user process to send request to hardware
-> > +accelerator without heavy user-kernel interaction cost.
-> > +
-> > +The *WarpDrive* user library is supposed to provide a pipe-based API, such as:
-> 
-> Do you say "is supposed to" because it doesn't do that (yet)?
-> Or you could just change that to say:
-> 
->    The WarpDrive user library provides a pipe-based API, such as:
-> 
+Hi, Bibby:
 
-Actually, I tried to say it can be defined like this. But people can choose
-other implementation with the same kernel API.
+On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> This patch adds hdmi dirver suppot for both MT2701 and MT7623.
+> And also support other (existing or future) chips that use
+> the same binding and driver.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/Makefile              |   1 +
+>  drivers/gpu/drm/mediatek/mtk_hdmi.h            |   1 +
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        |   3 +
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 307 +++++++++++++++++++++++++
+>  4 files changed, 312 insertions(+)
+>  create mode 100644 drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> 
+> diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
+> index 7f947979d68f..bf0067b5ee6f 100644
+> --- a/drivers/gpu/drm/mediatek/Makefile
+> +++ b/drivers/gpu/drm/mediatek/Makefile
+> @@ -2,6 +2,7 @@
+>  mediatek-drm-hdmi-objs := mtk_cec.o \
+>  			  mtk_hdmi.o \
+>  			  mtk_hdmi_ddc.o \
+> +                          mtk_mt2701_hdmi_phy.o \
+>  			  mtk_mt8173_hdmi_phy.o \
+>  			  mtk_hdmi_phy.o
+>  
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.h b/drivers/gpu/drm/mediatek/mtk_hdmi.h
+> index a350a6c9271f..fa12eb6288f3 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.h
+> @@ -45,5 +45,6 @@ extern struct platform_driver mtk_cec_driver;
+>  extern struct platform_driver mtk_hdmi_ddc_driver;
+>  extern struct platform_driver mtk_hdmi_phy_driver;
+>  extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf;
+> +extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf;
+>  
+>  #endif /* _MTK_HDMI_CTRL_H */
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> index 82ed73575e04..606fc7a0c13b 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> @@ -135,6 +135,9 @@ static int mtk_hdmi_phy_remove(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id mtk_hdmi_phy_match[] = {
+> +	{ .compatible = "mediatek,mt2701-hdmi-phy",
+> +	  .data = &mtk_hdmi_phy_2701_conf,
+> +	},
+>  	{ .compatible = "mediatek,mt8173-hdmi-phy",
+>  	  .data = &mtk_hdmi_phy_8173_conf,
+>  	},
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> new file mode 100644
+> index 000000000000..428ef1557a14
+> --- /dev/null
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -0,0 +1,307 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Chunhui Dai <chunhui.dai@mediatek.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/debugfs.h>
 
-I will say it explicitly in the future version. Thank you.
+Why need debugfs.h?
 
-> 
-> > +        ::
-> > +        int wd_request_queue(struct wd_queue *q);
-> > +        void wd_release_queue(struct wd_queue *q);
-> > +
-> > +        int wd_send(struct wd_queue *q, void *req);
-> > +        int wd_recv(struct wd_queue *q, void **req);
-> > +        int wd_recv_sync(struct wd_queue *q, void **req);
-> > +        int wd_flush(struct wd_queue *q);
-> > +
-> > +*wd_request_queue* creates the pipe connection, *queue*, between the
-> > +application and the hardware. The application sends request and pulls the
-> > +answer back by asynchronized wd_send/wd_recv, which directly interact with the
-> > +hardware (by MMIO or share memory) without syscall.
-> > +
-> > +*WarpDrive* maintains a unified application address space among all involved
-> > +accelerators.  With the following APIs: ::
-> 
-> Seems like an extra '.' there.  How about:
-> 
->   accelerators with the following APIs: ::
-> 
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/slab.h>
+> +#include "mtk_hdmi.h"
 
-Err, the "with..." clause belong to the following "The referred process
-space...".
+I don't know why the included file is different in mtk_mt8173_hdmi_phy.c
+with this file. The difference of these two files are hardware control,
+so I think these two files would include the same header files. If these
+two file include the same files, maybe we should move the common include
+statement in some header file to prevent duplicate in these two files.
 
-> > +
-> > +        int wd_mem_share(struct wd_queue *q, const void *addr,
-> > +                         size_t size, int flags);
-> > +        void wd_mem_unshare(struct wd_queue *q, const void *addr, size_t size);
-> > +
-> > +The referred process space shared by these APIs can be directly referred by the
-> > +hardware. The process can also dedicate its whole process space with flags,
-> > +*WD_SHARE_ALL* (not in this patch yet).
-> > +
-> > +The name *WarpDrive* is simply a cool and general name meaning the framework
-> > +makes the application faster. As it will be explained in this text later, the
-> > +facility in kernel is called *SDMDEV*, namely "Share Domain Mediated Device".
-> > +
-> > +
-> > +How does it work
-> > +================
-> > +
-> > +*WarpDrive* is built upon *VFIO-MDEV*. The queue is wrapped as *mdev* in VFIO.
-> > +So memory sharing can be done via standard VFIO standard DMA interface.
-> > +
-> > +The architecture is illustrated as follow figure:
-> > +
-> > +.. image:: wd-arch.svg
-> > +        :alt: WarpDrive Architecture
-> > +
-> > +Accelerator driver shares its capability via *SDMDEV* API: ::
-> > +
-> > +        vfio_sdmdev_register(struct vfio_sdmdev *sdmdev);
-> > +        vfio_sdmdev_unregister(struct vfio_sdmdev *sdmdev);
-> > +        vfio_sdmdev_wake_up(struct spimdev_queue *q);
-> > +
-> > +*vfio_sdmdev_register* is a helper function to register the hardware to the
-> > +*VFIO_MDEV* framework. The queue creation is done by *mdev* creation interface.
-> > +
-> > +*WarpDrive* User library mmap the mdev to access its mmio space and shared
-> 
-> s/mmio/MMIO/
-> 
-> > +memory. Request can be sent to, or receive from, hardware in this mmap-ed
-> > +space until the queue is full or empty.
-> > +
-> > +The user library can wait on the queue by ioctl(VFIO_SDMDEV_CMD_WAIT) the mdev
-> > +if the queue is full or empty. If the queue status is changed, the hardware
-> > +driver use *vfio_sdmdev_wake_up* to wake up the waiting process.
-> > +
-> > +
-> > +Multiple processes support
-> > +==========================
-> > +
-> > +In the latest mainline kernel (4.18) when this document is written,
-> > +multi-process is not supported in VFIO yet.
-> > +
-> > +Jean Philippe Brucker has a patchset to enable it[1]_. We have tested it
-> > +with our hardware (which is known as *D06*). It works well. *WarpDrive* rely
-> > +on them to support multiple processes. If it is not enabled, *WarpDrive* can
-> > +still work, but it support only one mdev for a process, which will share the
-> > +same io map table with kernel. (But it is not going to be a security problem,
-> > +since the user application cannot access the kernel address space)
-> > +
-> > +When multiprocess is support, mdev can be created based on how many
-> > +hardware resource (queue) is available. Because the VFIO framework accepts only
-> > +one open from one mdev iommu_group. Mdev become the smallest unit for process
-> > +to use queue. And the mdev will not be released if the user process exist. So
-> > +it will need a resource agent to manage the mdev allocation for the user
-> > +process. This is not in this document's range.
-> > +
-> > +
-> > +Legacy Mode Support
-> > +===================
-> > +For the hardware on which IOMMU is not support, WarpDrive can run on *NOIOMMU*
-> > +mode. That require some update to the mdev driver, which is not included in
-> > +this version yet.
-> > +
-> > +
-> > +References
-> > +==========
-> > +.. [1] https://patchwork.kernel.org/patch/10394851/
-> > +
-> > +.. vim: tw=78
-> 
-> thanks,
-> -- 
-> ~Randy
+> +
+> +#define HDMI_CON0	0x00
+> +#define RG_HDMITX_DRV_IBIAS		(0)
 
--- 
-			-Kenneth(Hisilicon)
+You need not to embrace a single number.
 
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
+> +#define RG_HDMITX_DRV_IBIAS_MASK	(0x3F << 0)
+
+Use lower case for hex number.
+
+> +#define RG_HDMITX_EN_SER		(12)
+> +#define RG_HDMITX_EN_SER_MASK		(0x0F << 12)
+> +#define RG_HDMITX_EN_SLDO		(16)
+> +#define RG_HDMITX_EN_SLDO_MASK		(0x0F << 16)
+> +#define RG_HDMITX_EN_PRED		(20)
+> +#define RG_HDMITX_EN_PRED_MASK		(0x0F << 20)
+> +#define RG_HDMITX_EN_IMP		(24)
+> +#define RG_HDMITX_EN_IMP_MASK		(0x0F << 24)
+> +#define RG_HDMITX_EN_DRV		(28)
+> +#define RG_HDMITX_EN_DRV_MASK		(0x0F << 28)
+> +
+> +#define HDMI_CON1	0x04
+> +#define RG_HDMITX_PRED_IBIAS		(18)
+> +#define RG_HDMITX_PRED_IBIAS_MASK	(0x0F << 18)
+> +#define RG_HDMITX_PRED_IMP		(0x01 << 22)
+> +#define RG_HDMITX_DRV_IMP		(26)
+> +#define RG_HDMITX_DRV_IMP_MASK		(0x3F << 26)
+> +
+> +#define HDMI_CON2	0x08
+> +#define RG_HDMITX_EN_TX_CKLDO		(0x01 << 0)
+> +#define RG_HDMITX_EN_TX_POSDIV		(0x01 << 1)
+> +#define RG_HDMITX_TX_POSDIV		(3)
+> +#define RG_HDMITX_TX_POSDIV_MASK	(0x03 << 3)
+> +#define RG_HDMITX_EN_MBIAS		(0x01 << 6)
+> +#define RG_HDMITX_MBIAS_LPF_EN		(0x01 << 7)
+> +
+> +#define HDMI_CON4	0x10
+> +#define RG_HDMITX_RESERVE_MASK		(0xFFFFFFFF << 0)
+> +
+> +#define HDMI_CON6	0x18
+> +#define RG_HTPLL_BR			(0)
+> +#define RG_HTPLL_BR_MASK		(0x03 << 0)
+> +#define RG_HTPLL_BC			(2)
+> +#define RG_HTPLL_BC_MASK		(0x03 << 2)
+> +#define RG_HTPLL_BP			(4)
+> +#define RG_HTPLL_BP_MASK		(0x0F << 4)
+> +#define RG_HTPLL_IR			(8)
+> +#define RG_HTPLL_IR_MASK		(0x0F << 8)
+> +#define RG_HTPLL_IC			(12)
+> +#define RG_HTPLL_IC_MASK		(0x0F << 12)
+> +#define RG_HTPLL_POSDIV			(16)
+> +#define RG_HTPLL_POSDIV_MASK		(0x03 << 16)
+> +#define RG_HTPLL_PREDIV			(18)
+> +#define RG_HTPLL_PREDIV_MASK		(0x03 << 18)
+> +#define RG_HTPLL_FBKSEL			(20)
+> +#define RG_HTPLL_FBKSEL_MASK		(0x03 << 20)
+> +#define RG_HTPLL_RLH_EN			(0x01 << 22)
+> +#define RG_HTPLL_FBKDIV			(24)
+> +#define RG_HTPLL_FBKDIV_MASK		(0x7F << 24)
+> +#define RG_HTPLL_EN			(0x01 << 31)
+> +
+> +#define HDMI_CON7	0x1c
+> +#define RG_HTPLL_AUTOK_EN		(0x01 << 23)
+> +#define RG_HTPLL_DIVEN			(28)
+> +#define RG_HTPLL_DIVEN_MASK		(0x07 << 28)
+> +
+> +static inline struct mtk_hdmi_phy *to_mtk_hdmi_pll(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct mtk_hdmi_phy, pll_hw);
+> +}
+
+to_mtk_hdmi_pll() is the same as to_mtk_hdmi_phy() in
+mtk_mt8173_hdmi_phy.c, I would like the merge these two functions. Maybe
+you could these common function to a .h or .c file.
+
+> +
+> +static inline void mtk_hdmi_pll_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+> +				     u32 val, u32 mask)
+> +{
+> +	u32 tmp = readl(hdmi_phy->regs  + offset) & ~mask;
+> +
+> +	tmp |= (val & mask);
+> +	writel(tmp, hdmi_phy->regs + offset);
+> +}
+
+Ditto.
+
+> +
+> +static int mtk_hdmi_pll_enable(struct clk_hw *hw)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
+> +
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN,
+> +			  RG_HTPLL_AUTOK_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_POSDIV),
+> +			  RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS,
+> +			  RG_HDMITX_EN_MBIAS);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, RG_HTPLL_EN, RG_HTPLL_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO,
+> +			  RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SLDO),
+> +			  RG_HDMITX_EN_SLDO_MASK);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN,
+> +			  RG_HDMITX_MBIAS_LPF_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV,
+> +			  RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SER),
+> +			  RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_PRED),
+> +			  RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_DRV),
+> +			  RG_HDMITX_EN_DRV_MASK);
+> +	usleep_range(80, 100);
+> +	return 0;
+> +}
+> +
+> +static void mtk_hdmi_pll_disable(struct clk_hw *hw)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
+> +
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_DRV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_MBIAS_LPF_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SLDO_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_MBIAS);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, 0, RG_HTPLL_AUTOK_EN);
+> +	usleep_range(80, 100);
+> +}
+> +
+> +static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				 unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
+> +	u32 pos_div;
+> +
+> +	if (rate <= 64000000)
+> +		pos_div = 3;
+> +	else if (rate <= 12800000)
+> +		pos_div = 1;
+> +	else
+> +		pos_div = 1;
+> +
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_PREDIV),
+> +			  RG_HTPLL_PREDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_POSDIV),
+> +			  RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IC),
+> +			  RG_HTPLL_IC_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IR),
+> +			  RG_HTPLL_IR_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, (pos_div << RG_HDMITX_TX_POSDIV),
+> +			  RG_HDMITX_TX_POSDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (1 << RG_HTPLL_FBKSEL),
+> +			  RG_HTPLL_FBKSEL_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (19 << RG_HTPLL_FBKDIV),
+> +			  RG_HTPLL_FBKDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, (0x2 << RG_HTPLL_DIVEN),
+> +			  RG_HTPLL_DIVEN_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0xc << RG_HTPLL_BP),
+> +			  RG_HTPLL_BP_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x2 << RG_HTPLL_BC),
+> +			  RG_HTPLL_BC_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_BR),
+> +			  RG_HTPLL_BR_MASK);
+> +
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON1, 0, RG_HDMITX_PRED_IMP);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON1, (0x3 << RG_HDMITX_PRED_IBIAS),
+> +			  RG_HDMITX_PRED_IBIAS_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0x0 << RG_HDMITX_EN_IMP),
+> +			  RG_HDMITX_EN_IMP_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON1, (0x28 << RG_HDMITX_DRV_IMP),
+> +			  RG_HDMITX_DRV_IMP_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON4, 0x28, RG_HDMITX_RESERVE_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xa << RG_HDMITX_DRV_IBIAS),
+> +			  RG_HDMITX_DRV_IBIAS_MASK);
+> +	return 0;
+> +}
+> +
+> +static long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				    unsigned long *parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
+> +
+> +	hdmi_phy->pll_rate = rate;
+
+In mtk_mt8173_hdmi_phy.c, mtk_hdmi_pll_round_rate adjust the
+parent_rate, so mt2701 need not to adjust?
+
+> +	return rate;
+> +}
+> +
+> +static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> +					      unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
+> +
+> +	return hdmi_phy->pll_rate;
+> +}
+> +
+> +static const struct clk_ops mtk_hdmi_phy_pll_ops = {
+> +	.enable = mtk_hdmi_pll_enable,
+> +	.disable = mtk_hdmi_pll_disable,
+
+Why mt2701 implement enable/disable, but mt8173 implement
+prepare/unprepare? I would like these two use the same method. If these
+two would be different, describe 'why' in commit message.
+
+> +	.set_rate = mtk_hdmi_pll_set_rate,
+> +	.round_rate = mtk_hdmi_pll_round_rate,
+> +	.recalc_rate = mtk_hdmi_pll_recalc_rate,
+> +};
+> +
+> +static void mtk_hdmi_phy_enable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+> +{
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN,
+> +			  RG_HTPLL_AUTOK_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
+
+In mtk_mt8173_hdmi_phy.c, it define mtk_hdmi_phy_set_bits() and
+mtk_hdmi_phy_clear_bits(). I think we could reuse it to reduce the code
+size.
+
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_POSDIV),
+> +			  RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS,
+> +			  RG_HDMITX_EN_MBIAS);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, RG_HTPLL_EN, RG_HTPLL_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO,
+> +			  RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SLDO),
+> +			  RG_HDMITX_EN_SLDO_MASK);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN,
+> +			  RG_HDMITX_MBIAS_LPF_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV,
+> +			  RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SER),
+> +			  RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_PRED),
+> +			  RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_DRV),
+> +			  RG_HDMITX_EN_DRV_MASK);
+> +	usleep_range(80, 100);
+> +}
+> +
+> +static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+> +{
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_DRV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_PRED_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SER_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_POSDIV);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_MBIAS_LPF_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SLDO_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_CKLDO);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_EN);
+> +	usleep_range(80, 100);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_MBIAS);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_POSDIV_MASK);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
+> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, 0, RG_HTPLL_AUTOK_EN);
+> +	usleep_range(80, 100);
+> +}
+> +
+> +static int mtk_hdmi_phy_power_on(struct phy *phy)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(hdmi_phy->pll);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mtk_hdmi_phy_enable_tmds(hdmi_phy);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mtk_hdmi_phy_power_off(struct phy *phy)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
+> +
+> +	mtk_hdmi_phy_disable_tmds(hdmi_phy);
+> +	clk_disable_unprepare(hdmi_phy->pll);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops mtk_hdmi_phy_dev_ops = {
+> +	.power_on = mtk_hdmi_phy_power_on,
+> +	.power_off = mtk_hdmi_phy_power_off,
+> +	.owner = THIS_MODULE,
+> +};
+
+
+mtk_hdmi_phy_power_on(), mtk_hdmi_phy_power_off(), mtk_hdmi_phy_dev_ops
+is the same as those in mtk_mt8173_hdmi_phy.c, so I think you should
+merge them to prevent duplicate code.
+
+Regards,
+CK
+
+> +
+> +struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
+> +	.tz_enabled = false,
+> +	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
+> +	.hdmi_phy_dev_ops = &mtk_hdmi_phy_dev_ops,
+> +};
+> +
+> +MODULE_AUTHOR("Chunhui Dai <chunhui.dai@mediatek.com>");
+> +MODULE_DESCRIPTION("MediaTek HDMI PHY Driver");
+> +MODULE_LICENSE("GPL v2");
+
 
