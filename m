@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04279C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB92FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B69A12083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69A12083D
+	by mail.kernel.org (Postfix) with ESMTP id A8FD22083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FD22083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbeIHCSK (ORCPT
+        id S1729848AbeIHCSR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:18:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52070 "EHLO
+        Fri, 7 Sep 2018 22:18:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727743AbeIHCSJ (ORCPT
+        with ESMTP id S1726618AbeIHCSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:18:09 -0400
+        Fri, 7 Sep 2018 22:18:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64950D6B;
-        Fri,  7 Sep 2018 21:35:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A29FD6B;
+        Fri,  7 Sep 2018 21:35:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 4.9 40/63] ARM: tegra: Fix Tegra30 Cardhu PCA954x reset
-Date:   Fri,  7 Sep 2018 23:10:11 +0200
-Message-Id: <20180907211015.185108272@linuxfoundation.org>
+        stable@vger.kernel.org, Yannik Sembritzki <yannik@sembritzki.me>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 41/63] Replace magic for trusting the secondary keyring with #define
+Date:   Fri,  7 Sep 2018 23:10:12 +0200
+Message-Id: <20180907211015.234722958@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -50,44 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Yannik Sembritzki <yannik@sembritzki.me>
 
-commit 6e1811900b6fe6f2b4665dba6bd6ed32c6b98575 upstream.
+commit 817aef260037f33ee0f44c17fe341323d3aebd6d upstream.
 
-On all versions of Tegra30 Cardhu, the reset signal to the NXP PCA9546
-I2C mux is connected to the Tegra GPIO BB0. Currently, this pin on the
-Tegra is not configured as a GPIO but as a special-function IO (SFIO)
-that is multiplexing the pin to an I2S controller. On exiting system
-suspend, I2C commands sent to the PCA9546 are failing because there is
-no ACK. Although it is not possible to see exactly what is happening
-to the reset during suspend, by ensuring it is configured as a GPIO
-and driven high, to de-assert the reset, the failures are no longer
-seen.
+Replace the use of a magic number that indicates that verify_*_signature()
+should use the secondary keyring with a symbol.
 
-Please note that this GPIO is also used to drive the reset signal
-going to the camera connector on the board. However, given that there
-is no camera support currently for Cardhu, this should not have any
-impact.
-
-Fixes: 40431d16ff11 ("ARM: tegra: enable PCA9546 on Cardhu")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/tegra30-cardhu.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ certs/system_keyring.c                  |    3 ++-
+ crypto/asymmetric_keys/pkcs7_key_type.c |    2 +-
+ include/linux/verification.h            |    6 ++++++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -205,6 +205,7 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			reg = <0x70>;
-+			reset-gpio = <&gpio TEGRA_GPIO(BB, 0) GPIO_ACTIVE_LOW>;
- 		};
- 	};
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -14,6 +14,7 @@
+ #include <linux/sched.h>
+ #include <linux/cred.h>
+ #include <linux/err.h>
++#include <linux/verification.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+@@ -207,7 +208,7 @@ int verify_pkcs7_signature(const void *d
  
+ 	if (!trusted_keys) {
+ 		trusted_keys = builtin_trusted_keys;
+-	} else if (trusted_keys == (void *)1UL) {
++	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+ 		trusted_keys = secondary_trusted_keys;
+ #else
+--- a/crypto/asymmetric_keys/pkcs7_key_type.c
++++ b/crypto/asymmetric_keys/pkcs7_key_type.c
+@@ -62,7 +62,7 @@ static int pkcs7_preparse(struct key_pre
+ 
+ 	return verify_pkcs7_signature(NULL, 0,
+ 				      prep->data, prep->datalen,
+-				      (void *)1UL, usage,
++				      VERIFY_USE_SECONDARY_KEYRING, usage,
+ 				      pkcs7_view_content, prep);
+ }
+ 
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -13,6 +13,12 @@
+ #define _LINUX_VERIFICATION_H
+ 
+ /*
++ * Indicate that both builtin trusted keys and secondary trusted keys
++ * should be used.
++ */
++#define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
++
++/*
+  * The use to which an asymmetric key is being put.
+  */
+ enum key_being_used_for {
 
 
