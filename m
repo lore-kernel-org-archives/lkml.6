@@ -2,112 +2,175 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 278DAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE63DC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DAC2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="qlASG0pk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3DAC2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by mail.kernel.org (Postfix) with ESMTP id 70ADD20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70ADD20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730574AbeIHCZS (ORCPT
+        id S1730551AbeIHCZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:25:18 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:13024 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729344AbeIHCZS (ORCPT
+        Fri, 7 Sep 2018 22:25:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56496 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729344AbeIHCZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:25:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536356543; x=1567892543;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Cf6O7A8NHGLrfGEVJAMW4eEXGii83rNsKysJ+20CSh4=;
-  b=qlASG0pkfKr09pQsuB93INLzXPYOi7yandT2mcOtXhPRljG4wGX46hm6
-   fOUasJInszq2D/jvl+sokh7m7QhCyDaZnNkGz5ib0/XppdMICfygT9Mrh
-   //XMnb0ks9eLYwHiG8z5LM1NlmhPYFZpkqVM2sxFZzZbv2/u3WCxJQAv7
-   w=;
-X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="361243196"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-81e76b79.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:42:22 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
-        by email-inbound-relay-2b-81e76b79.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LgHxB023819
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:42:19 GMT
-Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LgFrp027493
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:42:15 +0200
-Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LgE4q027489;
-        Fri, 7 Sep 2018 23:42:14 +0200
-From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC 31/60] cosched: Don't disable idle tick for now
-Date:   Fri,  7 Sep 2018 23:40:18 +0200
-Message-Id: <20180907214047.26914-32-jschoenh@amazon.de>
-X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
-In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
+        Fri, 7 Sep 2018 22:25:16 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9974EA95;
+        Fri,  7 Sep 2018 21:42:20 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Bernie Thompson <bernie@plugable.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.4 40/47] fb: fix lost console when the user unplugs a USB adapter
+Date:   Fri,  7 Sep 2018 23:10:36 +0200
+Message-Id: <20180907210908.742052597@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
+References: <20180907210904.607934824@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coscheduling relies on the leader to drive preemption of the
-group when the time slice is exhausted. This is also the case,
-when the leader is idle but the group as a whole is not.
-Because of that, we currently cannot disable the idle tick.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Keep the tick enabled in code. This relieves the user from disabling
-NOHZ and allows us to gradually improve the situation later.
+------------------
 
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+From: Mikulas Patocka <mpatocka@redhat.com>
+
+commit 8c5b044299951acd91e830a688dd920477ea1eda upstream.
+
+I have a USB display adapter using the udlfb driver and I use it on an ARM
+board that doesn't have any graphics card. When I plug the adapter in, the
+console is properly displayed, however when I unplug and re-plug the
+adapter, the console is not displayed and I can't access it until I reboot
+the board.
+
+The reason is this:
+When the adapter is unplugged, dlfb_usb_disconnect calls
+unlink_framebuffer, then it waits until the reference count drops to zero
+and then it deallocates the framebuffer. However, the console that is
+attached to the framebuffer device keeps the reference count non-zero, so
+the framebuffer device is never destroyed. When the USB adapter is plugged
+again, it creates a new device /dev/fb1 and the console is not attached to
+it.
+
+This patch fixes the bug by unbinding the console from unlink_framebuffer.
+The code to unbind the console is moved from do_unregister_framebuffer to
+a function unbind_console. When the console is unbound, the reference
+count drops to zero and the udlfb driver frees the framebuffer. When the
+adapter is plugged back, a new framebuffer is created and the console is
+attached to it.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Bernie Thompson <bernie@plugable.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Cc: stable@vger.kernel.org
+[b.zolnierkie: preserve old behavior for do_unregister_framebuffer()]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/time/tick-sched.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/video/fbdev/core/fbmem.c |   38 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 32 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 5b33e2f5c0ed..5e9c2a7d4ea9 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -861,6 +861,20 @@ static void tick_nohz_full_update_tick(struct tick_sched *ts)
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1687,12 +1687,12 @@ static int do_register_framebuffer(struc
+ 	return 0;
+ }
  
- static bool can_stop_idle_tick(int cpu, struct tick_sched *ts)
+-static int do_unregister_framebuffer(struct fb_info *fb_info)
++static int unbind_console(struct fb_info *fb_info)
  {
-+#ifdef CONFIG_COSCHEDULING
-+	/*
-+	 * FIXME: Coscheduling relies on the leader to drive preemption of the
-+	 *        group when the time slice is exhausted. This is also the case,
-+	 *        when the leader is idle but the group as a whole is not.
-+	 *        Because of that, we currently cannot disable the idle tick.
-+	 *
-+	 *        Short-term, we could disable the idle tick, in cases where the
-+	 *        whole group is idle. Long-term, we can consider switching
-+	 *        leadership of the group to a non-idle CPU.
-+	 */
-+	return false;
-+#endif
+ 	struct fb_event event;
+-	int i, ret = 0;
++	int ret;
++	int i = fb_info->node;
+ 
+-	i = fb_info->node;
+ 	if (i < 0 || i >= FB_MAX || registered_fb[i] != fb_info)
+ 		return -EINVAL;
+ 
+@@ -1707,17 +1707,29 @@ static int do_unregister_framebuffer(str
+ 	unlock_fb_info(fb_info);
+ 	console_unlock();
+ 
++	return ret;
++}
 +
- 	/*
- 	 * If this CPU is offline and it is the one which updates
- 	 * jiffies, then give up the assignment and let it be taken by
--- 
-2.9.3.1.gcba166c.dirty
++static int __unlink_framebuffer(struct fb_info *fb_info);
++
++static int do_unregister_framebuffer(struct fb_info *fb_info)
++{
++	struct fb_event event;
++	int ret;
++
++	ret = unbind_console(fb_info);
++
+ 	if (ret)
+ 		return -EINVAL;
+ 
+ 	pm_vt_switch_unregister(fb_info->dev);
+ 
+-	unlink_framebuffer(fb_info);
++	__unlink_framebuffer(fb_info);
+ 	if (fb_info->pixmap.addr &&
+ 	    (fb_info->pixmap.flags & FB_PIXMAP_DEFAULT))
+ 		kfree(fb_info->pixmap.addr);
+ 	fb_destroy_modelist(&fb_info->modelist);
+-	registered_fb[i] = NULL;
++	registered_fb[fb_info->node] = NULL;
+ 	num_registered_fb--;
+ 	fb_cleanup_device(fb_info);
+ 	event.info = fb_info;
+@@ -1730,7 +1742,7 @@ static int do_unregister_framebuffer(str
+ 	return 0;
+ }
+ 
+-int unlink_framebuffer(struct fb_info *fb_info)
++static int __unlink_framebuffer(struct fb_info *fb_info)
+ {
+ 	int i;
+ 
+@@ -1742,6 +1754,20 @@ int unlink_framebuffer(struct fb_info *f
+ 		device_destroy(fb_class, MKDEV(FB_MAJOR, i));
+ 		fb_info->dev = NULL;
+ 	}
++
++	return 0;
++}
++
++int unlink_framebuffer(struct fb_info *fb_info)
++{
++	int ret;
++
++	ret = __unlink_framebuffer(fb_info);
++	if (ret)
++		return ret;
++
++	unbind_console(fb_info);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(unlink_framebuffer);
+
 
