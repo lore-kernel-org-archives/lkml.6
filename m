@@ -2,170 +2,295 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE93C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47181C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB70A2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:29:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB70A2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D889D2086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D889D2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbeIGUK3 (ORCPT
+        id S1730180AbeIGUK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:10:29 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:55611 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729337AbeIGUK2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:10:28 -0400
-Received: by mail-it0-f69.google.com with SMTP id m207-v6so22613362itg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=NHmJBnWDH7I5C6L4zaMTHe7OylK2WiYCJnAJw4JLHNI=;
-        b=l/DqyCWfw0Ndd1AdZIGJaEhYhVjkVUifjmch4XxRINOQW+2bQExtPJLjIGklvxGCKi
-         btiWBxbJv6mON9n6GewMnsaHv7ab+fHF7K8vHCicRdVKS+M8/yaAV45Yr8oV59kP7CWB
-         d7k0sWy3n3v/2KP53NbT1C0fOGZs0QXoQY8pCEZS8cUEA/4eVW9d6U+AiS1ZIaS6TrN8
-         TrcJ1wp12padVaPS1VLOqdpcNrGEejTU7d87puGAFOCmdp/V1A7tnA0mGFKHThsbWZA1
-         EO5Esx1dF8hzqDqmdXHdQdBgjnirIwDOR9HeeyyXg79illreCTUJVPndB4kCGpEpjAVG
-         EhvQ==
-X-Gm-Message-State: APzg51AG+DDrVgJZkeEy3EAmdJ+r8LSWvqOAMYLk7ZqcwCdGfGWSxCl9
-        xTT4FSSjL7M8fFzUngRuUa6qglGaG69myjbkVvb8Y1T+WB1N
-X-Google-Smtp-Source: ANB0VdYCu7gH3R0xm+CZ8rMBl/1CKkLW2TB3SeiR9z/amfgO7l7lsR3JXGMuUVMHmSyj983Y3GNnUNIGT7uoFCOO+pbkSHN0uVpn
+        Fri, 7 Sep 2018 16:10:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:33640 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728215AbeIGUK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 16:10:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45CDF18A;
+        Fri,  7 Sep 2018 08:29:31 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DE5A3F5BC;
+        Fri,  7 Sep 2018 08:29:27 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 16:29:25 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling
+ depend on schedutil
+Message-ID: <20180907152923.oxsmcqciez4yhmkk@queper01-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <CAJZ5v0jL_k36RPc6e8yUHxAYGXp7HHWK+hLnBZWnu5Oi__7j3w@mail.gmail.com>
+ <20180906143842.xlxcg5notwdaflww@queper01-lin>
+ <1545744.fI5ZvP8FO0@aspire.rjw.lan>
 MIME-Version: 1.0
-X-Received: by 2002:a02:4fc7:: with SMTP id r68-v6mr7001624jad.47.1536334143513;
- Fri, 07 Sep 2018 08:29:03 -0700 (PDT)
-Date:   Fri, 07 Sep 2018 08:29:03 -0700
-In-Reply-To: <000000000000edab9e0575497f40@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e16cba057549aab6@google.com>
-Subject: Re: BUG: bad usercopy in __check_object_size (2)
-From:   syzbot <syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com>
-To:     crecklin@redhat.com, dvyukov@google.com, hpa@zytor.com,
-        keescook@chromium.org, keescook@google.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545744.fI5ZvP8FO0@aspire.rjw.lan>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Friday 07 Sep 2018 at 10:52:01 (+0200), Rafael J. Wysocki wrote:
+> On Thursday, September 6, 2018 4:38:44 PM CEST Quentin Perret wrote:
+> > Hi Rafael,
+> > 
+> > On Thursday 06 Sep 2018 at 11:18:55 (+0200), Rafael J. Wysocki wrote:
+> > > I'm not a particular fan of notifiers to be honest and you don't need
+> > > to add an extra chain just in order to be able to register a callback
+> > > from a single user.
+> > 
+> > Right. I agree there are alternatives to using notifiers. I used them
+> > because they're existing infrastructure, and because they let me do what
+> > I want without too much troubles, which are two important points.
+> > 
+> > > That can be achieved with a single callback
+> > > pointer too, but also you could just call a function exported by the
+> > > scheduler directly from where in the cpufreq code it needs to be
+> > > called.
+> > 
+> > Are you thinking about something comparable to what is done in
+> > cpufreq_add_update_util_hook() (kernel/sched/cpufreq.c) for example ?
+> > That would probably have the same drawback as my current implementation,
+> > that is that the scheduler is notified of _all_ governor changes, not
+> > only changes to/from sugov although this is the only thing we care about
+> > for EAS.
+> 
+> Well, why don't you implement it as something like "if the governor changes
+> from sugov to something else (or the other way around), call this function
+> from the scheduler"?
 
-HEAD commit:    28619527b8a7 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=124e64d1400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=62e9b447c16085cf
-dashboard link: https://syzkaller.appspot.com/bug?extid=a3c9d2673837ccc0f22b
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179f9cd1400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b3e8be400000
+I just gave it a try and ended up with the diff below. It's basically
+the exact same patch with a direct function call instead of a notifier.
+(I also tried the sugov_start/stop thing I keep mentioning but it is
+more complex, so let's see if the simplest solution could work first).
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com
+What do you think ?
 
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440479
-usercopy: Kernel memory overwrite attempt detected to spans multiple pages  
-(offset 0, size 64)!
-------------[ cut here ]------------
-kernel BUG at mm/usercopy.c:102!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5340 Comm: syz-executor610 Not tainted 4.19.0-rc2+ #50
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:90
-Code: c0 e8 8a 23 b2 ff 48 8b 55 c0 49 89 d9 4d 89 f0 ff 75 c8 4c 89 e1 4c  
-89 ee 48 c7 c7 80 48 15 88 ff 75 d0 41 57 e8 5a 38 98 ff <0f> 0b e8 5f 23  
-b2 ff e8 8a 6e f5 ff 8b 95 5c fe ff ff 4d 89 e0 31
-RSP: 0018:ffff8801bbcf6d50 EFLAGS: 00010086
-RAX: 000000000000005f RBX: ffffffff881545a0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8164f825 RDI: 0000000000000005
-RBP: ffff8801bbcf6da8 R08: ffff8801d8f1a500 R09: ffffed003b5c3ee2
-R10: ffffed003b5c3ee2 R11: ffff8801dae1f717 R12: ffffffff88154ac0
-R13: ffffffff881546e0 R14: ffffffff881545a0 R15: ffffffff881545a0
-FS:  000000000225c880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000455350 CR3: 00000001d90eb000 CR4: 00000000001406f0
-Call Trace:
-  check_page_span mm/usercopy.c:212 [inline]
-  check_heap_object mm/usercopy.c:241 [inline]
-  __check_object_size.cold.2+0x23/0x134 mm/usercopy.c:266
-  check_object_size include/linux/thread_info.h:119 [inline]
-  __copy_from_user_inatomic include/linux/uaccess.h:65 [inline]
-  __probe_kernel_read+0xda/0x1c0 mm/maccess.c:33
-  show_opcodes+0x4c/0x70 arch/x86/kernel/dumpstack.c:109
-  show_ip+0x31/0x36 arch/x86/kernel/dumpstack.c:126
-  show_iret_regs+0x14/0x38 arch/x86/kernel/dumpstack.c:131
-  __show_regs+0x1c/0x60 arch/x86/kernel/process_64.c:72
-  show_regs_if_on_stack.constprop.10+0x36/0x39  
-arch/x86/kernel/dumpstack.c:149
-  show_trace_log_lvl+0x25d/0x28c arch/x86/kernel/dumpstack.c:274
-  show_stack+0x38/0x3a arch/x86/kernel/dumpstack.c:293
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  fail_dump lib/fault-inject.c:51 [inline]
-  should_fail.cold.4+0xa/0x17 lib/fault-inject.c:149
-  __should_failslab+0x124/0x180 mm/failslab.c:32
-  should_failslab+0x9/0x14 mm/slab_common.c:1557
-  slab_pre_alloc_hook mm/slab.h:423 [inline]
-  slab_alloc mm/slab.c:3378 [inline]
-  kmem_cache_alloc_trace+0x2d7/0x750 mm/slab.c:3618
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  aa_alloc_file_ctx security/apparmor/include/file.h:60 [inline]
-  apparmor_file_alloc_security+0x168/0xaa0 security/apparmor/lsm.c:438
-  security_file_alloc+0x4c/0xa0 security/security.c:884
-  __alloc_file+0x12a/0x470 fs/file_table.c:105
-  alloc_empty_file+0x72/0x170 fs/file_table.c:150
-  dentry_open+0x71/0x1d0 fs/open.c:894
-  open_related_ns+0x1b0/0x210 fs/nsfs.c:177
-  __tun_chr_ioctl+0x48d/0x4690 drivers/net/tun.c:2901
-  tun_chr_ioctl+0x2a/0x40 drivers/net/tun.c:3179
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440479
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe3cf83628 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440479
-RDX: 0000000000000000 RSI: 000000000000894c RDI: 0000000000000004
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 0000000000000034
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 125c9e5841391893 ]---
-RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:90
-Code: c0 e8 8a 23 b2 ff 48 8b 55 c0 49 89 d9 4d 89 f0 ff 75 c8 4c 89 e1 4c  
-89 ee 48 c7 c7 80 48 15 88 ff 75 d0 41 57 e8 5a 38 98 ff <0f> 0b e8 5f 23  
-b2 ff e8 8a 6e f5 ff 8b 95 5c fe ff ff 4d 89 e0 31
-RSP: 0018:ffff8801bbcf6d50 EFLAGS: 00010086
-RAX: 000000000000005f RBX: ffffffff881545a0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8164f825 RDI: 0000000000000005
-RBP: ffff8801bbcf6da8 R08: ffff8801d8f1a500 R09: ffffed003b5c3ee2
-R10: ffffed003b5c3ee2 R11: ffff8801dae1f717 R12: ffffffff88154ac0
-R13: ffffffff881546e0 R14: ffffffff881545a0 R15: ffffffff881545a0
-FS:  000000000225c880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000455350 CR3: 00000001d90eb000 CR4: 00000000001406f0
+----------8<----------
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index b0dfd3222013..6300668ac67a 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -25,6 +25,7 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/sched/cpufreq.h>
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+ #include <linux/syscore_ops.h>
+@@ -2271,6 +2272,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+ 		ret = cpufreq_start_governor(policy);
+ 		if (!ret) {
+ 			pr_debug("cpufreq: governor change\n");
++			sched_governor_change(policy, old_gov);
+ 			return 0;
+ 		}
+ 		cpufreq_exit_governor(policy);
+diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+index afa940cd50dc..33b77eed8a41 100644
+--- a/include/linux/sched/cpufreq.h
++++ b/include/linux/sched/cpufreq.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_SCHED_CPUFREQ_H
+ #define _LINUX_SCHED_CPUFREQ_H
+ 
++#include <linux/cpufreq.h>
+ #include <linux/types.h>
+ 
+ /*
+@@ -28,4 +29,12 @@ static inline unsigned long map_util_freq(unsigned long util,
+ }
+ #endif /* CONFIG_CPU_FREQ */
+ 
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++void sched_governor_change(struct cpufreq_policy *policy,
++			struct cpufreq_governor *old_gov);
++#else
++static inline void sched_governor_change(struct cpufreq_policy *policy,
++			struct cpufreq_governor *old_gov) { }
++#endif
++
+ #endif /* _LINUX_SCHED_CPUFREQ_H */
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 8356cb0072a6..2ff40b2a8ba0 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -632,7 +632,7 @@ static struct kobj_type sugov_tunables_ktype = {
+ 
+ /********************** cpufreq governor interface *********************/
+ 
+-static struct cpufreq_governor schedutil_gov;
++struct cpufreq_governor schedutil_gov;
+ 
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+ {
+@@ -891,7 +891,7 @@ static void sugov_limits(struct cpufreq_policy *policy)
+ 	sg_policy->need_freq_update = true;
+ }
+ 
+-static struct cpufreq_governor schedutil_gov = {
++struct cpufreq_governor schedutil_gov = {
+ 	.name			= "schedutil",
+ 	.owner			= THIS_MODULE,
+ 	.dynamic_switching	= true,
+@@ -914,3 +914,32 @@ static int __init sugov_register(void)
+ 	return cpufreq_register_governor(&schedutil_gov);
+ }
+ fs_initcall(sugov_register);
++
++#ifdef CONFIG_ENERGY_MODEL
++extern bool sched_energy_update;
++static DEFINE_MUTEX(rebuild_sd_mutex);
++
++static void rebuild_sd_workfn(struct work_struct *work)
++{
++	mutex_lock(&rebuild_sd_mutex);
++	sched_energy_update = true;
++	rebuild_sched_domains();
++	sched_energy_update = false;
++	mutex_unlock(&rebuild_sd_mutex);
++}
++static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
++
++/*
++ * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
++ * on governor changes to make sure the scheduler knows about it.
++ */
++void sched_governor_change(struct cpufreq_policy *policy,
++				  struct cpufreq_governor *old_gov)
++{
++	if (old_gov == &schedutil_gov || policy->governor == &schedutil_gov) {
++		/* Sched domains cannot be rebuilt directly from this context */
++		schedule_work(&rebuild_sd_work);
++	}
++
++}
++#endif
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index e594a854977f..915766600568 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2265,10 +2265,8 @@ unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned
+ }
+ #endif
+ 
+-#ifdef CONFIG_SMP
+-#ifdef CONFIG_ENERGY_MODEL
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ #define perf_domain_span(pd) (to_cpumask(((pd)->obj->cpus)))
+ #else
+ #define perf_domain_span(pd) NULL
+ #endif
+-#endif
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index ae329447a082..781f3eba840e 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -209,7 +209,9 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
+  */
+ DEFINE_STATIC_KEY_FALSE(sched_energy_present);
+ 
+-#ifdef CONFIG_ENERGY_MODEL
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
++bool sched_energy_update;
++
+ static void free_pd(struct perf_domain *pd)
+ {
+ 	struct perf_domain *tmp;
+@@ -297,12 +299,15 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
+  */
+ #define EM_MAX_COMPLEXITY 2048
+ 
++extern struct cpufreq_governor schedutil_gov;
+ static void build_perf_domains(const struct cpumask *cpu_map)
+ {
+ 	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
+ 	struct perf_domain *pd = NULL, *tmp;
+ 	int cpu = cpumask_first(cpu_map);
+ 	struct root_domain *rd = cpu_rq(cpu)->rd;
++	struct cpufreq_policy *policy;
++	struct cpufreq_governor *gov;
+ 
+ 	/* EAS is enabled for asymmetric CPU capacity topologies. */
+ 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
+@@ -318,6 +323,15 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+ 		if (find_pd(pd, i))
+ 			continue;
+ 
++		/* Do not attempt EAS if schedutil is not being used. */
++		policy = cpufreq_cpu_get(i);
++		if (!policy)
++			goto free;
++		gov = policy->governor;
++		cpufreq_cpu_put(policy);
++		if (gov != &schedutil_gov)
++			goto free;
++
+ 		/* Create the new pd and add it to the local list. */
+ 		tmp = pd_init(i);
+ 		if (!tmp)
+@@ -389,7 +403,7 @@ static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
+ }
+ #else
+ static void free_pd(struct perf_domain *pd) { }
+-#endif /* CONFIG_ENERGY_MODEL */
++#endif /* CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL*/
+ 
+ static void free_rootdomain(struct rcu_head *rcu)
+ {
+@@ -2190,10 +2204,10 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ 		;
+ 	}
+ 
+-#ifdef CONFIG_ENERGY_MODEL
++#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ 	/* Build perf. domains: */
+ 	for (i = 0; i < ndoms_new; i++) {
+-		for (j = 0; j < n; j++) {
++		for (j = 0; j < n && !sched_energy_update; j++) {
+ 			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
+ 			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd)
+ 				goto match3;
 
