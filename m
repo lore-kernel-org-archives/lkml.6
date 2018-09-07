@@ -2,294 +2,192 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A962EC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D0C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E1A82083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E1A82083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BB0392083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB0392083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbeIGRTd (ORCPT
+        id S1728502AbeIGRVa convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:19:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52905 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729252AbeIGRTc (ORCPT
+        Fri, 7 Sep 2018 13:21:30 -0400
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:48060 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727104AbeIGRV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:19:32 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fyG27-0007c2-PQ; Fri, 07 Sep 2018 14:38:43 +0200
-Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fyG26-00062R-I1; Fri, 07 Sep 2018 14:38:42 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-mtd@lists.infradead.org
-Cc:     David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 17/25] ubifs: authenticate replayed journal
-Date:   Fri,  7 Sep 2018 14:36:38 +0200
-Message-Id: <20180907123646.12688-18-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180907123646.12688-1-s.hauer@pengutronix.de>
-References: <20180907123646.12688-1-s.hauer@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 7 Sep 2018 13:21:29 -0400
+X-ASG-Debug-ID: 1536324037-093b7e54e60cbe0001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id Gud91UfrNkf9h9qh (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 07 Sep 2018 20:40:38 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 7 Sep 2018 20:40:41 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Fri, 7 Sep 2018 20:40:41 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "sergei.shtylyov@cogentembedded.com" 
+        <sergei.shtylyov@cogentembedded.com>
+CC:     "jacob.e.keller@intel.com" <jacob.e.keller@intel.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "carolyn.wyborny@intel.com" <carolyn.wyborny@intel.com>
+Subject: Re: [PATCH v3 1/2] net: ethernet: i40e: fix build error
+Thread-Topic: [PATCH v3 1/2] net: ethernet: i40e: fix build error
+X-ASG-Orig-Subj: Re: [PATCH v3 1/2] net: ethernet: i40e: fix build error
+Thread-Index: AQHURpyuIJpR//FVHkih3FMT4XCKSQ==
+Date:   Fri, 7 Sep 2018 12:40:40 +0000
+Message-ID: <f2b0bdfcb53c461191e71603257874ac@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <1536319175-3660-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+ <1536319175-3660-2-git-send-email-dongsheng.wang@hxt-semitech.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.50.12]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1536324038
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.2546 1.0000 -0.5535
+X-Barracuda-Spam-Score: -0.05
+X-Barracuda-Spam-Status: No, SCORE=-0.05 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_RULE7568M
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.57064
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.50 BSF_RULE7568M          Custom Rule 7568M
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure that during replay all buds can be authenticated. To do
-this we calculate the hash chain until we find an authentication
-node and check the HMAC in that node against the current status
-of the hash chain.
+Hello all,
 
-After a power cut it can happen that some nodes have been written, but
-not yet the authentication node for them. These nodes have to be
-discarded during replay.
+The i40e_ethtool_stats.h is just included by i40e/i40e_ethtool.c. So the
+static doesn't make any affect. And Carolyn's team is working rebuild
+i40e and i40evf.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- fs/ubifs/replay.c | 146 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 144 insertions(+), 2 deletions(-)
+Cheers,
+Dongsheng
 
-diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
-index db489d93439c..75f961c4c044 100644
---- a/fs/ubifs/replay.c
-+++ b/fs/ubifs/replay.c
-@@ -34,6 +34,8 @@
- 
- #include "ubifs.h"
- #include <linux/list_sort.h>
-+#include <crypto/hash.h>
-+#include <crypto/algapi.h>
- 
- /**
-  * struct replay_entry - replay list entry.
-@@ -531,6 +533,105 @@ static int is_last_bud(struct ubifs_info *c, struct ubifs_bud *bud)
- 	return data == 0xFFFFFFFF;
- }
- 
-+/**
-+ * authenticate_sleb - authenticate one scan LEB
-+ * @c: UBIFS file-system description object
-+ * @sleb: the scan LEB to authenticate
-+ * @log_hash:
-+ * @is_last: if true, this is is the last LEB
-+ *
-+ * This function iterates over the buds of a single LEB authenticating all buds
-+ * with the authentication nodes on this LEB. Authentication nodes are written
-+ * after some buds and contain a HMAC covering the authentication node itself
-+ * and the buds between the last authentication node and the current
-+ * authentication node. It can happen that the last buds cannot be authenticated
-+ * because a powercut happened when some nodes were written but not the
-+ * corresponding authentication node. This function returns the number of nodes
-+ * that could be authenticated or a negative error code.
-+ */
-+static int authenticate_sleb(struct ubifs_info *c, struct ubifs_scan_leb *sleb,
-+			     struct shash_desc *log_hash, int is_last)
-+{
-+	int n_not_auth = 0;
-+	struct ubifs_scan_node *snod;
-+	int n_nodes = 0;
-+	int err;
-+	u8 *hash, *hmac;
-+
-+	if (!ubifs_authenticated(c))
-+		return sleb->nodes_cnt;
-+
-+	hash = kmalloc(crypto_shash_descsize(c->hash_tfm), GFP_NOFS);
-+	hmac = kmalloc(c->hmac_desc_len, GFP_NOFS);
-+	if (!hash || !hmac) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	list_for_each_entry(snod, &sleb->nodes, list) {
-+
-+		n_nodes++;
-+
-+		if (snod->type == UBIFS_AUTH_NODE) {
-+			struct ubifs_auth_node *auth = snod->node;
-+			SHASH_DESC_ON_STACK(hash_desc, c->hash_tfm);
-+			SHASH_DESC_ON_STACK(hmac_desc, c->hmac_tfm);
-+
-+			hash_desc->tfm = c->hash_tfm;
-+			hash_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
-+
-+			ubifs_shash_copy_state(c, log_hash, hash_desc);
-+			err = crypto_shash_final(hash_desc, hash);
-+			if (err)
-+				goto out;
-+
-+			hmac_desc->tfm = c->hmac_tfm;
-+			hmac_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
-+			err = crypto_shash_digest(hmac_desc, hash, c->hash_len,
-+						  hmac);
-+			if (err)
-+				goto out;
-+
-+			err = ubifs_check_hmac(c, auth->hmac, hmac);
-+			if (err) {
-+				err = -EPERM;
-+				goto out;
-+			}
-+			n_not_auth = 0;
-+		} else {
-+			err = crypto_shash_update(log_hash, snod->node,
-+						  snod->len);
-+			if (err)
-+				goto out;
-+			n_not_auth++;
-+		}
-+	}
-+
-+	/*
-+	 * A powercut can happen when some nodes were written, but not yet
-+	 * the corresponding authentication node. This may only happen on
-+	 * the last bud though.
-+	 */
-+	if (n_not_auth) {
-+		if (is_last) {
-+			dbg_mnt("%d unauthenticated nodes found on LEB %d, Ignoring them",
-+				n_not_auth, sleb->lnum);
-+			err = 0;
-+		} else {
-+			dbg_mnt("%d unauthenticated nodes found on non-last LEB %d",
-+				n_not_auth, sleb->lnum);
-+			err = -EPERM;
-+		}
-+	} else {
-+		err = 0;
-+	}
-+out:
-+	kfree(hash);
-+	kfree(hmac);
-+
-+	return err ? err : n_nodes - n_not_auth;
-+}
-+
- /**
-  * replay_bud - replay a bud logical eraseblock.
-  * @c: UBIFS file-system description object
-@@ -544,6 +645,7 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- {
- 	int is_last = is_last_bud(c, b->bud);
- 	int err = 0, used = 0, lnum = b->bud->lnum, offs = b->bud->start;
-+	int n_nodes, n = 0;
- 	struct ubifs_scan_leb *sleb;
- 	struct ubifs_scan_node *snod;
- 
-@@ -563,6 +665,15 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 	if (IS_ERR(sleb))
- 		return PTR_ERR(sleb);
- 
-+	n_nodes = authenticate_sleb(c, sleb, b->bud->log_hash, is_last);
-+	if (n_nodes < 0) {
-+		err = n_nodes;
-+		goto out;
-+	}
-+
-+	ubifs_shash_copy_state(c, b->bud->log_hash,
-+			       c->jheads[b->bud->jhead].log_hash);
-+
- 	/*
- 	 * The bud does not have to start from offset zero - the beginning of
- 	 * the 'lnum' LEB may contain previously committed data. One of the
-@@ -676,6 +787,10 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 		}
- 		if (err)
- 			goto out;
-+
-+		n++;
-+		if (n == n_nodes)
-+			break;
- 	}
- 
- 	ubifs_assert(c, ubifs_search_bud(c, lnum));
-@@ -754,6 +869,7 @@ static int add_replay_bud(struct ubifs_info *c, int lnum, int offs, int jhead,
- {
- 	struct ubifs_bud *bud;
- 	struct bud_entry *b;
-+	int err;
- 
- 	dbg_mnt("add replay bud LEB %d:%d, head %d", lnum, offs, jhead);
- 
-@@ -763,13 +879,21 @@ static int add_replay_bud(struct ubifs_info *c, int lnum, int offs, int jhead,
- 
- 	b = kmalloc(sizeof(struct bud_entry), GFP_KERNEL);
- 	if (!b) {
--		kfree(bud);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto out;
- 	}
- 
- 	bud->lnum = lnum;
- 	bud->start = offs;
- 	bud->jhead = jhead;
-+	bud->log_hash = ubifs_hash_get_desc(c);
-+	if (IS_ERR(bud->log_hash)) {
-+		err = PTR_ERR(bud->log_hash);
-+		goto out;
-+	}
-+
-+	ubifs_shash_copy_state(c, c->log_hash, bud->log_hash);
-+
- 	ubifs_add_bud(c, bud);
- 
- 	b->bud = bud;
-@@ -777,6 +901,11 @@ static int add_replay_bud(struct ubifs_info *c, int lnum, int offs, int jhead,
- 	list_add_tail(&b->list, &c->replay_buds);
- 
- 	return 0;
-+out:
-+	kfree(bud);
-+	kfree(b);
-+
-+	return err;
- }
- 
- /**
-@@ -882,6 +1011,14 @@ static int replay_log_leb(struct ubifs_info *c, int lnum, int offs, void *sbuf)
- 
- 		c->cs_sqnum = le64_to_cpu(node->ch.sqnum);
- 		dbg_mnt("commit start sqnum %llu", c->cs_sqnum);
-+
-+		err = ubifs_shash_init(c, c->log_hash);
-+		if (err)
-+			goto out;
-+
-+		err = ubifs_shash_update(c, c->log_hash, node, UBIFS_CS_NODE_SZ);
-+		if (err < 0)
-+			goto out;
- 	}
- 
- 	if (snod->sqnum < c->cs_sqnum) {
-@@ -929,6 +1066,11 @@ static int replay_log_leb(struct ubifs_info *c, int lnum, int offs, void *sbuf)
- 			if (err)
- 				goto out_dump;
- 
-+			err = ubifs_shash_update(c, c->log_hash, ref,
-+						 UBIFS_REF_NODE_SZ);
-+			if (err)
-+				goto out;
-+
- 			err = add_replay_bud(c, le32_to_cpu(ref->lnum),
- 					     le32_to_cpu(ref->offs),
- 					     le32_to_cpu(ref->jhead),
--- 
-2.18.0
+On 9/7/2018 7:19 PM, Wang, Dongsheng wrote:
+> Remove "inline" from __i40e_add_stat_strings and move the function.
+>
+> In file included from
+> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:9:0:
+> drivers/net/ethernet/intel/i40e/i40e_ethtool.c: In function
+> __i40e_add_stat_string:
+> drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h:193:20: error:
+> function __i40e_add_stat_strings can never be inlined because it uses
+> variable argument lists
+>  static inline void __i40e_add_stat_strings(u8 **p, const struct
+> 					    i40e_stats stats[],
+>
+> Tested on: x86_64, make ARCH=i386
+>
+> Modules section .text:
+> i40e: 00019380 <__i40e_add_stat_strings>:
+> i40evf: 00006b00 <__i40e_add_stat_strings>:
+>
+> Buildin section .text:
+> i40e: c351ca60 <__i40e_add_stat_strings>:
+> i40evf: c354f2c0 <__i40e_add_stat_strings>:
+>
+> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+> ---
+> V3: add static 
+> V2: Move function
+> ---
+>  .../net/ethernet/intel/i40e/i40e_ethtool.c    | 24 ++++++++++++++++++
+>  .../ethernet/intel/i40e/i40e_ethtool_stats.h  | 25 ++-----------------
+>  2 files changed, 26 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+> index d7d3974beca2..34121a72f2e7 100644
+> --- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+> +++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
+> @@ -1821,6 +1821,30 @@ static void i40e_get_ethtool_stats(struct net_device *netdev,
+>  		  "ethtool stats count mismatch!");
+>  }
+>  
+> +/**
+> + * __i40e_add_stat_strings - copy stat strings into ethtool buffer
+> + * @p: ethtool supplied buffer
+> + * @stats: stat definitions array
+> + * @size: size of the stats array
+> + *
+> + * Format and copy the strings described by stats into the buffer pointed at
+> + * by p.
+> + **/
+> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+> +				    const unsigned int size, ...)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < size; i++) {
+> +		va_list args;
+> +
+> +		va_start(args, size);
+> +		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
+> +		*p += ETH_GSTRING_LEN;
+> +		va_end(args);
+> +	}
+> +}
+> +
+>  /**
+>   * i40e_get_stat_strings - copy stat strings into supplied buffer
+>   * @netdev: the netdev to collect strings for
+> diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+> index bba1cb0b658f..553b0d720839 100644
+> --- a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+> +++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
+> @@ -181,29 +181,8 @@ i40e_add_queue_stats(u64 **data, struct i40e_ring *ring)
+>  	*data += size;
+>  }
+>  
+> -/**
+> - * __i40e_add_stat_strings - copy stat strings into ethtool buffer
+> - * @p: ethtool supplied buffer
+> - * @stats: stat definitions array
+> - * @size: size of the stats array
+> - *
+> - * Format and copy the strings described by stats into the buffer pointed at
+> - * by p.
+> - **/
+> -static inline void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+> -				    const unsigned int size, ...)
+> -{
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < size; i++) {
+> -		va_list args;
+> -
+> -		va_start(args, size);
+> -		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
+> -		*p += ETH_GSTRING_LEN;
+> -		va_end(args);
+> -	}
+> -}
+> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+> +				    const unsigned int size, ...);
+>  
+>  /**
+>   * 40e_add_stat_strings - copy stat strings into ethtool buffer
+
 
