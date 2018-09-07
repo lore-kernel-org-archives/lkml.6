@@ -2,230 +2,101 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB479C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A609C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5637A204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 561842075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="G6STCJQF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5637A204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6H0rS05"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561842075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeIGVtz (ORCPT
+        id S1727592AbeIGVuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:49:55 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:49020 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbeIGVtz (ORCPT
+        Fri, 7 Sep 2018 17:50:22 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38757 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbeIGVuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:49:55 -0400
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w87H7p9t000728;
-        Sat, 8 Sep 2018 02:07:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w87H7p9t000728
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536340072;
-        bh=TzzGu+c9+WvDQOQQQbqP2dzL+7h6WjR405lqKgcswlk=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=G6STCJQFAm0riEEmGywwN6IgJ4+dxajV67jExjVbkGp8rF7J30vOAQMqGvRL1JDzH
-         ygumn9VmoD8KSi1hw4x492bI25vY8O8k0Mv4GpjjqsJBp9J0rv2/77GCDSJeFLG5/Z
-         w8vcecAxtVq4SqkxR81LN3JgzaQutrqc+CACZVrHDXLwvQjepYDStlCJILL14vKhwG
-         II+HtfjMILs35jq7InSlaBDBi8sqycYE6igrBET4el2xTDsQQ11naV5M2PSspTBIp+
-         d32bsoW+xlcbbeCI1l+DB4ZR+futVhCsAz9T/JcbVBE11iU1WFqTKcHMWzCG1s7inV
-         MET7BxgT2VgFw==
-X-Nifty-SrcIP: [209.85.222.51]
-Received: by mail-ua1-f51.google.com with SMTP id m11-v6so12442141uao.11;
-        Fri, 07 Sep 2018 10:07:51 -0700 (PDT)
-X-Gm-Message-State: APzg51A4gcpw6IirF6XP3G3xEl+GQJInaBN0f019oat+u3nrkJ7Jruxe
-        kWXBNkkr2P8MnVZIuIS9IkvwNcYzXsLxfEWkuh0=
-X-Google-Smtp-Source: ANB0Vdbc7lcrQuxa4AJiUdMkbJHxLVGXQ49aWwuPuLQlxFdi8+o/U/vBLBYbPNvpDqZwzfMeTdE07KLpn1o/BFfU1Qc=
-X-Received: by 2002:a67:7cc9:: with SMTP id x192-v6mr3288738vsc.9.1536340070274;
- Fri, 07 Sep 2018 10:07:50 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 10:07:09 -0700 (PDT)
-In-Reply-To: <CAL_JsqJJ6DCT8AjVYqkbFuJ+fO0VmVch24B=XRp4pJPkUQYAww@mail.gmail.com>
-References: <20180821215524.23040-1-robh@kernel.org> <20180821215524.23040-7-robh@kernel.org>
- <CAK7LNATcYSvwh0BEEdyUuDa_Y9X-AqQAzA5MrbNhOSMmSzqhTg@mail.gmail.com> <CAL_JsqJJ6DCT8AjVYqkbFuJ+fO0VmVch24B=XRp4pJPkUQYAww@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 8 Sep 2018 02:07:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR1-G+eg-dAmiDvEo3JJHoXefm2eu+Aorgjv9BP48+qvw@mail.gmail.com>
-Message-ID: <CAK7LNAR1-G+eg-dAmiDvEo3JJHoXefm2eu+Aorgjv9BP48+qvw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] kbuild: consolidate Devicetree dtb build rules
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ley Foon Tan <lftan@altera.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        nios2-dev@lists.rocketboards.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-xtensa@linux-xtensa.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 7 Sep 2018 17:50:21 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p6-v6so12870303ljc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nehbaC1Fe6VD9sOFSvtsd6Qic2sOj+f5imoKlToBLi8=;
+        b=T6H0rS05/S0OeolO98wE6WfnbMYUbU7Go/0vOri9t7oXFsygRJiQ0P+/j1GjfpIURI
+         BsPrByPfVUqh9n+lvSTZZs0oEC+qX25DPa7U/B4StpSJB+lG+1EhsfsOVhAHN4CqXs7p
+         bCg7GgpOpDGf8q0laq3DvYzpVxMC25f6WIgR4Goa80yluUIiUYQpm7uMsaMIWIRGQs4C
+         VwE8hjMw9ymxPqtdOh2DPTAaptM8/qaUddZXTZeZPlfAmnmWqkfMBdtWYhc9NeH4GsnQ
+         1ka3UTYHDB5VcUKydtg0EIfIims4pE4dEKbTzL/5BjrEgT2yQdg3kkRkv63BTmxOIqks
+         rd/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nehbaC1Fe6VD9sOFSvtsd6Qic2sOj+f5imoKlToBLi8=;
+        b=JkPZ/Um/L7a5sZnXD63tXF+3mEhxbLTA9yPuKtb1tobJ+LZXttLOr/6ELilPH7alq9
+         kXgmfITD/lrLn3woP38k5KIzF0YKv3ZRc1w/52BMPGlVgHm+pqWENCebf3Or6SvfimLU
+         OYPk8UrVfJZnPDX65b8po4jRKILdmaRxkWOwUuFnjVx1cHZBfHKS/KQ9R118rbRqdjw4
+         vp4WeNINcKQ88rO2u1rSNoojT3UZEX1PEH2mK6F0fi6HUXjenVoHRNg/OuZK24W3xc3A
+         yw1EUesmeTaEbnYYrDssckO5z2o/X/1tB1bKXsr8xgYmhNIRqoT3ZSbTqNZr22NGltgl
+         AS8A==
+X-Gm-Message-State: APzg51CHwlcVc1Gf5stWsZetezu3lHsbCjadDEfTDUSsWgpir5PpUm6w
+        VwiW2lpJ0xF4/IHrpwCwlus=
+X-Google-Smtp-Source: ANB0VdbWzrvz4OltkTd2G6QHOH5lgWaygVWsIO9liFgiPHqaY2008r0RE5oyJqOYs5Jr4P0491Aztw==
+X-Received: by 2002:a2e:2c0d:: with SMTP id s13-v6mr5416368ljs.106.1536340108998;
+        Fri, 07 Sep 2018 10:08:28 -0700 (PDT)
+Received: from Mort.jumbo.freeair (91-156-179-220.elisa-laajakaista.fi. [91.156.179.220])
+        by smtp.gmail.com with ESMTPSA id h15-v6sm1340355ljb.8.2018.09.07.10.08.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 10:08:28 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: octeon-hcd: remove unnecessary unlikely()
+Date:   Fri,  7 Sep 2018 20:08:20 +0300
+Message-Id: <20180907170820.27328-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-27 8:56 GMT+09:00 Rob Herring <robh@kernel.org>:
-> On Sat, Aug 25, 2018 at 9:06 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->>
->> Hi Rob,
->>
->>
->> 2018-08-22 6:55 GMT+09:00 Rob Herring <robh@kernel.org>:
->> > There is nothing arch specific about building dtb files other than their
->> > location under /arch/*/boot/dts/. Keeping each arch aligned is a pain.
->> > The dependencies and supported targets are all slightly different.
->> > Also, a cross-compiler for each arch is needed, but really the host
->> > compiler preprocessor is perfectly fine for building dtbs. Move the
->> > build rules to a common location and remove the arch specific ones. This
->> > is done in a single step to avoid warnings about overriding rules.
->> >
->> > The build dependencies had been a mixture of 'scripts' and/or 'prepare'.
->> > These pull in several dependencies some of which need a target compiler
->> > (specifically devicetable-offsets.h) and aren't needed to build dtbs.
->> > All that is really needed is dtc, so adjust the dependencies to only be
->> > dtc.
->> >
->> > This change enables support 'dtbs_install' on some arches which were
->> > missing the target.
->> >
->> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
->> > Cc: Michal Marek <michal.lkml@markovi.net>
->> > Cc: Vineet Gupta <vgupta@synopsys.com>
->> > Cc: Russell King <linux@armlinux.org.uk>
->> > Cc: Catalin Marinas <catalin.marinas@arm.com>
->> > Cc: Will Deacon <will.deacon@arm.com>
->> > Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
->> > Cc: Michal Simek <monstr@monstr.eu>
->> > Cc: Ralf Baechle <ralf@linux-mips.org>
->> > Cc: Paul Burton <paul.burton@mips.com>
->> > Cc: James Hogan <jhogan@kernel.org>
->> > Cc: Ley Foon Tan <lftan@altera.com>
->> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> > Cc: Paul Mackerras <paulus@samba.org>
->> > Cc: Michael Ellerman <mpe@ellerman.id.au>
->> > Cc: Chris Zankel <chris@zankel.net>
->> > Cc: Max Filippov <jcmvbkbc@gmail.com>
->> > Cc: linux-kbuild@vger.kernel.org
->> > Cc: linux-snps-arc@lists.infradead.org
->> > Cc: linux-arm-kernel@lists.infradead.org
->> > Cc: uclinux-h8-devel@lists.sourceforge.jp
->> > Cc: linux-mips@linux-mips.org
->> > Cc: nios2-dev@lists.rocketboards.org
->> > Cc: linuxppc-dev@lists.ozlabs.org
->> > Cc: linux-xtensa@linux-xtensa.org
->> > Signed-off-by: Rob Herring <robh@kernel.org>
->> > ---
->> >  Makefile                 | 30 ++++++++++++++++++++++++++++++
->> >  arch/arc/Makefile        |  6 ------
->> >  arch/arm/Makefile        | 20 +-------------------
->> >  arch/arm64/Makefile      | 17 +----------------
->> >  arch/c6x/Makefile        |  2 --
->> >  arch/h8300/Makefile      | 11 +----------
->> >  arch/microblaze/Makefile |  4 +---
->> >  arch/mips/Makefile       | 15 +--------------
->> >  arch/nds32/Makefile      |  2 +-
->> >  arch/nios2/Makefile      |  7 -------
->> >  arch/nios2/boot/Makefile |  4 ----
->> >  arch/powerpc/Makefile    |  3 ---
->> >  arch/xtensa/Makefile     | 12 +-----------
->> >  scripts/Makefile         |  1 -
->> >  scripts/Makefile.lib     |  2 +-
->> >  15 files changed, 38 insertions(+), 98 deletions(-)
->> >
->> > diff --git a/Makefile b/Makefile
->> > index c13f8b85ba60..6d89e673f192 100644
->> > --- a/Makefile
->> > +++ b/Makefile
->> > @@ -1212,6 +1212,30 @@ kselftest-merge:
->> >                 $(srctree)/tools/testing/selftests/*/config
->> >         +$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
->> >
->> > +# ---------------------------------------------------------------------------
->> > +# Devicetree files
->> > +
->> > +dtstree := $(wildcard arch/$(SRCARCH)/boot/dts)
->
-> BTW, there's an error here too. It doesn't work right with
-> KBUILD_OUTPUT set and should be:
->
-> ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/boot/dts/),)
-> dtstree := arch/$(SRCARCH)/boot/dts
-> endif
->
->> > +
->> > +ifdef CONFIG_OF_EARLY_FLATTREE
->> > +
->> > +%.dtb %.dtb.S %.dtb.o: | dtc
->>
->> I think the pipe operator is unnecessary
->> because Kbuild will descend to $(dtstree) anyway.
->
-> The pipe means 'order-only', right?
+WARN_ON() already contains an unlikely(), so it's not necessary to
+wrap it into another.
 
-Yes.
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/staging/octeon-usb/octeon-hcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> So it is just a weaker dependency
-> for things which are not input files as dtc is not. The 'dtc' here is
-> just the dtc rule below, not the actual executable. Or am I missing
-> something?
-
-
-The pipe is used when
-
-  - we want to make sure the weaker prerequisite exists
-
-  - but, we do not want to execute the recipe
-    even if the weaker prerequisite is updated
-
-
-In this case, we want to execute the recipe _all_the_time_.
-
-We compare the timestamp between %.dtb and %.dts in the sub-directory.
-
-We never know the real depenency until the following recipe is run
-     $(Q)$(MAKE) $(build)=$(dtstree) $(dtstree)/$@
-
-
-
-PHONY += dtbs
-dtbs: | dtc
-      $(Q)$(MAKE) $(build)=$(dtstree)
-
-Here 'dtbs' is a PHONY target.
-We always want to run the recipe.
-The pipe operator is not sensible.
-
-
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+index cff5e790b196..1a6431879201 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.c
++++ b/drivers/staging/octeon-usb/octeon-hcd.c
+@@ -2768,7 +2768,7 @@ static int cvmx_usb_poll_channel(struct octeon_hcd *usb, int channel)
+ 	    (pipe->transfer_dir == CVMX_USB_DIRECTION_OUT))
+ 		pipe->flags |= CVMX_USB_PIPE_FLAGS_NEED_PING;
+ 
+-	if (unlikely(WARN_ON_ONCE(bytes_this_transfer < 0))) {
++	if (WARN_ON_ONCE(bytes_this_transfer < 0)) {
+ 		/*
+ 		 * In some rare cases the DMA engine seems to get stuck and
+ 		 * keeps substracting same byte count over and over again. In
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
