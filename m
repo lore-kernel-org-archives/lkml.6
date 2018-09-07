@@ -2,192 +2,127 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D0C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A182DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB0392083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB0392083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CF952077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CF952077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbeIGRVa convert rfc822-to-8bit (ORCPT
+        id S1728724AbeIGRVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:21:30 -0400
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:48060 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727104AbeIGRV3 (ORCPT
+        Fri, 7 Sep 2018 13:21:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58953 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbeIGRTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:21:29 -0400
-X-ASG-Debug-ID: 1536324037-093b7e54e60cbe0001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id Gud91UfrNkf9h9qh (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 07 Sep 2018 20:40:38 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Sep 2018 20:40:41 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Fri, 7 Sep 2018 20:40:41 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "sergei.shtylyov@cogentembedded.com" 
-        <sergei.shtylyov@cogentembedded.com>
-CC:     "jacob.e.keller@intel.com" <jacob.e.keller@intel.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "carolyn.wyborny@intel.com" <carolyn.wyborny@intel.com>
-Subject: Re: [PATCH v3 1/2] net: ethernet: i40e: fix build error
-Thread-Topic: [PATCH v3 1/2] net: ethernet: i40e: fix build error
-X-ASG-Orig-Subj: Re: [PATCH v3 1/2] net: ethernet: i40e: fix build error
-Thread-Index: AQHURpyuIJpR//FVHkih3FMT4XCKSQ==
-Date:   Fri, 7 Sep 2018 12:40:40 +0000
-Message-ID: <f2b0bdfcb53c461191e71603257874ac@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <1536319175-3660-1-git-send-email-dongsheng.wang@hxt-semitech.com>
- <1536319175-3660-2-git-send-email-dongsheng.wang@hxt-semitech.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.50.12]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1536324038
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.2546 1.0000 -0.5535
-X-Barracuda-Spam-Score: -0.05
-X-Barracuda-Spam-Status: No, SCORE=-0.05 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_RULE7568M
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.57064
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.50 BSF_RULE7568M          Custom Rule 7568M
+        Fri, 7 Sep 2018 13:19:32 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fyG27-0007bs-DD; Fri, 07 Sep 2018 14:38:43 +0200
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fyG26-00061x-DA; Fri, 07 Sep 2018 14:38:42 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     linux-mtd@lists.infradead.org
+Cc:     David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 07/25] ubifs: drop write_node
+Date:   Fri,  7 Sep 2018 14:36:28 +0200
+Message-Id: <20180907123646.12688-8-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907123646.12688-1-s.hauer@pengutronix.de>
+References: <20180907123646.12688-1-s.hauer@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
+write_node() is used only once and can easily be replaced with calls
+to ubifs_prepare_node()/write_head() which makes the code a bit shorter.
 
-The i40e_ethtool_stats.h is just included by i40e/i40e_ethtool.c. So the
-static doesn't make any affect. And Carolyn's team is working rebuild
-i40e and i40evf.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ fs/ubifs/journal.c | 39 +++++----------------------------------
+ 1 file changed, 5 insertions(+), 34 deletions(-)
 
-Cheers,
-Dongsheng
-
-On 9/7/2018 7:19 PM, Wang, Dongsheng wrote:
-> Remove "inline" from __i40e_add_stat_strings and move the function.
->
-> In file included from
-> drivers/net/ethernet/intel/i40e/i40e_ethtool.c:9:0:
-> drivers/net/ethernet/intel/i40e/i40e_ethtool.c: In function
-> __i40e_add_stat_string:
-> drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h:193:20: error:
-> function __i40e_add_stat_strings can never be inlined because it uses
-> variable argument lists
->  static inline void __i40e_add_stat_strings(u8 **p, const struct
-> 					    i40e_stats stats[],
->
-> Tested on: x86_64, make ARCH=i386
->
-> Modules section .text:
-> i40e: 00019380 <__i40e_add_stat_strings>:
-> i40evf: 00006b00 <__i40e_add_stat_strings>:
->
-> Buildin section .text:
-> i40e: c351ca60 <__i40e_add_stat_strings>:
-> i40evf: c354f2c0 <__i40e_add_stat_strings>:
->
-> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-> ---
-> V3: add static 
-> V2: Move function
-> ---
->  .../net/ethernet/intel/i40e/i40e_ethtool.c    | 24 ++++++++++++++++++
->  .../ethernet/intel/i40e/i40e_ethtool_stats.h  | 25 ++-----------------
->  2 files changed, 26 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-> index d7d3974beca2..34121a72f2e7 100644
-> --- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-> +++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-> @@ -1821,6 +1821,30 @@ static void i40e_get_ethtool_stats(struct net_device *netdev,
->  		  "ethtool stats count mismatch!");
->  }
->  
-> +/**
-> + * __i40e_add_stat_strings - copy stat strings into ethtool buffer
-> + * @p: ethtool supplied buffer
-> + * @stats: stat definitions array
-> + * @size: size of the stats array
-> + *
-> + * Format and copy the strings described by stats into the buffer pointed at
-> + * by p.
-> + **/
-> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-> +				    const unsigned int size, ...)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < size; i++) {
-> +		va_list args;
-> +
-> +		va_start(args, size);
-> +		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
-> +		*p += ETH_GSTRING_LEN;
-> +		va_end(args);
-> +	}
-> +}
-> +
->  /**
->   * i40e_get_stat_strings - copy stat strings into supplied buffer
->   * @netdev: the netdev to collect strings for
-> diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
-> index bba1cb0b658f..553b0d720839 100644
-> --- a/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
-> +++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool_stats.h
-> @@ -181,29 +181,8 @@ i40e_add_queue_stats(u64 **data, struct i40e_ring *ring)
->  	*data += size;
->  }
->  
-> -/**
-> - * __i40e_add_stat_strings - copy stat strings into ethtool buffer
-> - * @p: ethtool supplied buffer
-> - * @stats: stat definitions array
-> - * @size: size of the stats array
-> - *
-> - * Format and copy the strings described by stats into the buffer pointed at
-> - * by p.
-> - **/
-> -static inline void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-> -				    const unsigned int size, ...)
-> -{
-> -	unsigned int i;
-> -
-> -	for (i = 0; i < size; i++) {
-> -		va_list args;
-> -
-> -		va_start(args, size);
-> -		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
-> -		*p += ETH_GSTRING_LEN;
-> -		va_end(args);
-> -	}
-> -}
-> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-> +				    const unsigned int size, ...);
->  
->  /**
->   * 40e_add_stat_strings - copy stat strings into ethtool buffer
-
+diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
+index 802565a17733..de7ac9e7acce 100644
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -228,36 +228,6 @@ static int reserve_space(struct ubifs_info *c, int jhead, int len)
+ 	return err;
+ }
+ 
+-/**
+- * write_node - write node to a journal head.
+- * @c: UBIFS file-system description object
+- * @jhead: journal head
+- * @node: node to write
+- * @len: node length
+- * @lnum: LEB number written is returned here
+- * @offs: offset written is returned here
+- *
+- * This function writes a node to reserved space of journal head @jhead.
+- * Returns zero in case of success and a negative error code in case of
+- * failure.
+- */
+-static int write_node(struct ubifs_info *c, int jhead, void *node, int len,
+-		      int *lnum, int *offs)
+-{
+-	struct ubifs_wbuf *wbuf = &c->jheads[jhead].wbuf;
+-
+-	ubifs_assert(c, jhead != GCHD);
+-
+-	*lnum = c->jheads[jhead].wbuf.lnum;
+-	*offs = c->jheads[jhead].wbuf.offs + c->jheads[jhead].wbuf.used;
+-
+-	dbg_jnl("jhead %s, LEB %d:%d, len %d",
+-		dbg_jhead(jhead), *lnum, *offs, len);
+-	ubifs_prepare_node(c, node, len, 0);
+-
+-	return ubifs_wbuf_write_nolock(wbuf, node, len);
+-}
+-
+ /**
+  * write_head - write data to a journal head.
+  * @c: UBIFS file-system description object
+@@ -268,9 +238,9 @@ static int write_node(struct ubifs_info *c, int jhead, void *node, int len,
+  * @offs: offset written is returned here
+  * @sync: non-zero if the write-buffer has to by synchronized
+  *
+- * This function is the same as 'write_node()' but it does not assume the
+- * buffer it is writing is a node, so it does not prepare it (which means
+- * initializing common header and calculating CRC).
++ * This function writes data to the reserved space of journal head @jhead.
++ * Returns zero in case of success and a negative error code in case of
++ * failure.
+  */
+ static int write_head(struct ubifs_info *c, int jhead, void *buf, int len,
+ 		      int *lnum, int *offs, int sync)
+@@ -764,7 +734,8 @@ int ubifs_jnl_write_data(struct ubifs_info *c, const struct inode *inode,
+ 	if (err)
+ 		goto out_free;
+ 
+-	err = write_node(c, DATAHD, data, dlen, &lnum, &offs);
++	ubifs_prepare_node(c, data, dlen, 0);
++	err = write_head(c, DATAHD, data, dlen, &lnum, &offs, 0);
+ 	if (err)
+ 		goto out_release;
+ 	ubifs_wbuf_add_ino_nolock(&c->jheads[DATAHD].wbuf, key_inum(c, key));
+-- 
+2.18.0
 
