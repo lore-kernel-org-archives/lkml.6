@@ -2,97 +2,91 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ADAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBB4C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FAD82075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:26:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAD82075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 79C012075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:28:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C012075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeIGNGj (ORCPT
+        id S1727828AbeIGNI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:06:39 -0400
-Received: from mga09.intel.com ([134.134.136.24]:38585 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeIGNGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:06:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 01:26:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
-   d="scan'208";a="69085231"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Sep 2018 01:26:34 -0700
-Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 7 Sep 2018 01:26:34 -0700
-Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
- FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 7 Sep 2018 01:26:33 -0700
-Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.240]) by
- SHSMSX101.ccr.corp.intel.com ([169.254.1.205]) with mapi id 14.03.0319.002;
- Fri, 7 Sep 2018 16:26:31 +0800
-From:   "Yang, Bin" <bin.yang@intel.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>
-CC:     "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Gross, Mark" <mark.gross@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
- overlap()
-Thread-Topic: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
- overlap()
-Thread-Index: AQHUOOyiLUEwozeDmEmpKrJdpg0FR6Tfm9CAgAP8LwCAAG7LgIAAA7IAgAAFPACAAAD5gA==
-Date:   Fri, 7 Sep 2018 08:26:31 +0000
-Message-ID: <9c5031cb0dfeb6083e65e3b33f4e73b96c66699f.camel@intel.com>
-References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>
-          <1534814186-37067-5-git-send-email-bin.yang@intel.com>
-          <alpine.DEB.2.21.1809041413070.3395@nanos.tec.linutronix.de>
-          <82fc8d80749f920c4a5107469924205d92037785.camel@intel.com>
-          <alpine.DEB.2.21.1809070943490.1402@nanos.tec.linutronix.de>
-         <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
-         <alpine.DEB.2.21.1809071019020.1402@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1809071019020.1402@nanos.tec.linutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.0 
-x-originating-ip: [10.239.4.100]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8E34213BF415524CACEC3D19BB65EEED@intel.com>
-Content-Transfer-Encoding: base64
+        Fri, 7 Sep 2018 09:08:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42334 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725843AbeIGNI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:08:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A5132AD93;
+        Fri,  7 Sep 2018 08:28:35 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 10:28:34 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
+Message-ID: <20180907082834.vjycyvt6nddpb4la@pathway.suse.cz>
+References: <20180905213334.03375777@vmware.local.home>
+ <20180906023151.GA749@jagdpanzerIV>
+ <20180907074531.GM24106@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907074531.GM24106@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTA5LTA3IGF0IDEwOjIxICswMjAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
-DQo+IE9uIEZyaSwgNyBTZXAgMjAxOCwgWWFuZywgQmluIHdyb3RlOg0KPiA+IE9uIEZyaSwgMjAx
-OC0wOS0wNyBhdCAwOTo0OSArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+ID4gT24g
-RnJpLCA3IFNlcCAyMDE4LCBZYW5nLCBCaW4gd3JvdGU6DQo+ID4gPiA+IE9uIFR1ZSwgMjAxOC0w
-OS0wNCBhdCAxNDoyMiArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+ID4gPiANCj4g
-PiA+ID4gSSBqdXN0IHdyaXRlIGEgdGVzdC5jIHRvIGNvbXBhcmUgdGhlIHJlc3VsdCBiZXR3ZWVu
-IG92ZXJsYXAoKSBhbmQNCj4gPiA+ID4gb3JpZ2luYWwgd2l0aGluKCkuDQo+ID4gPiANCj4gPiA+
-IFlvdSBhcmUgcmlnaHQuIFlvdXIgdmVyc2lvbiBvZiBkb2luZyB0aGUgb3ZlcmxhcCBleGNsdXNp
-dmUgd29ya3MuIEkgbWlzcmVhZA0KPiA+ID4gdGhlIGNvbmRpdGlvbnMuIEkgc3RpbGwgcHJlZmVy
-IGRvaW5nIGluY2x1c2l2ZSBjaGVja3MgYmVjYXVzZSB0aGV5IGFyZSB3YXkNCj4gPiA+IG1vcmUg
-b2J2aW91cy4NCj4gPiANCj4gPiBJIGFtIHNvcnJ5IGZvciBteSBwb29yIGVuZ2xpc2guIFdoYXQg
-aXMgImluY2x1c2l2ZSBjaGVja3MiPw0KPiANCj4gRXhsdXNpdmU6ICAgIHZhbCA+PSBzdGFydCAm
-JiB2YWwgPCBlbmQNCj4gDQo+IEluY2x1c2l2ZTogICB2YWwgPj0gc3RhcnQgJiYgdmFsIDw9IGVu
-ZA0KPiANCj4gU28gdGhlIGRpZmZlcmVuY2UgaXMgdGhhdCB5b3UgZmVlZCBleGNsdXNpdmUgd2l0
-aDoNCj4gDQo+ICAgIGVuZCA9IHN0YXJ0ICsgc2l6ZQ0KPiANCj4gYW5kIGluY2x1c2l2ZSB3aXRo
-DQo+IA0KPiAgIGVuZCA9IHN0YXJ0ICsgc2l6ZSAtIDENCj4gDQoNClRoYW5rcy4gSSB3aWxsIGNo
-YW5nZSBpdCB0byBpbmNsdXNpdmUgY2hlY2suDQoNCj4gVGhhbmtzLA0KPiANCj4gCXRnbHgNCj4g
-DQo+IA0K
+On Fri 2018-09-07 09:45:31, Peter Zijlstra wrote:
+> On Thu, Sep 06, 2018 at 11:31:51AM +0900, Sergey Senozhatsky wrote:
+> > An alternative option, thus, could be re-instating back the rule that
+> > lockdep_off/on should be the first and the last thing we do in
+> > nmi_enter/nmi_exit. E.g.
+> > 
+> > nmi_enter()
+> > 	lockdep_off();
+> > 	printk_nmi_enter();
+> > 
+> > nmi_exit()
+> > 	printk_nmi_exit();
+> > 	lockdep_on();
+> 
+> Yes that. Also, those should probably be inline functions.
+> 
+> ---
+> Subject: locking/lockdep: Fix NMI handling
+> 
+> Someone put code in the NMI handler before lockdep_off(). Since lockdep
+> is not NMI safe, this wrecks stuff.
+
+My view is that nmi_enter() has to switch several features into
+NMI-safe mode. The code must not trigger the other features when
+they are still in the unsafe mode.
+
+It is a chicken&egg problem. And it is hard to completely prevent
+regressions caused by future changes.
+
+I though that printk_nmi_enter() should never need any lockdep-related
+code. On the other hand, people might want to printk debug messages
+when lockdep_off() is called. This is why I put it in the current order.
+
+That said, I am not against this change. Especially the inlining
+is a good move. Note that lockdep_off()/lockdep_on() must not
+be traced as well.
+
+Best Regards,
+Petr
