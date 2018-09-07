@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC96C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137BDC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D4D820645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4D820645
+	by mail.kernel.org (Postfix) with ESMTP id BCC0A20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC0A20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbeIHB6U (ORCPT
+        id S1728687AbeIHB6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:58:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42564 "EHLO
+        Fri, 7 Sep 2018 21:58:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42572 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbeIHB6U (ORCPT
+        with ESMTP id S1727681AbeIHB6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:58:20 -0400
+        Fri, 7 Sep 2018 21:58:23 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51F5CFA4;
-        Fri,  7 Sep 2018 21:15:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78562FA4;
+        Fri,  7 Sep 2018 21:15:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luke Dashjr <luke-jr+git@utopios.org>,
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 036/145] powerpc64/ftrace: Include ftrace.h needed for enable/disable calls
-Date:   Fri,  7 Sep 2018 23:08:22 +0200
-Message-Id: <20180907210907.429505356@linuxfoundation.org>
+Subject: [PATCH 4.18 037/145] powerpc/powernv/pci: Work around races in PCI bridge enabling
+Date:   Fri,  7 Sep 2018 23:08:23 +0200
+Message-Id: <20180907210907.524998805@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,33 +51,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luke Dashjr <luke@dashjr.org>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit d6ee76d3d37d156c479348821574b6f99d6472a1 upstream.
+commit db2173198b9513f7add8009f225afa1f1c79bcc6 upstream.
 
-this_cpu_disable_ftrace and this_cpu_enable_ftrace are inlines in
-ftrace.h Without it included, the build fails.
+The generic code is racy when multiple children of a PCI bridge try to
+enable it simultaneously.
 
-Fixes: a4bc64d305af ("powerpc64/ftrace: Disable ftrace during kvm entry/exit")
-Cc: stable@vger.kernel.org # v4.18+
-Signed-off-by: Luke Dashjr <luke-jr+git@utopios.org>
-Acked-by: Naveen N. Rao <naveen.n.rao at linux.vnet.ibm.com>
+This leads to drivers trying to access a device through a
+not-yet-enabled bridge, and this EEH errors under various
+circumstances when using parallel driver probing.
+
+There is work going on to fix that properly in the PCI core but it
+will take some time.
+
+x86 gets away with it because (outside of hotplug), the BIOS enables
+all the bridges at boot time.
+
+This patch does the same thing on powernv by enabling all bridges that
+have child devices at boot time, thus avoiding subsequent races. It's
+suitable for backporting to stable and distros, while the proper PCI
+fix will probably be significantly more invasive.
+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_hv.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/platforms/powernv/pci-ioda.c |   37 ++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -46,6 +46,7 @@
- #include <linux/compiler.h>
- #include <linux/of.h>
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -3368,12 +3368,49 @@ static void pnv_pci_ioda_create_dbgfs(vo
+ #endif /* CONFIG_DEBUG_FS */
+ }
  
-+#include <asm/ftrace.h>
- #include <asm/reg.h>
- #include <asm/ppc-opcode.h>
- #include <asm/asm-prototypes.h>
++static void pnv_pci_enable_bridge(struct pci_bus *bus)
++{
++	struct pci_dev *dev = bus->self;
++	struct pci_bus *child;
++
++	/* Empty bus ? bail */
++	if (list_empty(&bus->devices))
++		return;
++
++	/*
++	 * If there's a bridge associated with that bus enable it. This works
++	 * around races in the generic code if the enabling is done during
++	 * parallel probing. This can be removed once those races have been
++	 * fixed.
++	 */
++	if (dev) {
++		int rc = pci_enable_device(dev);
++		if (rc)
++			pci_err(dev, "Error enabling bridge (%d)\n", rc);
++		pci_set_master(dev);
++	}
++
++	/* Perform the same to child busses */
++	list_for_each_entry(child, &bus->children, node)
++		pnv_pci_enable_bridge(child);
++}
++
++static void pnv_pci_enable_bridges(void)
++{
++	struct pci_controller *hose;
++
++	list_for_each_entry(hose, &hose_list, list_node)
++		pnv_pci_enable_bridge(hose->bus);
++}
++
+ static void pnv_pci_ioda_fixup(void)
+ {
+ 	pnv_pci_ioda_setup_PEs();
+ 	pnv_pci_ioda_setup_iommu_api();
+ 	pnv_pci_ioda_create_dbgfs();
+ 
++	pnv_pci_enable_bridges();
++
+ #ifdef CONFIG_EEH
+ 	pnv_eeh_post_init();
+ #endif
 
 
