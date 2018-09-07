@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D12BC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B328CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F177020645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F177020645
+	by mail.kernel.org (Postfix) with ESMTP id 7757120645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7757120645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbeIHCBh (ORCPT
+        id S1728971AbeIHCBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:01:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45046 "EHLO
+        Fri, 7 Sep 2018 22:01:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728641AbeIHCBh (ORCPT
+        with ESMTP id S1728218AbeIHCBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:01:37 -0400
+        Fri, 7 Sep 2018 22:01:41 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4093ADC4;
-        Fri,  7 Sep 2018 21:18:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49518E2F;
+        Fri,  7 Sep 2018 21:18:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4.18 105/145] pwm: omap-dmtimer: Return -EPROBE_DEFER if no dmtimer platform data
-Date:   Fri,  7 Sep 2018 23:09:31 +0200
-Message-Id: <20180907210912.414776227@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 106/145] mm/tlb: Remove tlb_remove_table() non-concurrent condition
+Date:   Fri,  7 Sep 2018 23:09:32 +0200
+Message-Id: <20180907210912.461676986@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -53,40 +56,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rivshin <DRivshin@allworx.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 43725feb593127b16318b871e3a9bf89a96d66cb upstream.
+commit a6f572084fbee8b30f91465f4a085d7a90901c57 upstream.
 
-If a pwm-omap-dmtimer is probed before the dmtimer it uses, the platform
-data won't be set yet.
+Will noted that only checking mm_users is incorrect; we should also
+check mm_count in order to cover CPUs that have a lazy reference to
+this mm (and could do speculative TLB operations).
 
-Fixes: ac30751df953 ("ARM: OMAP: pdata-quirks: Remove unused timer pdata")
-Cc: <stable@vger.kernel.org> # 4.17+
-Signed-off-by: David Rivshin <drivshin@allworx.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Acked-by: Ladislav Michl <ladis@linux-mips.org>
-Tested-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+If removing this turns out to be a performance issue, we can
+re-instate a more complete check, but in tlb_table_flush() eliding the
+call_rcu_sched().
+
+Fixes: 267239116987 ("mm, powerpc: move the RCU page-table freeing into generic code")
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Rik van Riel <riel@surriel.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: David Miller <davem@davemloft.net>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pwm/pwm-omap-dmtimer.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ mm/memory.c |    9 ---------
+ 1 file changed, 9 deletions(-)
 
---- a/drivers/pwm/pwm-omap-dmtimer.c
-+++ b/drivers/pwm/pwm-omap-dmtimer.c
-@@ -264,8 +264,9 @@ static int pwm_omap_dmtimer_probe(struct
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -391,15 +391,6 @@ void tlb_remove_table(struct mmu_gather
+ {
+ 	struct mmu_table_batch **batch = &tlb->batch;
  
- 	timer_pdata = dev_get_platdata(&timer_pdev->dev);
- 	if (!timer_pdata) {
--		dev_err(&pdev->dev, "dmtimer pdata structure NULL\n");
--		ret = -EINVAL;
-+		dev_dbg(&pdev->dev,
-+			 "dmtimer pdata structure NULL, deferring probe\n");
-+		ret = -EPROBE_DEFER;
- 		goto put;
- 	}
- 
+-	/*
+-	 * When there's less then two users of this mm there cannot be a
+-	 * concurrent page-table walk.
+-	 */
+-	if (atomic_read(&tlb->mm->mm_users) < 2) {
+-		__tlb_remove_table(table);
+-		return;
+-	}
+-
+ 	if (*batch == NULL) {
+ 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
+ 		if (*batch == NULL) {
 
 
