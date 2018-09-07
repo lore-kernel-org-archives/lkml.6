@@ -6,106 +6,91 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED88C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1867EC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 400C12077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0DFD2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:36:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="LSjhddB4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400C12077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="SmXm6mvt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DFD2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeIGVSZ (ORCPT
+        id S1727589AbeIGVS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:18:25 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33195 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIGVSZ (ORCPT
+        Fri, 7 Sep 2018 17:18:28 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42436 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727339AbeIGVS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:18:25 -0400
-Received: by mail-it0-f67.google.com with SMTP id j198-v6so29702ita.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:36:42 -0700 (PDT)
+        Fri, 7 Sep 2018 17:18:27 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g23-v6so6821677plq.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:36:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tMrhodfY+7z76WiIQ2ossLOOz3NDzGek3dPmrbKHC8M=;
-        b=LSjhddB4Cog+p4jMX6MvsgZjMUnMrKVPC0cHcRenLI/0UXO13mfc7ofF6nba/CtD7u
-         jwMusVPMyiygWWQPs5HbWuY9vUxrDqxSjMNOwlSKYArX4uzZECGtmTTm6aPPhUGl1aX0
-         9ovCkTCVvS7Fri+vfeOajeDvCO784vKUxv3j85jNce4UPZcufZ84Zfn7vW5FK0tbWclY
-         EEaq1OV36MXpxc4QrrwnFERJjR2hxjLREW+3QpuU72wfEde/pN1aBl5jF0AAJl+9e8/D
-         TpayGw+WeBKRjw5mrFjOuNx02k94AdOzRE5sQ7OPuAe0cY/U6lkvjb5PAPTaeww78y1j
-         G7Jw==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=2kbaJjPILeU0B1EdO0Pi2txBfrE8aWx+C1uzYIpdRII=;
+        b=SmXm6mvt8j/P5n+OnDWBSFoxgiR9Mf+hK7XnRXiG5fK6TtaNGvpfAsQw0ka+a0ilzD
+         MF6APVBrcVSUdNr2wKjwd0+izdNzo38pYAhawAPGJQ8CyDMuWMZ7h6d0uKmQ35TrjyM3
+         ut9zuj3KY0b2MnC3DXAQM5Fotk4b8qXbvphkM0WjA1dDoVx81+wmcuCnDLS1bGAUig09
+         g239egus7Nf/BnN4T+Qlc062XrKc/lqfgIW/kXM5K3+y0TXu05OYx/Yq8QNFg5BCIhVJ
+         iMaRZylLl1qt2cWhT+omWe2hqMkGKmWQpt/B4hwVgqfdht7imMMAe3TpWq0rsgRtGOCS
+         IUww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tMrhodfY+7z76WiIQ2ossLOOz3NDzGek3dPmrbKHC8M=;
-        b=fQtQi7665ikCytsMBOpZ2HZuGb+5QX/pprtS8QhQ/K6cH+oxjzBDyJvnbmq5OA0YIJ
-         uQqhAzIo8uqP5PrsbSd14tc4IjwdbtWNwVonLGt+nO00nfN/RUHMI11gKVbb6XEc6ivL
-         XCbUBjwnwiJInXgWj+2MzwAmGVv0OQLle0BAup/zRWSwMvPZxuyY/IO2oR58e6RZnvMi
-         czfprBHfaGYmYYyCKAy3vxvpZCUEMzZ3E0JjW4jZRf18+cQXYHMk8xRMi28iE1c8+7VL
-         wn5weCPbLC6B65t2yBqnO5cc8dLgnvyV8fND94iuMbkCq3xK6hhTtS8tKrJT53G/sj++
-         sxyQ==
-X-Gm-Message-State: APzg51ATaKTvHaQsb2KVTteb3KNGRLEvkZf0YZGhLm0hpAgxZToYONVQ
-        8VHXdqn+s5ia1qizl8nSaMIrSA==
-X-Google-Smtp-Source: ANB0VdYQvAbmLcEUMvXVnJdDkK1Bv+p6JPh/Dcruwrx/ZuH8guFU9E6Z8wPTn8AKDKRXb7q0R7dCtw==
-X-Received: by 2002:a02:5c8f:: with SMTP id w15-v6mr7317524jad.109.1536338201992;
-        Fri, 07 Sep 2018 09:36:41 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm3632810ita.35.2018.09.07.09.36.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 09:36:40 -0700 (PDT)
-Subject: Re: [PATCH v3] ata: Disable AHCI ALPM feature for Ampere Computing
- eMAG SATA
-To:     Suman Tripathi <stripathi@amperecomputing.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     Open Source Submission <patches@amperecomputing.com>,
-        Rameshwar Sahu <Rameshwar.Sahu@amperecomputing.com>
-References: <1536257111-27948-1-git-send-email-stripathi@amperecomputing.com>
- <d3682fff-473f-021a-c805-466030b7644e@redhat.com>
- <MWHPR01MB2336EE4B6E4923C9ED851F20B3010@MWHPR01MB2336.prod.exchangelabs.com>
- <cd3e5c60-1619-9842-6198-e36fdbaa4b4b@kernel.dk>
- <MWHPR01MB2336534C2B5343D4235063E3B3000@MWHPR01MB2336.prod.exchangelabs.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <044a4fee-9d6d-371c-dc9d-a81e9512c3ba@kernel.dk>
-Date:   Fri, 7 Sep 2018 10:36:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=2kbaJjPILeU0B1EdO0Pi2txBfrE8aWx+C1uzYIpdRII=;
+        b=VEPVQsTHUTLsrTi4W39gV2m2rcQCkX3w1ss8dzJDrlgyksQMfo0a6ioKl8P/o5bniV
+         6va0Lsi/NKpPKcD4NSeUx6cLepIWsH8H2uf3N5s4FMInVg9nXc3fKzPyeGUBOQ/QJqGn
+         tQZmFM20CrkMvo6UyqG8D++Z3HQB5tYnhWm0zo9cCkWHyHdBy6uyy5W+17eV6lYvT7T6
+         ZV7vSXULN6QmPPMtwoj0NbGMlyv3GS2zHlErkroWS6zySHqOBqLQUJEa/7CnRQHmTDsh
+         8lRSTfHDpkEoTs8ruzjpHw9nkDWRId6DyiCuctJQiCUgE2Yc+lniZG3tmkTNck3RwKmo
+         2pbg==
+X-Gm-Message-State: APzg51AoQzWIrGLTuynInzzQDyJxDvIlzJhYYj4yAlcdLJhpf/k7bLQl
+        8ZJmkSChdSSzV6PnwAro53tgvA==
+X-Google-Smtp-Source: ANB0VdbDGAX7wzFxQSbQA/CSutNCAeUq9GsvweD/lTt7Ww2AGdSj1QBmAECdiOCPDD+Dgi0DdF2tmg==
+X-Received: by 2002:a17:902:b03:: with SMTP id 3-v6mr9023501plq.156.1536338204235;
+        Fri, 07 Sep 2018 09:36:44 -0700 (PDT)
+Received: from cakuba (89-66-82-92.dynamic.chello.pl. [89.66.82.92])
+        by smtp.gmail.com with ESMTPSA id g21-v6sm22414133pfe.41.2018.09.07.09.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 09:36:43 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 18:36:36 +0200
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     jun qian <hangdianqj@163.com>
+Cc:     Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        oss-drivers@netronome.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ethernet:netronome:nfp:move spin_lock_bh to spin_lock
+ in tasklet
+Message-ID: <20180907183636.48a681f4@cakuba>
+In-Reply-To: <20180907162117.47361-1-hangdianqj@163.com>
+References: <20180907162117.47361-1-hangdianqj@163.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-In-Reply-To: <MWHPR01MB2336534C2B5343D4235063E3B3000@MWHPR01MB2336.prod.exchangelabs.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/7/18 10:35 AM, Suman Tripathi wrote:
->> I can apply it manually while you work out the kinks in your email
->> setup. It might even be your company MTA mangling it, I've seen all
->> sorts of crazy like that.
->
-> Thanks for the support. We are working with IT to fix this issue.
+On Fri,  7 Sep 2018 09:21:17 -0700, jun qian wrote:
+> As you are already in a tasklet, it is unnecessary to call spin_lock_bh.
+> 
+> Signed-off-by: jun qian <hangdianqj@163.com>
 
-Good luck! If all else fails, there's always gmail...
+FWIW you should put spaces after the colons.  It's generally a good
+practice to look at the prefix previous authors used for a given piece
+of code with 
 
-In any case, queued up:
+git log -- $file_path
 
-http://git.kernel.dk/cgit/linux-block/commit/?h=for-4.20/libata&id=20bdc376b427cb420836f39ee8f281ea85dbaeef
+This would be a better subject:
 
--- 
-Jens Axboe
-
+nfp: replace spin_lock_bh with spin_lock in tasklet callback
