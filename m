@@ -6,135 +6,84 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FF7C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC16CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381282083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:45:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381282083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=CARNet.hr
+	by mail.kernel.org (Postfix) with ESMTP id 7DC8E20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:45:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DC8E20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbeIGV0x (ORCPT
+        id S1726499AbeIGV1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:26:53 -0400
-Received: from mail.CARNet.hr ([161.53.123.6]:40409 "EHLO mail.carnet.hr"
+        Fri, 7 Sep 2018 17:27:12 -0400
+Received: from muru.com ([72.249.23.125]:55444 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbeIGV0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:26:53 -0400
-Received: from [2001:b68:ff:12::131] (port=50872 helo=gavran.carpriv.carnet.hr)
-        by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <Valentin.Vidic@CARNet.hr>)
-        id 1fyJsT-0001zN-9q; Fri, 07 Sep 2018 18:45:02 +0200
-Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
-        id E89F5202E0; Fri,  7 Sep 2018 18:45:00 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 18:45:00 +0200
-From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
-To:     drbd-user@lists.linbit.com
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-Message-ID: <20180907164500.GN26705@gavran.carpriv.carnet.hr>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905162756.GA26705@gavran.carpriv.carnet.hr>
- <20180907120337.GB11834@soda.linbit>
- <20180907121348.GM26705@gavran.carpriv.carnet.hr>
- <20180907132828.GC11834@soda.linbit>
+        id S1726365AbeIGV1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:27:12 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 4AD1280CF;
+        Fri,  7 Sep 2018 16:49:29 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 09:45:24 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] mtd: rawnand: ams-delta: Cleanups and
+ optimizations
+Message-ID: <20180907164524.GH5662@atomide.com>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com>
+ <20180820213904.13475-1-jmkrzyszt@gmail.com>
+ <20180905084757.432e7c19@xps13>
+ <1855340.fVHtouTg44@z50>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180907132828.GC11834@soda.linbit>
+In-Reply-To: <1855340.fVHtouTg44@z50>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
-Subject: Re: [DRBD-user] [PATCH] xen-blkback: Switch to closed state after
- releasing the backing device
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 03:28:28PM +0200, Lars Ellenberg wrote:
-> We don't expose that, no.
-> But even if we did, that would not be racefree :-)
+Hi,
+
+* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180905 20:56]:
+> On Wednesday, September 5, 2018 8:47:57 AM CEST Miquel Raynal wrote:
+> > Patch 2/3 does not apply on nand/next. Indeed the driver does not look
+> > the same as in the diff.
 > 
-> The last (or even: any?) "close" of a block device that used to be open
-> for WRITE triggeres a udev "change" event, thus a udev run,
-> and the minimal action will be some read-only open and ioctl from
-> (systemd-)udev itself, more likely there also will be blkid and possibly
-> pvscan and similar actions. All of them should be read-only openers,
-> and all of them should be "short".
-> But they will race with the drbd demotion.
+> That's because I built it on top of my former series from the mid of July, 
+> containing "[PATCH v2 2/3 v4] mtd: rawnand: ams-delta: use GPIO lookup table". 
+> It was acked by you, Miquel, and supposed to be merged via linux-omap tree.
 
-True, but did not find any strange interaction with udev during VM shutdown.
+Hmm I thought the plan was for dependencies to clear and then
+merge the rest via various driver trees.. Or at least I don't have
+the patch above tagged anywhere for me to merge. Then again, I
+try to forget everything posted before -rc1 just to stay sane :)
 
-This is what udevadm monitor reports:
+> > I don't see any changes on my side that could
+> > explain this so perhaps you could rebase on top of 4.19-rc2 (or
+> > nand/next, as you wish) and resend the series?
+> 
+> As far as I can see, Tony hasn't applied that series yet, so maybe I can still 
+> move that patch out of there and insert it into this series in front of the 
+> other 3 patches and resend. That would however make patch 3/3 of that old 
+> series depend on this one.
+> 
+> Tony, what do you think?
 
-KERNEL[1174.220256] remove   /devices/vbd-10-51712 (xen-backend)
-UDEV  [1174.222484] remove   /devices/vbd-10-51712 (xen-backend)
-KERNEL[1174.224405] remove   /devices/console-10-0 (xen-backend)
-UDEV  [1174.226964] remove   /devices/console-10-0 (xen-backend)
-KERNEL[1174.287215] change   /devices/virtual/block/drbd0 (block)
-KERNEL[1174.287267] change   /devices/virtual/block/drbd0 (block)
-UDEV  [1174.295811] change   /devices/virtual/block/drbd0 (block)
-UDEV  [1174.301983] change   /devices/virtual/block/drbd0 (block)
+Yes please resend based on v4.19-rc1 or MTD next. If there
+are still pending dependencies, please let us know and we can
+set up an immutable branch against v4.19-rc1 with those for
+MTD and me to merge in as needed.
 
-Strace on the udev daemon gives only these:
+Regards,
 
-[pid  7416] execve("/sbin/drbdadm", ["/sbin/drbdadm", "sh-udev", "minor-0"], [/* 10 vars */]) = 0
-[pid  7416] execve("/lib/drbd/drbdadm-84", ["drbdadm", "sh-udev", "minor-0"], [/* 12 vars */]) = 0
-[pid  7418] execve("/sbin/drbdadm", ["/sbin/drbdadm", "sh-udev", "minor-0"], [/* 9 vars */]) = 0
-[pid  7418] execve("/lib/drbd/drbdadm-84", ["drbdadm", "sh-udev", "minor-0"], [/* 11 vars */]) = 0
-
-and this should be 65-drbd.rules to add/remove symlinks in /dev.
-
-Adding a dump_stack in drbd_release gives two possible code paths,
-both from xen_blkback and the first one from workqueue being the
-problematic one:
-
-[  530.698782] CPU: 0 PID: 4 Comm: kworker/0:0 Tainted: G           O    4.9.0-8-amd64 #1 Debian 4.9.110-3+deb9u4
-[  530.698783] Hardware name: HP ProLiant BL460c Gen9, BIOS I36 09/12/2016
-[  530.698784] Workqueue: events xen_blkif_deferred_free [xen_blkback]
-[  530.698785]  0000000000000000 ffffffff81331e54 ffff883f82143800 ffff883f741b5660
-[  530.698787]  ffffffffc03a309e ffff883f741b5580 ffffffff81245ca8 0000000281a186b5
-[  530.698789]  000000008935f100 8412ffa31a64cc4c 000000000000020a ffff883fa6218280
-[  530.698791] Call Trace:
-[  530.698792]  [<ffffffff81331e54>] ? dump_stack+0x5c/0x78
-[  530.698805]  [<ffffffffc03a309e>] ? drbd_release+0x1e/0x40 [drbd]
-[  530.698810]  [<ffffffff81245ca8>] ? __blkdev_put+0x1e8/0x2a0
-[  530.698813]  [<ffffffffc055d6b8>] ? xen_vbd_free.isra.9+0x48/0x60 [xen_blkback]
-[  530.698814]  [<ffffffffc055d6f7>] ? xen_blkif_deferred_free+0x27/0x70 [xen_blkback]
-[  530.698816]  [<ffffffff81092fea>] ? process_one_work+0x18a/0x420
-[  530.698817]  [<ffffffff810932cd>] ? worker_thread+0x4d/0x490
-[  530.698818]  [<ffffffff81093280>] ? process_one_work+0x420/0x420
-[  530.698820]  [<ffffffff81099329>] ? kthread+0xd9/0xf0
-[  530.698822]  [<ffffffff81099250>] ? kthread_park+0x60/0x60
-[  530.698823]  [<ffffffff81615df7>] ? ret_from_fork+0x57/0x70
-
-[ 1216.251924] CPU: 14 PID: 297 Comm: xenwatch Tainted: G           O    4.9.0-8-amd64 #1 Debian 4.9.110-3+deb9u4
-[ 1216.251925] Hardware name: HP ProLiant BL460c Gen9, BIOS I36 09/12/2016
-[ 1216.251926]  0000000000000000 ffffffff81331e54 ffff883f82143800 ffff883f741b5660
-[ 1216.251928]  ffffffffc03a309e ffff883f741b5580 ffffffff81245ca8 0000000281a186b5
-[ 1216.251930]  ffffffffc0562360 97e48f39d448f082 000000000000020a 0000000000000006
-[ 1216.251933] Call Trace:
-[ 1216.251935]  [<ffffffff81331e54>] ? dump_stack+0x5c/0x78
-[ 1216.251947]  [<ffffffffc03a309e>] ? drbd_release+0x1e/0x40 [drbd]
-[ 1216.251951]  [<ffffffff81245ca8>] ? __blkdev_put+0x1e8/0x2a0
-[ 1216.251954]  [<ffffffff81414910>] ? register_xenbus_watch+0xe0/0xe0
-[ 1216.251956]  [<ffffffffc055d6b8>] ? xen_vbd_free.isra.9+0x48/0x60 [xen_blkback]
-[ 1216.251959]  [<ffffffffc055e9fe>] ? frontend_changed+0x9e/0x660 [xen_blkback]
-[ 1216.251961]  [<ffffffff814120d9>] ? xenbus_read_driver_state+0x39/0x60
-[ 1216.251962]  [<ffffffff8141542c>] ? xenbus_otherend_changed+0x8c/0x120
-[ 1216.251964]  [<ffffffff81414910>] ? register_xenbus_watch+0xe0/0xe0
-[ 1216.251967]  [<ffffffff81414995>] ? xenwatch_thread+0x85/0x120
-[ 1216.251969]  [<ffffffff810bbfb0>] ? prepare_to_wait_event+0xf0/0xf0
-[ 1216.251971]  [<ffffffff81099329>] ? kthread+0xd9/0xf0
-[ 1216.251973]  [<ffffffff81099250>] ? kthread_park+0x60/0x60
-[ 1216.251975]  [<ffffffff81615df7>] ? ret_from_fork+0x57/0x70
-
--- 
-Valentin
+Tony
