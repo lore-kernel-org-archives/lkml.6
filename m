@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA516C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE00C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB022083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB022083D
+	by mail.kernel.org (Postfix) with ESMTP id 480F12083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 480F12083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbeIHCWb (ORCPT
+        id S1730058AbeIHCWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:22:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52808 "EHLO
+        Fri, 7 Sep 2018 22:22:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbeIHCWb (ORCPT
+        with ESMTP id S1727707AbeIHCWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:22:31 -0400
+        Fri, 7 Sep 2018 22:22:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DAE0EC3;
-        Fri,  7 Sep 2018 21:39:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B71EBE9A;
+        Fri,  7 Sep 2018 21:39:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.4 16/47] iio: ad9523: Fix return value for ad952x_store()
-Date:   Fri,  7 Sep 2018 23:10:12 +0200
-Message-Id: <20180907210906.133115568@linuxfoundation.org>
+        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 4.4 17/47] vmw_balloon: fix inflation of 64-bit GFNs
+Date:   Fri,  7 Sep 2018 23:10:13 +0200
+Message-Id: <20180907210906.264651444@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -52,40 +50,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Nadav Amit <namit@vmware.com>
 
-commit 9a5094ca29ea9b1da301b31fd377c0c0c4c23034 upstream.
+commit 09755690c6b7c1eabdc4651eb3b276f8feb1e447 upstream.
 
-A sysfs write callback function needs to either return the number of
-consumed characters or an error.
+When balloon batching is not supported by the hypervisor, the guest
+frame number (GFN) must fit in 32-bit. However, due to a bug, this check
+was mistakenly ignored. In practice, when total RAM is greater than
+16TB, the balloon does not work currently, making this bug unlikely to
+happen.
 
-The ad952x_store() function currently returns 0 if the input value was "0",
-this will signal that no characters have been consumed and the function
-will be called repeatedly in a loop indefinitely. Fix this by returning
-number of supplied characters to indicate that the whole input string has
-been consumed.
-
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Fixes: cd1678f96329 ("iio: frequency: New driver for AD9523 SPI Low Jitter Clock Generator")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: ef0f8f112984 ("VMware balloon: partially inline vmballoon_reserve_page.")
+Cc: stable@vger.kernel.org
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/frequency/ad9523.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/vmw_balloon.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/iio/frequency/ad9523.c
-+++ b/drivers/iio/frequency/ad9523.c
-@@ -507,7 +507,7 @@ static ssize_t ad9523_store(struct devic
- 		return ret;
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -450,7 +450,7 @@ static int vmballoon_send_lock_page(stru
  
- 	if (!state)
--		return 0;
-+		return len;
+ 	pfn32 = (u32)pfn;
+ 	if (pfn32 != pfn)
+-		return -1;
++		return -EINVAL;
  
- 	mutex_lock(&indio_dev->mlock);
- 	switch ((u32)this_attr->address) {
+ 	STATS_INC(b->stats.lock[false]);
+ 
+@@ -460,7 +460,7 @@ static int vmballoon_send_lock_page(stru
+ 
+ 	pr_debug("%s - ppn %lx, hv returns %ld\n", __func__, pfn, status);
+ 	STATS_INC(b->stats.lock_fail[false]);
+-	return 1;
++	return -EIO;
+ }
+ 
+ static int vmballoon_send_batched_lock(struct vmballoon *b,
+@@ -597,11 +597,12 @@ static int vmballoon_lock_page(struct vm
+ 
+ 	locked = vmballoon_send_lock_page(b, page_to_pfn(page), &hv_status,
+ 								target);
+-	if (locked > 0) {
++	if (locked) {
+ 		STATS_INC(b->stats.refused_alloc[false]);
+ 
+-		if (hv_status == VMW_BALLOON_ERROR_RESET ||
+-				hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED) {
++		if (locked == -EIO &&
++		    (hv_status == VMW_BALLOON_ERROR_RESET ||
++		     hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED)) {
+ 			vmballoon_free_page(page, false);
+ 			return -EIO;
+ 		}
+@@ -617,7 +618,7 @@ static int vmballoon_lock_page(struct vm
+ 		} else {
+ 			vmballoon_free_page(page, false);
+ 		}
+-		return -EIO;
++		return locked;
+ 	}
+ 
+ 	/* track allocated page */
 
 
