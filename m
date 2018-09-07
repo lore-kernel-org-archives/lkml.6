@@ -6,98 +6,120 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E23AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A86FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B3E2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B3E2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 2163920869
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:09:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2163920869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbeIGQtW (ORCPT
+        id S1729049AbeIGQuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 12:49:22 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:25602 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbeIGQtV (ORCPT
+        Fri, 7 Sep 2018 12:50:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37484 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727611AbeIGQuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 12:49:21 -0400
-Received: from [10.18.19.215] (10.18.19.215) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 7 Sep 2018
- 20:09:04 +0800
-Subject: Re: [PATCH v3 0/2] arm64: dts: meson-g12a: Introduce new DT files for
- Meson-G12A SoC
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1534243121-33589-1-git-send-email-jianxin.pan@amlogic.com>
- <170648ffb748c7b3890f5d7293920873efd16e30.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <aebe4a85-94b0-90f9-d3c2-ed0764398a55@amlogic.com>
-Date:   Fri, 7 Sep 2018 20:09:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 7 Sep 2018 12:50:03 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w87C3sF7074966
+        for <linux-kernel@vger.kernel.org>; Fri, 7 Sep 2018 08:09:22 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mbr50j63a-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:09:22 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 7 Sep 2018 13:09:20 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Sep 2018 13:09:15 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w87C9ESs59375742
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Sep 2018 12:09:15 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 748ECA4053;
+        Fri,  7 Sep 2018 15:09:06 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8049AA405B;
+        Fri,  7 Sep 2018 15:09:05 +0100 (BST)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.171])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Sep 2018 15:09:05 +0100 (BST)
+Subject: Re: [PATCH 77/77] perf tests: Fix record+probe_libc_inet_pton.sh
+ without ping's debuginfo
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>
+References: <20180905220440.20256-1-acme@kernel.org>
+ <20180905220440.20256-78-acme@kernel.org>
+From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM
+Date:   Fri, 7 Sep 2018 14:09:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <170648ffb748c7b3890f5d7293920873efd16e30.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180905220440.20256-78-acme@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.19.215]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18090712-0008-0000-0000-0000026DBCBF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090712-0009-0000-0000-000021D5E514
+Message-Id: <62359230-cfb2-676d-6baf-93282ee99afc@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809070123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/2018 7:58 PM, Jerome Brunet wrote:
-> On Tue, 2018-08-14 at 18:38 +0800, Jianxin Pan wrote:
->> This attempt will try to add new DT files to support Meson-G12A SoC.
->>
->> 1) first, Please notice that, in this patch series, the DT node about 16M reserved
->> memory for hwrom is removed, since it's not needed by G12A SoC.
->> 2) second, the pclk for uart_AO need to be fixed once G12A clock_ao driver is
->> merged. In this version, it rely on bootloader to enable the pclk gate which 
->> belong to AO clock domain. Please add clk_ignore_unused to bootargs.
->>
->> Changes since v2 [1]:
->>  - reorder subnodes
->>  - collect Rob's Reviewed-by
->>
->> Changes since v1 [0]:
->>  - fix signoff typo
->>  - order subnodes by addresses when there is one and alphabetically when there is none
->>
->> [0] https://lore.kernel.org/lkml/1533802951-49919-2-git-send-email-jianxin.pan@amlogic.com/
->>
->> Jianxin Pan (2):
->>   dt-bindings: arm: amlogic: Add Meson G12A binding
->>   arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support
->>
->>  Documentation/devicetree/bindings/arm/amlogic.txt |   6 +
->>  arch/arm64/boot/dts/amlogic/Makefile              |   1 +
->>  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts   |  22 +++
->>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi       | 172 ++++++++++++++++++++++
->>  4 files changed, 201 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
->>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
->>
-> 
-> Series looks good as far as I can tell
-> 
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
-> .
-> 
-Hi Kevin, this series are tested on latest v4.20/integ.
+On 09/06/2018 12:04 AM, Arnaldo Carvalho de Melo wrote:
+> rpm -e iputils-debuginfo
+
+I have done the same on my s390 this morning:
+
+[root@p23lp27 perf]# ./perf test ping
+60: probe libc's inet_pton & backtrace it with ping       : Ok
+[root@p23lp27 perf]# rpm -e iputils-debuginfo
+[root@p23lp27 perf]# ./perf test ping
+60: probe libc's inet_pton & backtrace it with ping       : Ok
+[root@p23lp27 perf]#
+
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+
