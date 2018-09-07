@@ -2,743 +2,167 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB88CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36EBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A6120869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76CDB204EC
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:01:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EO9K3vdC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HlPtwlSH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A6120869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="fofoPSLj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76CDB204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbeIGOlA (ORCPT
+        id S1728321AbeIGOlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 10:41:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60864 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbeIGOk7 (ORCPT
+        Fri, 7 Sep 2018 10:41:12 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34603 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeIGOlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 10:40:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 98A9460818; Fri,  7 Sep 2018 10:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536314446;
-        bh=q9TPh0qcA/+v75BIq3IzXxzzwpRkgvW+INhBTbACDuo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EO9K3vdCRpX6suffqWtkPvqrcwD3wbjkbfjbWxm/2u7IM+USThRf0ysxq3sdlAL8B
-         DywyL3ltlqW8gXL8xXkR9yibv07ISx7wDiP/ZcSiOlsmSsfAycyMlIwRU0WQFq14cE
-         1d+qNsir6MK6SpPRuU6leUYCRylwQGX4zyzvH7Os=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id E7755607DD;
-        Fri,  7 Sep 2018 10:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1536314445;
-        bh=q9TPh0qcA/+v75BIq3IzXxzzwpRkgvW+INhBTbACDuo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HlPtwlSHZ/apKiVnluuMm3zK9tOmkue+GdSp3i7X/KsURgZ5qqkj9dvOBe2s8pkP/
-         wXIQ7UpYieq1p9M7BHPXlE8mfgVRgyhKxOBADNbL1bZ4sO+2Idn0qKn8nwfdif8BUT
-         mIpg0+4b8rXXmyAig2evcfy96EtH/OHR3aBgubfU=
+        Fri, 7 Sep 2018 10:41:12 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f6-v6so6392930plo.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 03:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kFcCsyKI3U5OZk30HhyH6sqOAI4wZcu6hunC8AVXCPg=;
+        b=fofoPSLj8SCCVGnQhik1hrUkRiat9guG2R8LObReA8ldShjOhEM6wncrGqA4KdzSYf
+         cznNq64ytHqEvdHJOaBbbtGbuf3o3tN01PwQfIoQx6yD2SKOJk0ZRt5KWq5M2GKBCmqr
+         IwqMqV80TbHCzUWm4uySHCu6I+lTkvb+mNFbzGjeuhYMUQ1PW0X0vCUQ9vr/sfE6g3oR
+         aDTX49tfCuarlaxMsB+OLhuxDcBR0/TMRGeNv0ThUUGu1IMOOeBHC2r+qxQZ8BNehR5Z
+         Esc9WGNCJq0ANwEGh9U1+QtzltrAQmfBA9nT/CGi1XjXY2Of0uCb2CPI0ZiPcZnyf2yg
+         PeHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kFcCsyKI3U5OZk30HhyH6sqOAI4wZcu6hunC8AVXCPg=;
+        b=assTFpg3CtL0XzQWLZI7BY+lnjC7OhndjKril4lm4YnLo85qWwADbrZKznlDDn5a0d
+         93xqM54GJ+0La1nN27FBudpCLf9AELf8U4IRH3MtiKEGuOEQpND951+1QnKacWX9Bey1
+         mm7kQI6xCSTDBB4dUNLIGRktyn9kmHf/jU4JIK6xkJKZO07sE4F3ZPAw2OHlm9D+FP/K
+         IOIk5TC4GLn8l7nRCD16LOeDjRIVQFrwMpZvRf2iAqNUvWwNU+9trBcqJXyx9z3Tuysa
+         whDHervFtGMS20q0/CQxiZMHhzwHAxgyaFZf/405q8zZAuQNs8RGg5piEJPelbjQXy7a
+         xT6A==
+X-Gm-Message-State: APzg51DyPfzyZB7jxBqlVl0U8ZqrhNwNqYcvVzgFanCaJDdSzXtDfMSC
+        zu7kTk8yVQ8JqII8XO69r8khzsuPjqIMqA==
+X-Google-Smtp-Source: ANB0VdZsjqqXCN92t4V68w9tlgvzn3OPVq/0rNKzMUvFchAPXD6gNF2H0aQXY1nKkd8tJ5UOXi1/YQ==
+X-Received: by 2002:a17:902:9a47:: with SMTP id x7-v6mr7199510plv.37.1536314459877;
+        Fri, 07 Sep 2018 03:00:59 -0700 (PDT)
+Received: from [10.86.62.183] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id n79-v6sm21641488pfh.2.2018.09.07.03.00.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 03:00:58 -0700 (PDT)
+Subject: Re: [PATCH v2] lightnvm: pblk-recovery: lightnvm: pblk: Fix two
+ sleep-in-atomic-context bugs
+To:     javier@cnexlabs.com, baijiaju1990@gmail.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180905084017.27593-1-baijiaju1990@gmail.com>
+ <4FEA8984-5E08-44E1-9E5C-03A6516AF7F6@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <07fd7366-3deb-6c3e-1cc9-b0dcfdd9ad9f@lightnvm.io>
+Date:   Fri, 7 Sep 2018 12:00:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 07 Sep 2018 15:30:44 +0530
-From:   dkota@codeaurora.org
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>
-Subject: Re: [PATCH V3] spi: spi-geni-qcom: Add SPI driver support for GENI
- based QUP
-In-Reply-To: <CAD=FV=XigmU1LXnNbj9NYkjJmj18chBFjbctrBeOKoS=34PLXw@mail.gmail.com>
-References: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
- <CAD=FV=XigmU1LXnNbj9NYkjJmj18chBFjbctrBeOKoS=34PLXw@mail.gmail.com>
-Message-ID: <2493fc3fa3f6e5d2bcdde27cee1c33df@codeaurora.org>
-X-Sender: dkota@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <4FEA8984-5E08-44E1-9E5C-03A6516AF7F6@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-02 10:36, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Aug 24, 2018 at 3:42 AM, Dilip Kota <dkota@codeaurora.org> 
-> wrote:
->> From: Girish Mahadevan <girishm@codeaurora.org>
->> 
->> This driver supports GENI based SPI Controller in the Qualcomm SOCs. 
->> The
->> Qualcomm Generic Interface (GENI) is a programmable module supporting 
->> a
->> wide range of serial interfaces including SPI. This driver supports 
->> SPI
->> operations using FIFO mode of transfer.
->> 
->> Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
->> Signed-off-by: Dilip Kota <dkota@codeaurora.org>
+On 09/06/2018 03:18 PM, Javier Gonzalez wrote:
+>> On 5 Sep 2018, at 01.40, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+>>
+>> The driver may sleep with holding a spinlock.
+>>
+>> The function call paths (from bottom to top) in Linux-4.16 are:
+>>
+>> [FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
+>> drivers/lightnvm/pblk-core.c, 754:
+>> 	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
+>> drivers/lightnvm/pblk-core.c, 1048:
+>> 	pblk_line_submit_smeta_io in pblk_line_init_bb
+>> drivers/lightnvm/pblk-core.c, 1434:
+>> 	pblk_line_init_bb in pblk_line_replace_data
+>> drivers/lightnvm/pblk-recovery.c, 980:
+>> 	pblk_line_replace_data in pblk_recov_l2p
+>> drivers/lightnvm/pblk-recovery.c, 976:
+>> 	spin_lock in pblk_recov_l2p
+>>
+>> [FUNC] bio_map_kern(GFP_KERNEL)
+>> drivers/lightnvm/pblk-core.c, 762:
+>> 	bio_map_kern in pblk_line_submit_smeta_io
+>> drivers/lightnvm/pblk-core.c, 1048:
+>> 	pblk_line_submit_smeta_io in pblk_line_init_bb
+>> drivers/lightnvm/pblk-core.c, 1434:
+>> 	pblk_line_init_bb in pblk_line_replace_data
+>> drivers/lightnvm/pblk-recovery.c, 980:
+>> 	pblk_line_replace_data in pblk_recov_l2p
+>> drivers/lightnvm/pblk-recovery.c, 976:
+>> 	spin_lock in pblk_recov_l2p
+>>
+>> To fix these bugs, the call to pblk_line_replace_data()
+>> is moved out of the spinlock protection.
+>>
+>> These bugs are found by my static analysis tool DSAC.
+>>
+>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 >> ---
->> Addressing all the reviewer commets given in Patchset1.
->> Summerizing all the comments below:
->> 
->>         MAKEFILE: Arrange SPI-GENI driver in alphabetical order
->>         Kconfig: Mark SPI_GENI driver dependent on QCOM_GENI_SE
->>         Enable SPI core auto runtime pm, and remove runtime pm calls.
->>         Remove spi_geni_unprepare_message(), 
->> spi_geni_unprepare_transfer_hardware()
->>         Remove likely/unlikely keywords.
->>         Remove get_spi_master() and use dev_get_drvdata()
->>         Move request_irq to probe()
->>         Mark bus number assignment to -1 as SPI core framework will 
->> assign dynamically
->>         Use devm_spi_register_master()
->>         Include platform_device.h instead of of_platform.h
->>         Removing macros which are used only once:
->>                 #define SPI_NUM_CHIPSELECT     4
->>                 #define SPI_XFER_TIMEOUT_MS    250
->>         Place Register field definitions next to respective Register 
->> definitions.
->>         Replace int and u32 declerations to unsigned int.
->>         Remove Hex numbers in debug prints.
->>         Declare mode as u16 in spi_setup_word_len()
->>         Remove the labels: setup_fifo_params_exit: 
->> exit_prepare_transfer_hardware:
->>         Declaring struct spi_master as spi everywhere in the file.
->>         Calling spi_finalize_current_transfer() for end of transfer.
->>         Hard code the SPI controller max frequency instead of reading 
->> from DTSI node.
->>         Spinlock not required, removed it.
->>         Removed unrequired error prints.
->>         Fix KASAN error in geni_spi_isr().
->>         Remove spi-geni-qcom.h
->>         Remove inter words delay and CS to Clock toggle delay logic in 
->> the driver, as of now no clients are using it.
->>         Will submit this logic in the next patchset.
->>         Use major, minor and step macros to read from hardware version 
->> register.
->> 
->>  .../devicetree/bindings/soc/qcom/qcom,geni-se.txt  |   2 -
->>  drivers/spi/Kconfig                                |  12 +
->>  drivers/spi/Makefile                               |   1 +
->>  drivers/spi/spi-geni-qcom.c                        | 678 
->> +++++++++++++++++++++
->>  4 files changed, 691 insertions(+), 2 deletions(-)
-> 
-> See below for comments.  In general I've tried to post patches to
-> address my own comments.  See the series ending at
-> <https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201142/1>.
-> From there you can download patch files by using the "DOWNLOAD" link
-> at the bottom.  Yell if you have problems.  Hopefully that's useful.
-> I expect that you can squash many of these into your patch to give you
-> a leg up on v3.
-> 
-> NOTE: I won't promise that I made no mistakes on my fixup patches nor
-> that I caught everything or did everything right.  I'll plan to take a
-> fresh look at the whole patch when I see your v3.
-> 
-> 
->> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
->> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
->> @@ -60,7 +60,6 @@ Required properties:
->>  - interrupts:          Must contain SPI controller interrupts.
->>  - clock-names:         Must contain "se".
->>  - clocks:              Serial engine core clock needed by the device.
->> -- spi-max-frequency:   Specifies maximum SPI clock frequency, units - 
->> Hz.
-> 
-> As per Rob's feedback, please split the device tree change into a
-> separate patch and justify it.  Perhaps the commit message could be
-> something like:
-> 
-> ---
-Ok, will submit as separate patch.
-> 
-> dt-bindings: spi: Remove spi-max-frequency from qcom,geni-se controller
-> 
-> No other SPI controllers have a "spi-max-frequency" at the controller
-> level.  The normal "spi-max-frequency" property is something that is
-> used when defining the nodes for SPI slaves.  While it is possible
-> that someone might want to define a controller-level max frequency it
-> should be done in other ways (perhaps by keying off a compatible
-> string?)
-> 
-> ---
-> 
-> I think in the past Mark Brown has also requested that the bindings
-> actually live under "Documentation/devicetree/bindings/spi/", so
-> perhaps you should also add a patch to your series that moves this
-> documentation there and changes the "soc/qcom/qcom,geni-se.txt" to
-> reference that.
-> 
-> 
->> +static irqreturn_t geni_spi_isr(int irq, void *data);
->> +
->> +struct spi_geni_master {
->> +       struct geni_se se;
->> +       unsigned int irq;
-> 
-> In v1 Stephen requested that many things in this struct become
-> "unsigned int", but he didn't mean the "irq".  Please change this back
-> to an int.  As you have things right now the code "if (spi_geni->irq <
-> 0)" you have below is a no-op.  :(
-> 
-> ...oh, and as Stephen pointed out to me offline you don't even need to
-> store irq.
-> 
-Ok
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201065
-> 
-> 
->> +       struct device *dev;
->> +       unsigned int rx_fifo_depth;
->> +       unsigned int tx_fifo_depth;
->> +       unsigned int tx_fifo_width;
->> +       unsigned int tx_wm;
-> 
-> Anything that is effectively the contents of a hardware register
-> should be of type 'u32'.
-Ok, will update it
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201066
-> 
-> 
->> +static int get_spi_clk_cfg(unsigned int speed_hz,
->> +                       struct spi_geni_master *mas,
->> +                       unsigned int *clk_idx,
->> +                       unsigned int *clk_div)
->> +{
->> +       unsigned long sclk_freq;
->> +       struct geni_se *se = &mas->se;
->> +       int ret;
->> +
->> +       ret = geni_se_clk_freq_match(&mas->se,
->> +                               (speed_hz * mas->oversampling), 
->> clk_idx,
->> +                               &sclk_freq, true);
-> 
-> Pass "false" as the last parameter after picking my geni patch to make
-> this work right.  For my geni patch see
-> <https://lkml.kernel.org/r/20180830183612.169572-2-dianders@chromium.org>.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201064
-> Agree. Will mark it to False.
-> 
->> +       if (ret) {
->> +               dev_err(mas->dev, "%s: Failed(%d) to find src clk for 
->> %dHz\n",
->> +                                               __func__, ret, 
->> speed_hz);
-> 
-> As I said in previous reviews: printing __func__ is generally
-> discouraged for dev_xx printouts.  They've already got the device name
-> and that together with the string should be enough.  Remove it here
-> and elsewhere in this file.
-> 
-Ok, will traverse the driver and remove __func__
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201067
-> 
-> 
->> +               return ret;
->> +       }
->> +
->> +       *clk_div = ((sclk_freq / mas->oversampling) / speed_hz);
-> 
-> After changing exact to false, you'll want:
-> 
->   *clk_div = DIV_ROUND_UP(sclk_freq, mas->oversampling * speed_hz);
->   actual_hz = sclk_freq / (mas->oversampling * *clk_div);
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201064
-> 
-Ok. I see actual_hz variable for debug prints itself.
-> 
->> +       if (!(*clk_div)) {
->> +               dev_err(mas->dev, "%s:Err:sclk:%lu oversampling:%d 
->> speed:%u\n",
->> +                       __func__, sclk_freq, mas->oversampling, 
->> speed_hz);
->> +               return -EINVAL;
->> +       }
-> 
-> After change above to use DIV_ROUND_UP() you no longer need to check
-> for a zero clk_div.
-Ok
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201064
-> 
-> 
->> +static void spi_setup_word_len(struct spi_geni_master *mas, u16 mode,
->> +                                       unsigned int bits_per_word)
->> +{
->> +       unsigned int word_len, pack_words;
->> +       bool msb_first = (mode & SPI_LSB_FIRST) ? false : true;
->> +       struct geni_se *se = &mas->se;
->> +
->> +       word_len = readl_relaxed(se->base + SE_SPI_WORD_LEN);
-> 
-> Gratuitously using the __relaxed versions of readl() and writel() is
-> discouraged in Linux because it gives very little performance gain in
-> 99.9% of the cases and it makes the code significantly harder to
-> reason about it.  Remove it in spi-geni-qcom.  If it is shown that a
-> particular read or write is in a performance critical section then
-> that one instance can be added back in after carefully analysis and
-> documentation.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201068
-Ok
-> 
-> 
->> +static int setup_fifo_params(struct spi_device *spi_slv,
->> +                                       struct spi_master *spi)
->> +{
->> +       struct spi_geni_master *mas = spi_master_get_devdata(spi);
->> +       struct geni_se *se = &mas->se;
->> +       unsigned int mode = spi_slv->mode;
->> +       unsigned int loopback_cfg = readl_relaxed(se->base + 
->> SE_SPI_LOOPBACK);
->> +       unsigned int cpol = readl_relaxed(se->base + SE_SPI_CPOL);
->> +       unsigned int cpha = readl_relaxed(se->base + SE_SPI_CPHA);
->> +       unsigned int demux_sel, clk_sel, m_clk_cfg, idx, div;
->> +       int ret = 0;
-> 
-> In v1 Stephen said:
-> 
->> Don't initialize variables and then overwrite them.
-> 
-> This is in lots of places in your code.  I've found and fixed them for 
-> you:
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201070
-Ok
-> 
-> 
->> +       unsigned int demux_output_inv = 0;
->> +
->> +       loopback_cfg &= ~LOOPBACK_MSK;
->> +       cpol &= ~CPOL;
->> +       cpha &= ~CPHA;
->> +
->> +       if (mode & SPI_LOOP)
->> +               loopback_cfg |= LOOPBACK_ENABLE;
->> +
->> +       if (mode & SPI_CPOL)
->> +               cpol |= CPOL;
->> +
->> +       if (mode & SPI_CPHA)
->> +               cpha |= CPHA;
->> +
->> +       if (spi_slv->mode & SPI_CS_HIGH)
->> +               demux_output_inv = BIT(spi_slv->chip_select);
->> +
->> +       demux_sel = spi_slv->chip_select;
->> +       mas->cur_speed_hz = spi_slv->max_speed_hz;
->> +       mas->cur_word_len = spi_slv->bits_per_word;
->> +
->> +       ret = get_spi_clk_cfg(mas->cur_speed_hz, mas, &idx, &div);
->> +       if (ret) {
->> +               dev_err(mas->dev, "Err setting clks ret(%d) for %d\n",
->> +                                                       ret, 
->> mas->cur_speed_hz);
->> +               return ret;
->> +       }
->> +
->> +       clk_sel = (idx & CLK_SEL_MSK);
->> +       m_clk_cfg = ((div << CLK_DIV_SHFT) | SER_CLK_EN);
-> 
-> Please avoid useless parenthesis everywhere in this file.  Stephen
-> pointed out many of these in v1 but the correct thing to do would have
-> been to search for all instances and fix them, not just fix the ones
-> that Stephen pointed out.  I've now done it for you:
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201071
-> 
-> 
-Ok
->> +static int spi_geni_prepare_transfer_hardware(struct spi_master *spi)
->> +{
->> +       struct spi_geni_master *mas = spi_master_get_devdata(spi);
->> +       struct geni_se *se = &mas->se;
->> +
->> +       if (!mas->setup) {
->> +               unsigned int proto = geni_se_read_proto(se);
->> +               unsigned int major, minor, step, ver;
->> +
->> +               if (proto != GENI_SE_SPI) {
->> +                       dev_err(mas->dev, "Invalid proto %d\n", 
->> proto);
->> +                       return -ENXIO;
->> +               }
->> +               mas->tx_fifo_depth = geni_se_get_tx_fifo_depth(se);
->> +               mas->rx_fifo_depth = geni_se_get_rx_fifo_depth(se);
->> +               mas->tx_fifo_width = geni_se_get_tx_fifo_width(se);
->> +
->> +               /*
->> +                * Hardware programming guide suggests to configure
->> +                * RX FIFO RFR level to fifo_depth-2.
->> +                */
->> +               geni_se_init(se, 0x0, mas->tx_fifo_depth - 2);
->> +               mas->oversampling = 1;
->> +               /* Transmit an entire FIFO worth of data per IRQ */
->> +               mas->tx_wm = 1;
->> +               ver = geni_se_get_qup_hw_version(se);
->> +               major = GENI_SE_VERSION_MAJOR(ver);
->> +               minor = GENI_SE_VERSION_MINOR(ver);
->> +               step = GENI_SE_VERSION_STEP(ver);
-> 
-> You don't use "step".  Kill it.
-> 
-Ok
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201069
-> 
-> 
->> +       /*
->> +        * If CS change flag is set, then toggle the CS line in 
->> between
->> +        * transfers and keep CS asserted after the last transfer.
->> +        * Else if keep CS flag asserted in between transfers and 
->> de-assert
->> +        * CS after the last message.
->> +        */
->> +       if (xfer->cs_change) {
->> +               if (list_is_last(&xfer->transfer_list,
->> +                               &spi->cur_msg->transfers))
->> +                       m_param |= FRAGMENTATION;
->> +       } else {
->> +               if (!list_is_last(&xfer->transfer_list,
->> +                               &spi->cur_msg->transfers))
-> 
-> In v1 Stephen said:
-> 
->> Combine else and if here into an else if.
-> 
-> ...but really I think you could just do:
-> 
-> /*
->  * Keep the CS asserted in either of the two cases:
->  * - It's not the last transfer (and cs_change is not set)
->  * - It is the last transfer (and cs_change is set)
->  *
->  * ...AKA keep it asserted whenever the "last transfer" and cs_change
->  * booleans agree.
->  */
-> if (!!xfer->cs_change ==
->     !!list_is_last(&xfer->transfer_list, &spi->cur_msg->transfers))
->         m_param |= FRAGMENTATION;
-> 
-This complete logic will be removed with set_cs() change, because 
-m_param |= FRAGMENTATION; should set in all the cases.
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201072
-> 
-> 
->> +       if (m_cmd & SPI_TX_ONLY) {
->> +               mas->tx_rem_bytes = xfer->len;
->> +               writel_relaxed(trans_len, se->base + 
->> SE_SPI_TX_TRANS_LEN);
->> +       }
->> +
->> +       if (m_cmd & SPI_RX_ONLY) {
->> +               writel_relaxed(trans_len, se->base + 
->> SE_SPI_RX_TRANS_LEN);
->> +               mas->rx_rem_bytes = xfer->len;
->> +       }
->> +       writel_relaxed(spi_tx_cfg, se->base + SE_SPI_TRANS_CFG);
->> +       geni_se_setup_m_cmd(se, m_cmd, m_param);
->> +       if (m_cmd & SPI_TX_ONLY)
->> +               writel_relaxed(mas->tx_wm, se->base + 
->> SE_GENI_TX_WATERMARK_REG);
-> 
-> In v1 Stephen said:
-> 
->> This can't be combined with above m_cmd & SPI_TX_ONLY statement?
-> 
-> In v2 I said:
-> 
->> Girish said it can't.  ...but IMO if it really can't then please add a
->> comment in the code so someone doesn't later go back and try to
->> combine.
-> 
-> I don't see a comment.  An example of an appropriate comment (assuming
-> that the geni hardware really does need the services of a dark wizard)
-> would be:
-> 
-I will add the detailed comments.
-> /*
->  * NOTE: we have to write the SE_GENI_TX_WATERMARK_REG _after_ the
->  * write to SE_SPI_TRANS_CFG and the call to geni_se_setup_m_cmd()
->  * because these two things perform a special incantation to summon a
->  * dark wizard and we're not allowed to set the watermark until the
->  * dark wizard arrives.
->  */
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201073
-> 
-> Presumably writing to the watermark kicks off the interrupt happening
-> so it has to be last.  That would be something to say instead of
-> talking about magic.
-> 
-> 
->> +static irqreturn_t geni_spi_handle_tx(struct spi_geni_master *mas)
->> +{
->> +       unsigned int i = 0;
->> +       unsigned int tx_fifo_width = mas->tx_fifo_width / 
->> BITS_PER_BYTE;
-> 
-> This is super confusing.  You have two things with the same name
-> "tx_fifo_width" one that's in terms of bits and one that's in terms of
-> bytes.  ...in general it's really hard to figure out the units of all
-> your variables here.  For things that it's not clear you should rename
-> variables.
-> 
-Ok, will rename it.
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201075
-> 
-> 
->> +       unsigned int max_bytes;
->> +       const u8 *tx_buf;
->> +       struct geni_se *se = &mas->se;
->> +
->> +       if (!mas->cur_xfer)
->> +               return IRQ_NONE;
->> +
->> +       /*
->> +        * For non-byte aligned bits-per-word values(e.g 9).
->> +        * The FIFO packing is set to 1 SPI word per FIFO word.
-> 
-> In v1 Stephen said:
-> 
->> Decapitalize "The"
-> 
-> You added a "." at the end of the first line so I guess it's not quite
-> as wrong as it was but it's still better grammar to just have one
-> sentence.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201074
-> 
-> 
-Ok
->> +        * Assumption is that each SPI word will be accomodated in
->> +        * ceil (bits_per_word / bits_per_byte)
->> +        * and the next SPI word starts at the next byte.
->> +        * In such cases, we can fit 1 SPI word per FIFO word so 
->> adjust the
->> +        * max byte that can be sent per IRQ accordingly.
->> +        */
->> +       max_bytes = (mas->tx_fifo_depth - mas->tx_wm);
->> +       if (mas->tx_fifo_width % mas->cur_word_len)
->> +               max_bytes *= ((mas->cur_word_len / BITS_PER_BYTE) + 
->> 1);
-> 
-> Even though the math should be the same (since you should you'll never
-> divide cur_word_len evenly), the above is clearer as:
-> 
->   max_bytes *= DIV_ROUND_UP(mas->cur_word_len, BITS_PER_BYTE);
-> 
-> ...oh, but even that is wrong.  SPI framework documents that we need
-> the nearest power of 2, so a 20-bit transfer will not take up 3 bytes
-> but will actually take up 4.
-> 
-> ...and of course this same assumption is replicated twice in both the
-> tx and rx functions.  I'm just going to rewrite these two functions.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201076
-> 
-> 
->> +       while (i < max_bytes) {
->> +               unsigned int j;
->> +               unsigned int fifo_word = 0;
->> +               u8 *fifo_byte;
->> +               unsigned int bytes_per_fifo = tx_fifo_width;
->> +               unsigned int bytes_to_write = 0;
->> +
->> +               if (mas->tx_fifo_width % mas->cur_word_len)
->> +                       bytes_per_fifo =
->> +                               (mas->cur_word_len / BITS_PER_BYTE) + 
->> 1;
->> +
->> +               if (bytes_per_fifo < (max_bytes - i))
->> +                       bytes_to_write = bytes_per_fifo;
->> +               else
->> +                       bytes_to_write = max_bytes - i;
->> +
->> +               fifo_byte = (u8 *)&fifo_word;
->> +               for (j = 0; j < bytes_to_write; j++)
->> +                       fifo_byte[j] = tx_buf[i++];
-> 
-> In previous reviews Stephen pointed out that he's not super keen on
-> this manual copy of bytes, but IMO it's not a huge deal and we can
-> find a better way to do it later.  ...but if someone wants to propose
-> a patch that makes it nicer then I won't object.
-> 
-> 
->> +static irqreturn_t geni_spi_handle_rx(struct spi_geni_master *mas)
->> +{
->> +       unsigned int i = 0;
->> +       struct geni_se *se = &mas->se;
->> +       unsigned int fifo_width = mas->tx_fifo_width / BITS_PER_BYTE;
-> 
-> You're assuming TX and RX FIFO widths are the same.  Let's make that 
-> explicit.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201075
-> 
-Agree
-> 
->> +static int spi_geni_probe(struct platform_device *pdev)
->> +{
->> +       int ret;
->> +       struct spi_master *spi;
->> +       struct spi_geni_master *spi_geni;
->> +       struct resource *res;
->> +       struct geni_se *se;
->> +
->> +       spi = spi_alloc_master(&pdev->dev, sizeof(struct 
->> spi_geni_master));
->> +       if (!spi) {
->> +               ret = -ENOMEM;
->> +               goto spi_geni_probe_err;
-> 
-> When spi_alloc_master() fails you don't want spi_master_put().
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201078
-> 
-> 
->> +       spi->prepare_transfer_hardware = 
->> spi_geni_prepare_transfer_hardware;
-> 
-> IMO this is wrong.  You're using prepare_transfer_hardware() to do
-> one-time init.  Just do it at probe.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201079
-> 
-Agree, will move it to probe.
-> 
->> +       init_completion(&spi_geni->xfer_done);
->> +       pm_runtime_enable(&pdev->dev);
->> +       ret = devm_spi_register_master(&pdev->dev, spi);
->> +       if (ret)
->> +               goto spi_geni_probe_unmap;
-> 
-> In this error case I believe you need pm_runtime_disable().
-> 
-Yes, I will update it.
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201078
-> 
-> 
->> +       return ret;
->> +spi_geni_probe_unmap:
->> +       devm_iounmap(&pdev->dev, se->base);
-> 
-> The whole point of devm is that you don't need this kind of the error 
-> handling.
-> 
-Agree
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201078
+>> v2:
+>> * Move the call to pblk_line_replace_data() out of the spinlock
+>>   protection, instead of v1 that changes GFP_KERNEL to GFP_ATOMIC in
+>>   the calls to bio_map_kern() and nvm_dev_dma_alloc().
+>>   Thanks Javier for good advice.
+>> ---
+>> drivers/lightnvm/pblk-recovery.c | 6 ++++--
+>> 1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+>> index 3a5069183859..5fde414d78bb 100644
+>> --- a/drivers/lightnvm/pblk-recovery.c
+>> +++ b/drivers/lightnvm/pblk-recovery.c
+>> @@ -955,12 +955,14 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+>> 		}
+>> 	}
+>>
+>> -	spin_lock(&l_mg->free_lock);
+>> 	if (!open_lines) {
+>> +		spin_lock(&l_mg->free_lock);
+>> 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+>> 							&l_mg->meta_bitmap));
+>> +		spin_unlock(&l_mg->free_lock);
+>> 		pblk_line_replace_data(pblk);
+>> 	} else {
+>> +		spin_lock(&l_mg->free_lock);
+>> 		/* Allocate next line for preparation */
+>> 		l_mg->data_next = pblk_line_get(pblk);
+>> 		if (l_mg->data_next) {
+>> @@ -968,8 +970,8 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+>> 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
+>> 			is_next = 1;
+>> 		}
+>> +		spin_unlock(&l_mg->free_lock);
+>> 	}
+>> -	spin_unlock(&l_mg->free_lock);
+>>
+>> 	if (is_next)
+>> 		pblk_line_erase(pblk, l_mg->data_next);
+>> --
+>> 2.17.0
+> 
+> It looks good to me. Thanks Jia-Ju.
+> 
+> Reviewed-by: Javier González <javier@cnexlabs.com>
 > 
 
-> 
-> 
->> +static int spi_geni_remove(struct platform_device *pdev)
->> +{
->> +       struct spi_master *spi = platform_get_drvdata(pdev);
->> +       struct spi_geni_master *spi_geni = 
->> spi_master_get_devdata(spi);
->> +
->> +       geni_se_resources_off(&spi_geni->se);
-> 
-> In v2 I said:
-> 
->> Why would you need to call geni_se_resources_off()?  Isn't it handled
->> by pm_runtime?
-IMO, runtime_pm may not be called during unbind operation. Anyhow I will 
-run the test and check it.
-> 
-> 
->> +       pm_runtime_put_noidle(&pdev->dev);
-> 
-> In v2 I said:
-> 
->> I'm curious: why would you have a "put" here?  Won't that result in an
->> imbalance since you don't exit probe with "get"?  ...or did pm_runtime
->> throw me for a loop again?
-> 
->> +       pm_runtime_disable(&pdev->dev);
->> +       return 0;
-> 
-> So testing:
-> 
->       cd /sys/bus/platform/drivers/geni_spi/
->       echo 880000.spi > unbind
->       sleep 2
->       echo 880000.spi > bind
-> 
-> ...in fact it yells a lot.  To me this means that you didn't test
-> spi_geni_remove() at all.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201077
-> 
-I will test and update it.
-> 
->> +static int __maybe_unused spi_geni_suspend(struct device *dev)
->> +{
->> +       if (!pm_runtime_status_suspended(dev))
->> +               return -EBUSY;
-> 
-> I didn't have time to dig into Stephen Boyd's feedback, but please
-> make sure you address it here.  I agree that something seems fishy
-> here.
-> 
-I will check it.
-> ---
-> 
-> In v2, I said:
-> 
->> I'm not sure where to comment about this, so adding it to the end:
->> 
->> Between v1 and v2 you totally removed all the locking.  Presumably
->> this is because you didn't want to hold the lock in
->> handle_fifo_timeout() while waiting for the completion.  IMO taking
->> the lock out was the wrong thing to do.  You should keep it, but just
->> drop the lock before wait_for_completion_timeout() and add it back
->> afterwards.  Specifically you _don't_ want the IRQ and timeout code
->> stomping on each other.
-> 
-> ...but still no spinlock?
-I see there is no need of taking the spinlock as timeout will be handled 
-after the calculated time as per data size and speed.
-There is 99.9% less chances of interrupt during the timeout handler.
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201081
-> 
-> ---
-> 
-> As we've discussed offline, your current driver doesn't deal with chip
-> select in a correct enough way to make cros_ec_spi work.  I've applied
-> and fixed up your WIP patch to fix this.
-You are correct, runtime_pm wont be called by spi framework during the 
-setup call. And, in ISR flag is required to differentiate between set_cs 
-and actual transfer.
-
-
-> 
-> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201142
-> 
-> 
-> -Doug
+Thanks. Applied for 4.20.
