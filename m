@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1046FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75355C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C506C20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C506C20645
+	by mail.kernel.org (Postfix) with ESMTP id 38B2320645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B2320645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbeIHCLN (ORCPT
+        id S1729439AbeIHCLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:11:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48788 "EHLO
+        Fri, 7 Sep 2018 22:11:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728039AbeIHCLM (ORCPT
+        with ESMTP id S1728886AbeIHCLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:11:12 -0400
+        Fri, 7 Sep 2018 22:11:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85DABDBC;
-        Fri,  7 Sep 2018 21:28:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA67BACC;
+        Fri,  7 Sep 2018 21:28:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Kali <adityakali@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 51/89] ovl: fix wrong use of impure dir cache in ovl_iterate()
-Date:   Fri,  7 Sep 2018 23:09:45 +0200
-Message-Id: <20180907210858.551664941@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Kalauskas <peskal@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 52/89] drivers/block/zram/zram_drv.c: fix bug storing backing_dev
+Date:   Fri,  7 Sep 2018 23:09:46 +0200
+Message-Id: <20180907210858.699744342@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,75 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Peter Kalauskas <peskal@google.com>
 
-commit 67810693077afc1ebf9e1646af300436cb8103c2 upstream.
+commit c8bd134a4bddafe5917d163eea73873932c15e83 upstream.
 
-Only upper dir can be impure, but if we are in the middle of
-iterating a lower real dir, dir could be copied up and marked
-impure. We only want the impure cache if we started iterating
-a real upper dir to begin with.
+The call to strlcpy in backing_dev_store is incorrect. It should take
+the size of the destination buffer instead of the size of the source
+buffer.  Additionally, ignore the newline character (\n) when reading
+the new file_name buffer. This makes it possible to set the backing_dev
+as follows:
 
-Aditya Kali reported that the following reproducer hits the
-WARN_ON(!cache->refcount) in ovl_get_cache():
+	echo /dev/sdX > /sys/block/zram0/backing_dev
 
- docker run --rm drupal:8.5.4-fpm-alpine \
-    sh -c 'cd /var/www/html/vendor/symfony && \
-           chown -R www-data:www-data . && ls -l .'
+The reason it worked before was the fact that strlcpy() copies 'len - 1'
+bytes, which is strlen(buf) - 1 in our case, so it accidentally didn't
+copy the trailing new line symbol.  Which also means that "echo -n
+/dev/sdX" most likely was broken.
 
-Reported-by: Aditya Kali <adityakali@google.com>
-Tested-by: Aditya Kali <adityakali@google.com>
-Fixes: 4edb83bb1041 ('ovl: constant d_ino for non-merge dirs')
-Cc: <stable@vger.kernel.org> # v4.14
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Peter Kalauskas <peskal@google.com>
+Link: http://lkml.kernel.org/r/20180813061623.GC64836@rodete-desktop-imager.corp.google.com
+Acked-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: <stable@vger.kernel.org>    [4.14+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/readdir.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/block/zram/zram_drv.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -623,6 +623,21 @@ static int ovl_fill_real(struct dir_cont
- 	return orig_ctx->actor(orig_ctx, name, namelen, offset, ino, d_type);
- }
- 
-+static bool ovl_is_impure_dir(struct file *file)
-+{
-+	struct ovl_dir_file *od = file->private_data;
-+	struct inode *dir = d_inode(file->f_path.dentry);
-+
-+	/*
-+	 * Only upper dir can be impure, but if we are in the middle of
-+	 * iterating a lower real dir, dir could be copied up and marked
-+	 * impure. We only want the impure cache if we started iterating
-+	 * a real upper dir to begin with.
-+	 */
-+	return od->is_upper && ovl_test_flag(OVL_IMPURE, dir);
-+
-+}
-+
- static int ovl_iterate_real(struct file *file, struct dir_context *ctx)
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -321,6 +321,7 @@ static ssize_t backing_dev_store(struct
+ 		struct device_attribute *attr, const char *buf, size_t len)
  {
- 	int err;
-@@ -646,7 +661,7 @@ static int ovl_iterate_real(struct file
- 		rdt.parent_ino = stat.ino;
+ 	char *file_name;
++	size_t sz;
+ 	struct file *backing_dev = NULL;
+ 	struct inode *inode;
+ 	struct address_space *mapping;
+@@ -341,7 +342,11 @@ static ssize_t backing_dev_store(struct
+ 		goto out;
  	}
  
--	if (ovl_test_flag(OVL_IMPURE, d_inode(dir))) {
-+	if (ovl_is_impure_dir(file)) {
- 		rdt.cache = ovl_cache_get_impure(&file->f_path);
- 		if (IS_ERR(rdt.cache))
- 			return PTR_ERR(rdt.cache);
-@@ -676,7 +691,7 @@ static int ovl_iterate(struct file *file
- 		 * entries.
- 		 */
- 		if (ovl_same_sb(dentry->d_sb) &&
--		    (ovl_test_flag(OVL_IMPURE, d_inode(dentry)) ||
-+		    (ovl_is_impure_dir(file) ||
- 		     OVL_TYPE_MERGE(ovl_path_type(dentry->d_parent)))) {
- 			return ovl_iterate_real(file, ctx);
- 		}
+-	strlcpy(file_name, buf, len);
++	strlcpy(file_name, buf, PATH_MAX);
++	/* ignore trailing newline */
++	sz = strlen(file_name);
++	if (sz > 0 && file_name[sz - 1] == '\n')
++		file_name[sz - 1] = 0x00;
+ 
+ 	backing_dev = filp_open(file_name, O_RDWR|O_LARGEFILE, 0);
+ 	if (IS_ERR(backing_dev)) {
 
 
