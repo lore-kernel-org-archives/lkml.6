@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9088CC04ABE
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584A5C04ABB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48CB620844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48CB620844
+	by mail.kernel.org (Postfix) with ESMTP id 0D1D320844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1D320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbeIHBm2 (ORCPT
+        id S1727828AbeIHBmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:42:28 -0400
+        Fri, 7 Sep 2018 21:42:16 -0400
 Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727762AbeIHBmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:42:16 -0400
+        id S1727521AbeIHBmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 21:42:15 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 491F620883;
-        Fri,  7 Sep 2018 20:59:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23B012087A;
+        Fri,  7 Sep 2018 20:59:33 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fyNqn-0001tr-B3; Fri, 07 Sep 2018 16:59:33 -0400
-Message-Id: <20180907205933.227671780@goodmis.org>
+        id 1fyNqm-0001pz-1Z; Fri, 07 Sep 2018 16:59:32 -0400
+Message-Id: <20180907205931.925916531@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:59:18 -0400
+Date:   Fri, 07 Sep 2018 16:59:11 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -43,9 +43,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org,
-        Mike Galbraith <efault@gmx.de>
-Subject: [PATCH RT 21/24] sched: Allow pinned user tasks to be awakened to the CPU they pinned
+        tom.zanussi@linux.intel.com
+Subject: [PATCH RT 14/24] x86/ioapic: Dont let setaffinity unmask threaded EOI interrupt too
+ early
 References: <20180907205857.262840394@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -59,39 +59,115 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mike Galbraith <efault@gmx.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit cd4d35ef89948221f7cd1751cee453943967364c ]
+[ Upstream commit ac14002317721910204b82b9d8611dadb1cec2bb ]
 
-Since commit 7af443ee16976 ("sched/core: Require cpu_active() in
-select_task_rq(), for user tasks") select_fallback_rq() will BUG() if
-the CPU to which a task has pinned itself and pinned becomes
-!cpu_active() while it slept.
-The task will continue running on the to-be-removed CPU and will remove
-itself from the CPU during takedown_cpu() (while cpuhp_pin_lock will be
-acquired) and move to another CPU based on its mask after the
-migrate_disable() section has been left.
+There is an issue with threaded interrupts which are marked ONESHOT
+and using the fasteoi handler.
 
-Cc: stable-rt@vger.kernel.org
-Signed-off-by: Mike Galbraith <efault@gmx.de>
+    if (IS_ONESHOT())
+        mask_irq();
+
+    ....
+    ....
+
+    cond_unmask_eoi_irq()
+        chip->irq_eoi();
+
+So if setaffinity is pending then the interrupt will be moved and then
+unmasked, which is wrong as it should be kept masked up to the point where
+the threaded handler finished. It's not a real problem, the interrupt will
+just be able to fire before the threaded handler has finished, though the irq
+masked state will be wrong for a bit.
+
+The patch below should cure the issue. It also renames the horribly
+misnomed functions so it becomes clear what they are supposed to do.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[bigeasy: add the body of the patch, use the same functions in both
+          ifdef paths (spotted by Andy Shevchenko)]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apic/io_apic.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a5ce37b90fca..6e6bd5262f23 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -980,7 +980,7 @@ static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
- 	if (!cpumask_test_cpu(cpu, p->cpus_ptr))
- 		return false;
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 5832a9d657f2..c9af5afebc4a 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -1688,20 +1688,20 @@ static bool io_apic_level_ack_pending(struct mp_chip_data *data)
+ 	return false;
+ }
  
--	if (is_per_cpu_kthread(p))
-+	if (is_per_cpu_kthread(p) || __migrate_disabled(p))
- 		return cpu_online(cpu);
+-static inline bool ioapic_irqd_mask(struct irq_data *data)
++static inline bool ioapic_prepare_move(struct irq_data *data)
+ {
+ 	/* If we are moving the irq we need to mask it */
+-	if (unlikely(irqd_is_setaffinity_pending(data) &&
+-		     !irqd_irq_inprogress(data))) {
+-		mask_ioapic_irq(data);
++	if (unlikely(irqd_is_setaffinity_pending(data))) {
++		if (!irqd_irq_masked(data))
++			mask_ioapic_irq(data);
+ 		return true;
+ 	}
+ 	return false;
+ }
  
- 	return cpu_active(cpu);
+-static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
++static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
+ {
+-	if (unlikely(masked)) {
++	if (unlikely(moveit)) {
+ 		/* Only migrate the irq if the ack has been received.
+ 		 *
+ 		 * On rare occasions the broadcast level triggered ack gets
+@@ -1730,15 +1730,17 @@ static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
+ 		 */
+ 		if (!io_apic_level_ack_pending(data->chip_data))
+ 			irq_move_masked_irq(data);
+-		unmask_ioapic_irq(data);
++		/* If the irq is masked in the core, leave it */
++		if (!irqd_irq_masked(data))
++			unmask_ioapic_irq(data);
+ 	}
+ }
+ #else
+-static inline bool ioapic_irqd_mask(struct irq_data *data)
++static inline bool ioapic_prepare_move(struct irq_data *data)
+ {
+ 	return false;
+ }
+-static inline void ioapic_irqd_unmask(struct irq_data *data, bool masked)
++static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
+ {
+ }
+ #endif
+@@ -1747,11 +1749,11 @@ static void ioapic_ack_level(struct irq_data *irq_data)
+ {
+ 	struct irq_cfg *cfg = irqd_cfg(irq_data);
+ 	unsigned long v;
+-	bool masked;
++	bool moveit;
+ 	int i;
+ 
+ 	irq_complete_move(cfg);
+-	masked = ioapic_irqd_mask(irq_data);
++	moveit = ioapic_prepare_move(irq_data);
+ 
+ 	/*
+ 	 * It appears there is an erratum which affects at least version 0x11
+@@ -1806,7 +1808,7 @@ static void ioapic_ack_level(struct irq_data *irq_data)
+ 		eoi_ioapic_pin(cfg->vector, irq_data->chip_data);
+ 	}
+ 
+-	ioapic_irqd_unmask(irq_data, masked);
++	ioapic_finish_move(irq_data, moveit);
+ }
+ 
+ static void ioapic_ir_ack_level(struct irq_data *irq_data)
 -- 
 2.18.0
 
