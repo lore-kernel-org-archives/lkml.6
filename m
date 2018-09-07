@@ -2,258 +2,126 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 587C7C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F102C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEBB42075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:07:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEBB42075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5350620861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:08:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="NqHGPz13"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5350620861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbeIGNr4 (ORCPT
+        id S1728232AbeIGNsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:47:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59925 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbeIGNr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:47:56 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8DFF6206FF; Fri,  7 Sep 2018 11:07:55 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 59D5B206FF;
-        Fri,  7 Sep 2018 11:07:45 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 11:07:44 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 02/10] phy: Add configuration interface
-Message-ID: <20180907090744.5mkcw4odtu7iypbm@flea>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
- <8397722.XVQDA25ZU6@avalon>
- <20180906144807.pn753tgfyovvheil@flea>
- <2403687.Gdit31W5bd@avalon>
+        Fri, 7 Sep 2018 09:48:31 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33481 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeIGNsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:48:31 -0400
+Received: by mail-lj1-f194.google.com with SMTP id s12-v6so11712819ljj.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 02:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=S6ksY+JgxvRu27FYNP4ougPia55cCaLuq3qHA7AI/Mw=;
+        b=NqHGPz13d/ZyQfcXYnWJ/ad1YmCuiY0E43LfbKAzjImAMoL9uldBmxGC/tt6iUMKfn
+         DFIy1Ll8uHFSo2sQSFA90hjtP/YA7p8zLmqRx+XZgdbPjh7UYihfNKJJKyOKVIzqyfaL
+         oB3GduJATEeY7krTRBSK5W9J0Vsf+n6hZfS4yOmVHoifbpDS5qjlVhUFUiR7bzEFJD0U
+         4HmmSU4PTdzuZCoSHNCOVwH3zAg91peUqMauhGdiUnb+Zqpulz6Tzc6b9wAhh26qoby/
+         2VCSjIwI4zw+hRp0wkDjTrXhsCX9PJgTdwUwBJWqp6HziJUj1p9qDYGaGXeUF5boE4ai
+         4e0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S6ksY+JgxvRu27FYNP4ougPia55cCaLuq3qHA7AI/Mw=;
+        b=XBcD6S4+QD5ZXMQC0OQWLu9HPGyZwsTFIpkpF4qGW/OZWncJHv5KRvAF+jrZGa/EIW
+         zNuBx3Jj2Pr+DxIF8Lzz4Ujw/FX9CiQiDynvxSHBkHAoIcdn0vmJnq8t0wbI0uROkd3e
+         85Vw+qM064O4qB2uGk9whEk2sza7GCO06TlNJviJRyKMTX//JGXw6d7s3TaOL/8yh1+x
+         mwvDYDiUQO3KJ9qhut6yV0F6GWM8nr5msoyzabDtyLWfKrHHydAZ5uN+V3KPj+2PSJl8
+         oj0VI10BkqIuKHKMESbinTPs7ZO2SoUlJTLrFScQ2SAwh6l4EMx09PGwG8j0eJE3BDHS
+         uQew==
+X-Gm-Message-State: APzg51BzwtN/aDcefGqrAlSb8YRBRvntQ+RuCPmIsuJlBKYUIR1iTbIs
+        AZJQtxXdNF0oQAkK3sfB9BYQiQ==
+X-Google-Smtp-Source: ANB0VdZ/NBicuQoL/7npiEBLyA5Quv5ObHheQSvLNWStgesQCAC1aYTvOIrrRzLdXO1iOHDG8TlzIg==
+X-Received: by 2002:a2e:750d:: with SMTP id q13-v6mr4121068ljc.148.1536311309917;
+        Fri, 07 Sep 2018 02:08:29 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.85.38])
+        by smtp.gmail.com with ESMTPSA id p74-v6sm1207104lfg.88.2018.09.07.02.08.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 02:08:28 -0700 (PDT)
+Subject: Re: [PATCH] phy: renesas: convert to SPDX identifiers
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Simon Horman <horms+renesas@verge.net.au>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b35ae4e1-2905-3587-6ffe-0f8886ba0968@cogentembedded.com>
+Date:   Fri, 7 Sep 2018 12:08:28 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aamqqanzorijin73"
-Content-Disposition: inline
-In-Reply-To: <2403687.Gdit31W5bd@avalon>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/7/2018 5:08 AM, Kuninori Morimoto wrote:
 
---aamqqanzorijin73
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>   drivers/phy/renesas/Kconfig              | 1 +
+>   drivers/phy/renesas/Makefile             | 1 +
+>   drivers/phy/renesas/phy-rcar-gen2.c      | 5 +----
+>   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 +----
+>   drivers/phy/renesas/phy-rcar-gen3-usb3.c | 5 +----
+>   5 files changed, 5 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
+> index 4bd390c..e340a92 100644
+> --- a/drivers/phy/renesas/Kconfig
+> +++ b/drivers/phy/renesas/Kconfig
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>   #
+>   # Phy drivers for Renesas platforms
+>   #
 
-On Thu, Sep 06, 2018 at 07:51:05PM +0300, Laurent Pinchart wrote:
-> On Thursday, 6 September 2018 17:48:07 EEST Maxime Ripard wrote:
-> > On Wed, Sep 05, 2018 at 04:39:46PM +0300, Laurent Pinchart wrote:
-> > > On Wednesday, 5 September 2018 12:16:33 EEST Maxime Ripard wrote:
-> > >> The phy framework is only allowing to configure the power state of t=
-he
-> > >> PHY using the init and power_on hooks, and their power_off and exit
-> > >> counterparts.
-> > >>=20
-> > >> While it works for most, simple, PHYs supported so far, some more
-> > >> advanced PHYs need some configuration depending on runtime parameter=
-s.
-> > >> These PHYs have been supported by a number of means already, often by
-> > >> using ad-hoc drivers in their consumer drivers.
-> > >>=20
-> > >> That doesn't work too well however, when a consumer device needs to =
-deal
-> > >=20
-> > > s/deal/deal with/
-> > >=20
-> > >> multiple PHYs, or when multiple consumers need to deal with the same=
- PHY
-> > >> (a DSI driver and a CSI driver for example).
-> > >>=20
-> > >> So we'll add a new interface, through two funtions, phy_validate and
-> > >> phy_configure. The first one will allow to check that a current
-> > >> configuration, for a given mode, is applicable. It will also allow t=
-he
-> > >> PHY driver to tune the settings given as parameters as it sees fit.
-> > >>=20
-> > >> phy_configure will actually apply that configuration in the phy itse=
-lf.
-> > >>=20
-> > >> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > >> ---
-> > >>=20
-> > >>  drivers/phy/phy-core.c  | 62 ++++++++++++++++++++++++++++++++++++++=
-+++-
-> > >>  include/linux/phy/phy.h | 42 ++++++++++++++++++++++++++++-
-> > >>  2 files changed, 104 insertions(+)
-> > >>=20
-> > >> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> > >> index 35fd38c5a4a1..6eaf655e370f 100644
-> > >> --- a/drivers/phy/phy-core.c
-> > >> +++ b/drivers/phy/phy-core.c
-> > >> @@ -408,6 +408,68 @@ int phy_calibrate(struct phy *phy)
-> > >>  EXPORT_SYMBOL_GPL(phy_calibrate);
-> > >> =20
-> > >>  /**
-> > >> + * phy_configure() - Changes the phy parameters
-> > >> + * @phy: the phy returned by phy_get()
-> > >> + * @mode: phy_mode the configuration is applicable to.
-> > >> + * @opts: New configuration to apply
-> > >> + *
-> > >> + * Used to change the PHY parameters. phy_init() must have
-> > >> + * been called on the phy.
-> > >> + *
-> > >> + * Returns: 0 if successful, an negative error code otherwise
-> > >> + */
-> > >> +int phy_configure(struct phy *phy, enum phy_mode mode,
-> > >> +		  union phy_configure_opts *opts)
-> > >> +{
-> > >> +	int ret;
-> > >> +
-> > >> +	if (!phy)
-> > >> +		return -EINVAL;
-> > >> +
-> > >> +	if (!phy->ops->configure)
-> > >> +		return 0;
-> > >=20
-> > > Shouldn't you report an error to the caller ? If a caller expects the=
- PHY
-> > > to be configurable, I would assume that silently ignoring the request=
-ed
-> > > configuration won't work great.
-> >=20
-> > I'm not sure. I also expect a device having to interact with multiple
-> > PHYs, some of them needing some configuration while some other do
-> > not. In that scenario, returning 0 seems to be the right thing to do.
->=20
-> It could be up to the caller to decide whether to ignore the error or not=
- when=20
-> the operation isn't implemented. I expect that a call requiring specific=
-=20
-> configuration parameters for a given PHY might want to bail out if the=20
-> configuration can't be applied. On the other hand that should never happe=
-n=20
-> when the system is designed correctly, as vendors are not supposed to shi=
-p=20
-> kernels that would be broken by design (as in requiring a configure opera=
-tion=20
-> but not providing it).
+    Again, there was no license on that file...
 
-I'll do as Andrew (and you) suggested then.
+> diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile
+> index 4b76fc4..b599ff8 100644
+> --- a/drivers/phy/renesas/Makefile
+> +++ b/drivers/phy/renesas/Makefile
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>   obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
+>   obj-$(CONFIG_PHY_RCAR_GEN3_PCIE)	+= phy-rcar-gen3-pcie.o
+>   obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
 
-> > >> @@ -60,6 +66,38 @@ struct phy_ops {
-> > >>  	int	(*power_on)(struct phy *phy);
-> > >>  	int	(*power_off)(struct phy *phy);
-> > >>  	int	(*set_mode)(struct phy *phy, enum phy_mode mode);
-> > >> +
-> > >> +	/**
-> > >> +	 * @configure:
-> > >> +	 *
-> > >> +	 * Optional.
-> > >> +	 *
-> > >> +	 * Used to change the PHY parameters. phy_init() must have
-> > >> +	 * been called on the phy.
-> > >> +	 *
-> > >> +	 * Returns: 0 if successful, an negative error code otherwise
-> > >> +	 */
-> > >> +	int	(*configure)(struct phy *phy, enum phy_mode mode,
-> > >> +			     union phy_configure_opts *opts);
-> > >=20
-> > > Is this function allowed to modify opts ? If so, to what extent ? If =
-not,
-> > > the pointer should be made const.
-> >=20
-> > That's a pretty good question. I guess it could modify it to the same
-> > extent than validate could. Would that make sense?
->=20
-> It would, or we could say that PHY users are required to call the validat=
-e=20
-> function first, and the the configure function will return an error if th=
-e=20
-> passed configuration isn't valid. That would avoid double-validation when=
- the=20
-> PHY user uses .validate().
+    ... on this file as well.
 
-I usually prefer to have a function being able to check its input on
-its own. Especially, the sole use case we have right now is DRM, and
-DRM would typically call phy_validate X+1 times (X being the number of
-modes), once for each mode in mode_valid and once in atomic_check.
+     Otherwise looked valid.
 
-> > >> +	/**
-> > >> +	 * @validate:
-> > >> +	 *
-> > >> +	 * Optional.
-> > >> +	 *
-> > >> +	 * Used to check that the current set of parameters can be
-> > >> +	 * handled by the phy. Implementations are free to tune the
-> > >> +	 * parameters passed as arguments if needed by some
-> > >> +	 * implementation detail or constraints. It must not change
-> > >> +	 * any actual configuration of the PHY, so calling it as many
-> > >> +	 * times as deemed fit by the consumer must have no side
-> > >> +	 * effect.
-> > >> +	 *
-> > >> +	 * Returns: 0 if the configuration can be applied, an negative
-> > >> +	 * error code otherwise
-> > >=20
-> > > When should this operation modify the passed parameters, and when sho=
-uld
-> > > it return an error ? I understand that your goal is to implement a
-> > > negotiation mechanism for the PHY parameters, and to be really useful=
- I
-> > > think we need to document it more precisely.
-> >=20
-> > My initial idea was to reject a configuration that wouldn't be
-> > achievable by the PHY, ie you're asking something that is outside of
-> > the operating boundaries, while you would be able to change settings
-> > that would be operational, but sub-optimal.
->=20
-> I'm fine with that, let's document it explicitly.
-
-ACK.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---aamqqanzorijin73
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSP98ACgkQ0rTAlCFN
-r3Squg//X11u4l+Nts+h9ENgjjrqLmtUBSWEM3fTSep0c/HEZgDME5Cco5O8IiJ9
-wiUAJL0A2FMgXsVfEDe0lfQ7kUh6lI3ADHajtmmCdx7r8Q14MQQAHVVb+BFjIqbs
-pwGzjhgX+9K+8a94LvIFjCNg+0tauj0IB8XXi3DSHpcWLKz5M+eYTiy/kTUe8eIu
-qbENL+/k8zOzxpzXxrHHoUDYhCB5sVCh1me+DX5P34rMy5tjzeLf7FHnJgYTyyNC
-wEFbEpSGD2Xy52gTKHlaqjb0SbcDJLYWzzq7Vw3S4DgcIMggBv0KDT18Ggco0Vv9
-whUfszicI5T5qtROCzqGV6ajiO/3GfTzoiN17d2q3obIrnmVUvpwm/WUm9TvawgE
-hJLv11or1t8PSqSy3YDSf2lmPEsPWuLvtWixPDmzJdAIRWnGuIdn8KRuQpcbIqjz
-0P1VxwOiy7w+LXLeZHImIwJgx+Mpj6Os/FDsFXT71wVDRRj6D30CF40azKsiAWkh
-/FgF7DTFlEkYLj1ndLtHksk5XwGfdvj1pqvaOKfcC5ozocLTwV4JGcxJ3gyVghOd
-UHNbcfZc7DiYY4Scoq95GV/lHPORrdPpJiPV5AZq+TckbqLwksc3Rml+oYZMjJkO
-/BmbiOfQKxlXavbpB4MM4Zj2s4jcsljzqdbFNe9aEoBcG6GMEu0=
-=sm0Q
------END PGP SIGNATURE-----
-
---aamqqanzorijin73--
+MBR, Sergei
