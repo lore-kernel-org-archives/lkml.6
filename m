@@ -2,113 +2,89 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CAAC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E308DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57FFE2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:39:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FFE2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id A74B72075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A74B72075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeIGPTt (ORCPT
+        id S1728695AbeIGPT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:19:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40639 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeIGPTt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:19:49 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fyEAf-00031v-68; Fri, 07 Sep 2018 10:39:25 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt3sas: make sysfs error messages ratelimited
-Date:   Fri,  7 Sep 2018 11:39:24 +0100
-Message-Id: <20180907103924.17598-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Sep 2018 11:19:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58098 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726032AbeIGPT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 11:19:56 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0903E2636E;
+        Fri,  7 Sep 2018 10:39:35 +0000 (UTC)
+Received: from plouf.redhat.com (ovpn-116-25.ams2.redhat.com [10.36.116.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF4E02027EA0;
+        Fri,  7 Sep 2018 10:39:31 +0000 (UTC)
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Nestor Lopez Casado <nlopezcasad@logitech.com>,
+        Simon Wood <simon@mungewell.org>,
+        Olivier Gay <ogay@logitech.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 8/7] HID: quirks: do not blacklist Logitech devices
+Date:   Fri,  7 Sep 2018 12:39:29 +0200
+Message-Id: <20180907103929.14951-1-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
+References: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 10:39:35 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 10:39:35 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+I am actually suggesting people to not populate this list, and I should
+probably start to apply my advices to myself.
 
-It is possible to heavily spam the kernel logs with messages by
-excessive reading of the mpt3sas sysfs files.  Make the error messages
-ratelimited to reduce the spamming effect.
+The end result means that if your initrd is lacking hid-logitech-dj
+or hid-logitech-hidpp, but still contains hid-generic, then your
+keyboard will work during pre-init.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index 5e8c059ce2c9..656cec5adb17 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -2958,7 +2958,7 @@ _ctl_BRM_status_show(struct device *cdev, struct device_attribute *attr,
- 	ssize_t rc = 0;
- 
- 	if (!ioc->is_warpdrive) {
--		pr_err(MPT3SAS_FMT "%s: BRM attribute is only for"
-+		pr_err_ratelimited(MPT3SAS_FMT "%s: BRM attribute is only for"
- 		    " warpdrive\n", ioc->name, __func__);
- 		goto out;
- 	}
-@@ -3039,7 +3039,7 @@ _ctl_host_trace_buffer_size_show(struct device *cdev,
- 	struct DIAG_BUFFER_START *request_data;
- 
- 	if (!ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE]) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
-@@ -3047,7 +3047,7 @@ _ctl_host_trace_buffer_size_show(struct device *cdev,
- 
- 	if ((ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
- 	    MPT3_DIAG_BUFFER_IS_REGISTERED) == 0) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
-@@ -3089,7 +3089,7 @@ _ctl_host_trace_buffer_show(struct device *cdev, struct device_attribute *attr,
- 	u32 size;
- 
- 	if (!ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE]) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
-@@ -3097,7 +3097,7 @@ _ctl_host_trace_buffer_show(struct device *cdev, struct device_attribute *attr,
- 
- 	if ((ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
- 	    MPT3_DIAG_BUFFER_IS_REGISTERED) == 0) {
--		pr_err(MPT3SAS_FMT
-+		pr_err_ratelimited(MPT3SAS_FMT
- 			"%s: host_trace_buffer is not registered\n",
- 			ioc->name, __func__);
- 		return 0;
+Oops, looks like I forgot to append this one to the series.
+
+Cheers,
+Benjamin
+
+ drivers/hid/hid-quirks.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 249d49b6b16c..996febdf21ee 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -462,13 +462,8 @@ static const struct hid_device_id hid_have_special_driver[] = {
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_SPACENAVIGATOR) },
+ #endif
+ #if IS_ENABLED(CONFIG_HID_LOGITECH_HIDPP)
+-	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_T651) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G920_WHEEL) },
+ #endif
+-#if IS_ENABLED(CONFIG_HID_LOGITECH_DJ)
+-	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_UNIFYING_RECEIVER) },
+-	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_UNIFYING_RECEIVER_2) },
+-#endif
+ #if IS_ENABLED(CONFIG_HID_MAGICMOUSE)
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGICMOUSE) },
+ 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGICTRACKPAD) },
 -- 
-2.17.1
+2.14.3
 
