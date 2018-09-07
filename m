@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73516C43143
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38669C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F2420861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F2420861
+	by mail.kernel.org (Postfix) with ESMTP id EF0192083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:42:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF0192083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbeIHCZU (ORCPT
+        id S1730599AbeIHCZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:25:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56510 "EHLO
+        Fri, 7 Sep 2018 22:25:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729344AbeIHCZT (ORCPT
+        with ESMTP id S1729344AbeIHCZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:25:19 -0400
+        Fri, 7 Sep 2018 22:25:23 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE194BBF;
-        Fri,  7 Sep 2018 21:42:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08070BBF;
+        Fri,  7 Sep 2018 21:42:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.4 41/47] udlfb: set optimal write delay
-Date:   Fri,  7 Sep 2018 23:10:37 +0200
-Message-Id: <20180907210908.862095955@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Watson <cjwatson@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        Serge Hallyn <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.4 42/47] getxattr: use correct xattr length
+Date:   Fri,  7 Sep 2018 23:10:38 +0200
+Message-Id: <20180907210908.949596504@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -50,39 +52,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Christian Brauner <christian@brauner.io>
 
-commit bb24153a3f13dd0dbc1f8055ad97fe346d598f66 upstream.
+commit 82c9a927bc5df6e06b72d206d24a9d10cced4eb5 upstream.
 
-The default delay 5 jiffies is too much when the kernel is compiled with
-HZ=100 - it results in jumpy cursor in Xwindow.
+When running in a container with a user namespace, if you call getxattr
+with name = "system.posix_acl_access" and size % 8 != 4, then getxattr
+silently skips the user namespace fixup that it normally does resulting in
+un-fixed-up data being returned.
+This is caused by posix_acl_fix_xattr_to_user() being passed the total
+buffer size and not the actual size of the xattr as returned by
+vfs_getxattr().
+This commit passes the actual length of the xattr as returned by
+vfs_getxattr() down.
 
-In order to find out the optimal delay, I benchmarked the driver on
-1280x720x30fps video. I found out that with HZ=1000, 10ms is acceptable,
-but with HZ=250 or HZ=300, we need 4ms, so that the video is played
-without any frame skips.
+A reproducer for the issue is:
 
-This patch changes the delay to this value.
+  touch acl_posix
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+  setfacl -m user:0:rwx acl_posix
+
+and the compile:
+
+  #define _GNU_SOURCE
+  #include <errno.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+  #include <attr/xattr.h>
+
+  /* Run in user namespace with nsuid 0 mapped to uid != 0 on the host. */
+  int main(int argc, void **argv)
+  {
+          ssize_t ret1, ret2;
+          char buf1[128], buf2[132];
+          int fret = EXIT_SUCCESS;
+          char *file;
+
+          if (argc < 2) {
+                  fprintf(stderr,
+                          "Please specify a file with "
+                          "\"system.posix_acl_access\" permissions set\n");
+                  _exit(EXIT_FAILURE);
+          }
+          file = argv[1];
+
+          ret1 = getxattr(file, "system.posix_acl_access",
+                          buf1, sizeof(buf1));
+          if (ret1 < 0) {
+                  fprintf(stderr, "%s - Failed to retrieve "
+                                  "\"system.posix_acl_access\" "
+                                  "from \"%s\"\n", strerror(errno), file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          ret2 = getxattr(file, "system.posix_acl_access",
+                          buf2, sizeof(buf2));
+          if (ret2 < 0) {
+                  fprintf(stderr, "%s - Failed to retrieve "
+                                  "\"system.posix_acl_access\" "
+                                  "from \"%s\"\n", strerror(errno), file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          if (ret1 != ret2) {
+                  fprintf(stderr, "The value of \"system.posix_acl_"
+                                  "access\" for file \"%s\" changed "
+                                  "between two successive calls\n", file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          for (ssize_t i = 0; i < ret2; i++) {
+                  if (buf1[i] == buf2[i])
+                          continue;
+
+                  fprintf(stderr,
+                          "Unexpected different in byte %zd: "
+                          "%02x != %02x\n", i, buf1[i], buf2[i]);
+                  fret = EXIT_FAILURE;
+          }
+
+          if (fret == EXIT_SUCCESS)
+                  fprintf(stderr, "Test passed\n");
+          else
+                  fprintf(stderr, "Test failed\n");
+
+          _exit(fret);
+  }
+and run:
+
+  ./tester acl_posix
+
+On a non-fixed up kernel this should return something like:
+
+  root@c1:/# ./t
+  Unexpected different in byte 16: ffffffa0 != 00
+  Unexpected different in byte 17: ffffff86 != 00
+  Unexpected different in byte 18: 01 != 00
+
+and on a fixed kernel:
+
+  root@c1:~# ./t
+  Test passed
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 2f6f0654ab61 ("userns: Convert vfs posix_acl support to use kuids and kgids")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199945
+Reported-by: Colin Watson <cjwatson@ubuntu.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/video/udlfb.h |    2 +-
+ fs/xattr.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/video/udlfb.h
-+++ b/include/video/udlfb.h
-@@ -87,7 +87,7 @@ struct dlfb_data {
- #define MIN_RAW_PIX_BYTES	2
- #define MIN_RAW_CMD_BYTES	(RAW_HEADER_BYTES + MIN_RAW_PIX_BYTES)
- 
--#define DL_DEFIO_WRITE_DELAY    5 /* fb_deferred_io.delay in jiffies */
-+#define DL_DEFIO_WRITE_DELAY    msecs_to_jiffies(HZ <= 300 ? 4 : 10) /* optimal value for 720p video */
- #define DL_DEFIO_WRITE_DISABLE  (HZ*60) /* "disable" with long delay */
- 
- /* remove these once align.h patch is taken into kernel */
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -453,7 +453,7 @@ getxattr(struct dentry *d, const char __
+ 	if (error > 0) {
+ 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+ 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+-			posix_acl_fix_xattr_to_user(kvalue, size);
++			posix_acl_fix_xattr_to_user(kvalue, error);
+ 		if (size && copy_to_user(value, kvalue, error))
+ 			error = -EFAULT;
+ 	} else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
 
 
