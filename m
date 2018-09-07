@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6FDC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088F1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE712083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE712083D
+	by mail.kernel.org (Postfix) with ESMTP id AFBC22083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBC22083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbeIHCYd (ORCPT
+        id S1730363AbeIHCYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:24:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54962 "EHLO
+        Fri, 7 Sep 2018 22:24:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54974 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbeIHCYb (ORCPT
+        with ESMTP id S1728013AbeIHCYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:24:31 -0400
+        Fri, 7 Sep 2018 22:24:36 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB383FEA;
-        Fri,  7 Sep 2018 21:41:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09B84FEA;
+        Fri,  7 Sep 2018 21:41:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 08/47] powerpc/pseries: Fix endianness while restoring of r3 in MCE handler.
-Date:   Fri,  7 Sep 2018 23:10:04 +0200
-Message-Id: <20180907210905.212577353@linuxfoundation.org>
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dominique Martinet <dominique.martinet@cea.fr>
+Subject: [PATCH 4.4 09/47] fs/9p/xattr.c: catch the error of p9_client_clunk when setting xattr failed
+Date:   Fri,  7 Sep 2018 23:10:05 +0200
+Message-Id: <20180907210905.278603936@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -51,71 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+From: piaojun <piaojun@huawei.com>
 
-commit cd813e1cd7122f2c261dce5b54d1e0c97f80e1a5 upstream.
+commit 3111784bee81591ea2815011688d28b65df03627 upstream.
 
-During Machine Check interrupt on pseries platform, register r3 points
-RTAS extended event log passed by hypervisor. Since hypervisor uses r3
-to pass pointer to rtas log, it stores the original r3 value at the
-start of the memory (first 8 bytes) pointed by r3. Since hypervisor
-stores this info and rtas log is in BE format, linux should make
-sure to restore r3 value in correct endian format.
+In my testing, v9fs_fid_xattr_set will return successfully even if the
+backend ext4 filesystem has no space to store xattr key-value. That will
+cause inconsistent behavior between front end and back end. The reason is
+that lsetxattr will be triggered by p9_client_clunk, and unfortunately we
+did not catch the error. This patch will catch the error to notify upper
+caller.
 
-Without this patch when MCE handler, after recovery, returns to code that
-that caused the MCE may end up with Data SLB access interrupt for invalid
-address followed by kernel panic or hang.
+p9_client_clunk (in 9p)
+  p9_client_rpc(clnt, P9_TCLUNK, "d", fid->fid);
+    v9fs_clunk (in qemu)
+      put_fid
+        free_fid
+          v9fs_xattr_fid_clunk
+            v9fs_co_lsetxattr
+              s->ops->lsetxattr
+                ext4_xattr_user_set (in host ext4 filesystem)
 
-  Severe Machine check interrupt [Recovered]
-    NIP [d00000000ca301b8]: init_module+0x1b8/0x338 [bork_kernel]
-    Initiator: CPU
-    Error type: SLB [Multihit]
-      Effective address: d00000000ca70000
-  cpu 0xa: Vector: 380 (Data SLB Access) at [c0000000fc7775b0]
-      pc: c0000000009694c0: vsnprintf+0x80/0x480
-      lr: c0000000009698e0: vscnprintf+0x20/0x60
-      sp: c0000000fc777830
-     msr: 8000000002009033
-     dar: a803a30c000000d0
-    current = 0xc00000000bc9ef00
-    paca    = 0xc00000001eca5c00	 softe: 3	 irq_happened: 0x01
-      pid   = 8860, comm = insmod
-  vscnprintf+0x20/0x60
-  vprintk_emit+0xb4/0x4b0
-  vprintk_func+0x5c/0xd0
-  printk+0x38/0x4c
-  init_module+0x1c0/0x338 [bork_kernel]
-  do_one_initcall+0x54/0x230
-  do_init_module+0x8c/0x248
-  load_module+0x12b8/0x15b0
-  sys_finit_module+0xa8/0x110
-  system_call+0x58/0x6c
-  --- Exception: c00 (System Call) at 00007fff8bda0644
-  SP (7fffdfbfe980) is in userspace
-
-This patch fixes this issue.
-
-Fixes: a08a53ea4c97 ("powerpc/le: Enable RTAS events support")
-Cc: stable@vger.kernel.org # v3.15+
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/5B57EACC.2060900@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Ron Minnich <rminnich@sandia.gov>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/pseries/ras.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/9p/xattr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/platforms/pseries/ras.c
-+++ b/arch/powerpc/platforms/pseries/ras.c
-@@ -300,7 +300,7 @@ static struct rtas_error_log *fwnmi_get_
- 	}
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -107,7 +107,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fi
+ {
+ 	struct kvec kvec = {.iov_base = (void *)value, .iov_len = value_len};
+ 	struct iov_iter from;
+-	int retval;
++	int retval, err;
  
- 	savep = __va(regs->gpr[3]);
--	regs->gpr[3] = savep[0];	/* restore original r3 */
-+	regs->gpr[3] = be64_to_cpu(savep[0]);	/* restore original r3 */
+ 	iov_iter_kvec(&from, WRITE | ITER_KVEC, &kvec, 1, value_len);
  
- 	/* If it isn't an extended log we can use the per cpu 64bit buffer */
- 	h = (struct rtas_error_log *)&savep[1];
+@@ -128,7 +128,9 @@ int v9fs_fid_xattr_set(struct p9_fid *fi
+ 			 retval);
+ 	else
+ 		p9_client_write(fid, 0, &from, &retval);
+-	p9_client_clunk(fid);
++	err = p9_client_clunk(fid);
++	if (!retval && err)
++		retval = err;
+ 	return retval;
+ }
+ 
 
 
