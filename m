@@ -2,164 +2,137 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64AFC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124E7C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF9C20861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:11:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fICs13b+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF9C20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+	by mail.kernel.org (Postfix) with ESMTP id BD8252086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:12:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8252086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbeIGMvR (ORCPT
+        id S1728124AbeIGMwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:51:17 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42713 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeIGMvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:51:17 -0400
-Received: by mail-ed1-f66.google.com with SMTP id l5so10898860edw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:11:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=GgNwtJo1vPC7U/PtvAGAwPdDMSa7hPG7vco+1yqUmCg=;
-        b=fICs13b+/YAM+gKqXwS6mCw3gdV5+Wkq5HuHdPs9gnqLQGbinkXylWqJr2e3NjdVQ2
-         CR9jjlHRVVVUMlNQ/IX0QakbNbUu+gAQ4opq2qdBAUilak/VmrjxGC40V6hqd4QjiLEs
-         GvC0lDD5me+R7j3PjAkPJNYYdbTuYfCx0yDB+xJvOjxmqhtLQJdY0A8E/02jfnvW4cHZ
-         CumgtFIhVztGk1fMQDULXkIKFMvd2sdAA79N+xMdHLopPEA72BSqRz5xgKNFDWQVhgPK
-         jPrNg+hLGFk9Jq3TxeWm7bXC3kW5ZyV8pPrLroUCOzMq18zpSjh4+4TIWHnDrLWW8c2q
-         ouyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=GgNwtJo1vPC7U/PtvAGAwPdDMSa7hPG7vco+1yqUmCg=;
-        b=UEl7jz/vnukJ3DBjvkk5aXE42i7IXVFP5kQYs1dE42W8yN5QqvMod0hQrxOpUfOyKg
-         6FOVSz5rDYKDvxi7It1aW9QkxXp5M9a02/+j9mOes+v4pXl2w+jxDL78EyNlTw3+kXPL
-         xK4cC1UC/RusrZKpAo6Rmc01gfnbIRIY95KlMQpcQGScHkUFike7PhGbogSZ2hRav5NW
-         gaoG8Zs5h4uBUHWMUrMrRmGmfXgAwRHjHJuAX5V7rqoupiEDNlBwUG0HwcCDp2RNPB43
-         pyFO3tzEanf0vdHjJap1E9iaQLVfzSqpTqD1mCAtU/s/185UpI2pU66mYeKJegESbnxw
-         wveg==
-X-Gm-Message-State: APzg51CUvKnHZZdlt4r7MKcYA+cLigJ2lEJ8B4r0YGJUK7/PMg5nHzJP
-        iqfabZhxBxcH5aMoicDaVWW++95d
-X-Google-Smtp-Source: ANB0VdY3BvQueOeRK4WRqGICsnk0YUnIEQNrK8VmrhiyXzYpWgebS08YoYBzkkR4/37JfT6QHDX9Mg==
-X-Received: by 2002:aa7:d4d5:: with SMTP id t21-v6mr7705701edr.292.1536307888608;
-        Fri, 07 Sep 2018 01:11:28 -0700 (PDT)
-Received: from dell.be.48ers.dk (d51A5BC31.access.telenet.be. [81.165.188.49])
-        by smtp.gmail.com with ESMTPSA id g4-v6sm4380010eda.86.2018.09.07.01.11.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 01:11:27 -0700 (PDT)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peter@korsgaard.com>)
-        id 1fyBrO-0004bi-2J; Fri, 07 Sep 2018 10:11:22 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ttyprintk: make the printk log level configurable
-References: <20180821172822.30975-1-peter@korsgaard.com>
-        <CACXmViaj6XWUXmdFov_1-exCd5idDx2s-2_kfmDFydN75wUNNQ@mail.gmail.com>
-        <bc10850410b2c58c2bfbfa4f412403db7c82b535.camel@perches.com>
-Date:   Fri, 07 Sep 2018 10:11:22 +0200
-In-Reply-To: <bc10850410b2c58c2bfbfa4f412403db7c82b535.camel@perches.com> (Joe
-        Perches's message of "Fri, 07 Sep 2018 01:03:12 -0700")
-Message-ID: <87zhwt682d.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 7 Sep 2018 08:52:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:54782 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbeIGMwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 08:52:24 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 01:12:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
+   d="scan'208";a="69082891"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Sep 2018 01:12:35 -0700
+Date:   Fri, 7 Sep 2018 16:17:16 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+Message-ID: <20180907081716.bxw3hmcl6w7gqvax@shbuild888>
+References: <20180830111207.GE2656@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de>
+ <20180830124915.GH2656@dhcp22.suse.cz>
+ <20180830125909.uq3e76akcmep6j2u@shbuild888>
+ <alpine.DEB.2.21.1808301504300.1210@nanos.tec.linutronix.de>
+ <20180830131920.w2jqjvlkpfb4ejb2@shbuild888>
+ <alpine.DEB.2.21.1808301523510.1210@nanos.tec.linutronix.de>
+ <20180831061519.3zbxsjs4rd6mmsuo@shbuild888>
+ <alpine.DEB.2.21.1808311328260.2208@nanos.tec.linutronix.de>
+ <20180831133659.pkmscqpudjnkujbg@shbuild888>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831133659.pkmscqpudjnkujbg@shbuild888>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Joe" == Joe Perches <joe@perches.com> writes:
+Hi Thomas,
 
- > On Fri, 2018-09-07 at 09:50 +0200, Peter Korsgaard wrote:
- >> On Tue, Aug 21, 2018 at 7:28 PM Peter Korsgaard <peter@korsgaard.com> wrote:
- >> > 
- >> > For some use cases it is handy to use a different printk log level than the
- >> > default (info) for the messages written to ttyprintk, so add a Kconfig
- >> > option similar to what we have for default console loglevel.
- >> 
- >> Ping? Feedback, comments?
+On Fri, Aug 31, 2018 at 09:36:59PM +0800, Feng Tang wrote:
+> On Fri, Aug 31, 2018 at 01:33:05PM +0200, Thomas Gleixner wrote:
+> > On Fri, 31 Aug 2018, Feng Tang wrote:
+> > > On Thu, Aug 30, 2018 at 03:25:42PM +0200, Thomas Gleixner wrote:
+> > > This panic happens as the earlycon's fixmap address has no
+> > > pmd/pte ready, and __set_fixmap will try to allocate memory to
+> > > setup the page table, and trigger panic due to no memory.
+> > > 
+> > > x86 kernel actually prepares the page table for fixmap in head_64.S:
+> > > 
+> > > 	NEXT_PAGE(level2_fixmap_pgt)
+> > > 		.fill	506,8,0
+> > > 		.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+> > > 		/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+> > > 		.fill	5,8,0
+> > > 
+> > > and it expects the fixmap address is in [-12M, -10M] range, but
+> > > current code in fixmap.h will break the expectation when
+> > > X86_VSYSCALL_EMULATION=n
+> > > 
+> > > 	#ifdef CONFIG_X86_VSYSCALL_EMULATION
+> > > 		VSYSCALL_PAGE = (FIXADDR_TOP - VSYSCALL_ADDR) >> PAGE_SHIFT,
+> > > 	#endif
+> > > 
+> > > So removing the "#ifdef" will make the fixmap address space stable in
+> > > [-12M, -10M] and fix the issue.
+> > 
+> > Why on earth are you not fixing the damned PTE setup which is the obvious
+> > and correct thing to do?
+> 
+> Any sugestion? I can only have patch like this:
 
- > I think it is moving "[U]" into TPK_LEVEL is an
- > unnecessary and a tad obfuscating change.
+Could you review this patch, as at this time window there is no usable memory
+block or other memory allocators that I know, so I follow the exisitng static
+fixmap page table code and add one more.
 
-It is arguably part of the prefix, but OK - I have no problem leaving it
-in the printk line.
+Thanks,
+Feng
 
- > This also adds a leading space for unknown reasons
- > after the KERN_SOH <level>.
-
-True. I'll fix that and send a v2 - Thanks.
-
- >> > diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
- >> > index ce277ee0a28a..14a7f023f20b 100644
- >> > --- a/drivers/char/Kconfig
- >> > +++ b/drivers/char/Kconfig
- >> > @@ -66,6 +66,14 @@ config TTY_PRINTK
- >> > 
- >> >           If unsure, say N.
- >> > 
- >> > +config TTY_PRINTK_LEVEL
- >> > +       depends on TTY_PRINTK
- >> > +       int "ttyprintk log level (1-7)"
- >> > +       range 1 7
- >> > +       default "6"
- >> > +       help
- >> > +         Printk log level to use for ttyprintk messages.
- >> > +
- >> >  config PRINTER
- >> >         tristate "Parallel printer support"
- >> >         depends on PARPORT
- >> > diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
- >> > index 67549ce88cc9..22fbd483b5dc 100644
- >> > --- a/drivers/char/ttyprintk.c
- >> > +++ b/drivers/char/ttyprintk.c
- >> > @@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
- >> >   */
- >> >  #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
- >> >  #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
- >> > +#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL) " [U]"
-
- > I think this should be
-
- > #define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL)
-
- >> > +
- >> >  static int tpk_curr;
- >> > 
- >> >  static char tpk_buffer[TPK_STR_SIZE + 4];
- >> > @@ -45,7 +47,7 @@ static void tpk_flush(void)
- >> >  {
- >> >         if (tpk_curr > 0) {
- >> >                 tpk_buffer[tpk_curr] = '\0';
- >> > -               pr_info("[U] %s\n", tpk_buffer);
- >> > +               printk(TPK_PREFIX " %s\n", tpk_buffer);
-
- > and this
-
- > 		printk(TPK_PREFIX "[U] %s\n", tpk_buffer);
-
- >> >                 tpk_curr = 0;
- >> >         }
- >> >  }
- >> > --
- >> > 2.11.0
- >> > 
- >> 
- >> 
-
--- 
-Bye, Peter Korsgaard
+> 
+> ---
+> diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+> index 15ebc2fc166e..8cdb27ccc3a3 100644
+> --- a/arch/x86/kernel/head_64.S
+> +++ b/arch/x86/kernel/head_64.S
+> @@ -446,11 +446,15 @@ NEXT_PAGE(level2_kernel_pgt)
+>  
+>  NEXT_PAGE(level2_fixmap_pgt)
+>  	.fill	506,8,0
+> -	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+> +	.quad	level1_fixmap_pgt0 - __START_KERNEL_map + _PAGE_TABLE_NOENC
+> +	.quad	level1_fixmap_pgt1 - __START_KERNEL_map + _PAGE_TABLE_NOENC
+>  	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+> -	.fill	5,8,0
+> +	.fill	4,8,0
+>  
+> -NEXT_PAGE(level1_fixmap_pgt)
+> +NEXT_PAGE(level1_fixmap_pgt0)
+> +	.fill	512,8,0
+> +
+> +NEXT_PAGE(level1_fixmap_pgt1)
+>  	.fill	512,8,0
+>  
+>  #undef PMDS
+> 
+> 
+> Thanks,
+> Feng
+> 
