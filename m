@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50223C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E332C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1B492083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C107D2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:01:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="iwtiOqEw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1B492083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PQT5hQvX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C107D2075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbeIGFjS (ORCPT
+        id S1729335AbeIGFjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:39:18 -0400
-Received: from mail-eopbgr690126.outbound.protection.outlook.com ([40.107.69.126]:51988
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:39:33 -0400
+Received: from mail-sn1nam01on0092.outbound.protection.outlook.com ([104.47.32.92]:36128
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728506AbeIGFOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:14:23 -0400
+        id S1728640AbeIGFOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:14:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=icTABggDoornXOQeRF1zC/goSaGFBYnnw+WGQZsTlhU=;
- b=iwtiOqEwgC9kJ1Ae1hAokblViVGKy8R9Q0r4h/D3FH9dYZMWRz12LNLjHcFnlhclysfAMNSRs8eGiB1krWflhuphEP6DZ6UTLvMHj7vw++g+DZ/E8qnP33MO7AWlN8icD+9B2ctxXPe+YqeA95JImcUoymJC1xlvXcKr9Nbx4+s=
+ bh=xWiTbD37BMIpUbGUS/wo91JWglb6GhHiFZjAwyv7zTI=;
+ b=PQT5hQvXWzuh5HDJc+am3Vv85+M9pMkCEQjNANOEFX9POLBxqbnEdxHhP1El4sUMied2nxbQcLC6sPIl3LWtskrVL4T3hykaVkuSsYNL0bWxLce3X7O4TECLao8Lb/c9ylnzGnGTQERmx4LUcPF4zSz3p9I5Z7Ckx/YDed/ocpw=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
+ CY4PR21MB0824.namprd21.prod.outlook.com (10.173.192.10) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.1; Fri, 7 Sep 2018 00:36:03 +0000
+ 15.20.1143.8; Fri, 7 Sep 2018 00:36:09 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:36:03 +0000
+ 00:36:09 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Golan Ben Ami <golan.ben.ami@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+CC:     John Keeping <john@metanate.com>, Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 14/88] iwlwifi: cancel the injective function
- between hw pointers to tfd entry index
-Thread-Topic: [PATCH AUTOSEL 4.18 14/88] iwlwifi: cancel the injective
- function between hw pointers to tfd entry index
-Thread-Index: AQHURkLBpOqnI0eYYU61q4y8UMkajg==
-Date:   Fri, 7 Sep 2018 00:36:02 +0000
-Message-ID: <20180907003547.57567-14-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 25/88] dmaengine: pl330: fix irq race with
+ terminate_all
+Thread-Topic: [PATCH AUTOSEL 4.18 25/88] dmaengine: pl330: fix irq race with
+ terminate_all
+Thread-Index: AQHURkLF/4GjTzsUFUOE1HWfTspVag==
+Date:   Fri, 7 Sep 2018 00:36:09 +0000
+Message-ID: <20180907003547.57567-25-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,140 +58,90 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:28pgn+oHTWBIg2/0EiTZrfQSkrtJrYVb/9T6MRbhEw5mUDUbVQGW9GdoOHRmAMny3YAtRCMLt/6hp7F1pkTnK65AGO9P6aPR7jRs5FmjekYIHjCCBAwgR/NfnM/NnBxY31GRPUvHPh0GMXwnRWl5ulljNWeSlECixeQSeIwxQImltHdjIO1JM794e0tyHpkd975ufviXpK7nsExiSYAbRGt/3APfnOiETgdPiHa3kmKJzWiff7kfvkv17xR4pvj9NzEq05sBGBmdCHJTWKWa1DMHVUYwj+U7ko+5EIUZge36l4u9pvVdFlFABN/avszrV086TicT6/kFagEX92+Eqg9jEl+d7Gcj0l5z/a9VIaPaOM3vWw8WN/bZWfYra5mHE8T9of7h1C/gPDPBBmF8F8hoybYmvKlEqoCG9Nj3LKrUXZzXzY53vp+b5r50eYi9S8/csm0WIwiG1ib9nfUHaQ==;5:6AHRkT1g60e+qjKoyzHno2t/4yN2jVzWdN15zC6+55TLHQ0KtntDDNsQfzdK2Xu2A8yA4vVqdPTskLjSQRkLBOd3rbWl4gGmJ+9BcycVxma3L6K9eUjgeHDcPkFKqUsEqoP0wxRua9m1ej0IVbW1NliJr1I+IC5mLGaHfEJkLsk=;7:GIiEkDigYy5SUA4mW8xiBx7FdOCp6GIhQDm5Trtwn3O9CRiUshzULjAApqGvKv7PjksDfHvw4hfxYfTkZ0jmoVnzk8ImR6Iw6BRR6BtXVRpr7qz9OvM4SAztBIRs46PnVI0XK9Nw4MLLjY6+f5GwQDWnTlVChCx2g9GrLmuHpENbVZmQFN53leStqJnFgnOiIHbStDBia0urNhVmVmCj/TypODiy8ECfnuqf8tedZgCBGjnw1876jeys0RaCnCeJ
-x-ms-office365-filtering-correlation-id: a4c42eb9-92d4-4327-ff51-08d61459e417
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0824;6:ihQGv6CpQ4ft4SLveV62FtCV4jVckCDLl/R6WlB521vgA5v0Yto1TjThhlS9Rbqd7Y+B3kaMbp/q4r6VGCfXzbcO8e46U+ceBTiZlPyAl3y5xDt1ZUDBLw4QT1cgBl5keJVufjrFgOswwFgMvirwxNjRwKN0MsYxsoa+LNngJuX7HVf8U3VdU8jFhNKJ9Oi6evJWGQj2QrF3jg/CfEVthiP1fCNPzOQlF6xcJE8ZNwKnQQIJOE/TmuLV4rGw0QcTHrYMcuVaiZb5yz32WqUPdLWx6e34umTGVniAv2436m+LpJFyodC2F8njmnjzQKFfCWCyTpiUwZdqfttXOi9Ju/srC1J94QKlEzu6xIuMOpW0tVHnARkaSQV9TNWanpNGIrZKa0X+mL5wENk5w4hvzVWA7wP63cKoQwLLo9jU2yBfppsdH7MGaicaDtkZQP7FSSPBDph7BM6unzj+6FU7ow==;5:zByJzgWF8/Lhql+yyQtGA3AoPWHIZUaJxyzMDVfPyx+GqcrDRslMjeYteERoX1a9tksf+UxNaxLgk/jYXHDXR9dukvzlwlhqnc7lhVbdgHvZzBYP/4cq1kJqXOtf22Hrh1czEW7P0q83w465H45gGyE+JTTSqvmiE2Ivs2BE6Hs=;7:0LwGMTGSSToHls6XSXdFSyabur/l0clsZdbk7HyyLXhNq9NE3JlymDFiVbwh0eQBlEtMro7lIRegba0vXxTpdPAlfzgOXW1PRleJ3nk6oK3uJt5IzZea5OZ5vHdRu6Q1nqk8AwDQu6VP4o42v1yv8cM6Q4cLGRATw/yKzP8P9KNKosv+Ddc/JJmA8AaiU+WLGOAbJpUzBpsVPe3C5pNqz659vvPhIS4hPbDKPAEJTtk1N0QkvVmWW7MMviXToiH9
+x-ms-office365-filtering-correlation-id: 029cbf6f-24e2-463d-f830-08d61459e829
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
-x-ms-traffictypediagnostic: CY4PR21MB0773:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB07733EB6687E2C62A8C38186FB000@CY4PR21MB0773.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0824;
+x-ms-traffictypediagnostic: CY4PR21MB0824:
+x-microsoft-antispam-prvs: <CY4PR21MB0824289A631CB7EC3C97BF91FB000@CY4PR21MB0824.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0824;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0824;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(8676002)(5660300001)(106356001)(6436002)(25786009)(110136005)(54906003)(6506007)(105586002)(2906002)(486006)(53936002)(446003)(2616005)(476003)(4326008)(11346002)(5250100002)(107886003)(2501003)(86612001)(97736004)(6512007)(478600001)(3846002)(72206003)(6116002)(10290500003)(76176011)(68736007)(14454004)(1076002)(66066001)(26005)(6486002)(99286004)(8936002)(36756003)(81166006)(86362001)(14444005)(256004)(102836004)(81156014)(305945005)(186003)(22452003)(2900100001)(7736002)(10090500001)(316002)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(376002)(346002)(136003)(199004)(189003)(22452003)(14444005)(256004)(102836004)(6506007)(217873002)(10290500003)(186003)(26005)(5660300001)(4326008)(6346003)(81156014)(81166006)(110136005)(54906003)(72206003)(316002)(1076002)(6116002)(3846002)(8936002)(107886003)(14454004)(86612001)(2900100001)(105586002)(106356001)(5250100002)(86362001)(76176011)(2501003)(53936002)(10090500001)(68736007)(66066001)(36756003)(6436002)(99286004)(6512007)(486006)(25786009)(2906002)(6486002)(478600001)(7736002)(305945005)(2616005)(476003)(11346002)(97736004)(8676002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0824;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: X54Wk1JmT2Ytgz+6P8rCIgYn4QW5Hw7sglQD2IaFanzDY7OGaMN+JH1zT3kX2DzIpxbvdq31kpVMkZGNOMEav7H5caG6/TfgJcdPPTSw2o6MKRPJ8ebepo9YPjJEilASiBDD5l1o/j4PuKUw86MyRzPymZVsoiAsktzwLIzAfM7kEainK6SqH9zUQPDwaHbid3N2nvi2OM5+GE3mhPfTpwU6oJFavvtDNAHN6IRCeAgnsCpZtUm5zAudng32Ek20R8rcs6pthl1UKnJP6VGIL+OXD4uryHyFf9449PVHnmN7UMvqgBm6qWMNOc0bO6PBZrZXv8p56h8PWRgHo0xmpewSBOiovkYp5GuNBV9sjao=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: Vhv2jgr4C4F5cUpaqUMBhsTGfktsachU9J5CjAgB9QgbGTG5ueian7OVYBZDFgYO1Yo4Pdoj99Kr3Co5KDTzvHAtQHCtgNZwpWLDPTgzk2fN77WbrC9x0MQdOIk0vz6UBNl4aOzbxFuHDl9jUWkI6ekl5osDH/M3604t1hx7/MvRDVJyAWG4ptgJKcrw5PvfqIKb6ARtNQ5jY6YiJ9Yw+iJsb45MRWhUhkEJEzQ2Ysd+waq4vZZ1VqKpXXZikKfhBy2RZYlCu63rgEqCYCzgL/t8P5gtQvNADxsT8ek/Uos5MtC9jPhjXZ8OsgoFmpV5/fguWbpT0pVTLt5zCOgGP/H7c7gzSTYbnq7w+QB66eg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4c42eb9-92d4-4327-ff51-08d61459e417
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:02.9655
+X-MS-Exchange-CrossTenant-Network-Message-Id: 029cbf6f-24e2-463d-f830-08d61459e829
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:09.8022
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0773
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0824
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Golan Ben Ami <golan.ben.ami@intel.com>
+From: John Keeping <john@metanate.com>
 
-[ Upstream commit f5955a6cc3862a02d46f50b723c3172d24d749a5 ]
+[ Upstream commit e49756544a21f5625b379b3871d27d8500764670 ]
 
-Nowadays, the tfd queue max size is 2^8, and the reserved size in the
-command header sequence field for the tfd entry index is 8 bits,
-allowing an injective function from the hw pointers to the tfd entry index
-in the sequence field.
+In pl330_update() when checking if a channel has been aborted, the
+channel's lock is not taken, only the overall pl330_dmac lock.  But in
+pl330_terminate_all() the aborted flag (req_running=3D=3D-1) is set under
+the channel lock and not the pl330_dmac lock.
 
-In 22560 devices the tfd queue max size is 2^16, meaning that
-the hw pointers are 16 bit long (allowing to point to each entry
-in the tfd queue). However, the reserved space in the sequence field for
-the tfd entry doesn't change, and we are limited to 8 bit.
-This requires cancelling the injective function from hw pointer to
-tfd entry in the sequence number.
+With threaded interrupts, this leads to a potential race:
 
-Use iwl_pcie_get_cmd_index to wrap the hw pointer's to the n_window
-size, which is maximum 256 in tx queues, and so, keep the injective
-function between the window wrapped hw pointers to tfd entry index in
-the sequence.
+    pl330_terminate_all	        pl330_update
+    -------------------         ------------
+    lock channel
+                                entry
+    lock pl330
+    _stop channel
+    unlock pl330
+                                lock pl330
+                                check req_running !=3D -1
+    req_running =3D -1
+                                _start channel
 
-Signed-off-by: Golan Ben Ami <golan.ben.ami@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/internal.h | 12 ++++++++----
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c       | 11 ++++++++---
- 2 files changed, 16 insertions(+), 7 deletions(-)
+ drivers/dma/pl330.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h b/drivers/n=
-et/wireless/intel/iwlwifi/pcie/internal.h
-index 45ea32796cda..92b38a21cd10 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-@@ -660,7 +660,7 @@ static inline void iwl_enable_fw_load_int(struct iwl_tr=
-ans *trans)
- 	}
- }
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index de0957fe9668..bb6dfa2e1e8a 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2257,13 +2257,14 @@ static int pl330_terminate_all(struct dma_chan *cha=
+n)
 =20
--static inline u8 iwl_pcie_get_cmd_index(struct iwl_txq *q, u32 index)
-+static inline u8 iwl_pcie_get_cmd_index(const struct iwl_txq *q, u32 index=
-)
- {
- 	return index & (q->n_window - 1);
- }
-@@ -730,9 +730,13 @@ static inline void iwl_stop_queue(struct iwl_trans *tr=
-ans,
-=20
- static inline bool iwl_queue_used(const struct iwl_txq *q, int i)
- {
--	return q->write_ptr >=3D q->read_ptr ?
--		(i >=3D q->read_ptr && i < q->write_ptr) :
--		!(i < q->read_ptr && i >=3D q->write_ptr);
-+	int index =3D iwl_pcie_get_cmd_index(q, i);
-+	int r =3D iwl_pcie_get_cmd_index(q, q->read_ptr);
-+	int w =3D iwl_pcie_get_cmd_index(q, q->write_ptr);
+ 	pm_runtime_get_sync(pl330->ddma.dev);
+ 	spin_lock_irqsave(&pch->lock, flags);
 +
-+	return w >=3D r ?
-+		(index >=3D r && index < w) :
-+		!(index < r && index >=3D w);
- }
-=20
- static inline bool iwl_is_rfkill_set(struct iwl_trans *trans)
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c b/drivers/net/wir=
-eless/intel/iwlwifi/pcie/tx.c
-index 473fe7ccb07c..11bd7ce2be8e 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-@@ -1225,9 +1225,13 @@ static void iwl_pcie_cmdq_reclaim(struct iwl_trans *=
-trans, int txq_id, int idx)
- 	struct iwl_txq *txq =3D trans_pcie->txq[txq_id];
- 	unsigned long flags;
- 	int nfreed =3D 0;
-+	u16 r;
-=20
- 	lockdep_assert_held(&txq->lock);
-=20
-+	idx =3D iwl_pcie_get_cmd_index(txq, idx);
-+	r =3D iwl_pcie_get_cmd_index(txq, txq->read_ptr);
+ 	spin_lock(&pl330->lock);
+ 	_stop(pch->thread);
+-	spin_unlock(&pl330->lock);
+-
+ 	pch->thread->req[0].desc =3D NULL;
+ 	pch->thread->req[1].desc =3D NULL;
+ 	pch->thread->req_running =3D -1;
++	spin_unlock(&pl330->lock);
 +
- 	if ((idx >=3D TFD_QUEUE_SIZE_MAX) || (!iwl_queue_used(txq, idx))) {
- 		IWL_ERR(trans,
- 			"%s: Read index for DMA queue txq id (%d), index %d is out of range [0-=
-%d] %d %d.\n",
-@@ -1236,12 +1240,13 @@ static void iwl_pcie_cmdq_reclaim(struct iwl_trans =
-*trans, int txq_id, int idx)
- 		return;
- 	}
+ 	power_down =3D pch->active;
+ 	pch->active =3D false;
 =20
--	for (idx =3D iwl_queue_inc_wrap(idx); txq->read_ptr !=3D idx;
--	     txq->read_ptr =3D iwl_queue_inc_wrap(txq->read_ptr)) {
-+	for (idx =3D iwl_queue_inc_wrap(idx); r !=3D idx;
-+	     r =3D iwl_queue_inc_wrap(r)) {
-+		txq->read_ptr =3D iwl_queue_inc_wrap(txq->read_ptr);
-=20
- 		if (nfreed++ > 0) {
- 			IWL_ERR(trans, "HCMD skipped: index (%d) %d %d\n",
--				idx, txq->write_ptr, txq->read_ptr);
-+				idx, txq->write_ptr, r);
- 			iwl_force_nmi(trans);
- 		}
- 	}
 --=20
 2.17.1
