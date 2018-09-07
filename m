@@ -6,51 +6,52 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F215C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FBDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDB1D2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A96A42083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:58:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="dY+b/KK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB1D2083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="G39FkQTl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96A42083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbeIGFPL (ORCPT
+        id S1729646AbeIGFgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:15:11 -0400
-Received: from mail-sn1nam01on0109.outbound.protection.outlook.com ([104.47.32.109]:39556
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:36:50 -0400
+Received: from mail-eopbgr690126.outbound.protection.outlook.com ([40.107.69.126]:51988
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729136AbeIGFPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:15:10 -0400
+        id S1729181AbeIGFPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:15:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1UhswHcj2u1TRo6nJmvXLxGCDBRxj/LrEC5Z45T9G4U=;
- b=dY+b/KK6Z5o+YGidmkGf8jhMLaEeLrOm6aws0ThcoG+diUBwYOPKEqQyT9/G24vbng14IfnysFl/HtZtISfmOIqQSDWddFjKNpXdmC0BLH1q+zCSek3VlSzGoN1t8jxuIbac6V4ozc5kcg0xMV6Vme3+LJhdf5VUIDzhfOJ0mUs=
+ bh=UOMQ4K7BauC85bpxOgBDILcXyHMPpd/jlZ8NfzhCSno=;
+ b=G39FkQTlgcCb0b6JdxUVymXGSZ88Hj1ph0Q/cnneAdfxKXDoG6SZeMnhVS1wS04FyqRQdO3/IOh71kJbOAQxhfgHHZxkqfqgOV6n0TikiZ/UiuAlLEKUXC2rnqo21M+WCsAhgofoUWvD5o03DQgM7GRXCelOE7VwA0maBN3KXLU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0469.namprd21.prod.outlook.com (10.172.121.147) with Microsoft SMTP
+ CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.6; Fri, 7 Sep 2018 00:36:59 +0000
+ 15.20.1143.1; Fri, 7 Sep 2018 00:36:51 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:36:59 +0000
+ 00:36:51 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Oder Chiou <oder_chiou@realtek.com>,
-        Mark Brown <broonie@kernel.org>,
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 59/88] ASoC: rt5514: Fix the issue of the delay
- volume applied
-Thread-Topic: [PATCH AUTOSEL 4.18 59/88] ASoC: rt5514: Fix the issue of the
- delay volume applied
-Thread-Index: AQHURkLU10pvzoKVeEeUcJuCovye/g==
-Date:   Fri, 7 Sep 2018 00:36:34 +0000
-Message-ID: <20180907003547.57567-59-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 45/88] fbdev/via: fix defined but not used
+ warning
+Thread-Topic: [PATCH AUTOSEL 4.18 45/88] fbdev/via: fix defined but not used
+ warning
+Thread-Index: AQHURkLPaFfgojEkQkiJmv5FJBSdYA==
+Date:   Fri, 7 Sep 2018 00:36:25 +0000
+Message-ID: <20180907003547.57567-45-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,79 +60,80 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0469;6:h8VTQgVB2GFHgAyW6zYhtn/7dzV0kUhW7RN35wy172tmBl2+c7xsMsGgQ7/5KI5XyuDs4hUdC9aliRbo9UTS1W2UsjKbcfvNI3OOAQYtS6z2NSFCPpbUie7r9htmxKI54SOC2cfH8KReGd2BMichrCXrf46B/syR0yWdyCO+blWRWGj1fYy+k/JEHIBkIfsH6zbYQFjKn7QvGcFFsKug5dB/SDqItHvtiK8Av4AlqeMcq5RbkgxFAzRCfnu9DQHI4ObyVnjsZ04H32T1rAR/PiU0fSYaV/VMMqTYq534A+7/dc1Jh1MN97R7q0F9URePYapqFJapI05yvnPidM1NALmRR+/AEK8dmJiWVdGB/lu3tBj6x8A3UwUmBBYX3ukxiLP+sGPvtAbV94V0Gz8vJTwAra/BnQC8+ylu7w+OcRe5R6KlGZkQV/hsiHZrafQBHJ3FD6nDhzWnUj20yVJ4cQ==;5:yUmPMh3INwbYyZLfp6wKwT1VLohrHSw2One9MZlMYlH4ybc2F3JL/FXWfLWk6/x+jBHqCO/UlBFAoWG7uwRLvmIr2iXI6IRwON9nGrZ0Bivn4Ds7pqeVUR0t6+94mSajnfqOmwZz7j1I8xzMK3GDG58IYEStwxJQpJBRSx5xgsA=;7:gXDnScqz07nM5seg+u0ZPWi/hwzTKYHO782EyhGqdTc2VHqR80zJng0QXkmqNkhnvF7AqBGWKZvAhZ1N8hvL026+SO743ZLC2xhsLagDqdvHUcLOnm6XkOoUqSwp4600Ck8SyKcEk0YtX1Xu5C5nuoBe3waUW4wTS1U9XnRia6ToawFvNfI0yEaVlQgSotbR+hR/9IPSHOpJa5XTP9vtIoi3MZzA2s4u3ApoqEU7yDDT/wWRFxSKDUhVyXh33Gvz
-x-ms-office365-filtering-correlation-id: 1ef97966-0053-4129-b24c-08d6145a0590
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:sNoqo3/ocejZsmZ82YRK1CiQNYkqydv+Fk/jHAZgleeyVtvqmHsNKojCApaNXnNRVds7ypT5FxdQ+eL5RuqODqmA4+zzJmQF4LzH2/eVfv1GPBiovHVz9oem9GTbstdaxPoD4eIYmDJRy2EHCbsYsFWQW3WgoKjs6gZH74aFSuukaWsCztNAsZTPNvLDjUcwYIAx4mv9ez2LhhcpY6N30MscLmYGrFqWYwdpqzGy9jru7Qm7TRngjJmFU0heQbwL9dq1TQvI1XKy9Hy3kWes8dJxOp+GLdOw1dj3MCRN3Corg/oqpJTS47s88CfTyPHoMr2mw4VtDT+TvNuUyscDhAVNoY16Wk5okP3uL4TpEUOkgp+mQVT/h3/MJJ2Bz2ssT7d7/RhcYpA780gpciTRxznaJxw25eo9b13OOt2fgLe4nsA9wr9Jr3jTYfwt5F7zIs7Z8PZFakVBpzyKKNJhrQ==;5:TAZqf0Ihp7B/VLOq1WZKLLpoTTfGivrR7lVH8uBMi2xLcsuM+gNMqJWI5AjZh1vBWcAUEwveIx5WaGOIC9N8p1lE5W44+Xsx6L+FLsYU4NoAlfoUKcukvjWSpsb3Zyo47Fr8CfF96OP49diGsxk4fCKFIukPgGJgBe/MnQhI9HQ=;7:gXOW8hkRiMpBhqQ+pzAZ4FbJqOibyb000HVsZtDM0a+yGiJ8Qf79dnbxvQQqQ/4+/GTZANn1jm6AIPnjR8ua1XsB0VMXXdFtApk1899yaMQE57etCi14xLVyTGsgiz014fTSUBOCcPUDuenOYffdrQJxCDlfGpY8xhkTXQS1bM8cqAXTWy1oeIWUF+Hiqr6hYnyMZ9mwoVMYfZlxn0kyoHkGswqr2ivFVsy3g1lL7sYfLdlOE6syJqUrb2YyRl7s
+x-ms-office365-filtering-correlation-id: a0edb09a-d2d8-46e5-429f-08d6145a011d
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0469;
-x-ms-traffictypediagnostic: CY4PR21MB0469:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
+x-ms-traffictypediagnostic: CY4PR21MB0773:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0469C1CBE3C6C19165A4AAE6FB000@CY4PR21MB0469.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0773DC9BCA8B0FC24E3AF90EFB000@CY4PR21MB0773.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(26323138287068)(89211679590171)(7411616537696);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0469;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0469;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(346002)(136003)(376002)(199004)(189003)(25786009)(446003)(316002)(86612001)(54906003)(76176011)(86362001)(110136005)(256004)(6486002)(10090500001)(26005)(2900100001)(476003)(2616005)(102836004)(5250100002)(22452003)(186003)(6506007)(11346002)(53936002)(217873002)(66066001)(4326008)(575784001)(486006)(6512007)(107886003)(2906002)(8676002)(105586002)(72206003)(99286004)(1076002)(6666003)(68736007)(2501003)(7736002)(10290500003)(106356001)(305945005)(14454004)(6116002)(3846002)(5660300001)(36756003)(478600001)(81166006)(6436002)(97736004)(81156014)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0469;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(8676002)(5660300001)(106356001)(6436002)(25786009)(110136005)(54906003)(6506007)(105586002)(2906002)(486006)(53936002)(446003)(2616005)(476003)(4326008)(6666003)(11346002)(5250100002)(107886003)(2501003)(86612001)(97736004)(6512007)(478600001)(3846002)(72206003)(6116002)(10290500003)(76176011)(68736007)(14454004)(1076002)(66066001)(26005)(6486002)(99286004)(8936002)(36756003)(81166006)(86362001)(14444005)(256004)(102836004)(81156014)(305945005)(186003)(22452003)(2900100001)(7736002)(10090500001)(316002)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: xNVpDcVJ6Pqgo+qc429NkqDYjKK4QoySYHpNP2PHmD44QufpouENHlx5vxyfl7o67EwqDZPeFrc4eE6LcG89nMT1Timqq4X5p2KgBjdi0XWSb1zMYLWUzmJ8CQlvNU19/ZaxNWb4UDph4oal1LDVWhjtpdmWCL0ld05PldpfR/E7cNPl7AMgXcmC4sdbgt3vLqRCO+EMSd/aLqckWGWOrLL1dQ3HQbaPSErCcGOy5W2IWgD13sHuUcsTHHV8PE0TIDhakEPbc7SqYBL4bGZ5rOD6fyPufeJ1BQUccf61aaGIkw9FHo2YJ6bWaIevT5LAU5ZSH4tDAF9f/3Y8U4A7Um9rj3DywuBdImm4JQDvTZs=
+x-microsoft-antispam-message-info: fW0KHebDd2/fGJkSJJa6a7ckzV144hTDs/3uCgyPsPfvvqNLRH8UTkg9gzC9jL2eV7yjISQI++Um/oxj8LuZnI685AufjWrrYfHgDfpojxdnm6jYENaOEnXlxPfI3GNL8UsphfdhiXhLZHSiba38lPCXgOlaWkGsw1DINyrI0YgPg9kj7vmsfJTjA/zM12PETk01O5dQVvI6DiN0pumh7v/YMxMmUnWijcrq9psa5o86PQiuFVh+RB/ZY2ezU2JhmdXcfKuach2/yyrFlR0qafOcFT42Qwv7VH/66Ui46EW1VJOiHbkWBKIYgE5+1nomGZiXztEc0ZBStVd/v9LYU2HcujQHfyLnhFH1782ea2c=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ef97966-0053-4129-b24c-08d6145a0590
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:34.9821
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0edb09a-d2d8-46e5-429f-08d6145a011d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:25.9596
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0469
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0773
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oder Chiou <oder_chiou@realtek.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit d96f8bd28cd0bae3e6702ae90df593628ef6906f ]
+[ Upstream commit b6566b47a67e07fdca44cf51abb14e2fbe17d3eb ]
 
-The patch fixes the issue of the delay volume applied.
+Fix a build warning in viafbdev.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
 
-Signed-off-by: Oder Chiou <oder_chiou@realtek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+../drivers/video/fbdev/via/viafbdev.c:1471:12: warning: 'viafb_sup_odev_pro=
+c_show' defined but not used [-Wunused-function]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/soc/codecs/rt5514.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/via/viafbdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
-index 1570b91bf018..dca82dd6e3bf 100644
---- a/sound/soc/codecs/rt5514.c
-+++ b/sound/soc/codecs/rt5514.c
-@@ -64,8 +64,8 @@ static const struct reg_sequence rt5514_patch[] =3D {
- 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
- 	{RT5514_ANA_CTRL_ADCFED,	0x00000800},
- 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
--	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
--	{RT5514_DOWNFILTER1_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
-+	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
- };
+diff --git a/drivers/video/fbdev/via/viafbdev.c b/drivers/video/fbdev/via/v=
+iafbdev.c
+index d2f785068ef4..7bb7e90b8f00 100644
+--- a/drivers/video/fbdev/via/viafbdev.c
++++ b/drivers/video/fbdev/via/viafbdev.c
+@@ -19,6 +19,7 @@
+  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  */
 =20
- static const struct reg_default rt5514_reg[] =3D {
-@@ -92,10 +92,10 @@ static const struct reg_default rt5514_reg[] =3D {
- 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
- 	{RT5514_DOWNFILTER0_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER0_CTRL2,	0x00020c2f},
--	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
- 	{RT5514_DOWNFILTER1_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER1_CTRL2,	0x00020c2f},
--	{RT5514_DOWNFILTER1_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
- 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
- 	{RT5514_ANA_CTRL_LDO18_16,	0x02000345},
- 	{RT5514_ANA_CTRL_ADC12,		0x0000a2a8},
++#include <linux/compiler.h>
+ #include <linux/module.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -1468,7 +1469,7 @@ static const struct file_operations viafb_vt1636_proc=
+_fops =3D {
+=20
+ #endif /* CONFIG_FB_VIA_DIRECT_PROCFS */
+=20
+-static int viafb_sup_odev_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused viafb_sup_odev_proc_show(struct seq_file *m, voi=
+d *v)
+ {
+ 	via_odev_to_seq(m, supported_odev_map[
+ 		viaparinfo->shared->chip_info.gfx_chip_name]);
 --=20
 2.17.1
