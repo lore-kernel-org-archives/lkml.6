@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E141C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF18C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4366B206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC379206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="pr00AxmD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4366B206BB
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="tJz5JoxF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC379206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbeIHCZx (ORCPT
+        id S1730445AbeIHCci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:25:53 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:23044 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730728AbeIHCZw (ORCPT
+        Fri, 7 Sep 2018 22:32:38 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:42560 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729174AbeIHCZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 22:25:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
@@ -31,34 +31,34 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   t=1536356577; x=1567892577;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Qbo2tRBsA24neJorN0C3RRPRL0VsEZKsQ1z2jlpDL80=;
-  b=pr00AxmDA7XP5BKLz5CPm1+dNzyteVhvX5Z9GFRzcqteKKyr9Jq3y/rP
-   HcNeSZcO5tDmQU4uI36Bu+Z7jSAMBfqtAYbiq46ITsPl5DhxeZa8vrOt4
-   Sn+tfHfsSDyd/duQcCk4VTAS8+MiQtyvu8tiWLLqcmjVtVXGwQ6bsLEKv
-   4=;
+  bh=YZeaBs6bQwAyKdtvL96N+LC8VPinOgTwTPuPCYkvXsw=;
+  b=tJz5JoxF4fEIWCfQWncHYW3CxtZuTnfcD+iV5QL26J4UelkmwGPtXDo6
+   E1EKsW9ymlkKZ9yHK55OUTHT+pElzdCvFcvRWn4dko0y/rBf5ju2OkKRB
+   QKyHIU4NeEzllu7zIHiWARwmQszdqpgNntTMezxzy/+6/qFkX4kvY+Kj3
+   8=;
 X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="361243261"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:42:57 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87Lgp3w005088
+   d="scan'208";a="696510016"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:42:56 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
+        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87LgoBL056568
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:42:54 GMT
+        Fri, 7 Sep 2018 21:42:52 GMT
 Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LgokQ027762
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87Lgmko027751
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:42:50 +0200
+        Fri, 7 Sep 2018 23:42:48 +0200
 Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LgnZC027761;
-        Fri, 7 Sep 2018 23:42:49 +0200
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87Lglul027750;
+        Fri, 7 Sep 2018 23:42:47 +0200
 From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
         linux-kernel@vger.kernel.org
-Subject: [RFC 50/60] cosched: Propagate load changes across hierarchy levels
-Date:   Fri,  7 Sep 2018 23:40:37 +0200
-Message-Id: <20180907214047.26914-51-jschoenh@amazon.de>
+Subject: [RFC 49/60] cosched: Adjust locking for enqueuing and dequeueing
+Date:   Fri,  7 Sep 2018 23:40:36 +0200
+Message-Id: <20180907214047.26914-50-jschoenh@amazon.de>
 X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
 In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
 References: <20180907214047.26914-1-jschoenh@amazon.de>
@@ -70,171 +70,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The weight of an SD-SE is defined to be the average weight of all
-runqueues that are represented by the SD-SE. Hence, its weight
-should change whenever one of the child runqueues changes its
-weight. However, as these are two different hierarchy levels,
-they are protected by different locks. To reduce lock contention,
-we want to avoid holding higher level locks for prolonged amounts
-of time, if possible.
+Enqueuing and dequeuing of tasks (or entities) are a general activities
+that span across leader boundaries. They start from the bottom of the
+runqueue hierarchy and bubble upwards, until they hit their terminating
+condition (for example, enqueuing stops when the parent entity is already
+enqueued).
 
-Therefore, we update an aggregated weight -- sdrq->sdse_load --
-in a lock-free manner during enqueue and dequeue in the lower level,
-and once we actually get the higher level lock, we perform the actual
-SD-SE weight adjustment via update_sdse_load().
-
-At some point in the future (the code isn't there yet), this will
-allow software combining, where not all CPUs have to walk up the
-full hierarchy on enqueue/dequeue.
+We employ chain-locking in these cases to minimize lock contention.
+For example, if enqueuing has moved past a hierarchy level of a different
+leader, that leader can already make scheduling decisions again. Also,
+this opens the possibility to combine concurrent enqueues/dequeues to
+some extend, so that only one of multiple CPUs has to walk up the
+hierarchy.
 
 Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- kernel/sched/fair.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ kernel/sched/fair.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0dc4d289497c..1eee262ecf88 100644
+index 6d64f4478fda..0dc4d289497c 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -2740,6 +2740,10 @@ static inline void account_numa_dequeue(struct rq *rq, struct task_struct *p)
- static void
- account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
-+#ifdef CONFIG_COSCHEDULING
-+	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
-+		atomic64_add(se->load.weight, &cfs_rq->sdrq.sd_parent->sdse_load);
-+#endif
- 	update_load_add(&cfs_rq->load, se->load.weight);
- 	if (!parent_entity(se) || is_sd_se(parent_entity(se)))
- 		update_load_add(&hrq_of(cfs_rq)->load, se->load.weight);
-@@ -2757,6 +2761,10 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
- static void
- account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
-+#ifdef CONFIG_COSCHEDULING
-+	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
-+		atomic64_sub(se->load.weight, &cfs_rq->sdrq.sd_parent->sdse_load);
-+#endif
- 	update_load_sub(&cfs_rq->load, se->load.weight);
- 	if (!parent_entity(se) || is_sd_se(parent_entity(se)))
- 		update_load_sub(&hrq_of(cfs_rq)->load, se->load.weight);
-@@ -3083,6 +3091,35 @@ static inline void update_cfs_group(struct sched_entity *se)
- }
- #endif /* CONFIG_FAIR_GROUP_SCHED */
+@@ -4510,6 +4510,7 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct sched_entity *se;
+ 	long task_delta, dequeue = 1;
+ 	bool empty;
++	struct rq_chain rc;
  
-+#ifdef CONFIG_COSCHEDULING
-+static void update_sdse_load(struct sched_entity *se)
-+{
-+	struct cfs_rq *cfs_rq = cfs_rq_of(se);
-+	struct sdrq *sdrq = &cfs_rq->sdrq;
-+	unsigned long load;
-+
-+	if (!is_sd_se(se))
-+		return;
-+
-+	/* FIXME: the load calculation assumes a homogeneous topology */
-+	load = atomic64_read(&sdrq->sdse_load);
-+
-+	if (!list_empty(&sdrq->children)) {
-+		struct sdrq *entry;
-+
-+		entry = list_first_entry(&sdrq->children, struct sdrq, siblings);
-+		load *= entry->data->span_weight;
-+	}
-+
-+	load /= sdrq->data->span_weight;
-+
-+	/* FIXME: Use a proper runnable */
-+	reweight_entity(cfs_rq, se, load, load);
-+}
-+#else /* !CONFIG_COSCHEDULING */
-+static void update_sdse_load(struct sched_entity *se) { }
-+#endif /* !CONFIG_COSCHEDULING */
-+
- static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
- {
- 	struct rq *rq = hrq_of(cfs_rq);
-@@ -4527,6 +4564,11 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	/*
+ 	 * FIXME: We can only handle CPU runqueues at the moment.
+@@ -4532,8 +4533,11 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	rcu_read_unlock();
  
- 	se = cfs_rq->my_se;
- 
-+#ifdef CONFIG_COSCHEDULING
-+	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
-+		atomic64_sub(cfs_rq->load.weight,
-+			     &cfs_rq->sdrq.sd_parent->sdse_load);
-+#endif
- 	/* freeze hierarchy runnable averages while throttled */
- 	rcu_read_lock();
- 	walk_tg_tree_from(cfs_rq->tg, tg_throttle_down, tg_nop, (void *)rq);
-@@ -4538,6 +4580,8 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	task_delta = cfs_rq->h_nr_running;
++	rq_chain_init(&rc, rq);
+ 	for_each_sched_entity(se) {
  		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
- 
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
 +
++		rq_chain_lock(&rc, se);
  		/* throttled entity or throttle-on-deactivate */
  		if (!se->on_rq)
  			break;
-@@ -4590,6 +4634,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	se = cfs_rq->my_se;
+@@ -4549,6 +4553,8 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	if (!se)
+ 		sub_nr_running(rq, task_delta);
  
- 	cfs_rq->throttled = 0;
-+#ifdef CONFIG_COSCHEDULING
-+	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
-+		atomic64_add(cfs_rq->load.weight,
-+			     &cfs_rq->sdrq.sd_parent->sdse_load);
-+#endif
++	rq_chain_unlock(&rc);
++
+ 	cfs_rq->throttled = 1;
+ 	cfs_rq->throttled_clock = rq_clock(rq);
+ 	raw_spin_lock(&cfs_b->lock);
+@@ -4577,6 +4583,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	struct sched_entity *se;
+ 	int enqueue = 1;
+ 	long task_delta;
++	struct rq_chain rc;
  
- 	update_rq_clock(rq);
+ 	SCHED_WARN_ON(!is_cpu_rq(rq));
  
-@@ -4608,6 +4657,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	rq_chain_init(&rc, rq);
+@@ -4598,7 +4605,9 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		return;
+ 
+ 	task_delta = cfs_rq->h_nr_running;
++	rq_chain_init(&rc, rq);
  	for_each_sched_entity(se) {
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
++		rq_chain_lock(&rc, se);
  		if (se->on_rq)
  			enqueue = 0;
  
-@@ -5152,6 +5202,7 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 	rq_chain_init(&rc, rq);
+@@ -4614,6 +4623,8 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	if (!se)
+ 		add_nr_running(rq, task_delta);
+ 
++	rq_chain_unlock(&rc);
++
+ 	/* Determine whether we need to wake up potentially idle CPU: */
+ 	if (rq->curr == rq->idle && nr_cfs_tasks(rq))
+ 		resched_curr(rq);
+@@ -5136,8 +5147,11 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 			 unsigned int task_delta)
+ {
+ 	struct cfs_rq *cfs_rq;
++	struct rq_chain rc;
+ 
++	rq_chain_init(&rc, rq);
  	for_each_sched_entity(se) {
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
++		rq_chain_lock(&rc, se);
  		if (se->on_rq)
  			break;
  		cfs_rq = cfs_rq_of(se);
-@@ -5173,6 +5224,7 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+@@ -5157,6 +5171,8 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 	}
+ 
  	for_each_sched_entity(se) {
- 		/* FIXME: taking locks up to the top is bad */
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
++		/* FIXME: taking locks up to the top is bad */
++		rq_chain_lock(&rc, se);
  		cfs_rq = cfs_rq_of(se);
  		cfs_rq->h_nr_running += task_delta;
  
-@@ -5235,6 +5287,7 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 	rq_chain_init(&rc, rq);
+@@ -5167,6 +5183,8 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 		update_cfs_group(se);
+ 	}
+ 
++	rq_chain_unlock(&rc);
++
+ 	return se != NULL;
+ }
+ 
+@@ -5211,9 +5229,12 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 			 unsigned int task_delta)
+ {
+ 	struct cfs_rq *cfs_rq;
++	struct rq_chain rc;
+ 	int task_sleep = flags & DEQUEUE_SLEEP;
+ 
++	rq_chain_init(&rc, rq);
  	for_each_sched_entity(se) {
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
++		rq_chain_lock(&rc, se);
  		cfs_rq = cfs_rq_of(se);
  		dequeue_entity(cfs_rq, se, flags);
  
-@@ -5269,6 +5322,7 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+@@ -5231,6 +5252,9 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 		if (cfs_rq->load.weight) {
+ 			/* Avoid re-evaluating load for this entity: */
+ 			se = parent_entity(se);
++			if (se)
++				rq_chain_lock(&rc, se);
++
+ 			/*
+ 			 * Bias pick_next to pick a task from this cfs_rq, as
+ 			 * p is sleeping when it is within its sched_slice.
+@@ -5243,6 +5267,8 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 	}
+ 
  	for_each_sched_entity(se) {
- 		/* FIXME: taking locks up to the top is bad */
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
++		/* FIXME: taking locks up to the top is bad */
++		rq_chain_lock(&rc, se);
  		cfs_rq = cfs_rq_of(se);
  		cfs_rq->h_nr_running -= task_delta;
  
-@@ -9897,6 +9951,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+@@ -5253,6 +5279,8 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 		update_cfs_group(se);
+ 	}
+ 
++	rq_chain_unlock(&rc);
++
+ 	return se != NULL;
+ }
+ 
+@@ -9860,11 +9888,15 @@ static inline bool vruntime_normalized(struct task_struct *p)
+ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ {
+ 	struct cfs_rq *cfs_rq;
++	struct rq_chain rc;
++
++	rq_chain_init(&rc, hrq_of(cfs_rq_of(se)));
+ 
+ 	/* Start to propagate at parent */
+ 	se = parent_entity(se);
  
  	for_each_sched_entity(se) {
- 		rq_chain_lock(&rc, se);
-+		update_sdse_load(se);
++		rq_chain_lock(&rc, se);
  		cfs_rq = cfs_rq_of(se);
  
  		if (cfs_rq_throttled(cfs_rq))
+@@ -9872,6 +9904,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 
+ 		update_load_avg(cfs_rq, se, UPDATE_TG);
+ 	}
++	rq_chain_unlock(&rc);
+ }
+ #else
+ static void propagate_entity_cfs_rq(struct sched_entity *se) { }
 -- 
 2.9.3.1.gcba166c.dirty
 
