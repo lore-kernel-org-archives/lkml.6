@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D20C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DBEC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD35B2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD35B2083D
+	by mail.kernel.org (Postfix) with ESMTP id C1D8A2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D8A2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730844AbeIHC0P (ORCPT
+        id S1730868AbeIHC0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:26:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56872 "EHLO
+        Fri, 7 Sep 2018 22:26:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729347AbeIHC0O (ORCPT
+        with ESMTP id S1730028AbeIHC0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:26:14 -0400
+        Fri, 7 Sep 2018 22:26:17 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9150BBF;
-        Fri,  7 Sep 2018 21:43:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0D5BBBF;
+        Fri,  7 Sep 2018 21:43:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 3.18 15/29] pnfs/blocklayout: off by one in bl_map_stripe()
-Date:   Fri,  7 Sep 2018 23:10:36 +0200
-Message-Id: <20180907210910.657928775@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 3.18 16/29] ARM: tegra: Fix Tegra30 Cardhu PCA954x reset
+Date:   Fri,  7 Sep 2018 23:10:37 +0200
+Message-Id: <20180907210910.700907415@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
 References: <20180907210909.523240901@linuxfoundation.org>
@@ -51,37 +50,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-commit 0914bb965e38a055e9245637aed117efbe976e91 upstream.
+commit 6e1811900b6fe6f2b4665dba6bd6ed32c6b98575 upstream.
 
-"dev->nr_children" is the number of children which were parsed
-successfully in bl_parse_stripe().  It could be all of them and then, in
-that case, it is equal to v->stripe.volumes_count.  Either way, the >
-should be >= so that we don't go beyond the end of what we're supposed
-to.
+On all versions of Tegra30 Cardhu, the reset signal to the NXP PCA9546
+I2C mux is connected to the Tegra GPIO BB0. Currently, this pin on the
+Tegra is not configured as a GPIO but as a special-function IO (SFIO)
+that is multiplexing the pin to an I2S controller. On exiting system
+suspend, I2C commands sent to the PCA9546 are failing because there is
+no ACK. Although it is not possible to see exactly what is happening
+to the reset during suspend, by ensuring it is configured as a GPIO
+and driven high, to de-assert the reset, the failures are no longer
+seen.
 
-Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org # 3.17+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Please note that this GPIO is also used to drive the reset signal
+going to the camera connector on the board. However, given that there
+is no camera support currently for Cardhu, this should not have any
+impact.
+
+Fixes: 40431d16ff11 ("ARM: tegra: enable PCA9546 on Cardhu")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/blocklayout/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra30-cardhu.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/nfs/blocklayout/dev.c
-+++ b/fs/nfs/blocklayout/dev.c
-@@ -157,7 +157,7 @@ static bool bl_map_stripe(struct pnfs_bl
- 	chunk = div_u64(offset, dev->chunk_size);
- 	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -200,6 +200,7 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0x70>;
++			reset-gpio = <&gpio TEGRA_GPIO(BB, 0) GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
  
--	if (chunk_idx > dev->nr_children) {
-+	if (chunk_idx >= dev->nr_children) {
- 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
- 			__func__, chunk_idx, offset, dev->chunk_size);
- 		/* error, should not happen */
 
 
