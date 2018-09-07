@@ -2,124 +2,97 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A86FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF2FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2163920869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:09:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2163920869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EC20D2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:11:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IjoyoPsC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC20D2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729049AbeIGQuD (ORCPT
+        id S1729060AbeIGQwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 12:50:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37484 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727611AbeIGQuD (ORCPT
+        Fri, 7 Sep 2018 12:52:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49826 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbeIGQwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 12:50:03 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w87C3sF7074966
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Sep 2018 08:09:22 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mbr50j63a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:09:22 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Fri, 7 Sep 2018 13:09:20 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Sep 2018 13:09:15 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w87C9ESs59375742
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 12:09:15 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 748ECA4053;
-        Fri,  7 Sep 2018 15:09:06 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8049AA405B;
-        Fri,  7 Sep 2018 15:09:05 +0100 (BST)
-Received: from oc3784624756.ibm.com (unknown [9.152.212.171])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  7 Sep 2018 15:09:05 +0100 (BST)
-Subject: Re: [PATCH 77/77] perf tests: Fix record+probe_libc_inet_pton.sh
- without ping's debuginfo
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>
-References: <20180905220440.20256-1-acme@kernel.org>
- <20180905220440.20256-78-acme@kernel.org>
-From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM
-Date:   Fri, 7 Sep 2018 14:09:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 12:52:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8NGCb3pGqEispZowrIUMCvxbMfKQRUw/ZFewx9Lt7Bc=; b=IjoyoPsCpYAjy9Hc7bNU+lY1X
+        2T6RBkelwwF8CYS1LcWcgveCJyiPJNIUgCF1egui7WiQQB68BICbXhBTlzckM80KPi4/m/RHK93EP
+        xP3lH4zoE4WsVnnvG2AjuA1bHLjesNMQ86GavHzHq1eiGkyl2F11UnbGxEZTj6s26bO4E=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fyFbk-0005P4-U3; Fri, 07 Sep 2018 12:11:28 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id A458D1122A6D; Fri,  7 Sep 2018 13:11:28 +0100 (BST)
+Date:   Fri, 7 Sep 2018 13:11:28 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Grant Grundler <grundler@chromium.org>
+Cc:     Ryan Lee <ryans.lee@maximintegrated.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: max98373: usleep_range() needs include/delay.h
+Message-ID: <20180907121128.GH17459@sirena.org.uk>
+References: <20180907002728.112770-1-grundler@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20180905220440.20256-78-acme@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18090712-0008-0000-0000-0000026DBCBF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090712-0009-0000-0000-000021D5E514
-Message-Id: <62359230-cfb2-676d-6baf-93282ee99afc@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809070123
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jRdC2OsRnuV8iIl8"
+Content-Disposition: inline
+In-Reply-To: <20180907002728.112770-1-grundler@chromium.org>
+X-Cookie: Do not fold, spindle or mutilate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 12:04 AM, Arnaldo Carvalho de Melo wrote:
-> rpm -e iputils-debuginfo
 
-I have done the same on my s390 this morning:
+--jRdC2OsRnuV8iIl8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[root@p23lp27 perf]# ./perf test ping
-60: probe libc's inet_pton & backtrace it with ping       : Ok
-[root@p23lp27 perf]# rpm -e iputils-debuginfo
-[root@p23lp27 perf]# ./perf test ping
-60: probe libc's inet_pton & backtrace it with ping       : Ok
-[root@p23lp27 perf]#
+On Thu, Sep 06, 2018 at 05:27:28PM -0700, Grant Grundler wrote:
+> Commit ca917f9fe1a0fab added use of usleep_range() but not
+> the corresponding "include <linux/delay.h>". The result is
+> with Chrome OS won't build because warnings are forced
+> to be errors:
+> mnt/host/source/src/third_party/kernel/v4.4/sound/soc/codecs/max98373.c:734:2: error: implicit declaration of function 'usleep_range' [-Werror,-Wimplicit-function-declaration]
+>         usleep_range(10000, 11000);
+>         ^
 
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+Note that this isn't causing a warning upstream, presumably due to an
+implicit inclusion that isn't present in the v4.4 kernel that you appear
+to be using, or gets missed due to config differences.
 
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+--jRdC2OsRnuV8iIl8
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluSau8ACgkQJNaLcl1U
+h9AIfgf/eBKyahPC3KprtZfUSebDBqPYW/eaxZhAHW8tyHkAW2csHeATrxoxVXJl
+rov2bCkWYqeFZ3yrVS8snqsBcB/43VYbceDgxt9o8c99dQUc5LUpcu6h9H48B3GF
+7T4sw8aiLrTcW9jVGoArcIBeEW1LeX8wajm3As5PDzRLqbMrYUfcHVeCPgETQhXN
+GOlcuzoideXQWyn5saBIZywJCida2WsJJmvKPbW4YlgJ+NdXJQl6MlobnrJg6J94
+iShfA+D93hEd1GW8PFAAw1i9r9cs6OKa4AwiUpuJN0gZbIPvFEoMHwjgYI/v9JzY
+QcFxIze87XrhoQSyjKunUc8cZT+hyw==
+=jeZ+
+-----END PGP SIGNATURE-----
+
+--jRdC2OsRnuV8iIl8--
