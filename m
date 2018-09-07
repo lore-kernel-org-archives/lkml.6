@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68406C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26E2C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 149E620645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 149E620645
+	by mail.kernel.org (Postfix) with ESMTP id 9BD812075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD812075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeIHCGD (ORCPT
+        id S1728440AbeIHCGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:06:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46400 "EHLO
+        Fri, 7 Sep 2018 22:06:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46408 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727946AbeIHCGC (ORCPT
+        with ESMTP id S1727735AbeIHCGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:06:02 -0400
+        Fri, 7 Sep 2018 22:06:08 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ECAD5EF6;
-        Fri,  7 Sep 2018 21:23:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 500D2F01;
+        Fri,  7 Sep 2018 21:23:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 097/145] block, bfq: return nbytes and not zero from struct cftype .write() method
-Date:   Fri,  7 Sep 2018 23:09:23 +0200
-Message-Id: <20180907210911.911477386@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.18 098/145] pnfs/blocklayout: off by one in bl_map_stripe()
+Date:   Fri,  7 Sep 2018 23:09:24 +0200
+Message-Id: <20180907210911.967881810@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,38 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit fc8ebd01deeb12728c83381f6ec923e4a192ffd3 upstream.
+commit 0914bb965e38a055e9245637aed117efbe976e91 upstream.
 
-The value that struct cftype .write() method returns is then directly
-returned to userspace as the value returned by write() syscall, so it
-should be the number of bytes actually written (or consumed) and not zero.
+"dev->nr_children" is the number of children which were parsed
+successfully in bl_parse_stripe().  It could be all of them and then, in
+that case, it is equal to v->stripe.volumes_count.  Either way, the >
+should be >= so that we don't go beyond the end of what we're supposed
+to.
 
-Returning zero from write() syscall makes programs like /bin/echo or bash
-spin.
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: e21b7a0b9887 ("block, bfq: add full hierarchical scheduling and cgroups support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # 3.17+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/bfq-cgroup.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/nfs/blocklayout/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -913,7 +913,8 @@ static ssize_t bfq_io_set_weight(struct
- 	if (ret)
- 		return ret;
+--- a/fs/nfs/blocklayout/dev.c
++++ b/fs/nfs/blocklayout/dev.c
+@@ -204,7 +204,7 @@ static bool bl_map_stripe(struct pnfs_bl
+ 	chunk = div_u64(offset, dev->chunk_size);
+ 	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
  
--	return bfq_io_set_weight_legacy(of_css(of), NULL, weight);
-+	ret = bfq_io_set_weight_legacy(of_css(of), NULL, weight);
-+	return ret ?: nbytes;
- }
- 
- #ifdef CONFIG_DEBUG_BLK_CGROUP
+-	if (chunk_idx > dev->nr_children) {
++	if (chunk_idx >= dev->nr_children) {
+ 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
+ 			__func__, chunk_idx, offset, dev->chunk_size);
+ 		/* error, should not happen */
 
 
