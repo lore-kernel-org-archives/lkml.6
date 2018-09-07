@@ -2,115 +2,162 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B329C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3FDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02EB12086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtiPAXrE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02EB12086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B821204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:50:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B821204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbeIGJZH (ORCPT
+        id S1727328AbeIGJ3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 05:25:07 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37661 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbeIGJZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 05:25:06 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h69-v6so6396425pfd.4;
-        Thu, 06 Sep 2018 21:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4+QyJDhSp/Sz+HoJ6uFJhpaRaGIS0DhBLItPAAqgsrA=;
-        b=EtiPAXrEHy4Qh3oriaCHg91hW4Yk4NVBt8/EWXSLn2gQRnsGKmTXMo+FMsR7D5E+Fb
-         wx31Wy4y/Zmwu6dXpBkgjiIQM8/USMO+DkuPj64IJDLFDoRjRbMJJr4jEgmiS/iYg4t4
-         jCJt0Hfz5rrK940B4KQXUC1UDXWqs4GdArITC8p9cO1IqD4GddjQTqRgLd5nQhGA/HR7
-         EqE0SHpUpzhQYfdxGE1XL9bFpjArB+jXavvh/dmTeh6+f8N5ozbimdmP3/PJ080kN3tw
-         ATw0gwsj1CYP2nQhU9MZE1YHz8RB4rtxyc9ZpCcycSUms3ZE5LgH4v8O4EdyEKXxxkAN
-         1GAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4+QyJDhSp/Sz+HoJ6uFJhpaRaGIS0DhBLItPAAqgsrA=;
-        b=Je22OXSwbwBx0GCugevSlXACZLnIFqvLtquInHwLrGERb6ENG15cbnpCdxkPA70GoO
-         w13l/Bj4Awl9dRMO3m2WxXCSl8MUDU+3reNAs2zyhqgYr2jg60VFp92abGpYW7c2vz5Z
-         59UeHMx7frL3QujEN8m6wprWnV2zhsHGhDPO8UXh0KG5sGzrsO/B7mpQpJ7qAm97ZRTa
-         IFOwEzs3FbuHUqmFKAdnXyit8NYDHmkv6ku6hp5euY/NSelNTPuOjDNyLP6YhMbClEcV
-         8cMFWFZixWwgBnHreu5bI6uOfjLKn1uc5dyouyc33f6ELFgqMbYtpEhT8TLW58pJuMxk
-         sAQw==
-X-Gm-Message-State: APzg51CydeLSH3wy2US3Odo0MOlIskoZqYsnmlbl3xMdQGhBZv1eIqKj
-        9mWN8Ja/rxKih3zdCHUTmkgYaOBa
-X-Google-Smtp-Source: ANB0Vda/4r+wlbfOOKMnQp/ugr8UkJjbpSq17/BfK8W7BPU2dxu7V3/rqGadBHgDTMfkbz+2YDqliQ==
-X-Received: by 2002:a63:6446:: with SMTP id y67-v6mr6256094pgb.443.1536295561184;
-        Thu, 06 Sep 2018 21:46:01 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm15074411pfk.134.2018.09.06.21.46.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Sep 2018 21:46:00 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH] ARM: qcom_defconfig: Enable MAILBOX
-Date:   Thu,  6 Sep 2018 21:44:48 -0700
-Message-Id: <1536295488-12296-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 7 Sep 2018 05:29:46 -0400
+Received: from nautica.notk.org ([91.121.71.147]:33650 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727043AbeIGJ3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 05:29:46 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 39653C009; Fri,  7 Sep 2018 06:50:37 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Cc:     Dinu-Razvan Chis-Serban <justcsdr@gmail.com>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dominique Martinet <dominique.martinet@cea.fr>
+Subject: [PATCH] 9p locks: add mount option for lock retry interval
+Date:   Fri,  7 Sep 2018 06:50:27 +0200
+Message-Id: <1536295827-3181-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Dinu-Razvan Chis-Serban <justcsdr@gmail.com>
 
-Problem:
-ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
-added a "depends on MAILBOX") to RPMSG_QCOM_SMD, thus RPMSG_QCOM_SMD
-becomes unset since MAILBOX was not enabled in qcom_defconfig and is
-not otherwise selected for the dragonboard.  When the resulting
-kernel is booted the mmc device which contains the root file system
-is not available.
+The default P9_LOCK_TIMEOUT can be too long for some users exporting
+a local file system to a guest VM (30s), make this configurable at
+mount time.
 
-Fix:
-add CONFIG_MAILBOX to qcom_defconfig
-
-Fixes: ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
-added a "depends on MAILBOX")
-
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195727
+Signed-off-by: Dinu-Razvan Chis-Serban <justcsdr@gmail.com>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 ---
 
-Bjorn suggested that multi_v7_defconfig might need this same fix
-but I don't have a target to test on so I have not included that
-change in this patch
+This patch also has been in bugzilla for a bit over a year, and looks
+fine to me.
+I'll get it in linux-next around next week at the same time as the other
+bz patch I sent recently after some testing, and will see with Razvan
+(not sure how to call you in "short" version?) on how we fix comments
+to it but can take are of that if required.
 
-Tested on Qualcomm APQ8074 Dragonboard
+ fs/9p/v9fs.c     | 21 +++++++++++++++++++++
+ fs/9p/v9fs.h     |  1 +
+ fs/9p/vfs_file.c |  5 ++++-
+ 3 files changed, 26 insertions(+), 1 deletion(-)
 
- arch/arm/configs/qcom_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-index 6aa7046fb91f..bd6440f23493 100644
---- a/arch/arm/configs/qcom_defconfig
-+++ b/arch/arm/configs/qcom_defconfig
-@@ -207,6 +207,7 @@ CONFIG_MSM_MMCC_8974=y
- CONFIG_MSM_IOMMU=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
-+CONFIG_MAILBOX=y
- CONFIG_REMOTEPROC=y
- CONFIG_QCOM_ADSP_PIL=y
- CONFIG_QCOM_Q6V5_PIL=y
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 89bac3d2f05b..619128b55837 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -61,6 +61,8 @@ enum {
+ 	Opt_cache_loose, Opt_fscache, Opt_mmap,
+ 	/* Access options */
+ 	Opt_access, Opt_posixacl,
++	/* Lock timeout option */
++	Opt_locktimeout,
+ 	/* Error token */
+ 	Opt_err
+ };
+@@ -80,6 +82,7 @@ static const match_table_t tokens = {
+ 	{Opt_cachetag, "cachetag=%s"},
+ 	{Opt_access, "access=%s"},
+ 	{Opt_posixacl, "posixacl"},
++	{Opt_locktimeout, "locktimeout=%u"},
+ 	{Opt_err, NULL}
+ };
+ 
+@@ -187,6 +190,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ #ifdef CONFIG_9P_FSCACHE
+ 	v9ses->cachetag = NULL;
+ #endif
++	v9ses->session_lock_timeout = P9_LOCK_TIMEOUT;
+ 
+ 	if (!opts)
+ 		return 0;
+@@ -359,6 +363,23 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ #endif
+ 			break;
+ 
++		case Opt_locktimeout:
++			r = match_int(&args[0], &option);
++			if (r < 0) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "integer field, but no integer?\n");
++				ret = r;
++				continue;
++			}
++			if (option < 1) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "locktimeout must be a greater than zero integer.\n");
++				ret = -EINVAL;
++				continue;
++			}
++			v9ses->session_lock_timeout = (long)option * HZ;
++			break;
++
+ 		default:
+ 			continue;
+ 		}
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index 982e017acadb..129e5243a6bf 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -116,6 +116,7 @@ struct v9fs_session_info {
+ 	struct p9_client *clnt;	/* 9p client */
+ 	struct list_head slist; /* list of sessions registered with v9fs */
+ 	struct rw_semaphore rename_sem;
++	long session_lock_timeout; /* retry interval for blocking locks */
+ };
+ 
+ /* cache_validity flags */
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 374bc1c72048..c608b98c0188 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -154,6 +154,7 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+ 	uint8_t status = P9_LOCK_ERROR;
+ 	int res = 0;
+ 	unsigned char fl_type;
++	struct v9fs_session_info *v9ses;
+ 
+ 	fid = filp->private_data;
+ 	BUG_ON(fid == NULL);
+@@ -189,6 +190,8 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+ 	if (IS_SETLKW(cmd))
+ 		flock.flags = P9_LOCK_FLAGS_BLOCK;
+ 
++	v9ses = v9fs_inode2v9ses(file_inode(filp));
++
+ 	/*
+ 	 * if its a blocked request and we get P9_LOCK_BLOCKED as the status
+ 	 * for lock request, keep on trying
+@@ -202,7 +205,7 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+ 			break;
+ 		if (status == P9_LOCK_BLOCKED && !IS_SETLKW(cmd))
+ 			break;
+-		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
++		if (schedule_timeout_interruptible(v9ses->session_lock_timeout) != 0)
+ 			break;
+ 	}
+ 
 -- 
-Frank Rowand <frank.rowand@sony.com>
+2.17.1
 
