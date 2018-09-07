@@ -4,113 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77473C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C517C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27BD92075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 052432075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="hC5QgRG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27BD92075B
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ooxj2nsE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052432075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeIGFBU (ORCPT
+        id S1728272AbeIGFCA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:01:20 -0400
-Received: from mail-co1nam03on0132.outbound.protection.outlook.com ([104.47.40.132]:31072
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:02:00 -0400
+Received: from mail-dm3nam03on0095.outbound.protection.outlook.com ([104.47.41.95]:35264
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725831AbeIGFBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:01:19 -0400
+        id S1726605AbeIGFB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:01:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8WiJweBUesI/Am+LryzJOceotFpM7lrFMgC22JziyCM=;
- b=hC5QgRG+F3lugMoRvPLhmpanZqivac7Du8EtKtEREOLh1PuxKA1a3vdJvI6wOYzzPhdAHAsOFSP+W684EcKtFbe7G837zO4Yp1BRv9t5dFEd9Ao/B/0eCIitJRCdmgz6zDO+MNAnnaxj3o1W6x1iO9vXhCLXoEaSad937t75j7A=
+ bh=1gHAZZZYnIKP2krAw2X7A4QMjs1tnZA0bgG0a8veTrw=;
+ b=ooxj2nsEw6lI7sc20S/0Eyt4XH5kAuRjN40G3y6ts2NwkHjOMyZ5tYN7wJHYcOgUa+2Tt+hk1l+eMZA/GXA0TTexxxXLcjdjwAp9IJfQXXA9r5IQ9TarEpmtdd6pcpdgZiO/2+fzCoEEwqOGA44UaiHjQzh6KKU5UDLEqZgf1Xs=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
+ CY4PR21MB0168.namprd21.prod.outlook.com (10.173.192.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.8; Fri, 7 Sep 2018 00:23:14 +0000
+ 15.20.1143.8; Fri, 7 Sep 2018 00:23:55 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:23:14 +0000
+ 00:23:55 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     Mark Brown <broonie@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
 CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>
-Subject: Re: [PATCH AUTOSEL 4.18 043/131] ASoC: soc-pcm: Use delay set in
- component pointer function
-Thread-Topic: [PATCH AUTOSEL 4.18 043/131] ASoC: soc-pcm: Use delay set in
- component pointer function
-Thread-Index: AQHUQr1niRue9d/Q7kWN0UvpHCdMtaTeaaAAgAWS0oA=
-Date:   Fri, 7 Sep 2018 00:23:14 +0000
-Message-ID: <20180907002313.GB16300@sasha-vm>
+        Erica Bugden <erica.bugden@linutronix.de>
+Subject: Re: [PATCH AUTOSEL 4.18 037/131] ftrace: Add missing check for
+ existing hwlat thread
+Thread-Topic: [PATCH AUTOSEL 4.18 037/131] ftrace: Add missing check for
+ existing hwlat thread
+Thread-Index: AQHUQr1gBE/wJ8UrN0ygaxjXaATxC6TgV3YAgAOlLQA=
+Date:   Fri, 7 Sep 2018 00:23:55 +0000
+Message-ID: <20180907002353.GC16300@sasha-vm>
 References: <20180902064601.183036-1-alexander.levin@microsoft.com>
- <20180902064601.183036-43-alexander.levin@microsoft.com>
- <20180903111626.GC10302@sirena.org.uk>
-In-Reply-To: <20180903111626.GC10302@sirena.org.uk>
+ <20180902064601.183036-37-alexander.levin@microsoft.com>
+ <20180904124356.4a2f3dbc@gandalf.local.home>
+In-Reply-To: <20180904124356.4a2f3dbc@gandalf.local.home>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:TB5T+uBkpCsWdlIXAgclQs8047Wps+666JY4aTs3D+yh8KI88m7EmIWL8sASsN0qwszK6gWUyuS9gk4uU+Yy7d5ENo8lcNMYVeBklUyZCtrMNovYznKY1za1pE0zEA/9lV4WxhgKRen4WQBwrOQLyB2nyB1wZ0vWwASHaTVmGtcT7ngQNcoS0DVaQY5pkOeaH79QD5e5K+yGx6tic6Bz3p2+FlGoX47A98OmNmT0GAkrmpxzg8pTQi6NL3s5fMi7yCTa9sBaSf0owb7mlw5IpFbzGqVJmmOhwja24kH7UdA4KPyDUsfGb30btJ40Ufoq9Ph3niaEW34nt1qzY3EthebWWKXShHDWpMRa+i346bDrLxOU3Ic74mWMMD0NKWFCcyFEIGe1HhBkfP74Uh3wg5ZR9L/rhMrBGlnhIo222RLxk5KpRc8c6AQCGgQ3PhsboUIzus3UMkgUkUlGXjnq+w==;5:Dedrxz+2Dt0Ibwr8yoxQKGjr9Q9ioqCQAOo2LJ57I3RVC4V+Bk3TwqjOq3tXn0pKc93xniBEGpK4Eo60mhWXv/8H0sne/ibGbea6pLLGhT1E11pBMvfFbAeoKOBkhQnCDHoQFvXagDgO8txZNpQPIYOyGtEnVoO/8zX878MAQ+0=;7:pSP+YO/3B8aTdYUJ7IYxjdQGnOyyoydx3LEHyUOCNVk5ufPyuR+A07uS9TYfTwqVhiS72PZnFHZxA5E+bxi1bWMPzXEz3N57lngHunQOCvWP2oqmBoe1rVhSniKP8ExlGQVzWoXypcMkAOKuN5BhwQ5sxHgJG5ofKDJvNvs9ECJQGaI+pRPfx9ECzI64JmSJmWgkdn5XxVSkOKsWv96uOhYRBjEsoyMZoUyo5QnmyU+6uD7bgmbdhyoWgOqRGU4Y
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0168;6:N1C7Q0KlVIwI9BNPz7mJ1HxjaGgHQRhkNsny3NWwK0HRt+Ndmx9KH5F3CFbpUl5ZiCrYPWj/nQd9OALq8ABnuV3sXPTZxgR+HT112mfbKy6FP/A78DBPubd6Uy6ssTxUCesnLWZRxY+75ReywZWwTgPCwtLcM6LRveAlzHa/PvNufsXKzs6USvTqpymhLGagCL9TE91gEt2KaqmaAtUdXLtzi4LTxadrM+kyT7g70FqDYLjF08Ve4VS5B92KvgKT/c2nntuT/noPE7yaxCTEs0XDH8zOBiaDqVgOG7TbFBH9OnoCsgRAkjahkGQfg1M6SLjtjSI7Q6ih2RG9fEngtonXbGHYovfPlPaFYxMgbO7RFL6eXp5EBCmjxnSMz2lgs0mBUjhlyDpxIHtha/eq+AXCOwtgxZJWaOMWm9d+mZtqB7LMbM2uEsfGE22wK/0CgZEHW0wUAzXf4fivAYUJMA==;5:Ftm5jRBgsRcxFDSNN/3JUmwOYw8Scs71c1hMGair7p2GadyfqPZtziHPWqw6WLJQPVQTI99EBVolFHazuq9CIwRNwJMym98CLqxt2YJSRx0s7NNTwyOcEzJwLL0jKzohze9zW+UT4lc62QQCC+gsRqVi7SRr3BoXBv1HVnay3KI=;7:8lfRLOUKAz1ugrdZSvsvZzipHunWtujcOwDBf0pDPJ5NewkvYmNoPvpnQZwpKBX/av5Wo4FPOtLUKs8I5T1le7PU0N7pDDuh/Y+KaPAuOib5mxtoirB54S0m/LfDwVsPwgZ6/hE/Yeen/JwEq15AOOThqXf1ZPq919EKsyPGI4BJlF99DHKqtOdgtiBQ5keHwJ7tgDDmnnFMtEU9ZRLiWLf6GHZjq9yAQnQbpk1iurDVEA9Xa3hngCDZchpf5SgY
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d3a67512-b9b2-4a8d-9745-08d614581a2e
+x-ms-office365-filtering-correlation-id: 3a735278-f5f8-4ebd-5e99-08d614583268
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
-x-ms-traffictypediagnostic: CY4PR21MB0821:
-x-microsoft-antispam-prvs: <CY4PR21MB0821279D1C5ACC373D9B5988FB000@CY4PR21MB0821.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
-x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39860400002)(376002)(346002)(366004)(396003)(136003)(189003)(199004)(33896004)(105586002)(476003)(486006)(11346002)(76176011)(446003)(2900100001)(6916009)(256004)(14444005)(217873002)(66066001)(22452003)(86362001)(1076002)(6506007)(316002)(6346003)(25786009)(4326008)(102836004)(26005)(54906003)(86612001)(6246003)(3846002)(6116002)(5660300001)(229853002)(6486002)(5250100002)(14454004)(6436002)(7736002)(8936002)(68736007)(33656002)(53936002)(97736004)(10090500001)(6512007)(9686003)(33716001)(478600001)(99286004)(305945005)(106356001)(186003)(81156014)(2906002)(8676002)(81166006)(10290500003)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0168;
+x-ms-traffictypediagnostic: CY4PR21MB0168:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: 6Ribk7ZnfyeNUmlSSTg+HVUOD68FmmccXBMgiEpnqUeGbzokspOsLqNy0jDJ/lB3RGY/NrTCFYw3zoO6iHG/FIp9/89PtdRCkcjlZnzDGthdhctGBstXoN54lGcFRNk46XD0kU6CMx03HmU4YJC23/lWNO54gLJmZ4PNwCISqsTDeYCghStGDaToM+CUeEyQm3/ZT3z2Oo2Gh0fuHMfMQtJEWC8zvu59uYeZa4+drvoIEY5hXwpWbsD7GJv5fHd1K2HOnHcTaezQ7YjUkgBOg+bimWuhCaW3Z2NBZCS/Xiqcy63K7XUpOGCmyb9SsXeAZiGtQIa8U/Dr6eDvDYIfFLkB92k6mF1dZOX96lwi5LM=
+x-microsoft-antispam-prvs: <CY4PR21MB016899799C7A4F3DC21D6A74FB000@CY4PR21MB0168.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231344)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0168;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0168;
+x-forefront-prvs: 07880C4932
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(346002)(366004)(376002)(396003)(39860400002)(199004)(189003)(1076002)(33656002)(5250100002)(81166006)(81156014)(33716001)(2900100001)(97736004)(22452003)(10090500001)(6486002)(26005)(186003)(102836004)(6436002)(229853002)(9686003)(6512007)(11346002)(6916009)(476003)(217873002)(5660300001)(256004)(486006)(6506007)(446003)(53936002)(8936002)(7736002)(33896004)(76176011)(2906002)(8676002)(54906003)(316002)(305945005)(25786009)(86612001)(68736007)(99286004)(6246003)(4326008)(86362001)(10290500003)(66066001)(478600001)(72206003)(14454004)(105586002)(6116002)(3846002)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0168;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Lb782TdNkJwsBuiKa6Sj3RPZLW3MFRnjRqKawm2PTu2U/IlvGLLyQeo4tFey/Sku9Zzgxm4D2bGHWwE1mOZO5dTgKT92lkjaTtGIZvSzJ9Cvo2PFRDJJj7OLgrHs4K1ToXAsdjoHxmEf6QnR6c8BOnnaE/woZahWLJ2eZ0x8CYtlS0IDIeCWtYkPjs8k6OeI4UoVmKDNXqYdTHph+n/RctvXaO+XiyW7Qhh1g7pD7i8bKNdgYaei0A8oCPeceTVdIY6wliku8DWbbHobwZxJsSfar7a49h0EOqE1zz/RF8MVr8+RjxI+ARmEsyhwNFKKFeruahYQndMzUkF3VGUQLS9/p1quK0nBoZyl2dHlw04=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <570785E896CC5A429FB621208C7C9C14@namprd21.prod.outlook.com>
+Content-ID: <36E93CD4188AE34CA197836BEF73CA71@namprd21.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3a67512-b9b2-4a8d-9745-08d614581a2e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:23:14.6420
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a735278-f5f8-4ebd-5e99-08d614583268
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:23:55.3000
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0821
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 12:16:26PM +0100, Mark Brown wrote:
->On Sun, Sep 02, 2018 at 01:03:55PM +0000, Sasha Levin wrote:
->> From: Akshu Agrawal <akshu.agrawal@amd.com>
->>
->> [ Upstream commit 9fb4c2bf130b922c77c16a8368732699799c40de ]
->>
->> Take into account the base delay set in pointer callback.
->>
->> There are cases where a pointer function populates
->> runtime->delay, such as:
->> ./sound/pci/hda/hda_controller.c
->> ./sound/soc/intel/atom/sst-mfld-platform-pcm.c
+On Tue, Sep 04, 2018 at 12:43:56PM -0400, Steven Rostedt wrote:
+>On Sun, 2 Sep 2018 13:03:43 +0000
+>Sasha Levin <Alexander.Levin@microsoft.com> wrote:
 >
->I'm worried that if anyone notices this at all they will have already
->compensated for the delays in userspace and therefore this will cause
->them to see problems as they get double compenstation for delays.
+>> [
+>>  Note, this only fixes the symptom. The real fix was not to call
+>>  this function when tracing_on was already one. But this still makes
+>>  the code more robust, so we'll add it.
+>> ]
+>
+>This patch really didn't need to be backported (which is why I didn't
+>mark it for stable), because the real fix was backported.
 
-But what happens when they update to a newer Stable? They're going to
-hit that issue anyways.=
+Out it goes, thanks!=
