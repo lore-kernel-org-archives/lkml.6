@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4C1C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777E9C43143
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B7D2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B7D2083D
+	by mail.kernel.org (Postfix) with ESMTP id 39E2C2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E2C2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbeIHCNa (ORCPT
+        id S1729701AbeIHCNd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:13:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49010 "EHLO
+        Fri, 7 Sep 2018 22:13:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49024 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbeIHCN3 (ORCPT
+        with ESMTP id S1727959AbeIHCNc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:13:29 -0400
+        Fri, 7 Sep 2018 22:13:32 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB91EE84;
-        Fri,  7 Sep 2018 21:30:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00B1CED1;
+        Fri,  7 Sep 2018 21:30:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Bernie Thompson <bernie@plugable.com>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 77/89] fb: fix lost console when the user unplugs a USB adapter
-Date:   Fri,  7 Sep 2018 23:10:11 +0200
-Message-Id: <20180907210901.364162042@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 60/89] pnfs/blocklayout: off by one in bl_map_stripe()
+Date:   Fri,  7 Sep 2018 23:09:54 +0200
+Message-Id: <20180907210859.529643670@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -53,124 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 8c5b044299951acd91e830a688dd920477ea1eda upstream.
+commit 0914bb965e38a055e9245637aed117efbe976e91 upstream.
 
-I have a USB display adapter using the udlfb driver and I use it on an ARM
-board that doesn't have any graphics card. When I plug the adapter in, the
-console is properly displayed, however when I unplug and re-plug the
-adapter, the console is not displayed and I can't access it until I reboot
-the board.
+"dev->nr_children" is the number of children which were parsed
+successfully in bl_parse_stripe().  It could be all of them and then, in
+that case, it is equal to v->stripe.volumes_count.  Either way, the >
+should be >= so that we don't go beyond the end of what we're supposed
+to.
 
-The reason is this:
-When the adapter is unplugged, dlfb_usb_disconnect calls
-unlink_framebuffer, then it waits until the reference count drops to zero
-and then it deallocates the framebuffer. However, the console that is
-attached to the framebuffer device keeps the reference count non-zero, so
-the framebuffer device is never destroyed. When the USB adapter is plugged
-again, it creates a new device /dev/fb1 and the console is not attached to
-it.
-
-This patch fixes the bug by unbinding the console from unlink_framebuffer.
-The code to unbind the console is moved from do_unregister_framebuffer to
-a function unbind_console. When the console is unbound, the reference
-count drops to zero and the udlfb driver frees the framebuffer. When the
-adapter is plugged back, a new framebuffer is created and the console is
-attached to it.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Bernie Thompson <bernie@plugable.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Cc: stable@vger.kernel.org
-[b.zolnierkie: preserve old behavior for do_unregister_framebuffer()]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # 3.17+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/core/fbmem.c |   38 ++++++++++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 6 deletions(-)
+ fs/nfs/blocklayout/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1716,12 +1716,12 @@ static int do_register_framebuffer(struc
- 	return 0;
- }
+--- a/fs/nfs/blocklayout/dev.c
++++ b/fs/nfs/blocklayout/dev.c
+@@ -204,7 +204,7 @@ static bool bl_map_stripe(struct pnfs_bl
+ 	chunk = div_u64(offset, dev->chunk_size);
+ 	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
  
--static int do_unregister_framebuffer(struct fb_info *fb_info)
-+static int unbind_console(struct fb_info *fb_info)
- {
- 	struct fb_event event;
--	int i, ret = 0;
-+	int ret;
-+	int i = fb_info->node;
- 
--	i = fb_info->node;
- 	if (i < 0 || i >= FB_MAX || registered_fb[i] != fb_info)
- 		return -EINVAL;
- 
-@@ -1736,17 +1736,29 @@ static int do_unregister_framebuffer(str
- 	unlock_fb_info(fb_info);
- 	console_unlock();
- 
-+	return ret;
-+}
-+
-+static int __unlink_framebuffer(struct fb_info *fb_info);
-+
-+static int do_unregister_framebuffer(struct fb_info *fb_info)
-+{
-+	struct fb_event event;
-+	int ret;
-+
-+	ret = unbind_console(fb_info);
-+
- 	if (ret)
- 		return -EINVAL;
- 
- 	pm_vt_switch_unregister(fb_info->dev);
- 
--	unlink_framebuffer(fb_info);
-+	__unlink_framebuffer(fb_info);
- 	if (fb_info->pixmap.addr &&
- 	    (fb_info->pixmap.flags & FB_PIXMAP_DEFAULT))
- 		kfree(fb_info->pixmap.addr);
- 	fb_destroy_modelist(&fb_info->modelist);
--	registered_fb[i] = NULL;
-+	registered_fb[fb_info->node] = NULL;
- 	num_registered_fb--;
- 	fb_cleanup_device(fb_info);
- 	event.info = fb_info;
-@@ -1759,7 +1771,7 @@ static int do_unregister_framebuffer(str
- 	return 0;
- }
- 
--int unlink_framebuffer(struct fb_info *fb_info)
-+static int __unlink_framebuffer(struct fb_info *fb_info)
- {
- 	int i;
- 
-@@ -1771,6 +1783,20 @@ int unlink_framebuffer(struct fb_info *f
- 		device_destroy(fb_class, MKDEV(FB_MAJOR, i));
- 		fb_info->dev = NULL;
- 	}
-+
-+	return 0;
-+}
-+
-+int unlink_framebuffer(struct fb_info *fb_info)
-+{
-+	int ret;
-+
-+	ret = __unlink_framebuffer(fb_info);
-+	if (ret)
-+		return ret;
-+
-+	unbind_console(fb_info);
-+
- 	return 0;
- }
- EXPORT_SYMBOL(unlink_framebuffer);
+-	if (chunk_idx > dev->nr_children) {
++	if (chunk_idx >= dev->nr_children) {
+ 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
+ 			__func__, chunk_idx, offset, dev->chunk_size);
+ 		/* error, should not happen */
 
 
