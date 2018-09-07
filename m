@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB3DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0373DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E81320645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E81320645
+	by mail.kernel.org (Postfix) with ESMTP id B82DF20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82DF20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeIHCCs (ORCPT
+        id S1729134AbeIHCCz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:02:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45168 "EHLO
+        Fri, 7 Sep 2018 22:02:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45174 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727677AbeIHCCs (ORCPT
+        with ESMTP id S1727677AbeIHCCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:02:48 -0400
+        Fri, 7 Sep 2018 22:02:54 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19E77E2F;
-        Fri,  7 Sep 2018 21:19:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3FC2FEF6;
+        Fri,  7 Sep 2018 21:20:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.18 115/145] ubifs: xattr: Dont operate on deleted inodes
-Date:   Fri,  7 Sep 2018 23:09:41 +0200
-Message-Id: <20180907210912.845740747@linuxfoundation.org>
+Subject: [PATCH 4.18 116/145] ubifs: Fix directory size calculation for symlinks
+Date:   Fri,  7 Sep 2018 23:09:42 +0200
+Message-Id: <20180907210912.883353260@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,96 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Weinberger <richard@nod.at>
 
-commit 11a6fc3dc743e22fb50f2196ec55bee5140d3c52 upstream.
+commit 00ee8b60102862f4daf0814d12a2ea2744fc0b9b upstream.
 
-xattr operations can race with unlink and the following assert triggers:
-UBIFS assert failed in ubifs_jnl_change_xattr at 1606 (pid 6256)
+We have to account the name of the symlink and not the target length.
 
-Fix this by checking i_nlink before working on the host inode.
-
+Fixes: ca7f85be8d6c ("ubifs: Add support for encrypted symlinks")
 Cc: <stable@vger.kernel.org>
-Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/xattr.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ fs/ubifs/dir.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/ubifs/xattr.c
-+++ b/fs/ubifs/xattr.c
-@@ -152,6 +152,12 @@ static int create_xattr(struct ubifs_inf
- 	ui->data_len = size;
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -1123,8 +1123,7 @@ static int ubifs_symlink(struct inode *d
+ 	struct ubifs_inode *ui;
+ 	struct ubifs_inode *dir_ui = ubifs_inode(dir);
+ 	struct ubifs_info *c = dir->i_sb->s_fs_info;
+-	int err, len = strlen(symname);
+-	int sz_change = CALC_DENT_SIZE(len);
++	int err, sz_change, len = strlen(symname);
+ 	struct fscrypt_str disk_link;
+ 	struct ubifs_budget_req req = { .new_ino = 1, .new_dent = 1,
+ 					.new_ino_d = ALIGN(len, 8),
+@@ -1151,6 +1150,8 @@ static int ubifs_symlink(struct inode *d
+ 	if (err)
+ 		goto out_budg;
  
- 	mutex_lock(&host_ui->ui_mutex);
++	sz_change = CALC_DENT_SIZE(fname_len(&nm));
 +
-+	if (!host->i_nlink) {
-+		err = -ENOENT;
-+		goto out_noent;
-+	}
-+
- 	host->i_ctime = current_time(host);
- 	host_ui->xattr_cnt += 1;
- 	host_ui->xattr_size += CALC_DENT_SIZE(fname_len(nm));
-@@ -184,6 +190,7 @@ out_cancel:
- 	host_ui->xattr_size -= CALC_XATTR_BYTES(size);
- 	host_ui->xattr_names -= fname_len(nm);
- 	host_ui->flags &= ~UBIFS_CRYPT_FL;
-+out_noent:
- 	mutex_unlock(&host_ui->ui_mutex);
- out_free:
- 	make_bad_inode(inode);
-@@ -235,6 +242,12 @@ static int change_xattr(struct ubifs_inf
- 	mutex_unlock(&ui->ui_mutex);
- 
- 	mutex_lock(&host_ui->ui_mutex);
-+
-+	if (!host->i_nlink) {
-+		err = -ENOENT;
-+		goto out_noent;
-+	}
-+
- 	host->i_ctime = current_time(host);
- 	host_ui->xattr_size -= CALC_XATTR_BYTES(old_size);
- 	host_ui->xattr_size += CALC_XATTR_BYTES(size);
-@@ -256,6 +269,7 @@ static int change_xattr(struct ubifs_inf
- out_cancel:
- 	host_ui->xattr_size -= CALC_XATTR_BYTES(size);
- 	host_ui->xattr_size += CALC_XATTR_BYTES(old_size);
-+out_noent:
- 	mutex_unlock(&host_ui->ui_mutex);
- 	make_bad_inode(inode);
- out_free:
-@@ -482,6 +496,12 @@ static int remove_xattr(struct ubifs_inf
- 		return err;
- 
- 	mutex_lock(&host_ui->ui_mutex);
-+
-+	if (!host->i_nlink) {
-+		err = -ENOENT;
-+		goto out_noent;
-+	}
-+
- 	host->i_ctime = current_time(host);
- 	host_ui->xattr_cnt -= 1;
- 	host_ui->xattr_size -= CALC_DENT_SIZE(fname_len(nm));
-@@ -501,6 +521,7 @@ out_cancel:
- 	host_ui->xattr_size += CALC_DENT_SIZE(fname_len(nm));
- 	host_ui->xattr_size += CALC_XATTR_BYTES(ui->data_len);
- 	host_ui->xattr_names += fname_len(nm);
-+out_noent:
- 	mutex_unlock(&host_ui->ui_mutex);
- 	ubifs_release_budget(c, &req);
- 	make_bad_inode(inode);
-@@ -540,6 +561,9 @@ static int ubifs_xattr_remove(struct ino
- 
- 	ubifs_assert(inode_is_locked(host));
- 
-+	if (!host->i_nlink)
-+		return -ENOENT;
-+
- 	if (fname_len(&nm) > UBIFS_MAX_NLEN)
- 		return -ENAMETOOLONG;
- 
+ 	inode = ubifs_new_inode(c, dir, S_IFLNK | S_IRWXUGO);
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
 
 
