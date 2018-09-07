@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B26C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E005C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13E52075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13E52075B
+	by mail.kernel.org (Postfix) with ESMTP id E4AA320855
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4AA320855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbeIHB5U (ORCPT
+        id S1728434AbeIHB5X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:57:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42154 "EHLO
+        Fri, 7 Sep 2018 21:57:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727638AbeIHB5U (ORCPT
+        with ESMTP id S1727638AbeIHB5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:57:20 -0400
+        Fri, 7 Sep 2018 21:57:23 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5388CF07;
-        Fri,  7 Sep 2018 21:14:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B24B1FD4;
+        Fri,  7 Sep 2018 21:14:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 048/145] ib_srpt: Fix a use-after-free in __srpt_close_all_ch()
-Date:   Fri,  7 Sep 2018 23:08:34 +0200
-Message-Id: <20180907210908.495175671@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.18 031/145] powerpc/pkeys: key allocation/deallocation must not change pkey registers
+Date:   Fri,  7 Sep 2018 23:08:17 +0200
+Message-Id: <20180907210906.519721463@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,53 +52,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Ram Pai <linuxram@us.ibm.com>
 
-commit 14d15c2b278011056482eb015dff89f9cbf2b841 upstream.
+commit 4a4a5e5d2aadc793be95024f454cf511d115b62d upstream.
 
-BUG: KASAN: use-after-free in srpt_set_enabled+0x1a9/0x1e0 [ib_srpt]
-Read of size 4 at addr ffff8801269d23f8 by task check/29726
+Key allocation and deallocation has the side effect of programming the
+UAMOR/AMR/IAMR registers. This is wrong, since its the responsibility of
+the application and not that of the kernel, to modify the permission on
+the key.
 
-CPU: 4 PID: 29726 Comm: check Not tainted 4.18.0-rc2-dbg+ #4
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-Call Trace:
- dump_stack+0xa4/0xf5
- print_address_description+0x6f/0x270
- kasan_report+0x241/0x360
- __asan_load4+0x78/0x80
- srpt_set_enabled+0x1a9/0x1e0 [ib_srpt]
- srpt_tpg_enable_store+0xb8/0x120 [ib_srpt]
- configfs_write_file+0x14e/0x1d0 [configfs]
- __vfs_write+0xd2/0x3b0
- vfs_write+0x101/0x270
- ksys_write+0xab/0x120
- __x64_sys_write+0x43/0x50
- do_syscall_64+0x77/0x230
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f235cfe6154
+Do not modify the pkey registers at key allocation/deallocation.
 
-Fixes: aaf45bd83eba ("IB/srpt: Detect session shutdown reliably")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This patch also fixes a bug where a sys_pkey_free() resets the UAMOR
+bits of the key, thus making its permissions unmodifiable from user
+space. Later if the same key gets reallocated from a different thread
+this thread will no longer be able to change the permissions on the key.
+
+Fixes: cf43d3b26452 ("powerpc: Enable pkey subsystem")
+Cc: stable@vger.kernel.org # v4.16+
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/pkeys.h |   11 -----------
+ arch/powerpc/mm/pkeys.c          |   27 ---------------------------
+ 2 files changed, 38 deletions(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -1939,8 +1939,8 @@ static void __srpt_close_all_ch(struct s
- 	list_for_each_entry(nexus, &sport->nexus_list, entry) {
- 		list_for_each_entry(ch, &nexus->ch_list, list) {
- 			if (srpt_disconnect_ch(ch) >= 0)
--				pr_info("Closing channel %s-%d because target %s_%d has been disabled\n",
--					ch->sess_name, ch->qp->qp_num,
-+				pr_info("Closing channel %s because target %s_%d has been disabled\n",
-+					ch->sess_name,
- 					sport->sdev->device->name, sport->port);
- 			srpt_close_ch(ch);
- 		}
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -94,8 +94,6 @@ static inline bool mm_pkey_is_allocated(
+ 		__mm_pkey_is_allocated(mm, pkey));
+ }
+ 
+-extern void __arch_activate_pkey(int pkey);
+-extern void __arch_deactivate_pkey(int pkey);
+ /*
+  * Returns a positive, 5-bit key on success, or -1 on failure.
+  * Relies on the mmap_sem to protect against concurrency in mm_pkey_alloc() and
+@@ -124,11 +122,6 @@ static inline int mm_pkey_alloc(struct m
+ 	ret = ffz((u32)mm_pkey_allocation_map(mm));
+ 	__mm_pkey_allocated(mm, ret);
+ 
+-	/*
+-	 * Enable the key in the hardware
+-	 */
+-	if (ret > 0)
+-		__arch_activate_pkey(ret);
+ 	return ret;
+ }
+ 
+@@ -140,10 +133,6 @@ static inline int mm_pkey_free(struct mm
+ 	if (!mm_pkey_is_allocated(mm, pkey))
+ 		return -EINVAL;
+ 
+-	/*
+-	 * Disable the key in the hardware
+-	 */
+-	__arch_deactivate_pkey(pkey);
+ 	__mm_pkey_free(mm, pkey);
+ 
+ 	return 0;
+--- a/arch/powerpc/mm/pkeys.c
++++ b/arch/powerpc/mm/pkeys.c
+@@ -218,33 +218,6 @@ static inline void init_iamr(int pkey, u
+ 	write_iamr(old_iamr | new_iamr_bits);
+ }
+ 
+-static void pkey_status_change(int pkey, bool enable)
+-{
+-	u64 old_uamor;
+-
+-	/* Reset the AMR and IAMR bits for this key */
+-	init_amr(pkey, 0x0);
+-	init_iamr(pkey, 0x0);
+-
+-	/* Enable/disable key */
+-	old_uamor = read_uamor();
+-	if (enable)
+-		old_uamor |= (0x3ul << pkeyshift(pkey));
+-	else
+-		old_uamor &= ~(0x3ul << pkeyshift(pkey));
+-	write_uamor(old_uamor);
+-}
+-
+-void __arch_activate_pkey(int pkey)
+-{
+-	pkey_status_change(pkey, true);
+-}
+-
+-void __arch_deactivate_pkey(int pkey)
+-{
+-	pkey_status_change(pkey, false);
+-}
+-
+ /*
+  * Set the access rights in AMR IAMR and UAMOR registers for @pkey to that
+  * specified in @init_val.
 
 
