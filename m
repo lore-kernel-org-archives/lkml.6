@@ -2,86 +2,89 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F9CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5815C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C33A2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:22:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C33A2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9709F2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:23:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9709F2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeIGNBs (ORCPT
+        id S1727635AbeIGNCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:01:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35670 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbeIGNBs (ORCPT
+        Fri, 7 Sep 2018 09:02:50 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:48576 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeIGNCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:01:48 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyC1d-0001Ww-Ax; Fri, 07 Sep 2018 10:21:57 +0200
-Date:   Fri, 7 Sep 2018 10:21:56 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Yang, Bin" <bin.yang@intel.com>
-cc:     "mingo@kernel.org" <mingo@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Gross, Mark" <mark.gross@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
- overlap()
-In-Reply-To: <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
-Message-ID: <alpine.DEB.2.21.1809071019020.1402@nanos.tec.linutronix.de>
-References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>  <1534814186-37067-5-git-send-email-bin.yang@intel.com>  <alpine.DEB.2.21.1809041413070.3395@nanos.tec.linutronix.de>  <82fc8d80749f920c4a5107469924205d92037785.camel@intel.com> 
- <alpine.DEB.2.21.1809070943490.1402@nanos.tec.linutronix.de> <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 7 Sep 2018 09:02:50 -0400
+X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
+   d="scan'208";a="20245111"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 01:23:00 -0700
+Received: from ibiza.rfo.atmel.com (10.10.76.4) by chn-sv-exch06.mchp-main.com
+ (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Fri, 7 Sep 2018
+ 01:23:00 -0700
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+CC:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH] ARM: dts: at91: sama5d2_ptc_ek: fix nand pinctrl
+Date:   Fri, 7 Sep 2018 10:18:51 +0200
+Message-ID: <20180907081851.15911-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018, Yang, Bin wrote:
-> On Fri, 2018-09-07 at 09:49 +0200, Thomas Gleixner wrote:
-> > On Fri, 7 Sep 2018, Yang, Bin wrote:
-> > > On Tue, 2018-09-04 at 14:22 +0200, Thomas Gleixner wrote:
-> > > 
-> > > I just write a test.c to compare the result between overlap() and
-> > > original within().
-> > 
-> > You are right. Your version of doing the overlap exclusive works. I misread
-> > the conditions. I still prefer doing inclusive checks because they are way
-> > more obvious.
-> 
-> I am sorry for my poor english. What is "inclusive checks"?
+The drive strength has to be set to medium otherwise some data
+corruption may happen.
 
-Exlusive:    val >= start && val < end
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
 
-Inclusive:   val >= start && val <= end
+Hi,
 
-So the difference is that you feed exclusive with:
+This fix depends on the support of the drive-strength for the atmel pio4
+pinctroller. It has been added in v4.19 but I omitted to send it at the
+same time.
 
-   end = start + size
+Ludovic
 
-and inclusive with
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  end = start + size - 1
-
-Thanks,
-
-	tglx
-
+diff --git a/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts b/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
+index b10dccd0958f..3b1baa8605a7 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts
+@@ -11,6 +11,7 @@
+ #include "sama5d2-pinfunc.h"
+ #include <dt-bindings/mfd/atmel-flexcom.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/at91.h>
+ 
+ / {
+ 	model = "Atmel SAMA5D2 PTC EK";
+@@ -299,6 +300,7 @@
+ 							 <PIN_PA30__NWE_NANDWE>,
+ 							 <PIN_PB2__NRD_NANDOE>;
+ 						bias-pull-up;
++						atmel,drive-strength = <ATMEL_PIO_DRVSTR_ME>;
+ 					};
+ 
+ 					ale_cle_rdy_cs {
+-- 
+2.12.2
 
