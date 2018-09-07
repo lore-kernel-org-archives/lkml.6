@@ -2,99 +2,201 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8566CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46066C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32BB32077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:59:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ho1hogiw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BB32077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E75B42077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:04:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75B42077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730105AbeIGTkg (ORCPT
+        id S1730105AbeIGTqR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:40:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56968 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbeIGTkg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:40:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/tt1x5V8vI/gV9w+n7YTsD4Ii6pVEeVAYF8srGCm1Oc=; b=Ho1hogiwokgGgRwrhJZXjxLqe
-        oZ+Tk8wKHohXPn1cBsAtN0HbfNBlF5/kl1VCEqqLPTsIGVX9/YqgXck2os+w52wTbaukUfIchAEr7
-        18LY7velP9yMnnMGONpht6/Ue5+C6IplKiJVcQZcPktE3JzceITt+yCHPsYEoBzj/8oFDpEBrF2R/
-        7RdpufEjYTY088dr4POMSteThdYMHDkmSmvldcTLPAdWEcOt9Kq8IDAPHFKL35JatdeyGsT/t2j9z
-        rHOz2cpI74Grds4Egz86OWAP9IYWNJ6ndrmCprt2GjKQUi107hVY2Lwkn0lGXqfRgGxIt/0DhygWo
-        +T58MmvsQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fyIDs-0006Df-0R; Fri, 07 Sep 2018 14:59:00 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9E9262024E440; Fri,  7 Sep 2018 16:58:58 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 16:58:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180907145858.GK24106@hirez.programming.kicks-ass.net>
-References: <20180828172258.3185-1-hannes@cmpxchg.org>
- <20180828172258.3185-9-hannes@cmpxchg.org>
- <20180907101634.GO24106@hirez.programming.kicks-ass.net>
- <20180907144422.GA11088@cmpxchg.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907144422.GA11088@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Fri, 7 Sep 2018 15:46:17 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:60032 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbeIGTqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:46:16 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 6DDAAC0270;
+        Fri,  7 Sep 2018 17:04:56 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id A9468C0F67; Fri,  7 Sep 2018 17:04:54 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id ECF35C0F66;
+        Fri,  7 Sep 2018 17:04:33 +0200 (CEST)
+Message-ID: <d581b9cc8153d063360d8cde290329f5c1786ae9.camel@paulk.fr>
+Subject: Re: [PATCH v8 4/8] media: platform: Add Cedrus VPU decoder driver
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-sunxi@googlegroups.com
+Date:   Fri, 07 Sep 2018 17:04:29 +0200
+In-Reply-To: <890469f8-434f-4ca1-ec95-20542610fd78@xs4all.nl>
+References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
+         <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
+         <5faf5eed-eb2c-f804-93e3-5a42f6204d99@xs4all.nl>
+         <b7b3cb2320978d45acb34475d15abd7bf03da367.camel@paulk.fr>
+         <461c6a0d-a346-b9da-b75e-4aab907054df@xs4all.nl>
+         <890469f8-434f-4ca1-ec95-20542610fd78@xs4all.nl>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-/svZRu+03gLxIKygAmz+"
+X-Mailer: Evolution 3.28.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:44:22AM -0400, Johannes Weiner wrote:
 
-> > This does the whole seqcount thing 6x, which is a bit of a waste.
-> 
-> [...]
-> 
-> > It's a bit cumbersome, but that's because of C.
-> 
-> I was actually debating exactly this with Suren before, but since this
-> is a super cold path I went with readability. I was also thinking that
-> restarts could happen quite regularly under heavy scheduler load, and
-> so keeping the individual retry sections small could be helpful - but
-> I didn't instrument this in any way.
+--=-/svZRu+03gLxIKygAmz+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I was hoping going over the whole thing once would reduce the time we
-need to keep that line in shared mode and reduce traffic. And yes, this
-path is cold, but I was thinking about reducing the interference on the
-remote CPU.
+Hi,
 
-Alternatively, we memcpy the whole line under the seqlock and then do
-everything later.
+Le jeudi 06 septembre 2018 =C3=A0 09:22 +0200, Hans Verkuil a =C3=A9crit :
+> On 09/06/2018 09:01 AM, Hans Verkuil wrote:
+> > On 09/05/2018 06:29 PM, Paul Kocialkowski wrote:
+> > > Hi and thanks for the review!
+> > >=20
+> > > Le lundi 03 septembre 2018 =C3=A0 11:11 +0200, Hans Verkuil a =C3=A9c=
+rit :
+> > > > On 08/28/2018 09:34 AM, Paul Kocialkowski wrote:
+> > > > > +static int cedrus_queue_setup(struct vb2_queue *vq, unsigned int=
+ *nbufs,
+> > > > > +			      unsigned int *nplanes, unsigned int sizes[],
+> > > > > +			      struct device *alloc_devs[])
+> > > > > +{
+> > > > > +	struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vq);
+> > > > > +	struct cedrus_dev *dev =3D ctx->dev;
+> > > > > +	struct v4l2_pix_format_mplane *mplane_fmt;
+> > > > > +	struct cedrus_format *fmt;
+> > > > > +	unsigned int i;
+> > > > > +
+> > > > > +	switch (vq->type) {
+> > > > > +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+> > > > > +		mplane_fmt =3D &ctx->src_fmt;
+> > > > > +		fmt =3D cedrus_find_format(mplane_fmt->pixelformat,
+> > > > > +					 CEDRUS_DECODE_SRC,
+> > > > > +					 dev->capabilities);
+> > > > > +		break;
+> > > > > +
+> > > > > +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> > > > > +		mplane_fmt =3D &ctx->dst_fmt;
+> > > > > +		fmt =3D cedrus_find_format(mplane_fmt->pixelformat,
+> > > > > +					 CEDRUS_DECODE_DST,
+> > > > > +					 dev->capabilities);
+> > > > > +		break;
+> > > > > +
+> > > > > +	default:
+> > > > > +		return -EINVAL;
+> > > > > +	}
+> > > > > +
+> > > > > +	if (!fmt)
+> > > > > +		return -EINVAL;
+> > > > > +
+> > > > > +	if (fmt->num_buffers =3D=3D 1) {
+> > > > > +		sizes[0] =3D 0;
+> > > > > +
+> > > > > +		for (i =3D 0; i < fmt->num_planes; i++)
+> > > > > +			sizes[0] +=3D mplane_fmt->plane_fmt[i].sizeimage;
+> > > > > +	} else if (fmt->num_buffers =3D=3D fmt->num_planes) {
+> > > > > +		for (i =3D 0; i < fmt->num_planes; i++)
+> > > > > +			sizes[i] =3D mplane_fmt->plane_fmt[i].sizeimage;
+> > > > > +	} else {
+> > > > > +		return -EINVAL;
+> > > > > +	}
+> > > > > +
+> > > > > +	*nplanes =3D fmt->num_buffers;
+> > > >=20
+> > > > This code does not take VIDIOC_CREATE_BUFFERS into account.
+> > > >=20
+> > > > If it is called from that ioctl, then *nplanes is non-zero and you =
+need
+> > > > to check if *nplanes equals fmt->num_buffers and that sizes[n] is >=
+=3D
+> > > > the required size of the format. If so, then return 0, otherwise re=
+turn
+> > > > -EINVAL.
+> > >=20
+> > > Thanks for spotting this, I'll fix it as you suggested in the next
+> > > revision.
+> > >=20
+> > > > Doesn't v4l2-compliance fail on that? Or is that test skipped becau=
+se this
+> > > > is a decoder for which streaming is not supported (yet)?
+> > >=20
+> > > Apparently, v4l2-compliance doesn't fail since I'm getting:
+> > > test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+> >=20
+> > It is tested, but only with the -s option. I'll see if I can improve th=
+e
+> > tests.
+>=20
+> I've improved the tests. v4l2-compliance should now fail when run (withou=
+t the
+> -s option) against this driver. Can you check that that is indeed the cas=
+e?
 
-Also, this only has a single cpu_clock() invocation.
+I think this wasn't being tested with v8 of the driver as no default
+format was provided (for the G_FMT test), which probably led to MMAP
+not being picked up in valid_memorytype. Thus the subsequent
+CREATE_BUFS test was reported as not failing, but it really didn't test
+much of anything.
+
+Cheers,
+
+Paul
+
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-/svZRu+03gLxIKygAmz+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluSk30ACgkQhP3B6o/u
+lQz+Ng//bav/aEq2NkHpux+N1/OBbbVqSlgP4nqMGPiq2oBW1qfpgpC6By9xgGnY
+s7hO9XGTiM5kvyM3oanjxVUHVBgqP082E+UFHtyhXBFulKLzr03NyJK+jnGC/rbN
+f8beigEdUb1TBGjrXpLoOGlg2qEYh/wwRAJEfyMuAt4Y7WKtqONDALOa5VD/7UUl
+57zAhA4ZFGM2lFl/ezg6kmX+yp0rrrF1vrU9axJw3bHyv8hbxPNQ28XDr+qjSukA
+lOIYg6DA+2CVVe+9XYdA+Nc5zdCB10AHSHBeURpXwZhtVnGR9UPlXc4wlEra9J6U
+U5XrNhDNYxbmjnPAgq6hoENGZX0OSE6uRGp1D28nIV+QE+od4WbwMlvGhXi39rkA
+XDUXPBdsP6gGRBNKkomJifNmE4DR06RNCMQvSc2BnVFgFwBXt6oZE9iSQyWsb8Dz
+yPWiacQFTDdncAEUzjx/RIu/b/OifYlXQYahuhi7FvuodsrvMV60JCPOi623RHSr
+nMJzYdALtNqriN4bPXRj2J9HQBaUWbn/ddVmgg0fj5IYiAFyj1KqfoTk+S52/EFD
+rTsbPe93JrthQilTbmT3APgv44jTcNUWOANFudoEZs3+qWj6l77rd9RTrF+kFlAp
+8IsoUFsFUQUOszV2yY3G2hBGEzpdn10h06kCg+5NRLFLNTV4fRE=
+=5i8q
+-----END PGP SIGNATURE-----
+
+--=-/svZRu+03gLxIKygAmz+--
+
