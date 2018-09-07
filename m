@@ -2,183 +2,103 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A26C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D42FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A3B2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A6922077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:22:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RbrudgHW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A3B2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F32WMMMR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A6922077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeIGWCz (ORCPT
+        id S1727217AbeIGWEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:02:55 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50192 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeIGWCz (ORCPT
+        Fri, 7 Sep 2018 18:04:08 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40048 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeIGWEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:02:55 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w87HKQhc076405;
-        Fri, 7 Sep 2018 12:20:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536340826;
-        bh=TO5FVzDcH+dFEOSbAoyqecsSvTCpgmF6H5DB3gbkU8A=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=RbrudgHWXt8I+9ty/2fyN8PLV/8+6tSkmhvNzdteeZHGjfytNnNmwqzlCZocZQtsP
-         XeaWDqSoOItxIQahQ7qE/FmjchcNzPX/IIjwlMDRFheRf10EEBwToWtburKyuZCdmt
-         ToTGr+o0qDW4DY6JV5dyOJdgG7IO54fVOMb/KoOo=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w87HKQBK000309;
-        Fri, 7 Sep 2018 12:20:26 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 7 Sep
- 2018 12:20:26 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 7 Sep 2018 12:20:25 -0500
-Received: from [172.22.180.93] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w87HKPf4031735;
-        Fri, 7 Sep 2018 12:20:25 -0500
-Subject: Re: [PATCH] mfd: ti-lmu: constify mfd_cell tables
-To:     Pavel Machek <pavel@ucw.cz>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-omap@vger.kernel.org>, <tony@atomide.com>, <sre@kernel.org>,
-        <nekit1000@gmail.com>, <mpartap@gmx.net>, <merlijn@wizzup.org>,
-        <lee.jones@linaro.org>
-References: <20180829093108.GB22065@amd> <20180907093954.GA26364@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <e10bdc74-8138-055e-c829-7befbc7161b4@ti.com>
-Date:   Fri, 7 Sep 2018 12:20:21 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180907093954.GA26364@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 7 Sep 2018 18:04:08 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x26-v6so12636671lfi.7;
+        Fri, 07 Sep 2018 10:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=iqWj8t//jjvTywXSU6UCipICH2il3mzAgAeuRXBjRyE=;
+        b=F32WMMMRqw212dzEVRMarWZxpBOgtFNDOFNNfWxY3vVJscV296V99r06eqF1EGVzn/
+         j+U3PFV+v77R+YcvPUIZl6VmBjMDt14ARcOCr1d5NUScx0HM2DFBm6XAOwVJdk1Ppf/k
+         vPL59zyAK7z0cRUEzBv2UFlit6oSaoWUKuYIGoWTvfZBnMNU8q8a5CEVBR7YwiFD7AD8
+         /CB+/Bme1IlC3mX11Gho5ps8+da8H4vRfNgnFdZGhh+cgNOV37Pb2gZidBfO1lJUQkEL
+         al0lMEYfdsEF9TnFfiCa71rbvgbSxGylollWOpq0NHpEQ2gPBQ3nBqsdlEqO4gJwWYoE
+         6WmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iqWj8t//jjvTywXSU6UCipICH2il3mzAgAeuRXBjRyE=;
+        b=RBgYEia5jcN6EJEWJcZr6YY8dLFoVhvuKQLlt5Ez2+1dBMsJ3HwTjB5Y3sqptSbdrY
+         wvMumyIF39GkX4G76E66m3kIHOOShw/NNUxH1ecrKKyI0A9gcRZ5mOn36XavXEI4SWvD
+         LFNjGAJIT1qEQYS253v3cZCIU9ipmNxjmiHtqD9HQvAEgdpq+rCMBhBxuo4Wy1xSeds7
+         6/9+W1/BIcjabkBduMIc/sSTqs6O/2CPk0XZrmpYmbRi8C4cKXV7f5ug9aq7BbztjOkp
+         PHqjB7P+GvHudPtzTm3ErG7Vrt/nLNiIqgmTVr7Vgb6L1nzoIZylvIFUaouYJh/3rx5V
+         3MDw==
+X-Gm-Message-State: APzg51Cv9jvn1rweMYFaoTRCqFSoA/akdweWCnn1SQRsUd1OqCLCXqLl
+        GdRnWZS+dKKtK6/TdIJCnEVvwzNxs8Q=
+X-Google-Smtp-Source: ANB0VdY5OGEwIazfTx+CW/70XLmETpgY39g8sd/o94iy+PRW/5YFv6VFGK+ObPfrX8UdYuESLIM1bA==
+X-Received: by 2002:a19:c646:: with SMTP id w67-v6mr6027365lff.108.1536340932122;
+        Fri, 07 Sep 2018 10:22:12 -0700 (PDT)
+Received: from Mort.jumbo.freeair (91-156-179-220.elisa-laajakaista.fi. [91.156.179.220])
+        by smtp.gmail.com with ESMTPSA id g11-v6sm1358286ljk.45.2018.09.07.10.22.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 10:22:11 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        linux-wimax@intel.com, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] wimax: i2400m: remove unnecessary unlikely()
+Date:   Fri,  7 Sep 2018 20:22:03 +0300
+Message-Id: <20180907172203.28668-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
+WARN_ON() already contains an unlikely(), so it's not necessary to
+wrap it into another.
 
-On 09/07/2018 04:39 AM, Pavel Machek wrote:
-> On Wed 2018-08-29 11:31:08, Pavel Machek wrote:
->> From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
->>
->> mfd: ti-lmu: constify mfd_cell tables
->>     
->> Add const attribute to all mfd_cell structures.
->>     
->> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
->> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> 
-> Lee, I guess this is for you to apply. Any news there?
-> 
-> There are more patches ready,
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Cc: linux-wimax@intel.com
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/wimax/i2400m/tx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-As I stated in another email thread.  I don't see the need for this level of LMU framework.
-
-Here is the reference thread
-
-https://lore.kernel.org/patchwork/patch/982550/
-
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/log/?h=droid4-pending-v4.19
-> 
-> and it would be good to get them in. (Alternatively, you can just
-> cherry-pick them from droid4-pending-v4.19).
-> 
-> Thanks,
-> 							Pavel
-> 							
-> 
->> diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
->> index cfb411c..990437e 100644
->> --- a/drivers/mfd/ti-lmu.c
->> +++ b/drivers/mfd/ti-lmu.c
->> @@ -25,7 +25,7 @@
->>  #include <linux/slab.h>
->>  
->>  struct ti_lmu_data {
->> -	struct mfd_cell *cells;
->> +	const struct mfd_cell *cells;
->>  	int num_cells;
->>  	unsigned int max_register;
->>  };
->> @@ -63,7 +63,7 @@ static void ti_lmu_disable_hw(struct ti_lmu *lmu)
->>  		gpio_set_value(lmu->en_gpio, 0);
->>  }
->>  
->> -static struct mfd_cell lm3532_devices[] = {
->> +static const struct mfd_cell lm3532_devices[] = {
->>  	{
->>  		.name          = "ti-lmu-backlight",
->>  		.id            = LM3532,
->> @@ -78,7 +78,7 @@ static struct mfd_cell lm3532_devices[] = {
->>  	.of_compatible = "ti,lm363x-regulator",	\
->>  }						\
->>  
->> -static struct mfd_cell lm3631_devices[] = {
->> +static const struct mfd_cell lm3631_devices[] = {
->>  	LM363X_REGULATOR(LM3631_BOOST),
->>  	LM363X_REGULATOR(LM3631_LDO_CONT),
->>  	LM363X_REGULATOR(LM3631_LDO_OREF),
->> @@ -91,7 +91,7 @@ static struct mfd_cell lm3631_devices[] = {
->>  	},
->>  };
->>  
->> -static struct mfd_cell lm3632_devices[] = {
->> +static const struct mfd_cell lm3632_devices[] = {
->>  	LM363X_REGULATOR(LM3632_BOOST),
->>  	LM363X_REGULATOR(LM3632_LDO_POS),
->>  	LM363X_REGULATOR(LM3632_LDO_NEG),
->> @@ -102,7 +102,7 @@ static struct mfd_cell lm3632_devices[] = {
->>  	},
->>  };
->>  
->> -static struct mfd_cell lm3633_devices[] = {
->> +static const struct mfd_cell lm3633_devices[] = {
->>  	{
->>  		.name          = "ti-lmu-backlight",
->>  		.id            = LM3633,
->> @@ -120,7 +120,7 @@ static struct mfd_cell lm3633_devices[] = {
->>  	},
->>  };
->>  
->> -static struct mfd_cell lm3695_devices[] = {
->> +static const struct mfd_cell lm3695_devices[] = {
->>  	{
->>  		.name          = "ti-lmu-backlight",
->>  		.id            = LM3695,
->> @@ -128,7 +128,7 @@ static struct mfd_cell lm3695_devices[] = {
->>  	},
->>  };
->>  
->> -static struct mfd_cell lm3697_devices[] = {
->> +static const struct mfd_cell lm3697_devices[] = {
->>  	{
->>  		.name          = "ti-lmu-backlight",
->>  		.id            = LM3697,
->>
-> 
-> 
-> 
-
-
+diff --git a/drivers/net/wimax/i2400m/tx.c b/drivers/net/wimax/i2400m/tx.c
+index f20886ade1cc..59c70d928249 100644
+--- a/drivers/net/wimax/i2400m/tx.c
++++ b/drivers/net/wimax/i2400m/tx.c
+@@ -655,8 +655,7 @@ void i2400m_tx_close(struct i2400m *i2400m)
+ 	padding = aligned_size - tx_msg_moved->size;
+ 	if (padding > 0) {
+ 		pad_buf = i2400m_tx_fifo_push(i2400m, padding, 0, 0);
+-		if (unlikely(WARN_ON(pad_buf == NULL
+-				     || pad_buf == TAIL_FULL))) {
++		if (WARN_ON(!pad_buf || pad_buf == TAIL_FULL)) {
+ 			/* This should not happen -- append should verify
+ 			 * there is always space left at least to append
+ 			 * tx_block_size */
 -- 
-------------------
-Dan Murphy
+2.17.1
+
