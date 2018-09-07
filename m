@@ -2,118 +2,102 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD730C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6784DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 672922083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:49:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672922083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F9652077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:00:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="a2E6OmUC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9652077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeIGQ37 (ORCPT
+        id S1729009AbeIGQlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 12:29:59 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11650 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727611AbeIGQ37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 12:29:59 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 50357C3B03E5F;
-        Fri,  7 Sep 2018 19:49:20 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 7 Sep 2018 19:49:12 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: plug readahead IO in readdir()
-Date:   Fri, 7 Sep 2018 19:49:07 +0800
-Message-ID: <20180907114907.48740-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Fri, 7 Sep 2018 12:41:17 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59704 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbeIGQlQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 12:41:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uQ5Yz61x9Q60BUqyPVPDHQRc+eOIEJYK7TkYPPCyRW4=; b=a2E6OmUC5F7kPF0jxtcSoOJXt
+        jybAgXRQ+27qCiApur3qHaVcAm4AexUGvEkTHXX2Cy4i6BXAcXQW2N2pOCB/i4S1fnS5phPrqEaU4
+        WjdMGpA2MQXA3zvj8aRJ3XtG8V5sF3puHkqLU/ndV85f9d7L0kqaFlAwg/Ogd5QDXyQQA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fyFRD-0005Oi-6T; Fri, 07 Sep 2018 12:00:35 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B86A11122A6D; Fri,  7 Sep 2018 13:00:34 +0100 (BST)
+Date:   Fri, 7 Sep 2018 13:00:34 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Cc:     Sasha Levin <Alexander.Levin@microsoft.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.18 043/131] ASoC: soc-pcm: Use delay set in
+ component pointer function
+Message-ID: <20180907120034.GF17459@sirena.org.uk>
+References: <20180902064601.183036-1-alexander.levin@microsoft.com>
+ <20180902064601.183036-43-alexander.levin@microsoft.com>
+ <20180903111626.GC10302@sirena.org.uk>
+ <20180907002313.GB16300@sasha-vm>
+ <056779f2-8b3b-63b5-ce0b-f314317156f7@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hK8Uo4Yp55NZU70L"
+Content-Disposition: inline
+In-Reply-To: <056779f2-8b3b-63b5-ce0b-f314317156f7@amd.com>
+X-Cookie: Do not fold, spindle or mutilate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a plug to merge readahead IO in readdir(), expecting it can
-reduce bio count before submitting to block layer.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/dir.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+--hK8Uo4Yp55NZU70L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index ecc3a4e2be96..bd0348cc860f 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -784,9 +784,15 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 	struct f2fs_dir_entry *de = NULL;
- 	struct fscrypt_str de_name = FSTR_INIT(NULL, 0);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(d->inode);
-+	struct blk_plug plug;
-+	bool readdir_ra = sbi->readdir_ra == 1;
-+	int err = 0;
- 
- 	bit_pos = ((unsigned long)ctx->pos % d->max);
- 
-+	if (readdir_ra)
-+		blk_start_plug(&plug);
-+
- 	while (bit_pos < d->max) {
- 		bit_pos = find_next_bit_le(d->bitmap, d->max, bit_pos);
- 		if (bit_pos >= d->max)
-@@ -806,29 +812,33 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 
- 		if (f2fs_encrypted_inode(d->inode)) {
- 			int save_len = fstr->len;
--			int err;
- 
- 			err = fscrypt_fname_disk_to_usr(d->inode,
- 						(u32)de->hash_code, 0,
- 						&de_name, fstr);
- 			if (err)
--				return err;
-+				goto out;
- 
- 			de_name = *fstr;
- 			fstr->len = save_len;
- 		}
- 
- 		if (!dir_emit(ctx, de_name.name, de_name.len,
--					le32_to_cpu(de->ino), d_type))
--			return 1;
-+					le32_to_cpu(de->ino), d_type)) {
-+			err = 1;
-+			goto out;
-+		}
- 
--		if (sbi->readdir_ra == 1)
-+		if (readdir_ra)
- 			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
- 
- 		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
- 		ctx->pos = start_pos + bit_pos;
- 	}
--	return 0;
-+out:
-+	if (readdir_ra)
-+		blk_finish_plug(&plug);
-+	return err;
- }
- 
- static int f2fs_readdir(struct file *file, struct dir_context *ctx)
--- 
-2.18.0.rc1
+On Fri, Sep 07, 2018 at 12:46:21PM +0530, Agrawal, Akshu wrote:
 
+> But more likely I think the delay was just getting left out and there
+> wouldn't have been a compensation in userspace.
+
+Yes, I don't think most users are going to notice this either way - the
+overwhelming majority of them won't have noticed a problem and won't
+notice the fix going in.  It's then a question of if the people who saw
+the issue and cared did the userspace compenstation or not, my concern
+is that more will have done than won't given that it's a fairly common
+thing to have control for given that you also often get delays added in
+things like surround sound systems which aren't visible to the playback
+device.
+
+--hK8Uo4Yp55NZU70L
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluSaGEACgkQJNaLcl1U
+h9CE1Af+NM9Fb5vr16bfvI0/wSOnxQ60fQ6rH2hi3N3hglwoL1aEB3Ab38LRDEP/
+b8mpz+Zv2LB4wFgSy3e7azi/XlOh2KSF1ODy6vG1P/JY2gKzaHjGjRYzQR8WdJ2X
+skp7E8DR6MnEifShJSxwZRur6jMxxaI03Ue1xUHjHDByUSRUYXVPfyxan+6oBD3j
+kpFzuW7aBvBBBv26WgNDcYbhnKDbu1J7H8CvrSogbnlI21iPTsZM0xntDIosbKw+
+M/N8EtnFuGUXKkks79A+E4TGUuULqSR5Pg3G29wh67exH7i15kPv1BkZk0NZgwDr
+OyPkNpedjNXmVkJa+QbCTgNI2avEgg==
+=sos1
+-----END PGP SIGNATURE-----
+
+--hK8Uo4Yp55NZU70L--
