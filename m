@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74113C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4ED0C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A1420844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36A1420844
+	by mail.kernel.org (Postfix) with ESMTP id 90ACA2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90ACA2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbeIHCPZ (ORCPT
+        id S1729589AbeIHCP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:15:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50686 "EHLO
+        Fri, 7 Sep 2018 22:15:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbeIHCPY (ORCPT
+        with ESMTP id S1727416AbeIHCP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:15:24 -0400
+        Fri, 7 Sep 2018 22:15:28 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75867F4A;
-        Fri,  7 Sep 2018 21:32:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF181F81;
+        Fri,  7 Sep 2018 21:32:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 67/89] iommu/vt-d: Fix dev iotlb pfsid use
-Date:   Fri,  7 Sep 2018 23:10:01 +0200
-Message-Id: <20180907210900.352477253@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.14 58/89] xtensa: increase ranges in ___invalidate_{i,d}cache_all
+Date:   Fri,  7 Sep 2018 23:09:52 +0200
+Message-Id: <20180907210859.329158779@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -52,94 +49,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 1c48db44924298ad0cb5a6386b88017539be8822 upstream.
+commit fec3259c9f747c039f90e99570540114c8d81a14 upstream.
 
-PFSID should be used in the invalidation descriptor for flushing
-device IOTLBs on SRIOV VFs.
+Cache invalidation macros use cache line size to iterate over
+invalidated cache lines, assuming that all cache ways are invalidated by
+single instruction, but xtensa ISA recommends to not assume that for
+future compatibility:
+  In some implementations all ways at index Addry-1..z are invalidated
+  regardless of the specified way, but for future compatibility this
+  behavior should not be assumed.
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Iterate over all cache ways in ___invalidate_icache_all and
+___invalidate_dcache_all.
+
 Cc: stable@vger.kernel.org
-Cc: "Ashok Raj" <ashok.raj@intel.com>
-Cc: "Lu Baolu" <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/dmar.c        |    6 +++---
- drivers/iommu/intel-iommu.c |   17 ++++++++++++++++-
- include/linux/intel-iommu.h |    5 ++---
- 3 files changed, 21 insertions(+), 7 deletions(-)
+ arch/xtensa/include/asm/cacheasm.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1336,8 +1336,8 @@ void qi_flush_iotlb(struct intel_iommu *
- 	qi_submit_sync(&desc, iommu);
- }
+--- a/arch/xtensa/include/asm/cacheasm.h
++++ b/arch/xtensa/include/asm/cacheasm.h
+@@ -123,7 +123,7 @@
+ 	.macro	___invalidate_dcache_all ar at
  
--void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			u64 addr, unsigned mask)
-+void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask)
- {
- 	struct qi_desc desc;
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
++	__loop_cache_all \ar \at dii XCHAL_DCACHE_SIZE \
+ 			 XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
  
-@@ -1352,7 +1352,7 @@ void qi_flush_dev_iotlb(struct intel_iom
- 		qdep = 0;
+@@ -133,7 +133,7 @@
+ 	.macro	___invalidate_icache_all ar at
  
- 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
--		   QI_DIOTLB_TYPE;
-+		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
+ #if XCHAL_ICACHE_SIZE
+-	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
++	__loop_cache_all \ar \at iii XCHAL_ICACHE_SIZE \
+ 			 XCHAL_ICACHE_LINEWIDTH 1020
+ #endif
  
- 	qi_submit_sync(&desc, iommu);
- }
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1503,6 +1503,20 @@ static void iommu_enable_dev_iotlb(struc
- 		return;
- 
- 	pdev = to_pci_dev(info->dev);
-+	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
-+	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
-+	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
-+	 * reserved, which should be set to 0.
-+	 */
-+	if (!ecap_dit(info->iommu->ecap))
-+		info->pfsid = 0;
-+	else {
-+		struct pci_dev *pf_pdev;
-+
-+		/* pdev will be returned if device is not a vf */
-+		pf_pdev = pci_physfn(pdev);
-+		info->pfsid = PCI_DEVID(pf_pdev->bus->number, pf_pdev->devfn);
-+	}
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	/* The PCIe spec, in its wisdom, declares that the behaviour of
-@@ -1568,7 +1582,8 @@ static void iommu_flush_dev_iotlb(struct
- 
- 		sid = info->bus << 8 | info->devfn;
- 		qdep = info->ats_qdep;
--		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
-+		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
-+				qdep, addr, mask);
- 	}
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
- }
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -453,9 +453,8 @@ extern void qi_flush_context(struct inte
- 			     u8 fm, u64 type);
- extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 			  unsigned int size_order, u64 type);
--extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			       u64 addr, unsigned mask);
--
-+extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask);
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
- 
- extern int dmar_ir_support(void);
 
 
