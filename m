@@ -2,111 +2,201 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31C1C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0971C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4702086D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:38:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvVFSalk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4702086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5828D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:38:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5828D2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbeIGRSx (ORCPT
+        id S1729278AbeIGRTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:18:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbeIGRSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:18:52 -0400
-Received: from mail-wm0-f49.google.com (mail-wm0-f49.google.com [74.125.82.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1865C2083D;
-        Fri,  7 Sep 2018 12:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536323887;
-        bh=fMLVIyZVlyTnxuWX/3+iSkluK7NEGEACHU+2YIj9zmA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RvVFSalkZ32FgYkgN74h+qbt5pr4eRCXBV4F5Q2HVO0qZ8Bpq71bJWwaLl1qodtJo
-         EORWfbpTyAXVmuVJeNweiRLx6BrlRviZfvve0YUA8dPnNFka68aXQVFIdBZDXt5B4h
-         02UWQPmzb1f6kYgLtArpHhbHyomaxPyErB10bBt8=
-Received: by mail-wm0-f49.google.com with SMTP id f21-v6so14588765wmc.5;
-        Fri, 07 Sep 2018 05:38:07 -0700 (PDT)
-X-Gm-Message-State: APzg51Dyn86sNPhC8N1BZw+mgC6lR0aYZVktYFlIniN0YDgYSsPlCBBr
-        XtT/tzPh/VhuOexbq6Ygbp5QMlNwFmwBB38rJeo=
-X-Google-Smtp-Source: ANB0VdbnhRHYZWpVxR4EanOz07SN7yuPdHpSQYXmQkgU1GuDVPc0CvId61TCS5jKqWFNIeZ2rYQJl310DQKOQZd7LcU=
-X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr4803154wmd.135.1536323885502;
- Fri, 07 Sep 2018 05:38:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <96fe9889-2649-7a1e-23bf-b4d16713d212@free.fr>
-In-Reply-To: <96fe9889-2649-7a1e-23bf-b4d16713d212@free.fr>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 7 Sep 2018 14:37:54 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc5UTG2viu8KcbthJmdZW06_yAt+JttNBnbMuW4YU8hSQ@mail.gmail.com>
-Message-ID: <CAJKOXPc5UTG2viu8KcbthJmdZW06_yAt+JttNBnbMuW4YU8hSQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: s3c24xx: Correct SD card write protect detection
- on Mini2440
-To:     sed@free.fr
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 7 Sep 2018 13:19:32 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46251 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729215AbeIGRTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 13:19:31 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fyG27-0007bt-J5; Fri, 07 Sep 2018 14:38:43 +0200
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fyG26-000620-De; Fri, 07 Sep 2018 14:38:42 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     linux-mtd@lists.infradead.org
+Cc:     David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 08/25] ubifs: Store read superblock node
+Date:   Fri,  7 Sep 2018 14:36:29 +0200
+Message-Id: <20180907123646.12688-9-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907123646.12688-1-s.hauer@pengutronix.de>
+References: <20180907123646.12688-1-s.hauer@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018 at 23:27, Cedric Roux <sed@free.fr> wrote:
->
-> The mini2440 computer uses "active high" to signal that the "write protect"
-> of the inserted MMC is set. The current code uses the opposite, leading to
-> a wrong detection of write protection. The solution is simply to use
-> ".wprotect_invert = 1" in the description of the MMC.
->
-> Signed-off-by: Cedric Roux <sed@free.fr>
-> ---
->  arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> index 95753e0..4cd8d45 100644
-> --- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-> +++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> @@ -232,10 +232,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
->  /* MMC/SD  */
->
->  static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
-> -   .gpio_detect   = S3C2410_GPG(8),
-> -   .gpio_wprotect = S3C2410_GPH(8),
-> -   .set_power     = NULL,
-> -   .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
-> +       .wprotect_invert = 1,
-> +       .gpio_detect   = S3C2410_GPG(8),
-> +       .gpio_wprotect = S3C2410_GPH(8),
-> +       .set_power     = NULL,
-> +       .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+The superblock node is read/modified/written several times throughout
+the UBIFS code. Instead of reading it from the device each time just
+keep a copy in memory and write back the modified copy when necessary.
+This patch helps for authentication support, here we not only have to
+read the superblock node, but also have to authenticate it, which
+is easier if we do it once during initialization.
 
-I see that entire struct has wrong indentation. In such case can you
-send a separate patch cleaning it up, prior to introducing new
-feature? First patch would be cleanup and second new feature.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ fs/ubifs/sb.c    | 19 +++++--------------
+ fs/ubifs/super.c |  8 +-------
+ fs/ubifs/ubifs.h |  3 ++-
+ 3 files changed, 8 insertions(+), 22 deletions(-)
 
-While at cleanup you can also get rid of other checkpatch errors, like:
-ERROR: Macros with complex values should be enclosed in parentheses
-ERROR: space required after that ',' (ctx:VxV)
-WARNING: please, no space before tabs
-ERROR: trailing whitespace
-WARNING: Avoid unnecessary line continuations
-ERROR: "foo * bar" should be "foo *bar"
-ERROR: space prohibited before that close parenthesis ')'
-WARNING: quoted string split across lines
-WARNING: printk() should include KERN_<LEVEL> facility level
+diff --git a/fs/ubifs/sb.c b/fs/ubifs/sb.c
+index cf7ee2880c57..7e08c8143316 100644
+--- a/fs/ubifs/sb.c
++++ b/fs/ubifs/sb.c
+@@ -497,7 +497,7 @@ static int validate_sb(struct ubifs_info *c, struct ubifs_sb_node *sup)
+  * code. Note, the user of this function is responsible of kfree()'ing the
+  * returned superblock buffer.
+  */
+-struct ubifs_sb_node *ubifs_read_sb_node(struct ubifs_info *c)
++static struct ubifs_sb_node *ubifs_read_sb_node(struct ubifs_info *c)
+ {
+ 	struct ubifs_sb_node *sup;
+ 	int err;
+@@ -554,6 +554,8 @@ int ubifs_read_superblock(struct ubifs_info *c)
+ 	if (IS_ERR(sup))
+ 		return PTR_ERR(sup);
+ 
++	c->sup_node = sup;
++
+ 	c->fmt_version = le32_to_cpu(sup->fmt_version);
+ 	c->ro_compat_version = le32_to_cpu(sup->ro_compat_version);
+ 
+@@ -685,7 +687,6 @@ int ubifs_read_superblock(struct ubifs_info *c)
+ 
+ 	err = validate_sb(c, sup);
+ out:
+-	kfree(sup);
+ 	return err;
+ }
+ 
+@@ -814,7 +815,7 @@ static int fixup_free_space(struct ubifs_info *c)
+ int ubifs_fixup_free_space(struct ubifs_info *c)
+ {
+ 	int err;
+-	struct ubifs_sb_node *sup;
++	struct ubifs_sb_node *sup = c->sup_node;
+ 
+ 	ubifs_assert(c, c->space_fixup);
+ 	ubifs_assert(c, !c->ro_mount);
+@@ -825,16 +826,11 @@ int ubifs_fixup_free_space(struct ubifs_info *c)
+ 	if (err)
+ 		return err;
+ 
+-	sup = ubifs_read_sb_node(c);
+-	if (IS_ERR(sup))
+-		return PTR_ERR(sup);
+-
+ 	/* Free-space fixup is no longer required */
+ 	c->space_fixup = 0;
+ 	sup->flags &= cpu_to_le32(~UBIFS_FLG_SPACE_FIXUP);
+ 
+ 	err = ubifs_write_sb_node(c, sup);
+-	kfree(sup);
+ 	if (err)
+ 		return err;
+ 
+@@ -845,7 +841,7 @@ int ubifs_fixup_free_space(struct ubifs_info *c)
+ int ubifs_enable_encryption(struct ubifs_info *c)
+ {
+ 	int err;
+-	struct ubifs_sb_node *sup;
++	struct ubifs_sb_node *sup = c->sup_node;
+ 
+ 	if (c->encrypted)
+ 		return 0;
+@@ -858,16 +854,11 @@ int ubifs_enable_encryption(struct ubifs_info *c)
+ 		return -EINVAL;
+ 	}
+ 
+-	sup = ubifs_read_sb_node(c);
+-	if (IS_ERR(sup))
+-		return PTR_ERR(sup);
+-
+ 	sup->flags |= cpu_to_le32(UBIFS_FLG_ENCRYPTION);
+ 
+ 	err = ubifs_write_sb_node(c, sup);
+ 	if (!err)
+ 		c->encrypted = 1;
+-	kfree(sup);
+ 
+ 	return err;
+ }
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index 23e7042666a7..c197492802c2 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -1605,16 +1605,10 @@ static int ubifs_remount_rw(struct ubifs_info *c)
+ 		goto out;
+ 
+ 	if (c->old_leb_cnt != c->leb_cnt) {
+-		struct ubifs_sb_node *sup;
++		struct ubifs_sb_node *sup = c->sup_node;
+ 
+-		sup = ubifs_read_sb_node(c);
+-		if (IS_ERR(sup)) {
+-			err = PTR_ERR(sup);
+-			goto out;
+-		}
+ 		sup->leb_cnt = cpu_to_le32(c->leb_cnt);
+ 		err = ubifs_write_sb_node(c, sup);
+-		kfree(sup);
+ 		if (err)
+ 			goto out;
+ 	}
+diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
+index 306cc7a4f725..93e1c34c097f 100644
+--- a/fs/ubifs/ubifs.h
++++ b/fs/ubifs/ubifs.h
+@@ -983,6 +983,7 @@ struct ubifs_debug_info;
+  * struct ubifs_info - UBIFS file-system description data structure
+  * (per-superblock).
+  * @vfs_sb: VFS @struct super_block object
++ * @sup_node: The super block node as read from the device
+  *
+  * @highest_inum: highest used inode number
+  * @max_sqnum: current global sequence number
+@@ -1230,6 +1231,7 @@ struct ubifs_debug_info;
+  */
+ struct ubifs_info {
+ 	struct super_block *vfs_sb;
++	struct ubifs_sb_node *sup_node;
+ 
+ 	ino_t highest_inum;
+ 	unsigned long long max_sqnum;
+@@ -1664,7 +1666,6 @@ int ubifs_write_master(struct ubifs_info *c);
+ 
+ /* sb.c */
+ int ubifs_read_superblock(struct ubifs_info *c);
+-struct ubifs_sb_node *ubifs_read_sb_node(struct ubifs_info *c);
+ int ubifs_write_sb_node(struct ubifs_info *c, struct ubifs_sb_node *sup);
+ int ubifs_fixup_free_space(struct ubifs_info *c);
+ int ubifs_enable_encryption(struct ubifs_info *c);
+-- 
+2.18.0
 
-Best regards,
-Krzysztof
