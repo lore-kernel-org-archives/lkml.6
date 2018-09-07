@@ -3,130 +3,249 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0076DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E95C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C96F20861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:36:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C96F20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A19A2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A19A2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeIGLPg (ORCPT
+        id S1727535AbeIGLS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 07:15:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725933AbeIGLPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 07:15:36 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6B5C377886;
-        Fri,  7 Sep 2018 06:36:09 +0000 (UTC)
-Received: from washington.bos.jonmasters.org (ovpn-121-226.rdu2.redhat.com [10.10.121.226])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8BA834E626;
-        Fri,  7 Sep 2018 06:36:08 +0000 (UTC)
-Subject: Re: [RFC PATCH 00/11] Avoid synchronous TLB invalidation for
- intermediate page-table entries on arm64
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        benh@au1.ibm.com, torvalds@linux-foundation.org, npiggin@gmail.com,
-        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
-References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
- <3dd55e21-7424-071a-0f7e-d24fc2396f2a@redhat.com>
- <20180905122828.GF20186@arm.com>
-From:   Jon Masters <jcm@redhat.com>
+        Fri, 7 Sep 2018 07:18:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45538 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbeIGLS6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 07:18:58 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so13718719wrb.12;
+        Thu, 06 Sep 2018 23:39:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2rCcDt/BuA459h//BfpfqaRuny+5TZpUDIRh1shLvQo=;
+        b=Etw/M0vWy+MIaY1gdm3SyBB5oEeGf9B3tPRfbhZlMwm2L+YSRzmcVRA+kWO9I5OaY/
+         fb30k4YDWxsE/XcNejjR3ZKV/ZsPi9WvdyGK7/f7N3ZaevV7hPy52OZCBFXpG+NvYjiG
+         gXlMHLmK+GH56vxlg5CisEA8ZC4j9OdR6SJXp4AvfgpErSHl9mD0nWE5XW35Dr3Ao4TE
+         f9MfTbt7zQ+CpurtynHiT/6VHDLY4UFSEGVrl3JNoeLhLSrXETXum1+5AlugHQW0YfAY
+         BJ+uMj9Kj9CXDJU3440HgbzW2TbPcdtUQdrLCQLEVeoNDKgC0wibE7iUjHyStgXfVOBT
+         Hjrw==
+X-Gm-Message-State: APzg51D6lqI5muGP7TN1fZKQs4/eNATo49/Y+arY4jCEGJzy4Aee/mmK
+        wEeuXns6h+IbzpgJQyOWVyhEZT89
+X-Google-Smtp-Source: ANB0VdZ/4EAKm787O7qCiOfbrtKKNqO6Fq7VixhZ0QcimV0dWd0dwbvCNJv7i/+XCuk+TVGJ8868FQ==
+X-Received: by 2002:adf:c454:: with SMTP id a20-v6mr4836039wrg.20.1536302369850;
+        Thu, 06 Sep 2018 23:39:29 -0700 (PDT)
+Received: from ?IPv6:2a01:4240:2e27:ad85:aaaa::70f? ([2a01:4240:2e27:ad85:aaaa::70f])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm14757497wra.91.2018.09.06.23.39.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 23:39:29 -0700 (PDT)
+Subject: Re: [LKP] [tty] 0b4f83d510: INFO:task_blocked_for_more_than#seconds
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     lkp@01.org, Dmitry Safonov <dima@arista.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        =?UTF-8?B?UGFzaSBLw6Rya2vDpGluZW4=?= <pasik@iki.fi>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20180907045041.GF1110@shao2-debian>
+From:   Jiri Slaby <jslaby@suse.cz>
 Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- yrXvw9qg2waGcnb8WuoS+g==
-Message-ID: <f8ba271b-87c0-29ef-1216-77d5d391d5c8@redhat.com>
-Date:   Fri, 7 Sep 2018 02:36:08 -0400
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d5d23bc5-0e11-5cee-6d66-514dfc4fc25b@suse.cz>
+Date:   Fri, 7 Sep 2018 08:39:27 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180905122828.GF20186@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180907045041.GF1110@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 07 Sep 2018 06:36:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 07 Sep 2018 06:36:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jcm@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 08:28 AM, Will Deacon wrote:
-> On Tue, Sep 04, 2018 at 02:38:02PM -0400, Jon Masters wrote:
->> On 08/24/2018 11:52 AM, Will Deacon wrote:
->>
->>> I hacked up this RFC on the back of the recent changes to the mmu_gather
->>> stuff in mainline. It's had a bit of testing and it looks pretty good so
->>> far.
->>
->> I will request the server folks go and test this. You'll probably
->> remember a couple of parts we've seen where aggressive walker caches
->> ended up (correctly) seeing stale page table entries and we had all
->> manner of horrifically hard to debug problems. We have some fairly nice
->> reproducers that were able to find this last time that we can test.
+On 09/07/2018, 06:50 AM, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
 > 
-> Cheers, Jon, that would be very helpful. You're probably best off using
-> my (rebasing) tlb branch rather than picking the RFC:
+> commit: 0b4f83d510f6fef6bb9da25f122c8d733d50516f ("[PATCH 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()")
+> url: https://github.com/0day-ci/linux/commits/Dmitry-Safonov/tty-Hold-write-ldisc-sem-in-tty_reopen/20180829-165618
+> base: https://git.kernel.org/cgit/linux/kernel/git/gregkh/tty.git tty-testing
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git tlb
+> in testcase: trinity
+> with following parameters:
 > 
-> Let me know if you'd prefer something stable (I can tag it with a date).
+> 	runtime: 300s
+> 
+> test-description: Trinity is a linux system call fuzz tester.
+> test-url: http://codemonkey.org.uk/projects/trinity/
+> 
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -m 256M
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> +--------------------------------------------------+------------+------------+
+> |                                                  | 58dd163974 | 0b4f83d510 |
+> +--------------------------------------------------+------------+------------+
+> | boot_successes                                   | 14         | 4          |
+> | boot_failures                                    | 0          | 6          |
+> | INFO:task_blocked_for_more_than#seconds          | 0          | 6          |
+> | Kernel_panic-not_syncing:hung_task:blocked_tasks | 0          | 6          |
+> +--------------------------------------------------+------------+------------+
+> 
+> 
+> 
+> [  244.816801] INFO: task validate_data:655 blocked for more than 120 seconds.
+> [  244.818833]       Not tainted 4.18.0-11684-g0b4f83d #1
+> [  244.820028] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  244.826965] validate_data   D    0   655    623 0x20020000
+> [  244.828279] Call Trace:
+> [  244.828958]  ? __schedule+0x843/0x950
+> [  244.830173]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.834903]  schedule+0x31/0x70
+> [  244.835665]  schedule_timeout+0x34/0x760
+> [  244.836613]  ? ftrace_likely_update+0x35/0x60
+> [  244.837683]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.838818]  ? ftrace_likely_update+0x35/0x60
+> [  244.840127]  ? ftrace_likely_update+0x35/0x60
+> [  244.845947]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.847882]  __ldsem_down_read_nested+0x23a/0x3b0
+> [  244.849886]  ? tty_ldisc_ref_wait+0x25/0x50
+> [  244.853807]  tty_ldisc_ref_wait+0x25/0x50
+> [  244.854946]  tty_compat_ioctl+0x8a/0x120
+> [  244.855928]  ? this_tty+0x80/0x80
+> [  244.856742]  __ia32_compat_sys_ioctl+0xc28/0x1ce0
+> [  244.857981]  do_int80_syscall_32+0x1d2/0x5f0
+> [  244.859003]  entry_INT80_compat+0x88/0xa0
+> [  244.859972] INFO: task dnsmasq:668 blocked for more than 120 seconds.
+> [  244.868315]       Not tainted 4.18.0-11684-g0b4f83d #1
+> [  244.869583] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  244.871744] dnsmasq         D    0   668      1 0x20020000
+> [  244.873063] Call Trace:
+> [  244.873697]  ? __schedule+0x843/0x950
+> [  244.874572]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.875725]  schedule+0x31/0x70
+> [  244.876576]  schedule_timeout+0x34/0x760
+> [  244.877573]  ? ftrace_likely_update+0x35/0x60
+> [  244.878660]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.879872]  ? ftrace_likely_update+0x35/0x60
+> [  244.890522]  ? ftrace_likely_update+0x35/0x60
+> [  244.891572]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.892746]  __ldsem_down_read_nested+0x23a/0x3b0
+> [  244.893861]  ? tty_ldisc_ref_wait+0x25/0x50
+> [  244.894841]  tty_ldisc_ref_wait+0x25/0x50
+> [  244.895911]  tty_compat_ioctl+0x8a/0x120
+> [  244.896916]  ? this_tty+0x80/0x80
+> [  244.897717]  __ia32_compat_sys_ioctl+0xc28/0x1ce0
+> [  244.898821]  do_int80_syscall_32+0x1d2/0x5f0
+> [  244.899830]  entry_INT80_compat+0x88/0xa0
+> [  244.909466] INFO: task dropbear:734 blocked for more than 120 seconds.
+> [  244.911173]       Not tainted 4.18.0-11684-g0b4f83d #1
+> [  244.912394] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  244.914176] dropbear        D    0   734      1 0x20020000
+> [  244.915446] Call Trace:
+> [  244.916068]  ? __schedule+0x843/0x950
+> [  244.916945]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.918076]  schedule+0x31/0x70
+> [  244.918832]  schedule_timeout+0x34/0x760
+> [  244.919781]  ? ftrace_likely_update+0x35/0x60
+> [  244.921104]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.922304]  ? ftrace_likely_update+0x35/0x60
+> [  244.923347]  ? ftrace_likely_update+0x35/0x60
+> [  244.924369]  ? __ldsem_down_read_nested+0x1c4/0x3b0
+> [  244.925496]  __ldsem_down_read_nested+0x23a/0x3b0
+> [  244.926598]  ? tty_ldisc_ref_wait+0x25/0x50
+> [  244.927578]  tty_ldisc_ref_wait+0x25/0x50
+> [  244.928526]  tty_compat_ioctl+0x8a/0x120
+> [  244.929449]  ? this_tty+0x80/0x80
+> [  244.930240]  __ia32_compat_sys_ioctl+0xc28/0x1ce0
+> [  244.940083]  do_int80_syscall_32+0x1d2/0x5f0
+> [  244.941310]  entry_INT80_compat+0x88/0xa0
+> [  244.944070] 
+> [  244.944070] Showing all locks held in the system:
+> [  244.945558] 1 lock held by khungtaskd/18:
+> [  244.946495]  #0: (____ptrval____) (rcu_read_lock){....}, at: debug_show_all_locks+0x16/0x190
+> [  244.948503] 2 locks held by askfirst/235:
+> [  244.949439]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x25/0x50
+> [  244.951762]  #1: (____ptrval____) (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x13d/0xa00
 
-That would be useful. I've prodded each of the Arm server SoC vendors I
-work with via our weekly call to have them each specifically check this.
-A tag would be helpful to that effort I expect. They all claim to be
-watching this thread now, so we'll see if they see cabbages here.
+Here, it just seems to wait for input from the user.
 
-Jon.
+> [  244.953799] 1 lock held by validate_data/655:
+> [  244.954814]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x25/0x50
+> [  244.956764] 1 lock held by dnsmasq/668:
+> [  244.957649]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x25/0x50
+> [  244.959598] 1 lock held by dropbear/734:
+> [  244.967564]  #0: (____ptrval____) (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x25/0x50
 
+Hmm, I assume there is another task waiting for write_ldsem and that one
+prevents these readers to proceed. Unfortunately, due to the defunct
+__ptrval__ pointer hashing crap, we do not see who is waiting for what.
+But I am guessing all are the same locks.
+
+So I think, we are forced to limit the waiting to 5 seconds in reopen in
+the end too (the same as we do for new open in tty_init_dev).
+
+Dmitry, could you add the limit and handle the return value of
+tty_ldisc_lock now?
+
+thanks,
 -- 
-Computer Architect | Sent from my Fedora powered laptop
+js
+suse labs
