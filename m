@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268DDC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5ADC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA0EB20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0EB20645
+	by mail.kernel.org (Postfix) with ESMTP id 2BC7820645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC7820645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbeIHCDY (ORCPT
+        id S1729207AbeIHCD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:03:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45230 "EHLO
+        Fri, 7 Sep 2018 22:03:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbeIHCDY (ORCPT
+        with ESMTP id S1728838AbeIHCD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:03:24 -0400
+        Fri, 7 Sep 2018 22:03:27 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9137DC4;
-        Fri,  7 Sep 2018 21:20:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60696DC4;
+        Fri,  7 Sep 2018 21:20:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.18 122/145] udlfb: fix display corruption of the last line
-Date:   Fri,  7 Sep 2018 23:09:48 +0200
-Message-Id: <20180907210913.132197565@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.18 096/145] xtensa: increase ranges in ___invalidate_{i,d}cache_all
+Date:   Fri,  7 Sep 2018 23:09:22 +0200
+Message-Id: <20180907210911.874022299@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,112 +49,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 4e705e17ce3409a1f492cfd5dadcf6a4f6075842 upstream.
+commit fec3259c9f747c039f90e99570540114c8d81a14 upstream.
 
-The displaylink hardware has such a peculiarity that it doesn't render a
-command until next command is received. This produces occasional
-corruption, such as when setting 22x11 font on the console, only the first
-line of the cursor will be blinking if the cursor is located at some
-specific columns.
+Cache invalidation macros use cache line size to iterate over
+invalidated cache lines, assuming that all cache ways are invalidated by
+single instruction, but xtensa ISA recommends to not assume that for
+future compatibility:
+  In some implementations all ways at index Addry-1..z are invalidated
+  regardless of the specified way, but for future compatibility this
+  behavior should not be assumed.
 
-When we end up with a repeating pixel, the driver has a bug that it leaves
-one uninitialized byte after the command (and this byte is enough to flush
-the command and render it - thus it fixes the screen corruption), however
-whe we end up with a non-repeating pixel, there is no byte appended and
-this results in temporary screen corruption.
+Iterate over all cache ways in ___invalidate_icache_all and
+___invalidate_dcache_all.
 
-This patch fixes the screen corruption by always appending a byte 0xAF at
-the end of URB. It also removes the uninitialized byte.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/udlfb.c |   30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ arch/xtensa/include/asm/cacheasm.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -27,6 +27,7 @@
- #include <linux/slab.h>
- #include <linux/prefetch.h>
- #include <linux/delay.h>
-+#include <asm/unaligned.h>
- #include <video/udlfb.h>
- #include "edid.h"
+--- a/arch/xtensa/include/asm/cacheasm.h
++++ b/arch/xtensa/include/asm/cacheasm.h
+@@ -123,7 +123,7 @@
+ 	.macro	___invalidate_dcache_all ar at
  
-@@ -450,17 +451,17 @@ static void dlfb_compress_hline(
- 		raw_pixels_count_byte = cmd++; /*  we'll know this later */
- 		raw_pixel_start = pixel;
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
++	__loop_cache_all \ar \at dii XCHAL_DCACHE_SIZE \
+ 			 XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
  
--		cmd_pixel_end = pixel + min(MAX_CMD_PIXELS + 1,
--			min((int)(pixel_end - pixel),
--			    (int)(cmd_buffer_end - cmd) / BPP));
-+		cmd_pixel_end = pixel + min3(MAX_CMD_PIXELS + 1UL,
-+					(unsigned long)(pixel_end - pixel),
-+					(unsigned long)(cmd_buffer_end - 1 - cmd) / BPP);
+@@ -133,7 +133,7 @@
+ 	.macro	___invalidate_icache_all ar at
  
--		prefetch_range((void *) pixel, (cmd_pixel_end - pixel) * BPP);
-+		prefetch_range((void *) pixel, (u8 *)cmd_pixel_end - (u8 *)pixel);
+ #if XCHAL_ICACHE_SIZE
+-	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
++	__loop_cache_all \ar \at iii XCHAL_ICACHE_SIZE \
+ 			 XCHAL_ICACHE_LINEWIDTH 1020
+ #endif
  
- 		while (pixel < cmd_pixel_end) {
- 			const uint16_t * const repeating_pixel = pixel;
- 
--			*cmd++ = *pixel >> 8;
--			*cmd++ = *pixel;
-+			put_unaligned_be16(*pixel, cmd);
-+			cmd += 2;
- 			pixel++;
- 
- 			if (unlikely((pixel < cmd_pixel_end) &&
-@@ -486,13 +487,16 @@ static void dlfb_compress_hline(
- 		if (pixel > raw_pixel_start) {
- 			/* finalize last RAW span */
- 			*raw_pixels_count_byte = (pixel-raw_pixel_start) & 0xFF;
-+		} else {
-+			/* undo unused byte */
-+			cmd--;
- 		}
- 
- 		*cmd_pixels_count_byte = (pixel - cmd_pixel_start) & 0xFF;
--		dev_addr += (pixel - cmd_pixel_start) * BPP;
-+		dev_addr += (u8 *)pixel - (u8 *)cmd_pixel_start;
- 	}
- 
--	if (cmd_buffer_end <= MIN_RLX_CMD_BYTES + cmd) {
-+	if (cmd_buffer_end - MIN_RLX_CMD_BYTES <= cmd) {
- 		/* Fill leftover bytes with no-ops */
- 		if (cmd_buffer_end > cmd)
- 			memset(cmd, 0xAF, cmd_buffer_end - cmd);
-@@ -610,8 +614,11 @@ static int dlfb_handle_damage(struct dlf
- 	}
- 
- 	if (cmd > (char *) urb->transfer_buffer) {
-+		int len;
-+		if (cmd < (char *) urb->transfer_buffer + urb->transfer_buffer_length)
-+			*cmd++ = 0xAF;
- 		/* Send partial buffer remaining before exiting */
--		int len = cmd - (char *) urb->transfer_buffer;
-+		len = cmd - (char *) urb->transfer_buffer;
- 		ret = dlfb_submit_urb(dlfb, urb, len);
- 		bytes_sent += len;
- 	} else
-@@ -735,8 +742,11 @@ static void dlfb_dpy_deferred_io(struct
- 	}
- 
- 	if (cmd > (char *) urb->transfer_buffer) {
-+		int len;
-+		if (cmd < (char *) urb->transfer_buffer + urb->transfer_buffer_length)
-+			*cmd++ = 0xAF;
- 		/* Send partial buffer remaining before exiting */
--		int len = cmd - (char *) urb->transfer_buffer;
-+		len = cmd - (char *) urb->transfer_buffer;
- 		dlfb_submit_urb(dlfb, urb, len);
- 		bytes_sent += len;
- 	} else
 
 
