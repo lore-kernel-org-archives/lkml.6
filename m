@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EC2C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C561EC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 838E82083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D622083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:55:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PonWIs3t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 838E82083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="P3pqu9Ju"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D622083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbeIGFdP (ORCPT
+        id S1729658AbeIGFPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:33:15 -0400
+        Fri, 7 Sep 2018 01:15:53 -0400
 Received: from mail-eopbgr710095.outbound.protection.outlook.com ([40.107.71.95]:48060
         "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729651AbeIGFPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:15:54 -0400
+        id S1728038AbeIGFPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:15:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ZtqEo0auScFL5ZGU3snpMFuS81tNGBB0cUb/5OYotk=;
- b=PonWIs3tAD0D/jsg5WZOoQUxsTGhJZXfYimwEn+fVOInkR63r7Ekh8Gi2aDan0nLRa9kbQMYGe/YhHRHZG5jB5vM5oeOyU3i5nM9bbYIecfAP/MnsbjAij8kxJIfAauqpl9ga6siIaoKMzBf7/+xCkdpTVLLA47+v1jZqqzTAAs=
+ bh=yA74/iDFsR8DO9gVasMBlFLXW1SupJ7342cB/YzuxoA=;
+ b=P3pqu9JuxxC/OpSl9x0qtv+HRtU01dfhmDJ6uyFRPbygzktFOFk2Hrfl0Vau/FB+6ZbTcsfRaDp3gpvuc+RjwXY8ng+YBiloIoGqMAz7AeWEhJCfPWrkry/2FnvknWJw7IC4oxC4j5ue1CJE7UgkAc88rofNTyx2WBvU4AGTsMs=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -41,21 +41,15 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Jiang Biao <jiang.biao2@zte.com.cn>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "albcamus@gmail.com" <albcamus@gmail.com>,
-        "zhong.weidong@zte.com.cn" <zhong.weidong@zte.com.cn>,
+CC:     Hanna Hawa <hannah@marvell.com>, Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 85/88] x86/pti: Check the return value of
- pti_user_pagetable_walk_p4d()
-Thread-Topic: [PATCH AUTOSEL 4.18 85/88] x86/pti: Check the return value of
- pti_user_pagetable_walk_p4d()
-Thread-Index: AQHURkLeadmGhlrCUkGnKUGrVIDcQw==
-Date:   Fri, 7 Sep 2018 00:36:51 +0000
-Message-ID: <20180907003547.57567-85-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 83/88] dmaengine: mv_xor_v2: kill the tasklets
+ upon exit
+Thread-Topic: [PATCH AUTOSEL 4.18 83/88] dmaengine: mv_xor_v2: kill the
+ tasklets upon exit
+Thread-Index: AQHURkLdsjVipy01LUaWnR8GevzKCw==
+Date:   Fri, 7 Sep 2018 00:36:50 +0000
+Message-ID: <20180907003547.57567-83-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -64,30 +58,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:UDmbvS7uVjV5+OurezpBKhLQUGtn0Dj5Lo4IUNYUDrTVp2+ecqrWOeCRuBQWVve651QkUaAyyXULLVAhavTPboq92ApC/gOyQuFOC7LwkyvoDYdHTS9JAknzr4pqJnNgWFtLVjvpEdiZfG9EbDl/zCHTCDXiuLJa+g4uV5ikxP4JKkaoPIwwt61aZ5uGU9le4HQb7aPIpjbLJFQuijxuvUoYKpo9tsNJU9+z05toj1ZAdWw51nD6LHU80ceduhgfTU9hnmzXT6BEIBDbgFB8zEG7JbdLgLloZOd44w6z+OHic4FdlUZkhKB6hJ4gDGh8eclfb6AcGZ6Gkt9jqSBhRdJrAKdbulHQye3go0iOydeMoLX56338h79Y/pDSYhc4ZoA2RNQzGwy9PKxTCk292kQLPvVYGuoPsvXO3eEz05qQH1GISAIFfM7R1BCVp1dW03Dkk+3khsuc7cnv5BUCWg==;5:kBOVvTFRtaBpPiZBbm8nTfGiddSJpHWq61ZYNRSlnw+gMv+UKzyoLOrc9zYEnFFsn90OYfvEPoKX9oQEr0EP/sw1aqf+MMsvL+NeCfg14NnSFm2f/tIZpaGoA7Ev/zaNpqks3adnM/ODk0HJDeB1I3qANqaNAMq3Ihidv6BXyDs=;7:K8b/RdZSFNnC+XeGWLZIutivXSjD70Vfcx6Tn/fqd32XdiXYmAZZvJ+ZZ4h+JvVb2DLs7RYIdyhbfn6gqlqrOIlId7ZT+xAK60QYJLD8oUkpLdZRez2O+Q9Sa/pRfnyC8mXnWGbcba91pRTwRzih28tCu0IQ1LuDsjPdrdPoqwOXbv/+6Qt4gUVDQXwEGYxC/zjVePcwyfZ4HWBP8QEONzGy2u3El5YeTPsEo9ghOHPYvCDz4Czcx8Ljh0KJ4Ii+
-x-ms-office365-filtering-correlation-id: 5d7af250-98c8-4847-c16a-08d6145a1dca
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:z+9gpost/A/8QsQKZHu2KZkBibOmvTOO0sKsfnIhHmItWHEhFCRBryVTcIeetOriytHkiljr3x7Bd4PKrcFqtwyRUvwTyxyqX2SWexiDoG2q08Ci/qG6EE2EY5IXEk8rPm4BWX1bjECC1cAPCPlt9q/xsaQTRAyBuVj4r1JtmpqvGgBYvwFM/fG1r5LOq0CQ/FUP0r0bzXr/mJkzf95ATj6F/vEu5lhqthMlALkEJ3HoyPjY5i/WV4DSWo/C4ujSVhER/z6jTD5wtVkWJ+ZWt4L+LCVpJp7Inl7guB0H14OobkJQgC3pWGBFt8KY+AjX98ngCz/riP5LtluARgpuqjpsYHlohBKjea/ByT+HajF1LEs0E0PbAy0J6FcSfdpnl05pQLoe5VK+6qcNpzURY9rpQtY7MboHPuxcqrgA5bbgDJOfdBCpLU66fN77Ut5oJMpYej3e3xCAcgs2qIs0CA==;5:oMgB44M6cAOzzv9VsezqXytit6ClU/D6/EvE1aMVvuyRNeo4sBOiHKw8+6BfPnokwoxJKMjIMAUopoby5CSW7ir2Oi6TToizCYZ5aPJrBL1BDjZMSZB0c6R6gHPRcfdv+dvjOal8VhH/Q9vYUnC24DJpy8grZeKi8ly5jc4rNiU=;7:FocepbCOkv6kMuro5tVVqwrcJbE/IvgvruVC7U7ckSWWn3MG1y123UPN7VzoQk7Z7vu9RCAZOXY6Q0R3Y1vPFy9u9HJq9tNVZCBhHsym2HkyyGnrwkDaE+976I8Ba1mkJMAC2DYpaM9Wscm6EphfoHz12q5OQzOhpXgUsiRsxkh6B4x8H0WWL7jO6KM0z/rvVNafAALozdXnH5TXeRN7sWpNMd9eZVy+fr0pyNBHy9mF7g8PudUdQ6ko8UYcb0Ab
+x-ms-office365-filtering-correlation-id: 10de7c44-98ce-4ff6-3fd9-08d6145a1d4b
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0839;
 x-ms-traffictypediagnostic: CY4PR21MB0839:
-x-microsoft-antispam-prvs: <CY4PR21MB083914F1B92CA5F70C8C0370FB000@CY4PR21MB0839.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(42068640409301)(228905959029699);
+x-microsoft-antispam-prvs: <CY4PR21MB0839E61B74FC8DBC586879DFFB000@CY4PR21MB0839.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0839;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0839;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(136003)(346002)(39860400002)(189003)(199004)(10290500003)(99286004)(10090500001)(105586002)(106356001)(102836004)(15760500003)(76176011)(6306002)(97736004)(6512007)(53936002)(2900100001)(6346003)(316002)(54906003)(110136005)(256004)(14444005)(26005)(6436002)(107886003)(2906002)(86362001)(186003)(478600001)(5660300001)(6486002)(446003)(476003)(68736007)(7736002)(86612001)(11346002)(8936002)(1076002)(966005)(22452003)(25786009)(2501003)(36756003)(2616005)(486006)(81166006)(81156014)(66066001)(6666003)(217873002)(4326008)(6506007)(5250100002)(6116002)(3846002)(305945005)(8676002)(72206003)(14454004)(39060400002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(136003)(346002)(39860400002)(189003)(199004)(10290500003)(99286004)(10090500001)(105586002)(106356001)(102836004)(76176011)(97736004)(6512007)(53936002)(2900100001)(6346003)(316002)(54906003)(110136005)(256004)(26005)(6436002)(107886003)(2906002)(86362001)(186003)(478600001)(5660300001)(6486002)(446003)(476003)(68736007)(7736002)(86612001)(11346002)(8936002)(1076002)(22452003)(25786009)(2501003)(36756003)(2616005)(486006)(81166006)(81156014)(66066001)(6666003)(217873002)(4326008)(6506007)(5250100002)(6116002)(3846002)(305945005)(8676002)(72206003)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: yJJaLvdW1Qt8TAqoFe7sZNHqo6Te6itG5wLknkgGiX/tkB1hiG3GwoXp84XMX9wmbgIrZUoa2XqXaP2LPLvfX71cs4I5FBLVgtpZxkXQZcJOZxyNdVTRTXtgoqBisddeb0HYJMi4mIeBm/pjYHPvS0jWlfkIquBa4zcxyKCw1eQrM+13ehNpKTtiFDQwAgNtWhdh19yxaAW4N4A/871dX7FUhhB/t0Rg1XuJt39vNHYfw+mYJfby7U22j7dNv/ehQoiz7ot/pqUm0J2lkOB2cRES9bTuxj6jOXQ9pVgobrvCG6CcG3MNLsl+SRX5d4O89Kb6fnDh1w1c1Qh9w5K68LRC8NG0I8/05gf8R8rwXxE=
+x-microsoft-antispam-message-info: hMixJ1eKJdQEp30d6BB8FWgPJ9vFz4568iRZgYydrBgxF4IryuLoFz0oIjFINU1JgB9DTm9E9ZloAQtp8TLNfPNlJJ1mL9rSlmDq6/zDWhSE77iP17TL7YTDhW2aNUGAN7ZW+joR7Lz+xGv8j2DQNxVsMzR8XU/8wWEYy0FN205nQw+9/kEPhJlArfaGV8zoF6KN6Niwzj/3r3elj7E/Kby8qvPQyZNUHrSogpNqoXxTZ0Ta65EHvblMvSDOg5A+/yyk5wsWDdrtCUi+9kOU1rVrE9Y6IEWI5ZeGU+05G47KQcnQesqBv9MtvcVMQmvK31phxkYb4NAK1Zrb3LJZWxcEdRmOahCzfBd0WBHbcH0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d7af250-98c8-4847-c16a-08d6145a1dca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:51.4157
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10de7c44-98ce-4ff6-3fd9-08d6145a1d4b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:50.1167
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -97,68 +91,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiang Biao <jiang.biao2@zte.com.cn>
+From: Hanna Hawa <hannah@marvell.com>
 
-[ Upstream commit b2b7d986a89b6c94b1331a909de1217214fb08c1 ]
+[ Upstream commit 8bbafed8dd5cfa81071b50ead5cb60367fdef3a9 ]
 
-pti_user_pagetable_walk_p4d() can return NULL, so the return value should
-be checked to prevent a NULL pointer dereference.
+The mv_xor_v2 driver uses a tasklet, initialized during the probe()
+routine. However, it forgets to cleanup the tasklet using
+tasklet_kill() function during the remove() routine, which this patch
+fixes. This prevents the tasklet from potentially running after the
+module has been removed.
 
-Add the check and a warning when the P4D allocation fails.
+Fixes: 19a340b1a820 ("dmaengine: mv_xor_v2: new driver")
 
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: hpa@zytor.com
-Cc: albcamus@gmail.com
-Cc: zhong.weidong@zte.com.cn
-Link: https://lkml.kernel.org/r/1532045192-49622-1-git-send-email-jiang.bia=
-o2@zte.com.cn
+Signed-off-by: Hanna Hawa <hannah@marvell.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/x86/mm/pti.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/dma/mv_xor_v2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 946455e9cfef..51abd8292b6d 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -177,7 +177,7 @@ static p4d_t *pti_user_pagetable_walk_p4d(unsigned long=
- address)
+diff --git a/drivers/dma/mv_xor_v2.c b/drivers/dma/mv_xor_v2.c
+index c6589ccf1b9a..d349fedf4ab2 100644
+--- a/drivers/dma/mv_xor_v2.c
++++ b/drivers/dma/mv_xor_v2.c
+@@ -899,6 +899,8 @@ static int mv_xor_v2_remove(struct platform_device *pde=
+v)
 =20
- 	if (pgd_none(*pgd)) {
- 		unsigned long new_p4d_page =3D __get_free_page(gfp);
--		if (!new_p4d_page)
-+		if (WARN_ON_ONCE(!new_p4d_page))
- 			return NULL;
+ 	platform_msi_domain_free_irqs(&pdev->dev);
 =20
- 		set_pgd(pgd, __pgd(_KERNPG_TABLE | __pa(new_p4d_page)));
-@@ -196,9 +196,13 @@ static p4d_t *pti_user_pagetable_walk_p4d(unsigned lon=
-g address)
- static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- {
- 	gfp_t gfp =3D (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
--	p4d_t *p4d =3D pti_user_pagetable_walk_p4d(address);
-+	p4d_t *p4d;
- 	pud_t *pud;
-=20
-+	p4d =3D pti_user_pagetable_walk_p4d(address);
-+	if (!p4d)
-+		return NULL;
++	tasklet_kill(&xor_dev->irq_tasklet);
 +
- 	BUILD_BUG_ON(p4d_large(*p4d) !=3D 0);
- 	if (p4d_none(*p4d)) {
- 		unsigned long new_pud_page =3D __get_free_page(gfp);
-@@ -355,6 +359,9 @@ static void __init pti_clone_p4d(unsigned long addr)
- 	pgd_t *kernel_pgd;
+ 	clk_disable_unprepare(xor_dev->clk);
 =20
- 	user_p4d =3D pti_user_pagetable_walk_p4d(addr);
-+	if (!user_p4d)
-+		return;
-+
- 	kernel_pgd =3D pgd_offset_k(addr);
- 	kernel_p4d =3D p4d_offset(kernel_pgd, addr);
- 	*user_p4d =3D *kernel_p4d;
+ 	return 0;
 --=20
 2.17.1
