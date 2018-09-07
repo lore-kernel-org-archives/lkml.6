@@ -2,487 +2,266 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AEDC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79838C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C2E20857
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:28:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C2E20857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 02FB2205F4
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:49:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9xzXpH7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FB2205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbeIGHHU (ORCPT
+        id S1726161AbeIGH1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 03:07:20 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39955 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728031AbeIGHHU (ORCPT
+        Fri, 7 Sep 2018 03:27:49 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43359 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeIGH1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 03:07:20 -0400
-X-UUID: c0b9e816c6794bb8b1d6e0e0f1f28e37-20180907
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1014987525; Fri, 07 Sep 2018 10:28:43 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 7 Sep 2018 10:28:41 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 7 Sep 2018 10:28:41 +0800
-Message-ID: <1536287321.25853.19.camel@mtksdaap41>
-Subject: Re: [PATCH v2 10/13] drm/mediatek: add hdmi driver for MT2701 and
- MT7623
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date:   Fri, 7 Sep 2018 10:28:41 +0800
-In-Reply-To: <20180905083146.14727-11-bibby.hsieh@mediatek.com>
-References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
-         <20180905083146.14727-11-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 7 Sep 2018 03:27:49 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so24551839oib.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 19:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=g9AoT/1qXgt/tYW75whqAoTN6TSGgbvP+JwgRQq0p/Y=;
+        b=U9xzXpH7KuTCNoddTBhmicptJW1P/g+i9ChcNwjnurrDL6alNPD5cY9eTMwmB+AgRK
+         AyUQkeTfBauBAs2bNX4javS6vTjERZ4NJDpKWjVfhRdu9Rfv6VQs4qBb+xJwo4ge1HWo
+         1C8oFpsIp2ce46D0SMkFcO66waoNsr5WQDHNc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=g9AoT/1qXgt/tYW75whqAoTN6TSGgbvP+JwgRQq0p/Y=;
+        b=NrjO48xsk52Mh37zB/tyub607dNTBRHfPssjFZD0s4ACVpQaCeTLlueZ6Vu8olh8Th
+         HqdYKtgkzqln2nVwJJkfx6dbeIggJNuJBZYWpXF8JX//oFNdJsE+atc5jDruOJzrB8Ne
+         0NGS20uHHnf+QuqjGNCKKLRRsNdY7ZX3ZwrbxjIYN2vprBeKXCZgzCpr8oKDS0o+Mrt1
+         5IzLFxH4J32Bi82T4eHP1RrmR2ieOciekMTS6JtEUMWcr6QQHLt7qRvdaY7+/snry06f
+         B0MSV4fUjTOojqUuLCbqkLHZiIMLHmyqQJsWJ08IBGKn0FJlQ1Bfs30VJ85srLLKZviH
+         abjw==
+X-Gm-Message-State: APzg51C/x0/gXa9YT4L9GFgayYlAxgSszzlN1Bumudlz5OJedQ2ACH3c
+        dbCKiR8YXmZSLZKC4QFbtrFEruAtbiUUSShR6Mz8sQ==
+X-Google-Smtp-Source: ANB0VdZWv6tx9nnhg0L2sFyGR1QNqcLAxsd2nwhqUSBtowyxacTOYxxNIcldaky3Ib1SKCe+2R1GgZ3f1xYvnwzxO4I=
+X-Received: by 2002:aca:ef87:: with SMTP id n129-v6mr6278315oih.161.1536288554602;
+ Thu, 06 Sep 2018 19:49:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Received: by 2002:a9d:3ec8:0:0:0:0:0 with HTTP; Thu, 6 Sep 2018 19:49:14 -0700 (PDT)
+In-Reply-To: <ae29d9b4-e5f8-a00d-df74-fb20328e4634@gmail.com>
+References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536200860.git.baolin.wang@linaro.org>
+ <975a9570c75fb4469c0cef55cc9ed42266f933af.1536200860.git.baolin.wang@linaro.org>
+ <ae29d9b4-e5f8-a00d-df74-fb20328e4634@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 7 Sep 2018 10:49:14 +0800
+Message-ID: <CAMz4ku+7TcsQLiTPHB=8EpW7mbk5skd=TEio3HKX0WHEpWYc+g@mail.gmail.com>
+Subject: Re: [PATCH v10 2/2] leds: sc27xx: Add pattern_set/clear interfaces
+ for LED controller
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, rteysseyre@gmail.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
+Hi Jacek,
 
-On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
-> 
-> This patch adds hdmi dirver suppot for both MT2701 and MT7623.
-> And also support other (existing or future) chips that use
-> the same binding and driver.
-> 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/Makefile              |   1 +
->  drivers/gpu/drm/mediatek/mtk_hdmi.h            |   1 +
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        |   3 +
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 307 +++++++++++++++++++++++++
->  4 files changed, 312 insertions(+)
->  create mode 100644 drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> 
-> diff --git a/drivers/gpu/drm/mediatek/Makefile b/drivers/gpu/drm/mediatek/Makefile
-> index 7f947979d68f..bf0067b5ee6f 100644
-> --- a/drivers/gpu/drm/mediatek/Makefile
-> +++ b/drivers/gpu/drm/mediatek/Makefile
-> @@ -2,6 +2,7 @@
->  mediatek-drm-hdmi-objs := mtk_cec.o \
->  			  mtk_hdmi.o \
->  			  mtk_hdmi_ddc.o \
-> +                          mtk_mt2701_hdmi_phy.o \
->  			  mtk_mt8173_hdmi_phy.o \
->  			  mtk_hdmi_phy.o
->  
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.h b/drivers/gpu/drm/mediatek/mtk_hdmi.h
-> index a350a6c9271f..fa12eb6288f3 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.h
-> @@ -45,5 +45,6 @@ extern struct platform_driver mtk_cec_driver;
->  extern struct platform_driver mtk_hdmi_ddc_driver;
->  extern struct platform_driver mtk_hdmi_phy_driver;
->  extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf;
-> +extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf;
->  
->  #endif /* _MTK_HDMI_CTRL_H */
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> index 82ed73575e04..606fc7a0c13b 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> @@ -135,6 +135,9 @@ static int mtk_hdmi_phy_remove(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id mtk_hdmi_phy_match[] = {
-> +	{ .compatible = "mediatek,mt2701-hdmi-phy",
-> +	  .data = &mtk_hdmi_phy_2701_conf,
-> +	},
->  	{ .compatible = "mediatek,mt8173-hdmi-phy",
->  	  .data = &mtk_hdmi_phy_8173_conf,
->  	},
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> new file mode 100644
-> index 000000000000..428ef1557a14
-> --- /dev/null
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -0,0 +1,307 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Chunhui Dai <chunhui.dai@mediatek.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/debugfs.h>
+On 7 September 2018 at 04:16, Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+> Hi Baolin,
+>
+> Thank you for the patch. I really appreciate your effort.
+>
+> I see one more thing I forgot to mention in the previous
+> review. Please take a look at my comment to pattern_set().
+>
+> On 09/06/2018 04:37 AM, Baolin Wang wrote:
+>> This patch implements the 'pattern_set'and 'pattern_clear'
+>> interfaces to support SC27XX LED breathing mode.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes from v9:
+>>  - Optimize the ABI documentation file.
+>>  - Update the brightness value in hardware pattern mode.
+>>
+>> Changes from v8:
+>>  - Optimize the ABI documentation file.
+>>
+>> Changes from v7:
+>>  - Add its own ABI documentation file.
+>>
+>> Changes from v6:
+>>  - None.
+>>
+>> Changes from v5:
+>>  - None.
+>>
+>> Changes from v4:
+>>  - None.
+>>
+>> Changes from v3:
+>>  - None.
+>>
+>> Changes from v2:
+>>  - None.
+>>
+>> Changes from v1:
+>>  - Remove pattern_get interface.
+>> ---
+>>  .../ABI/testing/sysfs-class-led-driver-sc27xx      |   22 +++++
+>>  drivers/leds/leds-sc27xx-bltc.c                    |  103 ++++++++++++++++++++
+>>  2 files changed, 125 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> new file mode 100644
+>> index 0000000..d8056d5
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,22 @@
+>> +What:                /sys/class/leds/<led>/hw_pattern
+>> +Date:                September 2018
+>> +KernelVersion:       4.20
+>> +Description:
+>> +             Specify a hardware pattern for the SC27XX LED. For the SC27XX
+>> +             LED controller, it only supports 4 stages to make a single
+>> +             hardware pattern, which is used to configure the rise time,
+>> +             high time, fall time and low time for the breathing mode.
+>> +
+>> +             For the breathing mode, the SC27XX LED only expects one brightness
+>> +             for the high stage. To be compatible with the hardware pattern
+>> +             format, we should set brightness as 0 for rise stage, fall
+>> +             stage and low stage.
+>> +
+>> +             Min stage duration: 125 ms
+>> +             Max stage duration: 31875 ms
+>> +
+>> +             Since the stage duration step is 125 ms, the duration must be
+>> +             a multiplier of 125, like 125ms, 250ms, 375ms, 500ms ... 31875ms.
+>> +
+>> +             Thus the format of the hardware pattern values should be:
+>> +             "0 rise_duration brightness high_duration 0 fall_duration 0 low_duration".
+>> diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+>> index 9d9b7aa..558a325 100644
+>> --- a/drivers/leds/leds-sc27xx-bltc.c
+>> +++ b/drivers/leds/leds-sc27xx-bltc.c
+>> @@ -32,8 +32,15 @@
+>>  #define SC27XX_DUTY_MASK     GENMASK(15, 0)
+>>  #define SC27XX_MOD_MASK              GENMASK(7, 0)
+>>
+>> +#define SC27XX_CURVE_SHIFT   8
+>> +#define SC27XX_CURVE_L_MASK  GENMASK(7, 0)
+>> +#define SC27XX_CURVE_H_MASK  GENMASK(15, 8)
+>> +
+>>  #define SC27XX_LEDS_OFFSET   0x10
+>>  #define SC27XX_LEDS_MAX              3
+>> +#define SC27XX_LEDS_PATTERN_CNT      4
+>> +/* Stage duration step, in milliseconds */
+>> +#define SC27XX_LEDS_STEP     125
+>>
+>>  struct sc27xx_led {
+>>       char name[LED_MAX_NAME_SIZE];
+>> @@ -122,6 +129,98 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
+>>       return err;
+>>  }
+>>
+>> +static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
+>> +{
+>> +     struct sc27xx_led *leds = to_sc27xx_led(ldev);
+>> +     struct regmap *regmap = leds->priv->regmap;
+>> +     u32 base = sc27xx_led_get_offset(leds);
+>> +     u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
+>> +     u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
+>> +     int err;
+>> +
+>> +     mutex_lock(&leds->priv->lock);
+>> +
+>> +     /* Reset the rise, high, fall and low time to zero. */
+>> +     regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
+>> +     regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
+>> +
+>> +     err = regmap_update_bits(regmap, ctrl_base,
+>> +                     (SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
+>> +
+>> +     ldev->brightness = LED_OFF;
+>> +
+>> +     mutex_unlock(&leds->priv->lock);
+>> +
+>> +     return err;
+>> +}
+>> +
+>> +static int sc27xx_led_pattern_set(struct led_classdev *ldev,
+>> +                               struct led_pattern *pattern,
+>> +                               int len, u32 repeat)
+>> +{
+>> +     struct sc27xx_led *leds = to_sc27xx_led(ldev);
+>> +     u32 base = sc27xx_led_get_offset(leds);
+>> +     u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
+>> +     u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
+>> +     struct regmap *regmap = leds->priv->regmap;
+>> +     int err;
+>> +
+>> +     /*
+>> +      * Must contain 4 tuples to configure the rise time, high time, fall
+>> +      * time and low time to enable the breathing mode.
+>> +      */
+>> +     if (len != SC27XX_LEDS_PATTERN_CNT)
+>> +             return -EINVAL;
+>> +
+>> +     mutex_lock(&leds->priv->lock);
+>
+> Please add below macros at the top of the file and the function
+> shown. It will allow to nicely align the value provided by
+> the user to the nearest delta_t step. We have similar thing
+> in led_class_flash.c (led_clamp_align()), that was adopted from
+> v4l2-ctrls.c.
+>
+> #define SC27XX_DELTA_T_MIN SC27XX_LEDS_STEP
+> #define SC27XX_DELTA_T_MAX (SC27XX_LEDS_STEP * 255)
+>
+> static void sc27xx_led_clamp_align_delta_t(u32 *delta_t)
+> {
+>         u32 v, offset, t = *delta_t;
+>
+>         v = t + SC27XX_LEDS_STEP / 2;
+>         v = clamp(v, SC27XX_DELTA_T_MIN, SC27XX_DELTA_T_MAX);
+>         offset = v - SC27XX_DELTA_T_MIN;
+>         offset = SC27XX_LEDS_STEP * (offset / SC27XX_LEDS_STEP);
+>         *delta_t = SC27XX_DELTA_T_MIN + offset;
+> }
+>
+> Then call the function for each delta_t before writing it to the device:
+>
+> sc27xx_led_clamp_align_delta_t(&pattern[0].delta_t);
+> sc27xx_led_clamp_align_delta_t(&pattern[1].delta_t);
+> sc27xx_led_clamp_align_delta_t(&pattern[2].delta_t);
+> sc27xx_led_clamp_align_delta_t(&pattern[3].delta_t);
 
-Why need debugfs.h?
+That's a good point. Will add in next version.
 
-> +#include <linux/delay.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/slab.h>
-> +#include "mtk_hdmi.h"
-
-I don't know why the included file is different in mtk_mt8173_hdmi_phy.c
-with this file. The difference of these two files are hardware control,
-so I think these two files would include the same header files. If these
-two file include the same files, maybe we should move the common include
-statement in some header file to prevent duplicate in these two files.
-
-> +
-> +#define HDMI_CON0	0x00
-> +#define RG_HDMITX_DRV_IBIAS		(0)
-
-You need not to embrace a single number.
-
-> +#define RG_HDMITX_DRV_IBIAS_MASK	(0x3F << 0)
-
-Use lower case for hex number.
-
-> +#define RG_HDMITX_EN_SER		(12)
-> +#define RG_HDMITX_EN_SER_MASK		(0x0F << 12)
-> +#define RG_HDMITX_EN_SLDO		(16)
-> +#define RG_HDMITX_EN_SLDO_MASK		(0x0F << 16)
-> +#define RG_HDMITX_EN_PRED		(20)
-> +#define RG_HDMITX_EN_PRED_MASK		(0x0F << 20)
-> +#define RG_HDMITX_EN_IMP		(24)
-> +#define RG_HDMITX_EN_IMP_MASK		(0x0F << 24)
-> +#define RG_HDMITX_EN_DRV		(28)
-> +#define RG_HDMITX_EN_DRV_MASK		(0x0F << 28)
-> +
-> +#define HDMI_CON1	0x04
-> +#define RG_HDMITX_PRED_IBIAS		(18)
-> +#define RG_HDMITX_PRED_IBIAS_MASK	(0x0F << 18)
-> +#define RG_HDMITX_PRED_IMP		(0x01 << 22)
-> +#define RG_HDMITX_DRV_IMP		(26)
-> +#define RG_HDMITX_DRV_IMP_MASK		(0x3F << 26)
-> +
-> +#define HDMI_CON2	0x08
-> +#define RG_HDMITX_EN_TX_CKLDO		(0x01 << 0)
-> +#define RG_HDMITX_EN_TX_POSDIV		(0x01 << 1)
-> +#define RG_HDMITX_TX_POSDIV		(3)
-> +#define RG_HDMITX_TX_POSDIV_MASK	(0x03 << 3)
-> +#define RG_HDMITX_EN_MBIAS		(0x01 << 6)
-> +#define RG_HDMITX_MBIAS_LPF_EN		(0x01 << 7)
-> +
-> +#define HDMI_CON4	0x10
-> +#define RG_HDMITX_RESERVE_MASK		(0xFFFFFFFF << 0)
-> +
-> +#define HDMI_CON6	0x18
-> +#define RG_HTPLL_BR			(0)
-> +#define RG_HTPLL_BR_MASK		(0x03 << 0)
-> +#define RG_HTPLL_BC			(2)
-> +#define RG_HTPLL_BC_MASK		(0x03 << 2)
-> +#define RG_HTPLL_BP			(4)
-> +#define RG_HTPLL_BP_MASK		(0x0F << 4)
-> +#define RG_HTPLL_IR			(8)
-> +#define RG_HTPLL_IR_MASK		(0x0F << 8)
-> +#define RG_HTPLL_IC			(12)
-> +#define RG_HTPLL_IC_MASK		(0x0F << 12)
-> +#define RG_HTPLL_POSDIV			(16)
-> +#define RG_HTPLL_POSDIV_MASK		(0x03 << 16)
-> +#define RG_HTPLL_PREDIV			(18)
-> +#define RG_HTPLL_PREDIV_MASK		(0x03 << 18)
-> +#define RG_HTPLL_FBKSEL			(20)
-> +#define RG_HTPLL_FBKSEL_MASK		(0x03 << 20)
-> +#define RG_HTPLL_RLH_EN			(0x01 << 22)
-> +#define RG_HTPLL_FBKDIV			(24)
-> +#define RG_HTPLL_FBKDIV_MASK		(0x7F << 24)
-> +#define RG_HTPLL_EN			(0x01 << 31)
-> +
-> +#define HDMI_CON7	0x1c
-> +#define RG_HTPLL_AUTOK_EN		(0x01 << 23)
-> +#define RG_HTPLL_DIVEN			(28)
-> +#define RG_HTPLL_DIVEN_MASK		(0x07 << 28)
-> +
-> +static inline struct mtk_hdmi_phy *to_mtk_hdmi_pll(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct mtk_hdmi_phy, pll_hw);
-> +}
-
-to_mtk_hdmi_pll() is the same as to_mtk_hdmi_phy() in
-mtk_mt8173_hdmi_phy.c, I would like the merge these two functions. Maybe
-you could these common function to a .h or .c file.
-
-> +
-> +static inline void mtk_hdmi_pll_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
-> +				     u32 val, u32 mask)
-> +{
-> +	u32 tmp = readl(hdmi_phy->regs  + offset) & ~mask;
-> +
-> +	tmp |= (val & mask);
-> +	writel(tmp, hdmi_phy->regs + offset);
-> +}
-
-Ditto.
-
-> +
-> +static int mtk_hdmi_pll_enable(struct clk_hw *hw)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
-> +
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN,
-> +			  RG_HTPLL_AUTOK_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_POSDIV),
-> +			  RG_HTPLL_POSDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS,
-> +			  RG_HDMITX_EN_MBIAS);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, RG_HTPLL_EN, RG_HTPLL_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO,
-> +			  RG_HDMITX_EN_TX_CKLDO);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SLDO),
-> +			  RG_HDMITX_EN_SLDO_MASK);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN,
-> +			  RG_HDMITX_MBIAS_LPF_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV,
-> +			  RG_HDMITX_EN_TX_POSDIV);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SER),
-> +			  RG_HDMITX_EN_SER_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_PRED),
-> +			  RG_HDMITX_EN_PRED_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_DRV),
-> +			  RG_HDMITX_EN_DRV_MASK);
-> +	usleep_range(80, 100);
-> +	return 0;
-> +}
-> +
-> +static void mtk_hdmi_pll_disable(struct clk_hw *hw)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
-> +
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_DRV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_PRED_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SER_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_POSDIV);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_MBIAS_LPF_EN);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SLDO_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_CKLDO);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_EN);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_MBIAS);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_POSDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, 0, RG_HTPLL_AUTOK_EN);
-> +	usleep_range(80, 100);
-> +}
-> +
-> +static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				 unsigned long parent_rate)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
-> +	u32 pos_div;
-> +
-> +	if (rate <= 64000000)
-> +		pos_div = 3;
-> +	else if (rate <= 12800000)
-> +		pos_div = 1;
-> +	else
-> +		pos_div = 1;
-> +
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_PREDIV),
-> +			  RG_HTPLL_PREDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_POSDIV),
-> +			  RG_HTPLL_POSDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IC),
-> +			  RG_HTPLL_IC_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IR),
-> +			  RG_HTPLL_IR_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, (pos_div << RG_HDMITX_TX_POSDIV),
-> +			  RG_HDMITX_TX_POSDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (1 << RG_HTPLL_FBKSEL),
-> +			  RG_HTPLL_FBKSEL_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (19 << RG_HTPLL_FBKDIV),
-> +			  RG_HTPLL_FBKDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, (0x2 << RG_HTPLL_DIVEN),
-> +			  RG_HTPLL_DIVEN_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0xc << RG_HTPLL_BP),
-> +			  RG_HTPLL_BP_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x2 << RG_HTPLL_BC),
-> +			  RG_HTPLL_BC_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_BR),
-> +			  RG_HTPLL_BR_MASK);
-> +
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON1, 0, RG_HDMITX_PRED_IMP);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON1, (0x3 << RG_HDMITX_PRED_IBIAS),
-> +			  RG_HDMITX_PRED_IBIAS_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0x0 << RG_HDMITX_EN_IMP),
-> +			  RG_HDMITX_EN_IMP_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON1, (0x28 << RG_HDMITX_DRV_IMP),
-> +			  RG_HDMITX_DRV_IMP_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON4, 0x28, RG_HDMITX_RESERVE_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xa << RG_HDMITX_DRV_IBIAS),
-> +			  RG_HDMITX_DRV_IBIAS_MASK);
-> +	return 0;
-> +}
-> +
-> +static long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				    unsigned long *parent_rate)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
-> +
-> +	hdmi_phy->pll_rate = rate;
-
-In mtk_mt8173_hdmi_phy.c, mtk_hdmi_pll_round_rate adjust the
-parent_rate, so mt2701 need not to adjust?
-
-> +	return rate;
-> +}
-> +
-> +static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
-> +					      unsigned long parent_rate)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_pll(hw);
-> +
-> +	return hdmi_phy->pll_rate;
-> +}
-> +
-> +static const struct clk_ops mtk_hdmi_phy_pll_ops = {
-> +	.enable = mtk_hdmi_pll_enable,
-> +	.disable = mtk_hdmi_pll_disable,
-
-Why mt2701 implement enable/disable, but mt8173 implement
-prepare/unprepare? I would like these two use the same method. If these
-two would be different, describe 'why' in commit message.
-
-> +	.set_rate = mtk_hdmi_pll_set_rate,
-> +	.round_rate = mtk_hdmi_pll_round_rate,
-> +	.recalc_rate = mtk_hdmi_pll_recalc_rate,
-> +};
-> +
-> +static void mtk_hdmi_phy_enable_tmds(struct mtk_hdmi_phy *hdmi_phy)
-> +{
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, RG_HTPLL_AUTOK_EN,
-> +			  RG_HTPLL_AUTOK_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
-
-In mtk_mt8173_hdmi_phy.c, it define mtk_hdmi_phy_set_bits() and
-mtk_hdmi_phy_clear_bits(). I think we could reuse it to reduce the code
-size.
-
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, (0x3 << RG_HTPLL_POSDIV),
-> +			  RG_HTPLL_POSDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_MBIAS,
-> +			  RG_HDMITX_EN_MBIAS);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, RG_HTPLL_EN, RG_HTPLL_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_CKLDO,
-> +			  RG_HDMITX_EN_TX_CKLDO);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SLDO),
-> +			  RG_HDMITX_EN_SLDO_MASK);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN,
-> +			  RG_HDMITX_MBIAS_LPF_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV,
-> +			  RG_HDMITX_EN_TX_POSDIV);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_SER),
-> +			  RG_HDMITX_EN_SER_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_PRED),
-> +			  RG_HDMITX_EN_PRED_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, (0xf << RG_HDMITX_EN_DRV),
-> +			  RG_HDMITX_EN_DRV_MASK);
-> +	usleep_range(80, 100);
-> +}
-> +
-> +static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
-> +{
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_DRV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_PRED_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SER_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_POSDIV);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_MBIAS_LPF_EN);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON0, 0, RG_HDMITX_EN_SLDO_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_TX_CKLDO);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_EN);
-> +	usleep_range(80, 100);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON2, 0, RG_HDMITX_EN_MBIAS);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_POSDIV_MASK);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON6, 0, RG_HTPLL_RLH_EN);
-> +	mtk_hdmi_pll_mask(hdmi_phy, HDMI_CON7, 0, RG_HTPLL_AUTOK_EN);
-> +	usleep_range(80, 100);
-> +}
-> +
-> +static int mtk_hdmi_phy_power_on(struct phy *phy)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(hdmi_phy->pll);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	mtk_hdmi_phy_enable_tmds(hdmi_phy);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mtk_hdmi_phy_power_off(struct phy *phy)
-> +{
-> +	struct mtk_hdmi_phy *hdmi_phy = phy_get_drvdata(phy);
-> +
-> +	mtk_hdmi_phy_disable_tmds(hdmi_phy);
-> +	clk_disable_unprepare(hdmi_phy->pll);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops mtk_hdmi_phy_dev_ops = {
-> +	.power_on = mtk_hdmi_phy_power_on,
-> +	.power_off = mtk_hdmi_phy_power_off,
-> +	.owner = THIS_MODULE,
+>
+> Also, regarding PATCH v8 1/2, please change the types of properties
+> in struct led_pattern as follows:
+>
+> +struct led_pattern {
+> +       u32 delta_t;
+> +       enum led_brightness brightness;
 > +};
 
+Sure. Thanks for your comments.
 
-mtk_hdmi_phy_power_on(), mtk_hdmi_phy_power_off(), mtk_hdmi_phy_dev_ops
-is the same as those in mtk_mt8173_hdmi_phy.c, so I think you should
-merge them to prevent duplicate code.
-
-Regards,
-CK
-
-> +
-> +struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
-> +	.tz_enabled = false,
-> +	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
-> +	.hdmi_phy_dev_ops = &mtk_hdmi_phy_dev_ops,
-> +};
-> +
-> +MODULE_AUTHOR("Chunhui Dai <chunhui.dai@mediatek.com>");
-> +MODULE_DESCRIPTION("MediaTek HDMI PHY Driver");
-> +MODULE_LICENSE("GPL v2");
-
-
+-- 
+Baolin Wang
+Best Regards
