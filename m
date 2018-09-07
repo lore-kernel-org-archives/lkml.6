@@ -2,302 +2,125 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CCAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE33C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7262083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F7262083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9A4702083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="fiEwA7ha"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4702083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbeIHCY0 (ORCPT
+        id S1730343AbeIHCYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:24:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54950 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729557AbeIHCYZ (ORCPT
+        Fri, 7 Sep 2018 22:24:30 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:25381 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729557AbeIHCY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:24:25 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5469DFEA;
-        Fri,  7 Sep 2018 21:41:30 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 07/47] powerpc/fadump: handle crash memory ranges array index overflow
-Date:   Fri,  7 Sep 2018 23:10:03 +0200
-Message-Id: <20180907210905.123138277@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
-References: <20180907210904.607934824@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 7 Sep 2018 22:24:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1536356494; x=1567892494;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=coqOdefSRcgS8/PtGvLyBD+pkyND5+g1U3mo6EtjRg8=;
+  b=fiEwA7ha10uA21u/QodJwWGdgLn1lWrzoV/iDH3X1KHL0v3iCu8D9atS
+   P8H1lM1r260QRw9gVzlzvin3YidPYHdVi+37p1daHTzLM9n9Qy2prIJ3P
+   zUTktd/y3Q2WoNdkjbsWdHBQ4fVEqfJNTb7MQm9EUxD2Zn3WnSU1rgS2d
+   E=;
+X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
+   d="scan'208";a="361243118"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:41:33 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
+        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87LfRxT034578
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Fri, 7 Sep 2018 21:41:30 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LfPuF027183
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 7 Sep 2018 23:41:25 +0200
+Received: (from jschoenh@localhost)
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LfOHq027181;
+        Fri, 7 Sep 2018 23:41:24 +0200
+From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC 09/60] sched: Do not require a CFS in init_tg_cfs_entry()
+Date:   Fri,  7 Sep 2018 23:39:56 +0200
+Message-Id: <20180907214047.26914-10-jschoenh@amazon.de>
+X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
+In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Just like init_tg_cfs_entry() does something useful without a scheduling
+entity, let it do something useful without a CFS runqueue.
 
-------------------
+This prepares for the addition of new types of SEs.
 
-From: Hari Bathini <hbathini@linux.ibm.com>
-
-commit 1bd6a1c4b80a28d975287630644e6b47d0f977a5 upstream.
-
-Crash memory ranges is an array of memory ranges of the crashing kernel
-to be exported as a dump via /proc/vmcore file. The size of the array
-is set based on INIT_MEMBLOCK_REGIONS, which works alright in most cases
-where memblock memory regions count is less than INIT_MEMBLOCK_REGIONS
-value. But this count can grow beyond INIT_MEMBLOCK_REGIONS value since
-commit 142b45a72e22 ("memblock: Add array resizing support").
-
-On large memory systems with a few DLPAR operations, the memblock memory
-regions count could be larger than INIT_MEMBLOCK_REGIONS value. On such
-systems, registering fadump results in crash or other system failures
-like below:
-
-  task: c00007f39a290010 ti: c00000000b738000 task.ti: c00000000b738000
-  NIP: c000000000047df4 LR: c0000000000f9e58 CTR: c00000000010f180
-  REGS: c00000000b73b570 TRAP: 0300   Tainted: G          L   X  (4.4.140+)
-  MSR: 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22004484  XER: 20000000
-  CFAR: c000000000008500 DAR: 000007a450000000 DSISR: 40000000 SOFTE: 0
-  ...
-  NIP [c000000000047df4] smp_send_reschedule+0x24/0x80
-  LR [c0000000000f9e58] resched_curr+0x138/0x160
-  Call Trace:
-    resched_curr+0x138/0x160 (unreliable)
-    check_preempt_curr+0xc8/0xf0
-    ttwu_do_wakeup+0x38/0x150
-    try_to_wake_up+0x224/0x4d0
-    __wake_up_common+0x94/0x100
-    ep_poll_callback+0xac/0x1c0
-    __wake_up_common+0x94/0x100
-    __wake_up_sync_key+0x70/0xa0
-    sock_def_readable+0x58/0xa0
-    unix_stream_sendmsg+0x2dc/0x4c0
-    sock_sendmsg+0x68/0xa0
-    ___sys_sendmsg+0x2cc/0x2e0
-    __sys_sendmsg+0x5c/0xc0
-    SyS_socketcall+0x36c/0x3f0
-    system_call+0x3c/0x100
-
-as array index overflow is not checked for while setting up crash memory
-ranges causing memory corruption. To resolve this issue, dynamically
-allocate memory for crash memory ranges and resize it incrementally,
-in units of pagesize, on hitting array size limit.
-
-Fixes: 2df173d9e85d ("fadump: Initialize elfcore header and add PT_LOAD program headers.")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-[mpe: Just use PAGE_SIZE directly, fixup variable placement]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- arch/powerpc/include/asm/fadump.h |    3 -
- arch/powerpc/kernel/fadump.c      |   91 ++++++++++++++++++++++++++++++++------
- 2 files changed, 77 insertions(+), 17 deletions(-)
+ kernel/sched/fair.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/arch/powerpc/include/asm/fadump.h
-+++ b/arch/powerpc/include/asm/fadump.h
-@@ -194,9 +194,6 @@ struct fadump_crash_info_header {
- 	struct cpumask	cpu_online_mask;
- };
- 
--/* Crash memory ranges */
--#define INIT_CRASHMEM_RANGES	(INIT_MEMBLOCK_REGIONS + 2)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2b3fd7cd9fde..bccd7a66858e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9903,21 +9903,23 @@ void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
+ 		       struct sched_entity *se, struct rq *rq,
+ 		       struct cfs_rq *parent)
+ {
+-	cfs_rq->tg = tg;
+-	cfs_rq->rq = rq;
+-	cfs_rq->my_se = se;
+-	init_cfs_rq_runtime(cfs_rq);
 -
- struct fad_crash_memory_ranges {
- 	unsigned long long	base;
- 	unsigned long long	size;
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -48,8 +48,10 @@ static struct fadump_mem_struct fdm;
- static const struct fadump_mem_struct *fdm_active;
- 
- static DEFINE_MUTEX(fadump_mutex);
--struct fad_crash_memory_ranges crash_memory_ranges[INIT_CRASHMEM_RANGES];
-+struct fad_crash_memory_ranges *crash_memory_ranges;
-+int crash_memory_ranges_size;
- int crash_mem_ranges;
-+int max_crash_mem_ranges;
- 
- /* Scan the Firmware Assisted dump configuration details. */
- int __init early_init_dt_scan_fw_dump(unsigned long node,
-@@ -726,38 +728,88 @@ static int __init process_fadump(const s
- 	return 0;
- }
- 
--static inline void fadump_add_crash_memory(unsigned long long base,
--					unsigned long long end)
-+static void free_crash_memory_ranges(void)
-+{
-+	kfree(crash_memory_ranges);
-+	crash_memory_ranges = NULL;
-+	crash_memory_ranges_size = 0;
-+	max_crash_mem_ranges = 0;
-+}
-+
-+/*
-+ * Allocate or reallocate crash memory ranges array in incremental units
-+ * of PAGE_SIZE.
-+ */
-+static int allocate_crash_memory_ranges(void)
-+{
-+	struct fad_crash_memory_ranges *new_array;
-+	u64 new_size;
-+
-+	new_size = crash_memory_ranges_size + PAGE_SIZE;
-+	pr_debug("Allocating %llu bytes of memory for crash memory ranges\n",
-+		 new_size);
-+
-+	new_array = krealloc(crash_memory_ranges, new_size, GFP_KERNEL);
-+	if (new_array == NULL) {
-+		pr_err("Insufficient memory for setting up crash memory ranges\n");
-+		free_crash_memory_ranges();
-+		return -ENOMEM;
-+	}
-+
-+	crash_memory_ranges = new_array;
-+	crash_memory_ranges_size = new_size;
-+	max_crash_mem_ranges = (new_size /
-+				sizeof(struct fad_crash_memory_ranges));
-+	return 0;
-+}
-+
-+static inline int fadump_add_crash_memory(unsigned long long base,
-+					  unsigned long long end)
- {
- 	if (base == end)
+-	/* se could be NULL for root_task_group */
+-	if (!se)
 -		return;
-+		return 0;
-+
-+	if (crash_mem_ranges == max_crash_mem_ranges) {
-+		int ret;
-+
-+		ret = allocate_crash_memory_ranges();
-+		if (ret)
-+			return ret;
++	/* cfs_rq may be NULL for certain types of SE */
++	if (cfs_rq) {
++		cfs_rq->tg = tg;
++		cfs_rq->rq = rq;
++		cfs_rq->my_se = se;
++		init_cfs_rq_runtime(cfs_rq);
 +	}
  
- 	pr_debug("crash_memory_range[%d] [%#016llx-%#016llx], %#llx bytes\n",
- 		crash_mem_ranges, base, end - 1, (end - base));
- 	crash_memory_ranges[crash_mem_ranges].base = base;
- 	crash_memory_ranges[crash_mem_ranges].size = end - base;
- 	crash_mem_ranges++;
-+	return 0;
+-	set_entity_cfs(se, parent);
+-	se->my_q = cfs_rq;
++	/* se is NULL for root_task_group */
++	if (se) {
++		set_entity_cfs(se, parent);
++		se->my_q = cfs_rq;
+ 
+-	/* guarantee group entities always have weight */
+-	update_load_set(&se->load, NICE_0_LOAD);
+-	init_entity_runnable_average(se);
++		/* guarantee group entities always have weight */
++		update_load_set(&se->load, NICE_0_LOAD);
++		init_entity_runnable_average(se);
++	}
  }
  
--static void fadump_exclude_reserved_area(unsigned long long start,
-+static int fadump_exclude_reserved_area(unsigned long long start,
- 					unsigned long long end)
- {
- 	unsigned long long ra_start, ra_end;
-+	int ret = 0;
- 
- 	ra_start = fw_dump.reserve_dump_area_start;
- 	ra_end = ra_start + fw_dump.reserve_dump_area_size;
- 
- 	if ((ra_start < end) && (ra_end > start)) {
- 		if ((start < ra_start) && (end > ra_end)) {
--			fadump_add_crash_memory(start, ra_start);
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(start, ra_start);
-+			if (ret)
-+				return ret;
-+
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		} else if (start < ra_start) {
--			fadump_add_crash_memory(start, ra_start);
-+			ret = fadump_add_crash_memory(start, ra_start);
- 		} else if (ra_end < end) {
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		}
- 	} else
--		fadump_add_crash_memory(start, end);
-+		ret = fadump_add_crash_memory(start, end);
-+
-+	return ret;
- }
- 
- static int fadump_init_elfcore_header(char *bufp)
-@@ -793,10 +845,11 @@ static int fadump_init_elfcore_header(ch
-  * Traverse through memblock structure and setup crash memory ranges. These
-  * ranges will be used create PT_LOAD program headers in elfcore header.
-  */
--static void fadump_setup_crash_memory_ranges(void)
-+static int fadump_setup_crash_memory_ranges(void)
- {
- 	struct memblock_region *reg;
- 	unsigned long long start, end;
-+	int ret;
- 
- 	pr_debug("Setup crash memory ranges.\n");
- 	crash_mem_ranges = 0;
-@@ -807,7 +860,9 @@ static void fadump_setup_crash_memory_ra
- 	 * specified during fadump registration. We need to create a separate
- 	 * program header for this chunk with the correct offset.
- 	 */
--	fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	ret = fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	if (ret)
-+		return ret;
- 
- 	for_each_memblock(memory, reg) {
- 		start = (unsigned long long)reg->base;
-@@ -816,8 +871,12 @@ static void fadump_setup_crash_memory_ra
- 			start = fw_dump.boot_memory_size;
- 
- 		/* add this range excluding the reserved dump area. */
--		fadump_exclude_reserved_area(start, end);
-+		ret = fadump_exclude_reserved_area(start, end);
-+		if (ret)
-+			return ret;
- 	}
-+
-+	return 0;
- }
- 
- /*
-@@ -941,6 +1000,7 @@ static void register_fadump(void)
- {
- 	unsigned long addr;
- 	void *vaddr;
-+	int ret;
- 
- 	/*
- 	 * If no memory is reserved then we can not register for firmware-
-@@ -949,7 +1009,9 @@ static void register_fadump(void)
- 	if (!fw_dump.reserve_dump_area_size)
- 		return;
- 
--	fadump_setup_crash_memory_ranges();
-+	ret = fadump_setup_crash_memory_ranges();
-+	if (ret)
-+		return ret;
- 
- 	addr = be64_to_cpu(fdm.rmr_region.destination_address) + be64_to_cpu(fdm.rmr_region.source_len);
- 	/* Initialize fadump crash info header. */
-@@ -1028,6 +1090,7 @@ void fadump_cleanup(void)
- 	} else if (fw_dump.dump_registered) {
- 		/* Un-register Firmware-assisted dump if it was registered. */
- 		fadump_unregister_dump(&fdm);
-+		free_crash_memory_ranges();
- 	}
- }
- 
-
+ static DEFINE_MUTEX(shares_mutex);
+-- 
+2.9.3.1.gcba166c.dirty
 
