@@ -2,150 +2,212 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26789C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 23:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C96F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 23:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCB9B2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 23:32:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xMCeslYy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB9B2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 643AA20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 23:53:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643AA20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbeIHEPa (ORCPT
+        id S1726237AbeIHEhA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 00:15:30 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40062 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725734AbeIHEP3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 00:15:29 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w87NOBUb170130;
-        Fri, 7 Sep 2018 23:32:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=w3MCDawBW3umXcn6zKC3iTqwAoFxlqJtgkUb2ARUqo0=;
- b=xMCeslYyKPC8jLOlCuYdpzFcgFEN4Dd4UO0a83mi1M7dBGxEPURj3EY/6rKknB8OqP0M
- 62EBOnde/gO/uTJQT8kMGW5wibl6I6lRAgHrjrW3dJ6aBTUfniAc0f9YLj0JDTO3KqpR
- G3qWOPXS9BSwOQ6AGZkyMFVXYmRFMdZFgNyF6DGFoeYSvKvX0M7AqKFJJ6EhfTrV04KH
- ynulJVtRAsEyeCQivqmjPf+3b+82chM4BG/ciOwKxrpiiAlUEtprodr5M38pdtH3g751
- 6dCNoJlpD1NKTs4JrqsA1Yv+Mn3lxd8fu6Phlkw+VqLe4KdtWpT8eUd/2rGzzPFGDemM nA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2m7jqq5503-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Sep 2018 23:32:08 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w87NW2ow012154
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Sep 2018 23:32:02 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w87NW2Sw013897;
-        Fri, 7 Sep 2018 23:32:02 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 07 Sep 2018 16:32:01 -0700
-Date:   Fri, 7 Sep 2018 16:32:02 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Max Asbock <masbock@lenovo.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chris McDermott <lcm@lenovo.com>
-Subject: Re: [Patch] acpi_power_meter: remove 'ignoring unsafe software power
- cap' message
-Message-ID: <20180907233201.GA4635@magnolia>
-References: <TY2PR03MB3519C32A5BC640BA41356CBEDE000@TY2PR03MB3519.apcprd03.prod.outlook.com>
+        Sat, 8 Sep 2018 00:37:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46298 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725731AbeIHEhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 00:37:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 614A9AEF1;
+        Fri,  7 Sep 2018 23:53:35 +0000 (UTC)
+Subject: Re: [PATCH] apparmor: Fix network performance issue in
+ aa_label_sk_perm
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     seth.arnold@canonical.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20180907043357.4638-1-tonyj@suse.de>
+ <c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
+From:   Tony Jones <tonyj@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
+ xsDiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
+ il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
+ w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
+ /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
+ 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
+ VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
+ 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
+ 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc81CQW50aG9ueSBO
+ ZXZpbGxlIEpvbmVzIChmdWxsIGxlZ2FsIG5hbWUgb24gSUQpIDx0b255QHRvbnlqb25lcy5j
+ b20+wmEEExECACEFAldtZNcCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQsVhbIR/i
+ Shd9PgCeMA43k9Ej5K/l8lVdE2niwBvJAoIAoI2EVzpZQZH5QDl+EFIhEP0lCnMPzsFNBEkQ
+ mbwQCADOv1l3e/sHXQ4O1VztfFsx7dbqjUV0KUv1kiAu/rXOFZy1p8oMy78xRK/GZgWrTSl5
+ wP9J9fyjECsDTb6xDYT79lvgns0BYgDEJ+bLtUTTAMGtkf+EFqkjH8uBWph9n1HD5rgVeuWT
+ XLyhALCG+P6RaubtXuiVHRo87LU0UY1TJMVIyP6lubGI05d0LFVRB7dQTWT3ID6YguPJpFqf
+ CSIIsKM29E8vzxDTXsF2FUFZmbPyqHBc39GuMJwMew9fk7R6/rwwvK6yHmZ+6S68KrNbVjdC
+ X6LB/ATDmU2ZAZ2hX1yyDsk/uxoOJxIU7Ypxm8xu8Myq08WKl0XlRah9kpnfAAMFB/9vlxU3
+ JvmLxAjQbsE8YE2fhWVBfmfrpOw8GetE06LcyFNNUQEKnyz6OpSMmNcSOMD47iEibtCp2yjO
+ 6vDsaVxDQDTp0jM7/VFSCVlkygLQkvjdlCYn7f7IWsuNaAYfp6/oA5tgsftm6OAAHmfQfLZk
+ gKHOwospsem0W0G+kMoHy6l2r4a6exjig3fAZrruH2weoO+PKnrgLOCfwbm4YvDHd/951sQI
+ rPmQ9RLMKESTey4rvjZIQ/TW/itrlZfzwefzU2MYHJAzP1pwkt0LsV8vNe9s1rQqC8NpKWVh
+ +wkigYLPd4pU65NZc6JoQgq7Lzff7eavY+6UsLIsrKwAR10qwkkEGBECAAkFAkkQmbwCGwwA
+ CgkQsVhbIR/iSheGBACfUQYBMtk9LncC3236ndLwGQ0j3JEAn0DQ6YuWK/6vAR6xgaUZ4Y1o odMn
+Message-ID: <6d1908de-aa62-dc63-cc60-8883358d257c@suse.de>
+Date:   Fri, 7 Sep 2018 16:53:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY2PR03MB3519C32A5BC640BA41356CBEDE000@TY2PR03MB3519.apcprd03.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9009 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809070229
+In-Reply-To: <c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:07:39PM +0000, Max Asbock wrote:
-> At boot time the acpi_power_meter driver greets users of non-IBM systems with the message: 
-> 	
-> "Ignoring unsafe software power cap". 
+On 09/07/2018 09:37 AM, John Johansen wrote:
+
+> hey Tony,
 > 
-> This message is generally interpreted as meaning: The system is
-> operating under an unsafe power  cap and Linux is ignoring this fact,
-> thus living dangerously. It, or its presumed origin, has been blamed
-> for system crashes. People spent time writing knowledge base articles
-> which explain that the message doesn't mean what users think. I now
-> have to write another such article telling people to ignore this
-> message. To avoid future confusion and unnecessary work, I think the
-> best solution is to remove the message. 
-> 
-> Here is my translation of the 'ignoring unsafe power cap' message:
->
-> 'The acpi_power_meter driver discovered an ACPI object that would in
-> theory allow software to set power caps. The driver could now create
-> files in sysfs to expose this interface to user space, but it chooses
-> not to do so'.
+> thanks for the patch, I am curious did you're investigation look
+> into what parts of DEFINE_AUDIT_SK are causing the issue?
 
-TBH that driver safelists the (single) system that is known to have a
-working power capping mechanism.  At the time (ten years ago) the AEM
-group worried that other vendors would produce ACPI power meters which
-advertised the capping ability but did not enforce the limit, hence the
-safelist.  I asked "Well can't we just trust vendor firmware?" and peals
-of laughter erupted on the phone. ;)
+Hi JJ.
 
-If the user confusion is that Lenovo systems have ACPI power meters with
-working power capping, you could consider adding Lenovo to the safelist.
+Attached are the perf annotations for DEFINE_AUDIT_SK (percentages are relative to the fn).   
+Our kernel performance testing is carried out with default installs which means AppArmor 
+is enabled but the performance tests are unconfined. It was obvious that the overhead of 
+DEFINE_AUDIT_SK was significant for smaller packet sizes (typical of synthetic benchmarks) 
+and that it didn't need to execute for the unconfined case,  hence the patch.  I didn't 
+spend any time looking at the performance of confined tasks.  It may be worth your time to 
+look at this.
 
-That said, the message is misleading.  It probably should have read:
+Comparing my current tip (2601dd392dd1) to tip+patch I'm seeing an increase of 3-6% in netperf
+throughput for packet sizes 64-1024.
 
-"Power capping has not been verified to work on this platform.
-Please ask the platform vendor email X to have it added to the list."
+HTH
 
-Alternately, you could remove the safelisting entirely and assume that
-if the firmware is malicious there are far more evil things it will try.
-Seeing as IBM AEM is a decade old I doubt it's protecting much now.
+Tony
 
-But /me shrugs and says, "eh, good enough".  Also, nice to hear from you
-& lcm again. :)
-
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> 
-> Patch: Remove error message because it is generally misinterpreted. A replacement
-> for the message is not necessary.
-> 
-> Signed-off-by: Max Asbock <masbock@lenovo.com>
-> 
-> diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
-> index 34e45b9..578e886 100644
-> --- a/drivers/hwmon/acpi_power_meter.c
-> +++ b/drivers/hwmon/acpi_power_meter.c
-> @@ -693,11 +693,8 @@ static int setup_attrs(struct acpi_power_meter_resource *resource)
->  	}
->  
->  	if (resource->caps.flags & POWER_METER_CAN_CAP) {
-> -		if (!can_cap_in_hardware()) {
-> -			dev_err(&resource->acpi_dev->dev,
-> -				"Ignoring unsafe software power cap!\n");
-> +		if (!can_cap_in_hardware())
->  			goto skip_unsafe_cap;
-> -		}
->  
->  		if (resource->caps.configurable_cap)
->  			res = register_attrs(resource, rw_cap_attrs);
-> 
-> 
-> 
+ Percent |	Source code & Disassembly of vmlinux for cycles:ppp (117 samples)
+---------------------------------------------------------------------------------
+         :
+         :
+         :
+         :                      Disassembly of section .text:
+         :
+         :                      ffffffff813fbec0 <aa_label_sk_perm>:
+         :                      aa_label_sk_perm():
+         :                                                                 type));
+         :                      }
+         :
+         :                      static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
+         :                                                  struct sock *sk)
+         :                      {
+    0.00 :   ffffffff813fbec0:       callq  ffffffff81a017f0 <__fentry__>
+    2.56 :   ffffffff813fbec5:       push   %r14
+    0.00 :   ffffffff813fbec7:       mov    %rcx,%r14
+         :                              struct aa_profile *profile;
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbeca:       mov    $0x7,%ecx
+         :                      {
+    0.00 :   ffffffff813fbecf:       push   %r13
+    3.42 :   ffffffff813fbed1:       mov    %edx,%r13d
+    0.00 :   ffffffff813fbed4:       push   %r12
+    0.00 :   ffffffff813fbed6:       push   %rbp
+    0.00 :   ffffffff813fbed7:       mov    %rdi,%rbp
+    5.13 :   ffffffff813fbeda:       push   %rbx
+    0.00 :   ffffffff813fbedb:       sub    $0xb8,%rsp
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbee2:       movzwl 0x10(%r14),%r9d
+         :                      {
+    1.71 :   ffffffff813fbee7:       mov    %gs:0x28,%rax
+    0.00 :   ffffffff813fbef0:       mov    %rax,0xb0(%rsp)
+    0.00 :   ffffffff813fbef8:       xor    %eax,%eax
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbefa:       lea    0x78(%rsp),%rdx
+    1.71 :   ffffffff813fbeff:       lea    0x20(%rsp),%r8
+    0.00 :   ffffffff813fbf04:       movq   $0x0,(%rsp)
+    0.00 :   ffffffff813fbf0c:       movq   $0x0,0x10(%rsp)
+    0.00 :   ffffffff813fbf15:       mov    %rdx,%rdi
+   14.53 :   ffffffff813fbf18:       rep stos %rax,%es:(%rdi)
+    1.71 :   ffffffff813fbf1b:       mov    $0xb,%ecx
+    0.00 :   ffffffff813fbf20:       mov    %r8,%rdi
+    0.00 :   ffffffff813fbf23:       mov    %r14,0x80(%rsp)
+   18.80 :   ffffffff813fbf2b:       rep stos %rax,%es:(%rdi)
+    0.00 :   ffffffff813fbf2e:       mov    %rsi,0x28(%rsp)
+    1.71 :   ffffffff813fbf33:       mov    %r9w,0x88(%rsp)
+    0.00 :   ffffffff813fbf3c:       cmp    $0x1,%r9w
+    0.00 :   ffffffff813fbf41:       je     ffffffff813fbfa1 <aa_label_sk_perm+0xe1>
+    0.00 :   ffffffff813fbf43:       mov    $0x2,%eax
+    0.00 :   ffffffff813fbf48:       test   %r14,%r14
+    0.00 :   ffffffff813fbf4b:       je     ffffffff813fbfa1 <aa_label_sk_perm+0xe1>
+   14.53 :   ffffffff813fbf4d:       mov    %al,(%rsp)
+    0.00 :   ffffffff813fbf50:       movzwl 0x1ea(%r14),%eax
+         :                              AA_BUG(!sk);
+         :
+         :                              if (unconfined(label))
+         :                                      return 0;
+         :
+         :                              return fn_for_each_confined(label, profile,
+    0.00 :   ffffffff813fbf58:       xor    %r12d,%r12d
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbf5b:       mov    %r8,0x18(%rsp)
+    8.55 :   ffffffff813fbf60:       mov    %eax,0x58(%rsp)
+    0.00 :   ffffffff813fbf64:       movzbl 0x1e9(%r14),%eax
+    0.00 :   ffffffff813fbf6c:       mov    %rdx,0x8(%rsp)
+    0.00 :   ffffffff813fbf71:       mov    %eax,0x5c(%rsp)
+         :                              if (unconfined(label))
+    8.55 :   ffffffff813fbf75:       testb  $0x2,0x40(%rbp)
+    0.00 :   ffffffff813fbf79:       je     ffffffff813fbfa8 <aa_label_sk_perm+0xe8>
+         :                                              aa_profile_af_sk_perm(profile, &sa, request, sk));
+         :                      }
+    0.00 :   ffffffff813fbf7b:       mov    0xb0(%rsp),%rdx
+    0.00 :   ffffffff813fbf83:       xor    %gs:0x28,%rdx
+    4.27 :   ffffffff813fbf8c:       mov    %r12d,%eax
+    0.00 :   ffffffff813fbf8f:       jne    ffffffff813fbfe5 <aa_label_sk_perm+0x125>
+    0.00 :   ffffffff813fbf91:       add    $0xb8,%rsp
+    0.00 :   ffffffff813fbf98:       pop    %rbx
+    5.13 :   ffffffff813fbf99:       pop    %rbp
+    0.00 :   ffffffff813fbf9a:       pop    %r12
+    0.00 :   ffffffff813fbf9c:       pop    %r13
+    0.00 :   ffffffff813fbf9e:       pop    %r14
+    7.69 :   ffffffff813fbfa0:       retq
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbfa1:       mov    $0x7,%eax
+    0.00 :   ffffffff813fbfa6:       jmp    ffffffff813fbf4d <aa_label_sk_perm+0x8d>
+         :                              return fn_for_each_confined(label, profile,
+    0.00 :   ffffffff813fbfa8:       xor    %esi,%esi
+    0.00 :   ffffffff813fbfaa:       jmp    ffffffff813fbfcd <aa_label_sk_perm+0x10d>
+         :                      aa_profile_af_sk_perm():
+         :                      static inline int aa_profile_af_sk_perm(struct aa_profile *profile,
+         :                                                              struct common_audit_data *sa,
+         :                                                              u32 request,
+         :                                                              struct sock *sk)
+         :                      {
+         :                              return aa_profile_af_perm(profile, sa, request, sk->sk_family,
+    0.00 :   ffffffff813fbfac:       movzwl 0x10(%r14),%ecx
+    0.00 :   ffffffff813fbfb1:       movzwl 0x1ea(%r14),%r8d
+    0.00 :   ffffffff813fbfb9:       mov    %rsp,%rsi
+    0.00 :   ffffffff813fbfbc:       mov    %r13d,%edx
+    0.00 :   ffffffff813fbfbf:       callq  ffffffff813fbdf0 <aa_profile_af_perm>
+         :                      aa_label_sk_perm():
+    0.00 :   ffffffff813fbfc4:       lea    0x1(%rbx),%esi
+    0.00 :   ffffffff813fbfc7:       test   %eax,%eax
+    0.00 :   ffffffff813fbfc9:       cmovne %eax,%r12d
+    0.00 :   ffffffff813fbfcd:       mov    %rbp,%rdi
+    0.00 :   ffffffff813fbfd0:       callq  ffffffff813f7310 <aa_label_next_confined>
+    0.00 :   ffffffff813fbfd5:       mov    %eax,%ebx
+    0.00 :   ffffffff813fbfd7:       cltq
+    0.00 :   ffffffff813fbfd9:       mov    0x50(%rbp,%rax,8),%rdi
+    0.00 :   ffffffff813fbfde:       test   %rdi,%rdi
+    0.00 :   ffffffff813fbfe1:       jne    ffffffff813fbfac <aa_label_sk_perm+0xec>
+    0.00 :   ffffffff813fbfe3:       jmp    ffffffff813fbf7b <aa_label_sk_perm+0xbb>
+         :                      }
+    0.00 :   ffffffff813fbfe5:       callq  ffffffff81090d60 <__stack_chk_fail>
