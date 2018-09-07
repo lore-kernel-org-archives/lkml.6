@@ -2,110 +2,86 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9958BC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB38C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52EB02077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:44:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EB02077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8FAEB2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:45:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FAEB2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbeIGUZx (ORCPT
+        id S1729380AbeIGU0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:25:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36646 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728547AbeIGUYy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:24:54 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyIuo-00055Q-3v; Fri, 07 Sep 2018 17:43:22 +0200
-Message-Id: <20180907150119.325866892@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 17:01:19 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Bin Yang <bin.yang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-Subject: [patch 00/10] x86/mm/cpa: Improve large page preservation handling
+        Fri, 7 Sep 2018 16:26:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:33822 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728097AbeIGU0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 16:26:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC00618A;
+        Fri,  7 Sep 2018 08:45:01 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BD5EC3F5BC;
+        Fri,  7 Sep 2018 08:45:01 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id E7D321AE37BD; Fri,  7 Sep 2018 16:45:16 +0100 (BST)
+Date:   Fri, 7 Sep 2018 16:45:16 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com
+Subject: [GIT PULL] arm64: fix for -rc3
+Message-ID: <20180907154516.GG12788@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bin reported that try_preserve_large_page() in the page attribute code
-consumes an large amount of CPU time. His initial attempts of addressing
-this made me look deeper into the code.
+Hi Linus,
 
-The logic in this code is not really intelligent. It requires to check a
-large page in 4k steps for conflicts. That's insane as most operations do
-not conflict at all.
+Just one small fix here, preventing a VM_WARN_ON when a !present PMD/PUD
+is "freed" as part of a huge ioremap() operation. The correct behaviour
+is to skip the free silently in this case, which is a little weird (the
+function is a bit of a misnomer), but it follows the x86 implementation.
 
-The code also lacks sanity checks which allow to detect whether the
-existing mapping is incorrect vs. the static protections.
+I also renewed the expiry dates on my gpg subkeys this week, so you might
+need to re-fetch them if you can find a working keyserver.
 
-Any form of debugging or statistics is missing as well.
+Cheers,
 
-The following series addresses this:
+Will
 
-  - Clean up the code so it becomes extensible
+--->8
 
-  - Provide the ability to check a full range for conflicts
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
-  - Add debug output and statistics to quantify the changes and to allow
-    observation of the mechanism in the future.
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
-  - Add a sanity check for existing mappings with a fixup for the 2M case
-    and a warning for the 1G case. The 2M case is trivial to address, the
-    1G case requires larger changes and is just warned about for now.
+are available in the git repository at:
 
-  - Avoid conflict checks for operations which clear the PRESENT bit
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
-  - Utilize the range checks to detect conflicts in one operation
+for you to fetch changes up to fac880c7d074fdfca874114b5c47b36aa034e4ee:
 
-  - Drop the 4k wise checking which turned out to provide no extra large
-    page preservation in testing. There might be corner cases where a page
-    would be preserved, but that's overkill for the common cases.
+  arm64: fix erroneous warnings in page freeing functions (2018-09-06 18:01:13 +0100)
 
-Before:
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  540
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages checked:               800770
- 4K pages set-checked:             7668
+----------------------------------------------------------------
+arm64 fix
 
-After:
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  538
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages set-checked:             7668
+- Remove accidental VM_WARN_ON
 
-This gets rid of ~800000 checks whether a particular address is with a
-static protection region. Each check tests against 4 different regions,
-which adds up to several million instructions.
+----------------------------------------------------------------
+Mark Rutland (1):
+      arm64: fix erroneous warnings in page freeing functions
 
-Thanks,
-
-	tglx
-
----
- Kconfig       |    8 
- mm/pageattr.c |  515 +++++++++++++++++++++++++++++++++++++++++++---------------
- 2 files changed, 391 insertions(+), 132 deletions(-)
-
-
-
+ arch/arm64/mm/mmu.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
