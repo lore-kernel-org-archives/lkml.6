@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB571C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4AEC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 724052083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724052083D
+	by mail.kernel.org (Postfix) with ESMTP id BFD9C2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD9C2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbeIHCUR (ORCPT
+        id S1727809AbeIHCUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52532 "EHLO
+        Fri, 7 Sep 2018 22:20:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728071AbeIHCUR (ORCPT
+        with ESMTP id S1728071AbeIHCUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:17 -0400
+        Fri, 7 Sep 2018 22:20:23 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9FE5D6B;
-        Fri,  7 Sep 2018 21:37:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34356D6B;
+        Fri,  7 Sep 2018 21:37:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Silvio Cesare <silvio.cesare@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.9 51/63] ubifs: Check data node size before truncate
-Date:   Fri,  7 Sep 2018 23:10:22 +0200
-Message-Id: <20180907211015.785112491@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 52/63] ubifs: Fix synced_i_size calculation for xattr inodes
+Date:   Fri,  7 Sep 2018 23:10:23 +0200
+Message-Id: <20180907211015.839807423@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -53,44 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Weinberger <richard@nod.at>
 
-commit 95a22d2084d72ea067d8323cc85677dba5d97cae upstream.
+commit 59965593205fa4044850d35ee3557cf0b7edcd14 upstream.
 
-Check whether the size is within bounds before using it.
-If the size is not correct, abort and dump the bad data node.
+In ubifs_jnl_update() we sync parent and child inodes to the flash,
+in case of xattrs, the parent inode (AKA host inode) has a non-zero
+data_len. Therefore we need to adjust synced_i_size too.
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: stable@vger.kernel.org
-Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
-Reported-by: Silvio Cesare <silvio.cesare@gmail.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+This issue was reported by ubifs self tests unter a xattr related work
+load.
+UBIFS error (ubi0:0 pid 1896): dbg_check_synced_i_size: ui_size is 4, synced_i_size is 0, but inode is clean
+UBIFS error (ubi0:0 pid 1896): dbg_check_synced_i_size: i_ino 65, i_mode 0x81a4, i_size 4
+
+Cc: <stable@vger.kernel.org>
+Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/journal.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ fs/ubifs/journal.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
 --- a/fs/ubifs/journal.c
 +++ b/fs/ubifs/journal.c
-@@ -1344,7 +1344,16 @@ int ubifs_jnl_truncate(struct ubifs_info
- 		else if (err)
- 			goto out_free;
- 		else {
--			if (le32_to_cpu(dn->size) <= dlen)
-+			int dn_len = le32_to_cpu(dn->size);
-+
-+			if (dn_len <= 0 || dn_len > UBIFS_BLOCK_SIZE) {
-+				ubifs_err(c, "bad data node (block %u, inode %lu)",
-+					  blk, inode->i_ino);
-+				ubifs_dump_node(c, dn);
-+				goto out_free;
-+			}
-+
-+			if (dn_len <= dlen)
- 				dlen = 0; /* Nothing to do */
- 			else {
- 				int compr_type = le16_to_cpu(dn->compr_type);
+@@ -661,6 +661,11 @@ int ubifs_jnl_update(struct ubifs_info *
+ 	spin_lock(&ui->ui_lock);
+ 	ui->synced_i_size = ui->ui_size;
+ 	spin_unlock(&ui->ui_lock);
++	if (xent) {
++		spin_lock(&host_ui->ui_lock);
++		host_ui->synced_i_size = host_ui->ui_size;
++		spin_unlock(&host_ui->ui_lock);
++	}
+ 	mark_inode_clean(c, ui);
+ 	mark_inode_clean(c, host_ui);
+ 	return 0;
 
 
