@@ -2,103 +2,118 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D42FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1D9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6922077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3DCB2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F32WMMMR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A6922077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jFSR5NYs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DCB2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeIGWEI (ORCPT
+        id S1727342AbeIGWFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:04:08 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40048 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbeIGWEI (ORCPT
+        Fri, 7 Sep 2018 18:05:01 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37086 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeIGWFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:04:08 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x26-v6so12636671lfi.7;
-        Fri, 07 Sep 2018 10:22:12 -0700 (PDT)
+        Fri, 7 Sep 2018 18:05:01 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v9-v6so12894188ljk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=iqWj8t//jjvTywXSU6UCipICH2il3mzAgAeuRXBjRyE=;
-        b=F32WMMMRqw212dzEVRMarWZxpBOgtFNDOFNNfWxY3vVJscV296V99r06eqF1EGVzn/
-         j+U3PFV+v77R+YcvPUIZl6VmBjMDt14ARcOCr1d5NUScx0HM2DFBm6XAOwVJdk1Ppf/k
-         vPL59zyAK7z0cRUEzBv2UFlit6oSaoWUKuYIGoWTvfZBnMNU8q8a5CEVBR7YwiFD7AD8
-         /CB+/Bme1IlC3mX11Gho5ps8+da8H4vRfNgnFdZGhh+cgNOV37Pb2gZidBfO1lJUQkEL
-         al0lMEYfdsEF9TnFfiCa71rbvgbSxGylollWOpq0NHpEQ2gPBQ3nBqsdlEqO4gJwWYoE
-         6WmQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HoVU8pSwA1yNCBp+qfG/yzs73dsXV+Qkm7cKeM653ao=;
+        b=jFSR5NYsf7V85JSI4hm9xPMqQTA5GkbfYDlHPRJSHR1YKAD3PweOSaBbEeMGhqU5iR
+         TFeTSXYCKMmo8p22unrpuVRvn9Nm4XYJB7tS6agrfHX99iAyWdS1BEP/eTB5dXF1YW2w
+         Fb9IwWzniJ8mO177voCKlsDQIMx0F35XgDFek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iqWj8t//jjvTywXSU6UCipICH2il3mzAgAeuRXBjRyE=;
-        b=RBgYEia5jcN6EJEWJcZr6YY8dLFoVhvuKQLlt5Ez2+1dBMsJ3HwTjB5Y3sqptSbdrY
-         wvMumyIF39GkX4G76E66m3kIHOOShw/NNUxH1ecrKKyI0A9gcRZ5mOn36XavXEI4SWvD
-         LFNjGAJIT1qEQYS253v3cZCIU9ipmNxjmiHtqD9HQvAEgdpq+rCMBhBxuo4Wy1xSeds7
-         6/9+W1/BIcjabkBduMIc/sSTqs6O/2CPk0XZrmpYmbRi8C4cKXV7f5ug9aq7BbztjOkp
-         PHqjB7P+GvHudPtzTm3ErG7Vrt/nLNiIqgmTVr7Vgb6L1nzoIZylvIFUaouYJh/3rx5V
-         3MDw==
-X-Gm-Message-State: APzg51Cv9jvn1rweMYFaoTRCqFSoA/akdweWCnn1SQRsUd1OqCLCXqLl
-        GdRnWZS+dKKtK6/TdIJCnEVvwzNxs8Q=
-X-Google-Smtp-Source: ANB0VdY5OGEwIazfTx+CW/70XLmETpgY39g8sd/o94iy+PRW/5YFv6VFGK+ObPfrX8UdYuESLIM1bA==
-X-Received: by 2002:a19:c646:: with SMTP id w67-v6mr6027365lff.108.1536340932122;
-        Fri, 07 Sep 2018 10:22:12 -0700 (PDT)
-Received: from Mort.jumbo.freeair (91-156-179-220.elisa-laajakaista.fi. [91.156.179.220])
-        by smtp.gmail.com with ESMTPSA id g11-v6sm1358286ljk.45.2018.09.07.10.22.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 10:22:11 -0700 (PDT)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
-To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
-Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        linux-wimax@intel.com, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] wimax: i2400m: remove unnecessary unlikely()
-Date:   Fri,  7 Sep 2018 20:22:03 +0300
-Message-Id: <20180907172203.28668-1-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HoVU8pSwA1yNCBp+qfG/yzs73dsXV+Qkm7cKeM653ao=;
+        b=e0dbBXLGtspa90tB0Jey+Hky3MhyE0ji45iL4y2vKwkDrPbmt8oUdys4+HLru5KPvc
+         q8ismmcjPMwZrYfWHhtJzbzhv3o+iHyyQ5+x4H5wbwQKetUGcxIaz/etTobyPT3TZ/Xu
+         hF354VMR9MMlw/nS/Cdvap3ja5D2fNIhXLBKN6xpTp02RRRSBr9zh4PokLHP6eyz0y8z
+         SG3NWhqIAUXRExqc/Axf/E38tOrCDqbo46oswhEreW5vxcNuc09hwHMkuEWIweF3cYBt
+         FY8q3MQVG+wcfWNzUQO17Y8axdQfAP4Zi0UzxQJZKNK9/2g6rEtCUf4VR9QOX0jAkUR+
+         1V2w==
+X-Gm-Message-State: APzg51AkbkqsHfzHL0drNqTxn+IYnfNbSuitVUfLnG+srgCjZDh9ZiCa
+        D/vdT/tawB+5hGm1ZGoHKBMtyk4c+oRZXsshKDMiCG+Bhg4=
+X-Google-Smtp-Source: ANB0Vda7vmT/WDrMnfUwxawLw1Q//1jreRTsI0bHJAqMi7TuUmlX+RlmDpP7NGqZkz7vIfd3XoMkNhPzUgekspblifk=
+X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr5793835ljh.18.1536340985307;
+ Fri, 07 Sep 2018 10:23:05 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 10:23:04 -0700 (PDT)
+In-Reply-To: <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
+References: <20180711144403.1022829-1-arnd@arndb.de> <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 7 Sep 2018 22:53:04 +0530
+Message-ID: <CA+G9fYuw66eL+d7pxhSbH3J-D4wdOU7BEPL3rCWu-ntfB4OWog@mail.gmail.com>
+Subject: Re: [PATCH] [v3] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WARN_ON() already contains an unlikely(), so it's not necessary to
-wrap it into another.
+On 7 September 2018 at 15:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> On 11/07/18 15:43, Arnd Bergmann wrote:
+>> Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
+>> a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
+>>
+>> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
+>> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+>>
+>> This solves the problem by adding a silent symbol for the tcon_top module,
+>> building it as a separate module in exactly the cases that we need it,
+>> but in a way that it is reachable by the other modules.
+>>
+>> Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possible crtcs")
+>> Fixes: ef0cf6441fbb ("drm/sun4i: Add support for traversing graph with TCON TOP")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> I am seeing the following on today's -next (20180907) as well the last
+> few -next versions for that matter ...
+>
+> ERROR: "sun8i_tcon_top_de_config" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_set_hdmi_src" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+>
+> Seems like this issue has cropped up again as Arnd's fix is present. I
+> am seeing this on ARM64 builds.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
-Cc: linux-wimax@intel.com
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/wimax/i2400m/tx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I do notice these failures on ARM64 builds on linux next 20180906 and 20180907.
 
-diff --git a/drivers/net/wimax/i2400m/tx.c b/drivers/net/wimax/i2400m/tx.c
-index f20886ade1cc..59c70d928249 100644
---- a/drivers/net/wimax/i2400m/tx.c
-+++ b/drivers/net/wimax/i2400m/tx.c
-@@ -655,8 +655,7 @@ void i2400m_tx_close(struct i2400m *i2400m)
- 	padding = aligned_size - tx_msg_moved->size;
- 	if (padding > 0) {
- 		pad_buf = i2400m_tx_fifo_push(i2400m, padding, 0, 0);
--		if (unlikely(WARN_ON(pad_buf == NULL
--				     || pad_buf == TAIL_FULL))) {
-+		if (WARN_ON(!pad_buf || pad_buf == TAIL_FULL)) {
- 			/* This should not happen -- append should verify
- 			 * there is always space left at least to append
- 			 * tx_block_size */
--- 
-2.17.1
+11:40:55 | ERROR: "sun8i_tcon_top_de_config"
+[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+11:40:55 | ERROR: "sun8i_tcon_top_set_hdmi_src"
+[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+11:40:55 | ERROR: "sun8i_tcon_top_of_table"
+[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
 
+Build full log can be found on this link.
+https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=rpb,MACHINE=dragonboard-410c,label=docker-stretch-amd64/346/console
+
+- Naresh
+
+>
+> Cheers
+> Jon
+>
+> --
+> nvpublic
