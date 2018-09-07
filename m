@@ -6,85 +6,164 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7602C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD615C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BAC720844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:00:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BAC720844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B22020844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:03:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B22020844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeIGVmC (ORCPT
+        id S1726450AbeIGVov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:42:02 -0400
-Received: from muru.com ([72.249.23.125]:55478 "EHLO muru.com"
+        Fri, 7 Sep 2018 17:44:51 -0400
+Received: from mga07.intel.com ([134.134.136.100]:46006 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726355AbeIGVmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:42:02 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id D626D80CF;
-        Fri,  7 Sep 2018 17:04:14 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 10:00:09 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        KISHON VIJAY ABRAHAM <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] pci-dra7xx: Enable errata i870 workaround for RC
- mode
-Message-ID: <20180907170009.GJ5662@atomide.com>
-References: <20180724173150.2701-1-vigneshr@ti.com>
- <20180808165700.GB486@e107981-ln.cambridge.arm.com>
- <ba428a15-77bf-e09c-3bd7-b5a0eae7ee13@ti.com>
+        id S1726002AbeIGVov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:44:51 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 10:03:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
+   d="scan'208";a="86900033"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
+  by fmsmga004.fm.intel.com with ESMTP; 07 Sep 2018 10:02:40 -0700
+Date:   Fri, 7 Sep 2018 10:02:40 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        "Siddha, Suresh B" <suresh.b.siddha@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 11/13] platform/x86: Intel SGX driver
+Message-ID: <20180907170240.GA21376@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-12-jarkko.sakkinen@linux.intel.com>
+ <CAHp75VcqKunkHYNdd287_F7APHwYr7K9QD2PVCkqBqJWG2_E-g@mail.gmail.com>
+ <20180905173355.GE11368@linux.intel.com>
+ <CAHp75Vc2SZUfRnBPZ9xJ_B=KJL7yK9hqRZiFOTswn0AzjnLD1A@mail.gmail.com>
+ <20180906092100.GA27302@linux.intel.com>
+ <CANiq72kpY1y2aPH+GMi8mWZdttfdYJ3wk0cvE_qVD97vdvTJbQ@mail.gmail.com>
+ <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ba428a15-77bf-e09c-3bd7-b5a0eae7ee13@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5137f85388e26ea1ed46b34901b0f18540aee7cb.camel@perches.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Vignesh R <vigneshr@ti.com> [180810 10:10]:
+On Thu, Sep 06, 2018 at 05:50:01PM -0700, Joe Perches wrote:
+> On Thu, 2018-09-06 at 19:35 +0200, Miguel Ojeda wrote:
+> > > Which one is right and why the kernel tree is polluted with C99-headers
+> > > when they do not pass checkpatch.pl?
 > 
-> 
-> On Wednesday 08 August 2018 10:27 PM, Lorenzo Pieralisi wrote:
-> > On Tue, Jul 24, 2018 at 11:01:46PM +0530, Vignesh R wrote:
-> >> Make workaround for errata i870 applicable in Host mode as
-> >> well(previously it was enabled only for EP mode) as per errata
-> >> documentation: http://www.ti.com/lit/er/sprz450/sprz450.pdf
-> >>
-> >> Tested on DRA72 EVM
-> >>
-> >> Tony,
-> >>
-> >> If you are okay with the series, could you pick this via omap tree?
-> >> All ACKs are in place and Lorenzo is okay with PCIe bits to go along with
-> >> rest of DTS changes.
-> > 
-> > I think we have missed the v4.19 merge window by now - 
-> 
-> Right. I didn't get any response from Tony.
+> checkpatch ignores c99 headers since 2016.
 
-Sorry catching up with pending mails.. I try hard to not touch
-anything except fixes around -rc6 time.
+Jarkko was referring to c99 comments for the SPDX license.  checkpatch
+explicitly requires c-style comments for headers and assembly files as
+dictated by Documentation/process/license-rules.rst.  
 
-> > please let me know if I can drop this series from the PCI patch queue.
-> > 
-> 
-> Ok, I will resend the patch after 4.19-rc. Thanks!
+$ grep -r SPDX **/*.h | grep \/\/ | wc -l
+665
 
-FYI, I'm untagging this thread too. Please post the dts
-changes separately once the dependencies (if any) have
-cleared.
+$ grep -r SPDX **/*.S | grep \/\/ | wc -l
+22
 
-Regards,
+$ git show 9f3a89926d6df
+commit 9f3a89926d6dfc30a4fd1bbcb92cc7b218d3786d
+Author: Rob Herring <robh@kernel.org>
+Date:   Tue Apr 10 16:33:13 2018 -0700
 
-Tony
+    checkpatch.pl: add SPDX license tag check
+
+    Add SPDX license tag check based on the rules defined in
+    Documentation/process/license-rules.rst.  To summarize, SPDX license
+    tags should be on the 1st line (or 2nd line in scripts) using the
+    appropriate comment style for the file type.
+
+    Link: http://lkml.kernel.org/r/20180202154026.15298-1-robh@kernel.org
+    Signed-off-by: Rob Herring <robh@kernel.org>
+    Signed-off-by: Joe Perches <joe@perches.com>
+    Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+    Cc: Andy Whitcroft <apw@canonical.com>
+    Cc: Joe Perches <joe@perches.com>
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Cc: Igor Stoppa <igor.stoppa@huawei.com>
+    Cc: Jonathan Corbet <corbet@lwn.net>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index b464a4c3f863..0f022b56f117 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2257,6 +2257,8 @@ sub process {
+
+        my $camelcase_file_seeded = 0;
+
++       my $checklicenseline = 1;
++
+        sanitise_line_reset();
+        my $line;
+        foreach my $rawline (@rawlines) {
+@@ -2448,6 +2450,7 @@ sub process {
+                        } else {
+                                $check = $check_orig;
+                        }
++                       $checklicenseline = 1;
+                        next;
+                }
+
+@@ -2911,6 +2914,30 @@ sub process {
+                        }
+                }
+
++# check for using SPDX license tag at beginning of files
++               if ($realline == $checklicenseline) {
++                       if ($rawline =~ /^[ \+]\s*\#\!\s*\//) {
++                               $checklicenseline = 2;
++                       } elsif ($rawline =~ /^\+/) {
++                               my $comment = "";
++                               if ($realfile =~ /\.(h|s|S)$/) {
++                                       $comment = '/*';
++                               } elsif ($realfile =~ /\.(c|dts|dtsi)$/) {
++                                       $comment = '//';
++                               } elsif (($checklicenseline == 2) || $realfile =~ /\.(sh|pl|py|awk|tc)$/) {
++                                       $comment = '#';
++                               } elsif ($realfile =~ /\.rst$/) {
++                                       $comment = '..';
++                               }
++
++                               if ($comment !~ /^$/ &&
++                                   $rawline !~ /^\+\Q$comment\E SPDX-License-Identifier: /) {
++                                       WARN("SPDX_LICENSE_TAG",
++                                            "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
++                               }
++                       }
++               }
++
+ # check we are in a valid source file if not then ignore this hunk
+                next if ($realfile !~ /\.(h|c|s|S|sh|dtsi|dts)$/);
+
+
+
