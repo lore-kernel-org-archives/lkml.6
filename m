@@ -2,120 +2,122 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD2AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93070C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F052077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EFED2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KQG+ILcS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F052077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/qODpBB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EFED2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeIGWFE (ORCPT
+        id S1727640AbeIGWFX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:05:04 -0400
-Received: from mail-pl1-f170.google.com ([209.85.214.170]:32812 "EHLO
-        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727368AbeIGWFD (ORCPT
+        Fri, 7 Sep 2018 18:05:23 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39434 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbeIGWFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:05:03 -0400
-Received: by mail-pl1-f170.google.com with SMTP id b30-v6so4599802pla.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:23:08 -0700 (PDT)
+        Fri, 7 Sep 2018 18:05:23 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v77-v6so12643313lfa.6;
+        Fri, 07 Sep 2018 10:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DN3m2MP7rDI91Tlof3J+3B82j9mSSJrQY/U2pgTSkGU=;
-        b=KQG+ILcSPJMH/J78uUWNQ5ZDaiuHMlUg9+UCAGL4dte0Z97f6vyMqZt1aIPexUc1o8
-         imeY9WKd0s+MzoQdP2PwIHIq8vKBuuC2gVnPrtVRwvX4vej2mXNuDvxaMTNcDS9VRZzJ
-         Iavds5mJ0CWeKCjqV8pHDI7ov8eFtM+OfYoGRdDZ2rm7aRaXzv6dHMLxEV7pMYtmeoDy
-         N6FN3qogMqQgS40BXS2HoQhh97vYyj8ReOkq37tRckW5NwZhrjm6uxsqaQ4UBDKrC2Ji
-         E6V9tM5AXd+GTn2fPa7myzfTo8bapG5lrcOZSYhGxiG9leuB5VEaKfZKqEX1ck+iavvf
-         JATA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0XuIO/jwwbkrA/dGaqPCq8DyOayB0G1pbKNSu+Mm5vo=;
+        b=N/qODpBBscn+KPIBg8H4O3hiHNYFrxGYMjmle1pXYypNs8hkbwlUPsZ+txTWwmcb6O
+         yYrLNa8WMvtyzkpHWe+31V58zyDvD4OkU8bD5GhmFkuNGBFI4RfDFnsuirrz+Ncpvm7g
+         Clv82UCAYBsoOF+YoDgE9I0EcbwaXPfDLOdQWSgkkxAcWbr/91FzXbWE7sGP+mc2zQcd
+         BIR3EsgrfkF6U5T8S47eAoK2nOeauwiJiff2QGlxRgIlcmprwxZIZXhxp90xY7/Ck7/F
+         ZcdNgl6I4eagNWYuUgwjbfttZKUuDEJwwQ4tHzLzP06fdajfA2BhInlKgp9bMZTvw51q
+         L8KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DN3m2MP7rDI91Tlof3J+3B82j9mSSJrQY/U2pgTSkGU=;
-        b=JgKrYvpX6LcurW6R8gwy2ZhrCzwJ/NKmcTCLl6K9mP7Rv338bpdOazj4k40c6PtZic
-         8HzC0JNNtznIZEV92Q3yLaKG1IVzS9P1ZSmJdgA6ErAF5NTUgXQd6a3VZmbsrwfK72TY
-         vUHs8G2eLSVe5pKDVeeBXwtGvJMY0QIMkqXczIhm6gbw75JkFbWJmQzaxLUgMb090/xU
-         ouyMpaMvNwwftv0ic1MpyvUwHqkX2pM2CL4Ye8hGejpRtKY2mwkeXuQRlnO84T7oGKjK
-         D34sVfB9YZogSGhty2lltdHHfh2c3q/qm5zJoxNcZ/IbDrgiey6juE7taNMMShkv6X32
-         tT2A==
-X-Gm-Message-State: APzg51D6G2ASJdALYITAeWH82Zqsj9taVXplCK6d55Ap5MCdQm9Eix66
-        RonRtHG3NxK7i0gSNhR6d6gqWIR43H47+EVZNIII8w==
-X-Google-Smtp-Source: ANB0VdbA2lwE4bqF+3sJ3mwfbZtShcXVBrAMyM+B2tjbU1+nqF233AcbANNB6jrTMB7wMY83g0cS9K5n5bMAOgHCDOI=
-X-Received: by 2002:a17:902:7102:: with SMTP id a2-v6mr9023918pll.217.1536340987614;
- Fri, 07 Sep 2018 10:23:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr> <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
-In-Reply-To: <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 7 Sep 2018 10:22:56 -0700
-Message-ID: <CAKwvOdmuXydQsQyD2CUyoSkkDpF1e1CXg6v1SRv2q-bpYa9SQg@mail.gmail.com>
-Subject: Re: Conflict between sparse and commit cafa0010cd51f ("Raise the
- minimum required gcc version to 4.6")
-To:     christophe.leroy@c-s.fr
-Cc:     joe@perches.com, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, sparse@chrisli.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0XuIO/jwwbkrA/dGaqPCq8DyOayB0G1pbKNSu+Mm5vo=;
+        b=uJ9IGHGClFVxyoRXdQweAPuuiY5lUaa5IZg8sdI2jcKLPzwfjzN6vX4Q2B6fYF4rJ6
+         w3HMYaNZKkT1ScJNuMw0qqz9nuTCYFs5lCSOfUoCBOTpC91DEDuo6vDHEhjDhz0tHFNx
+         zalvWbFbtyrmkQ0IuGpqDkMyn8qn9A78fRrwAgCXDL/dJrzoOceSlVznFjk7gkRbaBIy
+         UyHDOZ0q+kAqmGSZF4C1+ptCkx0zjlIBiVjkFxBg80u9/0zBRFwQnwDpZtbYnkIihS/M
+         P7wcuiaG8OeypTYBv36p52kWQwukh9kaUSlIN2YyyethpCWHSBaWzzSSoeBgWEWMwgd8
+         Cq7w==
+X-Gm-Message-State: APzg51DRnGnFe5tZuEmHaxhKztB+jepQJDkkg4qklgE6gixSyWEQY8kW
+        Bc//XdtbaSsqSv3Y8x2SMnI=
+X-Google-Smtp-Source: ANB0VdZmTzeqCoBlJpspr0y7MJkx0B9TlOl+3giiWuJHRkdYco7QY8cNyklaMGcXQB299ZjG48/ylw==
+X-Received: by 2002:a19:9e85:: with SMTP id h127-v6mr5505067lfe.89.1536341006505;
+        Fri, 07 Sep 2018 10:23:26 -0700 (PDT)
+Received: from Mort.jumbo.freeair (91-156-179-220.elisa-laajakaista.fi. [91.156.179.220])
+        by smtp.gmail.com with ESMTPSA id q16-v6sm1377686ljj.68.2018.09.07.10.23.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 10:23:25 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     Madalin Bucur <madalin.bucur@nxp.com>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] freescale: ethernet: remove unnecessary unlikely()
+Date:   Fri,  7 Sep 2018 20:23:18 +0300
+Message-Id: <20180907172318.29014-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 7:34 AM Christophe LEROY <christophe.leroy@c-s.fr> w=
-rote:
->
-> Cc linux-sparse@vger.kernel.org
->
-> Le 07/09/2018 =C3=A0 14:22, Christophe Leroy a =C3=A9crit :
-> > Since commit cafa0010cd51f ("Raise the minimum required gcc version to
-> > 4.6"), sparse check fails as follows:
-> >
-> > [root@pc16082vm linux-powerpc]# make C=3D2 arch/powerpc/kernel/process.=
-o
-> >    CALL    scripts/checksyscalls.sh
-> >    CHECK   scripts/mod/empty.c
-> > ./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too
-> > old - please upgrade it.
-> >    CHECK   arch/powerpc/kernel/process.c
-> > ./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too
-> > old - please upgrade it.
-> >
-> >
-> > I have sparse version 0.5.2
-> >
-> > What can be done to fix that ?
-> >
-> > Christophe
+Both WARN_ON() and WARN_ONCE() already contain an unlikely(), so it's not
+necessary to wrap it into another.
 
-Oof, sorry Christophe.  Looks like that's the latest version of sparse:
-https://sparse.wiki.kernel.org/index.php/Main_Page#News
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: Madalin Bucur <madalin.bucur@nxp.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-I'm curious what sparse expands __GNUC__, __GNUC_MINOR__, and
-__GNUC_PATCHLEVEL__ to?  Pre commit cafa0010cd51f, it MUST be
-expanding them to something, otherwise you'd have seen the error then,
-too.  The previous check was GCC < 3.3, now it's GCC < 4.6.
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index 65a22cd9aef2..783134f1b779 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -1280,7 +1280,7 @@ static int dpaa_bman_release(const struct dpaa_bp *dpaa_bp,
+ 
+ 	err = bman_release(dpaa_bp->pool, bmb, cnt);
+ 	/* Should never occur, address anyway to avoid leaking the buffers */
+-	if (unlikely(WARN_ON(err)) && dpaa_bp->free_buf_cb)
++	if (WARN_ON(err) && dpaa_bp->free_buf_cb)
+ 		while (cnt-- > 0)
+ 			dpaa_bp->free_buf_cb(dpaa_bp, &bmb[cnt]);
+ 
+@@ -1704,10 +1704,8 @@ static struct sk_buff *contig_fd_to_skb(const struct dpaa_priv *priv,
+ 
+ 	skb = build_skb(vaddr, dpaa_bp->size +
+ 			SKB_DATA_ALIGN(sizeof(struct skb_shared_info)));
+-	if (unlikely(!skb)) {
+-		WARN_ONCE(1, "Build skb failure on Rx\n");
++	if (WARN_ONCE(!skb, "Build skb failure on Rx\n"))
+ 		goto free_buffer;
+-	}
+ 	WARN_ON(fd_off != priv->rx_headroom);
+ 	skb_reserve(skb, fd_off);
+ 	skb_put(skb, qm_fd_get_length(fd));
+@@ -1770,7 +1768,7 @@ static struct sk_buff *sg_fd_to_skb(const struct dpaa_priv *priv,
+ 			sz = dpaa_bp->size +
+ 				SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+ 			skb = build_skb(sg_vaddr, sz);
+-			if (WARN_ON(unlikely(!skb)))
++			if (WARN_ON(!skb))
+ 				goto free_buffers;
+ 
+ 			skb->ip_summed = rx_csum_offload(priv, fd);
+-- 
+2.17.1
 
-We could change the check to:
-
--#if GCC_VERSION < 40600
-+#if GCC_VERSION < 40600 && !defined(__CHECKER__)
-
-But it would be good to know what those sub macros that compose
-GCC_VERSION evaluate to in sparse; maybe they can be upgraded in
-Sparse unless they're matching __builtin_*() compatability?
---=20
-Thanks,
-~Nick Desaulniers
