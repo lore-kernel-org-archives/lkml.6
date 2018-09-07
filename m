@@ -6,57 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F6CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE8AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4B32083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:59:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3CC42083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="XKj2Ko26"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4B32083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Rc9gPdlh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CC42083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbeIGFhX (ORCPT
+        id S1729121AbeIGFPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:37:23 -0400
-Received: from mail-eopbgr690129.outbound.protection.outlook.com ([40.107.69.129]:53565
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:15:04 -0400
+Received: from mail-sn1nam01on0109.outbound.protection.outlook.com ([104.47.32.109]:39556
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728532AbeIGFPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:15:05 -0400
+        id S1729100AbeIGFPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:15:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I4Gat9E+DC54EFr9tJTImzW2KYBGINDL0Nqz45xQlEI=;
- b=XKj2Ko26uWM77SZ62i6nJvn5rNXA1VM0GhHZXSpu9Ct/A3uwM69sjP1zYimHVoSbx3MZmzm6tt2EZz97lBnjFTUz5umkolwHTsDe5pqqaIG0sqVAAk7xM9VLRS2KMSAvp6Rh0tcIOMxjfMHJiuTY5qJdI5w7L7tIuQm1kVgQ394=
+ bh=tHpf7yu1sP4Rz6N2CRDJ/3KfuRpyDclr+n6ogGVHVoI=;
+ b=Rc9gPdlh2j+n/XVKGmI3KEI3Tach6hl/289imyQIeH3Lm1lYkIgCt89Sy8QaGrpcZgjHmtOMQ0f5Orxch/Y6ebRnwwkNkCqu9kc3+Oh1In3KF/j9DxdSDx9ZI6zRuCeDd3nnUvUif3/76nx+CYYYx8NgLO/Z435gp8rWSu97M7s=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
+ CY4PR21MB0469.namprd21.prod.outlook.com (10.172.121.147) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.1; Fri, 7 Sep 2018 00:36:48 +0000
+ 15.20.1143.6; Fri, 7 Sep 2018 00:36:57 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:36:48 +0000
+ 00:36:57 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Maynard Johnson <maynard@us.ibm.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+CC:     Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 39/88] perf tests: Fix
- record+probe_libc_inet_pton.sh for powerpc64
-Thread-Topic: [PATCH AUTOSEL 4.18 39/88] perf tests: Fix
- record+probe_libc_inet_pton.sh for powerpc64
-Thread-Index: AQHURkLMkuVHHNcv9UWsVXP4jYk36g==
-Date:   Fri, 7 Sep 2018 00:36:21 +0000
-Message-ID: <20180907003547.57567-39-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 55/88] powerpc/powernv: opal_put_chars partial
+ write fix
+Thread-Topic: [PATCH AUTOSEL 4.18 55/88] powerpc/powernv: opal_put_chars
+ partial write fix
+Thread-Index: AQHURkLTZW21Wt3FPkSQ3nR5QG0Rhg==
+Date:   Fri, 7 Sep 2018 00:36:32 +0000
+Message-ID: <20180907003547.57567-55-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -65,115 +59,74 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:kozhLEFjtcYmeyg0nAHZTe8Ot63kKCwqet03DUwjd6UiDXaFv9ReGIkhN7VDDWXhsy2wbIaqkgxiCtQtkSk1zvhoNr6Igl9vclmNgHisOfw+rqXzq1lRqD4dmspV7s1k5WmGi40yteZhzLLloX9slc4v0yjvTLASm8xNCa84dedRomeuNsBFZn/86sZrTNgdNDvA5jeQdJSysVS3ZQ5SemILAD785V2P9Q9AhfUDMaAf1rvncguDXlNqtx9pIeYPfjPiIL+AeAP7weHsmEUnDq6VU1kEzjnznKggZCYHTIa3Yxpl1FU6l5rBeIToMO+oZnzi0UDEOwrfae3yP/RJ2b594OKlObd8aLS8ciyJw8Ntmi/NjxCcJpN2C99XJbiqiuFV0o3FgYQjljYXPBnvn2BglkguLsI1RlezVRWvtttz6ku3WXVoEVFU4AY6swBnGXv4+s+EtIAB9MjwGuU5Pw==;5:D3A9W8ioHOqqZPA44Dj3s2cc9/89a2MlpT3j1fydR9Giz62OOc1Rs2kW9u6FlWa89PVi8xekLGYI9k8ILnX/0ysLEVrCBXTxBMrcfJS3e+wmXIXVNFwSrzGI7iOTXvyBjYb38TsC+AjN8VAdUS7Dl00Z3QGdswJx+qpFnI4iWtw=;7:iUQCaFCuABS+99IU/pEDOv1IOT5N2+145xNFSAgQLYjogWt80nabB824ChsL3HTjWUptd8+TRuCco9TyUV3U3JZXP1UYWHE2+ucGdJYLOaZzGHnznpgt8Zp8v7j0mMQCLTpKuK746pM0j6BjYodP4Dj8F1gJwenfMPw9U/VmCpE06k8SEUQK1fiNDQIQb3XMR7WAO0ZXs5uciCoEBWbl+27/Z5B5moFRUaxv9DhJ8ta2z4w/B4Jd4YE0g2TAwbZT
-x-ms-office365-filtering-correlation-id: 7fa6c14c-632c-4354-506d-08d61459ff6c
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0469;6:VIrcAHS99c/5VOCiA6tQ9iQzW4NYafUmPBOJtkAvbcxAWOoiRym7DXX6FW9nDhTGkfjf6loH8W5eeiQAAp+CCK5eM/R7RgolktmTHNOIk+yG+IDMS8OviZ4/UTYpCXBfuev/4rytiLea7SjK9uUiW0S43NoARjZWJQIE65sC1rKIlsMmnvElW6sUQAEVj78x2iST6R2VUBviyCnut/JAoJUHxOyeJ8ygR+mV4s+S0vo0ek/ZulIRAXOb0YcpXuumTolCf9b7tbQQPBk/kOy2TJJCobK0M2se74C82HwEnKwaxba694jyS82Ei34B58GoN8/mQaISFKJ5UMi+/bWGZ0S2z+n6RD7ge/IUeC1f1sYof2T2LLgiDiFhZKnPJIrAr6hjHOkAMqhki2hcmHlSEITwStmQ5+ik1aG85JmfR3MLAieuFnaIWlr4uBnsD3e3e56lYZvWVwuUsNSAdN7X3w==;5:Yg6RIavl98uwPyGaPGfTDpqcFwa+QhTG6lNn1/bIkq2lBKoyqcEAthpbBFLscBp0EoKMNei8lCuIYtUVw1kSP6HaQr0QaKyIuS7FBWq9GzNg0coeB7Qjue2EwPKnOFg1FSqpVsAR4Pv27EtczevE+SmYdQLCLmsue8T7UzIOrn0=;7:QNr7X+OTZbGQnq/v8FAXtV4qFRFS6ObLVaul6EZywp649UF9wDSz59/yD6O23bm7DhnKjqVH+5by7C46GB7fkUCmeFSCajo+9Q5tH+aFgWXD+ccaCtLdy5TE6QjgkKIm3yHlNcnX2D3aK14L1wKebVyraqpfp0r31FmQD2UXal2WFYJjhQbSDQc7dsN9KWOFg/4NtCCObamo9YyxahUfAAJITSVmFQtp4Z0jmPmlafVpbC6jSFb51jjDWXTq5jN4
+x-ms-office365-filtering-correlation-id: 00e394dc-5b51-4331-755d-08d6145a0473
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
-x-ms-traffictypediagnostic: CY4PR21MB0773:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0469;
+x-ms-traffictypediagnostic: CY4PR21MB0469:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB07736D05B1E6BEF5B72E42CBFB000@CY4PR21MB0773.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(42068640409301)(274839183919467)(104084551191319);
+x-microsoft-antispam-prvs: <CY4PR21MB0469DCA0EC30E717C4D0EDCFFB000@CY4PR21MB0469.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0469;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0469;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(8676002)(5660300001)(106356001)(6436002)(25786009)(110136005)(54906003)(6506007)(105586002)(2906002)(486006)(53936002)(446003)(6306002)(2616005)(476003)(4326008)(6666003)(11346002)(5250100002)(107886003)(2501003)(86612001)(97736004)(6512007)(966005)(478600001)(3846002)(72206003)(6116002)(10290500003)(76176011)(68736007)(7416002)(14454004)(1076002)(66066001)(26005)(575784001)(6486002)(99286004)(8936002)(36756003)(81166006)(86362001)(256004)(102836004)(81156014)(305945005)(186003)(22452003)(2900100001)(7736002)(10090500001)(316002)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(346002)(136003)(376002)(199004)(189003)(25786009)(446003)(316002)(86612001)(54906003)(76176011)(86362001)(110136005)(256004)(6486002)(10090500001)(14444005)(26005)(2900100001)(476003)(2616005)(102836004)(5250100002)(22452003)(186003)(6506007)(11346002)(53936002)(217873002)(66066001)(4326008)(575784001)(486006)(6512007)(107886003)(2906002)(8676002)(105586002)(72206003)(99286004)(1076002)(6666003)(68736007)(2501003)(7736002)(10290500003)(106356001)(305945005)(14454004)(6116002)(3846002)(5660300001)(36756003)(39060400002)(478600001)(81166006)(6436002)(97736004)(81156014)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0469;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: keBt1WveAHZgZ1sGLmndicn7G6/Cd5hg+fAi26Tlcpa7gatkLYUq9GcNJ9ZU16teU/6ZrNUf4NOE4pv7I4wESqrypjSrgGAurWUxP7H8UociBLOhR+nzs2oySEqNSxiuoot5Exd3EAbpae4+Q2k+JkarxsuDpobe5FznubJudVGfqy9hZIg/dL6AkXYpjMvjsz5qjE/qHSVolEv7nYscBxcelvbZZBkmdNoJAMtiUgQpICIpxnrwpS0iMPHf+TrIJYsbZi4B/c/oEGlR/wYRTbVSKFP5m1NBoCDQhhZXfOfPo8IHU53qIYB6DKSf9z39Gj6x0B+1jeBIVKs0rRa6YwvWQ1qaEJgdTk17GfmLMbk=
+x-microsoft-antispam-message-info: dv8IgVhSsI+aXNoJ/bh2BIRGb2Q/FwF1bnSXPT8FdyDDBlLCDAteQ1HFYD1EFl7sNIz1FKuvKYQwi5Ym7gmfbJkRB09PMZMqeFLI2/fX8EaIz3gfFNgqpIG6UkuY9M9Tl4IrnUVGdBTriT2Nf7towBFd+sa0bQGixzplv7USCzDrPFkSTYW4iSmVZhmrO0bKmZOTmPBrWTMnL+6EpJdKv6u09jk4/GaC5v/5GXoUYTwHVI0FiN+zo7OYdRKU7QBH+jCKjEtgPV1x4xgVtUElha+08NEp+2qd8RvnbwEfM37oZmiQu7lzzPLXFZ60cjuDVxjLwNTrnmnRILuqZkSXPLsEKAo4H23JvjKZNnPb3Nw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fa6c14c-632c-4354-506d-08d61459ff6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:21.4829
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00e394dc-5b51-4331-755d-08d6145a0473
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:32.5110
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0773
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0469
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 3eae52f842329a95f8549124079518231c0daba8 ]
+[ Upstream commit bd90284cc6c1c9e8e48c8eadd0c79574fcce0b81 ]
 
-For powerpc64, this test currently fails due to a mismatch in the
-expected output.
+The intention here is to consume and discard the remaining buffer
+upon error. This works if there has not been a previous partial write.
+If there has been, then total_len is no longer total number of bytes
+to copy. total_len is always "bytes left to copy", so it should be
+added to written bytes.
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
+This code may not be exercised any more if partial writes will not be
+hit, but this is a small bugfix before a larger change.
 
-  # perf test -v "probe libc's inet_pton & backtrace it with ping"
-
-Before:
-
-  62: probe libc's inet_pton & backtrace it with ping       :
-  --- start ---
-  test child forked, pid 23948
-  ping 23965 [003] 71136.075084: probe_libc:inet_pton: (7fff996aaf28)
-  7fff996aaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
-  7fff9965fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
-  FAIL: expected backtrace entry 2 "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]=
-\(/usr/lib64/libc-2.26.so\)$" got "7fff9965fa54 gaih_inet.constprop.7+0xf44=
- (/usr/lib64/libc-2.26.so)"
-  test child finished with -1
-  ---- end ----
-  probe libc's inet_pton & backtrace it with ping: FAILED!
-
-After:
-
-  62: probe libc's inet_pton & backtrace it with ping       :
-  --- start ---
-  test child forked, pid 24638
-  ping 24655 [001] 71208.525396: probe_libc:inet_pton: (7fffa245af28)
-  7fffa245af28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
-  7fffa240fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
-  7fffa24105b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-  138d52d70 main+0x3e0 (/usr/bin/ping)
-  test child finished with 0
-  ---- end ----
-  probe libc's inet_pton & backtrace it with ping: Ok
-
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Maynard Johnson <maynard@us.ibm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use =
-record")
-Link: http://lkml.kernel.org/r/49621ec5f37109f0655e5a8c32287ad68d85a1e5.153=
-0724939.git.sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/platforms/powernv/opal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/=
-perf/tests/shell/record+probe_libc_inet_pton.sh
-index 94e513e62b34..1220e5e052bb 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -26,6 +26,12 @@ trace_libc_inet_pton_backtrace() {
- 		echo "(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"=
- >> $expected
- 		echo "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
-+	ppc64|ppc64le)
-+		eventattr=3D'max-stack=3D4'
-+		echo "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
-+		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
-+		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-+		;;
- 	*)
- 		eventattr=3D'max-stack=3D3'
- 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
+diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms=
+/powernv/opal.c
+index 0d539c661748..371e33ecc547 100644
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -388,7 +388,7 @@ int opal_put_chars(uint32_t vtermno, const char *data, =
+int total_len)
+ 		/* Closed or other error drop */
+ 		if (rc !=3D OPAL_SUCCESS && rc !=3D OPAL_BUSY &&
+ 		    rc !=3D OPAL_BUSY_EVENT) {
+-			written =3D total_len;
++			written +=3D total_len;
+ 			break;
+ 		}
+ 		if (rc =3D=3D OPAL_SUCCESS) {
 --=20
 2.17.1
