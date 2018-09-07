@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C9CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347FCC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A860520844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A860520844
+	by mail.kernel.org (Postfix) with ESMTP id E36B320844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36B320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbeIHCQr (ORCPT
+        id S1729842AbeIHCQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:16:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51842 "EHLO
+        Fri, 7 Sep 2018 22:16:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeIHCQq (ORCPT
+        with ESMTP id S1728013AbeIHCQt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:16:46 -0400
+        Fri, 7 Sep 2018 22:16:49 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7305CF4A;
-        Fri,  7 Sep 2018 21:33:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FA78F4A;
+        Fri,  7 Sep 2018 21:33:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.9 24/63] vmw_balloon: fix inflation of 64-bit GFNs
-Date:   Fri,  7 Sep 2018 23:09:55 +0200
-Message-Id: <20180907211014.311640123@linuxfoundation.org>
+        Nadav Amit <nadav.amit@gmail.com>
+Subject: [PATCH 4.9 25/63] vmw_balloon: do not use 2MB without batching
+Date:   Fri,  7 Sep 2018 23:09:56 +0200
+Message-Id: <20180907211014.367160368@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -52,68 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-commit 09755690c6b7c1eabdc4651eb3b276f8feb1e447 upstream.
+commit 5081efd112560d3febb328e627176235b250d59d upstream.
 
-When balloon batching is not supported by the hypervisor, the guest
-frame number (GFN) must fit in 32-bit. However, due to a bug, this check
-was mistakenly ignored. In practice, when total RAM is greater than
-16TB, the balloon does not work currently, making this bug unlikely to
-happen.
+If the hypervisor sets 2MB batching is on, while batching is cleared,
+the balloon code breaks. In this case the legacy mechanism is used with
+2MB page. The VM would report a 2MB page is ballooned, and the
+hypervisor would only take the first 4KB.
 
-Fixes: ef0f8f112984 ("VMware balloon: partially inline vmballoon_reserve_page.")
+While the hypervisor should not report such settings, make the code more
+robust by not enabling 2MB support without batching.
+
+Fixes: 365bd7ef7ec8e ("VMware balloon: Support 2m page ballooning.")
 Cc: stable@vger.kernel.org
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Nadav Amit <nadav.amit@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/misc/vmw_balloon.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -450,7 +450,7 @@ static int vmballoon_send_lock_page(stru
- 
- 	pfn32 = (u32)pfn;
- 	if (pfn32 != pfn)
--		return -1;
-+		return -EINVAL;
- 
- 	STATS_INC(b->stats.lock[false]);
- 
-@@ -460,7 +460,7 @@ static int vmballoon_send_lock_page(stru
- 
- 	pr_debug("%s - ppn %lx, hv returns %ld\n", __func__, pfn, status);
- 	STATS_INC(b->stats.lock_fail[false]);
--	return 1;
-+	return -EIO;
- }
- 
- static int vmballoon_send_batched_lock(struct vmballoon *b,
-@@ -597,11 +597,12 @@ static int vmballoon_lock_page(struct vm
- 
- 	locked = vmballoon_send_lock_page(b, page_to_pfn(page), &hv_status,
- 								target);
--	if (locked > 0) {
-+	if (locked) {
- 		STATS_INC(b->stats.refused_alloc[false]);
- 
--		if (hv_status == VMW_BALLOON_ERROR_RESET ||
--				hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED) {
-+		if (locked == -EIO &&
-+		    (hv_status == VMW_BALLOON_ERROR_RESET ||
-+		     hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED)) {
- 			vmballoon_free_page(page, false);
- 			return -EIO;
- 		}
-@@ -617,7 +618,7 @@ static int vmballoon_lock_page(struct vm
- 		} else {
- 			vmballoon_free_page(page, false);
- 		}
--		return -EIO;
-+		return locked;
+@@ -341,7 +341,13 @@ static bool vmballoon_send_start(struct
+ 		success = false;
  	}
  
- 	/* track allocated page */
+-	if (b->capabilities & VMW_BALLOON_BATCHED_2M_CMDS)
++	/*
++	 * 2MB pages are only supported with batching. If batching is for some
++	 * reason disabled, do not use 2MB pages, since otherwise the legacy
++	 * mechanism is used with 2MB pages, causing a failure.
++	 */
++	if ((b->capabilities & VMW_BALLOON_BATCHED_2M_CMDS) &&
++	    (b->capabilities & VMW_BALLOON_BATCHED_CMDS))
+ 		b->supported_page_sizes = 2;
+ 	else
+ 		b->supported_page_sizes = 1;
 
 
