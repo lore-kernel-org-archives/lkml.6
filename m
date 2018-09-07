@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8428AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6D2C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0652083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE60F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="QsbWsNdm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0652083D
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="cLuDWGxT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE60F2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbeIHCYP (ORCPT
+        id S1730294AbeIHCYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:24:15 -0400
+        Fri, 7 Sep 2018 22:24:19 -0400
 Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:60236 "EHLO
         smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729080AbeIHCYP (ORCPT
+        with ESMTP id S1729502AbeIHCYR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:24:15 -0400
+        Fri, 7 Sep 2018 22:24:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536356480; x=1567892480;
+  t=1536356483; x=1567892483;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=sJvlh8HzNYgqt17xwqY0KkguBDWUGUbjLs2d1zA4ih8=;
-  b=QsbWsNdmezvySfHAJrix0MIaX0VHTId2q8GD/9RdkF3IRES3hzuMyep8
-   Wxazt2we7KPG9IgIHdi3GsLnnn4mNzQgU+GIlYA/3wTHM3pkoslJ1wp2m
-   blhhJ8Q2ZF/w8dIaeJVEHcZNnWUVCa5D2mNqjSIYxACPLEY8wwYFh/cDm
-   s=;
+  bh=oU6+ToIHR70hf2UcDbePrNlBRyzUIVcZFSg2fyb9q90=;
+  b=cLuDWGxTySdXa3ZToL1+KGZ+WWBGVzEhK/XI1WalXizVwvTJr9mS3/DL
+   JWdbZ/OtRtzqVmA/Jo+mncpcNdDrn8Zgl4FzS+kUkqCkbBWKIkuK4xkEh
+   s4N2JWS8YJmUlY6tfGUJdbD+NzESV+RF7JbxRiNfjF4R8+ZxxnFL3ssvH
+   M=;
 X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="355980779"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-579b7f5b.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:41:18 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
-        by email-inbound-relay-2c-579b7f5b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LfDHF130618
+   d="scan'208";a="355980785"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-e7be2041.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:41:22 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2a-e7be2041.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LfHmi096499
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:41:15 GMT
+        Fri, 7 Sep 2018 21:41:19 GMT
 Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LfBSv027102
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LfFsG027125
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:41:11 +0200
+        Fri, 7 Sep 2018 23:41:15 +0200
 Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87Lf9Ge027097;
-        Fri, 7 Sep 2018 23:41:09 +0200
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LfEYn027124;
+        Fri, 7 Sep 2018 23:41:14 +0200
 From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
         linux-kernel@vger.kernel.org
-Subject: [RFC 02/60] sched: Introduce set_entity_cfs() to place a SE into a certain CFS runqueue
-Date:   Fri,  7 Sep 2018 23:39:49 +0200
-Message-Id: <20180907214047.26914-3-jschoenh@amazon.de>
+Subject: [RFC 04/60] sched: Replace sd_numa_mask() hack with something sane
+Date:   Fri,  7 Sep 2018 23:39:51 +0200
+Message-Id: <20180907214047.26914-5-jschoenh@amazon.de>
 X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
 In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
 References: <20180907214047.26914-1-jschoenh@amazon.de>
@@ -70,125 +70,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out the logic to place a SE into a CFS runqueue into its own
-function.
+Get rid of the global variable sched_domains_curr_level, which is used
+to pass state into a sd_numa_mask(), which is used as a callback for
+sched_domain_topology_level->mask().
 
-This consolidates various sprinkled updates of se->cfs_rq, se->parent,
-and se->depth at the cost of updating se->depth unnecessarily on
-same-group movements between CPUs.
+Extend the ->mask() callback instead, so that it takes the topology level
+as an extra argument. Provide a backward compatible ->simple_mask()
+callback, so that existing code can stay as it is.
+
+This enables other users to do queries via ->mask() without having to
+worry about the global variable. It also opens up the possibility for
+more generic topologies that require a dynamic number of levels (similar
+to what NUMA already does on top of the system topology).
 
 Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- kernel/sched/fair.c  | 26 ++++----------------------
- kernel/sched/sched.h | 12 +++++++++---
- 2 files changed, 13 insertions(+), 25 deletions(-)
+ include/linux/sched/topology.h | 11 ++++++++---
+ kernel/sched/topology.c        | 40 ++++++++++++++++++++++------------------
+ 2 files changed, 30 insertions(+), 21 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 638fd14bb6c4..3de0158729a6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9683,14 +9683,6 @@ static void attach_entity_cfs_rq(struct sched_entity *se)
- {
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 530ad856372e..f78534f1cc1e 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -165,7 +165,11 @@ void free_sched_domains(cpumask_var_t doms[], unsigned int ndoms);
  
--#ifdef CONFIG_FAIR_GROUP_SCHED
+ bool cpus_share_cache(int this_cpu, int that_cpu);
+ 
+-typedef const struct cpumask *(*sched_domain_mask_f)(int cpu);
++struct sched_domain_topology_level;
++
++typedef const struct cpumask *(*sched_domain_simple_mask_f)(int cpu);
++typedef const struct cpumask *(*sched_domain_mask_f)(struct sched_domain_topology_level *tl,
++						     int cpu);
+ typedef int (*sched_domain_flags_f)(void);
+ 
+ #define SDTL_OVERLAP	0x01
+@@ -178,10 +182,11 @@ struct sd_data {
+ };
+ 
+ struct sched_domain_topology_level {
+-	sched_domain_mask_f mask;
++	sched_domain_simple_mask_f simple_mask;
+ 	sched_domain_flags_f sd_flags;
++	sched_domain_mask_f mask;
+ 	int		    flags;
+-	int		    numa_level;
++	int		    level;
+ 	struct sd_data      data;
+ #ifdef CONFIG_SCHED_DEBUG
+ 	char                *name;
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 8b64f3f57d50..0f2c3aa0a097 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1043,7 +1043,6 @@ static void claim_allocations(int cpu, struct sched_domain *sd)
+ enum numa_topology_type sched_numa_topology_type;
+ 
+ static int			sched_domains_numa_levels;
+-static int			sched_domains_curr_level;
+ 
+ int				sched_max_numa_distance;
+ static int			*sched_domains_numa_distance;
+@@ -1084,15 +1083,9 @@ sd_init(struct sched_domain_topology_level *tl,
+ 	struct sd_data *sdd = &tl->data;
+ 	struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
+ 	int sd_id, sd_weight, sd_flags = 0;
++	const struct cpumask *mask = tl->mask(tl, cpu);
+ 
+-#ifdef CONFIG_NUMA
 -	/*
--	 * Since the real-depth could have been changed (only FAIR
--	 * class maintain depth value), reset depth properly.
+-	 * Ugly hack to pass state to sd_numa_mask()...
 -	 */
--	se->depth = se->parent ? se->parent->depth + 1 : 0;
+-	sched_domains_curr_level = tl->numa_level;
 -#endif
 -
- 	/* Synchronize entity with its cfs_rq */
- 	update_load_avg(cfs_rq, se, sched_feat(ATTACH_AGE_LOAD) ? 0 : SKIP_AGE_LOAD);
- 	attach_entity_load_avg(cfs_rq, se, 0);
-@@ -9781,10 +9773,7 @@ void init_cfs_rq(struct cfs_rq *cfs_rq)
- #ifdef CONFIG_FAIR_GROUP_SCHED
- static void task_set_group_fair(struct task_struct *p)
- {
--	struct sched_entity *se = &p->se;
--
- 	set_task_rq(p, task_cpu(p));
--	se->depth = se->parent ? se->parent->depth + 1 : 0;
+-	sd_weight = cpumask_weight(tl->mask(cpu));
++	sd_weight = cpumask_weight(mask);
+ 
+ 	if (tl->sd_flags)
+ 		sd_flags = (*tl->sd_flags)();
+@@ -1138,7 +1131,7 @@ sd_init(struct sched_domain_topology_level *tl,
+ #endif
+ 	};
+ 
+-	cpumask_and(sched_domain_span(sd), cpu_map, tl->mask(cpu));
++	cpumask_and(sched_domain_span(sd), cpu_map, mask);
+ 	sd_id = cpumask_first(sched_domain_span(sd));
+ 
+ 	/*
+@@ -1170,7 +1163,7 @@ sd_init(struct sched_domain_topology_level *tl,
+ 		sd->idle_idx = 2;
+ 
+ 		sd->flags |= SD_SERIALIZE;
+-		if (sched_domains_numa_distance[tl->numa_level] > RECLAIM_DISTANCE) {
++		if (sched_domains_numa_distance[tl->level] > RECLAIM_DISTANCE) {
+ 			sd->flags &= ~(SD_BALANCE_EXEC |
+ 				       SD_BALANCE_FORK |
+ 				       SD_WAKE_AFFINE);
+@@ -1195,17 +1188,23 @@ sd_init(struct sched_domain_topology_level *tl,
+ 	return sd;
  }
  
- static void task_move_group_fair(struct task_struct *p)
-@@ -9855,7 +9844,7 @@ int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
- 			goto err_free_rq;
- 
- 		init_cfs_rq(cfs_rq);
--		init_tg_cfs_entry(tg, cfs_rq, se, i, parent->cfs_rq[i]->my_se);
-+		init_tg_cfs_entry(tg, cfs_rq, se, i, parent->cfs_rq[i]);
- 		init_entity_runnable_average(se);
- 	}
- 
-@@ -9912,7 +9901,7 @@ void unregister_fair_sched_group(struct task_group *tg)
- 
- void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
- 			struct sched_entity *se, int cpu,
--			struct sched_entity *parent)
-+			struct cfs_rq *parent)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 
-@@ -9927,18 +9916,11 @@ void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
- 	if (!se)
- 		return;
- 
--	if (!parent) {
--		se->cfs_rq = &rq->cfs;
--		se->depth = 0;
--	} else {
--		se->cfs_rq = parent->my_q;
--		se->depth = parent->depth + 1;
--	}
--
-+	set_entity_cfs(se, parent);
- 	se->my_q = cfs_rq;
-+
- 	/* guarantee group entities always have weight */
- 	update_load_set(&se->load, NICE_0_LOAD);
--	se->parent = parent;
- }
- 
- static DEFINE_MUTEX(shares_mutex);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 8435bf70a701..b4d0e8a68697 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -428,7 +428,7 @@ extern void online_fair_sched_group(struct task_group *tg);
- extern void unregister_fair_sched_group(struct task_group *tg);
- extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
- 			struct sched_entity *se, int cpu,
--			struct sched_entity *parent);
-+			struct cfs_rq *parent);
- extern void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b);
- 
- extern void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b);
-@@ -1290,6 +1290,13 @@ static inline struct task_group *task_group(struct task_struct *p)
- 	return p->sched_task_group;
- }
- 
-+static inline void set_entity_cfs(struct sched_entity *se, struct cfs_rq *cfs_rq)
++static const struct cpumask *
++sd_simple_mask(struct sched_domain_topology_level *tl, int cpu)
 +{
-+	se->cfs_rq = cfs_rq;
-+	se->parent = cfs_rq->my_se;
-+	se->depth = se->parent ? se->parent->depth + 1 : 0;
++	return tl->simple_mask(cpu);
 +}
 +
- /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
- static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
- {
-@@ -1299,8 +1306,7 @@ static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	set_task_rq_fair(&p->se, p->se.cfs_rq, tg->cfs_rq[cpu]);
--	p->se.cfs_rq = tg->cfs_rq[cpu];
--	p->se.parent = tg->cfs_rq[cpu]->my_se;
-+	set_entity_cfs(&p->se, tg->cfs_rq[cpu]);
+ /*
+  * Topology list, bottom-up.
+  */
+ static struct sched_domain_topology_level default_topology[] = {
+ #ifdef CONFIG_SCHED_SMT
+-	{ cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT) },
++	{ cpu_smt_mask, cpu_smt_flags, sd_simple_mask, SD_INIT_NAME(SMT) },
  #endif
+ #ifdef CONFIG_SCHED_MC
+-	{ cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
++	{ cpu_coregroup_mask, cpu_core_flags, sd_simple_mask, SD_INIT_NAME(MC) },
+ #endif
+-	{ cpu_cpu_mask, SD_INIT_NAME(DIE) },
++	{ cpu_cpu_mask, NULL, sd_simple_mask, SD_INIT_NAME(DIE) },
+ 	{ NULL, },
+ };
  
- #ifdef CONFIG_RT_GROUP_SCHED
+@@ -1221,13 +1220,18 @@ void set_sched_topology(struct sched_domain_topology_level *tl)
+ 		return;
+ 
+ 	sched_domain_topology = tl;
++	for (; tl->mask || tl->simple_mask; tl++) {
++		if (tl->simple_mask)
++			tl->mask = sd_simple_mask;
++	}
+ }
+ 
+ #ifdef CONFIG_NUMA
+ 
+-static const struct cpumask *sd_numa_mask(int cpu)
++static const struct cpumask *
++sd_numa_mask(struct sched_domain_topology_level *tl, int cpu)
+ {
+-	return sched_domains_numa_masks[sched_domains_curr_level][cpu_to_node(cpu)];
++	return sched_domains_numa_masks[tl->level][cpu_to_node(cpu)];
+ }
+ 
+ static void sched_numa_warn(const char *str)
+@@ -1446,7 +1450,7 @@ void sched_init_numa(void)
+ 	 */
+ 	tl[i++] = (struct sched_domain_topology_level){
+ 		.mask = sd_numa_mask,
+-		.numa_level = 0,
++		.level = 0,
+ 		SD_INIT_NAME(NODE)
+ 	};
+ 
+@@ -1458,7 +1462,7 @@ void sched_init_numa(void)
+ 			.mask = sd_numa_mask,
+ 			.sd_flags = cpu_numa_flags,
+ 			.flags = SDTL_OVERLAP,
+-			.numa_level = j,
++			.level = j,
+ 			SD_INIT_NAME(NUMA)
+ 		};
+ 	}
 -- 
 2.9.3.1.gcba166c.dirty
 
