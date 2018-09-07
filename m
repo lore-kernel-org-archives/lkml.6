@@ -6,217 +6,272 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED2AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E28BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E20D2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:56:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E20D2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 29FF82075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FF82075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbeIGXjD (ORCPT
+        id S1727682AbeIGXqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 19:39:03 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:33797 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeIGXjD (ORCPT
+        Fri, 7 Sep 2018 19:46:16 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36833 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeIGXqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 19:39:03 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 13-v6so29201009ois.1;
-        Fri, 07 Sep 2018 11:56:46 -0700 (PDT)
+        Fri, 7 Sep 2018 19:46:16 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v26-v6so13096476ljj.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:03:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Gqvcyz8nRYGewQ+PkLiYtmTIi6Qfsv3na1btjxTw1FY=;
-        b=eRBZU9itFvxvjWMFr8MhCKz7oYDdJHotnhQNooI+w7d0A0Nsw84SfYuvpsLUKvjFOS
-         5hqBelYv4wxFZAk9KAnt8u7A2rnNNcrRisi8kPTDrhR48QqfDMyajCzhIH/jxi1O+/Ui
-         i0Wy5oOhGn5n8bNI77ZZqxNkIAWCm1gU8EctZlBNL0R9IfPVFy+H3gVne84yxFvm6ZJo
-         0FMyZqP6+mpZkcYJeSeP11FzXajAe/Pl/iq0eB0M2jnpnvMvJsDj0WH2YqTAfJ0yuhxB
-         HympUf10kAa+qWrPIfsszDtFxOcrUZpz+bUOWZKlWlJSNfRi0qhYkalBKgQ1b95lEauh
-         BvTA==
-X-Gm-Message-State: APzg51AcURBq8jhaQJg7gmEi8H9Drdg4bnJyKaByrb7K7XRa2eANYypu
-        sMO1EN6kWxbuMATeezGkWfNJhFgjJsM=
-X-Google-Smtp-Source: ANB0VdZKGK54da9IWfYOEjh408sJKWX9MvIaYCbvmCIO6A9TYaBF6Glsdp9SJmSOvj88biDSjr92pw==
-X-Received: by 2002:a54:4505:: with SMTP id l5-v6mr9975869oil.179.1536346606159;
-        Fri, 07 Sep 2018 11:56:46 -0700 (PDT)
-Received: from mail-oi0-f43.google.com (mail-oi0-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id j16-v6sm18356100oib.42.2018.09.07.11.56.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 11:56:45 -0700 (PDT)
-Received: by mail-oi0-f43.google.com with SMTP id l202-v6so29094922oig.7;
-        Fri, 07 Sep 2018 11:56:45 -0700 (PDT)
-X-Received: by 2002:a54:4d9d:: with SMTP id y29-v6mr9868762oix.273.1536346605118;
- Fri, 07 Sep 2018 11:56:45 -0700 (PDT)
+        bh=pgsyhWCDavYbao7+4vB/RPGybH+G/xSi++/BNkrHFPw=;
+        b=e9u5ZPhHE/+LWsZIsVAOGdIACuBeC8qBkVCJBUzyQAzw7OtcXD5WIpAp3GdkjChBcy
+         isQlHZMAVCPmxOHKHaxajH+LLoTM39N1XbVBo1yS/OTD+CIvf9t/t5dC3U3SpsKU/49/
+         Ikq9a3Pe2jiNM6EniROfoT4bZ75ww5MUrXD4hoQPLmMaIcDm+92H3sVILEXO1nPojB+j
+         nQIK1GL/lXoFwQY65EBsi8oXgk2hF3EIn0HGkUjAmgspxoc/m/b9gvcZcSunaw15tcCL
+         kcMHNuR2x0QntZTvouvqysLx4YKO2eniyX1OZWY9zhuO2kvlWZ/nrmviA4agbxfk4lyb
+         /YIw==
+X-Gm-Message-State: APzg51AQWroRa0yUv9sX9Zcy+bTHgzM4ogoOiriJA4bs0CHElmqZ0cUK
+        radmzNDAi9x92Wis2nWsR9iqisov61yPA2eEO92I0w==
+X-Google-Smtp-Source: ANB0VdaXQEcGM6Zl74fhl3biAQIWzExX6Nl3zu+0SqCD07klyHCM64xHyZbDYk+8O2hk9J7kJqGdHK7YAEV0czxTUnM=
+X-Received: by 2002:a2e:4557:: with SMTP id s84-v6mr5727142lja.47.1536347036478;
+ Fri, 07 Sep 2018 12:03:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180831035219.31619-1-ran.wang_1@nxp.com> <20180831035219.31619-3-ran.wang_1@nxp.com>
- <be39f5ea8c9046b0bf1f6bbfe935fae4@HXTBJIDCEMVIW02.hxtcorp.net>
- <CADRPPNQN=27+pOSckxvwSuBJoFaz7pT+Z6h07Wu3Liz5ao5kkA@mail.gmail.com> <AM5PR0402MB2865E57EDC0DE8B0047282A2F1000@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-In-Reply-To: <AM5PR0402MB2865E57EDC0DE8B0047282A2F1000@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 7 Sep 2018 13:56:33 -0500
-X-Gmail-Original-Message-ID: <CADRPPNTGrKBxzpbP05R0T3ovngYgQ4P_kgwgYwB6Aqrs8maXqw@mail.gmail.com>
-Message-ID: <CADRPPNTGrKBxzpbP05R0T3ovngYgQ4P_kgwgYwB6Aqrs8maXqw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] soc: fsl: add RCPM driver
-To:     Ran Wang <ran.wang_1@nxp.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        dongsheng.wang@hxt-semitech.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
+Received: by 2002:a2e:9357:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 12:03:55 -0700 (PDT)
+In-Reply-To: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Sat, 8 Sep 2018 00:33:55 +0530
+Message-ID: <CACi5LpP4=VprRuabhKVXWy+JmKB1WNri+OA3aMSw=Q7-obo_TA@mail.gmail.com>
+Subject: Re: [PATCH V4 0/3] Add efi page fault handler to recover from page
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc:     linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        x86@kernel.org, "Neri, Ricardo" <ricardo.neri@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 4:51 AM Ran Wang <ran.wang_1@nxp.com> wrote:
+On Fri, Sep 7, 2018 at 4:57 AM, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 >
-> Hi Leo,
+> There may exist some buggy UEFI firmware implementations that access efi
+> memory regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even after
+> the kernel has assumed control of the platform. This violates UEFI
+> specification. Hence, provide a debug config option which when enabled
+> recovers from page faults caused by buggy firmware.
 >
-> On September 05, 2018 at 11:22 Yang Li wrote:
-> > -----Original Message-----
-> > From: Li Yang <leoyang.li@nxp.com>
-> > Sent: Wednesday, September 05, 2018 11:22
-> > To: dongsheng.wang@hxt-semitech.com
-> > Cc: Ran Wang <ran.wang_1@nxp.com>; Rob Herring <robh+dt@kernel.org>;
-> > Mark Rutland <mark.rutland@arm.com>; open list:OPEN FIRMWARE AND
-> > FLATTENED DEVICE TREE BINDINGS <devicetree@vger.kernel.org>; linuxppc-
-> > dev <linuxppc-dev@lists.ozlabs.org>; lkml <linux-kernel@vger.kernel.org>;
-> > moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE <linux-arm-
-> > kernel@lists.infradead.org>
-> > Subject: Re: [PATCH 3/3] soc: fsl: add RCPM driver
-> >
-> > On Tue, Sep 4, 2018 at 9:58 PM Wang, Dongsheng <dongsheng.wang@hxt-
-> > semitech.com> wrote:
-> > >
-> > > Please change your comments style.
-> >
-> > Although this doesn't get into the Linux kernel coding style documentation
-> > yet, Linus seems changed his mind to prefer // than /*
-> > */ comment style now.
-> > https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml
-> > .org%2Flkml%2F2017%2F11%2F25%2F133&amp;data=02%7C01%7Cran.wang_
-> > 1%40nxp.com%7Cc0d88e6690384e02b95108d612dec235%7C686ea1d3bc2b4c
-> > 6fa92cd99c5c301635%7C0%7C0%7C636717145285126200&amp;sdata=JIoCZp
-> > WhRyW76EqgSflfTDA1f0gMQGKa%2FcbvSc5CO%2Fw%3D&amp;reserved=0
-> > So the
-> > // style should be acceptable for now.
-> >
-> > >
-> > > On 2018/8/31 11:56, Ran Wang wrote:
-> > > > The NXP's QorIQ Processors based on ARM Core have RCPM module (Run
-> > > > Control and Power Management), which performs all device-level tasks
-> > > > associated with power management such as wakeup source control.
-> > > >
-> > > > This driver depends on FSL platform PM driver framework which help
-> > > > to isolate user and PM service provider (such as RCPM driver).
-> > > >
-> > > > Signed-off-by: Chenhui Zhao <chenhui.zhao@nxp.com>
-> > > > Signed-off-by: Ying Zhang <ying.zhang22455@nxp.com>
-> > > > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> > > > ---
-> > > >  drivers/soc/fsl/Kconfig   |    6 ++
-> > > >  drivers/soc/fsl/Makefile  |    1 +
-> > > >  drivers/soc/fsl/ls-rcpm.c |  153
-> > > > +++++++++++++++++++++++++++++++++++++++++++++
-> > > >  3 files changed, 160 insertions(+), 0 deletions(-)  create mode
-> > > > 100644 drivers/soc/fsl/ls-rcpm.c
-> > > >
-> > > > diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig index
-> > > > 6517412..882330d 100644
-> > > > --- a/drivers/soc/fsl/Kconfig
-> > > > +++ b/drivers/soc/fsl/Kconfig
-> > > > @@ -30,3 +30,9 @@ config FSL_PLAT_PM
-> > > >         have to know the implement details of wakeup function it require.
-> > > >         Besides, it is also easy for service side to upgrade its logic when
-> > > >         design changed and remain user side unchanged.
-> > > > +
-> > > > +config LS_RCPM
-> > > > +     bool "Freescale RCPM support"
-> > > > +     depends on (FSL_PLAT_PM)
-> > > > +     help
-> > > > +       This feature is to enable specified wakeup source for system sleep.
-> > > > diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile
-> > > > index 8f9db23..43ff71a 100644
-> > > > --- a/drivers/soc/fsl/Makefile
-> > > > +++ b/drivers/soc/fsl/Makefile
-> > > > @@ -7,3 +7,4 @@ obj-$(CONFIG_QUICC_ENGINE)            += qe/
-> > > >  obj-$(CONFIG_CPM)                    += qe/
-> > > >  obj-$(CONFIG_FSL_GUTS)                       += guts.o
-> > > >  obj-$(CONFIG_FSL_PLAT_PM)    += plat_pm.o
-> > > > +obj-$(CONFIG_LS_RCPM)                += ls-rcpm.o
-> >
-> > Probably use "_" instead of "-" for alignment.
+> Page faults triggered by firmware happen at ring 0 and if unhandled,
+> hangs the kernel. So, provide an efi specific page fault handler to:
+> 1. Avoid panics/hangs caused by buggy firmware.
+> 2. Shout loud that the firmware is buggy and hence is not a kernel bug.
 >
-> OK, will update in next version
+> The efi page fault handler will check if the access is by
+> efi_reset_system().
+> 1. If so, then the efi page fault handler will reboot the machine
+>    through BIOS and not through efi_reset_system().
+> 2. If not, then the efi page fault handler will freeze efi_rts_wq and
+>    schedules a new process.
 >
-> > > > diff --git a/drivers/soc/fsl/ls-rcpm.c b/drivers/soc/fsl/ls-rcpm.c
-> > > > new file mode 100644 index 0000000..b0feb88
-> > > > --- /dev/null
-> > > > +++ b/drivers/soc/fsl/ls-rcpm.c
-> > > > @@ -0,0 +1,153 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0 // // plat_pm.c - Freescale
-> > > > +Layerscape RCPM driver
-> >
-> > The file name here is not the same as the real file name.
+> This issue was reported by Al Stone when he saw that reboot via EFI hangs
+> the machine. Upon debugging, I found that it's efi_reset_system() that's
+> touching memory regions which it shouldn't. To reproduce the same
+> behavior, I have hacked OVMF and made efi_reset_system() buggy. Along
+> with efi_reset_system(), I have also modified get_next_high_mono_count()
+> and set_virtual_address_map(). They illegally access both boot time and
+> other efi regions.
 >
-> Got it, will correct it.
+> Testing the patch set:
+> ----------------------
+> 1. Download buggy firmware from here [1].
+> 2. Run a qemu instance with this buggy BIOS and boot mainline kernel.
+> Add reboot=efi to the kernel command line arguments and after the kernel
+> is up and running, type "reboot". The kernel should hang while rebooting.
+> 3. With the same setup, boot kernel after applying patches and the
+> reboot should work fine. Also please notice warning/error messages
+> printed by kernel.
 >
-> > > > +//
-> > > > +// Copyright 2018 NXP
-> > > > +//
-> > > > +// Author: Ran Wang <ran.wang_1@nxp.com>,
-> >
-> > Where do you need the comma in the end?
+> Changes from RFC to V1:
+> -----------------------
+> 1. Drop "long jump" technique of dealing with illegal access and instead
+>    use scheduling away from efi_rts_wq.
 >
-> My bad, will remove comma in next version.
+> Changes from V1 to V2:
+> ----------------------
+> 1. Shortened config name to CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS from
+>    CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES.
+> 2. Made the config option available only to expert users.
+> 3. efi_free_boot_services() should be called only when
+>    CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is not enabled. Previously, this
+>    was part of init/main.c file. As it is an architecture agnostic code,
+>    moved the change to arch/x86/platform/efi/quirks.c file.
 >
-> > > > +
-> > > > +#include <linux/init.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/platform_device.h>
-> > > > +#include <linux/of_address.h>
-> > > > +#include <linux/slab.h>
-> > > > +#include <soc/fsl/plat_pm.h>
-> > > > +
-> > > > +#define MAX_COMPATIBLE_NUM   10
-> > > > +
-> > > > +struct rcpm_t {
-> > > > +     struct device *dev;
-> > > > +     void __iomem *ippdexpcr_addr;
-> > > > +     bool big_endian;        /* Big/Little endian of RCPM module */
-> > > > +};
-> > > > +
-> > > > +// rcpm_handle - Configure RCPM reg according to wake up source
-> > > > +request // @user_dev: pointer to user's device struct // @flag: to
-> > > > +enable(true) or disable(false) wakeup source // @handle_priv:
-> > > > +pointer to struct rcpm_t instance // // Return 0 on success other
-> > > > +negative errno
-> >
-> > Although Linus preferred this // comment style.  I'm not sure if this will be
-> > handled correctly by the kernel-doc compiler.
-> > https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fww
-> > w.kernel.org%2Fdoc%2Fhtml%2Fv4.18%2Fdoc-guide%2Fkernel-
-> > doc.html&amp;data=02%7C01%7Cran.wang_1%40nxp.com%7Cc0d88e669038
-> > 4e02b95108d612dec235%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0
-> > %7C636717145285126200&amp;sdata=H7GkUNOLVG%2FCcZESzhtHBeHCbO9
-> > %2FK4k9EdH30Cxq2%2BM%3D&amp;reserved=0
+> Changes from V2 to V3:
+> ----------------------
+> 1. Drop treating illegal access to EFI_BOOT_SERVICES_<CODE/DATA> regions
+>    separatley from illegal accesses to other regions like
+>    EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>.
+>    In previous versions, illegal access to EFI_BOOT_SERVICES_<CODE/DATA>
+>    regions were handled by mapping requested region to efi_pgd but from
+>    V3 they are handled similar to illegal access to other regions i.e by
+>    freezing efi_rts_wq and scheduling new process.
+> 2. Change __efi_init_fixup attribute to __efi_init.
 >
-> So, do you think I need to change all comment style back to '/* ... */' ?
-> Actually I feel a little bit confused here.
+> Changes from V3 to V4:
+> ----------------------
+> 1. Drop saving original memory map passed by kernel. It also means less
+>    checks in efi page fault handler.
+> 2. Change the config name to EFI_PAGE_FAULT_HANDLER to reflect it's
+>    functionality more appropriatley.
+>
+> Note:
+> -----
+> Patch set based on "next" branch in efi tree.
+>
+> [1] https://drive.google.com/drive/folders/1VozKTms92ifyVHAT0ZDQe55ZYL1UE5wt
+>
+> Sai Praneeth (3):
+>   efi: Make efi_rts_work accessible to efi page fault handler
+>   x86/efi: Add efi page fault handler to recover from page faults caused
+>         by the firmware
+>   x86/efi: Introduce EFI_PAGE_FAULT_HANDLER
+>
+>  arch/x86/Kconfig                        | 18 +++++++++
+>  arch/x86/include/asm/efi.h              |  9 +++++
+>  arch/x86/mm/fault.c                     |  9 +++++
+>  arch/x86/platform/efi/quirks.c          | 70 +++++++++++++++++++++++++++++++++
+>  drivers/firmware/efi/runtime-wrappers.c | 60 ++++++++--------------------
+>  include/linux/efi.h                     | 37 +++++++++++++++++
+>  6 files changed, 159 insertions(+), 44 deletions(-)
+>
+> Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+> Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Cc: Al Stone <astone@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>
+> --
+> 2.7.4
+>
 
-I think Linus's comment about // comment style applies to normal code
-comment.  But kernel-doc comment is a special kind of code comment
-that needs to meet certain requirements.  People can use the
-scripts/kernel-doc tool to generate readable API documents from the
-source code.  It looks like you wanted to make the function
-description aligned with the kernel-doc format, but kernel-doc
-specifically requires to use the /* */ style(at least for now).
+Thanks Sai for this work. I think this a step in the right direction.
+I tested this on qemu x86_64 with OVMF firmware modified to access
+some random address in the EFI_Reserved_Region. I was able to reboot
+the qemu instance successfully with the patches (see logs below) while
+without the patchset, reboot earlier used to get stuck.
 
-Regards,
-Leo
+So, feel free to add:
+Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+
+Qemu Console Logs:
+---------------------------
+
+# reboot
+
+<snip..>
+
+[   11.400004] ------------[ cut here ]------------
+[   11.400137] [Firmware Bug]: Page fault caused by firmware at PA: 0x7e924100
+[   11.400484] WARNING: CPU: 0 PID: 1111 at
+arch/x86/platform/efi/quirks.c:691
+efi_recover_from_page_fault+0x3b/0xf0
+[   11.400751] Modules linked in:
+[   11.400992] CPU: 0 PID: 1111 Comm: init Not tainted 4.18.0-rc5+ #1
+[   11.401146] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 0.0.0 02/06/2015
+[   11.401397] RIP: 0010:efi_recover_from_page_fault+0x3b/0xf0
+[   11.401547] Code: e0 03 00 00 e0 6e 8d 91 0f 85 9e 00 00 00 48 81
+ff ff 0f 00 00 0f 86 91 00 00 00 48 89 fe 48 c7 c7 b8 e6 5d 91 e8 65
+41 00 00 <0f> 0b 83 3d dc 19 8a 01 09 0f 84 89 00 00 00 48 c7 04 24 02
+00 00
+[   11.402185] RSP: 0018:ffffb91080d6ba70 EFLAGS: 00000086
+[   11.402330] RAX: 0000000000000000 RBX: ffff98b53e34c980 RCX: ffffffff91845d38
+[   11.402502] RDX: 0000000000000001 RSI: 0000000000000086 RDI: ffffffff91e8986c
+[   11.402706] RBP: ffffb91080d6bb58 R08: 7269662079622064 R09: 00000000000001fe
+[   11.402881] R10: 0000000000000000 R11: 3030313432396537 R12: ffff98b53e34c980
+[   11.403051] R13: 0000000000000002 R14: 000000000000000b R15: 0000000000000001
+[   11.403259] FS:  00007f7d510fe700(0000) GS:ffff98b53f600000(0000)
+knlGS:0000000000000000
+[   11.403452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   11.403602] CR2: 000000007e924100 CR3: 000000007ec9c000 CR4: 00000000000006f0
+[   11.403823] Call Trace:
+[   11.404368]  no_context+0x130/0x3a0
+[   11.404509]  __do_page_fault+0x39a/0x4b0
+[   11.404623]  page_fault+0x1e/0x30
+[   11.404811] RIP: 0010:0xfffffffeffbba977
+[   11.404908] Code: 89 d5 56 53 4d 89 c4 89 cb 48 83 ec 48 e8 cb 05
+00 00 84 c0 41 88 c6 74 11 48 8d 15 3e 15 00 00 b9 00 00 00 80 e8 f8
+07 00 00 <48> c7 04 25 00 41 92 7e 0a 00 00 00 48 83 3d c5 29 00 00 00
+75 30
+[   11.405544] RSP: 0018:ffffb91080d6bc00 EFLAGS: 00000082
+[   11.405683] RAX: 0000000000000041 RBX: 0000000000000000 RCX: ffffb91080d6bae0
+[   11.405849] RDX: 00000000000003f8 RSI: 0000000000000000 RDI: fffffffeffbba93f
+[   11.406016] RBP: 0000000000000000 R08: 0000000000000041 R09: 0000000000000041
+[   11.406184] R10: 00000000000003fd R11: 00000000000003f8 R12: 0000000000000000
+[   11.406369] R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000000
+[   11.406593]  ? serial8250_console_putchar+0x11/0x20
+[   11.406725]  ? efi_call+0x58/0x90
+[   11.406815]  ? msg_print_text+0x9c/0x100
+[   11.406927]  ? virt_efi_reset_system+0x81/0x100
+[   11.407042]  ? efi_reboot+0x85/0xe0
+[   11.407131]  ? native_machine_emergency_restart+0x17f/0x260
+[   11.407267]  ? clear_local_APIC.part.13+0x1e3/0x220
+[   11.407394]  ? __do_sys_reboot+0x1ee/0x210
+[   11.407501]  ? __switch_to_asm+0x40/0x70
+[   11.407613]  ? __switch_to_asm+0x34/0x70
+[   11.407716]  ? __switch_to_asm+0x40/0x70
+[   11.407817]  ? __switch_to_asm+0x34/0x70
+[   11.407916]  ? __switch_to_asm+0x40/0x70
+[   11.408017]  ? __switch_to_asm+0x34/0x70
+[   11.408117]  ? __switch_to_asm+0x40/0x70
+[   11.408217]  ? __switch_to_asm+0x34/0x70
+[   11.408317]  ? __switch_to_asm+0x40/0x70
+[   11.408417]  ? __switch_to_asm+0x34/0x70
+[   11.408515]  ? __switch_to_asm+0x40/0x70
+[   11.408620]  ? __switch_to_asm+0x34/0x70
+[   11.408718]  ? __switch_to_asm+0x40/0x70
+[   11.408814]  ? __switch_to_asm+0x34/0x70
+[   11.408909]  ? __switch_to_asm+0x40/0x70
+[   11.409005]  ? __switch_to_asm+0x34/0x70
+[   11.409113]  ? __switch_to_asm+0x40/0x70
+[   11.409209]  ? __switch_to_asm+0x34/0x70
+[   11.409303]  ? __switch_to_asm+0x40/0x70
+[   11.409396]  ? __switch_to_asm+0x34/0x70
+[   11.409491]  ? __switch_to_asm+0x40/0x70
+[   11.409589]  ? __switch_to_asm+0x34/0x70
+[   11.409685]  ? __switch_to_asm+0x40/0x70
+[   11.409781]  ? __switch_to_asm+0x34/0x70
+[   11.409879]  ? __switch_to_asm+0x40/0x70
+[   11.409980]  ? __switch_to_asm+0x34/0x70
+[   11.410079]  ? __switch_to_asm+0x40/0x70
+[   11.410178]  ? __switch_to_asm+0x34/0x70
+[   11.410281]  ? do_syscall_64+0x39/0xe0
+[   11.410378]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   11.410554] ---[ end trace ad3d0a220a88a45b ]---
+[   11.410742] efi: efi_reset_system() buggy! Reboot through BIOS
+
+<snip..>
+
+Thanks,
+Bhupesh
