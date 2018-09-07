@@ -2,219 +2,80 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAEAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0654AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D89B320857
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:35:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89B320857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 60D0420857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D0420857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbeIGIOM (ORCPT
+        id S1726596AbeIGIS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 04:14:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40654 "EHLO mx1.redhat.com"
+        Fri, 7 Sep 2018 04:18:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11649 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725957AbeIGIOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 04:14:12 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 561E8CFB62;
-        Fri,  7 Sep 2018 03:35:22 +0000 (UTC)
-Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DF267178BE;
-        Fri,  7 Sep 2018 03:35:17 +0000 (UTC)
-Subject: Re: [PATCH net-next 08/11] tun: switch to new type of msg_control
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
-References: <20180906040526.22518-1-jasowang@redhat.com>
- <20180906040526.22518-9-jasowang@redhat.com>
- <20180906125051-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <4141e1c0-618a-978f-0188-7bebeb2c4e70@redhat.com>
-Date:   Fri, 7 Sep 2018 11:35:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725743AbeIGIS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 04:18:56 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C6DF561A1CFF3;
+        Fri,  7 Sep 2018 11:40:02 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Fri, 7 Sep 2018
+ 11:39:55 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <jeffrey.t.kirsher@intel.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <intel-wired-lan@lists.osuosl.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] ixgbe: remove redundant function ixgbe_fw_recovery_mode()
+Date:   Fri, 7 Sep 2018 11:38:44 +0800
+Message-ID: <20180907033844.4876-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20180906125051-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 07 Sep 2018 03:35:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 07 Sep 2018 03:35:22 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There are no in-tree callers.
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_common.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-On 2018年09月07日 00:54, Michael S. Tsirkin wrote:
-> On Thu, Sep 06, 2018 at 12:05:23PM +0800, Jason Wang wrote:
->> This patch introduces to a new tun/tap specific msg_control:
->>
->> #define TUN_MSG_UBUF 1
->> #define TUN_MSG_PTR  2
->> struct tun_msg_ctl {
->>         int type;
->>         void *ptr;
->> };
->>
->> This allows us to pass different kinds of msg_control through
->> sendmsg(). The first supported type is ubuf (TUN_MSG_UBUF) which will
->> be used by the existed vhost_net zerocopy code. The second is XDP
->> buff, which allows vhost_net to pass XDP buff to TUN. This could be
->> used to implement accepting an array of XDP buffs from vhost_net in
->> the following patches.
->>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> At this point, do we want to just add a new sock opt for tap's
-> benefit? Seems cleaner than (ab)using sendmsg.
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+index 970f71d..0bd1294 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
+@@ -3485,17 +3485,6 @@ void ixgbe_set_vlan_anti_spoofing(struct ixgbe_hw *hw, bool enable, int vf)
+ }
+ 
+ /**
+- * ixgbe_fw_recovery_mode - Check if in FW NVM recovery mode
+- * @hw: pointer to hardware structure
+- */
+-bool ixgbe_fw_recovery_mode(struct ixgbe_hw *hw)
+-{
+-	if (hw->mac.ops.fw_recovery_mode)
+-		return hw->mac.ops.fw_recovery_mode(hw);
+-	return false;
+-}
+-
+-/**
+  *  ixgbe_get_device_caps_generic - Get additional device capabilities
+  *  @hw: pointer to hardware structure
+  *  @device_caps: the EEPROM word with the extra device capabilities
+-- 
+2.7.0
 
-I think it won't be much difference, we still need a void pointer.
-
->> ---
->>   drivers/net/tap.c      | 18 ++++++++++++------
->>   drivers/net/tun.c      |  6 +++++-
->>   drivers/vhost/net.c    |  7 +++++--
->>   include/linux/if_tun.h |  7 +++++++
->>   4 files changed, 29 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
->> index f0f7cd977667..7996ed7cbf18 100644
->> --- a/drivers/net/tap.c
->> +++ b/drivers/net/tap.c
->> @@ -619,7 +619,7 @@ static inline struct sk_buff *tap_alloc_skb(struct sock *sk, size_t prepad,
->>   #define TAP_RESERVE HH_DATA_OFF(ETH_HLEN)
->>   
->>   /* Get packet from user space buffer */
->> -static ssize_t tap_get_user(struct tap_queue *q, struct msghdr *m,
->> +static ssize_t tap_get_user(struct tap_queue *q, void *msg_control,
->>   			    struct iov_iter *from, int noblock)
->>   {
->>   	int good_linear = SKB_MAX_HEAD(TAP_RESERVE);
->> @@ -663,7 +663,7 @@ static ssize_t tap_get_user(struct tap_queue *q, struct msghdr *m,
->>   	if (unlikely(len < ETH_HLEN))
->>   		goto err;
->>   
->> -	if (m && m->msg_control && sock_flag(&q->sk, SOCK_ZEROCOPY)) {
->> +	if (msg_control && sock_flag(&q->sk, SOCK_ZEROCOPY)) {
->>   		struct iov_iter i;
->>   
->>   		copylen = vnet_hdr.hdr_len ?
->> @@ -724,11 +724,11 @@ static ssize_t tap_get_user(struct tap_queue *q, struct msghdr *m,
->>   	tap = rcu_dereference(q->tap);
->>   	/* copy skb_ubuf_info for callback when skb has no error */
->>   	if (zerocopy) {
->> -		skb_shinfo(skb)->destructor_arg = m->msg_control;
->> +		skb_shinfo(skb)->destructor_arg = msg_control;
->>   		skb_shinfo(skb)->tx_flags |= SKBTX_DEV_ZEROCOPY;
->>   		skb_shinfo(skb)->tx_flags |= SKBTX_SHARED_FRAG;
->> -	} else if (m && m->msg_control) {
->> -		struct ubuf_info *uarg = m->msg_control;
->> +	} else if (msg_control) {
->> +		struct ubuf_info *uarg = msg_control;
->>   		uarg->callback(uarg, false);
->>   	}
->>   
->> @@ -1150,7 +1150,13 @@ static int tap_sendmsg(struct socket *sock, struct msghdr *m,
->>   		       size_t total_len)
->>   {
->>   	struct tap_queue *q = container_of(sock, struct tap_queue, sock);
->> -	return tap_get_user(q, m, &m->msg_iter, m->msg_flags & MSG_DONTWAIT);
->> +	struct tun_msg_ctl *ctl = m->msg_control;
->> +
->> +	if (ctl && ctl->type != TUN_MSG_UBUF)
->> +		return -EINVAL;
->> +
->> +	return tap_get_user(q, ctl ? ctl->ptr : NULL, &m->msg_iter,
->> +			    m->msg_flags & MSG_DONTWAIT);
->>   }
->>   
->>   static int tap_recvmsg(struct socket *sock, struct msghdr *m,
->> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->> index ff1cbf3ebd50..c839a4bdcbd9 100644
->> --- a/drivers/net/tun.c
->> +++ b/drivers/net/tun.c
->> @@ -2429,11 +2429,15 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
->>   	int ret;
->>   	struct tun_file *tfile = container_of(sock, struct tun_file, socket);
->>   	struct tun_struct *tun = tun_get(tfile);
->> +	struct tun_msg_ctl *ctl = m->msg_control;
->>   
->>   	if (!tun)
->>   		return -EBADFD;
->>   
->> -	ret = tun_get_user(tun, tfile, m->msg_control, &m->msg_iter,
->> +	if (ctl && ctl->type != TUN_MSG_UBUF)
->> +		return -EINVAL;
->> +
->> +	ret = tun_get_user(tun, tfile, ctl ? ctl->ptr : NULL, &m->msg_iter,
->>   			   m->msg_flags & MSG_DONTWAIT,
->>   			   m->msg_flags & MSG_MORE);
->>   	tun_put(tun);
->> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->> index 4e656f89cb22..fb01ce6d981c 100644
->> --- a/drivers/vhost/net.c
->> +++ b/drivers/vhost/net.c
->> @@ -620,6 +620,7 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
->>   		.msg_controllen = 0,
->>   		.msg_flags = MSG_DONTWAIT,
->>   	};
->> +	struct tun_msg_ctl ctl;
->>   	size_t len, total_len = 0;
->>   	int err;
->>   	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
->> @@ -664,8 +665,10 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
->>   			ubuf->ctx = nvq->ubufs;
->>   			ubuf->desc = nvq->upend_idx;
->>   			refcount_set(&ubuf->refcnt, 1);
->> -			msg.msg_control = ubuf;
->> -			msg.msg_controllen = sizeof(ubuf);
->> +			msg.msg_control = &ctl;
->> +			ctl.type = TUN_MSG_UBUF;
->> +			ctl.ptr = ubuf;
->> +			msg.msg_controllen = sizeof(ctl);
->>   			ubufs = nvq->ubufs;
->>   			atomic_inc(&ubufs->refcount);
->>   			nvq->upend_idx = (nvq->upend_idx + 1) % UIO_MAXIOV;
->> diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
->> index 3d2996dc7d85..ba46dced1f38 100644
->> --- a/include/linux/if_tun.h
->> +++ b/include/linux/if_tun.h
->> @@ -19,6 +19,13 @@
->>   
->>   #define TUN_XDP_FLAG 0x1UL
->>   
->> +#define TUN_MSG_UBUF 1
->> +#define TUN_MSG_PTR  2
-> Looks like TUN_MSG_PTR should be pushed out to a follow-up patch?
-
-Ok.
-
->
->> +struct tun_msg_ctl {
->> +	int type;
->> +	void *ptr;
->> +};
->> +
-> type actually includes a size. Why not two short fields then?
-
-Yes, this sounds better.
-
-Thanks
-
->
->>   #if defined(CONFIG_TUN) || defined(CONFIG_TUN_MODULE)
->>   struct socket *tun_get_socket(struct file *);
->>   struct ptr_ring *tun_get_tx_ring(struct file *file);
->> -- 
->> 2.17.1
 
