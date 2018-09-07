@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7245AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73D3C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D75520645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D75520645
+	by mail.kernel.org (Postfix) with ESMTP id 915D020645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 915D020645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeIHCMQ (ORCPT
+        id S1729619AbeIHCMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:12:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48944 "EHLO
+        Fri, 7 Sep 2018 22:12:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48956 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728693AbeIHCMQ (ORCPT
+        with ESMTP id S1728095AbeIHCMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:12:16 -0400
+        Fri, 7 Sep 2018 22:12:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68D59DBC;
-        Fri,  7 Sep 2018 21:29:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA700ED1;
+        Fri,  7 Sep 2018 21:29:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Serge Hallyn <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.14 69/89] userns: move user access out of the mutex
-Date:   Fri,  7 Sep 2018 23:10:03 +0200
-Message-Id: <20180907210900.557863529@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 70/89] ubifs: Fix memory leak in lprobs self-check
+Date:   Fri,  7 Sep 2018 23:10:04 +0200
+Message-Id: <20180907210900.676612566@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -52,68 +49,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 5820f140edef111a9ea2ef414ab2428b8cb805b1 upstream.
+commit eef19816ada3abd56d9f20c88794cc2fea83ebb2 upstream.
 
-The old code would hold the userns_state_mutex indefinitely if
-memdup_user_nul stalled due to e.g. a userfault region. Prevent that by
-moving the memdup_user_nul in front of the mutex_lock().
+Allocate the buffer after we return early.
+Otherwise memory is being leaked.
 
-Note: This changes the error precedence of invalid buf/count/*ppos vs
-map already written / capabilities missing.
-
-Fixes: 22d917d80e84 ("userns: Rework the user_namespace adding uid/gid...")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Christian Brauner <christian@brauner.io>
-Acked-by: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/user_namespace.c |   24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ fs/ubifs/lprops.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -650,7 +650,16 @@ static ssize_t map_write(struct file *fi
- 	unsigned idx;
- 	struct uid_gid_extent *extent = NULL;
- 	char *kbuf = NULL, *pos, *next_line;
--	ssize_t ret = -EINVAL;
-+	ssize_t ret;
-+
-+	/* Only allow < page size writes at the beginning of the file */
-+	if ((*ppos != 0) || (count >= PAGE_SIZE))
-+		return -EINVAL;
-+
-+	/* Slurp in the user data */
-+	kbuf = memdup_user_nul(buf, count);
-+	if (IS_ERR(kbuf))
-+		return PTR_ERR(kbuf);
+--- a/fs/ubifs/lprops.c
++++ b/fs/ubifs/lprops.c
+@@ -1091,10 +1091,6 @@ static int scan_check_cb(struct ubifs_in
+ 		}
+ 	}
  
+-	buf = __vmalloc(c->leb_size, GFP_NOFS, PAGE_KERNEL);
+-	if (!buf)
+-		return -ENOMEM;
+-
  	/*
- 	 * The userns_state_mutex serializes all writes to any given map.
-@@ -684,19 +693,6 @@ static ssize_t map_write(struct file *fi
- 	if (cap_valid(cap_setid) && !file_ns_capable(file, ns, CAP_SYS_ADMIN))
- 		goto out;
+ 	 * After an unclean unmount, empty and freeable LEBs
+ 	 * may contain garbage - do not scan them.
+@@ -1113,6 +1109,10 @@ static int scan_check_cb(struct ubifs_in
+ 		return LPT_SCAN_CONTINUE;
+ 	}
  
--	/* Only allow < page size writes at the beginning of the file */
--	ret = -EINVAL;
--	if ((*ppos != 0) || (count >= PAGE_SIZE))
--		goto out;
--
--	/* Slurp in the user data */
--	kbuf = memdup_user_nul(buf, count);
--	if (IS_ERR(kbuf)) {
--		ret = PTR_ERR(kbuf);
--		kbuf = NULL;
--		goto out;
--	}
--
- 	/* Parse the user data */
- 	ret = -EINVAL;
- 	pos = kbuf;
++	buf = __vmalloc(c->leb_size, GFP_NOFS, PAGE_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
+ 	sleb = ubifs_scan(c, lnum, 0, buf, 0);
+ 	if (IS_ERR(sleb)) {
+ 		ret = PTR_ERR(sleb);
 
 
