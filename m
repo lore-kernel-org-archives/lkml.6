@@ -2,121 +2,117 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0373C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13FCC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3CA2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3CA2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id AA6172075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:37:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="kpQXdqNT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6172075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeIGMQC (ORCPT
+        id S1727698AbeIGMQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:16:02 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41339 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbeIGMQB (ORCPT
+        Fri, 7 Sep 2018 08:16:38 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:35204 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbeIGMQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:16:01 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1fyBJC-0006Q9-U2; Fri, 07 Sep 2018 09:36:02 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1fyBJ9-0007Z8-RG; Fri, 07 Sep 2018 09:35:59 +0200
-Date:   Fri, 7 Sep 2018 09:35:59 +0200
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, yibin.gong@nxp.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
-        kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180907073559.ejffdfjy7zpqetzq@pengutronix.de>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk>
- <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk>
+        Fri, 7 Sep 2018 08:16:38 -0400
+Received: by mail-qt0-f179.google.com with SMTP id j7-v6so15332681qtp.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=r8ccPo/7uRlB+FgFLfDdo+e5tdArx5VEGHE51bjxrEE=;
+        b=kpQXdqNTGkxpHlUhmQ0QdSFCfd6m7vVvZgwSxWboGJ1gn5rlg4ycazarMfwbxC9HoD
+         kHT9ddJ24h6qxEwSQyH3aorgIT2X43MwLFf0q9aKG8VFppYBaOEimhmDRWFyN6x4yZ2i
+         2D9Ie3cpMRVvNQawQi9KtM4SfHvlBBNfxN+0mq1mYsKGCv32jwzXxM/jRlwu0V2s6DQU
+         y5usao1+PGUDUFjW6qhPz0EHGu4aeOfhV6ZYTbktSi0WEZHuYb7LmV+QSU7Wnvc+0jZI
+         tbAQIhLLv7IzO4WP+S65IOandeUKJlwy1aMbRnOMv4yjRPtkDE5bm707GJACjGSqMPVP
+         2T4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=r8ccPo/7uRlB+FgFLfDdo+e5tdArx5VEGHE51bjxrEE=;
+        b=VlOWY4o3bPm7BVmwAxsC0mmY6xA2+VL7xqO/57+tR5RN0BLEm5aZFGkYhHqhEsXLhU
+         FutBoJICs9NXBiQ1M7PMWBvi8zKymEVMauvtMIOqQbXuy070hvKhnRZVz/11FRXOjyeH
+         DteivnG4Q9k7VihVR8Gg+RjO0Ov4Y69JkTTuTrRfNNvElmT0GOqrWOoG/+ft5b4YXIYN
+         UTLQCsYSUO6chrrGDbP0sFwizlSZ96wYuxARokKdfoy5tAlQI7mRx+c3rCfUcExDgvP5
+         U92GS916ctE0KmVWendJQR8tdH0V3rnQL1evVF+IBop7AqrQ6lhbINBe6VutfaR5SLIM
+         grcw==
+X-Gm-Message-State: APzg51BzPBMFCGX6uINQd/+btRVMCcSdpTO9R80Ng24LF9KT7HnoSobx
+        WBCtMhOJ2zzxwfwk2fy8/cNml60IRS7oC1zv5Yi8KQ==
+X-Google-Smtp-Source: ANB0VdayjcUyTuJwMjY16bDKUftIzdr4uhVsuAOLc0iE4wmNlFZJ134dhRKSWLiST/+90g/Hz6bIos1F6ljbxFV50Rg=
+X-Received: by 2002:a0c:bfe3:: with SMTP id u32-v6mr4844463qvj.172.1536305817171;
+ Fri, 07 Sep 2018 00:36:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hv37p32vqzzbscv3"
-Content-Disposition: inline
-In-Reply-To: <20180906101516.GA5360@sirena.org.uk>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:34:53 up 6 days, 23:49, 28 users,  load average: 0.09, 0.02, 0.00
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Received: by 2002:ac8:147:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 00:36:56 -0700 (PDT)
+In-Reply-To: <20180905214303.GA30178@cmpxchg.org>
+References: <20180828172258.3185-1-hannes@cmpxchg.org> <20180905214303.GA30178@cmpxchg.org>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Fri, 7 Sep 2018 15:36:56 +0800
+Message-ID: <CAD8Lp44vHpMiWZdU9+mp-pe2kXmnxF1zm20SNWf2BVunk8c46g@mail.gmail.com>
+Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
+ IO v4
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 6, 2018 at 5:43 AM, Johannes Weiner <hannes@cmpxchg.org> wrote:
+> Peter, do the changes from v3 look sane to you?
+>
+> If there aren't any further objections, I was hoping we could get this
+> lined up for 4.20.
 
---hv37p32vqzzbscv3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That would be excellent. I just retested the latest version at
+http://git.cmpxchg.org/cgit.cgi/linux-psi.git (Linux 4.18) and the
+results are great.
 
-Hi Mark,
+Test setup:
+Endless OS
+GeminiLake N4200 low end laptop
+2GB RAM
+swap (and zram swap) disabled
 
-On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
-> On Mon, Aug 27, 2018 at 09:48:16AM +0800, Shawn Guo wrote:
->=20
-> > Can you ACK on those two regulator patches, so that I can queue this
-> > series up on IMX tree?
->=20
-> I was expecting to get a pull request with the precursor patches in it -
-> the regulator driver seems to get a moderate amount of development so
-> there's a reasonable risk of conflicts.
+Baseline test: open a handful of large-ish apps and several website
+tabs in Google Chrome.
+Results: after a couple of minutes, system is excessively thrashing,
+mouse cursor can barely be moved, UI is not responding to mouse
+clicks, so it's impractical to recover from this situation as an
+ordinary user
 
-Are there any thing I can or should do?
+Add my simple killer:
+https://gist.github.com/dsd/a8988bf0b81a6163475988120fe8d9cd
+Results: when the thrashing causes the UI to become sluggish, the
+killer steps in and kills something (usually a chrome tab), and the
+system remains usable. I repeatedly opened more apps and more websites
+over a 15 minute period but I wasn't able to get the system to a point
+of UI unresponsiveness.
 
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---hv37p32vqzzbscv3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAluSKlwACgkQdQOiSHVI
-77SbiAf/Vo61tQX0DvUQYecE1iy7j6lBfvQsrNZrltl+fBM5WCwbqszQiK9ADiyg
-1/dLFR3VlCJXlgNTF1wcz1NymDAyStRkDR1670WY6x/qJeBwzNx7OHQuGQJtmj4G
-m8+GmT/AApfITmEr4sShF8TmkMu1wtXw4QFVj0hwBjAbAztWMqAlTt9TWOkoykoL
-4n2HuWWh7LUdq8A9ggGavw4YBSTA/fVHgpQdzAhK+mCDA7UGOyEf9r2AiG1eXa/q
-u+GXp9OQ5UNjbG5PW9v3NNZqsti/YJoN2bmqfmRHCgDARwNiusxa/IA3+CbAucop
-mJhmzM0+g7O9CKbs9Wqeag+7fTmhjw==
-=ncWt
------END PGP SIGNATURE-----
-
---hv37p32vqzzbscv3--
+Thanks,
+Daniel
