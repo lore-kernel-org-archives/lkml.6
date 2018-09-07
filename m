@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89858C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2748CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42F292075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F292075B
+	by mail.kernel.org (Postfix) with ESMTP id D911120844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D911120844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeIHB5H (ORCPT
+        id S1728368AbeIHB5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:57:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42058 "EHLO
+        Fri, 7 Sep 2018 21:57:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbeIHB5G (ORCPT
+        with ESMTP id S1727638AbeIHB5J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:57:06 -0400
+        Fri, 7 Sep 2018 21:57:09 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59CD5F07;
-        Fri,  7 Sep 2018 21:14:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA256FD4;
+        Fri,  7 Sep 2018 21:14:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 044/145] IB/srpt: Support HCAs with more than two ports
-Date:   Fri,  7 Sep 2018 23:08:30 +0200
-Message-Id: <20180907210908.132000718@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.18 045/145] overflow.h: Add arithmetic shift helper
+Date:   Fri,  7 Sep 2018 23:08:31 +0200
+Message-Id: <20180907210908.213674540@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,74 +51,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit e620ebfc228dcbef7519e3d16f43c6c6f1a1d0cb upstream.
+commit 0c66847793d1982d1083dc6f7adad60fa265ce9c upstream.
 
-Since there are adapters that have four ports, increase the size of
-the srpt_device.port[] array. This patch avoids that the following
-warning is hit with quad port Chelsio adapters:
+Add shift_overflow() helper to assist driver authors in ensuring that
+shift operations don't cause overflows or other odd conditions.
 
-    WARN_ON(sdev->device->phys_port_cnt > ARRAY_SIZE(sdev->port));
-
-Reported-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Steve Wise <swise@opengridcomputing.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Steve Wise <swise@opengridcomputing.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+[kees: tweaked comments and commit log, dropped unneeded assignment]
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |    5 ++---
- drivers/infiniband/ulp/srpt/ib_srpt.h |    4 ++--
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ include/linux/overflow.h |   31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2983,7 +2983,8 @@ static void srpt_add_one(struct ib_devic
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -202,6 +202,37 @@
  
- 	pr_debug("device = %p\n", device);
+ #endif /* COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW */
  
--	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
-+	sdev = kzalloc(struct_size(sdev, port, device->phys_port_cnt),
-+		       GFP_KERNEL);
- 	if (!sdev)
- 		goto err;
- 
-@@ -3037,8 +3038,6 @@ static void srpt_add_one(struct ib_devic
- 			      srpt_event_handler);
- 	ib_register_event_handler(&sdev->event_handler);
- 
--	WARN_ON(sdev->device->phys_port_cnt > ARRAY_SIZE(sdev->port));
--
- 	for (i = 1; i <= sdev->device->phys_port_cnt; i++) {
- 		sport = &sdev->port[i - 1];
- 		INIT_LIST_HEAD(&sport->nexus_list);
---- a/drivers/infiniband/ulp/srpt/ib_srpt.h
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.h
-@@ -396,9 +396,9 @@ struct srpt_port {
-  * @sdev_mutex:	   Serializes use_srq changes.
-  * @use_srq:       Whether or not to use SRQ.
-  * @ioctx_ring:    Per-HCA SRQ.
-- * @port:          Information about the ports owned by this HCA.
-  * @event_handler: Per-HCA asynchronous IB event handler.
-  * @list:          Node in srpt_dev_list.
-+ * @port:          Information about the ports owned by this HCA.
-  */
- struct srpt_device {
- 	struct ib_device	*device;
-@@ -410,9 +410,9 @@ struct srpt_device {
- 	struct mutex		sdev_mutex;
- 	bool			use_srq;
- 	struct srpt_recv_ioctx	**ioctx_ring;
--	struct srpt_port	port[2];
- 	struct ib_event_handler	event_handler;
- 	struct list_head	list;
-+	struct srpt_port        port[];
- };
- 
- #endif				/* IB_SRPT_H */
++/** check_shl_overflow() - Calculate a left-shifted value and check overflow
++ *
++ * @a: Value to be shifted
++ * @s: How many bits left to shift
++ * @d: Pointer to where to store the result
++ *
++ * Computes *@d = (@a << @s)
++ *
++ * Returns true if '*d' cannot hold the result or when 'a << s' doesn't
++ * make sense. Example conditions:
++ * - 'a << s' causes bits to be lost when stored in *d.
++ * - 's' is garbage (e.g. negative) or so large that the result of
++ *   'a << s' is guaranteed to be 0.
++ * - 'a' is negative.
++ * - 'a << s' sets the sign bit, if any, in '*d'.
++ *
++ * '*d' will hold the results of the attempted shift, but is not
++ * considered "safe for use" if false is returned.
++ */
++#define check_shl_overflow(a, s, d) ({					\
++	typeof(a) _a = a;						\
++	typeof(s) _s = s;						\
++	typeof(d) _d = d;						\
++	u64 _a_full = _a;						\
++	unsigned int _to_shift =					\
++		_s >= 0 && _s < 8 * sizeof(*d) ? _s : 0;		\
++	*_d = (_a_full << _to_shift);					\
++	(_to_shift != _s || *_d < 0 || _a < 0 ||			\
++		(*_d >> _to_shift) != _a);				\
++})
++
+ /**
+  * array_size() - Calculate size of 2-dimensional array.
+  *
 
 
