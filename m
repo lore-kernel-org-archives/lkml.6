@@ -2,326 +2,195 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED48C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B418C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DB720861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:15:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4DB720861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id 288062083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:17:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PdkYGGrW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288062083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeIGO4L convert rfc822-to-8bit (ORCPT
+        id S1728308AbeIGO5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 10:56:11 -0400
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:45210 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726295AbeIGO4L (ORCPT
+        Fri, 7 Sep 2018 10:57:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36864 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbeIGO5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 10:56:11 -0400
-X-ASG-Debug-ID: 1536315340-093b7e54e6096e0001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id OBR84lqO5vpvD9gN (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 07 Sep 2018 18:15:40 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Sep 2018 18:15:44 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Fri, 7 Sep 2018 18:15:44 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     Ran Wang <ran.wang_1@nxp.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/3] soc: fsl: add Platform PM driver QorIQ platforms
-Thread-Topic: [PATCH 1/3] soc: fsl: add Platform PM driver QorIQ platforms
-X-ASG-Orig-Subj: Re: [PATCH 1/3] soc: fsl: add Platform PM driver QorIQ platforms
-Thread-Index: AQHUQN7BocIUUTAFlkap4qeCxrnE2A==
-Date:   Fri, 7 Sep 2018 10:15:43 +0000
-Message-ID: <35f171989af34850bd192c2b4de9b43b@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <20180831035219.31619-1-ran.wang_1@nxp.com>
- <366f03eab44e489b9fef82fb8e8f3c3b@HXTBJIDCEMVIW02.hxtcorp.net>
- <AM5PR0402MB2865774C03981F9808AB3A13F1000@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.6.85]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 7 Sep 2018 10:57:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pZ6Lf6co6zgsKl8qdefhOF/uzplfkLJbhgYvWNOjvMs=; b=PdkYGGrWQhNYXtQ8c/Q1sOccx
+        UxcLOrecn3hZRTv7pCdau2CMvCeH/UdXz/xHMMmtJfJDdfnPWXQ+aL4IweO2BVixzWG66/uSfvOZq
+        ec+UegvY7OU/1pGU1yT+X1Xu1O55SmO56IQ94TiiIEewCcW+oP5M7bqOgvota/8CCapVeqh8lq/cI
+        USyfdEaPsetupGTbmrZ1Q/x0z0SVCE77Kk8vDdEnJzpkxZPZS3cj45tS5DftP1qb08TPrcn139g4t
+        uVSes+63f2BOUEfSgOaSdf9Ps7utw4SaSIqPCyeue/z/VfQV7cX0Bx89Ky6PaNgTzOu4r6zl1gLDu
+        PC5P40Xww==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyDoa-00053X-Un; Fri, 07 Sep 2018 10:16:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A4BE8201F9C46; Fri,  7 Sep 2018 12:16:34 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 12:16:34 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180907101634.GO24106@hirez.programming.kicks-ass.net>
+References: <20180828172258.3185-1-hannes@cmpxchg.org>
+ <20180828172258.3185-9-hannes@cmpxchg.org>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1536315340
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.57055
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828172258.3185-9-hannes@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/7 16:49, Ran Wang wrote:
-> Hi Dongsheng
->
->> On 2018/9/5 11:05, Dongsheng Wang wrote:
->>
->> Please change your comments style.
->>
->> On 2018/8/31 11:57, Ran Wang wrote:
->>> This driver is to provide a independent framework for PM service
->>> provider and consumer to configure system level wake up feature. For
->>> example, RCPM driver could register a callback function on this
->>> platform first, and Flex timer driver who want to enable timer wake up
->>> feature, will call generic API provided by this platform driver, and
->>> then it will trigger RCPM driver to do it. The benefit is to isolate
->>> the user and service, such as flex timer driver will not have to know
->>> the implement details of wakeup function it require. Besides, it is
->>> also easy for service side to upgrade its logic when design is changed
->>> and remain user side unchanged.
->>>
->>> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
->>> ---
->>>  drivers/soc/fsl/Kconfig   |   14 +++++
->>>  drivers/soc/fsl/Makefile  |    1 +
->>>  drivers/soc/fsl/plat_pm.c |  144
->> +++++++++++++++++++++++++++++++++++++++++++++
->>>  include/soc/fsl/plat_pm.h |   22 +++++++
->>>  4 files changed, 181 insertions(+), 0 deletions(-)  create mode
->>> 100644 drivers/soc/fsl/plat_pm.c  create mode 100644
->>> include/soc/fsl/plat_pm.h
->>>
->>> diff --git a/drivers/soc/fsl/Kconfig b/drivers/soc/fsl/Kconfig index
->>> 7a9fb9b..6517412 100644
->>> --- a/drivers/soc/fsl/Kconfig
->>> +++ b/drivers/soc/fsl/Kconfig
->>> @@ -16,3 +16,17 @@ config FSL_GUTS
->>>  	  Initially only reading SVR and registering soc device are supported.
->>>  	  Other guts accesses, such as reading RCW, should eventually be
->> moved
->>>  	  into this driver as well.
->>> +
->>> +config FSL_PLAT_PM
->>> +	bool "Freescale platform PM framework"
->>> +	help
->>> +	  This driver is to provide a independent framework for PM service
->>> +	  provider and consumer to configure system level wake up feature.
->> For
->>> +	  example, RCPM driver could register a callback function on this
->>> +	  platform first, and Flex timer driver who want to enable timer wake
->>> +	  up feature, will call generic API provided by this platform driver,
->>> +	  and then it will trigger RCPM driver to do it. The benefit is to
->>> +	  isolate the user and service, such as  flex timer driver will not
->>> +	  have to know the implement details of wakeup function it require.
->>> +	  Besides, it is also easy for service side to upgrade its logic when
->>> +	  design changed and remain user side unchanged.
->>> diff --git a/drivers/soc/fsl/Makefile b/drivers/soc/fsl/Makefile index
->>> 44b3beb..8f9db23 100644
->>> --- a/drivers/soc/fsl/Makefile
->>> +++ b/drivers/soc/fsl/Makefile
->>> @@ -6,3 +6,4 @@ obj-$(CONFIG_FSL_DPAA)                 += qbman/
->>>  obj-$(CONFIG_QUICC_ENGINE)		+= qe/
->>>  obj-$(CONFIG_CPM)			+= qe/
->>>  obj-$(CONFIG_FSL_GUTS)			+= guts.o
->>> +obj-$(CONFIG_FSL_PLAT_PM)	+= plat_pm.o
->>> diff --git a/drivers/soc/fsl/plat_pm.c b/drivers/soc/fsl/plat_pm.c new
->>> file mode 100644 index 0000000..19ea14e
->>> --- /dev/null
->>> +++ b/drivers/soc/fsl/plat_pm.c
->>> @@ -0,0 +1,144 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +//
->>> +// plat_pm.c - Freescale platform PM framework // // Copyright 2018
->>> +NXP // // Author: Ran Wang <ran.wang_1@nxp.com>,
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/device.h>
->>> +#include <linux/list.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/err.h>
->>> +#include <soc/fsl/plat_pm.h>
->>> +
->>> +
->>> +struct plat_pm_t {
->>> +	struct list_head node;
->>> +	fsl_plat_pm_handle handle;
->>> +	void *handle_priv;
->>> +	spinlock_t	lock;
->>> +};
->>> +
->>> +static struct plat_pm_t plat_pm;
->>> +
->>> +// register_fsl_platform_wakeup_source - Register callback function
->>> +to plat_pm // @handle: Pointer to handle PM feature requirement //
->>> +@handle_priv: Handler specific data struct // // Return 0 on success
->>> +other negative errno int
->>> +register_fsl_platform_wakeup_source(fsl_plat_pm_handle handle,
->>> +		void *handle_priv)
->>> +{
->>> +	struct plat_pm_t *p;
->>> +	unsigned long	flags;
->>> +
->>> +	if (!handle) {
->>> +		pr_err("FSL plat_pm: Handler invalid, reject\n");
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	p = kmalloc(sizeof(*p), GFP_KERNEL);
->>> +	if (!p)
->>> +		return -ENOMEM;
->>> +
->>> +	p->handle = handle;
->>> +	p->handle_priv = handle_priv;
->>> +
->>> +	spin_lock_irqsave(&plat_pm.lock, flags);
->>> +	list_add_tail(&p->node, &plat_pm.node);
->>> +	spin_unlock_irqrestore(&plat_pm.lock, flags);
->>> +
->>> +	return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(register_fsl_platform_wakeup_source);
->>> +
->>> +// Deregister_fsl_platform_wakeup_source - deregister callback
->>> +function // @handle_priv: Handler specific data struct // // Return 0
->>> +on success other negative errno int
->>> +deregister_fsl_platform_wakeup_source(void *handle_priv) {
->>> +	struct plat_pm_t *p, *tmp;
->>> +	unsigned long	flags;
->>> +
->>> +	spin_lock_irqsave(&plat_pm.lock, flags);
->>> +	list_for_each_entry_safe(p, tmp, &plat_pm.node, node) {
->>> +		if (p->handle_priv == handle_priv) {
->>> +			list_del(&p->node);
->>> +			kfree(p);
->>> +		}
->>> +	}
->>> +	spin_unlock_irqrestore(&plat_pm.lock, flags);
->>> +	return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(deregister_fsl_platform_wakeup_source);
->>> +
->>> +// fsl_platform_wakeup_config - Configure wakeup source by calling
->>> +handlers // @dev: pointer to user's device struct // @flag: to tell
->>> +enable or disable wakeup source // // Return 0 on success other
->>> +negative errno int fsl_platform_wakeup_config(struct device *dev,
->>> +bool flag) {
->>> +	struct plat_pm_t *p;
->>> +	int ret;
->>> +	bool success_handled;
->>> +	unsigned long	flags;
->>> +
->>> +	success_handled = false;
->>> +
->>> +	// Will consider success if at least one callback return 0.
->>> +	// Also, rest handles still get oppertunity to be executed
->>> +	spin_lock_irqsave(&plat_pm.lock, flags);
->>> +	list_for_each_entry(p, &plat_pm.node, node) {
->>> +		if (p->handle) {
->>> +			ret = p->handle(dev, flag, p->handle_priv);
->>> +			if (!ret)
->>> +				success_handled = true;
->> Miss a break?
-> Actually my idea is to allow more than one registered handler to handle this
-> request, so I define a flag rather than return to indicated if there is at least one handler successfully
-> do it. This design might give more flexibility to framework when running.
-There is only one flag(success_handled) here, how did know which handler
-failed?
+On Tue, Aug 28, 2018 at 01:22:57PM -0400, Johannes Weiner wrote:
+> +enum psi_states {
+> +	PSI_IO_SOME,
+> +	PSI_IO_FULL,
+> +	PSI_MEM_SOME,
+> +	PSI_MEM_FULL,
+> +	PSI_CPU_SOME,
+> +	/* Only per-CPU, to weigh the CPU in the global average: */
+> +	PSI_NONIDLE,
+> +	NR_PSI_STATES,
+> +};
 
-BTW, I don't think we need this flag. We can only use the return value.
+> +static u32 get_recent_time(struct psi_group *group, int cpu,
+> +			   enum psi_states state)
+> +{
+> +	struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
+> +	unsigned int seq;
+> +	u32 time, delta;
+> +
+> +	do {
+> +		seq = read_seqcount_begin(&groupc->seq);
+> +
+> +		time = groupc->times[state];
+> +		/*
+> +		 * In addition to already concluded states, we also
+> +		 * incorporate currently active states on the CPU,
+> +		 * since states may last for many sampling periods.
+> +		 *
+> +		 * This way we keep our delta sampling buckets small
+> +		 * (u32) and our reported pressure close to what's
+> +		 * actually happening.
+> +		 */
+> +		if (test_state(groupc->tasks, state))
+> +			time += cpu_clock(cpu) - groupc->state_start;
+> +	} while (read_seqcount_retry(&groupc->seq, seq));
+> +
+> +	delta = time - groupc->times_prev[state];
+> +	groupc->times_prev[state] = time;
+> +
+> +	return delta;
+> +}
 
-Cheers,
-Dongsheng
+> +static bool update_stats(struct psi_group *group)
+> +{
+> +	u64 deltas[NR_PSI_STATES - 1] = { 0, };
+> +	unsigned long missed_periods = 0;
+> +	unsigned long nonidle_total = 0;
+> +	u64 now, expires, period;
+> +	int cpu;
+> +	int s;
+> +
+> +	mutex_lock(&group->stat_lock);
+> +
+> +	/*
+> +	 * Collect the per-cpu time buckets and average them into a
+> +	 * single time sample that is normalized to wallclock time.
+> +	 *
+> +	 * For averaging, each CPU is weighted by its non-idle time in
+> +	 * the sampling period. This eliminates artifacts from uneven
+> +	 * loading, or even entirely idle CPUs.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		u32 nonidle;
+> +
+> +		nonidle = get_recent_time(group, cpu, PSI_NONIDLE);
+> +		nonidle = nsecs_to_jiffies(nonidle);
+> +		nonidle_total += nonidle;
+> +
+> +		for (s = 0; s < PSI_NONIDLE; s++) {
+> +			u32 delta;
+> +
+> +			delta = get_recent_time(group, cpu, s);
+> +			deltas[s] += (u64)delta * nonidle;
+> +		}
+> +	}
 
->>> +			else if (ret != -ENODEV) {
->>> +				pr_err("FSL plat_pm: Failed to config wakeup
->> source:%d\n", ret);
->> Please unlock before return.
-> Yes, will fix it in next version, thanks for pointing out!
->
->>> +				return ret;
->>> +			}
->>> +		} else
->>> +			pr_warn("FSL plat_pm: Invalid handler detected,
->> skip\n");
->>> +	}
->>> +	spin_unlock_irqrestore(&plat_pm.lock, flags);
->>> +
->>> +	if (success_handled == false) {
->>> +		pr_err("FSL plat_pm: Cannot find the matchhed handler for
->> wakeup source config\n");
->>> +		return -ENODEV;
->>> +	}
->> Add this into the loop.
-> My design is that if the 1st handler return -ENODEV to indicated this device it doesn't support, 
-> then the framework will continue try 2nd handler...
->
-> So I think it is needed to place this checking out of loop, what do you say?
->
-> Regards,
-> Ran
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +// fsl_platform_wakeup_enable - Enable wakeup source // @dev: pointer
->>> +to user's device struct // // Return 0 on success other negative
->>> +errno int fsl_platform_wakeup_enable(struct device *dev) {
->>> +	return fsl_platform_wakeup_config(dev, true); }
->>> +EXPORT_SYMBOL_GPL(fsl_platform_wakeup_enable);
->>> +
->>> +// fsl_platform_wakeup_disable - Disable wakeup source // @dev:
->>> +pointer to user's device struct // // Return 0 on success other
->>> +negative errno int fsl_platform_wakeup_disable(struct device *dev) {
->>> +	return fsl_platform_wakeup_config(dev, false); }
->>> +EXPORT_SYMBOL_GPL(fsl_platform_wakeup_disable);
->>> +
->>> +static int __init fsl_plat_pm_init(void) {
->>> +	spin_lock_init(&plat_pm.lock);
->>> +	INIT_LIST_HEAD(&plat_pm.node);
->>> +	return 0;
->>> +}
->>> +
->>> +core_initcall(fsl_plat_pm_init);
->>> diff --git a/include/soc/fsl/plat_pm.h b/include/soc/fsl/plat_pm.h new
->>> file mode 100644 index 0000000..bbe151e
->>> --- /dev/null
->>> +++ b/include/soc/fsl/plat_pm.h
->>> @@ -0,0 +1,22 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +//
->>> +// plat_pm.h - Freescale platform PM Header // // Copyright 2018 NXP
->>> +// // Author: Ran Wang <ran.wang_1@nxp.com>,
->>> +
->>> +#ifndef __FSL_PLAT_PM_H
->>> +#define __FSL_PLAT_PM_H
->>> +
->>> +typedef int (*fsl_plat_pm_handle)(struct device *dev, bool flag,
->>> +		void *handle_priv);
->>> +
->>> +int register_fsl_platform_wakeup_source(fsl_plat_pm_handle handle,
->>> +		void *handle_priv);
->>> +int deregister_fsl_platform_wakeup_source(void *handle_priv); int
->>> +fsl_platform_wakeup_config(struct device *dev, bool flag); int
->>> +fsl_platform_wakeup_enable(struct device *dev); int
->>> +fsl_platform_wakeup_disable(struct device *dev);
->>> +
->>> +#endif	// __FSL_PLAT_PM_H
->
+This does the whole seqcount thing 6x, which is a bit of a waste.
 
+struct snapshot {
+	u32 times[NR_PSI_STATES];
+};
+
+static inline struct snapshot get_times_snapshot(struct psi_group *pg, int cpu)
+{
+	struct pci_group_cpu *pgc = per_cpu_ptr(pg->pcpu, cpu);
+	struct snapshot s;
+	unsigned int seq;
+	u32 delta;
+	int i;
+
+	do {
+		seq = read_seqcount_begin(&pgc->seq);
+
+		delta = cpu_clock(cpu) - pgc->state_start;
+		for (i = 0; i < NR_PSI_STATES; i++) {
+			s.times[i] = gpc->times[i];
+			if (test_state(pgc->tasks, i))
+				s.times[i] += delta;
+		}
+
+	} while (read_seqcount_retry(&pgc->seq, seq);
+
+	return s;
+}
+
+
+	for_each_possible_cpu(cpu) {
+		struct snapshot s = get_times_snapshot(pg, cpu);
+
+		nonidle = nsecs_to_jiffies(s.times[PSI_NONIDLE]);
+		nonidle_total += nonidle;
+
+		for (i = 0; i < PSI_NONIDLE; i++)
+			deltas[s] += (u64)s.times[i] * nonidle;
+
+		/* ... */
+
+	}
+
+
+It's a bit cumbersome, but that's because of C.
