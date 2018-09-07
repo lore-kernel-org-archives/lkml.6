@@ -2,98 +2,101 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18574C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AF3C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0A62083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:47:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0A62083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AFB62083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:48:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvWdV7zG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFB62083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeIGW3X (ORCPT
+        id S1727635AbeIGWaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:29:23 -0400
-Received: from mga06.intel.com ([134.134.136.31]:9706 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726929AbeIGW3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:29:23 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 10:47:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
-   d="scan'208";a="261623139"
-Received: from otc-nc-03.jf.intel.com (HELO otc-nc-03) ([10.54.39.32])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Sep 2018 10:43:27 -0700
-Date:   Fri, 7 Sep 2018 10:43:28 -0700
-From:   "Raj, Ashok" <ashok.raj@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v2 06/12] iommu/vt-d: Add second level page table
- interface
-Message-ID: <20180907174328.GA95061@otc-nc-03>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-7-baolu.lu@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D1912F2C24@SHSMSX101.ccr.corp.intel.com>
- <331eef29-ae41-2d36-9487-265d773aae5b@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <331eef29-ae41-2d36-9487-265d773aae5b@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 7 Sep 2018 18:30:15 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38720 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726356AbeIGWaP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 18:30:15 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p6-v6so12957324ljc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qM43LjXiLjSbUJAJgeRwrTixwsuyvPKwSICeRdq7uNY=;
+        b=ZvWdV7zGjmfeG5v7DQcXbWgOALkUzB7iXaN9ap4QNEXoSirURz+XV/bcIMVaFYH5lm
+         t0+38BIVe3S5PqYaPzHVL6cgPuJPI7AGUfaml98riBVHnf0FPFnWis8ufLBBsFnyVZZZ
+         VdycG4nahFlFxn6hZlwoXTFwoN5V1FqbU78lxabLQg64CDPsoU2WWG/IfwUQ4kgLrM+1
+         HS0Gp4mRiUSUT0LsO0viWZ7o2lV3J6ycsJlhUFsfbrRWhXXZw+OFHDmkG38+fdLGTdNC
+         3xM/TfNHj/HE30v2a/UhuoPLjYwq0b05e1iDz/lKS0EFzRf5b8r0n2QKI4UxADq+g5fP
+         CJQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qM43LjXiLjSbUJAJgeRwrTixwsuyvPKwSICeRdq7uNY=;
+        b=AesIMv95lN+1GWfdEPJmUaF+ee0o+ojkeyVKolcSntB3D4MGVXF+49uQ5RkRHQgiyI
+         LpGnfn8TnkutxrxN+kydx0JNYPN62Hit3kUJwQYbhzc5O0H5Wd9tELmAF/2lzpz0S0/L
+         WF6a6XEMvuupr46TK5T2HobI6ZwcwKhs3qMaNryZKkY41B0y5AEIL0T/H3Lb5LH9JN8X
+         BWZ73KyZ/8kybJk45sBhWAmSc+5j+RErqd04BGRly7iVCDrw7PbOo/gqh4kqxr24cJ9j
+         bOYRMH2PUrJc8UTXn4moa+z4uVGkolmt+j+ppCMJ0T2Y63IM5c+9Xem30/zbY3XA7c2E
+         4fcg==
+X-Gm-Message-State: APzg51AWd1KagneY5votvkyEfQ/IuDezSUTGP7KMA1JyZY4d2yvyYcMt
+        6udnYyj4MyJae/jibCjSogY=
+X-Google-Smtp-Source: ANB0VdYwL9olv9g6up0LhN5+n7Sf9rdwUZVmToGXyK2IWUFWTWY3YMUgKkmBJtZfmrQ2H3QB2JVvIg==
+X-Received: by 2002:a2e:750d:: with SMTP id q13-v6mr5437493ljc.148.1536342492583;
+        Fri, 07 Sep 2018 10:48:12 -0700 (PDT)
+Received: from Mort.jumbo.freeair (91-156-179-220.elisa-laajakaista.fi. [91.156.179.220])
+        by smtp.gmail.com with ESMTPSA id j135-v6sm1384100lfj.91.2018.09.07.10.48.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 10:48:11 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To:     "Michael S . Tsirkin" <mst@redhat.com>
+Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] virtio: add unlikely() to WARN_ON_ONCE()
+Date:   Fri,  7 Sep 2018 20:48:02 +0300
+Message-Id: <20180907174802.31900-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:47:11AM +0800, Lu Baolu wrote:
-> 
-> >>+
-> >>+	intel_pasid_clear_entry(dev, pasid);
-> >>+
-> >>+	if (!ecap_coherent(iommu->ecap)) {
-> >>+		pte = intel_pasid_get_entry(dev, pasid);
-> >>+		clflush_cache_range(pte, sizeof(*pte));
-> >>+	}
-> >>+
-> >>+	pasid_based_pasid_cache_invalidation(iommu, did, pasid);
-> >>+	pasid_based_iotlb_cache_invalidation(iommu, did, pasid);
-> >>+
-> >>+	/* Device IOTLB doesn't need to be flushed in caching mode. */
-> >>+	if (!cap_caching_mode(iommu->cap))
-> >>+		pasid_based_dev_iotlb_cache_invalidation(iommu, dev,
-> >>pasid);
-> >
-> >can you elaborate, or point to any spec reference?
-> >
-> 
-> In the driver, device iotlb doesn't get flushed in caching mode. I just
-> follow what have been done there.
-> 
-> It also makes sense to me since only the bare metal host needs to
-> consider whether and how to flush the device iotlb.
-> 
+The condition to test is unlikely() to be true. Add the hint.
 
-DavidW might remember, i think the idea was to help with cost
-of virtualization, we can avoid taking 2 exits vs handling
-it directly when we do iotlb flushing instead.
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Virtualization@lists.linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+---
+ tools/virtio/linux/kernel.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-the other optimization was to only do devtlb flushing when you unmap 
-since when establish not-present to present there is no need to 
-flush devtlb at that point.
+diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
+index fb22bccfbc8a..2b5e417ea2f0 100644
+--- a/tools/virtio/linux/kernel.h
++++ b/tools/virtio/linux/kernel.h
+@@ -123,7 +123,7 @@ static inline void free_page(unsigned long addr)
+ #define dev_err(dev, format, ...) fprintf (stderr, format, ## __VA_ARGS__)
+ #define dev_warn(dev, format, ...) fprintf (stderr, format, ## __VA_ARGS__)
+ 
+-#define WARN_ON_ONCE(cond) ((cond) ? fprintf (stderr, "WARNING\n") : 0)
++#define WARN_ON_ONCE(cond) (unlikely(cond) ? fprintf (stderr, "WARNING\n") : 0)
+ 
+ #define min(x, y) ({				\
+ 	typeof(x) _min1 = (x);			\
+-- 
+2.17.1
+
