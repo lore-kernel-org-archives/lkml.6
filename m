@@ -2,81 +2,144 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC1EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4CFC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA72D2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:47:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA72D2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 77CB72077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77CB72077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729537AbeIGR2S (ORCPT
+        id S1729544AbeIGR2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:28:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36204 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbeIGR2S (ORCPT
+        Fri, 7 Sep 2018 13:28:51 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:54963 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727637AbeIGR2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:28:18 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyGAY-0001gW-3c; Fri, 07 Sep 2018 14:47:26 +0200
-Date:   Fri, 7 Sep 2018 14:47:25 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <dou_liyang@163.com>
-cc:     linux-kernel@vger.kernel.org, x86@kernel.org, mingo@redhat.com,
-        hpa@zytor.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH 2/2] irq/matrix: Spread managed interrupts on
- allocation
-In-Reply-To: <20180907082509.11083-2-dou_liyang@163.com>
-Message-ID: <alpine.DEB.2.21.1809071445580.1402@nanos.tec.linutronix.de>
-References: <20180907082509.11083-1-dou_liyang@163.com> <20180907082509.11083-2-dou_liyang@163.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 7 Sep 2018 13:28:50 -0400
+Received: by mail-it0-f69.google.com with SMTP id r19-v6so21209970itc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 05:48:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=jMftvMbgwVw5IQWy/7iLcaGjlm84IFGqjDw2rSo7Kzc=;
+        b=araTbxn7l/dyGWd4/gRsBSGUgJ2+C4H5eVCs3B1JH2x0MDqJGTmMdUroBFFNg4qELq
+         YUfvqUCRa+8en+i43jAo6yfkK1N5De9OiFF3bEs0IRZIG2lqg8RTTPYePJMkbTmtE9Iv
+         bVsjdW7oo5XNlioOJeWhKWwkWaPkjRjoWb2Cwmkp2c03+rrauzhecHMdOj8UpfcSerLd
+         7/N0M//y3na0PYXZ8TNi9i/Gc51HGZt44iZJ4ILiBvOGBqar1eJpW0Fa+jhaywRLoDAj
+         JZOXkyvP9b6ThG3ZTRq5AVbIh9e473zRCVx09fp4jQM0oum1vwbRSNfffxtp5VABI4I8
+         Dt4A==
+X-Gm-Message-State: APzg51AUBCxVMQQrd7BqLTwL8SBR77VNpL7aD4bFfge85o0lUNStKrfy
+        IcSnDOyQH/Dvp5Lel2jS9UiiCcl4XpTNVv19YQPaJhYlm8j1
+X-Google-Smtp-Source: ANB0VdZTHhH5z1/+rFHk1Q1/6qoxBKFX6wLgp/zCMQ4SFbSbKxcfX18YLWOGmgJkY89ek5q0xfCTtqCAz1R2aL3s8S+902IRgG0K
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-Received: by 2002:a24:970d:: with SMTP id k13-v6mr7387379ite.5.1536324482071;
+ Fri, 07 Sep 2018 05:48:02 -0700 (PDT)
+Date:   Fri, 07 Sep 2018 05:48:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000038dab0575476b73@google.com>
+Subject: WARNING: kmalloc bug in str_read
+From:   syzbot <syzbot+ac488b9811036cea7ea0@syzkaller.appspotmail.com>
+To:     eparis@parisplace.org, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, peter.enderborg@sony.com, sds@tycho.nsa.gov,
+        selinux@tycho.nsa.gov, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018, Dou Liyang wrote:
-> -int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu)
-> +int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
-> +				unsigned int *mapped_cpu)
->  {
-> -	struct cpumap *cm = per_cpu_ptr(m->maps, cpu);
->  	unsigned int bit, end = m->alloc_end;
-> +	unsigned int best_cpu = UINT_MAX;
-> +	struct cpumap *cm;
->  
-> -	/* Get managed bit which are not allocated */
-> -	bitmap_andnot(m->scratch_map, cm->managed_map, cm->alloc_map, end);
-> -	bit = find_first_bit(m->scratch_map, end);
-> -	if (bit >= end)
-> -		return -ENOSPC;
-> -	set_bit(bit, cm->alloc_map);
-> -	cm->allocated++;
-> -	m->total_allocated++;
-> -	trace_irq_matrix_alloc_managed(bit, cpu, m, cm);
-> -	return bit;
-> +	if (matrix_find_best_cpu(m, msk, &best_cpu)) {
+Hello,
 
-You can avoid that churn and the extra indentation by simply doing:
+syzbot found the following crash on:
 
-	if (!matrix_find_best_cpu(m, msk, &best_cpu))
-		return -ENOSPC;
+HEAD commit:    ca16eb342ebe Merge tag 'for-linus-20180906' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cad421400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6c9564cd177daf0c
+dashboard link: https://syzkaller.appspot.com/bug?extid=ac488b9811036cea7ea0
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Hmm?
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Thanks,
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ac488b9811036cea7ea0@syzkaller.appspotmail.com
 
-	tglx
+SELinux:  policydb version 983061 does not match my version range 15-31
+SELinux: ebitmap: truncated map
+Unknown ioctl 1075883590
+Unknown ioctl 1075883590
+WARNING: CPU: 1 PID: 7505 at mm/slab_common.c:1031 kmalloc_slab+0x56/0x70  
+mm/slab_common.c:1031
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 7505 Comm: syz-executor7 Not tainted 4.19.0-rc2+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+RIP: 0010:kmalloc_slab+0x56/0x70 mm/slab_common.c:1031
+Code: c5 40 db f2 87 5d c3 b8 10 00 00 00 48 85 ff 74 f4 83 ef 01 c1 ef 03  
+0f b6 87 60 da f2 87 eb d8 31 c0 81 e6 00 02 00 00 75 db <0f> 0b 5d c3 48  
+8b 04 c5 80 da f2 87 5d c3 66 90 66 2e 0f 1f 84 00
+RSP: 0018:ffff88018540f280 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000299a7ba5 RCX: ffffc900024eb000
+RDX: 00000000000018a3 RSI: 0000000000000000 RDI: 00000000299a7ba6
+RBP: ffff88018540f280 R08: ffff88018958a080 R09: ffffed003b6246de
+R10: ffffed003b6246de R11: ffff8801db1236f3 R12: 00000000006000c0
+R13: ffff88018540f938 R14: ffff88018540f3c8 R15: 00000000006000c0
+  __do_kmalloc mm/slab.c:3713 [inline]
+  __kmalloc+0x25/0x720 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  str_read+0x48/0x160 security/selinux/ss/policydb.c:1104
+  class_read+0x4a1/0xde0 security/selinux/ss/policydb.c:1345
+  policydb_read+0xf09/0x5f90 security/selinux/ss/policydb.c:2407
+  security_load_policy+0x23b/0x1650 security/selinux/ss/services.c:2165
+  sel_write_load+0x247/0x460 security/selinux/selinuxfs.c:565
+  __vfs_write+0x117/0x9d0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457099
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc5edd57c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fc5edd586d4 RCX: 0000000000457099
+RDX: 0000000000000094 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d83b8 R14: 00000000004cae4e R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
