@@ -2,132 +2,75 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCCEC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E61C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B632077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B632077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 250B92077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:57:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250B92077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbeIGNhl (ORCPT
+        id S1728200AbeIGNhu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:37:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48390 "EHLO mx1.suse.de"
+        Fri, 7 Sep 2018 09:37:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58392 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727780AbeIGNhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:37:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B362FAEA6;
-        Fri,  7 Sep 2018 08:57:41 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 10:57:40 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Rik van Riel <riel@surriel.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH v3] mm: slowly shrink slabs with a relatively small
- number of objects
-Message-ID: <20180907085740.GE19621@dhcp22.suse.cz>
-References: <20180905230759.12236-1-guro@fb.com>
+        id S1727529AbeIGNhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:37:50 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 74BC2804B4BA;
+        Fri,  7 Sep 2018 08:57:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B0E4D2027EA4;
+        Fri,  7 Sep 2018 08:57:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180906100220.4df8ac0e@canb.auug.org.au>
+References: <20180906100220.4df8ac0e@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the vfs tree
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905230759.12236-1-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <10475.1536310671.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 07 Sep 2018 09:57:51 +0100
+Message-ID: <10476.1536310671@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 08:57:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 08:57:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Please make sure to CC Vladimir when modifying memcg kmem reclaim]
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Wed 05-09-18 16:07:59, Roman Gushchin wrote:
-> Commit 9092c71bb724 ("mm: use sc->priority for slab shrink targets")
-> changed the way how the target slab pressure is calculated and
-> made it priority-based:
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
->     delta = freeable >> priority;
->     delta *= 4;
->     do_div(delta, shrinker->seeks);
+> security/selinux/hooks.c:2835:12: warning: 'selinux_sb_remount' defined but not used [-Wunused-function]
+>  static int selinux_sb_remount(struct super_block *sb, void *data, size_t data_size)
+>             ^~~~~~~~~~~~~~~~~~
 > 
-> The problem is that on a default priority (which is 12) no pressure
-> is applied at all, if the number of potentially reclaimable objects
-> is less than 4096 (1<<12).
+> Introduced by commit
 > 
-> This causes the last objects on slab caches of no longer used cgroups
-> to (almost) never get reclaimed. It's obviously a waste of memory.
-> 
-> It can be especially painful, if these stale objects are holding
-> a reference to a dying cgroup. Slab LRU lists are reparented on memcg
-> offlining, but corresponding objects are still holding a reference
-> to the dying cgroup. If we don't scan these objects, the dying cgroup
-> can't go away. Most likely, the parent cgroup hasn't any directly
-> charged objects, only remaining objects from dying children cgroups.
-> So it can easily hold a reference to hundreds of dying cgroups.
-> 
-> If there are no big spikes in memory pressure, and new memory cgroups
-> are created and destroyed periodically, this causes the number of
-> dying cgroups grow steadily, causing a slow-ish and hard-to-detect
-> memory "leak". It's not a real leak, as the memory can be eventually
-> reclaimed, but it could not happen in a real life at all. I've seen
-> hosts with a steadily climbing number of dying cgroups, which doesn't
-> show any signs of a decline in months, despite the host is loaded
-> with a production workload.
-> 
-> It is an obvious waste of memory, and to prevent it, let's apply
-> a minimal pressure even on small shrinker lists. E.g. if there are
-> freeable objects, let's scan at least min(freeable, scan_batch)
-> objects.
-> 
-> This fix significantly improves a chance of a dying cgroup to be
-> reclaimed, and together with some previous patches stops the steady
-> growth of the dying cgroups number on some of our hosts.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Acked-by: Rik van Riel <riel@surriel.com>
-> Cc: Josef Bacik <jbacik@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  mm/vmscan.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index fa2c150ab7b9..858d7558909e 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -476,6 +476,17 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
->  	delta = freeable >> priority;
->  	delta *= 4;
->  	do_div(delta, shrinker->seeks);
-> +
-> +	/*
-> +	 * Make sure we apply some minimal pressure on default priority
-> +	 * even on small cgroups. Stale objects are not only consuming memory
-> +	 * by themselves, but can also hold a reference to a dying cgroup,
-> +	 * preventing it from being reclaimed. A dying cgroup with all
-> +	 * corresponding structures like per-cpu stats and kmem caches
-> +	 * can be really big, so it may lead to a significant waste of memory.
-> +	 */
-> +	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
-> +
->  	total_scan += delta;
->  	if (total_scan < 0) {
->  		pr_err("shrink_slab: %pF negative objects to delete nr=%ld\n",
-> -- 
-> 2.17.1
+>   dfcf373eab92 ("vfs: Remove unused code after filesystem context changes")
 
--- 
-Michal Hocko
-SUSE Labs
+Sorry, I forgot to remove the function.  It's no longer used, with the checks
+being done in selinux_validate_for_sb_reconfigure() now, called indirectly
+from the ->fs_context_validate() hook.
+
+David
