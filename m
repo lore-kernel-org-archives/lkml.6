@@ -2,288 +2,196 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0F8C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C779C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53BA12077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:35:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53BA12077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 328642075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:38:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="uMr9P1GO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328642075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbeIGPQD (ORCPT
+        id S1728583AbeIGPS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:16:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37118 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728183AbeIGPPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:15:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4D363402315B;
-        Fri,  7 Sep 2018 10:35:00 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-116-25.ams2.redhat.com [10.36.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F22D6A30C9;
-        Fri,  7 Sep 2018 10:34:58 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        Simon Wood <simon@mungewell.org>,
-        Olivier Gay <ogay@logitech.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 3/7] HID: logitech-hidpp: support non-DJ receivers
-Date:   Fri,  7 Sep 2018 12:34:46 +0200
-Message-Id: <20180907103450.13890-4-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
-References: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 07 Sep 2018 10:35:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 07 Sep 2018 10:35:00 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+        Fri, 7 Sep 2018 11:18:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32936 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbeIGPS4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 11:18:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s7-v6so6826546pgc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 03:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OqyIANnJcnh1Xd+x6lSFfwsATPb69RTTxXH6fXhMBnk=;
+        b=uMr9P1GOd7+Vtv2dNrUQmdDXl2eXjnmm3RDHnpaQhvmvizpaN6A9aaNrpvNxO7x3wD
+         4vIDeWtBbscH28Yiw7pHbSS1yqKqMTIVu9Suy3evxrNe5giJv1q+lXf+E38Q07TllDdb
+         YHiT/Cobw38HqxerqPJcde2BQNgjufN3jmCCl0uGkez0l1HF+fIEQrjF9bvbQlJnhADf
+         QEtWMuhX06SadYfaW33nDEsShxj3zmz7+7gQTxrOLroE6fECF+NMUJjDYOh3p5BdJTcS
+         AhJKofpeTLTaRgIwE6V7yKM4WHHTuYBkzMZj9NMD/uGOwoPgHuEHs0qX3UwV3wt53DWR
+         aoIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OqyIANnJcnh1Xd+x6lSFfwsATPb69RTTxXH6fXhMBnk=;
+        b=pHg0E69cSq4mmd6bB5hCIqvewVlY+A2Suven63n2WUfD2Sh6vrpRUz92j51bVZgoES
+         YOfqxoYdPJ9gX/zPz+9fGKejrNq7c5easct2Maf01QBOPwMajnVnjsGSpJmcntipGBoq
+         sKF2HJ058YFL1uIPj4yAg4sTpH0n9eSDHHAWmGb+48h9MFgn/dcHtIqh+hqxwn3FMVQ0
+         8Y/DYs9f6JWhu/rNwKE7W201ErdRCKMD21wHhuvQ6kw3uigy155OBSkPIyCVvFyIbhlz
+         azjOkTkVfbPwUvW9rS1FIIWryUk5K7FKyEQE1Ll3Rr8FsJFNDLayofD4EHeT0iX/JqLZ
+         AkbA==
+X-Gm-Message-State: APzg51Au7xpt01NshxuNXbFzhSHmNaUB3AfKJRdHTIUZ22oZ+MwgH5Wr
+        uLbFiOP72cH57Yn0HDJxl2tuKg==
+X-Google-Smtp-Source: ANB0VdZawNFGlsOEj0upWlHmbvDrcX4KFOOPy91Frl/pgpJ8xTusxeQ87GTD/qUdUvbMY28ucvkh1w==
+X-Received: by 2002:a65:6086:: with SMTP id t6-v6mr7578931pgu.424.1536316715268;
+        Fri, 07 Sep 2018 03:38:35 -0700 (PDT)
+Received: from [10.86.62.183] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id o10-v6sm8284285pgp.70.2018.09.07.03.38.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 03:38:34 -0700 (PDT)
+Subject: Re: [PATCH 1/3] lightnvm: use internal allocation for chunk log page
+To:     javier@javigon.com
+Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com
+References: <1535537370-10729-1-git-send-email-javier@cnexlabs.com>
+ <1535537370-10729-2-git-send-email-javier@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <8ee257b6-d275-356a-184a-749ef455d945@lightnvm.io>
+Date:   Fri, 7 Sep 2018 12:38:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1535537370-10729-2-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The non unifying receivers are similar to a Unifying one, but not
-entirely. They don't come with the DJ collections and thus can't be
-handled by hid-logitech-dj.
+On 08/29/2018 12:09 PM, Javier González wrote:
+> The lightnvm subsystem provides helpers to retrieve chunk metadata,
+> where the target needs to provide a buffer to store the metadata. An
+> implicit assumption is that this buffer is contiguous and can be used to
+> retrieve the data from the device. If the device exposes too many
+> chunks, then kmalloc might fail, thus failing instance creation.
+> 
+> This patch removes this assumption by implementing an internal buffer in
+> the lightnvm subsystem to retrieve chunk metadata. Targets can then
+> use virtual memory allocations. Since this is a target API change, adapt
+> pblk accordingly.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk-core.c |  4 ++--
+>   drivers/lightnvm/pblk-init.c |  2 +-
+>   drivers/nvme/host/lightnvm.c | 23 +++++++++++++++--------
+>   3 files changed, 18 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index fdcbeb920c9e..a311cc29afd8 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -120,7 +120,7 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
+>   /*
+>    * Get information for all chunks from the device.
+>    *
+> - * The caller is responsible for freeing the returned structure
+> + * The caller is responsible for freeing (vmalloc) the returned structure
+>    */
+>   struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
+>   {
+> @@ -134,7 +134,7 @@ struct nvm_chk_meta *pblk_get_chunk_meta(struct pblk *pblk)
+>   	ppa.ppa = 0;
+>   
+>   	len = geo->all_chunks * sizeof(*meta);
+> -	meta = kzalloc(len, GFP_KERNEL);
+> +	meta = vzalloc(len);
+>   	if (!meta)
+>   		return ERR_PTR(-ENOMEM);
+>   
+> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+> index e0db6de137d6..a99854439224 100644
+> --- a/drivers/lightnvm/pblk-init.c
+> +++ b/drivers/lightnvm/pblk-init.c
+> @@ -983,7 +983,7 @@ static int pblk_lines_init(struct pblk *pblk)
+>   
+>   	pblk_set_provision(pblk, nr_free_chks);
+>   
+> -	kfree(chunk_meta);
+> +	vfree(chunk_meta);
+>   	return 0;
+>   
+>   fail_free_lines:
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index 2c96e7fcdcac..5bfa354c5dd5 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -579,7 +579,7 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+>   	struct nvm_geo *geo = &ndev->geo;
+>   	struct nvme_ns *ns = ndev->q->queuedata;
+>   	struct nvme_ctrl *ctrl = ns->ctrl;
+> -	struct nvme_nvm_chk_meta *dev_meta = (struct nvme_nvm_chk_meta *)meta;
+> +	struct nvme_nvm_chk_meta *dev_meta, *dev_meta_off;
+>   	struct ppa_addr ppa;
+>   	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
+>   	size_t log_pos, offset, len;
+> @@ -591,6 +591,10 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+>   	 */
+>   	max_len = min_t(unsigned int, ctrl->max_hw_sectors << 9, 256 * 1024);
+>   
+> +	dev_meta = kmalloc(max_len, GFP_KERNEL);
+> +	if (!dev_meta)
+> +		return -ENOMEM;
+> +
+>   	/* Normalize lba address space to obtain log offset */
+>   	ppa.ppa = slba;
+>   	ppa = dev_to_generic_addr(ndev, ppa);
+> @@ -604,6 +608,9 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+>   	while (left) {
+>   		len = min_t(unsigned int, left, max_len);
+>   
+> +		memset(dev_meta, 0, max_len);
+> +		dev_meta_off = dev_meta;
+> +
+>   		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
+>   				dev_meta, len, offset);
+>   		if (ret) {
+> @@ -612,15 +619,15 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+>   		}
+>   
+>   		for (i = 0; i < len; i += sizeof(struct nvme_nvm_chk_meta)) {
+> -			meta->state = dev_meta->state;
+> -			meta->type = dev_meta->type;
+> -			meta->wi = dev_meta->wi;
+> -			meta->slba = le64_to_cpu(dev_meta->slba);
+> -			meta->cnlb = le64_to_cpu(dev_meta->cnlb);
+> -			meta->wp = le64_to_cpu(dev_meta->wp);
+> +			meta->state = dev_meta_off->state;
+> +			meta->type = dev_meta_off->type;
+> +			meta->wi = dev_meta_off->wi;
+> +			meta->slba = le64_to_cpu(dev_meta_off->slba);
+> +			meta->cnlb = le64_to_cpu(dev_meta_off->cnlb);
+> +			meta->wp = le64_to_cpu(dev_meta_off->wp);
+>   
+>   			meta++;
+> -			dev_meta++;
+> +			dev_meta_off++;
+>   		}
+>   
+>   		offset += len;
+> 
 
-To enable connection notifications, we need to instruct the receiver (0xff)
-that we can handle those. Then, we need to retrieve the device index(es)
-of the connected devices by manually enumerating the 6 available slots.
-The two non DJ can actually handle two devices, one keyboard in slot
-1 and one mouse in slot 2. The HID++ collection is in the second
-interface, so we should be sure not to assign the attached keyboard
-to the mouse input node. The proper keyboard matching will be added in
-a following patch.
-
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- drivers/hid/hid-logitech-hidpp.c | 119 +++++++++++++++++++++++++++++++++------
- 1 file changed, 103 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index d635e9685581..315ef209a0c4 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -67,6 +67,7 @@ MODULE_PARM_DESC(disable_tap_to_click,
- #define HIDPP_QUIRK_HI_RES_SCROLL_1P0		BIT(26)
- #define HIDPP_QUIRK_HI_RES_SCROLL_X2120		BIT(27)
- #define HIDPP_QUIRK_HI_RES_SCROLL_X2121		BIT(28)
-+#define HIDPP_QUIRK_RECEIVER			BIT(29)
- 
- /* Convenience constant to check for any high-res support. */
- #define HIDPP_QUIRK_HI_RES_SCROLL	(HIDPP_QUIRK_HI_RES_SCROLL_1P0 | \
-@@ -145,6 +146,7 @@ struct hidpp_device {
- 	bool answer_available;
- 	u8 protocol_major;
- 	u8 protocol_minor;
-+	u8 device_index;
- 
- 	void *private_data;
- 
-@@ -202,11 +204,7 @@ static int __hidpp_send_report(struct hid_device *hdev,
- 		return -ENODEV;
- 	}
- 
--	/*
--	 * set the device_index as the receiver, it will be overwritten by
--	 * hid_hw_request if needed
--	 */
--	hidpp_report->device_index = 0xff;
-+	hidpp_report->device_index = hidpp->device_index;
- 
- 	if (hidpp->quirks & HIDPP_QUIRK_FORCE_OUTPUT_REPORTS) {
- 		ret = hid_hw_output_report(hdev, (u8 *)hidpp_report, fields_count);
-@@ -458,6 +456,36 @@ static int hidpp10_enable_scrolling_acceleration(struct hidpp_device *hidpp_dev)
- 	return hidpp10_set_register_bit(hidpp_dev, HIDPP_REG_FEATURES, 0, 6);
- }
- 
-+/* Must be called with 0xff as device index */
-+static int hidpp_unifying_enable_notifications(struct hidpp_device *hidpp_dev)
-+{
-+	struct hidpp_report response;
-+	int ret;
-+	u8 params[3] = { 0 };
-+
-+	ret = hidpp_send_rap_command_sync(hidpp_dev,
-+					REPORT_ID_HIDPP_SHORT,
-+					HIDPP_GET_REGISTER,
-+					HIDPP_REG_GENERAL,
-+					NULL, 0, &response);
-+	if (ret)
-+		return ret;
-+
-+	memcpy(params, response.rap.params, 3);
-+
-+	/* Set the wireless notification bit */
-+	params[1] |= BIT(0);
-+	params[1] |= BIT(3);
-+
-+	ret = hidpp_send_rap_command_sync(hidpp_dev,
-+					REPORT_ID_HIDPP_SHORT,
-+					HIDPP_SET_REGISTER,
-+					HIDPP_REG_GENERAL,
-+					params, 3, &response);
-+
-+	return ret;
-+}
-+
- #define HIDPP_REG_BATTERY_STATUS			0x07
- 
- static int hidpp10_battery_status_map_level(u8 param)
-@@ -636,14 +664,41 @@ static int hidpp10_battery_event(struct hidpp_device *hidpp, u8 *data, int size)
- }
- 
- #define HIDPP_REG_PAIRING_INFORMATION			0xB5
-+#define HIDPP_PAIRING_INFORMATION			0x20
- #define HIDPP_EXTENDED_PAIRING				0x30
- #define HIDPP_DEVICE_NAME				0x40
- 
--static char *hidpp_unifying_get_name(struct hidpp_device *hidpp_dev)
-+static inline bool hidpp_unifying_type_is_keyboard(u8 type)
-+{
-+	return type == 0x01;
-+}
-+
-+static int hidpp_unifying_get_quadid(struct hidpp_device *hidpp_dev, int index,
-+				     __be16 *quadid, u8 *type)
-+{
-+	struct hidpp_report response;
-+	int ret;
-+	u8 params[1] = { HIDPP_PAIRING_INFORMATION | ((index - 1) & 0x0F) };
-+
-+	ret = hidpp_send_rap_command_sync(hidpp_dev,
-+					REPORT_ID_HIDPP_SHORT,
-+					HIDPP_GET_LONG_REGISTER,
-+					HIDPP_REG_PAIRING_INFORMATION,
-+					params, 1, &response);
-+	if (ret)
-+		return ret;
-+
-+	*quadid = get_unaligned_be16(&response.rap.params[3]);
-+	*type = response.rap.params[7];
-+
-+	return ret;
-+}
-+
-+static char *hidpp_unifying_get_name(struct hidpp_device *hidpp_dev, int index)
- {
- 	struct hidpp_report response;
- 	int ret;
--	u8 params[1] = { HIDPP_DEVICE_NAME };
-+	u8 params[1] = { HIDPP_DEVICE_NAME | ((index - 1) & 0x0F) };
- 	char *name;
- 	int len;
- 
-@@ -672,11 +727,12 @@ static char *hidpp_unifying_get_name(struct hidpp_device *hidpp_dev)
- 	return name;
- }
- 
--static int hidpp_unifying_get_serial(struct hidpp_device *hidpp, u32 *serial)
-+static int hidpp_unifying_get_serial(struct hidpp_device *hidpp, int index,
-+				     u32 *serial)
- {
- 	struct hidpp_report response;
- 	int ret;
--	u8 params[1] = { HIDPP_EXTENDED_PAIRING };
-+	u8 params[1] = { HIDPP_EXTENDED_PAIRING | ((index - 1) & 0x0F) };
- 
- 	ret = hidpp_send_rap_command_sync(hidpp,
- 					REPORT_ID_HIDPP_SHORT,
-@@ -699,23 +755,42 @@ static int hidpp_unifying_init(struct hidpp_device *hidpp)
- 	struct hid_device *hdev = hidpp->hid_dev;
- 	const char *name;
- 	u32 serial;
--	int ret;
-+	u16 quadid, q;
-+	int device_index, ret;
-+	u8 type = 0;
-+
-+	device_index = 0;
-+	quadid = hdev->product;
-+
-+	if (hidpp->quirks & HIDPP_QUIRK_RECEIVER) {
-+		/*
-+		 * On the receiver, the HID++ collection is on the mouse
-+		 * interface, so match only there.
-+		 */
-+		ret = hidpp_unifying_get_quadid(hidpp, 2, &q, &type);
-+		if (!ret && !hidpp_unifying_type_is_keyboard(type)) {
-+			device_index = 2;
-+			quadid = q;
-+		}
-+		hidpp_unifying_enable_notifications(hidpp);
-+	}
- 
--	ret = hidpp_unifying_get_serial(hidpp, &serial);
-+	ret = hidpp_unifying_get_serial(hidpp, device_index, &serial);
- 	if (ret)
- 		return ret;
- 
--	snprintf(hdev->uniq, sizeof(hdev->uniq), "%04x-%4phD",
--		 hdev->product, &serial);
-+	snprintf(hdev->uniq, sizeof(hdev->uniq), "%04x-%4phD", quadid, &serial);
- 	dbg_hid("HID++ Unifying: Got serial: %s\n", hdev->uniq);
- 
--	name = hidpp_unifying_get_name(hidpp);
-+	name = hidpp_unifying_get_name(hidpp, device_index);
- 	if (!name)
- 		return -EIO;
- 
- 	snprintf(hdev->name, sizeof(hdev->name), "%s", name);
- 	dbg_hid("HID++ Unifying: Got name: %s\n", name);
- 
-+	hidpp->device_index = device_index;
-+
- 	kfree(name);
- 	return 0;
- }
-@@ -2800,6 +2875,10 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
- 	struct hidpp_report *report = (struct hidpp_report *)data;
- 	int ret;
- 
-+	if ((hidpp->quirks & HIDPP_QUIRK_RECEIVER) &&
-+	    data[1] != hidpp->device_index)
-+		return 0;
-+
- 	/*
- 	 * If the mutex is locked then we have a pending answer from a
- 	 * previously sent command.
-@@ -3239,6 +3318,12 @@ static int hidpp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	if (id->group == HID_GROUP_LOGITECH_DJ_DEVICE)
- 		hidpp->quirks |= HIDPP_QUIRK_UNIFYING;
- 
-+	/*
-+	 * set the device_index as the receiver, it will be overwritten by
-+	 * hid_hw_request if needed
-+	 */
-+	hidpp->device_index = 0xFF;
-+
- 	if (disable_raw_mode) {
- 		hidpp->quirks &= ~HIDPP_QUIRK_CLASS_WTP;
- 		hidpp->quirks &= ~HIDPP_QUIRK_NO_HIDINPUT;
-@@ -3426,11 +3511,13 @@ static const struct hid_device_id hidpp_devices[] = {
- 
- 	{ /* Logitech Nano (non DJ) receiver */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
--			 USB_DEVICE_ID_LOGITECH_NANO_RECEIVER) },
-+			 USB_DEVICE_ID_LOGITECH_NANO_RECEIVER),
-+	  .driver_data = HIDPP_QUIRK_RECEIVER | HIDPP_QUIRK_UNIFYING },
- 
- 	{ /* Logitech Nano (non DJ) receiver */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
--			 USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_2) },
-+			 USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_2),
-+	  .driver_data = HIDPP_QUIRK_RECEIVER | HIDPP_QUIRK_UNIFYING },
- 
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G920_WHEEL),
- 		.driver_data = HIDPP_QUIRK_CLASS_G920 | HIDPP_QUIRK_FORCE_OUTPUT_REPORTS},
--- 
-2.14.3
-
+Thanks. Applied for 4.20.
