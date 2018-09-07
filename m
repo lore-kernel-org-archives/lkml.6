@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52993C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F15C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DBDC2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBDC2075E
+	by mail.kernel.org (Postfix) with ESMTP id 5A9EE2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A9EE2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbeIHCDG (ORCPT
+        id S1729182AbeIHCDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:03:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45198 "EHLO
+        Fri, 7 Sep 2018 22:03:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45204 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728743AbeIHCDF (ORCPT
+        with ESMTP id S1728505AbeIHCDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:03:05 -0400
+        Fri, 7 Sep 2018 22:03:09 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 815ECDC4;
-        Fri,  7 Sep 2018 21:20:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6832DC4;
+        Fri,  7 Sep 2018 21:20:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4.18 119/145] pwm: tiehrpwm: Fix disabling of output of PWMs
-Date:   Fri,  7 Sep 2018 23:09:45 +0200
-Message-Id: <20180907210913.007724973@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Bernie Thompson <bernie@plugable.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.18 120/145] fb: fix lost console when the user unplugs a USB adapter
+Date:   Fri,  7 Sep 2018 23:09:46 +0200
+Message-Id: <20180907210913.047591487@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,39 +53,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 38dabd91ff0bde33352ca3cc65ef515599b77a05 upstream.
+commit 8c5b044299951acd91e830a688dd920477ea1eda upstream.
 
-pwm-tiehrpwm driver disables PWM output by putting it in low output
-state via active AQCSFRC register in ehrpwm_pwm_disable(). But, the
-AQCSFRC shadow register is not updated. Therefore, when shadow AQCSFRC
-register is re-enabled in ehrpwm_pwm_enable() (say to enable second PWM
-output), previous settings are lost as shadow register value is loaded
-into active register. This results in things like PWMA getting enabled
-automatically, when PWMB is enabled and vice versa. Fix this by
-updating AQCSFRC shadow register as well during ehrpwm_pwm_disable().
+I have a USB display adapter using the udlfb driver and I use it on an ARM
+board that doesn't have any graphics card. When I plug the adapter in, the
+console is properly displayed, however when I unplug and re-plug the
+adapter, the console is not displayed and I can't access it until I reboot
+the board.
 
-Fixes: 19891b20e7c2 ("pwm: pwm-tiehrpwm: PWM driver support for EHRPWM")
+The reason is this:
+When the adapter is unplugged, dlfb_usb_disconnect calls
+unlink_framebuffer, then it waits until the reference count drops to zero
+and then it deallocates the framebuffer. However, the console that is
+attached to the framebuffer device keeps the reference count non-zero, so
+the framebuffer device is never destroyed. When the USB adapter is plugged
+again, it creates a new device /dev/fb1 and the console is not attached to
+it.
+
+This patch fixes the bug by unbinding the console from unlink_framebuffer.
+The code to unbind the console is moved from do_unregister_framebuffer to
+a function unbind_console. When the console is unbound, the reference
+count drops to zero and the udlfb driver frees the framebuffer. When the
+adapter is plugged back, a new framebuffer is created and the console is
+attached to it.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Bernie Thompson <bernie@plugable.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+[b.zolnierkie: preserve old behavior for do_unregister_framebuffer()]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pwm/pwm-tiehrpwm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/video/fbdev/core/fbmem.c |   38 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 32 insertions(+), 6 deletions(-)
 
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -381,6 +381,8 @@ static void ehrpwm_pwm_disable(struct pw
- 		aqcsfrc_mask = AQCSFRC_CSFA_MASK;
- 	}
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1704,12 +1704,12 @@ static int do_register_framebuffer(struc
+ 	return 0;
+ }
  
-+	/* Update shadow register first before modifying active register */
-+	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
- 	/*
- 	 * Changes to immediate action on Action Qualifier. This puts
- 	 * Action Qualifier control on PWM output from next TBCLK
+-static int do_unregister_framebuffer(struct fb_info *fb_info)
++static int unbind_console(struct fb_info *fb_info)
+ {
+ 	struct fb_event event;
+-	int i, ret = 0;
++	int ret;
++	int i = fb_info->node;
+ 
+-	i = fb_info->node;
+ 	if (i < 0 || i >= FB_MAX || registered_fb[i] != fb_info)
+ 		return -EINVAL;
+ 
+@@ -1724,17 +1724,29 @@ static int do_unregister_framebuffer(str
+ 	unlock_fb_info(fb_info);
+ 	console_unlock();
+ 
++	return ret;
++}
++
++static int __unlink_framebuffer(struct fb_info *fb_info);
++
++static int do_unregister_framebuffer(struct fb_info *fb_info)
++{
++	struct fb_event event;
++	int ret;
++
++	ret = unbind_console(fb_info);
++
+ 	if (ret)
+ 		return -EINVAL;
+ 
+ 	pm_vt_switch_unregister(fb_info->dev);
+ 
+-	unlink_framebuffer(fb_info);
++	__unlink_framebuffer(fb_info);
+ 	if (fb_info->pixmap.addr &&
+ 	    (fb_info->pixmap.flags & FB_PIXMAP_DEFAULT))
+ 		kfree(fb_info->pixmap.addr);
+ 	fb_destroy_modelist(&fb_info->modelist);
+-	registered_fb[i] = NULL;
++	registered_fb[fb_info->node] = NULL;
+ 	num_registered_fb--;
+ 	fb_cleanup_device(fb_info);
+ 	event.info = fb_info;
+@@ -1747,7 +1759,7 @@ static int do_unregister_framebuffer(str
+ 	return 0;
+ }
+ 
+-int unlink_framebuffer(struct fb_info *fb_info)
++static int __unlink_framebuffer(struct fb_info *fb_info)
+ {
+ 	int i;
+ 
+@@ -1759,6 +1771,20 @@ int unlink_framebuffer(struct fb_info *f
+ 		device_destroy(fb_class, MKDEV(FB_MAJOR, i));
+ 		fb_info->dev = NULL;
+ 	}
++
++	return 0;
++}
++
++int unlink_framebuffer(struct fb_info *fb_info)
++{
++	int ret;
++
++	ret = __unlink_framebuffer(fb_info);
++	if (ret)
++		return ret;
++
++	unbind_console(fb_info);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(unlink_framebuffer);
 
 
