@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D75D6C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9092FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9508B2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9508B2075E
+	by mail.kernel.org (Postfix) with ESMTP id 4EF432075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF432075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbeIHCHz (ORCPT
+        id S1728799AbeIHCH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:07:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46858 "EHLO
+        Fri, 7 Sep 2018 22:07:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46864 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728159AbeIHCHy (ORCPT
+        with ESMTP id S1728159AbeIHCH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:07:54 -0400
+        Fri, 7 Sep 2018 22:07:58 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E712DF09;
-        Fri,  7 Sep 2018 21:25:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B842F09;
+        Fri,  7 Sep 2018 21:25:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Lukasz Dorau <lukasz.dorau@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>
-Subject: [PATCH 4.18 130/145] libnvdimm: fix ars_status output length calculation
-Date:   Fri,  7 Sep 2018 23:09:56 +0200
-Message-Id: <20180907210913.460864864@linuxfoundation.org>
+        stable@vger.kernel.org, Shan Hai <shan.hai@oracle.com>,
+        Coly Li <colyli@suse.de>, Shenghui Wang <shhuiw@foxmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 131/145] bcache: release dc->writeback_lock properly in bch_writeback_thread()
+Date:   Fri,  7 Sep 2018 23:09:57 +0200
+Message-Id: <20180907210913.503107913@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -53,58 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vishal Verma <vishal.l.verma@intel.com>
+From: Shan Hai <shan.hai@oracle.com>
 
-commit 286e87718103acdf85f4ed323a37e4839a8a7c05 upstream.
+commit 3943b040f11ed0cc6d4585fd286a623ca8634547 upstream.
 
-Commit efda1b5d87cb ("acpi, nfit, libnvdimm: fix / harden ars_status output length handling")
-Introduced additional hardening for ambiguity in the ACPI spec for
-ars_status output sizing. However, it had a couple of cases mixed up.
-Where it should have been checking for (and returning) "out_field[1] -
-4" it was using "out_field[1] - 8" and vice versa.
+The writeback thread would exit with a lock held when the cache device
+is detached via sysfs interface, fix it by releasing the held lock
+before exiting the while-loop.
 
-This caused a four byte discrepancy in the buffer size passed on to
-the command handler, and in some cases, this caused memory corruption
-like:
-
-  ./daxdev-errors.sh: line 76: 24104 Aborted   (core dumped) ./daxdev-errors $busdev $region
-  malloc(): memory corruption
-  Program received signal SIGABRT, Aborted.
-  [...]
-  #5  0x00007ffff7865a2e in calloc () from /lib64/libc.so.6
-  #6  0x00007ffff7bc2970 in ndctl_bus_cmd_new_ars_status (ars_cap=ars_cap@entry=0x6153b0) at ars.c:136
-  #7  0x0000000000401644 in check_ars_status (check=0x7fffffffdeb0, bus=0x604c20) at daxdev-errors.c:144
-  #8  test_daxdev_clear_error (region_name=<optimized out>, bus_name=<optimized out>)
-      at daxdev-errors.c:332
-
-Cc: <stable@vger.kernel.org>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Lukasz Dorau <lukasz.dorau@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Fixes: efda1b5d87cb ("acpi, nfit, libnvdimm: fix / harden ars_status output length handling")
-Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Signed-of-by: Dave Jiang <dave.jiang@intel.com>
+Fixes: fadd94e05c02 (bcache: quit dc->writeback_thread when BCACHE_DEV_DETACHING is set)
+Signed-off-by: Shan Hai <shan.hai@oracle.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Tested-by: Shenghui Wang <shhuiw@foxmail.com>
+Cc: stable@vger.kernel.org #4.17+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/bus.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/bcache/writeback.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -812,9 +812,9 @@ u32 nd_cmd_out_size(struct nvdimm *nvdim
- 		 * overshoots the remainder by 4 bytes, assume it was
- 		 * including 'status'.
- 		 */
--		if (out_field[1] - 8 == remainder)
-+		if (out_field[1] - 4 == remainder)
- 			return remainder;
--		return out_field[1] - 4;
-+		return out_field[1] - 8;
- 	} else if (cmd == ND_CMD_CALL) {
- 		struct nd_cmd_pkg *pkg = (struct nd_cmd_pkg *) in_field;
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -645,8 +645,10 @@ static int bch_writeback_thread(void *ar
+ 			 * data on cache. BCACHE_DEV_DETACHING flag is set in
+ 			 * bch_cached_dev_detach().
+ 			 */
+-			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags))
++			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)) {
++				up_write(&dc->writeback_lock);
+ 				break;
++			}
+ 		}
  
+ 		up_write(&dc->writeback_lock);
 
 
