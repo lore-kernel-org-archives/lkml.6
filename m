@@ -2,111 +2,84 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B36C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E59C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFECD20879
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B00B720652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:47:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="KjudEoSU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFECD20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UkTYU9pq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00B720652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeIGM02 (ORCPT
+        id S1727860AbeIGM0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:26:28 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41613 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbeIGM01 (ORCPT
+        Fri, 7 Sep 2018 08:26:42 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52874 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbeIGM0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:26:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y17-v6so11490348ljy.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=a1RTPO9qIQEpQtoAwM1pLWp2VNLlW/F/d+npIJiW/qA=;
-        b=KjudEoSU9bgyjraVpfMHrbGX930Fgzh+k5L7HSAEXgblNrp3p4fsVtsgAPomQHDtFl
-         372/gck2EdCcJszZ/dd/SpOvFsJIgcq/aEDhCq6eVtW47+IXcSwswV0vAwYidpE1FUP4
-         ZRuVNFoh98sbbV2xXRoKcGz2pzIVoCbNKF3zY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=a1RTPO9qIQEpQtoAwM1pLWp2VNLlW/F/d+npIJiW/qA=;
-        b=Kd+RwA+mqVy9gJLGrfUPUDlSC5H8EDBFEVyacu3MDEAinpVhyNPuRWiaXdWz7NVipA
-         W0F3L3JRVIGai8Gwoq31mMKc55fIsABSz4rGutxJul+A5U74v70c4hcuWahCL2ohQh04
-         IJBv+9zk97zstoN4rGr3oVosuNj9vnTwOnKLuPKxU4YZ9l9ufgpZQqJuLNmXeT4T0hzO
-         qAp2wZMfzOpVFVybT/zE4HqvX7V467Kpwo5F7kb2MGzrJsDxQD9Nuj+OocGbNegKsaeR
-         RD8fPD10fSmPJPETmWDeq8lgsTUpADtkHbHsRToz49IL3QNPrso/b+5ynldKgPCKMe2d
-         toEA==
-X-Gm-Message-State: APzg51DtWbv8KjUF7zYXnDtjqBZ4sh8ZKC6KVIQlLCbJwvsuQT1K/M8D
-        QUEcwIX1GpE3xgD1NYosiZL2dg==
-X-Google-Smtp-Source: ANB0VdaHlNtneZ3jdIgGLpVTvHZEIeULs+PuAUZTth4nGABsYVsilsxIV5GgHtfmbE3IUkrl2aU63A==
-X-Received: by 2002:a2e:5617:: with SMTP id k23-v6mr3981045ljb.86.1536306405263;
-        Fri, 07 Sep 2018 00:46:45 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 96-v6sm1183005lfu.40.2018.09.07.00.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 07 Sep 2018 00:46:44 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
+        Fri, 7 Sep 2018 08:26:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IrCg6O00xZRMFaVwDmDS6t28bHlDyx1+bPOmmLA2wEQ=; b=UkTYU9pq6D3tYcNU1JPANxfmw
+        8BGqo5HN0TOLbKq0qIXKkoIa7mohaADXtRJrXr80zw2chhl/ouYx/Efsphp6tMdPxaMqZUnT4gsGu
+        Ec2HBDkVNlevi84GcG/Ce05ExJaGwwx2QkIhF3FZSND2kVbfwXs4WKeV+/V6+PJFMcZI6PijSikXP
+        Z/gTElwjAEgf4toGfJYk4LeilVLPfjKybFwDSa1WX1OG0m6mgi1P+Y7iW6cRrW4W/BBUomCvlwoRU
+        7Cf13TIZt31oO2UWrH6cG6ot52cXYVn2cutpLhfSB9/0VkBFZWBFd8jtNRttJZBqz6K92aaHviM3d
+        uZc22//Bw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyBTX-0007og-BO; Fri, 07 Sep 2018 07:46:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 566C820210310; Fri,  7 Sep 2018 09:46:42 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 09:46:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 2/2] rxrpc: use kmemdup_nul in rxrpc_krb5_decode_principal
-Date:   Fri,  7 Sep 2018 09:46:40 +0200
-Message-Id: <20180907074640.27348-2-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
-References: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
+ IO v4
+Message-ID: <20180907074642.GN24106@hirez.programming.kicks-ass.net>
+References: <20180828172258.3185-1-hannes@cmpxchg.org>
+ <20180905214303.GA30178@cmpxchg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905214303.GA30178@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-This depends on patch 1/2.
+On Wed, Sep 05, 2018 at 05:43:03PM -0400, Johannes Weiner wrote:
+> On Tue, Aug 28, 2018 at 01:22:49PM -0400, Johannes Weiner wrote:
+> > This version 4 of the PSI series incorporates feedback from Peter and
+> > fixes two races in the lockless aggregator that Suren found in his
+> > testing and which caused the sample calculation to sometimes underflow
+> > and record bogusly large samples; details at the bottom of this email.
+> 
+> Peter, do the changes from v3 look sane to you?
 
- net/rxrpc/key.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/net/rxrpc/key.c b/net/rxrpc/key.c
-index e7f6b8823eb6..42f0ca9265c2 100644
---- a/net/rxrpc/key.c
-+++ b/net/rxrpc/key.c
-@@ -252,11 +252,9 @@ static int rxrpc_krb5_decode_principal(struct krb5_principal *princ,
- 		paddedlen = (tmp + 3) & ~3;
- 		if (paddedlen > toklen)
- 			return -EINVAL;
--		princ->name_parts[loop] = kmalloc(tmp + 1, GFP_KERNEL);
-+		princ->name_parts[loop] = kmemdup_nul(xdr, tmp, GFP_KERNEL);
- 		if (!princ->name_parts[loop])
- 			return -ENOMEM;
--		memcpy(princ->name_parts[loop], xdr, tmp);
--		princ->name_parts[loop][tmp] = 0;
- 		toklen -= paddedlen;
- 		xdr += paddedlen >> 2;
- 	}
-@@ -270,11 +268,9 @@ static int rxrpc_krb5_decode_principal(struct krb5_principal *princ,
- 	paddedlen = (tmp + 3) & ~3;
- 	if (paddedlen > toklen)
- 		return -EINVAL;
--	princ->realm = kmalloc(tmp + 1, GFP_KERNEL);
-+	princ->realm = kmemdup_nul(xdr, tmp, GFP_KERNEL);
- 	if (!princ->realm)
- 		return -ENOMEM;
--	memcpy(princ->realm, xdr, tmp);
--	princ->realm[tmp] = 0;
- 	toklen -= paddedlen;
- 	xdr += paddedlen >> 2;
- 
--- 
-2.16.4
-
+I'll go have a look.
