@@ -2,135 +2,235 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B7DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2571FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0CF2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:09:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Xvbef/y7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZKKEOsay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0CF2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id A97932086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:12:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97932086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbeIGRuc (ORCPT
+        id S1729149AbeIGRxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:50:32 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56139 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727653AbeIGRuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:50:32 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id A4D7E21193;
-        Fri,  7 Sep 2018 09:09:37 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 07 Sep 2018 09:09:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=c7zs8QEZs8yzY7Wh48v4OFVbIUm5kW1s2juj1HdfhZU=; b=Xvbef/y7
-        nvdQrqszHVkDxjJp7BzlLWomX70WKKsKVHp7c1wMh5WStmpyAjInIYzvZPson1Ki
-        rxTamDdJrk800J3ovDDGZ4iEZ3d4rpUwAd18j94jxU1Uh0Y7TWAeg857SKWArUR0
-        7bphmzJ3MP6hpFpIO8NcXC/YsIpu1Qqs2wc1odfisz45Di8BI+YsdBu6kZLL5UU6
-        sVAbopluTtYO4WJcKGWcBTcM5eDwhtX/gLiBUb8iASX9WXGlDSgqdA/ANE/B2dMn
-        I0OOLXVpU4f2+TZv29xE+lZV9hg1BEDXHZ8J3aqBpYDII4s04PP1vmt1cTQtjsga
-        sk2xNLq5Ay7aNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=c7zs8QEZs8yzY7Wh48v4OFVbIUm5k
-        W1s2juj1HdfhZU=; b=ZKKEOsaylp630W2oVYrLYnDQIy3nm3K1ldQ1/pzrJIbkQ
-        ZhXIb03Wm8EOTGAV81jfvm+sbDoszqiC6H8cRgD9jeHtvTh6vgSl11f6x9J/q+ga
-        hvdQZwJOifLzv8uBoi3Wn5sTQtXzNlb2g7UC2uemV9ZbVepXAx3px0cSrAsnQa27
-        TmNdUJinM5rcvVSkS/A4NSBZ/PUvsR2hOGe6lb1yhbPGi4IeSetEqqBf8NcHi32d
-        RIj/DzOjkPcTHILhTfZPUYUy+uhP50abmcFVVeeZYC0Uq3EhqQW5TVSNkA52vxzi
-        +ORfjtS7zcRNpjA/MI5WuS2+sjDdUiowqB+X3TCsw==
-X-ME-Proxy: <xmx:kHiSW6faqqJLzBmRbOVNmzI_U2oIzkUN_YT5v2Zx4n_nLirckOWALw>
-    <xmx:kHiSW6pepmzhSlm4v8k8fm1Uc2UvUmTsTrXRB48bYcr1SGtXLWXxDA>
-    <xmx:kHiSW0UdNVdTS1T-M0sJLwLceMV1sCMgDISpuDb2zPpgM4sKTORuVQ>
-    <xmx:kHiSW61Z8a-f0ZCGKax8e1O_5ssrCf4HfzChr4DuX4p2TlGAFFuw6w>
-    <xmx:kHiSW2D7NGFumnEpeXugGK4dsyPxvvWU9hdHR9H9jHEHOFwwIxzGMQ>
-    <xmx:kXiSWxoMeNrNsBM5pGj2xOKxBtf1KCxgMuzQHgz2dVayGzkEvWH07Q>
-X-ME-Sender: <xms:kHiSWypPB4WJwHkopWeQaWF1lquxqJDILQLSZkYgyN8XRa2mie_tlQ>
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E034810293;
-        Fri,  7 Sep 2018 09:09:35 -0400 (EDT)
-Date:   Fri, 7 Sep 2018 15:09:34 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andreas Dilger <andreas.dilger@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] ext4 updates for 3.11
-Message-ID: <20180907130934.GA22855@kroah.com>
-References: <nsxbo6mxu38.fsf@lambda.thunk.org>
- <20130703094529.99444050e676467d281a3b51@canb.auug.org.au>
- <CA+55aFxdAHqEhnV-zKwExVfBAvw=k8+GprTGniNz=TpJM6obtQ@mail.gmail.com>
- <20130703005419.GA7744@kroah.com>
- <CA+55aFxdNVX9koH=GViv1Haj3kU07PD-CTKCNuWrm-c-BF3mQw@mail.gmail.com>
- <20130703010111.GA7986@kroah.com>
- <20130703032941.GH14996@dastard>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20130703032941.GH14996@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 7 Sep 2018 13:53:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55498 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727817AbeIGRxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 13:53:23 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E5CC5400E9A8;
+        Fri,  7 Sep 2018 13:12:27 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-125-2.rdu2.redhat.com [10.10.125.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF1062166BA3;
+        Fri,  7 Sep 2018 13:12:27 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Allan Xavier <allan.x.xavier@oracle.com>
+Subject: [PATCH] objtool: Support per-function rodata sections
+Date:   Fri,  7 Sep 2018 08:12:01 -0500
+Message-Id: <099bdc375195c490dda04db777ee0b95d566ded1.1536325914.git.jpoimboe@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 07 Sep 2018 13:12:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 07 Sep 2018 13:12:27 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Digging up an email thread from 2013...
+From: Allan Xavier <allan.x.xavier@oracle.com>
 
-On Wed, Jul 03, 2013 at 01:29:41PM +1000, Dave Chinner wrote:
-> On Tue, Jul 02, 2013 at 06:01:11PM -0700, Greg KH wrote:
-> > On Tue, Jul 02, 2013 at 05:58:15PM -0700, Linus Torvalds wrote:
-> > > On Tue, Jul 2, 2013 at 5:54 PM, Greg KH <greg@kroah.com> wrote:
-> > > > On Tue, Jul 02, 2013 at 05:02:21PM -0700, Linus Torvalds wrote:
-> > > >>
-> > > >> I'm really not convinced this whole Lustre thing was correctly
-> > > >> handled. Merging it into stable and yet being in such bad shape that
-> > > >> it isn't enabled even there? I just dunno. But I have the turd in my
-> > > >> tree now, let's hope it gets fixed up.
-> > > >
-> > > > It's in "staging", not "stable" :)
-> > > 
-> > > Yes. But what was the reason to actually merge it even there? And once
-> > > it gets merged, disabling it again rather than fixing the problems it
-> > > has?
-> > 
-> > The problems turned out to be too big, too late in the merge cycle for
-> > me to be able to take them (they still aren't even done, as I don't have
-> > a working set of patches yet.)  So I just disabled it from the build to
-> > give Andreas and team time to get it working properly.
-> > 
-> > I could have just removed it, but I thought I would give them a chance.
-> > 
-> > > This is a filesystem that Intel apparently wants to push. I think it
-> > > would have been a better idea to push back a bit and say "at least
-> > > clean it up a bit first". It's not like Intel is one of the clueless
-> > > companies that couldn't have done so and need help from the community.
-> > 
-> > For this filesystem, it seems that they don't have any resources to do
-> > this work and are relying on the community to help out.  Which is odd,
-> > but big companies are strange some times...
-> 
-> Didn't we learn this lesson already with POHMELFS? i.e. that dumping
-> filesystem code in staging on the assumption "the community" will
-> fix it up when nobody in "the community" uses or can even test that
-> filesystem is a broken development model....
+Add support for processing switch jump tables in objects with multiple
+.rodata sections, such as those created by '-ffunction-sections' and
+'-fdata-sections'.  Currently, objtool always looks in .rodata for jump
+table information, which results in many "sibling call from callable
+instruction with modified stack frame" warnings with objects compiled
+using those flags.
 
-Dave, and Linus, you were totally right here.  Sorry for not listening
-to you before, my fault.  The lustre developers never got their act
-together and probably by this being in staging, it only prolonged the
-agony of everyone involved.
+The fix is comprised of three parts:
 
-greg k-h
+1. Flagging all .rodata sections when importing ELF information for
+   easier checking later.
+
+2. Keeping a reference to the section each relocation is from in order
+   to get the list_head for the other relocations in that section.
+
+3. Finding jump tables by following relocations to .rodata sections,
+   rather than always referencing a single global .rodata section.
+
+The patch has been tested without data sections enabled and no
+differences in the resulting orc unwind information were seen.
+
+Note that as objtool adds terminators to end of each .text section the
+unwind information generated between a function+data sections build and
+a normal build aren't directly comparable. Manual inspection suggests
+that objtool is now generating the correct information, or at least
+making more of an effort to do so than it did previously.
+
+Signed-off-by: Allan Xavier <allan.x.xavier@oracle.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ tools/objtool/check.c | 38 ++++++++++++++++++++++++++++++++------
+ tools/objtool/check.h |  4 ++--
+ tools/objtool/elf.c   |  1 +
+ tools/objtool/elf.h   |  3 ++-
+ 4 files changed, 37 insertions(+), 9 deletions(-)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 2928939b98ec..0414a0d52262 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -836,7 +836,7 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
+ 	struct symbol *pfunc = insn->func->pfunc;
+ 	unsigned int prev_offset = 0;
+ 
+-	list_for_each_entry_from(rela, &file->rodata->rela->rela_list, list) {
++	list_for_each_entry_from(rela, &table->rela_sec->rela_list, list) {
+ 		if (rela == next_table)
+ 			break;
+ 
+@@ -926,6 +926,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ {
+ 	struct rela *text_rela, *rodata_rela;
+ 	struct instruction *orig_insn = insn;
++	struct section *rodata_sec;
+ 	unsigned long table_offset;
+ 
+ 	/*
+@@ -953,10 +954,13 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 		/* look for a relocation which references .rodata */
+ 		text_rela = find_rela_by_dest_range(insn->sec, insn->offset,
+ 						    insn->len);
+-		if (!text_rela || text_rela->sym != file->rodata->sym)
++		if (!text_rela || text_rela->sym->type != STT_SECTION ||
++		    !text_rela->sym->sec->rodata)
+ 			continue;
+ 
+ 		table_offset = text_rela->addend;
++		rodata_sec = text_rela->sym->sec;
++
+ 		if (text_rela->type == R_X86_64_PC32)
+ 			table_offset += 4;
+ 
+@@ -964,10 +968,10 @@ static struct rela *find_switch_table(struct objtool_file *file,
+ 		 * Make sure the .rodata address isn't associated with a
+ 		 * symbol.  gcc jump tables are anonymous data.
+ 		 */
+-		if (find_symbol_containing(file->rodata, table_offset))
++		if (find_symbol_containing(rodata_sec, table_offset))
+ 			continue;
+ 
+-		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
++		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
+ 		if (rodata_rela) {
+ 			/*
+ 			 * Use of RIP-relative switch jumps is quite rare, and
+@@ -1052,7 +1056,7 @@ static int add_switch_table_alts(struct objtool_file *file)
+ 	struct symbol *func;
+ 	int ret;
+ 
+-	if (!file->rodata || !file->rodata->rela)
++	if (!file->rodata)
+ 		return 0;
+ 
+ 	for_each_sec(file, sec) {
+@@ -1198,10 +1202,33 @@ static int read_retpoline_hints(struct objtool_file *file)
+ 	return 0;
+ }
+ 
++static void mark_rodata(struct objtool_file *file)
++{
++	struct section *sec;
++	bool found = false;
++
++	/*
++	 * This searches for the .rodata section or multiple .rodata.func_name
++	 * sections if -fdata-sections is being used. The .str.1.1 and .str.1.8
++	 * rodata sections are ignored as they don't contain jump tables.
++	 */
++	for_each_sec(file, sec) {
++		if (!strncmp(sec->name, ".rodata", 7) &&
++		    !strstr(sec->name, ".str1.")) {
++			sec->rodata = true;
++			found = true;
++		}
++	}
++
++	file->rodata = found;
++}
++
+ static int decode_sections(struct objtool_file *file)
+ {
+ 	int ret;
+ 
++	mark_rodata(file);
++
+ 	ret = decode_instructions(file);
+ 	if (ret)
+ 		return ret;
+@@ -2171,7 +2198,6 @@ int check(const char *_objname, bool orc)
+ 	INIT_LIST_HEAD(&file.insn_list);
+ 	hash_init(file.insn_hash);
+ 	file.whitelist = find_section_by_name(file.elf, ".discard.func_stack_frame_non_standard");
+-	file.rodata = find_section_by_name(file.elf, ".rodata");
+ 	file.c_file = find_section_by_name(file.elf, ".comment");
+ 	file.ignore_unreachables = no_unreachable;
+ 	file.hints = false;
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index 95700a2bcb7c..e6e8a655b556 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -60,8 +60,8 @@ struct objtool_file {
+ 	struct elf *elf;
+ 	struct list_head insn_list;
+ 	DECLARE_HASHTABLE(insn_hash, 16);
+-	struct section *rodata, *whitelist;
+-	bool ignore_unreachables, c_file, hints;
++	struct section *whitelist;
++	bool ignore_unreachables, c_file, hints, rodata;
+ };
+ 
+ int check(const char *objname, bool orc);
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index 7ec85d567598..f7082de1ee82 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -379,6 +379,7 @@ static int read_relas(struct elf *elf)
+ 			rela->offset = rela->rela.r_offset;
+ 			symndx = GELF_R_SYM(rela->rela.r_info);
+ 			rela->sym = find_symbol_by_index(elf, symndx);
++			rela->rela_sec = sec;
+ 			if (!rela->sym) {
+ 				WARN("can't find rela entry symbol %d for %s",
+ 				     symndx, sec->name);
+diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
+index de5cd2ddded9..bc97ed86b9cd 100644
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -48,7 +48,7 @@ struct section {
+ 	char *name;
+ 	int idx;
+ 	unsigned int len;
+-	bool changed, text;
++	bool changed, text, rodata;
+ };
+ 
+ struct symbol {
+@@ -68,6 +68,7 @@ struct rela {
+ 	struct list_head list;
+ 	struct hlist_node hash;
+ 	GElf_Rela rela;
++	struct section *rela_sec;
+ 	struct symbol *sym;
+ 	unsigned int type;
+ 	unsigned long offset;
+-- 
+2.17.1
+
