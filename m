@@ -2,148 +2,185 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B0FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885D7C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E352083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:30:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E352083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3700420878
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:34:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3700420878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbeIGRKy (ORCPT
+        id S1729184AbeIGROy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:10:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33038 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728087AbeIGRKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:10:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 653D92BCB0;
-        Fri,  7 Sep 2018 12:30:09 +0000 (UTC)
-Received: from work-vm (ovpn-116-158.ams2.redhat.com [10.36.116.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D1FDD637AE;
-        Fri,  7 Sep 2018 12:29:58 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 13:29:56 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-Subject: Re: [PATCH v36 0/5] Virtio-balloon: support free page reporting
-Message-ID: <20180907122955.GD2544@work-vm>
-References: <1532075585-39067-1-git-send-email-wei.w.wang@intel.com>
- <20180723122342-mutt-send-email-mst@kernel.org>
- <20180723143604.GB2457@work-vm>
- <5B911B03.2060602@intel.com>
+        Fri, 7 Sep 2018 13:14:54 -0400
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:47939 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727598AbeIGROy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 13:14:54 -0400
+X-ASG-Debug-ID: 1536323644-093b7e54e60c9e0001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id YVuGJhym02XwbXJ6 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 07 Sep 2018 20:34:04 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 7 Sep 2018 20:34:08 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Fri, 7 Sep 2018 20:34:08 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "sergei.shtylyov@cogentembedded.com" 
+        <sergei.shtylyov@cogentembedded.com>
+CC:     "jacob.e.keller@intel.com" <jacob.e.keller@intel.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "carolyn.wyborny@intel.com" <carolyn.wyborny@intel.com>
+Subject: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+Thread-Topic: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+X-ASG-Orig-Subj: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+Thread-Index: AQHURpyuUEMtiCDf+EGRwpahWdajkw==
+Date:   Fri, 7 Sep 2018 12:34:08 +0000
+Message-ID: <77898840b49847a7a835b20b383e21a2@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <1536319175-3660-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+ <1536319175-3660-3-git-send-email-dongsheng.wang@hxt-semitech.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.50.12]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B911B03.2060602@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 12:30:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 12:30:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dgilbert@redhat.com' RCPT:''
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1536323644
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4195 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.57061
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Wei Wang (wei.w.wang@intel.com) wrote:
-> On 07/23/2018 10:36 PM, Dr. David Alan Gilbert wrote:
-> > * Michael S. Tsirkin (mst@redhat.com) wrote:
-> > > On Fri, Jul 20, 2018 at 04:33:00PM +0800, Wei Wang wrote:
-> > > > This patch series is separated from the previous "Virtio-balloon
-> > > > Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,
-> > > > implemented by this series enables the virtio-balloon driver to report
-> > > > hints of guest free pages to the host. It can be used to accelerate live
-> > > > migration of VMs. Here is an introduction of this usage:
-> > > > 
-> > > > Live migration needs to transfer the VM's memory from the source machine
-> > > > to the destination round by round. For the 1st round, all the VM's memory
-> > > > is transferred. From the 2nd round, only the pieces of memory that were
-> > > > written by the guest (after the 1st round) are transferred. One method
-> > > > that is popularly used by the hypervisor to track which part of memory is
-> > > > written is to write-protect all the guest memory.
-> > > > 
-> > > > This feature enables the optimization by skipping the transfer of guest
-> > > > free pages during VM live migration. It is not concerned that the memory
-> > > > pages are used after they are given to the hypervisor as a hint of the
-> > > > free pages, because they will be tracked by the hypervisor and transferred
-> > > > in the subsequent round if they are used and written.
-> > > > 
-> > > > * Tests
-> > > > - Test Environment
-> > > >      Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> > > >      Guest: 8G RAM, 4 vCPU
-> > > >      Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
-> > > > 
-> > > > - Test Results
-> > > >      - Idle Guest Live Migration Time (results are averaged over 10 runs):
-> > > >          - Optimization v.s. Legacy = 409ms vs 1757ms --> ~77% reduction
-> > > > 	(setting page poisoning zero and enabling ksm don't affect the
-> > > >           comparison result)
-> > > >      - Guest with Linux Compilation Workload (make bzImage -j4):
-> > > >          - Live Migration Time (average)
-> > > >            Optimization v.s. Legacy = 1407ms v.s. 2528ms --> ~44% reduction
-> > > >          - Linux Compilation Time
-> > > >            Optimization v.s. Legacy = 5min4s v.s. 5min12s
-> > > >            --> no obvious difference
-> > > I'd like to see dgilbert's take on whether this kind of gain
-> > > justifies adding a PV interfaces, and what kind of guest workload
-> > > is appropriate.
-> > > 
-> > > Cc'd.
-> > Well, 44% is great ... although the measurement is a bit weird.
-> > 
-> > a) A 2 second downtime is very large; 300-500ms is more normal
-> > b) I'm not sure what the 'average' is  - is that just between a bunch of
-> > repeated migrations?
-> > c) What load was running in the guest during the live migration?
-> > 
-> > An interesting measurement to add would be to do the same test but
-> > with a VM with a lot more RAM but the same load;  you'd hope the gain
-> > would be even better.
-> > It would be interesting, especially because the users who are interested
-> > are people creating VMs allocated with lots of extra memory (for the
-> > worst case) but most of the time migrating when it's fairly idle.
-> > 
-> > Dave
-> > 
-> 
-> Hi Dave,
-> 
-> The results of the added experiments have been shown in the v37 cover
-> letter.
-> Could you have a look at https://lkml.org/lkml/2018/8/27/29 . Thanks.
+Hello Jacob,
 
-OK, that's much better.
-The ~50% reducton with a 8G VM and a real workload is great,
-and it does what you expect when you put a lot more RAM in and see the
-84% reduction on a guest with 128G RAM - 54s vs ~9s is a big win!
+Since Carolyn' team is working this, I think we don't need this patch
+anymore because this header file is only for ethtool.c.
 
-(The migrate_set_speed is a bit high, since that's in bytes/s - but it's
-not important).
+The cross-including scenario simply doesn't exist.
 
-That looks good,
+If you agree, please ignore this patch and just only review the [1/2].
 
-Thanks!
 
-Dave
+Cheers,
+Dongsheng
 
-> Best,
-> Wei
-> 
---
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+On 9/7/2018 7:19 PM, Wang, Dongsheng wrote:
+> Can't have non-inline function in a header file.
+> There is a risk of "Multiple definition" from cross-including.
+>
+> Tested on: x86_64, make ARCH=i386
+>
+> Modules section .text:
+> i40e: 00019380 <__i40e_add_stat_strings>:
+> i40evf: 00006b00 <__i40e_add_stat_strings>:
+>
+> Buildin section .text:
+> i40e: c351ca60 <__i40e_add_stat_strings>:
+> i40evf: c354f2c0 <__i40e_add_stat_strings>:
+>
+> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+> ---
+> V3: add static 
+> ---
+>  .../intel/i40evf/i40e_ethtool_stats.h         | 23 +-----------------
+>  .../ethernet/intel/i40evf/i40evf_ethtool.c    | 24 +++++++++++++++++++
+>  2 files changed, 25 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
+> index 60b595dd8c39..62ab67a77753 100644
+> --- a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
+> +++ b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
+> @@ -181,29 +181,8 @@ i40evf_add_queue_stats(u64 **data, struct i40e_ring *ring)
+>  	*data += size;
+>  }
+>  
+> -/**
+> - * __i40e_add_stat_strings - copy stat strings into ethtool buffer
+> - * @p: ethtool supplied buffer
+> - * @stats: stat definitions array
+> - * @size: size of the stats array
+> - *
+> - * Format and copy the strings described by stats into the buffer pointed at
+> - * by p.
+> - **/
+>  static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+> -				    const unsigned int size, ...)
+> -{
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < size; i++) {
+> -		va_list args;
+> -
+> -		va_start(args, size);
+> -		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
+> -		*p += ETH_GSTRING_LEN;
+> -		va_end(args);
+> -	}
+> -}
+> +				    const unsigned int size, ...);
+>  
+>  /**
+>   * 40e_add_stat_strings - copy stat strings into ethtool buffer
+> diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
+> index 9319971c5c92..eb2e910bc3a1 100644
+> --- a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
+> +++ b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
+> @@ -171,6 +171,30 @@ static void i40evf_get_priv_flag_strings(struct net_device *netdev, u8 *data)
+>  	}
+>  }
+>  
+> +/**
+> + * __i40e_add_stat_strings - copy stat strings into ethtool buffer
+> + * @p: ethtool supplied buffer
+> + * @stats: stat definitions array
+> + * @size: size of the stats array
+> + *
+> + * Format and copy the strings described by stats into the buffer pointed at
+> + * by p.
+> + **/
+> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
+> +				    const unsigned int size, ...)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < size; i++) {
+> +		va_list args;
+> +
+> +		va_start(args, size);
+> +		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
+> +		*p += ETH_GSTRING_LEN;
+> +		va_end(args);
+> +	}
+> +}
+> +
+>  /**
+>   * i40evf_get_stat_strings - Get stat strings
+>   * @netdev: network interface device structure
+
+
