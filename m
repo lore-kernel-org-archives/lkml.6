@@ -6,154 +6,82 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C95C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6367C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8742120844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8742120844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 840A320857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 840A320857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbeIGGww (ORCPT
+        id S1729007AbeIGG4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:52:52 -0400
-Received: from mga05.intel.com ([192.55.52.43]:38948 "EHLO mga05.intel.com"
+        Fri, 7 Sep 2018 02:56:33 -0400
+Received: from mga18.intel.com ([134.134.136.126]:22361 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbeIGGwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:52:51 -0400
+        id S1728031AbeIGG4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 02:56:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 19:14:24 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 19:18:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
-   d="scan'208";a="69016940"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2018 19:14:21 -0700
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v2 08/12] iommu/vt-d: Pass pasid table to context mapping
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-9-baolu.lu@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D1912F2C7A@SHSMSX101.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <cbf798c6-180a-1c57-64c2-7713803eb888@linux.intel.com>
-Date:   Fri, 7 Sep 2018 10:13:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+   d="scan'208";a="71018280"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.13])
+  by orsmga007.jf.intel.com with ESMTP; 06 Sep 2018 19:17:58 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        <linux-kernel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        Aaron Lu <aaron.lu@intel.com>, <alex.kogan@oracle.com>,
+        <akpm@linux-foundation.org>, <boqun.feng@gmail.com>,
+        <brouer@redhat.com>, <dave@stgolabs.net>, <dave.dice@oracle.com>,
+        Dhaval Giani <dhaval.giani@oracle.com>, <ktkhai@virtuozzo.com>,
+        <ldufour@linux.vnet.ibm.com>, <Pavel.Tatashin@microsoft.com>,
+        <paulmck@linux.vnet.ibm.com>, <shady.issa@oracle.com>,
+        <tariqt@mellanox.com>, <tglx@linutronix.de>,
+        <tim.c.chen@intel.com>, <vbabka@suse.cz>, <longman@redhat.com>,
+        <yang.shi@linux.alibaba.com>, <shy828301@gmail.com>,
+        <subhra.mazumdar@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        <jwadams@google.com>, <ashwinch@google.com>, <sqazi@google.com>,
+        Shakeel Butt <shakeelb@google.com>, <walken@google.com>,
+        <rientjes@google.com>, <junaids@google.com>,
+        Neha Agarwal <nehaagarwal@google.com>
+Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
+References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
+        <01000165aa490dc9-64abf872-afd1-4a81-a46d-a50d0131de93-000000@email.amazonses.com>
+        <877ejzqtdy.fsf@yhuang-dev.intel.com>
+        <01000165af54d553-33f33ce2-7b36-4d67-a928-e53b10247e1d-000000@email.amazonses.com>
+Date:   Fri, 07 Sep 2018 10:17:57 +0800
+In-Reply-To: <01000165af54d553-33f33ce2-7b36-4d67-a928-e53b10247e1d-000000@email.amazonses.com>
+        (Christopher Lameter's message of "Thu, 6 Sep 2018 14:41:37 +0000")
+Message-ID: <87d0tqoxt6.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2C7A@SHSMSX101.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Christopher Lameter <cl@linux.com> writes:
 
-On 09/06/2018 11:17 AM, Tian, Kevin wrote:
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Thursday, August 30, 2018 9:35 AM
+> On Thu, 6 Sep 2018, Huang, Ying wrote:
+>
+>> > Certainly interested in attending but this overlaps supercomputing 2018 in
+>> > Dallas Texas...
 >>
->> So that the pasid related info, such as the pasid table and the
->> maximum of pasid could be used during setting up scalable mode
->> context.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-> 
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> 
+>> Sorry to know this.  It appears that there are too many conferences in
+>> November...
+>
+>  I will try to get to it in the middle of SC18, RDMA track and RISC V
+> track... Sign me up.
 
-Thank you, Kevin.
+Great to know this!  Looking forward to meet you in the microconference.
 
-Best regards,
-Lu Baolu
-
->> ---
->>   drivers/iommu/intel-iommu.c | 14 +++++++++++---
->>   1 file changed, 11 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index c3bf2ccf094d..33642dd3d6ba 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -1942,6 +1942,7 @@ static void domain_exit(struct dmar_domain
->> *domain)
->>
->>   static int domain_context_mapping_one(struct dmar_domain *domain,
->>   				      struct intel_iommu *iommu,
->> +				      struct pasid_table *table,
->>   				      u8 bus, u8 devfn)
->>   {
->>   	u16 did = domain->iommu_did[iommu->seq_id];
->> @@ -2064,6 +2065,7 @@ static int domain_context_mapping_one(struct
->> dmar_domain *domain,
->>   struct domain_context_mapping_data {
->>   	struct dmar_domain *domain;
->>   	struct intel_iommu *iommu;
->> +	struct pasid_table *table;
->>   };
->>
->>   static int domain_context_mapping_cb(struct pci_dev *pdev,
->> @@ -2072,25 +2074,31 @@ static int domain_context_mapping_cb(struct
->> pci_dev *pdev,
->>   	struct domain_context_mapping_data *data = opaque;
->>
->>   	return domain_context_mapping_one(data->domain, data-
->>> iommu,
->> -					  PCI_BUS_NUM(alias), alias & 0xff);
->> +					  data->table, PCI_BUS_NUM(alias),
->> +					  alias & 0xff);
->>   }
->>
->>   static int
->>   domain_context_mapping(struct dmar_domain *domain, struct device
->> *dev)
->>   {
->> +	struct domain_context_mapping_data data;
->> +	struct pasid_table *table;
->>   	struct intel_iommu *iommu;
->>   	u8 bus, devfn;
->> -	struct domain_context_mapping_data data;
->>
->>   	iommu = device_to_iommu(dev, &bus, &devfn);
->>   	if (!iommu)
->>   		return -ENODEV;
->>
->> +	table = intel_pasid_get_table(dev);
->> +
->>   	if (!dev_is_pci(dev))
->> -		return domain_context_mapping_one(domain, iommu, bus,
->> devfn);
->> +		return domain_context_mapping_one(domain, iommu,
->> table,
->> +						  bus, devfn);
->>
->>   	data.domain = domain;
->>   	data.iommu = iommu;
->> +	data.table = table;
->>
->>   	return pci_for_each_dma_alias(to_pci_dev(dev),
->>   				      &domain_context_mapping_cb, &data);
->> --
->> 2.17.1
-> 
-> 
+Best Regards,
+Huang, Ying
