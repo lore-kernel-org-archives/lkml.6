@@ -6,62 +6,65 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE14C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D1BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB242075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB242075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 058A62075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:55:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058A62075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730013AbeIGTgB (ORCPT
+        id S1730061AbeIGThH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:36:01 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50284 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727856AbeIGTgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:36:01 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1-eneF8xV7NP; Fri,  7 Sep 2018 16:54:43 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCC4300329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:4300:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 379B01EC0104;
-        Fri,  7 Sep 2018 16:54:43 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 16:54:41 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/paravirt] x86/paravirt: Move the pv_irq_ops under the
- PARAVIRT_XXL umbrella
-Message-ID: <20180907145441.GE12849@zn.tnic>
-References: <20180828074026.820-14-jgross@suse.com>
- <tip-6da63eb241a05b0e676d68975e793c0521387141@git.kernel.org>
- <20180907144939.GA1662@zn.tnic>
- <2585d868-29c1-ec6d-39b1-5346e51c72dc@suse.com>
+        Fri, 7 Sep 2018 15:37:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33150 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727856AbeIGThH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:37:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86E8118A;
+        Fri,  7 Sep 2018 07:55:50 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 575DB3F575;
+        Fri,  7 Sep 2018 07:55:50 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7EEF31AE3828; Fri,  7 Sep 2018 15:56:05 +0100 (BST)
+Date:   Fri, 7 Sep 2018 15:56:05 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kyeongdon Kim <kyeongdon.kim@lge.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: lib: use C string functions with KASAN enabled.
+Message-ID: <20180907145605.GE12788@arm.com>
+References: <20180906170534.20726-1-aryabinin@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2585d868-29c1-ec6d-39b1-5346e51c72dc@suse.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180906170534.20726-1-aryabinin@virtuozzo.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 04:52:20PM +0200, Juergen Gross wrote:
-> And the fixing patch is already there:
+On Thu, Sep 06, 2018 at 08:05:33PM +0300, Andrey Ryabinin wrote:
+> ARM64 has asm implementations of memchr(), memcmp(), str[r]chr(),
+> str[n]cmp(), str[n]len(). KASAN don't see memory accesses in asm
+> code, thus it can potentially miss many bugs.
+> 
+> Ifdef out __HAVE_ARCH_* defines of these functions when KASAN is
+> enabled, so the generic implementations from lib/string.c will be used.
+> 
+> Declare asm functions as weak instead of removing them because they
+> still can be used by efistub.
 
-Yeah, tglx just told me :)
+I don't understand this bit: efistub uses the __pi_ prefixed versions of the
+routines, so why do we need to declare them as weak?
 
-Thx!
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Will
