@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAB7C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52106C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D2120861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D2120861
+	by mail.kernel.org (Postfix) with ESMTP id 15B872083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:11:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15B872083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeIGOv5 (ORCPT
+        id S1728298AbeIGOv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 10:51:57 -0400
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:52878 "EHLO
+        Fri, 7 Sep 2018 10:51:59 -0400
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:59552 "EHLO
         outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726033AbeIGOv4 (ORCPT
+        by vger.kernel.org with ESMTP id S1726237AbeIGOv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 10:51:56 -0400
+        Fri, 7 Sep 2018 10:51:58 -0400
 Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id B47C61C327E
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id E438C1C32E5
         for <linux-kernel@vger.kernel.org>; Fri,  7 Sep 2018 11:11:40 +0100 (IST)
-Received: (qmail 19933 invoked from network); 7 Sep 2018 10:11:40 -0000
+Received: (qmail 19951 invoked from network); 7 Sep 2018 10:11:40 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.88])
   by 81.17.254.9 with ESMTPA; 7 Sep 2018 10:11:40 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
@@ -35,9 +35,9 @@ To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
 Cc:     Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@surriel.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 2/4] sched/numa: Remove unused calculations in update_numa_stats
-Date:   Fri,  7 Sep 2018 11:11:37 +0100
-Message-Id: <20180907101139.20760-3-mgorman@techsingularity.net>
+Subject: [PATCH 3/4] sched/numa: Stop comparing tasks for NUMA placement after selecting an idle core
+Date:   Fri,  7 Sep 2018 11:11:38 +0100
+Message-Id: <20180907101139.20760-4-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180907101139.20760-1-mgorman@techsingularity.net>
 References: <20180907101139.20760-1-mgorman@techsingularity.net>
@@ -46,57 +46,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 2d4056fafa19 ("sched/numa: Remove numa_has_capacity()") removed
-the the has_free_capacity field but did not remove calculations
-related to it in update_numa_stats. This patch removes the unused
-code.
+task_numa_migrate is responsible for finding a core on a preferred NUMA
+node for a task. As part of this, task_numa_find_cpu iterates through
+the CPUs of a node and evaulates CPUs, both idle and with running tasks,
+as placement candidates. Generally though, any idle CPU is equivalent in
+terms of improving imbalances and a search after finding one is pointless.
+This patch stops examining CPUs on a node if an idle CPU is considered
+suitable.
+
+While there are some workloads that show minor gains and losses, they are
+mostly within the noise with the exception of specjbb whether running
+as one large VM or one VM per socket. The following was reported on a
+two-socket Haswell machine with 24 cores per socket.
+
+specjbb, one JVM per socket (2 total)
+                              4.19.0-rc1             4.19.0-rc1
+                                 vanilla           oneselect-v1
+Hmean     tput-1     42258.43 (   0.00%)    43692.10 (   3.39%)
+Hmean     tput-2     87811.26 (   0.00%)    93719.52 (   6.73%)
+Hmean     tput-3    138100.56 (   0.00%)   143484.08 (   3.90%)
+Hmean     tput-4    181061.51 (   0.00%)   191292.99 (   5.65%)
+Hmean     tput-5    225577.34 (   0.00%)   233439.58 (   3.49%)
+Hmean     tput-6    264763.44 (   0.00%)   270634.50 (   2.22%)
+Hmean     tput-7    301458.48 (   0.00%)   314133.32 (   4.20%)
+Hmean     tput-8    348364.50 (   0.00%)   358445.76 (   2.89%)
+Hmean     tput-9    382129.65 (   0.00%)   403288.75 (   5.54%)
+Hmean     tput-10   403566.70 (   0.00%)   444592.51 (  10.17%)
+Hmean     tput-11   456967.43 (   0.00%)   483300.45 (   5.76%)
+Hmean     tput-12   502295.98 (   0.00%)   526281.53 (   4.78%)
+Hmean     tput-13   441284.41 (   0.00%)   535507.75 (  21.35%)
+Hmean     tput-14   461478.57 (   0.00%)   542068.97 (  17.46%)
+Hmean     tput-15   489725.29 (   0.00%)   545033.17 (  11.29%)
+Hmean     tput-16   503726.56 (   0.00%)   549738.23 (   9.13%)
+Hmean     tput-17   528650.57 (   0.00%)   550849.00 (   4.20%)
+Hmean     tput-18   518065.41 (   0.00%)   550018.29 (   6.17%)
+Hmean     tput-19   527412.99 (   0.00%)   550652.26 (   4.41%)
+Hmean     tput-20   528166.25 (   0.00%)   545783.85 (   3.34%)
+Hmean     tput-21   524669.70 (   0.00%)   544848.37 (   3.85%)
+Hmean     tput-22   519010.38 (   0.00%)   539603.70 (   3.97%)
+Hmean     tput-23   514947.43 (   0.00%)   534714.32 (   3.84%)
+Hmean     tput-24   517953.29 (   0.00%)   531783.24 (   2.67%)
+
+Coeffecient of variance is roughly 0-3% depending on the wareshouse count
+so these results are generally outside of the noise. Note that the biggest
+improvements are when a socket would be roughly half loaded. It's not
+especially obvious why this would be true given that without the patch the
+socket is scanned anyway but it may be cache miss related. On a 2-socket
+broadwell machine, the same observation was made in that the biggest
+benefit was when a socket was half-loaded. If a single JVM is used for
+the entire machine, the biggest benefit was also when the machine was
+half-utilised.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- kernel/sched/fair.c | 22 +---------------------
- 1 file changed, 1 insertion(+), 21 deletions(-)
+ kernel/sched/fair.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2472aeaff92e..5b2f1684e96e 100644
+index 5b2f1684e96e..d59d3e00a480 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1461,8 +1461,7 @@ struct numa_stats {
+@@ -1535,7 +1535,7 @@ static bool load_too_imbalanced(long src_load, long dst_load,
+  * into account that it might be best if task running on the dst_cpu should
+  * be exchanged with the source task
   */
- static void update_numa_stats(struct numa_stats *ns, int nid)
+-static void task_numa_compare(struct task_numa_env *env,
++static bool task_numa_compare(struct task_numa_env *env,
+ 			      long taskimp, long groupimp, bool maymove)
  {
--	int smt, cpu, cpus = 0;
--	unsigned long capacity;
-+	int cpu;
+ 	struct rq *dst_rq = cpu_rq(env->dst_cpu);
+@@ -1545,6 +1545,7 @@ static void task_numa_compare(struct task_numa_env *env,
+ 	long imp = env->p->numa_group ? groupimp : taskimp;
+ 	long moveimp = imp;
+ 	int dist = env->dist;
++	bool dst_idle = false;
  
- 	memset(ns, 0, sizeof(*ns));
- 	for_each_cpu(cpu, cpumask_of_node(nid)) {
-@@ -1470,26 +1469,7 @@ static void update_numa_stats(struct numa_stats *ns, int nid)
- 
- 		ns->load += weighted_cpuload(rq);
- 		ns->compute_capacity += capacity_of(cpu);
--
--		cpus++;
+ 	rcu_read_lock();
+ 	cur = task_rcu_dereference(&dst_rq->curr);
+@@ -1638,11 +1639,13 @@ static void task_numa_compare(struct task_numa_env *env,
+ 		env->dst_cpu = select_idle_sibling(env->p, env->src_cpu,
+ 						   env->dst_cpu);
+ 		local_irq_enable();
++		dst_idle = true;
  	}
--
--	/*
--	 * If we raced with hotplug and there are no CPUs left in our mask
--	 * the @ns structure is NULL'ed and task_numa_compare() will
--	 * not find this node attractive.
--	 *
--	 * We'll detect a huge imbalance and bail there.
--	 */
--	if (!cpus)
--		return;
--
--	/* smt := ceil(cpus / capacity), assumes: 1 < smt_power < 2 */
--	smt = DIV_ROUND_UP(SCHED_CAPACITY_SCALE * cpus, ns->compute_capacity);
--	capacity = cpus / smt; /* cores */
--
--	capacity = min_t(unsigned, capacity,
--		DIV_ROUND_CLOSEST(ns->compute_capacity, SCHED_CAPACITY_SCALE));
+ 
+ 	task_numa_assign(env, cur, imp);
+ unlock:
+ 	rcu_read_unlock();
++	return dst_idle;
  }
  
- struct task_numa_env {
+ static void task_numa_find_cpu(struct task_numa_env *env,
+@@ -1668,7 +1671,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+ 			continue;
+ 
+ 		env->dst_cpu = cpu;
+-		task_numa_compare(env, taskimp, groupimp, maymove);
++		if (task_numa_compare(env, taskimp, groupimp, maymove))
++			break;
+ 	}
+ }
+ 
 -- 
 2.16.4
 
