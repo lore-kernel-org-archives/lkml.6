@@ -2,124 +2,102 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE95C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DA9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82602075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A43822075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:25:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YHbGllDj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82602075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eGBN41G7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A43822075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbeIGVHF (ORCPT
+        id S1728162AbeIGVHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:07:05 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:44334 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbeIGVHF (ORCPT
+        Fri, 7 Sep 2018 17:07:20 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35542 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbeIGVHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:07:05 -0400
-Received: by mail-yw1-f65.google.com with SMTP id l9-v6so5579410ywc.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:25:25 -0700 (PDT)
+        Fri, 7 Sep 2018 17:07:20 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 7-v6so7257320pgf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:25:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=OEk2WljBHFeTbPUuH4TMNaRorwBNs6MuUKX7hXCUFzc=;
-        b=YHbGllDjtYi2DUYdXpsjF8F6SeVlYr4l9I8XUaU0729wAnT1vKsQWT6veBojJR6kfm
-         LW40w1V4yT8LlC9RjMYoNIEH2qkA0V8w6Ec1Ctgse0zUiv5EfzRPojKThpCrn8tWboOG
-         KvWQ0OlfdLfnSM0JVFH60rC0ouUVzV/4lUMDk=
+        bh=wQOpuBlnqGSyJKB/72RCH98mGMvJ+WwVyGPsfZkXeGA=;
+        b=eGBN41G7WNPI+a8bI+1Lw2hdZNREfZ4a9KMpzqcRUueVkryutOccey4UzkQhLLxM/A
+         JZ3vFQixcW/pMxhxnNcpbZhFl/yLFKaxfxD4JJMPyPD2MGr5/g6Li7n5eDtzM7UE6tsW
+         jIEdiGVWC7gWlyZKbWHvCzlP9fwGzHMaq5eXOWxAAoqSS/MEPi4+p8CBeHY+X7buFLr9
+         P2wi3AeYNgS1Bh0rPacYd6ii8WFBE0cvmhOzXAxjbLze3A9EqJCxOfObC/5eC6CKAb0x
+         oDOVIvbknUa6Nx/LsvZq1jcrKIL2QIalo27++hJKgZfb4nBmGKtUyWfNQY4JfHjeRijX
+         iYuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=OEk2WljBHFeTbPUuH4TMNaRorwBNs6MuUKX7hXCUFzc=;
-        b=jPP39Up5CikPFxxmzi3GSRH+C4PdRXkF2WZem3eKnfEi03aonJFmVf7a3Cy7RCh2S7
-         KY2ELIeu9TrNWtRXwb/kpU10rTlMPiSKdXBK3CgEG9NoTfGAzffOMdho7nx9BY787Fe5
-         jTazgC+cTTbU5GLC/X41sg8iFod9SykLTwYWoCcBJ8Mz+Ay9il9h7SA0RfDBg9s3/Mc5
-         iGuVswXczW4IQZ53AgmRVuzh2VKKj7ZTzyBVhw04B1Hz0mqEfphzE6jfzwMVHNZ7B3+F
-         K6KqwBgwv1uiO0WO0374wUGotg/toCvS7NkVkBsX2GJLaUBZ4W1qPU4cYSx6JDHNNl/L
-         nQ5Q==
-X-Gm-Message-State: APzg51B1Ye7El9fW42BB6Yj8ONNfXS+E5HgJDnMkmkhQbo6iHfsu87fg
-        7XMgnIOqe2WrgakpbQM0Syh8TcH3/Ac=
-X-Google-Smtp-Source: ANB0VdbFYmtT5o6ek47q1j/pCwk+oGd/6nXptmrfQrQbRxbb8IvIuhmZtGuQulPsk2GydJmIi53m+g==
-X-Received: by 2002:a81:7815:: with SMTP id t21-v6mr4451570ywc.174.1536337524445;
-        Fri, 07 Sep 2018 09:25:24 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id f82-v6sm3145943ywf.58.2018.09.07.09.25.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 09:25:24 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id j131-v6so5574884ywc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:25:24 -0700 (PDT)
-X-Received: by 2002:a0d:ea0a:: with SMTP id t10-v6mr4453847ywe.60.1536337148524;
- Fri, 07 Sep 2018 09:19:08 -0700 (PDT)
+        bh=wQOpuBlnqGSyJKB/72RCH98mGMvJ+WwVyGPsfZkXeGA=;
+        b=JvyB/+jNXmh1VE0DzBRqX+WIE6JGGTrS4TjlZSJMFcLFulNnczNYP847Ytftkjiff4
+         SzbBBl+N04N4ZzU4Cqk+qQ5PsxcapGKFm8MBJYIwEvVD1vlmd6mX9Me5fecDHWYhhrqW
+         eZvlSoWqsbIuRtaxQKLJEuBd61OXuheFsauAjwGlhteXQjf6n6viV79gSaIBGzJHSHzc
+         rxzTtNqqSKNwxU/YolXkK08koKaijUuXo56noHOuG9yCM9tLvb/QvA5SM4FYO6Oz9oLZ
+         /Gmn0gINg4D+wncgkYB2TRhA6Grb0T901Afy9EO9ekGHL8FkFHvMudK0jl6ezBlqMn8/
+         Zvew==
+X-Gm-Message-State: APzg51ApWPtOKxhJrbZL76r0v39gTkyideaAhv1zEIV+UP7vlIdlkNDf
+        YGIR3KSwXOweca/ztfQ1ykyRaKAuq/hahvUohidzKg==
+X-Google-Smtp-Source: ANB0VdaOcs4JTsHFA9j5I0R5vgXB7/hT3wUuh3wuyYFJzDjOv0cidMUtTVyHprAVpMwBgYJhwbTwWiTb9WKMpT7UK1M=
+X-Received: by 2002:a63:5c5d:: with SMTP id n29-v6mr9210733pgm.253.1536337539315;
+ Fri, 07 Sep 2018 09:25:39 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d04c:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 09:19:06 -0700 (PDT)
-In-Reply-To: <2493fc3fa3f6e5d2bcdde27cee1c33df@codeaurora.org>
-References: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
- <CAD=FV=XigmU1LXnNbj9NYkjJmj18chBFjbctrBeOKoS=34PLXw@mail.gmail.com> <2493fc3fa3f6e5d2bcdde27cee1c33df@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 7 Sep 2018 09:19:06 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VzYYyive--RzN=_OCQnFT-wgHwbUy1Vao2-8GADxHDLw@mail.gmail.com>
-Message-ID: <CAD=FV=VzYYyive--RzN=_OCQnFT-wgHwbUy1Vao2-8GADxHDLw@mail.gmail.com>
-Subject: Re: [PATCH V3] spi: spi-geni-qcom: Add SPI driver support for GENI
- based QUP
-To:     Dilip Kota <dkota@codeaurora.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Fri, 7 Sep 2018 09:25:18
+ -0700 (PDT)
+In-Reply-To: <7c37c201-8bca-ffa4-5e8d-5e0b4b268b3f@kernel.org>
+References: <CACT4Y+Ywimrr3_oD2r=u0-Sz-PFXL2tpXA4q0odKDMM_Tvw0AA@mail.gmail.com>
+ <8e8f8ac1-8b72-a21c-f504-74a5ce12b625@kernel.org> <CACT4Y+bJ+o7yLcPwQRbsD4_Ye_SsXe3GfmiozVJ-8w-4asyxbQ@mail.gmail.com>
+ <7c37c201-8bca-ffa4-5e8d-5e0b4b268b3f@kernel.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 7 Sep 2018 18:25:18 +0200
+Message-ID: <CACT4Y+ZV2aMWjobgV=-aUdSLnGU=_2yuf2TOx4TD8ApoVqRVYw@mail.gmail.com>
+Subject: Re: WARNING: ODEBUG bug in vudc_probe
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Valentina Manea <valentina.manea.m@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Sep 7, 2018 at 3:00 AM,  <dkota@codeaurora.org> wrote:
->> In v2, I said:
->>
->>> I'm not sure where to comment about this, so adding it to the end:
+On Fri, Sep 7, 2018 at 6:20 PM, Shuah Khan <shuah@kernel.org> wrote:
+> On 09/07/2018 10:14 AM, Dmitry Vyukov wrote:
+>> On Fri, Sep 7, 2018 at 6:03 PM, Shuah Khan <shuah@kernel.org> wrote:
+>>> Hi Dmitry,
 >>>
->>> Between v1 and v2 you totally removed all the locking.  Presumably
->>> this is because you didn't want to hold the lock in
->>> handle_fifo_timeout() while waiting for the completion.  IMO taking
->>> the lock out was the wrong thing to do.  You should keep it, but just
->>> drop the lock before wait_for_completion_timeout() and add it back
->>> afterwards.  Specifically you _don't_ want the IRQ and timeout code
->>> stomping on each other.
+>>> On 09/07/2018 04:54 AM, Dmitry Vyukov wrote:
+>>>> Hi,
+>>>>
+>>>> I am getting the following error while booting kernel on upstream
+>>>> commit a49a9dcce802b3651013f659813df1361d306172, config is attached.
+>>>> Seems there is some kind of resource leak.
+>>>>
+>>>> Thanks
+>>>
+>>> Odd. This commit has nothing to do with vudc.
 >>
+>> This is not the guilty commit, I just described state of my tree.
 >>
->> ...but still no spinlock?
 >
-> I see there is no need of taking the spinlock as timeout will be handled
-> after the calculated time as per data size and speed.
-> There is 99.9% less chances of interrupt during the timeout handler.
->>
->>
->>
->> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201081
+> Can you send me the full dmesg?
 
-The thing is, we want it to be 100% reliable, not 99.9% reliable.  Is
-it somehow wrong to add the spinlock?  ...or are you noticing
-performance problems with the spinlock there?  It's just nice not to
-have to think about it.
+Here it is:
 
--Doug
+https://gist.githubusercontent.com/dvyukov/e9dec59fb23da9cedd8ab07a7d8c78ae/raw/3ee13c7a1f406c9927ca3b16db262f2c78e84536/gistfile1.txt
