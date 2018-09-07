@@ -2,102 +2,74 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CC6C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA07C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E122077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:23:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E122077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0743920844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:25:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lvKIMKbJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0743920844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbeIGQED (ORCPT
+        id S1728957AbeIGQFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 12:04:03 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39340 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728917AbeIGQED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 12:04:03 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0C6BB20726; Fri,  7 Sep 2018 13:23:32 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D3E402071D;
-        Fri,  7 Sep 2018 13:23:31 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 13:23:31 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
-Subject: Re: [PATCH v2 0/6] drm/sun4i: Support color dithering for LCD panels
-Message-ID: <20180907112331.wjml25rfkyabvwwt@flea>
-References: <20180907041948.19913-1-wens@csie.org>
+        Fri, 7 Sep 2018 12:05:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35974 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbeIGQFi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 12:05:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HhTmHIhTmSOpd5/DampYt1tmeMC+FmuaaqFJG+d+ntw=; b=lvKIMKbJ94yuCXyFeezcIp//S
+        4hV99XHd3QKulQPJA26sZV5ubAv583/2lj9aGqZlYI2QzlFTy1oRBSzLmOtYb9a6DL2KW3hFsx6Ka
+        L2kbkjXpEvQ8CncVXl64+PmCZ6eNctRpTLE5s1Lgb2VdiZ5x8qYw7MCygov773NfmhLreDe+CunZk
+        gJGreP0n+le01hzTu/weyVh+BlJ7/qia3K2ib71+6Htcx1cJ8LuHncw0SnSEpDM9HZXqxoJf2/GUS
+        SsLG9tb7RpfJs4k0bS2spDWmPu2Xlrz8p+9s0+xSSogQhfJrwVKgt2cs3enn4gFt52Z6ftIG1Xi6h
+        WwQ13UoAw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyEsi-0001GJ-Ts; Fri, 07 Sep 2018 11:24:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 30A552021030F; Fri,  7 Sep 2018 13:24:55 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 13:24:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH 0/4] Follow-up fixes for v4.19-rc1 NUMA balancing
+Message-ID: <20180907112455.GT24106@hirez.programming.kicks-ass.net>
+References: <20180907101139.20760-1-mgorman@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3ovgveniivb2j72j"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180907041948.19913-1-wens@csie.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180907101139.20760-1-mgorman@techsingularity.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 07, 2018 at 11:11:35AM +0100, Mel Gorman wrote:
+> Srikar had an automatic NUMA balancing series merged during the 4.19 window
+> and there some issues I missed during review that this series addresses.
+> 
+> Patches 1-2 are simply removing redundant code and calculations that are
+> never used.
 
---3ovgveniivb2j72j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I already have those queued, from Vincent:
 
-On Fri, Sep 07, 2018 at 12:19:42PM +0800, Chen-Yu Tsai wrote:
->=20
-> Hi,
->=20
-> This is v2 of my sun4i-drm LCD color dithering series. v1 was from back
-> in April [1]. Most of the driver code is unchanged.
->=20
-> Changes since v1:
->=20
->   - Explicitly list properties from the simple-panel binding that apply
->     to the Bananapi 7" panel
->=20
->   - Moved an incorrectly squashed change from patch 3 to patch 1, where
->     it belongs
-
-Applied the first three patches, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---3ovgveniivb2j72j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSX7IACgkQ0rTAlCFN
-r3Ra6Q/+PzbW6bvBRNqHKh7wxc6gIuUb/nNG0RKX8ACK4XoPw93zbi5MS9YDZR5v
-CdOKmhXUhsfLkrYfbI4fNecoreEOcvS+LlngIOgcfVHOB2dTt0F/WpPMdmqxU6aK
-V//F8db2pbkSmjG6R7ShG6AHNlC5NRiSBA1NWKae/BuqxrBd0zYcsKy2IXlWx2CZ
-YrW81zJvBzQHkV8ghK0+Zm+zxZfqPnCLj0hwa+PMSHX0px+UAW2FZjj2NlVX2tKz
-83trNrY+ICVoGjlULFJSXR5scGtPlHMIWxmJ05Zoqo/a+M5x2vr9zxbgc4IaX9xk
-HQRrctOHnU4s4YBL48hxXvyGDMshDJkzFecHFJuLWsOudqkSQfAYegFqBetdmZzx
-T5bdL/u1sDR6kLgEWUkhhCtez7szCPF/EJMT+MezKHP1uCM2J/o4k0HXWZzpz9ex
-ijXmKey5rd+2SQI7UQQeokngITaLYYPcBzP95rPE1aBE9RBrXaTPaYAcGIht06nA
-jISsykxv7B+pUrLIMJn4Xq9DA4lGGMu8bWediqOqGofeTuBCOzmqKdHNDzAVBZri
-gdlPVLT/2+1AqvXCidjJ0ShT22oXGFZIXEdYNpeLce/1aZg4Ym/rHkw12TsRAXbn
-+VS/Bmqj3nUbtNLBC4GdImZKxajPl4vWqY5/DOIOFlNz6zBOun8=
-=TShe
------END PGP SIGNATURE-----
-
---3ovgveniivb2j72j--
+  https://lkml.kernel.org/r/1535548752-4434-1-git-send-email-vincent.guittot@linaro.org
