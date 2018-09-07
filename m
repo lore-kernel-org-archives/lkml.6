@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C76C7C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2E1C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D422075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D422075B
+	by mail.kernel.org (Postfix) with ESMTP id 9814C2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9814C2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbeIHBzg (ORCPT
+        id S1727803AbeIHBzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:55:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40580 "EHLO
+        Fri, 7 Sep 2018 21:55:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40634 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbeIHBzf (ORCPT
+        with ESMTP id S1726129AbeIHBzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:55:35 -0400
+        Fri, 7 Sep 2018 21:55:40 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6AB2F81;
-        Fri,  7 Sep 2018 21:12:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7FACAFAA;
+        Fri,  7 Sep 2018 21:12:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Omar Sandoval <osandov@fb.com>,
-        Alexandru Moise <00moses.alexander00@gmail.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 017/145] block: Introduce blk_exit_queue()
-Date:   Fri,  7 Sep 2018 23:08:03 +0200
-Message-Id: <20180907210904.966396533@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com,
+        John Johansen <john.johansen@canonical.com>
+Subject: [PATCH 4.18 019/145] apparmor: fix bad debug check in apparmor_secid_to_secctx()
+Date:   Fri,  7 Sep 2018 23:08:05 +0200
+Message-Id: <20180907210905.107613920@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -55,107 +51,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: John Johansen <john.johansen@canonical.com>
 
-commit 4cf6324b17e96b7b7ab4021c6929500934d46750 upstream.
+commit edf4e7b7b9104b58fddfcd073bd7dcc1585d5326 upstream.
 
-This patch does not change any functionality.
+apparmor_secid_to_secctx() has a bad debug statement tripping on a
+condition handle by the code.  When kconfig SECURITY_APPARMOR_DEBUG is
+enabled the debug WARN_ON will trip when **secdata is NULL resulting
+in the following trace.
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Omar Sandoval <osandov@fb.com>
-Cc: Alexandru Moise <00moses.alexander00@gmail.com>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+------------[ cut here ]------------
+AppArmor WARN apparmor_secid_to_secctx: ((!secdata)):
+WARNING: CPU: 0 PID: 14826 at security/apparmor/secid.c:82 apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 14826 Comm: syz-executor1 Not tainted 4.19.0-rc1+ #193
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ panic+0x238/0x4e7 kernel/panic.c:184
+ __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+ report_bug+0x252/0x2d0 lib/bug.c:186
+ fixup_bug arch/x86/kernel/traps.c:178 [inline]
+ do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+ do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+ invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+RIP: 0010:apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
+Code: c7 c7 40 66 58 87 e8 6a 6d 0f fe 0f 0b e9 6c fe ff ff e8 3e aa 44 fe 48 c7 c6 80 67 58 87 48 c7 c7 a0 65 58 87 e8 4b 6d 0f fe <0f> 0b e9 3f fe ff ff 48 89 df e8 fc a7 83 fe e9 ed fe ff ff bb f4
+RSP: 0018:ffff8801ba1bed10 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8801ba1beed0 RCX: ffffc9000227e000
+RDX: 0000000000018482 RSI: ffffffff8163ac01 RDI: 0000000000000001
+RBP: ffff8801ba1bed30 R08: ffff8801b80ec080 R09: ffffed003b603eca
+R10: ffffed003b603eca R11: ffff8801db01f657 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff8801ba1beed0
+ security_secid_to_secctx+0x63/0xc0 security/security.c:1314
+ ctnetlink_secctx_size net/netfilter/nf_conntrack_netlink.c:621 [inline]
+ ctnetlink_nlmsg_size net/netfilter/nf_conntrack_netlink.c:659 [inline]
+ ctnetlink_conntrack_event+0x303/0x1470 net/netfilter/nf_conntrack_netlink.c:706
+ nf_conntrack_eventmask_report+0x55f/0x930 net/netfilter/nf_conntrack_ecache.c:151
+ nf_conntrack_event_report include/net/netfilter/nf_conntrack_ecache.h:112 [inline]
+ nf_ct_delete+0x33c/0x5d0 net/netfilter/nf_conntrack_core.c:601
+ nf_ct_iterate_cleanup+0x48c/0x5e0 net/netfilter/nf_conntrack_core.c:1892
+ nf_ct_iterate_cleanup_net+0x23c/0x2d0 net/netfilter/nf_conntrack_core.c:1974
+ ctnetlink_flush_conntrack net/netfilter/nf_conntrack_netlink.c:1226 [inline]
+ ctnetlink_del_conntrack+0x66c/0x850 net/netfilter/nf_conntrack_netlink.c:1258
+ nfnetlink_rcv_msg+0xd88/0x1070 net/netfilter/nfnetlink.c:228
+ netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
+ nfnetlink_rcv+0x1c0/0x4d0 net/netfilter/nfnetlink.c:560
+ netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+ netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
+ netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:631
+ ___sys_sendmsg+0x7fd/0x930 net/socket.c:2114
+ __sys_sendmsg+0x11d/0x290 net/socket.c:2152
+ __do_sys_sendmsg net/socket.c:2161 [inline]
+ __se_sys_sendmsg net/socket.c:2159 [inline]
+ __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457089
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7bc6e03c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f7bc6e046d4 RCX: 0000000000457089
+RDX: 0000000000000000 RSI: 0000000020d65000 RDI: 0000000000000003
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d4588 R14: 00000000004c8d5c R15: 0000000000000000
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+CC: <stable@vger.kernel.org> #4.18
+Fixes: c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
+Reported-by: syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |   54 ++++++++++++++++++++++++++++++------------------------
- block/blk.h      |    1 +
- 2 files changed, 31 insertions(+), 24 deletions(-)
+ security/apparmor/secid.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -715,6 +715,35 @@ void blk_set_queue_dying(struct request_
- }
- EXPORT_SYMBOL_GPL(blk_set_queue_dying);
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -79,7 +79,6 @@ int apparmor_secid_to_secctx(u32 secid,
+ 	struct aa_label *label = aa_secid_to_label(secid);
+ 	int len;
  
-+/* Unconfigure the I/O scheduler and dissociate from the cgroup controller. */
-+void blk_exit_queue(struct request_queue *q)
-+{
-+	/*
-+	 * Since the I/O scheduler exit code may access cgroup information,
-+	 * perform I/O scheduler exit before disassociating from the block
-+	 * cgroup controller.
-+	 */
-+	if (q->elevator) {
-+		ioc_clear_queue(q);
-+		elevator_exit(q, q->elevator);
-+		q->elevator = NULL;
-+	}
-+
-+	/*
-+	 * Remove all references to @q from the block cgroup controller before
-+	 * restoring @q->queue_lock to avoid that restoring this pointer causes
-+	 * e.g. blkcg_print_blkgs() to crash.
-+	 */
-+	blkcg_exit_queue(q);
-+
-+	/*
-+	 * Since the cgroup code may dereference the @q->backing_dev_info
-+	 * pointer, only decrease its reference count after having removed the
-+	 * association with the block cgroup controller.
-+	 */
-+	bdi_put(q->backing_dev_info);
-+}
-+
- /**
-  * blk_cleanup_queue - shutdown a request queue
-  * @q: request queue to shutdown
-@@ -780,30 +809,7 @@ void blk_cleanup_queue(struct request_qu
- 	 */
- 	WARN_ON_ONCE(q->kobj.state_in_sysfs);
+-	AA_BUG(!secdata);
+ 	AA_BUG(!seclen);
  
--	/*
--	 * Since the I/O scheduler exit code may access cgroup information,
--	 * perform I/O scheduler exit before disassociating from the block
--	 * cgroup controller.
--	 */
--	if (q->elevator) {
--		ioc_clear_queue(q);
--		elevator_exit(q, q->elevator);
--		q->elevator = NULL;
--	}
--
--	/*
--	 * Remove all references to @q from the block cgroup controller before
--	 * restoring @q->queue_lock to avoid that restoring this pointer causes
--	 * e.g. blkcg_print_blkgs() to crash.
--	 */
--	blkcg_exit_queue(q);
--
--	/*
--	 * Since the cgroup code may dereference the @q->backing_dev_info
--	 * pointer, only decrease its reference count after having removed the
--	 * association with the block cgroup controller.
--	 */
--	bdi_put(q->backing_dev_info);
-+	blk_exit_queue(q);
- 
- 	if (q->mq_ops)
- 		blk_mq_free_queue(q);
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -130,6 +130,7 @@ void blk_free_flush_queue(struct blk_flu
- int blk_init_rl(struct request_list *rl, struct request_queue *q,
- 		gfp_t gfp_mask);
- void blk_exit_rl(struct request_queue *q, struct request_list *rl);
-+void blk_exit_queue(struct request_queue *q);
- void blk_rq_bio_prep(struct request_queue *q, struct request *rq,
- 			struct bio *bio);
- void blk_queue_bypass_start(struct request_queue *q);
+ 	if (!label)
 
 
