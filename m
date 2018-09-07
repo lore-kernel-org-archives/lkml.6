@@ -2,181 +2,125 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3270EC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02121C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D53452083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:44:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="HvDjD5P/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D53452083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id BC69C2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:44:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC69C2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbeIGTZk (ORCPT
+        id S1729950AbeIGTZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:25:40 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:36855 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbeIGTZj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:25:39 -0400
-Received: by mail-yw1-f65.google.com with SMTP id w202-v6so5478717yww.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 07:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xi0HJJ6Xvyxvxsf/RyFY/V2+9m/vHC2cCblt4mYHDoY=;
-        b=HvDjD5P/BQXbDDhdfdULZUDgagz+ZGKyCQvSzj/DeNvuO2arah2uzdmDwHPNXd7BQo
-         zmDnf0eddWXISnrmg/ks7id5jbGnPWFH1tOR9zeIMBXWVSxPxN44rGFFbUsTtozjR2MH
-         oskyRNwOk+vRcUN6FCRDHX5+G7FR/AVhAbQVddoD22G2GNa/CBT5d8yY7idPuz+xNklS
-         iEoXOia4czMku3vq+Vfajl+cymvDo6yB1aNgj+8BqMwRtvQhFs82QhSV+5kZm249krK5
-         S5mLQRhVMptA9Djd+5avCf/1kPnhv+eth+7ra+Exjhk0UXUJv33qvDIy8rJpW0z1fQOw
-         4LiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xi0HJJ6Xvyxvxsf/RyFY/V2+9m/vHC2cCblt4mYHDoY=;
-        b=d7Nu127JSAVQoYYcNzgZLTMUHQvd+uU0z4XDyPpSp5p9gACC213At4MwsQhz96DcKc
-         7KC1o0vEtLNlFlIbcuAbeFPNO6ID4HS89k9Sqn5BLYaqK3LKrsVrp/K7/LclxVLRXYSa
-         6mLKdBrd1K/IXSrZfonPo5gGKC4PVp56w8MN3VkBkF1rQ2fgXU0LWi1KBltDiRc2fKiF
-         a/nve6Hdi6DI3ES8y6PQHwvwcr/EL94W0wSTfoNkEY0OB5w0YOrZqoHzOMyWnhmLZXZm
-         T4FJZGxqrh34kmYRZ9veKjSe3Xeu0nzFuoCXXgxUMVlINr0c8dzX/AJwl+fdzrqugyE0
-         dtBw==
-X-Gm-Message-State: APzg51Cd7IaBEbonBR9M75jLrPUUwK49vKFKTAfHevOch7kuD2Rsr3IQ
-        2FEBKxcwMhkhidS/LuzC6VA0Ug==
-X-Google-Smtp-Source: ANB0VdZxD5dCDWMEDBptWHdlotwvJa79UvbpmA8ZJScou0g9BWaH8CmnYX9j2hbZBth3op2OKfjuMA==
-X-Received: by 2002:a81:4956:: with SMTP id w83-v6mr4125529ywa.482.1536331464682;
-        Fri, 07 Sep 2018 07:44:24 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1:96d9])
-        by smtp.gmail.com with ESMTPSA id c69-v6sm3244968ywb.11.2018.09.07.07.44.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 07:44:23 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 10:44:22 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
+        Fri, 7 Sep 2018 15:25:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:32980 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727821AbeIGTZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:25:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 103D218A;
+        Fri,  7 Sep 2018 07:44:33 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D455E3F575;
+        Fri,  7 Sep 2018 07:44:32 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 078CE1AE3828; Fri,  7 Sep 2018 15:44:47 +0100 (BST)
+Date:   Fri, 7 Sep 2018 15:44:47 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180907144422.GA11088@cmpxchg.org>
-References: <20180828172258.3185-1-hannes@cmpxchg.org>
- <20180828172258.3185-9-hannes@cmpxchg.org>
- <20180907101634.GO24106@hirez.programming.kicks-ass.net>
+        Michal Hocko <mhocko@suse.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH v11 0/3] remain and optimize memblock_next_valid_pfn on
+ arm and arm64
+Message-ID: <20180907144447.GD12788@arm.com>
+References: <1534907237-2982-1-git-send-email-jia.he@hxt-semitech.com>
+ <CAKv+Gu9u8RcrzSHdgXiqHS9HK1aSrjbPxVUSCP0DT4erAhx0pw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180907101634.GO24106@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKv+Gu9u8RcrzSHdgXiqHS9HK1aSrjbPxVUSCP0DT4erAhx0pw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 12:16:34PM +0200, Peter Zijlstra wrote:
-> On Tue, Aug 28, 2018 at 01:22:57PM -0400, Johannes Weiner wrote:
-> > +enum psi_states {
-> > +	PSI_IO_SOME,
-> > +	PSI_IO_FULL,
-> > +	PSI_MEM_SOME,
-> > +	PSI_MEM_FULL,
-> > +	PSI_CPU_SOME,
-> > +	/* Only per-CPU, to weigh the CPU in the global average: */
-> > +	PSI_NONIDLE,
-> > +	NR_PSI_STATES,
-> > +};
+On Thu, Sep 06, 2018 at 01:24:22PM +0200, Ard Biesheuvel wrote:
+> On 22 August 2018 at 05:07, Jia He <hejianet@gmail.com> wrote:
+> > Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+> > where possible") optimized the loop in memmap_init_zone(). But it causes
+> > possible panic bug. So Daniel Vacek reverted it later.
+> >
+> > But as suggested by Daniel Vacek, it is fine to using memblock to skip
+> > gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+> >
+> > More from what Daniel said:
+> > "On arm and arm64, memblock is used by default. But generic version of
+> > pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+> > not always return the next valid one but skips more resulting in some
+> > valid frames to be skipped (as if they were invalid). And that's why
+> > kernel was eventually crashing on some !arm machines."
+> >
+> > About the performance consideration:
+> > As said by James in b92df1de5,
+> > "I have tested this patch on a virtual model of a Samurai CPU with a
+> > sparse memory map.  The kernel boot time drops from 109 to 62 seconds."
+> > Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
+> >
+> > Besides we can remain memblock_next_valid_pfn, there is still some room
+> > for improvement. After this set, I can see the time overhead of memmap_init
+> > is reduced from 27956us to 13537us in my armv8a server(QDF2400 with 96G
+> > memory, pagesize 64k). I believe arm server will benefit more if memory is
+> > larger than TBs
+> >
 > 
-> > +static u32 get_recent_time(struct psi_group *group, int cpu,
-> > +			   enum psi_states state)
-> > +{
-> > +	struct psi_group_cpu *groupc = per_cpu_ptr(group->pcpu, cpu);
-> > +	unsigned int seq;
-> > +	u32 time, delta;
-> > +
-> > +	do {
-> > +		seq = read_seqcount_begin(&groupc->seq);
-> > +
-> > +		time = groupc->times[state];
-> > +		/*
-> > +		 * In addition to already concluded states, we also
-> > +		 * incorporate currently active states on the CPU,
-> > +		 * since states may last for many sampling periods.
-> > +		 *
-> > +		 * This way we keep our delta sampling buckets small
-> > +		 * (u32) and our reported pressure close to what's
-> > +		 * actually happening.
-> > +		 */
-> > +		if (test_state(groupc->tasks, state))
-> > +			time += cpu_clock(cpu) - groupc->state_start;
-> > +	} while (read_seqcount_retry(&groupc->seq, seq));
-> > +
-> > +	delta = time - groupc->times_prev[state];
-> > +	groupc->times_prev[state] = time;
-> > +
-> > +	return delta;
-> > +}
+> OK so we can summarize the benefits of this series as follows:
+> - boot time on a virtual model of a Samurai CPU drops from 109 to 62 seconds
+> - boot time on a QDF2400 arm64 server with 96 GB of RAM drops by ~15
+> *milliseconds*
 > 
-> > +static bool update_stats(struct psi_group *group)
-> > +{
-> > +	u64 deltas[NR_PSI_STATES - 1] = { 0, };
-> > +	unsigned long missed_periods = 0;
-> > +	unsigned long nonidle_total = 0;
-> > +	u64 now, expires, period;
-> > +	int cpu;
-> > +	int s;
-> > +
-> > +	mutex_lock(&group->stat_lock);
-> > +
-> > +	/*
-> > +	 * Collect the per-cpu time buckets and average them into a
-> > +	 * single time sample that is normalized to wallclock time.
-> > +	 *
-> > +	 * For averaging, each CPU is weighted by its non-idle time in
-> > +	 * the sampling period. This eliminates artifacts from uneven
-> > +	 * loading, or even entirely idle CPUs.
-> > +	 */
-> > +	for_each_possible_cpu(cpu) {
-> > +		u32 nonidle;
-> > +
-> > +		nonidle = get_recent_time(group, cpu, PSI_NONIDLE);
-> > +		nonidle = nsecs_to_jiffies(nonidle);
-> > +		nonidle_total += nonidle;
-> > +
-> > +		for (s = 0; s < PSI_NONIDLE; s++) {
-> > +			u32 delta;
-> > +
-> > +			delta = get_recent_time(group, cpu, s);
-> > +			deltas[s] += (u64)delta * nonidle;
-> > +		}
-> > +	}
+> Google was not very helpful in figuring out what a Samurai CPU is and
+> why we should care about the boot time of Linux running on a virtual
+> model of it, and the 15 ms speedup is not that compelling either.
 > 
-> This does the whole seqcount thing 6x, which is a bit of a waste.
+> Apologies to Jia that it took 11 revisions to reach this conclusion,
+> but in /my/ opinion, tweaking the fragile memblock/pfn handling code
+> for this reason is totally unjustified, and we're better off
+> disregarding these patches.
 
-[...]
+Oh, we're talking about a *simulator* for the significant boot time
+improvement here? I didn't realise that, so I agree that the premise of
+this patch set looks pretty questionable given how much "fun" we've had
+with the memmap on arm and arm64.
 
-> It's a bit cumbersome, but that's because of C.
-
-I was actually debating exactly this with Suren before, but since this
-is a super cold path I went with readability. I was also thinking that
-restarts could happen quite regularly under heavy scheduler load, and
-so keeping the individual retry sections small could be helpful - but
-I didn't instrument this in any way.
-
-No strong opinion from me, I can send an updated patch if you prefer.
+Will
