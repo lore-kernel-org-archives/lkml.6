@@ -2,114 +2,85 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DA7C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78B6C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A452E2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:16:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A452E2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 93C572083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C572083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbeIGR5K (ORCPT
+        id S1728372AbeIGSAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:57:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58848 "EHLO mx1.suse.de"
+        Fri, 7 Sep 2018 14:00:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59152 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726129AbeIGR5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:57:09 -0400
+        id S1726598AbeIGSAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:00:04 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18C13B019;
-        Fri,  7 Sep 2018 13:16:12 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] xen/balloon: add runtime control for
- scrubbing ballooned out pages
-To:     Jan Beulich <JBeulich@suse.com>,
-        Marek Marczykowski <marmarek@invisiblethingslab.com>
-Cc:     xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <20180906153355.25363-1-marmarek@invisiblethingslab.com>
- <5B921FEE02000078001E6258@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <44dc40d7-0403-c559-fc8e-a5cea1048433@suse.com>
-Date:   Fri, 7 Sep 2018 15:16:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <5B921FEE02000078001E6258@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        by mx1.suse.de (Postfix) with ESMTP id E100AB019;
+        Fri,  7 Sep 2018 13:19:06 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH] TTY: tty_buffer, warn on leaks
+Date:   Fri,  7 Sep 2018 15:19:06 +0200
+Message-Id: <20180907131906.12709-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/18 08:51, Jan Beulich wrote:
->>>> On 06.09.18 at 17:33, <marmarek@invisiblethingslab.com> wrote:
->> --- a/include/xen/mem-reservation.h
->> +++ b/include/xen/mem-reservation.h
->> @@ -17,12 +17,17 @@
->>  
->>  #include <xen/page.h>
->>  
->> +#ifdef CONFIG_XEN_SCRUB_PAGES
->> +extern bool xen_scrub_pages;
->> +
->>  static inline void xenmem_reservation_scrub_page(struct page *page)
->>  {
->> -#ifdef CONFIG_XEN_SCRUB_PAGES
->> -	clear_highpage(page);
->> -#endif
->> +	if (xen_scrub_pages)
->> +		clear_highpage(page);
->>  }
->> +#else
->> +static inline void xenmem_reservation_scrub_page(struct page *page) { }
->> +#endif
-> 
-> Wouldn't CONFIG_XEN_SCRUB_PAGES then better become
-> CONFIG_XEN_SCRUB_PAGES_DEFAULT, with the value used as
-> initializer of xen_scrub_pages?
+When we leak some tty buffer, warn about that. For that we need to
+account the memory used also in the tty_buffer_free_all function. On
+other locations, the accounting is handled correctly.
 
-Yes, I'd like that better.
+Note that we do not account the free list, as that was accounted in
+tty_buffer_free before put on the free list.
 
+I have been using this patch for ages, so let's see if anybody else
+encounters any issues.
 
-Juergen
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+---
+ drivers/tty/tty_buffer.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index c996b6859c5e..76151c002858 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -118,9 +118,12 @@ void tty_buffer_free_all(struct tty_port *port)
+ 	struct tty_bufhead *buf = &port->buf;
+ 	struct tty_buffer *p, *next;
+ 	struct llist_node *llist;
++	unsigned int freed = 0;
++	int still_used;
+ 
+ 	while ((p = buf->head) != NULL) {
+ 		buf->head = p->next;
++		freed += p->size;
+ 		if (p->size > 0)
+ 			kfree(p);
+ 	}
+@@ -132,7 +135,9 @@ void tty_buffer_free_all(struct tty_port *port)
+ 	buf->head = &buf->sentinel;
+ 	buf->tail = &buf->sentinel;
+ 
+-	atomic_set(&buf->mem_used, 0);
++	still_used = atomic_xchg(&buf->mem_used, 0);
++	WARN(still_used != freed, "we still have not freed %d bytes!",
++			still_used - freed);
+ }
+ 
+ /**
+-- 
+2.18.0
+
