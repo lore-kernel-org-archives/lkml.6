@@ -2,237 +2,116 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,SPF_PASS,
-	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3356C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E64C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3CF120855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7CB320855
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:26:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Y8dHiSaY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3CF120855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yf3z++Qw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7CB320855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbeIHDEu (ORCPT
+        id S1726565AbeIHDJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:04:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39746 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeIHDEt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:04:49 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so7639492pff.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 15:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=q7islqfOh+5ZJyMNFsPkSN7SKBhbtTChKbQYnekl0yU=;
-        b=Y8dHiSaYA0dyBG0N9Fz6X1+vYaGok95F/UMNkBbevIYwP5eshJ/Nti4NgNDsDvRzOA
-         QoYjqxpeB4bWj5c22Mur56D+atsUJTZ8NYbHmR8sTTNbSESoWZisoIfeqUIvmiXYPMP7
-         Ly5HaOkHMQDHVZ+WQBRl9yw/MVdOG23RhDDN6TPg4D1Tx8GzKrk9WUdbGVZSt3wxf3p1
-         rB4BcOYTa9OF09kGwGnydRI/cMhaQnGX7UhI2XxhZbY5Nk6fvkRkJT9mT8bNyoI6SZdf
-         Y4AFuUtM2+zPWhmnkW+/ltgQ8iPKVxQais6csQwdwbysc5cLxo0sKZ5v3cfEl0BhTWxj
-         w/Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=q7islqfOh+5ZJyMNFsPkSN7SKBhbtTChKbQYnekl0yU=;
-        b=fakkitvXsADNltQaHUzJLB1sZcoZX5sRMWhDgpBsWr2B40qnJjt4rdwBGUuDN0mph7
-         8nEKM3epZpTylWXY5Odtu6vsLENsx2DyPbbHYhJ7WQRof/rYhzG+vpjGTn/iNZ7tlMju
-         RYRMqNDuc6kXqwvhXixPl8AOjkfPlol01lNCQxscCnnD4IKF975FCSw5t2d0EYrm2O8t
-         nvZHj3CRdF6BqcOGXhNZJvvjuy8tXZzpgK+eo55GSK9wazsPTUmubdKxuhK41drlwECe
-         ic5IO1TTqUTpbEC36Bjl2nJsDBsFp7kG3JjZ+e1NYvK5ukD0W4eNBBHSx43+vCV6x+ER
-         VKlA==
-X-Gm-Message-State: APzg51Anve4XY+C4N0M+QJ5boAE0Ef6P84QBUxKHX7DEfKMuMR9Eu4rs
-        LA3CVjv6/thmFcFjes/E3fS+Hg==
-X-Google-Smtp-Source: ANB0VdZ+avLLMcYHYQ8hPlf2R3rEhW+J1Cx/0Og5CspnALvIKoz0/WJ4fNTHRsZ6oUo2PPIwz3ExUg==
-X-Received: by 2002:a63:de10:: with SMTP id f16-v6mr10379609pgg.97.1536358903968;
-        Fri, 07 Sep 2018 15:21:43 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b00f:e51c:f116:5740:3e1:4abe? ([2600:1010:b00f:e51c:f116:5740:3e1:4abe])
-        by smtp.gmail.com with ESMTPSA id 70-v6sm13300258pfz.27.2018.09.07.15.21.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 15:21:42 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC][PATCH 2/8] x86/mm: break out kernel address space handling
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <20180907194855.74E03836@viggo.jf.intel.com>
-Date:   Fri, 7 Sep 2018 15:21:41 -0700
-Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
-        luto@kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CD6177E3-BDE5-443F-9A28-351EAE0BE5BA@amacapital.net>
-References: <20180907194852.3C351B82@viggo.jf.intel.com> <20180907194855.74E03836@viggo.jf.intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
+        Fri, 7 Sep 2018 23:09:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726147AbeIHDJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 23:09:55 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF4312083D;
+        Fri,  7 Sep 2018 22:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536359209;
+        bh=yVAfwHYgItE9feY1MfIeul2yyo/icUzsG3NrNjMy3H4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yf3z++QwBAo1Zka3AoKMn+LXwM0e7Z/K8sDSPG8Ci/XvvlLkzhBY9q8RIQV1C5gu1
+         AGl/GaPee+kX5LbpKZuKAFm2CTDPZ/KfdlD6jzbdZZvwFBnB0Kxlif6noJ1DYrBIKY
+         aR7cTy+RUF8R7SjfR8EsNV1eCKVecA0ovtX/PWg8=
+Date:   Fri, 7 Sep 2018 17:26:47 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Peter Wu <peter@lekensteyn.nl>
+Cc:     Daniel Drake <drake@endlessm.com>, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux@endlessm.com,
+        nouveau@lists.freedesktop.org, linux-pm@vger.kernel.org,
+        kherbst@redhat.com, andriy.shevchenko@linux.intel.com,
+        rafael.j.wysocki@intel.com, keith.busch@intel.com,
+        mika.westerberg@linux.intel.com, jonathan.derrick@intel.com,
+        kugel@rockbox.org, davem@davemloft.net, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, nic_swsd@realtek.com,
+        linux-kernel@vger.kernel.org, Dave Jones <davej@codemonkey.org.uk>,
+        Luming Yu <luming.yu@intel.com>
+Subject: Re: [PATCH] PCI: Reprogram bridge prefetch registers on resume
+Message-ID: <20180907222647.GD250890@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180907053614.6540-1-drake@endlessm.com>
+ <20180907150515.GA28739@al>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907150515.GA28739@al>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[+cc LKML, Dave, Luming]
 
+On Fri, Sep 07, 2018 at 05:05:15PM +0200, Peter Wu wrote:
+> On Fri, Sep 07, 2018 at 01:36:14PM +0800, Daniel Drake wrote:
+> <..>
+> > Thomas Martitz reports that this workaround also solves an issue where
+> > the AMD Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive
+> > after S3 suspend/resume.
+> 
+> Where was this claimed? It is not stated in the linked bug:
+> (https://bugs.freedesktop.org/show_bug.cgi?id=105760
+> 
+> > On resume, reprogram the PCI bridge prefetch registers, including the
+> > magic register mentioned above.
+> > 
+> > This matches Win10 behaviour, which also rewrites these registers
+> > during S3 resume (checked with qemu tracing).
+> 
+> Windows 10 unconditionally rewrites these registers (BAR, I/O Base +
+> Limit, Memory Base + Limit, etc. from top to bottom), see annotations:
+> https://www.spinics.net/lists/linux-pci/msg75856.html
+> 
+> Linux has a generic "restore" operation that works backwards from the
+> end of the PCI config space to the beginning, see
+> pci_restore_config_space. Do you have a dmesg where you see the
+> "restoring config space at offset" messages?
+> 
+> Would it be reasonable to unconditionally write these registers in
+> pci_restore_config_dword, like Windows does?
 
-> On Sep 7, 2018, at 12:48 PM, Dave Hansen <dave.hansen@linux.intel.com> wro=
-te:
->=20
->=20
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->=20
-> The page fault handler (__do_page_fault())  basically has two sections:
-> one for handling faults in the kernel porttion of the address space
-> and another for faults in the user porttion of the address space.
->=20
-> But, these two parts don't stick out that well.  Let's make that more
-> clear from code separation and naming.  Pull kernel fault
-> handling into its own helper, and reflect that naming by renaming
-> spurious_fault() -> spurious_kernel_fault().
->=20
-> Also, rewrite the vmalloc handling comment a bit.  It was a bit
-> stale and also glossed over the reserved bit handling.
->=20
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: x86@kernel.org
-> Cc: Andy Lutomirski <luto@kernel.org>
-> ---
->=20
-> b/arch/x86/mm/fault.c |   98 ++++++++++++++++++++++++++++++---------------=
------
-> 1 file changed, 59 insertions(+), 39 deletions(-)
->=20
-> diff -puN arch/x86/mm/fault.c~pkeys-fault-warnings-00 arch/x86/mm/fault.c
-> --- a/arch/x86/mm/fault.c~pkeys-fault-warnings-00    2018-09-07 11:21:46.1=
-45751902 -0700
-> +++ b/arch/x86/mm/fault.c    2018-09-07 11:23:37.643751624 -0700
-> @@ -1033,7 +1033,7 @@ mm_fault_error(struct pt_regs *regs, uns
->    }
-> }
->=20
-> -static int spurious_fault_check(unsigned long error_code, pte_t *pte)
-> +static int spurious_kernel_fault_check(unsigned long error_code, pte_t *p=
-te)
-> {
->    if ((error_code & X86_PF_WRITE) && !pte_write(*pte))
->        return 0;
-> @@ -1072,7 +1072,7 @@ static int spurious_fault_check(unsigned
->  * (Optional Invalidation).
->  */
-> static noinline int
-> -spurious_fault(unsigned long error_code, unsigned long address)
-> +spurious_kernel_fault(unsigned long error_code, unsigned long address)
-> {
->    pgd_t *pgd;
->    p4d_t *p4d;
-> @@ -1103,27 +1103,27 @@ spurious_fault(unsigned long error_code,
->        return 0;
->=20
->    if (p4d_large(*p4d))
-> -        return spurious_fault_check(error_code, (pte_t *) p4d);
-> +        return spurious_kernel_fault_check(error_code, (pte_t *) p4d);
->=20
->    pud =3D pud_offset(p4d, address);
->    if (!pud_present(*pud))
->        return 0;
->=20
->    if (pud_large(*pud))
-> -        return spurious_fault_check(error_code, (pte_t *) pud);
-> +        return spurious_kernel_fault_check(error_code, (pte_t *) pud);
->=20
->    pmd =3D pmd_offset(pud, address);
->    if (!pmd_present(*pmd))
->        return 0;
->=20
->    if (pmd_large(*pmd))
-> -        return spurious_fault_check(error_code, (pte_t *) pmd);
-> +        return spurious_kernel_fault_check(error_code, (pte_t *) pmd);
->=20
->    pte =3D pte_offset_kernel(pmd, address);
->    if (!pte_present(*pte))
->        return 0;
->=20
-> -    ret =3D spurious_fault_check(error_code, pte);
-> +    ret =3D spurious_kernel_fault_check(error_code, pte);
->    if (!ret)
->        return 0;
->=20
-> @@ -1131,12 +1131,12 @@ spurious_fault(unsigned long error_code,
->     * Make sure we have permissions in PMD.
->     * If not, then there's a bug in the page tables:
->     */
-> -    ret =3D spurious_fault_check(error_code, (pte_t *) pmd);
-> +    ret =3D spurious_kernel_fault_check(error_code, (pte_t *) pmd);
->    WARN_ONCE(!ret, "PMD has incorrect permission bits\n");
->=20
->    return ret;
-> }
-> -NOKPROBE_SYMBOL(spurious_fault);
-> +NOKPROBE_SYMBOL(spurious_kernel_fault);
->=20
-> int show_unhandled_signals =3D 1;
->=20
-> @@ -1203,6 +1203,55 @@ static inline bool smap_violation(int er
->    return true;
-> }
->=20
-> +static void
-> +do_kern_addr_space_fault(struct pt_regs *regs, unsigned long hw_error_cod=
-e,
-> +             unsigned long address)
-> +{
+That sounds reasonable to me.
 
-Can you add a comment above this documenting *when* it=E2=80=99s called?  Is=
- it all faults, !user_mode faults, or !PF_USER?
+We did write them unconditionally, prior to 04d9c1a1100b ("[PATCH]
+PCI: Improve PCI config space writeback") [1].  That commit apparently
+fixed suspend on some laptop.
 
-> +    /*
-> +     * We can fault-in kernel-space virtual memory on-demand. The
-> +     * 'reference' page table is init_mm.pgd.
-> +     *
-> +     * NOTE! We MUST NOT take any locks for this case. We may
-> +     * be in an interrupt or a critical region, and should
-> +     * only copy the information from the master page table,
-> +     * nothing more.
-> +     *
-> +     * Before doing this on-demand faulting, ensure that the
-> +     * fault is not any of the following:
-> +     * 1. A fault on a PTE with a reserved bit set.
-> +     * 2. A fault caused by a user-mode access.  (Do not demand-
-> +     *    fault kernel memory due to user-mode accesses).
-> +     * 3. A fault caused by a page-level protection violation.
-> +     *    (A demand fault would be on a non-present page which
-> +     *     would have X86_PF_PROT=3D=3D0).
-> +     */
-> +    if (!(hw_error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
-> +        if (vmalloc_fault(address) >=3D 0)
-> +            return;
-> +    }
-> +
-> +    /* Was the fault spurious, caused by lazy TLB invalidation? */
-> +    if (spurious_kernel_fault(hw_error_code, address))
-> +        return;
-> +
-> +    /* kprobes don't want to hook the spurious faults: */
-> +    if (kprobes_fault(regs))
-> +        return;
-> +
-> +    /*
-> +     * This is a "bad" fault in the kernel address space.  There
-> +     * is no reasonable explanation for it.  We will either kill
-> +     * the process for making a bad access, or oops the kernel.
-> +     */
+But at that time, we restored the config space in order of dword 0, 1,
+2, ... 15, which means we restored the command register before the
+BARs and windows, and it's conceivable that the problem was the
+ordering, not the rewriting of the same value.
 
-Or call an extable handler?
+Only a week later, we reversed the order with 8b8c8d280ab2 ("[PATCH]
+PCI: reverse pci config space restore order") [2], which seems like a
+good idea and even includes a spec reference.  I found similar
+language in the Intel ICH 10 datasheet, sec 14.1.3 [3].
 
-Maybe the wording should be less scary, e.g. =E2=80=9Cthis fault is a genuin=
-e error. Send a signal, call an exception handler, or oops, as appropriate.=E2=
-=80=9D
+So it seems reasonable to me to try writing them unconditionally in
+reverse order (the same order we use today).
 
+[1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=04d9c1a1100b
+[2] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8b8c8d280ab2
+[3] Intel ICH 10 IBL 373635
