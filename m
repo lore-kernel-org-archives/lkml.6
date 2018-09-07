@@ -2,134 +2,237 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,SPF_PASS,
+	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63F7C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3356C4321E
 	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A112083D
+	by mail.kernel.org (Postfix) with ESMTP id A3CF120855
 	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:22:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AKgupg3U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A112083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Y8dHiSaY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3CF120855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeIHDE1 (ORCPT
+        id S1726614AbeIHDEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:04:27 -0400
-Received: from mail-yb1-f201.google.com ([209.85.219.201]:33404 "EHLO
-        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeIHDE1 (ORCPT
+        Fri, 7 Sep 2018 23:04:50 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39746 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbeIHDEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:04:27 -0400
-Received: by mail-yb1-f201.google.com with SMTP id d202-v6so6377147ybh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 15:21:22 -0700 (PDT)
+        Fri, 7 Sep 2018 23:04:49 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j8-v6so7639492pff.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 15:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=rU17X48zlaL0ooq4Yca3uERHAwdG+fJGmuN+EU/m6KY=;
-        b=AKgupg3UY9o1xxYiDWKmn+9wC0qr7Iy7JS7a85FhLq5dX0zQhGPomVgjP2WO2vatWJ
-         TC4+VPWNANkKBMpSpMTLjV9dcKD+TfAgTQGkWxrV62LVR5gMfEBVBRXvEd1mg7Nd9FO/
-         Z+Z3TPEp/ymUrjTq1rXaH8lEL1yQVOOpsfsvw2AomUjaaMLEMMCjA/o9ajr0PcoTPP/t
-         /K0AsiS6rk/3TEKWp2L7yQRpKVvCVrl0+qXMsIlXH0gZfHpBJh+P4KL9ztEzGUMdrdYw
-         lfO29pZ8yVe3+IVxvJ2da6qQVzWfy/Hlq75hRj8QdXFjMJZc/f25Qvdg5uQSZ3drIPnf
-         riGA==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=q7islqfOh+5ZJyMNFsPkSN7SKBhbtTChKbQYnekl0yU=;
+        b=Y8dHiSaYA0dyBG0N9Fz6X1+vYaGok95F/UMNkBbevIYwP5eshJ/Nti4NgNDsDvRzOA
+         QoYjqxpeB4bWj5c22Mur56D+atsUJTZ8NYbHmR8sTTNbSESoWZisoIfeqUIvmiXYPMP7
+         Ly5HaOkHMQDHVZ+WQBRl9yw/MVdOG23RhDDN6TPg4D1Tx8GzKrk9WUdbGVZSt3wxf3p1
+         rB4BcOYTa9OF09kGwGnydRI/cMhaQnGX7UhI2XxhZbY5Nk6fvkRkJT9mT8bNyoI6SZdf
+         Y4AFuUtM2+zPWhmnkW+/ltgQ8iPKVxQais6csQwdwbysc5cLxo0sKZ5v3cfEl0BhTWxj
+         w/Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=rU17X48zlaL0ooq4Yca3uERHAwdG+fJGmuN+EU/m6KY=;
-        b=ZKPh9SpUdrMSl73mFVXI+3XXQioZnzlm3WARMZjwgIyjK9mLgULY8EhVH2uREY7hYl
-         vFREpAPsmoO2mXkeWcKS/1g6N1cfmLCWrzs5hVZ+AWmEkWNAFSE8fn8aa55X2ySHv6NC
-         OijKAZGdh+/qm5R+r4WoKucEXkLlpjYo8ri7LPH3ap26vh0+WQhUG50JH1mvRotBOEC3
-         Hz9+iIojPM5qglqTFLZJP0YL3+liIxcTaSAOdyhUdup8qClQecHOv7/3lEHWG+T3xHTS
-         ET5OyT6LvuyCFsCyXUbUBC9/ui6tGZy5bnhYPB/87Qom5Qxa5fmGUEzAvjY4fluSa0Z5
-         qArQ==
-X-Gm-Message-State: APzg51Dp0CuL6tF78gm6M3L1eLBNle2Q7ijS5HdZuY44w5savQ+FXDX0
-        Lvp4u9TfPJegDujKguApG6LfFLkQcgoEcgm7uKw=
-X-Google-Smtp-Source: ANB0VdbGSuACc4TJwKe7ZLlgvlqxgHHqp7KQlI141/EtU8DDVP/aklyoa+Y+QgwNw8JB70NOrdTsUIIAwuj1Z/J7lZQ=
-X-Received: by 2002:a81:5a56:: with SMTP id o83-v6mr2373488ywb.59.1536358881741;
- Fri, 07 Sep 2018 15:21:21 -0700 (PDT)
-Date:   Fri,  7 Sep 2018 15:21:03 -0700
-Message-Id: <20180907222109.163802-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
-Subject: [PATCH] include/linux/compiler*.h: add version detection to asm_volatile_goto
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     akpm@linux-foundation.org
-Cc:     miguel.ojeda.sandonis@gmail.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Paul Burton <paul.burton@mips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=q7islqfOh+5ZJyMNFsPkSN7SKBhbtTChKbQYnekl0yU=;
+        b=fakkitvXsADNltQaHUzJLB1sZcoZX5sRMWhDgpBsWr2B40qnJjt4rdwBGUuDN0mph7
+         8nEKM3epZpTylWXY5Odtu6vsLENsx2DyPbbHYhJ7WQRof/rYhzG+vpjGTn/iNZ7tlMju
+         RYRMqNDuc6kXqwvhXixPl8AOjkfPlol01lNCQxscCnnD4IKF975FCSw5t2d0EYrm2O8t
+         nvZHj3CRdF6BqcOGXhNZJvvjuy8tXZzpgK+eo55GSK9wazsPTUmubdKxuhK41drlwECe
+         ic5IO1TTqUTpbEC36Bjl2nJsDBsFp7kG3JjZ+e1NYvK5ukD0W4eNBBHSx43+vCV6x+ER
+         VKlA==
+X-Gm-Message-State: APzg51Anve4XY+C4N0M+QJ5boAE0Ef6P84QBUxKHX7DEfKMuMR9Eu4rs
+        LA3CVjv6/thmFcFjes/E3fS+Hg==
+X-Google-Smtp-Source: ANB0VdZ+avLLMcYHYQ8hPlf2R3rEhW+J1Cx/0Og5CspnALvIKoz0/WJ4fNTHRsZ6oUo2PPIwz3ExUg==
+X-Received: by 2002:a63:de10:: with SMTP id f16-v6mr10379609pgg.97.1536358903968;
+        Fri, 07 Sep 2018 15:21:43 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b00f:e51c:f116:5740:3e1:4abe? ([2600:1010:b00f:e51c:f116:5740:3e1:4abe])
+        by smtp.gmail.com with ESMTPSA id 70-v6sm13300258pfz.27.2018.09.07.15.21.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 15:21:42 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC][PATCH 2/8] x86/mm: break out kernel address space handling
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <20180907194855.74E03836@viggo.jf.intel.com>
+Date:   Fri, 7 Sep 2018 15:21:41 -0700
+Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
+        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
+        luto@kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CD6177E3-BDE5-443F-9A28-351EAE0BE5BA@amacapital.net>
+References: <20180907194852.3C351B82@viggo.jf.intel.com> <20180907194855.74E03836@viggo.jf.intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment above asm_volatile_goto mentions working around a GCC bug,
-and links to a bug report that claims this has been fixed in newer
-versions of GCC.  Testing shows that this was resolved in GCC 4.8.2.
-asm_volatile_goto should also be defined for other compilers that
-support asm goto.
 
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- include/linux/compiler-gcc.h   | 7 ++++++-
- include/linux/compiler_types.h | 4 ++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 763bbad1e258..149f411b4366 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -171,7 +171,7 @@
- #endif
- 
- /*
-- * GCC 'asm goto' miscompiles certain code sequences:
-+ * GCC < 4.8.2 'asm goto' miscompiles certain code sequences:
-  *
-  *   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58670
-  *
-@@ -179,7 +179,12 @@
-  *
-  * (asm goto is automatically volatile - the naming reflects this.)
-  */
-+#if GCC_VERSION < 40802
- #define asm_volatile_goto(x...)	do { asm goto(x); asm (""); } while (0)
-+#else
-+#define asm_volatile_goto(x...)	asm goto(x)
-+#endif
-+
- 
- /*
-  * sparse (__CHECKER__) pretends to be gcc, but can't do constant
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 3525c179698c..61449dbf30d8 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -151,6 +151,10 @@ struct ftrace_likely_data {
- #define __assume_aligned(a, ...)
- #endif
- 
-+#ifndef asm_volatile_goto
-+#define asm_volatile_goto(x...) asm goto(x)
-+#endif
-+
- /* Are two types/vars the same type (ignoring qualifiers)? */
- #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
- 
--- 
-2.19.0.rc2.392.g5ba43deb5a-goog
+> On Sep 7, 2018, at 12:48 PM, Dave Hansen <dave.hansen@linux.intel.com> wro=
+te:
+>=20
+>=20
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>=20
+> The page fault handler (__do_page_fault())  basically has two sections:
+> one for handling faults in the kernel porttion of the address space
+> and another for faults in the user porttion of the address space.
+>=20
+> But, these two parts don't stick out that well.  Let's make that more
+> clear from code separation and naming.  Pull kernel fault
+> handling into its own helper, and reflect that naming by renaming
+> spurious_fault() -> spurious_kernel_fault().
+>=20
+> Also, rewrite the vmalloc handling comment a bit.  It was a bit
+> stale and also glossed over the reserved bit handling.
+>=20
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: x86@kernel.org
+> Cc: Andy Lutomirski <luto@kernel.org>
+> ---
+>=20
+> b/arch/x86/mm/fault.c |   98 ++++++++++++++++++++++++++++++---------------=
+-----
+> 1 file changed, 59 insertions(+), 39 deletions(-)
+>=20
+> diff -puN arch/x86/mm/fault.c~pkeys-fault-warnings-00 arch/x86/mm/fault.c
+> --- a/arch/x86/mm/fault.c~pkeys-fault-warnings-00    2018-09-07 11:21:46.1=
+45751902 -0700
+> +++ b/arch/x86/mm/fault.c    2018-09-07 11:23:37.643751624 -0700
+> @@ -1033,7 +1033,7 @@ mm_fault_error(struct pt_regs *regs, uns
+>    }
+> }
+>=20
+> -static int spurious_fault_check(unsigned long error_code, pte_t *pte)
+> +static int spurious_kernel_fault_check(unsigned long error_code, pte_t *p=
+te)
+> {
+>    if ((error_code & X86_PF_WRITE) && !pte_write(*pte))
+>        return 0;
+> @@ -1072,7 +1072,7 @@ static int spurious_fault_check(unsigned
+>  * (Optional Invalidation).
+>  */
+> static noinline int
+> -spurious_fault(unsigned long error_code, unsigned long address)
+> +spurious_kernel_fault(unsigned long error_code, unsigned long address)
+> {
+>    pgd_t *pgd;
+>    p4d_t *p4d;
+> @@ -1103,27 +1103,27 @@ spurious_fault(unsigned long error_code,
+>        return 0;
+>=20
+>    if (p4d_large(*p4d))
+> -        return spurious_fault_check(error_code, (pte_t *) p4d);
+> +        return spurious_kernel_fault_check(error_code, (pte_t *) p4d);
+>=20
+>    pud =3D pud_offset(p4d, address);
+>    if (!pud_present(*pud))
+>        return 0;
+>=20
+>    if (pud_large(*pud))
+> -        return spurious_fault_check(error_code, (pte_t *) pud);
+> +        return spurious_kernel_fault_check(error_code, (pte_t *) pud);
+>=20
+>    pmd =3D pmd_offset(pud, address);
+>    if (!pmd_present(*pmd))
+>        return 0;
+>=20
+>    if (pmd_large(*pmd))
+> -        return spurious_fault_check(error_code, (pte_t *) pmd);
+> +        return spurious_kernel_fault_check(error_code, (pte_t *) pmd);
+>=20
+>    pte =3D pte_offset_kernel(pmd, address);
+>    if (!pte_present(*pte))
+>        return 0;
+>=20
+> -    ret =3D spurious_fault_check(error_code, pte);
+> +    ret =3D spurious_kernel_fault_check(error_code, pte);
+>    if (!ret)
+>        return 0;
+>=20
+> @@ -1131,12 +1131,12 @@ spurious_fault(unsigned long error_code,
+>     * Make sure we have permissions in PMD.
+>     * If not, then there's a bug in the page tables:
+>     */
+> -    ret =3D spurious_fault_check(error_code, (pte_t *) pmd);
+> +    ret =3D spurious_kernel_fault_check(error_code, (pte_t *) pmd);
+>    WARN_ONCE(!ret, "PMD has incorrect permission bits\n");
+>=20
+>    return ret;
+> }
+> -NOKPROBE_SYMBOL(spurious_fault);
+> +NOKPROBE_SYMBOL(spurious_kernel_fault);
+>=20
+> int show_unhandled_signals =3D 1;
+>=20
+> @@ -1203,6 +1203,55 @@ static inline bool smap_violation(int er
+>    return true;
+> }
+>=20
+> +static void
+> +do_kern_addr_space_fault(struct pt_regs *regs, unsigned long hw_error_cod=
+e,
+> +             unsigned long address)
+> +{
+
+Can you add a comment above this documenting *when* it=E2=80=99s called?  Is=
+ it all faults, !user_mode faults, or !PF_USER?
+
+> +    /*
+> +     * We can fault-in kernel-space virtual memory on-demand. The
+> +     * 'reference' page table is init_mm.pgd.
+> +     *
+> +     * NOTE! We MUST NOT take any locks for this case. We may
+> +     * be in an interrupt or a critical region, and should
+> +     * only copy the information from the master page table,
+> +     * nothing more.
+> +     *
+> +     * Before doing this on-demand faulting, ensure that the
+> +     * fault is not any of the following:
+> +     * 1. A fault on a PTE with a reserved bit set.
+> +     * 2. A fault caused by a user-mode access.  (Do not demand-
+> +     *    fault kernel memory due to user-mode accesses).
+> +     * 3. A fault caused by a page-level protection violation.
+> +     *    (A demand fault would be on a non-present page which
+> +     *     would have X86_PF_PROT=3D=3D0).
+> +     */
+> +    if (!(hw_error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
+> +        if (vmalloc_fault(address) >=3D 0)
+> +            return;
+> +    }
+> +
+> +    /* Was the fault spurious, caused by lazy TLB invalidation? */
+> +    if (spurious_kernel_fault(hw_error_code, address))
+> +        return;
+> +
+> +    /* kprobes don't want to hook the spurious faults: */
+> +    if (kprobes_fault(regs))
+> +        return;
+> +
+> +    /*
+> +     * This is a "bad" fault in the kernel address space.  There
+> +     * is no reasonable explanation for it.  We will either kill
+> +     * the process for making a bad access, or oops the kernel.
+> +     */
+
+Or call an extable handler?
+
+Maybe the wording should be less scary, e.g. =E2=80=9Cthis fault is a genuin=
+e error. Send a signal, call an exception handler, or oops, as appropriate.=E2=
+=80=9D
 
