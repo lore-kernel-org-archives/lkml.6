@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B577AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FFDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684B72083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684B72083D
+	by mail.kernel.org (Postfix) with ESMTP id 1C57B2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C57B2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbeIHCP4 (ORCPT
+        id S1729810AbeIHCQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:15:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51452 "EHLO
+        Fri, 7 Sep 2018 22:16:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbeIHCP4 (ORCPT
+        with ESMTP id S1728357AbeIHCP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:15:56 -0400
+        Fri, 7 Sep 2018 22:15:59 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 905C8D6B;
-        Fri,  7 Sep 2018 21:33:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B362AF4A;
+        Fri,  7 Sep 2018 21:33:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Yiwen Jiang <jiangyiwen@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jun Piao <piaojun@huawei.com>,
         Dominique Martinet <dominique.martinet@cea.fr>
-Subject: [PATCH 4.9 15/63] fs/9p/xattr.c: catch the error of p9_client_clunk when setting xattr failed
-Date:   Fri,  7 Sep 2018 23:09:46 +0200
-Message-Id: <20180907211013.846927384@linuxfoundation.org>
+Subject: [PATCH 4.9 16/63] 9p/virtio: fix off-by-one error in sg list bounds check
+Date:   Fri,  7 Sep 2018 23:09:47 +0200
+Message-Id: <20180907211013.898746517@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -54,62 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: piaojun <piaojun@huawei.com>
+From: jiangyiwen <jiangyiwen@huawei.com>
 
-commit 3111784bee81591ea2815011688d28b65df03627 upstream.
+commit 23cba9cbde0bba05d772b335fe5f66aa82b9ad19 upstream.
 
-In my testing, v9fs_fid_xattr_set will return successfully even if the
-backend ext4 filesystem has no space to store xattr key-value. That will
-cause inconsistent behavior between front end and back end. The reason is
-that lsetxattr will be triggered by p9_client_clunk, and unfortunately we
-did not catch the error. This patch will catch the error to notify upper
-caller.
+Because the value of limit is VIRTQUEUE_NUM, if index is equal to
+limit, it will cause sg array out of bounds, so correct the judgement
+of BUG_ON.
 
-p9_client_clunk (in 9p)
-  p9_client_rpc(clnt, P9_TCLUNK, "d", fid->fid);
-    v9fs_clunk (in qemu)
-      put_fid
-        free_fid
-          v9fs_xattr_fid_clunk
-            v9fs_co_lsetxattr
-              s->ops->lsetxattr
-                ext4_xattr_user_set (in host ext4 filesystem)
-
-Link: http://lkml.kernel.org/r/5B57EACC.2060900@huawei.com
-Signed-off-by: Jun Piao <piaojun@huawei.com>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Ron Minnich <rminnich@sandia.gov>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Link: http://lkml.kernel.org/r/5B63D5F6.6080109@huawei.com
+Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reported-By: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Jun Piao <piaojun@huawei.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/9p/xattr.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/9p/trans_virtio.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/9p/xattr.c
-+++ b/fs/9p/xattr.c
-@@ -105,7 +105,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fi
- {
- 	struct kvec kvec = {.iov_base = (void *)value, .iov_len = value_len};
- 	struct iov_iter from;
--	int retval;
-+	int retval, err;
- 
- 	iov_iter_kvec(&from, WRITE | ITER_KVEC, &kvec, 1, value_len);
- 
-@@ -126,7 +126,9 @@ int v9fs_fid_xattr_set(struct p9_fid *fi
- 			 retval);
- 	else
- 		p9_client_write(fid, 0, &from, &retval);
--	p9_client_clunk(fid);
-+	err = p9_client_clunk(fid);
-+	if (!retval && err)
-+		retval = err;
- 	return retval;
- }
- 
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -189,7 +189,7 @@ static int pack_sg_list(struct scatterli
+ 		s = rest_of_page(data);
+ 		if (s > count)
+ 			s = count;
+-		BUG_ON(index > limit);
++		BUG_ON(index >= limit);
+ 		/* Make sure we don't terminate early. */
+ 		sg_unmark_end(&sg[index]);
+ 		sg_set_buf(&sg[index++], data, s);
+@@ -234,6 +234,7 @@ pack_sg_list_p(struct scatterlist *sg, i
+ 		s = PAGE_SIZE - data_off;
+ 		if (s > count)
+ 			s = count;
++		BUG_ON(index >= limit);
+ 		/* Make sure we don't terminate early. */
+ 		sg_unmark_end(&sg[index]);
+ 		sg_set_page(&sg[index++], pdata[i++], s, data_off);
 
 
