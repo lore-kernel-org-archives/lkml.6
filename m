@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E68C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF69C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A9420857
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 628CA2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:37:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="VU1pMkD0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A9420857
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="goh8jthJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628CA2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbeIGFPi (ORCPT
+        id S1729397AbeIGFPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:15:38 -0400
+        Fri, 7 Sep 2018 01:15:43 -0400
 Received: from mail-sn1nam02on0135.outbound.protection.outlook.com ([104.47.36.135]:30237
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726782AbeIGFPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:15:37 -0400
+        id S1729344AbeIGFPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:15:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h8X2M/FAHjsqJDOv7ooho7mjuFPqeZhTCyDdTeKunMo=;
- b=VU1pMkD0XjfeXN0Bk4C8fuiJPynCSKdbuaiShO6Woc/4KlXKDgBM1aUJ+SOeCV0nNn9zamuMjl0MqoND6FklRZYzwSpSUzM3OJivWKTdjv/RJ21KPwgBu2OJRDYvP+uageD2nuoUuBFl2XKQl1uoC16I3l1IYjKiptGmFWm/YPM=
+ bh=mXROCwI6Q01Rse4xYgLDeAbxyY1pNCqd/81qEo9U+dw=;
+ b=goh8jthJzC8egt6UERwMqlJfcnueSNlaRKgDmfOlEdApWKbrxMpCZlP1XdUgt9ZtthFunHZZcWWrIIpPcpdPDYCqhF1rUsuwzQjNZ37+mH1zd5LpBHSLLnJ8xv9sM7V4H1aHYJX/llexmJl2WcLLo1m3ZZz6yO3s1JFyzL4vCsU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0118.namprd21.prod.outlook.com (10.173.189.12) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.8; Fri, 7 Sep 2018 00:37:30 +0000
+ 15.20.1143.8; Fri, 7 Sep 2018 00:37:32 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:37:30 +0000
+ 00:37:32 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Manikanta Pubbisetty <mpubbise@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 61/88] mac80211: restrict delayed tailroom needed
- decrement
-Thread-Topic: [PATCH AUTOSEL 4.18 61/88] mac80211: restrict delayed tailroom
- needed decrement
-Thread-Index: AQHURkLVsE14J5Aju0GH3v3dZY6V3w==
-Date:   Fri, 7 Sep 2018 00:36:36 +0000
-Message-ID: <20180907003547.57567-61-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 66/88] efi/arm: preserve early mapping of UEFI
+ memory map longer for BGRT
+Thread-Topic: [PATCH AUTOSEL 4.18 66/88] efi/arm: preserve early mapping of
+ UEFI memory map longer for BGRT
+Thread-Index: AQHURkLX2hPwEEab/Eyzp7WPRQcVNg==
+Date:   Fri, 7 Sep 2018 00:36:39 +0000
+Message-ID: <20180907003547.57567-66-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +59,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0118;6:McT5GQx9nt+JAohl37zMtjfm0W0QXTPlbzdDtQTRGcmPvcwI3SK6u90YGeS1HtBIAyEjjDp2nU5wnGvj+JIZU2Nhfxigw14Os5XXCZMMqAZP1isvcoXEgNEl9w/n0nlbXm9F7ohj9NRF7srbo7q/n89U4uHObPw4hbg9LLMqtA0jklUKHY1s5dRLcPzzPcpsnp1EKdxYMUWGGOmxZ1W7mxn9mH5eMbJ7aAoMk7kWmt1L0qx8AMdvaz4DcfJyKieZIgiBDJ4OzdYV0LlGtYYoCsOb54FJqpQEYi9AXe9fKDDv6Jm2hgxiFFmeVPgVuz2FEUPlf7QOCgg7sKRl3Ku170sMVJUfu84xIpdnOd8mFdozrXn6RskGDEmGZDRqXQYDtVFxB/whRSrczZvqNj9CE7oMf+Fdcfk6w8slt9UVoMCdHN7lUfi7jsoXP9Pn2cSQgI0aO8N4vabCV21vKuYquw==;5:o4X9o6mZzR0A1x21Nv17Dek2WAAuqKzF3wfboKSMwdw3CV9FYmd9+KnaW1LOOkhFrcr0ulautBVKaMEPs/xUvmEfSumsyDwwSXEflAh0nxoxKpDxWlr1ok8SoiSrcJDLCRDSBxhg3F1dJmVKKWJjtb5i9HC1JiSRN6N/oDs5K9c=;7:9wtBKsDFeF925iZ+hj8o3GYBmMZDhWPy6ZiNiNdFsYa18v2/4qydb6/PVhhXvd4Xzbp0M2Sxms40/q4KAhQy1bkUg5b8omK0At9DTdgXMz7kC4a0TncJRnZv6JMS4Y5Xl6g/+htTbrac3rj1hDYEnVxOr44zlCUNKpQNR1fS80ECppc2NdZzlSpDhqL30LuypSJW9Bdu5pugHSXlTde+mMVjpfGKQJAJsDMv+rRZRvs0Zg+PAjXDYN8TfFOiy/OT
-x-ms-office365-filtering-correlation-id: 625c10bb-de66-43ad-89f5-08d6145a1817
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0118;6:CNLqzq9Da+HuuVKC8ds/inBZ69pUEtoMxhSXg8QU9E91RHkrtjZLqspQl3B+l7RrGVrgvGztyToPzjVs1k2o+PgE3G70BqW3lyzYVdBIIEdUCR4RaLB1LpO+19XE/sjFCmNgXSIJL8d4nbP7n/rb4wk4J6kcGFu2BIq4vDQHf9m5hJLl/F9AdNWlnip6QdElRBfn1yOru7ZJGloXSYPn1FEpmXio81qdhZ42zHOkgByohrP5sdcVBbJyU4A83B5i/Y7mYgujW5FDKw3XaJfu7zUpg8eML38+UGjNzYEqqMDPZ24+XTz0vGePJKcTA0NS79Wo9I8QiATF7AVwrX0PjsOYO7AYoceqvOJN3Ev2MIlxlq3iR9A8B4zAfeHRmCUz1upJlgP86CokhpMafHShcPSl2j0LNeOhbTyD55eyKQmq2iLeMLu6KSh+ixtye2/Nas1+5kYl2ZmnxeGbGWN3og==;5:QGB3xmWhAHUHwDIX0HhixEP9/O3CtroGMdZDXZL8Sb99lJ8NNkeKOtslLHRhyX5SCuIjCNtcV+sd1rLRiBiGi/900WItB+5vNA0no6YQfQOzTAZx1jh8E7m9XfvYU/gfKUAdqGFNOI65pubWRTdcgZcYJIcaV8cDDf4NjcjEq/A=;7:QqfY1pEnBT48axFpXNI3t+rRI/dZPNR7C1ALtsP8OXU/KpDS8Xb39cYVC2Ci3AOyfAtq1xE091hnFatrXYGjVIqimcDS/X3o9it/uoHpvlnNGw34KHUYr3bUPOE2Pq0cTJMZxkfOCF42j1FcDKEUcDchMVHrlWEWy55Lc2eQhDtet/n2XeS2IKOx+Wc5YeSl+TNtIbb8Bl+QFQd2MQjyqkr5JCbdGvN5aejypWNxuor1ax4n25noeT7rECEyJsjs
+x-ms-office365-filtering-correlation-id: 5a167454-58d2-49b4-cd1a-08d6145a1965
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0118;
 x-ms-traffictypediagnostic: CY4PR21MB0118:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB01181DFD7DFFCF456DB59434FB000@CY4PR21MB0118.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-microsoft-antispam-prvs: <CY4PR21MB01183167D9D808B1BBCAC880FB000@CY4PR21MB0118.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231344)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0118;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0118;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(136003)(366004)(189003)(199004)(97736004)(2900100001)(53936002)(316002)(86612001)(25786009)(86362001)(575784001)(2906002)(6512007)(68736007)(110136005)(54906003)(107886003)(4326008)(10290500003)(14454004)(81156014)(81166006)(66066001)(8936002)(8676002)(478600001)(6116002)(3846002)(72206003)(305945005)(7736002)(1076002)(106356001)(105586002)(36756003)(99286004)(186003)(26005)(5250100002)(14444005)(446003)(256004)(217873002)(10090500001)(76176011)(5660300001)(6436002)(11346002)(6486002)(6506007)(102836004)(2501003)(22452003)(476003)(486006)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0118;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(136003)(366004)(189003)(199004)(97736004)(2900100001)(53936002)(316002)(86612001)(25786009)(86362001)(575784001)(2906002)(6512007)(68736007)(110136005)(54906003)(107886003)(4326008)(10290500003)(14454004)(81156014)(81166006)(66066001)(8936002)(8676002)(478600001)(6116002)(3846002)(72206003)(305945005)(7736002)(1076002)(106356001)(105586002)(36756003)(99286004)(186003)(26005)(5250100002)(14444005)(446003)(256004)(217873002)(10090500001)(76176011)(5660300001)(6436002)(11346002)(6486002)(6506007)(102836004)(2501003)(22452003)(476003)(486006)(2616005)(148743002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0118;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: V2odYj/RAG6kAtSTCCZpqcnmlrqI7SipoeECv2sheDOKpIvYOL16KlDak0lmll0yiRJeXeZF9Sig6V9I+8PJhr/7Ksl7goMpCpjwlySwPu9acpVpmlqlGjK6Yc5Q+OGdESIqlwNF2XpGiqyiqZaeQCmmGRmItNksTiVxLDZ7sYsuKIT+lo15UYsbqBX7gpagx7WpcbZkJ/Iv2MTwyAtz3ydyxTjg3sPtAVgU6FFkojqrWGmIP+VMRyCnueucLYgoHVxdV1pjhiTOLbzB5cZbYS5/bbQxAZTJ/Sd6cb1I7GOSezCL/dUYCKPd1fu71Jx+l/L8QizzJcd8zcSjBbW+IYPpt+4YNSxgWf2MqHe4iBg=
+x-microsoft-antispam-message-info: CaY9TPmquVRfcF85tsj8C6QJMOVEvTfOC+XBdEB/zefogpvbuRw1t1KuNamurJQ1aMP6HvB7ia0xmF3YgVA/Hz7WlS0Mmoxc9oxA9gKKac9pyIFogcR9ghLV4KXWEEUwwr/8cMimyPPZRjydA3dXzknaoKnIdHm+7cBnY+09Irlyxi3yFvgmzVvd3LjZEi51vs+jVcrxCv73qiKL6+8Bir61QeKICcqMvnMSB6YBiuiZmccNVKQgzuVRVOJCIu9oRjHYoyS4+6jp7QgWVPt/pJgytgP5/2uTzTEWOfaFRxEk89oUoh05EkGgQiytaq5xrvRNhvjkfUppdSV7u7hwc47PmjCNiA5wjxV+dJSAUwo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 625c10bb-de66-43ad-89f5-08d6145a1817
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:36.3342
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a167454-58d2-49b4-cd1a-08d6145a1965
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:39.4768
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,144 +92,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manikanta Pubbisetty <mpubbise@codeaurora.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit 133bf90dbb8b873286f8ec2e81ba26e863114b8c ]
+[ Upstream commit 3ea86495aef2f6de26b7cb1599ba350dd6a0c521 ]
 
-As explained in ieee80211_delayed_tailroom_dec(), during roam,
-keys of the old AP will be destroyed and new keys will be
-installed. Deletion of the old key causes
-crypto_tx_tailroom_needed_cnt to go from 1 to 0 and the new key
-installation causes a transition from 0 to 1.
+The BGRT code validates the contents of the table against the UEFI
+memory map, and so it expects it to be mapped when the code runs.
 
-Whenever crypto_tx_tailroom_needed_cnt transitions from 0 to 1,
-we invoke synchronize_net(); the reason for doing this is to avoid
-a race in the TX path as explained in increment_tailroom_need_count().
-This synchronize_net() operation can be slow and can affect the station
-roam time. To avoid this, decrementing the crypto_tx_tailroom_needed_cnt
-is delayed for a while so that upon installation of new key the
-transition would be from 1 to 2 instead of 0 to 1 and thereby
-improving the roam time.
+On ARM, this is currently not the case, since we tear down the early
+mapping after efi_init() completes, and only create the permanent
+mapping in arm_enable_runtime_services(), which executes as an early
+initcall, but still leaves a window where the UEFI memory map is not
+mapped.
 
-This is all correct for a STA iftype, but deferring the tailroom_needed
-decrement for other iftypes may be unnecessary.
+So move the call to efi_memmap_unmap() from efi_init() to
+arm_enable_runtime_services().
 
-For example, let's consider the case of a 4-addr client connecting to
-an AP for which AP_VLAN interface is also created, let the initial
-value for tailroom_needed on the AP be 1.
-
-* 4-addr client connects to the AP (AP: tailroom_needed =3D 1)
-* AP will clear old keys, delay decrement of tailroom_needed count
-* AP_VLAN is created, it takes the tailroom count from master
-  (AP_VLAN: tailroom_needed =3D 1, AP: tailroom_needed =3D 1)
-* Install new key for the station, assume key is plumbed in the HW,
-  there won't be any change in tailroom_needed count on AP iface
-* Delayed decrement of tailroom_needed count on AP
-  (AP: tailroom_needed =3D 0, AP_VLAN: tailroom_needed =3D 1)
-
-Because of the delayed decrement on AP iface, tailroom_needed count goes
-out of sync between AP(master iface) and AP_VLAN(slave iface) and
-there would be unnecessary tailroom created for the packets going
-through AP_VLAN iface.
-
-Also, WARN_ONs were observed while trying to bring down the AP_VLAN
-interface:
-(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
-(warn_slowpath_null) (ieee80211_free_keys+0x114/0x1e4)
-(ieee80211_free_keys) (ieee80211_del_virtual_monitor+0x51c/0x850)
-(ieee80211_del_virtual_monitor) (ieee80211_stop+0x30/0x3c)
-(ieee80211_stop) (__dev_close_many+0x94/0xb8)
-(__dev_close_many) (dev_close_many+0x5c/0xc8)
-
-Restricting delayed decrement to station interface alone fixes the problem
-and it makes sense to do so because delayed decrement is done to improve
-roam time which is applicable only for client devices.
-
-Signed-off-by: Manikanta Pubbisetty <mpubbise@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[will: fold in EFI_MEMMAP attribute check from Ard]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/mac80211/cfg.c |  2 +-
- net/mac80211/key.c | 24 +++++++++++++++---------
- 2 files changed, 16 insertions(+), 10 deletions(-)
+ drivers/firmware/efi/arm-init.c    | 1 -
+ drivers/firmware/efi/arm-runtime.c | 4 +++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index bdf6fa78d0d2..aa082b71d2e4 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -495,7 +495,7 @@ static int ieee80211_del_key(struct wiphy *wiphy, struc=
-t net_device *dev,
- 		goto out_unlock;
- 	}
+diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-ini=
+t.c
+index b5214c143fee..388a929baf95 100644
+--- a/drivers/firmware/efi/arm-init.c
++++ b/drivers/firmware/efi/arm-init.c
+@@ -259,7 +259,6 @@ void __init efi_init(void)
 =20
--	ieee80211_key_free(key, true);
-+	ieee80211_key_free(key, sdata->vif.type =3D=3D NL80211_IFTYPE_STATION);
+ 	reserve_regions();
+ 	efi_esrt_init();
+-	efi_memmap_unmap();
 =20
- 	ret =3D 0;
-  out_unlock:
-diff --git a/net/mac80211/key.c b/net/mac80211/key.c
-index ee0d0cc8dc3b..c054ac85793c 100644
---- a/net/mac80211/key.c
-+++ b/net/mac80211/key.c
-@@ -656,11 +656,15 @@ int ieee80211_key_link(struct ieee80211_key *key,
+ 	memblock_reserve(params.mmap & PAGE_MASK,
+ 			 PAGE_ALIGN(params.mmap_size +
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-=
+runtime.c
+index 5889cbea60b8..4712445c3213 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -110,11 +110,13 @@ static int __init arm_enable_runtime_services(void)
  {
- 	struct ieee80211_local *local =3D sdata->local;
- 	struct ieee80211_key *old_key;
--	int idx, ret;
--	bool pairwise;
--
--	pairwise =3D key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
--	idx =3D key->conf.keyidx;
-+	int idx =3D key->conf.keyidx;
-+	bool pairwise =3D key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
-+	/*
-+	 * We want to delay tailroom updates only for station - in that
-+	 * case it helps roaming speed, but in other cases it hurts and
-+	 * can cause warnings to appear.
-+	 */
-+	bool delay_tailroom =3D sdata->vif.type =3D=3D NL80211_IFTYPE_STATION;
-+	int ret;
+ 	u64 mapsize;
 =20
- 	mutex_lock(&sdata->local->key_mtx);
-=20
-@@ -688,14 +692,14 @@ int ieee80211_key_link(struct ieee80211_key *key,
- 	increment_tailroom_need_count(sdata);
-=20
- 	ieee80211_key_replace(sdata, sta, pairwise, old_key, key);
--	ieee80211_key_destroy(old_key, true);
-+	ieee80211_key_destroy(old_key, delay_tailroom);
-=20
- 	ieee80211_debugfs_key_add(key);
-=20
- 	if (!local->wowlan) {
- 		ret =3D ieee80211_key_enable_hw_accel(key);
- 		if (ret)
--			ieee80211_key_free(key, true);
-+			ieee80211_key_free(key, delay_tailroom);
- 	} else {
- 		ret =3D 0;
- 	}
-@@ -930,7 +934,8 @@ void ieee80211_free_sta_keys(struct ieee80211_local *lo=
-cal,
- 		ieee80211_key_replace(key->sdata, key->sta,
- 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
- 				key, NULL);
--		__ieee80211_key_destroy(key, true);
-+		__ieee80211_key_destroy(key, key->sdata->vif.type =3D=3D
-+					NL80211_IFTYPE_STATION);
+-	if (!efi_enabled(EFI_BOOT)) {
++	if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
+ 		pr_info("EFI services will not be available.\n");
+ 		return 0;
  	}
 =20
- 	for (i =3D 0; i < NUM_DEFAULT_KEYS; i++) {
-@@ -940,7 +945,8 @@ void ieee80211_free_sta_keys(struct ieee80211_local *lo=
-cal,
- 		ieee80211_key_replace(key->sdata, key->sta,
- 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
- 				key, NULL);
--		__ieee80211_key_destroy(key, true);
-+		__ieee80211_key_destroy(key, key->sdata->vif.type =3D=3D
-+					NL80211_IFTYPE_STATION);
- 	}
-=20
- 	mutex_unlock(&local->key_mtx);
++	efi_memmap_unmap();
++
+ 	if (efi_runtime_disabled()) {
+ 		pr_info("EFI runtime services will be disabled.\n");
+ 		return 0;
 --=20
 2.17.1
