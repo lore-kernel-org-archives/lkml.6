@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FD8C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74165C4321E
 	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 676AC2086E
+	by mail.kernel.org (Postfix) with ESMTP id 0785A2083D
 	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:39:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676AC2086E
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0785A2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbeIGRTs (ORCPT
+        id S1729414AbeIGRTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:19:48 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60633 "EHLO
+        Fri, 7 Sep 2018 13:19:41 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35003 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeIGRTs (ORCPT
+        with ESMTP id S1729359AbeIGRTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:19:48 -0400
+        Fri, 7 Sep 2018 13:19:40 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <sha@pengutronix.de>)
-        id 1fyG27-0007by-Nk; Fri, 07 Sep 2018 14:38:43 +0200
+        id 1fyG27-0007bw-JL; Fri, 07 Sep 2018 14:38:43 +0200
 Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <sha@pengutronix.de>)
-        id 1fyG26-00062F-G4; Fri, 07 Sep 2018 14:38:42 +0200
+        id 1fyG26-000629-F6; Fri, 07 Sep 2018 14:38:42 +0200
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-mtd@lists.infradead.org
 Cc:     David Gstir <david@sigma-star.at>,
         Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
         linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 13/25] ubifs: Add hashes to the tree node cache
-Date:   Fri,  7 Sep 2018 14:36:34 +0200
-Message-Id: <20180907123646.12688-14-s.hauer@pengutronix.de>
+Subject: [PATCH 11/25] ubifs: add helper functions for authentication support
+Date:   Fri,  7 Sep 2018 14:36:32 +0200
+Message-Id: <20180907123646.12688-12-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907123646.12688-1-s.hauer@pengutronix.de>
 References: <20180907123646.12688-1-s.hauer@pengutronix.de>
@@ -51,577 +51,835 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of the UBIFS authentication support every branch in the index
-gets a hash covering the referenced node. To make that happen the tree
-node cache needs hashes over the nodes. This patch adds a hash argument
-to ubifs_tnc_add() and ubifs_tnc_add_nm(). The hashes are calculated
-from the callers of these functions which actually prepare the nodes.
-With this patch all the leaf nodes of the index tree get hashes, but
-currently nothing is done with these hashes, this is left for a later
-patch.
+This patch adds the various helper functions needed for authentication
+support. We need functions to hash nodes, to embed HMACs into a node and
+to compare hashes and HMACs. Most functions first check if this
+filesystem is authenticated and bail out early if not, which makes the
+functions safe to be called with disabled authentication.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- fs/ubifs/journal.c | 144 +++++++++++++++++++++++++++++++++++++--------
- fs/ubifs/replay.c  |   4 +-
- fs/ubifs/tnc.c     |  10 +++-
- fs/ubifs/ubifs.h   |   7 ++-
- 4 files changed, 135 insertions(+), 30 deletions(-)
+ fs/ubifs/Kconfig  |   1 +
+ fs/ubifs/Makefile |   1 +
+ fs/ubifs/auth.c   | 502 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ubifs/ubifs.h  | 218 ++++++++++++++++++++
+ 4 files changed, 722 insertions(+)
+ create mode 100644 fs/ubifs/auth.c
 
-diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
-index de7ac9e7acce..7c12bdfa9a7a 100644
---- a/fs/ubifs/journal.c
-+++ b/fs/ubifs/journal.c
-@@ -518,6 +518,9 @@ int ubifs_jnl_update(struct ubifs_info *c, const struct inode *dir,
- 	struct ubifs_dent_node *dent;
- 	struct ubifs_ino_node *ino;
- 	union ubifs_key dent_key, ino_key;
-+	u8 hash_dent[UBIFS_HASH_ARR_SZ];
-+	u8 hash_ino[UBIFS_HASH_ARR_SZ];
-+	u8 hash_ino_host[UBIFS_HASH_ARR_SZ];
- 
- 	ubifs_assert(c, mutex_is_locked(&host_ui->ui_mutex));
- 
-@@ -572,11 +575,21 @@ int ubifs_jnl_update(struct ubifs_info *c, const struct inode *dir,
- 
- 	zero_dent_node_unused(dent);
- 	ubifs_prep_grp_node(c, dent, dlen, 0);
-+	err = ubifs_node_calc_hash(c, dent, hash_dent);
-+	if (err)
-+		goto out_release;
- 
- 	ino = (void *)dent + aligned_dlen;
- 	pack_inode(c, ino, inode, 0);
-+	err = ubifs_node_calc_hash(c, ino, hash_ino);
-+	if (err)
-+		goto out_release;
+diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
+index bbc78549be4c..853c77579b4e 100644
+--- a/fs/ubifs/Kconfig
++++ b/fs/ubifs/Kconfig
+@@ -7,6 +7,7 @@ config UBIFS_FS
+ 	select CRYPTO if UBIFS_FS_ZLIB
+ 	select CRYPTO_LZO if UBIFS_FS_LZO
+ 	select CRYPTO_DEFLATE if UBIFS_FS_ZLIB
++	select CRYPTO_HASH_INFO
+ 	depends on MTD_UBI
+ 	help
+ 	  UBIFS is a file system for flash devices which works on top of UBI.
+diff --git a/fs/ubifs/Makefile b/fs/ubifs/Makefile
+index 6197d7e539e4..5f838319c8d5 100644
+--- a/fs/ubifs/Makefile
++++ b/fs/ubifs/Makefile
+@@ -8,3 +8,4 @@ ubifs-y += recovery.o ioctl.o lpt_commit.o tnc_misc.o debug.o
+ ubifs-y += misc.o
+ ubifs-$(CONFIG_UBIFS_FS_ENCRYPTION) += crypto.o
+ ubifs-$(CONFIG_UBIFS_FS_XATTR) += xattr.o
++ubifs-$(CONFIG_UBIFS_FS_AUTHENTICATION) += auth.o
+diff --git a/fs/ubifs/auth.c b/fs/ubifs/auth.c
+new file mode 100644
+index 000000000000..124e965a28b3
+--- /dev/null
++++ b/fs/ubifs/auth.c
+@@ -0,0 +1,502 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * This file is part of UBIFS.
++ *
++ * Copyright (C) 2018 Pengutronix, Sascha Hauer <s.hauer@pengutronix.de>
++ */
 +
- 	ino = (void *)ino + aligned_ilen;
- 	pack_inode(c, ino, dir, 1);
-+	err = ubifs_node_calc_hash(c, ino, hash_ino_host);
-+	if (err)
-+		goto out_release;
- 
- 	if (last_reference) {
- 		err = ubifs_add_orphan(c, inode->i_ino);
-@@ -608,7 +621,8 @@ int ubifs_jnl_update(struct ubifs_info *c, const struct inode *dir,
- 			goto out_ro;
- 		err = ubifs_add_dirt(c, lnum, dlen);
- 	} else
--		err = ubifs_tnc_add_nm(c, &dent_key, lnum, dent_offs, dlen, nm);
-+		err = ubifs_tnc_add_nm(c, &dent_key, lnum, dent_offs, dlen,
-+				       hash_dent, nm);
- 	if (err)
- 		goto out_ro;
- 
-@@ -620,14 +634,14 @@ int ubifs_jnl_update(struct ubifs_info *c, const struct inode *dir,
- 	 */
- 	ino_key_init(c, &ino_key, inode->i_ino);
- 	ino_offs = dent_offs + aligned_dlen;
--	err = ubifs_tnc_add(c, &ino_key, lnum, ino_offs, ilen);
-+	err = ubifs_tnc_add(c, &ino_key, lnum, ino_offs, ilen, hash_ino);
- 	if (err)
- 		goto out_ro;
- 
- 	ino_key_init(c, &ino_key, dir->i_ino);
- 	ino_offs += aligned_ilen;
- 	err = ubifs_tnc_add(c, &ino_key, lnum, ino_offs,
--			    UBIFS_INO_NODE_SZ + host_ui->data_len);
-+			    UBIFS_INO_NODE_SZ + host_ui->data_len, hash_ino_host);
- 	if (err)
- 		goto out_ro;
- 
-@@ -680,6 +694,7 @@ int ubifs_jnl_write_data(struct ubifs_info *c, const struct inode *inode,
- 	int dlen = COMPRESSED_DATA_NODE_BUF_SZ, allocated = 1;
- 	struct ubifs_inode *ui = ubifs_inode(inode);
- 	bool encrypted = ubifs_crypt_is_encrypted(inode);
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- 
- 	dbg_jnlk(key, "ino %lu, blk %u, len %d, key ",
- 		(unsigned long)key_inum(c, key), key_block(c, key), len);
-@@ -738,10 +753,15 @@ int ubifs_jnl_write_data(struct ubifs_info *c, const struct inode *inode,
- 	err = write_head(c, DATAHD, data, dlen, &lnum, &offs, 0);
- 	if (err)
- 		goto out_release;
++/*
++ * This file implements various helper functions for UBIFS authentication support
++ */
 +
-+	err = ubifs_node_calc_hash(c, data, hash);
-+	if (err)
-+		goto out_release;
++#include <linux/crypto.h>
++#include <crypto/hash.h>
++#include <crypto/sha.h>
++#include <crypto/algapi.h>
++#include <keys/user-type.h>
 +
- 	ubifs_wbuf_add_ino_nolock(&c->jheads[DATAHD].wbuf, key_inum(c, key));
- 	release_head(c, DATAHD);
- 
--	err = ubifs_tnc_add(c, key, lnum, offs, dlen);
-+	err = ubifs_tnc_add(c, key, lnum, offs, dlen, hash);
- 	if (err)
- 		goto out_ro;
- 
-@@ -780,6 +800,7 @@ int ubifs_jnl_write_inode(struct ubifs_info *c, const struct inode *inode)
- 	struct ubifs_ino_node *ino;
- 	struct ubifs_inode *ui = ubifs_inode(inode);
- 	int sync = 0, len = UBIFS_INO_NODE_SZ, last_reference = !inode->i_nlink;
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- 
- 	dbg_jnl("ino %lu, nlink %u", inode->i_ino, inode->i_nlink);
- 
-@@ -801,6 +822,10 @@ int ubifs_jnl_write_inode(struct ubifs_info *c, const struct inode *inode)
- 		goto out_free;
- 
- 	pack_inode(c, ino, inode, 1);
-+	err = ubifs_node_calc_hash(c, ino, hash);
-+	if (err)
-+		goto out_release;
++#include "ubifs.h"
 +
- 	err = write_head(c, BASEHD, ino, len, &lnum, &offs, sync);
- 	if (err)
- 		goto out_release;
-@@ -819,7 +844,7 @@ int ubifs_jnl_write_inode(struct ubifs_info *c, const struct inode *inode)
- 		union ubifs_key key;
- 
- 		ino_key_init(c, &key, inode->i_ino);
--		err = ubifs_tnc_add(c, &key, lnum, offs, len);
-+		err = ubifs_tnc_add(c, &key, lnum, offs, len, hash);
- 	}
- 	if (err)
- 		goto out_ro;
-@@ -929,6 +954,10 @@ int ubifs_jnl_xrename(struct ubifs_info *c, const struct inode *fst_dir,
- 	int aligned_dlen1, aligned_dlen2;
- 	int twoparents = (fst_dir != snd_dir);
- 	void *p;
-+	u8 hash_dent1[UBIFS_HASH_ARR_SZ];
-+	u8 hash_dent2[UBIFS_HASH_ARR_SZ];
-+	u8 hash_p1[UBIFS_HASH_ARR_SZ];
-+	u8 hash_p2[UBIFS_HASH_ARR_SZ];
- 
- 	ubifs_assert(c, ubifs_inode(fst_dir)->data_len == 0);
- 	ubifs_assert(c, ubifs_inode(snd_dir)->data_len == 0);
-@@ -964,6 +993,9 @@ int ubifs_jnl_xrename(struct ubifs_info *c, const struct inode *fst_dir,
- 	set_dent_cookie(c, dent1);
- 	zero_dent_node_unused(dent1);
- 	ubifs_prep_grp_node(c, dent1, dlen1, 0);
-+	err = ubifs_node_calc_hash(c, dent1, hash_dent1);
-+	if (err)
-+		goto out_release;
- 
- 	/* Make new dent for 2nd entry */
- 	dent2 = (void *)dent1 + aligned_dlen1;
-@@ -977,14 +1009,26 @@ int ubifs_jnl_xrename(struct ubifs_info *c, const struct inode *fst_dir,
- 	set_dent_cookie(c, dent2);
- 	zero_dent_node_unused(dent2);
- 	ubifs_prep_grp_node(c, dent2, dlen2, 0);
-+	err = ubifs_node_calc_hash(c, dent2, hash_dent2);
-+	if (err)
-+		goto out_release;
- 
- 	p = (void *)dent2 + aligned_dlen2;
--	if (!twoparents)
-+	if (!twoparents) {
- 		pack_inode(c, p, fst_dir, 1);
--	else {
-+		err = ubifs_node_calc_hash(c, p, hash_p1);
-+		if (err)
-+			goto out_release;
-+	} else {
- 		pack_inode(c, p, fst_dir, 0);
-+		err = ubifs_node_calc_hash(c, p, hash_p1);
-+		if (err)
-+			goto out_release;
- 		p += ALIGN(plen, 8);
- 		pack_inode(c, p, snd_dir, 1);
-+		err = ubifs_node_calc_hash(c, p, hash_p2);
-+		if (err)
-+			goto out_release;
- 	}
- 
- 	err = write_head(c, BASEHD, dent1, len, &lnum, &offs, sync);
-@@ -999,27 +1043,27 @@ int ubifs_jnl_xrename(struct ubifs_info *c, const struct inode *fst_dir,
- 	release_head(c, BASEHD);
- 
- 	dent_key_init(c, &key, snd_dir->i_ino, snd_nm);
--	err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen1, snd_nm);
-+	err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen1, hash_dent1, snd_nm);
- 	if (err)
- 		goto out_ro;
- 
- 	offs += aligned_dlen1;
- 	dent_key_init(c, &key, fst_dir->i_ino, fst_nm);
--	err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen2, fst_nm);
-+	err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen2, hash_dent2, fst_nm);
- 	if (err)
- 		goto out_ro;
- 
- 	offs += aligned_dlen2;
- 
- 	ino_key_init(c, &key, fst_dir->i_ino);
--	err = ubifs_tnc_add(c, &key, lnum, offs, plen);
-+	err = ubifs_tnc_add(c, &key, lnum, offs, plen, hash_p1);
- 	if (err)
- 		goto out_ro;
- 
- 	if (twoparents) {
- 		offs += ALIGN(plen, 8);
- 		ino_key_init(c, &key, snd_dir->i_ino);
--		err = ubifs_tnc_add(c, &key, lnum, offs, plen);
-+		err = ubifs_tnc_add(c, &key, lnum, offs, plen, hash_p2);
- 		if (err)
- 			goto out_ro;
- 	}
-@@ -1072,6 +1116,11 @@ int ubifs_jnl_rename(struct ubifs_info *c, const struct inode *old_dir,
- 	int last_reference = !!(new_inode && new_inode->i_nlink == 0);
- 	int move = (old_dir != new_dir);
- 	struct ubifs_inode *uninitialized_var(new_ui);
-+	u8 hash_old_dir[UBIFS_HASH_ARR_SZ];
-+	u8 hash_new_dir[UBIFS_HASH_ARR_SZ];
-+	u8 hash_new_inode[UBIFS_HASH_ARR_SZ];
-+	u8 hash_dent1[UBIFS_HASH_ARR_SZ];
-+	u8 hash_dent2[UBIFS_HASH_ARR_SZ];
- 
- 	ubifs_assert(c, ubifs_inode(old_dir)->data_len == 0);
- 	ubifs_assert(c, ubifs_inode(new_dir)->data_len == 0);
-@@ -1114,6 +1163,9 @@ int ubifs_jnl_rename(struct ubifs_info *c, const struct inode *old_dir,
- 	set_dent_cookie(c, dent);
- 	zero_dent_node_unused(dent);
- 	ubifs_prep_grp_node(c, dent, dlen1, 0);
-+	err = ubifs_node_calc_hash(c, dent, hash_dent1);
-+	if (err)
-+		goto out_release;
- 
- 	dent2 = (void *)dent + aligned_dlen1;
- 	dent2->ch.node_type = UBIFS_DENT_NODE;
-@@ -1133,19 +1185,36 @@ int ubifs_jnl_rename(struct ubifs_info *c, const struct inode *old_dir,
- 	set_dent_cookie(c, dent2);
- 	zero_dent_node_unused(dent2);
- 	ubifs_prep_grp_node(c, dent2, dlen2, 0);
-+	err = ubifs_node_calc_hash(c, dent2, hash_dent2);
-+	if (err)
-+		goto out_release;
- 
- 	p = (void *)dent2 + aligned_dlen2;
- 	if (new_inode) {
- 		pack_inode(c, p, new_inode, 0);
-+		err = ubifs_node_calc_hash(c, p, hash_new_inode);
-+		if (err)
-+			goto out_release;
++/**
++ * ubifs_node_calc_hash - calculate the hash of a UBIFS node
++ * @c: UBIFS file-system description object
++ * @node: the node to calculate a hash for
++ * @hash: the returned hash
++ *
++ * Returns 0 for success or a negative error code otherwise.
++ */
++int __ubifs_node_calc_hash(const struct ubifs_info *c, const void *node,
++			    u8 *hash)
++{
++	const struct ubifs_ch *ch = node;
++	SHASH_DESC_ON_STACK(shash, c->hash_tfm);
++	int err;
 +
- 		p += ALIGN(ilen, 8);
- 	}
- 
--	if (!move)
-+	if (!move) {
- 		pack_inode(c, p, old_dir, 1);
--	else {
-+		err = ubifs_node_calc_hash(c, p, hash_old_dir);
-+		if (err)
-+			goto out_release;
-+	} else {
- 		pack_inode(c, p, old_dir, 0);
-+		err = ubifs_node_calc_hash(c, p, hash_old_dir);
-+		if (err)
-+			goto out_release;
++	shash->tfm = c->hash_tfm;
++	shash->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
 +
- 		p += ALIGN(plen, 8);
- 		pack_inode(c, p, new_dir, 1);
-+		err = ubifs_node_calc_hash(c, p, hash_new_dir);
-+		if (err)
-+			goto out_release;
- 	}
- 
- 	if (last_reference) {
-@@ -1172,14 +1241,14 @@ int ubifs_jnl_rename(struct ubifs_info *c, const struct inode *old_dir,
- 	release_head(c, BASEHD);
- 
- 	dent_key_init(c, &key, new_dir->i_ino, new_nm);
--	err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen1, new_nm);
-+	err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen1, hash_dent1, new_nm);
- 	if (err)
- 		goto out_ro;
- 
- 	offs += aligned_dlen1;
- 	if (whiteout) {
- 		dent_key_init(c, &key, old_dir->i_ino, old_nm);
--		err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen2, old_nm);
-+		err = ubifs_tnc_add_nm(c, &key, lnum, offs, dlen2, hash_dent2, old_nm);
- 		if (err)
- 			goto out_ro;
- 
-@@ -1198,21 +1267,21 @@ int ubifs_jnl_rename(struct ubifs_info *c, const struct inode *old_dir,
- 	offs += aligned_dlen2;
- 	if (new_inode) {
- 		ino_key_init(c, &key, new_inode->i_ino);
--		err = ubifs_tnc_add(c, &key, lnum, offs, ilen);
-+		err = ubifs_tnc_add(c, &key, lnum, offs, ilen, hash_new_inode);
- 		if (err)
- 			goto out_ro;
- 		offs += ALIGN(ilen, 8);
- 	}
- 
- 	ino_key_init(c, &key, old_dir->i_ino);
--	err = ubifs_tnc_add(c, &key, lnum, offs, plen);
-+	err = ubifs_tnc_add(c, &key, lnum, offs, plen, hash_old_dir);
- 	if (err)
- 		goto out_ro;
- 
- 	if (move) {
- 		offs += ALIGN(plen, 8);
- 		ino_key_init(c, &key, new_dir->i_ino);
--		err = ubifs_tnc_add(c, &key, lnum, offs, plen);
-+		err = ubifs_tnc_add(c, &key, lnum, offs, plen, hash_new_dir);
- 		if (err)
- 			goto out_ro;
- 	}
-@@ -1331,6 +1400,8 @@ int ubifs_jnl_truncate(struct ubifs_info *c, const struct inode *inode,
- 	struct ubifs_inode *ui = ubifs_inode(inode);
- 	ino_t inum = inode->i_ino;
- 	unsigned int blk;
-+	u8 hash_ino[UBIFS_HASH_ARR_SZ];
-+	u8 hash_dn[UBIFS_HASH_ARR_SZ];
- 
- 	dbg_jnl("ino %lu, size %lld -> %lld",
- 		(unsigned long)inum, old_size, new_size);
-@@ -1392,9 +1463,17 @@ int ubifs_jnl_truncate(struct ubifs_info *c, const struct inode *inode,
- 		goto out_free;
- 
- 	pack_inode(c, ino, inode, 0);
-+	err = ubifs_node_calc_hash(c, ino, hash_ino);
++	err = crypto_shash_digest(shash, node, le32_to_cpu(ch->len), hash);
++	if (err < 0)
++		return err;
++	return 0;
++}
++
++/**
++ * ubifs_hash_calc_hmac - calculate a HMAC from a hash
++ * @c: UBIFS file-system description object
++ * @hash: the node to calculate a HMAC for
++ * @hmac: the returned HMAC
++ *
++ * Returns 0 for success or a negative error code otherwise.
++ */
++static int ubifs_hash_calc_hmac(const struct ubifs_info *c, const u8 *hash,
++				 u8 *hmac)
++{
++	SHASH_DESC_ON_STACK(shash, c->hmac_tfm);
++	int err;
++
++	shash->tfm = c->hmac_tfm;
++	shash->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
++
++	err = crypto_shash_digest(shash, hash, c->hash_len, hmac);
++	if (err < 0)
++		return err;
++	return 0;
++}
++
++/**
++ * ubifs_prepare_auth_node - Prepare an authentication node
++ * @c: UBIFS file-system description object
++ * @node: the node to calculate a hash for
++ * @hash: input hash of previous nodes
++ *
++ * This function prepares an authentication node for writing onto flash.
++ * It creates a HMAC from the given input hash and writes it to the node.
++ *
++ * Returns 0 for success or a negative error code otherwise.
++ */
++int ubifs_prepare_auth_node(struct ubifs_info *c, void *node,
++			     struct shash_desc *inhash)
++{
++	SHASH_DESC_ON_STACK(hash_desc, c->hash_tfm);
++	struct ubifs_auth_node *auth = node;
++	u8 *hash;
++	int err;
++
++	hash = kmalloc(crypto_shash_descsize(c->hash_tfm), GFP_NOFS);
++	if (!hash)
++		return -ENOMEM;
++
++	hash_desc->tfm = c->hash_tfm;
++	hash_desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
++	ubifs_shash_copy_state(c, inhash, hash_desc);
++
++	err = crypto_shash_final(hash_desc, hash);
 +	if (err)
-+		goto out_release;
++		goto out;
 +
- 	ubifs_prep_grp_node(c, trun, UBIFS_TRUN_NODE_SZ, dlen ? 0 : 1);
--	if (dlen)
-+	if (dlen) {
- 		ubifs_prep_grp_node(c, dn, dlen, 1);
-+		err = ubifs_node_calc_hash(c, dn, hash_dn);
-+		if (err)
-+			goto out_release;
++	err = ubifs_hash_calc_hmac(c, hash, auth->hmac);
++	if (err)
++		goto out;
++
++	auth->ch.node_type = UBIFS_AUTH_NODE;
++	ubifs_prepare_node(c, auth, ubifs_auth_node_sz(c), 0);
++
++	err = 0;
++out:
++	kfree(hash);
++
++	return err;
++}
++
++static struct shash_desc *ubifs_get_desc(const struct ubifs_info *c,
++					 struct crypto_shash *tfm)
++{
++	struct shash_desc *desc;
++	int err;
++
++	if (!ubifs_authenticated(c))
++		return NULL;
++
++	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(tfm), GFP_KERNEL);
++	if (!desc)
++		return ERR_PTR(-ENOMEM);
++
++	desc->tfm = tfm;
++	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
++
++	err = crypto_shash_init(desc);
++	if (err) {
++		kfree(desc);
++		return ERR_PTR(err);
 +	}
- 
- 	err = write_head(c, BASEHD, ino, len, &lnum, &offs, sync);
- 	if (err)
-@@ -1405,13 +1484,13 @@ int ubifs_jnl_truncate(struct ubifs_info *c, const struct inode *inode,
- 
- 	if (dlen) {
- 		sz = offs + UBIFS_INO_NODE_SZ + UBIFS_TRUN_NODE_SZ;
--		err = ubifs_tnc_add(c, &key, lnum, sz, dlen);
-+		err = ubifs_tnc_add(c, &key, lnum, sz, dlen, hash_dn);
- 		if (err)
- 			goto out_ro;
- 	}
- 
- 	ino_key_init(c, &key, inum);
--	err = ubifs_tnc_add(c, &key, lnum, offs, UBIFS_INO_NODE_SZ);
-+	err = ubifs_tnc_add(c, &key, lnum, offs, UBIFS_INO_NODE_SZ, hash_ino);
- 	if (err)
- 		goto out_ro;
- 
-@@ -1472,6 +1551,7 @@ int ubifs_jnl_delete_xattr(struct ubifs_info *c, const struct inode *host,
- 	union ubifs_key xent_key, key1, key2;
- 	int sync = IS_DIRSYNC(host);
- 	struct ubifs_inode *host_ui = ubifs_inode(host);
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- 
- 	ubifs_assert(c, inode->i_nlink == 0);
- 	ubifs_assert(c, mutex_is_locked(&host_ui->ui_mutex));
-@@ -1511,6 +1591,9 @@ int ubifs_jnl_delete_xattr(struct ubifs_info *c, const struct inode *host,
- 	pack_inode(c, ino, inode, 0);
- 	ino = (void *)ino + UBIFS_INO_NODE_SZ;
- 	pack_inode(c, ino, host, 1);
-+	err = ubifs_node_calc_hash(c, ino, hash);
++
++	return desc;
++}
++
++/**
++ * __ubifs_hash_get_desc - get a descriptor suitable for hashing a node
++ * @c: UBIFS file-system description object
++ *
++ * This function returns a descriptor suitable for hashing a node. Free after use
++ * with kfree.
++ */
++struct shash_desc *__ubifs_hash_get_desc(const struct ubifs_info *c)
++{
++	return ubifs_get_desc(c, c->hash_tfm);
++}
++
++/**
++ * __ubifs_shash_final - finalize shash
++ * @c: UBIFS file-system description object
++ * @desc: the descriptor
++ * @out: the output hash
++ *
++ * Simple wrapper around crypto_shash_final(), safe to be called with
++ * disabled authentication.
++ */
++int __ubifs_shash_final(const struct ubifs_info *c, struct shash_desc *desc,
++			u8 *out)
++{
++	if (ubifs_authenticated(c))
++		return crypto_shash_final(desc, out);
++
++	return 0;
++}
++
++/**
++ * ubifs_bad_hash - Report hash mismatches
++ * @c: UBIFS file-system description object
++ * @node: the node
++ * @hash: the expected hash
++ * @lnum: the LEB @node was read from
++ * @offs: offset in LEB @node was read from
++ *
++ * This function reports a hash mismatch when a node has a different hash than
++ * expected.
++ */
++void ubifs_bad_hash(const struct ubifs_info *c, const void *node, const u8 *hash,
++		    int lnum, int offs)
++{
++	int len = min(c->hash_len, 20);
++	int cropped = len != c->hash_len;
++	const char *cont = cropped ? "..." : "";
++
++	u8 calc[UBIFS_HASH_ARR_SZ];
++
++	__ubifs_node_calc_hash(c, node, calc);
++
++	ubifs_err(c, "hash mismatch on node at LEB %d:%d", lnum, offs);
++	ubifs_err(c, "hash expected:   %*ph%s", len, hash, cont);
++	ubifs_err(c, "hash calculated: %*ph%s", len, calc, cont);
++}
++
++/**
++ * __ubifs_node_check_hash - check the hash of a node against given hash
++ * @c: UBIFS file-system description object
++ * @node: the node
++ * @expected: the expected hash
++ *
++ * This function calculates a hash over a node and compares it to the given hash.
++ * Returns 0 if both hashes are equal or authentication is disabled, otherwise a
++ * negative error code is returned.
++ */
++int __ubifs_node_check_hash(const struct ubifs_info *c, const void *node,
++			    const u8 *expected)
++{
++	u8 calc[UBIFS_HASH_ARR_SZ];
++	int err;
++
++	err = __ubifs_node_calc_hash(c, node, calc);
 +	if (err)
-+		goto out_release;
- 
- 	err = write_head(c, BASEHD, xent, len, &lnum, &xent_offs, sync);
- 	if (!sync && !err)
-@@ -1543,7 +1626,7 @@ int ubifs_jnl_delete_xattr(struct ubifs_info *c, const struct inode *host,
- 
- 	/* And update TNC with the new host inode position */
- 	ino_key_init(c, &key1, host->i_ino);
--	err = ubifs_tnc_add(c, &key1, lnum, xent_offs + len - hlen, hlen);
-+	err = ubifs_tnc_add(c, &key1, lnum, xent_offs + len - hlen, hlen, hash);
- 	if (err)
- 		goto out_ro;
- 
-@@ -1554,6 +1637,9 @@ int ubifs_jnl_delete_xattr(struct ubifs_info *c, const struct inode *host,
- 	mark_inode_clean(c, host_ui);
- 	return 0;
- 
-+out_release:
-+	kfree(xent);
-+	release_head(c, BASEHD);
- out_ro:
- 	ubifs_ro_mode(c, err);
- 	finish_reservation(c);
-@@ -1581,6 +1667,8 @@ int ubifs_jnl_change_xattr(struct ubifs_info *c, const struct inode *inode,
- 	struct ubifs_ino_node *ino;
- 	union ubifs_key key;
- 	int sync = IS_DIRSYNC(host);
-+	u8 hash_host[UBIFS_HASH_ARR_SZ];
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- 
- 	dbg_jnl("ino %lu, ino %lu", host->i_ino, inode->i_ino);
- 	ubifs_assert(c, host->i_nlink > 0);
-@@ -1602,7 +1690,13 @@ int ubifs_jnl_change_xattr(struct ubifs_info *c, const struct inode *inode,
- 		goto out_free;
- 
- 	pack_inode(c, ino, host, 0);
-+	err = ubifs_node_calc_hash(c, ino, hash_host);
++		return err;
++
++	if (ubifs_check_hash(c, expected, calc))
++		return -EPERM;
++
++	return 0;
++}
++
++/**
++ * ubifs_init_authentication - initialize UBIFS authentication support
++ * @c: UBIFS file-system description object
++ *
++ * This function returns 0 for success or a negative error code otherwise.
++ */
++int ubifs_init_authentication(struct ubifs_info *c)
++{
++	struct key *keyring_key;
++	const struct user_key_payload *ukp;
++	int err;
++	char hmac_name[CRYPTO_MAX_ALG_NAME];
++
++	if (!c->auth_hash_name) {
++		ubifs_err(c, "authentication hash name needed with authentication");
++		return -EINVAL;
++	}
++
++	c->auth_hash_algo = match_string(hash_algo_name, HASH_ALGO__LAST,
++					 c->auth_hash_name);
++	if ((int)c->auth_hash_algo < 0) {
++		ubifs_err(c, "Unknown hash algo %s specified",
++			  c->auth_hash_name);
++		return -EINVAL;
++	}
++
++	snprintf(hmac_name, CRYPTO_MAX_ALG_NAME, "hmac(%s)",
++		 c->auth_hash_name);
++
++	keyring_key = request_key(&key_type_logon, c->auth_key_name, NULL);
++
++	if (IS_ERR(keyring_key)) {
++		ubifs_err(c, "Failed to request key: %ld",
++			  PTR_ERR(keyring_key));
++		return PTR_ERR(keyring_key);
++	}
++
++	down_read(&keyring_key->sem);
++
++	if (keyring_key->type != &key_type_logon) {
++		ubifs_err(c, "key type must be logon");
++		err = -ENOKEY;
++		goto out;
++	}
++
++	ukp = user_key_payload_locked(keyring_key);
++	if (!ukp) {
++		/* key was revoked before we acquired its semaphore */
++		err = -EKEYREVOKED;
++		goto out;
++	}
++
++	c->hash_tfm = crypto_alloc_shash(c->auth_hash_name, 0,
++					 CRYPTO_ALG_ASYNC);
++	if (IS_ERR(c->hash_tfm)) {
++		err = PTR_ERR(c->hash_tfm);
++		ubifs_err(c, "Can not allocate %s: %d",
++			  c->auth_hash_name, err);
++		goto out;
++	}
++
++	c->hash_len = crypto_shash_digestsize(c->hash_tfm);
++	if (c->hash_len > UBIFS_HASH_ARR_SZ) {
++		ubifs_err(c, "hash %s is bigger than maximum allowed hash size (%d > %d)",
++			  c->auth_hash_name, c->hash_len, UBIFS_HASH_ARR_SZ);
++		err = -EINVAL;
++		goto out_free_hash;
++	}
++
++	c->hmac_tfm = crypto_alloc_shash(hmac_name, 0, CRYPTO_ALG_ASYNC);
++	if (IS_ERR(c->hmac_tfm)) {
++		err = PTR_ERR(c->hmac_tfm);
++		ubifs_err(c, "Can not allocate %s: %d", hmac_name, err);
++		goto out_free_hash;
++	}
++
++	c->hmac_desc_len = crypto_shash_digestsize(c->hmac_tfm);
++	if (c->hmac_desc_len > UBIFS_HMAC_ARR_SZ) {
++		ubifs_err(c, "hmac %s is bigger than maximum allowed hmac size (%d > %d)",
++			  hmac_name, c->hmac_desc_len, UBIFS_HMAC_ARR_SZ);
++		err = -EINVAL;
++		goto out_free_hash;
++	}
++
++	err = crypto_shash_setkey(c->hmac_tfm, ukp->data, ukp->datalen);
 +	if (err)
-+		goto out_release;
- 	pack_inode(c, (void *)ino + aligned_len1, inode, 1);
-+	err = ubifs_node_calc_hash(c, (void *)ino + aligned_len1, hash);
++		goto out_free_hmac;
++
++	c->authenticated = true;
++
++	c->log_hash = ubifs_hash_get_desc(c);
++	if (IS_ERR(c->log_hash))
++		goto out_free_hmac;
++
++	err = 0;
++
++out_free_hmac:
 +	if (err)
-+		goto out_release;
- 
- 	err = write_head(c, BASEHD, ino, aligned_len, &lnum, &offs, 0);
- 	if (!sync && !err) {
-@@ -1616,12 +1710,12 @@ int ubifs_jnl_change_xattr(struct ubifs_info *c, const struct inode *inode,
- 		goto out_ro;
- 
- 	ino_key_init(c, &key, host->i_ino);
--	err = ubifs_tnc_add(c, &key, lnum, offs, len1);
-+	err = ubifs_tnc_add(c, &key, lnum, offs, len1, hash_host);
- 	if (err)
- 		goto out_ro;
- 
- 	ino_key_init(c, &key, inode->i_ino);
--	err = ubifs_tnc_add(c, &key, lnum, offs + aligned_len1, len2);
-+	err = ubifs_tnc_add(c, &key, lnum, offs + aligned_len1, len2, hash);
- 	if (err)
- 		goto out_ro;
- 
-@@ -1633,6 +1727,8 @@ int ubifs_jnl_change_xattr(struct ubifs_info *c, const struct inode *inode,
- 	kfree(ino);
- 	return 0;
- 
-+out_release:
-+	release_head(c, BASEHD);
- out_ro:
- 	ubifs_ro_mode(c, err);
- 	finish_reservation(c);
-diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
-index 4844538eb926..bccb35f72277 100644
---- a/fs/ubifs/replay.c
-+++ b/fs/ubifs/replay.c
-@@ -228,7 +228,7 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
- 			err = ubifs_tnc_remove_nm(c, &r->key, &r->nm);
- 		else
- 			err = ubifs_tnc_add_nm(c, &r->key, r->lnum, r->offs,
--					       r->len, &r->nm);
-+					       r->len, NULL, &r->nm);
- 	} else {
- 		if (r->deletion)
- 			switch (key_type(c, &r->key)) {
-@@ -248,7 +248,7 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
- 			}
- 		else
- 			err = ubifs_tnc_add(c, &r->key, r->lnum, r->offs,
--					    r->len);
-+					    r->len, NULL);
- 		if (err)
- 			return err;
- 
-diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
-index 8502c07c1e0a..bb5f989a6e06 100644
---- a/fs/ubifs/tnc.c
-+++ b/fs/ubifs/tnc.c
-@@ -2260,13 +2260,14 @@ static int tnc_insert(struct ubifs_info *c, struct ubifs_znode *znode,
-  * @lnum: LEB number of node
-  * @offs: node offset
-  * @len: node length
-+ * @hash: The hash over the node
-  *
-  * This function adds a node with key @key to TNC. The node may be new or it may
-  * obsolete some existing one. Returns %0 on success or negative error code on
-  * failure.
-  */
- int ubifs_tnc_add(struct ubifs_info *c, const union ubifs_key *key, int lnum,
--		  int offs, int len)
-+		  int offs, int len, const u8 *hash)
- {
- 	int found, n, err = 0;
- 	struct ubifs_znode *znode;
-@@ -2281,6 +2282,7 @@ int ubifs_tnc_add(struct ubifs_info *c, const union ubifs_key *key, int lnum,
- 		zbr.lnum = lnum;
- 		zbr.offs = offs;
- 		zbr.len = len;
-+		ubifs_copy_hash(c, hash, zbr.hash);
- 		key_copy(c, key, &zbr.key);
- 		err = tnc_insert(c, znode, &zbr, n + 1);
- 	} else if (found == 1) {
-@@ -2291,6 +2293,7 @@ int ubifs_tnc_add(struct ubifs_info *c, const union ubifs_key *key, int lnum,
- 		zbr->lnum = lnum;
- 		zbr->offs = offs;
- 		zbr->len = len;
-+		ubifs_copy_hash(c, hash, zbr->hash);
- 	} else
- 		err = found;
- 	if (!err)
-@@ -2392,13 +2395,14 @@ int ubifs_tnc_replace(struct ubifs_info *c, const union ubifs_key *key,
-  * @lnum: LEB number of node
-  * @offs: node offset
-  * @len: node length
-+ * @hash: The hash over the node
-  * @nm: node name
-  *
-  * This is the same as 'ubifs_tnc_add()' but it should be used with keys which
-  * may have collisions, like directory entry keys.
-  */
- int ubifs_tnc_add_nm(struct ubifs_info *c, const union ubifs_key *key,
--		     int lnum, int offs, int len,
-+		     int lnum, int offs, int len, const u8 *hash,
- 		     const struct fscrypt_name *nm)
- {
- 	int found, n, err = 0;
-@@ -2441,6 +2445,7 @@ int ubifs_tnc_add_nm(struct ubifs_info *c, const union ubifs_key *key,
- 			zbr->lnum = lnum;
- 			zbr->offs = offs;
- 			zbr->len = len;
-+			ubifs_copy_hash(c, hash, zbr->hash);
- 			goto out_unlock;
- 		}
- 	}
-@@ -2452,6 +2457,7 @@ int ubifs_tnc_add_nm(struct ubifs_info *c, const union ubifs_key *key,
- 		zbr.lnum = lnum;
- 		zbr.offs = offs;
- 		zbr.len = len;
-+		ubifs_copy_hash(c, hash, zbr.hash);
- 		key_copy(c, key, &zbr.key);
- 		err = tnc_insert(c, znode, &zbr, n + 1);
- 		if (err)
++		crypto_free_shash(c->hmac_tfm);
++out_free_hash:
++	if (err)
++		crypto_free_shash(c->hash_tfm);
++out:
++	up_read(&keyring_key->sem);
++	key_put(keyring_key);
++
++	return err;
++}
++
++/**
++ * __ubifs_exit_authentication - release resource
++ * @c: UBIFS file-system description object
++ *
++ * This function releases the authentication related resources.
++ */
++void __ubifs_exit_authentication(struct ubifs_info *c)
++{
++	if (!ubifs_authenticated(c))
++		return;
++
++	crypto_free_shash(c->hmac_tfm);
++	crypto_free_shash(c->hash_tfm);
++	kfree(c->log_hash);
++}
++
++/**
++ * ubifs_node_calc_hmac - calculate the HMAC of a UBIFS node
++ * @c: UBIFS file-system description object
++ * @node: the node to insert a HMAC into.
++ * @len: the length of the node
++ * @ofs_hmac: the offset in the node where the HMAC is inserted
++ * @hmac: returned HMAC
++ *
++ * This function calculates a HMAC of a UBIFS node. The HMAC is expected to be
++ * embedded into the node, so this area is not covered by the HMAC. Also not
++ * covered is the UBIFS_NODE_MAGIC and the CRC of the node.
++ */
++static int ubifs_node_calc_hmac(const struct ubifs_info *c, const void *node,
++				int len, int ofs_hmac, void *hmac)
++{
++	SHASH_DESC_ON_STACK(shash, c->hmac_tfm);
++	int hmac_len = c->hmac_desc_len;
++	int err;
++
++	ubifs_assert(c, ofs_hmac > 8);
++	ubifs_assert(c, ofs_hmac + hmac_len < len);
++
++	shash->tfm = c->hmac_tfm;
++	shash->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
++
++	err = crypto_shash_init(shash);
++	if (err)
++		return err;
++
++	/* behind common node header CRC up to HMAC begin */
++	err = crypto_shash_update(shash, node + 8, ofs_hmac - 8);
++	if (err < 0)
++		return err;
++
++	/* behind HMAC, if any */
++	if (len - ofs_hmac - hmac_len > 0) {
++		err = crypto_shash_update(shash, node + ofs_hmac + hmac_len,
++			    len - ofs_hmac - hmac_len);
++		if (err < 0)
++			return err;
++	}
++
++	return crypto_shash_final(shash, hmac);
++}
++
++/**
++ * __ubifs_node_insert_hmac - insert a HMAC into a UBIFS node
++ * @c: UBIFS file-system description object
++ * @node: the node to insert a HMAC into.
++ * @len: the length of the node
++ * @ofs_hmac: the offset in the node where the HMAC is inserted
++ *
++ * This function inserts a HMAC at offset @ofs_hmac into the node given in
++ * @node.
++ *
++ * This function returns 0 for success or a negative error code otherwise.
++ */
++int __ubifs_node_insert_hmac(const struct ubifs_info *c, void *node, int len,
++			    int ofs_hmac)
++{
++	return ubifs_node_calc_hmac(c, node, len, ofs_hmac, node + ofs_hmac);
++}
++
++/**
++ * __ubifs_node_verify_hmac - verify the HMAC of UBIFS node
++ * @c: UBIFS file-system description object
++ * @node: the node to insert a HMAC into.
++ * @len: the length of the node
++ * @ofs_hmac: the offset in the node where the HMAC is inserted
++ *
++ * This function verifies the HMAC at offset @ofs_hmac of the node given in
++ * @node. Returns 0 if successful or a negative error code otherwise.
++ */
++int __ubifs_node_verify_hmac(const struct ubifs_info *c, const void *node,
++			     int len, int ofs_hmac)
++{
++	int hmac_len = c->hmac_desc_len;
++	u8 *hmac;
++	int err;
++
++	hmac = kmalloc(hmac_len, GFP_NOFS);
++	if (!hmac)
++		return -ENOMEM;
++
++	err = ubifs_node_calc_hmac(c, node, len, ofs_hmac, hmac);
++	if (err)
++		return err;
++
++	err = crypto_memneq(hmac, node + ofs_hmac, hmac_len);
++
++	kfree(hmac);
++
++	if (!err)
++		return 0;
++
++	return -EPERM;
++}
++
++int __ubifs_shash_copy_state(const struct ubifs_info *c, struct shash_desc *src,
++			     struct shash_desc *target)
++{
++	u8 *state;
++	int err;
++
++	state = kmalloc(crypto_shash_descsize(src->tfm), GFP_NOFS);
++	if (!state)
++		return -ENOMEM;
++
++	err = crypto_shash_export(src, state);
++	if (err)
++		goto out;
++
++	err = crypto_shash_import(target, state);
++
++out:
++	kfree(state);
++
++	return err;
++}
++
++/**
++ * ubifs_hmac_wkm - Create a HMAC of the well known message
++ * @c: UBIFS file-system description object
++ * @hmac: The HMAC of the well known message
++ *
++ * This function creates a HMAC of a well known message. This is used
++ * to check if the provided key is suitable to authenticate a UBIFS
++ * image. This is only a convenience to the user to provide a better
++ * error message when the wrong key is provided.
++ *
++ * This function returns 0 for success or a negative error code otherwise.
++ */
++int ubifs_hmac_wkm(struct ubifs_info *c, u8 *hmac)
++{
++	SHASH_DESC_ON_STACK(shash, c->hmac_tfm);
++	int err;
++	const char well_known_message[] = "UBIFS";
++
++	if (!ubifs_authenticated(c))
++		return 0;
++
++	shash->tfm = c->hmac_tfm;
++	shash->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
++
++	err = crypto_shash_init(shash);
++	if (err)
++		return err;
++
++	err = crypto_shash_update(shash, well_known_message,
++				  sizeof(well_known_message) - 1);
++	if (err < 0)
++		return err;
++
++	err = crypto_shash_final(shash, hmac);
++	if (err)
++		return err;
++	return 0;
++}
 diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 42e904b060f9..a7e423347e6d 100644
+index 0422865661b1..3300f68c4097 100644
 --- a/fs/ubifs/ubifs.h
 +++ b/fs/ubifs/ubifs.h
-@@ -747,6 +747,7 @@ struct ubifs_jhead {
-  * @lnum: LEB number of the target node (indexing node or data node)
-  * @offs: target node offset within @lnum
-  * @len: target node length
-+ * @hash: the hash of the target node
-  */
- struct ubifs_zbranch {
- 	union ubifs_key key;
-@@ -757,6 +758,7 @@ struct ubifs_zbranch {
- 	int lnum;
- 	int offs;
- 	int len;
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- };
+@@ -39,6 +39,9 @@
+ #include <linux/security.h>
+ #include <linux/xattr.h>
+ #include <linux/random.h>
++#include <crypto/hash_info.h>
++#include <crypto/hash.h>
++#include <crypto/algapi.h>
  
- /**
-@@ -1818,11 +1820,12 @@ int ubifs_tnc_lookup_dh(struct ubifs_info *c, const union ubifs_key *key,
- int ubifs_tnc_locate(struct ubifs_info *c, const union ubifs_key *key,
- 		     void *node, int *lnum, int *offs);
- int ubifs_tnc_add(struct ubifs_info *c, const union ubifs_key *key, int lnum,
--		  int offs, int len);
-+		  int offs, int len, const u8 *hash);
- int ubifs_tnc_replace(struct ubifs_info *c, const union ubifs_key *key,
- 		      int old_lnum, int old_offs, int lnum, int offs, int len);
- int ubifs_tnc_add_nm(struct ubifs_info *c, const union ubifs_key *key,
--		     int lnum, int offs, int len, const struct fscrypt_name *nm);
-+		     int lnum, int offs, int len, const u8 *hash,
-+		     const struct fscrypt_name *nm);
- int ubifs_tnc_remove(struct ubifs_info *c, const union ubifs_key *key);
- int ubifs_tnc_remove_nm(struct ubifs_info *c, const union ubifs_key *key,
- 			const struct fscrypt_name *nm);
+ #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_UBIFS_FS_ENCRYPTION)
+ #include <linux/fscrypt.h>
+@@ -157,6 +160,14 @@
+ /* Maximum number of data nodes to bulk-read */
+ #define UBIFS_MAX_BULK_READ 32
+ 
++#ifdef CONFIG_UBIFS_FS_AUTHENTICATION
++#define UBIFS_HASH_ARR_SZ UBIFS_MAX_HASH_LEN
++#define UBIFS_HMAC_ARR_SZ UBIFS_MAX_HMAC_LEN
++#else
++#define UBIFS_HASH_ARR_SZ 0
++#define UBIFS_HMAC_ARR_SZ 0
++#endif
++
+ /*
+  * Lockdep classes for UBIFS inode @ui_mutex.
+  */
+@@ -1029,6 +1040,7 @@ struct ubifs_debug_info;
+  * @default_compr: default compression algorithm (%UBIFS_COMPR_LZO, etc)
+  * @rw_incompat: the media is not R/W compatible
+  * @assert_action: action to take when a ubifs_assert() fails
++ * @authenticated: flag indigating the FS is mounted in authenticated mode
+  *
+  * @tnc_mutex: protects the Tree Node Cache (TNC), @zroot, @cnext, @enext, and
+  *             @calc_idx_sz
+@@ -1076,6 +1088,7 @@ struct ubifs_debug_info;
+  * @key_hash: direntry key hash function
+  * @key_fmt: key format
+  * @key_len: key length
++ * @hash_len: The length of the index node hashes
+  * @fanout: fanout of the index tree (number of links per indexing node)
+  *
+  * @min_io_size: minimal input/output unit size
+@@ -1211,6 +1224,13 @@ struct ubifs_debug_info;
+  * @rp_uid: reserved pool user ID
+  * @rp_gid: reserved pool group ID
+  *
++ * @hash_tfm: the hash transformation used for hashing nodes
++ * @hmac_tfm: the HMAC transformation for this filesystem
++ * @hmac_desc_len: length of the HMAC used for authentication
++ * @auth_key_name: the authentication key name
++ * @auth_hash_name: the name of the hash algorithm used for authentication
++ * @auth_hash_algo: the authentication hash used for this fs
++ *
+  * @empty: %1 if the UBI device is empty
+  * @need_recovery: %1 if the file-system needs recovery
+  * @replaying: %1 during journal replay
+@@ -1272,6 +1292,7 @@ struct ubifs_info {
+ 	unsigned int default_compr:2;
+ 	unsigned int rw_incompat:1;
+ 	unsigned int assert_action:2;
++	unsigned int authenticated:1;
+ 
+ 	struct mutex tnc_mutex;
+ 	struct ubifs_zbranch zroot;
+@@ -1316,6 +1337,7 @@ struct ubifs_info {
+ 	uint32_t (*key_hash)(const char *str, int len);
+ 	int key_fmt;
+ 	int key_len;
++	int hash_len;
+ 	int fanout;
+ 
+ 	int min_io_size;
+@@ -1443,6 +1465,13 @@ struct ubifs_info {
+ 	kuid_t rp_uid;
+ 	kgid_t rp_gid;
+ 
++	struct crypto_shash *hash_tfm;
++	struct crypto_shash *hmac_tfm;
++	int hmac_desc_len;
++	char *auth_key_name;
++	char *auth_hash_name;
++	enum hash_algo auth_hash_algo;
++
+ 	/* The below fields are used only during mounting and re-mounting */
+ 	unsigned int empty:1;
+ 	unsigned int need_recovery:1;
+@@ -1473,6 +1502,195 @@ extern const struct inode_operations ubifs_dir_inode_operations;
+ extern const struct inode_operations ubifs_symlink_inode_operations;
+ extern struct ubifs_compressor *ubifs_compressors[UBIFS_COMPR_TYPES_CNT];
+ 
++/* auth.c */
++static inline int ubifs_authenticated(const struct ubifs_info *c)
++{
++	return (IS_ENABLED(CONFIG_UBIFS_FS_AUTHENTICATION)) && c->authenticated;
++}
++
++struct shash_desc *__ubifs_hash_get_desc(const struct ubifs_info *c);
++static inline struct shash_desc *ubifs_hash_get_desc(const struct ubifs_info *c)
++{
++	return ubifs_authenticated(c) ? __ubifs_hash_get_desc(c) : NULL;
++}
++
++static inline int ubifs_shash_init(const struct ubifs_info *c,
++				   struct shash_desc *desc)
++{
++	if (ubifs_authenticated(c))
++		return crypto_shash_init(desc);
++	else
++		return 0;
++}
++
++static inline int ubifs_shash_update(const struct ubifs_info *c,
++				      struct shash_desc *desc, const void *buf,
++				      unsigned int len)
++{
++	int err = 0;
++
++	if (ubifs_authenticated(c)) {
++		err = crypto_shash_update(desc, buf, len);
++		if (err < 0)
++			return err;
++	}
++
++	return 0;
++}
++
++static inline int ubifs_shash_final(const struct ubifs_info *c,
++				    struct shash_desc *desc, u8 *out)
++{
++	return ubifs_authenticated(c) ? crypto_shash_final(desc, out) : 0;
++}
++
++int __ubifs_node_calc_hash(const struct ubifs_info *c, const void *buf,
++			  u8 *hash);
++static inline int ubifs_node_calc_hash(const struct ubifs_info *c,
++					const void *buf, u8 *hash)
++{
++	if (ubifs_authenticated(c))
++		return __ubifs_node_calc_hash(c, buf, hash);
++	else
++		return 0;
++}
++
++int ubifs_prepare_auth_node(struct ubifs_info *c, void *node,
++			     struct shash_desc *inhash);
++
++/**
++ * ubifs_check_hash - compare two hashes
++ * @c: UBIFS file-system description object
++ * @expected: first hash
++ * @got: second hash
++ *
++ * Compare two hashes @expected and @got. Returns 0 when they are equal, a
++ * negative error code otherwise.
++ */
++static inline int ubifs_check_hash(const struct ubifs_info *c,
++				   const u8 *expected, const u8 *got)
++{
++	return crypto_memneq(expected, got, c->hash_len);
++}
++
++/**
++ * ubifs_check_hmac - compare two HMACs
++ * @c: UBIFS file-system description object
++ * @expected: first HMAC
++ * @got: second HMAC
++ *
++ * Compare two hashes @expected and @got. Returns 0 when they are equal, a
++ * negative error code otherwise.
++ */
++static inline int ubifs_check_hmac(const struct ubifs_info *c,
++				   const u8 *expected, const u8 *got)
++{
++	return crypto_memneq(expected, got, c->hmac_desc_len);
++}
++
++void ubifs_bad_hash(const struct ubifs_info *c, const void *node,
++		    const u8 *hash, int lnum, int offs);
++
++int __ubifs_node_check_hash(const struct ubifs_info *c, const void *buf,
++			  const u8 *expected);
++static inline int ubifs_node_check_hash(const struct ubifs_info *c,
++					const void *buf, const u8 *expected)
++{
++	if (ubifs_authenticated(c))
++		return __ubifs_node_check_hash(c, buf, expected);
++	else
++		return 0;
++}
++
++int ubifs_init_authentication(struct ubifs_info *c);
++void __ubifs_exit_authentication(struct ubifs_info *c);
++static inline void ubifs_exit_authentication(struct ubifs_info *c)
++{
++	if (ubifs_authenticated(c))
++		__ubifs_exit_authentication(c);
++}
++
++/**
++ * ubifs_branch_hash - returns a pointer to the hash of a branch
++ * @c: UBIFS file-system description object
++ * @br: branch to get the hash from
++ *
++ * This returns a pointer to the hash of a branch. Since the key already is a
++ * dynamically sized object we cannot use a struct member here.
++ */
++static inline u8 *ubifs_branch_hash(struct ubifs_info *c,
++				    struct ubifs_branch *br)
++{
++	return (void *)br + sizeof(*br) + c->key_len;
++}
++
++/**
++ * ubifs_copy_hash - copy a hash
++ * @c: UBIFS file-system description object
++ * @from: source hash
++ * @to: destination hash
++ *
++ * With authentication this copies a hash, otherwise does nothing.
++ */
++static inline void ubifs_copy_hash(const struct ubifs_info *c, const u8 *from,
++				   u8 *to)
++{
++	if (ubifs_authenticated(c))
++		memcpy(to, from, c->hash_len);
++}
++
++int __ubifs_node_insert_hmac(const struct ubifs_info *c, void *buf,
++			      int len, int ofs_hmac);
++static inline int ubifs_node_insert_hmac(const struct ubifs_info *c, void *buf,
++					  int len, int ofs_hmac)
++{
++	if (ubifs_authenticated(c))
++		return __ubifs_node_insert_hmac(c, buf, len, ofs_hmac);
++	else
++		return 0;
++}
++
++int __ubifs_node_verify_hmac(const struct ubifs_info *c, const void *buf,
++			     int len, int ofs_hmac);
++static inline int ubifs_node_verify_hmac(const struct ubifs_info *c,
++					 const void *buf, int len, int ofs_hmac)
++{
++	if (ubifs_authenticated(c))
++		return __ubifs_node_verify_hmac(c, buf, len, ofs_hmac);
++	else
++		return 0;
++}
++
++/**
++ * ubifs_auth_node_sz - returns the size of an authentication node
++ * @c: UBIFS file-system description object
++ *
++ * This function returns the size of an authentication node which can
++ * be 0 for unauthenticated filesystems or the real size of an auth node
++ * authentication is enabled.
++ */
++static inline int ubifs_auth_node_sz(const struct ubifs_info *c)
++{
++	if (ubifs_authenticated(c))
++		return sizeof(struct ubifs_auth_node) + c->hmac_desc_len;
++	else
++		return 0;
++}
++
++int ubifs_hmac_wkm(struct ubifs_info *c, u8 *hmac);
++
++int __ubifs_shash_copy_state(const struct ubifs_info *c, struct shash_desc *src,
++			     struct shash_desc *target);
++static inline int ubifs_shash_copy_state(const struct ubifs_info *c,
++					   struct shash_desc *src,
++					   struct shash_desc *target)
++{
++	if (ubifs_authenticated(c))
++		return __ubifs_shash_copy_state(c, src, target);
++	else
++		return 0;
++}
++
+ /* io.c */
+ void ubifs_ro_mode(struct ubifs_info *c, int err);
+ int ubifs_leb_read(const struct ubifs_info *c, int lnum, void *buf, int offs,
 -- 
 2.18.0
 
