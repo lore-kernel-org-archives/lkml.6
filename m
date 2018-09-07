@@ -2,142 +2,80 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 287A9C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DF9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC19F2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:21:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC19F2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 920B520844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:22:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920B520844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbeIGRCR (ORCPT
+        id S1729115AbeIGRCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:02:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50526 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727679AbeIGRCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:02:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E1C44AD24;
-        Fri,  7 Sep 2018 12:21:32 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        netdev@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com, davem@davemloft.net,
-        Juergen Gross <jgross@suse.com>, stable@vger.kernel.org
-Subject: [PATCH] xen/netfront: fix waiting for xenbus state change
-Date:   Fri,  7 Sep 2018 14:21:30 +0200
-Message-Id: <20180907122130.30810-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Fri, 7 Sep 2018 13:02:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:37201 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727679AbeIGRCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 13:02:54 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 426Glh0P9nz9ttFR;
+        Fri,  7 Sep 2018 14:22:08 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id NWsoc3DBoLW7; Fri,  7 Sep 2018 14:22:07 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 426Glg6tXCz9ttFD;
+        Fri,  7 Sep 2018 14:22:07 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 98A368B945;
+        Fri,  7 Sep 2018 14:22:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 6BZ6PNHFtoCF; Fri,  7 Sep 2018 14:22:11 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4C4D68B93D;
+        Fri,  7 Sep 2018 14:22:11 +0200 (CEST)
+To:     Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     linux-kernel@vger.kernel.org
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: Conflict between sparse and commit cafa0010cd51f ("Raise the minimum
+ required gcc version to 4.6")
+Message-ID: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr>
+Date:   Fri, 7 Sep 2018 12:22:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 822fb18a82aba ("xen-netfront: wait xenbus state change when load
-module manually") added a new wait queue to wait on for a state change
-when the module is loaded manually. Unfortunately there is no wakeup
-anywhere to stop that waiting.
+Since commit cafa0010cd51f ("Raise the minimum required gcc version to 
+4.6"), sparse check fails as follows:
 
-Instead of introducing a new wait queue rename the existing
-module_unload_q to module_wq and use it for both purposes (loading and
-unloading).
+[root@pc16082vm linux-powerpc]# make C=2 arch/powerpc/kernel/process.o
+   CALL    scripts/checksyscalls.sh
+   CHECK   scripts/mod/empty.c
+./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too 
+old - please upgrade it.
+   CHECK   arch/powerpc/kernel/process.c
+./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too 
+old - please upgrade it.
 
-As any state change of the backend might be intended to stop waiting
-do the wake_up_all() in any case when netback_changed() is called.
 
-Fixes: 822fb18a82aba ("xen-netfront: wait xenbus state change when load module manually")
-Cc: <stable@vger.kernel.org> #4.18
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/net/xen-netfront.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+I have sparse version 0.5.2
 
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 73f596a90c69..9407acbd19a9 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -87,8 +87,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
- 
--static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
--static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
-+static DECLARE_WAIT_QUEUE_HEAD(module_wq);
- 
- struct netfront_stats {
- 	u64			packets;
-@@ -1332,11 +1331,11 @@ static struct net_device *xennet_create_dev(struct xenbus_device *dev)
- 	netif_carrier_off(netdev);
- 
- 	xenbus_switch_state(dev, XenbusStateInitialising);
--	wait_event(module_load_q,
--			   xenbus_read_driver_state(dev->otherend) !=
--			   XenbusStateClosed &&
--			   xenbus_read_driver_state(dev->otherend) !=
--			   XenbusStateUnknown);
-+	wait_event(module_wq,
-+		   xenbus_read_driver_state(dev->otherend) !=
-+		   XenbusStateClosed &&
-+		   xenbus_read_driver_state(dev->otherend) !=
-+		   XenbusStateUnknown);
- 	return netdev;
- 
-  exit:
-@@ -2010,15 +2009,14 @@ static void netback_changed(struct xenbus_device *dev,
- 
- 	dev_dbg(&dev->dev, "%s\n", xenbus_strstate(backend_state));
- 
-+	wake_up_all(&module_wq);
-+
- 	switch (backend_state) {
- 	case XenbusStateInitialising:
- 	case XenbusStateInitialised:
- 	case XenbusStateReconfiguring:
- 	case XenbusStateReconfigured:
--		break;
--
- 	case XenbusStateUnknown:
--		wake_up_all(&module_unload_q);
- 		break;
- 
- 	case XenbusStateInitWait:
-@@ -2034,12 +2032,10 @@ static void netback_changed(struct xenbus_device *dev,
- 		break;
- 
- 	case XenbusStateClosed:
--		wake_up_all(&module_unload_q);
- 		if (dev->state == XenbusStateClosed)
- 			break;
- 		/* Missed the backend's CLOSING state -- fallthrough */
- 	case XenbusStateClosing:
--		wake_up_all(&module_unload_q);
- 		xenbus_frontend_closed(dev);
- 		break;
- 	}
-@@ -2147,14 +2143,14 @@ static int xennet_remove(struct xenbus_device *dev)
- 
- 	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
- 		xenbus_switch_state(dev, XenbusStateClosing);
--		wait_event(module_unload_q,
-+		wait_event(module_wq,
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateClosing ||
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateUnknown);
- 
- 		xenbus_switch_state(dev, XenbusStateClosed);
--		wait_event(module_unload_q,
-+		wait_event(module_wq,
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateClosed ||
- 			   xenbus_read_driver_state(dev->otherend) ==
--- 
-2.16.4
+What can be done to fix that ?
 
+Christophe
