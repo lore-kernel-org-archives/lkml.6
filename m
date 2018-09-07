@@ -2,119 +2,397 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C20C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDB52086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7130420861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:57:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W27v7XWF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EDB52086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AjAJkOcc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7130420861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbeIGMf7 (ORCPT
+        id S1727998AbeIGMgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:35:59 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54104 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeIGMf7 (ORCPT
+        Fri, 7 Sep 2018 08:36:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46027 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbeIGMgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:35:59 -0400
-Received: by mail-wm0-f65.google.com with SMTP id b19-v6so13784157wme.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:56:15 -0700 (PDT)
+        Fri, 7 Sep 2018 08:36:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i26-v6so6614145pfo.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vL2Bgk50GqR5ByoZy/GCah93JMbsotFIKZyvg3a2tJU=;
-        b=W27v7XWFN/34UXoC53P3vXbcAM3WmdhPMh3N8q2lnQ5VDOs9y6wcmCSaDPVNyxgo3Z
-         HZ8LRENaId0hwlbxCox8D9OEotYo5fttiRal59nMnMaTb4GucRRslSNyP7Q09Up0BlQF
-         jwyZFKilQN8enbjaWeNrjJx1IQSGrfzQ31VE1CJMk1XnlwAt5/LIvOpnWA88xwZrMhX+
-         ePTnBru1J5J4D7wY6zvezvNO5u1QgdagBCvnyAqIAczzfHTlJ87ItpGvrXctSuDbXF/O
-         /Gn+dNWiRDnTA6ZBQGbI/k3lMuy8AQaiWsxpwyx2E4+QWBdElrNA3KHz1NlmjHI+S426
-         SP+A==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=E+bulUdQer/8TvLsD4EBaqfrKZtoLa+MB7QJnyvXMak=;
+        b=AjAJkOccePZdDbbd4BW9w1j2t36uaTJGW+woTcHsDEAwfSrTx5Me6wDnRx9/7Vqaq9
+         Mz14nXMM1HbPynl0fQwS055j+hZHYjdasM+3Z/JxqZEJvgJitSloTZ4HUi9f5mBt9PxL
+         bJjebpZKf/D8mxQU/QRkqAJN0CK6iqsm+De2M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vL2Bgk50GqR5ByoZy/GCah93JMbsotFIKZyvg3a2tJU=;
-        b=o+2Zks+JHrx9Bfh4zLXAAeMvcLQGPe6SvunXeJqY4Qv61W1ljU1RaD5N0qMWF1jhqB
-         EL6wtPmcDlF3Tq+ItzxZF89tumpclorNmWQ2AGjksLaZzYqSWY0C3BIWHmkxhogppvlA
-         IR/C8TdZAbgXeWTfkvZGX1HyHijZy6+M38RXDal1hBgisgVs+c2YESZ3c9Wuxvw6kgva
-         0fl+PlYMI3R3ubK478XxKJyE+Gy+r90IOqDu5KOug73LfBu7zLpikBstNagguURGkyXH
-         ksxGvMmhcKR4qM7XLNmy4UV2xsSMtlmlXxSLF0TazVZ8BjTcZPR7jbJ04GXKvD8geoFO
-         jUzA==
-X-Gm-Message-State: APzg51AwyrU8vWFPp4+qSCmXCcu66irjTkfG06kZ63NuCoQHB0NCLF/X
-        EmAX6osPyNdgeH8LdPfh1mCHhg==
-X-Google-Smtp-Source: ANB0VdYePLKm3ub3hiJcEbqlh4g7SjxOclP26/QJI9nOHKucMUSQ4OVbv7rbQ7mNp5L92gwmWPuYkw==
-X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr4131577wmd.135.1536306974636;
-        Fri, 07 Sep 2018 00:56:14 -0700 (PDT)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm10833483wre.15.2018.09.07.00.56.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 00:56:14 -0700 (PDT)
-Message-ID: <1053e423d4ba8c1dd65468d278c79d2b7159401f.camel@baylibre.com>
-Subject: Re: [PATCH] leds: pwm: silently error out on EPROBE_DEFER
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Pavel Machek <pavel@ucw.cz>, sre@kernel.org
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 07 Sep 2018 09:56:12 +0200
-In-Reply-To: <20180906153548.GA10088@amd>
-References: <20180906135904.13803-1-jbrunet@baylibre.com>
-         <20180906153548.GA10088@amd>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=E+bulUdQer/8TvLsD4EBaqfrKZtoLa+MB7QJnyvXMak=;
+        b=oLYGb96rOneQAYeWp0ib8SQCzp6nEsArk5t0eBDm7O005pIklnL5ZUyAMIXRfR+OSX
+         eo+Kcnu7xr8gAqUrHOaWGs2zYe8QOWrW1XW5abff6gUMIU+syVVWW8slzdLAVYZe8QYz
+         Ej92rdE0qr++2m2nPie0q+7rXZC7DpnGuT1TtZoQL/JkGviNEzY/1SmuXlAGExytxcQw
+         sOR7ddIStPLg6xcxLbz9ZBiLPpVmJBVUt/Oa6U4dcNQuqR+J/oXLYvBi+vvb+iej+FZI
+         a3VnwiUMLgQ15Zk/zzr4XCPBbJA1kc4tzE1ixtdFSY8It6NQGc5P2vUNls8ejemKBL8j
+         b/rA==
+X-Gm-Message-State: APzg51BHwK1ARai46av6a43jZxaydflr8Wqz7aJGniW1U0IL6siAwsZ2
+        zH0HR90I8POptHOGb4A6+7I9uA==
+X-Google-Smtp-Source: ANB0VdbCJhcZJClV3l4tLr5O7Vap4dz+KEOjbjSJNmGTrRnDL/hRXbV63SLJdKrWYznm1Qi4GSAssA==
+X-Received: by 2002:a65:654d:: with SMTP id a13-v6mr5204704pgw.35.1536307021939;
+        Fri, 07 Sep 2018 00:57:01 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id 6-v6sm12019090pfs.58.2018.09.07.00.57.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 00:57:00 -0700 (PDT)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v14 00/16] subject: arm64: kexec: add kexec_file_load() support
+Date:   Fri,  7 Sep 2018 16:56:37 +0900
+Message-Id: <20180907075653.4696-1-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-06 at 17:35 +0200, Pavel Machek wrote:
-> On Thu 2018-09-06 15:59:04, Jerome Brunet wrote:
-> > When probing, if we fail to get the pwm due to probe deferal, we shouldn't
-> > print an error message. Just be silent in this case.
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  drivers/leds/leds-pwm.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
-> > index df80c89ebe7f..5d3faae51d59 100644
-> > --- a/drivers/leds/leds-pwm.c
-> > +++ b/drivers/leds/leds-pwm.c
-> > @@ -100,8 +100,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
-> >  		led_data->pwm = devm_pwm_get(dev, led->name);
-> >  	if (IS_ERR(led_data->pwm)) {
-> >  		ret = PTR_ERR(led_data->pwm);
-> > -		dev_err(dev, "unable to request PWM for %s: %d\n",
-> > -			led->name, ret);
-> > +		if (ret != -EPROBE_DEFER)
-> > +			dev_err(dev, "unable to request PWM for %s: %d\n",
-> > +				led->name, ret);
-> >  		return ret;
-> >  	}
-> 
-> Hmm, sometimes probing is deffered forever, and in such case debug
-> message is useful.
-> 
-> Do you see excessive number of these?
+This is the fourteenth round of implementing kexec_file_load() support
+on arm64.[1] (See "Changes" below)
+Most of the code is based on kexec-tools.
 
-About 10 but displaying an error which is not error is already excessive IMO.
 
-There is nothing out of the ordinary here. Feel free to grep git log for
-EPROBE_DEFER. Many drivers take this into account from the beginning now and
-we've been fixing others in most subsystem.
+This patch series enables us to
+  * load the kernel by specifying its file descriptor, instead of user-
+    filled buffer, at kexec_file_load() system call, and
+  * optionally verify its signature at load time for trusted boot.
+Kernel virtual address randomization is also supported since v9.
 
-> 									
-> 									Pavel
+Contrary to kexec_load() system call, as we discussed a long time ago,
+users may not be allowed to provide a device tree to the 2nd kernel
+explicitly, hence enforcing a dt blob of the first kernel to be re-used
+internally.
 
+To use kexec_file_load() system call, instead of kexec_load(), at kexec
+command, '-s' option must be specified. See [2] for a necessary patch for
+kexec-tools.
+
+To analyze a generated crash dump file, use the latest master branch of
+crash utility[3]. I always try to submit patches to fix any inconsistencies
+introduced in the latest kernel.
+
+Regarding a kernel image verification, a signature must be presented
+along with the binary itself. A signature is basically a hash value
+calculated against the whole binary data and encrypted by a key which
+will be authenticated by one of the system's trusted certificates.
+Any attempt to read and load a to-be-kexec-ed kernel image through
+a system call will be checked and blocked if the binary's hash value
+doesn't match its associated signature.
+
+There are two methods available now:
+1. implementing arch-specific verification hook of kexec_file_load()
+2. utilizing IMA(Integrity Measurement Architecture)[4] appraisal framework
+
+Before my v7, I believed that my patch only supports (1) but am now
+confident that (2) comes free if IMA is enabled and properly configured.
+
+
+(1) Arch-specific verification hook
+If CONFIG_KEXEC_VERIFY_SIG is enabled, kexec_file_load() invokes an arch-
+defined (and hence file-format-specific) hook function to check for the
+validity of kernel binary.
+
+On x86, a signature is embedded into a PE file (Microsoft's format) header
+of binary. Since arm64's "Image" can also be seen as a PE file as far as
+CONFIG_EFI is enabled, we adopt this format for kernel signing.  
+
+As in the case of UEFI applications, we can create a signed kernel image:
+    $ sbsign --key ${KEY} --cert ${CERT} Image
+
+You may want to use certs/signing_key.pem, which is intended to be used
+for module signing (CONFIG_MODULE_SIG), as ${KEY} and ${CERT} for test
+purpose.
+
+
+(2) IMA appraisal-based
+IMA was first introduced in linux in order to meet TCG (Trusted Computing
+Group) requirement that all the sensitive files be *measured* before
+reading/executing them to detect any untrusted changes/modification.
+Then appraisal feature, which allows us to ensure the integrity of
+files and even prevent them from reading/executing, was added later.
+
+Meanwhile, kexec_file_load() has been merged since v3.17 and evolved to
+enable IMA-appraisal type verification by the commit b804defe4297 ("kexec:
+replace call to copy_file_from_fd() with kernel version").
+
+In this scheme, a signature will be stored in a extended file attribute,
+"security.ima" while a decryption key is hold in a dedicated keyring,
+".ima" or "_ima".  All the necessary process of verification is confined
+in a secure API, kernel_read_file_from_fd(), called by kexec_file_load().
+
+    Please note that powerpc is one of the two architectures now
+    supporting KEXEC_FILE, and that it wishes to extend IMA,
+    where a signature may be appended to "vmlinux" file[5], like module
+    signing, instead of using an extended file attribute.
+
+While IMA meant to be used with TPM (Trusted Platform Module) on secure
+platform, IMA is still usable without TPM. Here is an example procedure
+about how we can give it a try to run the feature using a self-signed
+root ca for demo/test purposes:
+
+ 1) Generate needed keys and certificates, following "Generate trusted
+    keys" section in README of ima-evm-utils[6].
+
+ 2) Build the kernel with the following kernel configurations, specifying
+    "ima-local-ca.pem" for CONFIG_SYSTEM_TRUSTED_KEYS:
+	CONFIG_EXT4_FS_SECURITY
+	CONFIG_INTEGRITY_SIGNATURE
+	CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+	CONFIG_INTEGRITY_TRUSTED_KEYRING
+	CONFIG_IMA
+	CONFIG_IMA_WRITE_POLICY
+	CONFIG_IMA_READ_POLICY
+	CONFIG_IMA_APPRAISE
+	CONFIG_IMA_APPRAISE_BOOTPARAM
+	CONFIG_SYSTEM_TRUSTED_KEYS
+    Please note that CONFIG_KEXEC_VERIFY_SIG is not, actually should
+    not be, enabled.
+
+ 3) Sign(label) a kernel image binary to be kexec-ed on target filesystem:
+    $ evmctl ima_sign --key /path/to/private_key.pem /your/Image
+
+ 4) Add a command line parameter and boot the kernel:
+    ima_appraise=enforce
+
+ On live system,
+ 5) Set a security policy:
+    $ mount -t securityfs none /sys/kernel/security
+    $ echo "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig" \
+      > /sys/kernel/security/ima/policy
+
+ 6) Add a key for ima:
+    $ keyctl padd asymmetric my_ima_key %:.ima < /path/to/x509_ima.der
+    (or evmctl import /path/to/x509_ima.der <ima_keyring_id>)
+
+ 7) Then try kexec as normal.
+
+
+Concerns(or future works):
+* Support for physical address randomization
+* Signature verification of big endian kernel with CONFIG_KEXEC_VERIFY_SIG
+  While big-endian kernel can support kernel signing, I'm not sure that
+  Image can be recognized as in PE format because x86 standard only
+  defines little-endian-based format.
+* Support for vminux loading
+
+  [1] http://git.linaro.org/people/takahiro.akashi/linux-aarch64.git
+	branch:arm64/kexec_file
+  [2] http://git.linaro.org/people/takahiro.akashi/kexec-tools.git
+	branch:arm64/kexec_file
+  [3] http://github.com/crash-utility/crash.git
+  [4] https://sourceforge.net/p/linux-ima/wiki/Home/
+  [5] http://lkml.iu.edu//hypermail/linux/kernel/1707.0/03669.html
+  [6] https://sourceforge.net/p/linux-ima/ima-evm-utils/ci/master/tree/
+
+
+Changes in v14 (Sep 7, 2018)
+* rebased to v4.19-rc
+* define default KEXEC_BUF_MEM_UNKNOWN which indicates that,
+  if kexec_buf.mem does match it, kexec_locate_mem_hole() should allocate
+  free memory for arch
+
+Changes in v13 (July 31, 2018)
+* rebased to arm64/for-next/core
+* system call number changed to 294
+  (kexec-tools must be updated as well.)
+* rename arch_kexec_walk_mem() to kexec_walk_resources()
+* define string macros for dtb properties' names in setup_dtb()
+* use MEMBLOCK_NONE rather than 0 at for_each_mem_range[_reverse]()
+* rename dtb_buf to dtb in struct kexec_arch at right place
+* provide "kaslr-seed" only if random number generator is available
+
+Changes in v12 (July 24, 2018)
+ (mostly addressing James' comments)
+* unify all the variants of arch_kexec_walk_mem(), including s390's, into
+  common code, leaving arch_kexec_walk_mem() static (i.e. no longer
+  replaceable)
+* always initialize kbuf.mem to zero to align with a change above
+* set kbuf.buf_min/buf_max consistently between kexec and kdump
+* try to consistently use "unsigned long" for physical (kexec-time)
+  address, and "void *" for virtual (runtime) address in
+  load_other_segments() with a couple of variables renamed for readability
+* fix a 'sparse' warning against arch_kimage_file_post_load_cleanup()
+* fix a calculation of string length of "ARM64_MAGIC"
+* set kernel image alignment to MIN_KIMG_ALIGN rather than SZ_2M
+* set elf header alignment to SZ_64K rather than SZ_4K
+
+
+Changes in v11 (July 11, 2018)
+* split v10's patch#3, a refactoring stuff, into two parts, "just move"
+  and modify
+* remove selecting BUILD_BIN2C from KEXEC_FILE config
+* modify setup_dtb()
+   * to correct a return value on failure of fdt_xyz() call,
+   * to always remove existing bootargs and initrd-start/end properties,
+     if any, when copying current system's dtb into new dtb
+   * to use fdt_setprop_string() for bootargs (I'm now sure that
+     kimage->cmdline_buf is a null-terminated string.)
+* revise a warning comment in case of KEXEC_VERIFY_SIG but
+  !(EFI && SIGNED_PE_FILE_VERIFICATION)
+
+Changes in v10 (June 23, 2018)
+* rebased to v4.18-rc
+* change syscall number of kexec_file_load from 292 to 293
+* factor out memblock-based arch_kexec_walk_mem() from powerpc and
+  merge it into generic one
+* move generic fdt helper functions from arm64 dir to drivers/of
+  (dt_root_[addr|size]_cells are no longer __initdata.)
+* modify fill_property() to use 'while' loop
+* modify fdt_setprop_reg() to allocate a buffer on stack
+* modify setup_dtb() to use fdt_setprop_u64()
+* pass kernel_load_addr/size directly as arguments, instead of via
+  kimage_arch.kern_segment, at load_other_segments()
+* refuse loading an image which cannot be supported in image loader,
+  adding cpu-feature(MMFR0) helper functions
+* modify prepare_elf_headers() to use kmalloc() instead of vmalloc()
+* always pass arch.dtb_mem as the fourth argument to cpu_soft_restart()
+  in machine_kexec() while dtb_mem will be zero in kexec case
+
+Changes in v9 (April 25, 2018)
+* rebased to v4.17-rc
+* remove preparatory patches on generic/x86/ppc code
+  They have now been merged in v4.17-rc1.
+* allocate memory based on memblock list instead of system resources
+  This will prevent reserved regions, particularly UEFI/ACPI data,
+  from being corrupted.
+* correct dt property names, linux,initrd-*, in newly-created dtb
+  "linux," was missing.
+* remove alignment requirement for initrd loading
+* add kaslr (kernel virtual address randomization) support
+* misc code clean-up
+* revise commit messages
+
+Changes in v8 (Feb 22, 2018)
+* introduce ARCH_HAS_KEXEC_PURGATORY so that arm64 will be able to skip
+  purgatory
+* remove "ifdef CONFIG_X86_64" stuffs from a re-factored function,
+  prepare_elf64_headers(), making its interface more generic
+  (The original patch was split into two for easier reviews.)
+* modify cpu_soft_restart() so as to let the 2nd kernel jump into its entry
+  code directly without requiring purgatory in case of kexec_file_load
+* remove CONFIG_KEXEC_FILE_IMAGE_FMT and introduce
+  CONFIG_KEXEC_IMAGE_VERIFY_SIG, much similar to x86 but quite redundant
+  for now.
+* In addition, update/modify dependencies of KEXEC_IMAGE_VERIFY_SIG
+
+Changes in v7 (Dec 4, 2017)
+* rebased to v4.15-rc2
+* re-organize the patch set to separate KEXEC_FILE_VERIFY_SIG-related
+  code from the others
+* revamp factored-out code in kernel/kexec_file.c due to the changes
+  in original x86 code
+* redefine walk_sys_ram_res_rev() prototype due to change of callback
+  type in the counterpart, walk_sys_ram_res()
+* make KEXEC_FILE_IMAGE_FMT default on if KEXEC_FILE selected
+
+Changes in v6 (Oct 24, 2017)
+* fix a for-loop bug in _kexec_kernel_image_probe() per Julien
+
+Changes in v5 (Oct 10, 2017)
+* fix kbuild errors around patch #3
+per Julien's comments,
+* fix a bug in walk_system_ram_res_rev() with some cleanup
+* modify fdt_setprop_range() to use vmalloc()
+* modify fill_property() to use memset()
+
+Changes in v4 (Oct 2, 2017)
+* reinstate x86's arch_kexec_kernel_image_load()
+* rename weak arch_kexec_kernel_xxx() to _kexec_kernel_xxx() for
+  better re-use
+* constify kexec_file_loaders[]
+
+Changes in v3 (Sep 15, 2017)
+* fix kbuild test error
+* factor out arch_kexec_kernel_*() & arch_kimage_file_post_load_cleanup()
+* remove CONFIG_CRASH_CORE guard from kexec_file.c
+* add vmapped kernel region to vmcore for gdb backtracing
+  (see prepare_elf64_headers())
+* merge asm/kexec_file.h into asm/kexec.h
+* and some cleanups
+
+Changes in v2 (Sep 8, 2017)
+* move core-header-related functions from crash_core.c to kexec_file.c
+* drop hash-check code from purgatory
+* modify purgatory asm to remove arch_kexec_apply_relocations_add()
+* drop older kernel support
+* drop vmlinux support (at least, for this series)
+
+
+Patch #1 to #10 are essential part for KEXEC_FILE support
+(additionally allowing for IMA-based verification):
+  Patch #1 to #6 are all preparatory patches on generic side.
+  Patch #7 to #11 are to enable kexec_file_load on arm64.
+
+Patch #12 to #13 are for KEXEC_VERIFY_SIG (arch-specific verification)
+support
+
+AKASHI Takahiro (16):
+  asm-generic: add kexec_file_load system call to unistd.h
+  kexec_file: make kexec_image_post_load_cleanup_default() global
+  s390, kexec_file: drop arch_kexec_mem_walk()
+  powerpc, kexec_file: factor out memblock-based arch_kexec_walk_mem()
+  kexec_file: kexec_walk_memblock() only walks a dedicated region at
+    kdump
+  of/fdt: add helper functions for handling properties
+  arm64: add image head flag definitions
+  arm64: cpufeature: add MMFR0 helper functions
+  arm64: enable KEXEC_FILE config
+  arm64: kexec_file: load initrd and device-tree
+  arm64: kexec_file: allow for loading Image-format kernel
+  arm64: kexec_file: add crash dump support
+  arm64: kexec_file: invoke the kernel without purgatory
+  include: pe.h: remove message[] from mz header definition
+  arm64: kexec_file: add kernel signature verification support
+  arm64: kexec_file: add kaslr support
+
+ arch/arm64/Kconfig                          |  33 ++
+ arch/arm64/include/asm/boot.h               |  15 +
+ arch/arm64/include/asm/cpufeature.h         |  48 +++
+ arch/arm64/include/asm/kexec.h              |  49 +++
+ arch/arm64/kernel/Makefile                  |   3 +-
+ arch/arm64/kernel/cpu-reset.S               |   8 +-
+ arch/arm64/kernel/head.S                    |   2 +-
+ arch/arm64/kernel/kexec_image.c             | 123 +++++++
+ arch/arm64/kernel/machine_kexec.c           |  12 +-
+ arch/arm64/kernel/machine_kexec_file.c      | 357 ++++++++++++++++++++
+ arch/arm64/kernel/relocate_kernel.S         |   3 +-
+ arch/powerpc/kernel/machine_kexec_file_64.c |  54 ---
+ arch/s390/kernel/machine_kexec_file.c       |  10 -
+ drivers/of/fdt.c                            |  62 +++-
+ include/linux/kexec.h                       |  11 +-
+ include/linux/of_fdt.h                      |  10 +-
+ include/linux/pe.h                          |   2 +-
+ include/uapi/asm-generic/unistd.h           |   4 +-
+ kernel/kexec_file.c                         |  69 +++-
+ 19 files changed, 790 insertions(+), 85 deletions(-)
+ create mode 100644 arch/arm64/kernel/kexec_image.c
+ create mode 100644 arch/arm64/kernel/machine_kexec_file.c
+
+-- 
+2.18.0
 
