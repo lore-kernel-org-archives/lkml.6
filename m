@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3400C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C14C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D6F2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D6F2083D
+	by mail.kernel.org (Postfix) with ESMTP id 85F5D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85F5D2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbeIHCUu (ORCPT
+        id S1729883AbeIHCUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52590 "EHLO
+        Fri, 7 Sep 2018 22:20:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52598 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729412AbeIHCUt (ORCPT
+        with ESMTP id S1725999AbeIHCUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:49 -0400
+        Fri, 7 Sep 2018 22:20:52 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E18B0EC3;
-        Fri,  7 Sep 2018 21:37:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F35ED6B;
+        Fri,  7 Sep 2018 21:37:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Lukasz Dorau <lukasz.dorau@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>
-Subject: [PATCH 4.9 57/63] libnvdimm: fix ars_status output length calculation
-Date:   Fri,  7 Sep 2018 23:10:28 +0200
-Message-Id: <20180907211016.091074274@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.9 58/63] printk/tracing: Do not trace printk_nmi_enter()
+Date:   Fri,  7 Sep 2018 23:10:29 +0200
+Message-Id: <20180907211016.144089220@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -53,58 +52,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vishal Verma <vishal.l.verma@intel.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 286e87718103acdf85f4ed323a37e4839a8a7c05 upstream.
+commit d1c392c9e2a301f38998a353f467f76414e38725 upstream.
 
-Commit efda1b5d87cb ("acpi, nfit, libnvdimm: fix / harden ars_status output length handling")
-Introduced additional hardening for ambiguity in the ACPI spec for
-ars_status output sizing. However, it had a couple of cases mixed up.
-Where it should have been checking for (and returning) "out_field[1] -
-4" it was using "out_field[1] - 8" and vice versa.
+I hit the following splat in my tests:
 
-This caused a four byte discrepancy in the buffer size passed on to
-the command handler, and in some cases, this caused memory corruption
-like:
+------------[ cut here ]------------
+IRQs not enabled as expected
+WARNING: CPU: 3 PID: 0 at kernel/time/tick-sched.c:982 tick_nohz_idle_enter+0x44/0x8c
+Modules linked in: ip6t_REJECT nf_reject_ipv6 ip6table_filter ip6_tables ipv6
+CPU: 3 PID: 0 Comm: swapper/3 Not tainted 4.19.0-rc2-test+ #2
+Hardware name: MSI MS-7823/CSM-H87M-G43 (MS-7823), BIOS V1.6 02/22/2014
+EIP: tick_nohz_idle_enter+0x44/0x8c
+Code: ec 05 00 00 00 75 26 83 b8 c0 05 00 00 00 75 1d 80 3d d0 36 3e c1 00
+75 14 68 94 63 12 c1 c6 05 d0 36 3e c1 01 e8 04 ee f8 ff <0f> 0b 58 fa bb a0
+e5 66 c1 e8 25 0f 04 00 64 03 1d 28 31 52 c1 8b
+EAX: 0000001c EBX: f26e7f8c ECX: 00000006 EDX: 00000007
+ESI: f26dd1c0 EDI: 00000000 EBP: f26e7f40 ESP: f26e7f38
+DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010296
+CR0: 80050033 CR2: 0813c6b0 CR3: 2f342000 CR4: 001406f0
+Call Trace:
+ do_idle+0x33/0x202
+ cpu_startup_entry+0x61/0x63
+ start_secondary+0x18e/0x1ed
+ startup_32_smp+0x164/0x168
+irq event stamp: 18773830
+hardirqs last  enabled at (18773829): [<c040150c>] trace_hardirqs_on_thunk+0xc/0x10
+hardirqs last disabled at (18773830): [<c040151c>] trace_hardirqs_off_thunk+0xc/0x10
+softirqs last  enabled at (18773824): [<c0ddaa6f>] __do_softirq+0x25f/0x2bf
+softirqs last disabled at (18773767): [<c0416bbe>] call_on_stack+0x45/0x4b
+---[ end trace b7c64aa79e17954a ]---
 
-  ./daxdev-errors.sh: line 76: 24104 Aborted   (core dumped) ./daxdev-errors $busdev $region
-  malloc(): memory corruption
-  Program received signal SIGABRT, Aborted.
-  [...]
-  #5  0x00007ffff7865a2e in calloc () from /lib64/libc.so.6
-  #6  0x00007ffff7bc2970 in ndctl_bus_cmd_new_ars_status (ars_cap=ars_cap@entry=0x6153b0) at ars.c:136
-  #7  0x0000000000401644 in check_ars_status (check=0x7fffffffdeb0, bus=0x604c20) at daxdev-errors.c:144
-  #8  test_daxdev_clear_error (region_name=<optimized out>, bus_name=<optimized out>)
-      at daxdev-errors.c:332
+After a bit of debugging, I found what was happening. This would trigger
+when performing "perf" with a high NMI interrupt rate, while enabling and
+disabling function tracer. Ftrace uses breakpoints to convert the nops at
+the start of functions to calls to the function trampolines. The breakpoint
+traps disable interrupts and this makes calls into lockdep via the
+trace_hardirqs_off_thunk in the entry.S code. What happens is the following:
 
-Cc: <stable@vger.kernel.org>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Lukasz Dorau <lukasz.dorau@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Fixes: efda1b5d87cb ("acpi, nfit, libnvdimm: fix / harden ars_status output length handling")
-Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Signed-of-by: Dave Jiang <dave.jiang@intel.com>
+  do_idle {
+
+    [interrupts enabled]
+
+    <interrupt> [interrupts disabled]
+	TRACE_IRQS_OFF [lockdep says irqs off]
+	[...]
+	TRACE_IRQS_IRET
+	    test if pt_regs say return to interrupts enabled [yes]
+	    TRACE_IRQS_ON [lockdep says irqs are on]
+
+	    <nmi>
+		nmi_enter() {
+		    printk_nmi_enter() [traced by ftrace]
+		    [ hit ftrace breakpoint ]
+		    <breakpoint exception>
+			TRACE_IRQS_OFF [lockdep says irqs off]
+			[...]
+			TRACE_IRQS_IRET [return from breakpoint]
+			   test if pt_regs say interrupts enabled [no]
+			   [iret back to interrupt]
+	   [iret back to code]
+
+    tick_nohz_idle_enter() {
+
+	lockdep_assert_irqs_enabled() [lockdep say no!]
+
+Although interrupts are indeed enabled, lockdep thinks it is not, and since
+we now do asserts via lockdep, it gives a false warning. The issue here is
+that printk_nmi_enter() is called before lockdep_off(), which disables
+lockdep (for this reason) in NMIs. By simply not allowing ftrace to see
+printk_nmi_enter() (via notrace annotation) we keep lockdep from getting
+confused.
+
+Cc: stable@vger.kernel.org
+Fixes: 42a0bb3f71383 ("printk/nmi: generic solution for safe printk in NMI")
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Acked-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/bus.c |    4 ++--
+ kernel/printk/nmi.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -748,9 +748,9 @@ u32 nd_cmd_out_size(struct nvdimm *nvdim
- 		 * overshoots the remainder by 4 bytes, assume it was
- 		 * including 'status'.
- 		 */
--		if (out_field[1] - 8 == remainder)
-+		if (out_field[1] - 4 == remainder)
- 			return remainder;
--		return out_field[1] - 4;
-+		return out_field[1] - 8;
- 	} else if (cmd == ND_CMD_CALL) {
- 		struct nd_cmd_pkg *pkg = (struct nd_cmd_pkg *) in_field;
+--- a/kernel/printk/nmi.c
++++ b/kernel/printk/nmi.c
+@@ -260,12 +260,12 @@ void __init printk_nmi_init(void)
+ 	printk_nmi_flush();
+ }
  
+-void printk_nmi_enter(void)
++void notrace printk_nmi_enter(void)
+ {
+ 	this_cpu_write(printk_func, vprintk_nmi);
+ }
+ 
+-void printk_nmi_exit(void)
++void notrace printk_nmi_exit(void)
+ {
+ 	this_cpu_write(printk_func, vprintk_default);
+ }
 
 
