@@ -2,184 +2,74 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DF1C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D982EC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 276C020844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:43:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 276C020844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 962CE2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:43:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O13251RI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962CE2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbeIGQXc (ORCPT
+        id S1728974AbeIGQYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 12:23:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39798 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbeIGQXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 12:23:31 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BABE020726; Fri,  7 Sep 2018 13:42:56 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 806A120701;
-        Fri,  7 Sep 2018 13:42:56 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 13:42:55 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [PATCH] [v3] drm/sun4i: fix build failure with
- CONFIG_DRM_SUN8I_MIXER=m
-Message-ID: <20180907114255.7j7r6wzolnz5qkk7@flea>
-References: <20180711144403.1022829-1-arnd@arndb.de>
- <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
- <CAK8P3a1w0SrxFNRwjt1nWhQPdqgt=bZ8oqGaPE=z9iHp84R5mw@mail.gmail.com>
+        Fri, 7 Sep 2018 12:24:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39504 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725986AbeIGQYQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 12:24:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8llVEwE+sftxEk1yeB8OhQZrcRIeFsZIU7QyMNwpv80=; b=O13251RIREQa9o2fLNgrDskND
+        ltJAhi+UM7C2clNrZduC6Uim6Lje2Rb0mrM0MsHULJaiGOyzaSjjfKv+j0mEZgaRNCvuYSCFTZBY4
+        1bBAHp6K+Ub3d2pkGGk6MC9GqYqq6vhIS7FUjIuqMTet0tp3214hjEjsKr+jAD+DXuq4Bgk/4phy3
+        RQPmJmK9T/eo9Tg4J5gpTIbw+SVJlAnsCOFeB+UNm2I2U/qhSbwuVoGOoaK+o2TGqJLf5jZxM2yFR
+        cuk43YHn01Zr648GV67FZrmerLkrsU20te3hiIEBCSy/BL1KcT2uaHrl0LqpjtbdEhDx5I5o5xvPh
+        zX8Z37kPA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyFAr-0007vi-Fm; Fri, 07 Sep 2018 11:43:41 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E859420191BFB; Fri,  7 Sep 2018 13:43:39 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 13:43:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locking: Fix mutex debug call and ww_mutex doc
+Message-ID: <20180907114339.GX24106@hirez.programming.kicks-ass.net>
+References: <20180903140708.2401-1-thellstrom@vmware.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4zkbdfg7sppywb2m"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a1w0SrxFNRwjt1nWhQPdqgt=bZ8oqGaPE=z9iHp84R5mw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180903140708.2401-1-thellstrom@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---4zkbdfg7sppywb2m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 07, 2018 at 01:26:30PM +0200, Arnd Bergmann wrote:
-> On Fri, Sep 7, 2018 at 11:41 AM Jon Hunter <jonathanh@nvidia.com> wrote:
-> >
-> >
-> > On 11/07/18 15:43, Arnd Bergmann wrote:
-> > > Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module re=
-sults in
-> > > a link error, as we try to access a symbol from the sun8i_tcon_top.ko=
- module:
-> > >
-> > > ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdm=
-i.ko] undefined!
-> > > ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko]=
- undefined!
-> > >
-> > > This solves the problem by adding a silent symbol for the tcon_top mo=
-dule,
-> > > building it as a separate module in exactly the cases that we need it,
-> > > but in a way that it is reachable by the other modules.
-> > >
-> > > Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possib=
-le crtcs")
-> > > Fixes: ef0cf6441fbb ("drm/sun4i: Add support for traversing graph wit=
-h TCON TOP")
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > I am seeing the following on today's -next (20180907) as well the last
-> > few -next versions for that matter ...
-> >
-> > ERROR: "sun8i_tcon_top_de_config" [drivers/gpu/drm/sun4i/sun4i-tcon.ko]=
- undefined!
-> > ERROR: "sun8i_tcon_top_set_hdmi_src" [drivers/gpu/drm/sun4i/sun4i-tcon.=
-ko] undefined!
-> > ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] =
-undefined!
-> >
-> > Seems like this issue has cropped up again as Arnd's fix is present. I
-> > am seeing this on ARM64 builds.
->=20
-> I have not started build testing on linux-next since the merge window, but
-> looking at the changes that got queued up, I find commits cf77d79b4e29
-> ("drm/sun4i: tcon: Add another way for matching mixers with tcon") and
-> 0305189afb32 ("drm/sun4i: tcon: Add support for R40 TCON") that both
-> introduced a reference to the tcon_top file from sun4i_tcon.c.
->=20
-> More IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) checks in
-> the caller like I did in my patch would help, or alternatively one could
-> decide to give up and just always include the TCON_TOP.
-
-Sorry for the breakage.
-
-Can you test:
-
-----8<----
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun=
-4i_tcon.c
-index 4834c90b4912..c78cd35a1294 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -974,7 +974,8 @@ static bool sun4i_tcon_connected_to_tcon_top(struct dev=
-ice_node *node)
-=20
- 	remote =3D of_graph_get_remote_node(node, 0, -1);
- 	if (remote) {
--		ret =3D !!of_match_node(sun8i_tcon_top_of_table, remote);
-+		ret =3D !!(IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
-+			 of_match_node(sun8i_tcon_top_of_table, remote));
- 		of_node_put(remote);
- 	}
-=20
-@@ -1402,13 +1403,20 @@ static int sun8i_r40_tcon_tv_set_mux(struct sun4i_t=
-con *tcon,
- 	if (!pdev)
- 		return -EINVAL;
-=20
--	if (encoder->encoder_type =3D=3D DRM_MODE_ENCODER_TMDS) {
-+	if (IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
-+	    encoder->encoder_type =3D=3D DRM_MODE_ENCODER_TMDS) {
- 		ret =3D sun8i_tcon_top_set_hdmi_src(&pdev->dev, id);
- 		if (ret)
- 			return ret;
- 	}
-=20
--	return sun8i_tcon_top_de_config(&pdev->dev, tcon->id, id);
-+	if (IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP)) {
-+		ret =3D sun8i_tcon_top_de_config(&pdev->dev, tcon->id, id);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
- }
-=20
- static const struct sun4i_tcon_quirks sun4i_a10_quirks =3D {
-----8<----
+On Mon, Sep 03, 2018 at 04:07:08PM +0200, Thomas Hellstrom wrote:
+> Commit 08295b3b5bee ("Implement an algorithm choice for Wound-Wait
+> mutexes") introduced a reference in the documentation to a function
+> that was removed in an earlier commit.
+> 
+> It also forgot to remove a call to debug_mutex_add_waiter() which is now
+> unconditionally called by __mutex_add_waiter().
+> 
+> Fix those issues.
+> 
+> Fixes: 08295b3b5bee ("Implement an algorithm choice for Wound-Wait mutexes")
+> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 
 Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4zkbdfg7sppywb2m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSZD4ACgkQ0rTAlCFN
-r3Q6YQ//Yw5kuFRiog0m6febtwKIWUZc3Q3Yal+Xk+HgIw3yH03lRluKYwj8cY92
-EYooUSv8eErK+8Z7DHYvTyMHWcZ6PVIAEq0sWRmlwac4PlJRhWGHAbbH1OozAG+i
-RARz9LE/0Qmwnj648KxVqmF07ttApht4ECJRp8RCrogrC5HKyOtCTb/y3iVdwsMz
-SjcUJbRC3oN+0qTOrbV3H0bGUbRwvb4SXI4X8USzwIXEcXUbiq03YioE+TDL8oz8
-qkV8RiHPwD0NCGSAtVFmRXbyyv59zGiLWymuJXVvl8caoZm7XLBdnqyrAu07lk93
-Y4jnYPyOtxOkQ4eGBcJgF+AAwR7njPgbhbkR4dONrd+lm6UCr5Q5rSJWjvJLijYc
-cWb+zjra7OOP33BnX1zJYaT17SzXRbfHH1xPURuCxxpYNn95fOdM2PbWE1Y6Ea98
-fZpNFSb76zrVLcOSe3tY+abd6B8BU9WnFK5Prf/5YD2fTYTLJiYO1hksm0Qyv+Jt
-YZ+gsU+VGKuCsk+OsFp2lYfS6cUbVB30vtfjqqtDQBic73LilcKUxbqSSm+jJVtX
-94TmcgcXooXZXe03vFqbnynp2Nuee0ETInH8rtd8cWtGKq1ZvDP5facBO+ldj6kK
-bmZaPwx92XHRJsZ+eNrtaohmnJSNEIyJWKs3iiE5T/mYMOxVBYc=
-=H2q2
------END PGP SIGNATURE-----
-
---4zkbdfg7sppywb2m--
