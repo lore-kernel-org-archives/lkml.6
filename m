@@ -2,125 +2,98 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02121C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C188FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC69C2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:44:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC69C2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 652322075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:49:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CpMElXp7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652322075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729950AbeIGTZs (ORCPT
+        id S1728861AbeIGTa5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:25:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:32980 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727821AbeIGTZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:25:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 103D218A;
-        Fri,  7 Sep 2018 07:44:33 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D455E3F575;
-        Fri,  7 Sep 2018 07:44:32 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 078CE1AE3828; Fri,  7 Sep 2018 15:44:47 +0100 (BST)
-Date:   Fri, 7 Sep 2018 15:44:47 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
-Subject: Re: [PATCH v11 0/3] remain and optimize memblock_next_valid_pfn on
- arm and arm64
-Message-ID: <20180907144447.GD12788@arm.com>
-References: <1534907237-2982-1-git-send-email-jia.he@hxt-semitech.com>
- <CAKv+Gu9u8RcrzSHdgXiqHS9HK1aSrjbPxVUSCP0DT4erAhx0pw@mail.gmail.com>
+        Fri, 7 Sep 2018 15:30:57 -0400
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:39013 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727837AbeIGTa5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:30:57 -0400
+Received: by mail-lj1-f171.google.com with SMTP id l15-v6so12498269lji.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 07:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=KkL04uQ7tyqeWedAAB1AO3uIABla0DwHYkjcRQLfFCU=;
+        b=CpMElXp7G+Avs8vEKrjuvRDIfnUDYgseJX+d0lbNTrlXZkRuW42GX1Htw4Hr4DuVs7
+         6kovctupj1GzK28eGZwbCQsXSDQDSdqTrNpxcefBEJ2voyEGE3pQAl90iEoTq4CTmiQ5
+         abdLPu0NBll33r85n4r67uSKWRPIeOE+30tXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=KkL04uQ7tyqeWedAAB1AO3uIABla0DwHYkjcRQLfFCU=;
+        b=j3ygKqt+QO/uh/21fgdTHnEuIzNDRIaY4mAC3V320ykiut+hSqYETs3eWgsb3EERsn
+         ELAEkBHT+1a4wRVyX5T2vOeU5dMfEjQYDlKm9E+HfG6181tWEUTQ0vOIrMATH9sh5IS0
+         p0sx7BfRENGVOSZ49ki8OySjT6rhdPiMx+6WVh8rfj6OQknfFkYtqOsUiXHkR7/ZlozB
+         goysMAAd9gaRQz8qm6DEe4Y0aOmUvQZea9gPpVcQDbS6nrilo4in0ZAdndFX4PljYH2P
+         vKy4MhQGbf5J2YOCvT771tLV/UIKScUcbWGl0ZIS7dy3/0S+SSzSmBAo+LAeiEqzlmk3
+         xjag==
+X-Gm-Message-State: APzg51BwjSGSWMRwdU0QYMcDHoAFTZSrlvEoVk4wl/FAVZ2vEwELzEmc
+        SFAOpkpZ6l/yqT9CvSgX1UWzWyOXSwJIO4M3wI9oIg==
+X-Google-Smtp-Source: ANB0VdbenTIneYJBKPH26Nq+1HskgzbuTYPmv0oeQt0ObICUTli2ns7IZDUYjjqnTy1ZYGP3b3dYjlMLEvfpPItdz3I=
+X-Received: by 2002:a2e:4557:: with SMTP id s84-v6mr5173210lja.47.1536331780028;
+ Fri, 07 Sep 2018 07:49:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9u8RcrzSHdgXiqHS9HK1aSrjbPxVUSCP0DT4erAhx0pw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a19:8fd3:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 07:49:19 -0700 (PDT)
+In-Reply-To: <20180906194330.GH5098@thunk.org>
+References: <2e8e31f5-4db5-4907-2d09-f6444bc78ede@roeck-us.net>
+ <20180906140413.GA5098@thunk.org> <CAH+k93Fgk2yZ3OzBOL2uxSVuOqEJB5wS1Zfny8bDkbuQ3sM6Jw@mail.gmail.com>
+ <20180906194330.GH5098@thunk.org>
+From:   Matt Hart <matthew.hart@linaro.org>
+Date:   Fri, 7 Sep 2018 15:49:19 +0100
+Message-ID: <CAH+k93HFi7njDrKDOXxZG0gfNUfATfKafwpF7Exjff925to3mw@mail.gmail.com>
+Subject: Re: Widespread crashes in next-20180906
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        David Howells <dhowells@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 01:24:22PM +0200, Ard Biesheuvel wrote:
-> On 22 August 2018 at 05:07, Jia He <hejianet@gmail.com> wrote:
-> > Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-> > where possible") optimized the loop in memmap_init_zone(). But it causes
-> > possible panic bug. So Daniel Vacek reverted it later.
-> >
-> > But as suggested by Daniel Vacek, it is fine to using memblock to skip
-> > gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
-> >
-> > More from what Daniel said:
-> > "On arm and arm64, memblock is used by default. But generic version of
-> > pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
-> > not always return the next valid one but skips more resulting in some
-> > valid frames to be skipped (as if they were invalid). And that's why
-> > kernel was eventually crashing on some !arm machines."
-> >
-> > About the performance consideration:
-> > As said by James in b92df1de5,
-> > "I have tested this patch on a virtual model of a Samurai CPU with a
-> > sparse memory map.  The kernel boot time drops from 109 to 62 seconds."
-> > Thus it would be better if we remain memblock_next_valid_pfn on arm/arm64.
-> >
-> > Besides we can remain memblock_next_valid_pfn, there is still some room
-> > for improvement. After this set, I can see the time overhead of memmap_init
-> > is reduced from 27956us to 13537us in my armv8a server(QDF2400 with 96G
-> > memory, pagesize 64k). I believe arm server will benefit more if memory is
-> > larger than TBs
-> >
-> 
-> OK so we can summarize the benefits of this series as follows:
-> - boot time on a virtual model of a Samurai CPU drops from 109 to 62 seconds
-> - boot time on a QDF2400 arm64 server with 96 GB of RAM drops by ~15
-> *milliseconds*
-> 
-> Google was not very helpful in figuring out what a Samurai CPU is and
-> why we should care about the boot time of Linux running on a virtual
-> model of it, and the 15 ms speedup is not that compelling either.
-> 
-> Apologies to Jia that it took 11 revisions to reach this conclusion,
-> but in /my/ opinion, tweaking the fragile memblock/pfn handling code
-> for this reason is totally unjustified, and we're better off
-> disregarding these patches.
+On 6 September 2018 at 20:43, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Thu, Sep 06, 2018 at 03:13:23PM +0100, Matt Hart wrote:
+>> On 6 September 2018 at 15:04, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>> > On Thu, Sep 06, 2018 at 06:45:15AM -0700, Guenter Roeck wrote:
+>> >> Build results:
+>> >>       total: 134 pass: 133 fail: 1
+>>
+>> Do you build arm64? Because KernelCI is seeing build failures in arm64
+>> defconfig for next-20180906
+>> Clearly it's a module build problem for sunxi but I'm not sure who to
+>> CC about this.
+>>
+>> https://kernelci.org/build/next/branch/master/kernel/next-20180906/
+>> https://storage.kernelci.org/next/master/next-20180906/arm64/defconfig/build.log
+>
+> At a guess, from the MAINTAINERS file
+>
+> ARM/Allwinner sunXi SoC support
+> M:      Maxime Ripard <maxime.ripard@bootlin.com>
+> M:      Chen-Yu Tsai <wens@csie.org>
 
-Oh, we're talking about a *simulator* for the significant boot time
-improvement here? I didn't realise that, so I agree that the premise of
-this patch set looks pretty questionable given how much "fun" we've had
-with the memmap on arm and arm64.
+Seems they are already on the case
+https://www.spinics.net/lists/arm-kernel/msg675227.html
 
-Will
+>
+>                                                 - Ted
