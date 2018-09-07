@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9076CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8348C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A89920645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A89920645
+	by mail.kernel.org (Postfix) with ESMTP id 7537B20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7537B20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbeIHCGi (ORCPT
+        id S1728677AbeIHCGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:06:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46724 "EHLO
+        Fri, 7 Sep 2018 22:06:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728125AbeIHCGi (ORCPT
+        with ESMTP id S1728282AbeIHCGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:06:38 -0400
+        Fri, 7 Sep 2018 22:06:42 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75C18EF6;
-        Fri,  7 Sep 2018 21:23:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B24C6EF6;
+        Fri,  7 Sep 2018 21:23:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.18 102/145] NFSv4: Fix a sleep in atomic context in nfs4_callback_sequence()
-Date:   Fri,  7 Sep 2018 23:09:28 +0200
-Message-Id: <20180907210912.254880663@linuxfoundation.org>
+        stable@vger.kernel.org, Bandan Das <bsd@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.18 093/145] KVM: VMX: fixes for vmentry_l1d_flush module parameter
+Date:   Fri,  7 Sep 2018 23:09:19 +0200
+Message-Id: <20180907210911.644705014@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,63 +50,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 8618289c46556fd4dd259a1af02ccc448032f48d upstream.
+commit 0027ff2a75f9dcf0537ac0a65c5840b0e21a4950 upstream.
 
-We must drop the lock before we can sleep in referring_call_exists().
+Two bug fixes:
 
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 045d2a6d076a ("NFSv4.1: Delay callback processing...")
-Cc: stable@vger.kernel.org # v4.9+
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+1) missing entries in the l1d_param array; this can cause a host crash
+if an access attempts to reach the missing entry. Future-proof the get
+function against any overflows as well.  However, the two entries
+VMENTER_L1D_FLUSH_EPT_DISABLED and VMENTER_L1D_FLUSH_NOT_REQUIRED must
+not be accepted by the parse function, so disable them there.
+
+2) invalid values must be rejected even if the CPU does not have the
+bug, so test for them before checking boot_cpu_has(X86_BUG_L1TF)
+
+... and a small refactoring, since the .cmd field is redundant with
+the index in the array.
+
+Reported-by: Bandan Das <bsd@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/callback_proc.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c |   26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
---- a/fs/nfs/callback_proc.c
-+++ b/fs/nfs/callback_proc.c
-@@ -441,11 +441,14 @@ validate_seqid(const struct nfs4_slot_ta
-  * a match.  If the slot is in use and the sequence numbers match, the
-  * client is still waiting for a response to the original request.
-  */
--static bool referring_call_exists(struct nfs_client *clp,
-+static int referring_call_exists(struct nfs_client *clp,
- 				  uint32_t nrclists,
--				  struct referring_call_list *rclists)
-+				  struct referring_call_list *rclists,
-+				  spinlock_t *lock)
-+	__releases(lock)
-+	__acquires(lock)
- {
--	bool status = false;
-+	int status = 0;
- 	int i, j;
- 	struct nfs4_session *session;
- 	struct nfs4_slot_table *tbl;
-@@ -468,8 +471,10 @@ static bool referring_call_exists(struct
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -197,12 +197,14 @@ static enum vmx_l1d_flush_state __read_m
  
- 		for (j = 0; j < rclist->rcl_nrefcalls; j++) {
- 			ref = &rclist->rcl_refcalls[j];
-+			spin_unlock(lock);
- 			status = nfs4_slot_wait_on_seqid(tbl, ref->rc_slotid,
- 					ref->rc_sequenceid, HZ >> 1) < 0;
-+			spin_lock(lock);
- 			if (status)
- 				goto out;
+ static const struct {
+ 	const char *option;
+-	enum vmx_l1d_flush_state cmd;
++	bool for_parse;
+ } vmentry_l1d_param[] = {
+-	{"auto",	VMENTER_L1D_FLUSH_AUTO},
+-	{"never",	VMENTER_L1D_FLUSH_NEVER},
+-	{"cond",	VMENTER_L1D_FLUSH_COND},
+-	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
++	[VMENTER_L1D_FLUSH_AUTO]	 = {"auto", true},
++	[VMENTER_L1D_FLUSH_NEVER]	 = {"never", true},
++	[VMENTER_L1D_FLUSH_COND]	 = {"cond", true},
++	[VMENTER_L1D_FLUSH_ALWAYS]	 = {"always", true},
++	[VMENTER_L1D_FLUSH_EPT_DISABLED] = {"EPT disabled", false},
++	[VMENTER_L1D_FLUSH_NOT_REQUIRED] = {"not required", false},
+ };
+ 
+ #define L1D_CACHE_ORDER 4
+@@ -286,8 +288,9 @@ static int vmentry_l1d_flush_parse(const
+ 
+ 	if (s) {
+ 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
+-			if (sysfs_streq(s, vmentry_l1d_param[i].option))
+-				return vmentry_l1d_param[i].cmd;
++			if (vmentry_l1d_param[i].for_parse &&
++			    sysfs_streq(s, vmentry_l1d_param[i].option))
++				return i;
  		}
-@@ -546,7 +551,8 @@ __be32 nfs4_callback_sequence(void *argp
- 	 * related callback was received before the response to the original
- 	 * call.
- 	 */
--	if (referring_call_exists(clp, args->csa_nrclists, args->csa_rclists)) {
-+	if (referring_call_exists(clp, args->csa_nrclists, args->csa_rclists,
-+				&tbl->slot_tbl_lock) < 0) {
- 		status = htonl(NFS4ERR_DELAY);
- 		goto out_unlock;
  	}
+ 	return -EINVAL;
+@@ -297,13 +300,13 @@ static int vmentry_l1d_flush_set(const c
+ {
+ 	int l1tf, ret;
+ 
+-	if (!boot_cpu_has(X86_BUG_L1TF))
+-		return 0;
+-
+ 	l1tf = vmentry_l1d_flush_parse(s);
+ 	if (l1tf < 0)
+ 		return l1tf;
+ 
++	if (!boot_cpu_has(X86_BUG_L1TF))
++		return 0;
++
+ 	/*
+ 	 * Has vmx_init() run already? If not then this is the pre init
+ 	 * parameter parsing. In that case just store the value and let
+@@ -323,6 +326,9 @@ static int vmentry_l1d_flush_set(const c
+ 
+ static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
+ {
++	if (WARN_ON_ONCE(l1tf_vmx_mitigation >= ARRAY_SIZE(vmentry_l1d_param)))
++		return sprintf(s, "???\n");
++
+ 	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
+ }
+ 
 
 
