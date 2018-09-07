@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511D9C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A2DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 112E12083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 112E12083D
+	by mail.kernel.org (Postfix) with ESMTP id E047420855
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E047420855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729395AbeIHCK7 (ORCPT
+        id S1729410AbeIHCLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:10:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48754 "EHLO
+        Fri, 7 Sep 2018 22:11:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48762 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728507AbeIHCK6 (ORCPT
+        with ESMTP id S1729175AbeIHCLC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:10:58 -0400
+        Fri, 7 Sep 2018 22:11:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA2D3F07;
-        Fri,  7 Sep 2018 21:28:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D96BCACC;
+        Fri,  7 Sep 2018 21:28:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 49/89] uprobes: Use synchronize_rcu() not synchronize_sched()
-Date:   Fri,  7 Sep 2018 23:09:43 +0200
-Message-Id: <20180907210858.396720107@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 23/89] RDMA/rxe: Set wqe->status correctly if an unexpected response is received
+Date:   Fri,  7 Sep 2018 23:09:17 +0200
+Message-Id: <20180907210855.343547999@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -50,39 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 016f8ffc48cb01d1e7701649c728c5d2e737d295 upstream.
+commit 61b717d041b1976530f68f8b539b2e3a7dd8e39c upstream.
 
-While debugging another bug, I was looking at all the synchronize*()
-functions being used in kernel/trace, and noticed that trace_uprobes was
-using synchronize_sched(), with a comment to synchronize with
-{u,ret}_probe_trace_func(). When looking at those functions, the data is
-protected with "rcu_read_lock()" and not with "rcu_read_lock_sched()". This
-is using the wrong synchronize_*() function.
+Every function that returns COMPST_ERROR must set wqe->status to another
+value than IB_WC_SUCCESS before returning COMPST_ERROR. Fix the only code
+path for which this is not yet the case.
 
-Link: http://lkml.kernel.org/r/20180809160553.469e1e32@gandalf.local.home
-
-Cc: stable@vger.kernel.org
-Fixes: 70ed91c6ec7f8 ("tracing/uprobes: Support ftrace_event_file base multibuffer")
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_uprobe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/sw/rxe/rxe_comp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -967,7 +967,7 @@ probe_event_disable(struct trace_uprobe
- 
- 		list_del_rcu(&link->list);
- 		/* synchronize with u{,ret}probe_trace_func */
--		synchronize_sched();
-+		synchronize_rcu();
- 		kfree(link);
- 
- 		if (!list_empty(&tu->tp.files))
+--- a/drivers/infiniband/sw/rxe/rxe_comp.c
++++ b/drivers/infiniband/sw/rxe/rxe_comp.c
+@@ -276,6 +276,7 @@ static inline enum comp_state check_ack(
+ 	case IB_OPCODE_RC_RDMA_READ_RESPONSE_MIDDLE:
+ 		if (wqe->wr.opcode != IB_WR_RDMA_READ &&
+ 		    wqe->wr.opcode != IB_WR_RDMA_READ_WITH_INV) {
++			wqe->status = IB_WC_FATAL_ERR;
+ 			return COMPST_ERROR;
+ 		}
+ 		reset_retry_counters(qp);
 
 
