@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3907DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2352C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5CD12075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CD12075B
+	by mail.kernel.org (Postfix) with ESMTP id 70B0E20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:01:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B0E20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeIHBoI (ORCPT
+        id S1727951AbeIHBod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:44:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39352 "EHLO mail.kernel.org"
+        Fri, 7 Sep 2018 21:44:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727623AbeIHBmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:42:14 -0400
+        id S1726929AbeIHBmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 21:42:13 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6636F20870;
-        Fri,  7 Sep 2018 20:59:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4078F20861;
+        Fri,  7 Sep 2018 20:59:31 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fyNql-0001mH-6g; Fri, 07 Sep 2018 16:59:31 -0400
-Message-Id: <20180907205931.097824414@goodmis.org>
+        id 1fyNqk-0001is-AI; Fri, 07 Sep 2018 16:59:30 -0400
+Message-Id: <20180907205930.221592760@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:59:06 -0400
+Date:   Fri, 07 Sep 2018 16:59:00 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -43,9 +43,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: [PATCH RT 09/24] Revert "timer: delay waking softirqs from the jiffy tick"
+        tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org,
+        Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH RT 03/24] squashfs: make use of local lock in multi_cpu decompressor
 References: <20180907205857.262840394@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -59,43 +59,73 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+From: Julia Cartwright <julia@ni.com>
 
-[ Upstream commit b5b16907c58280e015d5673dca4c6bd3fde0c348 ]
+[ Upstream commit c160736542d7b3d67da32848d2f028b8e35730e5 ]
 
-This patch was required as long as RT tasks where accounted to CFS
-load but this was only a work around. Upstream Commit 17bdcf949d03
-("sched: Drop all load weight manipulation for RT tasks") fixed the
-accounting of RT tasks into CFS load.
+Currently, the squashfs multi_cpu decompressor makes use of
+get_cpu_ptr()/put_cpu_ptr(), which unconditionally disable preemption
+during decompression.
 
-Remove the patch and fix dependencies.
+Because the workload is distributed across CPUs, all CPUs can observe a
+very high wakeup latency, which has been seen to be as much as 8000us.
 
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Convert this decompressor to make use of a local lock, which will allow
+execution of the decompressor with preemption-enabled, but also ensure
+concurrent accesses to the percpu compressor data on the local CPU will
+be serialized.
+
+Cc: stable-rt@vger.kernel.org
+Reported-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Tested-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Signed-off-by: Julia Cartwright <julia@ni.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/time/timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/squashfs/decompressor_multi_percpu.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index ff1d60d4c0cc..f57106c6e786 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1635,13 +1635,13 @@ void update_process_times(int user_tick)
+diff --git a/fs/squashfs/decompressor_multi_percpu.c b/fs/squashfs/decompressor_multi_percpu.c
+index 23a9c28ad8ea..6a73c4fa88e7 100644
+--- a/fs/squashfs/decompressor_multi_percpu.c
++++ b/fs/squashfs/decompressor_multi_percpu.c
+@@ -10,6 +10,7 @@
+ #include <linux/slab.h>
+ #include <linux/percpu.h>
+ #include <linux/buffer_head.h>
++#include <linux/locallock.h>
  
- 	/* Note: this timer irq context must be accounted for as well. */
- 	account_process_tick(p, user_tick);
--	scheduler_tick();
- 	run_local_timers();
- 	rcu_check_callbacks(user_tick);
- #if defined(CONFIG_IRQ_WORK)
- 	if (in_irq())
- 		irq_work_tick();
- #endif
-+	scheduler_tick();
- 	if (IS_ENABLED(CONFIG_POSIX_TIMERS))
- 		run_posix_cpu_timers(p);
- }
+ #include "squashfs_fs.h"
+ #include "squashfs_fs_sb.h"
+@@ -25,6 +26,8 @@ struct squashfs_stream {
+ 	void		*stream;
+ };
+ 
++static DEFINE_LOCAL_IRQ_LOCK(stream_lock);
++
+ void *squashfs_decompressor_create(struct squashfs_sb_info *msblk,
+ 						void *comp_opts)
+ {
+@@ -79,10 +82,15 @@ int squashfs_decompress(struct squashfs_sb_info *msblk, struct buffer_head **bh,
+ {
+ 	struct squashfs_stream __percpu *percpu =
+ 			(struct squashfs_stream __percpu *) msblk->stream;
+-	struct squashfs_stream *stream = get_cpu_ptr(percpu);
+-	int res = msblk->decompressor->decompress(msblk, stream->stream, bh, b,
+-		offset, length, output);
+-	put_cpu_ptr(stream);
++	struct squashfs_stream *stream;
++	int res;
++
++	stream = get_locked_ptr(stream_lock, percpu);
++
++	res = msblk->decompressor->decompress(msblk, stream->stream, bh, b,
++			offset, length, output);
++
++	put_locked_ptr(stream_lock, stream);
+ 
+ 	if (res < 0)
+ 		ERROR("%s decompression failed, data probably corrupt\n",
 -- 
 2.18.0
 
