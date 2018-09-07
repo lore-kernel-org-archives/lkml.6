@@ -2,87 +2,100 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA0AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44BBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD4F2086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D76B20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:10:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsAWOKfc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DD4F2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="ItK8sIVO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D76B20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbeIGTtu (ORCPT
+        id S1728410AbeIGTvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:49:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35248 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727705AbeIGTtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:49:50 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CD982086B;
-        Fri,  7 Sep 2018 15:08:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536332910;
-        bh=jMAdw4vIHnCmh6u4I1FZhYNHROFddJnv1Wr/nF14d/Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DsAWOKfcXRJ+iMRk5esUUBdms9zr1tyPUrbbnznIMfCLR/wl+q1A4qn/26ViT+rqq
-         op74sW49Hkk0GgYUn6FfrqJZkjUrC3axglcmTkcDtCNGkSf1S097holcDj3g7U51Wb
-         gLrjkx7+rrM+44HE82qrxT+ynqV9+TIo2B2PTwAU=
-Received: by mail-qk1-f179.google.com with SMTP id z78-v6so9878681qka.0;
-        Fri, 07 Sep 2018 08:08:30 -0700 (PDT)
-X-Gm-Message-State: APzg51CTx5FqYxGfvy8pK5xPJzYHL1fqIvCV7euGX7xmVOKfDQ5bSQ+2
-        ExXL9IRihk7dgMI/g0VZrhVp0szsosZO574Blw==
-X-Google-Smtp-Source: ANB0VdaSbCA5NGeXnh2OcL8lyNB2K3NRTY5Z2mTjjExxt2tbJlJirAz01su+zAfs+84kqG1yhedLjqTJVa/BRhuBZs8=
-X-Received: by 2002:a37:4453:: with SMTP id r80-v6mr6233077qka.79.1536332909323;
- Fri, 07 Sep 2018 08:08:29 -0700 (PDT)
+        Fri, 7 Sep 2018 15:51:19 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:37901 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728248AbeIGTvT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:51:19 -0400
+Received: by mail-yb1-f196.google.com with SMTP id e18-v6so5572288ybq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:09:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TaAYZ9snpOcizEPrlLp2rv+nViYTbC2PtsByXxBogJk=;
+        b=ItK8sIVOrcLoFfAyx9kSiK5UqRyUu1Sg1tovdm35w1X0tDNpzKQfFyv3oChOJfdep6
+         A/6iN8Xk8OAEMGbJVF785TEs3JeM+dk3+XAMgqSVrGYBItxP3APTS7CpTEUbw4w3m8Ai
+         dfkH3U5JiIpKVN8tkDfQRPHtkmSZzxevwPMNCUWK2Q/PIb9xiZoHHRA2+Pqtw4IXWAHH
+         DxCNeFaFrl1W/eA1SwgLWaD5OBoZdU6Y91hq4YDiH1EZ34oLZd6f+UBqYWANXGSj7Ria
+         TnmAjtKSh4UAeEG2U10a8eXtJkIpkqZNK0QBt7ZuajFXMT3A5eH+bZpFk+J7eBMh/kZs
+         1mIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TaAYZ9snpOcizEPrlLp2rv+nViYTbC2PtsByXxBogJk=;
+        b=Wc7Cqzl93gVRMUD3RmfdMOqj/3foJ33mqwLEdPx+f9NyZ4rmZSoEn21gyMviDg2mN1
+         Qau+Dky2XXCZigwhLfnAXAD0lfpELj58v7ApaBJ+llwh+an2MrC9XY7+M/sPYlAEDqqY
+         fKXlBouplhK5vjFEehZeoY4Zgwmw8/jS0IX/MP3UMda4Z0UE1H7Szvj2FhhGqoPwQFdp
+         fPz3N/QcQOlj9Bia7wlQWXSf9QK9ImV5zlaqhn2jZ4Y3F/jdDec4170sSkPc1gmYlE/T
+         8HHxnF4lNkDAEbF2xK4il7UdUrfLHUfkkSCQWIr1UGkRIf+iOw+p3qkJnviwvddSrPUF
+         g3UQ==
+X-Gm-Message-State: APzg51CH9u1v6uSOCQ65ei/mwa24gVeeGRNhfZba6veSdcZiYrQb/2bt
+        YIcY0OMuBVAVE60kcZNxXVlQ1Q==
+X-Google-Smtp-Source: ANB0VdacjviL7/expV7dlzxm7OCdgFyIm3feUzK3fyPT4AynIpvyMzJifI/U8vqzlag+OA3OHyBmxw==
+X-Received: by 2002:a25:7911:: with SMTP id u17-v6mr4192824ybc.3.1536332998148;
+        Fri, 07 Sep 2018 08:09:58 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:96d9])
+        by smtp.gmail.com with ESMTPSA id g131-v6sm3562603ywh.70.2018.09.07.08.09.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 08:09:57 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 11:09:55 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
+ IO v4
+Message-ID: <20180907150955.GC11088@cmpxchg.org>
+References: <20180828172258.3185-1-hannes@cmpxchg.org>
+ <20180905214303.GA30178@cmpxchg.org>
+ <20180907110407.GQ24106@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-12-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-12-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 7 Sep 2018 10:08:18 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLR_jsVScGBp0cMfhNJrw4bYOAychWX3Ejw1DBzTpRK+A@mail.gmail.com>
-Message-ID: <CAL_JsqLR_jsVScGBp0cMfhNJrw4bYOAychWX3Ejw1DBzTpRK+A@mail.gmail.com>
-Subject: Re: [PATCH] clk: Convert to using %pOFn instead of device_node.name
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907110407.GQ24106@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 8:53 PM Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+On Fri, Sep 07, 2018 at 01:04:07PM +0200, Peter Zijlstra wrote:
+> So yeah, grudingly acked. Did you want me to pick this up through the
+> scheduler tree since most of this lives there?
 
+Thanks for the ack.
 
-> @@ -492,8 +492,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->
->         provider->base = of_iomap(node, 0);
->
-> -       provider->clkdm_name = kmalloc(strlen(node->parent->name) + 3,
-> -                                      GFP_KERNEL);
-> +       provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
-
-Turns out xxx was a bad choice as the %p handler eats all alphanumeric
-characters. Looks like this has already been applied, so I will send a
-fix.
-
-Rob
+As for routing it, I'll leave that decision to you and Andrew. It
+touches stuff all over, so it could result in quite a few conflicts
+between trees (although I don't expect any of them to be non-trivial).
