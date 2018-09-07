@@ -2,67 +2,76 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183E3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0FEC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABDD2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:42:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABDD2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id A09AC2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:51:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09AC2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeIGLVp (ORCPT
+        id S1726389AbeIGLa4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 07:21:45 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:46934 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725942AbeIGLVp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 07:21:45 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1168613|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03273;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CnaPd4m_1536302509;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CnaPd4m_1536302509)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Fri, 07 Sep 2018 14:41:49 +0800
-Date:   Fri, 7 Sep 2018 14:41:49 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Rob Herring <rob.herring@linaro.org>
-Cc:     linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V3 19/26] dt-bindings: timer: gx6605s SOC timer
-Message-ID: <20180907064149.GA18512@guoren>
-References: <cover.1536138304.git.ren_guo@c-sky.com>
- <768ac390f9eee8acb4dc9ca85a489a1d2fd00628.1536138304.git.ren_guo@c-sky.com>
- <CABGGiszuo3gpjmutYzOpQUmGaNjq88_5pDj2TjXveX9x2+Rsig@mail.gmail.com>
- <20180906020229.GB29405@guoren-Inspiron-7460>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Fri, 7 Sep 2018 07:30:56 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:56369 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeIGLaz (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:5:1>);
+        Fri, 7 Sep 2018 07:30:55 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Fri, 07 Sep 2018 00:51:27 -0600
+Message-Id: <5B921FEE02000078001E6258@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.2 
+Date:   Fri, 07 Sep 2018 00:51:26 -0600
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "Marek Marczykowski" <marmarek@invisiblethingslab.com>
+Cc:     "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Xen-devel] [PATCH] xen/balloon: add runtime control for
+ scrubbing ballooned out pages
+References: <20180906153355.25363-1-marmarek@invisiblethingslab.com>
+In-Reply-To: <20180906153355.25363-1-marmarek@invisiblethingslab.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <20180906020229.GB29405@guoren-Inspiron-7460>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:02:29AM +0800, Guo Ren wrote:
-> On Wed, Sep 05, 2018 at 07:47:29PM -0500, Rob Herring wrote:
-> > On Wed, Sep 5, 2018 at 7:09 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > >
-> > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > > ---
-> > >  .../bindings/timer/csky,gx6605s-timer.txt          | 46 ++++++++++++++++++++++
-> > >  1 file changed, 46 insertions(+)
+>>> On 06.09.18 at 17:33, <marmarek@invisiblethingslab.com> wrote:
+> --- a/include/xen/mem-reservation.h
+> +++ b/include/xen/mem-reservation.h
+> @@ -17,12 +17,17 @@
+>  
+>  #include <xen/page.h>
+>  
+> +#ifdef CONFIG_XEN_SCRUB_PAGES
+> +extern bool xen_scrub_pages;
+> +
+>  static inline void xenmem_reservation_scrub_page(struct page *page)
+>  {
+> -#ifdef CONFIG_XEN_SCRUB_PAGES
+> -	clear_highpage(page);
+> -#endif
+> +	if (xen_scrub_pages)
+> +		clear_highpage(page);
+>  }
+> +#else
+> +static inline void xenmem_reservation_scrub_page(struct page *page) { }
+> +#endif
 
-> Ok, change to "timer0: timer@0x0020a000"
-  Ok, change to "timer0: timer@20a000"
+Wouldn't CONFIG_XEN_SCRUB_PAGES then better become
+CONFIG_XEN_SCRUB_PAGES_DEFAULT, with the value used as
+initializer of xen_scrub_pages?
+
+Jan
+
 
