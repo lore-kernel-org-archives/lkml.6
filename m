@@ -2,101 +2,127 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AF3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43ED3C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFB62083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E506120652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:49:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvWdV7zG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFB62083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RVQ7eAYU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E506120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeIGWaP (ORCPT
+        id S1727608AbeIGWbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:30:15 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38720 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbeIGWaP (ORCPT
+        Fri, 7 Sep 2018 18:31:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34818 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeIGWbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:30:15 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p6-v6so12957324ljc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qM43LjXiLjSbUJAJgeRwrTixwsuyvPKwSICeRdq7uNY=;
-        b=ZvWdV7zGjmfeG5v7DQcXbWgOALkUzB7iXaN9ap4QNEXoSirURz+XV/bcIMVaFYH5lm
-         t0+38BIVe3S5PqYaPzHVL6cgPuJPI7AGUfaml98riBVHnf0FPFnWis8ufLBBsFnyVZZZ
-         VdycG4nahFlFxn6hZlwoXTFwoN5V1FqbU78lxabLQg64CDPsoU2WWG/IfwUQ4kgLrM+1
-         HS0Gp4mRiUSUT0LsO0viWZ7o2lV3J6ycsJlhUFsfbrRWhXXZw+OFHDmkG38+fdLGTdNC
-         3xM/TfNHj/HE30v2a/UhuoPLjYwq0b05e1iDz/lKS0EFzRf5b8r0n2QKI4UxADq+g5fP
-         CJQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qM43LjXiLjSbUJAJgeRwrTixwsuyvPKwSICeRdq7uNY=;
-        b=AesIMv95lN+1GWfdEPJmUaF+ee0o+ojkeyVKolcSntB3D4MGVXF+49uQ5RkRHQgiyI
-         LpGnfn8TnkutxrxN+kydx0JNYPN62Hit3kUJwQYbhzc5O0H5Wd9tELmAF/2lzpz0S0/L
-         WF6a6XEMvuupr46TK5T2HobI6ZwcwKhs3qMaNryZKkY41B0y5AEIL0T/H3Lb5LH9JN8X
-         BWZ73KyZ/8kybJk45sBhWAmSc+5j+RErqd04BGRly7iVCDrw7PbOo/gqh4kqxr24cJ9j
-         bOYRMH2PUrJc8UTXn4moa+z4uVGkolmt+j+ppCMJ0T2Y63IM5c+9Xem30/zbY3XA7c2E
-         4fcg==
-X-Gm-Message-State: APzg51AWd1KagneY5votvkyEfQ/IuDezSUTGP7KMA1JyZY4d2yvyYcMt
-        6udnYyj4MyJae/jibCjSogY=
-X-Google-Smtp-Source: ANB0VdYwL9olv9g6up0LhN5+n7Sf9rdwUZVmToGXyK2IWUFWTWY3YMUgKkmBJtZfmrQ2H3QB2JVvIg==
-X-Received: by 2002:a2e:750d:: with SMTP id q13-v6mr5437493ljc.148.1536342492583;
-        Fri, 07 Sep 2018 10:48:12 -0700 (PDT)
-Received: from Mort.jumbo.freeair (91-156-179-220.elisa-laajakaista.fi. [91.156.179.220])
-        by smtp.gmail.com with ESMTPSA id j135-v6sm1384100lfj.91.2018.09.07.10.48.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 10:48:11 -0700 (PDT)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
-To:     "Michael S . Tsirkin" <mst@redhat.com>
-Cc:     igor.stoppa@gmail.com, Igor Stoppa <igor.stoppa@huawei.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] virtio: add unlikely() to WARN_ON_ONCE()
-Date:   Fri,  7 Sep 2018 20:48:02 +0300
-Message-Id: <20180907174802.31900-1-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 7 Sep 2018 18:31:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=L/xMawFhxdJ7gWCvy7G4gRF+nNXSDDK2zVZojQoCY0A=; b=RVQ7eAYUaioc14er2mqN16Dzp
+        L29YCP4GFGGAUhOF378snopXBshHFl5K50OKHPyAiz0FhQxgUwx+h2gf0QbqYAndaheTSqtEaQDro
+        KT0Qd/EKzXond9vg+8/Tew1ia/BpSo+IGMf+jt6LqCA6C8d8rf31bjL5WwyDATc2S/ul0oKDkf5h5
+        nstjeYySmc+T7LNpAvmZXoVrmDUv52yk1OMBhfcFxtzSzoQ6YhkZEEHCMQNZJ4I9EXQDADqvOCUGR
+        N2ldMIOZ5oPjnG2rSH+hhCgCyHVma1rRdejBw1l1ObJP2Vq7f7SgfcvDfC4OF8rNoWh6lW95ClrcU
+        fscT5MLBg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyKt5-0007hL-56; Fri, 07 Sep 2018 17:49:43 +0000
+Date:   Fri, 7 Sep 2018 10:49:42 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Subject: Re: [PATCH 2/6] md: convert to kvmalloc
+Message-ID: <20180907174942.GB3425@bombadil.infradead.org>
+References: <20180907165635.8469-1-kent.overstreet@gmail.com>
+ <20180907165635.8469-3-kent.overstreet@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907165635.8469-3-kent.overstreet@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The condition to test is unlikely() to be true. Add the hint.
+On Fri, Sep 07, 2018 at 12:56:31PM -0400, Kent Overstreet wrote:
+> @@ -165,7 +164,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+>  		       struct dma_async_tx_descriptor *tx)
+>  {
+>  	int disks = sh->disks;
+> -	struct page **srcs = flex_array_get(percpu->scribble, 0);
+> +	struct page **srcs = percpu->scribble;
+>  	int count = 0, pd_idx = sh->pd_idx, i;
+>  	struct async_submit_ctl submit;
+>  
+> @@ -196,8 +195,8 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+>  	}
+>  
+>  	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, tx,
+> -			  NULL, sh, flex_array_get(percpu->scribble, 0)
+> -			  + sizeof(struct page *) * (sh->disks + 2));
+> +			  NULL, sh, percpu->scribble +
+> +			  sizeof(struct page *) * (sh->disks + 2));
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Virtualization@lists.linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
----
- tools/virtio/linux/kernel.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think this would read better written as:
 
-diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
-index fb22bccfbc8a..2b5e417ea2f0 100644
---- a/tools/virtio/linux/kernel.h
-+++ b/tools/virtio/linux/kernel.h
-@@ -123,7 +123,7 @@ static inline void free_page(unsigned long addr)
- #define dev_err(dev, format, ...) fprintf (stderr, format, ## __VA_ARGS__)
- #define dev_warn(dev, format, ...) fprintf (stderr, format, ## __VA_ARGS__)
- 
--#define WARN_ON_ONCE(cond) ((cond) ? fprintf (stderr, "WARNING\n") : 0)
-+#define WARN_ON_ONCE(cond) (unlikely(cond) ? fprintf (stderr, "WARNING\n") : 0)
- 
- #define min(x, y) ({				\
- 	typeof(x) _min1 = (x);			\
--- 
-2.17.1
+	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, tx,
+			  NULL, sh, srcs + sh->disks + 2);
 
+>  static addr_conv_t *to_addr_conv(struct stripe_head *sh,
+>  				 struct raid5_percpu *percpu, int i)
+>  {
+> -	void *addr;
+> -
+> -	addr = flex_array_get(percpu->scribble, i);
+> -	return addr + sizeof(struct page *) * (sh->disks + 2);
+> +	return percpu->scribble + i * percpu->scribble_obj_size +
+> +		sizeof(struct page *) * (sh->disks + 2);
+>  }
+>  
+>  /* return a pointer to the address conversion region of the scribble buffer */
+>  static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
+>  {
+> -	void *addr;
+> -
+> -	addr = flex_array_get(percpu->scribble, i);
+> -	return addr;
+> +	return percpu->scribble + i * percpu->scribble_obj_size;
+>  }
+
+Perhaps this would be better as ...
+
+ static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
+ {
+-	void *addr;
+-
+-	addr = flex_array_get(percpu->scribble, i);
+-	return addr;
++	return percpu->scribble + i * percpu->scribble_obj_size;
+ }
+
+ static addr_conv_t *to_addr_conv(struct stripe_head *sh,
+ 				 struct raid5_percpu *percpu, int i)
+ {
+-	void *addr;
+-
+-	addr = flex_array_get(percpu->scribble, i);
+-	return addr + sizeof(struct page *) * (sh->disks + 2);
++	return to_addr_page(percpu, i) + sh->disks + 2;
+ }
+
+
+The rest looks good.
