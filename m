@@ -6,51 +6,50 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A42C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD62C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFEE4206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:38:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFEE4206BB
+	by mail.kernel.org (Postfix) with ESMTP id B5108206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:38:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5108206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbeIGNR5 (ORCPT
+        id S1728190AbeIGNR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:17:57 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:39418 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728071AbeIGNR4 (ORCPT
+        Fri, 7 Sep 2018 09:17:58 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:33326 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbeIGNR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:17:56 -0400
-Received: by mail-it0-f70.google.com with SMTP id w196-v6so18701241itb.4
+        Fri, 7 Sep 2018 09:17:57 -0400
+Received: by mail-it0-f71.google.com with SMTP id u126-v6so18736649itb.0
         for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:38:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=7ABnmAd5zyZxB/9Q3Turs7e+vlK3CYX7hf5YIylZu8g=;
-        b=ImTs3/0dEX8J1mxNWtie9Qo3Y0xSs+NbAd14X6brYFRXSgMZLBIEDY5X3nOmPA5Jqy
-         F0S5qH+F9hZ2CpV3MYaJKLShLrDzAZ1V7f3bJd7VszPr7lJ81vEyYM00qHRvELVxhrUk
-         k4nYBvXD/Y7Wd4VvOxN/pRoBin1OoGI780LM8FX8tHo2tQTMHXlangs2MGRcqvlms115
-         iAlr1dmwnT1sjhUFDXYIVQsuAwQvyHaiaVaOWJNB6LSCYSj7CFYI4er+kUY78Gk/vs6P
-         nlh8JNQnZDjUwl5mP5hdjwUVy4vcslu0uz9D+UeGkRkawOO3excUrM/5WTvMSCICL6Ne
-         FKOA==
-X-Gm-Message-State: APzg51BCCeUEhaoRRzHFAsGfRWSr1eVM8XmRLcpXelp2fsG0m0coGF/k
-        1JiYBwie2XCmY+Dv0qdvC84kU3ui+1CT6YceITqo0IlqCLvY
-X-Google-Smtp-Source: ANB0VdZ5/Li3bL7KbhwHXl0Zsw5NE2p1y8kbZi8GekKEuCUCHQAgMw1vPDv1o5BCmfr002m5fU2MkqgoPlYl+4eaj6d1AkZ9M9rl
+        bh=m7A1cBbZBItiBgOXWLjjAk+x94DIqIvnYGoIqW8EVxM=;
+        b=GiX++7W73ry8EnGqhaYUDIEwvQt1CVJANFzgtKJbRwfJbQ+ny3pmr5QVTGPqqvIdoM
+         2f06htzmexcB4OUQeVuyiZPzIM5pMd9XUaFTaGtvyZ5rg8cjXhika92ip8qC2HQnPEzY
+         NzAqID0X6xQs7V8QvLA4oFvSgkG6buAhvkVB0M+2iLcT9WKTSMUqtXLyg481PKBlfBw6
+         QBDFZkUMhA7eisO2qi/wZ9RY+tDweHOylqhp35dEii0ozhJU72PuAjLqbnE6OWer6arS
+         DbRY0hWIjfsF+GI9HLBQBizlc6m+Hwfa8Xu2IV1yQH7x4lIQyPRiqYn3jFix26uqDY+O
+         rggw==
+X-Gm-Message-State: APzg51AFbL4sGief2p/cVMzf/Irmr04OjqbYpR0gjW+Ua9SfFFkHjZ/5
+        NXyDAAeFZOo5muUHuPrahT66V81QinWTEy5ldv5FsI0ReKs/
+X-Google-Smtp-Source: ANB0VdZxhWhMKclzKHERulx2rs9cfpnvD+WRb+dDDK8BlHfZsASkctoi2ZN/I9Umb7JPRn+us14deoJU+Ob1fLO4Oon10yRmJZML
 MIME-Version: 1.0
-X-Received: by 2002:a24:783:: with SMTP id f125-v6mr5865668itf.50.1536309482789;
- Fri, 07 Sep 2018 01:38:02 -0700 (PDT)
-Date:   Fri, 07 Sep 2018 01:38:02 -0700
+X-Received: by 2002:a02:4ad2:: with SMTP id s79-v6mr5496012jad.50.1536309483029;
+ Fri, 07 Sep 2018 01:38:03 -0700 (PDT)
+Date:   Fri, 07 Sep 2018 01:38:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fca96a057543ecea@google.com>
-Subject: KASAN: use-after-free Read in cma_bind_port
-From:   syzbot <syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com>
-To:     danielj@mellanox.com, dledford@redhat.com, jgg@ziepe.ca,
-        leon@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, parav@mellanox.com,
-        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000005a89057543edbb@google.com>
+Subject: possible deadlock in start_this_handle
+From:   syzbot <syzbot+fe49aec75e221f9b093e@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,119 +60,550 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    b36fdc6853a3 Merge tag 'gpio-v4.19-2' of git://git.kernel...
+HEAD commit:    ca16eb342ebe Merge tag 'for-linus-20180906' of git://git.k..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1660c266400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=129e80ae400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=6c9564cd177daf0c
-dashboard link: https://syzkaller.appspot.com/bug?extid=da2591e115d57a9cbb8b
+dashboard link: https://syzkaller.appspot.com/bug?extid=fe49aec75e221f9b093e
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+da2591e115d57a9cbb8b@syzkaller.appspotmail.com
+Reported-by: syzbot+fe49aec75e221f9b093e@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: use-after-free in cma_bind_port+0x35d/0x3f0  
-drivers/infiniband/core/cma.c:3059
-Read of size 2 at addr ffff8801b89fb320 by task syz-executor3/7584
+ISOFS: Unable to identify CD-ROM format.
 
-CPU: 1 PID: 7584 Comm: syz-executor3 Not tainted 4.19.0-rc2+ #224
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.0-rc2+ #2 Not tainted
+------------------------------------------------------
+kswapd0/1430 is trying to acquire lock:
+0000000085a9412e (jbd2_handle){++++}, at: start_this_handle+0x589/0x1260  
+fs/jbd2/transaction.c:383
+
+but task is already holding lock:
+00000000af99a839 (fs_reclaim){+.+.}, at: __page_frag_cache_refill  
+mm/page_alloc.c:4476 [inline]
+00000000af99a839 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30  
+mm/page_alloc.c:4505
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (fs_reclaim){+.+.}:
+        __fs_reclaim_acquire mm/page_alloc.c:3728 [inline]
+        fs_reclaim_acquire.part.98+0x24/0x30 mm/page_alloc.c:3739
+        fs_reclaim_acquire+0x14/0x20 mm/page_alloc.c:3740
+        slab_pre_alloc_hook mm/slab.h:418 [inline]
+        slab_alloc mm/slab.c:3378 [inline]
+        kmem_cache_alloc_trace+0x2d/0x730 mm/slab.c:3618
+        kmalloc include/linux/slab.h:513 [inline]
+        kzalloc include/linux/slab.h:707 [inline]
+        smk_fetch.part.24+0x5a/0xf0 security/smack/smack_lsm.c:273
+        smk_fetch security/smack/smack_lsm.c:3548 [inline]
+        smack_d_instantiate+0x946/0xea0 security/smack/smack_lsm.c:3502
+        security_d_instantiate+0x5c/0xf0 security/security.c:1287
+        d_instantiate+0x5e/0xa0 fs/dcache.c:1870
+        shmem_mknod+0x189/0x1f0 mm/shmem.c:2812
+        vfs_mknod+0x447/0x800 fs/namei.c:3719
+        handle_create+0x1ff/0x7c0 drivers/base/devtmpfs.c:211
+        handle drivers/base/devtmpfs.c:374 [inline]
+        devtmpfsd+0x27f/0x4c0 drivers/base/devtmpfs.c:400
+        kthread+0x35a/0x420 kernel/kthread.c:246
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+-> #1 (&isp->smk_lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+        smack_d_instantiate+0x130/0xea0 security/smack/smack_lsm.c:3369
+        security_d_instantiate+0x5c/0xf0 security/security.c:1287
+        d_instantiate_new+0x7e/0x160 fs/dcache.c:1889
+        ext4_add_nondir+0x81/0x90 fs/ext4/namei.c:2415
+        ext4_symlink+0x761/0x1170 fs/ext4/namei.c:3162
+        vfs_symlink+0x37a/0x5d0 fs/namei.c:4127
+        do_symlinkat+0x242/0x2d0 fs/namei.c:4154
+        __do_sys_symlink fs/namei.c:4173 [inline]
+        __se_sys_symlink fs/namei.c:4171 [inline]
+        __x64_sys_symlink+0x59/0x80 fs/namei.c:4171
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (jbd2_handle){++++}:
+        lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+        start_this_handle+0x5c0/0x1260 fs/jbd2/transaction.c:385
+        jbd2__journal_start+0x3c9/0x9f0 fs/jbd2/transaction.c:439
+        __ext4_journal_start_sb+0x18d/0x590 fs/ext4/ext4_jbd2.c:81
+        __ext4_journal_start fs/ext4/ext4_jbd2.h:311 [inline]
+        ext4_dirty_inode+0x62/0xc0 fs/ext4/inode.c:6021
+        __mark_inode_dirty+0x760/0x1300 fs/fs-writeback.c:2129
+        mark_inode_dirty_sync include/linux/fs.h:2072 [inline]
+        iput+0x131/0xa00 fs/inode.c:1570
+        dentry_unlink_inode+0x461/0x5e0 fs/dcache.c:374
+        __dentry_kill+0x44c/0x7a0 fs/dcache.c:566
+        shrink_dentry_list+0x322/0x7c0 fs/dcache.c:1079
+        prune_dcache_sb+0x12f/0x1c0 fs/dcache.c:1171
+        super_cache_scan+0x270/0x480 fs/super.c:102
+        do_shrink_slab+0x4ba/0xbb0 mm/vmscan.c:536
+        shrink_slab+0x389/0x8c0 mm/vmscan.c:686
+        shrink_node+0x429/0x16a0 mm/vmscan.c:2735
+        kswapd_shrink_node mm/vmscan.c:3457 [inline]
+        balance_pgdat+0x7ca/0x1010 mm/vmscan.c:3567
+        kswapd+0x82f/0x11e0 mm/vmscan.c:3789
+        kthread+0x35a/0x420 kernel/kthread.c:246
+        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+
+other info that might help us debug this:
+
+Chain exists of:
+   jbd2_handle --> &isp->smk_lock --> fs_reclaim
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(fs_reclaim);
+                                lock(&isp->smk_lock);
+                                lock(fs_reclaim);
+   lock(jbd2_handle);
+
+  *** DEADLOCK ***
+
+3 locks held by kswapd0/1430:
+  #0: 00000000af99a839 (fs_reclaim){+.+.}, at: __page_frag_cache_refill  
+mm/page_alloc.c:4476 [inline]
+  #0: 00000000af99a839 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30  
+mm/page_alloc.c:4505
+  #1: 000000003e78ad93 (shrinker_rwsem){++++}, at: shrink_slab+0x207/0x8c0  
+mm/vmscan.c:676
+  #2: 00000000e742ec1a (&type->s_umount_key#28){++++}, at:  
+trylock_super+0x22/0x110 fs/super.c:412
+
+stack backtrace:
+CPU: 1 PID: 1430 Comm: kswapd0 Not tainted 4.19.0-rc2+ #2
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:431
-  cma_bind_port+0x35d/0x3f0 drivers/infiniband/core/cma.c:3059
-  cma_alloc_port+0x115/0x180 drivers/infiniband/core/cma.c:3095
-  cma_alloc_any_port drivers/infiniband/core/cma.c:3160 [inline]
-  cma_get_port drivers/infiniband/core/cma.c:3314 [inline]
-  rdma_bind_addr+0x1765/0x23d0 drivers/infiniband/core/cma.c:3434
-  cma_bind_addr drivers/infiniband/core/cma.c:2963 [inline]
-  rdma_resolve_addr+0x4fa/0x27a0 drivers/infiniband/core/cma.c:2974
-  ucma_resolve_ip+0x242/0x2a0 drivers/infiniband/core/ucma.c:711
-  ucma_write+0x336/0x420 drivers/infiniband/core/ucma.c:1680
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  print_circular_bug.isra.34.cold.55+0x1bd/0x27d  
+kernel/locking/lockdep.c:1222
+  check_prev_add kernel/locking/lockdep.c:1862 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1975 [inline]
+  validate_chain kernel/locking/lockdep.c:2416 [inline]
+  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
+  lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+  start_this_handle+0x5c0/0x1260 fs/jbd2/transaction.c:385
+  jbd2__journal_start+0x3c9/0x9f0 fs/jbd2/transaction.c:439
+  __ext4_journal_start_sb+0x18d/0x590 fs/ext4/ext4_jbd2.c:81
+  __ext4_journal_start fs/ext4/ext4_jbd2.h:311 [inline]
+  ext4_dirty_inode+0x62/0xc0 fs/ext4/inode.c:6021
+  __mark_inode_dirty+0x760/0x1300 fs/fs-writeback.c:2129
+  mark_inode_dirty_sync include/linux/fs.h:2072 [inline]
+  iput+0x131/0xa00 fs/inode.c:1570
+  dentry_unlink_inode+0x461/0x5e0 fs/dcache.c:374
+  __dentry_kill+0x44c/0x7a0 fs/dcache.c:566
+  shrink_dentry_list+0x322/0x7c0 fs/dcache.c:1079
+  prune_dcache_sb+0x12f/0x1c0 fs/dcache.c:1171
+  super_cache_scan+0x270/0x480 fs/super.c:102
+  do_shrink_slab+0x4ba/0xbb0 mm/vmscan.c:536
+  shrink_slab+0x389/0x8c0 mm/vmscan.c:686
+  shrink_node+0x429/0x16a0 mm/vmscan.c:2735
+  kswapd_shrink_node mm/vmscan.c:3457 [inline]
+  balance_pgdat+0x7ca/0x1010 mm/vmscan.c:3567
+  kswapd+0x82f/0x11e0 mm/vmscan.c:3789
+  kthread+0x35a/0x420 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "
+esize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "
+esize="
+ISOFS: Unable to identify CD-ROM format.
+FAULT_FLAG_ALLOW_RETRY missing 30
+CPU: 1 PID: 323 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  handle_userfault.cold.33+0x43/0x52 fs/userfaultfd.c:432
+  do_anonymous_page mm/memory.c:3164 [inline]
+  handle_pte_fault mm/memory.c:3981 [inline]
+  __handle_mm_fault+0x389e/0x4350 mm/memory.c:4107
+  handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
+  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
+  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1161
+RIP: 0010:copy_user_generic_unrolled+0x86/0xc0  
+arch/x86/lib/copy_user_64.S:65
+Code: 4c 8b 5e 38 4c 89 47 20 4c 89 4f 28 4c 89 57 30 4c 89 5f 38 48 8d 76  
+40 48 8d 7f 40 ff c9 75 b6 89 d1 83 e2 07 c1 e9 03 74 12 <4c> 8b 06 4c 89  
+07 48 8d 76 08 48 8d 7f 08 ff c9 75 ee 21 d2 74 10
+RSP: 0018:ffff880164f67700 EFLAGS: 00010203
+RAX: 0000000000000004 RBX: 000000000000000c RCX: 0000000000000001
+RDX: 0000000000000004 RSI: 0000000020013ff4 RDI: ffff8801c49a14a0
+RBP: ffff880164f67738 R08: ffffed0038934296 R09: ffffed0038934294
+R10: ffffed0038934295 R11: 0000000000000003 R12: 0000000020014000
+R13: 0000000020013ff4 R14: ffff8801c49a14a0 R15: 00007ffffffff000
+  copy_from_user include/linux/uaccess.h:147 [inline]
+  ip_options_get_from_user+0x8d/0xf0 net/ipv4/ip_options.c:537
+  do_ip_setsockopt.isra.13+0x1ba6/0x3e70 net/ipv4/ip_sockglue.c:655
+  ip_setsockopt+0x4c/0x140 net/ipv4/ip_sockglue.c:1249
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3062
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1c5/0x3b0 net/socket.c:1900
+  __do_sys_setsockopt net/socket.c:1911 [inline]
+  __se_sys_setsockopt net/socket.c:1908 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1908
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x457099
 Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f47da18ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f47da18b6d4 RCX: 0000000000457099
-RDX: 0000000000000048 RSI: 0000000020000240 RDI: 0000000000000005
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d8100 R14: 00000000004c1c28 R15: 0000000000000000
-
-Allocated by task 7601:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x730 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  __rdma_create_id+0xdf/0x7a0 drivers/infiniband/core/cma.c:782
-  ucma_create_id+0x399/0x9d0 drivers/infiniband/core/ucma.c:502
-  ucma_write+0x336/0x420 drivers/infiniband/core/ucma.c:1680
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+RSP: 002b:00007f20d1b5ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f20d1b5f6d4 RCX: 0000000000457099
+RDX: 0000000000000004 RSI: 0900000000000000 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 000000000000000c R09: 0000000000000000
+R10: 0000000020013ff4 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d58c8 R14: 00000000004c982a R15: 0000000000000000
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "%esize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "%esize="
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "xesize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "xesize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+FAULT_FLAG_ALLOW_RETRY missing 30
+CPU: 0 PID: 480 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  handle_userfault.cold.33+0x43/0x52 fs/userfaultfd.c:432
+  do_anonymous_page mm/memory.c:3164 [inline]
+  handle_pte_fault mm/memory.c:3981 [inline]
+  __handle_mm_fault+0x389e/0x4350 mm/memory.c:4107
+  handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
+ISOFS: Unable to identify CD-ROM format.
+  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
+  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
+ISOFS: Unable to identify CD-ROM format.
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1161
+RIP: 0010:copy_user_generic_unrolled+0x86/0xc0  
+arch/x86/lib/copy_user_64.S:65
+Code: 4c 8b 5e 38 4c 89 47 20 4c 89 4f 28 4c 89 57 30 4c 89 5f 38 48 8d 76  
+40 48 8d 7f 40 ff c9 75 b6 89 d1 83 e2 07 c1 e9 03 74 12 <4c> 8b 06 4c 89  
+07 48 8d 76 08 48 8d 7f 08 ff c9 75 ee 21 d2 74 10
+RSP: 0018:ffff880166f67700 EFLAGS: 00010203
+RAX: 0000000000000004 RBX: 000000000000000c RCX: 0000000000000001
+RDX: 0000000000000004 RSI: 0000000020013ff4 RDI: ffff8801c04690a0
+RBP: ffff880166f67738 R08: ffffed003808d216 R09: ffffed003808d214
+R10: ffffed003808d215 R11: 0000000000000003 R12: 0000000020014000
+R13: 0000000020013ff4 R14: ffff8801c04690a0 R15: 00007ffffffff000
+  copy_from_user include/linux/uaccess.h:147 [inline]
+  ip_options_get_from_user+0x8d/0xf0 net/ipv4/ip_options.c:537
+  do_ip_setsockopt.isra.13+0x1ba6/0x3e70 net/ipv4/ip_sockglue.c:655
+ISOFS: Unable to identify CD-ROM format.
+  ip_setsockopt+0x4c/0x140 net/ipv4/ip_sockglue.c:1249
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3062
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1c5/0x3b0 net/socket.c:1900
+  __do_sys_setsockopt net/socket.c:1911 [inline]
+  __se_sys_setsockopt net/socket.c:1908 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1908
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 7583:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x210 mm/slab.c:3813
-  rdma_destroy_id+0x848/0xce0 drivers/infiniband/core/cma.c:1737
-  ucma_close+0x100/0x300 drivers/infiniband/core/ucma.c:1759
-  __fput+0x38a/0xa40 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+RIP: 0033:0x457099
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f20d1b5ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f20d1b5f6d4 RCX: 0000000000457099
+RDX: 0000000000000004 RSI: 0200000000000000 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 000000000000000c R09: 0000000000000000
+R10: 0000000020013ff4 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d58c8 R14: 00000000004c982a R15: 0000000000000000
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "r%size="
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "r%size="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rxsize="
+ISOFS: Unable to identify CD-ROM format.
+FAULT_FLAG_ALLOW_RETRY missing 30
+CPU: 0 PID: 618 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  handle_userfault.cold.33+0x43/0x52 fs/userfaultfd.c:432
+  do_anonymous_page mm/memory.c:3164 [inline]
+  handle_pte_fault mm/memory.c:3981 [inline]
+  __handle_mm_fault+0x389e/0x4350 mm/memory.c:4107
+ISOFS: Unable to identify CD-ROM format.
+  handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
+  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
+ISOFS: Unable to identify CD-ROM format.
+  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1161
+RIP: 0010:copy_user_generic_unrolled+0x86/0xc0  
+arch/x86/lib/copy_user_64.S:65
+Code: 4c 8b 5e 38 4c 89 47 20 4c 89 4f 28 4c 89 57 30 4c 89 5f 38 48 8d 76  
+40 48 8d 7f 40 ff c9 75 b6 89 d1 83 e2 07 c1 e9 03 74 12 <4c> 8b 06 4c 89  
+07 48 8d 76 08 48 8d 7f 08 ff c9 75 ee 21 d2 74 10
+RSP: 0018:ffff880166f87700 EFLAGS: 00010203
+RAX: 0000000000000004 RBX: 000000000000000c RCX: 0000000000000001
+RDX: 0000000000000004 RSI: 0000000020013ff4 RDI: ffff8800136c75a0
+RBP: ffff880166f87738 R08: ffffed00026d8eb6 R09: ffffed00026d8eb4
+R10: ffffed00026d8eb5 R11: 0000000000000003 R12: 0000000020014000
+R13: 0000000020013ff4 R14: ffff8800136c75a0 R15: 00007ffffffff000
+  copy_from_user include/linux/uaccess.h:147 [inline]
+  ip_options_get_from_user+0x8d/0xf0 net/ipv4/ip_options.c:537
+  do_ip_setsockopt.isra.13+0x1ba6/0x3e70 net/ipv4/ip_sockglue.c:655
+  ip_setsockopt+0x4c/0x140 net/ipv4/ip_sockglue.c:1249
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3062
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1c5/0x3b0 net/socket.c:1900
+ISOFS: Unable to identify CD-ROM format.
+  __do_sys_setsockopt net/socket.c:1911 [inline]
+  __se_sys_setsockopt net/socket.c:1908 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1908
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801b89fb300
-  which belongs to the cache kmalloc-2048 of size 2048
-The buggy address is located 32 bytes inside of
-  2048-byte region [ffff8801b89fb300, ffff8801b89fbb00)
-The buggy address belongs to the page:
-page:ffffea0006e27e80 count:1 mapcount:0 mapping:ffff8801dac00c40 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0006ec8108 ffffea0006e90288 ffff8801dac00c40
-raw: 0000000000000000 ffff8801b89fa200 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b89fb200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b89fb280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801b89fb300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                ^
-  ffff8801b89fb380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b89fb400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+RIP: 0033:0x457099
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f20d1b5ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f20d1b5f6d4 RCX: 0000000000457099
+RDX: 0000000000000004 RSI: 6000000000000000 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 000000000000000c R09: 0000000000000000
+R10: 0000000020013ff4 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d58c8 R14: 00000000004c982a R15: 0000000000000000
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rxsize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+isofs_fill_super: bread failed, dev=loop6, iso_blknum=32, block=64
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "r
+size="
+ISOFS: Unable to identify CD-ROM format.
+FAULT_FLAG_ALLOW_RETRY missing 30
+CPU: 0 PID: 728 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  handle_userfault.cold.33+0x43/0x52 fs/userfaultfd.c:432
+ISOFS: Unable to identify CD-ROM format.
+  do_anonymous_page mm/memory.c:3164 [inline]
+  handle_pte_fault mm/memory.c:3981 [inline]
+  __handle_mm_fault+0x389e/0x4350 mm/memory.c:4107
+  handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
+  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
+  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
+ISOFS: Unable to identify CD-ROM format.
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1161
+RIP: 0010:copy_user_generic_unrolled+0x86/0xc0  
+arch/x86/lib/copy_user_64.S:65
+Code: 4c 8b 5e 38 4c 89 47 20 4c 89 4f 28 4c 89 57 30 4c 89 5f 38 48 8d 76  
+40 48 8d 7f 40 ff c9 75 b6 89 d1 83 e2 07 c1 e9 03 74 12 <4c> 8b 06 4c 89  
+07 48 8d 76 08 48 8d 7f 08 ff c9 75 ee 21 d2 74 10
+RSP: 0018:ffff88015ba57700 EFLAGS: 00010203
+RAX: 0000000000000004 RBX: 000000000000000c RCX: 0000000000000001
+RDX: 0000000000000004 RSI: 0000000020013ff4 RDI: ffff8801d7f72220
+RBP: ffff88015ba57738 R08: ffffed003afee446 R09: ffffed003afee444
+R10: ffffed003afee445 R11: 0000000000000003 R12: 0000000020014000
+R13: 0000000020013ff4 R14: ffff8801d7f72220 R15: 00007ffffffff000
+  copy_from_user include/linux/uaccess.h:147 [inline]
+  ip_options_get_from_user+0x8d/0xf0 net/ipv4/ip_options.c:537
+  do_ip_setsockopt.isra.13+0x1ba6/0x3e70 net/ipv4/ip_sockglue.c:655
+  ip_setsockopt+0x4c/0x140 net/ipv4/ip_sockglue.c:1249
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3062
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1c5/0x3b0 net/socket.c:1900
+  __do_sys_setsockopt net/socket.c:1911 [inline]
+  __se_sys_setsockopt net/socket.c:1908 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1908
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457099
+ISOFS: Unable to identify CD-ROM format.
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f20d1b5ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f20d1b5f6d4 RCX: 0000000000457099
+RDX: 0000000000000004 RSI: ffffffff00000000 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 000000000000000c R09: 0000000000000000
+R10: 0000000020013ff4 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d58c8 R14: 00000000004c982a R15: 0000000000000000
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "r
+size="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "reaize="
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "reaize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rezize="
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rezize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+FAULT_FLAG_ALLOW_RETRY missing 30
+CPU: 0 PID: 938 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  handle_userfault.cold.33+0x43/0x52 fs/userfaultfd.c:432
+  do_anonymous_page mm/memory.c:3164 [inline]
+  handle_pte_fault mm/memory.c:3981 [inline]
+  __handle_mm_fault+0x389e/0x4350 mm/memory.c:4107
+  handle_mm_fault+0x53e/0xc80 mm/memory.c:4144
+  __do_page_fault+0x620/0xe50 arch/x86/mm/fault.c:1395
+  do_page_fault+0xf6/0x7a4 arch/x86/mm/fault.c:1470
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1161
+RIP: 0010:copy_user_generic_unrolled+0x86/0xc0  
+arch/x86/lib/copy_user_64.S:65
+Code: 4c 8b 5e 38 4c 89 47 20 4c 89 4f 28 4c 89 57 30 4c 89 5f 38 48 8d 76  
+40 48 8d 7f 40 ff c9 75 b6 89 d1 83 e2 07 c1 e9 03 74 12 <4c> 8b 06 4c 89  
+07 48 8d 76 08 48 8d 7f 08 ff c9 75 ee 21 d2 74 10
+RSP: 0018:ffff88001c8ff700 EFLAGS: 00010203
+RAX: 0000000000000004 RBX: 000000000000000c RCX: 0000000000000001
+RDX: 0000000000000004 RSI: 0000000020013ff4 RDI: ffff880164d4e1a0
+RBP: ffff88001c8ff738 R08: ffffed002c9a9c36 R09: ffffed002c9a9c34
+R10: ffffed002c9a9c35 R11: 0000000000000003 R12: 0000000020014000
+R13: 0000000020013ff4 R14: ffff880164d4e1a0 R15: 00007ffffffff000
+  copy_from_user include/linux/uaccess.h:147 [inline]
+  ip_options_get_from_user+0x8d/0xf0 net/ipv4/ip_options.c:537
+  do_ip_setsockopt.isra.13+0x1ba6/0x3e70 net/ipv4/ip_sockglue.c:655
+  ip_setsockopt+0x4c/0x140 net/ipv4/ip_sockglue.c:1249
+  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3062
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1c5/0x3b0 net/socket.c:1900
+  __do_sys_setsockopt net/socket.c:1911 [inline]
+  __se_sys_setsockopt net/socket.c:1908 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1908
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457099
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f20d1b5ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f20d1b5f6d4 RCX: 0000000000457099
+RDX: 0000000000000004 RSI: 2000000000000000 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 000000000000000c R09: 0000000000000000
+R10: 0000000020013ff4 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d58c8 R14: 00000000004c982a R15: 0000000000000000
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rexize="
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rexize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "re-ize="
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "re-ize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "reuize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "re
+ize="
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "re
+ize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rehize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "rehize="
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "reyize="
+ISOFS: Unable to identify CD-ROM format.
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "reyize="
+ISOFS: Unable to identify CD-ROM format.
+FAULT_FLAG_ALLOW_RETRY missing 30
+CPU: 1 PID: 1343 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #2
 
 
 ---
