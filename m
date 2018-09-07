@@ -2,102 +2,124 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B50CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE95C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3126E2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:23:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3126E2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C82602075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:25:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YHbGllDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82602075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeIGVF0 (ORCPT
+        id S1728093AbeIGVHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:05:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40722 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726598AbeIGVF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:05:26 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2C1468577E;
-        Fri,  7 Sep 2018 16:23:46 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 90263A9E6F;
-        Fri,  7 Sep 2018 16:23:37 +0000 (UTC)
-Date:   Sat, 8 Sep 2018 00:23:32 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org, jsmart2021@gmail.com,
-        sagi@grimberg.me, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, keith.busch@intel.com,
-        jthumshirn@suse.de, bart.vanassche@wdc.com
-Subject: Re: [PATCH 3/3] nvme-pci: use queue close instead of queue freeze
-Message-ID: <20180907162331.GB9056@ming.t460p>
-References: <1536120586-3378-1-git-send-email-jianchao.w.wang@oracle.com>
- <1536120586-3378-4-git-send-email-jianchao.w.wang@oracle.com>
- <20180905220910.GC21352@ming.t460p>
- <8ba97c77-0c3b-75df-0259-3c97ef7b774e@oracle.com>
- <20180906130715.GB31250@ming.t460p>
- <165989bc-949f-570e-c1d2-0ee1f0d4472a@oracle.com>
+        Fri, 7 Sep 2018 17:07:05 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:44334 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbeIGVHF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:07:05 -0400
+Received: by mail-yw1-f65.google.com with SMTP id l9-v6so5579410ywc.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=OEk2WljBHFeTbPUuH4TMNaRorwBNs6MuUKX7hXCUFzc=;
+        b=YHbGllDjtYi2DUYdXpsjF8F6SeVlYr4l9I8XUaU0729wAnT1vKsQWT6veBojJR6kfm
+         LW40w1V4yT8LlC9RjMYoNIEH2qkA0V8w6Ec1Ctgse0zUiv5EfzRPojKThpCrn8tWboOG
+         KvWQ0OlfdLfnSM0JVFH60rC0ouUVzV/4lUMDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=OEk2WljBHFeTbPUuH4TMNaRorwBNs6MuUKX7hXCUFzc=;
+        b=jPP39Up5CikPFxxmzi3GSRH+C4PdRXkF2WZem3eKnfEi03aonJFmVf7a3Cy7RCh2S7
+         KY2ELIeu9TrNWtRXwb/kpU10rTlMPiSKdXBK3CgEG9NoTfGAzffOMdho7nx9BY787Fe5
+         jTazgC+cTTbU5GLC/X41sg8iFod9SykLTwYWoCcBJ8Mz+Ay9il9h7SA0RfDBg9s3/Mc5
+         iGuVswXczW4IQZ53AgmRVuzh2VKKj7ZTzyBVhw04B1Hz0mqEfphzE6jfzwMVHNZ7B3+F
+         K6KqwBgwv1uiO0WO0374wUGotg/toCvS7NkVkBsX2GJLaUBZ4W1qPU4cYSx6JDHNNl/L
+         nQ5Q==
+X-Gm-Message-State: APzg51B1Ye7El9fW42BB6Yj8ONNfXS+E5HgJDnMkmkhQbo6iHfsu87fg
+        7XMgnIOqe2WrgakpbQM0Syh8TcH3/Ac=
+X-Google-Smtp-Source: ANB0VdbFYmtT5o6ek47q1j/pCwk+oGd/6nXptmrfQrQbRxbb8IvIuhmZtGuQulPsk2GydJmIi53m+g==
+X-Received: by 2002:a81:7815:: with SMTP id t21-v6mr4451570ywc.174.1536337524445;
+        Fri, 07 Sep 2018 09:25:24 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id f82-v6sm3145943ywf.58.2018.09.07.09.25.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 09:25:24 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id j131-v6so5574884ywc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:25:24 -0700 (PDT)
+X-Received: by 2002:a0d:ea0a:: with SMTP id t10-v6mr4453847ywe.60.1536337148524;
+ Fri, 07 Sep 2018 09:19:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <165989bc-949f-570e-c1d2-0ee1f0d4472a@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 16:23:46 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 16:23:46 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+Received: by 2002:a25:d04c:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 09:19:06 -0700 (PDT)
+In-Reply-To: <2493fc3fa3f6e5d2bcdde27cee1c33df@codeaurora.org>
+References: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
+ <CAD=FV=XigmU1LXnNbj9NYkjJmj18chBFjbctrBeOKoS=34PLXw@mail.gmail.com> <2493fc3fa3f6e5d2bcdde27cee1c33df@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 7 Sep 2018 09:19:06 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VzYYyive--RzN=_OCQnFT-wgHwbUy1Vao2-8GADxHDLw@mail.gmail.com>
+Message-ID: <CAD=FV=VzYYyive--RzN=_OCQnFT-wgHwbUy1Vao2-8GADxHDLw@mail.gmail.com>
+Subject: Re: [PATCH V3] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+To:     Dilip Kota <dkota@codeaurora.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:19:27PM +0800, jianchao.wang wrote:
-> 
-> 
-> On 09/06/2018 09:07 PM, Ming Lei wrote:
-> > On Thu, Sep 06, 2018 at 09:28:46AM +0800, jianchao.wang wrote:
-> >> Hi Ming
-> >>
-> >> On 09/06/2018 06:09 AM, Ming Lei wrote:
-> >>> nvme_dev_add() still may call freeze & unfreeze queue, so your patch
-> >>> can't avoid draining queue completely here.
-> >>
-> >> Yes, I know this. We still need to freeze queue when update nr_hw_queues.
-> >> But we move forward a step at least. :)
-> >> We don't need to drain request queue in normal case of nvme_reset_work.
-> > 
-> > It is hard to say who is the normal case. In case of CPU hotplug, it is quite
-> > easy to trigger updating nr_hw_queues.
-> > 
-> >>
-> >> As for updating nr_hw_queues, we could try some other method on it next.
-> > 
-> > The thing is that draining queue may be inevitable inside reset work
-> > function because of updating nr_hw_queues, that means the approach in
-> > this patchset is just a partial solution
-> > 
-> > Or it may not make sense to do that because we may never remove the draining
-> > queue in the code path of updating nr_hw_queues.
-> > 
-> > Given they belong to same issue, I suggest to solve them all.
-> 
-> I still think if just prevent new IO, freeze queue is over-kill.
-> 
-> With respect to update nr_hw_queues, we could try to take the bios down from the
-> queued requests as the blk_steal_bios. Then re-issue these bios after updating the
-> nr_hw_queues.
+Hi,
 
-It is always easier to say than done, :-)
+On Fri, Sep 7, 2018 at 3:00 AM,  <dkota@codeaurora.org> wrote:
+>> In v2, I said:
+>>
+>>> I'm not sure where to comment about this, so adding it to the end:
+>>>
+>>> Between v1 and v2 you totally removed all the locking.  Presumably
+>>> this is because you didn't want to hold the lock in
+>>> handle_fifo_timeout() while waiting for the completion.  IMO taking
+>>> the lock out was the wrong thing to do.  You should keep it, but just
+>>> drop the lock before wait_for_completion_timeout() and add it back
+>>> afterwards.  Specifically you _don't_ want the IRQ and timeout code
+>>> stomping on each other.
+>>
+>>
+>> ...but still no spinlock?
+>
+> I see there is no need of taking the spinlock as timeout will be handled
+> after the calculated time as per data size and speed.
+> There is 99.9% less chances of interrupt during the timeout handler.
+>>
+>>
+>>
+>> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1201081
 
-Please go ahead and post patches, and I am happy to review.
+The thing is, we want it to be 100% reliable, not 99.9% reliable.  Is
+it somehow wrong to add the spinlock?  ...or are you noticing
+performance problems with the spinlock there?  It's just nice not to
+have to think about it.
 
-
-Thanks,
-Ming
+-Doug
