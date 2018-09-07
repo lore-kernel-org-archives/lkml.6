@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.3 required=3.0 tests=DATE_IN_FUTURE_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2387EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCECC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D989F206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D989F206BB
+	by mail.kernel.org (Postfix) with ESMTP id E4177206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:24:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4177206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeIGOEC (ORCPT
+        id S1728336AbeIGOE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 10:04:02 -0400
-Received: from mga07.intel.com ([134.134.136.100]:64649 "EHLO mga07.intel.com"
+        Fri, 7 Sep 2018 10:04:28 -0400
+Received: from mga09.intel.com ([134.134.136.24]:44890 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbeIGOEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 10:04:02 -0400
+        id S1728297AbeIGOE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 10:04:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 02:23:58 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 02:24:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
-   d="scan'208";a="255286464"
+   d="scan'208";a="71327138"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 07 Sep 2018 02:23:58 -0700
+  by orsmga008.jf.intel.com with ESMTP; 07 Sep 2018 02:24:25 -0700
 Received: from dazhang1-ssd.sh.intel.com (unknown [10.239.48.163])
-        by linux.intel.com (Postfix) with ESMTP id 3EBE25803DA;
-        Fri,  7 Sep 2018 02:23:56 -0700 (PDT)
+        by linux.intel.com (Postfix) with ESMTP id 708385802B3;
+        Fri,  7 Sep 2018 02:24:22 -0700 (PDT)
 From:   Zhang Yi <yi.z.zhang@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, pbonzini@redhat.com,
@@ -42,63 +42,47 @@ To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         jack@suse.cz, hch@lst.de
 Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
         yi.z.zhang@intel.com, Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [PATCH V5 0/4] Fix kvm misconceives NVDIMM pages as reserved mmio
-Date:   Sat,  8 Sep 2018 02:03:02 +0800
-Message-Id: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
+Subject: [PATCH V5 1/4] kvm: remove redundant reserved page check
+Date:   Sat,  8 Sep 2018 02:03:28 +0800
+Message-Id: <26f79872e78cc643937059003763b5cfc1333167.1536342881.git.yi.z.zhang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
+References: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For device specific memory space, when we move these area of pfn to
-memory zone, we will set the page reserved flag at that time, some of
-these reserved for device mmio, and some of these are not, such as
-NVDIMM pmem.
+PageReserved() is already checked inside kvm_is_reserved_pfn(),
+remove it from kvm_set_pfn_dirty().
 
-Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
-backend, since these pages are reserved. the check of
-kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
-introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
-to indentify these pages are from NVDIMM pmem. and let kvm treat these
-as normal pages.
+Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: Pankaj Gupta <pagupta@redhat.com>
+---
+ virt/kvm/kvm_main.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Without this patch, Many operations will be missed due to this
-mistreatment to pmem pages. For example, a page may not have chance to
-be unpinned for KVM guest(in kvm_release_pfn_clean); not able to be
-marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
-
-V1:
-https://lkml.org/lkml/2018/7/4/91
-
-V2:
-https://lkml.org/lkml/2018/7/10/135
-
-V3:
-https://lkml.org/lkml/2018/8/9/17
-
-V4:
-https://lkml.org/lkml/2018/8/22/17
-
-V5:
-[PATCH V3 1/4] Reviewed-by: David / Acked-by: Pankaj
-[PATCH V3 2/4] Reviewed-by: Jan
-[PATCH V3 3/4] Acked-by: Jan
-[PATCH V3 4/4] Added "Acked-by: Pankaj", Added in-line comments: Dave
-
-Zhang Yi (4):
-  kvm: remove redundant reserved page check
-  mm: introduce memory type MEMORY_DEVICE_DEV_DAX
-  mm: add a function to differentiate the pages is from DAX device
-    memory
-  kvm: add a check if pfn is from NVDIMM pmem.
-
- drivers/dax/pmem.c       |  1 +
- include/linux/memremap.h |  8 ++++++++
- include/linux/mm.h       | 12 ++++++++++++
- virt/kvm/kvm_main.c      | 24 ++++++++++++++++--------
- 4 files changed, 37 insertions(+), 8 deletions(-)
-
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 8b47507f..c44c406 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1690,12 +1690,8 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_dirty);
+ 
+ void kvm_set_pfn_dirty(kvm_pfn_t pfn)
+ {
+-	if (!kvm_is_reserved_pfn(pfn)) {
+-		struct page *page = pfn_to_page(pfn);
+-
+-		if (!PageReserved(page))
+-			SetPageDirty(page);
+-	}
++	if (!kvm_is_reserved_pfn(pfn))
++		SetPageDirty(pfn_to_page(pfn));
+ }
+ EXPORT_SYMBOL_GPL(kvm_set_pfn_dirty);
+ 
 -- 
 2.7.4
 
