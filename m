@@ -3,124 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C0CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E23C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4BA2206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:03:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4BA2206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 666ED206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666ED206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeIGMnB (ORCPT
+        id S1728049AbeIGMoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:43:01 -0400
-Received: from smtprelay0172.hostedemail.com ([216.40.44.172]:53151 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727093AbeIGMnB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:43:01 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 3767E837F243;
-        Fri,  7 Sep 2018 08:03:15 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bed26_395bbcbd78805
-X-Filterd-Recvd-Size: 3186
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  7 Sep 2018 08:03:14 +0000 (UTC)
-Message-ID: <bc10850410b2c58c2bfbfa4f412403db7c82b535.camel@perches.com>
-Subject: Re: [PATCH] ttyprintk: make the printk log level configurable
-From:   Joe Perches <joe@perches.com>
-To:     Peter Korsgaard <peter@korsgaard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 07 Sep 2018 01:03:12 -0700
-In-Reply-To: <CACXmViaj6XWUXmdFov_1-exCd5idDx2s-2_kfmDFydN75wUNNQ@mail.gmail.com>
-References: <20180821172822.30975-1-peter@korsgaard.com>
-         <CACXmViaj6XWUXmdFov_1-exCd5idDx2s-2_kfmDFydN75wUNNQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Sep 2018 08:44:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:48109 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726444AbeIGMoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 08:44:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 01:04:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
+   d="scan'208";a="81623065"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga003.jf.intel.com with ESMTP; 07 Sep 2018 01:04:22 -0700
+Received: from fmsmsx117.amr.corp.intel.com (10.18.116.17) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 7 Sep 2018 01:04:21 -0700
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ fmsmsx117.amr.corp.intel.com (10.18.116.17) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 7 Sep 2018 01:04:21 -0700
+Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.240]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.226]) with mapi id 14.03.0319.002;
+ Fri, 7 Sep 2018 16:04:18 +0800
+From:   "Yang, Bin" <bin.yang@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
+ overlap()
+Thread-Topic: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
+ overlap()
+Thread-Index: AQHUOOyiLUEwozeDmEmpKrJdpg0FR6Tfm9CAgAP8LwCAAG7LgIAAA7IA
+Date:   Fri, 7 Sep 2018 08:04:18 +0000
+Message-ID: <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
+References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>
+         <1534814186-37067-5-git-send-email-bin.yang@intel.com>
+         <alpine.DEB.2.21.1809041413070.3395@nanos.tec.linutronix.de>
+         <82fc8d80749f920c4a5107469924205d92037785.camel@intel.com>
+         <alpine.DEB.2.21.1809070943490.1402@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809070943490.1402@nanos.tec.linutronix.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.0 
+x-originating-ip: [10.239.4.101]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <67AD40BF26831E4D99F00B3025426471@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-09-07 at 09:50 +0200, Peter Korsgaard wrote:
-> On Tue, Aug 21, 2018 at 7:28 PM Peter Korsgaard <peter@korsgaard.com> wrote:
-> > 
-> > For some use cases it is handy to use a different printk log level than the
-> > default (info) for the messages written to ttyprintk, so add a Kconfig
-> > option similar to what we have for default console loglevel.
-> 
-> Ping? Feedback, comments?
-
-I think it is moving "[U]" into TPK_LEVEL is an
-unnecessary and a tad obfuscating change.
-
-This also adds a leading space for unknown reasons
-after the KERN_SOH <level>.
-
-> > diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-> > index ce277ee0a28a..14a7f023f20b 100644
-> > --- a/drivers/char/Kconfig
-> > +++ b/drivers/char/Kconfig
-> > @@ -66,6 +66,14 @@ config TTY_PRINTK
-> > 
-> >           If unsure, say N.
-> > 
-> > +config TTY_PRINTK_LEVEL
-> > +       depends on TTY_PRINTK
-> > +       int "ttyprintk log level (1-7)"
-> > +       range 1 7
-> > +       default "6"
-> > +       help
-> > +         Printk log level to use for ttyprintk messages.
-> > +
-> >  config PRINTER
-> >         tristate "Parallel printer support"
-> >         depends on PARPORT
-> > diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-> > index 67549ce88cc9..22fbd483b5dc 100644
-> > --- a/drivers/char/ttyprintk.c
-> > +++ b/drivers/char/ttyprintk.c
-> > @@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
-> >   */
-> >  #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
-> >  #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
-> > +#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL) " [U]"
-
-I think this should be
-
-#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL)
-
-> > +
-> >  static int tpk_curr;
-> > 
-> >  static char tpk_buffer[TPK_STR_SIZE + 4];
-> > @@ -45,7 +47,7 @@ static void tpk_flush(void)
-> >  {
-> >         if (tpk_curr > 0) {
-> >                 tpk_buffer[tpk_curr] = '\0';
-> > -               pr_info("[U] %s\n", tpk_buffer);
-> > +               printk(TPK_PREFIX " %s\n", tpk_buffer);
-
-and this
-
-		printk(TPK_PREFIX "[U] %s\n", tpk_buffer);
-
-> >                 tpk_curr = 0;
-> >         }
-> >  }
-> > --
-> > 2.11.0
-> > 
-> 
-> 
+T24gRnJpLCAyMDE4LTA5LTA3IGF0IDA5OjQ5ICswMjAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
+DQo+IE9uIEZyaSwgNyBTZXAgMjAxOCwgWWFuZywgQmluIHdyb3RlOg0KPiA+IE9uIFR1ZSwgMjAx
+OC0wOS0wNCBhdCAxNDoyMiArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+IA0KPiA+
+IEkganVzdCB3cml0ZSBhIHRlc3QuYyB0byBjb21wYXJlIHRoZSByZXN1bHQgYmV0d2VlbiBvdmVy
+bGFwKCkgYW5kDQo+ID4gb3JpZ2luYWwgd2l0aGluKCkuDQo+IA0KPiBZb3UgYXJlIHJpZ2h0LiBZ
+b3VyIHZlcnNpb24gb2YgZG9pbmcgdGhlIG92ZXJsYXAgZXhjbHVzaXZlIHdvcmtzLiBJIG1pc3Jl
+YWQNCj4gdGhlIGNvbmRpdGlvbnMuIEkgc3RpbGwgcHJlZmVyIGRvaW5nIGluY2x1c2l2ZSBjaGVj
+a3MgYmVjYXVzZSB0aGV5IGFyZSB3YXkNCj4gbW9yZSBvYnZpb3VzLg0KDQpJIGFtIHNvcnJ5IGZv
+ciBteSBwb29yIGVuZ2xpc2guIFdoYXQgaXMgImluY2x1c2l2ZSBjaGVja3MiPw0KDQoNCj4gDQo+
+IFRoYW5rcywNCj4gDQo+IAl0Z2x4DQo=
