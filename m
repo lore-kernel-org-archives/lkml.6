@@ -4,70 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2984AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46DEC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07242083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB042086D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:56:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="omdQ6/2L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07242083D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWV3qans"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB042086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbeIGVib (ORCPT
+        id S1727530AbeIGVie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:38:31 -0400
-Received: from mail-ua1-f45.google.com ([209.85.222.45]:37486 "EHLO
-        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbeIGVia (ORCPT
+        Fri, 7 Sep 2018 17:38:34 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:37935 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbeIGVid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:38:30 -0400
-Received: by mail-ua1-f45.google.com with SMTP id y10-v6so12443298uao.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:56:42 -0700 (PDT)
+        Fri, 7 Sep 2018 17:38:33 -0400
+Received: by mail-ua1-f65.google.com with SMTP id o11-v6so12450472uak.5;
+        Fri, 07 Sep 2018 09:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Js8CNh2v6/eZtsk33ccIbs2b1Mpsuw+ORIRUejvWEoY=;
-        b=omdQ6/2L0Ty8T0IWyAPDMt667D46rb7SRZyYUnKGdbqUPTKaoOzAXLgjLBMH6d4Kgk
-         hoSYTCN5SleVr8ZtRrMZXbez8wbWOZbCLlco4Z0lsmQ0cucUmL+WPql4LzaCiGKh5nYo
-         tJXoOBW++nMlsJI4aHPXKnmxudrkMEmnCBIybzN4yCkhi92aEl4l5kmjFswIRDAyA6az
-         UMK4hsJbroMi5Qxe6CDK3AYxABKUed4pQ+Ls1ehnneOafx761wf5ize1boQCuDNnlsxv
-         Zvn37fufihc9X0VB6q4Gy0fmuzAx+x62J+QIfJgrd3lzG3kjX7LuLWxztWNgN1B7cVrn
-         pS3A==
+        bh=iAHGcURZNbVVsKChm/fJy9d3RDB9tCJRXxWas2nNIxw=;
+        b=nWV3qansOgL+FO2yVEgUoYBKu1FM9J+vHWLg4itZcn4Tu4Z+3O0YYmvEdq4uyh37VM
+         lslu53KJqOOSXARFLjHTWsOsxMI9jKME3rtBSfpiDb7YNIbd74SgIGaxxib854mPln/F
+         0fOWI4sw32p2v964L3Aa3gkc/jE3JaYdagiK4KUwgMnroIQ2SnInjWOEHE1Dc2ifMp15
+         j0/m/LI8lkOy0SJvtwK+rV2RB/4ScCshBdWbD8UgjDwm1TMtyjE1kgCZQivJ8K+Z6Pd6
+         HqEPOncE9lW0VYNzWUbVVSJqZrk0uQJ3r44X+6kuQxLoaAU/1QYJnQvr0XqIMw3TDBf1
+         U1TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Js8CNh2v6/eZtsk33ccIbs2b1Mpsuw+ORIRUejvWEoY=;
-        b=WYhXJxL4M9DllrsPzd28fwM02ceCD8Ix1wKwupfxESu2cUREZSV14ecB5nmoCU1/As
-         LEocamBEFmT3KiZBnis2IC91QSCkK+eUiGk7ONA9vo3ZU0cgr5lpojpaceFQBJrRl3yP
-         WXAjoxuuqXfhcjPa48ZMihKvEg2Lm0EJ3zu1fCqSfzdQJ/4/U084RGs7Ut4mvPZ4qAsB
-         PHVpvFuyJgSpKf6jCnemiy0vi8r102FHzI4lMI5pwxVwmAAiKPDrPWFNDA2cnzA6wZVE
-         Q2DpyH5EUjxg/nROSKs+laufECfEFJxsxpvfUK7RSI0t22m+ZsNjiWH3E3ILRfqUjjxZ
-         hA7g==
-X-Gm-Message-State: APzg51Ck2lj1Nv0k77bZmWYNFUhnfX5gjdGLn2muY2ne/UlTXkJeqS0D
-        bnvnvcx+GDlTVepMJIiaxzdj8MM=
-X-Google-Smtp-Source: ANB0Vdb2daeVnDtEQEK0mjTDheEd25j9+VwfOoKVQjDJNf8lH4mzApuloivawgbONSqIsJC+luLq5g==
-X-Received: by 2002:ab0:4c6c:: with SMTP id d44-v6mr3153708uag.102.1536339401672;
-        Fri, 07 Sep 2018 09:56:41 -0700 (PDT)
+        bh=iAHGcURZNbVVsKChm/fJy9d3RDB9tCJRXxWas2nNIxw=;
+        b=qfoteAuvM6EhyTS3cZVpIvQpnoLxrRp53j5TCMIXIJScnkPHppdy4xVQLF/HmBriMp
+         p+xS3JY2gOVqgevAeKEqfA0zewGCMck3gHlHUJKKXYSyMShOe4j4dfsjpBEBAIMwKu9t
+         VqLL7BWBV9pJdsojJY+XS9xTyrcF+KGZIbKlnohXT/0P2QtD9n2ab5hZP3OlFdBOqJt1
+         dOVQ444EzAgIjHHq1SbF/eGb5MwsdQ1GvoFRYOo8uRcsZy3cMqaDFgj5tLl7LHsxURa3
+         Yz9xx8dH+KijVIaMNm69GjRFEJ5gS23bxDY5i45++ZdSGaTJSt9p++QZOd1x2sWbn2iE
+         MjbQ==
+X-Gm-Message-State: APzg51CAAKgNseVpvLRBCZZMGVrPQWF6WZXV4sZLzBhdK7+ofGMDDJ2/
+        9zsQYDuja/NS+Rf2igL0FTaT1Kg=
+X-Google-Smtp-Source: ANB0VdatuTD0VV8/Z4WU1ymKNMtyhshw/J9zD7ByOnr+y6vAapj7kXo5l7MU1oONv/ukZOAOiFBhAA==
+X-Received: by 2002:ab0:9c1:: with SMTP id e1-v6mr3190280uah.125.1536339403886;
+        Fri, 07 Sep 2018 09:56:43 -0700 (PDT)
 Received: from localhost.localdomain (c-71-234-172-214.hsd1.vt.comcast.net. [71.234.172.214])
-        by smtp.gmail.com with ESMTPSA id q202-v6sm1039619vke.53.2018.09.07.09.56.39
+        by smtp.gmail.com with ESMTPSA id q202-v6sm1039619vke.53.2018.09.07.09.56.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 09:56:40 -0700 (PDT)
+        Fri, 07 Sep 2018 09:56:42 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Pravin B Shelar <pshelar@ovn.org>, dev@openvswitch.org
-Subject: [PATCH 1/6] openvswitch: convert to kvmalloc
-Date:   Fri,  7 Sep 2018 12:56:30 -0400
-Message-Id: <20180907165635.8469-2-kent.overstreet@gmail.com>
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Subject: [PATCH 2/6] md: convert to kvmalloc
+Date:   Fri,  7 Sep 2018 12:56:31 -0400
+Message-Id: <20180907165635.8469-3-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.19.0.rc2
 In-Reply-To: <20180907165635.8469-1-kent.overstreet@gmail.com>
 References: <20180907165635.8469-1-kent.overstreet@gmail.com>
@@ -78,178 +78,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There was no real need for this code to be using flexarrays, it's just
-implementing a hash table - ideally it would be using rhashtables, but
-that conversion would be significantly more complicated.
+The code really just wants a big flat buffer, so just do that.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Pravin B Shelar <pshelar@ovn.org>
-Cc: dev@openvswitch.org
+Cc: Shaohua Li <shli@kernel.org>
+Cc: linux-raid@vger.kernel.org
 ---
- net/openvswitch/flow.h         |  1 -
- net/openvswitch/flow_netlink.h |  1 -
- net/openvswitch/flow_table.c   | 51 ++++++++--------------------------
- net/openvswitch/flow_table.h   |  3 +-
- 4 files changed, 13 insertions(+), 43 deletions(-)
+ drivers/md/raid5-ppl.c |  7 ++--
+ drivers/md/raid5.c     | 82 +++++++++++++++++++-----------------------
+ drivers/md/raid5.h     |  9 ++---
+ 3 files changed, 45 insertions(+), 53 deletions(-)
 
-diff --git a/net/openvswitch/flow.h b/net/openvswitch/flow.h
-index c670dd24b8..4f06278166 100644
---- a/net/openvswitch/flow.h
-+++ b/net/openvswitch/flow.h
-@@ -30,7 +30,6 @@
- #include <linux/in6.h>
- #include <linux/jiffies.h>
- #include <linux/time.h>
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index 3a7c363265..5911810101 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -16,7 +16,6 @@
+ #include <linux/blkdev.h>
+ #include <linux/slab.h>
+ #include <linux/crc32c.h>
 -#include <linux/flex_array.h>
- #include <linux/cpumask.h>
- #include <net/inet_ecn.h>
- #include <net/ip_tunnels.h>
-diff --git a/net/openvswitch/flow_netlink.h b/net/openvswitch/flow_netlink.h
-index 6657606b2b..66f9553758 100644
---- a/net/openvswitch/flow_netlink.h
-+++ b/net/openvswitch/flow_netlink.h
-@@ -30,7 +30,6 @@
- #include <linux/in6.h>
- #include <linux/jiffies.h>
- #include <linux/time.h>
+ #include <linux/async_tx.h>
+ #include <linux/raid/md_p.h>
+ #include "md.h"
+@@ -165,7 +164,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+ 		       struct dma_async_tx_descriptor *tx)
+ {
+ 	int disks = sh->disks;
+-	struct page **srcs = flex_array_get(percpu->scribble, 0);
++	struct page **srcs = percpu->scribble;
+ 	int count = 0, pd_idx = sh->pd_idx, i;
+ 	struct async_submit_ctl submit;
+ 
+@@ -196,8 +195,8 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+ 	}
+ 
+ 	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, tx,
+-			  NULL, sh, flex_array_get(percpu->scribble, 0)
+-			  + sizeof(struct page *) * (sh->disks + 2));
++			  NULL, sh, percpu->scribble +
++			  sizeof(struct page *) * (sh->disks + 2));
+ 
+ 	if (count == 1)
+ 		tx = async_memcpy(sh->ppl_page, srcs[0], 0, 0, PAGE_SIZE,
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 2031506a0e..d5603946dc 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -54,7 +54,6 @@
+ #include <linux/slab.h>
+ #include <linux/ratelimit.h>
+ #include <linux/nodemask.h>
 -#include <linux/flex_array.h>
  
- #include <net/inet_ecn.h>
- #include <net/ip_tunnels.h>
-diff --git a/net/openvswitch/flow_table.c b/net/openvswitch/flow_table.c
-index 80ea2a7185..cfb0098c9a 100644
---- a/net/openvswitch/flow_table.c
-+++ b/net/openvswitch/flow_table.c
-@@ -111,29 +111,6 @@ int ovs_flow_tbl_count(const struct flow_table *table)
- 	return table->count;
+ #include <trace/events/block.h>
+ #include <linux/list_sort.h>
+@@ -1399,19 +1398,14 @@ static void ops_complete_compute(void *stripe_head_ref)
+ static addr_conv_t *to_addr_conv(struct stripe_head *sh,
+ 				 struct raid5_percpu *percpu, int i)
+ {
+-	void *addr;
+-
+-	addr = flex_array_get(percpu->scribble, i);
+-	return addr + sizeof(struct page *) * (sh->disks + 2);
++	return percpu->scribble + i * percpu->scribble_obj_size +
++		sizeof(struct page *) * (sh->disks + 2);
  }
  
--static struct flex_array *alloc_buckets(unsigned int n_buckets)
--{
--	struct flex_array *buckets;
--	int i, err;
+ /* return a pointer to the address conversion region of the scribble buffer */
+ static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
+ {
+-	void *addr;
 -
--	buckets = flex_array_alloc(sizeof(struct hlist_head),
--				   n_buckets, GFP_KERNEL);
--	if (!buckets)
+-	addr = flex_array_get(percpu->scribble, i);
+-	return addr;
++	return percpu->scribble + i * percpu->scribble_obj_size;
+ }
+ 
+ static struct dma_async_tx_descriptor *
+@@ -2240,21 +2234,23 @@ static int grow_stripes(struct r5conf *conf, int num)
+  * calculate over all devices (not just the data blocks), using zeros in place
+  * of the P and Q blocks.
+  */
+-static struct flex_array *scribble_alloc(int num, int cnt, gfp_t flags)
++static int scribble_alloc(struct raid5_percpu *percpu,
++			  int num, int cnt, gfp_t flags)
+ {
+-	struct flex_array *ret;
+-	size_t len;
++	size_t obj_size =
++		sizeof(struct page *) * (num+2) +
++		sizeof(addr_conv_t) * (num+2);
++	void *scribble;
+ 
+-	len = sizeof(struct page *) * (num+2) + sizeof(addr_conv_t) * (num+2);
+-	ret = flex_array_alloc(len, cnt, flags);
+-	if (!ret)
 -		return NULL;
--
--	err = flex_array_prealloc(buckets, 0, n_buckets, GFP_KERNEL);
--	if (err) {
--		flex_array_free(buckets);
+-	/* always prealloc all elements, so no locking is required */
+-	if (flex_array_prealloc(ret, 0, cnt, flags)) {
+-		flex_array_free(ret);
 -		return NULL;
 -	}
--
--	for (i = 0; i < n_buckets; i++)
--		INIT_HLIST_HEAD((struct hlist_head *)
--					flex_array_get(buckets, i));
--
--	return buckets;
--}
--
- static void flow_free(struct sw_flow *flow)
- {
- 	int cpu;
-@@ -168,31 +145,30 @@ void ovs_flow_free(struct sw_flow *flow, bool deferred)
- 		flow_free(flow);
+-	return ret;
++	scribble = kvmalloc_array(cnt, obj_size, flags);
++	if (!scribble)
++		return -ENOMEM;
++
++	kvfree(percpu->scribble);
++
++	percpu->scribble = scribble;
++	percpu->scribble_obj_size = obj_size;
++	return 0;
  }
  
--static void free_buckets(struct flex_array *buckets)
--{
--	flex_array_free(buckets);
--}
--
--
- static void __table_instance_destroy(struct table_instance *ti)
- {
--	free_buckets(ti->buckets);
-+	kvfree(ti->buckets);
- 	kfree(ti);
- }
+ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
+@@ -2272,23 +2268,18 @@ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
+ 		return 0;
+ 	mddev_suspend(conf->mddev);
+ 	get_online_cpus();
++
+ 	for_each_present_cpu(cpu) {
+ 		struct raid5_percpu *percpu;
+-		struct flex_array *scribble;
  
- static struct table_instance *table_instance_alloc(int new_size)
- {
- 	struct table_instance *ti = kmalloc(sizeof(*ti), GFP_KERNEL);
-+	int i;
- 
- 	if (!ti)
- 		return NULL;
- 
--	ti->buckets = alloc_buckets(new_size);
+ 		percpu = per_cpu_ptr(conf->percpu, cpu);
+-		scribble = scribble_alloc(new_disks,
+-					  new_sectors / STRIPE_SECTORS,
+-					  GFP_NOIO);
 -
-+	ti->buckets = kvmalloc_array(new_size, sizeof(struct hlist_head),
-+				     GFP_KERNEL);
- 	if (!ti->buckets) {
- 		kfree(ti);
- 		return NULL;
+-		if (scribble) {
+-			flex_array_free(percpu->scribble);
+-			percpu->scribble = scribble;
+-		} else {
+-			err = -ENOMEM;
++		err = scribble_alloc(percpu, new_disks,
++				     new_sectors / STRIPE_SECTORS,
++				     GFP_NOIO);
++		if (err)
+ 			break;
+-		}
  	}
 +
-+	for (i = 0; i < new_size; i++)
-+		INIT_HLIST_HEAD(&ti->buckets[i]);
-+
- 	ti->n_buckets = new_size;
- 	ti->node_ver = 0;
- 	ti->keep_flows = false;
-@@ -249,7 +225,7 @@ static void table_instance_destroy(struct table_instance *ti,
- 
- 	for (i = 0; i < ti->n_buckets; i++) {
- 		struct sw_flow *flow;
--		struct hlist_head *head = flex_array_get(ti->buckets, i);
-+		struct hlist_head *head = &ti->buckets[i];
- 		struct hlist_node *n;
- 		int ver = ti->node_ver;
- 		int ufid_ver = ufid_ti->node_ver;
-@@ -294,7 +270,7 @@ struct sw_flow *ovs_flow_tbl_dump_next(struct table_instance *ti,
- 	ver = ti->node_ver;
- 	while (*bucket < ti->n_buckets) {
- 		i = 0;
--		head = flex_array_get(ti->buckets, *bucket);
-+		head = &ti->buckets[*bucket];
- 		hlist_for_each_entry_rcu(flow, head, flow_table.node[ver]) {
- 			if (i < *last) {
- 				i++;
-@@ -313,8 +289,7 @@ struct sw_flow *ovs_flow_tbl_dump_next(struct table_instance *ti,
- static struct hlist_head *find_bucket(struct table_instance *ti, u32 hash)
+ 	put_online_cpus();
+ 	mddev_resume(conf->mddev);
+ 	if (!err) {
+@@ -6722,25 +6713,26 @@ raid5_size(struct mddev *mddev, sector_t sectors, int raid_disks)
+ static void free_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
  {
- 	hash = jhash_1word(hash, ti->hash_seed);
--	return flex_array_get(ti->buckets,
--				(hash & (ti->n_buckets - 1)));
-+	return &ti->buckets[hash & (ti->n_buckets - 1)];
+ 	safe_put_page(percpu->spare_page);
+-	if (percpu->scribble)
+-		flex_array_free(percpu->scribble);
+ 	percpu->spare_page = NULL;
++	kvfree(percpu->scribble);
+ 	percpu->scribble = NULL;
  }
  
- static void table_instance_insert(struct table_instance *ti,
-@@ -347,9 +322,7 @@ static void flow_table_copy_flows(struct table_instance *old,
- 	/* Insert in new table. */
- 	for (i = 0; i < old->n_buckets; i++) {
- 		struct sw_flow *flow;
--		struct hlist_head *head;
+ static int alloc_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
+ {
+-	if (conf->level == 6 && !percpu->spare_page)
++	if (conf->level == 6 && !percpu->spare_page) {
+ 		percpu->spare_page = alloc_page(GFP_KERNEL);
+-	if (!percpu->scribble)
+-		percpu->scribble = scribble_alloc(max(conf->raid_disks,
+-						      conf->previous_raid_disks),
+-						  max(conf->chunk_sectors,
+-						      conf->prev_chunk_sectors)
+-						   / STRIPE_SECTORS,
+-						  GFP_KERNEL);
 -
--		head = flex_array_get(old->buckets, i);
-+		struct hlist_head *head = &old->buckets[i];
- 
- 		if (ufid)
- 			hlist_for_each_entry(flow, head,
-diff --git a/net/openvswitch/flow_table.h b/net/openvswitch/flow_table.h
-index 2dd9900f53..de5ec6cf51 100644
---- a/net/openvswitch/flow_table.h
-+++ b/net/openvswitch/flow_table.h
-@@ -29,7 +29,6 @@
- #include <linux/in6.h>
- #include <linux/jiffies.h>
- #include <linux/time.h>
--#include <linux/flex_array.h>
- 
- #include <net/inet_ecn.h>
- #include <net/ip_tunnels.h>
-@@ -37,7 +36,7 @@
- #include "flow.h"
- 
- struct table_instance {
--	struct flex_array *buckets;
-+	struct hlist_head *buckets;
- 	unsigned int n_buckets;
- 	struct rcu_head rcu;
- 	int node_ver;
+-	if (!percpu->scribble || (conf->level == 6 && !percpu->spare_page)) {
++		if (!percpu->spare_page)
++			return -ENOMEM;
++	}
++
++	if (scribble_alloc(percpu,
++			   max(conf->raid_disks,
++			       conf->previous_raid_disks),
++			   max(conf->chunk_sectors,
++			       conf->prev_chunk_sectors)
++			   / STRIPE_SECTORS,
++			   GFP_KERNEL)) {
+ 		free_scratch_buffer(conf, percpu);
+ 		return -ENOMEM;
+ 	}
+diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
+index 8474c22412..cf991f1340 100644
+--- a/drivers/md/raid5.h
++++ b/drivers/md/raid5.h
+@@ -638,10 +638,11 @@ struct r5conf {
+ 	/* per cpu variables */
+ 	struct raid5_percpu {
+ 		struct page	*spare_page; /* Used when checking P/Q in raid6 */
+-		struct flex_array *scribble;   /* space for constructing buffer
+-					      * lists and performing address
+-					      * conversions
+-					      */
++		void		*scribble;  /* space for constructing buffer
++					     * lists and performing address
++					     * conversions
++					     */
++		int scribble_obj_size;
+ 	} __percpu *percpu;
+ 	int scribble_disks;
+ 	int scribble_sectors;
 -- 
 2.19.0.rc2
 
