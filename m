@@ -2,125 +2,145 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471ECC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798DBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A0A20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:34:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A0A20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 20CE92087A
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:36:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwGDDimF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CE92087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729894AbeIGTP7 (ORCPT
+        id S1729895AbeIGTRN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:15:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47420 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727659AbeIGTP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:15:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12C97AD53;
-        Fri,  7 Sep 2018 14:34:44 +0000 (UTC)
-Subject: Re: [PATCH v4] xen: avoid crash in disable_hotplug_cpu
-To:     Olaf Hering <olaf@aepfle.de>, xen-devel@lists.xenproject.org
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180907143135.29608-1-olaf@aepfle.de>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8cc45ae5-5609-09b8-1f57-32b40f1f22b5@suse.com>
-Date:   Fri, 7 Sep 2018 16:34:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 15:17:13 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39963 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728564AbeIGTRN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:17:13 -0400
+Received: by mail-oi0-f68.google.com with SMTP id l202-v6so27605178oig.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 07:36:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MTJMlsL/qn3+Dab4i8dJ2bnn9KxJOVfBWvsWQ3iChLM=;
+        b=LwGDDimF6XRqHckkC2nHruCIBfW8R0074mLtWo+j4z7KEJV/Yi/JzZ/IkjNg+aQMzs
+         Wrr8mfpu6mT4oyNNOsPwvr/tboAI0SnNdzPNldoF1zg0Gqkg271N4HGcmUozFFjtVA/O
+         KIbeGEyTdxATnhHNaufH/r0KoQoQ4V10IeAlI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MTJMlsL/qn3+Dab4i8dJ2bnn9KxJOVfBWvsWQ3iChLM=;
+        b=DilGnikmVXl6ee6kultp9kwMalCm5Hhoci5UgTZtVjMI01ACfaJ8hVkgPWQVPWQ6Xe
+         XoRB9PBRPgMWZmbPfhWnon+xkE1R3e8unhLBqT/G7rbRcMI1wQECpKPeydOYJO97Uh78
+         Sb5eNOzRa0tYq3nMRjXS89twWnq57tnzrmr3RlouYuHYNS0GYiHxa5OXIGFtPkShXpjv
+         9yv4gv/c7X/CdAqTcH8EsMuhK9Hf4bJ1uQYI4/5LyjfJ6TFSNxvv7lRp1sVZIen4XLfF
+         /yU90EcIeVz/uIx+/RK4nSBpDWhbGsdw/IGFhjcCzBMp6uCJT7Lw67UueopwFX85S+3H
+         jHKQ==
+X-Gm-Message-State: APzg51B31UMe2Z5u8AyqitRKIh/V9QKiU2bLbs4e7PzknWkuGkB1a1WV
+        i/L7PJkfETYlV/eyAVc8eAGblA==
+X-Google-Smtp-Source: ANB0VdY4Sj/e/UqGIW8DgBOHr8CgUcozfSZU/AGlcKdOYIMMmUSI/6Pd5Q7hqR0yg07fNIGo6zBpJw==
+X-Received: by 2002:aca:ac54:: with SMTP id v81-v6mr8010762oie.1.1536330960021;
+        Fri, 07 Sep 2018 07:36:00 -0700 (PDT)
+Received: from aura.cortijodelrio.net ([187.161.144.121])
+        by smtp.googlemail.com with ESMTPSA id i132-v6sm10306360oif.20.2018.09.07.07.35.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 07 Sep 2018 07:35:58 -0700 (PDT)
+From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
+To:     shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
+Cc:     linus.walleij@linaro.org, Fathi Boudra <fathi.boudra@linaro.org>,
+        =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-gpio@vger.kernel.org (open list:GPIO MOCKUP DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/2] selftests: gpio: restructure Makefile
+Date:   Fri,  7 Sep 2018 09:34:54 -0500
+Message-Id: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180907143135.29608-1-olaf@aepfle.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/18 16:31, Olaf Hering wrote:
-> The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
-> 
-> BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
-> PGD 0 P4D 0
-> Oops: 0000 [#1] PREEMPT SMP NOPTI
-> CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
-> Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
-> RIP: e030:device_offline+0x9/0xb0
-> Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
-> RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
-> R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
-> R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
-> FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
-> CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
-> Call Trace:
->  handle_vcpu_hotplug_event+0xb5/0xc0
->  xenwatch_thread+0x80/0x140
->  ? wait_woken+0x80/0x80
->  kthread+0x112/0x130
->  ? kthread_create_worker_on_cpu+0x40/0x40
->  ret_from_fork+0x3a/0x50
-> 
-> This happens because handle_vcpu_hotplug_event is called twice. In the
-> first iteration cpu_present is still true, in the second iteration
-> cpu_present is false which causes get_cpu_device to return NULL.
-> In case of cpu#0, cpu_online is apparently always true.
-> 
-> Fix this crash by checking if the cpu can be hotplugged, which is false
-> for a cpu that was just removed.
-> 
-> Also check if the cpu was actually offlined by device_remove, otherwise
-> leave the cpu_present state as it is.
-> 
-> Rearrange to code to do all work with device_hotplug_lock held.
-> 
-> Signed-off-by: Olaf Hering <olaf@aepfle.de>
+From: Fathi Boudra <fathi.boudra@linaro.org>
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+This patch cleans up the Makefile by restructuring a couple of
+things, namely:
+1) change explicit paths in targets for variables
+2) substitute a variable (BINARIES) for another, part of the
+   selftests build system (TEST_PROGS_EXTENDED)
+3) proper cleaning up of the EXTRA objects
 
+The resulting Makefile is much more readable and manageable.
 
-Juergen
+Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+---
+ tools/testing/selftests/gpio/Makefile | 32 +++++++++++++++-----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
+
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index 4665cdb..a4a01ec8 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -1,28 +1,26 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
++LDLIBS += -lmount -I/usr/include/libmount
++
+ TEST_PROGS := gpio-mockup.sh
+-TEST_FILES := gpio-mockup-sysfs.sh $(BINARIES)
+-BINARIES := gpio-mockup-chardev
+-EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
+-EXTRA_DIRS := ../gpioinclude/
+-EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
+-EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
+-EXTRA_OBJS += ../gpiolsgpio.o
++TEST_FILES := gpio-mockup-sysfs.sh
++TEST_PROGS_EXTENDED := gpio-mockup-chardev
++
++GPIODIR := ../../../gpio
++GPIOOBJ := gpio-utils.o
+ 
+ include ../lib.mk
+ 
+-all: $(BINARIES)
++all: $(TEST_PROGS_EXTENDED)
+ 
+ override define CLEAN
+-	$(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
+-	$(RM) -r $(EXTRA_DIRS)
++	$(RM) $(TEST_PROGS_EXTENDED)
++	$(MAKE) -C $(GPIODIR) clean
+ endef
+ 
+-CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+-LDLIBS += -lmount -I/usr/include/libmount
+-
+-$(BINARIES):| khdr
+-$(BINARIES): ../../../gpio/gpio-utils.o
++$(TEST_PROGS_EXTENDED):| khdr
++$(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
+ 
+-../../../gpio/gpio-utils.o:
+-	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
++$(GPIODIR)/$(GPIOOBJ):
++	$(MAKE) -C $(GPIODIR)
+-- 
+2.7.4
+
