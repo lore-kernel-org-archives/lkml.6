@@ -2,392 +2,219 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3FBC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D4BC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E6820652
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4764120652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:29:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YPk9Zdc2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E6820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ETkEmbMf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4764120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeIHALT (ORCPT
+        id S1727417AbeIHALr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:11:19 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43401 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeIHALT (ORCPT
+        Fri, 7 Sep 2018 20:11:47 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33781 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeIHALr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:11:19 -0400
-Received: by mail-ed1-f68.google.com with SMTP id z27-v6so12286270edb.10
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:28:54 -0700 (PDT)
+        Fri, 7 Sep 2018 20:11:47 -0400
+Received: by mail-ua1-f67.google.com with SMTP id i4-v6so12804118uak.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:29:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jHrSvlSamlkwByLBZ29Mhp19Uk7uEeF0gMVxqRWOdxQ=;
-        b=YPk9Zdc2U+5EPgJoHmWbPwNIy+GlCYfAI04L60V3jW1NeTI2Ao5GqpT4BsZH+Zla4u
-         u25VaG3OnQ+VCc9vDXTZCEhydDWurKGERaJ4tdV8aubmCvF/uYwdA42aj4boc97wZFyO
-         WEoWYJPugfr+c0CZ/vXGnOY4HrzHHTNa4JxAY=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JOw/Rzmznnp7ezEw0iWH1J2IYoykMyAS0cnhK1NJ/Rg=;
+        b=ETkEmbMfayjOhcTUVwdXLfDTbaf6dgVLzpsQID5DcLxfiHRDifyJrdqeTTmx/Kz6mT
+         oErImMNtAMz4wXZuBz72qm+Yx6vX2dRo01waFSUURg1hxWXJ6bqfbdblgNbIdXjbf5BB
+         3xp7ciUYPXwyKnn8kt1YFfsUORN/OgTjfnDkfSpdgDA604rxs9MKVgRu1S7PXM0EQEB+
+         pFat3cu+34pBvhT842ob+ay6OgCBYxKPrJzRSA/lHUKY9YMUk1EECy7omHWFx63rTzJt
+         yhRzNNFjPgWxddRuBLTcZlPPuwHOPv+fhF6H9BUhcs095RVh1bJNNv/mY59AVCn/57du
+         uxrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=jHrSvlSamlkwByLBZ29Mhp19Uk7uEeF0gMVxqRWOdxQ=;
-        b=lJmAf+IX03chai7ZCgYM4MvHN8VyFZ1p1WEK6W6Vj3vtqa9mQYKInYGSnOI6mvyH0a
-         OEwEC2CPXIoJxp2wBrmI/uibmjAVx3km0NrELjQ5lM7NMkhPsRFsCwjwmb2EYfhTk847
-         Nlt/+T4N//OKflzwS3mdIszdJi19V6H97935sVMrcbV0Xp23548KAuObHCsE+s2atbOX
-         hKQXAwlJErsFAo0bSrtkRwbEyE38aQEMEZpdJ6X+IJaSB3VVAOMr2zaPmaltkvXyb8NF
-         rsHae1LdcII9O8M8MxBKxDDQU9X/MtAC0JaObCvcNEcauISdLpfQeD4UyeVE9BUxYKOc
-         DjWQ==
-X-Gm-Message-State: APzg51CgRFvWfaQIH3lo53htdjF6vamNAPzM7aA4OEhJrpCEEPEFBSHl
-        8t4i3gAnm3XmVgpSKV9Ikur5Mw==
-X-Google-Smtp-Source: ANB0VdbVZ91Kg+oWnD9HlDJ1bhXzYi93tBCc5Qv5JIZcAFHPvimKC/JgNM49hXThOhEga6nGa0hwrQ==
-X-Received: by 2002:a50:95dd:: with SMTP id x29-v6mr10586315eda.3.1536348533957;
-        Fri, 07 Sep 2018 12:28:53 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm8330637edo.39.2018.09.07.12.28.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 12:28:52 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 21:28:44 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Brian Starkey <brian.starkey@arm.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-        daniel.vetter@ffwll.ch, daniel@fooishbar.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, linux-kernel@vger.kernel.org,
-        alexandru-cosmin.gheorghe@arm.com, liviu.dudau@arm.com,
-        ayan.halder@arm.com, tfiga@chromium.org, hoegsberg@chromium.org
-Subject: Re: [RFC PATCH v2 1/3] drm/fourcc: Add 'bpp' field for formats with
- non-integer bytes-per-pixel
-Message-ID: <20180907192626.GA7176@phenom.ffwll.local>
-Mail-Followup-To: Brian Starkey <brian.starkey@arm.com>,
-        dri-devel@lists.freedesktop.org, daniel@fooishbar.org,
-        airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-kernel@vger.kernel.org, alexandru-cosmin.gheorghe@arm.com,
-        liviu.dudau@arm.com, ayan.halder@arm.com, tfiga@chromium.org,
-        hoegsberg@chromium.org
-References: <20180823152343.6474-1-brian.starkey@arm.com>
- <20180823152343.6474-2-brian.starkey@arm.com>
- <20180831081730.GM21634@phenom.ffwll.local>
- <20180907124535.GA3461@DESKTOP-E1NTVVP.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JOw/Rzmznnp7ezEw0iWH1J2IYoykMyAS0cnhK1NJ/Rg=;
+        b=YuYEd5tyJtCHohWbeilJEL46hLlmAyGVWFAdNru4OseHW8KG4plX3SC/1ySv/Mr6Ms
+         LqDMWWHYhJPbvsKfnAAn8bpRPgEyC+lPby0gd5Mp9MxPwJIP+tFGdlSxgq1LfjXVf8cx
+         /LT6SmlfZa2d51RILpec5G88h7hJ9lZz4gIV0tZJrGU6ZWkuf+m5VO7HZu7GVfS/vHXQ
+         mUkkaNyRQn2Z4B/Cwp9mvyQ1FL98VcEtCTnD/0iBY2WmKK1Ts9vfrTbPwplI5HYsbCQr
+         pjmHlC028ie8O9jIDitnrNm1I6KXoCUpxDrbqrX+9HppPN2MfXvjzU1RwTFRH7EMgsAC
+         UFQw==
+X-Gm-Message-State: APzg51BAJw35ewE4qzHCqM0FMPZm+pboRH2gVq8xZr1Qf7yn+eZ3B3bd
+        trr5095Dx45S3ZcV1+5NFXNHOYtclrLLdq/rS8HY+dfE
+X-Google-Smtp-Source: ANB0VdZrf33dTC63lEL6m9HoqqCgNKdtjHue6Kvu/u1zVSffPfI2bH5QIGHsNsZQWGNWAiOdAVGrtWZDBghiv3oAfgA=
+X-Received: by 2002:ab0:7253:: with SMTP id d19-v6mr3076797uap.99.1536348563249;
+ Fri, 07 Sep 2018 12:29:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907124535.GA3461@DESKTOP-E1NTVVP.localdomain>
-X-Operating-System: Linux phenom 4.17.0-3-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180907182131.144514-1-vnagarnaik@google.com> <20180907143052.50ccfab6@gandalf.local.home>
+In-Reply-To: <20180907143052.50ccfab6@gandalf.local.home>
+From:   Vaibhav Nagarnaik <vnagarnaik@google.com>
+Date:   Fri, 7 Sep 2018 12:28:57 -0700
+Message-ID: <CAL26m8+0BC8Tbyaoh+VzGdE_ebr2_=hqV7eeH2m5=9v_v8=yOw@mail.gmail.com>
+Subject: Re: [PATCH] ring-buffer: Allow for rescheduling when removing pages
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Jason Behmer <jbehmer@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="00000000000066ad0705754d067e"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 01:45:36PM +0100, Brian Starkey wrote:
-> Hi Daniel,
-> 
-> On Fri, Aug 31, 2018 at 10:17:30AM +0200, Daniel Vetter wrote:
-> > On Thu, Aug 23, 2018 at 04:23:41PM +0100, Brian Starkey wrote:
-> > > Some formats have a non-integer number of bytes per pixel, which can't
-> > > be handled with the existing 'cpp' field in drm_format_info. To handle
-> > > these formats, add a 'bpp' field, which is only used if cpp[0] == 0.
-> > > 
-> > > This updates all the users of format->cpp in the core DRM code,
-> > > converting them to use a new function to get the bits-per-pixel for any
-> > > format.
-> > > 
-> > > It's assumed that drivers will use the 'bpp' field when they add support
-> > > for pixel formats with non-integer bytes-per-pixel.
-> > > 
-> > > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
-> > 
-> > I assume you still require that stuff is eventually aligned to bytes? In
-> > that case, can we subsume this into the tile work Alex is doing? It's
-> > essentially just another special case of having storage-size units
-> > measured in bytes which span more than 1x1 pixel. And I kinda don't want a
-> > metric pile of special cases here in the format code, because that just
-> > means every driver handles a different subset, with different bugs.
-> > -Daniel
-> 
-> Sorry for the delay, been struggling to free some cycles to think
-> about this.
-> 
-> I'm not sure how to pull this in with the tiling stuff. In the AFBC
-> case then our AFBC superblocks are always nice round numbers (256
-> pixels), and so it does end up being a multiple of bytes.
-> 
-> However, AFBC supports different superblock sizes, so picking just one
-> doesn't really work out, and putting AFBC in the core format table
-> which reflects AFBC doesn't seem good.
-> 
-> We could make something up (e.g. call these formats "tiled" with 2x4
-> tiles, which guarantees a multiple of 8), but it would be an
-> arbitrarily-selected lie, which often seems to spell trouble. If we
-> did do that, would you re-define cpp as "bytes-per-tile"? Otherwise
-> we still need to add a new field anyway.
-> 
-> What's the pile of special cases you're worried about? The helper I've
-> added here means that drivers which need to care can use one API and
-> not implement their own bugs.
+--00000000000066ad0705754d067e
+Content-Type: text/plain; charset="UTF-8"
 
-I'm confused ... the new bits-per-pixel stuff you're adding here is for
-yuv formats, not afbc. I'm just suggesting we have only 1 way of
-describing such formats that need more descriptive power than cpp, whether
-they have some kind of pixel-groups or small tiles.
+On Fri, Sep 7, 2018 at 11:30 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Fri,  7 Sep 2018 11:21:31 -0700
+> Vaibhav Nagarnaik <vnagarnaik@google.com> wrote:
+>
+> > When reducing ring buffer size, pages are removed by scheduling a work
+> > item on each CPU for the corresponding CPU ring buffer. After the pages
+> > are removed from ring buffer linked list, the pages are free()d in a
+> > tight loop. The loop does not give up CPU until all pages are removed.
+> > In a worst case behavior, when lot of pages are to be freed, it can
+> > cause system stall.
+> >
+> > After the pages are removed from the list, the free() can happen while
+> > the work is rescheduled. Add a check for need_sched() within the loop
+> > to prevent the system hangup.
+> >
+> > Reported-by: Jason Behmer <jbehmer@google.com>
+> > Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
+> > ---
+> >  kernel/trace/ring_buffer.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> > index 1d92d4a982fd..bc1789df7c53 100644
+> > --- a/kernel/trace/ring_buffer.c
+> > +++ b/kernel/trace/ring_buffer.c
+> > @@ -1546,6 +1546,9 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
+> >       tmp_iter_page = first_page;
+> >
+> >       do {
+> > +             if (need_resched())
+> > +                     schedule();
+> > +
+>
+> Hi, thanks for the patch, but the proper way to do this is to stick in:
+>
+>                 cond_resched();
+>
+> And that should solve it for you. Want to send in another patch?
 
-For very special stuff like afbc you need to validate in the driver
-anyway, too complicated. So I have no idea why you bring this up here?
--Daniel
+Sounds good. Let me update the patch. Testing it first though.
 
-> 
-> Cheers,
-> -Brian
-> 
-> > 
-> > > ---
-> > >  drivers/gpu/drm/drm_fb_cma_helper.c          |  6 +++-
-> > >  drivers/gpu/drm/drm_fb_helper.c              |  8 +++--
-> > >  drivers/gpu/drm/drm_fourcc.c                 | 50 ++++++++++++++++++++++++++++
-> > >  drivers/gpu/drm/drm_framebuffer.c            |  8 ++---
-> > >  drivers/gpu/drm/drm_gem_framebuffer_helper.c |  3 +-
-> > >  include/drm/drm_fourcc.h                     |  4 +++
-> > >  6 files changed, 70 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
-> > > index 186d00adfb5f..e279d70d3e60 100644
-> > > --- a/drivers/gpu/drm/drm_fb_cma_helper.c
-> > > +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-> > > @@ -118,13 +118,17 @@ dma_addr_t drm_fb_cma_get_gem_addr(struct drm_framebuffer *fb,
-> > >  {
-> > >  	struct drm_gem_cma_object *obj;
-> > >  	dma_addr_t paddr;
-> > > +	u8 bpp = drm_format_info_plane_bpp(fb->format, plane);
-> > > +
-> > > +	/* This can't work for non-integer bytes-per-pixel */
-> > > +	WARN_ON(bpp % 8);
-> > > 
-> > >  	obj = drm_fb_cma_get_gem_obj(fb, plane);
-> > >  	if (!obj)
-> > >  		return 0;
-> > > 
-> > >  	paddr = obj->paddr + fb->offsets[plane];
-> > > -	paddr += fb->format->cpp[plane] * (state->src_x >> 16);
-> > > +	paddr += (bpp / 8) * (state->src_x >> 16);
-> > >  	paddr += fb->pitches[plane] * (state->src_y >> 16);
-> > > 
-> > >  	return paddr;
-> > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> > > index 0646b108030b..ab369f250af4 100644
-> > > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > > @@ -1572,6 +1572,7 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
-> > >  	struct drm_fb_helper *fb_helper = info->par;
-> > >  	struct drm_framebuffer *fb = fb_helper->fb;
-> > >  	int depth;
-> > > +	u8 bpp = drm_format_info_plane_bpp(fb->format, 0);
-> > > 
-> > >  	if (var->pixclock != 0 || in_dbg_master())
-> > >  		return -EINVAL;
-> > > @@ -1580,14 +1581,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
-> > >  	 * Changes struct fb_var_screeninfo are currently not pushed back
-> > >  	 * to KMS, hence fail if different settings are requested.
-> > >  	 */
-> > > -	if (var->bits_per_pixel != fb->format->cpp[0] * 8 ||
-> > > +	if (var->bits_per_pixel != bpp ||
-> > >  	    var->xres > fb->width || var->yres > fb->height ||
-> > >  	    var->xres_virtual > fb->width || var->yres_virtual > fb->height) {
-> > >  		DRM_DEBUG("fb requested width/height/bpp can't fit in current fb "
-> > >  			  "request %dx%d-%d (virtual %dx%d) > %dx%d-%d\n",
-> > >  			  var->xres, var->yres, var->bits_per_pixel,
-> > >  			  var->xres_virtual, var->yres_virtual,
-> > > -			  fb->width, fb->height, fb->format->cpp[0] * 8);
-> > > +			  fb->width, fb->height, bpp);
-> > >  		return -EINVAL;
-> > >  	}
-> > > 
-> > > @@ -1949,11 +1950,12 @@ void drm_fb_helper_fill_var(struct fb_info *info, struct drm_fb_helper *fb_helpe
-> > >  			    uint32_t fb_width, uint32_t fb_height)
-> > >  {
-> > >  	struct drm_framebuffer *fb = fb_helper->fb;
-> > > +	u8 bpp = drm_format_info_plane_bpp(fb->format, 0);
-> > > 
-> > >  	info->pseudo_palette = fb_helper->pseudo_palette;
-> > >  	info->var.xres_virtual = fb->width;
-> > >  	info->var.yres_virtual = fb->height;
-> > > -	info->var.bits_per_pixel = fb->format->cpp[0] * 8;
-> > > +	info->var.bits_per_pixel = bpp;
-> > >  	info->var.accel_flags = FB_ACCELF_TEXT;
-> > >  	info->var.xoffset = 0;
-> > >  	info->var.yoffset = 0;
-> > > diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> > > index 3b42c25bd58d..bb28919c32f3 100644
-> > > --- a/drivers/gpu/drm/drm_fourcc.c
-> > > +++ b/drivers/gpu/drm/drm_fourcc.c
-> > > @@ -272,10 +272,60 @@ int drm_format_plane_cpp(uint32_t format, int plane)
-> > >  	if (!info || plane >= info->num_planes)
-> > >  		return 0;
-> > > 
-> > > +	/*
-> > > +	 * Not valid for formats with non-integer cpp,
-> > > +	 * use drm_format{_info}_plane_bpp instead
-> > > +	 */
-> > > +	WARN_ON(!info->cpp[0]);
-> > > +
-> > >  	return info->cpp[plane];
-> > >  }
-> > >  EXPORT_SYMBOL(drm_format_plane_cpp);
-> > > 
-> > > +/**
-> > > + * drm_format_plane_bpp - determine the bits per pixel value
-> > > + * @format: pixel format (DRM_FORMAT_*)
-> > > + * @plane: plane index
-> > > + *
-> > > + * Returns:
-> > > + * The bits per pixel value for the specified plane.
-> > > + */
-> > > +int drm_format_plane_bpp(uint32_t format, int plane)
-> > > +{
-> > > +	const struct drm_format_info *info;
-> > > +
-> > > +	info = drm_format_info(format);
-> > > +	if (!info)
-> > > +		return 0;
-> > > +
-> > > +	return drm_format_info_plane_bpp(info, plane);
-> > > +}
-> > > +EXPORT_SYMBOL(drm_format_plane_bpp);
-> > > +
-> > > +/**
-> > > + * drm_format_info_plane_bpp - determine the bits per pixel value
-> > > + *
-> > > + * Convenience function which handles formats with both integer
-> > > + * and non-integer bytes-per-pixel.
-> > > + *
-> > > + * @format: pixel format info structure
-> > > + * @plane: plane index
-> > > + *
-> > > + * Returns:
-> > > + * The bits per pixel value for the specified plane.
-> > > + */
-> > > +int drm_format_info_plane_bpp(const struct drm_format_info *info, int plane)
-> > > +{
-> > > +	if (plane >= info->num_planes)
-> > > +		return 0;
-> > > +
-> > > +	if (info->cpp[0])
-> > > +		return info->cpp[plane] * 8;
-> > > +
-> > > +	return info->bpp[plane];
-> > > +}
-> > > +EXPORT_SYMBOL(drm_format_info_plane_bpp);
-> > > +
-> > >  /**
-> > >   * drm_format_horz_chroma_subsampling - get the horizontal chroma subsampling factor
-> > >   * @format: pixel format (DRM_FORMAT_*)
-> > > diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-> > > index 8c4d32adcc17..7e00360ff70d 100644
-> > > --- a/drivers/gpu/drm/drm_framebuffer.c
-> > > +++ b/drivers/gpu/drm/drm_framebuffer.c
-> > > @@ -185,20 +185,20 @@ static int framebuffer_check(struct drm_device *dev,
-> > >  	for (i = 0; i < info->num_planes; i++) {
-> > >  		unsigned int width = fb_plane_width(r->width, info, i);
-> > >  		unsigned int height = fb_plane_height(r->height, info, i);
-> > > -		unsigned int cpp = info->cpp[i];
-> > > +		unsigned int bpp = drm_format_info_plane_bpp(info, i);
-> > > 
-> > >  		if (!r->handles[i]) {
-> > >  			DRM_DEBUG_KMS("no buffer object handle for plane %d\n", i);
-> > >  			return -EINVAL;
-> > >  		}
-> > > 
-> > > -		if ((uint64_t) width * cpp > UINT_MAX)
-> > > +		if ((uint64_t) DIV_ROUND_UP(width * bpp, 8) > UINT_MAX)
-> > >  			return -ERANGE;
-> > > 
-> > >  		if ((uint64_t) height * r->pitches[i] + r->offsets[i] > UINT_MAX)
-> > >  			return -ERANGE;
-> > > 
-> > > -		if (r->pitches[i] < width * cpp) {
-> > > +		if ((uint64_t) r->pitches[i] * 8 < (uint64_t) width * bpp) {
-> > >  			DRM_DEBUG_KMS("bad pitch %u for plane %d\n", r->pitches[i], i);
-> > >  			return -EINVAL;
-> > >  		}
-> > > @@ -476,7 +476,7 @@ int drm_mode_getfb(struct drm_device *dev,
-> > >  	r->height = fb->height;
-> > >  	r->width = fb->width;
-> > >  	r->depth = fb->format->depth;
-> > > -	r->bpp = fb->format->cpp[0] * 8;
-> > > +	r->bpp = drm_format_info_plane_bpp(fb->format, 0);
-> > >  	r->pitch = fb->pitches[0];
-> > > 
-> > >  	/* GET_FB() is an unprivileged ioctl so we must not return a
-> > > diff --git a/drivers/gpu/drm/drm_gem_framebuffer_helper.c b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
-> > > index acfbc0641a06..dfe224ccaeba 100644
-> > > --- a/drivers/gpu/drm/drm_gem_framebuffer_helper.c
-> > > +++ b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
-> > > @@ -161,6 +161,7 @@ drm_gem_fb_create_with_funcs(struct drm_device *dev, struct drm_file *file,
-> > >  		unsigned int width = mode_cmd->width / (i ? info->hsub : 1);
-> > >  		unsigned int height = mode_cmd->height / (i ? info->vsub : 1);
-> > >  		unsigned int min_size;
-> > > +		u8 bpp = drm_format_info_plane_bpp(fb->format, i);
-> > > 
-> > >  		objs[i] = drm_gem_object_lookup(file, mode_cmd->handles[i]);
-> > >  		if (!objs[i]) {
-> > > @@ -170,7 +171,7 @@ drm_gem_fb_create_with_funcs(struct drm_device *dev, struct drm_file *file,
-> > >  		}
-> > > 
-> > >  		min_size = (height - 1) * mode_cmd->pitches[i]
-> > > -			 + width * info->cpp[i]
-> > > +			 + DIV_ROUND_UP(width * bpp, 8)
-> > >  			 + mode_cmd->offsets[i];
-> > > 
-> > >  		if (objs[i]->size < min_size) {
-> > > diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-> > > index 3e86408dac9f..d4af4dab1623 100644
-> > > --- a/include/drm/drm_fourcc.h
-> > > +++ b/include/drm/drm_fourcc.h
-> > > @@ -36,6 +36,7 @@ struct drm_mode_fb_cmd2;
-> > >   *	use in new code and set to 0 for new formats.
-> > >   * @num_planes: Number of color planes (1 to 3)
-> > >   * @cpp: Number of bytes per pixel (per plane)
-> > > + * @bpp: Number of bits per pixel (per plane), only valid if cpp[0] == 0.
-> > >   * @hsub: Horizontal chroma subsampling factor
-> > >   * @vsub: Vertical chroma subsampling factor
-> > >   * @has_alpha: Does the format embeds an alpha component?
-> > > @@ -45,6 +46,7 @@ struct drm_format_info {
-> > >  	u8 depth;
-> > >  	u8 num_planes;
-> > >  	u8 cpp[3];
-> > > +	u8 bpp[3];
-> > >  	u8 hsub;
-> > >  	u8 vsub;
-> > >  	bool has_alpha;
-> > > @@ -66,6 +68,8 @@ drm_get_format_info(struct drm_device *dev,
-> > >  uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
-> > >  int drm_format_num_planes(uint32_t format);
-> > >  int drm_format_plane_cpp(uint32_t format, int plane);
-> > > +int drm_format_plane_bpp(uint32_t format, int plane);
-> > > +int drm_format_info_plane_bpp(const struct drm_format_info *format, int plane);
-> > >  int drm_format_horz_chroma_subsampling(uint32_t format);
-> > >  int drm_format_vert_chroma_subsampling(uint32_t format);
-> > >  int drm_format_plane_width(int width, uint32_t format, int plane);
-> > > --
-> > > 2.16.1
-> > > 
-> > 
-> > -- 
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
+Vaibhav
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> -- Steve
+>
+> >               to_remove_page = tmp_iter_page;
+> >               rb_inc_page(cpu_buffer, &tmp_iter_page);
+> >
+>
+
+--00000000000066ad0705754d067e
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIS7wYJKoZIhvcNAQcCoIIS4DCCEtwCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBVMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+QjBABggrBgEFBQcwAoY0aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NodnNt
+aW1lY2ExLmNydDAdBgNVHQ4EFgQUH+edOUi4Dg/4BcEaQBhbxUlT6H0wHwYDVR0jBBgwFoAUyzgS
+sMeZwHiSjLMhleb0JmLA4D8wTAYDVR0gBEUwQzBBBgkrBgEEAaAyASgwNDAyBggrBgEFBQcCARYm
+aHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wOwYDVR0fBDQwMjAwoC6gLIYq
+aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2h2c21pbWVjYTEuY3JsMA4GA1UdDwEB/wQEAwIF
+oDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAHB9OW0w
+X+D4D4ogfYFLq3P7W8JPCIZjkKIlA92Leo7WRm+s0dRYcHcXohr0NdEODLvR1QFO0+gB9IjecZ2t
+8SfMEX3qMLJtfOkymSy9dRGQ0M3PiHix30Ux29GUOXDB8ZP1mJ3jzKUnqns/0jSY55YQ50qqhCky
+gexjBpT4khyoLIGPnHEognAHQgZyAkOTCFxFyhJmIlYRjfM5p6UJUhoZWVmQmkhW4N59WDvbDGBb
+0xoGU5Hrsm9UOHPMrSGNTbm+l+GZNWly3ZRlfSsEihAUzo3SmDBKyXMt+0t0QgKKbwpcPzYMiqjL
+WvBlcrqdOIcj9luM9egtNIiDRRJfuKExggJeMIICWgIBATBcMEwxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMSIwIAYDVQQDExlHbG9iYWxTaWduIEhWIFMvTUlNRSBDQSAx
+AgweXXqQOwKL1mLnm0QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIMBc6LHB3Doe
+xaupE2R/dl6DDiqgT3pQhslXFW11yT6kMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZI
+hvcNAQkFMQ8XDTE4MDkwNzE5MjkyM1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJ
+YIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcN
+AQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBbEBNrr4Dq4B/DJXBE2kxao1/AaG6V
+hQhVRrbrpZimEY6lNOfUKzn21Qsm3CCj1UYr17CJFi4hPc1ZqBBEzC5fHqc907j4bINF8qqvvHSh
+cdNYv1UoQUpFZ9aoQ0YTeKeyPasddFdmixlIy496KnDIaNriMgrROnA79PshDzTzeCpfvnccKh5o
+6PC+hU5ACvUR0mdzoKXdnWVEahofBka9yoJbb5/ObEtTeyu4mHSMcOFcM47wWKZ5uAE7tdmJNfmX
+FGyIm6GLaTwhD87xkdHsZBlPu8GQWF9QMX9OdFYPhWey6ANGYXcZKuV79omAlUyOBpPHCS2m1U97
+ZCzQC1un
+--00000000000066ad0705754d067e--
