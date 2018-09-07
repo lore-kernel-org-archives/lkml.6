@@ -2,104 +2,115 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9DBC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA81C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31A72077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31A72077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 150272077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:14:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hjWO2rPL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 150272077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeIGSzB (ORCPT
+        id S1729054AbeIGSzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:55:01 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:38550 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbeIGSzB (ORCPT
+        Fri, 7 Sep 2018 14:55:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58486 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbeIGSzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:55:01 -0400
-Received: by mail-qt0-f195.google.com with SMTP id x7-v6so16342047qtk.5;
-        Fri, 07 Sep 2018 07:13:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z0evgYeo5X3sJ0ABpw9Rh8HyzhNeb4D+zN5TZKbuCeE=;
-        b=fOVGbWiyKd8zEv37aSvPfI4BUtC3DsBlSMLHcciBfzcwAn6UgeWd8Ly/lAAxoZv8Jn
-         7iq2A/+XUL3ePT4Af1O4XdgKkul4uFvi2cm1K8uYWEbW6FfnKNtMss9KSlWlhIYK8zQy
-         QsVsfMcUyu6NDTwIwf6X6h7tv3+Nzy7XAiIq8heDHilgWmC6jTAHONmZzB1dRW+DQCdD
-         Y7IWkN9x4SjmtQeZmT4vqZkrZ4b6BTC77ZanUz9PkWb6Ne7kLa+PYKdopRITdHup0aue
-         xM3SXjQO6GbyJBLQvxTZ0Jofj6BwrVUJNkktvYUESlXNWKLpT/FGqPbrAM5LnshDselw
-         gsqg==
-X-Gm-Message-State: APzg51D3tyzcYF6zdCX7BqCQKaCZUTPokQ2gWUoTq5CweHPQSh8DQRdd
-        IZLLo4xWihMRxXwFnBxeJR10k4Aua1mEcuQMILo=
-X-Google-Smtp-Source: ANB0VdZ2virbiAbITaUFP/m/hc+LNCVebyaVqijlSrsrivvJT0h4SPOPjIQs9hWLeEP2MHmG0gwy5FUYB4Q8WG6RV+0=
-X-Received: by 2002:a0c:8b67:: with SMTP id d39-v6mr5764154qvc.180.1536329631727;
- Fri, 07 Sep 2018 07:13:51 -0700 (PDT)
+        Fri, 7 Sep 2018 14:55:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OG7CpCqwDTHhoXbBOHqBcBUWNn3zGgm6Vv7WweSw7So=; b=hjWO2rPLXO6nzGeWOlf1LlpQh
+        b6JAdQ9U1qo8kbCROD0HuD9nAZYGYMWgCz4ycQcLRxS9q94U0RYATWsMWK6/4XFvQKbFfaR8gagnW
+        5pSblOX88N+O8RjdHXApbSsvVL6KrT+nmi1iTbPeNvCleX9+IYLhE6fMBa+COuIldw10HjYiCd3ti
+        YhL+JtdyIqBbzPsdT1FNdRn7KAMGpWMk7gaWgUoEZAUBWuOlKxxJC2yQJrlY7YdSS03gfAKqJroFD
+        2xmEYYYu+cBGaFlqM14WSEgMaAFfa6wPbgblWv0II93NfEqdP4OAdpFboYErR/tfsT7fDQV9dxX6k
+        c4kt6N8vg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyHWC-0006NJ-C2; Fri, 07 Sep 2018 14:13:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BF5FD2024E43D; Fri,  7 Sep 2018 16:13:50 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 16:13:50 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] perf: enum overflow in uapi/linux/perf_event.h
+Message-ID: <20180907141350.GK24142@hirez.programming.kicks-ass.net>
+References: <a70172863fa7d3c138f788b18d36524bd45b0a73.1536326078.git.christophe.leroy@c-s.fr>
+ <20180907134246.GC24106@hirez.programming.kicks-ass.net>
+ <ae32181d-37b2-1a13-3c72-66775e05ff88@c-s.fr>
+ <20180907135817.GF24106@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <cover.1536138304.git.ren_guo@c-sky.com> <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
- <CAK8P3a1fYM0X=F+9yD6BVLq=57eJeFWXCvywjQOFwEHz7oAhcg@mail.gmail.com>
- <20180907030447.GA10434@guoren-Inspiron-7460> <CAK8P3a2K_ecCQEs840hQMrjsf4H8hHxS+HtM2TtPDYpRu8-LeQ@mail.gmail.com>
- <20180907125536.GA2308@guoren>
-In-Reply-To: <20180907125536.GA2308@guoren>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 7 Sep 2018 16:13:35 +0200
-Message-ID: <CAK8P3a3b+dM2kxSG7kCqTR=NmiqvZoMwOwSmQKRQLQjXqpqxYw@mail.gmail.com>
-Subject: Re: [PATCH V3 06/26] csky: Cache and TLB routines
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907135817.GF24106@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 2:55 PM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> On Fri, Sep 07, 2018 at 10:14:38AM +0200, Arnd Bergmann wrote:
-> > On Fri, Sep 7, 2018 at 5:04 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > > On Thu, Sep 06, 2018 at 04:31:16PM +0200, Arnd Bergmann wrote:
-> > Similarly, an MMIO read may be used to see if a DMA has completed
-> > and the device register tells you that the DMA has left the device,
-> > but without a barrier, the CPU may have prefetched the DMA
-> > data while waiting for the MMIO-read to complete. The __io_ar()
-> > barrier() in asm-generic/io.h prevents the compiler from reordering
-> > the two reads, but if an weakly ordered read (in coherent DMA buffer)
-> > can bypass a strongly ordered read (MMIO), then it's still still
-> > broken.
-> __io_ar() barrier()? not rmb() ?! I've defined the rmb in asm/barrier, So
-> I got rmb() here not barrier().
->
-> Only __io_br() is barrier().
+On Fri, Sep 07, 2018 at 03:58:17PM +0200, Peter Zijlstra wrote:
+> On Fri, Sep 07, 2018 at 01:50:18PM +0000, Christophe Leroy wrote:
+> > 
+> > 
+> > On 09/07/2018 01:42 PM, Peter Zijlstra wrote:
+> > > On Fri, Sep 07, 2018 at 01:27:19PM +0000, Christophe Leroy wrote:
+> > > > On PPC32, enums are 32 bits, so __PERF_SAMPLE_CALLCHAIN_EARLY is
+> > > > out of scope. The following sparse warning is encountered:
+> > > > 
+> > > >    CHECK   arch/powerpc/kernel/process.c
+> > > > ./include/uapi/linux/perf_event.h:147:56: warning: cast truncates bits from constant value (8000000000000000 becomes 0)
+> > > 
+> > > Urgh... what compiler is that? I've not seen anything like that from the
+> > > build bots.
+> > > 
+> > 
+> > [root@pc16082vm linux-powerpc]# sparse --version
+> > 0.5.2
+> > 
+> > [root@pc16082vm linux-powerpc]# ppc-linux-gcc --version
+> > ppc-linux-gcc (GCC) 5.4.0
+> 
+> Ah, that's a sparse warning. But does your GCC agree? The thing is,
+> sparse uses the C enum spec, but I suspect GCC uses the C++ enum spec
+> and it all works fine.
 
-Ah right, I misremembered the defaults. It's probably ok then.
+What does the below proglet print on your PPC32 box? I suspect the
+output will be:
 
-> > > > - How does endianess work? Are there any buses that flip bytes around
-> > > >   when running big-endian, or do you always do that in software?
-> > > Currently we only support little-endian and soc will follow it.
-> >
-> > Ok, that makes it easier. If you think that you won't even need big-endian
-> > support in the long run, you could also remove your asm/byteorder.h
-> > header. If you're not sure, it doesn't hurt to keep it of course.
-> Em... I'm not sure, so let me keep it for a while.
+400000000000
 
-Ok. I think overall the trend is to be little-endian only for most
-architectures: powerpc64 moved from big-endian only to little-endian
-by default, ARM rarely uses big-endian (basically only for legacy
-applications ported from BE MIPS or ppc), and all new architectures
-we added in the last years are little-endian (OpenRISC being the
-main exception).
+and all is well.
 
-     Arnd
+---
+#include <stdio.h>
+
+enum ponies {
+	big = 1ULL<<46,
+};
+
+int main(int argc, char **argv)
+{
+	unsigned long long val = big;
+	printf("%Lx\n", val);
+	return 0;
+}
+
