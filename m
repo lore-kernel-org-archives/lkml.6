@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF24C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF2BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADAF02083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAF02083D
+	by mail.kernel.org (Postfix) with ESMTP id 5C76420844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C76420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730171AbeIHCXr (ORCPT
+        id S1730178AbeIHCXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:23:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54708 "EHLO
+        Fri, 7 Sep 2018 22:23:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54744 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728473AbeIHCXq (ORCPT
+        with ESMTP id S1728473AbeIHCXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:23:46 -0400
+        Fri, 7 Sep 2018 22:23:49 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24FDFFF6;
-        Fri,  7 Sep 2018 21:40:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58F651012;
+        Fri,  7 Sep 2018 21:40:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chirantan Ekbote <chirantan@chromium.org>,
-        Greg Kurz <groug@kaod.org>, Dylan Reid <dgreid@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Dominique Martinet <dominique.martinet@cea.fr>
-Subject: [PATCH 4.4 03/47] 9p/net: Fix zero-copy path in the 9p virtio transport
-Date:   Fri,  7 Sep 2018 23:09:59 +0200
-Message-Id: <20180907210904.834444985@linuxfoundation.org>
+        stable@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.4 30/47] iommu/vt-d: Add definitions for PFSID
+Date:   Fri,  7 Sep 2018 23:10:26 +0200
+Message-Id: <20180907210907.893067368@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -52,59 +52,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chirantan Ekbote <chirantan@chromium.org>
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-commit d28c756caee6e414d9ba367d0b92da24145af2a8 upstream.
+commit 0f725561e168485eff7277d683405c05b192f537 upstream.
 
-The zero-copy optimization when reading or writing large chunks of data
-is quite useful.  However, the 9p messages created through the zero-copy
-write path have an incorrect message size: it should be the size of the
-header + size of the data being written but instead it's just the size
-of the header.
+When SRIOV VF device IOTLB is invalidated, we need to provide
+the PF source ID such that IOMMU hardware can gauge the depth
+of invalidation queue which is shared among VFs. This is needed
+when device invalidation throttle (DIT) capability is supported.
 
-This only works if the server ignores the size field of the message and
-otherwise breaks the framing of the protocol. Fix this by re-writing the
-message size field with the correct value.
+This patch adds bit definitions for checking and tracking PFSID.
 
-Tested by running `dd if=/dev/zero of=out bs=4k count=1` inside a
-virtio-9p mount.
-
-Link: http://lkml.kernel.org/r/20180717003529.114368-1-chirantan@chromium.org
-Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
-Reviewed-by: Greg Kurz <groug@kaod.org>
-Tested-by: Greg Kurz <groug@kaod.org>
-Cc: Dylan Reid <dgreid@chromium.org>
-Cc: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Cc: "Ashok Raj" <ashok.raj@intel.com>
+Cc: "Lu Baolu" <baolu.lu@linux.intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/trans_virtio.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/iommu/intel-iommu.c |    1 +
+ include/linux/intel-iommu.h |    3 +++
+ 2 files changed, 4 insertions(+)
 
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -409,6 +409,7 @@ p9_virtio_zc_request(struct p9_client *c
- 	p9_debug(P9_DEBUG_TRANS, "virtio request\n");
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -419,6 +419,7 @@ struct device_domain_info {
+ 	struct list_head global; /* link to global list */
+ 	u8 bus;			/* PCI bus number */
+ 	u8 devfn;		/* PCI devfn number */
++	u16 pfsid;		/* SRIOV physical function source ID */
+ 	u8 pasid_supported:3;
+ 	u8 pasid_enabled:1;
+ 	u8 pri_supported:1;
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -125,6 +125,7 @@ static inline void dmar_writeq(void __io
+  * Extended Capability Register
+  */
  
- 	if (uodata) {
-+		__le32 sz;
- 		int n = p9_get_mapped_pages(chan, &out_pages, uodata,
- 					    outlen, &offs, &need_drop);
- 		if (n < 0)
-@@ -419,6 +420,12 @@ p9_virtio_zc_request(struct p9_client *c
- 			memcpy(&req->tc->sdata[req->tc->size - 4], &v, 4);
- 			outlen = n;
- 		}
-+		/* The size field of the message must include the length of the
-+		 * header and the length of the data.  We didn't actually know
-+		 * the length of the data until this point so add it in now.
-+		 */
-+		sz = cpu_to_le32(req->tc->size + outlen);
-+		memcpy(&req->tc->sdata[0], &sz, sizeof(sz));
- 	} else if (uidata) {
- 		int n = p9_get_mapped_pages(chan, &in_pages, uidata,
- 					    inlen, &offs, &need_drop);
++#define ecap_dit(e)		((e >> 41) & 0x1)
+ #define ecap_pasid(e)		((e >> 40) & 0x1)
+ #define ecap_pss(e)		((e >> 35) & 0x1f)
+ #define ecap_eafs(e)		((e >> 34) & 0x1)
+@@ -294,6 +295,7 @@ enum {
+ #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
+ #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
+ #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
++#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
+ #define QI_DEV_IOTLB_SIZE	1
+ #define QI_DEV_IOTLB_MAX_INVS	32
+ 
+@@ -318,6 +320,7 @@ enum {
+ #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
+ #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
+ #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
++#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
+ #define QI_DEV_EIOTLB_MAX_INVS	32
+ 
+ #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
 
 
