@@ -2,80 +2,105 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC0CC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 06:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35907C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 06:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B040A20844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 06:36:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B040A20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C9FCB20844
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 06:37:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYsOIGq0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FCB20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbeIHLUr (ORCPT
+        id S1726495AbeIHLWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 07:20:47 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37342 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbeIHLUq (ORCPT
+        Sat, 8 Sep 2018 07:22:33 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40333 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbeIHLWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 07:20:46 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyWqi-0003ja-F4; Sat, 08 Sep 2018 08:36:04 +0200
-Date:   Sat, 8 Sep 2018 08:36:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v2 3/3] x86/pti/64: Remove the SYSCALL64 entry
- trampoline
-In-Reply-To: <CALCETrXw9kjeGTrGBy=VMV_2pqAUC4bRZVMgvTrqkZ-EzO80_A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1809080833580.1402@nanos.tec.linutronix.de>
-References: <cover.1536015544.git.luto@kernel.org> <8c7c6e483612c3e4e10ca89495dc160b1aa66878.1536015544.git.luto@kernel.org> <20180904070455.GX24124@hirez.programming.kicks-ass.net> <CALCETrUZm3KsonYVd5sn=LhoGZ2ciO7xT_Fz=jD_HZ04tB9o=Q@mail.gmail.com>
- <alpine.DEB.2.21.1809072145460.1402@nanos.tec.linutronix.de> <CA+55aFz9aZUo0psXDqiQ4aTZSiiU-mRr_PSWkm_vzAZzpdhMmg@mail.gmail.com> <CALCETrXw9kjeGTrGBy=VMV_2pqAUC4bRZVMgvTrqkZ-EzO80_A@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sat, 8 Sep 2018 07:22:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l63-v6so8002157pga.7;
+        Fri, 07 Sep 2018 23:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=C5SdN+OjFt2ji9pDfHLvVliUhy/o+6TROPtuwJ0hyZA=;
+        b=EYsOIGq0WqlAM22SeWH5M7QE5W3kaK3GJuc6i8Ab8aBNuz9aSYObcNvfr1Mam/qqau
+         jVlMX9aPh5R2H8c+BiF4JoIXx7cv1ufHUF3GpfiS5Hnm1DUrff6gYFndpJ/0brVFM2/w
+         uy0GNqsU9iB170f78CLbFwl2KDthThp8gyiJrQWYiBA2Q64CEdFSFxHc5hD+kkzP5OrX
+         qmnPnVXb+AkjGN2XTurXw65C3xfU+Tha/QzBSyjJP1r23QAeen+BWj3mIEWgfEbkDMz2
+         Uxw2I5IaKTZl6yyQCc0bb6FkQkzS8zdcemLD7DKXL8KUvnsqOYHstZUkOWXMnBW2j6Nl
+         btbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C5SdN+OjFt2ji9pDfHLvVliUhy/o+6TROPtuwJ0hyZA=;
+        b=VqsDD1KHrUZufp2DsV41OQ2zPT9HlanRBFoSRQopZ9mEcjUk94WLqtZ3YVkABk+4F8
+         ZqTpkH9zxQ0EK2djqX18kzWJuCWE30B36lGA1DAngqFh50mDWGub32MLuh6x35sAN7Jv
+         ZoWTVaxFilMydfxasDPcUBWH1V4v+C9a2r95ci6QR1fZqlEYDrUwSiRTh+DDwsLNNb12
+         PlEzDLay+TiXUX2vsCpZxKXWrmBkJImUf2Sv5EreielOpOMBYvjqCh25R13ANj+NkAAb
+         fXo+fzu5vcYyVhfcYQwhNgMCWvCKyDzm9qxX5UHzm0YQCeEyJFOS55RnVG03qIXhXqgo
+         swGQ==
+X-Gm-Message-State: APzg51AGeVNMBConKuclGe61EErgKAabpdGj0YaSZDAB2dV3M/3grWzO
+        h/5zBNbyw5SdMTlHO7Z7EFI=
+X-Google-Smtp-Source: ANB0VdYHsF+LMff+LwyGV38thrHx0nlkj/uJbnvXsXzwHRaTJSIrwhSuIAtaHiTpjAhe2OV55HQBMg==
+X-Received: by 2002:a62:83ca:: with SMTP id h193-v6mr12417607pfe.123.1536388674601;
+        Fri, 07 Sep 2018 23:37:54 -0700 (PDT)
+Received: from localhost.localdomain ([2409:8900:2a51:f4a:7c2c:f4b6:91c4:bb76])
+        by smtp.gmail.com with ESMTPSA id g7-v6sm12199975pfi.175.2018.09.07.23.37.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 07 Sep 2018 23:37:53 -0700 (PDT)
+From:   Zhaoxiong Yuan <yuanzhx326@gmail.com>
+To:     dan.j.williams@intel.com, vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zhaoxiong Yuan <yuanzhx326@gmail.com>
+Subject: [PATCH] dma: idma64: replace spin_lock_irqsave with spin_lock
+Date:   Sat,  8 Sep 2018 06:02:10 +1100
+Message-Id: <1536346930-6842-1-git-send-email-yuanzhx326@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018, Andy Lutomirski wrote:
-> On Fri, Sep 7, 2018 at 5:04 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > Virtual mapping tricks may be cool, but in the end, not having to use
-> > them is better still, I think.
-> >
-> 
-> If (and this is a *big* if) all the percpu data is within 2GB of the
-> entry text, then we could avoid this extra TLB reference by accessing
-> it directly instead of using an alias.
-> 
-> I suppose the summary is that the retpoline-free trampoline variant is
-> even more complicated than the code I'm removing in this series, and
-> that it would be at best a teeny tiny win.  Once all the Spectre dust
-> settles and we get fixed CPUs, we could consider re-optimizing this.
+idma64_chan_irq() is invoked in hardirq handle function, it is unnecessary 
+to call spin_lock_irqsave.
+Signed-off-by: Zhaoxiong Yuan <yuanzhx326@gmail.com>
+---
+ drivers/dma/idma64.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-That's going to be after my retirement ...
-
+diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
+index 1fbf9cb..5b9c156 100644
+--- a/drivers/dma/idma64.c
++++ b/drivers/dma/idma64.c
+@@ -142,9 +142,8 @@ static void idma64_chan_irq(struct idma64 *idma64, unsigned short c,
+ {
+ 	struct idma64_chan *idma64c = &idma64->chan[c];
+ 	struct idma64_desc *desc;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&idma64c->vchan.lock, flags);
++	spin_lock(&idma64c->vchan.lock);
+ 	desc = idma64c->desc;
+ 	if (desc) {
+ 		if (status_err & (1 << c)) {
+@@ -161,7 +160,7 @@ static void idma64_chan_irq(struct idma64 *idma64, unsigned short c,
+ 		if (idma64c->desc == NULL || desc->status == DMA_ERROR)
+ 			idma64_stop_transfer(idma64c);
+ 	}
+-	spin_unlock_irqrestore(&idma64c->vchan.lock, flags);
++	spin_unlock(&idma64c->vchan.lock);
+ }
+ 
+ static irqreturn_t idma64_irq(int irq, void *dev)
+-- 
+1.9.1
 
