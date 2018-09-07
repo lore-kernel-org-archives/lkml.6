@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D85C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AB3C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633F220844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633F220844
+	by mail.kernel.org (Postfix) with ESMTP id 23BBA20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23BBA20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbeIHCUj (ORCPT
+        id S1729802AbeIHCUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52556 "EHLO
+        Fri, 7 Sep 2018 22:20:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbeIHCUi (ORCPT
+        with ESMTP id S1727655AbeIHCUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:38 -0400
+        Fri, 7 Sep 2018 22:20:45 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB04CD6B;
-        Fri,  7 Sep 2018 21:37:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4BF2E9A;
+        Fri,  7 Sep 2018 21:37:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Bernie Thompson <bernie@plugable.com>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.9 54/63] fb: fix lost console when the user unplugs a USB adapter
-Date:   Fri,  7 Sep 2018 23:10:25 +0200
-Message-Id: <20180907211015.944154648@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Watson <cjwatson@ubuntu.com>,
+        Christian Brauner <christian@brauner.io>,
+        Serge Hallyn <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.9 56/63] getxattr: use correct xattr length
+Date:   Fri,  7 Sep 2018 23:10:27 +0200
+Message-Id: <20180907211016.039478211@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -53,124 +52,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Christian Brauner <christian@brauner.io>
 
-commit 8c5b044299951acd91e830a688dd920477ea1eda upstream.
+commit 82c9a927bc5df6e06b72d206d24a9d10cced4eb5 upstream.
 
-I have a USB display adapter using the udlfb driver and I use it on an ARM
-board that doesn't have any graphics card. When I plug the adapter in, the
-console is properly displayed, however when I unplug and re-plug the
-adapter, the console is not displayed and I can't access it until I reboot
-the board.
+When running in a container with a user namespace, if you call getxattr
+with name = "system.posix_acl_access" and size % 8 != 4, then getxattr
+silently skips the user namespace fixup that it normally does resulting in
+un-fixed-up data being returned.
+This is caused by posix_acl_fix_xattr_to_user() being passed the total
+buffer size and not the actual size of the xattr as returned by
+vfs_getxattr().
+This commit passes the actual length of the xattr as returned by
+vfs_getxattr() down.
 
-The reason is this:
-When the adapter is unplugged, dlfb_usb_disconnect calls
-unlink_framebuffer, then it waits until the reference count drops to zero
-and then it deallocates the framebuffer. However, the console that is
-attached to the framebuffer device keeps the reference count non-zero, so
-the framebuffer device is never destroyed. When the USB adapter is plugged
-again, it creates a new device /dev/fb1 and the console is not attached to
-it.
+A reproducer for the issue is:
 
-This patch fixes the bug by unbinding the console from unlink_framebuffer.
-The code to unbind the console is moved from do_unregister_framebuffer to
-a function unbind_console. When the console is unbound, the reference
-count drops to zero and the udlfb driver frees the framebuffer. When the
-adapter is plugged back, a new framebuffer is created and the console is
-attached to it.
+  touch acl_posix
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Cc: Bernie Thompson <bernie@plugable.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
+  setfacl -m user:0:rwx acl_posix
+
+and the compile:
+
+  #define _GNU_SOURCE
+  #include <errno.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+  #include <attr/xattr.h>
+
+  /* Run in user namespace with nsuid 0 mapped to uid != 0 on the host. */
+  int main(int argc, void **argv)
+  {
+          ssize_t ret1, ret2;
+          char buf1[128], buf2[132];
+          int fret = EXIT_SUCCESS;
+          char *file;
+
+          if (argc < 2) {
+                  fprintf(stderr,
+                          "Please specify a file with "
+                          "\"system.posix_acl_access\" permissions set\n");
+                  _exit(EXIT_FAILURE);
+          }
+          file = argv[1];
+
+          ret1 = getxattr(file, "system.posix_acl_access",
+                          buf1, sizeof(buf1));
+          if (ret1 < 0) {
+                  fprintf(stderr, "%s - Failed to retrieve "
+                                  "\"system.posix_acl_access\" "
+                                  "from \"%s\"\n", strerror(errno), file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          ret2 = getxattr(file, "system.posix_acl_access",
+                          buf2, sizeof(buf2));
+          if (ret2 < 0) {
+                  fprintf(stderr, "%s - Failed to retrieve "
+                                  "\"system.posix_acl_access\" "
+                                  "from \"%s\"\n", strerror(errno), file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          if (ret1 != ret2) {
+                  fprintf(stderr, "The value of \"system.posix_acl_"
+                                  "access\" for file \"%s\" changed "
+                                  "between two successive calls\n", file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          for (ssize_t i = 0; i < ret2; i++) {
+                  if (buf1[i] == buf2[i])
+                          continue;
+
+                  fprintf(stderr,
+                          "Unexpected different in byte %zd: "
+                          "%02x != %02x\n", i, buf1[i], buf2[i]);
+                  fret = EXIT_FAILURE;
+          }
+
+          if (fret == EXIT_SUCCESS)
+                  fprintf(stderr, "Test passed\n");
+          else
+                  fprintf(stderr, "Test failed\n");
+
+          _exit(fret);
+  }
+and run:
+
+  ./tester acl_posix
+
+On a non-fixed up kernel this should return something like:
+
+  root@c1:/# ./t
+  Unexpected different in byte 16: ffffffa0 != 00
+  Unexpected different in byte 17: ffffff86 != 00
+  Unexpected different in byte 18: 01 != 00
+
+and on a fixed kernel:
+
+  root@c1:~# ./t
+  Test passed
+
 Cc: stable@vger.kernel.org
-[b.zolnierkie: preserve old behavior for do_unregister_framebuffer()]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 2f6f0654ab61 ("userns: Convert vfs posix_acl support to use kuids and kgids")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199945
+Reported-by: Colin Watson <cjwatson@ubuntu.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/core/fbmem.c |   38 ++++++++++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 6 deletions(-)
+ fs/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1695,12 +1695,12 @@ static int do_register_framebuffer(struc
- 	return 0;
- }
- 
--static int do_unregister_framebuffer(struct fb_info *fb_info)
-+static int unbind_console(struct fb_info *fb_info)
- {
- 	struct fb_event event;
--	int i, ret = 0;
-+	int ret;
-+	int i = fb_info->node;
- 
--	i = fb_info->node;
- 	if (i < 0 || i >= FB_MAX || registered_fb[i] != fb_info)
- 		return -EINVAL;
- 
-@@ -1715,17 +1715,29 @@ static int do_unregister_framebuffer(str
- 	unlock_fb_info(fb_info);
- 	console_unlock();
- 
-+	return ret;
-+}
-+
-+static int __unlink_framebuffer(struct fb_info *fb_info);
-+
-+static int do_unregister_framebuffer(struct fb_info *fb_info)
-+{
-+	struct fb_event event;
-+	int ret;
-+
-+	ret = unbind_console(fb_info);
-+
- 	if (ret)
- 		return -EINVAL;
- 
- 	pm_vt_switch_unregister(fb_info->dev);
- 
--	unlink_framebuffer(fb_info);
-+	__unlink_framebuffer(fb_info);
- 	if (fb_info->pixmap.addr &&
- 	    (fb_info->pixmap.flags & FB_PIXMAP_DEFAULT))
- 		kfree(fb_info->pixmap.addr);
- 	fb_destroy_modelist(&fb_info->modelist);
--	registered_fb[i] = NULL;
-+	registered_fb[fb_info->node] = NULL;
- 	num_registered_fb--;
- 	fb_cleanup_device(fb_info);
- 	event.info = fb_info;
-@@ -1738,7 +1750,7 @@ static int do_unregister_framebuffer(str
- 	return 0;
- }
- 
--int unlink_framebuffer(struct fb_info *fb_info)
-+static int __unlink_framebuffer(struct fb_info *fb_info)
- {
- 	int i;
- 
-@@ -1750,6 +1762,20 @@ int unlink_framebuffer(struct fb_info *f
- 		device_destroy(fb_class, MKDEV(FB_MAJOR, i));
- 		fb_info->dev = NULL;
- 	}
-+
-+	return 0;
-+}
-+
-+int unlink_framebuffer(struct fb_info *fb_info)
-+{
-+	int ret;
-+
-+	ret = __unlink_framebuffer(fb_info);
-+	if (ret)
-+		return ret;
-+
-+	unbind_console(fb_info);
-+
- 	return 0;
- }
- EXPORT_SYMBOL(unlink_framebuffer);
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -540,7 +540,7 @@ getxattr(struct dentry *d, const char __
+ 	if (error > 0) {
+ 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+ 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+-			posix_acl_fix_xattr_to_user(kvalue, size);
++			posix_acl_fix_xattr_to_user(kvalue, error);
+ 		if (size && copy_to_user(value, kvalue, error))
+ 			error = -EFAULT;
+ 	} else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
 
 
