@@ -2,144 +2,124 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E117C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD70C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E757020861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F294B20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:08:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6csySU3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E757020861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mzsnk3qf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F294B20844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbeIGGpY (ORCPT
+        id S1728865AbeIGGqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:45:24 -0400
-Received: from mail-qk1-f177.google.com ([209.85.222.177]:36142 "EHLO
-        mail-qk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbeIGGpY (ORCPT
+        Fri, 7 Sep 2018 02:46:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45989 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbeIGGqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:45:24 -0400
-Received: by mail-qk1-f177.google.com with SMTP id 93-v6so8770179qks.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 19:06:58 -0700 (PDT)
+        Fri, 7 Sep 2018 02:46:46 -0400
+Received: by mail-pl1-f196.google.com with SMTP id j8-v6so5829091pll.12;
+        Thu, 06 Sep 2018 19:08:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=kdQdsCXqdzZUMm0wjgHOMhmXpBSlt2QVqWv+rUwL2TQ=;
-        b=B6csySU3fMN2uYUIwY2o3tKfEHh8x9g/Rr89w7lZoevtk3lWTzvMWrsraJdfcfRJBV
-         p8tkp7qlmb37kL6dyDtXn1zz5d6nNHyWJjUn1vfc5sDuXIFx4LbCmQ4hvvyclfPGaA9V
-         ceKfIVmFbMudHUIUTeudhFhpU240tEUM90zd0pElnTbydYRjdmP94Zctwv1uEGpuDIJK
-         NmXSINObTzfEvN3AIrvlJYcFR/7W8mxxFUWvIsctqVKItZIgz5JMKKiEu4Qm7oijGVOe
-         KFrLoIVeM9oec393bjlacw3ui9w+8BBmiXz8n2TBZUcTvW5RbF+VVPX8YlS5RAdkCoaf
-         FaVg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hh1yjQTwttsny38NMyvRJOMTD1z7c5y+qebCDm0jLxw=;
+        b=Mzsnk3qfeKzPyhXBAOggPhfBXIOSaUBQsOqSThtpiyCc1hgETBY973ZxiuSbjtqHml
+         MOdLH9QnUwW3X89ZmkC4tYf+UHyp5h0nj8SSKgNllzi1ZCSWTFlu0lKuTsqSCTm2CX4X
+         FBbahIPcYUcgmmhbpdBuBvNiTeYR3QNc1ZYkNUSyTZZGMI/OC6NuQjV/pdoYkFZrK/Vg
+         1Td9ndi++txdseuWRr9ioNPOCJv14fYrYzLIFNMA2N0ZW5Moh+zsPiPuzWWtA/cdPP9f
+         n1F1YGvtSi420z2VYlfoOqpvgm0Y7kvIyQwFGOK6YMfen1rarRe6cFfIsUdPoO2lBQZH
+         SGgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=kdQdsCXqdzZUMm0wjgHOMhmXpBSlt2QVqWv+rUwL2TQ=;
-        b=BZA1kZkKYQ+JYLUvOlYdI7ndXlmAXDV6svtr+Kwjl7OCPACbL+JLH6UZ3c/5mTWYrZ
-         NbhD/WJM2QJkmQfzGWleyaDbwsna+d99u0Csl4KqdTtE6HLUlMa5B3jqiI9h0BzVUNd0
-         vbsY9+YXdUTT3QnvrZUtpfMV4zWKGqGkGsvFMtszCnlLIXQkixJi8xGHv7cQFkJDVICL
-         TLAq1kPnEaAsYqQq+cUpFiSOI4cEU0nlH5p5Lf8DX2hX2IEmLm3v3fiRhAQwDte9yCUR
-         EROxp2lZS175bdzxUbo0CeQbQBzOvrXtKBktxkWSxJXNUU16t/mBmB4suDQAp+yDSk2W
-         8PMw==
-X-Gm-Message-State: APzg51B2ztq4Ug6XejloFqnEfq6h6vtZ/NHQIfrwwVCxrufOpi62sVkr
-        T/fumWlvQHOT0QXSVfuQizSdWdRWRLJezzeEUc4=
-X-Google-Smtp-Source: ANB0VdYecv/kQLp/bpKV1+3UOpqPy386JxfN59YDNNMpdM/kYFtQMHT4zoNlUb/BU5+3C4+oTPiFeN6NyolfKh+eWz4=
-X-Received: by 2002:a37:c881:: with SMTP id t1-v6mr4324239qkl.285.1536286017463;
- Thu, 06 Sep 2018 19:06:57 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hh1yjQTwttsny38NMyvRJOMTD1z7c5y+qebCDm0jLxw=;
+        b=Sv+YbBh3MIlDPFT+y5jY3CUiwtrkxSD+4H0KmE9avyOe4qzOaX6FNCbE8CcsmNGtag
+         HiwmYapPOw1NlUoaouPOtrpXMgGLh2YQTn3kDkhh7WtUja8dz5ox8DveBgl4hkcpbyov
+         FBBvRwr91AoGse3Z5PsmnjPx+sjSYiWaf0qWDsXcq42drF7GV3uMuRNDkpDQAG9NJM/j
+         G2g4EeoM8zV/96p8gVY/1GU3TT8zZ3qRf4xaVZ/+3Q5HTjbMWsLaAvi0ZuIo2pjMOBoU
+         pxAtuVVIHvKFSknLtpfTC3cplL2zciSDG4GFbD2Aj4f05KWwyOsmG9coCJ4qc3g9BHx9
+         1GPA==
+X-Gm-Message-State: APzg51DhA+Dw7t4RwOZNJb+UH6pzakc4OLBHorkFOURzw1Xfpzg+Mnnm
+        ir+J05VVQaiqt9wWMHrc4nE=
+X-Google-Smtp-Source: ANB0VdYHHKQNOHnfmcW8kyib+9OmHG9NNvjzgnl06i5fZUomgvUDrrampLDFc1Q5wSjbw44SA4pmJQ==
+X-Received: by 2002:a17:902:bd4a:: with SMTP id b10-v6mr5675622plx.209.1536286100395;
+        Thu, 06 Sep 2018 19:08:20 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id h190-v6sm12972625pge.18.2018.09.06.19.08.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 19:08:19 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 19:08:18 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V3 00/26] C-SKY(csky) Linux Kernel Port
+Message-ID: <20180907020818.GA9110@roeck-us.net>
+References: <cover.1536138304.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Fri, 7 Sep 2018 12:06:45 +1000
-Message-ID: <CAPM=9tyJzRMh5+wOq+6TwfJqGF=G1Xntn+tj4a6EK5ONzCuQOw@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.19-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1536138304.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Seems to have been overly quiet this week so I expect next week will
-be more stuff, just one pull request with i915 fixes in it.
+On Wed, Sep 05, 2018 at 08:07:39PM +0800, Guo Ren wrote:
+> This is the 3th version patchset to add the Linux kernel port for C-SKY(csky).
+> Thanks to everyone who provided feedback on the previous version.
+> 
+> This patchset adds architecture support to Linux for C-SKY's 32-bit embedded
+> CPU cores and the patches are based on linux-4.18.4
+> 
+> There are two ABI versions with several CPU cores in this patchset:
+>   ABIv1: ck610 (16-bit instruction, 32-bit data path, VIPT Cache ...)
+>   ABIv2: ck807 ck810 ck860 (16/32-bit variable length instruction, PIPT Cache,
+> 	 SMP ...)
+> 
 
-i915: (from Rodrigo's pull)
-"The critical fix here on display side is the DP MST regression one.
-  But this pull also include fixes for DP SST, small VDSC register fix
-  and GVT's bucked with "BXT fixes, two guest warning fixes, dmabuf
-  format mod fix and one for recent multiple VM timeout failure."
+My key question is about upstream toolchain support.
+The buildroot clone tells me
 
-Dave.
+$ git describe csky/master
+2017.11-2111-ge9cc5a5
 
-drm-fixes-2018-09-07:
-i915 fixes
-The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
+and
 
-  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
+$ git log --oneline origin/master..csky/master  | wc
+   1180    7436   57104
 
-are available in the Git repository at:
+with
+$ git remote -v
+csky	https://gitlab.com/c-sky/buildroot.git 
+origin	git://git.buildroot.net/buildroot
 
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-09-07
+So it looks like there are more thasn a thousand patches on top of
+buildroot. Adding an architecture to buildroot should only take a
+single patch, or maybe a few, but not more than a thousand.
+This strongly suggests that a lot of changes are not upstream
+but only available in the buildroot clone. 
 
-for you to fetch changes up to 67c6ed7cf9ebe53815f15bfdeb49ad91801c2235:
+When are we going to see all those changes in upstream gcc, binutils,
+and qemu ? I don't really want to dig through more than a thousand
+patches in a buildroot clone to find out details about the status
+of upstream toolchain support.
 
-  Merge tag 'drm-intel-fixes-2018-09-05' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2018-09-07
-11:07:03 +1000)
-
-----------------------------------------------------------------
-i915 fixes
-
-----------------------------------------------------------------
-Colin Xu (2):
-      drm/i915/gvt: Make correct handling to vreg BXT_PHY_CTL_FAMILY
-      drm/i915/gvt: Handle GEN9_WM_CHICKEN3 with F_CMD_ACCESS.
-
-Dave Airlie (1):
-      Merge tag 'drm-intel-fixes-2018-09-05' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
-
-Hang Yuan (1):
-      drm/i915/gvt: move intel_runtime_pm_get out of spin_lock in stop_schedule
-
-Imre Deak (1):
-      drm/i915/dp_mst: Fix enabling pipe clock for all streams
-
-Jan-Marek Glogowski (1):
-      drm/i915: Re-apply "Perform link quality check, unconditionally
-during long pulse"
-
-Manasi Navare (1):
-      drm/i915/dsc: Fix PPS register definition macros for 2nd VDSC engine
-
-Rodrigo Vivi (1):
-      Merge tag 'gvt-fixes-2018-09-04' of
-https://github.com/intel/gvt-linux into drm-intel-fixes
-
-Xiaolin Zhang (1):
-      drm/i915/gvt: emulate gen9 dbuf ctl register access
-
-Zhenyu Wang (2):
-      drm/i915/gvt: Fix drm_format_mod value for vGPU plane
-      drm/i915/gvt: Give new born vGPU higher scheduling chance
-
- drivers/gpu/drm/i915/gvt/dmabuf.c       | 33 ++++++++++++++++++++++-------
- drivers/gpu/drm/i915/gvt/fb_decoder.c   |  5 ++---
- drivers/gpu/drm/i915/gvt/fb_decoder.h   |  2 +-
- drivers/gpu/drm/i915/gvt/handlers.c     | 33 +++++++++++++++++++++++------
- drivers/gpu/drm/i915/gvt/mmio_context.c |  2 --
- drivers/gpu/drm/i915/gvt/sched_policy.c | 37 ++++++++++++++++++++++++++-------
- drivers/gpu/drm/i915/i915_reg.h         |  4 ++--
- drivers/gpu/drm/i915/intel_ddi.c        | 17 ++++++++-------
- drivers/gpu/drm/i915/intel_dp.c         | 33 ++++++++++++++++-------------
- drivers/gpu/drm/i915/intel_dp_mst.c     |  4 ++++
- 10 files changed, 120 insertions(+), 50 deletions(-)
+Thanks,
+Guenter
