@@ -6,36 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3F6C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A25C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB572083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB572083D
+	by mail.kernel.org (Postfix) with ESMTP id 75A112083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A112083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbeIHCSV (ORCPT
+        id S1729922AbeIHCSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:18:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52090 "EHLO
+        Fri, 7 Sep 2018 22:18:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52108 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeIHCSU (ORCPT
+        with ESMTP id S1727639AbeIHCSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:18:20 -0400
+        Fri, 7 Sep 2018 22:18:23 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52BC9D6B;
-        Fri,  7 Sep 2018 21:35:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49E09F81;
+        Fri,  7 Sep 2018 21:35:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yannik Sembritzki <yannik@sembritzki.me>,
-        David Howells <dhowells@redhat.com>, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        stable@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 42/63] Fix kexec forbidding kernels signed with keys in the secondary keyring to boot
-Date:   Fri,  7 Sep 2018 23:10:13 +0200
-Message-Id: <20180907211015.278423823@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 43/63] mm/tlb: Remove tlb_remove_table() non-concurrent condition
+Date:   Fri,  7 Sep 2018 23:10:14 +0200
+Message-Id: <20180907211015.338142875@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -52,41 +56,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yannik Sembritzki <yannik@sembritzki.me>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit ea93102f32244e3f45c8b26260be77ed0cc1d16c upstream.
+commit a6f572084fbee8b30f91465f4a085d7a90901c57 upstream.
 
-The split of .system_keyring into .builtin_trusted_keys and
-.secondary_trusted_keys broke kexec, thereby preventing kernels signed by
-keys which are now in the secondary keyring from being kexec'd.
+Will noted that only checking mm_users is incorrect; we should also
+check mm_count in order to cover CPUs that have a lazy reference to
+this mm (and could do speculative TLB operations).
 
-Fix this by passing VERIFY_USE_SECONDARY_KEYRING to
-verify_pefile_signature().
+If removing this turns out to be a performance issue, we can
+re-instate a more complete check, but in tlb_table_flush() eliding the
+call_rcu_sched().
 
-Fixes: d3bfe84129f6 ("certs: Add a secondary system keyring that can be added to dynamically")
-Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: kexec@lists.infradead.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
+Fixes: 267239116987 ("mm, powerpc: move the RCU page-table freeing into generic code")
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Rik van Riel <riel@surriel.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: David Miller <davem@davemloft.net>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: stable@kernel.org
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/kexec-bzimage64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memory.c |    9 ---------
+ 1 file changed, 9 deletions(-)
 
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -529,7 +529,7 @@ static int bzImage64_cleanup(void *loade
- static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -373,15 +373,6 @@ void tlb_remove_table(struct mmu_gather
  {
- 	return verify_pefile_signature(kernel, kernel_len,
--				       NULL,
-+				       VERIFY_USE_SECONDARY_KEYRING,
- 				       VERIFYING_KEXEC_PE_SIGNATURE);
- }
- #endif
+ 	struct mmu_table_batch **batch = &tlb->batch;
+ 
+-	/*
+-	 * When there's less then two users of this mm there cannot be a
+-	 * concurrent page-table walk.
+-	 */
+-	if (atomic_read(&tlb->mm->mm_users) < 2) {
+-		__tlb_remove_table(table);
+-		return;
+-	}
+-
+ 	if (*batch == NULL) {
+ 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
+ 		if (*batch == NULL) {
 
 
