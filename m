@@ -2,185 +2,136 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 885D7C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF3BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3700420878
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:34:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3700420878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id AF9DF2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:35:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cywUXhom"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9DF2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbeIGROy convert rfc822-to-8bit (ORCPT
+        id S1729188AbeIGRQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:14:54 -0400
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:47939 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727598AbeIGROy (ORCPT
+        Fri, 7 Sep 2018 13:16:41 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35533 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728233AbeIGRQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:14:54 -0400
-X-ASG-Debug-ID: 1536323644-093b7e54e60c9e0001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id YVuGJhym02XwbXJ6 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Fri, 07 Sep 2018 20:34:04 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 7 Sep 2018 20:34:08 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Fri, 7 Sep 2018 20:34:08 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "sergei.shtylyov@cogentembedded.com" 
-        <sergei.shtylyov@cogentembedded.com>
-CC:     "jacob.e.keller@intel.com" <jacob.e.keller@intel.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "carolyn.wyborny@intel.com" <carolyn.wyborny@intel.com>
-Subject: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
-Thread-Topic: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
-X-ASG-Orig-Subj: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
-Thread-Index: AQHURpyuUEMtiCDf+EGRwpahWdajkw==
-Date:   Fri, 7 Sep 2018 12:34:08 +0000
-Message-ID: <77898840b49847a7a835b20b383e21a2@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <1536319175-3660-1-git-send-email-dongsheng.wang@hxt-semitech.com>
- <1536319175-3660-3-git-send-email-dongsheng.wang@hxt-semitech.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.50.12]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 7 Sep 2018 13:16:40 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o18-v6so14551370wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 05:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=VpB1vYCQbP4r/2bEcPqiF8o2uY9ubTvP/ZfDVhYapSc=;
+        b=cywUXhom7eifWOjT72m6SIqGXtJ3Rd3d9+dFPjNQLXj0zSZDRuspK3ySTgbn1g4hWQ
+         zJMyAXTi2sWyP9lHQr+wun7C6o8KoMIEbCfjFYoUWRvku+Qd54o9nM7wTPfqfNI4OxmG
+         if1uKBOGu+Po+7D5z7JKTMSbrg7XsQOBRA178=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VpB1vYCQbP4r/2bEcPqiF8o2uY9ubTvP/ZfDVhYapSc=;
+        b=H+yymHM1vrbkPBRKrBtbWvPacHXQmQLC/V3jExDaptRdPzus+yKP6TC3ft96SOs3z+
+         IhmzuZlkiaJBzwBX1iJysHaeghsNMRFeaSXu5bUue+NycGMhpUUzeZGPfqCpo/5zD106
+         FcGGRc4PQ+hsFPP8vDVgP+B1syVWRY6wTDZAhQUbMEzcrI3y0Ej+cVG0lTw0b5Q9CAVK
+         zsebk/HVo/RUPGvsnA+kfclJ8TF31eVEUtqJideMLuUaq0x2dO5+oOr0w+YxBWcxO8KH
+         L34mHa1m00IVo971xFu2nyOdR8d+Mt0FG/WGJzgSmLpYSiQGx6l0fAvGaqn9DXnHONJ9
+         tTFw==
+X-Gm-Message-State: APzg51BVlYXqcF6LXseCrp3DvgIIv3Oc74Bo3DyJPItqfd2sy5zSBzBq
+        4zEOeFDSDEB2YzAC7v2o7mPdZg==
+X-Google-Smtp-Source: ANB0VdaRXUb8vmygXq4cXP+uhcSAWj3fcVzKvIrPx/2jSTwG0Gb+QzBA4loORzrDp+o5rIBoMvaRrQ==
+X-Received: by 2002:a1c:cecf:: with SMTP id e198-v6mr4878145wmg.83.1536323754192;
+        Fri, 07 Sep 2018 05:35:54 -0700 (PDT)
+Received: from linaro.org ([2a01:e0a:f:6020:5981:ec43:6d36:934e])
+        by smtp.gmail.com with ESMTPSA id d1-v6sm18658770wrc.52.2018.09.07.05.35.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 05:35:53 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 14:35:51 +0200
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        dietmar.eggemann@arm.com, jhugo@codeaurora.org
+Subject: Re: [PATCH] sched/fair: fix load_balance redo for null imbalance
+Message-ID: <20180907123551.GA9955@linaro.org>
+References: <1536306664-29827-1-git-send-email-vincent.guittot@linaro.org>
+ <20180907113748.GV24106@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1536323644
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.4195 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.57061
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180907113748.GV24106@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jacob,
+Le Friday 07 Sep 2018 à 13:37:49 (+0200), Peter Zijlstra a écrit :
+> On Fri, Sep 07, 2018 at 09:51:04AM +0200, Vincent Guittot wrote:
+> > It can happen that load_balance finds a busiest group and then a busiest rq
+> > but the calculated imbalance is in fact null.
+> 
+> Cute. Does that happen often?
 
-Since Carolyn' team is working this, I think we don't need this patch
-anymore because this header file is only for ethtool.c.
+I have a use case with RT tasks that reproduces the problem regularly.
+It happens at least when we have CPUs with different capacity either because
+of heterogeous CPU or because of RT/DL reducing available capacity for cfs
+I have put the call path that trigs the problem below and accroding to the
+comment it seems that we can reach similar state when playing with priority.
 
-The cross-including scenario simply doesn't exist.
+> 
+> > If the calculated imbalance is null, it's useless to try to find a busiest
+> > rq as no task will be migrated and we can return immediately.
+> > 
+> > This situation can happen with heterogeneous system or smp system when RT
+> > tasks are decreasing the capacity of some CPUs.
+> 
+> Is it the result of one of those "force_balance" conditions in
+> find_busiest_group() ? Should we not fix that to then return NULL
+> instead?
 
-If you agree, please ignore this patch and just only review the [1/2].
+The UC is:
+We have a newly_idle load balance that is triggered when RT task becomes idle
+( but I think that I have seen that with idle load balance too)
 
+we trigs:
+	if (env->idle != CPU_NOT_IDLE && group_has_capacity(env, local) &&
+	    busiest->group_no_capacity)
+		goto force_balance;
 
-Cheers,
-Dongsheng
+In calculate_imbalance we use the path
+	/*
+	 * Avg load of busiest sg can be less and avg load of local sg can
+	 * be greater than avg load across all sgs of sd because avg load
+	 * factors in sg capacity and sgs with smaller group_type are
+	 * skipped when updating the busiest sg:
+	 */
+	if (busiest->avg_load <= sds->avg_load ||
+	    local->avg_load >= sds->avg_load) {
+		env->imbalance = 0;
+		return fix_small_imbalance(env, sds);
+	}
 
-On 9/7/2018 7:19 PM, Wang, Dongsheng wrote:
-> Can't have non-inline function in a header file.
-> There is a risk of "Multiple definition" from cross-including.
->
-> Tested on: x86_64, make ARCH=i386
->
-> Modules section .text:
-> i40e: 00019380 <__i40e_add_stat_strings>:
-> i40evf: 00006b00 <__i40e_add_stat_strings>:
->
-> Buildin section .text:
-> i40e: c351ca60 <__i40e_add_stat_strings>:
-> i40evf: c354f2c0 <__i40e_add_stat_strings>:
->
-> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-> ---
-> V3: add static 
-> ---
->  .../intel/i40evf/i40e_ethtool_stats.h         | 23 +-----------------
->  .../ethernet/intel/i40evf/i40evf_ethtool.c    | 24 +++++++++++++++++++
->  2 files changed, 25 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
-> index 60b595dd8c39..62ab67a77753 100644
-> --- a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
-> +++ b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
-> @@ -181,29 +181,8 @@ i40evf_add_queue_stats(u64 **data, struct i40e_ring *ring)
->  	*data += size;
->  }
->  
-> -/**
-> - * __i40e_add_stat_strings - copy stat strings into ethtool buffer
-> - * @p: ethtool supplied buffer
-> - * @stats: stat definitions array
-> - * @size: size of the stats array
-> - *
-> - * Format and copy the strings described by stats into the buffer pointed at
-> - * by p.
-> - **/
->  static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-> -				    const unsigned int size, ...)
-> -{
-> -	unsigned int i;
-> -
-> -	for (i = 0; i < size; i++) {
-> -		va_list args;
-> -
-> -		va_start(args, size);
-> -		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
-> -		*p += ETH_GSTRING_LEN;
-> -		va_end(args);
-> -	}
-> -}
-> +				    const unsigned int size, ...);
->  
->  /**
->   * 40e_add_stat_strings - copy stat strings into ethtool buffer
-> diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-> index 9319971c5c92..eb2e910bc3a1 100644
-> --- a/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-> +++ b/drivers/net/ethernet/intel/i40evf/i40evf_ethtool.c
-> @@ -171,6 +171,30 @@ static void i40evf_get_priv_flag_strings(struct net_device *netdev, u8 *data)
->  	}
->  }
->  
-> +/**
-> + * __i40e_add_stat_strings - copy stat strings into ethtool buffer
-> + * @p: ethtool supplied buffer
-> + * @stats: stat definitions array
-> + * @size: size of the stats array
-> + *
-> + * Format and copy the strings described by stats into the buffer pointed at
-> + * by p.
-> + **/
-> +static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
-> +				    const unsigned int size, ...)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < size; i++) {
-> +		va_list args;
-> +
-> +		va_start(args, size);
-> +		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
-> +		*p += ETH_GSTRING_LEN;
-> +		va_end(args);
-> +	}
-> +}
-> +
->  /**
->   * i40evf_get_stat_strings - Get stat strings
->   * @netdev: network interface device structure
+but fix_small_imbalance finally decides to return without modifying imbalance
+like here
+	if (busiest->avg_load + scaled_busy_load_per_task >=
+	    local->avg_load + (scaled_busy_load_per_task * imbn)) {
+		env->imbalance = busiest->load_per_task;
+		return;
+	}
 
+Beside this patch, I'm preparing another patch in fix small imbalance to
+ensure 1 task per CPU in similar situation but according to the comment above,
+we can reach this situation because of tasks priority
 
