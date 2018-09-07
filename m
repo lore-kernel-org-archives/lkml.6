@@ -2,92 +2,89 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0654CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F0FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E9E20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:45:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="p0yjpKT3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E9E20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+	by mail.kernel.org (Postfix) with ESMTP id 0EBFD2064D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBFD2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeIGKYm (ORCPT
+        id S1726284AbeIGKbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 06:24:42 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.216]:20984 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbeIGKYl (ORCPT
+        Fri, 7 Sep 2018 06:31:35 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:11495 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725831AbeIGKbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 06:24:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536299123;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=S+CE7bZJZNIEjj6hOGWIr2sWzXIHVWJuoqQwoeMT5cc=;
-        b=p0yjpKT3FpLEelJXXV5ZqEatPuZBvB1D2FvDaKR25n5DrbQ14V8GE6AHYtZrw4sUUx
-        vQutnJdeBMN81xOf4vQ4mj18DSMmAvxw/xqwQof0V121mhiD6C+r0E0rayP10/GGJH9E
-        ZxE/C8yGvtBcHY2HjQlQAy5WAqzvshPMfAfzaH7EkJKHlNsIWdPXuvfkbtCwkhua2vk3
-        7yNsPY5EKjDngrAW9H/O5F9KIa2NxLhNqR5tYjEqQMn22r26KYdMITUhTdqnGNt7ivOR
-        9n0guVlw/BhfqYUXRchDelGVefF0P5PiL4LVRzyJ+kSp/bMT933Bzin94GaDxr44sNg2
-        XUVw==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivsAQtyRsdRVZ54BGpAypu4eYvjwzPAqxRcXNDW+"
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.0 AUTH)
-        with ESMTPSA id L0862bu875jLCvg
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 7 Sep 2018 07:45:21 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 07:45:16 +0200
-From:   Olaf Hering <olaf@aepfle.de>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] xen: avoid crash in disable_hotplug_cpu
-Message-ID: <20180907074516.0b41c22c.olaf@aepfle.de>
-In-Reply-To: <20180906223145.37f7009b.olaf@aepfle.de>
-References: <20180906063712.28639-1-olaf@aepfle.de>
-        <b7306d7f-e827-6556-e1bb-4b934a162e46@oracle.com>
-        <20180906223145.37f7009b.olaf@aepfle.de>
-X-Mailer: Claws Mail 3.16.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Fri, 7 Sep 2018 06:31:34 -0400
+X-UUID: 33fac13fc5cc46e69affe135e60f132a-20180907
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1553609894; Fri, 07 Sep 2018 13:52:11 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 7 Sep 2018 13:52:10 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 7 Sep 2018 13:52:09 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] usb: xhci: fix interrupt transfer error happened on MTK platforms
+Date:   Fri, 7 Sep 2018 13:51:48 +0800
+Message-ID: <afafa68eb3a74a414848c116382e95811f924905.1536298766.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/brc6enfNc+w_nEhkbdKk8pt"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/brc6enfNc+w_nEhkbdKk8pt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The MTK xHCI controller use some reserved bytes in endpoint context for
+bandwidth scheduling, so need keep them in xhci_endpoint_copy();
 
-Am Thu, 6 Sep 2018 22:31:45 +0200
-schrieb Olaf Hering <olaf@aepfle.de>:
+The issue is introduced by:
+commit f5249461b504 ("xhci: Clear the host side toggle manually when
+endpoint is soft reset")
+It resets endpoints and will drop bandwidth scheduling parameters used
+by interrupt or isochronous endpoints on MTK xHCI controller.
 
-> IF cpu0_hotpluggable is broken, then only "if (!cpu) return;" can help.
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/host/xhci-mem.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Another option is to do cpu_online() twice to check if device_offline did a=
-nything.
-Not sure if the compiler would fold the two checks into a single check.
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index ef350c3..b1f27aa 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1613,6 +1613,10 @@ void xhci_endpoint_copy(struct xhci_hcd *xhci,
+ 	in_ep_ctx->ep_info2 = out_ep_ctx->ep_info2;
+ 	in_ep_ctx->deq = out_ep_ctx->deq;
+ 	in_ep_ctx->tx_info = out_ep_ctx->tx_info;
++	if (xhci->quirks & XHCI_MTK_HOST) {
++		in_ep_ctx->reserved[0] = out_ep_ctx->reserved[0];
++		in_ep_ctx->reserved[1] = out_ep_ctx->reserved[1];
++	}
+ }
+ 
+ /* Copy output xhci_slot_ctx to the input xhci_slot_ctx.
+-- 
+1.9.1
 
-Olaf
-
---Sig_/brc6enfNc+w_nEhkbdKk8pt
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCW5IQbAAKCRBdQqD6ppg2
-fonmAJ43xS6t1EFuJyUjloE4fVpnnuEtTwCgzjLUMBW90a4+dgJfyWxEbKC4g3Y=
-=GVQ8
------END PGP SIGNATURE-----
-
---Sig_/brc6enfNc+w_nEhkbdKk8pt--
