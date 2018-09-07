@@ -2,178 +2,147 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C879C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B23C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82B72086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:37:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82B72086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 4554F2077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:40:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WWV42tSG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4554F2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbeIGVTW (ORCPT
+        id S1726365AbeIGVVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:19:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48215 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbeIGVTW (ORCPT
+        Fri, 7 Sep 2018 17:21:44 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2302 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbeIGVVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:19:22 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1fyJlJ-0002eG-Gy; Fri, 07 Sep 2018 16:37:37 +0000
-Subject: Re: [PATCH] apparmor: Fix network performance issue in
- aa_label_sk_perm
-To:     Tony Jones <tonyj@suse.de>
-Cc:     seth.arnold@canonical.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20180907043357.4638-1-tonyj@suse.de>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
-Date:   Fri, 7 Sep 2018 09:37:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 7 Sep 2018 17:21:43 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5b92a9d30000>; Fri, 07 Sep 2018 09:39:47 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 07 Sep 2018 09:39:59 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 07 Sep 2018 09:39:59 -0700
+Received: from [10.110.39.62] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Sep
+ 2018 16:39:59 +0000
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+To:     Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+CC:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <mingo@kernel.org>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>
+References: <20180906093655.GA9653@andrea>
+ <Pine.LNX.4.44L0.1809071145260.1547-100000@iolanthe.rowland.org>
+ <20180907160950.GH12788@arm.com>
+From:   Daniel Lustig <dlustig@nvidia.com>
+Message-ID: <20990a3f-1507-c98b-f14e-2f5241319d8c@nvidia.com>
+Date:   Fri, 7 Sep 2018 09:39:58 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180907043357.4638-1-tonyj@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20180907160950.GH12788@arm.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com;
+        s=n1._domainkey.nvidia.com; t=1536338387;
+        bh=a38sZjk6vmkjACrOgknRiHv4gEl6hj71+aXYKenYtIQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=WWV42tSGieG4YF9ZVrfotYaB3SUlO1NbZo/TZCBMK11yBI0AgyffKRBMTW87bpee4
+         V1uHTiflr6Zf7hFt0wBOezAnRiAedlPm9B5p8WCsS/yPqixnMg18W3Tkd1RjBK/wQc
+         ucCnToQudryubwEmLmuG76jW6m03jfq/CJ7ra5jOpiyIjfYF0ytyrV0U4Jldkgdft2
+         OYx7HYvTyq90lj1ad8oLJb2+PQ9daoN2lydtUL2PBd7g+3bvwvlc/olUtvolpy6dGe
+         p2hgxW2H+THr8F9eT4m8jqvYNAPr7VvpbtPAsh4+h0LutOdkt3Erm4qvUvewuzd3oD
+         KFquKTGkHyQXA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 09:33 PM, Tony Jones wrote:
-> The netperf benchmark shows a 5.73% reduction in throughput for 
-> small (64 byte) transfers by unconfined tasks.
+On 9/7/2018 9:09 AM, Will Deacon wrote:
+> On Fri, Sep 07, 2018 at 12:00:19PM -0400, Alan Stern wrote:
+>> On Thu, 6 Sep 2018, Andrea Parri wrote:
+>>
+>>>> Have you noticed any part of the generic code that relies on ordinary 
+>>>> acquire-release (rather than atomic RMW acquire-release) in order to 
+>>>> implement locking constructs?
+>>>
+>>> There are several places in code where the "lock-acquire" seems to be
+>>> provided by an atomic_cond_read_acquire/smp_cond_load_acquire: I have
+>>> mentioned one in qspinlock in this thread; qrwlock and mcs_spinlock
+>>> provide other examples (grep for the primitives...).
+>>>
+>>> As long as we don't consider these primitive as RMW (which would seem
+>>> odd...) or as acquire for which "most people expect strong ordering"
+>>> (see above), these provides other examples for the _gap_ I mentioned.
+>>
+>> Okay, now I understand your objection.  It does appear that on RISC-V,
+>> if nowhere else, the current implementations of qspinlock, qrwlock,
+>> etc. will not provide "RCtso" ordering.
+>>
+>> The discussions surrounding this topic have been so lengthy and 
+>> confusing that I have lost track of any comments Palmer or Daniel may 
+>> have made concerning this potential problem.
+>>
+>> One possible resolution would be to define smp_cond_load_acquire() 
+>> specially on RISC-V so that it provided the same ordering guarantees as 
+>> RMW-acquire.  (Plus adding a comment in the asm-generic/barrier.h 
+>> pointing out the necessity for the stronger guarantee on all 
+>> architectures.)
+>>
+>> Another would be to replace the usages of atomic/smp_cond_load_acquire 
+>> in the locking constructs with a new function that would otherwise be 
+>> the same but would provide the ordering guarantee we want.
+>>
+>> Do you think either of these would be an adequate fix?
 > 
-> DEFINE_AUDIT_SK() in aa_label_sk_perm() should not be performed 
-> unconditionally, rather only when the label is confined.
+> I didn't think RISC-V used qspinlock or qrwlock, so I'm not sure there's
+> actually anything to fix, is there?
 > 
-> netperf-tcp
->                             56974a6fc^              56974a6fc
-> Min       64         563.48 (   0.00%)      531.17 (  -5.73%)
-> Min       128       1056.92 (   0.00%)      999.44 (  -5.44%)
-> Min       256       1945.95 (   0.00%)     1867.97 (  -4.01%)
-> Min       1024      6761.40 (   0.00%)     6364.23 (  -5.87%)
-> Min       2048     11110.53 (   0.00%)    10606.20 (  -4.54%)
-> Min       3312     13692.67 (   0.00%)    13158.41 (  -3.90%)
-> Min       4096     14926.29 (   0.00%)    14457.46 (  -3.14%)
-> Min       8192     18399.34 (   0.00%)    18091.65 (  -1.67%)
-> Min       16384    21384.13 (   0.00%)    21158.05 (  -1.06%)
-> Hmean     64         564.96 (   0.00%)      534.38 (  -5.41%)
-> Hmean     128       1064.42 (   0.00%)     1010.12 (  -5.10%)
-> Hmean     256       1965.85 (   0.00%)     1879.16 (  -4.41%)
-> Hmean     1024      6839.77 (   0.00%)     6478.70 (  -5.28%)
-> Hmean     2048     11154.80 (   0.00%)    10671.13 (  -4.34%)
-> Hmean     3312     13838.12 (   0.00%)    13249.01 (  -4.26%)
-> Hmean     4096     15009.99 (   0.00%)    14561.36 (  -2.99%)
-> Hmean     8192     18975.57 (   0.00%)    18326.54 (  -3.42%)
-> Hmean     16384    21440.44 (   0.00%)    21324.59 (  -0.54%)
-> Stddev    64           1.24 (   0.00%)        2.85 (-130.64%)
-> Stddev    128          4.51 (   0.00%)        6.53 ( -44.84%)
-> Stddev    256         11.67 (   0.00%)        8.50 (  27.16%)
-> Stddev    1024        48.33 (   0.00%)       75.07 ( -55.34%)
-> Stddev    2048        54.82 (   0.00%)       65.16 ( -18.86%)
-> Stddev    3312       153.57 (   0.00%)       56.29 (  63.35%)
-> Stddev    4096       100.25 (   0.00%)       88.50 (  11.72%)
-> Stddev    8192       358.13 (   0.00%)      169.99 (  52.54%)
-> Stddev    16384       43.99 (   0.00%)      141.82 (-222.39%)
-> 
-> Signed-off-by: Tony Jones <tonyj@suse.de>
-> Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket
-> mediation")
+> Will
 
-hey Tony,
+I've also lost track of whether the current preference is or is not for
+RCtso, or in which subset of cases RCtso is currently preferred.  For
+whichever cases do in fact need to be RCtso, the RISC-V approach would
+still be the same as what I've written in the past, as far as I can
+tell [1].
 
-thanks for the patch, I am curious did you're investigation look
-into what parts of DEFINE_AUDIT_SK are causing the issue?
+In a nutshell, if a data structure uses only atomics with .aq/.rl,
+RISC-V provides RCtso already anyway.  If a data structure uses fences,
+or mixes fences and atomics, we can replace a "fence r,rw" or a
+"fence rw,w" with a "fence.tso" (== fence r,rw + fence rw,w) as
+necessary, at the cost of some amount of performance.
 
-regardless, I have pulled it into apparmor next
+I suppose the answer to the question of whether smp_cond_load_acquire()
+needs to change depends on where exactly RCtso is needed, and which
+data structures actually use that vs. some other macro. 
 
-> ---
->  security/apparmor/net.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-> index bb24cfa0a164..d5d72dd1ca1f 100644
-> --- a/security/apparmor/net.c
-> +++ b/security/apparmor/net.c
-> @@ -146,17 +146,20 @@ int aa_af_perm(struct aa_label *label, const char *op, u32 request, u16 family,
->  static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
->  			    struct sock *sk)
->  {
-> -	struct aa_profile *profile;
-> -	DEFINE_AUDIT_SK(sa, op, sk);
-> +	int error = 0;
->  
->  	AA_BUG(!label);
->  	AA_BUG(!sk);
->  
-> -	if (unconfined(label))
-> -		return 0;
-> +	if (!unconfined(label)) {
-> +		struct aa_profile *profile;
-> +		DEFINE_AUDIT_SK(sa, op, sk);
->  
-> -	return fn_for_each_confined(label, profile,
-> -			aa_profile_af_sk_perm(profile, &sa, request, sk));
-> +		error = fn_for_each_confined(label, profile,
-> +			    aa_profile_af_sk_perm(profile, &sa, request, sk));
-> +	}
-> +
-> +	return error;
->  }
->  
->  int aa_sk_perm(const char *op, u32 request, struct sock *sk)
-> 
+Does that answer your question Alan?  Does it make sense?
 
+[1] https://lore.kernel.org/lkml/11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com/
+
+Dan
