@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A165C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65CAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C2842083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2842083D
+	by mail.kernel.org (Postfix) with ESMTP id AA14620844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA14620844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730083AbeIHCWp (ORCPT
+        id S1730089AbeIHCWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:22:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52848 "EHLO
+        Fri, 7 Sep 2018 22:22:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727850AbeIHCWo (ORCPT
+        with ESMTP id S1727707AbeIHCWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:22:44 -0400
+        Fri, 7 Sep 2018 22:22:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74924E9A;
-        Fri,  7 Sep 2018 21:39:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCF46D6B;
+        Fri,  7 Sep 2018 21:39:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
-        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
-        Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>
-Subject: [PATCH 4.4 02/47] net: mac802154: tx: expand tailroom if necessary
-Date:   Fri,  7 Sep 2018 23:09:58 +0200
-Message-Id: <20180907210904.776221337@linuxfoundation.org>
+        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 4.4 20/47] vmw_balloon: fix VMCI use when balloon built into kernel
+Date:   Fri,  7 Sep 2018 23:10:16 +0200
+Message-Id: <20180907210906.563270730@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -52,48 +50,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+From: Nadav Amit <namit@vmware.com>
 
-commit f9c52831133050c6b82aa8b6831c92da2bbf2a0b upstream.
+commit c3cc1b0fc27508da53fe955a3b23d03964410682 upstream.
 
-This patch is necessary if case of AF_PACKET or other socket interface
-which I am aware of it and didn't allocated the necessary room.
+Currently, when all modules, including VMCI and VMware balloon are built
+into the kernel, the initialization of the balloon happens before the
+VMCI is probed. As a result, the balloon fails to initialize the VMCI
+doorbell, which it uses to get asynchronous requests for balloon size
+changes.
 
-Reported-by: David Palma <david.palma@ntnu.no>
-Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
+The problem can be seen in the logs, in the form of the following
+message:
+	"vmw_balloon: failed to initialize vmci doorbell"
+
+The driver would work correctly but slightly less efficiently, probing
+for requests periodically. This patch changes the balloon to be
+initialized using late_initcall() instead of module_init() to address
+this issue. It does not address a situation in which VMCI is built as a
+module and the balloon is built into the kernel.
+
+Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac802154/tx.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/misc/vmw_balloon.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/mac802154/tx.c
-+++ b/net/mac802154/tx.c
-@@ -72,8 +72,21 @@ ieee802154_tx(struct ieee802154_local *l
- 	int ret;
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -1297,7 +1297,14 @@ static int __init vmballoon_init(void)
  
- 	if (!(local->hw.flags & IEEE802154_HW_TX_OMIT_CKSUM)) {
--		u16 crc = crc_ccitt(0, skb->data, skb->len);
-+		struct sk_buff *nskb;
-+		u16 crc;
- 
-+		if (unlikely(skb_tailroom(skb) < IEEE802154_FCS_LEN)) {
-+			nskb = skb_copy_expand(skb, 0, IEEE802154_FCS_LEN,
-+					       GFP_ATOMIC);
-+			if (likely(nskb)) {
-+				consume_skb(skb);
-+				skb = nskb;
-+			} else {
-+				goto err_tx;
-+			}
-+		}
+ 	return 0;
+ }
+-module_init(vmballoon_init);
 +
-+		crc = crc_ccitt(0, skb->data, skb->len);
- 		put_unaligned_le16(crc, skb_put(skb, 2));
- 	}
++/*
++ * Using late_initcall() instead of module_init() allows the balloon to use the
++ * VMCI doorbell even when the balloon is built into the kernel. Otherwise the
++ * VMCI is probed only after the balloon is initialized. If the balloon is used
++ * as a module, late_initcall() is equivalent to module_init().
++ */
++late_initcall(vmballoon_init);
  
+ static void __exit vmballoon_exit(void)
+ {
 
 
