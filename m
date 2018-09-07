@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A182DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70036C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CF952077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CF952077C
+	by mail.kernel.org (Postfix) with ESMTP id 1FF8C20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:41:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF8C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeIGRVn (ORCPT
+        id S1729265AbeIGRTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:21:43 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58953 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbeIGRTc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 13:19:32 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51947 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728518AbeIGRTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 13:19:31 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <sha@pengutronix.de>)
-        id 1fyG27-0007bs-DD; Fri, 07 Sep 2018 14:38:43 +0200
+        id 1fyG27-0007bn-79; Fri, 07 Sep 2018 14:38:43 +0200
 Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <sha@pengutronix.de>)
-        id 1fyG26-00061x-DA; Fri, 07 Sep 2018 14:38:42 +0200
+        id 1fyG26-00061h-Al; Fri, 07 Sep 2018 14:38:42 +0200
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-mtd@lists.infradead.org
 Cc:     David Gstir <david@sigma-star.at>,
         Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
         linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 07/25] ubifs: drop write_node
-Date:   Fri,  7 Sep 2018 14:36:28 +0200
-Message-Id: <20180907123646.12688-8-s.hauer@pengutronix.de>
+Subject: [PATCH 02/25] ubifs: refactor create_default_filesystem()
+Date:   Fri,  7 Sep 2018 14:36:23 +0200
+Message-Id: <20180907123646.12688-3-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907123646.12688-1-s.hauer@pengutronix.de>
 References: <20180907123646.12688-1-s.hauer@pengutronix.de>
@@ -51,78 +51,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-write_node() is used only once and can easily be replaced with calls
-to ubifs_prepare_node()/write_head() which makes the code a bit shorter.
+create_default_filesystem() allocates memory for a node, writes that
+node and frees the memory directly afterwards. With this patch we
+allocate memory for all nodes at the beginning of the function and
+free the memory at the end. This makes it easier to implement
+authentication support since with authentication support we'll need
+the contents of some nodes when creating other nodes.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- fs/ubifs/journal.c | 39 +++++----------------------------------
- 1 file changed, 5 insertions(+), 34 deletions(-)
+ fs/ubifs/sb.c | 95 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 47 insertions(+), 48 deletions(-)
 
-diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
-index 802565a17733..de7ac9e7acce 100644
---- a/fs/ubifs/journal.c
-+++ b/fs/ubifs/journal.c
-@@ -228,36 +228,6 @@ static int reserve_space(struct ubifs_info *c, int jhead, int len)
- 	return err;
+diff --git a/fs/ubifs/sb.c b/fs/ubifs/sb.c
+index bf17f58908ff..cf7ee2880c57 100644
+--- a/fs/ubifs/sb.c
++++ b/fs/ubifs/sb.c
+@@ -82,6 +82,7 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 	int err, tmp, jnl_lebs, log_lebs, max_buds, main_lebs, main_first;
+ 	int lpt_lebs, lpt_first, orph_lebs, big_lpt, ino_waste, sup_flags = 0;
+ 	int min_leb_cnt = UBIFS_MIN_LEB_CNT;
++	int idx_node_size;
+ 	long long tmp64, main_bytes;
+ 	__le64 tmp_le64;
+ 	__le32 tmp_le32;
+@@ -156,11 +157,19 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 
+ 	main_first = c->leb_cnt - main_lebs;
+ 
++	sup = kzalloc(ALIGN(UBIFS_SB_NODE_SZ, c->min_io_size), GFP_KERNEL);
++	mst = kzalloc(c->mst_node_alsz, GFP_KERNEL);
++	idx_node_size = ubifs_idx_node_sz(c, 1);
++	idx = kzalloc(ALIGN(tmp, c->min_io_size), GFP_KERNEL);
++	ino = kzalloc(ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size), GFP_KERNEL);
++	cs = kzalloc(ALIGN(UBIFS_CS_NODE_SZ, c->min_io_size), GFP_KERNEL);
++
++	if (!sup || !mst || !idx || !ino || !cs) {
++		err = -ENOMEM;
++		goto out;
++	}
++
+ 	/* Create default superblock */
+-	tmp = ALIGN(UBIFS_SB_NODE_SZ, c->min_io_size);
+-	sup = kzalloc(tmp, GFP_KERNEL);
+-	if (!sup)
+-		return -ENOMEM;
+ 
+ 	tmp64 = (long long)max_buds * c->leb_size;
+ 	if (big_lpt)
+@@ -197,17 +206,9 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 	sup->rp_size = cpu_to_le64(tmp64);
+ 	sup->ro_compat_version = cpu_to_le32(UBIFS_RO_COMPAT_VERSION);
+ 
+-	err = ubifs_write_node(c, sup, UBIFS_SB_NODE_SZ, 0, 0);
+-	kfree(sup);
+-	if (err)
+-		return err;
+-
+ 	dbg_gen("default superblock created at LEB 0:0");
+ 
+ 	/* Create default master node */
+-	mst = kzalloc(c->mst_node_alsz, GFP_KERNEL);
+-	if (!mst)
+-		return -ENOMEM;
+ 
+ 	mst->ch.node_type = UBIFS_MST_NODE;
+ 	mst->log_lnum     = cpu_to_le32(UBIFS_LOG_LNUM);
+@@ -253,24 +254,9 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 
+ 	mst->total_used = cpu_to_le64(UBIFS_INO_NODE_SZ);
+ 
+-	err = ubifs_write_node(c, mst, UBIFS_MST_NODE_SZ, UBIFS_MST_LNUM, 0);
+-	if (err) {
+-		kfree(mst);
+-		return err;
+-	}
+-	err = ubifs_write_node(c, mst, UBIFS_MST_NODE_SZ, UBIFS_MST_LNUM + 1,
+-			       0);
+-	kfree(mst);
+-	if (err)
+-		return err;
+-
+ 	dbg_gen("default master node created at LEB %d:0", UBIFS_MST_LNUM);
+ 
+ 	/* Create the root indexing node */
+-	tmp = ubifs_idx_node_sz(c, 1);
+-	idx = kzalloc(ALIGN(tmp, c->min_io_size), GFP_KERNEL);
+-	if (!idx)
+-		return -ENOMEM;
+ 
+ 	c->key_fmt = UBIFS_SIMPLE_KEY_FMT;
+ 	c->key_hash = key_r5_hash;
+@@ -282,19 +268,11 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 	key_write_idx(c, &key, &br->key);
+ 	br->lnum = cpu_to_le32(main_first + DEFAULT_DATA_LEB);
+ 	br->len  = cpu_to_le32(UBIFS_INO_NODE_SZ);
+-	err = ubifs_write_node(c, idx, tmp, main_first + DEFAULT_IDX_LEB, 0);
+-	kfree(idx);
+-	if (err)
+-		return err;
+ 
+ 	dbg_gen("default root indexing node created LEB %d:0",
+ 		main_first + DEFAULT_IDX_LEB);
+ 
+ 	/* Create default root inode */
+-	tmp = ALIGN(UBIFS_INO_NODE_SZ, c->min_io_size);
+-	ino = kzalloc(tmp, GFP_KERNEL);
+-	if (!ino)
+-		return -ENOMEM;
+ 
+ 	ino_key_init_flash(c, &ino->key, UBIFS_ROOT_INO);
+ 	ino->ch.node_type = UBIFS_INO_NODE;
+@@ -317,12 +295,6 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 	/* Set compression enabled by default */
+ 	ino->flags = cpu_to_le32(UBIFS_COMPR_FL);
+ 
+-	err = ubifs_write_node(c, ino, UBIFS_INO_NODE_SZ,
+-			       main_first + DEFAULT_DATA_LEB, 0);
+-	kfree(ino);
+-	if (err)
+-		return err;
+-
+ 	dbg_gen("root inode created at LEB %d:0",
+ 		main_first + DEFAULT_DATA_LEB);
+ 
+@@ -331,19 +303,46 @@ static int create_default_filesystem(struct ubifs_info *c)
+ 	 * always the case during normal file-system operation. Write a fake
+ 	 * commit start node to the log.
+ 	 */
+-	tmp = ALIGN(UBIFS_CS_NODE_SZ, c->min_io_size);
+-	cs = kzalloc(tmp, GFP_KERNEL);
+-	if (!cs)
+-		return -ENOMEM;
+ 
+ 	cs->ch.node_type = UBIFS_CS_NODE;
++
++	err = ubifs_write_node(c, sup, UBIFS_SB_NODE_SZ, 0, 0);
++	if (err)
++		goto out;
++
++	err = ubifs_write_node(c, mst, UBIFS_MST_NODE_SZ, UBIFS_MST_LNUM, 0);
++	if (err)
++		goto out;
++
++	err = ubifs_write_node(c, mst, UBIFS_MST_NODE_SZ, UBIFS_MST_LNUM + 1,
++			       0);
++	if (err)
++		goto out;
++
++	err = ubifs_write_node(c, idx, idx_node_size, main_first + DEFAULT_IDX_LEB, 0);
++	if (err)
++		goto out;
++
++	err = ubifs_write_node(c, ino, UBIFS_INO_NODE_SZ,
++			       main_first + DEFAULT_DATA_LEB, 0);
++	if (err)
++		goto out;
++
+ 	err = ubifs_write_node(c, cs, UBIFS_CS_NODE_SZ, UBIFS_LOG_LNUM, 0);
+-	kfree(cs);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	ubifs_msg(c, "default file-system created");
+-	return 0;
++
++	err = 0;
++out:
++	kfree(sup);
++	kfree(mst);
++	kfree(idx);
++	kfree(ino);
++	kfree(cs);
++
++	return err;
  }
  
--/**
-- * write_node - write node to a journal head.
-- * @c: UBIFS file-system description object
-- * @jhead: journal head
-- * @node: node to write
-- * @len: node length
-- * @lnum: LEB number written is returned here
-- * @offs: offset written is returned here
-- *
-- * This function writes a node to reserved space of journal head @jhead.
-- * Returns zero in case of success and a negative error code in case of
-- * failure.
-- */
--static int write_node(struct ubifs_info *c, int jhead, void *node, int len,
--		      int *lnum, int *offs)
--{
--	struct ubifs_wbuf *wbuf = &c->jheads[jhead].wbuf;
--
--	ubifs_assert(c, jhead != GCHD);
--
--	*lnum = c->jheads[jhead].wbuf.lnum;
--	*offs = c->jheads[jhead].wbuf.offs + c->jheads[jhead].wbuf.used;
--
--	dbg_jnl("jhead %s, LEB %d:%d, len %d",
--		dbg_jhead(jhead), *lnum, *offs, len);
--	ubifs_prepare_node(c, node, len, 0);
--
--	return ubifs_wbuf_write_nolock(wbuf, node, len);
--}
--
  /**
-  * write_head - write data to a journal head.
-  * @c: UBIFS file-system description object
-@@ -268,9 +238,9 @@ static int write_node(struct ubifs_info *c, int jhead, void *node, int len,
-  * @offs: offset written is returned here
-  * @sync: non-zero if the write-buffer has to by synchronized
-  *
-- * This function is the same as 'write_node()' but it does not assume the
-- * buffer it is writing is a node, so it does not prepare it (which means
-- * initializing common header and calculating CRC).
-+ * This function writes data to the reserved space of journal head @jhead.
-+ * Returns zero in case of success and a negative error code in case of
-+ * failure.
-  */
- static int write_head(struct ubifs_info *c, int jhead, void *buf, int len,
- 		      int *lnum, int *offs, int sync)
-@@ -764,7 +734,8 @@ int ubifs_jnl_write_data(struct ubifs_info *c, const struct inode *inode,
- 	if (err)
- 		goto out_free;
- 
--	err = write_node(c, DATAHD, data, dlen, &lnum, &offs);
-+	ubifs_prepare_node(c, data, dlen, 0);
-+	err = write_head(c, DATAHD, data, dlen, &lnum, &offs, 0);
- 	if (err)
- 		goto out_release;
- 	ubifs_wbuf_add_ino_nolock(&c->jheads[DATAHD].wbuf, key_inum(c, key));
 -- 
 2.18.0
 
