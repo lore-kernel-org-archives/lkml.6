@@ -3,105 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A59C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8281EC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 584CF2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 372F12077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:26:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="X67Zk84y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584CF2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OL0m6OUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 372F12077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729836AbeIGTHO (ORCPT
+        id S1729869AbeIGTHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:07:14 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:53281 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729773AbeIGTHO (ORCPT
+        Fri, 7 Sep 2018 15:07:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39512 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729773AbeIGTHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:07:14 -0400
-Received: by mail-it0-f42.google.com with SMTP id p79-v6so20811797itp.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 07:26:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2Aw5SnLG6dUbnfTXCayQbTZvWAcTKmXGXLJs8Y70a8s=;
-        b=X67Zk84yYP6lZc/NZ5HXyfDDQyJgrP+8CxJDOHmv3mixo/QpTTj5bH/zsTN4rBRAwj
-         X246R+KDpigJaitH9124ZCV+kC8jsJ4NVML+t30iSjaD0ta9c6JkHdKjxQgjdlgsnVKZ
-         Yhd/DpGf6+ewWaluzObc4BMcpyCH5Tai01p1dPfUHsZxQ4Ep/m9e6H7xyHTV3APy4kij
-         zuP4co95s7JRQOTUDev26P11vKRe0tXEKdzX2gZY+kBvmPmF7G5Gr0R1jKZgDtoeu6E4
-         CNoclB4qfbCx80ZvN2ksMLxOSNoF3swFVSCEj8tAYNSloblOP2atWz1kdbp9umsRDBFp
-         Yu8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2Aw5SnLG6dUbnfTXCayQbTZvWAcTKmXGXLJs8Y70a8s=;
-        b=KjSZJDshuRzbMhykMRieBAsfwIMjtqeMHxHkioV8m7TAU8/ADyY9pFCPWTUuci70Dz
-         RcraHaptrYLIz95s+pcDIscvoaJffnBK4U6QL9gjSMsGincYNLg37TCfQnFJkQ+UU18n
-         XqdVz7hza6xQRQBHSeYI4jDyU9q/0dFx0by9gOwXP5b4/SrqI/XaKgC4icNujU+6Ic+2
-         UP2R7ClnfhsCItObuQa3lthVVpaYsmMR963VTs1BiA566G4ZPstTjXyt2k3Y55+uzUJl
-         hJA19t+e7q5hKOS/Rp2gBgDE8UdELykPKUB+YSpVaqHK0+Wx5bAplSHgPVKTHd8Ms9qj
-         riIg==
-X-Gm-Message-State: APzg51CxEYNwWdP5xh6tqHywSB5tUeVi3vVzCz4IZp47M1WsyHfCrclA
-        bfznNkEhGzY65bf7VwieJZPacQ==
-X-Google-Smtp-Source: ANB0VdaU7wilXr/g3w42fWgyLN2vrWV2YwODJjFZEoeta2+9jtwJ3fm+4Qe6pIf7HPOGj/w5EYbwZw==
-X-Received: by 2002:a24:1688:: with SMTP id a130-v6mr7920384ita.74.1536330362954;
-        Fri, 07 Sep 2018 07:26:02 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id v13-v6sm3817234ita.38.2018.09.07.07.26.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 07:26:01 -0700 (PDT)
-Subject: Re: [PATCH v3] ata: Disable AHCI ALPM feature for Ampere Computing
- eMAG SATA
-To:     Suman Tripathi <stripathi@amperecomputing.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     Open Source Submission <patches@amperecomputing.com>,
-        Rameshwar Sahu <Rameshwar.Sahu@amperecomputing.com>
-References: <1536257111-27948-1-git-send-email-stripathi@amperecomputing.com>
- <d3682fff-473f-021a-c805-466030b7644e@redhat.com>
- <MWHPR01MB2336EE4B6E4923C9ED851F20B3010@MWHPR01MB2336.prod.exchangelabs.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cd3e5c60-1619-9842-6198-e36fdbaa4b4b@kernel.dk>
-Date:   Fri, 7 Sep 2018 08:25:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 7 Sep 2018 15:07:34 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F6DB84;
+        Fri,  7 Sep 2018 16:26:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536330381;
+        bh=l5Y260kPSGpMFPHqfDr9s2sEQc0YXoxs/exOQaPQdT8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OL0m6OUt7sWnOgHL0htxg2Z4LEn0TSS2VRSweDsGryj1Qv5pHRvwQNwHgALB+yPNb
+         iVXbDNAtS44GjXax7VQS3OknANJGNrTWsxPAmyTcRw218TjXODi8HlSyN4AU7OMWPK
+         urqQgRdiU6wz6OAbt7b7eFCjvMpL2p3ZBEdP8rdo=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH 04/10] phy: dphy: Add configuration helpers
+Date:   Fri, 07 Sep 2018 17:26:29 +0300
+Message-ID: <1923627.Ifno3EcWVN@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180907133739.6lvlw7wsdk4ffeua@flea>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com> <3617916.Vq2Smf1hnZ@avalon> <20180907133739.6lvlw7wsdk4ffeua@flea>
 MIME-Version: 1.0
-In-Reply-To: <MWHPR01MB2336EE4B6E4923C9ED851F20B3010@MWHPR01MB2336.prod.exchangelabs.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/6/18 2:08 PM, Suman Tripathi wrote:
->> Sorry, but the patch is still coming through mangled. Did you use git
->> send-email ?
->
-> [Suman Tripathi] yes. I rechecked before sending twice. Sorry for the
-> inconvenience. Will figure the issue out
+Hi Maxime,
 
-I can apply it manually while you work out the kinks in your email
-setup. It might even be your company MTA mangling it, I've seen all
-sorts of crazy like that.
+On Friday, 7 September 2018 16:37:39 EEST Maxime Ripard wrote:
+> On Wed, Sep 05, 2018 at 04:46:05PM +0300, Laurent Pinchart wrote:
+> > On Wednesday, 5 September 2018 12:16:35 EEST Maxime Ripard wrote:
+> >> The MIPI D-PHY spec defines default values and boundaries for most of
+> >> the parameters it defines. Introduce helpers to help drivers get
+> >> meaningful values based on their current parameters, and validate the
+> >> boundaries of these parameters if needed.
+> >> 
+> >> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> >> ---
+> >> 
+> >>  drivers/phy/Kconfig               |   8 ++-
+> >>  drivers/phy/Makefile              |   1 +-
+> >>  drivers/phy/phy-core-mipi-dphy.c  | 160 ++++++++++++++++++++++++++++++-
+> >>  include/linux/phy/phy-mipi-dphy.h |   6 +-
+> >>  4 files changed, 175 insertions(+)
+> >>  create mode 100644 drivers/phy/phy-core-mipi-dphy.c
+
+[snip]
+
+> >> diff --git a/drivers/phy/phy-core-mipi-dphy.c
+> >> b/drivers/phy/phy-core-mipi-dphy.c new file mode 100644
+> >> index 000000000000..6c1ddc7734a2
+> >> --- /dev/null
+> >> +++ b/drivers/phy/phy-core-mipi-dphy.c
+> >> @@ -0,0 +1,160 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0 */
+> >> +/*
+> >> + * Copyright (C) 2013 NVIDIA Corporation
+> >> + * Copyright (C) 2018 Cadence Design Systems Inc.
+> >> + */
+> >> +
+> >> +#include <linux/errno.h>
+> >> +#include <linux/export.h>
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/time64.h>
+> >> +
+> >> +#include <linux/phy/phy.h>
+> >> +#include <linux/phy/phy-mipi-dphy.h>
+> >> +
+> >> +/*
+> >> + * Default D-PHY timings based on MIPI D-PHY specification. Derived
+> >> from the
+> >> + * valid ranges specified in Section 6.9, Table 14, Page 40 of the
+> >> D-PHY
+> >> + * specification (v1.2) with minor adjustments.
+> > 
+> > Could you list those adjustments ?
+> 
+> I will. This was taken from the Tegra DSI driver, so I'm not sure what
+> these are exactly, but that should be addressed.
+> 
+> >> + */
+> >> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
+> >> +				     unsigned int bpp,
+> >> +				     unsigned int lanes,
+> >> +				     struct phy_configure_opts_mipi_dphy *cfg)
+> >> +{
+> >> +	unsigned long hs_clk_rate;
+> >> +	unsigned long ui;
+> >> +
+> >> +	if (!cfg)
+> >> +		return -EINVAL;
+> > 
+> > Should we really expect cfg to be NULL ?
+> 
+> It avoids a kernel panic and it's not in a hot patch, so I'd say yes?
+
+A few line below you divide by the lanes parameter without checking whether it 
+is equal to 0 first, which would also cause issues.
+
+I believe that invalid values in input parameters should only be handled 
+explicitly when considered acceptable for the caller to pass such values. In 
+this case a NULL cfg pointer is a bug in the caller, which would get noticed 
+during development if the kernel panics.
 
 -- 
-Jens Axboe
+Regards,
+
+Laurent Pinchart
+
+
 
