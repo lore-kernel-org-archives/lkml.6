@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC65C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1890DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D12820844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D12820844
+	by mail.kernel.org (Postfix) with ESMTP id CEEB82075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEEB82075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeIHB4v (ORCPT
+        id S1728306AbeIHB4z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:56:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41672 "EHLO
+        Fri, 7 Sep 2018 21:56:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbeIHB4v (ORCPT
+        with ESMTP id S1727217AbeIHB4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:56:51 -0400
+        Fri, 7 Sep 2018 21:56:54 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC2D81026;
-        Fri,  7 Sep 2018 21:14:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AB5F1026;
+        Fri,  7 Sep 2018 21:14:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 040/145] IB/mlx5: Honor cnt_set_id_valid flag instead of set_id
-Date:   Fri,  7 Sep 2018 23:08:26 +0200
-Message-Id: <20180907210907.827913941@linuxfoundation.org>
+Subject: [PATCH 4.18 041/145] IB/mlx5: Fix leaking stack memory to userspace
+Date:   Fri,  7 Sep 2018 23:08:27 +0200
+Message-Id: <20180907210907.921492252@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,37 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit 921c0f5ba58e4064deb18b4985a202508fc5527f upstream.
+commit 0625b4ba1a5d4703c7fb01c497bd6c156908af00 upstream.
 
-It is incorrect to depend on set_id value to know if counters were
-allocated or not. set_id_valid field is set to true when counters
-were allocated. Therefore, use set_id_valid while deciding to
-free counters.
+mlx5_ib_create_qp_resp was never initialized and only the first 4 bytes
+were written.
 
-Cc: <stable@vger.kernel.org> # 4.15
-Fixes: aac4492ef23a ("IB/mlx5: Update counter implementation for dual port RoCE")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Fixes: 41d902cb7c32 ("RDMA/mlx5: Fix definition of mlx5_ib_create_qp_resp")
+Cc: <stable@vger.kernel.org>
+Acked-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/main.c |    2 +-
+ drivers/infiniband/hw/mlx5/qp.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -4694,7 +4694,7 @@ static void mlx5_ib_dealloc_counters(str
- 	int i;
- 
- 	for (i = 0; i < dev->num_ports; i++) {
--		if (dev->port[i].cnts.set_id)
-+		if (dev->port[i].cnts.set_id_valid)
- 			mlx5_core_dealloc_q_counter(dev->mdev,
- 						    dev->port[i].cnts.set_id);
- 		kfree(dev->port[i].cnts.names);
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -1626,7 +1626,7 @@ static int create_qp_common(struct mlx5_
+ 	struct mlx5_ib_resources *devr = &dev->devr;
+ 	int inlen = MLX5_ST_SZ_BYTES(create_qp_in);
+ 	struct mlx5_core_dev *mdev = dev->mdev;
+-	struct mlx5_ib_create_qp_resp resp;
++	struct mlx5_ib_create_qp_resp resp = {};
+ 	struct mlx5_ib_cq *send_cq;
+ 	struct mlx5_ib_cq *recv_cq;
+ 	unsigned long flags;
 
 
