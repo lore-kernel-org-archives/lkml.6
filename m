@@ -2,148 +2,137 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C69FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE9EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A7B2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:50:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rdnwOlwI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A7B2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 61AF32086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:52:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AF32086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbeIGTcD (ORCPT
+        id S1729967AbeIGTdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:32:03 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39620 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbeIGTcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:32:03 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:4407:cd00:1953:677d:5909:a7be])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0C8A84;
-        Fri,  7 Sep 2018 16:50:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536331845;
-        bh=uSUzkQTqVxW9DWhO4EZPDAlLqJV7+iNL578KYRShi+U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rdnwOlwIu5rKyDVxRepEwyE/PCYd3z4FOY/ryu+1K4TGP0fjJSx3US7HVntZeJHiU
-         HoVkKUmO0qwscY+AyQjRPs0qXO8LGtoZIuRffTCkBLjuURdeH1x1JHtn+LcD9+gxBy
-         cg/0SakoPD2bqTrlWTIh/jgYpkIUQAds/kxdG7w4=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 03/10] phy: Add MIPI D-PHY configuration options
-Date:   Fri, 07 Sep 2018 17:50:52 +0300
-Message-ID: <4247225.jW0mJSbZmP@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180907085623.ltzybsftrw3zmmev@flea>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com> <11216244.YyI1EIWKhC@avalon> <20180907085623.ltzybsftrw3zmmev@flea>
+        Fri, 7 Sep 2018 15:33:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49992 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727639AbeIGTdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:33:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 67292B032;
+        Fri,  7 Sep 2018 14:52:21 +0000 (UTC)
+Subject: Re: [tip:x86/paravirt] x86/paravirt: Move the pv_irq_ops under the
+ PARAVIRT_XXL umbrella
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        hpa@zytor.com, linux-tip-commits@vger.kernel.org
+References: <20180828074026.820-14-jgross@suse.com>
+ <tip-6da63eb241a05b0e676d68975e793c0521387141@git.kernel.org>
+ <20180907144939.GA1662@zn.tnic>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2585d868-29c1-ec6d-39b1-5346e51c72dc@suse.com>
+Date:   Fri, 7 Sep 2018 16:52:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180907144939.GA1662@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
-On Friday, 7 September 2018 11:56:23 EEST Maxime Ripard wrote:
-> On Wed, Sep 05, 2018 at 04:43:57PM +0300, Laurent Pinchart wrote:
-> >> The current set of parameters should cover all the potential users.
-> >> 
-> >> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> >> ---
-> >> 
-> >>  include/linux/phy/phy-mipi-dphy.h | 241 ++++++++++++++++++++++++++++++-
-> >>  include/linux/phy/phy.h           |   6 +-
-> >>  2 files changed, 247 insertions(+)
-> >>  create mode 100644 include/linux/phy/phy-mipi-dphy.h
-> >> 
-> >> diff --git a/include/linux/phy/phy-mipi-dphy.h
-> >> b/include/linux/phy/phy-mipi-dphy.h new file mode 100644
-> >> index 000000000000..792724145290
-> >> --- /dev/null
-> >> +++ b/include/linux/phy/phy-mipi-dphy.h
-> >> @@ -0,0 +1,241 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 */
-> >> +/*
-> >> + * Copyright (C) 2018 Cadence Design Systems Inc.
-> >> + */
-> >> +
-> >> +#ifndef __PHY_MIPI_DPHY_H_
-> >> +#define __PHY_MIPI_DPHY_H_
-> >> +
-> >> +#include <video/videomode.h>
-> >> +
-> >> +/**
-> >> + * struct phy_configure_opts_mipi_dphy - MIPI D-PHY configuration set
-> >> + *
-> >> + * This structure is used to represent the configuration state of a
-> >> + * MIPI D-PHY phy.
-> > 
-> > Shouldn't we split the RX and TX parameters in two structures ?
+On 07/09/18 16:49, Borislav Petkov wrote:
+> Hi Jürgen,
 > 
-> Are they different? As far as I understood it, both were having the
-> same parameters.
-
-clk_miss, for instance, is a receiver parameter, while clk_post is a 
-transmitter parameter. There are relationships between the transmitter and 
-receiver parameters in the sense that they have to be compatible, and we may 
-want to compute one set of parameters based on the other one, but I think they 
-target RX and TX separately.
-
-> >> +	/**
-> >> +	 * @modes:
-> >> +	 *
-> >> +	 * transmission operation mode flags
-> >> +	 */
-> >> +	u32			modes;
-> > 
-> > Where are those flags defined ?
+> On Mon, Sep 03, 2018 at 08:01:40AM -0700, tip-bot for Juergen Gross wrote:
+>> Commit-ID:  6da63eb241a05b0e676d68975e793c0521387141
+>> Gitweb:     https://git.kernel.org/tip/6da63eb241a05b0e676d68975e793c0521387141
+>> Author:     Juergen Gross <jgross@suse.com>
+>> AuthorDate: Tue, 28 Aug 2018 09:40:24 +0200
+>> Committer:  Thomas Gleixner <tglx@linutronix.de>
+>> CommitDate: Mon, 3 Sep 2018 16:50:36 +0200
+>>
+>> x86/paravirt: Move the pv_irq_ops under the PARAVIRT_XXL umbrella
+>>
+>> All of the paravirt ops defined in pv_irq_ops are for Xen PV guests
+>> or VSMP only. Define them only if CONFIG_PARAVIRT_XXL is set.
+>>
+>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: xen-devel@lists.xenproject.org
+>> Cc: virtualization@lists.linux-foundation.org
+>> Cc: akataria@vmware.com
+>> Cc: rusty@rustcorp.com.au
+>> Cc: boris.ostrovsky@oracle.com
+>> Cc: hpa@zytor.com
+>> Link: https://lkml.kernel.org/r/20180828074026.820-14-jgross@suse.com
+>>
+>> ---
+>>  arch/x86/include/asm/irqflags.h       | 8 +-------
+>>  arch/x86/include/asm/paravirt.h       | 6 +++---
+>>  arch/x86/include/asm/paravirt_types.h | 3 ++-
+>>  arch/x86/kernel/asm-offsets.c         | 2 +-
+>>  arch/x86/kernel/asm-offsets_64.c      | 2 +-
+>>  arch/x86/kernel/paravirt.c            | 2 +-
+>>  arch/x86/kernel/paravirt_patch_32.c   | 4 ++--
+>>  arch/x86/kernel/paravirt_patch_64.c   | 4 +++-
+>>  arch/x86/kernel/vsmp_64.c             | 2 +-
+>>  9 files changed, 15 insertions(+), 18 deletions(-)
 > 
-> goto label;
+> this one is breaking the randconfig builds with the following error
+> (failure case simplified):
 > 
-> >> +	/**
-> >> +	 * @timings:
-> >> +	 *
-> >> +	 * Video timings associated with the transmission.
-> > 
-> > That's a pretty vague description...
-> 
-> I'll try to improve it then
-> 
-> >> +	 */
-> >> +	struct videomode	timings;
-> >> +};
-> >> +
-> 
-> label:
-> > > +/* TODO: Add other modes (burst, commands, etc) */
-> > > +#define MIPI_DPHY_MODE_VIDEO_SYNC_PULSE		BIT(0)
-> 
-> But maybe I should reorganize it to make it more obvious.
+> $ make arch/x86/entry/entry_64.o
+>   DESCEND  objtool
+>   CALL    scripts/checksyscalls.sh
+>   AS      arch/x86/entry/entry_64.o
+> In file included from arch/x86/entry/entry_64.S:33:0:
+> ./arch/x86/include/asm/paravirt.h:938:0: warning: "SAVE_FLAGS" redefined
+>  #define SAVE_FLAGS(clobbers)                                        \
 
--- 
-Regards,
+And the fixing patch is already there:
 
-Laurent Pinchart
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/patch/?id=b7a5eb6aafa95fce45fc4dcbc195cb232fa1b76d
 
 
-
+Juergen
