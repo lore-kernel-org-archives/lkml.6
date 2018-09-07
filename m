@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AF0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E230EC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8350D2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8350D2075B
+	by mail.kernel.org (Postfix) with ESMTP id A36452075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36452075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbeIHB4b (ORCPT
+        id S1728210AbeIHB4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:56:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40812 "EHLO
+        Fri, 7 Sep 2018 21:56:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbeIHB4a (ORCPT
+        with ESMTP id S1728034AbeIHB4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:56:30 -0400
+        Fri, 7 Sep 2018 21:56:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C5B0F07;
-        Fri,  7 Sep 2018 21:13:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A749FAA;
+        Fri,  7 Sep 2018 21:13:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Jan Kotas <jank@cadence.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.18 007/145] spi: spi-fsl-dspi: Fix imprecise abort on VF500 during probe
-Date:   Fri,  7 Sep 2018 23:07:53 +0200
-Message-Id: <20180907210904.260022004@linuxfoundation.org>
+Subject: [PATCH 4.18 008/145] spi: cadence: Change usleep_range() to udelay(), for atomic context
+Date:   Fri,  7 Sep 2018 23:07:54 +0200
+Message-Id: <20180907210904.340146754@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,90 +50,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Janek Kotas <jank@cadence.com>
 
-commit d8ffee2f551a627ffb7b216e2da322cb9a037f77 upstream.
+commit 931c4e9a72ae91d59c5332ffb6812911a749da8e upstream.
 
-Registers of DSPI should not be accessed before enabling its clock.  On
-Toradex Colibri VF50 on Iris carrier board this could be seen during
-bootup as imprecise abort:
+The path "spi: cadence: Add usleep_range() for
+cdns_spi_fill_tx_fifo()" added a usleep_range() function call,
+which cannot be used in atomic context.
+However the cdns_spi_fill_tx_fifo() function can be called during
+an interrupt which may result in a kernel panic:
 
-    Unhandled fault: imprecise external abort (0x1c06) at 0x00000000
-    Internal error: : 1c06 [#1] ARM
-    Modules linked in:
-    CPU: 0 PID: 1 Comm: swapper Not tainted 4.14.39-dirty #97
-    Hardware name: Freescale Vybrid VF5xx/VF6xx (Device Tree)
-    Backtrace:
-    [<804166a8>] (regmap_write) from [<80466b5c>] (dspi_probe+0x1f0/0x8dc)
-    [<8046696c>] (dspi_probe) from [<8040107c>] (platform_drv_probe+0x54/0xb8)
-    [<80401028>] (platform_drv_probe) from [<803ff53c>] (driver_probe_device+0x280/0x2f8)
-    [<803ff2bc>] (driver_probe_device) from [<803ff674>] (__driver_attach+0xc0/0xc4)
-    [<803ff5b4>] (__driver_attach) from [<803fd818>] (bus_for_each_dev+0x70/0xa4)
-    [<803fd7a8>] (bus_for_each_dev) from [<803fee74>] (driver_attach+0x24/0x28)
-    [<803fee50>] (driver_attach) from [<803fe980>] (bus_add_driver+0x1a0/0x218)
-    [<803fe7e0>] (bus_add_driver) from [<803fffe8>] (driver_register+0x80/0x100)
-    [<803fff68>] (driver_register) from [<80400fdc>] (__platform_driver_register+0x48/0x50)
-    [<80400f94>] (__platform_driver_register) from [<8091cf7c>] (fsl_dspi_driver_init+0x1c/0x20)
-    [<8091cf60>] (fsl_dspi_driver_init) from [<8010195c>] (do_one_initcall+0x4c/0x174)
-    [<80101910>] (do_one_initcall) from [<80900e8c>] (kernel_init_freeable+0x144/0x1d8)
-    [<80900d48>] (kernel_init_freeable) from [<805ff6a8>] (kernel_init+0x10/0x114)
-    [<805ff698>] (kernel_init) from [<80107be8>] (ret_from_fork+0x14/0x2c)
+BUG: scheduling while atomic: grep/561/0x00010002
+Modules linked in:
+Preemption disabled at:
+[<ffffff800858ea28>] wait_for_common+0x48/0x178
+CPU: 0 PID: 561 Comm: grep Not tainted 4.17.0 #1
+Hardware name: Cadence CSP (DT)
+Call trace:
+ dump_backtrace+0x0/0x198
+ show_stack+0x14/0x20
+ dump_stack+0x8c/0xac
+ __schedule_bug+0x6c/0xb8
+ __schedule+0x570/0x5d8
+ schedule+0x34/0x98
+ schedule_hrtimeout_range_clock+0x98/0x110
+ schedule_hrtimeout_range+0x10/0x18
+ usleep_range+0x64/0x98
+ cdns_spi_fill_tx_fifo+0x70/0xb0
+ cdns_spi_irq+0xd0/0xe0
+ __handle_irq_event_percpu+0x9c/0x128
+ handle_irq_event_percpu+0x34/0x88
+ handle_irq_event+0x48/0x78
+ handle_fasteoi_irq+0xbc/0x1b0
+ generic_handle_irq+0x24/0x38
+ __handle_domain_irq+0x84/0xf8
+ gic_handle_irq+0xc4/0x180
 
-Cc: <stable@vger.kernel.org>
-Fixes: 5ee67b587a2b ("spi: dspi: clear SPI_SR before enable interrupt")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This patch replaces the function call with udelay() which can be
+used in an atomic context, like an interrupt.
+
+Signed-off-by: Jan Kotas <jank@cadence.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-fsl-dspi.c |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/spi/spi-cadence.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -1029,31 +1029,31 @@ static int dspi_probe(struct platform_de
- 		goto out_master_put;
- 	}
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -319,7 +319,7 @@ static void cdns_spi_fill_tx_fifo(struct
+ 		 */
+ 		if (cdns_spi_read(xspi, CDNS_SPI_ISR) &
+ 		    CDNS_SPI_IXR_TXFULL)
+-			usleep_range(10, 20);
++			udelay(10);
  
-+	dspi->clk = devm_clk_get(&pdev->dev, "dspi");
-+	if (IS_ERR(dspi->clk)) {
-+		ret = PTR_ERR(dspi->clk);
-+		dev_err(&pdev->dev, "unable to get clock\n");
-+		goto out_master_put;
-+	}
-+	ret = clk_prepare_enable(dspi->clk);
-+	if (ret)
-+		goto out_master_put;
-+
- 	dspi_init(dspi);
- 	dspi->irq = platform_get_irq(pdev, 0);
- 	if (dspi->irq < 0) {
- 		dev_err(&pdev->dev, "can't get platform irq\n");
- 		ret = dspi->irq;
--		goto out_master_put;
-+		goto out_clk_put;
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, dspi->irq, dspi_interrupt, 0,
- 			pdev->name, dspi);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Unable to attach DSPI interrupt\n");
--		goto out_master_put;
-+		goto out_clk_put;
- 	}
- 
--	dspi->clk = devm_clk_get(&pdev->dev, "dspi");
--	if (IS_ERR(dspi->clk)) {
--		ret = PTR_ERR(dspi->clk);
--		dev_err(&pdev->dev, "unable to get clock\n");
--		goto out_master_put;
--	}
--	ret = clk_prepare_enable(dspi->clk);
--	if (ret)
--		goto out_master_put;
--
- 	if (dspi->devtype_data->trans_mode == DSPI_DMA_MODE) {
- 		ret = dspi_request_dma(dspi, res->start);
- 		if (ret < 0) {
+ 		if (xspi->txbuf)
+ 			cdns_spi_write(xspi, CDNS_SPI_TXD, *xspi->txbuf++);
 
 
