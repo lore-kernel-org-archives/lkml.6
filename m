@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A68C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07845C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F4162083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4162083D
+	by mail.kernel.org (Postfix) with ESMTP id B000620844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B000620844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbeIHCVK (ORCPT
+        id S1729639AbeIHCVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:21:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52640 "EHLO
+        Fri, 7 Sep 2018 22:21:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52660 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbeIHCVJ (ORCPT
+        with ESMTP id S1728262AbeIHCVQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:21:09 -0400
+        Fri, 7 Sep 2018 22:21:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 391BDD6B;
-        Fri,  7 Sep 2018 21:38:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4E62D6B;
+        Fri,  7 Sep 2018 21:38:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 61/63] crypto: vmx - Fix sleep-in-atomic bugs
-Date:   Fri,  7 Sep 2018 23:10:32 +0200
-Message-Id: <20180907211016.300641554@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.9 63/63] fs/quota: Fix spectre gadget in do_quotactl
+Date:   Fri,  7 Sep 2018 23:10:34 +0200
+Message-Id: <20180907211016.418973601@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -50,162 +50,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Jeremy Cline <jcline@redhat.com>
 
-commit 0522236d4f9c5ab2e79889cb020d1acbe5da416e upstream.
+commit 7b6924d94a60c6b8c1279ca003e8744e6cd9e8b1 upstream.
 
-This patch fixes sleep-in-atomic bugs in AES-CBC and AES-XTS VMX
-implementations. The problem is that the blkcipher_* functions should
-not be called in atomic context.
+'type' is user-controlled, so sanitize it after the bounds check to
+avoid using it in speculative execution. This covers the following
+potential gadgets detected with the help of smatch:
 
-The bugs can be reproduced via the AF_ALG interface by trying to
-encrypt/decrypt sufficiently large buffers (at least 64 KiB) using the
-VMX implementations of 'cbc(aes)' or 'xts(aes)'. Such operations then
-trigger BUG in crypto_yield():
+* fs/ext4/super.c:5741 ext4_quota_read() warn: potential spectre issue
+  'sb_dqopt(sb)->files' [r]
+* fs/ext4/super.c:5778 ext4_quota_write() warn: potential spectre issue
+  'sb_dqopt(sb)->files' [r]
+* fs/f2fs/super.c:1552 f2fs_quota_read() warn: potential spectre issue
+  'sb_dqopt(sb)->files' [r]
+* fs/f2fs/super.c:1608 f2fs_quota_write() warn: potential spectre issue
+  'sb_dqopt(sb)->files' [r]
+* fs/quota/dquot.c:412 mark_info_dirty() warn: potential spectre issue
+  'sb_dqopt(sb)->info' [w]
+* fs/quota/dquot.c:933 dqinit_needed() warn: potential spectre issue
+  'dquots' [r]
+* fs/quota/dquot.c:2112 dquot_commit_info() warn: potential spectre
+  issue 'dqopt->ops' [r]
+* fs/quota/dquot.c:2362 vfs_load_quota_inode() warn: potential spectre
+  issue 'dqopt->files' [w] (local cap)
+* fs/quota/dquot.c:2369 vfs_load_quota_inode() warn: potential spectre
+  issue 'dqopt->ops' [w] (local cap)
+* fs/quota/dquot.c:2370 vfs_load_quota_inode() warn: potential spectre
+  issue 'dqopt->info' [w] (local cap)
+* fs/quota/quota.c:110 quota_getfmt() warn: potential spectre issue
+  'sb_dqopt(sb)->info' [r]
+* fs/quota/quota_v2.c:84 v2_check_quota_file() warn: potential spectre
+  issue 'quota_magics' [w]
+* fs/quota/quota_v2.c:85 v2_check_quota_file() warn: potential spectre
+  issue 'quota_versions' [w]
+* fs/quota/quota_v2.c:96 v2_read_file_info() warn: potential spectre
+  issue 'dqopt->info' [r]
+* fs/quota/quota_v2.c:172 v2_write_file_info() warn: potential spectre
+  issue 'dqopt->info' [r]
 
-[  891.863680] BUG: sleeping function called from invalid context at include/crypto/algapi.h:424
-[  891.864622] in_atomic(): 1, irqs_disabled(): 0, pid: 12347, name: kcapi-enc
-[  891.864739] 1 lock held by kcapi-enc/12347:
-[  891.864811]  #0: 00000000f5d42c46 (sk_lock-AF_ALG){+.+.}, at: skcipher_recvmsg+0x50/0x530
-[  891.865076] CPU: 5 PID: 12347 Comm: kcapi-enc Not tainted 4.19.0-0.rc0.git3.1.fc30.ppc64le #1
-[  891.865251] Call Trace:
-[  891.865340] [c0000003387578c0] [c000000000d67ea4] dump_stack+0xe8/0x164 (unreliable)
-[  891.865511] [c000000338757910] [c000000000172a58] ___might_sleep+0x2f8/0x310
-[  891.865679] [c000000338757990] [c0000000006bff74] blkcipher_walk_done+0x374/0x4a0
-[  891.865825] [c0000003387579e0] [d000000007e73e70] p8_aes_cbc_encrypt+0x1c8/0x260 [vmx_crypto]
-[  891.865993] [c000000338757ad0] [c0000000006c0ee0] skcipher_encrypt_blkcipher+0x60/0x80
-[  891.866128] [c000000338757b10] [c0000000006ec504] skcipher_recvmsg+0x424/0x530
-[  891.866283] [c000000338757bd0] [c000000000b00654] sock_recvmsg+0x74/0xa0
-[  891.866403] [c000000338757c10] [c000000000b00f64] ___sys_recvmsg+0xf4/0x2f0
-[  891.866515] [c000000338757d90] [c000000000b02bb8] __sys_recvmsg+0x68/0xe0
-[  891.866631] [c000000338757e30] [c00000000000bbe4] system_call+0x5c/0x70
+Additionally, a quick inspection indicates there are array accesses with
+'type' in quota_on() and quota_off() functions which are also addressed
+by this.
 
-Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
-Fixes: c07f5d3da643 ("crypto: vmx - Adding support for XTS")
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aes_cbc.c |   30 ++++++++++++++----------------
- drivers/crypto/vmx/aes_xts.c |   21 ++++++++++++++-------
- 2 files changed, 28 insertions(+), 23 deletions(-)
+ fs/quota/quota.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/crypto/vmx/aes_cbc.c
-+++ b/drivers/crypto/vmx/aes_cbc.c
-@@ -111,24 +111,23 @@ static int p8_aes_cbc_encrypt(struct blk
- 		ret = crypto_blkcipher_encrypt(&fallback_desc, dst, src,
- 					       nbytes);
- 	} else {
--		preempt_disable();
--		pagefault_disable();
--		enable_kernel_vsx();
--
- 		blkcipher_walk_init(&walk, dst, src, nbytes);
- 		ret = blkcipher_walk_virt(desc, &walk);
- 		while ((nbytes = walk.nbytes)) {
-+			preempt_disable();
-+			pagefault_disable();
-+			enable_kernel_vsx();
- 			aes_p8_cbc_encrypt(walk.src.virt.addr,
- 					   walk.dst.virt.addr,
- 					   nbytes & AES_BLOCK_MASK,
- 					   &ctx->enc_key, walk.iv, 1);
-+			disable_kernel_vsx();
-+			pagefault_enable();
-+			preempt_enable();
-+
- 			nbytes &= AES_BLOCK_SIZE - 1;
- 			ret = blkcipher_walk_done(desc, &walk, nbytes);
- 		}
--
--		disable_kernel_vsx();
--		pagefault_enable();
--		preempt_enable();
- 	}
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -17,6 +17,7 @@
+ #include <linux/quotaops.h>
+ #include <linux/types.h>
+ #include <linux/writeback.h>
++#include <linux/nospec.h>
  
- 	return ret;
-@@ -152,24 +151,23 @@ static int p8_aes_cbc_decrypt(struct blk
- 		ret = crypto_blkcipher_decrypt(&fallback_desc, dst, src,
- 					       nbytes);
- 	} else {
--		preempt_disable();
--		pagefault_disable();
--		enable_kernel_vsx();
--
- 		blkcipher_walk_init(&walk, dst, src, nbytes);
- 		ret = blkcipher_walk_virt(desc, &walk);
- 		while ((nbytes = walk.nbytes)) {
-+			preempt_disable();
-+			pagefault_disable();
-+			enable_kernel_vsx();
- 			aes_p8_cbc_encrypt(walk.src.virt.addr,
- 					   walk.dst.virt.addr,
- 					   nbytes & AES_BLOCK_MASK,
- 					   &ctx->dec_key, walk.iv, 0);
-+			disable_kernel_vsx();
-+			pagefault_enable();
-+			preempt_enable();
-+
- 			nbytes &= AES_BLOCK_SIZE - 1;
- 			ret = blkcipher_walk_done(desc, &walk, nbytes);
- 		}
--
--		disable_kernel_vsx();
--		pagefault_enable();
--		preempt_enable();
- 	}
+ static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+ 				     qid_t id)
+@@ -706,6 +707,7 @@ static int do_quotactl(struct super_bloc
  
- 	return ret;
---- a/drivers/crypto/vmx/aes_xts.c
-+++ b/drivers/crypto/vmx/aes_xts.c
-@@ -123,32 +123,39 @@ static int p8_aes_xts_crypt(struct blkci
- 		ret = enc ? crypto_blkcipher_encrypt(&fallback_desc, dst, src, nbytes) :
-                             crypto_blkcipher_decrypt(&fallback_desc, dst, src, nbytes);
- 	} else {
-+		blkcipher_walk_init(&walk, dst, src, nbytes);
-+
-+		ret = blkcipher_walk_virt(desc, &walk);
-+
- 		preempt_disable();
- 		pagefault_disable();
- 		enable_kernel_vsx();
- 
--		blkcipher_walk_init(&walk, dst, src, nbytes);
--
--		ret = blkcipher_walk_virt(desc, &walk);
- 		iv = walk.iv;
- 		memset(tweak, 0, AES_BLOCK_SIZE);
- 		aes_p8_encrypt(iv, tweak, &ctx->tweak_key);
- 
-+		disable_kernel_vsx();
-+		pagefault_enable();
-+		preempt_enable();
-+
- 		while ((nbytes = walk.nbytes)) {
-+			preempt_disable();
-+			pagefault_disable();
-+			enable_kernel_vsx();
- 			if (enc)
- 				aes_p8_xts_encrypt(walk.src.virt.addr, walk.dst.virt.addr,
- 						nbytes & AES_BLOCK_MASK, &ctx->enc_key, NULL, tweak);
- 			else
- 				aes_p8_xts_decrypt(walk.src.virt.addr, walk.dst.virt.addr,
- 						nbytes & AES_BLOCK_MASK, &ctx->dec_key, NULL, tweak);
-+			disable_kernel_vsx();
-+			pagefault_enable();
-+			preempt_enable();
- 
- 			nbytes &= AES_BLOCK_SIZE - 1;
- 			ret = blkcipher_walk_done(desc, &walk, nbytes);
- 		}
--
--		disable_kernel_vsx();
--		pagefault_enable();
--		preempt_enable();
- 	}
- 	return ret;
- }
+ 	if (type >= (XQM_COMMAND(cmd) ? XQM_MAXQUOTAS : MAXQUOTAS))
+ 		return -EINVAL;
++	type = array_index_nospec(type, MAXQUOTAS);
+ 	/*
+ 	 * Quota not supported on this fs? Check this before s_quota_types
+ 	 * since they needn't be set if quota is not supported at all.
 
 
