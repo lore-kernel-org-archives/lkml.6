@@ -2,118 +2,120 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1D9C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD2AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3DCB2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F052077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:23:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jFSR5NYs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DCB2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KQG+ILcS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F052077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbeIGWFB (ORCPT
+        id S1727597AbeIGWFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:05:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37086 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbeIGWFB (ORCPT
+        Fri, 7 Sep 2018 18:05:04 -0400
+Received: from mail-pl1-f170.google.com ([209.85.214.170]:32812 "EHLO
+        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbeIGWFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:05:01 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v9-v6so12894188ljk.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:23:06 -0700 (PDT)
+        Fri, 7 Sep 2018 18:05:03 -0400
+Received: by mail-pl1-f170.google.com with SMTP id b30-v6so4599802pla.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=HoVU8pSwA1yNCBp+qfG/yzs73dsXV+Qkm7cKeM653ao=;
-        b=jFSR5NYsf7V85JSI4hm9xPMqQTA5GkbfYDlHPRJSHR1YKAD3PweOSaBbEeMGhqU5iR
-         TFeTSXYCKMmo8p22unrpuVRvn9Nm4XYJB7tS6agrfHX99iAyWdS1BEP/eTB5dXF1YW2w
-         Fb9IwWzniJ8mO177voCKlsDQIMx0F35XgDFek=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DN3m2MP7rDI91Tlof3J+3B82j9mSSJrQY/U2pgTSkGU=;
+        b=KQG+ILcSPJMH/J78uUWNQ5ZDaiuHMlUg9+UCAGL4dte0Z97f6vyMqZt1aIPexUc1o8
+         imeY9WKd0s+MzoQdP2PwIHIq8vKBuuC2gVnPrtVRwvX4vej2mXNuDvxaMTNcDS9VRZzJ
+         Iavds5mJ0CWeKCjqV8pHDI7ov8eFtM+OfYoGRdDZ2rm7aRaXzv6dHMLxEV7pMYtmeoDy
+         N6FN3qogMqQgS40BXS2HoQhh97vYyj8ReOkq37tRckW5NwZhrjm6uxsqaQ4UBDKrC2Ji
+         E6V9tM5AXd+GTn2fPa7myzfTo8bapG5lrcOZSYhGxiG9leuB5VEaKfZKqEX1ck+iavvf
+         JATA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=HoVU8pSwA1yNCBp+qfG/yzs73dsXV+Qkm7cKeM653ao=;
-        b=e0dbBXLGtspa90tB0Jey+Hky3MhyE0ji45iL4y2vKwkDrPbmt8oUdys4+HLru5KPvc
-         q8ismmcjPMwZrYfWHhtJzbzhv3o+iHyyQ5+x4H5wbwQKetUGcxIaz/etTobyPT3TZ/Xu
-         hF354VMR9MMlw/nS/Cdvap3ja5D2fNIhXLBKN6xpTp02RRRSBr9zh4PokLHP6eyz0y8z
-         SG3NWhqIAUXRExqc/Axf/E38tOrCDqbo46oswhEreW5vxcNuc09hwHMkuEWIweF3cYBt
-         FY8q3MQVG+wcfWNzUQO17Y8axdQfAP4Zi0UzxQJZKNK9/2g6rEtCUf4VR9QOX0jAkUR+
-         1V2w==
-X-Gm-Message-State: APzg51AkbkqsHfzHL0drNqTxn+IYnfNbSuitVUfLnG+srgCjZDh9ZiCa
-        D/vdT/tawB+5hGm1ZGoHKBMtyk4c+oRZXsshKDMiCG+Bhg4=
-X-Google-Smtp-Source: ANB0Vda7vmT/WDrMnfUwxawLw1Q//1jreRTsI0bHJAqMi7TuUmlX+RlmDpP7NGqZkz7vIfd3XoMkNhPzUgekspblifk=
-X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr5793835ljh.18.1536340985307;
- Fri, 07 Sep 2018 10:23:05 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DN3m2MP7rDI91Tlof3J+3B82j9mSSJrQY/U2pgTSkGU=;
+        b=JgKrYvpX6LcurW6R8gwy2ZhrCzwJ/NKmcTCLl6K9mP7Rv338bpdOazj4k40c6PtZic
+         8HzC0JNNtznIZEV92Q3yLaKG1IVzS9P1ZSmJdgA6ErAF5NTUgXQd6a3VZmbsrwfK72TY
+         vUHs8G2eLSVe5pKDVeeBXwtGvJMY0QIMkqXczIhm6gbw75JkFbWJmQzaxLUgMb090/xU
+         ouyMpaMvNwwftv0ic1MpyvUwHqkX2pM2CL4Ye8hGejpRtKY2mwkeXuQRlnO84T7oGKjK
+         D34sVfB9YZogSGhty2lltdHHfh2c3q/qm5zJoxNcZ/IbDrgiey6juE7taNMMShkv6X32
+         tT2A==
+X-Gm-Message-State: APzg51D6G2ASJdALYITAeWH82Zqsj9taVXplCK6d55Ap5MCdQm9Eix66
+        RonRtHG3NxK7i0gSNhR6d6gqWIR43H47+EVZNIII8w==
+X-Google-Smtp-Source: ANB0VdbA2lwE4bqF+3sJ3mwfbZtShcXVBrAMyM+B2tjbU1+nqF233AcbANNB6jrTMB7wMY83g0cS9K5n5bMAOgHCDOI=
+X-Received: by 2002:a17:902:7102:: with SMTP id a2-v6mr9023918pll.217.1536340987614;
+ Fri, 07 Sep 2018 10:23:07 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 10:23:04 -0700 (PDT)
-In-Reply-To: <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
-References: <20180711144403.1022829-1-arnd@arndb.de> <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 7 Sep 2018 22:53:04 +0530
-Message-ID: <CA+G9fYuw66eL+d7pxhSbH3J-D4wdOU7BEPL3rCWu-ntfB4OWog@mail.gmail.com>
-Subject: Re: [PATCH] [v3] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
+References: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr> <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
+In-Reply-To: <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 7 Sep 2018 10:22:56 -0700
+Message-ID: <CAKwvOdmuXydQsQyD2CUyoSkkDpF1e1CXg6v1SRv2q-bpYa9SQg@mail.gmail.com>
+Subject: Re: Conflict between sparse and commit cafa0010cd51f ("Raise the
+ minimum required gcc version to 4.6")
+To:     christophe.leroy@c-s.fr
+Cc:     joe@perches.com, Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-sparse@vger.kernel.org, sparse@chrisli.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 September 2018 at 15:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+On Fri, Sep 7, 2018 at 7:34 AM Christophe LEROY <christophe.leroy@c-s.fr> w=
+rote:
 >
-> On 11/07/18 15:43, Arnd Bergmann wrote:
->> Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
->> a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
->>
->> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
->> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
->>
->> This solves the problem by adding a silent symbol for the tcon_top module,
->> building it as a separate module in exactly the cases that we need it,
->> but in a way that it is reachable by the other modules.
->>
->> Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possible crtcs")
->> Fixes: ef0cf6441fbb ("drm/sun4i: Add support for traversing graph with TCON TOP")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> I am seeing the following on today's -next (20180907) as well the last
-> few -next versions for that matter ...
+> Cc linux-sparse@vger.kernel.org
 >
-> ERROR: "sun8i_tcon_top_de_config" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
-> ERROR: "sun8i_tcon_top_set_hdmi_src" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
-> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
->
-> Seems like this issue has cropped up again as Arnd's fix is present. I
-> am seeing this on ARM64 builds.
+> Le 07/09/2018 =C3=A0 14:22, Christophe Leroy a =C3=A9crit :
+> > Since commit cafa0010cd51f ("Raise the minimum required gcc version to
+> > 4.6"), sparse check fails as follows:
+> >
+> > [root@pc16082vm linux-powerpc]# make C=3D2 arch/powerpc/kernel/process.=
+o
+> >    CALL    scripts/checksyscalls.sh
+> >    CHECK   scripts/mod/empty.c
+> > ./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too
+> > old - please upgrade it.
+> >    CHECK   arch/powerpc/kernel/process.c
+> > ./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too
+> > old - please upgrade it.
+> >
+> >
+> > I have sparse version 0.5.2
+> >
+> > What can be done to fix that ?
+> >
+> > Christophe
 
-I do notice these failures on ARM64 builds on linux next 20180906 and 20180907.
+Oof, sorry Christophe.  Looks like that's the latest version of sparse:
+https://sparse.wiki.kernel.org/index.php/Main_Page#News
 
-11:40:55 | ERROR: "sun8i_tcon_top_de_config"
-[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
-11:40:55 | ERROR: "sun8i_tcon_top_set_hdmi_src"
-[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
-11:40:55 | ERROR: "sun8i_tcon_top_of_table"
-[drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+I'm curious what sparse expands __GNUC__, __GNUC_MINOR__, and
+__GNUC_PATCHLEVEL__ to?  Pre commit cafa0010cd51f, it MUST be
+expanding them to something, otherwise you'd have seen the error then,
+too.  The previous check was GCC < 3.3, now it's GCC < 4.6.
 
-Build full log can be found on this link.
-https://ci.linaro.org/view/lkft/job/openembedded-lkft-linux-next/DISTRO=rpb,MACHINE=dragonboard-410c,label=docker-stretch-amd64/346/console
+We could change the check to:
 
-- Naresh
+-#if GCC_VERSION < 40600
++#if GCC_VERSION < 40600 && !defined(__CHECKER__)
 
->
-> Cheers
-> Jon
->
-> --
-> nvpublic
+But it would be good to know what those sub macros that compose
+GCC_VERSION evaluate to in sparse; maybe they can be upgraded in
+Sparse unless they're matching __builtin_*() compatability?
+--=20
+Thanks,
+~Nick Desaulniers
