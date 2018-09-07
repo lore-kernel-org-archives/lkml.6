@@ -2,100 +2,84 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56015C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E995FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCE2C205F4
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:31:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE2C205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E5E720857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5E720857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeIGIKd (ORCPT
+        id S1727318AbeIGIMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 04:10:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50552 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725743AbeIGIKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 04:10:33 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9EC61807A0D0;
-        Fri,  7 Sep 2018 03:31:45 +0000 (UTC)
-Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6275D7D4C9;
-        Fri,  7 Sep 2018 03:31:39 +0000 (UTC)
-Subject: Re: [PATCH net-next 07/11] tuntap: move XDP flushing out of
- tun_do_xdp()
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
-References: <20180906040526.22518-1-jasowang@redhat.com>
- <20180906040526.22518-8-jasowang@redhat.com>
- <20180906132209-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <25e6c109-69bd-ca10-3322-0e3d3b23f5dd@redhat.com>
-Date:   Fri, 7 Sep 2018 11:31:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 04:12:37 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:44486 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeIGIMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 04:12:37 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fy7W7-00056k-W3; Fri, 07 Sep 2018 11:33:08 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fy7Vx-0000ev-Ae; Fri, 07 Sep 2018 11:32:57 +0800
+Date:   Fri, 7 Sep 2018 11:32:57 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Olof Johansson <olof@lixom.net>,
+        David Miller <davem@davemloft.net>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        linux-decnet-user@lists.sourceforge.net,
+        kernel-team <kernel-team@fb.com>
+Subject: Re: [PATCH] net/sock: move memory_allocated over to percpu_counter
+ variables
+Message-ID: <20180907033257.2nlgiqm2t4jiwhzc@gondor.apana.org.au>
+References: <20180906192034.8467-1-olof@lixom.net>
+ <CANn89i+akEWrHELBkZJQOxok-ZfYy+FNPUWdPEfB6c4YyWLqJA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180906132209-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 03:31:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 03:31:45 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89i+akEWrHELBkZJQOxok-ZfYy+FNPUWdPEfB6c4YyWLqJA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 06, 2018 at 12:33:58PM -0700, Eric Dumazet wrote:
+> On Thu, Sep 6, 2018 at 12:21 PM Olof Johansson <olof@lixom.net> wrote:
+> >
+> > Today these are all global shared variables per protocol, and in
+> > particular tcp_memory_allocated can get hot on a system with
+> > large number of CPUs and a substantial number of connections.
+> >
+> > Moving it over to a per-cpu variable makes it significantly cheaper,
+> > and the added overhead when summing up the percpu copies is still smaller
+> > than the cost of having a hot cacheline bouncing around.
+> 
+> I am curious. We never noticed contention on this variable, at least for TCP.
 
+Yes these variables are heavily amortised so I'm surprised that
+they would cause much contention.
 
-On 2018年09月07日 01:48, Michael S. Tsirkin wrote:
-> On Thu, Sep 06, 2018 at 12:05:22PM +0800, Jason Wang wrote:
->> This will allow adding batch flushing on top.
->>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   drivers/net/tun.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->> index 21b125020b3b..ff1cbf3ebd50 100644
->> --- a/drivers/net/tun.c
->> +++ b/drivers/net/tun.c
->> @@ -1646,7 +1646,6 @@ static u32 tun_do_xdp(struct tun_struct *tun,
->>   	switch (act) {
->>   	case XDP_REDIRECT:
->>   		*err = xdp_do_redirect(tun->dev, xdp, xdp_prog);
->> -		xdp_do_flush_map();
->>   		if (*err)
->>   			break;
->>   		goto out;
->> @@ -1735,6 +1734,9 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
->>   		act = tun_do_xdp(tun, tfile, xdp_prog, &xdp, &err);
->>   		if (err)
->>   			goto err_xdp;
->> +
->> +		if (act == XDP_REDIRECT)
->> +			xdp_do_flush_map();
->>   		if (act != XDP_PASS)
->>   			goto out;
-> At this point the switch statement which used to contain all XDP things
-> seems to be gone completely. Just rewrite with a bunch of if statements
-> and all xdp handling spread out to where it makes sense?
+> Please share some numbers with us.
 
-But tun_do_xdp() will be reused in the batching path.
+Indeed.
 
-Thanks
-
->
->> -- 
->> 2.17.1
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
