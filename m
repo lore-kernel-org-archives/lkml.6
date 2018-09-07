@@ -2,128 +2,158 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9534C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF79C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C3C4206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:10:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LAfYyQJx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C3C4206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7FA58206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:11:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA58206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeIGLuM (ORCPT
+        id S1727664AbeIGLuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 07:50:12 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40430 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeIGLuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 07:50:12 -0400
-Received: by mail-it0-f66.google.com with SMTP id h23-v6so18696088ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kkF8E2VsUzQjSNqMUrGSd3sx4tM1uQQBJT/Yw1PuEBg=;
-        b=LAfYyQJx6ikwJw3/0OQTCebufYCL9E9oMo9O3HL4NP6irjhLsMhb9qIgRMP/Ck0RkX
-         06nlMSASWOsiBJTwYEcVI+VSpTTF/2aVVz+5EwVsf8KitkppMlWLBhPX12m6/aJ3f53q
-         iVU2o2HaEC21dpahtDxKqxa+NbIQveuReClrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kkF8E2VsUzQjSNqMUrGSd3sx4tM1uQQBJT/Yw1PuEBg=;
-        b=jxt7N6VRvgHoStiNH5RjRj/IeJ7yYNwyb0B68ilOCGapmRgPjGW1J0c6E5KAO+w30I
-         TrCqh2GCob+PDIgbB3VZL1laxakG84WEBnhw+wLZixAABEkyqOZ1uitVTdqubPEiteV6
-         o/JsTJ0dyLA9UWfkZpuJwo46t8NDMcDAZK4vLLdi7Mjt0l4Wa6yCe+FT2tJiIzcsl8bt
-         2a3JhgK9QrCHBkUprq2Pg3JKfOvQ54Hs1mKshbKQGC0ROZIbk85+OSPZOfam81wdKEJt
-         5T7Ix5bnTWSZgoPq1RswZqZkTyN87sO4OMh4+TijHHCJcYjDnsWzOmLo/NTqiGDGSZos
-         mMnw==
-X-Gm-Message-State: APzg51B9Cr7jDhCuGV2OvMpI7B4iM98jr1YMankqfGvZoBg/DW4qKTmz
-        aldgUXTmRLhdGXJcBeqm0DNReSf39WXc0nlp/POnpg==
-X-Google-Smtp-Source: ANB0VdYIUybykWhSJuKnNmw6nf+cMF+dLGvog5MLVxXDvZmrjvIRcAefUfFtLykx2lImztpe41ISRPY3U/ilTAXWoS8=
-X-Received: by 2002:a24:144:: with SMTP id 65-v6mr5386999itk.62.1536304240101;
- Fri, 07 Sep 2018 00:10:40 -0700 (PDT)
+        Fri, 7 Sep 2018 07:50:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:28291 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725987AbeIGLui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 07:50:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 00:11:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
+   d="scan'208";a="81612635"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 07 Sep 2018 00:11:06 -0700
+Received: from [10.125.252.7] (abudanko-mobl.ccr.corp.intel.com [10.125.252.7])
+        by linux.intel.com (Postfix) with ESMTP id D29BF5801E6;
+        Fri,  7 Sep 2018 00:11:04 -0700 (PDT)
+Subject: [PATCH v8 1/3]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <daf97b00-fbfe-47c8-5f8c-3d8889487e80@linux.intel.com>
+Date:   Fri, 7 Sep 2018 10:11:03 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180905052113.21262-1-stefan@agner.ch> <4035252.QuWadVx7pr@avalon>
- <1569297.pdEFdpi3HS@avalon> <a00c1650b69ba85bed7ae39b81a0c40f@agner.ch>
- <CACRpkdbw0VjkHYcUpox+DorRG0oRdPARL4ShgPfV2eFaUF_w0g@mail.gmail.com> <b1cb586397a4cd444c33dd83d72fa544@agner.ch>
-In-Reply-To: <b1cb586397a4cd444c33dd83d72fa544@agner.ch>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 7 Sep 2018 09:10:27 +0200
-Message-ID: <CACRpkdaUuWUHZgT0b64hMNZm3oy=7rece3H0p5VVe4d8jpFRaw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        max.krummenacher@toradex.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e1144f9d-b231-e42c-d698-4db0e62b71ff@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 10:25 PM Stefan Agner <stefan@agner.ch> wrote:
 
-> Ok, I read a bit up on the history of bridge timing, especially:
-> https://www.spinics.net/lists/dri-devel/msg155618.html
->
-> IMHO, this got overengineered. For displays we do not need all that
-> setup/sample delay timing information, and much longer cables are in
-> use. So why is all that needed for bridges?
+The map->data buffer is used to preserve map->base profiling data 
+for writing to disk. AIO map->cblock is used to queue corresponding 
+map->data buffer for asynchronous writing.
 
-I also avoided the overhead of creating this abstraction initially.
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ Changes in v7:
+  - implemented handling record.aio setting from perfconfig file
+ Changes in v6:
+  - adjusted setting of priorities for cblocks;
+ Changes in v5:
+  - reshaped layout of data structures;
+  - implemented --aio option;
+ Changes in v4:
+  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management 
+ Changes in v2:
+  - converted zalloc() to calloc() for allocation of mmap_aio array,
+  - cleared typo and adjusted fallback branch code;
+---
+ tools/perf/util/mmap.c | 25 +++++++++++++++++++++++++
+ tools/perf/util/mmap.h |  3 +++
+ 2 files changed, 28 insertions(+)
 
-But after doing it I have this Stockholm syndrome that I start
-liking what Laurent told me to do.
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index fc832676a798..e53038d76445 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -155,6 +155,8 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ 
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++	if (map->data)
++		zfree(&map->data);
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -166,6 +168,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
+ 
+ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
+ {
++	int delta_max;
+ 	/*
+ 	 * The last one will be done at perf_mmap__consume(), so that we
+ 	 * make sure we don't prevent tools from consuming every last event in
+@@ -190,6 +193,28 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
+ 		map->base = NULL;
+ 		return -1;
+ 	}
++	delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++	map->data = malloc(perf_mmap__mmap_len(map));
++	if (!map->data) {
++		pr_debug2("failed to allocate data buffer, error %d\n",
++				errno);
++		return -1;
++	}
++	/*
++	 * Use cblock.aio_fildes value different from -1
++	 * to denote started aio write operation on the
++	 * cblock so it requires explicit record__aio_sync()
++	 * call prior the cblock may be reused again.
++	 */
++	map->cblock.aio_fildes = -1;
++	/*
++	 * Allocate cblock with max priority delta to
++	 * have faster aio_write() calls because queued
++	 * requests are kept in separate per-prio queues
++	 * and adding a new request iterates thru shorter
++	 * per-prio list.
++	 */
++	map->cblock.aio_reqprio = delta_max;
+ 	map->fd = fd;
+ 
+ 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index d82294db1295..1974e621e36b 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,7 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#include <aio.h>
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -25,6 +26,8 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++	void 		 *data;
++	struct aiocb	 cblock;
+ };
+ 
+ /*
 
-> For Linus case, the THS8134(A/B) data sheet I found (revised March 2010)
-> clearly states:
-> Clock input. A rising edge on CLK latches RPr0-7, GY0-7, BPb0-7.
->
-> So we need to drive on negative edge, hence DRM_BUS_FLAG_PIXDATA_NEGEDGE
-> should be used, which makes the pl111 driver setting TIM2_IPC:
-> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0121d/index.html
-
-That is easy to say, but if I just set that up in code, even with a good
-comment it is hard for the next reader to understand what is going
-on. The central question will be, why does PL111 need to do this
-but not R-Car though they are using the same bridge?
-
-So this elaborate model gives a better transfer of abstract concepts
-to whoever needs to touch that code next. The code is not just
-logic, but also our map of the world and the documentation of our
-problem space.
-
-Donald Knuth has this idea about literate programming which even
-turns the documentation/implementation process around. We are
-not there, not even remotely, but IMO the more complex the problem.
-the more we need to convey our thinking, not just our solution.
-
-Yours,
-Linus Walleij
