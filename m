@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93D6C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE455C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA09320844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA09320844
+	by mail.kernel.org (Postfix) with ESMTP id A1EAD20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EAD20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbeIHCYF (ORCPT
+        id S1730246AbeIHCYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:24:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54852 "EHLO
+        Fri, 7 Sep 2018 22:24:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54886 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728220AbeIHCYE (ORCPT
+        with ESMTP id S1728265AbeIHCYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:24:04 -0400
+        Fri, 7 Sep 2018 22:24:07 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCFA61010;
-        Fri,  7 Sep 2018 21:41:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53FC4FF0;
+        Fri,  7 Sep 2018 21:41:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Serge Hallyn <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.4 34/47] userns: move user access out of the mutex
-Date:   Fri,  7 Sep 2018 23:10:30 +0200
-Message-Id: <20180907210908.241189276@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "stable@vger.kernel.org, Stefan Wahren" <stefan.wahren@i2se.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 04/47] net: lan78xx: Fix misplaced tasklet_schedule() call
+Date:   Fri,  7 Sep 2018 23:10:00 +0200
+Message-Id: <20180907210904.911462382@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -52,66 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit 5820f140edef111a9ea2ef414ab2428b8cb805b1 upstream.
+Commit 136f55f66019 ("net: lan78xx: fix rx handling before first
+packet is send") was not correctly backported to 4.4.  The call to
+tasklet_schedule() belongs in lan78xx_link_reset().
 
-The old code would hold the userns_state_mutex indefinitely if
-memdup_user_nul stalled due to e.g. a userfault region. Prevent that by
-moving the memdup_user_nul in front of the mutex_lock().
-
-Note: This changes the error precedence of invalid buf/count/*ppos vs
-map already written / capabilities missing.
-
-Fixes: 22d917d80e84 ("userns: Rework the user_namespace adding uid/gid...")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Christian Brauner <christian@brauner.io>
-Acked-by: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Fixes: d1fc12d8475c ("net: lan78xx: fix rx handling before first packet is send")
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/user_namespace.c |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+This is for 4.4 only; the backports to other stable branches look OK.
+I didn't test the driver on any branch though.
 
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -604,7 +604,16 @@ static ssize_t map_write(struct file *fi
- 	struct uid_gid_extent *extent = NULL;
- 	unsigned long page = 0;
- 	char *kbuf, *pos, *next_line;
--	ssize_t ret = -EINVAL;
-+	ssize_t ret;
-+
-+	/* Only allow < page size writes at the beginning of the file */
-+	if ((*ppos != 0) || (count >= PAGE_SIZE))
-+		return -EINVAL;
-+
-+	/* Slurp in the user data */
-+	if (copy_from_user(kbuf, buf, count))
-+		return -EFAULT;
-+	kbuf[count] = '\0';
+Ben.
+
+ drivers/net/usb/lan78xx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -902,6 +902,8 @@ static int lan78xx_link_reset(struct lan
  
- 	/*
- 	 * The userns_state_mutex serializes all writes to any given map.
-@@ -645,17 +654,6 @@ static ssize_t map_write(struct file *fi
- 	if (!page)
- 		goto out;
+ 		ret = lan78xx_update_flowcontrol(dev, ecmd.duplex, ladv, radv);
+ 		netif_carrier_on(dev->net);
++
++		tasklet_schedule(&dev->bh);
+ 	}
  
--	/* Only allow < page size writes at the beginning of the file */
--	ret = -EINVAL;
--	if ((*ppos != 0) || (count >= PAGE_SIZE))
--		goto out;
+ 	return ret;
+@@ -1361,8 +1363,6 @@ static void lan78xx_init_mac_address(str
+ 			netif_dbg(dev, ifup, dev->net,
+ 				  "MAC address set to random addr");
+ 		}
 -
--	/* Slurp in the user data */
--	ret = -EFAULT;
--	if (copy_from_user(kbuf, buf, count))
--		goto out;
--	kbuf[count] = '\0';
--
- 	/* Parse the user data */
- 	ret = -EINVAL;
- 	pos = kbuf;
+-		tasklet_schedule(&dev->bh);
+ 	}
+ 
+ 	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
 
 
