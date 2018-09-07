@@ -5,543 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50776C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4248C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBBF220844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:12:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBBF220844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8890220857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8890220857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbeIGGuz (ORCPT
+        id S1729007AbeIGGu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:50:55 -0400
-Received: from mga03.intel.com ([134.134.136.65]:57457 "EHLO mga03.intel.com"
+        Fri, 7 Sep 2018 02:50:56 -0400
+Received: from mga05.intel.com ([192.55.52.43]:38793 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbeIGGuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728969AbeIGGuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 02:50:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 19:12:26 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 19:12:28 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
-   d="scan'208";a="69016667"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2018 19:12:10 -0700
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+   d="scan'208";a="72277300"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga006.jf.intel.com with ESMTP; 06 Sep 2018 19:12:28 -0700
+Received: from FMSMSX110.amr.corp.intel.com (10.18.116.10) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 6 Sep 2018 19:12:27 -0700
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ fmsmsx110.amr.corp.intel.com (10.18.116.10) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 6 Sep 2018 19:12:27 -0700
+Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.240]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.226]) with mapi id 14.03.0319.002;
+ Fri, 7 Sep 2018 10:12:23 +0800
+From:   "Yang, Bin" <bin.yang@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v2 04/12] iommu/vt-d: Add 256-bit invalidation descriptor
- support
-To:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20180830013524.28743-1-baolu.lu@linux.intel.com>
- <20180830013524.28743-5-baolu.lu@linux.intel.com>
- <AADFC41AFE54684AB9EE6CBC0274A5D1912F2B3B@SHSMSX101.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <8c87d776-e7d2-7c12-1a13-c8c324530bd2@linux.intel.com>
-Date:   Fri, 7 Sep 2018 10:11:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1912F2B3B@SHSMSX101.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 5/5] x86/mm: add WARN_ON_ONCE() for wrong large page
+ mapping
+Thread-Topic: [PATCH v3 5/5] x86/mm: add WARN_ON_ONCE() for wrong large page
+ mapping
+Thread-Index: AQHUOOymJE+K7YyITE+hh9OuBQRM4qTesq4AgACHUgCAABOQgIAAmdOAgAPAxwA=
+Date:   Fri, 7 Sep 2018 02:12:23 +0000
+Message-ID: <710f6a6fcc00f836eb78952741b79969f159beb9.camel@intel.com>
+References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>
+          <1534814186-37067-6-git-send-email-bin.yang@intel.com>
+          <alpine.DEB.2.21.1809040023450.1462@nanos.tec.linutronix.de>
+         <2ad0ff43ea406005890ad4fcbb7a42da747289d9.camel@intel.com>
+         <alpine.DEB.2.21.1809040939400.1462@nanos.tec.linutronix.de>
+         <alpine.DEB.2.21.1809041835480.3395@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809041835480.3395@nanos.tec.linutronix.de>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.0 
+x-originating-ip: [10.239.4.101]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3FABD20C80E0D448951557E10E114260@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 09/06/2018 10:39 AM, Tian, Kevin wrote:
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Thursday, August 30, 2018 9:35 AM
->>
->> Intel vt-d spec rev3.0 requires software to use 256-bit
->> descriptors in invalidation queue. As the spec reads in
->> section 6.5.2:
->>
->> Remapping hardware supporting Scalable Mode Translations
->> (ECAP_REG.SMTS=1) allow software to additionally program
->> the width of the descriptors (128-bits or 256-bits) that
->> will be written into the Queue. Software should setup the
->> Invalidation Queue for 256-bit descriptors before progra-
->> mming remapping hardware for scalable-mode translation as
->> 128-bit descriptors are treated as invalid descriptors
->> (see Table 21 in Section 6.5.2.10) in scalable-mode.
->>
->> This patch adds 256-bit invalidation descriptor support
->> if the hardware presents scalable mode capability.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
->>   drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
->>   drivers/iommu/intel_irq_remapping.c |  6 ++-
->>   include/linux/intel-iommu.h         |  7 ++-
->>   4 files changed, 113 insertions(+), 59 deletions(-)
->>
->> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
->> index d9c748b6f9e4..b1429fa2cf29 100644
->> --- a/drivers/iommu/dmar.c
->> +++ b/drivers/iommu/dmar.c
->> @@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu
->> *iommu, int index)
->>   	int head, tail;
->>   	struct q_inval *qi = iommu->qi;
->>   	int wait_index = (index + 1) % QI_LENGTH;
->> +	int shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
-> 
-> could add a new macro: qi_shift()
-
-Fair enough.
-
-> 
->>
->>   	if (qi->desc_status[wait_index] == QI_ABORT)
->>   		return -EAGAIN;
->> @@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu
->> *iommu, int index)
->>   	 */
->>   	if (fault & DMA_FSTS_IQE) {
->>   		head = readl(iommu->reg + DMAR_IQH_REG);
->> -		if ((head >> DMAR_IQ_SHIFT) == index) {
->> +		if ((head >> shift) == index) {
-> 
-> could be another macro: qi_index(head)
-
-Fair enough.
-
-> 
->> +			struct qi_desc *desc = qi->desc + head;
->> +
->>   			pr_err("VT-d detected invalid descriptor: "
->>   				"low=%llx, high=%llx\n",
->> -				(unsigned long long)qi->desc[index].low,
->> -				(unsigned long long)qi->desc[index].high);
->> -			memcpy(&qi->desc[index], &qi->desc[wait_index],
->> -					sizeof(struct qi_desc));
->> +				(unsigned long long)desc->qw0,
->> +				(unsigned long long)desc->qw1);
-> 
-> what about qw2 and qw3 in 256-bit case?
-
-Should print qw2 and qw3 as well.
-
-> 
->> +			memcpy(desc, qi->desc + (wait_index << shift),
->> +			       1 << shift);
->>   			writel(DMA_FSTS_IQE, iommu->reg +
->> DMAR_FSTS_REG);
->>   			return -EINVAL;
->>   		}
->> @@ -1191,10 +1194,10 @@ static int qi_check_fault(struct intel_iommu
->> *iommu, int index)
->>   	 */
->>   	if (fault & DMA_FSTS_ITE) {
->>   		head = readl(iommu->reg + DMAR_IQH_REG);
->> -		head = ((head >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) %
->> QI_LENGTH;
->> +		head = ((head >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
->>   		head |= 1;
->>   		tail = readl(iommu->reg + DMAR_IQT_REG);
->> -		tail = ((tail >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) %
->> QI_LENGTH;
->> +		tail = ((tail >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
->>
->>   		writel(DMA_FSTS_ITE, iommu->reg + DMAR_FSTS_REG);
->>
->> @@ -1222,15 +1225,14 @@ int qi_submit_sync(struct qi_desc *desc, struct
->> intel_iommu *iommu)
->>   {
->>   	int rc;
->>   	struct q_inval *qi = iommu->qi;
->> -	struct qi_desc *hw, wait_desc;
->> +	int offset, shift, length;
->> +	struct qi_desc wait_desc;
->>   	int wait_index, index;
->>   	unsigned long flags;
->>
->>   	if (!qi)
->>   		return 0;
->>
->> -	hw = qi->desc;
->> -
->>   restart:
->>   	rc = 0;
->>
->> @@ -1243,16 +1245,21 @@ int qi_submit_sync(struct qi_desc *desc, struct
->> intel_iommu *iommu)
->>
->>   	index = qi->free_head;
->>   	wait_index = (index + 1) % QI_LENGTH;
->> +	shift = DMAR_IQ_SHIFT + !!ecap_smts(iommu->ecap);
->> +	length = 1 << shift;
->>
->>   	qi->desc_status[index] = qi->desc_status[wait_index] = QI_IN_USE;
->>
->> -	hw[index] = *desc;
->> -
->> -	wait_desc.low = QI_IWD_STATUS_DATA(QI_DONE) |
->> +	offset = index << shift;
->> +	memcpy(qi->desc + offset, desc, length);
->> +	wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
->>   			QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
->> -	wait_desc.high = virt_to_phys(&qi->desc_status[wait_index]);
->> +	wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
->> +	wait_desc.qw2 = 0;
->> +	wait_desc.qw3 = 0;
->>
->> -	hw[wait_index] = wait_desc;
->> +	offset = wait_index << shift;
->> +	memcpy(qi->desc + offset, &wait_desc, length);
->>
->>   	qi->free_head = (qi->free_head + 2) % QI_LENGTH;
->>   	qi->free_cnt -= 2;
->> @@ -1261,7 +1268,7 @@ int qi_submit_sync(struct qi_desc *desc, struct
->> intel_iommu *iommu)
->>   	 * update the HW tail register indicating the presence of
->>   	 * new descriptors.
->>   	 */
->> -	writel(qi->free_head << DMAR_IQ_SHIFT, iommu->reg +
->> DMAR_IQT_REG);
->> +	writel(qi->free_head << shift, iommu->reg + DMAR_IQT_REG);
->>
->>   	while (qi->desc_status[wait_index] != QI_DONE) {
->>   		/*
->> @@ -1298,8 +1305,10 @@ void qi_global_iec(struct intel_iommu *iommu)
->>   {
->>   	struct qi_desc desc;
->>
->> -	desc.low = QI_IEC_TYPE;
->> -	desc.high = 0;
->> +	desc.qw0 = QI_IEC_TYPE;
->> +	desc.qw1 = 0;
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>
->>   	/* should never fail */
->>   	qi_submit_sync(&desc, iommu);
->> @@ -1310,9 +1319,11 @@ void qi_flush_context(struct intel_iommu
->> *iommu, u16 did, u16 sid, u8 fm,
->>   {
->>   	struct qi_desc desc;
->>
->> -	desc.low = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
->> +	desc.qw0 = QI_CC_FM(fm) | QI_CC_SID(sid) | QI_CC_DID(did)
->>   			| QI_CC_GRAN(type) | QI_CC_TYPE;
->> -	desc.high = 0;
->> +	desc.qw1 = 0;
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>
->>   	qi_submit_sync(&desc, iommu);
->>   }
->> @@ -1331,10 +1342,12 @@ void qi_flush_iotlb(struct intel_iommu
->> *iommu, u16 did, u64 addr,
->>   	if (cap_read_drain(iommu->cap))
->>   		dr = 1;
->>
->> -	desc.low = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) |
->> QI_IOTLB_DW(dw)
->> +	desc.qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) |
->> QI_IOTLB_DW(dw)
->>   		| QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
->> -	desc.high = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
->> +	desc.qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
->>   		| QI_IOTLB_AM(size_order);
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>
->>   	qi_submit_sync(&desc, iommu);
->>   }
->> @@ -1347,15 +1360,17 @@ void qi_flush_dev_iotlb(struct intel_iommu
->> *iommu, u16 sid, u16 pfsid,
->>   	if (mask) {
->>   		WARN_ON_ONCE(addr & ((1ULL << (VTD_PAGE_SHIFT +
->> mask)) - 1));
->>   		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
->> -		desc.high = QI_DEV_IOTLB_ADDR(addr) |
->> QI_DEV_IOTLB_SIZE;
->> +		desc.qw1 = QI_DEV_IOTLB_ADDR(addr) |
->> QI_DEV_IOTLB_SIZE;
->>   	} else
->> -		desc.high = QI_DEV_IOTLB_ADDR(addr);
->> +		desc.qw1 = QI_DEV_IOTLB_ADDR(addr);
->>
->>   	if (qdep >= QI_DEV_IOTLB_MAX_INVS)
->>   		qdep = 0;
->>
->> -	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
->> +	desc.qw0 = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
->>   		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>
->>   	qi_submit_sync(&desc, iommu);
->>   }
->> @@ -1403,16 +1418,24 @@ static void __dmar_enable_qi(struct
->> intel_iommu *iommu)
->>   	u32 sts;
->>   	unsigned long flags;
->>   	struct q_inval *qi = iommu->qi;
->> +	u64 val = virt_to_phys(qi->desc);
->>
->>   	qi->free_head = qi->free_tail = 0;
->>   	qi->free_cnt = QI_LENGTH;
->>
->> +	/*
->> +	 * Set DW=1 and QS=1 in IQA_REG when Scalable Mode capability
->> +	 * is present.
->> +	 */
->> +	if (ecap_smts(iommu->ecap))
->> +		val |= (1 << 11) | 1;
->> +
->>   	raw_spin_lock_irqsave(&iommu->register_lock, flags);
->>
->>   	/* write zero to the tail reg */
->>   	writel(0, iommu->reg + DMAR_IQT_REG);
->>
->> -	dmar_writeq(iommu->reg + DMAR_IQA_REG, virt_to_phys(qi-
->>> desc));
->> +	dmar_writeq(iommu->reg + DMAR_IQA_REG, val);
->>
->>   	iommu->gcmd |= DMA_GCMD_QIE;
->>   	writel(iommu->gcmd, iommu->reg + DMAR_GCMD_REG);
->> @@ -1448,8 +1471,12 @@ int dmar_enable_qi(struct intel_iommu
->> *iommu)
->>
->>   	qi = iommu->qi;
->>
->> -
->> -	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC |
->> __GFP_ZERO, 0);
->> +	/*
->> +	 * Need two pages to accommodate 256 descriptors of 256 bits each
->> +	 * if the remapping hardware supports scalable mode translation.
->> +	 */
->> +	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC |
->> __GFP_ZERO,
->> +				     !!ecap_smts(iommu->ecap));
->>   	if (!desc_page) {
->>   		kfree(qi);
->>   		iommu->qi = NULL;
->> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
->> index 6c0bd9ee9602..a06ed098e928 100644
->> --- a/drivers/iommu/intel-svm.c
->> +++ b/drivers/iommu/intel-svm.c
->> @@ -161,27 +161,40 @@ static void intel_flush_svm_range_dev (struct
->> intel_svm *svm, struct intel_svm_d
->>   		 * because that's the only option the hardware gives us.
->> Despite
->>   		 * the fact that they are actually only accessible through one.
->> */
->>   		if (gl)
->> -			desc.low = QI_EIOTLB_PASID(svm->pasid) |
->> QI_EIOTLB_DID(sdev->did) |
->> -				QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
->> QI_EIOTLB_TYPE;
->> +			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
->> +					QI_EIOTLB_DID(sdev->did) |
->> +
->> 	QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
->> +					QI_EIOTLB_TYPE;
->>   		else
->> -			desc.low = QI_EIOTLB_PASID(svm->pasid) |
->> QI_EIOTLB_DID(sdev->did) |
->> -				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID)
->> | QI_EIOTLB_TYPE;
->> -		desc.high = 0;
->> +			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
->> +					QI_EIOTLB_DID(sdev->did) |
->> +
->> 	QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
->> +					QI_EIOTLB_TYPE;
->> +		desc.qw1 = 0;
->>   	} else {
->>   		int mask = ilog2(__roundup_pow_of_two(pages));
->>
->> -		desc.low = QI_EIOTLB_PASID(svm->pasid) |
->> QI_EIOTLB_DID(sdev->did) |
->> -			QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
->> QI_EIOTLB_TYPE;
->> -		desc.high = QI_EIOTLB_ADDR(address) | QI_EIOTLB_GL(gl) |
->> -			QI_EIOTLB_IH(ih) | QI_EIOTLB_AM(mask);
->> +		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
->> +				QI_EIOTLB_DID(sdev->did) |
->> +				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
->> +				QI_EIOTLB_TYPE;
->> +		desc.qw1 = QI_EIOTLB_ADDR(address) |
->> +				QI_EIOTLB_GL(gl) |
->> +				QI_EIOTLB_IH(ih) |
->> +				QI_EIOTLB_AM(mask);
->>   	}
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>   	qi_submit_sync(&desc, svm->iommu);
->>
->>   	if (sdev->dev_iotlb) {
->> -		desc.low = QI_DEV_EIOTLB_PASID(svm->pasid) |
->> QI_DEV_EIOTLB_SID(sdev->sid) |
->> -			QI_DEV_EIOTLB_QDEP(sdev->qdep) |
->> QI_DEIOTLB_TYPE;
->> +		desc.qw0 = QI_DEV_EIOTLB_PASID(svm->pasid) |
->> +				QI_DEV_EIOTLB_SID(sdev->sid) |
->> +				QI_DEV_EIOTLB_QDEP(sdev->qdep) |
->> +				QI_DEIOTLB_TYPE;
->>   		if (pages == -1) {
->> -			desc.high = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
->> QI_DEV_EIOTLB_SIZE;
->> +			desc.qw1 = QI_DEV_EIOTLB_ADDR(-1ULL >> 1) |
->> +					QI_DEV_EIOTLB_SIZE;
->>   		} else if (pages > 1) {
->>   			/* The least significant zero bit indicates the size. So,
->>   			 * for example, an "address" value of 0x12345f000
->> will
->> @@ -189,10 +202,13 @@ static void intel_flush_svm_range_dev (struct
->> intel_svm *svm, struct intel_svm_d
->>   			unsigned long last = address + ((unsigned
->> long)(pages - 1) << VTD_PAGE_SHIFT);
->>   			unsigned long mask =
->> __rounddown_pow_of_two(address ^ last);
->>
->> -			desc.high = QI_DEV_EIOTLB_ADDR((address &
->> ~mask) | (mask - 1)) | QI_DEV_EIOTLB_SIZE;
->> +			desc.qw1 = QI_DEV_EIOTLB_ADDR((address &
->> ~mask) |
->> +					(mask - 1)) | QI_DEV_EIOTLB_SIZE;
->>   		} else {
->> -			desc.high = QI_DEV_EIOTLB_ADDR(address);
->> +			desc.qw1 = QI_DEV_EIOTLB_ADDR(address);
->>   		}
->> +		desc.qw2 = 0;
->> +		desc.qw3 = 0;
->>   		qi_submit_sync(&desc, svm->iommu);
->>   	}
->>   }
->> @@ -237,8 +253,11 @@ static void intel_flush_pasid_dev(struct intel_svm
->> *svm, struct intel_svm_dev *s
->>   {
->>   	struct qi_desc desc;
->>
->> -	desc.high = 0;
->> -	desc.low = QI_PC_TYPE | QI_PC_DID(sdev->did) | QI_PC_PASID_SEL
->> | QI_PC_PASID(pasid);
->> +	desc.qw0 = QI_PC_TYPE | QI_PC_DID(sdev->did) |
->> +			QI_PC_PASID_SEL | QI_PC_PASID(pasid);
->> +	desc.qw1 = 0;
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>
->>   	qi_submit_sync(&desc, svm->iommu);
->>   }
->> @@ -668,24 +687,27 @@ static irqreturn_t prq_event_thread(int irq, void
->> *d)
->>   	no_pasid:
->>   		if (req->lpig) {
->>   			/* Page Group Response */
->> -			resp.low = QI_PGRP_PASID(req->pasid) |
->> +			resp.qw0 = QI_PGRP_PASID(req->pasid) |
->>   				QI_PGRP_DID((req->bus << 8) | req->devfn)
->> |
->>   				QI_PGRP_PASID_P(req->pasid_present) |
->>   				QI_PGRP_RESP_TYPE;
->> -			resp.high = QI_PGRP_IDX(req->prg_index) |
->> -				QI_PGRP_PRIV(req->private) |
->> QI_PGRP_RESP_CODE(result);
->> -
->> -			qi_submit_sync(&resp, iommu);
->> +			resp.qw1 = QI_PGRP_IDX(req->prg_index) |
->> +				QI_PGRP_PRIV(req->private) |
->> +				QI_PGRP_RESP_CODE(result);
->>   		} else if (req->srr) {
->>   			/* Page Stream Response */
->> -			resp.low = QI_PSTRM_IDX(req->prg_index) |
->> -				QI_PSTRM_PRIV(req->private) |
->> QI_PSTRM_BUS(req->bus) |
->> -				QI_PSTRM_PASID(req->pasid) |
->> QI_PSTRM_RESP_TYPE;
->> -			resp.high = QI_PSTRM_ADDR(address) |
->> QI_PSTRM_DEVFN(req->devfn) |
->> +			resp.qw0 = QI_PSTRM_IDX(req->prg_index) |
->> +				QI_PSTRM_PRIV(req->private) |
->> +				QI_PSTRM_BUS(req->bus) |
->> +				QI_PSTRM_PASID(req->pasid) |
->> +				QI_PSTRM_RESP_TYPE;
->> +			resp.qw1 = QI_PSTRM_ADDR(address) |
->> +				QI_PSTRM_DEVFN(req->devfn) |
->>   				QI_PSTRM_RESP_CODE(result);
->> -
->> -			qi_submit_sync(&resp, iommu);
->>   		}
->> +		resp.qw2 = 0;
->> +		resp.qw3 = 0;
->> +		qi_submit_sync(&resp, iommu);
->>
->>   		head = (head + sizeof(*req)) & PRQ_RING_MASK;
->>   	}
->> diff --git a/drivers/iommu/intel_irq_remapping.c
->> b/drivers/iommu/intel_irq_remapping.c
->> index 967450bd421a..916391f33ca6 100644
->> --- a/drivers/iommu/intel_irq_remapping.c
->> +++ b/drivers/iommu/intel_irq_remapping.c
->> @@ -145,9 +145,11 @@ static int qi_flush_iec(struct intel_iommu *iommu,
->> int index, int mask)
->>   {
->>   	struct qi_desc desc;
->>
->> -	desc.low = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
->> +	desc.qw0 = QI_IEC_IIDEX(index) | QI_IEC_TYPE | QI_IEC_IM(mask)
->>   		   | QI_IEC_SELECTIVE;
->> -	desc.high = 0;
->> +	desc.qw1 = 0;
->> +	desc.qw2 = 0;
->> +	desc.qw3 = 0;
->>
->>   	return qi_submit_sync(&desc, iommu);
->>   }
->> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
->> index 41791903a5e3..72aff482b293 100644
->> --- a/include/linux/intel-iommu.h
->> +++ b/include/linux/intel-iommu.h
->> @@ -340,12 +340,15 @@ enum {
->>   #define QI_GRAN_PSI_PASID		3
->>
->>   struct qi_desc {
->> -	u64 low, high;
->> +	u64 qw0;
->> +	u64 qw1;
->> +	u64 qw2;
->> +	u64 qw3;
->>   };
->>
->>   struct q_inval {
->>   	raw_spinlock_t  q_lock;
->> -	struct qi_desc  *desc;          /* invalidation queue */
->> +	void		*desc;          /* invalidation queue */
->>   	int             *desc_status;   /* desc status */
->>   	int             free_head;      /* first free entry */
->>   	int             free_tail;      /* last free entry */
->> --
->> 2.17.1
-> 
-> 
-
-Best regards,
-Lu Baolu
+T24gVHVlLCAyMDE4LTA5LTA0IGF0IDE4OjUyICswMjAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
+DQo+IE9uIFR1ZSwgNCBTZXAgMjAxOCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+IE9uIFR1
+ZSwgNCBTZXAgMjAxOCwgWWFuZywgQmluIHdyb3RlOg0KPiA+ID4gT24gVHVlLCAyMDE4LTA5LTA0
+IGF0IDAwOjI3ICswMjAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6DQo+ID4gPiA+IE9uIFR1ZSwg
+MjEgQXVnIDIwMTgsIEJpbiBZYW5nIHdyb3RlOg0KPiA+ID4gPiA+IEBAIC02MjUsNiArNjI1LDcg
+QEAgdHJ5X3ByZXNlcnZlX2xhcmdlX3BhZ2UocHRlX3QgKmtwdGUsIHVuc2lnbmVkIGxvbmcgYWRk
+cmVzcywNCj4gPiA+ID4gPiAgDQo+ID4gPiA+ID4gIAlwc2l6ZSA9IHBhZ2VfbGV2ZWxfc2l6ZShs
+ZXZlbCk7DQo+ID4gPiA+ID4gIAlwbWFzayA9IHBhZ2VfbGV2ZWxfbWFzayhsZXZlbCk7DQo+ID4g
+PiA+ID4gKwlhZGRyID0gYWRkcmVzcyAmIHBtYXNrOw0KPiA+ID4gPiA+ICANCj4gPiA+ID4gPiAg
+CS8qDQo+ID4gPiA+ID4gIAkgKiBDYWxjdWxhdGUgdGhlIG51bWJlciBvZiBwYWdlcywgd2hpY2gg
+Zml0IGludG8gdGhpcyBsYXJnZQ0KPiA+ID4gPiA+IEBAIC02MzYsNiArNjM3LDEyIEBAIHRyeV9w
+cmVzZXJ2ZV9sYXJnZV9wYWdlKHB0ZV90ICprcHRlLCB1bnNpZ25lZCBsb25nIGFkZHJlc3MsDQo+
+ID4gPiA+ID4gIAkJY3BhLT5udW1wYWdlcyA9IG51bXBhZ2VzOw0KPiA+ID4gPiA+ICANCj4gPiA+
+ID4gPiAgCS8qDQo+ID4gPiA+ID4gKwkgKiBUaGUgb2xkIHBncHJvdCBzaG91bGQgbm90IGhhdmUg
+YW55IHByb3RlY3Rpb24gYml0LiBPdGhlcndpc2UsDQo+ID4gPiA+ID4gKwkgKiB0aGUgZXhpc3Rp
+bmcgbWFwcGluZyBpcyB3cm9uZyBhbHJlYWR5Lg0KPiA+ID4gPiA+ICsJICovDQo+ID4gPiA+ID4g
+KwlXQVJOX09OX09OQ0UobmVlZHNfc3RhdGljX3Byb3RlY3Rpb25zKG9sZF9wcm90LCBhZGRyLCBw
+c2l6ZSwgb2xkX3BmbikpOw0KPiA+ID4gPiANCj4gPiA+ID4gVGhlIGNoZWNrIGl0c2VsZiBpcyBm
+aW5lLCBidXQgaXQganVzdCBlbWl0cyBhIHdhcm5pbmcgYW5kIGdvZXMgb24gYXMgaWYNCj4gPiA+
+ID4gbm90aGluZyBoYXBwZW5lZC4NCj4gPiA+ID4gDQo+ID4gPiA+IFdlIHJlYWxseSB3YW50IHRv
+IHRoaW5rIGFib3V0IGEgcHJvcGVyIHdheSB0byBmaXggdGhhdCB1cCB3aXRob3V0IG92ZXJoZWFk
+DQo+ID4gPiA+IGZvciB0aGUgc2FuZSBjYXNlLg0KPiA+ID4gDQo+ID4gPiBjb3VsZCB3ZSBjaGFu
+Z2UgaXQgYXMgYmVsb3c/IEkgdGhpbmsgaXQgc2hvdWxkIGJlIHNhZmUgdG8gc3BsaXQgbGFyZ2UN
+Cj4gPiA+IHBhZ2UgaWYgY3VycmVudCBtYXBwaW5nIGlzIHdyb25nIGFscmVhZHkuDQo+ID4gPiAN
+Cj4gPiA+ICAgICAgICAgaWYgKG5lZWRzX3N0YXRpY19wcm90ZWN0aW9ucyhvbGRfcHJvdCwgYWRk
+ciwgcHNpemUsIG9sZF9wZm4pKSB7DQo+ID4gPiAgICAgICAgICAgICAgICAgV0FSTl9PTl9PTkNF
+KDEpOw0KPiA+ID4gICAgICAgICAgICAgICAgIGdvdG8gb3V0X3VubG9jazsNCj4gPiA+ICAgICAg
+ICAgfQ0KPiA+IA0KPiA+IFN1cmUsIGJ1dCB3aGF0IGVuZm9yY2VzIHRoZSBzdGF0aWMgcHJvdGVj
+dGlvbnMgb24gdGhlIHBhZ2VzIHdoaWNoIGFyZSBub3QNCj4gPiBpbiB0aGUgbW9kaWZpZWQgcmFu
+Z2Ugb2YgdGhlIGN1cnJlbnQgQ1BBIGNhbGw/IE5vdGhpbmcuDQo+IA0KPiBJIGxvb2tlZCBkZWVw
+ZXIgaW50byB0aGF0LiBGb3IgdGhlIFBNRCBzcGxpdCBpdCdzIHJhdGhlciB0cml2aWFsIHRvIGRv
+LCBidXQNCj4gYSBQVUQgc3BsaXQgd291bGQgcmVxdWlyZSBhIGhvcnJpYmxlIHBpbGUgb2YgY2hh
+bmdlcyBhcyB3ZSdkIGhhdmUgdG8gcmVtb3ZlDQo+IHRoZSBwcm90ZWN0aW9ucyBmcm9tIHRoZSBu
+ZXcgUE1EIGZpcnN0LCBnbyBhbGwgdGhlIHdheSBiYWNrIGFuZCByZXNjYW4gdGhlDQo+IG5ldyBQ
+TURzIHdoZXRoZXIgdGhleSBuZWVkIHRvIGJlIHNwbGl0IHVwIGZ1cnRoZXIuIEJ1dCB0aGF0IG5l
+ZWRzIGEgbG90IG9mDQo+IHJlZmFjdG9yaW5nIGFuZCBJJ20gbm90IHN1cmUgaWYgaXQncyB3b3J0
+aCB0aGUgdHJvdWJsZSByaWdodCBub3cuDQo+IA0KPiBBcyB3ZSBoYXZlbid0IGNhcmVkIGFib3V0
+IHRoYXQgc2luY2UgQ1BBIGdvdCBpbnRyb2R1Y2VkLCBJIHRoaW5rIHdlIGp1c3QgZG8NCj4gdGhl
+IGNvbnNpc3RlbmN5IGNoZWNrIGFuZCB3YXJuLiBUaGF0J3MgYmV0dGVyIHdoYXQgd2UgaGF2ZSBu
+b3cgYW5kIHdoZW4gaXQNCj4gZXZlciB0cmlnZ2VycyByZXZpc2l0IGl0Lg0KDQpJcyBiZWxvdyBj
+aGVjayBlbm91Z2g/DQoNCiAgICAgICAgaWYgKChwZ3Byb3RfdmFsKG9sZF9wcm90KSAmIF9QQUdF
+X1BSRVNFTlQpICYmDQogICAgICAgICAgICBuZWVkc19zdGF0aWNfcHJvdGVjdGlvbnMob2xkX3By
+b3QsIGFkZHIsIHBzaXplLCBvbGRfcGZuKSkgew0KICAgICAgICAgICAgICAgIFdBUk5fT05fT05D
+RSgxKTsNCiAgICAgICAgfQ0KDQoNCj4gDQo+IFRoYW5rcywNCj4gDQo+IAl0Z2x4DQo=
