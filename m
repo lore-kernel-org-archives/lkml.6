@@ -2,106 +2,124 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751AFC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B738DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16F872086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CBEC20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:47:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="by3T9fcd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F872086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G8I7dxC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CBEC20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbeIHDYe (ORCPT
+        id S1726687AbeIHDbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:24:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42053 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeIHDYe (ORCPT
+        Fri, 7 Sep 2018 23:31:06 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54074 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbeIHDbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:24:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v17-v6so16321381wrr.9;
-        Fri, 07 Sep 2018 15:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s12dKhf3YAoLjkH2sOtX1NrqJWjp3BZ9pqewD/sIZ3w=;
-        b=by3T9fcddUz1wWsaqz4JO0PHmsayetC/ZZ6katBE4UNxBR5GU0XZMTfgKTn2mb/DrW
-         qQbaJNM2qOCXPiDnIvsMT8h/JqJAqKVig6YNfi0EGaXJBBE9fZslsduigTYMKis1iM4q
-         ndWwZzSb45lXLVa72FEYgG3IhB8ggaAZ7qOMJp/PQBxu85QsM++MCk/BUqYeYlJ4sAOm
-         92AJc+nkt80itoUeH7kXvVHmOrM72AILpV+tQhO9Tw8itr43cT0FfwkYNk9CkMQPqN/x
-         5r5t+nQh/QSviurAvJ2kKquHM4nSn3VSlbFcd2o324Lg7MEJ8d4t+X/6O7r2A+byq6Kw
-         +U6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s12dKhf3YAoLjkH2sOtX1NrqJWjp3BZ9pqewD/sIZ3w=;
-        b=pvQ5nh4/k1jFEPgFb4JYbjcUBEfUjGAS3/t/RjkZZaNnlIfcvCZEWdl1KUylwF+Y/k
-         fvOhojZZEKZmzN2WzFqjlDkPNVHGzJxQRIbKlAirHEcywIjcayPE7sLRGOb4YKa+dhYo
-         l/JdURx4QdYGyq/8BkK1eg+q3mPqYiuyWwRXhgbeAR6ZYCDQvIJXt5rdmri1A2EAqm2/
-         RupB2zeH4qdmzN4tFL/bkn19gwho4uXlpSm7O0Erte0/FGauZOan1rcujrXu/rDv4ooh
-         pAUrAO2pWm7owwMf23TUUTep8BkIdxORFjtByd2zboy+d40ZedIy1gF/1EwTpy6j+PuA
-         k/KA==
-X-Gm-Message-State: APzg51BONZ7X/Pw1h8LRBlOyM9p96cuYp9xD+E5bj6dD3bYY+LN/QzNY
-        Ags/KIA4hHQXWd/WuESe7yM=
-X-Google-Smtp-Source: ANB0VdbpRL8x9zPNNeHr9D6Za6oijDPFwGC+WPpirOgdZ7fBgAibAnTzQgE7qvHklmTTNlahV3F9qw==
-X-Received: by 2002:adf:80ea:: with SMTP id 97-v6mr7312758wrl.57.1536360083310;
-        Fri, 07 Sep 2018 15:41:23 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id b5-v6sm5675340wrs.62.2018.09.07.15.41.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 15:41:22 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 15:41:20 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 00/29] 3.18.122-stable review
-Message-ID: <20180907224120.GC2171@flashbox>
-References: <20180907210909.523240901@linuxfoundation.org>
+        Fri, 7 Sep 2018 23:31:06 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w87MeGdw115093;
+        Fri, 7 Sep 2018 22:47:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=QxQo5DuGr8kyL19cp3OSEZITpsam7eNwbvZdYwLG4Cg=;
+ b=G8I7dxC/S8AkRVgMaqQBsid6JiS/KTd5fm5WDpMGffvry9UlZ/BquUXpJ3IWXnTbg0Hu
+ T1LmC+WmkVsIs/Xp9/VwThXWJtcZ4eGowYfWXR29tGKyaCqmLwrd6FKbBTQAWPw+Hkgc
+ D5DBrxM6hwRM6Gl0UE+BfPYDNKiwpheMDv6YKsDRe7Pp5QpqLh61fq2K3CvImeGYtjQH
+ ctXmFWJR6KiL6f+QqSxdhuQCu6/tlNnSZLaMC2bm4aqVGNnOYFTtsi+1I+/sP+3d348M
+ 6YOKP7fSgtqxjtRmVSqiYlfu/qZrnm/yzs3zcfvgj4NBVu16RzaSwktesH3hlT/Gps9U dA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2m7j6u52aq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Sep 2018 22:47:53 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w87Mlqna008397
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Sep 2018 22:47:52 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w87MlplF027412;
+        Fri, 7 Sep 2018 22:47:51 GMT
+Received: from [10.211.202.81] (/10.211.202.81)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Sep 2018 15:47:51 -0700
+Subject: Re: [Xen-devel] [PATCH] xen-swiotlb: use actually allocated size on
+ check physical contiguous
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <d578b69a-848b-2c86-175a-1b1933d82a36@oracle.com>
+ <f3befca2-fc65-81b8-c9ed-311de7967958@oracle.com>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <5bb5e41f-ed6c-87d0-a1b1-d053c191a8d5@oracle.com>
+Date:   Fri, 7 Sep 2018 15:47:50 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f3befca2-fc65-81b8-c9ed-311de7967958@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9009 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809070223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 11:10:21PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.122 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Sep  9 21:08:52 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.122-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Anybody would like to help review this patch?
 
-Merged, compiled with -Werror, and installed onto my Pixel XL.
+Thanks,
+Joe
 
-No initial issues noticed in dmesg or general usage.
-
-Thanks!
-Nathan
+On 09/05/2018 02:16 AM, Joe Jin wrote                                           
+> xen_swiotlb_{alloc,free}_coherent() actually allocate/free size by order      
+> but used the required size to check if address is physical contiguous,        
+> if first pages are physical contiguous also passed                            
+> range_straddles_page_boundary() check, but others were not it will            
+> lead kernel panic.                                                            
+>                                                                               
+> Signed-off-by: Joe Jin <joe.jin@oracle.com>                                   
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>                            
+> ---                                                                           
+>  drivers/xen/swiotlb-xen.c | 6 ++++++                                         
+>  1 file changed, 6 insertions(+)                                              
+>                                                                               
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c            
+> index a6f9ba85dc4b..aa081f806728 100644                                       
+> --- a/drivers/xen/swiotlb-xen.c                                               
+> +++ b/drivers/xen/swiotlb-xen.c                                               
+> @@ -303,6 +303,9 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+>       */                                                                      
+>       flags &= ~(__GFP_DMA | __GFP_HIGHMEM);                                  
+>                                                                               
+> +     /* Convert the size to actually allocated. */                           
+> +     size = 1UL << (order + XEN_PAGE_SHIFT);                                 
+> +                                                                             
+>       /* On ARM this function returns an ioremap'ped virtual address for      
+>        * which virt_to_phys doesn't return the corresponding physical         
+>        * address. In fact on ARM virt_to_phys only works for kernel direct    
+> @@ -351,6 +354,9 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+>        * physical address */                                                  
+>       phys = xen_bus_to_phys(dev_addr);                                       
+>                                                                               
+> +     /* Convert the size to actually allocated. */                           
+> +     size = 1UL << (order + XEN_PAGE_SHIFT);                                 
+> +                                                                             
+>       if (((dev_addr + size - 1 <= dma_mask)) ||                              
+>           range_straddles_page_boundary(phys, size))                          
+>               xen_destroy_contiguous_region(phys, order);                     
+>                                                                               
