@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E89C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DD8C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C876920844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C876920844
+	by mail.kernel.org (Postfix) with ESMTP id AD3C020844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3C020844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbeIHCUH (ORCPT
+        id S1729700AbeIHCUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52510 "EHLO
+        Fri, 7 Sep 2018 22:20:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52522 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbeIHCUH (ORCPT
+        with ESMTP id S1725999AbeIHCUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:07 -0400
+        Fri, 7 Sep 2018 22:20:13 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B83FE9A;
-        Fri,  7 Sep 2018 21:37:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9B93D6B;
+        Fri,  7 Sep 2018 21:37:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rafael David Tinoco <rafael.tinoco@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.9 32/63] mfd: hi655x: Fix regmap area declared size for hi655x
-Date:   Fri,  7 Sep 2018 23:10:03 +0200
-Message-Id: <20180907211014.750632399@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Silvio Cesare <silvio.cesare@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 50/63] Revert "UBIFS: Fix potential integer overflow in allocation"
+Date:   Fri,  7 Sep 2018 23:10:21 +0200
+Message-Id: <20180907211015.741024679@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -51,65 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael David Tinoco <rafael.tinoco@linaro.org>
+From: Richard Weinberger <richard@nod.at>
 
-commit 6afebb70ee7a4bde106dc1a875e7ac7997248f84 upstream.
+commit 08acbdd6fd736b90f8d725da5a0de4de2dd6de62 upstream.
 
-Fixes https://bugs.linaro.org/show_bug.cgi?id=3903
+This reverts commit 353748a359f1821ee934afc579cf04572406b420.
+It bypassed the linux-mtd review process and fixes the issue not as it
+should.
 
-LTP Functional tests have caused a bad paging request when triggering
-the regmap_read_debugfs() logic of the device PMIC Hi6553 (reading
-regmap/f8000000.pmic/registers file during read_all test):
-
-Unable to handle kernel paging request at virtual address ffff0
-[ffff00000984e000] pgd=0000000077ffe803, pud=0000000077ffd803,0
-Internal error: Oops: 96000007 [#1] SMP
-...
-Hardware name: HiKey Development Board (DT)
-...
-Call trace:
- regmap_mmio_read8+0x24/0x40
- regmap_mmio_read+0x48/0x70
- _regmap_bus_reg_read+0x38/0x48
- _regmap_read+0x68/0x170
- regmap_read+0x50/0x78
- regmap_read_debugfs+0x1a0/0x308
- regmap_map_read_file+0x48/0x58
- full_proxy_read+0x68/0x98
- __vfs_read+0x48/0x80
- vfs_read+0x94/0x150
- SyS_read+0x6c/0xd8
- el0_svc_naked+0x30/0x34
-Code: aa1e03e0 d503201f f9400280 8b334000 (39400000)
-
-Investigations have showed that, when triggered by debugfs read()
-handler, the mmio regmap logic was reading a bigger (16k) register area
-than the one mapped by devm_ioremap_resource() during hi655x-pmic probe
-time (4k).
-
-This commit changes hi655x's max register, according to HW specs, to be
-the same as the one declared in the pmic device in hi6220's dts, fixing
-the issue.
-
-Cc: <stable@vger.kernel.org> #v4.9 #v4.14 #v4.16 #v4.17
-Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Silvio Cesare <silvio.cesare@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/hi655x-pmic.c |    2 +-
+ fs/ubifs/journal.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mfd/hi655x-pmic.c
-+++ b/drivers/mfd/hi655x-pmic.c
-@@ -49,7 +49,7 @@ static struct regmap_config hi655x_regma
- 	.reg_bits = 32,
- 	.reg_stride = HI655X_STRIDE,
- 	.val_bits = 8,
--	.max_register = HI655X_BUS_ADDR(0xFFF),
-+	.max_register = HI655X_BUS_ADDR(0x400) - HI655X_STRIDE,
- };
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -1265,7 +1265,7 @@ static int recomp_data_node(const struct
+ 	int err, len, compr_type, out_len;
  
- static struct resource pwrkey_resources[] = {
+ 	out_len = le32_to_cpu(dn->size);
+-	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
++	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
 
 
