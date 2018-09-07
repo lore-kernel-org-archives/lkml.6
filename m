@@ -2,307 +2,142 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D6AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFC9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B250B2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:53:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B250B2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 76A1E2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:54:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="SWcG4VFC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="DHKJ6+uu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A1E2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeIGVfB (ORCPT
+        id S1726597AbeIGVgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:35:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726043AbeIGVfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:35:00 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 974AA401D780;
-        Fri,  7 Sep 2018 16:53:12 +0000 (UTC)
-Received: from redhat.com (ovpn-123-145.rdu2.redhat.com [10.10.123.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4EDD5FA99E;
-        Fri,  7 Sep 2018 16:53:07 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 12:53:06 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <liguozhu@hisilicon.com>
-Cc:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, kvm@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, Alex Williamson <alex.williamson@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-crypto@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180907165303.GA3519@redhat.com>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180904150019.GA4024@redhat.com>
- <20180904101509.62314b67@t450s.home>
- <20180906094532.GG230707@Turing-Arch-b>
- <20180906133133.GA3830@redhat.com>
- <20180907040138.GI230707@Turing-Arch-b>
+        Fri, 7 Sep 2018 17:36:02 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56148 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726032AbeIGVgC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:36:02 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w87GmCJV001033;
+        Fri, 7 Sep 2018 09:54:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=+dBHRTpz2GYOsAmFvd6pHmFqMv0/LRIia3zdCyI1EhI=;
+ b=SWcG4VFCToi8E4f1cWDh+vnC5cctez3Ef12DJyyuc7+ZMiYoOzddQ4fZmCSEDXFDjgo/
+ QatVcOQH/BJZC7Qa1tCIGx6YXM/X1v1CBiwjSBqP0MzHYPbe4Z1yMa9eewQVifDxH3zz
+ x7qhpjSvLhofsd88c/pkWFbG0COYnrc8LiA= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2mbv1wg7y0-10
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 07 Sep 2018 09:54:12 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.34) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Fri, 7 Sep 2018 12:52:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+dBHRTpz2GYOsAmFvd6pHmFqMv0/LRIia3zdCyI1EhI=;
+ b=DHKJ6+uuJ3ZsRwK4ReKsrsYIvI5Uky+Qy41kwUDaKeY6nyl86M0u7hWlMxXg17TLwl2yTQSAT87ERbE0ABT7fj6UtuL5Q7az+CJ0O3YImhXBURUWNHpg9/X5z952kk0yNao5LBFAMeCxxOXgb/w3VevMna26cRpqOQBGvyfD/4Y=
+Received: from vall.thefacebook.com (2620:10d:c090:200::4:cd5) by
+ CY4PR15MB1223.namprd15.prod.outlook.com (2603:10b6:903:10a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1122.15; Fri, 7 Sep
+ 2018 16:52:32 +0000
+From:   <jgkamat@fb.com>
+To:     <shuah@kernel.org>
+CC:     <linux-kselftest@vger.kernel.org>, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>, <jaygkamat@gmail.com>,
+        <jgkamat@fb.com>
+Subject: kselftests for memory.oom.group
+Date:   Fri, 7 Sep 2018 09:49:22 -0700
+Message-ID: <20180907164924.13789-1-jgkamat@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180905010827.27743-1-jgkamat@fb.com>
+References: <20180905010827.27743-1-jgkamat@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180907040138.GI230707@Turing-Arch-b>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 07 Sep 2018 16:53:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 07 Sep 2018 16:53:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c090:200::4:cd5]
+X-ClientProxiedBy: AM6PR06CA0004.eurprd06.prod.outlook.com
+ (2603:10a6:20b:14::17) To CY4PR15MB1223.namprd15.prod.outlook.com
+ (2603:10b6:903:10a::21)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 62a5c478-9361-484c-6d4f-08d614e24fda
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1223;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1223;3:Q+mAAkkBaIsbkEdSxdIDiAWpJbxwOUyhc0zgr+PmxNntZQZDUqoYdFXig7mNi3n9Nq3bDSCyiZTcxEOZM5zbpx8QUxV0p+iBZhBLHHsf+Lef6GrvoRLq7fcsRwp1DkP8t4N+KXh6qUL0Hj2MZCg409dCgFrqp8C06t0LlSJMRWotCTRmb7EJuozP+nnPWOe0AbdI4b0Twd1ZZ0MxqJrIk74KrSv6VpuVxVYoVV17WVe94Wx7hVxftBn4YMahwGvl;25:vGrEO2/krfPIw8JGLQ6nZX1oKNPRGfkHToD2Oa9Du0J5m9pczIQfWVo1suXKr3VyOsA/gdXW3VOTplpAyB6sCUPhVxk11T5Bc6tT29PnjRgbH4MNELiJgAvjGnlr+wbK7tfOwWv5US01PSmNN78hRqo9D9jK4a6Jv2en4YRtTBohg53QgYxEG0/wMxQeZ6sQa0XPCG2yXyjrDnqpb4eXYjyLkDA+KKXVDgdT27sHJZ/Os+m3Yw1G2vtJiRyDku8bg/F3yveL6DLzQolw+94sGq9Ejr3nN8tb15VtTLf1fWC1HhfUvzoAVQvBTctvD2ELr+JghTYhJ1L4Xi978ba69Q==;31:N16F/gve7Lp75oJ+XU5J5458vxpp16uhaF6JEDjr2lr7NCvNvY0vRcmJTmoiBWm3KdnHr221G+05t9RJbeqwILyEaLGQVTiv9zdEAuOhh/vGpXpzdMZbPUp/tZq1sA5Br1k293d4jzKOWgWVvR0ex187keI8D2q+vL4Fe3y07wLzuieXMq1/qN33sz8GuRb3Kwzamo1Q/leaxrHKI04At4IWEQnADUOhrxF/rTlB4NA=
+X-MS-TrafficTypeDiagnostic: CY4PR15MB1223:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1223;20:Ui4HkVRV9EvJsMjH1DwfLJBtLcBhQ61CfAkCaQ2yevv4chGk3nn0HlALRVV5SJ/najDasCBXvdqtLtSQYAWoyxbZywdiioRTEpk/JnBo8OzOHgI0MJOD2GZAbRN9z/ytJeGwnoDSKInEp5+Yxorrjkxt+IOYoeleFowLtQeHdyyARKa/xNCtKyKl5o4B8MYgCmrDM6+0zMye2nOndog8YIVbI9cp9u/7aKgXw8ZUEdmq3y6FyvOcXfmKkvXUBrptmp5RMOurM10pQ6NiL10Y7PQreXE5LP1TOMcZiKBGJ5YW2gq5BdGd1lBytODuP9TwVAQEC2GpLi7H1QNJYx8QBGO64b7gvrBfWPyGp8aOJ0QHTOZwUWKdL7AZSs79Y72+uyuaJrtNcINtEYpB6cDBBwCptnef0Nei45Ds/EEKiJa2840lmEzDwMpeEhkYGWsLrmK5S795uM65tL56OtfN1k2JbgvKOwxjaNxbySByfvw8qqd8W96mkzIuzs595NMJ;4:6faPvL44SqOSoGq1aIGWIbf3S/tLDPFw9cfz6p/13ZrJH0sEe9lMo/2t9rTjAOfuREn9vByayVxvxl5863ZUC3wSoYw0rKSIhpyQsHJiieng3Rn9qkVH9tBxPy4ZzMMsG2bPznSg6eBJotNUubThzNRcahUAAm7ZsqeWP2Uzv/xtY3PLSV9Tkv7kGYflim4Nd8iwsBunw23FmYLwGWDSbTLx1hpn1/u6pE7S8ftf06GR6ySQmEFMAG93xnOiJngZcLPhDWAWzU+l8Ubl4dwcow==
+X-Microsoft-Antispam-PRVS: <CY4PR15MB12234316C7E005360FEC8C31CE000@CY4PR15MB1223.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3231311)(11241501184)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:CY4PR15MB1223;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1223;
+X-Forefront-PRVS: 07880C4932
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(136003)(376002)(39860400002)(199004)(189003)(46003)(11346002)(97736004)(446003)(53416004)(5660300001)(6486002)(7736002)(85782001)(6512007)(9686003)(52396003)(105586002)(305945005)(106356001)(8676002)(476003)(186003)(86362001)(52116002)(53936002)(16526019)(1076002)(6116002)(2616005)(51416003)(36756003)(69596002)(386003)(6506007)(48376002)(33896004)(2351001)(25786009)(47776003)(316002)(50226002)(76176011)(68736007)(50466002)(54906003)(4326008)(16586007)(2906002)(2361001)(486006)(8936002)(39060400002)(478600001)(81156014)(6666003)(81166006)(6916009)(85772001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1223;H:vall.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR15MB1223;23:bfrqNTlP+Lmk15zLTqboN41qVFZh+L+SHeyLUew+R?=
+ =?us-ascii?Q?29GrPGfW5Cw0TMxMU3sYJ7q367MBMn/AYM9Y0JRZINeVRpRt+hGa5NJCRfXM?=
+ =?us-ascii?Q?7iSQuwTSNnpWWvAargcZMzH5JXafr4dxUI0SnUgoZsdqVUj+/JIm5zhluW//?=
+ =?us-ascii?Q?hCXl6kdJpBDrM94uD8V4sVDt1MOmpMu+bIQREy0LkI8hLG5PZAxI8aM4QHvf?=
+ =?us-ascii?Q?cd1lnGHRA/eVnrA+js7R9hb1cPb58vGuYMH11wEk2epJXoyMgDFZ8X88GM3O?=
+ =?us-ascii?Q?Q/6fMKStXdQeKLIVdCJ42CoTtOJH29zWHR7e4SMQzEQ1Yw9wIMKokgUjM825?=
+ =?us-ascii?Q?ECHxuIBCsM9HJlOOqjtpnXbtmZrS4FwxEyxUJSEF9MViO9I7QCsWx36d1Svn?=
+ =?us-ascii?Q?gayOFz0oGmbbk1JH9THBp8AvoAwIIoNUFEg6UlH2siZtg7OddoHO/Mop5aTT?=
+ =?us-ascii?Q?RsQ1MP0fsB/6PruCIuma2I2MR/A3LnY4MttRUsD/aSpX8Ey8v/UUJApJG9bA?=
+ =?us-ascii?Q?FQwI5TPkobZqugRZaF22tM72LgXy6uYcO8l1q2lZgajcjXkoEanw0im70rTb?=
+ =?us-ascii?Q?DCiD2F6PFYu9GNigM4Dm7PTVV1c6mf3Erkh7N+gdMsgxfkml7jMT0eOBi4kL?=
+ =?us-ascii?Q?xMuu59GDMq/eCGpszVNbKxUQxI1/Bwi5Ezr9uT0bTcm7cc4eK+XPPvI0I1tI?=
+ =?us-ascii?Q?nRaTrnVBwTLMPXF6/Zt9nYq4pIPqsOtnljVSbFqGLW3bqVh4Vfq2L7Ld5Rks?=
+ =?us-ascii?Q?R74rAWYc8TeYy2kv/qGkLifgUU3aNyFvWKXTSh1EZG59HBVLuGBNJWw9+pnU?=
+ =?us-ascii?Q?jf2XoUbYWq+R2xvn5ycANERWg5qNUKhyXbHt/KOm6NaHjU2POpf8ohujzQMZ?=
+ =?us-ascii?Q?+XbTRWgL7MyiS/WDQMCxZ0xFt/S2weTWWbA/qNTdjzVBQjRQEp2fqjfbW30U?=
+ =?us-ascii?Q?/vuXTN6d2WgdXqAiB7i44voc8yyO208qOrVo0iEkcaaul5LClxDQ6YRV0ilu?=
+ =?us-ascii?Q?mqWYQ9i/+zkTz2MNoDmi5TlFuQOFonpCJR/ZBDyNRsrprhoj53D0kCMD5Hzv?=
+ =?us-ascii?Q?9N8bgE7yOvneHV1q1M3zdzEjxrylGRXOY62A50fzU3ns1PG4qW+31v1YQtlm?=
+ =?us-ascii?Q?prWXzPlwYPhqt9MY3FL2QlXePZ4ZMsbPgdj/R73ngtS5gtcSaXGOUI/PiUN6?=
+ =?us-ascii?Q?XW5mVITFFrIaHPYIEb0Yt+wFdpJaavOc9jciD3Slr11YquGQZpWH2CGKDnZK?=
+ =?us-ascii?Q?MrjBRUe5JQWTIELsBYj6Z58Km3JoVLpET2Hyg7OOSI28j0uuDMqpNB8VPkE3?=
+ =?us-ascii?Q?+iAvEIr8JndveoBrYnZ9t2U/8oCbYfQmudeOgyf2tOVmDB3JUFr/j5SrctnZ?=
+ =?us-ascii?Q?Q87ag=3D=3D?=
+X-Microsoft-Antispam-Message-Info: LecBnKRWegn8JJhGq6tVSGo8+VmRRzWxwGU9s11OwAg62PUgM2gtRW9ii3LpDjf22aifJZHVK9ELymEQrYyNeCmyZHlK0RPMimnwSrnwIbYyCS8pscvpbxpgsBhFCGngWe3TCXRBsJEmF7mcar3bE1A731ILK/oQH+fKFiCJ5s0t8PXPWngpLpdy4cfFjr18Q2oSSBkxE7c/8UtsxrPeowFq2RuFHDCxdsluosCbaac846zojQ8AzuRgqnBJt3xQN1jyFO4pwtFoLuVCCo6O/GK0BLaXShGgNAGBIxr1c9YvVvXbcuPK8LMBBNEEObbAR5XyxZYFvDndGv9R5bpxb5ydC/5MwkQBQquccJ7GR5w=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1223;6:sklmu8odGVfWSraQsoP/TO8Z4XqZgeLxREWW1pnAriI3VquNJPRfDL8VctxWEmLhapvzT+k8KeKhorsyKWiTu/9Ab9OyFQ6qfkac7J4/SBSYagZqdczP0tBm5drWx6Ay+OdEjhlrPTXieccMX2vSZgBKBGnr+MCsPYaSR6zdXbHcgOZKph9GvCZk/m++wDfdpzBOva77XmPmU+m6f4zjzI1N+Bt/b2HlAKLOP64UKhqWhY0zorwCgtYNVPDBXhw5K+Camm7+WgUcWvC+LavTrMqucq3yibY8b4LiCjybGcOKW1PAPaYV+VciV6bv/rGUIXr2kPEJMxx/Fbw3ZQb/j6blaQewqsjYEW64DZqjvFFpCFt0xxUKP0ZGaqBPae84nSJZxqt7RR6vyrkmqe9IoEHxFCf5JUGQrBXk5a1/tg2mC0XYzNOLB+LGkLRND97Laffu/Hd9PAW7AVyqRzzUDQ==;5:pqvPWejTBUWFgB9sPPa6Jy6pOmzKNh4W5zjydWcZctMzoXpLlKAp+CbwQ3/xYErW2WFfwGGuCJSRjOQpUqBA74XDqHXGxCZFwwUhm9zZNNuxqObIANlBapvvJ6D+oAvyO70h8B87KGOpP6WoYOVes7eErZ0LkQlHlDMeTs71NJo=;7:sI5zyEaoz5B2PopKS/OlwALP3p4hX6d+cmYG8yuRPBEHD1ZcJXu/RsgeJQZFL/a2DwwTGxMvPqzDQaAfXYLO8ckKYqaQyiijS4BsVOgPODvFzgfn1IuvPncf8Zluzdvw/Iy0LM/beXlOLDPeIN29J65SCpA7wBA7qnn6D5x5l0ft3b0hA5sFA1ojch5LWCDL02bxZpIwI4+jqQrET+7Id0SxcP7t3LN9nBaEd3rI/xk60mOG4IqVuIuoXi6HrALU
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR15MB1223;20:M4YIPmP4iu/JZ/s9lcZ4zGLQjc++8E5F5gZb686DkYnnPDpSXNa5rNDNxiRpej4KEob6bXwKOvMOdvHNKNH33IklnG4X6jxLfBJJfVqgSwWPRfjlEACRqDfkkvcz6cXSxNGwVRtSGE+OnwMMU06wNTWqZ811Q0kQnZhlcsZx+G4=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 16:52:32.4908 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62a5c478-9361-484c-6d4f-08d614e24fda
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1223
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 12:01:38PM +0800, Kenneth Lee wrote:
-> On Thu, Sep 06, 2018 at 09:31:33AM -0400, Jerome Glisse wrote:
-> > Date: Thu, 6 Sep 2018 09:31:33 -0400
-> > From: Jerome Glisse <jglisse@redhat.com>
-> > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > CC: Alex Williamson <alex.williamson@redhat.com>, Kenneth Lee
-> >  <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Herbert Xu
-> >  <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
-> >  Joerg Roedel <joro@8bytes.org>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
-> >  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
-> >  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
-> >  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-> >  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-> >  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-> >  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
-> >  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
-> >  linuxarm@huawei.com
-> > Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> > User-Agent: Mutt/1.10.0 (2018-05-17)
-> > Message-ID: <20180906133133.GA3830@redhat.com>
-> > 
-> > On Thu, Sep 06, 2018 at 05:45:32PM +0800, Kenneth Lee wrote:
-> > > On Tue, Sep 04, 2018 at 10:15:09AM -0600, Alex Williamson wrote:
-> > > > Date: Tue, 4 Sep 2018 10:15:09 -0600
-> > > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > > To: Jerome Glisse <jglisse@redhat.com>
-> > > > CC: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-> > > >  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
-> > > >  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Kenneth Lee
-> > > >  <liguozhu@hisilicon.com>, Hao Fang <fanghao11@huawei.com>, Zhou Wang
-> > > >  <wangzhou1@hisilicon.com>, Zaibo Xu <xuzaibo@huawei.com>, Philippe
-> > > >  Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
-> > > >  <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
-> > > >  linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-> > > >  linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-> > > >  kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org, Lu Baolu
-> > > >  <baolu.lu@linux.intel.com>, Sanjay Kumar <sanjay.k.kumar@intel.com>,
-> > > >  linuxarm@huawei.com
-> > > > Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> > > > Message-ID: <20180904101509.62314b67@t450s.home>
-> > > > 
-> > > > On Tue, 4 Sep 2018 11:00:19 -0400
-> > > > Jerome Glisse <jglisse@redhat.com> wrote:
-> > > > 
-> > > > > On Mon, Sep 03, 2018 at 08:51:57AM +0800, Kenneth Lee wrote:
-> > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
-> > > > > > 
-> > > > > > WarpDrive is an accelerator framework to expose the hardware capabilities
-> > > > > > directly to the user space. It makes use of the exist vfio and vfio-mdev
-> > > > > > facilities. So the user application can send request and DMA to the
-> > > > > > hardware without interaction with the kernel. This removes the latency
-> > > > > > of syscall.
-> > > > > > 
-> > > > > > WarpDrive is the name for the whole framework. The component in kernel
-> > > > > > is called SDMDEV, Share Domain Mediated Device. Driver driver exposes its
-> > > > > > hardware resource by registering to SDMDEV as a VFIO-Mdev. So the user
-> > > > > > library of WarpDrive can access it via VFIO interface.
-> > > > > > 
-> > > > > > The patchset contains document for the detail. Please refer to it for more
-> > > > > > information.
-> > > > > > 
-> > > > > > This patchset is intended to be used with Jean Philippe Brucker's SVA
-> > > > > > patch [1], which enables not only IO side page fault, but also PASID
-> > > > > > support to IOMMU and VFIO.
-> > > > > > 
-> > > > > > With these features, WarpDrive can support non-pinned memory and
-> > > > > > multi-process in the same accelerator device.  We tested it in our SoC
-> > > > > > integrated Accelerator (board ID: D06, Chip ID: HIP08). A reference work
-> > > > > > tree can be found here: [2].
-> > > > > > 
-> > > > > > But it is not mandatory. This patchset is tested in the latest mainline
-> > > > > > kernel without the SVA patches.  So it supports only one process for each
-> > > > > > accelerator.
-> > > > > > 
-> > > > > > We have noticed the IOMMU aware mdev RFC announced recently [3].
-> > > > > > 
-> > > > > > The IOMMU aware mdev has similar idea but different intention comparing to
-> > > > > > WarpDrive. It intends to dedicate part of the hardware resource to a VM.
-> > > > > > And the design is supposed to be used with Scalable I/O Virtualization.
-> > > > > > While sdmdev is intended to share the hardware resource with a big amount
-> > > > > > of processes.  It just requires the hardware supporting address
-> > > > > > translation per process (PCIE's PASID or ARM SMMU's substream ID).
-> > > > > > 
-> > > > > > But we don't see serious confliction on both design. We believe they can be
-> > > > > > normalized as one.
-> > > > > >   
-> > > > > 
-> > > > > So once again i do not understand why you are trying to do things
-> > > > > this way. Kernel already have tons of example of everything you
-> > > > > want to do without a new framework. Moreover i believe you are
-> > > > > confuse by VFIO. To me VFIO is for VM not to create general device
-> > > > > driver frame work.
-> > > > 
-> > > > VFIO is a userspace driver framework, the VM use case just happens to
-> > > > be a rather prolific one.  VFIO was never intended to be solely a VM
-> > > > device interface and has several other userspace users, notably DPDK
-> > > > and SPDK, an NVMe backend in QEMU, a userspace NVMe driver, a ruby
-> > > > wrapper, and perhaps others that I'm not aware of.  Whether vfio is
-> > > > appropriate interface here might certainly still be a debatable topic,
-> > > > but I would strongly disagree with your last sentence above.  Thanks,
-> > > > 
-> > > > Alex
-> > > > 
-> > > 
-> > > Yes, that is also my standpoint here.
-> > > 
-> > > > > So here is your use case as i understand it. You have a device
-> > > > > with a limited number of command queues (can be just one) and in
-> > > > > some case it can support SVA/SVM (when hardware support it and it
-> > > > > is not disabled). Final requirement is being able to schedule cmds
-> > > > > from userspace without ioctl. All of this exists already exists
-> > > > > upstream in few device drivers.
-> > > > > 
-> > > > > 
-> > > > > So here is how every body else is doing it. Please explain why
-> > > > > this does not work.
-> > > > > 
-> > > > > 1 Userspace open device file driver. Kernel device driver create
-> > > > >   a context and associate it with on open. This context can be
-> > > > >   uniq to the process and can bind hardware resources (like a
-> > > > >   command queue) to the process.
-> > > > > 2 Userspace bind/acquire a commands queue and initialize it with
-> > > > >   an ioctl on the device file. Through that ioctl userspace can
-> > > > >   be inform wether either SVA/SVM works for the device. If SVA/
-> > > > >   SVM works then kernel device driver bind the process to the
-> > > > >   device as part of this ioctl.
-> > > > > 3 If SVM/SVA does not work userspace do an ioctl to create dma
-> > > > >   buffer or something that does exactly the same thing.
-> > > > > 4 Userspace mmap the command queue (mmap of the device file by
-> > > > >   using informations gather at step 2)
-> > > > > 5 Userspace can write commands into the queue it mapped
-> > > > > 6 When userspace close the device file all resources are release
-> > > > >   just like any existing device drivers.
-> > > 
-> > > Hi, Jerome,
-> > > 
-> > > Just one thing, as I said in the cover letter, dma-buf requires the application
-> > > to use memory created by the driver for DMA. I did try the dma-buf way in
-> > > WrapDrive (refer to [4] in the cover letter), it is a good backup for NOIOMMU
-> > > mode or we cannot solve the problem in VFIO.
-> > > 
-> > > But, in many of my application scenario, the application already has some memory
-> > > in hand, maybe allocated by the framework or libraries. Anyway, they don't get
-> > > memory from my library, and they pass the poiter for data operation. And they
-> > > may also have pointer in the buffer. Those pointer may be used by the
-> > > accelerator. So I need hardware fully share the address space with the
-> > > application. That is what dmabuf cannot do.
-> > 
-> > dmabuf can do that ... it is call uptr you can look at i915 for
-> > instance. Still this does not answer my question above, why do
-> > you need to be in VFIO to do any of the above thing ? Kernel has
-> > tons of examples that does all of the above and are not in VFIO
-> > (including usinng existing user pointer with device).
-> > 
-> > Cheers,
-> > Jérôme
-> 
-> I took a look at i915_gem_execbuffer_ioctl(). It seems it "copy_from_user" the
-> user memory to the kernel. That is not what we need. What we try to get is: the
-> user application do something on its data, and push it away to the accelerator,
-> and says: "I'm tied, it is your turn to do the job...". Then the accelerator has
-> the memory, referring any portion of it with the same VAs of the application,
-> even the VAs are stored inside the memory itself.
+Here is an amended patch which fixes those issues.
 
-You were not looking at right place see drivers/gpu/drm/i915/i915_gem_userptr.c
-It does GUP and create GEM object AFAICR you can wrap that GEM object into a
-dma buffer object.
+Please let me know if you see anything else that could be improved.
 
-> 
-> And I don't understand why I should avoid to use VFIO? As Alex said, VFIO is the
-> user driver framework. And I need exactly a user driver interface. Why should I
-> invent another wheel? It has most of stuff I need:
-> 
-> 1. Connecting multiple devices to the same application space
-> 2. Pinning and DMA from the application space to the whole set of device
-> 3. Managing hardware resource by device
-> 
-> We just need the last step: make sure multiple applications and the kernel can
-> share the same IOMMU. Then why shouldn't we use VFIO?
+Changes since the last patchset:
 
-Because tons of other drivers already do all of the above outside VFIO. Many
-driver have a sizeable userspace side to them (anything with ioctl do) so they
-can be construded as userspace driver too.
+- Use if statement to check for empty string in cgroup_util.c
+- Cleanup and return properly when failing to kill process
+  in test_memcg_oom_group_score_events
 
-So there is no reasons to do that under VFIO. Especialy as in your example
-it is not a real user space device driver, the userspace portion only knows
-about writting command into command buffer AFAICT.
+Thanks,
+-Jay
 
-VFIO is for real userspace driver where interrupt, configurations, ... ie
-all the driver is handled in userspace. This means that the userspace have
-to be trusted as it could program the device to do DMA to anywhere (if
-IOMMU is disabled at boot which is still the default configuration in the
-kernel).
-
-So i do not see any reasons to do anything you want inside VFIO. All you
-want to do can be done outside as easily. Moreover it would be better if
-you define clearly each scenario because from where i sit it looks like
-you are opening the door wide open to userspace to DMA anywhere when IOMMU
-is disabled.
-
-When IOMMU is disabled you can _not_ expose command queue to userspace
-unless your device has its own page table and all commands are relative
-to that page table and the device page table is populated by kernel driver
-in secure way (ie by checking that what is populated can be access).
-
-I do not believe your example device to have such page table nor do i see
-a fallback path when IOMMU is disabled that force user to do ioctl for
-each commands.
-
-Yes i understand that you target SVA/SVM but still you claim to support
-non SVA/SVM. The point is that userspace can not be trusted if you want
-to have random program use your device. I am pretty sure that all user
-of VFIO are trusted process (like QEMU).
-
-
-Finaly i am convince that the IOMMU grouping stuff related to VFIO is
-useless for your usecase. I really do not see the point of that, it
-does complicate things for you for no reasons AFAICT.
-
-
-> 
-> And personally, I believe the maturity and correctness of a framework are driven
-> by applications. Now the problem in accelerator world is that we don't have a
-> direction. If we believe the requirement is right, the method itself is not a
-> big problem in the end. We just need to let people have a unify platform to
-> share their work together.
-
-I am not against that but it seems to me that all you want to do is only
-a matter of simplifying discovery of such devices and sharing few common
-ioctl (DMA mapping, creating command queue, managing command queue, ...)
-and again for all this i do not see the point of doing this under VFIO.
-
-
-Cheers,
-Jérôme
