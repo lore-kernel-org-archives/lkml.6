@@ -2,106 +2,106 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2CDC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54513C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4309206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E752D20861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:37:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U/CD3JL6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4309206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbS0qHgl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E752D20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeIHDO4 (ORCPT
+        id S1727069AbeIHDUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:14:56 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:41276 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbeIHDO4 (ORCPT
+        Fri, 7 Sep 2018 23:20:50 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42890 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbeIHDUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:14:56 -0400
-Received: by mail-yw1-f73.google.com with SMTP id t9-v6so9547280ywg.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 15:31:49 -0700 (PDT)
+        Fri, 7 Sep 2018 23:20:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v17-v6so16316618wrr.9;
+        Fri, 07 Sep 2018 15:37:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=swXSXNYo9e+z3a+rPUiAwcdafcZKfK0bN6Lk7+5yGJw=;
-        b=U/CD3JL6Zyd36Lrae6fCr4FQoBxcg4RQYeE+xHs1CFPWsfOwUk5yguHe1uFw8Pxj4/
-         R8wudA6o4rxvs8lIsrOVPVYyeDTxI0XkaJil/myjkCJUrdAbtCjH2CSPRyhwAqEApFHq
-         1ENXmnseOAiAV4vhoovKNqC000On5wqxab0dkhTg3DS9C75arveA7hMdzHNcEkJ5mOH+
-         YIDE35POoFnU+lXvqf6jmZF+4Zcoce+2mnRshNfWBxu8geew+UQS/CvZpPC64QKRb2WI
-         zodHxf50txRN1YZ6YlMcM6OzP0CUyb6K8bLKY19YQYX8RvVa+pwo6PdjjuIggywIbtMB
-         Xe9A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+zmSjm1vrRbxXXtVwZ3MXL35cfvsZSgYuylblMmh/90=;
+        b=GbS0qHglW+jmVY3jyKqKs7jlzvXvTqHDi+Y6nJWLSJZNZNThX8GnFYPJF0/5ny8J5F
+         BgOn8NubAvsI9+z6NFERyU73S00is/5FpNK+/rT236Y2MBzeTOrlf2EFEAW8cj+OyFpZ
+         lWgJgtsWzIWOnZ5FNm45Uf4Z+Zl0KuRRSUyU6zg0WgPC7hidF8j+pwlclU/SPHw5Kk9L
+         3F6C0o+IyQVH5UsValFLLUrav7wNO7KqjBVT7pVQNXh+nbfvQt8cyxT0lGdByKMBOK40
+         ygTO0eKV608d3MQUllDiEv04IGzR6pLCapcByhCUi5YFO/9ap/YlNzfb921AWfyQgzIY
+         t8KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=swXSXNYo9e+z3a+rPUiAwcdafcZKfK0bN6Lk7+5yGJw=;
-        b=iGel/bSlXRDiDPVAtkFjs7h5FCXoAXugSfPwYfmTeDo19NGOr5K5qFtKBYIiunKZO/
-         ckVQfhpDXwYpyg8OFtjA+J1kss9tW2Guuh0hMoCIa5hVJSe6YnCSJ4Kmehb/pf8C9Z+i
-         O7Dka/P8QG0MQYyQbVG5bjgUdlTcyTxglhEx4fK6eMGSKZoKXK17Ldfo49bVFJPvXS8P
-         SGGIeQvIx3X+mHx7ClGw9dgu3wMkjiullA3APJvs9vY3cO4cO8zbcBPEXYE+Gb5MrajD
-         EqQqCGijuMfxhvYp1WY5OXp7I2X7wP34Knncr0lc2UcdggPxOnyz+qh2KW4b3a0tccrm
-         cH5Q==
-X-Gm-Message-State: APzg51D6E40BHgIZ17EPaV81c5rRJ+e5gNvNSIl1OBagHoPZhChFjz/T
-        /4gPKqama/p+lDBVXnh/jNjgpVN7FFJkrUOt
-X-Google-Smtp-Source: ANB0VdY4ojWG4KGvydw0XAN+lsIc753Zr6KKd05mP6t+1ueJuySmd+AVWZW6mxqmQbDZ64ijxiUrrr9V8IjbCYZ7
-X-Received: by 2002:a0d:c8c5:: with SMTP id k188-v6mr2300708ywd.130.1536359508435;
- Fri, 07 Sep 2018 15:31:48 -0700 (PDT)
-Date:   Fri,  7 Sep 2018 15:31:29 -0700
-In-Reply-To: <20180907182131.144514-1-vnagarnaik@google.com>
-Message-Id: <20180907223129.71994-1-vnagarnaik@google.com>
-Mime-Version: 1.0
-References: <20180907182131.144514-1-vnagarnaik@google.com>
-X-Mailer: git-send-email 2.19.0.rc2.392.g5ba43deb5a-goog
-Subject: [PATCH] ring-buffer: Allow for rescheduling when removing pages
-From:   Vaibhav Nagarnaik <vnagarnaik@google.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Vaibhav Nagarnaik <vnagarnaik@google.com>, jbehmer@google.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+zmSjm1vrRbxXXtVwZ3MXL35cfvsZSgYuylblMmh/90=;
+        b=GY0wLT0l0JTqlcTNHDcjUKnSDKqqijkT0gBoTcdD3IAYMng8XtO+58ljXFNg7JbCQR
+         fn9QrvCFVu4iWI7Z6cDDIQ6HMu6jLcG2d4HhmXQxk11uO2n24L9ZmypnD6k6AxYqXpHa
+         dGmqZ5A/84iHpbamOLD/zUO+2JIkESkXfIsxFtRc4kZ3RMTt9PHgYEsgvn6kXsL+L4se
+         1tcvcepbALdBfcbmSJdo9ljv86Q6GsJYvV9M4izBdwwKbsH8bAqUMrJhVvGF7R0RNkmy
+         5ar06fqN9Pl5WMETkTYCP2uMPJDNj5goUm3Eq44TtuotuEOJyE3qOztX0ggx8yhacX+V
+         iUhw==
+X-Gm-Message-State: APzg51CN2FS3kOoZe6NZVtp356P4zGkeDpmdH+RtGme8r3G4h1hkJiBc
+        4JJTvDYiNZqObMuzmBCz51xPQmeX3ew=
+X-Google-Smtp-Source: ANB0VdZjPSs/oa4pEsit/f5/XEQsmbyMCztk03sh4+628AtDX2kDhqggknBUyU8RzGYERTHzyStOgQ==
+X-Received: by 2002:adf:eb47:: with SMTP id u7-v6mr7754860wrn.22.1536359860291;
+        Fri, 07 Sep 2018 15:37:40 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 69-v6sm7772609wmb.27.2018.09.07.15.37.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 15:37:39 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 15:37:37 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/89] 4.14.69-stable review
+Message-ID: <20180907223737.GA2171@flashbox>
+References: <20180907210852.341064285@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When reducing ring buffer size, pages are removed by scheduling a work
-item on each CPU for the corresponding CPU ring buffer. After the pages
-are removed from ring buffer linked list, the pages are free()d in a
-tight loop. The loop does not give up CPU until all pages are removed.
-In a worst case behavior, when lot of pages are to be freed, it can
-cause system stall.
+On Fri, Sep 07, 2018 at 11:08:54PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.69 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun Sep  9 21:08:28 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.69-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-After the pages are removed from the list, the free() can happen while
-the work is rescheduled. Call cond_resched() in the loop to prevent the
-system hangup.
+Merged, compiled, and installed onto my Raspberry Pi.
 
-Reported-by: Jason Behmer <jbehmer@google.com>
-Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
----
- kernel/trace/ring_buffer.c | 2 ++
- 1 file changed, 2 insertions(+)
+No initial issues noticed in dmesg or general usage.
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 1d92d4a982fd..65bd4616220d 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1546,6 +1546,8 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
- 	tmp_iter_page = first_page;
- 
- 	do {
-+		cond_resched();
-+
- 		to_remove_page = tmp_iter_page;
- 		rb_inc_page(cpu_buffer, &tmp_iter_page);
- 
--- 
-2.19.0.rc2.392.g5ba43deb5a-goog
-
+Thanks!
+Nathan
