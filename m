@@ -2,90 +2,114 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5D5C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE598C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C35120869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56A2A20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="H5ruSBKw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C35120869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNJQyeD1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A2A20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729492AbeIGSUh (ORCPT
+        id S1729522AbeIGSWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:20:37 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.23]:9180 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbeIGSUg (ORCPT
+        Fri, 7 Sep 2018 14:22:13 -0400
+Received: from mail-qk1-f173.google.com ([209.85.222.173]:35538 "EHLO
+        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729288AbeIGSWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:20:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536327574;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=7am7UAeqSoR3TRSMtO17MW3MrN4gUsl8+hX+rpgjL04=;
-        b=H5ruSBKw4z9NLe8HZdKod03/ftHVaZAuP/yyZmzn2MxfTtFyeBSkS0b07Wqxf+RR3/
-        naaG5cLSHCnyab5wokxrWMM+98pTGm0ivuMWQgZbqOD2ON5XneeAOACNBzqRS9bpA6ST
-        UMDjYDiWuWS8A5PIiFj1ZRzdKKLY58+jNvTvunV3kgO3sFz23mU+pTef4jlr7ZTnBooI
-        lSJKjUrHMDqpMgFyOzk9M7uOJRF0Uior2PAI59t2CQBWADWusE/Swe6G7wgEkd9UiIFV
-        Wf5uPNm9U3FYyjXjtREkm++Kfv2Nn8cE2XtrunC93K8LEpfKOSBMm9psAnHz3pRnwXtj
-        OnKw==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivsAQtyRsdRVZ54BGpAypu4eYvjwzPAqxRcXNDW+"
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.0 AUTH)
-        with ESMTPSA id L0862bu87DdXFNp
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 7 Sep 2018 15:39:33 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 15:39:29 +0200
-From:   Olaf Hering <olaf@aepfle.de>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] xen: avoid crash in disable_hotplug_cpu
-Message-ID: <20180907153929.17d82e95.olaf@aepfle.de>
-In-Reply-To: <26bef656-a1ec-8b81-98e2-ea723d095f03@oracle.com>
-References: <20180907063023.16913-1-olaf@aepfle.de>
-        <26bef656-a1ec-8b81-98e2-ea723d095f03@oracle.com>
-X-Mailer: Claws Mail 3.16.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Fri, 7 Sep 2018 14:22:12 -0400
+Received: by mail-qk1-f173.google.com with SMTP id f62-v6so7967261qke.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 06:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:message-id:disposition-notification-to:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=vwp9QJtySLAygvHFMUFd+LuMvy8SeODc7QAZGsrYCJo=;
+        b=FNJQyeD1eAJrfXMno2Zdm/wc18C53OvUtPuZCY0yCBH6Vavpe/6ck8HCMkHy7Tvtx8
+         hhw7N81fbmZJ+xkQr0gPQVdU8VTbCtSgICdscXJW8bPK8E9Z6PYedUf5t0Sbactxw8zS
+         C54o/+YSyG9kZ1AS+o+q6WYDtyoMCMCHSpRk9afkw3qE/Wye+9u8chbB+M1LuBaE/Bpr
+         wBPKdzrDAL4dHS9h+f5/aPeF+HEnW6mJSv3rR1dHnmRjtnK2tBORBrx6XY9v7yMAJ/9+
+         4BJk+80hikbj1N3EPkVWKan9DclOr3I/aj+n5ame3dPQBlZ4+EP9q9GEWwaGf6XqGAAw
+         VdaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:message-id
+         :disposition-notification-to:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=vwp9QJtySLAygvHFMUFd+LuMvy8SeODc7QAZGsrYCJo=;
+        b=cWpTrAFnl79sH5Ih7yaCYg/6/JE+v34xfeg432v/sA5VL1UwbCg5gjG+JB4esTQCUg
+         KWcQrt+X0BVDQbDqvlvI7piLEYZKYlKAJ1A5v56h5M6CJkC757z6Imn5ut9fQT8hXmfd
+         D/nCiV3BqEmenR1r7hvEsVpjkNlildYNBXH0qP46Tb2secpTeqagph3E66kVKk/K/iiP
+         T9AMhaOppxWFeuWj6c2kAe80TeO//ouYSaep9m0y3DetZ/I6IGIUuTnr13Hvk4MbtDDR
+         i3BAmzR6WeewJ+LHsiGg/X+DeAFstZVvOnD+n5bfSuJyUho+FS7TCMB3TJUIT+dZMaVP
+         uxrQ==
+X-Gm-Message-State: APzg51Db0MPaW9v23DAmsQYvTFnOkGPUTbu8sxtMKeFD8mx0CvUAbXgo
+        qciCuraMudrScbbEX7gQXl32TP1D
+X-Google-Smtp-Source: ANB0VdaVKM1P+krSHZ2WfncksW5o6We1bueHokFbN+UgEHmA9a55/c+hQ0Dm7neUJ8xhobYYDj/yQg==
+X-Received: by 2002:a37:7607:: with SMTP id r7-v6mr5962793qkc.133.1536327670519;
+        Fri, 07 Sep 2018 06:41:10 -0700 (PDT)
+Received: from [10.1.1.147] (pool-96-244-117-231.bltmmd.fios.verizon.net. [96.244.117.231])
+        by smtp.gmail.com with ESMTPSA id a187-v6sm4738154qkd.47.2018.09.07.06.41.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 06:41:09 -0700 (PDT)
+From:   "hanasaki@gmail.com" <hanasaki@gmail.com>
+Subject: Mouse no longer working : works in 4.18 : doesn't work in 4.18.5
+To:     LIST - Linux Kernel <linux-kernel@vger.kernel.org>
+Message-ID: <8a77c527-01af-3857-e4ad-30be18f94bd2@gmail.com>
+Date:   Fri, 7 Sep 2018 09:41:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/dqoXiiKj2tZPOgK2yTzd_Y="; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/dqoXiiKj2tZPOgK2yTzd_Y=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Mouse worked fine in 4.18 however does not work in 4.18.5  Both kernels 
+were built with exactly the same .config file (copied from the 4.18 
+build dir to the un-tar'ed 4.18.5 directory to build)
 
-Am Fri, 7 Sep 2018 09:33:20 -0400
-schrieb Boris Ostrovsky <boris.ostrovsky@oracle.com>:
+Any input on root cause and fix / workaround is appreciated.
 
-> what is the purpose of 'xl vcpu-set <domid> 0'?
+"Doesn't work" means : syslog and kernel show that:
+1. the kernel finds the mouse
+2. gpm finds the mouse and detects its protocol
+3. mouse cursor does not move and buttons do not work
+	: not in gpm
+	: not in X
+4. syslog and kernel .config are the same for both versions
 
-Likely just a script that went wrong. But that command should not break the=
- dom0.
+Below is the output from syslog and dmesg.
 
-Olaf
+Update : same issue in 4.18.6 @ 20180906
 
---Sig_/dqoXiiKj2tZPOgK2yTzd_Y=
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
+========= dmesg
+     6.925981] usbcore: registered new interface driver usbhid
+[    6.925982] usbhid: USB HID core driver
+[    6.927425] usbcore: registered new interface driver usbmouse
+[    6.942113] input: PixArt USB Optical Mouse as 
+/devices/pci0000:00/0000:00:14.0/usb2/2-10/2-10:1.0/0003:093A:2510.0001/input/input17
+[    6.942207] hid-generic 0003:093A:2510.0001: input,hidraw0: USB HID 
+v1.11 Mouse [PixArt USB Optical Mouse] on usb-0000:00:14.0-10/input0
 
------BEGIN PGP SIGNATURE-----
+========= Syslog
+Sep  6 23:26:22 russia /usr/sbin/gpm[2699]: *** info 
+[daemon/startup.c(131)]:
+Sep  6 23:26:22 russia /usr/sbin/gpm[2699]: Started gpm successfully. 
+Entered daemon mode.
+Sep  6 23:26:23 russia /usr/sbin/gpm[2699]: *** info [mice.c(2059)]:
+Sep  6 23:26:23 russia /usr/sbin/gpm[2699]: Detected EXPS/2 protocol mouse.
 
-iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCW5J/kQAKCRBdQqD6ppg2
-foPVAKDBMAZro1uFQQ8JlSqyU2Nmnsw4PgCeJMskAcPHeieR6XyXCnV1lpg0Tkg=
-=6+u2
------END PGP SIGNATURE-----
-
---Sig_/dqoXiiKj2tZPOgK2yTzd_Y=--
+TIA / Thanks.
