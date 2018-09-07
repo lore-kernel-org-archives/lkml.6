@@ -2,187 +2,135 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F41EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B7DC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC162075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF0CF2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:09:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KC99B6Wd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC162075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Xvbef/y7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZKKEOsay"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0CF2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbeIGRtk (ORCPT
+        id S1729206AbeIGRuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:49:40 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37936 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbeIGRtk (ORCPT
+        Fri, 7 Sep 2018 13:50:32 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56139 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727653AbeIGRuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:49:40 -0400
-Received: by mail-it0-f65.google.com with SMTP id p129-v6so19783988ite.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 06:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/KOsm+xjajxHv0OEvggXRAv5+GXdjtoRaVqEjZruFVo=;
-        b=KC99B6Wd5cB5CrzndEygfkEXaVhx9kBQNLKT7FMQtVbH34+23oaPrgXzkDoOrCcLZa
-         /53lZRuQFAG5genxouao4nZhAV4Djnaz9bn89gcACoktKHEQtUe8PyA3+2LrKAkokoNP
-         gBTKvonhPirN6tIaLzdJNo3oEM94ycnyMwF1k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/KOsm+xjajxHv0OEvggXRAv5+GXdjtoRaVqEjZruFVo=;
-        b=oV6emvJN29PYCHK9qwl/y7+W9h0eRuQ0qc3RBOuAPMMQ0WA3QOdBgQcQnOni/c+zmd
-         zqRhyFNRWnet+/QnXn4YYNgdmBfWQkemwQoOgfInEwxWfR+307vAIXoOHYER8+eysd7T
-         KcsfR2trGTdRJj7D+BBn1SF+zXJ7fHqIZAa41Hgw68r961o2Py7Gcz7Uy/c5kAc9No9+
-         +q+fqDkdBA09ggtkMuot+6Dz4e+VaUF8fUo+PQkCZdvP2C2b3Nn4sEmtl9GMySQpcFeA
-         Cje8RL7TS4ufFiAgyG0DfRRrWf1xS8xMTCdab4pGd0UCf84k9bO40zyHLILi5KBfIMUZ
-         pfTw==
-X-Gm-Message-State: APzg51BH+pLldfXvXmJq8u2F4df4yGROGM6JWIHHdG8/cBvQJRWIFOnT
-        gj2qBEFlemD1J2dCPSBKGiEDv9heuS83iiW77eCC8g==
-X-Google-Smtp-Source: ANB0VdYEbJ04HcSWJjde9bNffYorAKsGE7WmxuNigIuy6+B7NdcwXmCmFktcHFwJ9Fq7ad/hh057SlkcdnFHCcqo+cA=
-X-Received: by 2002:a24:d104:: with SMTP id w4-v6mr7102289itg.29.1536325725816;
- Fri, 07 Sep 2018 06:08:45 -0700 (PDT)
+        Fri, 7 Sep 2018 13:50:32 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id A4D7E21193;
+        Fri,  7 Sep 2018 09:09:37 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 07 Sep 2018 09:09:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=c7zs8QEZs8yzY7Wh48v4OFVbIUm5kW1s2juj1HdfhZU=; b=Xvbef/y7
+        nvdQrqszHVkDxjJp7BzlLWomX70WKKsKVHp7c1wMh5WStmpyAjInIYzvZPson1Ki
+        rxTamDdJrk800J3ovDDGZ4iEZ3d4rpUwAd18j94jxU1Uh0Y7TWAeg857SKWArUR0
+        7bphmzJ3MP6hpFpIO8NcXC/YsIpu1Qqs2wc1odfisz45Di8BI+YsdBu6kZLL5UU6
+        sVAbopluTtYO4WJcKGWcBTcM5eDwhtX/gLiBUb8iASX9WXGlDSgqdA/ANE/B2dMn
+        I0OOLXVpU4f2+TZv29xE+lZV9hg1BEDXHZ8J3aqBpYDII4s04PP1vmt1cTQtjsga
+        sk2xNLq5Ay7aNA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=c7zs8QEZs8yzY7Wh48v4OFVbIUm5k
+        W1s2juj1HdfhZU=; b=ZKKEOsaylp630W2oVYrLYnDQIy3nm3K1ldQ1/pzrJIbkQ
+        ZhXIb03Wm8EOTGAV81jfvm+sbDoszqiC6H8cRgD9jeHtvTh6vgSl11f6x9J/q+ga
+        hvdQZwJOifLzv8uBoi3Wn5sTQtXzNlb2g7UC2uemV9ZbVepXAx3px0cSrAsnQa27
+        TmNdUJinM5rcvVSkS/A4NSBZ/PUvsR2hOGe6lb1yhbPGi4IeSetEqqBf8NcHi32d
+        RIj/DzOjkPcTHILhTfZPUYUy+uhP50abmcFVVeeZYC0Uq3EhqQW5TVSNkA52vxzi
+        +ORfjtS7zcRNpjA/MI5WuS2+sjDdUiowqB+X3TCsw==
+X-ME-Proxy: <xmx:kHiSW6faqqJLzBmRbOVNmzI_U2oIzkUN_YT5v2Zx4n_nLirckOWALw>
+    <xmx:kHiSW6pepmzhSlm4v8k8fm1Uc2UvUmTsTrXRB48bYcr1SGtXLWXxDA>
+    <xmx:kHiSW0UdNVdTS1T-M0sJLwLceMV1sCMgDISpuDb2zPpgM4sKTORuVQ>
+    <xmx:kHiSW61Z8a-f0ZCGKax8e1O_5ssrCf4HfzChr4DuX4p2TlGAFFuw6w>
+    <xmx:kHiSW2D7NGFumnEpeXugGK4dsyPxvvWU9hdHR9H9jHEHOFwwIxzGMQ>
+    <xmx:kXiSWxoMeNrNsBM5pGj2xOKxBtf1KCxgMuzQHgz2dVayGzkEvWH07Q>
+X-ME-Sender: <xms:kHiSWypPB4WJwHkopWeQaWF1lquxqJDILQLSZkYgyN8XRa2mie_tlQ>
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E034810293;
+        Fri,  7 Sep 2018 09:09:35 -0400 (EDT)
+Date:   Fri, 7 Sep 2018 15:09:34 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] ext4 updates for 3.11
+Message-ID: <20180907130934.GA22855@kroah.com>
+References: <nsxbo6mxu38.fsf@lambda.thunk.org>
+ <20130703094529.99444050e676467d281a3b51@canb.auug.org.au>
+ <CA+55aFxdAHqEhnV-zKwExVfBAvw=k8+GprTGniNz=TpJM6obtQ@mail.gmail.com>
+ <20130703005419.GA7744@kroah.com>
+ <CA+55aFxdNVX9koH=GViv1Haj3kU07PD-CTKCNuWrm-c-BF3mQw@mail.gmail.com>
+ <20130703010111.GA7986@kroah.com>
+ <20130703032941.GH14996@dastard>
 MIME-Version: 1.0
-References: <1536306664-29827-1-git-send-email-vincent.guittot@linaro.org>
- <20180907113748.GV24106@hirez.programming.kicks-ass.net> <20180907123551.GA9955@linaro.org>
- <20180907125554.GA24106@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180907125554.GA24106@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 7 Sep 2018 15:08:34 +0200
-Message-ID: <CAKfTPtDRq4YXFTJ29+yxdYb0GPUff1C6wnPJwazLoapO6BCJ3g@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: fix load_balance redo for null imbalance
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        jhugo@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20130703032941.GH14996@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018 at 14:56, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Sep 07, 2018 at 02:35:51PM +0200, Vincent Guittot wrote:
-> > Le Friday 07 Sep 2018 =C3=A0 13:37:49 (+0200), Peter Zijlstra a =C3=A9c=
-rit :
-> > > On Fri, Sep 07, 2018 at 09:51:04AM +0200, Vincent Guittot wrote:
-> > > > It can happen that load_balance finds a busiest group and then a bu=
-siest rq
-> > > > but the calculated imbalance is in fact null.
-> > >
-> > > Cute. Does that happen often?
-> >
-> > I have a use case with RT tasks that reproduces the problem regularly.
-> > It happens at least when we have CPUs with different capacity either be=
-cause
-> > of heterogeous CPU or because of RT/DL reducing available capacity for =
-cfs
-> > I have put the call path that trigs the problem below and accroding to =
-the
-> > comment it seems that we can reach similar state when playing with prio=
-rity.
-> >
-> > >
-> > > > If the calculated imbalance is null, it's useless to try to find a =
-busiest
-> > > > rq as no task will be migrated and we can return immediately.
+Digging up an email thread from 2013...
+
+On Wed, Jul 03, 2013 at 01:29:41PM +1000, Dave Chinner wrote:
+> On Tue, Jul 02, 2013 at 06:01:11PM -0700, Greg KH wrote:
+> > On Tue, Jul 02, 2013 at 05:58:15PM -0700, Linus Torvalds wrote:
+> > > On Tue, Jul 2, 2013 at 5:54 PM, Greg KH <greg@kroah.com> wrote:
+> > > > On Tue, Jul 02, 2013 at 05:02:21PM -0700, Linus Torvalds wrote:
+> > > >>
+> > > >> I'm really not convinced this whole Lustre thing was correctly
+> > > >> handled. Merging it into stable and yet being in such bad shape that
+> > > >> it isn't enabled even there? I just dunno. But I have the turd in my
+> > > >> tree now, let's hope it gets fixed up.
 > > > >
-> > > > This situation can happen with heterogeneous system or smp system w=
-hen RT
-> > > > tasks are decreasing the capacity of some CPUs.
-> > >
-> > > Is it the result of one of those "force_balance" conditions in
-> > > find_busiest_group() ? Should we not fix that to then return NULL
-> > > instead?
-> >
-> > The UC is:
-> > We have a newly_idle load balance that is triggered when RT task become=
-s idle
-> > ( but I think that I have seen that with idle load balance too)
-> >
-> > we trigs:
-> >       if (env->idle !=3D CPU_NOT_IDLE && group_has_capacity(env, local)=
- &&
-> >           busiest->group_no_capacity)
-> >               goto force_balance;
-> >
-> > In calculate_imbalance we use the path
-> >       /*
-> >        * Avg load of busiest sg can be less and avg load of local sg ca=
-n
-> >        * be greater than avg load across all sgs of sd because avg load
-> >        * factors in sg capacity and sgs with smaller group_type are
-> >        * skipped when updating the busiest sg:
-> >        */
-> >       if (busiest->avg_load <=3D sds->avg_load ||
-> >           local->avg_load >=3D sds->avg_load) {
-> >               env->imbalance =3D 0;
-> >               return fix_small_imbalance(env, sds);
-> >       }
-> >
-> > but fix_small_imbalance finally decides to return without modifying imb=
-alance
-> > like here
-> >       if (busiest->avg_load + scaled_busy_load_per_task >=3D
-> >           local->avg_load + (scaled_busy_load_per_task * imbn)) {
-> >               env->imbalance =3D busiest->load_per_task;
-> >               return;
-> >       }
->
-> That one actually does modify imbalance :-) But I get your point.
->
-> > Beside this patch, I'm preparing another patch in fix small imbalance t=
-o
-> > ensure 1 task per CPU in similar situation but according to the comment=
- above,
-> > we can reach this situation because of tasks priority
->
-> Didn't we all hate fix_small_imbalance() ?
+> > > > It's in "staging", not "stable" :)
+> > > 
+> > > Yes. But what was the reason to actually merge it even there? And once
+> > > it gets merged, disabling it again rather than fixing the problems it
+> > > has?
+> > 
+> > The problems turned out to be too big, too late in the merge cycle for
+> > me to be able to take them (they still aren't even done, as I don't have
+> > a working set of patches yet.)  So I just disabled it from the build to
+> > give Andreas and team time to get it working properly.
+> > 
+> > I could have just removed it, but I thought I would give them a chance.
+> > 
+> > > This is a filesystem that Intel apparently wants to push. I think it
+> > > would have been a better idea to push back a bit and say "at least
+> > > clean it up a bit first". It's not like Intel is one of the clueless
+> > > companies that couldn't have done so and need help from the community.
+> > 
+> > For this filesystem, it seems that they don't have any resources to do
+> > this work and are relying on the community to help out.  Which is odd,
+> > but big companies are strange some times...
+> 
+> Didn't we learn this lesson already with POHMELFS? i.e. that dumping
+> filesystem code in staging on the assumption "the community" will
+> fix it up when nobody in "the community" uses or can even test that
+> filesystem is a broken development model....
 
-yes.  the rational of some decisions in the function are more and more
-opaque to me. For now I'm trying to fix all UCs that I can find to
-then try to get a generic rule
-As an example, I have some situations (other than those discussed
-here) in fix_small_imbalance where the task migration decision mainly
-depends of a variation of +/-5 in the load of a task. This finally
-generates good fairness between tasks but the root cause of this
-fairness is a bit random.
+Dave, and Linus, you were totally right here.  Sorry for not listening
+to you before, my fault.  The lustre developers never got their act
+together and probably by this being in staging, it only prolonged the
+agony of everyone involved.
 
->
-> Anyway, I think I'd prefer something like the below; although it might
-> be nicer to thread the return value through calculate_imbalance() and
-> fix_small_imbalance(), but looking at them that's not going to be
-> particularly nicer.
->
-> Do you agree with this?, If so, I'll stick your orignal Changelog on it
-> and pretend this is what you send me :-)
-
-That's fine to me :-)
-
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b39fb596f6c1..0596a29f3d2a 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8269,7 +8269,7 @@ static struct sched_group *find_busiest_group(struc=
-t lb_env *env)
->  force_balance:
->         /* Looks like there is an imbalance. Compute it */
->         calculate_imbalance(env, &sds);
-> -       return sds.busiest;
-> +       return env->imbalance ? sds.busiest : NULL;
->
->  out_balanced:
->         env->imbalance =3D 0;
+greg k-h
