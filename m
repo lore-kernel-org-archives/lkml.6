@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0498C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E46C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1A02083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:36:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1A02083D
+	by mail.kernel.org (Postfix) with ESMTP id 38D382083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:36:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D382083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbeIHCTg (ORCPT
+        id S1729472AbeIHCTj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:19:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52138 "EHLO
+        Fri, 7 Sep 2018 22:19:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52146 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeIHCTg (ORCPT
+        with ESMTP id S1726618AbeIHCTj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:19:36 -0400
+        Fri, 7 Sep 2018 22:19:39 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6519FD6B;
-        Fri,  7 Sep 2018 21:36:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95270F81;
+        Fri,  7 Sep 2018 21:36:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.9 45/63] iommu/vt-d: Fix dev iotlb pfsid use
-Date:   Fri,  7 Sep 2018 23:10:16 +0200
-Message-Id: <20180907211015.452355265@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 46/63] osf_getdomainname(): use copy_to_user()
+Date:   Fri,  7 Sep 2018 23:10:17 +0200
+Message-Id: <20180907211015.505798634@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -52,94 +49,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 1c48db44924298ad0cb5a6386b88017539be8822 upstream.
+commit 9ba3eb5103cf56f0daaf07de4507df76e7813ed7 upstream.
 
-PFSID should be used in the invalidation descriptor for flushing
-device IOTLBs on SRIOV VFs.
-
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: stable@vger.kernel.org
-Cc: "Ashok Raj" <ashok.raj@intel.com>
-Cc: "Lu Baolu" <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/dmar.c        |    6 +++---
- drivers/iommu/intel-iommu.c |   17 ++++++++++++++++-
- include/linux/intel-iommu.h |    5 ++---
- 3 files changed, 21 insertions(+), 7 deletions(-)
+ arch/alpha/kernel/osf_sys.c |   23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1328,8 +1328,8 @@ void qi_flush_iotlb(struct intel_iommu *
- 	qi_submit_sync(&desc, iommu);
- }
- 
--void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			u64 addr, unsigned mask)
-+void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask)
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -561,25 +561,20 @@ SYSCALL_DEFINE0(getdtablesize)
+  */
+ SYSCALL_DEFINE2(osf_getdomainname, char __user *, name, int, namelen)
  {
- 	struct qi_desc desc;
+-	unsigned len;
+-	int i;
++	int len, err = 0;
++	char *kname;
  
-@@ -1344,7 +1344,7 @@ void qi_flush_dev_iotlb(struct intel_iom
- 		qdep = 0;
- 
- 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
--		   QI_DIOTLB_TYPE;
-+		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
- 
- 	qi_submit_sync(&desc, iommu);
- }
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1512,6 +1512,20 @@ static void iommu_enable_dev_iotlb(struc
- 		return;
- 
- 	pdev = to_pci_dev(info->dev);
-+	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
-+	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
-+	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
-+	 * reserved, which should be set to 0.
-+	 */
-+	if (!ecap_dit(info->iommu->ecap))
-+		info->pfsid = 0;
-+	else {
-+		struct pci_dev *pf_pdev;
-+
-+		/* pdev will be returned if device is not a vf */
-+		pf_pdev = pci_physfn(pdev);
-+		info->pfsid = PCI_DEVID(pf_pdev->bus->number, pf_pdev->devfn);
-+	}
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	/* The PCIe spec, in its wisdom, declares that the behaviour of
-@@ -1577,7 +1591,8 @@ static void iommu_flush_dev_iotlb(struct
- 
- 		sid = info->bus << 8 | info->devfn;
- 		qdep = info->ats_qdep;
--		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
-+		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
-+				qdep, addr, mask);
- 	}
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
- }
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -466,9 +466,8 @@ extern void qi_flush_context(struct inte
- 			     u8 fm, u64 type);
- extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 			  unsigned int size_order, u64 type);
--extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			       u64 addr, unsigned mask);
+-	if (!access_ok(VERIFY_WRITE, name, namelen))
+-		return -EFAULT;
 -
-+extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask);
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
+-	len = namelen;
+-	if (len > 32)
+-		len = 32;
++	if (namelen > 32)
++		namelen = 32;
  
- extern int dmar_ir_support(void);
+ 	down_read(&uts_sem);
+-	for (i = 0; i < len; ++i) {
+-		__put_user(utsname()->domainname[i], name + i);
+-		if (utsname()->domainname[i] == '\0')
+-			break;
+-	}
++	kname = utsname()->domainname;
++	len = strnlen(kname, namelen);
++	if (copy_to_user(name, kname, min(len + 1, namelen)))
++		err = -EFAULT;
+ 	up_read(&uts_sem);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ /*
 
 
