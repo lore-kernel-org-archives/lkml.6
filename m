@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E892EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB9CC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC39420645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC39420645
+	by mail.kernel.org (Postfix) with ESMTP id 412E820861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 412E820861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbeIHB7t (ORCPT
+        id S1728996AbeIHB7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:59:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42798 "EHLO
+        Fri, 7 Sep 2018 21:59:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42808 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728379AbeIHB7s (ORCPT
+        with ESMTP id S1728221AbeIHB7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:59:48 -0400
+        Fri, 7 Sep 2018 21:59:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B3E5FA4;
-        Fri,  7 Sep 2018 21:17:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B967F07;
+        Fri,  7 Sep 2018 21:17:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lihua Yao <ylhuajnu@163.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 090/145] ALSA: ac97: fix check of pm_runtime_get_sync failure
-Date:   Fri,  7 Sep 2018 23:09:16 +0200
-Message-Id: <20180907210911.458008218@linuxfoundation.org>
+        stable@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.18 064/145] iio: sca3000: Fix missing return in switch
+Date:   Fri,  7 Sep 2018 23:08:50 +0200
+Message-Id: <20180907210909.852426807@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,33 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lihua Yao <ylhuajnu@163.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit d15ec0b482ff502e4e19e43d15aa5072e4290199 upstream.
+commit c5b974bee9d2ceae4c441ae5a01e498c2674e100 upstream.
 
-pm_runtime_get_sync returns negative on failure.
+The IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY case is missing a
+return and will fall through to the default case and errorenously
+return -EINVAL.
 
-Fixes: 74426fbff66e ("ALSA: ac97: add an ac97 bus")
-Signed-off-by: Lihua Yao <ylhuajnu@163.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fix this by adding in missing *return ret*.
+
+Fixes: 626f971b5b07 ("staging:iio:accel:sca3000 Add write support to the low pass filter control")
+Reported-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/ac97/bus.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/accel/sca3000.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/ac97/bus.c
-+++ b/sound/ac97/bus.c
-@@ -503,7 +503,7 @@ static int ac97_bus_remove(struct device
- 	int ret;
- 
- 	ret = pm_runtime_get_sync(dev);
--	if (ret)
-+	if (ret < 0)
- 		return ret;
- 
- 	ret = adrv->remove(adev);
+--- a/drivers/iio/accel/sca3000.c
++++ b/drivers/iio/accel/sca3000.c
+@@ -797,6 +797,7 @@ static int sca3000_write_raw(struct iio_
+ 		mutex_lock(&st->lock);
+ 		ret = sca3000_write_3db_freq(st, val);
+ 		mutex_unlock(&st->lock);
++		return ret;
+ 	default:
+ 		return -EINVAL;
+ 	}
 
 
