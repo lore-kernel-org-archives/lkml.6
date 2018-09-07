@@ -2,125 +2,120 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE33C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6FDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A4702083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="fiEwA7ha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A4702083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by mail.kernel.org (Postfix) with ESMTP id 5FE712083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE712083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbeIHCYa (ORCPT
+        id S1730352AbeIHCYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:24:30 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:25381 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729557AbeIHCY3 (ORCPT
+        Fri, 7 Sep 2018 22:24:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54962 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728198AbeIHCYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:24:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536356494; x=1567892494;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=coqOdefSRcgS8/PtGvLyBD+pkyND5+g1U3mo6EtjRg8=;
-  b=fiEwA7ha10uA21u/QodJwWGdgLn1lWrzoV/iDH3X1KHL0v3iCu8D9atS
-   P8H1lM1r260QRw9gVzlzvin3YidPYHdVi+37p1daHTzLM9n9Qy2prIJ3P
-   zUTktd/y3Q2WoNdkjbsWdHBQ4fVEqfJNTb7MQm9EUxD2Zn3WnSU1rgS2d
-   E=;
-X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="361243118"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:41:33 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
-        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87LfRxT034578
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:41:30 GMT
-Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LfPuF027183
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:41:25 +0200
-Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LfOHq027181;
-        Fri, 7 Sep 2018 23:41:24 +0200
-From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC 09/60] sched: Do not require a CFS in init_tg_cfs_entry()
-Date:   Fri,  7 Sep 2018 23:39:56 +0200
-Message-Id: <20180907214047.26914-10-jschoenh@amazon.de>
-X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
-In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
+        Fri, 7 Sep 2018 22:24:31 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB383FEA;
+        Fri,  7 Sep 2018 21:41:36 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 08/47] powerpc/pseries: Fix endianness while restoring of r3 in MCE handler.
+Date:   Fri,  7 Sep 2018 23:10:04 +0200
+Message-Id: <20180907210905.212577353@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
+References: <20180907210904.607934824@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like init_tg_cfs_entry() does something useful without a scheduling
-entity, let it do something useful without a CFS runqueue.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This prepares for the addition of new types of SEs.
+------------------
 
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+
+commit cd813e1cd7122f2c261dce5b54d1e0c97f80e1a5 upstream.
+
+During Machine Check interrupt on pseries platform, register r3 points
+RTAS extended event log passed by hypervisor. Since hypervisor uses r3
+to pass pointer to rtas log, it stores the original r3 value at the
+start of the memory (first 8 bytes) pointed by r3. Since hypervisor
+stores this info and rtas log is in BE format, linux should make
+sure to restore r3 value in correct endian format.
+
+Without this patch when MCE handler, after recovery, returns to code that
+that caused the MCE may end up with Data SLB access interrupt for invalid
+address followed by kernel panic or hang.
+
+  Severe Machine check interrupt [Recovered]
+    NIP [d00000000ca301b8]: init_module+0x1b8/0x338 [bork_kernel]
+    Initiator: CPU
+    Error type: SLB [Multihit]
+      Effective address: d00000000ca70000
+  cpu 0xa: Vector: 380 (Data SLB Access) at [c0000000fc7775b0]
+      pc: c0000000009694c0: vsnprintf+0x80/0x480
+      lr: c0000000009698e0: vscnprintf+0x20/0x60
+      sp: c0000000fc777830
+     msr: 8000000002009033
+     dar: a803a30c000000d0
+    current = 0xc00000000bc9ef00
+    paca    = 0xc00000001eca5c00	 softe: 3	 irq_happened: 0x01
+      pid   = 8860, comm = insmod
+  vscnprintf+0x20/0x60
+  vprintk_emit+0xb4/0x4b0
+  vprintk_func+0x5c/0xd0
+  printk+0x38/0x4c
+  init_module+0x1c0/0x338 [bork_kernel]
+  do_one_initcall+0x54/0x230
+  do_init_module+0x8c/0x248
+  load_module+0x12b8/0x15b0
+  sys_finit_module+0xa8/0x110
+  system_call+0x58/0x6c
+  --- Exception: c00 (System Call) at 00007fff8bda0644
+  SP (7fffdfbfe980) is in userspace
+
+This patch fixes this issue.
+
+Fixes: a08a53ea4c97 ("powerpc/le: Enable RTAS events support")
+Cc: stable@vger.kernel.org # v3.15+
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/sched/fair.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ arch/powerpc/platforms/pseries/ras.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2b3fd7cd9fde..bccd7a66858e 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9903,21 +9903,23 @@ void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
- 		       struct sched_entity *se, struct rq *rq,
- 		       struct cfs_rq *parent)
- {
--	cfs_rq->tg = tg;
--	cfs_rq->rq = rq;
--	cfs_rq->my_se = se;
--	init_cfs_rq_runtime(cfs_rq);
--
--	/* se could be NULL for root_task_group */
--	if (!se)
--		return;
-+	/* cfs_rq may be NULL for certain types of SE */
-+	if (cfs_rq) {
-+		cfs_rq->tg = tg;
-+		cfs_rq->rq = rq;
-+		cfs_rq->my_se = se;
-+		init_cfs_rq_runtime(cfs_rq);
-+	}
+--- a/arch/powerpc/platforms/pseries/ras.c
++++ b/arch/powerpc/platforms/pseries/ras.c
+@@ -300,7 +300,7 @@ static struct rtas_error_log *fwnmi_get_
+ 	}
  
--	set_entity_cfs(se, parent);
--	se->my_q = cfs_rq;
-+	/* se is NULL for root_task_group */
-+	if (se) {
-+		set_entity_cfs(se, parent);
-+		se->my_q = cfs_rq;
+ 	savep = __va(regs->gpr[3]);
+-	regs->gpr[3] = savep[0];	/* restore original r3 */
++	regs->gpr[3] = be64_to_cpu(savep[0]);	/* restore original r3 */
  
--	/* guarantee group entities always have weight */
--	update_load_set(&se->load, NICE_0_LOAD);
--	init_entity_runnable_average(se);
-+		/* guarantee group entities always have weight */
-+		update_load_set(&se->load, NICE_0_LOAD);
-+		init_entity_runnable_average(se);
-+	}
- }
- 
- static DEFINE_MUTEX(shares_mutex);
--- 
-2.9.3.1.gcba166c.dirty
+ 	/* If it isn't an extended log we can use the per cpu 64bit buffer */
+ 	h = (struct rtas_error_log *)&savep[1];
+
 
