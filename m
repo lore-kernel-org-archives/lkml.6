@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8066C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3B6C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA7E20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E91EF20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="HkL/nj+e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA7E20844
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="RIW/qr6D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E91EF20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeIGXhN (ORCPT
+        id S1727741AbeIGXhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 19:37:13 -0400
+        Fri, 7 Sep 2018 19:37:17 -0400
 Received: from mail-eopbgr700102.outbound.protection.outlook.com ([40.107.70.102]:48769
         "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726614AbeIGXhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 19:37:13 -0400
+        id S1727223AbeIGXhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 19:37:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pOVULiAsP8WbHiMN2MtIfTFyVv1ABa+q9c9NajxlqfI=;
- b=HkL/nj+eLU6JJwl3T3B6KHgIBgVASD9B0YNzNx5P2TO2UiOgDdvXy2bOSyfTT82qGosJ+O3qG0MP84EvGeCH1DCFswQIn6LmFZ4CqVvm+9beVy0IESJL2DCspzU7k7VrMnPSijHNvB7M5gZd7lGK5/20crOOU4QGfF21vpPAseQ=
+ bh=D8OY+/OCATD2IHHwRzbw5BR0ovos0s1RjYSg68UBPiM=;
+ b=RIW/qr6D2EplM1aRTTCHsAn9YhsYu64ozg2ss00eauksgwHAU2SVOHiWvgqj0lJzkIXjlcXSuyqKegeoNDiOGrcemaahe02UxuW9KbsLPYdJ4+M7+NEssNf0sx/O5VcCeW2NJyXB6j2cHk1mv6yt94BYPFZGifKRujzrzte+M7o=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=pburton@wavecomp.com; 
 Received: from pburton-laptop.mipstec.com (4.16.204.77) by
  BN7PR08MB4929.namprd08.prod.outlook.com (2603:10b6:408:28::15) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.13; Fri, 7 Sep 2018 18:54:50 +0000
+ 15.20.1101.13; Fri, 7 Sep 2018 18:54:52 +0000
 From:   Paul Burton <paul.burton@mips.com>
 To:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
@@ -44,10 +44,12 @@ Cc:     Paul Burton <paul.burton@mips.com>,
         Jaedon Shin <jaedon.shin@gmail.com>,
         Mathieu Malaterre <malat@debian.org>,
         Rob Herring <robh+dt@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH 1/2] of/fdt: Allow architectures to override CONFIG_CMDLINE logic
-Date:   Fri,  7 Sep 2018 11:54:13 -0700
-Message-Id: <20180907185414.2630-1-paul.burton@mips.com>
+Subject: [PATCH 2/2] MIPS: Fix CONFIG_CMDLINE handling
+Date:   Fri,  7 Sep 2018 11:54:14 -0700
+Message-Id: <20180907185414.2630-2-paul.burton@mips.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907185414.2630-1-paul.burton@mips.com>
+References: <20180907185414.2630-1-paul.burton@mips.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [4.16.204.77]
@@ -55,48 +57,49 @@ X-ClientProxiedBy: CS1PR8401CA0027.NAMPRD84.PROD.OUTLOOK.COM
  (2a01:111:e400:7503::13) To BN7PR08MB4929.namprd08.prod.outlook.com
  (2603:10b6:408:28::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3159f3c7-bcc6-4a2b-19b5-08d614f364ae
+X-MS-Office365-Filtering-Correlation-Id: b76b4d96-882b-45b4-e987-08d614f3657f
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR08MB4929;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;3:S1PwxUMIh0E9WumjKyIQUlb0a6wEWx5pJ8JPK/xw91grJwPEB030Vas982/rnJl6vbhixqRzEoZr0XN2wD/tw4vYFOwT1MvUL9efFeMtH7gtMlUmJ3J576SyjEo83QQdIg49udll/Zl4yn8r/s2xHUPYFFTGJoYXYF6hllYaT0NedHpn1CyzMdx702vjQUPrknwIa+8oLnjI3UBZW/O61AAlxaFXy4Rd+7+iWSMtHPxcGXECeDtIbiibfB5Stwr1;25:zhw7xhnxCYg1dh6youGDhLruMHY6FT8+7wiyTEYWKF4LgPH/fZOCZwzAZ9nfHTZkTI/xWSWrhHVccY4ZgVdG8F5s+7Q6uHopawAX6NIO/Q9OdTCEKpDOfpMDa915oqc4cn8BDTQREpQbw3eu1XItcxUYOZC17xRypKTkhNgBRxAKMZbwUIDLBFJFfp4njkmWiJeMFkas7/xsx3CEIvedotmBTUvFc3HdUO1I8Zt8cQFn0S16C0fTeM+Y1vOMZDQf/SfzUUtcGujjGxC1sKz5+qGWy5Ek8jT89eYlQpDYpePemvWIW/HQEAgUVpO2hCE4GTX9enGXoe0uhtPlj3GZVQ==;31:miR0H+ci8UfMKOhFeP0rb45++ta2e7Paou4GOGyyC/jwt4SMOPBPYxsNYSLstUXFQuTTvtmy0BIdObqZcz2kpnRuuAnvhWGW6ye3Ta5nKfuMsHtCO1qGInYPfZmJ45ZjYNR+nIXkebfcqDd9X9DtAJTraOM6NduwvFeSSuNC1ek27FYFygMDwWObd9TzhUJEQ17emeY4GsfLJAcG0p9Y/2+NHMT07bCEqYHyPmYM6EY=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;3:hzTR9mglvKknUOV1PctVix1FOtkRW/RY8VRDss29S+mWaggUA4eXzmi0PpnhkTdwU+k6qfc+jDrDOn9zqtV50w5v3rnMYhNqcX/wyUTiQWyOdX2f6odUYT2x8RD7zAItpLLE89wTd+VFBq5BhyPq6aASsBmVu54Wq5un5lalZ5Zk3ET1EuvZ1jnOuljC5L7AWW2SPNMllF+BYzPqSkZl034eYhb8aGyfBZMQW5j+jJf99JlJlPxm31VLGs34V1Z9;25:ImrWF6PG/Nh30IvZuWQcZa+JV4+0/qNkzLoTQu/K2nQQ8SF6mR9nVIb70FDRqxmgd0Nr0FuVEgkX4y3MDnmp3EU1tcGIqKoi0rRuf0RTbDyJ+7uwzEw0wZlitSpj6zbBC6tbBmPXlDgGDZrl6SBAzjOXiCxZpC3IK5Y+2nMij9dqQ9wuD+Cc+Xuk0IQScJms4aMm/F/7vglsysZIJoOG3RwLd6Q38fUFmvYG/oPDgc4KRujAbWSbX6gxCxQ0ITlDnSlgdcXw7gnva9GkBLhsoGdA80QtS0Ai+Fv3kjY7WFPJVV4KZ3wtnrvPMg2vnG1ZQkHIxf4S80/PvThFp1KFkw==;31:n7lBZNbDU+CuZXxEgCoYB0vLsAXMrVdIm0Xp/nDd46FF3W7kclwseG/mIUO9Fgibk4J9euin3BYoKT4L5AINNCgUUTqNY7bmGEGbOHmQqb7Hpd4GCIe9m6/j534hkjraS1CM5SNaXD9kaJII00AFgG8bA67UKTPFvUIUwq/WCUArSEbXrt+/RG2Trtg+s/Beh/jSVHXUMUTCsaC148TZH4tQegrnzHQYnrCSArcSnnM=
 X-MS-TrafficTypeDiagnostic: BN7PR08MB4929:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;20:WxDrOsiNAeiwaVo6uXkuJ643H7V0/a0TFcFnr4k1dltccDRMbMtQGAWCx949HxfiuZesgyW4vyJAIAxLmQ9uQxaTzfNTQ3Z0r/ZrZex8MkUO7E4UJXgcGM9mnzyVH8Bt++GewQxxMs7tzblvi8RkwEFA5ck2whRBOJKv2UgxE6CtUD0J9N48qT/h7X5DNjpX5PLzS1OGtos21eyyHvdk4bq19CXYdEx9hqAejRuqJm48iRQZnA85OdCb7W+yaHac;4:XQwAoAjUFsJBIeUTK3URdxvltMKQfxFNOqdxl0kluBgy4szh6qBShPgBWsiQSLbAMk9jl/w+QKq2V8DhWiy0CJ6BTJIfiyoZJydQDtF0q3F1AmNQCHfNYAmYnrH/kSGuJ0S+v6FkyXI6kSUr2ImZWKo+rhWTDPto+r+prq9PKXo6bOBXKlWRj/eP4mKDzeZ1q5qPa6emVusbdxajS5/Wh/q2CCUDhKWPdWGNhXWhk1KlPZG8uG3fHdci20YL+x+X6eAn0MRKjA2zpDdMB05g52f9xjtvWh+RUq9pvHDrL06t7g4ilSFlLlfoxzQqQgIK8aTvhAIDwsx9o3WPn6OnqlCNv35qdEPJ/V0aTSKvMpMBHnhTYIEyiegGVgNWfdfE
-X-Microsoft-Antispam-PRVS: <BN7PR08MB4929420CA3100BACDD9470B2C1000@BN7PR08MB4929.namprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(85827821059158)(788757137089);
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;20:ucYh6Sc0tJjJz946CItV4qnmRgb4aoqj6n3l49m3d3Hp1tofQTirdGC4urxG5sTMWKL3+VxVpukbROR8tv1De5RiyNcg5iGryO4XKu4JbQOHTXQnPmu4dTLlTQncmoVDmG2xPdoB0A/Khgwa8AKXr7X7y3tNqIF2usov0alA0E084x7qdu22caEN0SdjOLIOliot5nZsw4eAOzuET3zUNVYgT0/w7I1vTRgJOF/vp8jlHE6YN20Kzw8LWe0tvIyY;4:bzzjWYk0gp4iG3AUhIfSEDZmxIk2tkp/JF3EwS8MtFvfJmDZBkmzySVLq/l7N/m/S5pQh6EURMi64/szMITDqiIzhqDuEbR7o30Ko4srsdzOm4Uk/ql/FdoQdUGU72zP4t1lV/4DmtLs38tWGfd5WEA7c1FA/BR1D82ub9yLStfid12Xfc6BcSWW8osEEVLOhRA99Imlfaipe7F6nx5KdyjWENwmR2/MowtPy7MVLC+4SLZb1miu/vwQVtBAHcWC7IXVyXym2Yr7Iag2WfTL0Zy4sc2S/LNWSx3USZFWZ+wO43JkbKhZoNoTBYGh9RCtiIB0LsMUsaXkFJpVpVDHEcznIZXElGR3ml0A08ODq9U=
+X-Microsoft-Antispam-PRVS: <BN7PR08MB492931AD2A05B54BCA3EEF43C1000@BN7PR08MB4929.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(85827821059158);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(93006095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:BN7PR08MB4929;BCL:0;PCL:0;RULEID:;SRVR:BN7PR08MB4929;
 X-Forefront-PRVS: 07880C4932
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(396003)(39840400004)(199004)(189003)(42882007)(39060400002)(105586002)(305945005)(7736002)(476003)(956004)(2616005)(51416003)(52116002)(48376002)(186003)(966005)(6506007)(26005)(386003)(478600001)(36756003)(6486002)(50466002)(16526019)(81156014)(6512007)(486006)(6306002)(44832011)(8676002)(2906002)(8936002)(1076002)(81166006)(3846002)(6116002)(106356001)(4326008)(316002)(47776003)(54906003)(25786009)(68736007)(66066001)(50226002)(16586007)(53936002)(5660300001)(53416004)(6666003)(69596002)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR08MB4929;H:pburton-laptop.mipstec.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(136003)(396003)(39840400004)(199004)(189003)(14444005)(42882007)(39060400002)(105586002)(305945005)(7736002)(476003)(956004)(2616005)(11346002)(446003)(51416003)(52116002)(48376002)(186003)(76176011)(966005)(6506007)(26005)(386003)(478600001)(36756003)(6486002)(50466002)(16526019)(81156014)(6512007)(486006)(6306002)(44832011)(8676002)(2906002)(8936002)(1076002)(81166006)(3846002)(6116002)(106356001)(4326008)(316002)(47776003)(54906003)(25786009)(68736007)(66066001)(50226002)(16586007)(53936002)(5660300001)(53416004)(6666003)(69596002)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR08MB4929;H:pburton-laptop.mipstec.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR08MB4929;23:GO7MLRD8m58CqT1Yme3V4j3AvJARSnR+3Dr3NPsTn?=
- =?us-ascii?Q?EGOZJxYLMHmPWQ9HKzzTQLUeXTXm5Wu2TUkUthmyR9bvxxpE6peGgdyumkca?=
- =?us-ascii?Q?9o6j6QBxSqs1YLvWovTUbvKc7dcoKTj6EcibP73Erb/RgLVKA1viJKtNtk07?=
- =?us-ascii?Q?NWBbCsbb6KnksrSdHB2/mbWJ2o1gQPSoq7l1rMvST6NTuOGpgy0ZzFYlfHaj?=
- =?us-ascii?Q?apm2wvsEYaxULcYDcPqVxWvEIfhFvtaKGaSpQpDTPFrtgl9hlWfxHyPAzb/v?=
- =?us-ascii?Q?QTCFyg4WSU34lCUUPH3px6zOPR/Bc/+oy8JW4pOf7PYyHdwTcrBUIYuJCMa4?=
- =?us-ascii?Q?8nDam1+Lpv9YR0G67iBglX7Fap0BZxBSMugdjy7pl0K5CLgUY2m6y8diB6gV?=
- =?us-ascii?Q?+5iyWx2RjN0dCySqF+6lcoZqZiWj47dB/FJa3WU9UMIoRmw5Qf/WlJHFc+Kf?=
- =?us-ascii?Q?S77y8xIzBG6B+ORDOuyr42l0Ad0Ci1irlW0XSVL7uCDn2nR298ID8MtsKceU?=
- =?us-ascii?Q?GpThcRwDjo8fyJbqzbIHmicj9LTKqreCRbevK8trk8msdCQ+XpENWH6QVEy9?=
- =?us-ascii?Q?OOCMhy7Zu/AcmtgKhb+pXr9+78//vv5U22h7/y6XtvcKlJHz/vGC9oABBb0y?=
- =?us-ascii?Q?I/CQL8TlmirQRwEnEPFF9Im3rSF9/H3QkWBHWnm+4NEmZLL9L/KsVqJNNAsz?=
- =?us-ascii?Q?mN7Se43P4uDQkZv3qlEoAh1+AuWTruOxBSaUXAnZ72cWgLdnZITAF+HffZKl?=
- =?us-ascii?Q?BtTkg1G2L5u3neh4FlQAG1GyxaKClQ7JflazDrtlV4By+DP350cqdbEzwFLZ?=
- =?us-ascii?Q?/YxNfF5tjmkFNiBeIwSTnkciUmCgAeBP42eAzRAOlKVDhFb71JxAMJDF9mRL?=
- =?us-ascii?Q?v/I4jdK2YA9tMvoZP+YTTJfIQ/0hYNC2wWKj3xCzFWlsGsp0/5ulpDSNGFZD?=
- =?us-ascii?Q?RDpMTT7ha91/yGh3ye+BLFVmlZbQX1rkDrKgDj2Km5pmqJvNNcxSqhnguU3t?=
- =?us-ascii?Q?dzvSsjUcNQaGRY/t3zSAK2sbhMpznIYxgofaochppRckAwlY5qW613BDh/LP?=
- =?us-ascii?Q?V91GOCymh/aLbekyQgEjbrbxNYovMXJHePKlk2VJ2xGV5Ai6LZWBc1NCl+0n?=
- =?us-ascii?Q?A1EOzvZSPtrQ+AIMwU61eCCP9jCadqgsecyl1vKYkBhY74XRmyTee4W2s7mf?=
- =?us-ascii?Q?ifELnxB5S+AlG73vZgafvtegPf7BTxPBTXyPZ7ZW96FrthQ08IMgd6cC46Rh?=
- =?us-ascii?Q?ZXSs2Yy2aCP2E/+5M0=3D?=
-X-Microsoft-Antispam-Message-Info: /oZ21IBLs7pRBJopqRPo5mL7bxln/eiiaj3gMfQECPq7+i6UqJDeLREWDa+yeO+3NFru4Kh2AAakGeT4DKOnqOAqAeW0dMx1wPoDqYyxbbjqrGOVg8VpjMDuP+Afg7Y319UVT2na/J+xveW7NE+OyLmRC0Io5ySlTf0OVjlIiLvTZ21jJha5AtILut5E9SheusHpn1NKWA3FYQD0ZMjjpQm1ftg9kMLUee+AFRwvUHh1LGZJz48dKxlhQyN646SETJamdnToLfgQO3pXrLnpdmHlJq7VA1D5CuWhn3fQnzIbQFQKWpCic9yt/jnUC0IVAqCyi72oF4hbtcwHjGwtMZDbovS3dMDeT5WFAjQGU2o=
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;6:ACBVT/TMFtawieM6GmcEnTb9Cyv9I7R1+9ku5P7OYCIPOimwWHsfdNYvetdM5EREg5JZ+vm7645AFo090O+SzicuawQt+hEea+PVHzHYW/0kThn7LdflFzLvmHoFkpF3PDkD6ojtS8TdEn35FGtLuT4gmOQZPiF7pvMI5/eDiDry7adWsRwp0qCrch86j55eQqknbhGa4oUX7TQnDoUACekBcrqHIFzAsUq9Mtb6Iq8JNVmtgpiIy17lnrerVVxhCaTMFQrTRxMIoU+62XI6Y7cKsZl/OGtWUfcvtzr6wcr4U/6whqmUKuoJ7eS9Eji7Fodtz+vGVho0Gh7J+iyugqa+8Gbf4tBRWN0/5BxXo3SmvwT+xUZQ/Ra3f5JdaT1RdamNYBrsl0BWP6CU185YU1hXC1zTSPM1cIgSoj6gS3JSjo0AgfpCYluBwY3XnCXV56OlCrwOovnDRKVZ2MYtHA==;5:rSc9F51gkxypAnTM6xp178I5JAOj0UV8A1cFJIkgRA9exZUmbfXhoL1e5iyyT5t4qgpdBo/6zbS2SNYAOYiSjd8hT1aaKIlqehNqtXEt6vJ5PY7bZk7fAyOP4akWUDQEJMyYdMn66UTSWfAG4kPDYmB5GOYxdBLDnlCC6xVnZXc=;7:Kzb2eGZS6QuHN70738ZPnJFtE217rCNJr3cOdWYju8fRfF4DRltCloH8XXFXIzgma3d4X1LhchC21ixqjNCehj3MF4HbNaMKrgZYuu1gMijjNg/mohXXRQbLUYTFU5W4b71UF93pLZWx6bMwKLb8QwWsNmH4TS+oEO7yLmPNT0vrqaxXUK0wtPbpUKPSxwJeeMoHNZSxe7/wFFtQLmDdcWR44F+e3k5x8xaJoINKhZJNqFrhT3H4RC2jVFMCjyX/
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR08MB4929;23:dMhkmdKuhYxWQVikRI/bGlIK3dVl0m9N9e2C7KgOE?=
+ =?us-ascii?Q?/JegClZozhzBOPzgwQjVPbW4O1dmD9K7jxmY2dyVKMgTT6IFk1NYl162QytK?=
+ =?us-ascii?Q?xC1u9L16Trl4eIU+TVQliwUFMWyl6gD+yGTrwGQh7SK/DGVwYV7ilycCwsPs?=
+ =?us-ascii?Q?oNoQlzM2GFMjuUFsVSM78jDTn9D+Js9xnZhLaE2V4UJOqZsBS0H5DuotOk9k?=
+ =?us-ascii?Q?FfOHEsopshM8y81qBaOoaHDJmQMsrWB5Lzx7JuZBcBZmXfzZpx7B4xQdhBYm?=
+ =?us-ascii?Q?0fcSqfiJHWSwMCq48i40Jv4+ChVQNVwHpmiNtJXirvmHH0HSXwhd3Tj8+kZj?=
+ =?us-ascii?Q?96ojV7IkAn3MdVNMgYgZNZ3FFcGFmmreEC+Q2fXaG6xRdMapUEDfpTFfT+Ka?=
+ =?us-ascii?Q?HtEn+Of9F30HMY8cYwE/sjXjuhvxCfRQyDAMc6sFvpvNZtUjgGJ8ml5Wr1Oa?=
+ =?us-ascii?Q?cV1TyjPOk+M1wr5utx4HPlmkQas1V4QN/CSyMwpzodS1+fBT3fFZU93H/n+P?=
+ =?us-ascii?Q?y5oG9cVc1XSLenyqOw6btoKhaCeUebASM5Y37shxJkv307sHXAuoTxd5bWGC?=
+ =?us-ascii?Q?vY5QbH4rdsPLp2AyOS2MX3EbV3wPuejN8kJydQ0iuw/JjcN+6lnOlPBUSXs0?=
+ =?us-ascii?Q?76sjSUVlrFRLbYdsQ9mNnjbOAntnG/aUHRRr9duzvtc/YN5ah8+YjO0k4a7i?=
+ =?us-ascii?Q?1sWUnFDGNbiv9vRJb1V9rnUS+kd7tKwk777jq7x0Xl1/evT2uWFeBg3YLt7F?=
+ =?us-ascii?Q?IZhiwmuerk82onXzKpyK1HFg+bB/zf8OmKbIsYUKbYqPf61cPm57hIiNuCl9?=
+ =?us-ascii?Q?OhTQcl6DgdRY/wFNwLhZoy4072FMQEhhEiusr1BA6aY7vINDZmuGAkUOkH7a?=
+ =?us-ascii?Q?GQzW0TcTkAyiBI2GWWx6oUbyYFPU5fRnp+AuVud8GXARYOWM9ufz0SmCxlry?=
+ =?us-ascii?Q?tGexDK7rnV2XDQrrnEwdB24GaFFiyAJWKEbR4jhqd/QGGRHeIJiQ5GS9yfgW?=
+ =?us-ascii?Q?8bpaZPu3EgGGozS4IfKGI/R581NVIL1jwcFCoa1uc3575GgHnmzVAD01dQQD?=
+ =?us-ascii?Q?fFhtAZyybW/UE8HeJ+RaTfvoJXT6fEo9EjtPNe21I04yecNY++8eleTEAXGq?=
+ =?us-ascii?Q?tpD93MPdW7Gwm1OXjWh5nE2r7UZFeJ4wsmGKiTIfCIVW24lrs2/i0u8E2XS/?=
+ =?us-ascii?Q?MujHsT3ue9AXhI80R8DZYpU+yHRRSUChKymHMRSNjcq24EFAFYLnVCZxyPYm?=
+ =?us-ascii?Q?enwEYajLkYpfZyLit+B+vSbzbJwoYTl+VnxqHqq5LrZn+DG1fXFUUbpPqVK8?=
+ =?us-ascii?Q?FU63gm/6iROSfx/YuQaCocQId/RlZRNqXQDQq78y9Db?=
+X-Microsoft-Antispam-Message-Info: pEUIJEecO3+6y3qUJrRi47bGbXs9/q7DcbY3KU1r1eGa3wIRnxQKS+ZUokvUZcp/vlht+b5Q+1ijNpntZnLENZmaFqKelsIIrQIxMKECSykix044LJNUPlNmk+G253kX4Euzx9bgebs9DYFj9DYzK4rF6gES/m/R5X79qgwLABMXoTwZnO6vfF3yCmnGlpK0UpUwkm6wTihG8u4ZQLOndbI0NzM68OQTGS/I1nc9vz/wewrtx+hF3dVCwdJwctAb6J+47H7HK7ruB6ExyZ+LOPfiH2C8xbBlPfv8wuwk9KDQQaAzpqI5GL0rXUOsDK37WDPxM8Zm1RXoNQzZ5bxIvQeuNqft0uLL8O/MsBp7Whw=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4929;6:0Ui4uKbtSN9HmY/ZIYxleOKCeoXDHH/cM8YrGb+SeJZyNiR5aet9iHtOGDMT9QY5LHb59Blj05EH3uwAFNmVvRaUPHPRpY9E/ItmCzeugifjrR9eWWL4/czO0fQ42C02MQbwKQrMMDhx/9F6wehgtuObNQcwamLLsewMxEjLXM8jzymiFaSnC9yfFO/NQzF8AdXYRctsGnnnrNbRmFF3CHV1gMAeP4SrSDIzwSNxMwi02+yaoZIAT2GK/TLErGiNIZODCKTo0G1OuYZUJRVwABFC8Jbm8HC7wsiqjmxpsMtCIxzlxNRurUyURDGfxosOKiUpEIRlcltLvH80J2od4sBlFfFcmKml5pr5q2l+r/Y1+qVoW7y3egHQafXl15L98u9U7wozDZnbg/jZYqwNoRQZ/ovJxpHQXib9pl1vUyV43Fgd0jAHRdcv459szHndjgxskwOGXHo3OppwKHo2jg==;5:Iqn1XouZy/p6mYTRCFueLIF8Xt5zdrQ2r6RFVkK2sHTwdIh2gAmW418bCeU70Qx1vn8A49xXVy/lrU0xqEaurAjtg5SR9aDxncRzdW11O6tPkDytN2SNyQ965HTnNLR3dOyd3WlqXsUG7/2JY4uHQejIDbdZo3wQMK5giNgiDTc=;7:yXivW0jtxcuTnt62QJbSPVHkDEi1s7eYIPuweP/V/yO3d/DR+koQCS+JOMUSZqq6SfguuV02UAfypYBFTALd9ut1A4ZkJkt2202NqMAZx5B/rfqlb9L6gTkXPUBjkEC07KeC1zzLst8B8LydhlGpi/nGdSH5zyZHsZP40q2XaUjCZB3KfkkGVL1dRqAMrmW/6FOEUkyzYuJucpU8PmDlOjA6smCz/IGPRUnLbZEJQNThdLRGnGyW+82aK1ahOAjt
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 18:54:50.9337 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3159f3c7-bcc6-4a2b-19b5-08d614f364ae
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 18:54:52.3087 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b76b4d96-882b-45b4-e987-08d614f3657f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4929
@@ -105,27 +108,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CONFIG_CMDLINE-related logic in early_init_dt_scan_chosen() falls
-back to copying CONFIG_CMDLINE into boot_command_line/data if the DT has
-a /chosen node but that node has no bootargs property or a bootargs
-property of length zero.
+Commit 8ce355cf2e38 ("MIPS: Setup boot_command_line before
+plat_mem_setup") fixed a problem for systems which have
+CONFIG_CMDLINE_BOOL=y & use a DT with a chosen node that has either no
+bootargs property or an empty one. In this configuration
+early_init_dt_scan_chosen() copies CONFIG_CMDLINE into
+boot_command_line, but the MIPS code doesn't know this so it appends
+CONFIG_CMDLINE (via builtin_cmdline) to boot_command_line again. The
+result is that boot_command_line contains the arguments from
+CONFIG_CMDLINE twice.
 
-This is problematic for the MIPS architecture because we support
-concatenating arguments from either the DT or the bootloader with those
-from CONFIG_CMDLINE, but the behaviour of early_init_dt_scan_chosen()
-gives us no way of knowing whether boot_command_line contains arguments
-from DT or already contains CONFIG_CMDLINE. This can lead to us
-concatenating CONFIG_CMDLINE with itself, duplicating command line
-arguments which can be problematic (eg. for earlycon which will attempt
-to register the same console twice & warn about it).
+That commit took the approach of simply setting up boot_command_line
+from the MIPS code before early_init_dt_scan_chosen() runs, causing it
+not to copy CONFIG_CMDLINE to boot_command_line if a chosen node with no
+bootargs property is found.
 
-Move the CONFIG_CMDLINE-related logic to a weak function that
-architectures can provide their own version of, such that we continue to
-use the existing logic for architectures where it's suitable but also
-allow MIPS to override this behaviour such that the architecture code
-knows when CONFIG_CMDLINE is used.
+Unfortunately this is problematic for systems which do have a non-empty
+bootargs property & CONFIG_CMDLINE_BOOL=y. There
+early_init_dt_scan_chosen() will overwrite boot_command_line with the
+arguments from DT, which means we lose those from CONFIG_CMDLINE
+entirely. This breaks CONFIG_MIPS_CMDLINE_DTB_EXTEND. If we have
+CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER or
+CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND selected and the DT has a bootargs
+property which we should ignore, it will instead be honoured breaking
+those configurations too.
+
+Fix this by reverting commit 8ce355cf2e38 ("MIPS: Setup
+boot_command_line before plat_mem_setup") to restore the former
+behaviour, and fixing the CONFIG_CMDLINE duplication issue by instead
+providing a no-op implementation of early_init_dt_fixup_cmdline_arch()
+to prevent early_init_dt_scan_chosen() from using CONFIG_CMDLINE.
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 8ce355cf2e38 ("MIPS: Setup boot_command_line before plat_mem_setup")
 References: https://patchwork.linux-mips.org/patch/18804/
 Cc: Frank Rowand <frowand.list@gmail.com>
 Cc: Jaedon Shin <jaedon.shin@gmail.com>
@@ -136,100 +151,79 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-mips@linux-mips.org
 Cc: stable@vger.kernel.org # v4.16+
 ---
-Marked for stable as a prerequisite of the following patch.
+ arch/mips/kernel/setup.c | 47 +++++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 20 deletions(-)
 
-DT maintainers: if you're OK with this it'd be great to get an ack so
-this can go through the mips-fixes tree.
----
- drivers/of/fdt.c       | 55 +++++++++++++++++++++++++++++-------------
- include/linux/of_fdt.h |  1 +
- 2 files changed, 39 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 800ad252cf9c..94c474315cff 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -1072,6 +1072,43 @@ int __init early_init_dt_scan_memory(unsigned long node, const char *uname,
- 	return 0;
- }
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index c71d1eb7da59..7f755bc8a91c 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -841,11 +841,38 @@ static void __init request_crashkernel(struct resource *res)
+ #define BUILTIN_EXTEND_WITH_PROM	\
+ 	IS_ENABLED(CONFIG_MIPS_CMDLINE_BUILTIN_EXTEND)
  
-+/**
-+ * early_init_dt_fixup_cmdline_arch() - Modify a command line taken from DT
-+ * @data: A pointer to the command line
-+ *
-+ * This function provides an opportunity to make modifications to command line
-+ * arguments taken from a device tree before use, for example to concatenate
-+ * them with arguments from other sources or replace them entirely.
-+ *
-+ * Modifications should be made directly to the string pointed at by @data,
-+ * which is COMMAND_LINE_SIZE bytes in size.
-+ *
-+ * The default implementation supports extending or overriding the DT command
-+ * line arguments using CONFIG_CMDLINE. Since other sources of command line
-+ * arguments are platform-specific, architectures can provide their own
-+ * implementation of this function to obtain their desired behaviour.
-+ */
-+void __init __weak early_init_dt_fixup_cmdline_arch(char *data)
++void __init early_init_dt_fixup_cmdline_arch(char *data)
 +{
 +	/*
-+	 * CONFIG_CMDLINE is meant to be a default in case nothing else
-+	 * managed to set the command line, unless CONFIG_CMDLINE_FORCE
-+	 * is set in which case we override whatever was found earlier.
++	 * Do nothing - arch_mem_init() will assemble our command line below,
++	 * for both the DT & non-DT cases.
 +	 */
-+#ifdef CONFIG_CMDLINE
-+#if defined(CONFIG_CMDLINE_EXTEND)
-+	strlcat(data, " ", COMMAND_LINE_SIZE);
-+	strlcat(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
-+#elif defined(CONFIG_CMDLINE_FORCE)
-+	strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
-+#else
-+	/* No arguments from boot loader, use kernel's cmdl */
-+	if (!data[0])
-+		strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
-+#endif
-+#endif /* CONFIG_CMDLINE */
 +}
 +
- int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
- 				     int depth, void *data)
+ static void __init arch_mem_init(char **cmdline_p)
  {
-@@ -1091,23 +1128,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
- 	if (p != NULL && l > 0)
- 		strlcpy(data, p, min((int)l, COMMAND_LINE_SIZE));
+ 	struct memblock_region *reg;
+ 	extern void plat_mem_setup(void);
  
++	/* call board setup routine */
++	plat_mem_setup();
++
++	/*
++	 * Make sure all kernel memory is in the maps.  The "UP" and
++	 * "DOWN" are opposite for initdata since if it crosses over
++	 * into another memory section you don't want that to be
++	 * freed when the initdata is freed.
++	 */
++	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
++			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
++			 BOOT_MEM_RAM);
++	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
++			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
++			 BOOT_MEM_INIT_RAM);
++
++	pr_info("Determined physical RAM map:\n");
++	print_memory_map();
++
+ #if defined(CONFIG_CMDLINE_BOOL) && defined(CONFIG_CMDLINE_OVERRIDE)
+ 	strlcpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
+ #else
+@@ -873,26 +900,6 @@ static void __init arch_mem_init(char **cmdline_p)
+ 	}
+ #endif
+ #endif
+-
+-	/* call board setup routine */
+-	plat_mem_setup();
+-
 -	/*
--	 * CONFIG_CMDLINE is meant to be a default in case nothing else
--	 * managed to set the command line, unless CONFIG_CMDLINE_FORCE
--	 * is set in which case we override whatever was found earlier.
+-	 * Make sure all kernel memory is in the maps.  The "UP" and
+-	 * "DOWN" are opposite for initdata since if it crosses over
+-	 * into another memory section you don't want that to be
+-	 * freed when the initdata is freed.
 -	 */
--#ifdef CONFIG_CMDLINE
--#if defined(CONFIG_CMDLINE_EXTEND)
--	strlcat(data, " ", COMMAND_LINE_SIZE);
--	strlcat(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
--#elif defined(CONFIG_CMDLINE_FORCE)
--	strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
--#else
--	/* No arguments from boot loader, use kernel's  cmdl*/
--	if (!((char *)data)[0])
--		strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
--#endif
--#endif /* CONFIG_CMDLINE */
-+	early_init_dt_fixup_cmdline_arch(data);
+-	arch_mem_addpart(PFN_DOWN(__pa_symbol(&_text)) << PAGE_SHIFT,
+-			 PFN_UP(__pa_symbol(&_edata)) << PAGE_SHIFT,
+-			 BOOT_MEM_RAM);
+-	arch_mem_addpart(PFN_UP(__pa_symbol(&__init_begin)) << PAGE_SHIFT,
+-			 PFN_DOWN(__pa_symbol(&__init_end)) << PAGE_SHIFT,
+-			 BOOT_MEM_INIT_RAM);
+-
+-	pr_info("Determined physical RAM map:\n");
+-	print_memory_map();
+-
+ 	strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
  
- 	pr_debug("Command line is: %s\n", (char*)data);
- 
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index b9cd9ebdf9b9..98935695f49d 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -80,6 +80,7 @@ extern void early_init_dt_add_memory_arch(u64 base, u64 size);
- extern int early_init_dt_mark_hotplug_memory_arch(u64 base, u64 size);
- extern int early_init_dt_reserve_memory_arch(phys_addr_t base, phys_addr_t size,
- 					     bool no_map);
-+extern void early_init_dt_fixup_cmdline_arch(char *data);
- extern u64 dt_mem_next_cell(int s, const __be32 **cellp);
- 
- /* Early flat tree scan hooks */
+ 	*cmdline_p = command_line;
 -- 
 2.18.0
 
