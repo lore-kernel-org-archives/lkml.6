@@ -2,331 +2,188 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6F3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383F9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13C6020861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:00:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZ9A3QxJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C6020861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E3FEA206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3FEA206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeIGMki (ORCPT
+        id S1728149AbeIGMks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:40:38 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38602 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726596AbeIGMki (ORCPT
+        Fri, 7 Sep 2018 08:40:48 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:42563 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727965AbeIGMks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:40:38 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u11-v6so6231252plq.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kuvWS+UEUvQZ2xoTaqUxXfZ4y4Bfqw3nkDkVU5NcSio=;
-        b=MZ9A3QxJ7yRFgCIEoDFMglvR9MFB25h+UXHZBcN7/UOYpmmUXgi1mSCgTP+t/wweU0
-         zwdH74SMalwuKNMY0AKwCfQ5f1pJS+9JZj7BJZoARJLLUyk5aTxJjMD6xisomeA4BNng
-         aKJBLMbfPRiLXNAnDCTTDLTUryjVXLq/w4MEI=
+        Fri, 7 Sep 2018 08:40:48 -0400
+Received: by mail-it0-f70.google.com with SMTP id 20-v6so18524722itb.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:01:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kuvWS+UEUvQZ2xoTaqUxXfZ4y4Bfqw3nkDkVU5NcSio=;
-        b=aanWjAZ4+n5ik5EJ3RduIz5j7kAES6xHDElXHexhqIA6Is+R+03C9ju4nuSbfe+FcN
-         Gwjdhaejg+nHZZAr9R0mXt3v9CrMlH+OdChaTmN36nQhhD23eKABi2XfYqR2u5PLJs0M
-         DGWv31jaIfqO8780UHvDQ7VXZmJCNo5YPLDnFNqPvAe1DN4wo985PddXczVemW4ak/LC
-         QcZ3qWkLcyqrcWZr14IcICf+DB2Am6suBdf4KALhrRG7hIgW9+ZuBag0/CP3R3PBgNwe
-         EA5nCI2Hb8ZDmP4/5EkAfNg88vJN+129Jc504SpghqcW6chRsfv3G9vfVHcip4ZXg6wV
-         LlGQ==
-X-Gm-Message-State: APzg51DMZsIimBLmawZrz0Yi0mdLXRKyVQORx8NhR5IOySZDXE1CeD0s
-        4axOS3yjDuT76A3bKuSOU8imyw==
-X-Google-Smtp-Source: ANB0VdZ4Ph6XxIz7yk79prCPqeUXuq1u+ajtrHhpG1RtU4zn6SjbTbmNVm0JlVhrRYwwT0o2Jm2rtg==
-X-Received: by 2002:a17:902:3c5:: with SMTP id d63-v6mr6654075pld.145.1536307253444;
-        Fri, 07 Sep 2018 01:00:53 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id d12-v6sm10819689pfk.69.2018.09.07.01.00.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 01:00:52 -0700 (PDT)
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v14 10/16] arm64: kexec_file: load initrd and device-tree
-Date:   Fri,  7 Sep 2018 17:00:34 +0900
-Message-Id: <20180907080040.4967-5-takahiro.akashi@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180907080040.4967-1-takahiro.akashi@linaro.org>
-References: <20180907080040.4967-1-takahiro.akashi@linaro.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=YEHfSTvo/vh2qJRRH4n/isWeHSWV0tCwMxJT9pn/imQ=;
+        b=uiMOZhZSRS0bWuu9SLpYX5BN4+rNzVuF3I0qumJO6PNgmoqIZPz8KF/U7gbQDBdgwX
+         Y4GswQ96GP4NVc9UPgOcJszAm1HlqZ48useXIRl823Ju84AnhQbh69QVXeIAF7p2xZ6q
+         QxZ3hgxHq7sOSpaOFcpr9Kdu6bZ85I/F5NRtwHWJ4pIHlgNj7m220LZ44ipvH63gOSiA
+         awhiruVbMs5BxCwQkJ7oFZWRTAYrtom2yaQ+9sxtztreoVEkMromNXKeJaG/w6/XtV9j
+         Psxsz9aWXmMeWMa/tjPFkIHm5u222TzDo92y1/1KjcFPbThOv9DByBSAT2bQpwZMxJXm
+         D2UA==
+X-Gm-Message-State: APzg51AHRixvEhsMKOEnPH4Ref2QX3+2T9jracGTxYlrG4mWujaB5oeL
+        yt27j5oBD2ZmfEFBU+ScfSiAUfackUXYOSrBddkjoNmNps2u
+X-Google-Smtp-Source: ANB0VdaoTbqDHtdsgs5kj3Kdi982SlSATL+9XI/QVETRdgaa0tbAflW/ZmGHieNTK38XSCsW72xtxKf6ZMI7CB25u5V0CZak22v9
+MIME-Version: 1.0
+X-Received: by 2002:a24:9f84:: with SMTP id c126-v6mr5753623ite.29.1536307263273;
+ Fri, 07 Sep 2018 01:01:03 -0700 (PDT)
+Date:   Fri, 07 Sep 2018 01:01:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b18a4605754368bd@google.com>
+Subject: KASAN: use-after-free Write in ucma_put_ctx
+From:   syzbot <syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com>
+To:     dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        parav@mellanox.com, roland@purestorage.com,
+        swise@opengridcomputing.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-load_other_segments() is expected to allocate and place all the necessary
-memory segments other than kernel, including initrd and device-tree
-blob (and elf core header for crash).
-While most of the code was borrowed from kexec-tools' counterpart,
-users may not be allowed to specify dtb explicitly, instead, the dtb
-presented by the original boot loader is reused.
+Hello,
 
-arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
-specific data allocated in load_other_segments().
+syzbot found the following crash on:
 
-Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
+HEAD commit:    b36fdc6853a3 Merge tag 'gpio-v4.19-2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a18421400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6c9564cd177daf0c
+dashboard link: https://syzkaller.appspot.com/bug?extid=cfe3c1e8ef634ba8964b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154f2056400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+cfe3c1e8ef634ba8964b@syzkaller.appspotmail.com
+
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+hrtimer: interrupt took 27351 ns
+==================================================================
+BUG: KASAN: use-after-free in atomic_dec_and_test  
+include/asm-generic/atomic-instrumented.h:259 [inline]
+BUG: KASAN: use-after-free in ucma_put_ctx+0x1d/0x60  
+drivers/infiniband/core/ucma.c:158
+Write of size 4 at addr ffff8801d9193858 by task syz-executor0/5348
+
+CPU: 1 PID: 5348 Comm: syz-executor0 Not tainted 4.19.0-rc2+ #224
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+  atomic_dec_and_test include/asm-generic/atomic-instrumented.h:259 [inline]
+  ucma_put_ctx+0x1d/0x60 drivers/infiniband/core/ucma.c:158
+  ucma_resolve_ip+0x24d/0x2a0 drivers/infiniband/core/ucma.c:713
+  ucma_write+0x336/0x420 drivers/infiniband/core/ucma.c:1680
+  __vfs_write+0x117/0x9d0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457099
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f95c9f42c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f95c9f436d4 RCX: 0000000000457099
+RDX: 0000000000000048 RSI: 0000000020000240 RDI: 0000000000000005
+RBP: 0000000000930140 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d8100 R14: 00000000004c1c28 R15: 0000000000000001
+
+Allocated by task 5348:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x730 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  ucma_alloc_ctx+0xd5/0x670 drivers/infiniband/core/ucma.c:205
+  ucma_create_id+0x276/0x9d0 drivers/infiniband/core/ucma.c:496
+  ucma_write+0x336/0x420 drivers/infiniband/core/ucma.c:1680
+  __vfs_write+0x117/0x9d0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 5344:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x210 mm/slab.c:3813
+  ucma_free_ctx+0x9e2/0xe20 drivers/infiniband/core/ucma.c:595
+  ucma_close+0x10d/0x300 drivers/infiniband/core/ucma.c:1764
+  __fput+0x38a/0xa40 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801d9193800
+  which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 88 bytes inside of
+  256-byte region [ffff8801d9193800, ffff8801d9193900)
+The buggy address belongs to the page:
+page:ffffea00076464c0 count:1 mapcount:0 mapping:ffff8801dac007c0 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0007658488 ffffea000766a688 ffff8801dac007c0
+raw: 0000000000000000 ffff8801d9193080 000000010000000c 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d9193700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801d9193780: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801d9193800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                     ^
+  ffff8801d9193880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801d9193900: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- arch/arm64/include/asm/kexec.h         |  17 +++
- arch/arm64/kernel/machine_kexec_file.c | 188 +++++++++++++++++++++++++
- 2 files changed, 205 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index e17f0529a882..157b2897d911 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -93,6 +93,23 @@ static inline void crash_prepare_suspend(void) {}
- static inline void crash_post_resume(void) {}
- #endif
- 
-+#ifdef CONFIG_KEXEC_FILE
-+#define ARCH_HAS_KIMAGE_ARCH
-+
-+struct kimage_arch {
-+	void *dtb;
-+	unsigned long dtb_mem;
-+};
-+
-+struct kimage;
-+
-+extern int arch_kimage_file_post_load_cleanup(struct kimage *image);
-+extern int load_other_segments(struct kimage *image,
-+		unsigned long kernel_load_addr, unsigned long kernel_size,
-+		char *initrd, unsigned long initrd_len,
-+		char *cmdline, unsigned long cmdline_len);
-+#endif
-+
- #endif /* __ASSEMBLY__ */
- 
- #endif
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index c38a8048ed00..f53f14bd1700 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -5,12 +5,200 @@
-  * Copyright (C) 2018 Linaro Limited
-  * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-  *
-+ * Most code is derived from arm64 port of kexec-tools
-  */
- 
- #define pr_fmt(fmt) "kexec_file: " fmt
- 
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
- #include <linux/kexec.h>
-+#include <linux/libfdt.h>
-+#include <linux/memblock.h>
-+#include <linux/of_fdt.h>
-+#include <linux/types.h>
-+#include <asm/byteorder.h>
-+
-+/* relevant device tree properties */
-+#define FDT_PSTR_INITRD_STA	"linux,initrd-start"
-+#define FDT_PSTR_INITRD_END	"linux,initrd-end"
-+#define FDT_PSTR_BOOTARGS	"bootargs"
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	NULL
- };
-+
-+int arch_kimage_file_post_load_cleanup(struct kimage *image)
-+{
-+	vfree(image->arch.dtb);
-+	image->arch.dtb = NULL;
-+
-+	return kexec_image_post_load_cleanup_default(image);
-+}
-+
-+static int setup_dtb(struct kimage *image,
-+		unsigned long initrd_load_addr, unsigned long initrd_len,
-+		char *cmdline, unsigned long cmdline_len,
-+		void **dtb_buf, unsigned long *dtb_buf_len)
-+{
-+	void *buf = NULL;
-+	size_t buf_size;
-+	int nodeoffset;
-+	int ret;
-+
-+	/* duplicate dt blob */
-+	buf_size = fdt_totalsize(initial_boot_params);
-+
-+	if (initrd_load_addr) {
-+		/* can be redundant, but trimmed at the end */
-+		buf_size += fdt_prop_len(FDT_PSTR_INITRD_STA, sizeof(u64));
-+		buf_size += fdt_prop_len(FDT_PSTR_INITRD_END, sizeof(u64));
-+	}
-+
-+	if (cmdline)
-+		/* can be redundant, but trimmed at the end */
-+		buf_size += fdt_prop_len(FDT_PSTR_BOOTARGS, cmdline_len);
-+
-+	buf = vmalloc(buf_size);
-+	if (!buf) {
-+		ret = -ENOMEM;
-+		goto out_err;
-+	}
-+
-+	ret = fdt_open_into(initial_boot_params, buf, buf_size);
-+	if (ret) {
-+		ret = -EINVAL;
-+		goto out_err;
-+	}
-+
-+	nodeoffset = fdt_path_offset(buf, "/chosen");
-+	if (nodeoffset < 0) {
-+		ret = -EINVAL;
-+		goto out_err;
-+	}
-+
-+	/* add bootargs */
-+	if (cmdline) {
-+		ret = fdt_setprop_string(buf, nodeoffset, FDT_PSTR_BOOTARGS,
-+							cmdline);
-+		if (ret) {
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+	} else {
-+		ret = fdt_delprop(buf, nodeoffset, FDT_PSTR_BOOTARGS);
-+		if (ret && (ret != -FDT_ERR_NOTFOUND)) {
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+	}
-+
-+	/* add initrd-* */
-+	if (initrd_load_addr) {
-+		ret = fdt_setprop_u64(buf, nodeoffset, FDT_PSTR_INITRD_STA,
-+							initrd_load_addr);
-+		if (ret) {
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+
-+		ret = fdt_setprop_u64(buf, nodeoffset, FDT_PSTR_INITRD_END,
-+						initrd_load_addr + initrd_len);
-+		if (ret) {
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+	} else {
-+		ret = fdt_delprop(buf, nodeoffset, FDT_PSTR_INITRD_STA);
-+		if (ret && (ret != -FDT_ERR_NOTFOUND)) {
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+
-+		ret = fdt_delprop(buf, nodeoffset, FDT_PSTR_INITRD_END);
-+		if (ret && (ret != -FDT_ERR_NOTFOUND)) {
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+	}
-+
-+	/* trim a buffer */
-+	fdt_pack(buf);
-+	*dtb_buf = buf;
-+	*dtb_buf_len = fdt_totalsize(buf);
-+
-+	return 0;
-+
-+out_err:
-+	vfree(buf);
-+	return ret;
-+}
-+
-+int load_other_segments(struct kimage *image,
-+			unsigned long kernel_load_addr,
-+			unsigned long kernel_size,
-+			char *initrd, unsigned long initrd_len,
-+			char *cmdline, unsigned long cmdline_len)
-+{
-+	struct kexec_buf kbuf;
-+	void *dtb = NULL;
-+	unsigned long initrd_load_addr = 0, dtb_len;
-+	int ret = 0;
-+
-+	kbuf.image = image;
-+	/* not allocate anything below the kernel */
-+	kbuf.buf_min = kernel_load_addr + kernel_size;
-+
-+	/* load initrd */
-+	if (initrd) {
-+		kbuf.buffer = initrd;
-+		kbuf.bufsz = initrd_len;
-+		kbuf.mem = 0;
-+		kbuf.memsz = initrd_len;
-+		kbuf.buf_align = 0;
-+		/* within 1GB-aligned window of up to 32GB in size */
-+		kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
-+						+ (unsigned long)SZ_1G * 32;
-+		kbuf.top_down = false;
-+
-+		ret = kexec_add_buffer(&kbuf);
-+		if (ret)
-+			goto out_err;
-+		initrd_load_addr = kbuf.mem;
-+
-+		pr_debug("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+				initrd_load_addr, initrd_len, initrd_len);
-+	}
-+
-+	/* load dtb blob */
-+	ret = setup_dtb(image, initrd_load_addr, initrd_len,
-+				cmdline, cmdline_len, &dtb, &dtb_len);
-+	if (ret) {
-+		pr_err("Preparing for new dtb failed\n");
-+		goto out_err;
-+	}
-+
-+	kbuf.buffer = dtb;
-+	kbuf.bufsz = dtb_len;
-+	kbuf.mem = 0;
-+	kbuf.memsz = dtb_len;
-+	/* not across 2MB boundary */
-+	kbuf.buf_align = SZ_2M;
-+	kbuf.buf_max = ULONG_MAX;
-+	kbuf.top_down = true;
-+
-+	ret = kexec_add_buffer(&kbuf);
-+	if (ret)
-+		goto out_err;
-+	image->arch.dtb = dtb;
-+	image->arch.dtb_mem = kbuf.mem;
-+
-+	pr_debug("Loaded dtb at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+			kbuf.mem, dtb_len, dtb_len);
-+
-+	return 0;
-+
-+out_err:
-+	vfree(dtb);
-+	return ret;
-+}
--- 
-2.18.0
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
