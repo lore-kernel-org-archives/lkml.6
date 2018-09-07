@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C786BC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD29C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C8920855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C8920855
+	by mail.kernel.org (Postfix) with ESMTP id E2D1320645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2D1320645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbeIHCAt (ORCPT
+        id S1728735AbeIHCAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:00:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44996 "EHLO
+        Fri, 7 Sep 2018 22:00:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727798AbeIHCAs (ORCPT
+        with ESMTP id S1728459AbeIHCAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:00:48 -0400
+        Fri, 7 Sep 2018 22:00:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2B5EDC4;
-        Fri,  7 Sep 2018 21:18:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4204FE2F;
+        Fri,  7 Sep 2018 21:18:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christopher Ferris <cferris@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.18 068/145] eventpoll.h: wrap casts in () properly
-Date:   Fri,  7 Sep 2018 23:08:54 +0200
-Message-Id: <20180907210910.132300521@linuxfoundation.org>
+        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 4.18 069/145] vmw_balloon: fix inflation of 64-bit GFNs
+Date:   Fri,  7 Sep 2018 23:08:55 +0200
+Message-Id: <20180907210910.189619245@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,57 +50,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Nadav Amit <namit@vmware.com>
 
-commit 45cd74cb5061781e793a098c420a7f548fdc9e7d upstream.
+commit 09755690c6b7c1eabdc4651eb3b276f8feb1e447 upstream.
 
-When importing the latest copy of the kernel headers into Bionic,
-Christpher and Elliott noticed that the eventpoll.h casts were not
-wrapped in ().  As it is, clang complains about macros without
-surrounding (), so this makes it a pain for userspace tools.
+When balloon batching is not supported by the hypervisor, the guest
+frame number (GFN) must fit in 32-bit. However, due to a bug, this check
+was mistakenly ignored. In practice, when total RAM is greater than
+16TB, the balloon does not work currently, making this bug unlikely to
+happen.
 
-So fix it up by adding another () pair, and make them line up purty by
-using tabs.
-
-Fixes: 65aaf87b3aa2 ("add EPOLLNVAL, annotate EPOLL... and event_poll->event")
-Reported-by: Christopher Ferris <cferris@google.com>
-Reported-by: Elliott Hughes <enh@google.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: ef0f8f112984 ("VMware balloon: partially inline vmballoon_reserve_page.")
+Cc: stable@vger.kernel.org
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/eventpoll.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/misc/vmw_balloon.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/include/uapi/linux/eventpoll.h
-+++ b/include/uapi/linux/eventpoll.h
-@@ -42,7 +42,7 @@
- #define EPOLLRDHUP	(__force __poll_t)0x00002000
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -450,7 +450,7 @@ static int vmballoon_send_lock_page(stru
  
- /* Set exclusive wakeup mode for the target file descriptor */
--#define EPOLLEXCLUSIVE (__force __poll_t)(1U << 28)
-+#define EPOLLEXCLUSIVE	((__force __poll_t)(1U << 28))
+ 	pfn32 = (u32)pfn;
+ 	if (pfn32 != pfn)
+-		return -1;
++		return -EINVAL;
  
- /*
-  * Request the handling of system wakeup events so as to prevent system suspends
-@@ -54,13 +54,13 @@
-  *
-  * Requires CAP_BLOCK_SUSPEND
-  */
--#define EPOLLWAKEUP (__force __poll_t)(1U << 29)
-+#define EPOLLWAKEUP	((__force __poll_t)(1U << 29))
+ 	STATS_INC(b->stats.lock[false]);
  
- /* Set the One Shot behaviour for the target file descriptor */
--#define EPOLLONESHOT (__force __poll_t)(1U << 30)
-+#define EPOLLONESHOT	((__force __poll_t)(1U << 30))
+@@ -460,7 +460,7 @@ static int vmballoon_send_lock_page(stru
  
- /* Set the Edge Triggered behaviour for the target file descriptor */
--#define EPOLLET (__force __poll_t)(1U << 31)
-+#define EPOLLET		((__force __poll_t)(1U << 31))
+ 	pr_debug("%s - ppn %lx, hv returns %ld\n", __func__, pfn, status);
+ 	STATS_INC(b->stats.lock_fail[false]);
+-	return 1;
++	return -EIO;
+ }
  
- /* 
-  * On x86-64 make the 64bit structure have the same alignment as the
+ static int vmballoon_send_batched_lock(struct vmballoon *b,
+@@ -597,11 +597,12 @@ static int vmballoon_lock_page(struct vm
+ 
+ 	locked = vmballoon_send_lock_page(b, page_to_pfn(page), &hv_status,
+ 								target);
+-	if (locked > 0) {
++	if (locked) {
+ 		STATS_INC(b->stats.refused_alloc[false]);
+ 
+-		if (hv_status == VMW_BALLOON_ERROR_RESET ||
+-				hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED) {
++		if (locked == -EIO &&
++		    (hv_status == VMW_BALLOON_ERROR_RESET ||
++		     hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED)) {
+ 			vmballoon_free_page(page, false);
+ 			return -EIO;
+ 		}
+@@ -617,7 +618,7 @@ static int vmballoon_lock_page(struct vm
+ 		} else {
+ 			vmballoon_free_page(page, false);
+ 		}
+-		return -EIO;
++		return locked;
+ 	}
+ 
+ 	/* track allocated page */
 
 
