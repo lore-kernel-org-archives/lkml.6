@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2194AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B95C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8BF42075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8BF42075B
+	by mail.kernel.org (Postfix) with ESMTP id 16C1E2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C1E2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeIHBzP (ORCPT
+        id S1727669AbeIHBzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:55:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39604 "EHLO
+        Fri, 7 Sep 2018 21:55:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39876 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIHBzP (ORCPT
+        with ESMTP id S1726002AbeIHBzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:55:15 -0400
+        Fri, 7 Sep 2018 21:55:21 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C00C4FA4;
-        Fri,  7 Sep 2018 21:12:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21930FBE;
+        Fri,  7 Sep 2018 21:12:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.18 010/145] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
-Date:   Fri,  7 Sep 2018 23:07:56 +0200
-Message-Id: <20180907210904.461197262@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 013/145] block: fix infinite loop if the device loses discard capability
+Date:   Fri,  7 Sep 2018 23:07:59 +0200
+Message-Id: <20180907210904.663692213@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,54 +50,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit d2332f887ddfba50fee93b8e1736376517c2df0c upstream.
+commit b88aef36b87c9787a4db724923ec4f57dfd513f3 upstream.
 
-I have encountered an interrupt storm during the eMMC chip probing (and
-the chip finally didn't get detected).  It turned out that U-Boot left
-the SDHI DMA interrupts enabled while the Linux driver didn't use those.
-Masking those interrupts in renesas_sdhi_internal_dmac_request_dma() gets
-rid of both issues...
+If __blkdev_issue_discard is in progress and a device mapper device is
+reloaded with a table that doesn't support discard,
+q->limits.max_discard_sectors is set to zero. This results in infinite
+loop in __blkdev_issue_discard.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+This patch checks if max_discard_sectors is zero and aborts with
+-EOPNOTSUPP.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Tested-by: Zdenek Kabelac <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ block/blk-lib.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -49,10 +49,12 @@
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -68,6 +68,8 @@ int __blkdev_issue_discard(struct block_
+ 		 */
+ 		req_sects = min_t(sector_t, nr_sects,
+ 					q->limits.max_discard_sectors);
++		if (!req_sects)
++			goto fail;
+ 		if (req_sects > UINT_MAX >> 9)
+ 			req_sects = UINT_MAX >> 9;
  
- /* DM_CM_INFO1 and DM_CM_INFO1_MASK */
- #define INFO1_CLEAR		0
-+#define INFO1_MASK_CLEAR	GENMASK_ULL(31, 0)
- #define INFO1_DTRANEND1		BIT(17)
- #define INFO1_DTRANEND0		BIT(16)
+@@ -105,6 +107,14 @@ int __blkdev_issue_discard(struct block_
  
- /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
-+#define INFO2_MASK_CLEAR	GENMASK_ULL(31, 0)
- #define INFO2_DTRANERR1		BIT(17)
- #define INFO2_DTRANERR0		BIT(16)
- 
-@@ -236,6 +238,12 @@ renesas_sdhi_internal_dmac_request_dma(s
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 
-+	/* Disable DMAC interrupts, we don't use them */
-+	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO1_MASK,
-+					    INFO1_MASK_CLEAR);
-+	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO2_MASK,
-+					    INFO2_MASK_CLEAR);
+ 	*biop = bio;
+ 	return 0;
 +
- 	/* Each value is set to non-zero to assume "enabling" each DMA */
- 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
++fail:
++	if (bio) {
++		submit_bio_wait(bio);
++		bio_put(bio);
++	}
++	*biop = NULL;
++	return -EOPNOTSUPP;
+ }
+ EXPORT_SYMBOL(__blkdev_issue_discard);
  
 
 
