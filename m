@@ -2,308 +2,790 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DE2C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECEBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72652075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:48:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRjIz5Pe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72652075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id DA0742075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:49:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0742075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbeIGS3I (ORCPT
+        id S1729795AbeIGSaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:29:08 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33956 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728459AbeIGS3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:29:07 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f6-v6so6648025plo.1;
-        Fri, 07 Sep 2018 06:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cv0EO+F0cBfMQW0bEId0HDTgg2gZGrE+N5rClCFWomc=;
-        b=lRjIz5PeLCGOjq28JlFvsXQ659cCZe5bzzbxA3k++HsuLg/8kMg/fQHV3wahaC5DvW
-         O32/5uD+BthHOT4CRLQRuczBu6YcH+IA3//V2zFyUHCMK0qgOD48l7E8zANWn8bj1mf9
-         UUxUUiN1O6+8ruChwg6cQrTEdaA9IDEDufXTlO95YBvhuTzYQiDMDOSKnP5xqIFYBtAS
-         j364shfzg2OG8P0gdd4l0M+AAi6I2h5aEidRxEuNPxWDFWZKXTtZ3kTEPWcbZoPMsPTj
-         zesNQeQr/bHA+rtlUVlzEIfruOc2Ht/cgXLXlSWEFU3+fHSBs0toJKDi7HQrvTrL5+11
-         wz/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cv0EO+F0cBfMQW0bEId0HDTgg2gZGrE+N5rClCFWomc=;
-        b=G9DHp75sqP+aH1L0EgMM9tEJz/XwwTIb/lF3+arFJN5284nk7IsEomeXualidzdTbF
-         Oa80a+EKDSUwhT5glVS5/7fMeNW/J2tkFqpr8tVDqQzkrYJ9l3i2g7xsqGkHuNXrhV+4
-         96xbaYuxU+0ZB2NzGlgZ3GaBmYiChYcTae9Ra3kBP3SEEgihTSU7JJwJbu2DHeOa5B8+
-         59EQm9Vfu6XCPjUAvtnKTF7S+F/MUusLgdxsRdvA0Z425rhOL4phfhsxtTeYoOZWqPW/
-         H71rERx/OxsBqP4LPoCeDNdzRIxNM6MByhQLUSmO9qeCflQ4xhWT2nii36tERVAP+ZF0
-         XkfQ==
-X-Gm-Message-State: APzg51DS3jDtWH4szj9dDOsou78PWINWy8knvuFBRNYAQMgAzfUg2OzX
-        se68L2wMuqRGZD7xW92rEzh1vrU+
-X-Google-Smtp-Source: ANB0VdZ8iake88DjYaoCVwO2f2xnRK9SMbQD9HqQRAUCk2a+sgcxyl38UGjH3HbQM2W9QOtfBSdpxg==
-X-Received: by 2002:a17:902:d211:: with SMTP id t17-v6mr8132779ply.258.1536328084526;
-        Fri, 07 Sep 2018 06:48:04 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id v8-v6sm10509553pff.120.2018.09.07.06.48.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 06:48:03 -0700 (PDT)
-Subject: Re: [PATCH V2 8/8] watchdog: stpmic1: add stpmic1 watchdog driver
-To:     Pascal PAILLET-LME <p.paillet@st.com>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>
-References: <1536325173-16617-1-git-send-email-p.paillet@st.com>
- <1536325173-16617-9-git-send-email-p.paillet@st.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c1594be0-5210-bfe0-59b8-d8b163195da5@roeck-us.net>
-Date:   Fri, 7 Sep 2018 06:48:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 14:30:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725942AbeIGSaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:30:23 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B2B628077104;
+        Fri,  7 Sep 2018 13:49:17 +0000 (UTC)
+Received: from redhat.com (ovpn-124-199.rdu2.redhat.com [10.10.124.199])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 420872027EA0;
+        Fri,  7 Sep 2018 13:49:15 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 09:49:14 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Tiwei Bie <tiwei.bie@intel.com>
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH net-next v2 3/5] virtio_ring: add packed ring support
+Message-ID: <20180907083500-mutt-send-email-mst@kernel.org>
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180711022711.7090-4-tiwei.bie@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1536325173-16617-9-git-send-email-p.paillet@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711022711.7090-4-tiwei.bie@intel.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 13:49:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 13:49:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 05:59 AM, Pascal PAILLET-LME wrote:
-> From: pascal paillet <p.paillet@st.com>
+On Wed, Jul 11, 2018 at 10:27:09AM +0800, Tiwei Bie wrote:
+> This commit introduces the support (without EVENT_IDX) for
+> packed ring.
 > 
-> The stpmic1 PMIC embeds a watchdog which is disabled by default. As soon
-> as the watchdog is started, it must be refreshed periodically otherwise
-> the PMIC goes off.
-> 
-> Signed-off-by: pascal paillet <p.paillet@st.com>
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 > ---
-> changes in v2:
-> * the hardware component has been renamed from stpmu1 to stpmic1 !
-> * change headers
-> * handle remarks from Guenter
-
-Hmm ... as if I would remember what those were.
-
-> * fix set timeout
+>  drivers/virtio/virtio_ring.c | 495 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 487 insertions(+), 8 deletions(-)
 > 
->   drivers/watchdog/Kconfig       |  12 ++++
->   drivers/watchdog/Makefile      |   1 +
->   drivers/watchdog/stpmic1_wdt.c | 130 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 143 insertions(+)
->   create mode 100644 drivers/watchdog/stpmic1_wdt.c
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 9af07fd..11c5937 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -796,6 +796,18 @@ config STM32_WATCHDOG
->   	  To compile this driver as a module, choose M here: the
->   	  module will be called stm32_iwdg.
->   
-> +config STPMIC1_WATCHDOG
-> +	tristate "STPMIC1 PMIC watchdog support"
-> +	depends on MFD_STPMIC1
-> +	select WATCHDOG_CORE
-> +	help
-> +	  Say Y here to include watchdog support embedded into STPMIC1 PMIC.
-> +	  If the watchdog timer expires, stpmic1 shut-down all its power
-> +	  supplies.
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index c4f8abc7445a..f317b485ba54 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -55,12 +55,21 @@
+>  #define END_USE(vq)
+>  #endif
+>  
+> +#define _VRING_DESC_F_AVAIL(b)	((__u16)(b) << 7)
+> +#define _VRING_DESC_F_USED(b)	((__u16)(b) << 15)
+
+Underscore followed by an upper case letter isn't a good idea
+for a symbol. And it's not nice that this does not
+use the VRING_DESC_F_USED from the header.
+How about ((b) ? VRING_DESC_F_USED : 0) instead?
+Is produced code worse then?
+
 > +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called spmic1_wdt.
-> +
->   config UNIPHIER_WATCHDOG
->   	tristate "UniPhier watchdog support"
->   	depends on ARCH_UNIPHIER || COMPILE_TEST
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index 1d3c6b0..a898d8f 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -216,3 +216,4 @@ obj-$(CONFIG_ZIIRAVE_WATCHDOG) += ziirave_wdt.o
->   obj-$(CONFIG_SOFT_WATCHDOG) += softdog.o
->   obj-$(CONFIG_MENF21BMC_WATCHDOG) += menf21bmc_wdt.o
->   obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
-> +obj-$(CONFIG_STPMIC1_WATCHDOG) += stpmic1_wdt.o
-> diff --git a/drivers/watchdog/stpmic1_wdt.c b/drivers/watchdog/stpmic1_wdt.c
-> new file mode 100644
-> index 0000000..391e544
-> --- /dev/null
-> +++ b/drivers/watchdog/stpmic1_wdt.c
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) STMicroelectronics 2018
-> +// Author: Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
-> + > +#include <linux/kernel.h>
-> +#include <linux/mfd/stpmic1.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reboot.h>
-> +#include <linux/slab.h>
-> +#include <linux/watchdog.h>
-> +
-> +/* WATCHDOG CONTROL REGISTER bit */
-> +#define WDT_START		BIT(0)
-> +#define WDT_PING		BIT(1)
-> +#define WDT_START_MASK		BIT(0)
-> +#define WDT_PING_MASK		BIT(1)
-> +
-> +#define PMIC_WDT_MIN_TIMEOUT 1
-> +#define PMIC_WDT_MAX_TIMEOUT 256
-> +
-> +struct stpmic1_wdt {
-> +	struct stpmic1_dev *pmic;
-> +	struct watchdog_device wdtdev;
-> +};
-> +
-> +static int pmic_wdt_start(struct watchdog_device *wdd)
+>  struct vring_desc_state {
+>  	void *data;			/* Data for callback. */
+>  	struct vring_desc *indir_desc;	/* Indirect descriptor, if any. */
+>  };
+>  
+>  struct vring_desc_state_packed {
+> +	void *data;			/* Data for callback. */
+> +	struct vring_packed_desc *indir_desc; /* Indirect descriptor, if any. */
+
+Include vring_desc_state for these?
+
+> +	int num;			/* Descriptor list length. */
+> +	dma_addr_t addr;		/* Buffer DMA addr. */
+> +	u32 len;			/* Buffer length. */
+> +	u16 flags;			/* Descriptor flags. */
+
+This seems only to be used for indirect. Check indirect field above
+instead and drop this.
+
+>  	int next;			/* The next desc state. */
+
+Packing things into 16 bit integers will help reduce
+cache pressure here.
+
+Also, this is only used for unmap, so when dma API is not used,
+maintaining addr and len list management is unnecessary. How about we
+maintain addr/len in a separate array, avoiding accesses on unmap in that case?
+
+Also, lots of architectures have a nop unmap in the DMA API.
+See a proposed patch at the end for optimizing that case.
+
+>  };
+>  
+> @@ -660,7 +669,6 @@ static bool virtqueue_poll_split(struct virtqueue *_vq, unsigned last_used_idx)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> -	virtio_mb(vq->weak_barriers);
+>  	return (u16)last_used_idx != virtio16_to_cpu(_vq->vdev, vq->vring.used->idx);
+>  }
+
+why is this changing the split queue implementation?
+
+
+>  
+> @@ -757,6 +765,72 @@ static inline unsigned vring_size_packed(unsigned int num, unsigned long align)
+>  		& ~(align - 1)) + sizeof(struct vring_packed_desc_event) * 2;
+>  }
+>  
+> +static void vring_unmap_state_packed(const struct vring_virtqueue *vq,
+> +				     struct vring_desc_state_packed *state)
 > +{
-> +	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
+> +	u16 flags;
 > +
-> +	return regmap_update_bits(wdt->pmic->regmap,
-> +				  WCHDG_CR, WDT_START_MASK, WDT_START);
+> +	if (!vring_use_dma_api(vq->vq.vdev))
+> +		return;
+> +
+> +	flags = state->flags;
+> +
+> +	if (flags & VRING_DESC_F_INDIRECT) {
+> +		dma_unmap_single(vring_dma_dev(vq),
+> +				 state->addr, state->len,
+> +				 (flags & VRING_DESC_F_WRITE) ?
+> +				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	} else {
+> +		dma_unmap_page(vring_dma_dev(vq),
+> +			       state->addr, state->len,
+> +			       (flags & VRING_DESC_F_WRITE) ?
+> +			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	}
 > +}
 > +
-> +static int pmic_wdt_stop(struct watchdog_device *wdd)
+> +static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+> +				   struct vring_packed_desc *desc)
 > +{
-> +	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
+> +	u16 flags;
 > +
-> +	return regmap_update_bits(wdt->pmic->regmap,
-> +				  WCHDG_CR, WDT_START_MASK, ~WDT_START);
+> +	if (!vring_use_dma_api(vq->vq.vdev))
+> +		return;
+> +
+> +	flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+
+I see no reason to use virtioXX wrappers for the packed ring.
+That's there to support legacy devices. Just use leXX.
+
+> +
+> +	if (flags & VRING_DESC_F_INDIRECT) {
+> +		dma_unmap_single(vring_dma_dev(vq),
+> +				 virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> +				 virtio32_to_cpu(vq->vq.vdev, desc->len),
+> +				 (flags & VRING_DESC_F_WRITE) ?
+> +				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	} else {
+> +		dma_unmap_page(vring_dma_dev(vq),
+> +			       virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> +			       virtio32_to_cpu(vq->vq.vdev, desc->len),
+> +			       (flags & VRING_DESC_F_WRITE) ?
+> +			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	}
 > +}
 > +
-> +static int pmic_wdt_ping(struct watchdog_device *wdd)
+> +static struct vring_packed_desc *alloc_indirect_packed(struct virtqueue *_vq,
+> +						       unsigned int total_sg,
+> +						       gfp_t gfp)
 > +{
-> +	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
+> +	struct vring_packed_desc *desc;
 > +
-> +	return regmap_update_bits(wdt->pmic->regmap,
-> +				  WCHDG_CR, WDT_PING_MASK, WDT_PING);
+> +	/*
+> +	 * We require lowmem mappings for the descriptors because
+> +	 * otherwise virt_to_phys will give us bogus addresses in the
+> +	 * virtqueue.
+
+Where is virt_to_phys used? I don't see it in this patch.
+
+> +	 */
+> +	gfp &= ~__GFP_HIGHMEM;
+> +
+> +	desc = kmalloc(total_sg * sizeof(struct vring_packed_desc), gfp);
+> +
+> +	return desc;
 > +}
 > +
-> +static int pmic_wdt_set_timeout(struct watchdog_device *wdd,
-> +				unsigned int timeout)
-> +{
-> +	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
+>  static inline int virtqueue_add_packed(struct virtqueue *_vq,
+>  				       struct scatterlist *sgs[],
+>  				       unsigned int total_sg,
+> @@ -766,47 +840,449 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+>  				       void *ctx,
+>  				       gfp_t gfp)
+>  {
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +	struct vring_packed_desc *desc;
+> +	struct scatterlist *sg;
+> +	unsigned int i, n, descs_used, uninitialized_var(prev), err_idx;
+> +	__virtio16 uninitialized_var(head_flags), flags;
+> +	u16 head, avail_wrap_counter, id, curr;
+> +	bool indirect;
 > +
-> +	return regmap_write(wdt->pmic->regmap, WCHDG_TIMER_CR, timeout - 1);
+> +	START_USE(vq);
+> +
+> +	BUG_ON(data == NULL);
+> +	BUG_ON(ctx && vq->indirect);
+> +
+> +	if (unlikely(vq->broken)) {
+> +		END_USE(vq);
+> +		return -EIO;
+> +	}
+> +
+> +#ifdef DEBUG
+> +	{
+> +		ktime_t now = ktime_get();
+> +
+> +		/* No kick or get, with .1 second between?  Warn. */
+> +		if (vq->last_add_time_valid)
+> +			WARN_ON(ktime_to_ms(ktime_sub(now, vq->last_add_time))
+> +					    > 100);
+> +		vq->last_add_time = now;
+> +		vq->last_add_time_valid = true;
+> +	}
+> +#endif
 
-What happens if the configured timeout is 1 ? Does that translate to a 1-second
-timeout ?
-
-This function also has to set wdd->timeout.
-
-> +}
-> +
-> +static const struct watchdog_info pmic_watchdog_info = {
-> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING,
-
-No WDIOF_MAGICCLOSE ?
-
-> +	.identity = "STPMIC1 PMIC Watchdog",
-> +};
-> +
-> +static const struct watchdog_ops pmic_watchdog_ops = {
-> +	.owner = THIS_MODULE,
-> +	.start = pmic_wdt_start,
-> +	.stop = pmic_wdt_stop,
-> +	.ping = pmic_wdt_ping,
-> +	.set_timeout = pmic_wdt_set_timeout,
-> +};
-> +
-> +static int pmic_wdt_probe(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +	struct stpmic1_dev *pmic;
-> +	struct stpmic1_wdt *wdt;
-> +
-> +	if (!pdev->dev.parent)
-> +		return -EINVAL;
-> +
-> +	pmic = dev_get_drvdata(pdev->dev.parent);
-> +	if (!pmic)
-> +		return -EINVAL;
-> +
-> +	wdt = devm_kzalloc(&pdev->dev, sizeof(struct stpmic1_wdt), GFP_KERNEL);
-> +	if (!wdt)
-> +		return -ENOMEM;
-> +
-> +	wdt->pmic = pmic;
-> +
-> +	wdt->wdtdev.info = &pmic_watchdog_info;
-> +	wdt->wdtdev.ops = &pmic_watchdog_ops;
-> +	wdt->wdtdev.min_timeout = PMIC_WDT_MIN_TIMEOUT;
-> +	wdt->wdtdev.max_timeout = PMIC_WDT_MAX_TIMEOUT;
-> +	wdt->wdtdev.timeout = PMIC_WDT_MIN_TIMEOUT;
-
-Are you sure about that ? A timeout of 1 second may be a cause for unexpected
-reboots if user space is busy. Personally I find it better to set a larger
-default and let userspace configure a tighter value if so desired.
-
-Also,
-	watchdog_init_timeout(&wdt->wdtdev, 0, &pdev->dev);
-might be desirable if you want to be able to specify the timeout in the
-devicetree file.
+Add incline helpers for this debug stuff rather than
+duplicate it from split ring?
 
 
 > +
-> +	wdt->wdtdev.status = WATCHDOG_NOWAYOUT_INIT_STATUS;
+> +	BUG_ON(total_sg == 0);
 > +
-> +	watchdog_set_drvdata(&wdt->wdtdev, wdt);
-> +	dev_set_drvdata(&pdev->dev, wdt);
+> +	head = vq->next_avail_idx;
+> +	avail_wrap_counter = vq->avail_wrap_counter;
+> +
+> +	if (virtqueue_use_indirect(_vq, total_sg))
+> +		desc = alloc_indirect_packed(_vq, total_sg, gfp);
+> +	else {
+> +		desc = NULL;
+> +		WARN_ON_ONCE(total_sg > vq->vring_packed.num && !vq->indirect);
+> +	}
 
-Unless I am missing something this should not be needed.
+
+Apparently this attempts to treat indirect descriptors same as
+direct ones. This is how it is in the split ring, but not in
+the packed one. I think you want two separate functions, for
+direct and indirect.
 
 > +
-> +	ret = devm_watchdog_register_device(&pdev->dev, &wdt->wdtdev);
-> +	if (ret)
-> +		return ret;
+> +	if (desc) {
+> +		/* Use a single buffer which doesn't continue */
+> +		indirect = true;
+> +		/* Set up rest to use this indirect table. */
+> +		i = 0;
+> +		descs_used = 1;
+> +	} else {
+> +		indirect = false;
+> +		desc = vq->vring_packed.desc;
+> +		i = head;
+> +		descs_used = total_sg;
+> +	}
 > +
-> +	dev_dbg(wdt->pmic->dev, "PMIC Watchdog driver probed\n");
+> +	if (vq->vq.num_free < descs_used) {
+> +		pr_debug("Can't add buf len %i - avail = %i\n",
+> +			 descs_used, vq->vq.num_free);
+> +		/* FIXME: for historical reasons, we force a notify here if
+> +		 * there are outgoing parts to the buffer.  Presumably the
+> +		 * host should service the ring ASAP. */
+> +		if (out_sgs)
+> +			vq->notify(&vq->vq);
+> +		if (indirect)
+> +			kfree(desc);
+> +		END_USE(vq);
+> +		return -ENOSPC;
+> +	}
+> +
+> +	id = vq->free_head;
+> +	BUG_ON(id == vq->vring_packed.num);
+> +
+> +	curr = id;
+> +	for (n = 0; n < out_sgs + in_sgs; n++) {
+> +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> +			dma_addr_t addr = vring_map_one_sg(vq, sg, n < out_sgs ?
+> +					       DMA_TO_DEVICE : DMA_FROM_DEVICE);
+> +			if (vring_mapping_error(vq, addr))
+> +				goto unmap_release;
+> +
+> +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
+> +				  (n < out_sgs ? 0 : VRING_DESC_F_WRITE) |
+> +				  _VRING_DESC_F_AVAIL(vq->avail_wrap_counter) |
+> +				  _VRING_DESC_F_USED(!vq->avail_wrap_counter));
+
+Spec says:
+	The VIRTQ_DESC_F_WRITE flags bit is the only valid flag for descriptors in the
+	indirect table.
+
+All this logic isn't needed for indirect.
+
+Also, why re-calculate avail/used flags every time? They only change
+when you wrap around.
+
+
+> +			if (!indirect && i == head)
+> +				head_flags = flags;
+> +			else
+> +				desc[i].flags = flags;
+> +
+> +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
+> +			i++;
+> +			if (!indirect) {
+> +				if (vring_use_dma_api(_vq->vdev)) {
+> +					vq->desc_state_packed[curr].addr = addr;
+> +					vq->desc_state_packed[curr].len =
+> +						sg->length;
+> +					vq->desc_state_packed[curr].flags =
+> +						virtio16_to_cpu(_vq->vdev,
+> +								flags);
+> +				}
+> +				curr = vq->desc_state_packed[curr].next;
+> +
+> +				if (i >= vq->vring_packed.num) {
+> +					i = 0;
+> +					vq->avail_wrap_counter ^= 1;
+> +				}
+> +			}
+> +		}
+> +	}
+> +
+> +	prev = (i > 0 ? i : vq->vring_packed.num) - 1;
+> +	desc[prev].id = cpu_to_virtio16(_vq->vdev, id);
+
+Is it easier to write this out in all descriptors, to avoid the need to
+calculate prev?
+
+> +
+> +	/* Last one doesn't continue. */
+> +	if (total_sg == 1)
+> +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> +	else
+> +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev,
+> +						~VRING_DESC_F_NEXT);
+
+Wouldn't it be easier to avoid setting VRING_DESC_F_NEXT
+in the first place?
+	 if (n != in_sgs - 1 && n != out_sgs - 1)
+
+must be better than writing descriptor an extra time.
+
+> +
+> +	if (indirect) {
+> +		/* Now that the indirect table is filled in, map it. */
+> +		dma_addr_t addr = vring_map_single(
+> +			vq, desc, total_sg * sizeof(struct vring_packed_desc),
+> +			DMA_TO_DEVICE);
+> +		if (vring_mapping_error(vq, addr))
+> +			goto unmap_release;
+> +
+> +		head_flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_INDIRECT |
+> +				      _VRING_DESC_F_AVAIL(avail_wrap_counter) |
+> +				      _VRING_DESC_F_USED(!avail_wrap_counter));
+> +		vq->vring_packed.desc[head].addr = cpu_to_virtio64(_vq->vdev,
+> +								   addr);
+> +		vq->vring_packed.desc[head].len = cpu_to_virtio32(_vq->vdev,
+> +				total_sg * sizeof(struct vring_packed_desc));
+> +		vq->vring_packed.desc[head].id = cpu_to_virtio16(_vq->vdev, id);
+> +
+> +		if (vring_use_dma_api(_vq->vdev)) {
+> +			vq->desc_state_packed[id].addr = addr;
+> +			vq->desc_state_packed[id].len = total_sg *
+> +					sizeof(struct vring_packed_desc);
+> +			vq->desc_state_packed[id].flags =
+> +					virtio16_to_cpu(_vq->vdev, head_flags);
+> +		}
+> +	}
+> +
+> +	/* We're using some buffers from the free list. */
+> +	vq->vq.num_free -= descs_used;
+> +
+> +	/* Update free pointer */
+> +	if (indirect) {
+> +		n = head + 1;
+> +		if (n >= vq->vring_packed.num) {
+> +			n = 0;
+> +			vq->avail_wrap_counter ^= 1;
+> +		}
+> +		vq->next_avail_idx = n;
+> +		vq->free_head = vq->desc_state_packed[id].next;
+> +	} else {
+> +		vq->next_avail_idx = i;
+> +		vq->free_head = curr;
+> +	}
+> +
+> +	/* Store token and indirect buffer state. */
+> +	vq->desc_state_packed[id].num = descs_used;
+> +	vq->desc_state_packed[id].data = data;
+> +	if (indirect)
+> +		vq->desc_state_packed[id].indir_desc = desc;
+> +	else
+> +		vq->desc_state_packed[id].indir_desc = ctx;
+> +
+> +	/* A driver MUST NOT make the first descriptor in the list
+> +	 * available before all subsequent descriptors comprising
+> +	 * the list are made available. */
+> +	virtio_wmb(vq->weak_barriers);
+> +	vq->vring_packed.desc[head].flags = head_flags;
+> +	vq->num_added += descs_used;
+> +
+> +	pr_debug("Added buffer head %i to %p\n", head, vq);
+> +	END_USE(vq);
+> +
 > +	return 0;
+> +
+> +unmap_release:
+> +	err_idx = i;
+> +	i = head;
+> +
+> +	for (n = 0; n < total_sg; n++) {
+> +		if (i == err_idx)
+> +			break;
+> +		vring_unmap_desc_packed(vq, &desc[i]);
+> +		i++;
+> +		if (!indirect && i >= vq->vring_packed.num)
+> +			i = 0;
+> +	}
+> +
+> +	vq->avail_wrap_counter = avail_wrap_counter;
+> +
+> +	if (indirect)
+> +		kfree(desc);
+> +
+> +	END_USE(vq);
+>  	return -EIO;
+>  }
+>  
+>  static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+>  {
+> -	return false;
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +	u16 flags;
+> +	bool needs_kick;
+> +	u32 snapshot;
+> +
+> +	START_USE(vq);
+> +	/* We need to expose the new flags value before checking notification
+> +	 * suppressions. */
+> +	virtio_mb(vq->weak_barriers);
+> +
+> +	snapshot = READ_ONCE(*(u32 *)vq->vring_packed.device);
+> +	flags = virtio16_to_cpu(_vq->vdev, (__virtio16)(snapshot >> 16)) & 0x3;
+
+What are all these hard-coded things? Also either we do READ_ONCE
+everywhere or nowhere. Why is this place special? Any why read 32 bit
+if you only want the 16?
+
+And doesn't sparse complain about cast to __virtio16?
+
+> +
+> +#ifdef DEBUG
+> +	if (vq->last_add_time_valid) {
+> +		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
+> +					      vq->last_add_time)) > 100);
+> +	}
+> +	vq->last_add_time_valid = false;
+> +#endif
+> +
+> +	needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> +	END_USE(vq);
+> +	return needs_kick;
 > +}
 > +
-> +static const struct of_device_id of_pmic_wdt_match[] = {
-> +	{ .compatible = "st,stpmic1-wdt" },
-> +	{ },
-> +};
+> +static void detach_buf_packed(struct vring_virtqueue *vq,
+> +			      unsigned int id, void **ctx)
+> +{
+> +	struct vring_desc_state_packed *state = NULL;
+> +	struct vring_packed_desc *desc;
+> +	unsigned int curr, i;
 > +
-> +MODULE_DEVICE_TABLE(of, of_pmic_wdt_match);
+> +	/* Clear data ptr. */
+> +	vq->desc_state_packed[id].data = NULL;
 > +
-> +static struct platform_driver stpmic1_wdt_driver = {
-> +	.probe = pmic_wdt_probe,
-> +	.driver = {
-> +		.name = "stpmic1-wdt",
-> +		.of_match_table = of_pmic_wdt_match,
-> +	},
-> +};
-> +module_platform_driver(stpmic1_wdt_driver);
+> +	curr = id;
+> +	for (i = 0; i < vq->desc_state_packed[id].num; i++) {
+> +		state = &vq->desc_state_packed[curr];
+> +		vring_unmap_state_packed(vq, state);
+> +		curr = state->next;
+> +	}
 > +
-> +MODULE_DESCRIPTION("Watchdog driver for STPMIC1 device");
-> +MODULE_AUTHOR("Pascal Paillet");
-> +MODULE_LICENSE("GPL v2");
-> 
+> +	BUG_ON(state == NULL);
+> +	vq->vq.num_free += vq->desc_state_packed[id].num;
+> +	state->next = vq->free_head;
+> +	vq->free_head = id;
+> +
+> +	if (vq->indirect) {
+> +		u32 len;
+> +
+> +		/* Free the indirect table, if any, now that it's unmapped. */
+> +		desc = vq->desc_state_packed[id].indir_desc;
+> +		if (!desc)
+> +			return;
+> +
+> +		if (vring_use_dma_api(vq->vq.vdev)) {
+> +			len = vq->desc_state_packed[id].len;
+> +			for (i = 0; i < len / sizeof(struct vring_packed_desc);
+> +					i++)
+> +				vring_unmap_desc_packed(vq, &desc[i]);
+> +		}
+> +		kfree(desc);
+> +		vq->desc_state_packed[id].indir_desc = NULL;
+> +	} else if (ctx) {
+> +		*ctx = vq->desc_state_packed[id].indir_desc;
+> +	}
+> +}
+> +
+> +static inline bool is_used_desc_packed(const struct vring_virtqueue *vq,
+> +				       u16 idx, bool used_wrap_counter)
+> +{
+> +	u16 flags;
+> +	bool avail, used;
+> +
+> +	flags = virtio16_to_cpu(vq->vq.vdev,
+> +				vq->vring_packed.desc[idx].flags);
+> +	avail = !!(flags & VRING_DESC_F_AVAIL);
+> +	used = !!(flags & VRING_DESC_F_USED);
+> +
+> +	return avail == used && used == used_wrap_counter;
 
+I think that you don't need to look at avail flag to detect a used
+descriptor. The reason device writes it is to avoid confusing
+*device* next time descriptor wraps.
+
+>  }
+>  
+>  static inline bool more_used_packed(const struct vring_virtqueue *vq)
+>  {
+> -	return false;
+> +	return is_used_desc_packed(vq, vq->last_used_idx,
+> +			vq->used_wrap_counter);
+>  }
+>  
+>  static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
+>  					  unsigned int *len,
+>  					  void **ctx)
+>  {
+> -	return NULL;
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +	u16 last_used, id;
+> +	void *ret;
+> +
+> +	START_USE(vq);
+> +
+> +	if (unlikely(vq->broken)) {
+> +		END_USE(vq);
+> +		return NULL;
+> +	}
+> +
+> +	if (!more_used_packed(vq)) {
+> +		pr_debug("No more buffers in queue\n");
+> +		END_USE(vq);
+> +		return NULL;
+> +	}
+> +
+> +	/* Only get used elements after they have been exposed by host. */
+> +	virtio_rmb(vq->weak_barriers);
+> +
+> +	last_used = vq->last_used_idx;
+> +	id = virtio16_to_cpu(_vq->vdev, vq->vring_packed.desc[last_used].id);
+> +	*len = virtio32_to_cpu(_vq->vdev, vq->vring_packed.desc[last_used].len);
+> +
+> +	if (unlikely(id >= vq->vring_packed.num)) {
+> +		BAD_RING(vq, "id %u out of range\n", id);
+> +		return NULL;
+> +	}
+> +	if (unlikely(!vq->desc_state_packed[id].data)) {
+> +		BAD_RING(vq, "id %u is not a head!\n", id);
+> +		return NULL;
+> +	}
+> +
+> +	vq->last_used_idx += vq->desc_state_packed[id].num;
+> +	if (vq->last_used_idx >= vq->vring_packed.num) {
+> +		vq->last_used_idx -= vq->vring_packed.num;
+> +		vq->used_wrap_counter ^= 1;
+> +	}
+> +
+> +	/* detach_buf_packed clears data, so grab it now. */
+> +	ret = vq->desc_state_packed[id].data;
+> +	detach_buf_packed(vq, id, ctx);
+> +
+> +#ifdef DEBUG
+> +	vq->last_add_time_valid = false;
+> +#endif
+> +
+> +	END_USE(vq);
+> +	return ret;
+>  }
+>  
+>  static void virtqueue_disable_cb_packed(struct virtqueue *_vq)
+>  {
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +
+> +	if (vq->event_flags_shadow != VRING_EVENT_F_DISABLE) {
+> +		vq->event_flags_shadow = VRING_EVENT_F_DISABLE;
+> +		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> +							vq->event_flags_shadow);
+> +	}
+>  }
+>  
+>  static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
+>  {
+> -	return 0;
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +
+> +	START_USE(vq);
+> +
+> +	/* We optimistically turn back on interrupts, then check if there was
+> +	 * more to do. */
+> +
+> +	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> +		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> +		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> +							vq->event_flags_shadow);
+> +	}
+> +
+> +	END_USE(vq);
+> +	return vq->last_used_idx | ((u16)vq->used_wrap_counter << 15);
+>  }
+>  
+> -static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
+> +static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned off_wrap)
+>  {
+> -	return false;
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +	bool wrap_counter;
+> +	u16 used_idx;
+> +
+> +	wrap_counter = off_wrap >> 15;
+> +	used_idx = off_wrap & ~(1 << 15);
+> +
+> +	return is_used_desc_packed(vq, used_idx, wrap_counter);
+
+These >> 15 << 15 all over the place duplicate info.
+Pls put 15 in the header.
+
+Also can you maintain the counters properly shifted?
+Then just use them.
+
+
+>  }
+>  
+>  static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
+>  {
+> -	return false;
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +
+> +	START_USE(vq);
+> +
+> +	/* We optimistically turn back on interrupts, then check if there was
+> +	 * more to do. */
+> +
+> +	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> +		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> +		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> +							vq->event_flags_shadow);
+> +		/* We need to enable interrupts first before re-checking
+> +		 * for more used buffers. */
+> +		virtio_mb(vq->weak_barriers);
+> +	}
+> +
+> +	if (more_used_packed(vq)) {
+> +		END_USE(vq);
+> +		return false;
+> +	}
+> +
+> +	END_USE(vq);
+> +	return true;
+>  }
+>  
+>  static void *virtqueue_detach_unused_buf_packed(struct virtqueue *_vq)
+>  {
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +	unsigned int i;
+> +	void *buf;
+> +
+> +	START_USE(vq);
+> +
+> +	for (i = 0; i < vq->vring_packed.num; i++) {
+> +		if (!vq->desc_state_packed[i].data)
+> +			continue;
+> +		/* detach_buf clears data, so grab it now. */
+> +		buf = vq->desc_state_packed[i].data;
+> +		detach_buf_packed(vq, i, NULL);
+> +		END_USE(vq);
+> +		return buf;
+> +	}
+> +	/* That should have freed everything. */
+> +	BUG_ON(vq->vq.num_free != vq->vring_packed.num);
+> +
+> +	END_USE(vq);
+>  	return NULL;
+>  }
+>  
+> @@ -1083,6 +1559,9 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned last_used_idx)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> +	/* We need to enable interrupts first before re-checking
+> +	 * for more used buffers. */
+> +	virtio_mb(vq->weak_barriers);
+>  	return vq->packed ? virtqueue_poll_packed(_vq, last_used_idx) :
+>  			    virtqueue_poll_split(_vq, last_used_idx);
+>  }
+
+Possible optimization for when dma API is in use:
+
+--->
+
+dma: detecting nop unmap
+
+drivers need to maintain the dma address for unmap purposes,
+but these cycles are wasted when unmap callback is not
+defined. Add an API for drivers to check that and avoid
+unmap completely. Debug builds still have unmap.
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+----
+
+diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
+index a785f2507159..38b2c27c8449 100644
+--- a/include/linux/dma-debug.h
++++ b/include/linux/dma-debug.h
+@@ -42,6 +42,11 @@ extern void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
+ extern void debug_dma_unmap_page(struct device *dev, dma_addr_t addr,
+ 				 size_t size, int direction, bool map_single);
+ 
++static inline bool has_debug_dma_unmap(struct device *dev)
++{
++	return true;
++}
++
+ extern void debug_dma_map_sg(struct device *dev, struct scatterlist *sg,
+ 			     int nents, int mapped_ents, int direction);
+ 
+@@ -121,6 +126,11 @@ static inline void debug_dma_unmap_page(struct device *dev, dma_addr_t addr,
+ {
+ }
+ 
++static inline bool has_debug_dma_unmap(struct device *dev)
++{
++	return false;
++}
++
+ static inline void debug_dma_map_sg(struct device *dev, struct scatterlist *sg,
+ 				    int nents, int mapped_ents, int direction)
+ {
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 1db6a6b46d0d..656f3e518166 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -241,6 +241,14 @@ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+ 	return addr;
+ }
+ 
++static inline bool has_dma_unmap(struct device *dev)
++{
++	const struct dma_map_ops *ops = get_dma_ops(dev);
++
++	return ops->unmap_page || ops->unmap_sg || ops->unmap_resource ||
++		has_dma_unmap(dev);
++}
++
+ static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
+ 					  size_t size,
+ 					  enum dma_data_direction dir,
