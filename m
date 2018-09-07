@@ -2,98 +2,187 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF10C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD51C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4122620870
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A9D20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:57:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EoDG6iK2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4122620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="iTFWQ99v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A9D20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbeIGWia (ORCPT
+        id S1727670AbeIGWjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:38:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35616 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeIGWi3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:38:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sP02+WZAEVNeUjreRYYGutrxK3DGZ/il9YWD1m4STNY=; b=EoDG6iK2R2ntKJF1QsOORvF37
-        8866VyYJI8mvjR7BTAo9gLXhDGuHYMz72CEHDoRlufNlEPYf/F/gGR7wseTn5fpn0AsyZW1N84+WN
-        NJkLkgaJryVUvELf7IhgXBY/nppotKDRBiUCnjV9Bdp8ii6Q+sYHdDNwN7GZb4L9lYlbg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fyKzU-0005mj-MP; Fri, 07 Sep 2018 17:56:20 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 341901122A6D; Fri,  7 Sep 2018 18:56:20 +0100 (BST)
-Date:   Fri, 7 Sep 2018 18:56:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Grant Grundler <grundler@chromium.org>
-Cc:     ryans.lee@maximintegrated.com, lgirdwood@gmail.com,
-        kuninori.morimoto.gx@renesas.com, alsa-devel@alsa-project.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: max98373: usleep_range() needs include/delay.h
-Message-ID: <20180907175620.GL17459@sirena.org.uk>
-References: <20180907002728.112770-1-grundler@chromium.org>
- <20180907121128.GH17459@sirena.org.uk>
- <CANEJEGv0A8LO1znHToYOkddzr_JmHpogvYewVrMpK+ZB6SJX5w@mail.gmail.com>
+        Fri, 7 Sep 2018 18:39:46 -0400
+Received: from mail-eopbgr680053.outbound.protection.outlook.com ([40.107.68.53]:59456
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726365AbeIGWjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 18:39:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f/XUdxtvuW/dp1CMYA+byIUqWyTqBp/QGbLTjfS8OBA=;
+ b=iTFWQ99vzujqR8M1LmMqxoyfZZwelfSw/Xk7JzoSelcnZEEBgQSaf7MUkJI871PWzUiUml1nYTd+jmX4+Ljk/l/bULxB5kG32H8Wekxi8UwQK3prqsjqU9ITEEjxDE19hIKqTFVWyfH24i6PMsg6sRsYKMxm2YzzYXkxdQcz9O8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
+ DM6PR12MB2684.namprd12.prod.outlook.com (2603:10b6:5:4a::33) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.16; Fri, 7 Sep 2018 17:57:38 +0000
+From:   Brijesh Singh <brijesh.singh@amd.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH v6 0/5] x86: Fix SEV guest regression
+Date:   Fri,  7 Sep 2018 12:57:25 -0500
+Message-Id: <1536343050-18532-1-git-send-email-brijesh.singh@amd.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kaF1vgn83Aa7CiXN"
-Content-Disposition: inline
-In-Reply-To: <CANEJEGv0A8LO1znHToYOkddzr_JmHpogvYewVrMpK+ZB6SJX5w@mail.gmail.com>
-X-Cookie: Do not fold, spindle or mutilate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [165.204.77.1]
+X-ClientProxiedBy: SN4PR0401CA0004.namprd04.prod.outlook.com
+ (2603:10b6:803:21::14) To DM6PR12MB2684.namprd12.prod.outlook.com
+ (2603:10b6:5:4a::33)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1dad419f-1cad-4d60-d6ce-08d614eb66b6
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB2684;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;3:2YFoSyXk6jDGBzl+Ub4XRkh9Q3sOptaqM7UkWt4P759EOuzWJsAz2gYadTcUCjj8DZtkz6SYdMTzTZpTEr5LDgsWI/ekneu1mwFxbggZ6nJ2Lv0k88pphrSm9+CpLnffC6ohFgAjdrV1WNf6M2sv6OPkmg73sxGa//+TzIsc9MDtS486OIazip9eF5g2nbZS6XWUaWF2pD3mG2QlVNkjHGyAoZ/jrcIlDZClQkBsp6Dp97Y8Lyhd987Z/ZOituea;25:DYkPAG71BGms/9ZUdAOL+2yOgNJo/oh5to0yvwIzYQudie/Q1jPdaJFUvRcA/gSJ5G8dtsWrzhlpV3nFrhDNq4iW3x1UZ9WM5e2Hix7hxgCWU/NpOnmGxdGQBPet08mS19f5zhLZ/pSoq02Xnd4Cq1pJJ3JYMjE9fE8/6EdV1SnG2Ip/LIbNVXlEjnzYjM8Ani0dnADGR5f2lz+blXj6dih9Pvads8OQKlmjTUTHR1Pvship3vkKnmlEDveK5ZGVdUA6y2BAByjZtF6tbdp7SLFPHC2RfbXo6Q9n8ifSWNu26rlkpmquLN4C1/kgCdGaVyv3QUB1AUqKaB/AZC1yNQ==;31:5BG6ej4XrS3/KEwpV6i7zRKy6xTFwFn6lZFkNJ4FtaYn9S3p1qo2f1ZCOXNpJiK/CfG0cUntiF0XDPTD0m6HB3tTk2xPIEju//nnK1pSdcbNze1DlMxGqfW1+Qfa9NULwbZoVmkIACyGQyI6n5m8pStgP43GY7nPrAH2OggbufOmtqlFk+hqBC8sMe+hMe60s8layM9lIYX9L4yPPXcH2UE6qLXFcu0SeU2oxu1sRPE=
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2684:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;20:QR1JmkJVLfA66c/tjM0ybZygkL4ZSnIy7Ge/YAYegojVdBjAlg54sVO3kaPJf9UbmZhjPKLv2WSr0uO54pyhyVOmoFBbUdsveGY3tbr7UsvhIUMNmrp7L2Nh37AUWS7YmhA0C9n/ddo2Y/npxl6SVJakngMy179Pf0QF+BNC/Nw/oGzLLQdeeSTrg1MdoGIlYp6oG2JMd+NwxmN69RSm8b6emkRufv+Sr0OgkIK/HtLztlI4eLyOdb5VikRWltlOMpeA2EV7eCQkwHoTuAOz9VjRtxq7KvBDL/KbbSi02D+ZZQVeW2i1nrTIE70wKAv6v10tb+64wGxO74Aiuh3xEGWcQPjAmGibw2t6uBVc78QKe2knJSRIfK0JoCJI8HCIFCkdzI+U9c9NtOiV309Mmc2s2H43zz7CZ2wMJkxjJGCJfpkjNr1NT7eHzG1GDrYb0sHqMENQ8ANiC7bI9AaehVT4Aw0C/4xjj04Lin7xmrAy/9wTaJRMUCH4SmS3j8ax;4:E6U7DsPMjQ2tTs1SHEXVNRlxuTlt9SbPlX7rh2LHusiizsrTS+KaKI004l1ODVjQnYVIZs+Nm66lyrKqYsT81wpBASWjg3WD/x6wSihM1tV/7otsmZZ24C/IP3nooCxC7lpq5BgkKZqa7uU50N47FxNTuarACvSmsQb2ip2SBtOXcI9TyT+yG781h5vNZXx7RekW5+G/XEevmxBAkIh+RzUtghQS+HEf3UmrnFM6JOTExOqCUPQjPKGFkv7co6HHa+jlC9qrk2+l3HM4Lxx6wZDKoEfMNTFos8Cb/FYlULXjrIME49s3N5TRDsMkU5NOmFFF0B991yKavgIYp5GcEWrnNq5MR6e3dMTaJABI9qkcJRMLhlfuAWVTesdROsYlEjWfViWMWKTyTmoxlN7hR/ip3IcGJvU3kaTdGsZRwIU=
+X-Microsoft-Antispam-PRVS: <DM6PR12MB26848D8B3AD041F5B6BC93A0E5000@DM6PR12MB2684.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(767451399110)(84791874153150)(228905959029699);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699050);SRVR:DM6PR12MB2684;BCL:0;PCL:0;RULEID:;SRVR:DM6PR12MB2684;
+X-Forefront-PRVS: 07880C4932
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(396003)(136003)(189003)(199004)(14444005)(966005)(8936002)(81156014)(81166006)(476003)(2616005)(956004)(86362001)(36756003)(486006)(2870700001)(44832011)(2906002)(47776003)(25786009)(50226002)(66066001)(4326008)(6116002)(97736004)(6666003)(7736002)(105586002)(316002)(54906003)(106356001)(3846002)(23676004)(7696005)(8676002)(305945005)(52116002)(16526019)(386003)(186003)(68736007)(6486002)(26005)(5660300001)(50466002)(6306002)(53936002)(478600001)(53416004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2684;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTZQUjEyTUIyNjg0OzIzOnZDcWQ3VTkwcWtHVEl1RXBqOWdnR0JTSnVk?=
+ =?utf-8?B?SjFvSmR3NGJGelkwbjgxQ2FVMjQwQ05FMTZmdU04VXZnWUJ4MW1vQ21aSTRM?=
+ =?utf-8?B?aVNjc0VFdTdDeTVNc1lTYXJucjdRcTNxY2hRcXJJa2o3QTBvR3VEd2pCZVdw?=
+ =?utf-8?B?M2FRdGxYRmY2SXE5QzZHQnFPQVZIWFlPZ0V6eEJXZCs1N3dRY01yT0NkV0c5?=
+ =?utf-8?B?YVVIbHo5M2lGems5WEwvODRzODBieGtJYnZqL2RZVDlJTEc4akp5TFVjNVN0?=
+ =?utf-8?B?MDNyZDR4S1RoVllvRTBnYjFqb0hFRUlxanVaMmMyeHRGTFk3dkpXeU1TUTJx?=
+ =?utf-8?B?b2c0M0IwcmJoeTR6dVdYYzN6OCt4cUlsaS8xa0Rmam9nMjJWMDhFOVJublBC?=
+ =?utf-8?B?Q2xRam1mc21PYzJqbDI4c3diL2Nmems3M2FpQWQwUGxpN1FoOGxZMHNsZDAy?=
+ =?utf-8?B?RjdmSVNEY21wNlpzVTBKTFowdEplR0NFVDZyRFJEbEdMRUd2dmFsRzZEMk8y?=
+ =?utf-8?B?NFpZbnNNbU1RQVNudXlsQTVGZFFnRjN5YmdVYXZXendKL0xaRGNOT2k0RVdT?=
+ =?utf-8?B?cFkyQ2h2a29IMEJWV1FFSW55ZkhRSzkzV1FJeFlIV2ZtRFdtMnVuNExkalUv?=
+ =?utf-8?B?YzRhUHEyalRjWEZmVVh3S2ZsRzZLTWo5aklrQ1REQWVtSVV6ZjVmQUIvd1Ay?=
+ =?utf-8?B?YmZXTENOTVVIWktBQXZaVzBMREFhU0dyT2Zva0hjWVpNN3hIM1RmZHJ2M05s?=
+ =?utf-8?B?VS9XMk1xYU50M0Q2NWdrKzNTOXJpcGhheDRwcFVwT3NlTXQ5OWozd1hUNmt1?=
+ =?utf-8?B?S0lHY2lBUTl4WkswZmxnSm1yVmNER0toNnZLczVvZHVYeldEcFdjM2x6Nklx?=
+ =?utf-8?B?UFh3NzFjSVVQVit1REprcnBCR0Z4UnZwekhDbzhPWGZ1UWNRZnZlZU44MTJ0?=
+ =?utf-8?B?SmRCWFl2c296djdsdU5LL3ZzQlZmYStjTGxzcE1veW1Vc1F3MVVhTmw3MkhM?=
+ =?utf-8?B?TTE3aXBKamdRRk1Cb0tPc2tWSXZlVTFIdHRDSk93aWxmM2tYRUpKOTk3dlpY?=
+ =?utf-8?B?UU5lbG45bDJTVklWOWw1RzVCNnMxUm81c0czdHRuZ0xLUEVIK1IzZVlzUjF1?=
+ =?utf-8?B?dXJHYmdzL3R1Ui9DbXhMR1RNcEZTQ3I2aHp0d05OR1VZb09kQzZjWTNpVXNn?=
+ =?utf-8?B?T1c2eHQvcTAzZWNpSXlTclk4MUVxcEJZWE5BdlEyOVVGUmI5dUpyUVVSQUN0?=
+ =?utf-8?B?WjNOY3FUNkNZTGJkOVFHOW5SRDVCQjJ2NkFCSVc2VlVYSTZLdFNPNzRFRTB0?=
+ =?utf-8?B?QkQwREpwSVVGSTBpWFhZNm1sL0dtZnZjdE5HV25nNXJzZWdJaW9uTEZjOFdw?=
+ =?utf-8?B?Rk1TbW9sRVdwVEJ6Lzk3bGdaUllwbXRFSDVnYlJJY0dqYU55YVJKQnRGamtx?=
+ =?utf-8?B?T2hJS21GT051REhYcUo1dHg2bnVQRzkzN2I5NjMwWFowQjF1djg4VWJtcG5w?=
+ =?utf-8?B?VnFKMHo5cXB4UnVNZlJHZTB6L25aczkwdzlKWklYcy9CRklNS3JzQUxoNVVt?=
+ =?utf-8?Q?IWpDWGyVb0xgDBStxRYIdDqXqe6ZdFQc9/wX51V8VOzM=3D?=
+X-Microsoft-Antispam-Message-Info: 2hFY7gyDdrxYEUBy8jIb3Fzaz9/xYZSkbC62lyZ4dnh34tGzkxbtX9jV3mrrSUp6yhNg4IfNVeF/bmTRbzIvIjJyX0Rkaxkb/WY9GoojTG/nHm7A9s0NtIF9XWGTieQsggpCPdv7xdNUBXWp9GiPEZNedWX+4pK1Zz+7mRK8Qh2yTBp2JN/7+e+LrkV2UQC740xHoIhlqRGjDluBZ2fQRT4s+T1AD2WAlfCLe10WVl/OYhxojDCMbUzw+OfDdZ0gmiiLBUXAfWnk/ReKkaamyhY+8VBzWLE3j+sf7SASXGqR0b06JmKl7yFBg4D5CshWrDBGcN6eETJXu8cZLN8RZWEIEeof8gaVBYM4MUz28Oo=
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;6:1oqxonX+piAph5YLcVbHk2Q2Z6Y0Z3MWvzlmaReH0BDahyMtq0dQhthdqx0LSJXREY6g4GXu1zfQJ07xzHcTRzuqTZYB7iGlLeMOjTbwr/pn0dI5HGeqJVFiACrRRb8Jq+lKU3JBRz3PqUJJq3yevsyH5sQoM0imX1jv1FMAmeU+YypIWrDg0R5fQb1KUtD+8AUgfUbxrI2Zmqi1d75P2j2fwlfPGdKZ8vcXTBwFXSoD9yd+HIGtQBm0p3NUG2DUTnZpkPj4p8GhBSSr4FdmL5tLjUCUuzASl/y38MvQU/uJupD7CRDl+Jk6qw0vTMYaMJ1LfILjIwFvRnLjxwd3YtDX+kEMoxKCSZf7ZkJmUhwVtOkA11MARkp2F4C8KThB+LEOUSlvT5NPvEbUdIU6utPoWvnAAZw+IgDEe/AljuIT0K7Yu3tauQec88zxSLPtUOWDAPHmgaiAzBF11bWW+g==;5:mXy8owbf/x+/hcmsDc1a0rX4Tbt0KqSHBjv40uAUigYel5ks+dCElGaqIbwIXKE+WXXxsh8w0vyb0XBiCRw8CJ5O2nJYWXjZly2VyiAzH3l/3LXLFHHqBuuVnKD+bO0ztkn6VZ7KXLc7DYIS3BI6t0gbXpNNcQzR5rm9wv/8IJI=;7:JSxIX56RXVSW0eJd5mHBudP+fwR1qg/CykQCx4m5p50vKVpyaF46AH5hQ9kqXbRFb/+Fe3nund0jNivgsVHgZ/eKpi3CX1a8df8cezJjdw8AmW+3gbORbwchzDZwm6dKziUrAUU+pP82mUN8mo2n83U4cJeU2m66Z7ChavoyuzN3VS6Zo2Rti5tpJtli5h0NYGPtweLeRlNJh0hcrMcR1iNFe5lC9SvG3c68tjvmA+cA8dnTc7NPxPWXl+oJn/J5
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR12MB2684;20:y5OypGOQa3MF0Lpl6YPJHLXhN5UshDGSFnSvmNIjt83TvX34SVrGiniHHHbBoXDYcQ8d09ScRgL8rOMx+nJG/IlXpBl/Gz0mX03KKH6TXmwIVA3GADLJ3df3lLtjtGu6Uenc7D41job9KDWciNN8L8iP5rSOJeuCHVj44EPt7KHH6cFBZBTDjhOX0+AG/j2lz6ni6rRrleVBNfbtT2jAKaa7QKzNy/hv9n2sKzqAifqRK4UbdKuOkZRGHD3Z6goD
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 17:57:38.6368 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dad419f-1cad-4d60-d6ce-08d614eb66b6
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2684
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit
 
---kaF1vgn83Aa7CiXN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+"
+x86/kvmclock: Remove memblock dependency
 
-On Fri, Sep 07, 2018 at 10:52:24AM -0700, Grant Grundler wrote:
-> On Fri, Sep 7, 2018 at 5:11 AM Mark Brown <broonie@kernel.org> wrote:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
+"
 
-> > Note that this isn't causing a warning upstream, presumably due to an
-> > implicit inclusion that isn't present in the v4.4 kernel that you appear
-> > to be using, or gets missed due to config differences.
+introduced SEV guest regression.
 
-> Ok. Is this just an observation or are these reasons to not accept the
-> change?
+The guest physical address holding the wall_clock and hv_clock_boot
+are shared with the hypervisor must be mapped with C=0 when SEV
+is active. To clear the C-bit we use  kernel_physical_mapping_init() to
+split the large pages. The above commit moved the kvmclock initialization
+very early and kernel_physical_mapping_init() fails to allocate memory
+while spliting the large page.
 
-An observation, you should already have a mail about it being applied. =20
+To solve it, we add a special .data..decrypted section, this section can be
+used to hold the shared variables. Early boot code maps this section with
+C=0. The section is pmd aligned and sized to avoid the need to split the pages.
+Caller can use __decrypted attribute to add the variables in .data..decrypted
+section. 
 
---kaF1vgn83Aa7CiXN
-Content-Type: application/pgp-signature; name="signature.asc"
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: "Radim Krčmář" <rkrcmar@redhat.com>
 
------BEGIN PGP SIGNATURE-----
+Changes since v5:
+ - rename hvclock_boot_dec -> hvclock_boot_aux.
+ - rename section from .data..decrypted_aux -> .data..decrypted.aux.
+ - use NR_CPUS instead of random number elements in hv_clock_aux variable.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluSu8MACgkQJNaLcl1U
-h9Da1Qf/av+NNGne88nxbWrscrd10NjysRVgLpRfdYyyU3iPXln43RiTKN0+Wqxk
-DM/K9kXyRW/5vbm0KYK6O5obBPnWfWB5rUI/QVKNLzObfUIni+Zj53otfo1giJCF
-MkApUDrhUwCOf8V1A8tgwFO91Qg62QWMzs04bq2mrpw7quHQAXcBQjp/vBWldtAn
-fSUaurW7o/fpWD3C1o4dTPqayqf43/m5T/k0c1QJ/pKDwGtL5QBdGucyrRjULORR
-rD2jgaGoxwMMcySfcPvqVzM0EM286Vi0vh62oBojRns4zOAxf9owbBnpAAf1MBqY
-Evgn2+d60flDCXXVhVxPSTNzgcppHw==
-=ETFg
------END PGP SIGNATURE-----
+Changes since v4:
+ - define few static pages in .data..decrypted which can be used
+   for cpus > HVC_BOOT_ARRAY_SIZE when SEV is active.
 
---kaF1vgn83Aa7CiXN--
+Changes since v3:
+ - commit message improvements (based on Sean's feedback)
+
+Changes since v2:
+ - commit message and code comment improvements (based on Boris feedback)
+ - move sme_populate_pgd fixes in new patch.
+ - drop stable Cc - will submit to stable after patch is upstreamed.
+
+Changes since v1:
+ - move the logic to re-arrange mapping in new patch
+ - move the definition of __start_data_* in mem_encrypt.h
+ - map the workarea buffer as encrypted when SEV is enabled
+ - enhance the sme_populate_pgd to update the pte/pmd flags when mapping exist
+
+Brijesh Singh (5):
+  x86/mm: Restructure sme_encrypt_kernel()
+  x86/mm: fix sme_populate_pgd() to update page flags
+  x86/mm: add .data..decrypted section to hold shared variables
+  x86/kvm: use __decrypted attribute in shared variables
+  x86/kvm: Avoid dynamic allocation of pvclock data when SEV is active
+
+ arch/x86/include/asm/mem_encrypt.h |  10 ++
+ arch/x86/kernel/head64.c           |  11 ++
+ arch/x86/kernel/kvmclock.c         |  18 ++-
+ arch/x86/kernel/vmlinux.lds.S      |  20 ++++
+ arch/x86/mm/init.c                 |   3 +
+ arch/x86/mm/mem_encrypt.c          |  10 ++
+ arch/x86/mm/mem_encrypt_identity.c | 232 +++++++++++++++++++++++++++----------
+ 7 files changed, 240 insertions(+), 64 deletions(-)
+
+-- 
+2.7.4
+
