@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB8FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF24C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4041B2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4041B2083D
+	by mail.kernel.org (Postfix) with ESMTP id ADAF02083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAF02083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbeIHCXo (ORCPT
+        id S1730171AbeIHCXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:23:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54688 "EHLO
+        Fri, 7 Sep 2018 22:23:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54708 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728473AbeIHCXn (ORCPT
+        with ESMTP id S1728473AbeIHCXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:23:43 -0400
+        Fri, 7 Sep 2018 22:23:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B279E1010;
-        Fri,  7 Sep 2018 21:40:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24FDFFF6;
+        Fri,  7 Sep 2018 21:40:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 29/47] mm/tlb: Remove tlb_remove_table() non-concurrent condition
-Date:   Fri,  7 Sep 2018 23:10:25 +0200
-Message-Id: <20180907210907.796949765@linuxfoundation.org>
+        stable@vger.kernel.org, Chirantan Ekbote <chirantan@chromium.org>,
+        Greg Kurz <groug@kaod.org>, Dylan Reid <dgreid@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Dominique Martinet <dominique.martinet@cea.fr>
+Subject: [PATCH 4.4 03/47] 9p/net: Fix zero-copy path in the 9p virtio transport
+Date:   Fri,  7 Sep 2018 23:09:59 +0200
+Message-Id: <20180907210904.834444985@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -56,52 +52,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Chirantan Ekbote <chirantan@chromium.org>
 
-commit a6f572084fbee8b30f91465f4a085d7a90901c57 upstream.
+commit d28c756caee6e414d9ba367d0b92da24145af2a8 upstream.
 
-Will noted that only checking mm_users is incorrect; we should also
-check mm_count in order to cover CPUs that have a lazy reference to
-this mm (and could do speculative TLB operations).
+The zero-copy optimization when reading or writing large chunks of data
+is quite useful.  However, the 9p messages created through the zero-copy
+write path have an incorrect message size: it should be the size of the
+header + size of the data being written but instead it's just the size
+of the header.
 
-If removing this turns out to be a performance issue, we can
-re-instate a more complete check, but in tlb_table_flush() eliding the
-call_rcu_sched().
+This only works if the server ignores the size field of the message and
+otherwise breaks the framing of the protocol. Fix this by re-writing the
+message size field with the correct value.
 
-Fixes: 267239116987 ("mm, powerpc: move the RCU page-table freeing into generic code")
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Rik van Riel <riel@surriel.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested by running `dd if=/dev/zero of=out bs=4k count=1` inside a
+virtio-9p mount.
+
+Link: http://lkml.kernel.org/r/20180717003529.114368-1-chirantan@chromium.org
+Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Tested-by: Greg Kurz <groug@kaod.org>
+Cc: Dylan Reid <dgreid@chromium.org>
+Cc: Guenter Roeck <groeck@chromium.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory.c |    9 ---------
- 1 file changed, 9 deletions(-)
+ net/9p/trans_virtio.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -361,15 +361,6 @@ void tlb_remove_table(struct mmu_gather
- {
- 	struct mmu_table_batch **batch = &tlb->batch;
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -409,6 +409,7 @@ p9_virtio_zc_request(struct p9_client *c
+ 	p9_debug(P9_DEBUG_TRANS, "virtio request\n");
  
--	/*
--	 * When there's less then two users of this mm there cannot be a
--	 * concurrent page-table walk.
--	 */
--	if (atomic_read(&tlb->mm->mm_users) < 2) {
--		__tlb_remove_table(table);
--		return;
--	}
--
- 	if (*batch == NULL) {
- 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
- 		if (*batch == NULL) {
+ 	if (uodata) {
++		__le32 sz;
+ 		int n = p9_get_mapped_pages(chan, &out_pages, uodata,
+ 					    outlen, &offs, &need_drop);
+ 		if (n < 0)
+@@ -419,6 +420,12 @@ p9_virtio_zc_request(struct p9_client *c
+ 			memcpy(&req->tc->sdata[req->tc->size - 4], &v, 4);
+ 			outlen = n;
+ 		}
++		/* The size field of the message must include the length of the
++		 * header and the length of the data.  We didn't actually know
++		 * the length of the data until this point so add it in now.
++		 */
++		sz = cpu_to_le32(req->tc->size + outlen);
++		memcpy(&req->tc->sdata[0], &sz, sizeof(sz));
+ 	} else if (uidata) {
+ 		int n = p9_get_mapped_pages(chan, &in_pages, uidata,
+ 					    inlen, &offs, &need_drop);
 
 
