@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 483F6C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA317C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065CE20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065CE20645
+	by mail.kernel.org (Postfix) with ESMTP id 9113520645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9113520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeIHCGN (ORCPT
+        id S1728622AbeIHCGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:06:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46560 "EHLO
+        Fri, 7 Sep 2018 22:06:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46704 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeIHCGM (ORCPT
+        with ESMTP id S1727735AbeIHCGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:06:12 -0400
+        Fri, 7 Sep 2018 22:06:15 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 756ACEF6;
-        Fri,  7 Sep 2018 21:23:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7514EF6;
+        Fri,  7 Sep 2018 21:23:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eddie Horng <eddiehorng.tw@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.18 099/145] nfsd: fix leaked file lock with nfs exported overlayfs
-Date:   Fri,  7 Sep 2018 23:09:25 +0200
-Message-Id: <20180907210912.030749768@linuxfoundation.org>
+        stable@vger.kernel.org, Bill Baker <bill.baker@oracle.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Helen Chao <helen.chao@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.18 100/145] NFSv4 client live hangs after live data migration recovery
+Date:   Fri,  7 Sep 2018 23:09:26 +0200
+Message-Id: <20180907210912.113049223@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,160 +52,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Bill Baker <Bill.Baker@Oracle.com>
 
-commit 64bed6cbe38bc95689fb9399872d9ce250192f90 upstream.
+commit 0f90be132cbf1537d87a6a8b9e80867adac892f6 upstream.
 
-nfsd and lockd call vfs_lock_file() to lock/unlock the inode
-returned by locks_inode(file).
+After a live data migration event at the NFS server, the client may send
+I/O requests to the wrong server, causing a live hang due to repeated
+recovery events.  On the wire, this will appear as an I/O request failing
+with NFS4ERR_BADSESSION, followed by successful CREATE_SESSION, repeatedly.
+NFS4ERR_BADSSESSION is returned because the session ID being used was
+issued by the other server and is not valid at the old server.
 
-Many places in nfsd/lockd code use the inode returned by
-file_inode(file) for lock manipulation. With Overlayfs, file_inode()
-(the underlying inode) is not the same object as locks_inode() (the
-overlay inode). This can result in "Leaked POSIX lock" messages
-and eventually to a kernel crash as reported by Eddie Horng:
-https://marc.info/?l=linux-unionfs&m=153086643202072&w=2
+The failure is caused by async worker threads having cached the transport
+(xprt) in the rpc_task structure.  After the migration recovery completes,
+the task is redispatched and the task resends the request to the wrong
+server based on the old value still present in tk_xprt.
 
-Fix all the call sites in nfsd/lockd that should use locks_inode().
-This is a correctness bug that manifested when overlayfs gained
-NFS export support in v4.16.
+The solution is to recompute the tk_xprt field of the rpc_task structure
+so that the request goes to the correct server.
 
-Reported-by: Eddie Horng <eddiehorng.tw@gmail.com>
-Tested-by: Eddie Horng <eddiehorng.tw@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Fixes: 8383f1748829 ("ovl: wire up NFS export operations")
-Cc: stable@vger.kernel.org
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Bill Baker <bill.baker@oracle.com>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Tested-by: Helen Chao <helen.chao@oracle.com>
+Fixes: fb43d17210ba ("SUNRPC: Use the multipath iterator to assign a ...")
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/lockd/clntlock.c         |    2 +-
- fs/lockd/clntproc.c         |    2 +-
- fs/lockd/svclock.c          |   16 ++++++++--------
- fs/lockd/svcsubs.c          |    4 ++--
- fs/nfsd/nfs4state.c         |    2 +-
- include/linux/lockd/lockd.h |    4 ++--
- 6 files changed, 15 insertions(+), 15 deletions(-)
+ fs/nfs/nfs4proc.c           |    9 ++++++++-
+ include/linux/sunrpc/clnt.h |    1 +
+ net/sunrpc/clnt.c           |   28 ++++++++++++++++++++--------
+ 3 files changed, 29 insertions(+), 9 deletions(-)
 
---- a/fs/lockd/clntlock.c
-+++ b/fs/lockd/clntlock.c
-@@ -187,7 +187,7 @@ __be32 nlmclnt_grant(const struct sockad
- 			continue;
- 		if (!rpc_cmp_addr(nlm_addr(block->b_host), addr))
- 			continue;
--		if (nfs_compare_fh(NFS_FH(file_inode(fl_blocked->fl_file)) ,fh) != 0)
-+		if (nfs_compare_fh(NFS_FH(locks_inode(fl_blocked->fl_file)), fh) != 0)
- 			continue;
- 		/* Alright, we found a lock. Set the return status
- 		 * and wake up the caller
---- a/fs/lockd/clntproc.c
-+++ b/fs/lockd/clntproc.c
-@@ -128,7 +128,7 @@ static void nlmclnt_setlockargs(struct n
- 	char *nodename = req->a_host->h_rpcclnt->cl_nodename;
- 
- 	nlmclnt_next_cookie(&argp->cookie);
--	memcpy(&lock->fh, NFS_FH(file_inode(fl->fl_file)), sizeof(struct nfs_fh));
-+	memcpy(&lock->fh, NFS_FH(locks_inode(fl->fl_file)), sizeof(struct nfs_fh));
- 	lock->caller  = nodename;
- 	lock->oh.data = req->a_owner;
- 	lock->oh.len  = snprintf(req->a_owner, sizeof(req->a_owner), "%u@%s",
---- a/fs/lockd/svclock.c
-+++ b/fs/lockd/svclock.c
-@@ -405,8 +405,8 @@ nlmsvc_lock(struct svc_rqst *rqstp, stru
- 	__be32			ret;
- 
- 	dprintk("lockd: nlmsvc_lock(%s/%ld, ty=%d, pi=%d, %Ld-%Ld, bl=%d)\n",
--				file_inode(file->f_file)->i_sb->s_id,
--				file_inode(file->f_file)->i_ino,
-+				locks_inode(file->f_file)->i_sb->s_id,
-+				locks_inode(file->f_file)->i_ino,
- 				lock->fl.fl_type, lock->fl.fl_pid,
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end,
-@@ -511,8 +511,8 @@ nlmsvc_testlock(struct svc_rqst *rqstp,
- 	__be32			ret;
- 
- 	dprintk("lockd: nlmsvc_testlock(%s/%ld, ty=%d, %Ld-%Ld)\n",
--				file_inode(file->f_file)->i_sb->s_id,
--				file_inode(file->f_file)->i_ino,
-+				locks_inode(file->f_file)->i_sb->s_id,
-+				locks_inode(file->f_file)->i_ino,
- 				lock->fl.fl_type,
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end);
-@@ -566,8 +566,8 @@ nlmsvc_unlock(struct net *net, struct nl
- 	int	error;
- 
- 	dprintk("lockd: nlmsvc_unlock(%s/%ld, pi=%d, %Ld-%Ld)\n",
--				file_inode(file->f_file)->i_sb->s_id,
--				file_inode(file->f_file)->i_ino,
-+				locks_inode(file->f_file)->i_sb->s_id,
-+				locks_inode(file->f_file)->i_ino,
- 				lock->fl.fl_pid,
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end);
-@@ -595,8 +595,8 @@ nlmsvc_cancel_blocked(struct net *net, s
- 	int status = 0;
- 
- 	dprintk("lockd: nlmsvc_cancel(%s/%ld, pi=%d, %Ld-%Ld)\n",
--				file_inode(file->f_file)->i_sb->s_id,
--				file_inode(file->f_file)->i_ino,
-+				locks_inode(file->f_file)->i_sb->s_id,
-+				locks_inode(file->f_file)->i_ino,
- 				lock->fl.fl_pid,
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end);
---- a/fs/lockd/svcsubs.c
-+++ b/fs/lockd/svcsubs.c
-@@ -44,7 +44,7 @@ static inline void nlm_debug_print_fh(ch
- 
- static inline void nlm_debug_print_file(char *msg, struct nlm_file *file)
- {
--	struct inode *inode = file_inode(file->f_file);
-+	struct inode *inode = locks_inode(file->f_file);
- 
- 	dprintk("lockd: %s %s/%ld\n",
- 		msg, inode->i_sb->s_id, inode->i_ino);
-@@ -414,7 +414,7 @@ nlmsvc_match_sb(void *datap, struct nlm_
- {
- 	struct super_block *sb = datap;
- 
--	return sb == file_inode(file->f_file)->i_sb;
-+	return sb == locks_inode(file->f_file)->i_sb;
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -581,8 +581,15 @@ nfs4_async_handle_exception(struct rpc_t
+ 		ret = -EIO;
+ 	return ret;
+ out_retry:
+-	if (ret == 0)
++	if (ret == 0) {
+ 		exception->retry = 1;
++		/*
++		 * For NFS4ERR_MOVED, the client transport will need to
++		 * be recomputed after migration recovery has completed.
++		 */
++		if (errorcode == -NFS4ERR_MOVED)
++			rpc_task_release_transport(task);
++	}
+ 	return ret;
  }
  
- /**
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6293,7 +6293,7 @@ check_for_locks(struct nfs4_file *fp, st
- 		return status;
+--- a/include/linux/sunrpc/clnt.h
++++ b/include/linux/sunrpc/clnt.h
+@@ -156,6 +156,7 @@ int		rpc_switch_client_transport(struct
+ 
+ void		rpc_shutdown_client(struct rpc_clnt *);
+ void		rpc_release_client(struct rpc_clnt *);
++void		rpc_task_release_transport(struct rpc_task *);
+ void		rpc_task_release_client(struct rpc_task *);
+ 
+ int		rpcb_create_local(struct net *);
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -965,10 +965,20 @@ out:
+ }
+ EXPORT_SYMBOL_GPL(rpc_bind_new_program);
+ 
++void rpc_task_release_transport(struct rpc_task *task)
++{
++	struct rpc_xprt *xprt = task->tk_xprt;
++
++	if (xprt) {
++		task->tk_xprt = NULL;
++		xprt_put(xprt);
++	}
++}
++EXPORT_SYMBOL_GPL(rpc_task_release_transport);
++
+ void rpc_task_release_client(struct rpc_task *task)
+ {
+ 	struct rpc_clnt *clnt = task->tk_client;
+-	struct rpc_xprt *xprt = task->tk_xprt;
+ 
+ 	if (clnt != NULL) {
+ 		/* Remove from client task list */
+@@ -979,12 +989,14 @@ void rpc_task_release_client(struct rpc_
+ 
+ 		rpc_release_client(clnt);
  	}
++	rpc_task_release_transport(task);
++}
  
--	inode = file_inode(filp);
-+	inode = locks_inode(filp);
- 	flctx = inode->i_flctx;
- 
- 	if (flctx && !list_empty_careful(&flctx->flc_posix)) {
---- a/include/linux/lockd/lockd.h
-+++ b/include/linux/lockd/lockd.h
-@@ -299,7 +299,7 @@ int           nlmsvc_unlock_all_by_ip(st
- 
- static inline struct inode *nlmsvc_file_inode(struct nlm_file *file)
- {
--	return file_inode(file->f_file);
-+	return locks_inode(file->f_file);
+-	if (xprt != NULL) {
+-		task->tk_xprt = NULL;
+-
+-		xprt_put(xprt);
+-	}
++static
++void rpc_task_set_transport(struct rpc_task *task, struct rpc_clnt *clnt)
++{
++	if (!task->tk_xprt)
++		task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
  }
  
- static inline int __nlm_privileged_request4(const struct sockaddr *sap)
-@@ -359,7 +359,7 @@ static inline int nlm_privileged_request
- static inline int nlm_compare_locks(const struct file_lock *fl1,
- 				    const struct file_lock *fl2)
+ static
+@@ -992,8 +1004,7 @@ void rpc_task_set_client(struct rpc_task
  {
--	return file_inode(fl1->fl_file) == file_inode(fl2->fl_file)
-+	return locks_inode(fl1->fl_file) == locks_inode(fl2->fl_file)
- 	     && fl1->fl_pid   == fl2->fl_pid
- 	     && fl1->fl_owner == fl2->fl_owner
- 	     && fl1->fl_start == fl2->fl_start
+ 
+ 	if (clnt != NULL) {
+-		if (task->tk_xprt == NULL)
+-			task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
++		rpc_task_set_transport(task, clnt);
+ 		task->tk_client = clnt;
+ 		atomic_inc(&clnt->cl_count);
+ 		if (clnt->cl_softrtry)
+@@ -1512,6 +1523,7 @@ call_start(struct rpc_task *task)
+ 		clnt->cl_program->version[clnt->cl_vers]->counts[idx]++;
+ 	clnt->cl_stats->rpccnt++;
+ 	task->tk_action = call_reserve;
++	rpc_task_set_transport(task, clnt);
+ }
+ 
+ /*
 
 
