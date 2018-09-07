@@ -2,160 +2,97 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E52C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ADAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0970E2086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:26:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AmNCP4xq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0970E2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FAD82075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:26:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FAD82075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbeIGNFt (ORCPT
+        id S1727817AbeIGNGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:05:49 -0400
-Received: from m12-13.163.com ([220.181.12.13]:45911 "EHLO m12-13.163.com"
+        Fri, 7 Sep 2018 09:06:39 -0400
+Received: from mga09.intel.com ([134.134.136.24]:38585 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbeIGNFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:05:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=j27uu8pCPRpxKJXn+B
-        7L5naymltUs4aAtlORruMdu3Q=; b=AmNCP4xqB7fpUIqRs95m2dwnbFM92BEnXR
-        hfdOB8tz9bT1lE/B4s3RRr/n+5G+t/H23ywiX5UtCfy6umba7gczh7PyOWmB0PK4
-        ZJo7ed3z65PXUVGg4CNx2AoM8eirBzzKrXfHAWBrAfz3JLdmhvE/ZdsNiCuGxifQ
-        jNTf71St8=
-Received: from localhost.localdomain (unknown [49.65.59.196])
-        by smtp9 (Coremail) with SMTP id DcCowABHrooFNpJbiI7ZIg--.39791S5;
-        Fri, 07 Sep 2018 16:25:48 +0800 (CST)
-From:   Dou Liyang <dou_liyang@163.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com
-Subject: [PATCH 2/2] irq/matrix: Spread managed interrupts on allocation
-Date:   Fri,  7 Sep 2018 16:25:09 +0800
-Message-Id: <20180907082509.11083-2-dou_liyang@163.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180907082509.11083-1-dou_liyang@163.com>
-References: <20180907082509.11083-1-dou_liyang@163.com>
-X-CM-TRANSID: DcCowABHrooFNpJbiI7ZIg--.39791S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1fWryrGryxGrWxZrWrKrg_yoWrWF4kpr
-        WkJFy7urWUJ3ZrWw17ZayDAFZIy3s7ArsIkas5u3sa9ryftr12qF1qqFyDZF15Ar1rCayU
-        CFWqqryru3WUJF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jBFALUUUUU=
-X-Originating-IP: [49.65.59.196]
-X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiLgy6olSIcLjKMwAAsX
+        id S1725843AbeIGNGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:06:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 01:26:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,341,1531810800"; 
+   d="scan'208";a="69085231"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga008.fm.intel.com with ESMTP; 07 Sep 2018 01:26:34 -0700
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 7 Sep 2018 01:26:34 -0700
+Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 7 Sep 2018 01:26:33 -0700
+Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.240]) by
+ SHSMSX101.ccr.corp.intel.com ([169.254.1.205]) with mapi id 14.03.0319.002;
+ Fri, 7 Sep 2018 16:26:31 +0800
+From:   "Yang, Bin" <bin.yang@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Gross, Mark" <mark.gross@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
+ overlap()
+Thread-Topic: [PATCH v3 4/5] x86/mm: optimize static_protection() by using
+ overlap()
+Thread-Index: AQHUOOyiLUEwozeDmEmpKrJdpg0FR6Tfm9CAgAP8LwCAAG7LgIAAA7IAgAAFPACAAAD5gA==
+Date:   Fri, 7 Sep 2018 08:26:31 +0000
+Message-ID: <9c5031cb0dfeb6083e65e3b33f4e73b96c66699f.camel@intel.com>
+References: <1534814186-37067-1-git-send-email-bin.yang@intel.com>
+          <1534814186-37067-5-git-send-email-bin.yang@intel.com>
+          <alpine.DEB.2.21.1809041413070.3395@nanos.tec.linutronix.de>
+          <82fc8d80749f920c4a5107469924205d92037785.camel@intel.com>
+          <alpine.DEB.2.21.1809070943490.1402@nanos.tec.linutronix.de>
+         <cd73f43a15f06c720bb4907d2c424dfb3f0c8683.camel@intel.com>
+         <alpine.DEB.2.21.1809071019020.1402@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809071019020.1402@nanos.tec.linutronix.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.0 
+x-originating-ip: [10.239.4.100]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8E34213BF415524CACEC3D19BB65EEED@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-
-Linux has spread out the non managed interrupt across the possible
-target CPUs to avoid vector space exhaustion.
-
-But, the same situation may happen on the managed interrupts.
-
-Spread managed interrupt on allocation as well.
-
-Fixes: a0c9259dc4e1("irq/matrix: Spread interrupts on allocation")
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
----
- arch/x86/kernel/apic/vector.c |  8 +++-----
- include/linux/irq.h           |  3 ++-
- kernel/irq/matrix.c           | 32 ++++++++++++++++++++------------
- 3 files changed, 25 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 9f148e3d45b4..b7fc290b4b98 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -313,14 +313,12 @@ assign_managed_vector(struct irq_data *irqd, const struct cpumask *dest)
- 	struct apic_chip_data *apicd = apic_chip_data(irqd);
- 	int vector, cpu;
- 
--	cpumask_and(vector_searchmask, vector_searchmask, affmsk);
--	cpu = cpumask_first(vector_searchmask);
--	if (cpu >= nr_cpu_ids)
--		return -EINVAL;
-+	cpumask_and(vector_searchmask, dest, affmsk);
-+
- 	/* set_affinity might call here for nothing */
- 	if (apicd->vector && cpumask_test_cpu(apicd->cpu, vector_searchmask))
- 		return 0;
--	vector = irq_matrix_alloc_managed(vector_matrix, cpu);
-+	vector = irq_matrix_alloc_managed(vector_matrix, vector_searchmask, &cpu);
- 	trace_vector_alloc_managed(irqd->irq, vector, vector);
- 	if (vector < 0)
- 		return vector;
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 201de12a9957..c9bffda04a45 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -1151,7 +1151,8 @@ void irq_matrix_offline(struct irq_matrix *m);
- void irq_matrix_assign_system(struct irq_matrix *m, unsigned int bit, bool replace);
- int irq_matrix_reserve_managed(struct irq_matrix *m, const struct cpumask *msk);
- void irq_matrix_remove_managed(struct irq_matrix *m, const struct cpumask *msk);
--int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu);
-+int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
-+				unsigned int *mapped_cpu);
- void irq_matrix_reserve(struct irq_matrix *m);
- void irq_matrix_remove_reserved(struct irq_matrix *m);
- int irq_matrix_alloc(struct irq_matrix *m, const struct cpumask *msk,
-diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
-index 5eb0c8b857f0..b449a749b354 100644
---- a/kernel/irq/matrix.c
-+++ b/kernel/irq/matrix.c
-@@ -259,21 +259,29 @@ void irq_matrix_remove_managed(struct irq_matrix *m, const struct cpumask *msk)
-  * @m:		Matrix pointer
-  * @cpu:	On which CPU the interrupt should be allocated
-  */
--int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu)
-+int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
-+				unsigned int *mapped_cpu)
- {
--	struct cpumap *cm = per_cpu_ptr(m->maps, cpu);
- 	unsigned int bit, end = m->alloc_end;
-+	unsigned int best_cpu = UINT_MAX;
-+	struct cpumap *cm;
- 
--	/* Get managed bit which are not allocated */
--	bitmap_andnot(m->scratch_map, cm->managed_map, cm->alloc_map, end);
--	bit = find_first_bit(m->scratch_map, end);
--	if (bit >= end)
--		return -ENOSPC;
--	set_bit(bit, cm->alloc_map);
--	cm->allocated++;
--	m->total_allocated++;
--	trace_irq_matrix_alloc_managed(bit, cpu, m, cm);
--	return bit;
-+	if (matrix_find_best_cpu(m, msk, &best_cpu)) {
-+		cm = per_cpu_ptr(m->maps, best_cpu);
-+		end = m->alloc_end;
-+		/* Get managed bit which are not allocated */
-+		bitmap_andnot(m->scratch_map, cm->managed_map, cm->alloc_map, end);
-+		bit = find_first_bit(m->scratch_map, end);
-+		if (bit >= end)
-+			return -ENOSPC;
-+		set_bit(bit, cm->alloc_map);
-+		cm->allocated++;
-+		m->total_allocated++;
-+		*mapped_cpu = best_cpu;
-+		trace_irq_matrix_alloc_managed(bit, best_cpu, m, cm);
-+		return bit;
-+	}
-+	return -ENOSPC;
- }
- 
- /**
--- 
-2.14.3
-
-
+T24gRnJpLCAyMDE4LTA5LTA3IGF0IDEwOjIxICswMjAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
+DQo+IE9uIEZyaSwgNyBTZXAgMjAxOCwgWWFuZywgQmluIHdyb3RlOg0KPiA+IE9uIEZyaSwgMjAx
+OC0wOS0wNyBhdCAwOTo0OSArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+ID4gT24g
+RnJpLCA3IFNlcCAyMDE4LCBZYW5nLCBCaW4gd3JvdGU6DQo+ID4gPiA+IE9uIFR1ZSwgMjAxOC0w
+OS0wNCBhdCAxNDoyMiArMDIwMCwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiA+ID4gPiANCj4g
+PiA+ID4gSSBqdXN0IHdyaXRlIGEgdGVzdC5jIHRvIGNvbXBhcmUgdGhlIHJlc3VsdCBiZXR3ZWVu
+IG92ZXJsYXAoKSBhbmQNCj4gPiA+ID4gb3JpZ2luYWwgd2l0aGluKCkuDQo+ID4gPiANCj4gPiA+
+IFlvdSBhcmUgcmlnaHQuIFlvdXIgdmVyc2lvbiBvZiBkb2luZyB0aGUgb3ZlcmxhcCBleGNsdXNp
+dmUgd29ya3MuIEkgbWlzcmVhZA0KPiA+ID4gdGhlIGNvbmRpdGlvbnMuIEkgc3RpbGwgcHJlZmVy
+IGRvaW5nIGluY2x1c2l2ZSBjaGVja3MgYmVjYXVzZSB0aGV5IGFyZSB3YXkNCj4gPiA+IG1vcmUg
+b2J2aW91cy4NCj4gPiANCj4gPiBJIGFtIHNvcnJ5IGZvciBteSBwb29yIGVuZ2xpc2guIFdoYXQg
+aXMgImluY2x1c2l2ZSBjaGVja3MiPw0KPiANCj4gRXhsdXNpdmU6ICAgIHZhbCA+PSBzdGFydCAm
+JiB2YWwgPCBlbmQNCj4gDQo+IEluY2x1c2l2ZTogICB2YWwgPj0gc3RhcnQgJiYgdmFsIDw9IGVu
+ZA0KPiANCj4gU28gdGhlIGRpZmZlcmVuY2UgaXMgdGhhdCB5b3UgZmVlZCBleGNsdXNpdmUgd2l0
+aDoNCj4gDQo+ICAgIGVuZCA9IHN0YXJ0ICsgc2l6ZQ0KPiANCj4gYW5kIGluY2x1c2l2ZSB3aXRo
+DQo+IA0KPiAgIGVuZCA9IHN0YXJ0ICsgc2l6ZSAtIDENCj4gDQoNClRoYW5rcy4gSSB3aWxsIGNo
+YW5nZSBpdCB0byBpbmNsdXNpdmUgY2hlY2suDQoNCj4gVGhhbmtzLA0KPiANCj4gCXRnbHgNCj4g
+DQo+IA0K
