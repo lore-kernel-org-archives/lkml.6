@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65CAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52D2C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA14620844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA14620844
+	by mail.kernel.org (Postfix) with ESMTP id 893FB2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893FB2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730089AbeIHCWv (ORCPT
+        id S1729968AbeIHCXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:22:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52856 "EHLO
+        Fri, 7 Sep 2018 22:23:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53562 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbeIHCWv (ORCPT
+        with ESMTP id S1727628AbeIHCXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:22:51 -0400
+        Fri, 7 Sep 2018 22:23:00 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCF46D6B;
-        Fri,  7 Sep 2018 21:39:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54085FEF;
+        Fri,  7 Sep 2018 21:40:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.4 20/47] vmw_balloon: fix VMCI use when balloon built into kernel
-Date:   Fri,  7 Sep 2018 23:10:16 +0200
-Message-Id: <20180907210906.563270730@linuxfoundation.org>
+        stable@vger.kernel.org, Erica Bugden <erica.bugden@linutronix.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 21/47] tracing: Do not call start/stop() functions when tracing_on does not change
+Date:   Fri,  7 Sep 2018 23:10:17 +0200
+Message-Id: <20180907210906.641124584@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -50,53 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit c3cc1b0fc27508da53fe955a3b23d03964410682 upstream.
+commit f143641bfef9a4a60c57af30de26c63057e7e695 upstream.
 
-Currently, when all modules, including VMCI and VMware balloon are built
-into the kernel, the initialization of the balloon happens before the
-VMCI is probed. As a result, the balloon fails to initialize the VMCI
-doorbell, which it uses to get asynchronous requests for balloon size
-changes.
+Currently, when one echo's in 1 into tracing_on, the current tracer's
+"start()" function is executed, even if tracing_on was already one. This can
+lead to strange side effects. One being that if the hwlat tracer is enabled,
+and someone does "echo 1 > tracing_on" into tracing_on, the hwlat tracer's
+start() function is called again which will recreate another kernel thread,
+and make it unable to remove the old one.
 
-The problem can be seen in the logs, in the form of the following
-message:
-	"vmw_balloon: failed to initialize vmci doorbell"
+Link: http://lkml.kernel.org/r/1533120354-22923-1-git-send-email-erica.bugden@linutronix.de
 
-The driver would work correctly but slightly less efficiently, probing
-for requests periodically. This patch changes the balloon to be
-initialized using late_initcall() instead of module_init() to address
-this issue. It does not address a situation in which VMCI is built as a
-module and the balloon is built into the kernel.
-
-Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 Cc: stable@vger.kernel.org
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Fixes: 2df8f8a6a897e ("tracing: Fix regression with irqsoff tracer and tracing_on file")
+Reported-by: Erica Bugden <erica.bugden@linutronix.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ kernel/trace/trace.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1297,7 +1297,14 @@ static int __init vmballoon_init(void)
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6496,7 +6496,9 @@ rb_simple_write(struct file *filp, const
  
- 	return 0;
- }
--module_init(vmballoon_init);
-+
-+/*
-+ * Using late_initcall() instead of module_init() allows the balloon to use the
-+ * VMCI doorbell even when the balloon is built into the kernel. Otherwise the
-+ * VMCI is probed only after the balloon is initialized. If the balloon is used
-+ * as a module, late_initcall() is equivalent to module_init().
-+ */
-+late_initcall(vmballoon_init);
- 
- static void __exit vmballoon_exit(void)
- {
+ 	if (buffer) {
+ 		mutex_lock(&trace_types_lock);
+-		if (val) {
++		if (!!val == tracer_tracing_is_on(tr)) {
++			val = 0; /* do nothing */
++		} else if (val) {
+ 			tracer_tracing_on(tr);
+ 			if (tr->current_trace->start)
+ 				tr->current_trace->start(tr);
 
 
