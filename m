@@ -2,125 +2,148 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE67C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25803C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3132083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5682075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:56:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l08EbGrW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3132083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XiY0iWCZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5682075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbeIGRgq (ORCPT
+        id S1729304AbeIGRgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:36:46 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44985 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbeIGRgq (ORCPT
+        Fri, 7 Sep 2018 13:36:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35116 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbeIGRgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:36:46 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so6963441pgp.11;
-        Fri, 07 Sep 2018 05:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=q/iTA2d2KrpjnDGL1a1FzznXDMvDUZVnWXWH6jnmLSc=;
-        b=l08EbGrWZ28ILFdgmBdhy3BVe9bUkitGV7AJm1ZmeQaHIh/JXLQCLFniuQaE6nOsJ2
-         AZNi7Cjs74MRwWbTXa1caOIuxzbGpVenkw6fNLnGT8rQsCYUOxznao+zw5UCH+lhQp6e
-         GRGNpZQ9Fw4av2tqPmQ+NnBSoS3SCcVgdbYeuKCZIuc4lU4RVbX4wXRWkpPP3jMWVGVj
-         2Pmf/Hc/nzOKV/hxb8BaL6GK5qdvPCTmKhLvKsii3smTWbkl60NSQ9jmjhZLb4/5V+RF
-         l4az3fiLlyOxiHaZYosQp+ZcIkGIA7F0POHqtmsAGu+fB8ua1v8d0wpooQOVGG+MvDcn
-         NfBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=q/iTA2d2KrpjnDGL1a1FzznXDMvDUZVnWXWH6jnmLSc=;
-        b=Q8wOfJiccc7rZhmR4FZkKaRBA6ImTYuSDF2GOg8ZqmUTw6gf61s4XY7doeaf6arj4v
-         03Y/8JbsmC2qckFCdEl1z9fLNT8CKZjU4FnCUYOIJMzWvtBIfSNhPVcyoT3sYymlvkXe
-         cO3JwUecKen64BtVu0FgfyhqYL4NS/Dq4D0XAAqbx+u09bgbH9NO49zrg4xHkw8C9fCR
-         SinfVc6AgItqN0FoY+kq10DjGDtYDkrJ6fmYoPLIkdwQxPk0vDDq07fxhDi3s8OwVwHo
-         /GNhPU28DRq4MiO1td2Gg+WqjW8BeySz0ijPdkq80mfuBPocj0GBtH6x2AIR7OA97atF
-         SPWA==
-X-Gm-Message-State: APzg51AmGzesQqiwdpt6x/Ac7Jkko/jPRblGSiuRXCjLe+jQ6fN/nLLN
-        WQUhVj2BjKJS+sqPdDfjFoG/Jmcy
-X-Google-Smtp-Source: ANB0Vdb0oMVOJ6ibyVmWHlvFfTMVeSqSESCdTHR2n9L8xoXGvI58vamayVjKMZQ2/t7JWZm4bv/bzA==
-X-Received: by 2002:a62:5047:: with SMTP id e68-v6mr8183084pfb.157.1536324956235;
-        Fri, 07 Sep 2018 05:55:56 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id y4-v6sm11188036pfn.123.2018.09.07.05.55.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 05:55:55 -0700 (PDT)
-Subject: Re: [PATCH] usb: typec: don't disable sink or source on
- initialization
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180906192644.24587-1-angus@akkea.ca>
- <20180907103438.GI25121@kuha.fi.intel.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <0adff11c-4836-4035-39a7-1cd2ea3ff74d@roeck-us.net>
-Date:   Fri, 7 Sep 2018 05:55:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 13:36:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=uGlsiIycJ0dvn9XAAii1VUSmpffVIgJru/y83Jg6K5c=; b=XiY0iWCZ4J+joMB5wjxWFS8l3g
+        ZuD2oBlh9Q/WXiZvIIiXeZhyRAlFTNnwj1EguXcw0Z74yznALdypo7Bhqw0qpg+zgUyWP1+wEwfPk
+        5cUOFXkaoSua/zM8e6CuLkOsI2vKB4H3ito8j17wb0yj/3XyRMEuyD6Byl34SIgFfkUTPRRAB+d05
+        pyjq2p6CThNToDHaIaMylDR7dyMLqMGj8R+5aR0wOWB+MbZzaZhzoVI2cTkfPVB7CVQljS/W0XjAQ
+        Fccw+AvkpEgY0eukZEBUctUY+r0t2E2s0SkYmYIap3PbdFj/YgFCuJEvYZBqA8sQ5irp0OzTV5dFk
+        ZL0eGuzA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyGIm-0005O5-HO; Fri, 07 Sep 2018 12:55:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D057320593806; Fri,  7 Sep 2018 14:55:54 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 14:55:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        dietmar.eggemann@arm.com, jhugo@codeaurora.org
+Subject: Re: [PATCH] sched/fair: fix load_balance redo for null imbalance
+Message-ID: <20180907125554.GA24106@hirez.programming.kicks-ass.net>
+References: <1536306664-29827-1-git-send-email-vincent.guittot@linaro.org>
+ <20180907113748.GV24106@hirez.programming.kicks-ass.net>
+ <20180907123551.GA9955@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180907103438.GI25121@kuha.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180907123551.GA9955@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 03:34 AM, Heikki Krogerus wrote:
-> +Guenter
+On Fri, Sep 07, 2018 at 02:35:51PM +0200, Vincent Guittot wrote:
+> Le Friday 07 Sep 2018 à 13:37:49 (+0200), Peter Zijlstra a écrit :
+> > On Fri, Sep 07, 2018 at 09:51:04AM +0200, Vincent Guittot wrote:
+> > > It can happen that load_balance finds a busiest group and then a busiest rq
+> > > but the calculated imbalance is in fact null.
+> > 
+> > Cute. Does that happen often?
 > 
-> On Thu, Sep 06, 2018 at 01:26:44PM -0600, Angus Ainslie (Purism) wrote:
->> If the board is being powered by USB disabling the source and sink
->> can remove power from the board. Default to source and sink enabled.
->>
-
-Seems to me that might violate the specification, and cause trouble for systems
-where vbus has to be off initially. It may be better to provide this kind of
-information as configuration parameter instead of imposing it on everyone.
-
-Guenter
-
->> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
->> ---
->>   drivers/usb/typec/tcpm.c | 8 +++++---
->>   1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
->> index ca7bedb46f7f..a1b819cf31da 100644
->> --- a/drivers/usb/typec/tcpm.c
->> +++ b/drivers/usb/typec/tcpm.c
->> @@ -2462,9 +2462,11 @@ static int tcpm_init_vbus(struct tcpm_port *port)
->>   {
->>   	int ret;
->>   
->> -	ret = port->tcpc->set_vbus(port->tcpc, false, false);
->> -	port->vbus_source = false;
->> -	port->vbus_charge = false;
->> +	/* default to source and sink enabled in case USB is our only power
->> +	 * source */
-
-I am personally in favor of standard multi-line comments.
-
->> +	ret = port->tcpc->set_vbus(port->tcpc, true, true);
->> +	port->vbus_source = true;
->> +	port->vbus_charge = true;
->>   	return ret;
->>   }
+> I have a use case with RT tasks that reproduces the problem regularly.
+> It happens at least when we have CPUs with different capacity either because
+> of heterogeous CPU or because of RT/DL reducing available capacity for cfs
+> I have put the call path that trigs the problem below and accroding to the
+> comment it seems that we can reach similar state when playing with priority.
 > 
+> > 
+> > > If the calculated imbalance is null, it's useless to try to find a busiest
+> > > rq as no task will be migrated and we can return immediately.
+> > > 
+> > > This situation can happen with heterogeneous system or smp system when RT
+> > > tasks are decreasing the capacity of some CPUs.
+> > 
+> > Is it the result of one of those "force_balance" conditions in
+> > find_busiest_group() ? Should we not fix that to then return NULL
+> > instead?
+> 
+> The UC is:
+> We have a newly_idle load balance that is triggered when RT task becomes idle
+> ( but I think that I have seen that with idle load balance too)
+> 
+> we trigs:
+> 	if (env->idle != CPU_NOT_IDLE && group_has_capacity(env, local) &&
+> 	    busiest->group_no_capacity)
+> 		goto force_balance;
+> 
+> In calculate_imbalance we use the path
+> 	/*
+> 	 * Avg load of busiest sg can be less and avg load of local sg can
+> 	 * be greater than avg load across all sgs of sd because avg load
+> 	 * factors in sg capacity and sgs with smaller group_type are
+> 	 * skipped when updating the busiest sg:
+> 	 */
+> 	if (busiest->avg_load <= sds->avg_load ||
+> 	    local->avg_load >= sds->avg_load) {
+> 		env->imbalance = 0;
+> 		return fix_small_imbalance(env, sds);
+> 	}
+> 
+> but fix_small_imbalance finally decides to return without modifying imbalance
+> like here
+> 	if (busiest->avg_load + scaled_busy_load_per_task >=
+> 	    local->avg_load + (scaled_busy_load_per_task * imbn)) {
+> 		env->imbalance = busiest->load_per_task;
+> 		return;
+> 	}
 
+That one actually does modify imbalance :-) But I get your point.
+
+> Beside this patch, I'm preparing another patch in fix small imbalance to
+> ensure 1 task per CPU in similar situation but according to the comment above,
+> we can reach this situation because of tasks priority
+
+Didn't we all hate fix_small_imbalance() ?
+
+Anyway, I think I'd prefer something like the below; although it might
+be nicer to thread the return value through calculate_imbalance() and
+fix_small_imbalance(), but looking at them that's not going to be
+particularly nicer.
+
+Do you agree with this?, If so, I'll stick your orignal Changelog on it
+and pretend this is what you send me :-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b39fb596f6c1..0596a29f3d2a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8269,7 +8269,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ force_balance:
+ 	/* Looks like there is an imbalance. Compute it */
+ 	calculate_imbalance(env, &sds);
+-	return sds.busiest;
++	return env->imbalance ? sds.busiest : NULL;
+ 
+ out_balanced:
+ 	env->imbalance = 0;
