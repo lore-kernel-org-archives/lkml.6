@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AB3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3400C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23BBA20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23BBA20844
+	by mail.kernel.org (Postfix) with ESMTP id 84D6F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D6F2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbeIHCUq (ORCPT
+        id S1729837AbeIHCUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52582 "EHLO
+        Fri, 7 Sep 2018 22:20:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52590 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbeIHCUp (ORCPT
+        with ESMTP id S1729412AbeIHCUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:45 -0400
+        Fri, 7 Sep 2018 22:20:49 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4BF2E9A;
-        Fri,  7 Sep 2018 21:37:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E18B0EC3;
+        Fri,  7 Sep 2018 21:37:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Watson <cjwatson@ubuntu.com>,
-        Christian Brauner <christian@brauner.io>,
-        Serge Hallyn <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.9 56/63] getxattr: use correct xattr length
-Date:   Fri,  7 Sep 2018 23:10:27 +0200
-Message-Id: <20180907211016.039478211@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Lukasz Dorau <lukasz.dorau@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>
+Subject: [PATCH 4.9 57/63] libnvdimm: fix ars_status output length calculation
+Date:   Fri,  7 Sep 2018 23:10:28 +0200
+Message-Id: <20180907211016.091074274@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -52,134 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Brauner <christian@brauner.io>
+From: Vishal Verma <vishal.l.verma@intel.com>
 
-commit 82c9a927bc5df6e06b72d206d24a9d10cced4eb5 upstream.
+commit 286e87718103acdf85f4ed323a37e4839a8a7c05 upstream.
 
-When running in a container with a user namespace, if you call getxattr
-with name = "system.posix_acl_access" and size % 8 != 4, then getxattr
-silently skips the user namespace fixup that it normally does resulting in
-un-fixed-up data being returned.
-This is caused by posix_acl_fix_xattr_to_user() being passed the total
-buffer size and not the actual size of the xattr as returned by
-vfs_getxattr().
-This commit passes the actual length of the xattr as returned by
-vfs_getxattr() down.
+Commit efda1b5d87cb ("acpi, nfit, libnvdimm: fix / harden ars_status output length handling")
+Introduced additional hardening for ambiguity in the ACPI spec for
+ars_status output sizing. However, it had a couple of cases mixed up.
+Where it should have been checking for (and returning) "out_field[1] -
+4" it was using "out_field[1] - 8" and vice versa.
 
-A reproducer for the issue is:
+This caused a four byte discrepancy in the buffer size passed on to
+the command handler, and in some cases, this caused memory corruption
+like:
 
-  touch acl_posix
+  ./daxdev-errors.sh: line 76: 24104 Aborted   (core dumped) ./daxdev-errors $busdev $region
+  malloc(): memory corruption
+  Program received signal SIGABRT, Aborted.
+  [...]
+  #5  0x00007ffff7865a2e in calloc () from /lib64/libc.so.6
+  #6  0x00007ffff7bc2970 in ndctl_bus_cmd_new_ars_status (ars_cap=ars_cap@entry=0x6153b0) at ars.c:136
+  #7  0x0000000000401644 in check_ars_status (check=0x7fffffffdeb0, bus=0x604c20) at daxdev-errors.c:144
+  #8  test_daxdev_clear_error (region_name=<optimized out>, bus_name=<optimized out>)
+      at daxdev-errors.c:332
 
-  setfacl -m user:0:rwx acl_posix
-
-and the compile:
-
-  #define _GNU_SOURCE
-  #include <errno.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <string.h>
-  #include <sys/types.h>
-  #include <unistd.h>
-  #include <attr/xattr.h>
-
-  /* Run in user namespace with nsuid 0 mapped to uid != 0 on the host. */
-  int main(int argc, void **argv)
-  {
-          ssize_t ret1, ret2;
-          char buf1[128], buf2[132];
-          int fret = EXIT_SUCCESS;
-          char *file;
-
-          if (argc < 2) {
-                  fprintf(stderr,
-                          "Please specify a file with "
-                          "\"system.posix_acl_access\" permissions set\n");
-                  _exit(EXIT_FAILURE);
-          }
-          file = argv[1];
-
-          ret1 = getxattr(file, "system.posix_acl_access",
-                          buf1, sizeof(buf1));
-          if (ret1 < 0) {
-                  fprintf(stderr, "%s - Failed to retrieve "
-                                  "\"system.posix_acl_access\" "
-                                  "from \"%s\"\n", strerror(errno), file);
-                  _exit(EXIT_FAILURE);
-          }
-
-          ret2 = getxattr(file, "system.posix_acl_access",
-                          buf2, sizeof(buf2));
-          if (ret2 < 0) {
-                  fprintf(stderr, "%s - Failed to retrieve "
-                                  "\"system.posix_acl_access\" "
-                                  "from \"%s\"\n", strerror(errno), file);
-                  _exit(EXIT_FAILURE);
-          }
-
-          if (ret1 != ret2) {
-                  fprintf(stderr, "The value of \"system.posix_acl_"
-                                  "access\" for file \"%s\" changed "
-                                  "between two successive calls\n", file);
-                  _exit(EXIT_FAILURE);
-          }
-
-          for (ssize_t i = 0; i < ret2; i++) {
-                  if (buf1[i] == buf2[i])
-                          continue;
-
-                  fprintf(stderr,
-                          "Unexpected different in byte %zd: "
-                          "%02x != %02x\n", i, buf1[i], buf2[i]);
-                  fret = EXIT_FAILURE;
-          }
-
-          if (fret == EXIT_SUCCESS)
-                  fprintf(stderr, "Test passed\n");
-          else
-                  fprintf(stderr, "Test failed\n");
-
-          _exit(fret);
-  }
-and run:
-
-  ./tester acl_posix
-
-On a non-fixed up kernel this should return something like:
-
-  root@c1:/# ./t
-  Unexpected different in byte 16: ffffffa0 != 00
-  Unexpected different in byte 17: ffffff86 != 00
-  Unexpected different in byte 18: 01 != 00
-
-and on a fixed kernel:
-
-  root@c1:~# ./t
-  Test passed
-
-Cc: stable@vger.kernel.org
-Fixes: 2f6f0654ab61 ("userns: Convert vfs posix_acl support to use kuids and kgids")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199945
-Reported-by: Colin Watson <cjwatson@ubuntu.com>
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Acked-by: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Cc: <stable@vger.kernel.org>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Lukasz Dorau <lukasz.dorau@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Fixes: efda1b5d87cb ("acpi, nfit, libnvdimm: fix / harden ars_status output length handling")
+Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Signed-of-by: Dave Jiang <dave.jiang@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvdimm/bus.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -540,7 +540,7 @@ getxattr(struct dentry *d, const char __
- 	if (error > 0) {
- 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
- 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
--			posix_acl_fix_xattr_to_user(kvalue, size);
-+			posix_acl_fix_xattr_to_user(kvalue, error);
- 		if (size && copy_to_user(value, kvalue, error))
- 			error = -EFAULT;
- 	} else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -748,9 +748,9 @@ u32 nd_cmd_out_size(struct nvdimm *nvdim
+ 		 * overshoots the remainder by 4 bytes, assume it was
+ 		 * including 'status'.
+ 		 */
+-		if (out_field[1] - 8 == remainder)
++		if (out_field[1] - 4 == remainder)
+ 			return remainder;
+-		return out_field[1] - 4;
++		return out_field[1] - 8;
+ 	} else if (cmd == ND_CMD_CALL) {
+ 		struct nd_cmd_pkg *pkg = (struct nd_cmd_pkg *) in_field;
+ 
 
 
