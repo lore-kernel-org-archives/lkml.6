@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EFCC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F55EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77BB920645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77BB920645
+	by mail.kernel.org (Postfix) with ESMTP id 52E7A20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E7A20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbeIHCLj (ORCPT
+        id S1729528AbeIHCLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:11:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48846 "EHLO
+        Fri, 7 Sep 2018 22:11:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbeIHCLi (ORCPT
+        with ESMTP id S1728060AbeIHCLl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:11:38 -0400
+        Fri, 7 Sep 2018 22:11:41 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F133ACC;
-        Fri,  7 Sep 2018 21:28:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D630DBC;
+        Fri,  7 Sep 2018 21:28:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Jun Piao <piaojun@huawei.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Dominique Martinet <dominique.martinet@cea.fr>
-Subject: [PATCH 4.14 24/89] 9p: fix multiple NULL-pointer-dereferences
-Date:   Fri,  7 Sep 2018 23:09:18 +0200
-Message-Id: <20180907210855.447289532@linuxfoundation.org>
+Subject: [PATCH 4.14 25/89] fs/9p/xattr.c: catch the error of p9_client_clunk when setting xattr failed
+Date:   Fri,  7 Sep 2018 23:09:19 +0200
+Message-Id: <20180907210855.550982641@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,82 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: piaojun <piaojun@huawei.com>
 
-commit 10aa14527f458e9867cf3d2cc6b8cb0f6704448b upstream.
+commit 3111784bee81591ea2815011688d28b65df03627 upstream.
 
-Added checks to prevent GPFs from raising.
+In my testing, v9fs_fid_xattr_set will return successfully even if the
+backend ext4 filesystem has no space to store xattr key-value. That will
+cause inconsistent behavior between front end and back end. The reason is
+that lsetxattr will be triggered by p9_client_clunk, and unfortunately we
+did not catch the error. This patch will catch the error to notify upper
+caller.
 
-Link: http://lkml.kernel.org/r/20180727110558.5479-1-tomasbortoli@gmail.com
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+1a262da37d3bead15c39@syzkaller.appspotmail.com
+p9_client_clunk (in 9p)
+  p9_client_rpc(clnt, P9_TCLUNK, "d", fid->fid);
+    v9fs_clunk (in qemu)
+      put_fid
+        free_fid
+          v9fs_xattr_fid_clunk
+            v9fs_co_lsetxattr
+              s->ops->lsetxattr
+                ext4_xattr_user_set (in host ext4 filesystem)
+
+Link: http://lkml.kernel.org/r/5B57EACC.2060900@huawei.com
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Ron Minnich <rminnich@sandia.gov>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/trans_fd.c     |    5 ++++-
- net/9p/trans_rdma.c   |    3 +++
- net/9p/trans_virtio.c |    3 +++
- net/9p/trans_xen.c    |    3 +++
- 4 files changed, 13 insertions(+), 1 deletion(-)
+ fs/9p/xattr.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -951,7 +951,7 @@ p9_fd_create_tcp(struct p9_client *clien
- 	if (err < 0)
- 		return err;
- 
--	if (valid_ipaddr4(addr) < 0)
-+	if (addr == NULL || valid_ipaddr4(addr) < 0)
- 		return -EINVAL;
- 
- 	csocket = NULL;
-@@ -1001,6 +1001,9 @@ p9_fd_create_unix(struct p9_client *clie
- 
- 	csocket = NULL;
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	if (strlen(addr) >= UNIX_PATH_MAX) {
- 		pr_err("%s (%d): address too long: %s\n",
- 		       __func__, task_pid_nr(current), addr);
---- a/net/9p/trans_rdma.c
-+++ b/net/9p/trans_rdma.c
-@@ -646,6 +646,9 @@ rdma_create_trans(struct p9_client *clie
- 	struct rdma_conn_param conn_param;
- 	struct ib_qp_init_attr qp_attr;
- 
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	/* Parse the transport specific mount options */
- 	err = parse_opts(args, &opts);
- 	if (err < 0)
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -650,6 +650,9 @@ p9_virtio_create(struct p9_client *clien
- 	int ret = -ENOENT;
- 	int found = 0;
- 
-+	if (devname == NULL)
-+		return -EINVAL;
-+
- 	mutex_lock(&virtio_9p_lock);
- 	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
- 		if (!strncmp(devname, chan->tag, chan->tag_len) &&
---- a/net/9p/trans_xen.c
-+++ b/net/9p/trans_xen.c
-@@ -95,6 +95,9 @@ static int p9_xen_create(struct p9_clien
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -105,7 +105,7 @@ int v9fs_fid_xattr_set(struct p9_fid *fi
  {
- 	struct xen_9pfs_front_priv *priv;
+ 	struct kvec kvec = {.iov_base = (void *)value, .iov_len = value_len};
+ 	struct iov_iter from;
+-	int retval;
++	int retval, err;
  
-+	if (addr == NULL)
-+		return -EINVAL;
-+
- 	read_lock(&xen_9pfs_lock);
- 	list_for_each_entry(priv, &xen_9pfs_devs, list) {
- 		if (!strcmp(priv->tag, addr)) {
+ 	iov_iter_kvec(&from, WRITE | ITER_KVEC, &kvec, 1, value_len);
+ 
+@@ -126,7 +126,9 @@ int v9fs_fid_xattr_set(struct p9_fid *fi
+ 			 retval);
+ 	else
+ 		p9_client_write(fid, 0, &from, &retval);
+-	p9_client_clunk(fid);
++	err = p9_client_clunk(fid);
++	if (!retval && err)
++		retval = err;
+ 	return retval;
+ }
+ 
 
 
