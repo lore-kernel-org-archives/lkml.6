@@ -2,97 +2,110 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF99C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAD2C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E439B20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:49:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrdZ3cbK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E439B20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6BB902083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 18:49:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB902083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbeIGXbu (ORCPT
+        id S1727724AbeIGXcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 19:31:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727648AbeIGXbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 19:31:49 -0400
-Received: from mail-qt0-f174.google.com (mail-qt0-f174.google.com [209.85.216.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E787C2083D;
-        Fri,  7 Sep 2018 18:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536346175;
-        bh=HiUZe+WPncley1Ll9aGqHIBYjQn1CeG7b+18OmU4jIQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rrdZ3cbKZ2ILceSM57E9/NQ2vAQsOK4ML2wFIv/c2Z4D1FVEWoll0KInJf8RawyvJ
-         o6yftrDXp7lWdYMVQB6EDWE7o8MIRbadMStHpfyN8E3hKbzPU6rOv+BdAuQtxgJYKz
-         Olh8SK6be+lmZ74Xh32Jr7JU/XSz5Qt/gtSumQ0I=
-Received: by mail-qt0-f174.google.com with SMTP id r37-v6so17317200qtc.0;
-        Fri, 07 Sep 2018 11:49:34 -0700 (PDT)
-X-Gm-Message-State: APzg51BFBjl3RVk9r7C27WA/ZmyMTC12mabF6e2qyce9I3zD3ifveS3D
-        Ny2ZU64uVO2QqECjBY56EReL32wox++cSH3L5w==
-X-Google-Smtp-Source: ANB0VdZd+i31O3ejWEbV65uX4otwyZzzeLJljPBw1ZccSC+zjuqlV+Z/LfiQpRYgdmdGCijpI+jaScQY8ZQyZfqEfvs=
-X-Received: by 2002:a0c:db87:: with SMTP id m7-v6mr6832443qvk.90.1536346174072;
- Fri, 07 Sep 2018 11:49:34 -0700 (PDT)
+        Fri, 7 Sep 2018 19:32:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40487 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727694AbeIGXcA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 19:32:00 -0400
+Received: by mail-pg1-f193.google.com with SMTP id l63-v6so7405149pga.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 11:49:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=vIIkIbgiuSUJjpz0K1r5H4tLrFnyyZwMmUr4AOpBfZ0=;
+        b=oz+EJwVnFHzoUl3boqy2vM+62qjUvu5dnFFhwBLIYZNc/f3TEEySiWzXNLQec72wSa
+         Rl2Eawb2892OWoOx832VkqvgvNHBVNN6ON37UXDZ6jESE75kvOyyl8N5PL17A4+z3LcV
+         rmftzQfq6rNBNJqiDTXmYerjP8Jq5vLCa1hKW90ugu/m0s26P44PdmFq+d22lAsHK6Ua
+         1VJu/GYGFn16o5Ra+jagQW+U9PK2q9SU+YFfKF/xOQHT8/zG8Cota03S2wEgmVzU0ITP
+         oVEJHF8gu1xs51E8O5UkQZIgD/muw8VYalrSipkg54eljfHoYxHsVIcjqVTWYd4zxSIn
+         7a+w==
+X-Gm-Message-State: APzg51CNU1N/N7LPOtkSurZIe4mKPwJx87uSdSxdtd2D7avjJgUh0QBF
+        HOVKtNYJ09akDsIrXxI3LPVi7A==
+X-Google-Smtp-Source: ANB0VdaayRBE+sC4vX9s9k8pwyl3Tl4r94Tp0z0OKb1HzvxDByeJzqmfySGMWfaRYXF0WeqT9XL9oQ==
+X-Received: by 2002:a62:2646:: with SMTP id m67-v6mr10168793pfm.254.1536346186233;
+        Fri, 07 Sep 2018 11:49:46 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:1004:378:275a:f56d:4749:7a3b])
+        by smtp.gmail.com with ESMTPSA id l85-v6sm15587466pfk.34.2018.09.07.11.49.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 11:49:44 -0700 (PDT)
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH V4 3/3] x86/efi: Introduce EFI_PAGE_FAULT_HANDLER
+References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1536276468-28499-4-git-send-email-sai.praneeth.prakhya@intel.com>
+ <20180907112207.GS24106@hirez.programming.kicks-ass.net>
+ <FFF73D592F13FD46B8700F0A279B802F485BA5C1@ORSMSX114.amr.corp.intel.com>
+Message-ID: <e10acaa8-f5d8-85f3-219c-86fafd793a87@redhat.com>
+Date:   Sat, 8 Sep 2018 00:19:34 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-References: <20180907142247.2931-1-thierry.reding@gmail.com>
-In-Reply-To: <20180907142247.2931-1-thierry.reding@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 7 Sep 2018 13:49:22 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ0VZftZ+Qve+=91tbvgYof68NW+dBf4bPv+b8uQ0y1hg@mail.gmail.com>
-Message-ID: <CAL_JsqJ0VZftZ+Qve+=91tbvgYof68NW+dBf4bPv+b8uQ0y1hg@mail.gmail.com>
-Subject: Re: [PATCH] of: Split up name & type in modalias generation
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F485BA5C1@ORSMSX114.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 9:22 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+On 09/07/2018 11:53 PM, Prakhya, Sai Praneeth wrote:
+> >> There may exist some buggy UEFI firmware implementations that might
+> >> access efi regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even
+> >> after the kernel has assumed control of the platform. This violates
+> >> UEFI specification.
+> >>
+> >> If selected, this debug option will print a warning message if the
+> >> UEFI firmware tries to access any memory region which it shouldn't.
+> >> Along with the warning, the efi page fault handler will also try to
+> >> recover from the page fault triggered by the firmware so that the
+> >> machine doesn't hang.
+> >
+> > Why make this optional?
 >
-> From: Thierry Reding <treding@nvidia.com>
+> I made it as a config option in RFC because the page fault handler was
+> complicated and touching many parts (it had lots of code change and I didn't want
+> to break any existing functionality). Now that it's simple, I don't think we need
+> the config option.
 >
-> The kernel's vsnprintf() implementation discards all alpha-numeric
-> characters following a %p conversion specifier. This is done in order to
-> generically skip any of the various modifiers that the kernel supports.
-> Unfortunately, the OF modalias is generated with a format string that
-> violates the assumption made by vsnprintf():
+> Without efi page fault handler, any page fault caused by firmware should panic
+> kernel but with this patch I think we are just improving existing condition (ideally).
 >
->         of:N%pOFnT%s
+> So, if Thomas, Ingo, Andy, Ard and Boris are ok.. I will make it as default (i.e. without
+> config).
 >
-> While processing the above format string, vsnprintf() will eat the 'T'
-> character, assuming that it belongs to the preceeding %p specifier. This
-> results in a modalias with an incompatible format, which in turn causes
-> the automatic loading of drivers based on modalias to no longer work.
+> Regards,
+> Sai
 >
-> To fix this, split up the generation of the name & type fields into two
-> separate snprintf() calls to avoid confusing the parser.
->
-> Fixes: 73813f8483b1 ("of: Convert to using %pOFn instead of device_node.name")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Note that a more elegant fix would be to make the %p format specifier
-> parser report back the exact number of characters consumed. I briefly
-> tried to implement it, but quickly ran into numerous special cases
-> that make this solution rather involved.
->
-> I can spend some more time to improve this in general if that's what we
-> ultimately want, but I think this patch is a better short-term fix to
-> workaround the issue.
+Also, some distributions already have specific ways to handle buggy firmwares which can be at times dependent on the underlying hardware and the firmware versions.
 
-See my reply on the original patch. I've updated the patch in my
-dt/next branch with the fix to use %c.
+I would suggest that we enable this under a CONFIG for the first round and once it is tested with wider variety of x86 machines which have buggy or orphaned firmware and linux (and reboot) works fine with them, we can drop the CONFIG option in future and enable this by default.
 
-Rob
+Regards,
+Bhupesh
