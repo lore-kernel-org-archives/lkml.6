@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A28C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F7AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C770A20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C770A20645
+	by mail.kernel.org (Postfix) with ESMTP id C696C20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C696C20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbeIHCI0 (ORCPT
+        id S1728652AbeIHCIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:08:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46928 "EHLO
+        Fri, 7 Sep 2018 22:08:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46938 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbeIHCI0 (ORCPT
+        with ESMTP id S1727217AbeIHCI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:08:26 -0400
+        Fri, 7 Sep 2018 22:08:29 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE8C6F07;
-        Fri,  7 Sep 2018 21:25:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26804F07;
+        Fri,  7 Sep 2018 21:25:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
-        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
-        Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>
-Subject: [PATCH 4.14 01/89] net: 6lowpan: fix reserved space for single frames
-Date:   Fri,  7 Sep 2018 23:08:55 +0200
-Message-Id: <20180907210852.404092852@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        xiao jin <jin.xiao@intel.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 10/89] block: blk_init_allocated_queue() set q->fq as NULL in the fail case
+Date:   Fri,  7 Sep 2018 23:09:04 +0200
+Message-Id: <20180907210853.972007911@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,57 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+From: xiao jin <jin.xiao@intel.com>
 
-commit ac74f87c789af40936a80131c4759f3e72579c3a upstream.
+commit 54648cf1ec2d7f4b6a71767799c45676a138ca24 upstream.
 
-This patch fixes patch add handling to take care tail and headroom for
-single 6lowpan frames. We need to be sure we have a skb with the right
-head and tailroom for single frames. This patch do it by using
-skb_copy_expand() if head and tailroom is not enough allocated by upper
-layer.
+We find the memory use-after-free issue in __blk_drain_queue()
+on the kernel 4.14. After read the latest kernel 4.18-rc6 we
+think it has the same problem.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195059
-Reported-by: David Palma <david.palma@ntnu.no>
-Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Memory is allocated for q->fq in the blk_init_allocated_queue().
+If the elevator init function called with error return, it will
+run into the fail case to free the q->fq.
+
+Then the __blk_drain_queue() uses the same memory after the free
+of the q->fq, it will lead to the unpredictable event.
+
+The patch is to set q->fq as NULL in the fail case of
+blk_init_allocated_queue().
+
+Fixes: commit 7c94e1c157a2 ("block: introduce blk_flush_queue to drive flush machinery")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: xiao jin <jin.xiao@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ieee802154/6lowpan/tx.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ block/blk-core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ieee802154/6lowpan/tx.c
-+++ b/net/ieee802154/6lowpan/tx.c
-@@ -265,9 +265,24 @@ netdev_tx_t lowpan_xmit(struct sk_buff *
- 	/* We must take a copy of the skb before we modify/replace the ipv6
- 	 * header as the header could be used elsewhere
- 	 */
--	skb = skb_unshare(skb, GFP_ATOMIC);
--	if (!skb)
--		return NET_XMIT_DROP;
-+	if (unlikely(skb_headroom(skb) < ldev->needed_headroom ||
-+		     skb_tailroom(skb) < ldev->needed_tailroom)) {
-+		struct sk_buff *nskb;
-+
-+		nskb = skb_copy_expand(skb, ldev->needed_headroom,
-+				       ldev->needed_tailroom, GFP_ATOMIC);
-+		if (likely(nskb)) {
-+			consume_skb(skb);
-+			skb = nskb;
-+		} else {
-+			kfree_skb(skb);
-+			return NET_XMIT_DROP;
-+		}
-+	} else {
-+		skb = skb_unshare(skb, GFP_ATOMIC);
-+		if (!skb)
-+			return NET_XMIT_DROP;
-+	}
- 
- 	ret = lowpan_header(skb, ldev, &dgram_size, &dgram_offset);
- 	if (ret < 0) {
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1025,6 +1025,7 @@ out_exit_flush_rq:
+ 		q->exit_rq_fn(q, q->fq->flush_rq);
+ out_free_flush_queue:
+ 	blk_free_flush_queue(q->fq);
++	q->fq = NULL;
+ 	return -ENOMEM;
+ }
+ EXPORT_SYMBOL(blk_init_allocated_queue);
 
 
