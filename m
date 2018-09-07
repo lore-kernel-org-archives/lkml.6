@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5561C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D606BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65C732083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C732083D
+	by mail.kernel.org (Postfix) with ESMTP id 99DE6204FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:40:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99DE6204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729405AbeIHCXI (ORCPT
+        id S1730121AbeIHCXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:23:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54174 "EHLO
+        Fri, 7 Sep 2018 22:23:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54376 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728505AbeIHCXH (ORCPT
+        with ESMTP id S1728505AbeIHCXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:23:07 -0400
+        Fri, 7 Sep 2018 22:23:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D9C2100B;
-        Fri,  7 Sep 2018 21:40:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA1DDFEF;
+        Fri,  7 Sep 2018 21:40:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Snild Dolkow <snild@sony.com>
-Subject: [PATCH 4.4 23/47] kthread, tracing: Dont expose half-written comm when creating kthreads
-Date:   Fri,  7 Sep 2018 23:10:19 +0200
-Message-Id: <20180907210907.190592885@linuxfoundation.org>
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 24/47] uprobes: Use synchronize_rcu() not synchronize_sched()
+Date:   Fri,  7 Sep 2018 23:10:20 +0200
+Message-Id: <20180907210907.327312282@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -51,83 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Snild Dolkow <snild@sony.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 3e536e222f2930534c252c1cc7ae799c725c5ff9 upstream.
+commit 016f8ffc48cb01d1e7701649c728c5d2e737d295 upstream.
 
-There is a window for racing when printing directly to task->comm,
-allowing other threads to see a non-terminated string. The vsnprintf
-function fills the buffer, counts the truncated chars, then finally
-writes the \0 at the end.
+While debugging another bug, I was looking at all the synchronize*()
+functions being used in kernel/trace, and noticed that trace_uprobes was
+using synchronize_sched(), with a comment to synchronize with
+{u,ret}_probe_trace_func(). When looking at those functions, the data is
+protected with "rcu_read_lock()" and not with "rcu_read_lock_sched()". This
+is using the wrong synchronize_*() function.
 
-	creator                     other
-	vsnprintf:
-	  fill (not terminated)
-	  count the rest            trace_sched_waking(p):
-	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
-	  write \0
-
-The consequences depend on how 'other' uses the string. In our case,
-it was copied into the tracing system's saved cmdlines, a buffer of
-adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
-
-	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
-	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
-
-...and a strcpy out of there would cause stack corruption:
-
-	[224761.522292] Kernel panic - not syncing: stack-protector:
-	    Kernel stack is corrupted in: ffffff9bf9783c78
-
-	crash-arm64> kbt | grep 'comm\|trace_print_context'
-	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
-	      comm (char [16]) =  "irq/497-pwr_even"
-
-	crash-arm64> rd 0xffffffd4d0e17d14 8
-	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
-	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
-	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
-	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
-
-The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
-likely needed because of this same bug.
-
-Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
-This way, there won't be a window where comm is not terminated.
-
-Link: http://lkml.kernel.org/r/20180726071539.188015-1-snild@sony.com
+Link: http://lkml.kernel.org/r/20180809160553.469e1e32@gandalf.local.home
 
 Cc: stable@vger.kernel.org
-Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Snild Dolkow <snild@sony.com>
+Fixes: 70ed91c6ec7f8 ("tracing/uprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-[backported to 3.18 / 4.4 by Snild]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/kthread.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/trace/trace_uprobe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -313,10 +313,16 @@ struct task_struct *kthread_create_on_no
- 	task = create->result;
- 	if (!IS_ERR(task)) {
- 		static const struct sched_param param = { .sched_priority = 0 };
-+		char name[TASK_COMM_LEN];
- 		va_list args;
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -969,7 +969,7 @@ probe_event_disable(struct trace_uprobe
  
- 		va_start(args, namefmt);
--		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
-+		/*
-+		 * task is already visible to other tasks, so updating
-+		 * COMM must be protected.
-+		 */
-+		vsnprintf(name, sizeof(name), namefmt, args);
-+		set_task_comm(task, name);
- 		va_end(args);
- 		/*
- 		 * root may have changed our (kthreadd's) priority or CPU mask.
+ 		list_del_rcu(&link->list);
+ 		/* synchronize with u{,ret}probe_trace_func */
+-		synchronize_sched();
++		synchronize_rcu();
+ 		kfree(link);
+ 
+ 		if (!list_empty(&tu->tp.files))
 
 
