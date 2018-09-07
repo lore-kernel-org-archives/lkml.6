@@ -2,123 +2,109 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5927C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513A9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8118320861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:38:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8118320861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E24C720861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:38:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TunyopOW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24C720861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbeIHDVJ (ORCPT
+        id S1727592AbeIHDWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:21:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12003 "EHLO mga07.intel.com"
+        Fri, 7 Sep 2018 23:22:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727125AbeIHDVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:21:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 15:38:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,344,1531810800"; 
-   d="scan'208";a="78837673"
-Received: from ray.jf.intel.com (HELO [10.54.74.179]) ([10.54.74.179])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Sep 2018 15:37:46 -0700
-Subject: Re: [RFC][PATCH 2/8] x86/mm: break out kernel address space handling
-To:     Andy Lutomirski <luto@amacapital.net>
-References: <20180907194852.3C351B82@viggo.jf.intel.com>
- <20180907194855.74E03836@viggo.jf.intel.com>
- <CD6177E3-BDE5-443F-9A28-351EAE0BE5BA@amacapital.net>
-Cc:     linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
-        luto@kernel.org
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <90a3e9c8-61df-f1dc-0d5c-b71342835f59@linux.intel.com>
-Date:   Fri, 7 Sep 2018 15:37:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726349AbeIHDWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 23:22:02 -0400
+Received: from localhost (unknown [104.132.0.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C44320844;
+        Fri,  7 Sep 2018 22:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536359933;
+        bh=z0nZLFBWrw4qG8tNWgZN1zTnS/cJYMU4z1ijUrmhEMM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TunyopOW7kIPXEWh/+suagH4KG1HWpKGk6hkRqJmypZ66a3DGwsYcUYay2Id7yhu/
+         TbbVAtT0G0haZvVMgdijnLESWIBgdhF0XAxBrgm6Br7zl1RQUoPIfEXCouErJB1pj7
+         a7AFM3vJVJf/EBxqu+v9vfmMCk2Q49hNqtPNviec=
+Date:   Fri, 7 Sep 2018 15:38:52 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH 2/2] f2fs: fix to avoid quota inode leak in ->put_super
+Message-ID: <20180907223852.GA96592@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180906124436.89193-1-yuchao0@huawei.com>
+ <20180906124436.89193-2-yuchao0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CD6177E3-BDE5-443F-9A28-351EAE0BE5BA@amacapital.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906124436.89193-2-yuchao0@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 03:21 PM, Andy Lutomirski wrote:
->> +static void
->> +do_kern_addr_space_fault(struct pt_regs *regs, unsigned long hw_error_code,
->> +             unsigned long address)
->> +{
->
-> Can you add a comment above this documenting *when* it’s called? Is
-> it all faults, !user_mode faults, or !PF_USER?
+I merged as one. Please check dev. :)
 
-Yep, can do.
-
->> +    /*
->> +     * This is a "bad" fault in the kernel address space.  There
->> +     * is no reasonable explanation for it.  We will either kill
->> +     * the process for making a bad access, or oops the kernel.
->> +     */
+On 09/06, Chao Yu wrote:
+> generic/019 reports below error:
 > 
-> Or call an extable handler?
+>  __quota_error: 1160 callbacks suppressed
+>  Quota error (device zram1): write_blk: dquota write failed
+>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>  Quota error (device zram1): write_blk: dquota write failed
+>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>  Quota error (device zram1): write_blk: dquota write failed
+>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>  Quota error (device zram1): write_blk: dquota write failed
+>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>  Quota error (device zram1): write_blk: dquota write failed
+>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
 > 
-> Maybe the wording should be less scary, e.g. “this fault is a genuine
-> error. Send a signal, call an exception handler, or oops, as
-> appropriate.”
-
-Yeah, the real behavior is quite a bit more subtle than I'm letting on.
-I'll tone it down.
+> If we failed in below path due to fail to write dquot block, we will miss
+> to release quota inode, fix it.
+> 
+> - f2fs_put_super
+>  - f2fs_quota_off_umount
+>   - f2fs_quota_off
+>    - f2fs_quota_sync   <-- failed
+>    - dquot_quota_off   <-- missed to call
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/super.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index c026aaccf218..328f58647f4c 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1900,10 +1900,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+>  	for (type = 0; type < MAXQUOTAS; type++) {
+>  		err = f2fs_quota_off(sb, type);
+>  		if (err) {
+> +			int ret = dquot_quota_off(sb, type);
+> +
+>  			f2fs_msg(sb, KERN_ERR,
+>  				"Fail to turn off disk quota "
+> -				"(type: %d, err: %d), Please "
+> -				"run fsck to fix it.", type, err);
+> +				"(type: %d, err: %d, ret:%d), Please "
+> +				"run fsck to fix it.", type, err, ret);
+>  			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  		}
+>  	}
+> -- 
+> 2.18.0.rc1
