@@ -2,101 +2,121 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B286C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0373C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B0E2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:35:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v005ubu5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B0E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B3CA2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3CA2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeIGMOg (ORCPT
+        id S1727629AbeIGMQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:14:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52754 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbeIGMOf (ORCPT
+        Fri, 7 Sep 2018 08:16:02 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41339 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbeIGMQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:14:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6AQiD9D2levhriXbeDepjyHN/nm3dK7vD8VzK4LogX0=; b=v005ubu5lP//KQK5nMFrrIxfx
-        dc9Nd+FKLyFROyz8sjHtQV+nYHwt9MygVpoINVkrVcKDS1Ug0JAAY0PeJMLADbApUN3TTqW+pln2J
-        Gwak9/LlTSgqTiyjUHAmxAEtsIXtDN7GrR+TqwH1eC6mwPIFeP1tkFIuLqCHWvbADAg3gJGDHT/lP
-        jhDZySEy2DXHRuKtoaKYm3lGONotABXksU3LCsFvq9HepVuh2Ufx+SmK2IdxZEdZ7x4TtMt7TQAuP
-        FnLkBmqwrYM8jKnhGRQyqdiJyi+V26WokuHD/D2CEyl0lTPay6HQPSly29MnigwGZ1wQrAptIoInr
-        W1YMueKdA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fyBI3-0007h0-93; Fri, 07 Sep 2018 07:34:51 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 04F39201F9C52; Fri,  7 Sep 2018 09:34:49 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 09:34:48 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
-Message-ID: <20180907073448.GL24106@hirez.programming.kicks-ass.net>
-References: <20180905213334.03375777@vmware.local.home>
+        Fri, 7 Sep 2018 08:16:01 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1fyBJC-0006Q9-U2; Fri, 07 Sep 2018 09:36:02 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1fyBJ9-0007Z8-RG; Fri, 07 Sep 2018 09:35:59 +0200
+Date:   Fri, 7 Sep 2018 09:35:59 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, yibin.gong@nxp.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
+        kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180907073559.ejffdfjy7zpqetzq@pengutronix.de>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
+ <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hv37p32vqzzbscv3"
 Content-Disposition: inline
-In-Reply-To: <20180905213334.03375777@vmware.local.home>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180906101516.GA5360@sirena.org.uk>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:34:53 up 6 days, 23:49, 28 users,  load average: 0.09, 0.02, 0.00
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 09:33:34PM -0400, Steven Rostedt wrote:
->   do_idle {
-> 
->     [interrupts enabled]
-> 
->     <interrupt> [interrupts disabled]
-> 	TRACE_IRQS_OFF [lockdep says irqs off]
-> 	[...]
-> 	TRACE_IRQS_IRET
-> 	    test if pt_regs say return to interrupts enabled [yes]
-> 	    TRACE_IRQS_ON [lockdep says irqs are on]
-> 
-> 	    <nmi>
-> 		nmi_enter() {
-> 		    printk_nmi_enter() [traced by ftrace]
-> 		    [ hit ftrace breakpoint ]
-> 		    <breakpoint exception>
-> 			TRACE_IRQS_OFF [lockdep says irqs off]
-> 			[...]
-> 			TRACE_IRQS_IRET [return from breakpoint]
-> 			   test if pt_regs say interrupts enabled [no]
-> 			   [iret back to interrupt]
-> 	   [iret back to code]
-> 
->     tick_nohz_idle_enter() {
-> 
-> 	lockdep_assert_irqs_enabled() [lockdep say no!]
 
-Isn't the problem that we muck with the IRQ state from NMI context? We
-shouldn't be doing that.
+--hv37p32vqzzbscv3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The thing is, since we trace the IRQ state from within IRQ-disable,
-since that's the only IRQ-safe option, it is very much not NMI-safe.
+Hi Mark,
 
-Your patch might avoid the symptom, but I don't think it cures the
-fundamental problem.
+On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
+> On Mon, Aug 27, 2018 at 09:48:16AM +0800, Shawn Guo wrote:
+>=20
+> > Can you ACK on those two regulator patches, so that I can queue this
+> > series up on IMX tree?
+>=20
+> I was expecting to get a pull request with the precursor patches in it -
+> the regulator driver seems to get a moderate amount of development so
+> there's a reasonable risk of conflicts.
+
+Are there any thing I can or should do?
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--hv37p32vqzzbscv3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAluSKlwACgkQdQOiSHVI
+77SbiAf/Vo61tQX0DvUQYecE1iy7j6lBfvQsrNZrltl+fBM5WCwbqszQiK9ADiyg
+1/dLFR3VlCJXlgNTF1wcz1NymDAyStRkDR1670WY6x/qJeBwzNx7OHQuGQJtmj4G
+m8+GmT/AApfITmEr4sShF8TmkMu1wtXw4QFVj0hwBjAbAztWMqAlTt9TWOkoykoL
+4n2HuWWh7LUdq8A9ggGavw4YBSTA/fVHgpQdzAhK+mCDA7UGOyEf9r2AiG1eXa/q
+u+GXp9OQ5UNjbG5PW9v3NNZqsti/YJoN2bmqfmRHCgDARwNiusxa/IA3+CbAucop
+mJhmzM0+g7O9CKbs9Wqeag+7fTmhjw==
+=ncWt
+-----END PGP SIGNATURE-----
+
+--hv37p32vqzzbscv3--
