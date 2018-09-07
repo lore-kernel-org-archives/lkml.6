@@ -4,174 +4,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A650FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41216C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504E42083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEA5F2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="cYRsY/yL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504E42083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BhfrFS4D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEA5F2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbeIGFTc (ORCPT
+        id S1731012AbeIGFTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:19:32 -0400
-Received: from mail-cys01nam02on0134.outbound.protection.outlook.com ([104.47.37.134]:20941
+        Fri, 7 Sep 2018 01:19:37 -0400
+Received: from mail-cys01nam02on0119.outbound.protection.outlook.com ([104.47.37.119]:49833
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730880AbeIGFTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:19:32 -0400
+        id S1730939AbeIGFTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:19:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DGPZ0z8RjQLTCrrRyjIRMZEAQ2bnPpesWEOsjDyRZt0=;
- b=cYRsY/yLPfdhhDJC+uAq5nINgzK25t07LEXEkQ99PTTRRUVZ4zTysF1vZ6I34RyFZQ5kXdOZUCulk99dKEs31OCtXv9neTdOwwQsMthNH8cSfF1NRBNhpBstpPSMXpdz5+FuT9PSNeKTx/aKELOIOt+IUJjU3OPu4ssypyxvFMU=
+ bh=X6A5mE1qeiSKUHgv4ox9tjNzwLAs+0hUfzO8DhZ2GhY=;
+ b=BhfrFS4DM5pbGqwvUCZyS9IDoHNvWcLxMAowdgXo5m4Qw/9QLJyjxNH8GNUtnbZG5mCr5ryqJKmGMw5Y3gekfOj/Um1TjYWTRrsWnPTvAyCYJCP4023bUFSpBNW13KO0QRcVi4JRkJNJ26UGgbDJo/89p3selsZp1Auck6FG2EI=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0694.namprd21.prod.outlook.com (10.175.121.148) with Microsoft SMTP
+ CY4PR21MB0853.namprd21.prod.outlook.com (10.173.192.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.1; Fri, 7 Sep 2018 00:41:20 +0000
+ 15.20.1143.1; Fri, 7 Sep 2018 00:41:26 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:41:20 +0000
+ 00:41:26 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC:     Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 33/43] nfp: avoid buffer leak when FW
- communication fails
-Thread-Topic: [PATCH AUTOSEL 4.9 33/43] nfp: avoid buffer leak when FW
- communication fails
-Thread-Index: AQHURkMgPU+fJmDpvEOqjZIhr0Dryw==
-Date:   Fri, 7 Sep 2018 00:38:42 +0000
-Message-ID: <20180907003816.57852-33-alexander.levin@microsoft.com>
-References: <20180907003816.57852-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180907003816.57852-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 03/30] ALSA: msnd: Fix the default sample sizes
+Thread-Topic: [PATCH AUTOSEL 4.4 03/30] ALSA: msnd: Fix the default sample
+ sizes
+Thread-Index: AQHURkMqtu6P7PG2VkqAT6vbmWwenA==
+Date:   Fri, 7 Sep 2018 00:38:58 +0000
+Message-ID: <20180907003853.57942-3-alexander.levin@microsoft.com>
+References: <20180907003853.57942-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180907003853.57942-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0694;6:ESoYmESEXt8V/7JtQbUS5bZUjD8qJKQqudMvWc8vcGq2g4WnDo/AlGcKiI0kwPSvkZ9ukf5t4kUiSW9iChXBoXR2tHQfjv+rz/jWLGIbsJ0R39Tdv1uqL3m9mq6fsNy+WBq5FdUza5HpGOWIF/EE8LMAzqkhJsUT3hW1uz6Vj++Lwchjske9qEHYyDNbq4rM1pHIq2z8Alqd9SSXY/VThuXPo37iWDtD/GH+3Cs6tJ2SB79dHQDnyfJQX/fNkOOoJ8rX8dYSgGLwjCe1XVHIsPctwl0Q3JGPhtfbWluwtXqVlo9lvKPXQBzXNwBl3kRzhD8SVSsBS5GP1J2hV/42TaDEbQ4YfcEWynNecaNJ8jPs9vc584BdmgvIw1Po2l5jPXfOzlCpzR7Idwo5fTJLwkCdrLs8szulghWeLvQuXRAKMbtnO8ObmC/ZIwnUopuad2xHjGpM03bClEIfBsd3Iw==;5:s+YBgD6hxfsnrXMGPLYm1Le36Rpx2xaINIPrXe/T+eCRcUClhL2F0+k1+nvl3wi8okNF2snZdTS66dobpwL28+2CUCWejGc3f8aX4g2dLGPUON/szV6rxw0LKXbShem42CvkAOb+VpkNev7mKNtnlF/NX2TqDqNKt4gxugP/Yrc=;7:sWEakv07nXtPGqcOAx4bjoznzD9PaHJxSPH91EdSwWOSGG5nsqqmeo+DrDU3LyZhpikTvBpPukZ1FeAVPLSULCgY8a/oYMV1LBhR9WTBP5x02I/9sYtez59onz8+SkRduLHkVw0gsSB3WE3AuA+RQDZTWGf04CimW32McHRYTxQ3rLk6J3Nop0bWSeO8R2fYE8rQNoTlZdt/fS1Jg6+mWEcgOM5WA9wugRdoaRxd/cNWhXLlKB1jQKsOJKlvxVuV
-x-ms-office365-filtering-correlation-id: 0610c7bd-0231-4c86-e180-08d6145aa109
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0853;6:dpnBEstSDvGo5WzILm95vxVdhyqCo54OrzG3S8R08+MSxQQ/pS/dmWaJEfU6Qts6d1rWYZyx6aQVei6L6HuKCmfr0bIbc6gWuDmL8r03fGx5YHsq1srei8PCMWDtJg81XYgrnFOLqg+os3oY6AObhayRnTseoFnB17IX4uqFogcCM2TXyVdiekSJWZ4KTb2QTGZy7GiE9/YfaUhsyRnY0sBbDbpxcbQEZy0Ol+eFnHMfQyhxpw41PQ61zOiK8LW1uAsc9HsicMmQl98CZfUkEODVpxpEvxMM8cgtUJOSusFxfx0B186V4TJo56ogYN9l2wBmX4q7JhyZSwSI7mDwMj+bm538AW/QAiVgCb0MjK+/HgAtGChZU7QYNT3RxKysPfDKvCG+JT7Vn5k3H9loMfMkQ+zk8z8IJMW9ITHAFf24zVGtMNPzrqoDAkcfok5IGtxnG7nbmdpt+QFVghn6ug==;5:wWg9u1WiVZccRvS8pGjxn176PLdtu/g3HCrd8DWuzWyyDOJghb4Gb/hZHr2NlJP5sotfspDZelg2Rbtodju1hE2+fLCGR1+eo9xPVbjM2L3v9A7ZVDiuD1ZFiF6gUBlf3Bdi11zG7/HAnW5Jj60O1ljn8GiFJ6oXLOhjngaNsi0=;7:xMpEVARwraJzE3K7jq6VBIopSX32HMdlM/PgFhj1cqXtnH2Nc6n4UiCd06kfbHabb8ZrMjeMJ7frEMP49gT4wLug98NiLo5iG8SE0HscV/9Iop8cjx3bEOLpfwewBtX9RCAAC9bSSedm2N4gILbP5vLoySVajaSIKPrChIXf94KHIoO+38+Wo3D9MKR2xaQ58LSz3F9v8OrKIskGC2zR5+EvMrcOFRJdIySGbMLZzpwVkbDp21qh+IqioyoJGIus
+x-ms-office365-filtering-correlation-id: 7f502763-2c41-40fc-c494-08d6145aa49e
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0694;
-x-ms-traffictypediagnostic: CY4PR21MB0694:
-x-microsoft-antispam-prvs: <CY4PR21MB06940C954FB40284775418D3FB000@CY4PR21MB0694.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231344)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0694;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0694;
-x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(366004)(136003)(346002)(189003)(199004)(39060400002)(2906002)(186003)(86362001)(6666003)(110136005)(107886003)(54906003)(36756003)(25786009)(4326008)(256004)(14444005)(2616005)(6506007)(6486002)(6346003)(6436002)(6512007)(446003)(476003)(11346002)(486006)(86612001)(2900100001)(5660300001)(102836004)(26005)(66066001)(53936002)(68736007)(7736002)(81166006)(81156014)(8676002)(10090500001)(8936002)(6116002)(3846002)(99286004)(105586002)(76176011)(106356001)(5250100002)(22452003)(14454004)(316002)(1076002)(2501003)(305945005)(217873002)(97736004)(10290500003)(72206003)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0694;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0853;
+x-ms-traffictypediagnostic: CY4PR21MB0853:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: ODc3ry1IbIVHQ1uSLK0jujq2LJoss37U6DL6kvJ1am1cFF0nm7S03QyQsMtyjmY3JXfZV33IrF5x+gy/lHzCK63Jh7KjGO41GNbDLSyjDYGd+BM+KFDZ/9OuFxxkAEquWYXkT2KemJoSW272QECpKpcw+3i5cBRjCKc83nMhEFyZzQ/RtjxzNNYHVVrXO6elYtopmQcjTVw8pcAFRfSO19Xd2dnxbxbu5A74xb9GMUhUrmlHAb7y6e4kD3X8lpQzGpzFJT7oImHNFqfirjxrgwI8guXCIe5nqEwBFDZfzfw4PpntS4AQtDMQzfJ1Rpe3lTD8aT4+cH+QDEWSfIUAc7rfxREnqVoCi+AIsg2L2xM=
+x-microsoft-antispam-prvs: <CY4PR21MB085394B5655D6AAE4608674FFB000@CY4PR21MB0853.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0853;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0853;
+x-forefront-prvs: 07880C4932
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(366004)(39860400002)(136003)(199004)(189003)(217873002)(105586002)(106356001)(256004)(1076002)(66066001)(3846002)(6116002)(4326008)(25786009)(107886003)(486006)(6436002)(6512007)(6666003)(53936002)(5660300001)(68736007)(102836004)(10290500003)(186003)(2906002)(2616005)(11346002)(476003)(2501003)(5250100002)(6506007)(446003)(110136005)(8936002)(36756003)(54906003)(76176011)(99286004)(26005)(2900100001)(81166006)(7736002)(81156014)(8676002)(14454004)(305945005)(6486002)(97736004)(72206003)(478600001)(86362001)(10090500001)(316002)(22452003)(575784001)(86612001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0853;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: X7/yTbtUt9DVwMsbmt2viiCazuSRPkRELrTCvhAyxp9MNzfY8tvoFQNJNq4pWSrGq2WpF0z8mEFMZUqLykE9v7RtLcLzx1AZ9cKEhxYNKKs0Y9qa9zeHmpjs5XEEiOg1jXpLPCm1jaPbm0Vx3tY0qUXq15R9U52MBotKfzLmU89M5QVAtO+0h/yPp5smHrcY6rmKCHzoCVrIlcwDXjKdX6gu3BkqqMk+XY/yiWFGd/8yjQ4yetvl9gRuqGixsf8yDfqccd03GNQXbU6Fl0Wko+iMzB7I6jrdr/aUL7M7/jV+1ZySv84r8h7oT3bBSRtaTpho5Na1UGLi70WtteL2+FC29Z8zUdFl7fSX8F38n6s=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0610c7bd-0231-4c86-e180-08d6145aa109
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:38:42.1009
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f502763-2c41-40fc-c494-08d6145aa49e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:38:58.2815
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0694
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0853
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 07300f774fec9519663a597987a4083225588be4 ]
+[ Upstream commit 7c500f9ea139d0c9b80fdea5a9c911db3166ea54 ]
 
-After device is stopped we reset the rings by moving all free buffers
-to positions [0, cnt - 2], and clear the position cnt - 1 in the ring.
-We then proceed to clear the read/write pointers.  This means that if
-we try to reset the ring again the code will assume that the next to
-fill buffer is at position 0 and swap it with cnt - 1.  Since we
-previously cleared position cnt - 1 it will lead to leaking the first
-buffer and leaving ring in a bad state.
+The default sample sizes set by msnd driver are bogus; it sets ALSA
+PCM format, not the actual bit width.
 
-This scenario can only happen if FW communication fails, in which case
-the ring will never be used again, so the fact it's in a bad state will
-not be noticed.  Buffer leak is the only problem.  Don't try to move
-buffers in the ring if the read/write pointers indicate the ring was
-never used or have already been reset.
-
-nfp_net_clear_config_and_disable() is now fully idempotent.
-
-Found by code inspection, FW communication failures are very rare,
-and reconfiguring a live device is not common either, so it's unlikely
-anyone has ever noticed the leak.
-
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ sound/isa/msnd/msnd_pinnacle.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/=
-net/ethernet/netronome/nfp/nfp_net_common.c
-index eee6e59e6cf3..2e8703da536d 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -990,7 +990,7 @@ static void nfp_net_tx_complete(struct nfp_net_tx_ring =
-*tx_ring)
-  * @nn:		NFP Net device
-  * @tx_ring:	TX ring structure
-  *
-- * Assumes that the device is stopped
-+ * Assumes that the device is stopped, must be idempotent.
-  */
- static void
- nfp_net_tx_ring_reset(struct nfp_net *nn, struct nfp_net_tx_ring *tx_ring)
-@@ -1144,13 +1144,18 @@ static void nfp_net_rx_give_one(struct nfp_net_rx_r=
-ing *rx_ring,
-  * nfp_net_rx_ring_reset() - Reflect in SW state of freelist after disable
-  * @rx_ring:	RX ring structure
-  *
-- * Warning: Do *not* call if ring buffers were never put on the FW freelis=
-t
-- *	    (i.e. device was not enabled)!
-+ * Assumes that the device is stopped, must be idempotent.
-  */
- static void nfp_net_rx_ring_reset(struct nfp_net_rx_ring *rx_ring)
- {
- 	unsigned int wr_idx, last_idx;
+diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.=
+c
+index a31ea6c22d19..2d7379dec1f0 100644
+--- a/sound/isa/msnd/msnd_pinnacle.c
++++ b/sound/isa/msnd/msnd_pinnacle.c
+@@ -82,10 +82,10 @@
 =20
-+	/* wr_p =3D=3D rd_p means ring was never fed FL bufs.  RX rings are alway=
-s
-+	 * kept at cnt - 1 FL bufs.
-+	 */
-+	if (rx_ring->wr_p =3D=3D 0 && rx_ring->rd_p =3D=3D 0)
-+		return;
-+
- 	/* Move the empty entry to the end of the list */
- 	wr_idx =3D rx_ring->wr_p % rx_ring->cnt;
- 	last_idx =3D rx_ring->cnt - 1;
-@@ -1919,6 +1924,8 @@ static void nfp_net_vec_clear_ring_data(struct nfp_ne=
-t *nn, unsigned int idx)
- /**
-  * nfp_net_clear_config_and_disable() - Clear control BAR and disable NFP
-  * @nn:      NFP Net device to reconfigure
-+ *
-+ * Warning: must be fully idempotent.
-  */
- static void nfp_net_clear_config_and_disable(struct nfp_net *nn)
+ static void set_default_audio_parameters(struct snd_msnd *chip)
  {
+-	chip->play_sample_size =3D DEFSAMPLESIZE;
++	chip->play_sample_size =3D snd_pcm_format_width(DEFSAMPLESIZE);
+ 	chip->play_sample_rate =3D DEFSAMPLERATE;
+ 	chip->play_channels =3D DEFCHANNELS;
+-	chip->capture_sample_size =3D DEFSAMPLESIZE;
++	chip->capture_sample_size =3D snd_pcm_format_width(DEFSAMPLESIZE);
+ 	chip->capture_sample_rate =3D DEFSAMPLERATE;
+ 	chip->capture_channels =3D DEFCHANNELS;
+ }
 --=20
 2.17.1
