@@ -6,257 +6,163 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5B2C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503B0C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5889B2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5889B2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1645920876
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:43:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1645920876
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbeIGUYK (ORCPT
+        id S1730266AbeIGUYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:24:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:33756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727752AbeIGUYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:24:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E69C618A;
-        Fri,  7 Sep 2018 08:42:41 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C2FC3F5BC;
-        Fri,  7 Sep 2018 08:42:38 -0700 (PDT)
-Subject: Re: [PATCH v2 2/4] acpi: arm64: iort helper to find the associated
- smmu of pmcg node
-To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        lorenzo.pieralisi@arm.com
-Cc:     will.deacon@arm.com, mark.rutland@arm.com, guohanjun@huawei.com,
-        john.garry@huawei.com, pabba@codeaurora.org,
-        vkilari@codeaurora.org, rruigrok@codeaurora.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        neil.m.leeder@gmail.com
-References: <20180724114515.21764-1-shameerali.kolothum.thodi@huawei.com>
- <20180724114515.21764-3-shameerali.kolothum.thodi@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <0eda98b8-cd99-1153-e6c3-3de2feca91ba@arm.com>
-Date:   Fri, 7 Sep 2018 16:42:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 16:24:54 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36654 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730101AbeIGUYy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 16:24:54 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fyIuq-00055i-VC; Fri, 07 Sep 2018 17:43:25 +0200
+Message-Id: <20180907152054.735423242@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 07 Sep 2018 17:01:23 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+Subject: [patch 04/10] x86/mm/cpa: Add debug mechanism
+References: <20180907150119.325866892@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180724114515.21764-3-shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=x86-mm-cpa--Add-proper-debug-output.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/07/18 12:45, Shameer Kolothum wrote:
-> This adds an helper to retrieve the smmuv3 dev(if any) associated
-> with the PMCG node. This will be used in subsequent SMMUv3 PMU
-> driver patch to name the pmu device.
+The whole static protection magic is silently fixing up anything which is
+handed in. That's just wrong. The offending call sites need to be fixed.
 
-As before, I think we might as well try to generalise this to the NC/RC 
-case now, rather than have to redo it later once PMCGs for "external" 
-TBUs become a real thing.
+Add a debug mechanism which emits a warning if a requested mapping needs to be
+fixed up. The DETECT debug mechanism is really not meant to be enabled except
+for developers, so limit the output hard to the protection fixups.
 
-Robin.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/mm/pageattr.c |   60 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 51 insertions(+), 9 deletions(-)
 
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
->   drivers/acpi/arm64/iort.c | 84 ++++++++++++++++++++++++++++++++++++-----------
->   include/linux/acpi_iort.h |  4 +++
->   2 files changed, 69 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index ac4d0d6..7940080 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -42,6 +42,7 @@ struct iort_fwnode {
->   	struct list_head list;
->   	struct acpi_iort_node *iort_node;
->   	struct fwnode_handle *fwnode;
-> +	struct platform_device *pdev;
->   };
->   static LIST_HEAD(iort_fwnode_list);
->   static DEFINE_SPINLOCK(iort_fwnode_lock);
-> @@ -52,12 +53,14 @@ static DEFINE_SPINLOCK(iort_fwnode_lock);
->    *
->    * @node: IORT table node associated with the IOMMU
->    * @fwnode: fwnode associated with the IORT node
-> + * @pdev: platform dev associated with the IORT node if any
->    *
->    * Returns: 0 on success
->    *          <0 on failure
->    */
->   static inline int iort_set_fwnode(struct acpi_iort_node *iort_node,
-> -				  struct fwnode_handle *fwnode)
-> +				  struct fwnode_handle *fwnode,
-> +				  struct platform_device *pdev)
->   {
->   	struct iort_fwnode *np;
->   
-> @@ -69,6 +72,7 @@ static inline int iort_set_fwnode(struct acpi_iort_node *iort_node,
->   	INIT_LIST_HEAD(&np->list);
->   	np->iort_node = iort_node;
->   	np->fwnode = fwnode;
-> +	np->pdev = pdev;
->   
->   	spin_lock(&iort_fwnode_lock);
->   	list_add_tail(&np->list, &iort_fwnode_list);
-> @@ -78,6 +82,31 @@ static inline int iort_set_fwnode(struct acpi_iort_node *iort_node,
->   }
->   
->   /**
-> + * iort_get_pdev() - Retrieve pdev associated with an IORT node
-> + *
-> + * @node: IORT table node to be looked-up
-> + *
-> + * Returns: platform dev pointer on success, NULL on failure
-> + */
-> +static inline struct platform_device *iort_get_pdev(
-> +			struct acpi_iort_node *node)
-> +{
-> +	struct iort_fwnode *curr;
-> +	struct platform_device *pdev = NULL;
-> +
-> +	spin_lock(&iort_fwnode_lock);
-> +	list_for_each_entry(curr, &iort_fwnode_list, list) {
-> +		if (curr->iort_node == node) {
-> +			pdev = curr->pdev;
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock(&iort_fwnode_lock);
-> +
-> +	return pdev;
-> +}
-> +
-> +/**
->    * iort_get_fwnode() - Retrieve fwnode associated with an IORT node
->    *
->    * @node: IORT table node to be looked-up
-> @@ -1347,6 +1376,32 @@ static struct acpi_iort_node *iort_find_pmcg_ref(struct acpi_iort_node *node)
->   	return ref_node;
->   }
->   
-> +/**
-> + * iort_find_pmcg_ref_smmu - helper to retrieve SMMUv3 associated with PMCG
-> + * @dev: PMCG device
-> + *
-> + * Returns: smmu dev associated with the PMCG on success, NULL on failure
-> + */
-> +struct device *iort_find_pmcg_ref_smmu(struct device *dev)
-> +{
-> +	struct acpi_iort_node *node;
-> +	struct acpi_iort_node *ref_node = NULL;
-> +	struct platform_device *pdev = NULL;
-> +
-> +	node = iort_get_iort_node(dev->fwnode);
-> +	if (!node || node->type != ACPI_IORT_NODE_PMCG)
-> +		return NULL;
-> +
-> +	ref_node = iort_find_pmcg_ref(node);
-> +	if (ref_node && ref_node->type == ACPI_IORT_NODE_SMMU_V3)
-> +		pdev = iort_get_pdev(ref_node);
-> +
-> +	if (pdev)
-> +		return &pdev->dev;
-> +
-> +	return NULL;
-> +}
-> +
->   struct iort_dev_config {
->   	const char *name;
->   	int (*dev_init)(struct acpi_iort_node *node);
-> @@ -1453,13 +1508,14 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
->   	if (ret)
->   		goto dev_put;
->   
-> -	fwnode = iort_get_fwnode(node);
-> -
-> +	fwnode = acpi_alloc_fwnode_static();
->   	if (!fwnode) {
->   		ret = -ENODEV;
->   		goto dev_put;
->   	}
->   
-> +	iort_set_fwnode(node, fwnode, pdev);
-> +
->   	pdev->dev.fwnode = fwnode;
->   
->   	if (ops->dev_dma_configure) {
-> @@ -1472,12 +1528,14 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
->   
->   	ret = platform_device_add(pdev);
->   	if (ret)
-> -		goto dma_deconfigure;
-> +		goto out;
->   
->   	return 0;
->   
-> -dma_deconfigure:
-> +out:
->   	acpi_dma_deconfigure(&pdev->dev);
-> +	iort_delete_fwnode(node);
-> +	acpi_free_fwnode_static(fwnode);
->   dev_put:
->   	platform_device_put(pdev);
->   
-> @@ -1519,8 +1577,7 @@ static void __init iort_init_platform_devices(void)
->   {
->   	struct acpi_iort_node *iort_node, *iort_end;
->   	struct acpi_table_iort *iort;
-> -	struct fwnode_handle *fwnode;
-> -	int i, ret;
-> +	int i;
->   	bool acs_enabled = false;
->   	const struct iort_dev_config *ops;
->   
-> @@ -1547,18 +1604,7 @@ static void __init iort_init_platform_devices(void)
->   
->   		ops = iort_get_dev_cfg(iort_node);
->   		if (ops) {
-> -			fwnode = acpi_alloc_fwnode_static();
-> -			if (!fwnode)
-> -				return;
-> -
-> -			iort_set_fwnode(iort_node, fwnode);
-> -
-> -			ret = iort_add_platform_device(iort_node, ops);
-> -			if (ret) {
-> -				iort_delete_fwnode(iort_node);
-> -				acpi_free_fwnode_static(fwnode);
-> -				return;
-> -			}
-> +			iort_add_platform_device(iort_node, ops);
->   		}
->   
->   		iort_node = ACPI_ADD_PTR(struct acpi_iort_node, iort_node,
-> diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
-> index 38cd77b..54ccff2 100644
-> --- a/include/linux/acpi_iort.h
-> +++ b/include/linux/acpi_iort.h
-> @@ -36,6 +36,7 @@ u32 iort_msi_map_rid(struct device *dev, u32 req_id);
->   struct irq_domain *iort_get_device_domain(struct device *dev, u32 req_id);
->   void acpi_configure_pmsi_domain(struct device *dev);
->   int iort_pmsi_get_dev_id(struct device *dev, u32 *dev_id);
-> +struct device *iort_find_pmcg_ref_smmu(struct device *dev);
->   /* IOMMU interface */
->   void iort_dma_setup(struct device *dev, u64 *dma_addr, u64 *size);
->   const struct iommu_ops *iort_iommu_configure(struct device *dev);
-> @@ -48,6 +49,9 @@ static inline struct irq_domain *iort_get_device_domain(struct device *dev,
->   							u32 req_id)
->   { return NULL; }
->   static inline void acpi_configure_pmsi_domain(struct device *dev) { }
-> +static inline
-> +struct device *iort_find_pmcg_ref_smmu(struct device *dev)
-> +{ return NULL; }
->   /* IOMMU interface */
->   static inline void iort_dma_setup(struct device *dev, u64 *dma_addr,
->   				  u64 *size) { }
-> 
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -42,6 +42,13 @@ struct cpa_data {
+ 	struct page	**pages;
+ };
+ 
++enum cpa_warn {
++	CPA_PROTECT,
++	CPA_DETECT,
++};
++
++static const int cpa_warn_level = CPA_PROTECT;
++
+ /*
+  * Serialize cpa() (for !DEBUG_PAGEALLOC which uses large identity mappings)
+  * using cpa_lock. So that we don't allow any other cpu, with stale large tlb
+@@ -392,6 +399,27 @@ static pgprotval_t protect_kernel_text_r
+ }
+ #endif
+ 
++static inline bool conflicts(pgprot_t prot, pgprotval_t val)
++{
++	return (pgprot_val(prot) & ~val) != pgprot_val(prot);
++}
++
++static inline void check_conflict(int warnlvl, pgprot_t prot, pgprotval_t val,
++				  unsigned long start, unsigned long end,
++				  unsigned long pfn, const char *txt)
++{
++	static const char *lvltxt[] = {
++		[CPA_PROTECT]	= "protect",
++		[CPA_DETECT]	= "detect",
++	};
++
++	if (warnlvl > cpa_warn_level || !conflicts(prot, val))
++		return;
++
++	pr_warn("CPA %8s %10s: 0x%016lx - 0x%016lx PFN %lx req %016lx prevent %016lx\n",
++		lvltxt[warnlvl], txt, start, end, pfn, pgprot_val(prot), val);
++}
++
+ /*
+  * Certain areas of memory on x86 require very specific protection flags,
+  * for example the BIOS area or kernel text. Callers don't always get this
+@@ -399,19 +427,31 @@ static pgprotval_t protect_kernel_text_r
+  * checks and fixes these known static required protection bits.
+  */
+ static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
+-					  unsigned long pfn, unsigned long npg)
++					  unsigned long pfn, unsigned long npg,
++					  int warnlvl)
+ {
+-	pgprotval_t forbidden;
++	pgprotval_t forbidden, res;
+ 	unsigned long end;
+ 
+ 	/* Operate on the virtual address */
+ 	end = start + npg * PAGE_SIZE - 1;
+-	forbidden  = protect_kernel_text(start, end);
+-	forbidden |= protect_kernel_text_ro(start, end);
++
++	res = protect_kernel_text(start, end);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "Text NX");
++	forbidden = res;
++
++	res = protect_kernel_text_ro(start, end);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "Text RO");
++	forbidden |= res;
+ 
+ 	/* Check the PFN directly */
+-	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
+-	forbidden |= protect_rodata(pfn, pfn + npg - 1);
++	res = protect_pci_bios(pfn, pfn + npg - 1);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "PCIBIOS NX");
++	forbidden |= res;
++
++	res = protect_rodata(pfn, pfn + npg - 1);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "Rodata RO");
++	forbidden |= res;
+ 
+ 	return __pgprot(pgprot_val(prot) & ~forbidden);
+ }
+@@ -683,10 +723,11 @@ static int __should_split_large_page(pte
+ 	 * in it results in a different pgprot than the first one of the
+ 	 * requested range. If yes, then the page needs to be split.
+ 	 */
+-	new_prot = static_protections(req_prot, address, pfn, 1);
++	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
+ 	pfn = old_pfn;
+ 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
++		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1,
++						       CPA_DETECT);
+ 
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			return 1;
+@@ -1296,7 +1337,8 @@ static int __change_page_attr(struct cpa
+ 		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+ 		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
+ 
+-		new_prot = static_protections(new_prot, address, pfn, 1);
++		new_prot = static_protections(new_prot, address, pfn, 1,
++					      CPA_PROTECT);
+ 
+ 		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
+
+
