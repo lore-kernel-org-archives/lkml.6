@@ -7,97 +7,104 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6133C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3D4C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FACF20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4321C2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:58:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cl9hYHLK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FACF20844
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f93XVwxY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4321C2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeIGUkM (ORCPT
+        id S1728016AbeIGUk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:40:12 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38256 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbeIGUkM (ORCPT
+        Fri, 7 Sep 2018 16:40:26 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:45952 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbeIGUk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:40:12 -0400
-Received: by mail-wm0-f67.google.com with SMTP id t25-v6so15092507wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:58:37 -0700 (PDT)
+        Fri, 7 Sep 2018 16:40:26 -0400
+Received: by mail-yb1-f196.google.com with SMTP id h22-v6so5610884ybg.12
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=+ZR6++p5OdDfOouBlBByaH8T5wkcBYztRaDPUIqWl30=;
-        b=Cl9hYHLKbDzl8/8QI4LvxG/FYitkB3fY+o0ANcw26CfrfvJPstA+lpMItWuQyh8f+W
-         U38F3ebYgI9l6/fa5UV9x7K3/nrfzqI+uKgv+tZWvfVMlO9K+q/ZoOoqf3AyxnNB2tl4
-         mu6PFFH2Zhgl8BjOZ66CTNRfJOPnuk7LIKnp2PWUeu5tIAl91gBLUVwDMxTsl6S62mfy
-         +sP7/q/Da6XIKZtw7nS8VRAEYFSf2Alg52sofUQabfcsxTd5mCGcrvxGO3ARAjz48kyM
-         NFDqlRG4LUwsW3RUqqsYlengmWCiWS6XfjUrC75O/8Fd6WF5z3DvTxld6tUxttF45wI7
-         EzDQ==
+        bh=6DbOPasXmvvA9ax5nixZ9FIEYbBx/6YMibqhBygSp9Q=;
+        b=f93XVwxYDC0VkAqFfh/qlXeZxa4M+lp9A4kDGMJ/gztNLn68wr3L8k4Q/NRPZzcQe+
+         BJI9Ju2d0P4dktV+lMPqnQHvuc0umzIxTpASQri9WkBglL2mUjTnk0fdw41sifG7VGwE
+         ft7y3MGqk4LzYJeNj21q2YwawP479wI2tKM7Fj1mMb+N9r+HX5zmi8MIZHiuzdexaShm
+         gpNALyF8Xw3t5gLaP02YFS1OHaxCMGcvzuun49J1jonuHOk9tcRNjj9uHFKg2HkFvw8a
+         xDVXmii86iSD2rqb8iNKt6JP10GxltGcnoQB1XPObryvDeX1YHv0U/oKXzTIez7NEaLM
+         d2cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=+ZR6++p5OdDfOouBlBByaH8T5wkcBYztRaDPUIqWl30=;
-        b=I1xvc/+VA+hfZmsxeEU1dxHSqem1myuMssszXJm0BpCTaLMr5Zr821IAwwOxHXqRis
-         gbrixRN8vx7Mtg6Ua7OSaAHmTcOMlm5OYiUvezmil7berMffVfvO5IufPAbnsaeGOq8y
-         kGLeQgLi7As3H6dB9o3moFU3/4VMX4g7DMa54iv7K8gqAnWYZxVfgFMZZDYdl3qlYy54
-         0b7UVmGRm5PpyDCej/PDlMW6J7yA2ypYMjteuqSEdjya7kXL8qs4ZFKauZXeZWBWqBNH
-         VHecez7IzSz2jJ3J0yRA7cLN8L2YiWIdZi2exhDIq5f7dosxGJwCDFg7YrizPyMRugQw
-         euFA==
-X-Gm-Message-State: APzg51C96zrYEbfIRE1wKno2zq8CDkc7siTqTlH5aRtnac5uMYozt1IC
-        /vaUChp4cABHQ5ZgaYVto0kLHTFNeJlpyQcQFktbXQ==
-X-Google-Smtp-Source: ANB0VdZ+m33M+XsHmWOQfUGbL2OovlXa1jWcQ6c7bT+fWtWOkVg1XdsFyMUyO3gIaqgpX7eDMn7A0euBn9iBM5zn+YY=
-X-Received: by 2002:a1c:9e89:: with SMTP id h131-v6mr5552161wme.13.1536335916666;
- Fri, 07 Sep 2018 08:58:36 -0700 (PDT)
+        bh=6DbOPasXmvvA9ax5nixZ9FIEYbBx/6YMibqhBygSp9Q=;
+        b=J7VqVNY1wd1fBw1aJbDT1oqqbTY01k6se+upR8SRk2ERDF2LFAv9Edsxlv8JUqYbCr
+         cobgckBH02cxNAkZnumkQsIRo7ivCuqwl8vTSSr1Cnty7xQmK7/ArpYnpF70CeR0v5ep
+         h112rbYW//Q1+rYFwZzbwkqGl6plL9ayZUMfnaXH0y8zWnw2DOtJAdl9O7QVhYu4Sk/v
+         Jr6Bsl1yoT+KFhtFnECAairE6cWAHEjxVBlTkivDinAJBERsGBUtPDQ+zJ2R/iNf3X8K
+         8+rDXmmNqsjCN993fi2j7zTmYYy/ffIcDLcuoh2Y+Sni5JCyYmMFCHT61SXVrZrRFro3
+         npRg==
+X-Gm-Message-State: APzg51AvIz1aoq+vbvqj/DCjuOHTNdtg1GxcP+axRfF6KzG3zk7bmJTo
+        0dDj2RQ8+CN7/UCj1Z+xknP/JZC1CSTn/eCRnKUeWQ==
+X-Google-Smtp-Source: ANB0VdbXFgRN9LiGFnvcfASoFe//CiTmNKSmA89kFRrSi9bkbBGQ+GjGXJ6GVz+d5NYZws9szyIuHa60FYfAd8+CK/s=
+X-Received: by 2002:a25:5c87:: with SMTP id q129-v6mr4465999ybb.403.1536335932287;
+ Fri, 07 Sep 2018 08:58:52 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:c710:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 08:58:36 -0700 (PDT)
-In-Reply-To: <20180907150955.GC11088@cmpxchg.org>
-References: <20180828172258.3185-1-hannes@cmpxchg.org> <20180905214303.GA30178@cmpxchg.org>
- <20180907110407.GQ24106@hirez.programming.kicks-ass.net> <20180907150955.GC11088@cmpxchg.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 7 Sep 2018 08:58:36 -0700
-Message-ID: <CAJuCfpG1=pXOg=1GwC33Uy0BcXNq-BsR6dO0JJq4Jnm5TyNENQ@mail.gmail.com>
-Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
- IO v4
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 08:58:51 -0700 (PDT)
+In-Reply-To: <CACT4Y+YszL5gXBqz041i1WZW4nifK3tQ35sAH6t0GuGxLp5-VQ@mail.gmail.com>
+References: <000000000000edab9e0575497f40@google.com> <CACT4Y+YszL5gXBqz041i1WZW4nifK3tQ35sAH6t0GuGxLp5-VQ@mail.gmail.com>
+From:   Kees Cook <keescook@google.com>
+Date:   Fri, 7 Sep 2018 08:58:51 -0700
+Message-ID: <CAGXu5jK=upmx7Fx+Y7vFJXz7aYvvd7WxXhOYk=746tpmafZDug@mail.gmail.com>
+Subject: Re: BUG: bad usercopy in __check_object_size (2)
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm <linux-mm@kvack.org>,
-        cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team@fb.com
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the new patchset! Backported to 4.9 and retested on ARMv8 8
-code system running Android. Signals behave as expected reacting to
-memory pressure, no jumps in "total" counters that would indicate an
-overflow/underflow issues. Nicely done!
-
-Tested-by: Suren Baghdasaryan <surenb@google.com>
-
-On Fri, Sep 7, 2018 at 8:09 AM, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> On Fri, Sep 07, 2018 at 01:04:07PM +0200, Peter Zijlstra wrote:
->> So yeah, grudingly acked. Did you want me to pick this up through the
->> scheduler tree since most of this lives there?
+On Fri, Sep 7, 2018 at 8:19 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Fri, Sep 7, 2018 at 5:17 PM, syzbot
+> <syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    28619527b8a7 Merge git://git.kernel.org/pub/scm/linux/kern..
+>> git tree:       bpf
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1618ac21400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=62e9b447c16085cf
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=a3c9d2673837ccc0f22b
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com
 >
-> Thanks for the ack.
->
-> As for routing it, I'll leave that decision to you and Andrew. It
-> touches stuff all over, so it could result in quite a few conflicts
-> between trees (although I don't expect any of them to be non-trivial).
+> +Kees, looks like false positive?
+
+Basically, yes. CONFIG_HARDENED_USERCOPY_PAGESPAN=y should not be used
+-- it's for tracking down these cases (not really for general-purpose
+"debugging"), but no one is currently working on solving them.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
