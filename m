@@ -3,137 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE55CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C247C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A1F2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:27:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A1F2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 120CB2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:29:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120CB2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeIGWJn (ORCPT
+        id S1727423AbeIGWLx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:09:43 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:39028 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbeIGWJn (ORCPT
+        Fri, 7 Sep 2018 18:11:53 -0400
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:52869 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726002AbeIGWLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:09:43 -0400
-Received: by mail-qt0-f194.google.com with SMTP id o15-v6so17011710qtk.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 10:27:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=bhfDOT699q47QC2IVbeRU81m4U4IN5Lkn/a2PscBxf0=;
-        b=dNOm3aOza2KPCEzc35pGHKYRy9VZIJbOTM5dpWphzKxnriYAZKWsxC38BriI90J8zH
-         vhhVVV8WhOhU0feyH5d75YrOsD6rl/16kzHgvoHXsGEsVbZKwhPgiuwipolZguaJfgQ4
-         ZoQXHHNQ1KmQx+HAgTtMMjegTHj8gIcd7vKO0zCZwz0y7KqWzC1OvO5126s6y+wp4G5g
-         HOQw25xtRMpZof58fGfiRvA1OTEqDB0G5/EEXhe12DXjVopwdPIlxQ19ngANaHxONiVO
-         RfeCiTDP28YuJq8xoWPtAVwkAk8+8F+iwG6gHGBVLTlmux+PNq6ac8NSwaVL/enqOGmO
-         zVGQ==
-X-Gm-Message-State: APzg51Do0TNYxuUdF0nsB0fD6SzmBDzyuZqijQLYfYQBsVlzoiUDUq1g
-        UgggoREudYNF6x7I2ap2RNhLbO7xVuA=
-X-Google-Smtp-Source: ANB0VdZ3QK7zeT/rF8zAU4nJTh2XXg+7HnIo/pI3BsJzo+FCkA04ikAIVsDptI5iXMDxUS5KsaXuAQ==
-X-Received: by 2002:a0c:d788:: with SMTP id z8-v6mr6706656qvi.71.1536341266135;
-        Fri, 07 Sep 2018 10:27:46 -0700 (PDT)
-Received: from malachite.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
-        by smtp.gmail.com with ESMTPSA id k5-v6sm4899742qkf.53.2018.09.07.10.27.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 10:27:45 -0700 (PDT)
-Message-ID: <e73583043c36ef1c4e7c40ff50a03f3ab276099e.camel@redhat.com>
-Subject: Re: [PATCH v4 2/6] drm/nouveau: Add NV_PRINTK_ONCE and variants
-From:   Lyude Paul <lyude@redhat.com>
-To:     Joe Perches <joe@perches.com>, nouveau@lists.freedesktop.org
-Cc:     Karol Herbst <kherbst@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date:   Fri, 07 Sep 2018 13:27:44 -0400
-In-Reply-To: <4d74256435a71cdb7ec8d114b1c3cb640f29c267.camel@perches.com>
-References: <20180906214328.24012-1-lyude@redhat.com>
-         <20180906214328.24012-3-lyude@redhat.com>
-         <4d74256435a71cdb7ec8d114b1c3cb640f29c267.camel@perches.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Sep 2018 18:11:52 -0400
+X-ASG-Debug-ID: 1536341387-093b7e54e6124a0001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id nXgfgClEkgidVyZT (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Sat, 08 Sep 2018 01:29:47 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 8 Sep 2018 01:29:50 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Sat, 8 Sep 2018 01:29:50 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     "Wyborny, Carolyn" <carolyn.wyborny@intel.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "sergei.shtylyov@cogentembedded.com" 
+        <sergei.shtylyov@cogentembedded.com>
+CC:     "Keller, Jacob E" <jacob.e.keller@intel.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+Thread-Topic: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+X-ASG-Orig-Subj: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+Thread-Index: AQHURpyuUEMtiCDf+EGRwpahWdajkw==
+Date:   Fri, 7 Sep 2018 17:29:49 +0000
+Message-ID: <5ed6f32940644d7f9a13ac55e2015165@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <1536319175-3660-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+ <1536319175-3660-3-git-send-email-dongsheng.wang@hxt-semitech.com>
+ <77898840b49847a7a835b20b383e21a2@HXTBJIDCEMVIW02.hxtcorp.net>
+ <9BBC4E0CF881AA4299206E2E1412B6267C604A79@ORSMSX102.amr.corp.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.50.12]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1536341387
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.1937 1.0000 -0.8611
+X-Barracuda-Spam-Score: -0.86
+X-Barracuda-Spam-Status: No, SCORE=-0.86 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.57077
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-06 at 22:35 -0700, Joe Perches wrote:
-> On Thu, 2018-09-06 at 17:43 -0400, Lyude Paul wrote:
-> > Since we're about to use this in nouveau_backlight.c. Same thing as
-> > DRM_WARN_ONCE, DRM_INFO_ONCE, etc...
-> 
-> Can you redefine this in terms of the patches I submitted
-> instead?
-> 
-> https://lore.kernel.org/patchwork/patch/979598/
-> https://lore.kernel.org/patchwork/patch/979601/
+On 9/7/2018 11:27 PM, Wyborny, Carolyn wrote:
+>> -----Original Message-----
+>> From: Wang, Dongsheng [mailto:dongsheng.wang@hxt-semitech.com]
+>> Sent: Friday, September 07, 2018 5:34 AM
+>> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>;
+>> sergei.shtylyov@cogentembedded.com
+>> Cc: Keller, Jacob E <jacob.e.keller@intel.com>; davem@davemloft.net;
+>> intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Wyborny, Carolyn <carolyn.wyborny@intel.com>
+>> Subject: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+>>
+>> Hello Jacob,
+>>
+>> Since Carolyn' team is working this, I think we don't need this patch
+>> anymore because this header file is only for ethtool.c.
+>> [..]
+> Hello Dongsheng,
+>
+> The commonization effort we're working on is prioritizing our newest drivers.  The i40e work is still being scoped, so we should fix this problem as needed now and not wait.
 
-Unfortunately this patch series has already been merged:
+After Sergei agree.  ;)
 
-https://github.com/skeggsb/nouveau/commit/c5082a8e3d84330140b9250692a3f4c38d7da3ea
 
-So it is probably a better idea to do this the other way around and just
-rebase your patches on top of that
-> 
-> 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Karol Herbst <kherbst@redhat.com>
-> > ---
-> >  drivers/gpu/drm/nouveau/nouveau_drv.h | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h
-> > b/drivers/gpu/drm/nouveau/nouveau_drv.h
-> > index 6e1acaec3400..d9d687916553 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_drv.h
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
-> > @@ -244,10 +244,12 @@ void nouveau_drm_device_remove(struct drm_device
-> > *dev);
-> >  	struct nouveau_cli *_cli =
-> > (c);                                        \
-> >  	dev_##l(_cli->drm->dev->dev, "%s: "f, _cli->name,
-> > ##a);                \
-> >  } while(0)
-> > +
-> >  #define NV_FATAL(drm,f,a...) NV_PRINTK(crit, &(drm)->client, f, ##a)
-> >  #define NV_ERROR(drm,f,a...) NV_PRINTK(err, &(drm)->client, f, ##a)
-> >  #define NV_WARN(drm,f,a...) NV_PRINTK(warn, &(drm)->client, f, ##a)
-> >  #define NV_INFO(drm,f,a...) NV_PRINTK(info, &(drm)->client, f, ##a)
-> > +
-> >  #define NV_DEBUG(drm,f,a...) do
-> > {                                              \
-> >  	if (unlikely(drm_debug &
-> > DRM_UT_DRIVER))                               \
-> >  		NV_PRINTK(info, &(drm)->client, f,
-> > ##a);                       \
-> > @@ -257,6 +259,12 @@ void nouveau_drm_device_remove(struct drm_device
-> > *dev);
-> >  		NV_PRINTK(info, &(drm)->client, f,
-> > ##a);                       \
-> >  } while(0)
-> >  
-> > +#define NV_PRINTK_ONCE(l,c,f,a...) NV_PRINTK(l##_once,c,f, ##a)
-> > +
-> > +#define NV_ERROR_ONCE(drm,f,a...) NV_PRINTK_ONCE(err, &(drm)->client, f,
-> > ##a)
-> > +#define NV_WARN_ONCE(drm,f,a...) NV_PRINTK_ONCE(warn, &(drm)->client, f,
-> > ##a)
-> > +#define NV_INFO_ONCE(drm,f,a...) NV_PRINTK_ONCE(info, &(drm)->client, f,
-> > ##a)
-> > +
-> >  extern int nouveau_modeset;
-> >  
-> >  #endif
--- 
 Cheers,
-	Lyude Paul
+
+Dongsheng
+
+> I apologize for any miscommunication.  Was trying to let people know that we aware of the issue and are trying to make progress in that direction.
+>
+> Thanks,
+>
+> Carolyn
+>
 
