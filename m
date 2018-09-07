@@ -6,39 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F39EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2194AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE862075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE862075E
+	by mail.kernel.org (Postfix) with ESMTP id D8BF42075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8BF42075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbeIHBzH (ORCPT
+        id S1727599AbeIHBzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:55:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39248 "EHLO
+        Fri, 7 Sep 2018 21:55:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39604 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIHBzH (ORCPT
+        with ESMTP id S1726002AbeIHBzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:55:07 -0400
+        Fri, 7 Sep 2018 21:55:15 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EF4EFA4;
-        Fri,  7 Sep 2018 21:12:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C00C4FA4;
+        Fri,  7 Sep 2018 21:12:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Subject: [PATCH 4.18 001/145] rcu: Make expedited GPs handle CPU 0 being offline
-Date:   Fri,  7 Sep 2018 23:07:47 +0200
-Message-Id: <20180907210903.744555886@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.18 010/145] mmc: renesas_sdhi_internal_dmac: mask DMAC interrupts
+Date:   Fri,  7 Sep 2018 23:07:56 +0200
+Message-Id: <20180907210904.461197262@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,57 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boqun Feng <boqun.feng@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit fcc63543650150629c8a873cbef3578770acecd9 upstream.
+commit d2332f887ddfba50fee93b8e1736376517c2df0c upstream.
 
-Currently, the parallelized initialization of expedited grace periods uses
-the workqueue associated with each rcu_node structure's ->grplo field.
-This works fine unless that CPU is offline.  This commit therefore uses
-the CPU corresponding to the lowest-numbered online CPU, or just queues
-the work on WORK_CPU_UNBOUND if there are no online CPUs corresponding
-to this rcu_node structure.
+I have encountered an interrupt storm during the eMMC chip probing (and
+the chip finally didn't get detected).  It turned out that U-Boot left
+the SDHI DMA interrupts enabled while the Linux driver didn't use those.
+Masking those interrupts in renesas_sdhi_internal_dmac_request_dma() gets
+rid of both issues...
 
-Note that this patch uses cpu_is_offline() instead of the usual approach
-of checking bits in the rcu_node structure's ->qsmaskinitnext field.  This
-is safe because preemption is disabled across both the cpu_is_offline()
-check and the call to queue_work_on().
-
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-[ paulmck: Disable preemption to close offline race window. ]
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-[ paulmck: Apply Peter Zijlstra feedback on CPU selection. ]
-Tested-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/rcu/tree_exp.h |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -472,6 +472,7 @@ retry_ipi:
- static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 				     smp_call_func_t func)
- {
-+	int cpu;
- 	struct rcu_node *rnp;
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -49,10 +49,12 @@
  
- 	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
-@@ -492,7 +493,13 @@ static void sync_rcu_exp_select_cpus(str
- 			continue;
- 		}
- 		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
--		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
-+		preempt_disable();
-+		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
-+		/* If all offline, queue the work on an unbound CPU. */
-+		if (unlikely(cpu > rnp->grphi))
-+			cpu = WORK_CPU_UNBOUND;
-+		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-+		preempt_enable();
- 		rnp->exp_need_flush = true;
- 	}
+ /* DM_CM_INFO1 and DM_CM_INFO1_MASK */
+ #define INFO1_CLEAR		0
++#define INFO1_MASK_CLEAR	GENMASK_ULL(31, 0)
+ #define INFO1_DTRANEND1		BIT(17)
+ #define INFO1_DTRANEND0		BIT(16)
+ 
+ /* DM_CM_INFO2 and DM_CM_INFO2_MASK */
++#define INFO2_MASK_CLEAR	GENMASK_ULL(31, 0)
+ #define INFO2_DTRANERR1		BIT(17)
+ #define INFO2_DTRANERR0		BIT(16)
+ 
+@@ -236,6 +238,12 @@ renesas_sdhi_internal_dmac_request_dma(s
+ {
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 
++	/* Disable DMAC interrupts, we don't use them */
++	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO1_MASK,
++					    INFO1_MASK_CLEAR);
++	renesas_sdhi_internal_dmac_dm_write(host, DM_CM_INFO2_MASK,
++					    INFO2_MASK_CLEAR);
++
+ 	/* Each value is set to non-zero to assume "enabling" each DMA */
+ 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
  
 
 
