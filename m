@@ -3,118 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9C9C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9DBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D129E2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D129E2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C31A72077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31A72077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbeIGSwJ (ORCPT
+        id S1728436AbeIGSzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:52:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43116 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729022AbeIGSwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:52:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D3D66B03D;
-        Fri,  7 Sep 2018 14:10:58 +0000 (UTC)
-Subject: Re: [PATCH] x86: use WRITE_ONCE() when setting PTEs
-To:     Dave Hansen <dave.hansen@intel.com>, Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-References: <20180902181451.80520-1-namit@vmware.com>
- <8aef58c7-c27c-5df8-69b3-b188dd5f64e8@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <a7ce97d5-5907-25a2-da14-9b2a60321677@suse.cz>
-Date:   Fri, 7 Sep 2018 16:10:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 14:55:01 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:38550 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727601AbeIGSzB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:55:01 -0400
+Received: by mail-qt0-f195.google.com with SMTP id x7-v6so16342047qtk.5;
+        Fri, 07 Sep 2018 07:13:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z0evgYeo5X3sJ0ABpw9Rh8HyzhNeb4D+zN5TZKbuCeE=;
+        b=fOVGbWiyKd8zEv37aSvPfI4BUtC3DsBlSMLHcciBfzcwAn6UgeWd8Ly/lAAxoZv8Jn
+         7iq2A/+XUL3ePT4Af1O4XdgKkul4uFvi2cm1K8uYWEbW6FfnKNtMss9KSlWlhIYK8zQy
+         QsVsfMcUyu6NDTwIwf6X6h7tv3+Nzy7XAiIq8heDHilgWmC6jTAHONmZzB1dRW+DQCdD
+         Y7IWkN9x4SjmtQeZmT4vqZkrZ4b6BTC77ZanUz9PkWb6Ne7kLa+PYKdopRITdHup0aue
+         xM3SXjQO6GbyJBLQvxTZ0Jofj6BwrVUJNkktvYUESlXNWKLpT/FGqPbrAM5LnshDselw
+         gsqg==
+X-Gm-Message-State: APzg51D3tyzcYF6zdCX7BqCQKaCZUTPokQ2gWUoTq5CweHPQSh8DQRdd
+        IZLLo4xWihMRxXwFnBxeJR10k4Aua1mEcuQMILo=
+X-Google-Smtp-Source: ANB0VdZ2virbiAbITaUFP/m/hc+LNCVebyaVqijlSrsrivvJT0h4SPOPjIQs9hWLeEP2MHmG0gwy5FUYB4Q8WG6RV+0=
+X-Received: by 2002:a0c:8b67:: with SMTP id d39-v6mr5764154qvc.180.1536329631727;
+ Fri, 07 Sep 2018 07:13:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8aef58c7-c27c-5df8-69b3-b188dd5f64e8@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1536138304.git.ren_guo@c-sky.com> <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
+ <CAK8P3a1fYM0X=F+9yD6BVLq=57eJeFWXCvywjQOFwEHz7oAhcg@mail.gmail.com>
+ <20180907030447.GA10434@guoren-Inspiron-7460> <CAK8P3a2K_ecCQEs840hQMrjsf4H8hHxS+HtM2TtPDYpRu8-LeQ@mail.gmail.com>
+ <20180907125536.GA2308@guoren>
+In-Reply-To: <20180907125536.GA2308@guoren>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 7 Sep 2018 16:13:35 +0200
+Message-ID: <CAK8P3a3b+dM2kxSG7kCqTR=NmiqvZoMwOwSmQKRQLQjXqpqxYw@mail.gmail.com>
+Subject: Re: [PATCH V3 06/26] csky: Cache and TLB routines
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 07:21 PM, Dave Hansen wrote:
-> On 09/02/2018 11:14 AM, Nadav Amit wrote:
->> When page-table entries are set, the compiler might optimize their
->> assignment by using multiple instructions to set the PTE. This might
->> turn into a security hazard if the user somehow manages to use the
->> interim PTE. L1TF does not make our lives easier, making even an interim
->> non-present PTE a security hazard.
->>
->> Using WRITE_ONCE() to set PTEs and friends should prevent this potential
->> security hazard.
-> 
-> But, our types are already 64-bit, and we're doing a 64-bit pointer
-> write.  Our WRITE_ONCE() implementation boils down to:
-> 
-> static __always_inline void __write_once_size(...
-> {
->         switch (size) {
-> 	...
->         case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
-> 
-> 
-> For 64-bit types, which is precisely the same thing.  Right?
+On Fri, Sep 7, 2018 at 2:55 PM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> On Fri, Sep 07, 2018 at 10:14:38AM +0200, Arnd Bergmann wrote:
+> > On Fri, Sep 7, 2018 at 5:04 AM Guo Ren <ren_guo@c-sky.com> wrote:
+> > > On Thu, Sep 06, 2018 at 04:31:16PM +0200, Arnd Bergmann wrote:
+> > Similarly, an MMIO read may be used to see if a DMA has completed
+> > and the device register tells you that the DMA has left the device,
+> > but without a barrier, the CPU may have prefetched the DMA
+> > data while waiting for the MMIO-read to complete. The __io_ar()
+> > barrier() in asm-generic/io.h prevents the compiler from reordering
+> > the two reads, but if an weakly ordered read (in coherent DMA buffer)
+> > can bypass a strongly ordered read (MMIO), then it's still still
+> > broken.
+> __io_ar() barrier()? not rmb() ?! I've defined the rmb in asm/barrier, So
+> I got rmb() here not barrier().
+>
+> Only __io_br() is barrier().
 
-Notice the volatile cast. While the CPU write itself is fine, the
-*compiler* can decide to do partial updates; volatile forbids it.
+Ah right, I misremembered the defaults. It's probably ok then.
+
+> > > > - How does endianess work? Are there any buses that flip bytes around
+> > > >   when running big-endian, or do you always do that in software?
+> > > Currently we only support little-endian and soc will follow it.
+> >
+> > Ok, that makes it easier. If you think that you won't even need big-endian
+> > support in the long run, you could also remove your asm/byteorder.h
+> > header. If you're not sure, it doesn't hurt to keep it of course.
+> Em... I'm not sure, so let me keep it for a while.
+
+Ok. I think overall the trend is to be little-endian only for most
+architectures: powerpc64 moved from big-endian only to little-endian
+by default, ARM rarely uses big-endian (basically only for legacy
+applications ported from BE MIPS or ppc), and all new architectures
+we added in the last years are little-endian (OpenRISC being the
+main exception).
+
+     Arnd
