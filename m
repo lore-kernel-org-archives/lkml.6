@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E59C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA3DC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3286B2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3286B2083D
+	by mail.kernel.org (Postfix) with ESMTP id 0FD6C20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FD6C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbeIHCPf (ORCPT
+        id S1729709AbeIHCPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:15:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51228 "EHLO
+        Fri, 7 Sep 2018 22:15:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51324 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbeIHCPf (ORCPT
+        with ESMTP id S1726032AbeIHCPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:15:35 -0400
+        Fri, 7 Sep 2018 22:15:38 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 39EE4D6B;
-        Fri,  7 Sep 2018 21:32:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C179D6B;
+        Fri,  7 Sep 2018 21:32:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 10/63] powerpc/pseries: Fix endianness while restoring of r3 in MCE handler.
-Date:   Fri,  7 Sep 2018 23:09:41 +0200
-Message-Id: <20180907211013.537618723@linuxfoundation.org>
+Subject: [PATCH 4.9 11/63] powerpc/powernv/pci: Work around races in PCI bridge enabling
+Date:   Fri,  7 Sep 2018 23:09:42 +0200
+Message-Id: <20180907211013.616200930@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -51,71 +51,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit cd813e1cd7122f2c261dce5b54d1e0c97f80e1a5 upstream.
+commit db2173198b9513f7add8009f225afa1f1c79bcc6 upstream.
 
-During Machine Check interrupt on pseries platform, register r3 points
-RTAS extended event log passed by hypervisor. Since hypervisor uses r3
-to pass pointer to rtas log, it stores the original r3 value at the
-start of the memory (first 8 bytes) pointed by r3. Since hypervisor
-stores this info and rtas log is in BE format, linux should make
-sure to restore r3 value in correct endian format.
+The generic code is racy when multiple children of a PCI bridge try to
+enable it simultaneously.
 
-Without this patch when MCE handler, after recovery, returns to code that
-that caused the MCE may end up with Data SLB access interrupt for invalid
-address followed by kernel panic or hang.
+This leads to drivers trying to access a device through a
+not-yet-enabled bridge, and this EEH errors under various
+circumstances when using parallel driver probing.
 
-  Severe Machine check interrupt [Recovered]
-    NIP [d00000000ca301b8]: init_module+0x1b8/0x338 [bork_kernel]
-    Initiator: CPU
-    Error type: SLB [Multihit]
-      Effective address: d00000000ca70000
-  cpu 0xa: Vector: 380 (Data SLB Access) at [c0000000fc7775b0]
-      pc: c0000000009694c0: vsnprintf+0x80/0x480
-      lr: c0000000009698e0: vscnprintf+0x20/0x60
-      sp: c0000000fc777830
-     msr: 8000000002009033
-     dar: a803a30c000000d0
-    current = 0xc00000000bc9ef00
-    paca    = 0xc00000001eca5c00	 softe: 3	 irq_happened: 0x01
-      pid   = 8860, comm = insmod
-  vscnprintf+0x20/0x60
-  vprintk_emit+0xb4/0x4b0
-  vprintk_func+0x5c/0xd0
-  printk+0x38/0x4c
-  init_module+0x1c0/0x338 [bork_kernel]
-  do_one_initcall+0x54/0x230
-  do_init_module+0x8c/0x248
-  load_module+0x12b8/0x15b0
-  sys_finit_module+0xa8/0x110
-  system_call+0x58/0x6c
-  --- Exception: c00 (System Call) at 00007fff8bda0644
-  SP (7fffdfbfe980) is in userspace
+There is work going on to fix that properly in the PCI core but it
+will take some time.
 
-This patch fixes this issue.
+x86 gets away with it because (outside of hotplug), the BIOS enables
+all the bridges at boot time.
 
-Fixes: a08a53ea4c97 ("powerpc/le: Enable RTAS events support")
-Cc: stable@vger.kernel.org # v3.15+
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+This patch does the same thing on powernv by enabling all bridges that
+have child devices at boot time, thus avoiding subsequent races. It's
+suitable for backporting to stable and distros, while the proper PCI
+fix will probably be significantly more invasive.
+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/pseries/ras.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/pci-ioda.c |   37 ++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
---- a/arch/powerpc/platforms/pseries/ras.c
-+++ b/arch/powerpc/platforms/pseries/ras.c
-@@ -346,7 +346,7 @@ static struct rtas_error_log *fwnmi_get_
- 	}
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -3124,12 +3124,49 @@ static void pnv_pci_ioda_create_dbgfs(vo
+ #endif /* CONFIG_DEBUG_FS */
+ }
  
- 	savep = __va(regs->gpr[3]);
--	regs->gpr[3] = savep[0];	/* restore original r3 */
-+	regs->gpr[3] = be64_to_cpu(savep[0]);	/* restore original r3 */
++static void pnv_pci_enable_bridge(struct pci_bus *bus)
++{
++	struct pci_dev *dev = bus->self;
++	struct pci_bus *child;
++
++	/* Empty bus ? bail */
++	if (list_empty(&bus->devices))
++		return;
++
++	/*
++	 * If there's a bridge associated with that bus enable it. This works
++	 * around races in the generic code if the enabling is done during
++	 * parallel probing. This can be removed once those races have been
++	 * fixed.
++	 */
++	if (dev) {
++		int rc = pci_enable_device(dev);
++		if (rc)
++			pci_err(dev, "Error enabling bridge (%d)\n", rc);
++		pci_set_master(dev);
++	}
++
++	/* Perform the same to child busses */
++	list_for_each_entry(child, &bus->children, node)
++		pnv_pci_enable_bridge(child);
++}
++
++static void pnv_pci_enable_bridges(void)
++{
++	struct pci_controller *hose;
++
++	list_for_each_entry(hose, &hose_list, list_node)
++		pnv_pci_enable_bridge(hose->bus);
++}
++
+ static void pnv_pci_ioda_fixup(void)
+ {
+ 	pnv_pci_ioda_setup_PEs();
+ 	pnv_pci_ioda_setup_iommu_api();
+ 	pnv_pci_ioda_create_dbgfs();
  
- 	/* If it isn't an extended log we can use the per cpu 64bit buffer */
- 	h = (struct rtas_error_log *)&savep[1];
++	pnv_pci_enable_bridges();
++
+ #ifdef CONFIG_EEH
+ 	eeh_init();
+ 	eeh_addr_cache_build();
 
 
