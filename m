@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15842C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA6AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA2220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA2220855
+	by mail.kernel.org (Postfix) with ESMTP id 72AF920645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:26:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72AF920645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbeIHCIr (ORCPT
+        id S1728690AbeIHCIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:08:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47004 "EHLO
+        Fri, 7 Sep 2018 22:08:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47010 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbeIHCIq (ORCPT
+        with ESMTP id S1728708AbeIHCIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:08:46 -0400
+        Fri, 7 Sep 2018 22:08:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A5E1F07;
-        Fri,  7 Sep 2018 21:25:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C7DCEF6;
+        Fri,  7 Sep 2018 21:26:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: [PATCH 4.14 15/89] mailbox: xgene-slimpro: Fix potential NULL pointer dereference
-Date:   Fri,  7 Sep 2018 23:09:09 +0200
-Message-Id: <20180907210854.593851342@linuxfoundation.org>
+        stable@vger.kernel.org, Yannik Sembritzki <yannik@sembritzki.me>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 16/89] Replace magic for trusting the secondary keyring with #define
+Date:   Fri,  7 Sep 2018 23:09:10 +0200
+Message-Id: <20180907210854.655102443@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,43 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Yannik Sembritzki <yannik@sembritzki.me>
 
-commit 3512a18cbd8d09e22a790540cb9624c3c49827ba upstream.
+commit 817aef260037f33ee0f44c17fe341323d3aebd6d upstream.
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+Replace the use of a magic number that indicates that verify_*_signature()
+should use the secondary keyring with a symbol.
 
-Fix this by replacing devm_ioremap with devm_ioremap_resource,
-which has the NULL check and the memory region request.
-
-This code was detected with the help of Coccinelle.
-
-Cc: stable@vger.kernel.org
-Fixes: f700e84f417b ("mailbox: Add support for APM X-Gene platform mailbox driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mailbox/mailbox-xgene-slimpro.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ certs/system_keyring.c                  |    3 ++-
+ crypto/asymmetric_keys/pkcs7_key_type.c |    2 +-
+ include/linux/verification.h            |    6 ++++++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/mailbox/mailbox-xgene-slimpro.c
-+++ b/drivers/mailbox/mailbox-xgene-slimpro.c
-@@ -195,9 +195,9 @@ static int slimpro_mbox_probe(struct pla
- 	platform_set_drvdata(pdev, ctx);
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -15,6 +15,7 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/verification.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+@@ -230,7 +231,7 @@ int verify_pkcs7_signature(const void *d
  
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mb_base = devm_ioremap(&pdev->dev, regs->start, resource_size(regs));
--	if (!mb_base)
--		return -ENOMEM;
-+	mb_base = devm_ioremap_resource(&pdev->dev, regs);
-+	if (IS_ERR(mb_base))
-+		return PTR_ERR(mb_base);
+ 	if (!trusted_keys) {
+ 		trusted_keys = builtin_trusted_keys;
+-	} else if (trusted_keys == (void *)1UL) {
++	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+ 		trusted_keys = secondary_trusted_keys;
+ #else
+--- a/crypto/asymmetric_keys/pkcs7_key_type.c
++++ b/crypto/asymmetric_keys/pkcs7_key_type.c
+@@ -62,7 +62,7 @@ static int pkcs7_preparse(struct key_pre
  
- 	/* Setup mailbox links */
- 	for (i = 0; i < MBOX_CNT; i++) {
+ 	return verify_pkcs7_signature(NULL, 0,
+ 				      prep->data, prep->datalen,
+-				      (void *)1UL, usage,
++				      VERIFY_USE_SECONDARY_KEYRING, usage,
+ 				      pkcs7_view_content, prep);
+ }
+ 
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -13,6 +13,12 @@
+ #define _LINUX_VERIFICATION_H
+ 
+ /*
++ * Indicate that both builtin trusted keys and secondary trusted keys
++ * should be used.
++ */
++#define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
++
++/*
+  * The use to which an asymmetric key is being put.
+  */
+ enum key_being_used_for {
 
 
