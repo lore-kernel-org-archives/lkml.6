@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF030C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA93C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 931AD2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:23:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931AD2075E
+	by mail.kernel.org (Postfix) with ESMTP id 064FF2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:23:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064FF2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeIGMCg (ORCPT
+        id S1727701AbeIGMCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:02:36 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:44255 "EHLO hermes.aosc.io"
+        Fri, 7 Sep 2018 08:02:46 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:44281 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbeIGMCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:02:36 -0400
+        id S1727662AbeIGMCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 08:02:46 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id B5CA85768C;
-        Fri,  7 Sep 2018 07:22:57 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 53D495768C;
+        Fri,  7 Sep 2018 07:23:08 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
@@ -32,9 +32,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/5] dt-bindings: sun4i-drm: drop second PLL from A64 HDMI PHY binding
-Date:   Fri,  7 Sep 2018 15:22:30 +0800
-Message-Id: <20180907072234.48282-2-icenowy@aosc.io>
+Subject: [PATCH 2/5] drm: sun4i: drop second PLL from A64 HDMI PHY
+Date:   Fri,  7 Sep 2018 15:22:31 +0800
+Message-Id: <20180907072234.48282-3-icenowy@aosc.io>
 In-Reply-To: <20180907072234.48282-1-icenowy@aosc.io>
 References: <20180907072234.48282-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,28 +42,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By experiments it seems that the A64 HDMI PHY is not able to use the
-second video PLL as the clock parent.
+The A64 HDMI PHY seems to be not able to use the second video PLL as
+clock parent in experiments.
 
-Drop pll-1 from the device tree binding of A64 HDMI PHY.
+Drop the support for the second PLL from A64 HDMI PHY driver.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 -
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index f8773ecb7525..62034039cee1 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -114,7 +114,6 @@ Required properties:
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 82502b351aec..a564b5dfe082 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -398,7 +398,6 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
  
- H3 and A64 HDMI PHY require additional clocks:
-   - pll-0: parent of phy clock
--  - pll-1: second possible phy clock parent (A64 only)
- 
- TV Encoder
- ----------
+ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+ 	.has_phy_clk = true,
+-	.has_second_pll = true,
+ 	.phy_init = &sun8i_hdmi_phy_init_h3,
+ 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
+ 	.phy_config = &sun8i_hdmi_phy_config_h3,
 -- 
 2.18.0
 
