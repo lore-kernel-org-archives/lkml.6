@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58029C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15842C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B44120645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B44120645
+	by mail.kernel.org (Postfix) with ESMTP id BDA2220855
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:26:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA2220855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbeIHCIp (ORCPT
+        id S1728945AbeIHCIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:08:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46996 "EHLO
+        Fri, 7 Sep 2018 22:08:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47004 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727869AbeIHCIn (ORCPT
+        with ESMTP id S1728927AbeIHCIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:08:43 -0400
+        Fri, 7 Sep 2018 22:08:46 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1EC41EF6;
-        Fri,  7 Sep 2018 21:25:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A5E1F07;
+        Fri,  7 Sep 2018 21:25:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 14/89] media: Revert "[media] tvp5150: fix pad format frame height"
-Date:   Fri,  7 Sep 2018 23:09:08 +0200
-Message-Id: <20180907210854.455819653@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Subject: [PATCH 4.14 15/89] mailbox: xgene-slimpro: Fix potential NULL pointer dereference
+Date:   Fri,  7 Sep 2018 23:09:09 +0200
+Message-Id: <20180907210854.593851342@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -52,44 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 1831af092308aa5a59ae61e47494e441c8be6b93 upstream.
+commit 3512a18cbd8d09e22a790540cb9624c3c49827ba upstream.
 
-This reverts commit 0866df8dffd514185bfab0d205db76e4c02cf1e4.
+There is a potential execution path in which function
+platform_get_resource() returns NULL. If this happens,
+we will end up having a NULL pointer dereference.
 
-The v4l uAPI documentation [0] makes clear that in the case of interlaced
-video (i.e: field is V4L2_FIELD_ALTERNATE) the height refers to the number
-of lines in the field and not the number of lines in the full frame (which
-is twice the field height for interlaced formats).
+Fix this by replacing devm_ioremap with devm_ioremap_resource,
+which has the NULL check and the memory region request.
 
-So the original height calculation was correct, and it shouldn't had been
-changed by the mentioned commit.
+This code was detected with the help of Coccinelle.
 
-[0]:https://linuxtv.org/downloads/v4l-dvb-apis/uapi/v4l/subdev-formats.html
-
-Fixes: 0866df8dffd5 ("[media] tvp5150: fix pad format frame height")
-
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Cc: <stable@vger.kernel.org>      # for v4.12 and up
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: f700e84f417b ("mailbox: Add support for APM X-Gene platform mailbox driver")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/tvp5150.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mailbox/mailbox-xgene-slimpro.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -871,7 +871,7 @@ static int tvp5150_fill_fmt(struct v4l2_
- 	f = &format->format;
+--- a/drivers/mailbox/mailbox-xgene-slimpro.c
++++ b/drivers/mailbox/mailbox-xgene-slimpro.c
+@@ -195,9 +195,9 @@ static int slimpro_mbox_probe(struct pla
+ 	platform_set_drvdata(pdev, ctx);
  
- 	f->width = decoder->rect.width;
--	f->height = decoder->rect.height;
-+	f->height = decoder->rect.height / 2;
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mb_base = devm_ioremap(&pdev->dev, regs->start, resource_size(regs));
+-	if (!mb_base)
+-		return -ENOMEM;
++	mb_base = devm_ioremap_resource(&pdev->dev, regs);
++	if (IS_ERR(mb_base))
++		return PTR_ERR(mb_base);
  
- 	f->code = MEDIA_BUS_FMT_UYVY8_2X8;
- 	f->field = V4L2_FIELD_ALTERNATE;
+ 	/* Setup mailbox links */
+ 	for (i = 0; i < MBOX_CNT; i++) {
 
 
