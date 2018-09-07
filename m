@@ -6,298 +6,338 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F384C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394A42083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394A42083D
+	by mail.kernel.org (Postfix) with ESMTP id BFC4C20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC4C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeIHCRo (ORCPT
+        id S1729692AbeIHCRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:17:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52038 "EHLO
+        Fri, 7 Sep 2018 22:17:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727703AbeIHCRn (ORCPT
+        with ESMTP id S1728429AbeIHCRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:17:43 -0400
+        Fri, 7 Sep 2018 22:17:48 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47F79ACC;
-        Fri,  7 Sep 2018 21:34:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0C8CD6B;
+        Fri,  7 Sep 2018 21:34:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 09/63] powerpc/fadump: handle crash memory ranges array index overflow
-Date:   Fri,  7 Sep 2018 23:09:40 +0200
-Message-Id: <20180907211013.477016436@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.9 00/63] 4.9.126-stable review
+Date:   Fri,  7 Sep 2018 23:09:31 +0200
+Message-Id: <20180907211012.965501324@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
-References: <20180907211012.965501324@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.126-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.126-rc1
+X-KernelTest-Deadline: 2018-09-09T21:10+00:00
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.9.126 release.
+There are 63 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sun Sep  9 21:09:58 UTC 2018.
+Anything received after that time might be too late.
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.126-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
 
-commit 1bd6a1c4b80a28d975287630644e6b47d0f977a5 upstream.
+thanks,
 
-Crash memory ranges is an array of memory ranges of the crashing kernel
-to be exported as a dump via /proc/vmcore file. The size of the array
-is set based on INIT_MEMBLOCK_REGIONS, which works alright in most cases
-where memblock memory regions count is less than INIT_MEMBLOCK_REGIONS
-value. But this count can grow beyond INIT_MEMBLOCK_REGIONS value since
-commit 142b45a72e22 ("memblock: Add array resizing support").
+greg k-h
 
-On large memory systems with a few DLPAR operations, the memblock memory
-regions count could be larger than INIT_MEMBLOCK_REGIONS value. On such
-systems, registering fadump results in crash or other system failures
-like below:
+-------------
+Pseudo-Shortlog of commits:
 
-  task: c00007f39a290010 ti: c00000000b738000 task.ti: c00000000b738000
-  NIP: c000000000047df4 LR: c0000000000f9e58 CTR: c00000000010f180
-  REGS: c00000000b73b570 TRAP: 0300   Tainted: G          L   X  (4.4.140+)
-  MSR: 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22004484  XER: 20000000
-  CFAR: c000000000008500 DAR: 000007a450000000 DSISR: 40000000 SOFTE: 0
-  ...
-  NIP [c000000000047df4] smp_send_reschedule+0x24/0x80
-  LR [c0000000000f9e58] resched_curr+0x138/0x160
-  Call Trace:
-    resched_curr+0x138/0x160 (unreliable)
-    check_preempt_curr+0xc8/0xf0
-    ttwu_do_wakeup+0x38/0x150
-    try_to_wake_up+0x224/0x4d0
-    __wake_up_common+0x94/0x100
-    ep_poll_callback+0xac/0x1c0
-    __wake_up_common+0x94/0x100
-    __wake_up_sync_key+0x70/0xa0
-    sock_def_readable+0x58/0xa0
-    unix_stream_sendmsg+0x2dc/0x4c0
-    sock_sendmsg+0x68/0xa0
-    ___sys_sendmsg+0x2cc/0x2e0
-    __sys_sendmsg+0x5c/0xc0
-    SyS_socketcall+0x36c/0x3f0
-    system_call+0x3c/0x100
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.126-rc1
 
-as array index overflow is not checked for while setting up crash memory
-ranges causing memory corruption. To resolve this issue, dynamically
-allocate memory for crash memory ranges and resize it incrementally,
-in units of pagesize, on hitting array size limit.
+Jeremy Cline <jcline@redhat.com>
+    fs/quota: Fix spectre gadget in do_quotactl
 
-Fixes: 2df173d9e85d ("fadump: Initialize elfcore header and add PT_LOAD program headers.")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-[mpe: Just use PAGE_SIZE directly, fixup variable placement]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam/jr - fix descriptor DMA unmapping
 
----
- arch/powerpc/include/asm/fadump.h |    3 -
- arch/powerpc/kernel/fadump.c      |   91 ++++++++++++++++++++++++++++++++------
- 2 files changed, 77 insertions(+), 17 deletions(-)
+Ondrej Mosnacek <omosnace@redhat.com>
+    crypto: vmx - Fix sleep-in-atomic bugs
 
---- a/arch/powerpc/include/asm/fadump.h
-+++ b/arch/powerpc/include/asm/fadump.h
-@@ -190,9 +190,6 @@ struct fadump_crash_info_header {
- 	struct cpumask	online_mask;
- };
- 
--/* Crash memory ranges */
--#define INIT_CRASHMEM_RANGES	(INIT_MEMBLOCK_REGIONS + 2)
--
- struct fad_crash_memory_ranges {
- 	unsigned long long	base;
- 	unsigned long long	size;
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -48,8 +48,10 @@ static struct fadump_mem_struct fdm;
- static const struct fadump_mem_struct *fdm_active;
- 
- static DEFINE_MUTEX(fadump_mutex);
--struct fad_crash_memory_ranges crash_memory_ranges[INIT_CRASHMEM_RANGES];
-+struct fad_crash_memory_ranges *crash_memory_ranges;
-+int crash_memory_ranges_size;
- int crash_mem_ranges;
-+int max_crash_mem_ranges;
- 
- /* Scan the Firmware Assisted dump configuration details. */
- int __init early_init_dt_scan_fw_dump(unsigned long node,
-@@ -731,38 +733,88 @@ static int __init process_fadump(const s
- 	return 0;
- }
- 
--static inline void fadump_add_crash_memory(unsigned long long base,
--					unsigned long long end)
-+static void free_crash_memory_ranges(void)
-+{
-+	kfree(crash_memory_ranges);
-+	crash_memory_ranges = NULL;
-+	crash_memory_ranges_size = 0;
-+	max_crash_mem_ranges = 0;
-+}
-+
-+/*
-+ * Allocate or reallocate crash memory ranges array in incremental units
-+ * of PAGE_SIZE.
-+ */
-+static int allocate_crash_memory_ranges(void)
-+{
-+	struct fad_crash_memory_ranges *new_array;
-+	u64 new_size;
-+
-+	new_size = crash_memory_ranges_size + PAGE_SIZE;
-+	pr_debug("Allocating %llu bytes of memory for crash memory ranges\n",
-+		 new_size);
-+
-+	new_array = krealloc(crash_memory_ranges, new_size, GFP_KERNEL);
-+	if (new_array == NULL) {
-+		pr_err("Insufficient memory for setting up crash memory ranges\n");
-+		free_crash_memory_ranges();
-+		return -ENOMEM;
-+	}
-+
-+	crash_memory_ranges = new_array;
-+	crash_memory_ranges_size = new_size;
-+	max_crash_mem_ranges = (new_size /
-+				sizeof(struct fad_crash_memory_ranges));
-+	return 0;
-+}
-+
-+static inline int fadump_add_crash_memory(unsigned long long base,
-+					  unsigned long long end)
- {
- 	if (base == end)
--		return;
-+		return 0;
-+
-+	if (crash_mem_ranges == max_crash_mem_ranges) {
-+		int ret;
-+
-+		ret = allocate_crash_memory_ranges();
-+		if (ret)
-+			return ret;
-+	}
- 
- 	pr_debug("crash_memory_range[%d] [%#016llx-%#016llx], %#llx bytes\n",
- 		crash_mem_ranges, base, end - 1, (end - base));
- 	crash_memory_ranges[crash_mem_ranges].base = base;
- 	crash_memory_ranges[crash_mem_ranges].size = end - base;
- 	crash_mem_ranges++;
-+	return 0;
- }
- 
--static void fadump_exclude_reserved_area(unsigned long long start,
-+static int fadump_exclude_reserved_area(unsigned long long start,
- 					unsigned long long end)
- {
- 	unsigned long long ra_start, ra_end;
-+	int ret = 0;
- 
- 	ra_start = fw_dump.reserve_dump_area_start;
- 	ra_end = ra_start + fw_dump.reserve_dump_area_size;
- 
- 	if ((ra_start < end) && (ra_end > start)) {
- 		if ((start < ra_start) && (end > ra_end)) {
--			fadump_add_crash_memory(start, ra_start);
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(start, ra_start);
-+			if (ret)
-+				return ret;
-+
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		} else if (start < ra_start) {
--			fadump_add_crash_memory(start, ra_start);
-+			ret = fadump_add_crash_memory(start, ra_start);
- 		} else if (ra_end < end) {
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		}
- 	} else
--		fadump_add_crash_memory(start, end);
-+		ret = fadump_add_crash_memory(start, end);
-+
-+	return ret;
- }
- 
- static int fadump_init_elfcore_header(char *bufp)
-@@ -802,10 +854,11 @@ static int fadump_init_elfcore_header(ch
-  * Traverse through memblock structure and setup crash memory ranges. These
-  * ranges will be used create PT_LOAD program headers in elfcore header.
-  */
--static void fadump_setup_crash_memory_ranges(void)
-+static int fadump_setup_crash_memory_ranges(void)
- {
- 	struct memblock_region *reg;
- 	unsigned long long start, end;
-+	int ret;
- 
- 	pr_debug("Setup crash memory ranges.\n");
- 	crash_mem_ranges = 0;
-@@ -816,7 +869,9 @@ static void fadump_setup_crash_memory_ra
- 	 * specified during fadump registration. We need to create a separate
- 	 * program header for this chunk with the correct offset.
- 	 */
--	fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	ret = fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	if (ret)
-+		return ret;
- 
- 	for_each_memblock(memory, reg) {
- 		start = (unsigned long long)reg->base;
-@@ -825,8 +880,12 @@ static void fadump_setup_crash_memory_ra
- 			start = fw_dump.boot_memory_size;
- 
- 		/* add this range excluding the reserved dump area. */
--		fadump_exclude_reserved_area(start, end);
-+		ret = fadump_exclude_reserved_area(start, end);
-+		if (ret)
-+			return ret;
- 	}
-+
-+	return 0;
- }
- 
- /*
-@@ -950,6 +1009,7 @@ static void register_fadump(void)
- {
- 	unsigned long addr;
- 	void *vaddr;
-+	int ret;
- 
- 	/*
- 	 * If no memory is reserved then we can not register for firmware-
-@@ -958,7 +1018,9 @@ static void register_fadump(void)
- 	if (!fw_dump.reserve_dump_area_size)
- 		return;
- 
--	fadump_setup_crash_memory_ranges();
-+	ret = fadump_setup_crash_memory_ranges();
-+	if (ret)
-+		return ret;
- 
- 	addr = be64_to_cpu(fdm.rmr_region.destination_address) + be64_to_cpu(fdm.rmr_region.source_len);
- 	/* Initialize fadump crash info header. */
-@@ -1036,6 +1098,7 @@ void fadump_cleanup(void)
- 	} else if (fw_dump.dump_registered) {
- 		/* Un-register Firmware-assisted dump if it was registered. */
- 		fadump_unregister_dump(&fdm);
-+		free_crash_memory_ranges();
- 	}
- }
- 
+Adrian Hunter <adrian.hunter@intel.com>
+    perf auxtrace: Fix queue resize
+
+Shan Hai <shan.hai@oracle.com>
+    bcache: release dc->writeback_lock properly in bch_writeback_thread()
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    printk/tracing: Do not trace printk_nmi_enter()
+
+Vishal Verma <vishal.l.verma@intel.com>
+    libnvdimm: fix ars_status output length calculation
+
+Christian Brauner <christian@brauner.io>
+    getxattr: use correct xattr length
+
+Mikulas Patocka <mpatocka@redhat.com>
+    udlfb: set optimal write delay
+
+Mikulas Patocka <mpatocka@redhat.com>
+    fb: fix lost console when the user unplugs a USB adapter
+
+Vignesh R <vigneshr@ti.com>
+    pwm: tiehrpwm: Fix disabling of output of PWMs
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Fix synced_i_size calculation for xattr inodes
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Check data node size before truncate
+
+Richard Weinberger <richard@nod.at>
+    Revert "UBIFS: Fix potential integer overflow in allocation"
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Fix memory leak in lprobs self-check
+
+Jann Horn <jannh@google.com>
+    userns: move user access out of the mutex
+
+Jann Horn <jannh@google.com>
+    sys: don't hold uts_sem while accessing userspace memory
+
+Al Viro <viro@zeniv.linux.org.uk>
+    osf_getdomainname(): use copy_to_user()
+
+Jacob Pan <jacob.jun.pan@linux.intel.com>
+    iommu/vt-d: Fix dev iotlb pfsid use
+
+Jacob Pan <jacob.jun.pan@linux.intel.com>
+    iommu/vt-d: Add definitions for PFSID
+
+Peter Zijlstra <peterz@infradead.org>
+    mm/tlb: Remove tlb_remove_table() non-concurrent condition
+
+Yannik Sembritzki <yannik@sembritzki.me>
+    Fix kexec forbidding kernels signed with keys in the secondary keyring to boot
+
+Yannik Sembritzki <yannik@sembritzki.me>
+    Replace magic for trusting the secondary keyring with #define
+
+Jon Hunter <jonathanh@nvidia.com>
+    ARM: tegra: Fix Tegra30 Cardhu PCA954x reset
+
+Bill Baker <Bill.Baker@Oracle.com>
+    NFSv4 client live hangs after live data migration recovery
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    pnfs/blocklayout: off by one in bl_map_stripe()
+
+Max Filippov <jcmvbkbc@gmail.com>
+    xtensa: increase ranges in ___invalidate_{i,d}cache_all
+
+Max Filippov <jcmvbkbc@gmail.com>
+    xtensa: limit offsets in __loop_cache_{all,page}
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: VMX: fixes for vmentry_l1d_flush module parameter
+
+zhangyi (F) <yi.zhang@huawei.com>
+    PM / sleep: wakeup: Fix build error caused by missing SRCU support
+
+Tomas Bortoli <tomasbortoli@gmail.com>
+    9p: fix multiple NULL-pointer-dereferences
+
+Rafael David Tinoco <rafael.tinoco@linaro.org>
+    mfd: hi655x: Fix regmap area declared size for hi655x
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    uprobes: Use synchronize_rcu() not synchronize_sched()
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    tracing/blktrace: Fix to allow setting same value
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    tracing: Do not call start/stop() functions when tracing_on does not change
+
+Johan Hovold <johan@kernel.org>
+    rtc: omap: fix potential crash on power off
+
+Nadav Amit <namit@vmware.com>
+    vmw_balloon: fix VMCI use when balloon built into kernel
+
+Nadav Amit <namit@vmware.com>
+    vmw_balloon: VMCI_DOORBELL_SET does not check status
+
+Nadav Amit <namit@vmware.com>
+    vmw_balloon: do not use 2MB without batching
+
+Nadav Amit <namit@vmware.com>
+    vmw_balloon: fix inflation of 64-bit GFNs
+
+Lars-Peter Clausen <lars@metafoo.de>
+    iio: ad9523: Fix return value for ad952x_store()
+
+Lars-Peter Clausen <lars@metafoo.de>
+    iio: ad9523: Fix displayed phase
+
+Tycho Andersen <tycho@tycho.ws>
+    uart: fix race between uart_put_char() and uart_shutdown()
+
+Mike Snitzer <snitzer@redhat.com>
+    dm cache metadata: save in-core policy_hint_size to on-disk superblock
+
+Hou Tao <houtao1@huawei.com>
+    dm thin: stop no_space_timeout worker when switching to write-mode
+
+Tomas Bortoli <tomasbortoli@gmail.com>
+    net/9p/trans_fd.c: fix race-condition by flushing workqueue before the kfree()
+
+Tomas Bortoli <tomasbortoli@gmail.com>
+    net/9p/client.c: version pointer uninitialized
+
+jiangyiwen <jiangyiwen@huawei.com>
+    9p/virtio: fix off-by-one error in sg list bounds check
+
+piaojun <piaojun@huawei.com>
+    fs/9p/xattr.c: catch the error of p9_client_clunk when setting xattr failed
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    RDMA/rxe: Set wqe->status correctly if an unexpected response is received
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    ib_srpt: Fix a use-after-free in srpt_close_ch()
+
+Vaibhav Jain <vaibhav@linux.ibm.com>
+    cxl: Fix wrong comparison in cxl_adapter_context_get()
+
+Benjamin Herrenschmidt <benh@kernel.crashing.org>
+    powerpc/powernv/pci: Work around races in PCI bridge enabling
+
+Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+    powerpc/pseries: Fix endianness while restoring of r3 in MCE handler.
+
+Hari Bathini <hbathini@linux.ibm.com>
+    powerpc/fadump: handle crash memory ranges array index overflow
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    mailbox: xgene-slimpro: Fix potential NULL pointer dereference
+
+Daniel Mack <daniel@zonque.org>
+    libertas: fix suspend and resume for SDIO connected cards
+
+Matthew Auld <matthew.auld@intel.com>
+    drm/i915/userptr: reject zero user_size
+
+Krzysztof Kozlowski <krzk@kernel.org>
+    spi: spi-fsl-dspi: Fix imprecise abort on VF500 during probe
+
+Bartosz Golaszewski <bgolaszewski@baylibre.com>
+    spi: davinci: fix a NULL pointer dereference
+
+Chirantan Ekbote <chirantan@chromium.org>
+    9p/net: Fix zero-copy path in the 9p virtio transport
+
+Alexander Aring <aring@mojatatu.com>
+    net: mac802154: tx: expand tailroom if necessary
+
+Alexander Aring <aring@mojatatu.com>
+    net: 6lowpan: fix reserved space for single frames
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                        |  4 +-
+ arch/alpha/kernel/osf_sys.c                     | 64 ++++++++---------
+ arch/arm/boot/dts/tegra30-cardhu.dtsi           |  1 +
+ arch/powerpc/include/asm/fadump.h               |  3 -
+ arch/powerpc/kernel/fadump.c                    | 91 +++++++++++++++++++----
+ arch/powerpc/platforms/powernv/pci-ioda.c       | 37 ++++++++++
+ arch/powerpc/platforms/pseries/ras.c            |  2 +-
+ arch/sparc/kernel/sys_sparc_32.c                | 22 +++---
+ arch/sparc/kernel/sys_sparc_64.c                | 20 +++---
+ arch/x86/kernel/kexec-bzimage64.c               |  2 +-
+ arch/x86/kvm/vmx.c                              | 26 ++++---
+ arch/xtensa/include/asm/cacheasm.h              | 69 +++++++++++-------
+ certs/system_keyring.c                          |  3 +-
+ crypto/asymmetric_keys/pkcs7_key_type.c         |  2 +-
+ drivers/crypto/caam/jr.c                        |  3 +-
+ drivers/crypto/vmx/aes_cbc.c                    | 30 ++++----
+ drivers/crypto/vmx/aes_xts.c                    | 21 ++++--
+ drivers/gpu/drm/i915/i915_gem_userptr.c         |  3 +
+ drivers/iio/frequency/ad9523.c                  |  4 +-
+ drivers/infiniband/sw/rxe/rxe_comp.c            |  1 +
+ drivers/infiniband/ulp/srpt/ib_srpt.c           |  3 +-
+ drivers/iommu/dmar.c                            |  6 +-
+ drivers/iommu/intel-iommu.c                     | 18 ++++-
+ drivers/mailbox/mailbox-xgene-slimpro.c         |  6 +-
+ drivers/md/bcache/writeback.c                   |  4 +-
+ drivers/md/dm-cache-metadata.c                  |  3 +-
+ drivers/md/dm-thin.c                            |  2 +
+ drivers/mfd/hi655x-pmic.c                       |  2 +-
+ drivers/misc/cxl/main.c                         |  2 +-
+ drivers/misc/vmw_balloon.c                      | 67 ++++++++++-------
+ drivers/net/wireless/marvell/libertas/dev.h     |  1 +
+ drivers/net/wireless/marvell/libertas/if_sdio.c | 30 ++++++--
+ drivers/nvdimm/bus.c                            |  4 +-
+ drivers/pwm/pwm-tiehrpwm.c                      |  2 +
+ drivers/rtc/rtc-omap.c                          | 14 ++--
+ drivers/spi/spi-davinci.c                       |  2 +-
+ drivers/spi/spi-fsl-dspi.c                      | 24 +++----
+ drivers/tty/serial/serial_core.c                | 17 +++--
+ drivers/video/fbdev/core/fbmem.c                | 38 ++++++++--
+ fs/9p/xattr.c                                   |  6 +-
+ fs/nfs/blocklayout/dev.c                        |  2 +-
+ fs/nfs/nfs4proc.c                               |  9 ++-
+ fs/quota/quota.c                                |  2 +
+ fs/ubifs/journal.c                              | 18 ++++-
+ fs/ubifs/lprops.c                               |  8 +--
+ fs/xattr.c                                      |  2 +-
+ include/linux/intel-iommu.h                     |  8 ++-
+ include/linux/sunrpc/clnt.h                     |  1 +
+ include/linux/verification.h                    |  6 ++
+ include/video/udlfb.h                           |  2 +-
+ kernel/power/Kconfig                            |  1 +
+ kernel/printk/nmi.c                             |  4 +-
+ kernel/sys.c                                    | 95 ++++++++++++-------------
+ kernel/trace/blktrace.c                         |  4 ++
+ kernel/trace/trace.c                            |  4 +-
+ kernel/trace/trace_uprobe.c                     |  2 +-
+ kernel/user_namespace.c                         | 24 +++----
+ kernel/utsname_sysctl.c                         | 41 ++++++-----
+ mm/memory.c                                     |  9 ---
+ net/9p/client.c                                 |  2 +-
+ net/9p/trans_fd.c                               |  7 +-
+ net/9p/trans_rdma.c                             |  3 +
+ net/9p/trans_virtio.c                           | 13 +++-
+ net/ieee802154/6lowpan/tx.c                     | 21 +++++-
+ net/mac802154/tx.c                              | 15 +++-
+ net/sunrpc/clnt.c                               | 28 +++++---
+ tools/perf/util/auxtrace.c                      |  3 +
+ 67 files changed, 653 insertions(+), 340 deletions(-)
 
 
