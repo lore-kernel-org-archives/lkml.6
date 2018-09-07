@@ -2,111 +2,125 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BDDC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB48DC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED5C2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:05:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED5C2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 664372083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:05:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jeWQcoFr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664372083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbeIGHoC (ORCPT
+        id S1727100AbeIGHoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 03:44:02 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:56942 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726434AbeIGHoC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 03:44:02 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07716261|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CnW3XSL_1536289489;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CnW3XSL_1536289489)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Fri, 07 Sep 2018 11:04:49 +0800
-Date:   Fri, 7 Sep 2018 11:04:49 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fri, 7 Sep 2018 03:44:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:35273 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbeIGHoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 03:44:18 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4262PT5dHGz9s55;
+        Fri,  7 Sep 2018 13:05:33 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1536289538;
+        bh=QR3BAfqkp1HjnXKmy3uOBttZdgduvGSE/fDoyheLTmI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jeWQcoFrowvbViNQjj99R+O2k3EgUmcv0czv7OKY4Q5s140yQ6DIMcUbpMf2VTtzU
+         nLQhu71t7P4Tw9tffCLyDPAPGvmRcDVSW4TbPbc88jB/iJg+ndSVUupto64jcLlgpX
+         znImCz/BaxTUHBHBZAl6/fpyMxFAhqUgyMgq7FGjhtc0WYWm4oNEDS4SBjMCzxSCqK
+         1+dETW1COSxrQE2vntb0BAv+c88adNEo3YoTcDCOib7Sn/9TGbKcjpKQblpRYH8+ST
+         jIPjxpKcLEdJomKzSG/Z3os5NLDygVn//xRyziSnyZ4EePX4VDB8ZR3/g6MGSHg6WK
+         zIIMGvRxbpK4g==
+Date:   Fri, 7 Sep 2018 13:05:33 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kees Cook <keescook@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V3 06/26] csky: Cache and TLB routines
-Message-ID: <20180907030447.GA10434@guoren-Inspiron-7460>
-References: <cover.1536138304.git.ren_guo@c-sky.com>
- <16105a3e54f1c4bb65a5ec81d77af7c176e705c6.1536138304.git.ren_guo@c-sky.com>
- <CAK8P3a1fYM0X=F+9yD6BVLq=57eJeFWXCvywjQOFwEHz7oAhcg@mail.gmail.com>
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: linux-next: manual merge of the kspp tree with the tip tree
+Message-ID: <20180907130533.03ba3119@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1fYM0X=F+9yD6BVLq=57eJeFWXCvywjQOFwEHz7oAhcg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ChvU3MaG=OK88FENH1qaAfo"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 04:31:16PM +0200, Arnd Bergmann wrote:
-> On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> 
-> > diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
-> > new file mode 100644
-> > index 0000000..fcb2142
-> > --- /dev/null
-> > +++ b/arch/csky/include/asm/io.h
-> > @@ -0,0 +1,23 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-> > +#ifndef __ASM_CSKY_IO_H
-> > +#define __ASM_CSKY_IO_H
-> > +
-> > +#include <abi/pgtable-bits.h>
-> > +#include <linux/types.h>
-> > +#include <linux/version.h>
-> > +
-> > +extern void __iomem *ioremap(phys_addr_t offset, size_t size);
-> > +
-> > +extern void iounmap(void *addr);
-> > +
-> > +extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
-> > +               size_t size, unsigned long flags);
-> > +
-> > +#define ioremap_nocache(phy, sz)       ioremap(phy, sz)
-> > +#define ioremap_wc ioremap_nocache
-> > +#define ioremap_wt ioremap_nocache
-> > +
-> > +#include <asm-generic/io.h>
-> 
-> It is very unusual for an architecture to not need special handling in asm/io.h,
-> to do the proper barriers etc.
-> 
-> Can you describe how C-Sky hardware implements MMIO?
-Our mmio is uncachable and strong-order address, so there is no need
-barriers for access these io addr.
+--Sig_/ChvU3MaG=OK88FENH1qaAfo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
- #define ioremap_wc ioremap_nocache
- #define ioremap_wt ioremap_nocache
+Hi Kees,
 
-Current ioremap_wc and ioremap_wt implementation are too simple and
-we'll improve it in future.
+Today's linux-next merge of the kspp tree got a conflict in:
 
-> In particular:
-> 
-> - Is a read from uncached memory always serialized with DMA, and with
->   other CPUs doing MMIO access to a different address?
-CPU use ld.w to get data from uncached strong order memory.
-Other CPUs use the same mmio vaddr to access the uncachable strong order
-memory paddr.
+  drivers/misc/lkdtm/core.c
 
-> - How does endianess work? Are there any buses that flip bytes around
->   when running big-endian, or do you always do that in software?
-Currently we only support little-endian and soc will follow it.
+between commit:
 
- Guo Ren
+  bef459026b16 ("lkdtm: Test copy_to_user() on bad kernel pointer under KER=
+NEL_DS")
+
+from the tip tree and commit:
+
+  f90d1e0c7804 ("lkdtm: Add a test for STACKLEAK")
+
+from the kspp tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/misc/lkdtm/core.c
+index 5a755590d3dc,aca26d81e9b8..000000000000
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@@ -183,7 -183,7 +183,8 @@@ static const struct crashtype crashtype
+  	CRASHTYPE(USERCOPY_STACK_FRAME_FROM),
+  	CRASHTYPE(USERCOPY_STACK_BEYOND),
+  	CRASHTYPE(USERCOPY_KERNEL),
+ +	CRASHTYPE(USERCOPY_KERNEL_DS),
++ 	CRASHTYPE(STACKLEAK_ERASING),
+  };
+ =20
+ =20
+
+--Sig_/ChvU3MaG=OK88FENH1qaAfo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluR6v0ACgkQAVBC80lX
+0GwklAf/eZ1gx5K7IRC8oX8WYl4rP1kN6Y+2thbamwW0mfuQMzwlPlYrU6dgSFbG
+jXQdqt2NhZ3q9h/jnpQhJD0HbPm8rQa18Ir298iqfwN8qP+K5H/Yoj7g0gQmYnVM
+KKTu23JDZMMrpSKAl2RzF92o0cHoSkPhz0EzZksmuwqXPkvX0VuW8s0VBOi5eS3W
+xwXy8my1g245KYcun5pCDI/uqlKXKYnwjMRYepEkML0jsgw3x+GwslDNkuEE9kZz
+g0S4KL0nKmWBWdPFKMqohAv50YieFS+IcI9P5gA7CFHBcm5SBz/rFQDoWW6P+nss
+SA85stTSGWnljxSgFR3ylPaDw59r8g==
+=dNGN
+-----END PGP SIGNATURE-----
+
+--Sig_/ChvU3MaG=OK88FENH1qaAfo--
