@@ -2,163 +2,239 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8587C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E141C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9707C2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4366B206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:49:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsoAeyk3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9707C2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="pr00AxmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4366B206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730532AbeIHCb4 (ORCPT
+        id S1730741AbeIHCZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:31:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbeIHCbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:31:55 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D46B4206BB;
-        Fri,  7 Sep 2018 21:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536356938;
-        bh=5DUHfmWd15rzMoc0897HgT75Kzs4re6cJf8zHAteJqs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GsoAeyk3Gj9WIBFiCdWaLmIGQ0k9GSZQ9Qec40aXVU+GJ83puyIGL0JkEgrMZ+Edr
-         XoF60W2pKU/HWd/nW1Q49x98lj45srjgxfDEdLOyQeIED/4xm3ECCVD7TBYQAXCL+f
-         4FFUGyEILqKk33Lq0YXVFeyi+yVcsxEieLdFYUhg=
-Date:   Fri, 7 Sep 2018 16:48:56 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org, linux@endlessm.com,
-        nouveau@lists.freedesktop.org, linux-pm@vger.kernel.org,
-        peter@lekensteyn.nl, kherbst@redhat.com,
-        andriy.shevchenko@linux.intel.com, rafael.j.wysocki@intel.com,
-        keith.busch@intel.com, mika.westerberg@linux.intel.com,
-        jonathan.derrick@intel.com, kugel@rockbox.org, davem@davemloft.net,
-        hkallweit1@gmail.com, netdev@vger.kernel.org, nic_swsd@realtek.com,
+        Fri, 7 Sep 2018 22:25:53 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:23044 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730728AbeIHCZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 22:25:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1536356577; x=1567892577;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Qbo2tRBsA24neJorN0C3RRPRL0VsEZKsQ1z2jlpDL80=;
+  b=pr00AxmDA7XP5BKLz5CPm1+dNzyteVhvX5Z9GFRzcqteKKyr9Jq3y/rP
+   HcNeSZcO5tDmQU4uI36Bu+Z7jSAMBfqtAYbiq46ITsPl5DhxeZa8vrOt4
+   Sn+tfHfsSDyd/duQcCk4VTAS8+MiQtyvu8tiWLLqcmjVtVXGwQ6bsLEKv
+   4=;
+X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
+   d="scan'208";a="361243261"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-27fb8269.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:42:57 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1e-27fb8269.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87Lgp3w005088
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Fri, 7 Sep 2018 21:42:54 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LgokQ027762
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 7 Sep 2018 23:42:50 +0200
+Received: (from jschoenh@localhost)
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LgnZC027761;
+        Fri, 7 Sep 2018 23:42:49 +0200
+From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Reprogram bridge prefetch registers on resume
-Message-ID: <20180907214856.GC250890@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180907053614.6540-1-drake@endlessm.com>
+Subject: [RFC 50/60] cosched: Propagate load changes across hierarchy levels
+Date:   Fri,  7 Sep 2018 23:40:37 +0200
+Message-Id: <20180907214047.26914-51-jschoenh@amazon.de>
+X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
+In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907053614.6540-1-drake@endlessm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc LKML]
+The weight of an SD-SE is defined to be the average weight of all
+runqueues that are represented by the SD-SE. Hence, its weight
+should change whenever one of the child runqueues changes its
+weight. However, as these are two different hierarchy levels,
+they are protected by different locks. To reduce lock contention,
+we want to avoid holding higher level locks for prolonged amounts
+of time, if possible.
 
-On Fri, Sep 07, 2018 at 01:36:14PM +0800, Daniel Drake wrote:
-> On 38+ Intel-based Asus products, the nvidia GPU becomes unusable
-> after S3 suspend/resume. The affected products include multiple
-> generations of nvidia GPUs and Intel SoCs. After resume, nouveau logs
-> many errors such as:
-> 
->     fifo: fault 00 [READ] at 0000005555555000 engine 00 [GR] client 04 [HUB/FE] reason 4a [] on channel -1 [007fa91000 unknown]
->     DRM: failed to idle channel 0 [DRM]
-> 
-> Similarly, the nvidia proprietary driver also fails after resume
-> (black screen, 100% CPU usage in Xorg process). We shipped a sample
-> to Nvidia for diagnosis, and their response indicated that it's a
-> problem with the parent PCI bridge (on the Intel SoC), not the GPU.
-> 
-> Runtime suspend/resume works fine, only S3 suspend is affected.
-> 
-> We found a workaround: on resume, rewrite the Intel PCI bridge
-> 'Prefetchable Base Upper 32 Bits' register (PCI_PREF_BASE_UPPER32). In
-> the cases that I checked, this register has value 0 and we just have to
-> rewrite that value.
-> 
-> It's very strange that rewriting the exact same register value
-> makes a difference, but it definitely makes the issue go away.
-> It's not just acting as some kind of memory barrier, because rewriting
-> other bridge registers does not work around the issue. There's something
-> magic in this particular register. We have confirmed this on all
-> the affected models we have in-hands (X542UQ, UX533FD, X530UN, V272UN).
-> 
-> Additionally, this workaround solves an issue where r8169 MSI-X
-> interrupts were broken after S3 suspend/resume on Asus X441UAR. This
-> issue was recently worked around in commit 7bb05b85bc2d ("r8169:
-> don't use MSI-X on RTL8106e"). It also fixes the same issue on
-> RTL6186evl/8111evl on an Aimfor-tech laptop that we had not yet
-> patched. I suspect it will also fix the issue that was worked around in
-> commit 7c53a722459c ("r8169: don't use MSI-X on RTL8168g").
+Therefore, we update an aggregated weight -- sdrq->sdse_load --
+in a lock-free manner during enqueue and dequeue in the lower level,
+and once we actually get the higher level lock, we perform the actual
+SD-SE weight adjustment via update_sdse_load().
 
-This is crazy.  I would think *lots* of devices, like anything that
-uses prefetchable memory, would be affected by this.
+At some point in the future (the code isn't there yet), this will
+allow software combining, where not all CPUs have to walk up the
+full hierarchy on enqueue/dequeue.
 
-> Thomas Martitz reports that this workaround also solves an issue where
-> the AMD Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive
-> after S3 suspend/resume.
-> 
-> From our testing, the affected Intel PCI bridges are:
-> Intel Skylake PCIe Controller (x16) [8086:1901] (rev 05)
-> Intel Skylake PCIe Controller (x16) [8086:1901] (rev 07)
-> Intel Device [8086:31d8] (rev f3)
-> Intel Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port B #1 [8086:5ad6] (rev fb)
-> Intel Celeron N3350/Pentium N4200/Atom E3900 Series PCI Express Port A #1 [8086:5ad8] (rev fb)
-> Intel Sunrise Point-LP PCI Express Root Port [8086:9d10] (rev f1)
-> Intel Sunrise Point-LP PCI Express Root Port #5 [8086:9d14] (rev f1)
-> Intel Device [8086:9dbc] (rev f0)
-> 
-> On resume, reprogram the PCI bridge prefetch registers, including the
-> magic register mentioned above.
-> 
-> This matches Win10 behaviour, which also rewrites these registers
-> during S3 resume (checked with qemu tracing).
-> 
-> Link: https://marc.info/?i=CAD8Lp46Y2eOR7WE28xToUL8s-aYiqPa0nS=1GSD0AxkddXq6+A@mail.gmail.com
+Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+---
+ kernel/sched/fair.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-Can you use
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0dc4d289497c..1eee262ecf88 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2740,6 +2740,10 @@ static inline void account_numa_dequeue(struct rq *rq, struct task_struct *p)
+ static void
+ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
++#ifdef CONFIG_COSCHEDULING
++	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
++		atomic64_add(se->load.weight, &cfs_rq->sdrq.sd_parent->sdse_load);
++#endif
+ 	update_load_add(&cfs_rq->load, se->load.weight);
+ 	if (!parent_entity(se) || is_sd_se(parent_entity(se)))
+ 		update_load_add(&hrq_of(cfs_rq)->load, se->load.weight);
+@@ -2757,6 +2761,10 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ static void
+ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
++#ifdef CONFIG_COSCHEDULING
++	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
++		atomic64_sub(se->load.weight, &cfs_rq->sdrq.sd_parent->sdse_load);
++#endif
+ 	update_load_sub(&cfs_rq->load, se->load.weight);
+ 	if (!parent_entity(se) || is_sd_se(parent_entity(se)))
+ 		update_load_sub(&hrq_of(cfs_rq)->load, se->load.weight);
+@@ -3083,6 +3091,35 @@ static inline void update_cfs_group(struct sched_entity *se)
+ }
+ #endif /* CONFIG_FAIR_GROUP_SCHED */
+ 
++#ifdef CONFIG_COSCHEDULING
++static void update_sdse_load(struct sched_entity *se)
++{
++	struct cfs_rq *cfs_rq = cfs_rq_of(se);
++	struct sdrq *sdrq = &cfs_rq->sdrq;
++	unsigned long load;
++
++	if (!is_sd_se(se))
++		return;
++
++	/* FIXME: the load calculation assumes a homogeneous topology */
++	load = atomic64_read(&sdrq->sdse_load);
++
++	if (!list_empty(&sdrq->children)) {
++		struct sdrq *entry;
++
++		entry = list_first_entry(&sdrq->children, struct sdrq, siblings);
++		load *= entry->data->span_weight;
++	}
++
++	load /= sdrq->data->span_weight;
++
++	/* FIXME: Use a proper runnable */
++	reweight_entity(cfs_rq, se, load, load);
++}
++#else /* !CONFIG_COSCHEDULING */
++static void update_sdse_load(struct sched_entity *se) { }
++#endif /* !CONFIG_COSCHEDULING */
++
+ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+ {
+ 	struct rq *rq = hrq_of(cfs_rq);
+@@ -4527,6 +4564,11 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 
+ 	se = cfs_rq->my_se;
+ 
++#ifdef CONFIG_COSCHEDULING
++	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
++		atomic64_sub(cfs_rq->load.weight,
++			     &cfs_rq->sdrq.sd_parent->sdse_load);
++#endif
+ 	/* freeze hierarchy runnable averages while throttled */
+ 	rcu_read_lock();
+ 	walk_tg_tree_from(cfs_rq->tg, tg_throttle_down, tg_nop, (void *)rq);
+@@ -4538,6 +4580,8 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+ 		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+ 
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
++
+ 		/* throttled entity or throttle-on-deactivate */
+ 		if (!se->on_rq)
+ 			break;
+@@ -4590,6 +4634,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	se = cfs_rq->my_se;
+ 
+ 	cfs_rq->throttled = 0;
++#ifdef CONFIG_COSCHEDULING
++	if (!cfs_rq->sdrq.is_root && !cfs_rq->throttled)
++		atomic64_add(cfs_rq->load.weight,
++			     &cfs_rq->sdrq.sd_parent->sdse_load);
++#endif
+ 
+ 	update_rq_clock(rq);
+ 
+@@ -4608,6 +4657,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	rq_chain_init(&rc, rq);
+ 	for_each_sched_entity(se) {
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
+ 		if (se->on_rq)
+ 			enqueue = 0;
+ 
+@@ -5152,6 +5202,7 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 	rq_chain_init(&rc, rq);
+ 	for_each_sched_entity(se) {
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
+ 		if (se->on_rq)
+ 			break;
+ 		cfs_rq = cfs_rq_of(se);
+@@ -5173,6 +5224,7 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 	for_each_sched_entity(se) {
+ 		/* FIXME: taking locks up to the top is bad */
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
+ 		cfs_rq = cfs_rq_of(se);
+ 		cfs_rq->h_nr_running += task_delta;
+ 
+@@ -5235,6 +5287,7 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 	rq_chain_init(&rc, rq);
+ 	for_each_sched_entity(se) {
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
+ 		cfs_rq = cfs_rq_of(se);
+ 		dequeue_entity(cfs_rq, se, flags);
+ 
+@@ -5269,6 +5322,7 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+ 	for_each_sched_entity(se) {
+ 		/* FIXME: taking locks up to the top is bad */
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
+ 		cfs_rq = cfs_rq_of(se);
+ 		cfs_rq->h_nr_running -= task_delta;
+ 
+@@ -9897,6 +9951,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 
+ 	for_each_sched_entity(se) {
+ 		rq_chain_lock(&rc, se);
++		update_sdse_load(se);
+ 		cfs_rq = cfs_rq_of(se);
+ 
+ 		if (cfs_rq_throttled(cfs_rq))
+-- 
+2.9.3.1.gcba166c.dirty
 
-  https://lkml.kernel.org/r/CAD8Lp46Y2eOR7WE28xToUL8s-aYiqPa0nS=1GSD0AxkddXq6+A@mail.gmail.com
-
-instead, so we don't depend on marc.info?  lkml.kernel.org doesn't have
-linux-pci archives, but it might someday, and it does redirect to other
-archives already.
-
-> Link: https://bugs.freedesktop.org/show_bug.cgi?id=105760
-
-I would really like to have a bugzilla.kernel.org issue with the
-excellent debugging you and Peter did attached.  Then we don't also
-have to depend on github.com, etc., sticking around.
-
-The list of platforms below could also be attached there, since you
-went to a lot of trouble to collect it, but it's probably more than is
-necessary for the changelog.
-
-> Signed-off-by: Daniel Drake <drake@endlessm.com>
-> ---
-> 
-> Notes:
->     Replaces patch:
->        PCI: add prefetch quirk to work around Asus/Nvidia suspend issues
->     
->     Below is the list of Asus products with Intel/Nvidia that we
->     believe are affected by the GPU resume issue.
->     
->     I revised my counting method from my last patch to eliminate duplicate
->     platforms that had multiple SKUs with the same DMI/GPU/bridge, that's why
->     the product count reduced from 43 to 38.
->     
->     sys_vendor: ASUSTeK COMPUTER INC.
->     board_name: FX502VD
->     product_name: FX502VD
->     01:00.0 3D controller [0302]: NVIDIA Corporation Device [10de:1c8d] (rev ff) (prog-if ff)
->     	!!! Unknown header type 7f
->     00:01.0 PCI bridge [0604]: Intel Corporation Device [8086:1901] (rev 05) (prog-if 00 [Normal decode])
-> ...
