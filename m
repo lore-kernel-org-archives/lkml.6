@@ -2,79 +2,175 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6D4C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15716C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC4AC20652
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:05:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC4AC20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BF32920873
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:06:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF32920873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbeIHArm (ORCPT
+        id S1726663AbeIHAsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:47:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:46081 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbeIHArm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:47:42 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 13:05:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
-   d="scan'208";a="86943329"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Sep 2018 13:05:11 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id E3336300B65; Fri,  7 Sep 2018 13:05:10 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 13:05:10 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     "Wang, Wei W" <wei.w.wang@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Liang, Kan" <kan.liang@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Xu, Like" <like.xu@intel.com>
-Subject: Re: [PATCH v2 6/8] perf/x86/intel/lbr: guest requesting KVM for lbr
- stack save/restore
-Message-ID: <20180907200510.GR27886@tassilo.jf.intel.com>
-References: <1536233456-12173-1-git-send-email-wei.w.wang@intel.com>
- <1536233456-12173-7-git-send-email-wei.w.wang@intel.com>
- <20180907032707.GN27886@tassilo.jf.intel.com>
- <5B920B96.6080803@intel.com>
- <20180907141051.GP27886@tassilo.jf.intel.com>
- <286AC319A985734F985F78AFA26841F73978F75E@shsmsx102.ccr.corp.intel.com>
+        Fri, 7 Sep 2018 20:48:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39480 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeIHAsq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 20:48:46 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97125E2F;
+        Fri,  7 Sep 2018 20:06:14 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 22:06:11 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, mpatocka@redhat.com,
+        pavel.tatashin@microsoft.com, will.deacon@arm.com,
+        stable-commits@vger.kernel.org
+Subject: Re: Patch "arm64: mm: always enable CONFIG_HOLES_IN_ZONE" has been
+ added to the 4.9-stable tree
+Message-ID: <20180907200611.GC25756@kroah.com>
+References: <1536325071252165@kroah.com>
+ <20180907183601.GA28007@flashbox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F73978F75E@shsmsx102.ccr.corp.intel.com>
+In-Reply-To: <20180907183601.GA28007@flashbox>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> How would you realize the function of saving/restoring the lbr stack on the host?
+On Fri, Sep 07, 2018 at 11:36:01AM -0700, Nathan Chancellor wrote:
+> On Fri, Sep 07, 2018 at 02:57:51PM +0200, gregkh@linuxfoundation.org wrote:
+> > 
+> > This is a note to let you know that I've just added the patch titled
+> > 
+> >     arm64: mm: always enable CONFIG_HOLES_IN_ZONE
+> > 
+> > to the 4.9-stable tree which can be found at:
+> >     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+> > 
+> > The filename of the patch is:
+> >      arm64-mm-always-enable-config_holes_in_zone.patch
+> > and it can be found in the queue-4.9 subdirectory.
+> > 
+> > If you, or anyone else, feels it should not be added to the stable tree,
+> > please let <stable@vger.kernel.org> know about it.
+> > 
+> > 
+> > From f52bb98f5aded4c43e52f5ce19fb83f7261e9e73 Mon Sep 17 00:00:00 2001
+> > From: James Morse <james.morse@arm.com>
+> > Date: Thu, 30 Aug 2018 16:05:32 +0100
+> > Subject: arm64: mm: always enable CONFIG_HOLES_IN_ZONE
+> > 
+> > From: James Morse <james.morse@arm.com>
+> > 
+> > commit f52bb98f5aded4c43e52f5ce19fb83f7261e9e73 upstream.
+> > 
+> > Commit 6d526ee26ccd ("arm64: mm: enable CONFIG_HOLES_IN_ZONE for NUMA")
+> > only enabled HOLES_IN_ZONE for NUMA systems because the NUMA code was
+> > choking on the missing zone for nomap pages. This problem doesn't just
+> > apply to NUMA systems.
+> > 
+> > If the architecture doesn't set HAVE_ARCH_PFN_VALID, pfn_valid() will
+> > return true if the pfn is part of a valid sparsemem section.
+> > 
+> > When working with multiple pages, the mm code uses pfn_valid_within()
+> > to test each page it uses within the sparsemem section is valid. On
+> > most systems memory comes in MAX_ORDER_NR_PAGES chunks which all
+> > have valid/initialised struct pages. In this case pfn_valid_within()
+> > is optimised out.
+> > 
+> > Systems where this isn't true (e.g. due to nomap) should set
+> > HOLES_IN_ZONE and provide HAVE_ARCH_PFN_VALID so that mm tests each
+> > page as it works with it.
+> > 
+> > Currently non-NUMA arm64 systems can't enable HOLES_IN_ZONE, leading to
+> > a VM_BUG_ON():
+> > 
+> > | page:fffffdff802e1780 is uninitialized and poisoned
+> > | raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> > | raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> > | page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> > | ------------[ cut here ]------------
+> > | kernel BUG at include/linux/mm.h:978!
+> > | Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+> > [...]
+> > | CPU: 1 PID: 25236 Comm: dd Not tainted 4.18.0 #7
+> > | Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+> > | pstate: 40000085 (nZcv daIf -PAN -UAO)
+> > | pc : move_freepages_block+0x144/0x248
+> > | lr : move_freepages_block+0x144/0x248
+> > | sp : fffffe0071177680
+> > [...]
+> > | Process dd (pid: 25236, stack limit = 0x0000000094cc07fb)
+> > | Call trace:
+> > |  move_freepages_block+0x144/0x248
+> > |  steal_suitable_fallback+0x100/0x16c
+> > |  get_page_from_freelist+0x440/0xb20
+> > |  __alloc_pages_nodemask+0xe8/0x838
+> > |  new_slab+0xd4/0x418
+> > |  ___slab_alloc.constprop.27+0x380/0x4a8
+> > |  __slab_alloc.isra.21.constprop.26+0x24/0x34
+> > |  kmem_cache_alloc+0xa8/0x180
+> > |  alloc_buffer_head+0x1c/0x90
+> > |  alloc_page_buffers+0x68/0xb0
+> > |  create_empty_buffers+0x20/0x1ec
+> > |  create_page_buffers+0xb0/0xf0
+> > |  __block_write_begin_int+0xc4/0x564
+> > |  __block_write_begin+0x10/0x18
+> > |  block_write_begin+0x48/0xd0
+> > |  blkdev_write_begin+0x28/0x30
+> > |  generic_perform_write+0x98/0x16c
+> > |  __generic_file_write_iter+0x138/0x168
+> > |  blkdev_write_iter+0x80/0xf0
+> > |  __vfs_write+0xe4/0x10c
+> > |  vfs_write+0xb4/0x168
+> > |  ksys_write+0x44/0x88
+> > |  sys_write+0xc/0x14
+> > |  el0_svc_naked+0x30/0x34
+> > | Code: aa1303e0 90001a01 91296421 94008902 (d4210000)
+> > | ---[ end trace 1601ba47f6e883fe ]---
+> > 
+> > Remove the NUMA dependency.
+> > 
+> > Link: https://www.spinics.net/lists/arm-kernel/msg671851.html
+> > Cc: <stable@vger.kernel.org>
+> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> > Tested-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Signed-off-by: James Morse <james.morse@arm.com>
+> > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
+> > ---
+> >  arch/arm64/Kconfig |    1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -631,7 +631,6 @@ config HAVE_SETUP_PER_CPU_AREA
+> >  
+> >  config NEED_PER_CPU_EMBED_FIRST_CHUNK
 > 
-> Here, we create a perf event on the host (please see guest_lbr_event_create on patch 7), which essentially satisfies all the conditions (e.g. increases cpuc->lbr_users) that are required to have the lbr stack saved/restored on the vCPU switching.
+> Looks like git got confused here, this isn't HOLES_IN_ZONE.
 > 
-> If we want to stop the host side lbr stack save/restore for the vCPU, we need accordingly to call guest_lbr_event_release (in patch 7) to destroy that perf event (the host doesn't automatically stop saving the lbr stack for the vCPU if that perf event is still there).
-> 
-> When would you call that release function? (we all know that the lbr doesn't need to be saved when the guest is not using it, but we need to destroy that perf event to achieve "doesn't need to be saved")
+> Additionally, commit 6d526ee26ccd ("arm64: mm: enable
+> CONFIG_HOLES_IN_ZONE for NUMA") that introduced it to this file didn't
+> appear until 4.11 so this patch can be dropped from 4.9.
 
-Maybe set a timer on DEBUGCTL LBR=0 ? A timer would provide hysteresis, so that quick toggles
-(like in a PMI handler) wouldn't do anything expensive.
+Argh, I thought I had checked that too...
 
-It needs new interfaces for perf anyways because we need to access the LBR state from
-the last save.
+Anyway, thanks for letting me know, I've now dropped it from the 4.9
+queue.
 
--Andi
+greg k-h
