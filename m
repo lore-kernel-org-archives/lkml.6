@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4ED0C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51310C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90ACA2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90ACA2083D
+	by mail.kernel.org (Postfix) with ESMTP id 14DC020844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14DC020844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729589AbeIHCP2 (ORCPT
+        id S1729622AbeIHCPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:15:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50856 "EHLO
+        Fri, 7 Sep 2018 22:15:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51056 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbeIHCP2 (ORCPT
+        with ESMTP id S1727416AbeIHCPb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:15:28 -0400
+        Fri, 7 Sep 2018 22:15:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF181F81;
-        Fri,  7 Sep 2018 21:32:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1ED69F81;
+        Fri,  7 Sep 2018 21:32:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.14 58/89] xtensa: increase ranges in ___invalidate_{i,d}cache_all
-Date:   Fri,  7 Sep 2018 23:09:52 +0200
-Message-Id: <20180907210859.329158779@linuxfoundation.org>
+        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
+        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: [PATCH 4.9 01/63] net: 6lowpan: fix reserved space for single frames
+Date:   Fri,  7 Sep 2018 23:09:32 +0200
+Message-Id: <20180907211013.039466930@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
-References: <20180907210852.341064285@linuxfoundation.org>
+In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
+References: <20180907211012.965501324@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,52 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Alexander Aring <aring@mojatatu.com>
 
-commit fec3259c9f747c039f90e99570540114c8d81a14 upstream.
+commit ac74f87c789af40936a80131c4759f3e72579c3a upstream.
 
-Cache invalidation macros use cache line size to iterate over
-invalidated cache lines, assuming that all cache ways are invalidated by
-single instruction, but xtensa ISA recommends to not assume that for
-future compatibility:
-  In some implementations all ways at index Addry-1..z are invalidated
-  regardless of the specified way, but for future compatibility this
-  behavior should not be assumed.
+This patch fixes patch add handling to take care tail and headroom for
+single 6lowpan frames. We need to be sure we have a skb with the right
+head and tailroom for single frames. This patch do it by using
+skb_copy_expand() if head and tailroom is not enough allocated by upper
+layer.
 
-Iterate over all cache ways in ___invalidate_icache_all and
-___invalidate_dcache_all.
-
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195059
+Reported-by: David Palma <david.palma@ntnu.no>
+Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/include/asm/cacheasm.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ieee802154/6lowpan/tx.c |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/arch/xtensa/include/asm/cacheasm.h
-+++ b/arch/xtensa/include/asm/cacheasm.h
-@@ -123,7 +123,7 @@
- 	.macro	___invalidate_dcache_all ar at
+--- a/net/ieee802154/6lowpan/tx.c
++++ b/net/ieee802154/6lowpan/tx.c
+@@ -266,9 +266,24 @@ netdev_tx_t lowpan_xmit(struct sk_buff *
+ 	/* We must take a copy of the skb before we modify/replace the ipv6
+ 	 * header as the header could be used elsewhere
+ 	 */
+-	skb = skb_unshare(skb, GFP_ATOMIC);
+-	if (!skb)
+-		return NET_XMIT_DROP;
++	if (unlikely(skb_headroom(skb) < ldev->needed_headroom ||
++		     skb_tailroom(skb) < ldev->needed_tailroom)) {
++		struct sk_buff *nskb;
++
++		nskb = skb_copy_expand(skb, ldev->needed_headroom,
++				       ldev->needed_tailroom, GFP_ATOMIC);
++		if (likely(nskb)) {
++			consume_skb(skb);
++			skb = nskb;
++		} else {
++			kfree_skb(skb);
++			return NET_XMIT_DROP;
++		}
++	} else {
++		skb = skb_unshare(skb, GFP_ATOMIC);
++		if (!skb)
++			return NET_XMIT_DROP;
++	}
  
- #if XCHAL_DCACHE_SIZE
--	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
-+	__loop_cache_all \ar \at dii XCHAL_DCACHE_SIZE \
- 			 XCHAL_DCACHE_LINEWIDTH 1020
- #endif
- 
-@@ -133,7 +133,7 @@
- 	.macro	___invalidate_icache_all ar at
- 
- #if XCHAL_ICACHE_SIZE
--	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
-+	__loop_cache_all \ar \at iii XCHAL_ICACHE_SIZE \
- 			 XCHAL_ICACHE_LINEWIDTH 1020
- #endif
- 
+ 	ret = lowpan_header(skb, ldev, &dgram_size, &dgram_offset);
+ 	if (ret < 0) {
 
 
