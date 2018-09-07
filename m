@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D109BC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFECC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86E9B20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E9B20645
+	by mail.kernel.org (Postfix) with ESMTP id EBC8520645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC8520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbeIHB5r (ORCPT
+        id S1728547AbeIHB5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:57:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42410 "EHLO
+        Fri, 7 Sep 2018 21:57:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42430 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeIHB5q (ORCPT
+        with ESMTP id S1727873AbeIHB5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:57:46 -0400
+        Fri, 7 Sep 2018 21:57:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7949FFD4;
-        Fri,  7 Sep 2018 21:15:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E38D6FA4;
+        Fri,  7 Sep 2018 21:15:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 055/145] dm integrity: change suspending variable from bool to int
-Date:   Fri,  7 Sep 2018 23:08:41 +0200
-Message-Id: <20180907210909.098520249@linuxfoundation.org>
+Subject: [PATCH 4.18 056/145] dm thin: stop no_space_timeout worker when switching to write-mode
+Date:   Fri,  7 Sep 2018 23:08:42 +0200
+Message-Id: <20180907210909.193484322@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,55 +50,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Hou Tao <houtao1@huawei.com>
 
-commit c21b16392701543d61e366dca84e15fe7f0cf0cf upstream.
+commit 75294442d896f2767be34f75aca7cc2b0d01301f upstream.
 
-Early alpha processors can't write a byte or short atomically - they
-read 8 bytes, modify the byte or two bytes in registers and write back
-8 bytes.
+Now both check_for_space() and do_no_space_timeout() will read & write
+pool->pf.error_if_no_space.  If these functions run concurrently, as
+shown in the following case, the default setting of "queue_if_no_space"
+can get lost.
 
-The modification of the variable "suspending" may race with
-modification of the variable "failed".  Fix this by changing
-"suspending" to an int.
+precondition:
+    * error_if_no_space = false (aka "queue_if_no_space")
+    * pool is in Out-of-Data-Space (OODS) mode
+    * no_space_timeout worker has been queued
 
+CPU 0:                          CPU 1:
+// delete a thin device
+process_delete_mesg()
+// check_for_space() invoked by commit()
+set_pool_mode(pool, PM_WRITE)
+    pool->pf.error_if_no_space = \
+     pt->requested_pf.error_if_no_space
+
+				// timeout, pool is still in OODS mode
+				do_no_space_timeout
+				    // "queue_if_no_space" config is lost
+				    pool->pf.error_if_no_space = true
+    pool->pf.mode = new_mode
+
+Fix it by stopping no_space_timeout worker when switching to write mode.
+
+Fixes: bcc696fac11f ("dm thin: stay in out-of-data-space mode once no_space_timeout expires")
 Cc: stable@vger.kernel.org
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Hou Tao <houtao1@huawei.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-integrity.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/md/dm-thin.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -178,7 +178,7 @@ struct dm_integrity_c {
- 	__u8 sectors_per_block;
- 
- 	unsigned char mode;
--	bool suspending;
-+	int suspending;
- 
- 	int failed;
- 
-@@ -2210,7 +2210,7 @@ static void dm_integrity_postsuspend(str
- 
- 	del_timer_sync(&ic->autocommit_timer);
- 
--	ic->suspending = true;
-+	WRITE_ONCE(ic->suspending, 1);
- 
- 	queue_work(ic->commit_wq, &ic->commit_work);
- 	drain_workqueue(ic->commit_wq);
-@@ -2220,7 +2220,7 @@ static void dm_integrity_postsuspend(str
- 		dm_integrity_flush_buffers(ic);
- 	}
- 
--	ic->suspending = false;
-+	WRITE_ONCE(ic->suspending, 0);
- 
- 	BUG_ON(!RB_EMPTY_ROOT(&ic->in_progress));
- 
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -2520,6 +2520,8 @@ static void set_pool_mode(struct pool *p
+ 	case PM_WRITE:
+ 		if (old_mode != new_mode)
+ 			notify_of_pool_mode_change(pool, "write");
++		if (old_mode == PM_OUT_OF_DATA_SPACE)
++			cancel_delayed_work_sync(&pool->no_space_timeout);
+ 		pool->out_of_data_space = false;
+ 		pool->pf.error_if_no_space = pt->requested_pf.error_if_no_space;
+ 		dm_pool_metadata_read_write(pool->pmd);
 
 
