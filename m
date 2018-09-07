@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAF7C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CBDC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF42D20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:19:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF42D20645
+	by mail.kernel.org (Postfix) with ESMTP id 650B320645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:19:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 650B320645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729086AbeIHCB7 (ORCPT
+        id S1729090AbeIHCCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:01:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45104 "EHLO
+        Fri, 7 Sep 2018 22:02:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728506AbeIHCB7 (ORCPT
+        with ESMTP id S1727664AbeIHCCK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:01:59 -0400
+        Fri, 7 Sep 2018 22:02:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1726BE2F;
-        Fri,  7 Sep 2018 21:19:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BF1BE2F;
+        Fri,  7 Sep 2018 21:19:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.18 109/145] iommu/vt-d: Fix dev iotlb pfsid use
-Date:   Fri,  7 Sep 2018 23:09:35 +0200
-Message-Id: <20180907210912.590669998@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.18 110/145] sys: dont hold uts_sem while accessing userspace memory
+Date:   Fri,  7 Sep 2018 23:09:36 +0200
+Message-Id: <20180907210912.628191268@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,94 +50,453 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+From: Jann Horn <jannh@google.com>
 
-commit 1c48db44924298ad0cb5a6386b88017539be8822 upstream.
+commit 42a0cc3478584d4d63f68f2f5af021ddbea771fa upstream.
 
-PFSID should be used in the invalidation descriptor for flushing
-device IOTLBs on SRIOV VFs.
+Holding uts_sem as a writer while accessing userspace memory allows a
+namespace admin to stall all processes that attempt to take uts_sem.
+Instead, move data through stack buffers and don't access userspace memory
+while uts_sem is held.
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: stable@vger.kernel.org
-Cc: "Ashok Raj" <ashok.raj@intel.com>
-Cc: "Lu Baolu" <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/dmar.c        |    6 +++---
- drivers/iommu/intel-iommu.c |   17 ++++++++++++++++-
- include/linux/intel-iommu.h |    5 ++---
- 3 files changed, 21 insertions(+), 7 deletions(-)
+ arch/alpha/kernel/osf_sys.c      |   51 +++++++++-----------
+ arch/sparc/kernel/sys_sparc_32.c |   22 +++++----
+ arch/sparc/kernel/sys_sparc_64.c |   20 ++++----
+ kernel/sys.c                     |   95 ++++++++++++++++++---------------------
+ kernel/utsname_sysctl.c          |   41 ++++++++++------
+ 5 files changed, 119 insertions(+), 110 deletions(-)
 
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1339,8 +1339,8 @@ void qi_flush_iotlb(struct intel_iommu *
- 	qi_submit_sync(&desc, iommu);
- }
- 
--void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			u64 addr, unsigned mask)
-+void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask)
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -530,24 +530,19 @@ SYSCALL_DEFINE4(osf_mount, unsigned long
+ SYSCALL_DEFINE1(osf_utsname, char __user *, name)
  {
- 	struct qi_desc desc;
+ 	int error;
++	char tmp[5 * 32];
  
-@@ -1355,7 +1355,7 @@ void qi_flush_dev_iotlb(struct intel_iom
- 		qdep = 0;
+ 	down_read(&uts_sem);
+-	error = -EFAULT;
+-	if (copy_to_user(name + 0, utsname()->sysname, 32))
+-		goto out;
+-	if (copy_to_user(name + 32, utsname()->nodename, 32))
+-		goto out;
+-	if (copy_to_user(name + 64, utsname()->release, 32))
+-		goto out;
+-	if (copy_to_user(name + 96, utsname()->version, 32))
+-		goto out;
+-	if (copy_to_user(name + 128, utsname()->machine, 32))
+-		goto out;
++	memcpy(tmp + 0 * 32, utsname()->sysname, 32);
++	memcpy(tmp + 1 * 32, utsname()->nodename, 32);
++	memcpy(tmp + 2 * 32, utsname()->release, 32);
++	memcpy(tmp + 3 * 32, utsname()->version, 32);
++	memcpy(tmp + 4 * 32, utsname()->machine, 32);
++	up_read(&uts_sem);
  
- 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
--		   QI_DIOTLB_TYPE;
-+		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
- 
- 	qi_submit_sync(&desc, iommu);
+-	error = 0;
+- out:
+-	up_read(&uts_sem);	
+-	return error;
++	if (copy_to_user(name, tmp, sizeof(tmp)))
++		return -EFAULT;
++	return 0;
  }
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1502,6 +1502,20 @@ static void iommu_enable_dev_iotlb(struc
- 		return;
  
- 	pdev = to_pci_dev(info->dev);
-+	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
-+	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
-+	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
-+	 * reserved, which should be set to 0.
-+	 */
-+	if (!ecap_dit(info->iommu->ecap))
-+		info->pfsid = 0;
-+	else {
-+		struct pci_dev *pf_pdev;
+ SYSCALL_DEFINE0(getpagesize)
+@@ -567,18 +562,21 @@ SYSCALL_DEFINE2(osf_getdomainname, char
+ {
+ 	int len, err = 0;
+ 	char *kname;
++	char tmp[32];
+ 
+-	if (namelen > 32)
++	if (namelen < 0 || namelen > 32)
+ 		namelen = 32;
+ 
+ 	down_read(&uts_sem);
+ 	kname = utsname()->domainname;
+ 	len = strnlen(kname, namelen);
+-	if (copy_to_user(name, kname, min(len + 1, namelen)))
+-		err = -EFAULT;
++	len = min(len + 1, namelen);
++	memcpy(tmp, kname, len);
+ 	up_read(&uts_sem);
+ 
+-	return err;
++	if (copy_to_user(name, tmp, len))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ /*
+@@ -739,13 +737,14 @@ SYSCALL_DEFINE3(osf_sysinfo, int, comman
+ 	};
+ 	unsigned long offset;
+ 	const char *res;
+-	long len, err = -EINVAL;
++	long len;
++	char tmp[__NEW_UTS_LEN + 1];
+ 
+ 	offset = command-1;
+ 	if (offset >= ARRAY_SIZE(sysinfo_table)) {
+ 		/* Digital UNIX has a few unpublished interfaces here */
+ 		printk("sysinfo(%d)", command);
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	down_read(&uts_sem);
+@@ -753,13 +752,11 @@ SYSCALL_DEFINE3(osf_sysinfo, int, comman
+ 	len = strlen(res)+1;
+ 	if ((unsigned long)len > (unsigned long)count)
+ 		len = count;
+-	if (copy_to_user(buf, res, len))
+-		err = -EFAULT;
+-	else
+-		err = 0;
++	memcpy(tmp, res, len);
+ 	up_read(&uts_sem);
+- out:
+-	return err;
++	if (copy_to_user(buf, tmp, len))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE5(osf_getsysinfo, unsigned long, op, void __user *, buffer,
+--- a/arch/sparc/kernel/sys_sparc_32.c
++++ b/arch/sparc/kernel/sys_sparc_32.c
+@@ -197,23 +197,27 @@ SYSCALL_DEFINE5(rt_sigaction, int, sig,
+ 
+ SYSCALL_DEFINE2(getdomainname, char __user *, name, int, len)
+ {
+- 	int nlen, err;
+- 	
++	int nlen, err;
++	char tmp[__NEW_UTS_LEN + 1];
 +
-+		/* pdev will be returned if device is not a vf */
-+		pf_pdev = pci_physfn(pdev);
-+		info->pfsid = PCI_DEVID(pf_pdev->bus->number, pf_pdev->devfn);
+ 	if (len < 0)
+ 		return -EINVAL;
+ 
+- 	down_read(&uts_sem);
+- 	
++	down_read(&uts_sem);
++
+ 	nlen = strlen(utsname()->domainname) + 1;
+ 	err = -EINVAL;
+ 	if (nlen > len)
+-		goto out;
++		goto out_unlock;
++	memcpy(tmp, utsname()->domainname, nlen);
++
++	up_read(&uts_sem);
+ 
+-	err = -EFAULT;
+-	if (!copy_to_user(name, utsname()->domainname, nlen))
+-		err = 0;
++	if (copy_to_user(name, tmp, nlen))
++		return -EFAULT;
++	return 0;
+ 
+-out:
++out_unlock:
+ 	up_read(&uts_sem);
+ 	return err;
+ }
+--- a/arch/sparc/kernel/sys_sparc_64.c
++++ b/arch/sparc/kernel/sys_sparc_64.c
+@@ -519,23 +519,27 @@ asmlinkage void sparc_breakpoint(struct
+ 
+ SYSCALL_DEFINE2(getdomainname, char __user *, name, int, len)
+ {
+-        int nlen, err;
++	int nlen, err;
++	char tmp[__NEW_UTS_LEN + 1];
+ 
+ 	if (len < 0)
+ 		return -EINVAL;
+ 
+- 	down_read(&uts_sem);
+- 	
++	down_read(&uts_sem);
++
+ 	nlen = strlen(utsname()->domainname) + 1;
+ 	err = -EINVAL;
+ 	if (nlen > len)
+-		goto out;
++		goto out_unlock;
++	memcpy(tmp, utsname()->domainname, nlen);
++
++	up_read(&uts_sem);
+ 
+-	err = -EFAULT;
+-	if (!copy_to_user(name, utsname()->domainname, nlen))
+-		err = 0;
++	if (copy_to_user(name, tmp, nlen))
++		return -EFAULT;
++	return 0;
+ 
+-out:
++out_unlock:
+ 	up_read(&uts_sem);
+ 	return err;
+ }
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1237,18 +1237,19 @@ static int override_release(char __user
+ 
+ SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
+ {
+-	int errno = 0;
++	struct new_utsname tmp;
+ 
+ 	down_read(&uts_sem);
+-	if (copy_to_user(name, utsname(), sizeof *name))
+-		errno = -EFAULT;
++	memcpy(&tmp, utsname(), sizeof(tmp));
+ 	up_read(&uts_sem);
++	if (copy_to_user(name, &tmp, sizeof(tmp)))
++		return -EFAULT;
+ 
+-	if (!errno && override_release(name->release, sizeof(name->release)))
+-		errno = -EFAULT;
+-	if (!errno && override_architecture(name))
+-		errno = -EFAULT;
+-	return errno;
++	if (override_release(name->release, sizeof(name->release)))
++		return -EFAULT;
++	if (override_architecture(name))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ #ifdef __ARCH_WANT_SYS_OLD_UNAME
+@@ -1257,55 +1258,46 @@ SYSCALL_DEFINE1(newuname, struct new_uts
+  */
+ SYSCALL_DEFINE1(uname, struct old_utsname __user *, name)
+ {
+-	int error = 0;
++	struct old_utsname tmp;
+ 
+ 	if (!name)
+ 		return -EFAULT;
+ 
+ 	down_read(&uts_sem);
+-	if (copy_to_user(name, utsname(), sizeof(*name)))
+-		error = -EFAULT;
++	memcpy(&tmp, utsname(), sizeof(tmp));
+ 	up_read(&uts_sem);
++	if (copy_to_user(name, &tmp, sizeof(tmp)))
++		return -EFAULT;
+ 
+-	if (!error && override_release(name->release, sizeof(name->release)))
+-		error = -EFAULT;
+-	if (!error && override_architecture(name))
+-		error = -EFAULT;
+-	return error;
++	if (override_release(name->release, sizeof(name->release)))
++		return -EFAULT;
++	if (override_architecture(name))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ SYSCALL_DEFINE1(olduname, struct oldold_utsname __user *, name)
+ {
+-	int error;
++	struct oldold_utsname tmp = {};
+ 
+ 	if (!name)
+ 		return -EFAULT;
+-	if (!access_ok(VERIFY_WRITE, name, sizeof(struct oldold_utsname)))
+-		return -EFAULT;
+ 
+ 	down_read(&uts_sem);
+-	error = __copy_to_user(&name->sysname, &utsname()->sysname,
+-			       __OLD_UTS_LEN);
+-	error |= __put_user(0, name->sysname + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->nodename, &utsname()->nodename,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->nodename + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->release, &utsname()->release,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->release + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->version, &utsname()->version,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->version + __OLD_UTS_LEN);
+-	error |= __copy_to_user(&name->machine, &utsname()->machine,
+-				__OLD_UTS_LEN);
+-	error |= __put_user(0, name->machine + __OLD_UTS_LEN);
++	memcpy(&tmp.sysname, &utsname()->sysname, __OLD_UTS_LEN);
++	memcpy(&tmp.nodename, &utsname()->nodename, __OLD_UTS_LEN);
++	memcpy(&tmp.release, &utsname()->release, __OLD_UTS_LEN);
++	memcpy(&tmp.version, &utsname()->version, __OLD_UTS_LEN);
++	memcpy(&tmp.machine, &utsname()->machine, __OLD_UTS_LEN);
+ 	up_read(&uts_sem);
++	if (copy_to_user(name, &tmp, sizeof(tmp)))
++		return -EFAULT;
+ 
+-	if (!error && override_architecture(name))
+-		error = -EFAULT;
+-	if (!error && override_release(name->release, sizeof(name->release)))
+-		error = -EFAULT;
+-	return error ? -EFAULT : 0;
++	if (override_architecture(name))
++		return -EFAULT;
++	if (override_release(name->release, sizeof(name->release)))
++		return -EFAULT;
++	return 0;
+ }
+ #endif
+ 
+@@ -1319,17 +1311,18 @@ SYSCALL_DEFINE2(sethostname, char __user
+ 
+ 	if (len < 0 || len > __NEW_UTS_LEN)
+ 		return -EINVAL;
+-	down_write(&uts_sem);
+ 	errno = -EFAULT;
+ 	if (!copy_from_user(tmp, name, len)) {
+-		struct new_utsname *u = utsname();
++		struct new_utsname *u;
+ 
++		down_write(&uts_sem);
++		u = utsname();
+ 		memcpy(u->nodename, tmp, len);
+ 		memset(u->nodename + len, 0, sizeof(u->nodename) - len);
+ 		errno = 0;
+ 		uts_proc_notify(UTS_PROC_HOSTNAME);
++		up_write(&uts_sem);
+ 	}
+-	up_write(&uts_sem);
+ 	return errno;
+ }
+ 
+@@ -1337,8 +1330,9 @@ SYSCALL_DEFINE2(sethostname, char __user
+ 
+ SYSCALL_DEFINE2(gethostname, char __user *, name, int, len)
+ {
+-	int i, errno;
++	int i;
+ 	struct new_utsname *u;
++	char tmp[__NEW_UTS_LEN + 1];
+ 
+ 	if (len < 0)
+ 		return -EINVAL;
+@@ -1347,11 +1341,11 @@ SYSCALL_DEFINE2(gethostname, char __user
+ 	i = 1 + strlen(u->nodename);
+ 	if (i > len)
+ 		i = len;
+-	errno = 0;
+-	if (copy_to_user(name, u->nodename, i))
+-		errno = -EFAULT;
++	memcpy(tmp, u->nodename, i);
+ 	up_read(&uts_sem);
+-	return errno;
++	if (copy_to_user(name, tmp, i))
++		return -EFAULT;
++	return 0;
+ }
+ 
+ #endif
+@@ -1370,17 +1364,18 @@ SYSCALL_DEFINE2(setdomainname, char __us
+ 	if (len < 0 || len > __NEW_UTS_LEN)
+ 		return -EINVAL;
+ 
+-	down_write(&uts_sem);
+ 	errno = -EFAULT;
+ 	if (!copy_from_user(tmp, name, len)) {
+-		struct new_utsname *u = utsname();
++		struct new_utsname *u;
+ 
++		down_write(&uts_sem);
++		u = utsname();
+ 		memcpy(u->domainname, tmp, len);
+ 		memset(u->domainname + len, 0, sizeof(u->domainname) - len);
+ 		errno = 0;
+ 		uts_proc_notify(UTS_PROC_DOMAINNAME);
++		up_write(&uts_sem);
+ 	}
+-	up_write(&uts_sem);
+ 	return errno;
+ }
+ 
+--- a/kernel/utsname_sysctl.c
++++ b/kernel/utsname_sysctl.c
+@@ -18,7 +18,7 @@
+ 
+ #ifdef CONFIG_PROC_SYSCTL
+ 
+-static void *get_uts(struct ctl_table *table, int write)
++static void *get_uts(struct ctl_table *table)
+ {
+ 	char *which = table->data;
+ 	struct uts_namespace *uts_ns;
+@@ -26,21 +26,9 @@ static void *get_uts(struct ctl_table *t
+ 	uts_ns = current->nsproxy->uts_ns;
+ 	which = (which - (char *)&init_uts_ns) + (char *)uts_ns;
+ 
+-	if (!write)
+-		down_read(&uts_sem);
+-	else
+-		down_write(&uts_sem);
+ 	return which;
+ }
+ 
+-static void put_uts(struct ctl_table *table, int write, void *which)
+-{
+-	if (!write)
+-		up_read(&uts_sem);
+-	else
+-		up_write(&uts_sem);
+-}
+-
+ /*
+  *	Special case of dostring for the UTS structure. This has locks
+  *	to observe. Should this be in kernel/sys.c ????
+@@ -50,13 +38,34 @@ static int proc_do_uts_string(struct ctl
+ {
+ 	struct ctl_table uts_table;
+ 	int r;
++	char tmp_data[__NEW_UTS_LEN + 1];
++
+ 	memcpy(&uts_table, table, sizeof(uts_table));
+-	uts_table.data = get_uts(table, write);
++	uts_table.data = tmp_data;
++
++	/*
++	 * Buffer the value in tmp_data so that proc_dostring() can be called
++	 * without holding any locks.
++	 * We also need to read the original value in the write==1 case to
++	 * support partial writes.
++	 */
++	down_read(&uts_sem);
++	memcpy(tmp_data, get_uts(table), sizeof(tmp_data));
++	up_read(&uts_sem);
+ 	r = proc_dostring(&uts_table, write, buffer, lenp, ppos);
+-	put_uts(table, write, uts_table.data);
+ 
+-	if (write)
++	if (write) {
++		/*
++		 * Write back the new value.
++		 * Note that, since we dropped uts_sem, the result can
++		 * theoretically be incorrect if there are two parallel writes
++		 * at non-zero offsets to the same sysctl.
++		 */
++		down_write(&uts_sem);
++		memcpy(get_uts(table), tmp_data, sizeof(tmp_data));
++		up_write(&uts_sem);
+ 		proc_sys_poll_notify(table->poll);
 +	}
  
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	/* The PCIe spec, in its wisdom, declares that the behaviour of
-@@ -1567,7 +1581,8 @@ static void iommu_flush_dev_iotlb(struct
- 
- 		sid = info->bus << 8 | info->devfn;
- 		qdep = info->ats_qdep;
--		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
-+		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
-+				qdep, addr, mask);
- 	}
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
+ 	return r;
  }
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -456,9 +456,8 @@ extern void qi_flush_context(struct inte
- 			     u8 fm, u64 type);
- extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 			  unsigned int size_order, u64 type);
--extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			       u64 addr, unsigned mask);
--
-+extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask);
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
- 
- extern int dmar_ir_support(void);
 
 
