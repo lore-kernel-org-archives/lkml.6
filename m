@@ -2,130 +2,124 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F6AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41B8C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDC2D2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:47:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTZV5JNw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC2D2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EA172083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:47:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA172083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbeIGV3J (ORCPT
+        id S1726605AbeIGV3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:29:09 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35118 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbeIGV3J (ORCPT
+        Fri, 7 Sep 2018 17:29:42 -0400
+Received: from mail.netline.ch ([148.251.143.178]:41220 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbeIGV3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:29:09 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 7-v6so7283897pgf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4Zcw7h74TEmUiVi34KaQtuJuhSGWP774pgj+PuL3Wl0=;
-        b=DTZV5JNwA9sIweofvVQe5vbG99OWt0I3Tj+FOHESPvG4hV9u+N58gQOnJdTT3u3SAx
-         4b2NtFmItVZe5DY9Yyhs+CZPwny6KWaxbLjn/mXJAzvGQzg7RHq+2QP+sLKFDGRStDzx
-         KdtPV9Ss7ESgwH9HkmtP+S4z9plqv/aYG8uPU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4Zcw7h74TEmUiVi34KaQtuJuhSGWP774pgj+PuL3Wl0=;
-        b=C9958uKliGIyczQp5IVkJ2KYl7ZpObU1PGyU1Q8nPzhblnUkGAMWKV25N4MzulRmLp
-         ukleIFk6QSj2lh5S7nxY+5kE9zX4JGIh9VioI3rUQGJux324u3Lc4950p7xETe2z1SLZ
-         z3sXeJdYiHSf3xOuUPaRVCNPeJhawNaN+cTifWnb4+1WBovp0TmesZ/sFGIBEeiHQG+J
-         jic62TnM3nYbGa1/B2p6Z1lNYZOeWhfb0ZSseXS4icsxSqIp9+XCG39YOjFl1V1MvEDm
-         hHb47L+1/vEjvrWUF5j1gosz1ubFnO+w6lE1VbaCzKbr52HTXQAoAWyJRHPpor6+qCYu
-         A8MA==
-X-Gm-Message-State: APzg51ApFBk+5zR16QRhdUmiQiKWP0iY7eYO2xPzhdUHOH1S2u9TR67X
-        qcZY32fcslM4sP5TvDB9ija33tVqUH0=
-X-Google-Smtp-Source: ANB0VdYE7SmR9ckank+hKLbqot4GXANZB2eRM8uGLvrQDhKpbMkzgjj6hYQv38b0kCfmCvOtHoFPbA==
-X-Received: by 2002:a62:fd06:: with SMTP id p6-v6mr9490947pfh.167.1536338843746;
-        Fri, 07 Sep 2018 09:47:23 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm17497918pfp.6.2018.09.07.09.47.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 09:47:23 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 09:51:19 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     frowand.list@gmail.com
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] ARM: qcom_defconfig: Enable MAILBOX
-Message-ID: <20180907165119.GD3286@tuxbook-pro>
-References: <1536295488-12296-1-git-send-email-frowand.list@gmail.com>
+        Fri, 7 Sep 2018 17:29:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id ECB782A6045;
+        Fri,  7 Sep 2018 18:47:53 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id AYq_h1x07gk2; Fri,  7 Sep 2018 18:47:53 +0200 (CEST)
+Received: from thor (67.124.127.176.dynamic.wline.res.cust.swisscom.ch [176.127.124.67])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 627D22A6042;
+        Fri,  7 Sep 2018 18:47:52 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1fyJvD-0003DS-W9; Fri, 07 Sep 2018 18:47:52 +0200
+Subject: Re: [PATCH] drm/amdgpu: Fix wornings while make xmldocs
+To:     Masanari Iida <standby24x7@gmail.com>, alexander.deucher@amd.com,
+        airlied@linux.ie, andrey.grodzovsky@amd.com
+Cc:     linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+        corbet@lwn.net
+References: <20180906021057.22756-1-standby24x7@gmail.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <2dc12a77-7413-5c58-01e9-30a823215f8d@daenzer.net>
+Date:   Fri, 7 Sep 2018 18:47:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536295488-12296-1-git-send-email-frowand.list@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180906021057.22756-1-standby24x7@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 06 Sep 21:44 PDT 2018, frowand.list@gmail.com wrote:
 
-> From: Frank Rowand <frank.rowand@sony.com>
-> 
-> Problem:
-> ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
-> added a "depends on MAILBOX") to RPMSG_QCOM_SMD, thus RPMSG_QCOM_SMD
-> becomes unset since MAILBOX was not enabled in qcom_defconfig and is
-> not otherwise selected for the dragonboard.  When the resulting
-> kernel is booted the mmc device which contains the root file system
-> is not available.
-> 
-> Fix:
-> add CONFIG_MAILBOX to qcom_defconfig
-> 
-> Fixes: ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
-> added a "depends on MAILBOX")
-> 
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Hi Iida-san,
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
+On 2018-09-06 4:10 a.m., Masanari Iida wrote:
+> This patch fixes following wornings.
+> 
+> ./drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:3011:
+> warning: Excess function parameter 'dev' description
+> in 'amdgpu_vm_get_task_info'
+> 
+> ./drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:3012:
+> warning: Function parameter or member 'adev' not
+> described in 'amdgpu_vm_get_task_info'
+> 
+> ./drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:3012:
+> warning: Excess function parameter 'dev' description
+> in 'amdgpu_vm_get_task_info'
+> 
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
 > ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Bjorn suggested that multi_v7_defconfig might need this same fix
-> but I don't have a target to test on so I have not included that
-> change in this patch
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> index b17771dd5ce7..861718e2be7a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> @@ -3002,7 +3002,7 @@ int amdgpu_vm_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+>  /**
+>   * amdgpu_vm_get_task_info - Extracts task info for a PASID.
+>   *
+> - * @dev: drm device pointer
+> + * @adev: drm device pointer
+>   * @pasid: PASID identifier for VM
+>   * @task_info: task_info to fill.
+>   */
 > 
 
-multi_v7_defconfig should boot on 8974 as well, but I would not be a
-surprise if there are other things missing there.
+Queued in the amdgpu tree (with fixed spelling of "warnings"), thanks!
 
-Regards,
-Bjorn
 
-> Tested on Qualcomm APQ8074 Dragonboard
-> 
->  arch/arm/configs/qcom_defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-> index 6aa7046fb91f..bd6440f23493 100644
-> --- a/arch/arm/configs/qcom_defconfig
-> +++ b/arch/arm/configs/qcom_defconfig
-> @@ -207,6 +207,7 @@ CONFIG_MSM_MMCC_8974=y
->  CONFIG_MSM_IOMMU=y
->  CONFIG_HWSPINLOCK=y
->  CONFIG_HWSPINLOCK_QCOM=y
-> +CONFIG_MAILBOX=y
->  CONFIG_REMOTEPROC=y
->  CONFIG_QCOM_ADSP_PIL=y
->  CONFIG_QCOM_Q6V5_PIL=y
-> -- 
-> Frank Rowand <frank.rowand@sony.com>
-> 
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
