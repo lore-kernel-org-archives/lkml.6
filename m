@@ -6,157 +6,166 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88DAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A31C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABAA2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F0C2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:41:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Z3N4WW2s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ABAA2083D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BL04BZl8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F0C2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbeIGFTl (ORCPT
+        id S1730552AbeIGFTz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:19:41 -0400
-Received: from mail-dm3nam03on0102.outbound.protection.outlook.com ([104.47.41.102]:49926
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:19:55 -0400
+Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:11972
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730969AbeIGFTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:19:39 -0400
+        id S1731032AbeIGFTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:19:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nl5hXXh5IdspCBygjSyFheVCZgM47PVKbY/F26ni0GA=;
- b=Z3N4WW2siiJPejp8MFfalJmRFammXzLlUthFOPKbX0yStMhBMufu0wFnPpiuzXLXpUr/mW+60/MhjFpmpc+zx+Qr+m8kmNUepI86YeMcGwxpioSRLZ2EzntgV6gUvuYQKfK3vsyKlRSDJ6eEG6K/KVN0d84Pp0/5ngawcqlrOhA=
+ bh=63gbotlpCfBMasCP4jL/Eax6743EllK2KzXd3Nk8hkY=;
+ b=BL04BZl8uWjqo9Sd8MmhLnuXuaxF8xsnQkttA52sI00zjE8AcLGW9w9duK7MQ8xzDPjXvQrX+3CPd5EhdJ4IcWL8eIyISSh8ZB4ljojJPU7Q+kTJy2/3viCrGCyhYrAuaIVygwhSdO6Xx/o298KvsF4R+bqs8TG6A7z4koic2DU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0694.namprd21.prod.outlook.com (10.175.121.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.1; Fri, 7 Sep 2018 00:41:25 +0000
+ CY4PR21MB0757.namprd21.prod.outlook.com (10.173.192.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1143.1; Fri, 7 Sep 2018 00:41:29 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:41:25 +0000
+ 00:41:29 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 01/30] usb: usbtest: use irqsave() in USB's
- complete callback
-Thread-Topic: [PATCH AUTOSEL 4.4 01/30] usb: usbtest: use irqsave() in USB's
- complete callback
-Thread-Index: AQHURkMp3NKaNwolVEmwjQb+yB85WQ==
-Date:   Fri, 7 Sep 2018 00:38:56 +0000
-Message-ID: <20180907003853.57942-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 12/30] mtd/maps: fix solutionengine.c printk
+ format warnings
+Thread-Topic: [PATCH AUTOSEL 4.4 12/30] mtd/maps: fix solutionengine.c printk
+ format warnings
+Thread-Index: AQHURkMtPAbrOe/D1kuFWxrlrWvxPA==
+Date:   Fri, 7 Sep 2018 00:39:04 +0000
+Message-ID: <20180907003853.57942-12-alexander.levin@microsoft.com>
+References: <20180907003853.57942-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180907003853.57942-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0694;6:aRHA+np5sWc2scOG423ePBcg/w3STCX2AUtifQmg4nMQI6EKZQCGaSV/lNaB12rn0AZIPpa46LlPDFpdYywqRv2aUQp0AKZe4Wxxw1uV3TlsqMkX4N73JhL2/0O4MuV6gmeiHL9f86ziWs7SLPitcbhR/z80tR0Hq+KjT8o94x7UNdunwOaS1wwqz79UdfYPZCKaYuRz0I62P4LZ8FPBWQXsTOPl/TOOsEmdcaU1MyYrIx7lQ4fJHediQTSV/L9gBnAipq0lZfRXmnO3gRR8K/5eNCgig6GxVQlcpn6/oU9ntW0Vu8kbJEkiij1aqD/1Fs41zkXHOYPEn2A/SV/YqpILBld13yRH7Nt6I51gDy0t++DH/RaSlqaDqD+bqhIBcVRcuyafhzaVywtOGn6R9XVGBEOamt/oulqBD2MGm+nWBBMuTd4Vj2DNnxw0MlNr1uk/7s2VMeTBt1lo3QTJ2Q==;5:LQG9XoPjuV219NUd+2CGyO/jOglmI2GJBWaWDnB6vE8um6r5r3lcpwdm1WE2ZgM6wNQUzHn36QSXWnpKfm88yXVkktLG7gLDtQRwyCoeeHwcOm0KcAHL6LcMomTjj6Fg8p5gWY1IVrWy3TBh5UF/vegodsGUI2UxcSS/G+VRLc0=;7:ehd4+NwW45dshr3IYg+na0O8dPdCjdGQtNdNaRcAnTkG6h7o/y7H1Oi15hq5CTryZdtVUUoJ19cZvWXwPQTnws+9y6XAuPAh2thNjAmHL3yTweh4KtpR1SZQ6uTuwan9ZqApe1jAickK0i/qyGzQpX0OKJCe2xkqhvQzHQJUAEZQlQ3gYs6GuIpAHIS3takxvMLujHAGFsTHnNa9Ro77ED0kh0WyLXw+GuRdLQUKD7PwjK/zbR3wW/tL5dPNmIju
-x-ms-office365-filtering-correlation-id: 6c932ac8-7e2a-48b8-5c79-08d6145aa425
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0757;6:5YPqUqDKze0/n/qXfbm+9ra8MdB0IozL9YmDMgtUMoWf3ktcS8glZN7luXoVs5JJTINLINFxrEvPBJkbFGonykeLtjz+KWIB4xLzd5glZHqPH/AuaBSMVKwo0jrNFyUMG0RjdFKDhEB2EKlU0+d4KBD/fDoKGmXjcADS1OoNFMoVYCy/Cxf/51AvlbQA4ZCtFKJz/JKn6mvmdP8BrxGaSiGcbaobAMG/gI6/213GiIztOc+DS3r4R/PTKbrCWAfRTQ3iNAoaQBMTKjLQqpRaP/Vr+N6rdV6SLRUQV0NDffIb5xcIl3e/rPZbrgRH4oxMlDphv6j3HK59M4riLp3Pjf2UjEHphZFcNIl9DMqJFH4JFjg4ZiBOEWS7drZ1s20le1K03A19SWAITjfIHRZ8BDKPSj2atJgbMpNDCUkJFSbRa7VW3Wne7p98JD7/5MuRchFtclrIguZMverZ0zggoQ==;5:DsM04JH//GOU41P+jU5gi9jIhpPERW/zse3ao0YF1oYfEMVnOM7yE34vLtOPqjoryJzUuuSjvLlkOu+lp2M6f0yVeKjdcqLjYukIPqCh4tHL+/nOffQFgv+yJ0IPkkITZPjtCuJLEPFAVGjyG+p8p1N2bcdMv++uLeK+NfVJjTk=;7:vUvLfoiCHNXsEkUZTRn4k2lE8e1/HqjxYV5ZtDaRx1rY19dt77UKHNXb3HwzCakhy37a5hKsQvxMgRD6kdzFe9X6JGkWUToC8gkg+v4UmTayiNUsHR40USXAAlCsmFJGW0CH6bJOEtjkS7/Ab0FeKnMpoPpQJ3WjbQZW+cK7LDCWMD+JqwpD21kfwTSUHUbHQQ5z0tp5j0VxpdsMl8RElmPpO811slq+YVAhNcT9kxdyrhsVuho/vd8FUP/Qjvc/
+x-ms-office365-filtering-correlation-id: 6ca24ecd-d0c2-4f46-88cd-08d6145aa6e3
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0694;
-x-ms-traffictypediagnostic: CY4PR21MB0694:
-x-microsoft-antispam-prvs: <CY4PR21MB069451D6400C21E7E8D1B38DFB000@CY4PR21MB0694.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(35762410373642);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0757;
+x-ms-traffictypediagnostic: CY4PR21MB0757:
+x-microsoft-antispam-prvs: <CY4PR21MB0757A610B924C99DB7E152B6FB000@CY4PR21MB0757.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158)(258649278758335);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231344)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0694;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0694;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0757;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0757;
 x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(366004)(136003)(346002)(189003)(199004)(2906002)(186003)(86362001)(6666003)(110136005)(107886003)(54906003)(36756003)(25786009)(4326008)(256004)(14444005)(2616005)(6506007)(6486002)(6346003)(6436002)(6512007)(476003)(486006)(86612001)(2900100001)(5660300001)(102836004)(26005)(66066001)(53936002)(68736007)(7736002)(81166006)(81156014)(8676002)(10090500001)(8936002)(6116002)(3846002)(99286004)(105586002)(106356001)(5250100002)(22452003)(14454004)(316002)(1076002)(2501003)(305945005)(217873002)(97736004)(10290500003)(72206003)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0694;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(136003)(346002)(376002)(199004)(189003)(8936002)(3846002)(81166006)(39060400002)(86612001)(6666003)(5250100002)(81156014)(486006)(99286004)(6486002)(106356001)(10290500003)(107886003)(256004)(14444005)(26005)(11346002)(14454004)(446003)(76176011)(6346003)(5660300001)(10090500001)(110136005)(2616005)(66066001)(186003)(476003)(72206003)(2501003)(54906003)(316002)(6436002)(86362001)(97736004)(53936002)(22452003)(6506007)(102836004)(8676002)(6512007)(2900100001)(68736007)(305945005)(7736002)(217873002)(6116002)(7416002)(1076002)(25786009)(2906002)(36756003)(4326008)(105586002)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0757;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: h75pXeDTFnbiXdMQpdMqYnKci0unpm1SlZ4W5HJYVcz7296WTns9nGVBhuxwhAGvF0cBuptCzb08twDEfxNSvC+SAcKqtg3qNhBP5SxT2lhUJMaKy3CTObeCg5VNVilOyMQJISUcPHn25Wgt43Fka607G3O7NaGFyufrOKd1lQGpK0AgSU+sYaFgQ8nfNJ/8EVFQ0t/DobOwMum0baOGYm1A1vR37lyax3hsY2jklGfZDmqipcP6KxsUg0usilYUByBE55ZTfOXk/QDav7JKZD7eB21gAATK5OmTtKkwnArIcYS+FM8qifIgUBTMnZd7RWPv1QVENOGGOyJbXaXAu5H9hVULGBH6v8nZVKKrz6s=
+x-microsoft-antispam-message-info: BxxNkca0wmw8lqD3phTfjZ+H+Zf6RRoRTz1LybLQj8i2fSig6kM66zM789RS1SmMgxKkL5Oc8YSPSLxk5SG1J/GVnzwxSG851XqlqHgh3qdixnVHfajhhnkTJL1KCWaeOSv1m5juDGrndLSY2d36p+B1P2kj47kjhWM/lpvFBTkLVV6rIuE3qtchSPXWLFEfkQifNi/Q8Qx3HNuC7TRvXEb7tqkf71MaE6BEttCcsbgNqGNHxGqvWVRGlmYITB7T/E2t6SLZWLWbq3lVf1vhfcl8NegZQ9BFV2+VG+IqCEPxlRb+3ZMdJcDwim98nvA84VkcNUQ62VdxCcEXYeM89GRyE0sdpVL9lbhNXB+HN1Y=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c932ac8-7e2a-48b8-5c79-08d6145aa425
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:38:56.9305
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ca24ecd-d0c2-4f46-88cd-08d6145aa6e3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:39:04.4884
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0694
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0757
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 6f3fde684d0232e66ada3410f016a58e09a87689 ]
+[ Upstream commit 1d25e3eeed1d987404e2d2e451eebac8c15cecc1 ]
 
-The USB completion callback does not disable interrupts while acquiring
-the lock. We want to remove the local_irq_disable() invocation from
-__usb_hcd_giveback_urb() and therefore it is required for the callback
-handler to disable the interrupts while acquiring the lock.
-The callback may be invoked either in IRQ or BH context depending on the
-USB host controller.
-Use the _irqsave() variant of the locking primitives.
+Fix 2 printk format warnings (this driver is currently only used by
+arch/sh/) by using "%pap" instead of "%lx".
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes these build warnings:
+
+../drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
+../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument=
+ of type 'long unsigned int', but argument 2 has type 'resource_size_t' {ak=
+a 'unsigned int'} [-Wformat=3D]
+../drivers/mtd/maps/solutionengine.c:62:54: note: format string is defined =
+here
+  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n=
+",
+                                                  ~~~~^
+                                                  %08x
+../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument=
+ of type 'long unsigned int', but argument 3 has type 'resource_size_t' {ak=
+a 'unsigned int'} [-Wformat=3D]
+../drivers/mtd/maps/solutionengine.c:62:72: note: format string is defined =
+here
+  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n=
+",
+                                                                    ~~~~^
+                                                                    %08x
+
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: linux-mtd@lists.infradead.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
+Cc: linux-sh@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/usb/misc/usbtest.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/mtd/maps/solutionengine.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
-index bc92a498ec03..4632a29d5403 100644
---- a/drivers/usb/misc/usbtest.c
-+++ b/drivers/usb/misc/usbtest.c
-@@ -1053,11 +1053,12 @@ static void ctrl_complete(struct urb *urb)
- 	struct usb_ctrlrequest	*reqp;
- 	struct subcase		*subcase;
- 	int			status =3D urb->status;
-+	unsigned long		flags;
-=20
- 	reqp =3D (struct usb_ctrlrequest *)urb->setup_packet;
- 	subcase =3D container_of(reqp, struct subcase, setup);
-=20
--	spin_lock(&ctx->lock);
-+	spin_lock_irqsave(&ctx->lock, flags);
- 	ctx->count--;
- 	ctx->pending--;
-=20
-@@ -1156,7 +1157,7 @@ static void ctrl_complete(struct urb *urb)
- 	/* signal completion when nothing's queued */
- 	if (ctx->pending =3D=3D 0)
- 		complete(&ctx->complete);
--	spin_unlock(&ctx->lock);
-+	spin_unlock_irqrestore(&ctx->lock, flags);
- }
-=20
- static int
-@@ -1832,8 +1833,9 @@ struct transfer_context {
- static void complicated_callback(struct urb *urb)
- {
- 	struct transfer_context	*ctx =3D urb->context;
-+	unsigned long flags;
-=20
--	spin_lock(&ctx->lock);
-+	spin_lock_irqsave(&ctx->lock, flags);
- 	ctx->count--;
-=20
- 	ctx->packet_count +=3D urb->number_of_packets;
-@@ -1873,7 +1875,7 @@ static void complicated_callback(struct urb *urb)
- 		complete(&ctx->done);
+diff --git a/drivers/mtd/maps/solutionengine.c b/drivers/mtd/maps/solutione=
+ngine.c
+index bb580bc16445..c07f21b20463 100644
+--- a/drivers/mtd/maps/solutionengine.c
++++ b/drivers/mtd/maps/solutionengine.c
+@@ -59,9 +59,9 @@ static int __init init_soleng_maps(void)
+ 			return -ENXIO;
+ 		}
  	}
- done:
--	spin_unlock(&ctx->lock);
-+	spin_unlock_irqrestore(&ctx->lock, flags);
- }
+-	printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n=
+",
+-	       soleng_flash_map.phys & 0x1fffffff,
+-	       soleng_eprom_map.phys & 0x1fffffff);
++	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
++	       &soleng_flash_map.phys,
++	       &soleng_eprom_map.phys);
+ 	flash_mtd->owner =3D THIS_MODULE;
 =20
- static struct urb *iso_alloc_urb(
+ 	eprom_mtd =3D do_map_probe("map_rom", &soleng_eprom_map);
 --=20
 2.17.1
