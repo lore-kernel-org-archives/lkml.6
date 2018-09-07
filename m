@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0D2C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F51CC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4CE220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4CE220855
+	by mail.kernel.org (Postfix) with ESMTP id 3FD7220844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD7220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbeIHCQ5 (ORCPT
+        id S1729860AbeIHCRD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:16:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51950 "EHLO
+        Fri, 7 Sep 2018 22:17:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51964 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbeIHCQ4 (ORCPT
+        with ESMTP id S1728085AbeIHCRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:16:56 -0400
+        Fri, 7 Sep 2018 22:17:02 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C959D6B;
-        Fri,  7 Sep 2018 21:34:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 403C9F54;
+        Fri,  7 Sep 2018 21:34:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.9 27/63] vmw_balloon: fix VMCI use when balloon built into kernel
-Date:   Fri,  7 Sep 2018 23:09:58 +0200
-Message-Id: <20180907211014.468943169@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marcin Niestroj <m.niestroj@grinn-global.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Johan Hovold <johan@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.9 28/63] rtc: omap: fix potential crash on power off
+Date:   Fri,  7 Sep 2018 23:09:59 +0200
+Message-Id: <20180907211014.538019051@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -50,53 +53,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit c3cc1b0fc27508da53fe955a3b23d03964410682 upstream.
+commit 5c8b84f410b3819d14cb1ebf32e4b3714b5a6e0b upstream.
 
-Currently, when all modules, including VMCI and VMware balloon are built
-into the kernel, the initialization of the balloon happens before the
-VMCI is probed. As a result, the balloon fails to initialize the VMCI
-doorbell, which it uses to get asynchronous requests for balloon size
-changes.
+Do not set the system power-off callback and omap power-off rtc pointer
+until we're done setting up our device to avoid leaving stale pointers
+around after a late probe error.
 
-The problem can be seen in the logs, in the form of the following
-message:
-	"vmw_balloon: failed to initialize vmci doorbell"
-
-The driver would work correctly but slightly less efficiently, probing
-for requests periodically. This patch changes the balloon to be
-initialized using late_initcall() instead of module_init() to address
-this issue. It does not address a situation in which VMCI is built as a
-module and the balloon is built into the kernel.
-
-Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
-Cc: stable@vger.kernel.org
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Fixes: 97ea1906b3c2 ("rtc: omap: Support ext_wakeup configuration")
+Cc: stable <stable@vger.kernel.org>     # 4.9
+Cc: Marcin Niestroj <m.niestroj@grinn-global.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Reviewed-by: Marcin Niestroj <m.niestroj@grinn-global.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-omap.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1297,7 +1297,14 @@ static int __init vmballoon_init(void)
+--- a/drivers/rtc/rtc-omap.c
++++ b/drivers/rtc/rtc-omap.c
+@@ -817,13 +817,6 @@ static int omap_rtc_probe(struct platfor
+ 			goto err;
+ 	}
  
- 	return 0;
- }
--module_init(vmballoon_init);
+-	if (rtc->is_pmic_controller) {
+-		if (!pm_power_off) {
+-			omap_rtc_power_off_rtc = rtc;
+-			pm_power_off = omap_rtc_power_off;
+-		}
+-	}
+-
+ 	/* Support ext_wakeup pinconf */
+ 	rtc_pinctrl_desc.name = dev_name(&pdev->dev);
+ 
+@@ -833,6 +826,13 @@ static int omap_rtc_probe(struct platfor
+ 		return PTR_ERR(rtc->pctldev);
+ 	}
+ 
++	if (rtc->is_pmic_controller) {
++		if (!pm_power_off) {
++			omap_rtc_power_off_rtc = rtc;
++			pm_power_off = omap_rtc_power_off;
++		}
++	}
 +
-+/*
-+ * Using late_initcall() instead of module_init() allows the balloon to use the
-+ * VMCI doorbell even when the balloon is built into the kernel. Otherwise the
-+ * VMCI is probed only after the balloon is initialized. If the balloon is used
-+ * as a module, late_initcall() is equivalent to module_init().
-+ */
-+late_initcall(vmballoon_init);
+ 	return 0;
  
- static void __exit vmballoon_exit(void)
- {
+ err:
 
 
