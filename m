@@ -2,111 +2,76 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E51C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8132075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8132075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D3E920861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:46:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3E920861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeIGPX5 (ORCPT
+        id S1728676AbeIGP0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:23:57 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:31374 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbeIGPX4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:23:56 -0400
-X-IronPort-AV: E=Sophos;i="5.53,342,1531785600"; 
-   d="scan'208";a="78696431"
-Date:   Fri, 7 Sep 2018 12:43:09 +0200
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
-CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, <xen-devel@lists.xenproject.org>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <drbd-user@lists.linbit.com>
-Subject: Re: [PATCH] xen-blkback: Switch to closed state after releasing the
- backing device
-Message-ID: <20180907104309.z4jsga5hcnphwxu7@mac.bytemobile.com>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905113515.GU26705@gavran.carpriv.carnet.hr>
- <20180905162801.GB26705@gavran.carpriv.carnet.hr>
- <20180906162932.7qge5dmrgyqbmbbj@mac.bytemobile.com>
- <20180906221929.GZ26705@gavran.carpriv.carnet.hr>
- <20180907071530.te5dxdvg4zqgqscj@mac.bytemobile.com>
- <20180907072319.GA26705@gavran.carpriv.carnet.hr>
- <20180907075455.szxahgevvlmfjvwy@mac.bytemobile.com>
- <20180907102026.GH26705@gavran.carpriv.carnet.hr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180907102026.GH26705@gavran.carpriv.carnet.hr>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Fri, 7 Sep 2018 11:26:30 -0400
+Received: from mga11.intel.com ([192.55.52.93]:2414 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728415AbeIGP03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 11:26:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 03:46:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,342,1531810800"; 
+   d="scan'208";a="89773486"
+Received: from sstepnic-mobl1.ger.corp.intel.com ([10.249.254.171])
+  by orsmga002.jf.intel.com with ESMTP; 07 Sep 2018 03:46:04 -0700
+Message-ID: <823634a7ab18ad1f536cf1771fbfd27b1c711917.camel@intel.com>
+Subject: Re: [PATCH 09/12] iwlwifi: Remove local iwl_bcast_addr and use
+ ether_broadcast_addr
+From:   Luciano Coelho <luciano.coelho@intel.com>
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Date:   Fri, 07 Sep 2018 13:46:03 +0300
+In-Reply-To: <ebe5bbb03ca9c39e468d7f40d67d58733062a1f9.camel@intel.com>
+References: <cover.1522479607.git.joe@perches.com>
+         <af831d8873ffcc36014244f76d21cd6aaf5aca9c.1522479608.git.joe@perches.com>
+         <ebe5bbb03ca9c39e468d7f40d67d58733062a1f9.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 12:20:26PM +0200, Valentin Vidic wrote:
-> On Fri, Sep 07, 2018 at 09:54:55AM +0200, Roger Pau Monné wrote:
-> > Then I'm afraid you will have to look into the vbd_free/create fix.
+On Sat, 2018-07-07 at 10:40 +0300, Luciano Coelho wrote:
+> On Sat, 2018-03-31 at 00:05 -0700, Joe Perches wrote:
+> > Use the new global to save a little bit of object code.
+> > 
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> > ---
 > 
-> Yes, here is a first draft for that idea, let me know if you see some
-> problems there:
+> I took this one to our internal tree and it will be applied as part
+> of our normal upstreaming process.
 
-Thanks!
+It seems that the patch to etherdevice.h never got applied upstream, so
+I'm actually dropping this patch.
 
-> --- xenbus.c.orig       2018-09-07 12:11:57.798071485 +0200
-> +++ xenbus.c    2018-09-07 12:14:23.536077992 +0200
-> @@ -758,6 +759,7 @@
->                              enum xenbus_state frontend_state)
->  {
->         struct backend_info *be = dev_get_drvdata(&dev->dev);
-> +       struct block_device *bdev;
->         int err;
->  
->         pr_debug("%s %p %s\n", __func__, dev, xenbus_strstate(frontend_state));
-> @@ -772,6 +774,22 @@
->  
->         case XenbusStateInitialised:
->         case XenbusStateConnected:
-> +               if (!be->blkif->vbd.bdev) {
-> +                       printk("blkdev_get");
-> +                       bdev = blkdev_get_by_dev(be->blkif->vbd.pdevice,
-> +                                                be->blkif->vbd.readonly ?
-> +                                                FMODE_READ : FMODE_WRITE, NULL);
-> +
-> +                       if (IS_ERR(bdev)) {
-> +                               pr_warn("frontend_changed: device %08x could not be opened\n",
-> +                                       be->blkif->vbd.pdevice);
-> +                               break;
-> +                       }
-> +
-> +                       printk("blkdev_get good");
-> +                       be->blkif->vbd.bdev = bdev;
-> +               }
-> +
+Please resend if it becomes relevant again.
 
-I would prefer if you could avoid open-coding this here, and instead
-use xen_vbd_create or similar. I would also prefer that the call to
-xen_vbd_create in backend_changed was removed and we had a single call
-to xen_vbd_create that's used for both initial device connection and
-reconnection.
+--
+Cheers,
+Luca.
 
-Also, I think this could cause issues if for some reason the frontend
-switches to state 'Connected' before hotplug scripts have run, in
-which case you would try to open an unexpected device because pdevice
-won't be correctly set.
-
-Roger.
