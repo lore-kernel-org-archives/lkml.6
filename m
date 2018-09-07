@@ -2,71 +2,73 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A96C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A2DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1012620869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:51:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1012620869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id EE1D820861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:52:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE1D820861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbeIGPbi (ORCPT
+        id S1728712AbeIGPcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:31:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:41810 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728183AbeIGPbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:31:38 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id WSUcfCNVJAex; Fri,  7 Sep 2018 12:51:14 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCC4300329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:4300:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4CC231EC0200;
-        Fri,  7 Sep 2018 12:51:14 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 12:51:12 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Juergen Gross <jgross@suse.com>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH] x86/paravirt: Get rid of patch_site label
-Message-ID: <20180907105112.GD12849@zn.tnic>
-References: <20180907104917.12502-1-bp@alien8.de>
+        Fri, 7 Sep 2018 11:32:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35941 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728669AbeIGPcq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 11:32:46 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fyEN7-0006va-Qc; Fri, 07 Sep 2018 12:52:17 +0200
+Date:   Fri, 7 Sep 2018 12:52:17 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Feng Tang <feng.tang@intel.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+In-Reply-To: <20180907081716.bxw3hmcl6w7gqvax@shbuild888>
+Message-ID: <alpine.DEB.2.21.1809071250240.1402@nanos.tec.linutronix.de>
+References: <20180830111207.GE2656@dhcp22.suse.cz> <alpine.DEB.2.21.1808301352410.1210@nanos.tec.linutronix.de> <20180830124915.GH2656@dhcp22.suse.cz> <20180830125909.uq3e76akcmep6j2u@shbuild888> <alpine.DEB.2.21.1808301504300.1210@nanos.tec.linutronix.de>
+ <20180830131920.w2jqjvlkpfb4ejb2@shbuild888> <alpine.DEB.2.21.1808301523510.1210@nanos.tec.linutronix.de> <20180831061519.3zbxsjs4rd6mmsuo@shbuild888> <alpine.DEB.2.21.1808311328260.2208@nanos.tec.linutronix.de> <20180831133659.pkmscqpudjnkujbg@shbuild888>
+ <20180907081716.bxw3hmcl6w7gqvax@shbuild888>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180907104917.12502-1-bp@alien8.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 12:49:17PM +0200, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@suse.de>
+On Fri, 7 Sep 2018, Feng Tang wrote:
+> On Fri, Aug 31, 2018 at 09:36:59PM +0800, Feng Tang wrote:
+> > Any sugestion? I can only have patch like this:
 > 
-> When CONFIG_PARAVIRT_SPINLOCKS=n, it fires
-> 
->   arch/x86/kernel/paravirt_patch_64.c: In function ‘native_patch’:
->   arch/x86/kernel/paravirt_patch_64.c:89:1: warning: label ‘patch_site’ defined but not used [-Wunused-label]
->    patch_site:
-> 
-> but that label can simply be removed by directly calling
-> paravirt_patch_insns() there.
+> Could you review this patch, as at this time window there is no usable memory
+> block or other memory allocators that I know, so I follow the exisitng static
+> fixmap page table code and add one more.
 
-Whoops, no, it is still being used. Lemme see if I can remove all the
-labels in that function.
+You really want to add a proper sanity check for this. The static stuff has
+to cover the fixmap. Just making it work for this particular case is sloppy
+at best as the next larger change of the fixmap will just bring the problem
+back.
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+	tglx
