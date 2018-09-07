@@ -2,131 +2,98 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7913FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F57C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D68B2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:52:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D68B2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id C32952075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:52:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qp5Ss+tc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32952075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbeIGSdJ (ORCPT
+        id S1729835AbeIGSdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:33:09 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:45916 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725942AbeIGSdJ (ORCPT
+        Fri, 7 Sep 2018 14:33:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45090 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbeIGSdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:33:09 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id yHB2fjZUHw2L8yHB5fDnkL; Fri, 07 Sep 2018 15:52:04 +0200
-Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Paul Kocialkowski <contact@paulk.fr>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20180906222442.14825-1-contact@paulk.fr>
- <20180906222442.14825-6-contact@paulk.fr>
- <4b30c0bf-e525-1868-f625-569d4a104aa0@xs4all.nl>
- <20180907132620.lmsvlwpa3rzioj2h@flea>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <2c9689b2-c5a6-58b7-b467-fc53208ecd2d@xs4all.nl>
-Date:   Fri, 7 Sep 2018 15:52:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 7 Sep 2018 14:33:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WfYhixwiezvNKyYIR4vsuFXNqFNzbamtbDJ0QGWpAkE=; b=qp5Ss+tcbtjVXUxy98cmTpBmv
+        wZ4+V0MdYL2FD+TKJDdTcoWMrv84DpvLDmm9t+coKsbM9Fk5CWwsa94Jczhx+o9knQhHKBo8vlTbe
+        uqsSXmLFrIsvetplh7ZvrYniAwrmv71tEBBX6dNB9/x/u39IKXYQP2TkH5FcvbDswwWz3k4mBm2Uo
+        3mAJuDnSeXAvJw/Zn3OMh8mPQIU6D2vhNWh+HUY/mUA4M9bTPRticAlzuG7t2Kkx2rf+asN5RUUs4
+        0oVWzGDyq3dyZnQx48MZbc18fOh7o9cKZP5+EdzIF8wsaHyRkxLLhRRYWsuo+7gVblRncqBrFT8Z2
+        Y/Hh+xWBg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyHBd-0006NS-M0; Fri, 07 Sep 2018 13:52:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E07B52024DB85; Fri,  7 Sep 2018 15:52:35 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 15:52:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Jirka Hladky <jhladky@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jakub Ra??ek <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kkolakow@redhat.com" <kkolakow@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [SCHEDULER] Performance drop in 4.19 compared to 4.18 kernel
+Message-ID: <20180907135235.GE24106@hirez.programming.kicks-ass.net>
+References: <CAE4VaGC+FcE4cTUwzTLuCRd8rnd-=MhSZHfjKstiRTKcYq-39g@mail.gmail.com>
+ <20180907125649.GA3995@linux.vnet.ibm.com>
+ <20180907131923.GB24106@hirez.programming.kicks-ass.net>
+ <20180907134420.GD3995@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180907132620.lmsvlwpa3rzioj2h@flea>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfC3pm72lIpWZIiqpcolSosgniYy2MNgJtY7BYNsy8u67ySMXAugL9+VwR/v4TvSV7K6+1IxJcqCtdKhEkdXlZRdbeYG+FtxCjJ8dYCMRyOjzEVItq61P
- j6W4aKqmBOWNqqlQKQcBtRvZyqsIUWhQzYmzi2nyA9E4QSifcMUKmgzIARPVZ37stEzQQh8knqQmYjzKSbMmbc+soG/QpLKonB4OSu+RoHeWScYjAdS5+eNC
- 1CRRvhz//UEf+xUfSLA9iBcob3gM0kGns8rGZB0bUYYchu1Ege3pu15G0yUkKhlEU35Odi+vzETMaFboi/DFgxn6WcEQJAyB9Ob6PG/5tRHnhsGZOydKq3pB
- IlyhLutSqxbZqs+X/8OG3e+X3hsjmTKYg9AVzO5ZhNh1rmg0vlS/2LlPLNNTVtNxHGfskDokYmKaVg54HdCyzBIqjJc6k0/hAkR5SV5uQP4T7aH2bmKNfdOE
- kJpW0KHb9watFZgTf6VvOOI4MVfEN/C5SrVNiAxJH4BPPmjQBEYV2PhcbW4Bty3hPPesZL80wPEQMQJImMrR1H7KKFQanXU9SFFnMi4vRr8+P8s+YNNXTVeH
- B+X4NMXUDGgDEsbE0hTd2hJz6nRNiAMlgKeQQGagtlyCvvOceSuAu1JJliRPN3wKxlTJj5E+kRAwM82c1gHCgJsD+Lpmp0kfCaXbF/1MwoxAynqkskZV0/xP
- Yka28J+XKUkaCBmYbYx1B5xs5BzT/JCFCCSpt3cFqTghbh3lGwa+x7Dov4PSD42DggDq8/8Sio/IKh9WNkjysHPCjaqc/MPchcPC2aMZbZncxxZT2T+fYW2V
- MpnWa5l+vAzFAH6dZ7cSgb1cGMNUZklCOCHeNjc6B5BkAOuUoZG8yYJavuI/S2FPrcly9twRuQcS1CLEEgFvTzZQRjXC32OJl8zC7TALL5mjSXPmcNr8daoi
- WnihqA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907134420.GD3995@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 03:26 PM, Maxime Ripard wrote:
-> Hi Hans,
+On Fri, Sep 07, 2018 at 07:14:20PM +0530, Srikar Dronamraju wrote:
+> * Peter Zijlstra <peterz@infradead.org> [2018-09-07 15:19:23]:
 > 
-> On Fri, Sep 07, 2018 at 03:13:19PM +0200, Hans Verkuil wrote:
->> On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
->>> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>>
->>> This introduces the Cedrus VPU driver that supports the VPU found in
->>> Allwinner SoCs, also known as Video Engine. It is implemented through
->>> a V4L2 M2M decoder device and a media device (used for media requests).
->>> So far, it only supports MPEG-2 decoding.
->>>
->>> Since this VPU is stateless, synchronization with media requests is
->>> required in order to ensure consistency between frame headers that
->>> contain metadata about the frame to process and the raw slice data that
->>> is used to generate the frame.
->>>
->>> This driver was made possible thanks to the long-standing effort
->>> carried out by the linux-sunxi community in the interest of reverse
->>> engineering, documenting and implementing support for the Allwinner VPU.
->>>
->>> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
->>
->> One high-level comment:
->>
->> Can you add a TODO file for this staging driver? This can be done in
->> a follow-up patch.
->>
->> It should contain what needs to be done to get this out of staging:
->>
->> - Request API needs to stabilize
->> - Userspace support for stateless codecs must be created
+> > On Fri, Sep 07, 2018 at 06:26:49PM +0530, Srikar Dronamraju wrote:
+> > 
+> > > Can you please pick
+> > > 
+> > > 
+> > > 1. 69bb3230297e881c797bbc4b3dbf73514078bc9d sched/numa: Stop multiple tasks
+> > > from moving to the cpu at the same time
+> > > 2. dc62cfdac5e5b7a61cd8a2bd4190e80b9bb408fc sched/numa: Avoid task migration
+> > > for small numa improvement
+> > > 3. 76e18a67cdd9e3609716c8a074c03168734736f9 sched/numa: Pass destination cpu as
+> > > a parameter to migrate_task_rq
+> > > 4.  489c19b440ebdbabffe530b9a41389d0a8b315d9 sched/numa: Reset scan rate
+> > > whenever task moves across nodes
+> > > 5.  b7e9ae1ae3825f35cd0f38f1f0c8e91ea145bc30 sched/numa: Limit the
+> > > conditions where scan period is reset
+> > > 
+> > > from https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/kernel/sched
+> > 
+> > That is not a stable tree; the whole thing is re-generated from my quilt
+> > set every time I feel like it.
+> > 
+> > It is likely those commit ids will no longer exist in a few hours.
+> > 
 > 
-> On that particular note, as part of the effort to develop the driver,
-> we've also developped two userspace components:
-> 
->   - v4l2-request-test, that has a bunch of sample frames for various
->     codecs and will rely solely on the kernel request api (and DRM for
->     the display part) to test and bringup a particular driver
->     https://github.com/bootlin/v4l2-request-test
-> 
->   - libva-v4l2-request, that is a libva implementation using the
->     request API
->     https://github.com/bootlin/libva-v4l2-request
-> 
-> Did you have something else in mind?
+> Okay, I will forward the relevant mails to Jirka.
 
-Reviewing this will be the next step. I haven't looked at the userspace components
-at all yet, so I don't know yet whether it is what we expect/want/need.
-
-I think this might be a very good topic for the media summit in October if we
-can get all the stakeholders together.
-
-Regards,
-
-	Hans
+Or he can click on that link and find new IDs :-)
