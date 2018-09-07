@@ -2,258 +2,113 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4003C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F140C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1452075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:32:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1452075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id D97882075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:33:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEsX2hfH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97882075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=welchs.me.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeIGNMH (ORCPT
+        id S1728021AbeIGNND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:12:07 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2989 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727881AbeIGNMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:12:06 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4269fH6frDz9ttFN;
-        Fri,  7 Sep 2018 10:32:07 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 5PsAh1MCdr5i; Fri,  7 Sep 2018 10:32:07 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4269fH66Xlz9ttDr;
-        Fri,  7 Sep 2018 10:32:07 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D8868B933;
-        Fri,  7 Sep 2018 10:32:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id zne_rf7OoJYv; Fri,  7 Sep 2018 10:32:11 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E30BD8B932;
-        Fri,  7 Sep 2018 10:32:10 +0200 (CEST)
-Subject: Re: [RFC PATCH v1 00/17] ban the use of _PAGE_XXX flags outside
- platform specific code
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1535913369.git.christophe.leroy@c-s.fr>
- <8736uneylc.fsf@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <1f4d6cc9-5d18-b171-02b0-d715629d594f@c-s.fr>
-Date:   Thu, 6 Sep 2018 21:36:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <8736uneylc.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Sep 2018 09:13:03 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44763 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeIGNNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:13:02 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v16-v6so14038736wro.11
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:33:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zQxrkgCzYHSL+l76yzAd+wSLg7FaP2gnD0zA79Idmhc=;
+        b=aEsX2hfHJ5V6oCRBbzvezoULWU8qiOC0ZtAgpeWY6iCLpWT9+UWyRRDKSchPsyFfXh
+         nEPM9+TG+A1g8Vbpk0UJ6hEl7gjLnUdN4IFdhiYDwArMJgWtZlXO6RRJGhevoKkArwKk
+         xOtdsgJ96gMUNHV1NnghqVXvcO+MN7Rib8/H0KVyTrxfc4KHD827RgspG6f45MC9L5Ir
+         zzeouqlRK0meTRi5Tg/LXpavUf1LUhFauaGZrZk9Az3c/v2rRjDd/dp5MhWFH7cDJI+o
+         YpalsVEbgzsiKXa+UssMCEFTWLEBi+AsL3Ndqvhjp3kL8fO/CaFFhknFXP0VmizUjUkM
+         iUbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:message-id:subject:from:to:cc:date
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=zQxrkgCzYHSL+l76yzAd+wSLg7FaP2gnD0zA79Idmhc=;
+        b=dvoCxxMHU67HqUFNrL+1SdVbAuXQ9ZoyQdU2tzlaDl4i7mvnKqYhhAjM1RDSfMyDNf
+         GvFTAbwwppzTt1sZf+xtNJT/sDkEebhVedvwtv0fnpzAbNfLAN0HqeqLTzZFfYDz1kus
+         VRYRPCqQrprpf3vKhOApaIeNKphv2nJzaJ7k1vY18hMdUi0WkcILFGbTbTuYVPYNuecr
+         JxpkBkNCdt2Bm2PLVltW3JkIgJbVdg8Csspe6h85lqWCQLOnBqDHkI8ajD3i4PytOt+C
+         39vBzhrARhzXf0D73hNBW1zuqhiy4/ZO/xl2sVxe+zGGJbSYFC1sA9NT94NDkDWrCY6p
+         oUrg==
+X-Gm-Message-State: APzg51BOMeRDFWHCbzJoFw+qFr7zhgTCJLwAxM73i5QHCMzhMZ4Lq9w9
+        nAimU3UYH36jUuvHYCKRK6Y=
+X-Google-Smtp-Source: ANB0VdYwca6rBYw3rS6X7GCdqbKZGUJwFKK0z2J/sxBzhfESj38MuyPUM/Hjg6EUlykaWEO/5K2Vzg==
+X-Received: by 2002:adf:bacf:: with SMTP id w15-v6mr5575829wrg.203.1536309189960;
+        Fri, 07 Sep 2018 01:33:09 -0700 (PDT)
+Received: from broadband.bt.com ([2a00:23c5:58d:db00:68bb:47d:d5ca:9abd])
+        by smtp.gmail.com with ESMTPSA id x24-v6sm11381090wrd.13.2018.09.07.01.33.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 01:33:09 -0700 (PDT)
+Message-ID: <1536309188.8050.9.camel@welchs.me.uk>
+Subject: Re: [PATCH] vme: remove unneeded kfree
+From:   Martyn Welch <martyn@welchs.me.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dingxiang@cmss.chinamobile.com
+Cc:     manohar.vanga@gmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Staging subsystem List <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 07 Sep 2018 09:33:08 +0100
+In-Reply-To: <CA+55aFxuha1tQXcn+WtbOKzwwmtA8AORb04tMM=hk6jT3ntt3w@mail.gmail.com>
+References: <1536223870-6324-1-git-send-email-dingxiang@cmss.chinamobile.com>
+         <CA+55aFxuha1tQXcn+WtbOKzwwmtA8AORb04tMM=hk6jT3ntt3w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/06/2018 09:58 AM, Aneesh Kumar K.V wrote:
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Thu, 2018-09-06 at 22:04 -0700, Linus Torvalds wrote:
+> On Thu, Sep 6, 2018 at 1:51 AM Ding Xiang
+> <dingxiang@cmss.chinamobile.com> wrote:
+> > 
+> > put_device will call vme_dev_release to free vdev, kfree is
+> > unnecessary here.
 > 
->> Today flags like for instance _PAGE_RW or _PAGE_USER are used through
->> common parts of code.
->> Using those directly in common parts of code have proven to lead to
->> mistakes or misbehaviour, because their use is not always as trivial
->> as one could think.
->>
->> For instance, (flags & _PAGE_USER) == 0 isn't enough to tell
->> that a page is a kernel page, because some targets are using
->> _PAGE_PRIVILEDGED and not _PAGE_USER, so the test has to be
->> (flags & (_PAGE_USER | _PAGE_PRIVILEDGED)) == _PAGE_PRIVILEDGED
->> This has to (bad) consequences:
->>
->>   - All targets must define every bit, even the unsupported ones,
->>     leading to a lot of useless #define _PAGE_XXX 0
->>   - If someone forgets to take into account all possible _PAGE_XXX bits
->>     for the case, we can get unexpected behaviour on some targets.
->>
->> This becomes even more complex when we come to using _PAGE_RW.
->> Testing (flags & _PAGE_RW) is not enough to test whether a page
->> if writable or not, because:
->>
->>   - Some targets have _PAGE_RO instead, which has to be unset to tell
->>     a page is writable
->>   - Some targets have _PAGE_R and _PAGE_W, in which case
->>     _PAGE_RW = _PAGE_R | _PAGE_W
->>   - Even knowing whether a page is readable is not always trivial because:
->>     - Some targets requires to check that _PAGE_R is set to ensure page
->>     is readable
->>     - Some targets requires to check that _PAGE_NA is not set
->>     - Some targets requires to check that _PAGE_RO or _PAGE_RW is set
->>
->> Etc ....
->>
->> In order to work around all those issues and minimise the risks of errors,
->> this serie aims at removing all use of _PAGE_XXX flags from powerpc code
->> and always use pte_xxx() and pte_mkxxx() accessors instead. Those accessors
->> are then defined in target specific parts of the kernel code.
+> That does seem to be the case.  I think "unnecessary" is overly kind,
+> it does seem to be a double free.
 > 
-> The series is really good. It also helps in code readability. Few things
-> i am not sure there is a way to reduce the overhead
+> Looks like the issue was introduced back in 2013 by commit
+> def1820d25fa ("vme: add missing put_device() after device_register()
+> fails").
 > 
-> -		access = _PAGE_EXEC;
-> +		access = pte_val(pte_mkexec(__pte(0)));
+> It seems you should *either* kfree() the vdev, _or_ do put_device(),
+> but doing both seems wrong.
 > 
-> Considering we have multiple big endian to little endian coversion there
-> for book3s 64.
-
-Thanks for the review.
-
-For the above, I propose the following:
-
-diff --git a/arch/powerpc/mm/hash_utils_64.c 
-b/arch/powerpc/mm/hash_utils_64.c
-index f23a89d8e4ce..904ac9c84ea5 100644
---- a/arch/powerpc/mm/hash_utils_64.c
-+++ b/arch/powerpc/mm/hash_utils_64.c
-@@ -1482,7 +1482,7 @@ static bool should_hash_preload(struct mm_struct 
-*mm, unsigned long ea)
-  #endif
-
-  void hash_preload(struct mm_struct *mm, unsigned long ea,
--		  unsigned long access, unsigned long trap)
-+		  bool is_exec, unsigned long trap)
-  {
-  	int hugepage_shift;
-  	unsigned long vsid;
-@@ -1490,6 +1490,7 @@ void hash_preload(struct mm_struct *mm, unsigned 
-long ea,
-  	pte_t *ptep;
-  	unsigned long flags;
-  	int rc, ssize, update_flags = 0;
-+	unsigned long access = is_exec ? _PAGE_EXEC : 0;
-
-  	BUG_ON(REGION_ID(ea) != USER_REGION_ID);
-
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 5c8530d0c611..4122f26a2f44 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -507,7 +507,8 @@ void update_mmu_cache(struct vm_area_struct *vma, 
-unsigned long address,
-  	 * We don't need to worry about _PAGE_PRESENT here because we are
-  	 * called with either mm->page_table_lock held or ptl lock held
-  	 */
--	unsigned long access, trap;
-+	unsigned long trap;
-+	bool is_exec;
-
-  	if (radix_enabled()) {
-  		prefetch((void *)address);
-@@ -529,10 +530,10 @@ void update_mmu_cache(struct vm_area_struct *vma, 
-unsigned long address,
-  	trap = current->thread.regs ? TRAP(current->thread.regs) : 0UL;
-  	switch (trap) {
-  	case 0x300:
--		access = 0UL;
-+		is_exec = false;
-  		break;
-  	case 0x400:
--		access = _PAGE_EXEC;
-+		is_exec = true;
-  		break;
-  	default:
-  		return;
-diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-index e5d779eed181..dd7f9b951d25 100644
---- a/arch/powerpc/mm/mmu_decl.h
-+++ b/arch/powerpc/mm/mmu_decl.h
-@@ -82,7 +82,7 @@ static inline void _tlbivax_bcast(unsigned long 
-address, unsigned int pid,
-  #else /* CONFIG_PPC_MMU_NOHASH */
-
-  extern void hash_preload(struct mm_struct *mm, unsigned long ea,
--			 unsigned long access, unsigned long trap);
-+			 bool is_exec, unsigned long trap);
-
-
-  extern void _tlbie(unsigned long address);
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index f983ffa24aa0..506e5c3e96da 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -263,7 +263,7 @@ static void __init __mapin_ram_chunk(unsigned long 
-offset, unsigned long top)
-  		map_kernel_page(v, p, f);
-  #ifdef CONFIG_PPC_STD_MMU_32
-  		if (ktext)
--			hash_preload(&init_mm, v, 0, 0x300);
-+			hash_preload(&init_mm, v, false, 0x300);
-  #endif
-  		v += PAGE_SIZE;
-  		p += PAGE_SIZE;
-diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index bea6c544e38f..38a793bfca37 100644
---- a/arch/powerpc/mm/ppc_mmu_32.c
-+++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -163,7 +163,7 @@ void __init setbat(int index, unsigned long virt, 
-phys_addr_t phys,
-   * Preload a translation in the hash table
-   */
-  void hash_preload(struct mm_struct *mm, unsigned long ea,
--		  unsigned long access, unsigned long trap)
-+		  bool is_exec, unsigned long trap)
-  {
-  	pmd_t *pmd;
-
-
-
-> 
-> Other thing is __ioremap_at where we do
-> 
-> +       pte_t pte = __pte(flags);
->   
->          /* Make sure we have the base flags */
-> -       if ((flags & _PAGE_PRESENT) == 0)
-> +       if (!pte_present(pte))
-
-This one is using pte_raw(), so shouldn't be a problem.
-
-Since the function is doing almost nothing of on the flags, maybe
-we could just replace the above by pte_present(__pte(flags)) and
-leave the rest as is.
-
-> 
-> -               err = map_kernel_page(v+i, p+i, flags);
-> +               err = map_kernel_page(v + i, p + i, pte_val(pte));
-
-Maybe another alternative would be to pass a pte_t to map_kernel_page(), 
-then we have to find an optimised way to insert the RPN into it before
-calling set_pte_at() instead of using pfn_pte() ?
-
-
-If we are so concerned by the multiple conversions, should we modify all 
-the pte_mkxxxx() to use pte_raw() and __pte_raw() instead of pte_val() 
-and __pte() ?
-
-> 
-> 
-> But otherwise for the series.
-> 
-> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> I presume the device_register() has never failed, and this being
+> vme-only I'm guessing there isn't a vibrant testing community.
 > 
 
-Thanks
-Christophe
+I think that is also overly kind :-)
+
+I currently lack access to suitable hardware to test fully myself and I
+need to find some time to (re)implement some automated testing, after I
+lost access to the bits I had when I left a previous employer. That and
+see if I can get access to some hardware again...
+
+Manohar, do you still have access/interest in the VME stuff? You've
+been very quiet for a long time now.
+
+Martyn
