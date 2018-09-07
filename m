@@ -2,175 +2,131 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15716C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7DDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF32920873
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF32920873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E9D320652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:09:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fieahl-im.20150623.gappssmtp.com header.i=@fieahl-im.20150623.gappssmtp.com header.b="bXpU9raR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9D320652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieahl.im
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbeIHAsq (ORCPT
+        id S1726351AbeIHAvf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:48:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39480 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbeIHAsq (ORCPT
+        Fri, 7 Sep 2018 20:51:35 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37342 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeIHAvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:48:46 -0400
-Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97125E2F;
-        Fri,  7 Sep 2018 20:06:14 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 22:06:11 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, mpatocka@redhat.com,
-        pavel.tatashin@microsoft.com, will.deacon@arm.com,
-        stable-commits@vger.kernel.org
-Subject: Re: Patch "arm64: mm: always enable CONFIG_HOLES_IN_ZONE" has been
- added to the 4.9-stable tree
-Message-ID: <20180907200611.GC25756@kroah.com>
-References: <1536325071252165@kroah.com>
- <20180907183601.GA28007@flashbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907183601.GA28007@flashbox>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 7 Sep 2018 20:51:35 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f1-v6so7052948plt.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 13:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fieahl-im.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=U+LCn+tGBn4g91J27ahpHZnhw99Dn7tqV0Pc4odJTh4=;
+        b=bXpU9raRdbHUVoPJAeoRx9Dw1KRzlszzkRAFdaa9Tv3lSTzFU/8vMyWt6oATgvBDHE
+         VwEpI9y8pywN9Mj28bDGAlAVYQZTNICebHrNH+eLzViTaawalIiEGBdqpQCexOJ+IOns
+         cztqnzALnqiOcd3XoXIO2F7uPCMCj95UirkR29TZiYu+3qZrZOu6t1ANa63FFSlMJdyZ
+         dSuUNmEpgFJmxyJl0ra3PhABRf8eUG9tI9F/9imYiP5+qlcciaP5eV5VsoW7bltzOCYi
+         CBh116n/EFxBgfKr4H6Q0dN9l/3VmglRd5NFu/C8Tilt+v1vNEgBirlEnQfKzOElnTGY
+         pcCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=U+LCn+tGBn4g91J27ahpHZnhw99Dn7tqV0Pc4odJTh4=;
+        b=jewwa1aX+uyfP1qx81cpDaFOGV2F31gou4npqsFQp5elclB6P7ucETvub8zeiQjqVB
+         T1juv6cq1qxgfKH4sgAHDIbn6+UMKp+afU6fAQk4Dsw/HyroRdnJyYJSD04FqOPaFJrw
+         gaNHmaRpM0BcyPeGG8issXmRZu885oE6cS/E8JEjZTFHhCL7sa5+6wC3c4CF70W+d7Pa
+         rFYqQA0Wtabm1lwJODAD5iRIbpBlEm8bDPQFtPJHXsMeBOoeKlzWwRmgR+j4lpeG4GOn
+         lijbd0/hNF9Nzd89HDMSLZ3F9/L55zrYtY85M5Ewu91q/wPfLpXXx13qfn2x7faSTEgD
+         u/Ag==
+X-Gm-Message-State: APzg51ARgG79Lwpxu3GXaQxe7kJsc7NjCaSp8yvvtqqTKGp9H776+ZnC
+        i+c0QtO1tMpl8xLEWPDVF0iEqQ==
+X-Google-Smtp-Source: ANB0VdYmuQR668j5OXA1VYCelDCyulsuUEXFjyTGMR+cldQAnUBd5TNcc3I7+FUJvShsjlzVgR0TeQ==
+X-Received: by 2002:a17:902:934c:: with SMTP id g12-v6mr9735265plp.67.1536350943635;
+        Fri, 07 Sep 2018 13:09:03 -0700 (PDT)
+Received: from WorkZone.localdomain ([175.138.183.133])
+        by smtp.googlemail.com with ESMTPSA id o62-v6sm11266569pfb.0.2018.09.07.13.09.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 13:09:03 -0700 (PDT)
+From:   Fieah Lim <kw@fieahl.im>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-pm@vger.kernel.org (open list:CPUIDLE DRIVERS)
+Cc:     Fieah Lim <kw@fieahl.im>
+Subject: [PATCH] cpuidle: Remove unnecessary wrapper cpuidle_get_last_residency()
+Date:   Sat,  8 Sep 2018 04:08:38 +0800
+Message-Id: <20180907200838.4966-1-kw@fieahl.im>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 11:36:01AM -0700, Nathan Chancellor wrote:
-> On Fri, Sep 07, 2018 at 02:57:51PM +0200, gregkh@linuxfoundation.org wrote:
-> > 
-> > This is a note to let you know that I've just added the patch titled
-> > 
-> >     arm64: mm: always enable CONFIG_HOLES_IN_ZONE
-> > 
-> > to the 4.9-stable tree which can be found at:
-> >     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-> > 
-> > The filename of the patch is:
-> >      arm64-mm-always-enable-config_holes_in_zone.patch
-> > and it can be found in the queue-4.9 subdirectory.
-> > 
-> > If you, or anyone else, feels it should not be added to the stable tree,
-> > please let <stable@vger.kernel.org> know about it.
-> > 
-> > 
-> > From f52bb98f5aded4c43e52f5ce19fb83f7261e9e73 Mon Sep 17 00:00:00 2001
-> > From: James Morse <james.morse@arm.com>
-> > Date: Thu, 30 Aug 2018 16:05:32 +0100
-> > Subject: arm64: mm: always enable CONFIG_HOLES_IN_ZONE
-> > 
-> > From: James Morse <james.morse@arm.com>
-> > 
-> > commit f52bb98f5aded4c43e52f5ce19fb83f7261e9e73 upstream.
-> > 
-> > Commit 6d526ee26ccd ("arm64: mm: enable CONFIG_HOLES_IN_ZONE for NUMA")
-> > only enabled HOLES_IN_ZONE for NUMA systems because the NUMA code was
-> > choking on the missing zone for nomap pages. This problem doesn't just
-> > apply to NUMA systems.
-> > 
-> > If the architecture doesn't set HAVE_ARCH_PFN_VALID, pfn_valid() will
-> > return true if the pfn is part of a valid sparsemem section.
-> > 
-> > When working with multiple pages, the mm code uses pfn_valid_within()
-> > to test each page it uses within the sparsemem section is valid. On
-> > most systems memory comes in MAX_ORDER_NR_PAGES chunks which all
-> > have valid/initialised struct pages. In this case pfn_valid_within()
-> > is optimised out.
-> > 
-> > Systems where this isn't true (e.g. due to nomap) should set
-> > HOLES_IN_ZONE and provide HAVE_ARCH_PFN_VALID so that mm tests each
-> > page as it works with it.
-> > 
-> > Currently non-NUMA arm64 systems can't enable HOLES_IN_ZONE, leading to
-> > a VM_BUG_ON():
-> > 
-> > | page:fffffdff802e1780 is uninitialized and poisoned
-> > | raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> > | raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-> > | page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-> > | ------------[ cut here ]------------
-> > | kernel BUG at include/linux/mm.h:978!
-> > | Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-> > [...]
-> > | CPU: 1 PID: 25236 Comm: dd Not tainted 4.18.0 #7
-> > | Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-> > | pstate: 40000085 (nZcv daIf -PAN -UAO)
-> > | pc : move_freepages_block+0x144/0x248
-> > | lr : move_freepages_block+0x144/0x248
-> > | sp : fffffe0071177680
-> > [...]
-> > | Process dd (pid: 25236, stack limit = 0x0000000094cc07fb)
-> > | Call trace:
-> > |  move_freepages_block+0x144/0x248
-> > |  steal_suitable_fallback+0x100/0x16c
-> > |  get_page_from_freelist+0x440/0xb20
-> > |  __alloc_pages_nodemask+0xe8/0x838
-> > |  new_slab+0xd4/0x418
-> > |  ___slab_alloc.constprop.27+0x380/0x4a8
-> > |  __slab_alloc.isra.21.constprop.26+0x24/0x34
-> > |  kmem_cache_alloc+0xa8/0x180
-> > |  alloc_buffer_head+0x1c/0x90
-> > |  alloc_page_buffers+0x68/0xb0
-> > |  create_empty_buffers+0x20/0x1ec
-> > |  create_page_buffers+0xb0/0xf0
-> > |  __block_write_begin_int+0xc4/0x564
-> > |  __block_write_begin+0x10/0x18
-> > |  block_write_begin+0x48/0xd0
-> > |  blkdev_write_begin+0x28/0x30
-> > |  generic_perform_write+0x98/0x16c
-> > |  __generic_file_write_iter+0x138/0x168
-> > |  blkdev_write_iter+0x80/0xf0
-> > |  __vfs_write+0xe4/0x10c
-> > |  vfs_write+0xb4/0x168
-> > |  ksys_write+0x44/0x88
-> > |  sys_write+0xc/0x14
-> > |  el0_svc_naked+0x30/0x34
-> > | Code: aa1303e0 90001a01 91296421 94008902 (d4210000)
-> > | ---[ end trace 1601ba47f6e883fe ]---
-> > 
-> > Remove the NUMA dependency.
-> > 
-> > Link: https://www.spinics.net/lists/arm-kernel/msg671851.html
-> > Cc: <stable@vger.kernel.org>
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Reported-by: Mikulas Patocka <mpatocka@redhat.com>
-> > Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-> > Tested-by: Mikulas Patocka <mpatocka@redhat.com>
-> > Signed-off-by: James Morse <james.morse@arm.com>
-> > Signed-off-by: Will Deacon <will.deacon@arm.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > ---
-> >  arch/arm64/Kconfig |    1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -631,7 +631,6 @@ config HAVE_SETUP_PER_CPU_AREA
-> >  
-> >  config NEED_PER_CPU_EMBED_FIRST_CHUNK
-> 
-> Looks like git got confused here, this isn't HOLES_IN_ZONE.
-> 
-> Additionally, commit 6d526ee26ccd ("arm64: mm: enable
-> CONFIG_HOLES_IN_ZONE for NUMA") that introduced it to this file didn't
-> appear until 4.11 so this patch can be dropped from 4.9.
+There's no magic inside, let's just make it more intuitive.
 
-Argh, I thought I had checked that too...
+Signed-off-by: Fieah Lim <kw@fieahl.im>
+---
+ drivers/cpuidle/governors/ladder.c |  2 +-
+ drivers/cpuidle/governors/menu.c   |  2 +-
+ include/linux/cpuidle.h            | 10 ----------
+ 3 files changed, 2 insertions(+), 12 deletions(-)
 
-Anyway, thanks for letting me know, I've now dropped it from the 4.9
-queue.
+diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
+index 704880a6612a..f0dddc66af26 100644
+--- a/drivers/cpuidle/governors/ladder.c
++++ b/drivers/cpuidle/governors/ladder.c
+@@ -80,7 +80,7 @@ static int ladder_select_state(struct cpuidle_driver *drv,
+ 
+ 	last_state = &ldev->states[last_idx];
+ 
+-	last_residency = cpuidle_get_last_residency(dev) - drv->states[last_idx].exit_latency;
++	last_residency = dev->last_residency - drv->states[last_idx].exit_latency;
+ 
+ 	/* consider promotion */
+ 	if (last_idx < drv->state_count - 1 &&
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 1aef60d160eb..715520e339da 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -492,7 +492,7 @@ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		measured_us = 9 * MAX_INTERESTING / 10;
+ 	} else {
+ 		/* measured value */
+-		measured_us = cpuidle_get_last_residency(dev);
++		measured_us = dev->last_residency;
+ 
+ 		/* Deduct exit latency */
+ 		if (measured_us > 2 * target->exit_latency)
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 4325d6fdde9b..d262f620890e 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -99,16 +99,6 @@ struct cpuidle_device {
+ DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
+ DECLARE_PER_CPU(struct cpuidle_device, cpuidle_dev);
+ 
+-/**
+- * cpuidle_get_last_residency - retrieves the last state's residency time
+- * @dev: the target CPU
+- */
+-static inline int cpuidle_get_last_residency(struct cpuidle_device *dev)
+-{
+-	return dev->last_residency;
+-}
+-
+-
+ /****************************
+  * CPUIDLE DRIVER INTERFACE *
+  ****************************/
+-- 
+2.18.0
 
-greg k-h
