@@ -6,69 +6,71 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B2FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0713EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC57205F4
+	by mail.kernel.org (Postfix) with ESMTP id 77D0F2083D
 	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC57205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D0F2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeIGGNL (ORCPT
+        id S1728519AbeIGGNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:13:11 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:43620 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeIGGNK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:13:10 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.5]) by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee95b91d5b523a-1236b; Fri, 07 Sep 2018 09:34:45 +0800 (CST)
-X-RM-TRANSID: 2ee95b91d5b523a-1236b
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee35b91d5b364b-0d2a5;
-        Fri, 07 Sep 2018 09:34:45 +0800 (CST)
-X-RM-TRANSID: 2ee35b91d5b364b-0d2a5
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] tools: include: Add PTR_ERR_OR_ZERO to err.h
-Date:   Fri,  7 Sep 2018 09:34:41 +0800
-Message-Id: <1536284082-23466-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 7 Sep 2018 02:13:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11670 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727743AbeIGGNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 02:13:40 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 84DDEABA021D2;
+        Fri,  7 Sep 2018 09:35:13 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 7 Sep 2018 09:35:08 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] interconnect: qcom: fix return value of qnoc_probe
+Date:   Fri, 7 Sep 2018 01:45:27 +0000
+Message-ID: <1536284727-170651-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PTR_ERR_OR_ZERO, and tools can use it.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+drivers/interconnect/qcom/msm8916.c: In function 'qnoc_probe':
+drivers/interconnect/qcom/msm8916.c:439:7: warning:
+ variable 'ret' set but not used [-Wunused-but-set-variable]
+
+if icc_node_create failed, err code 'ret' will be returned,
+so it cannot be a local variable in for-loop.
+
+Fixes: 8d9300299a40 ("interconnect: qcom: Add msm8916 interconnect provider driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- tools/include/linux/err.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/interconnect/qcom/msm8916.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/include/linux/err.h b/tools/include/linux/err.h
-index 7a8b61a..0946496 100644
---- a/tools/include/linux/err.h
-+++ b/tools/include/linux/err.h
-@@ -52,4 +52,11 @@ static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
- 	return unlikely(!ptr) || IS_ERR_VALUE((unsigned long)ptr);
- }
+diff --git a/drivers/interconnect/qcom/msm8916.c b/drivers/interconnect/qcom/msm8916.c
+index 74145f4..0e33fdf 100644
+--- a/drivers/interconnect/qcom/msm8916.c
++++ b/drivers/interconnect/qcom/msm8916.c
+@@ -436,7 +436,6 @@ static int qnoc_probe(struct platform_device *pdev)
+ 	}
  
-+static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
-+{
-+	if (IS_ERR(ptr))
-+		return PTR_ERR(ptr);
-+	else
-+		return 0;
-+}
- #endif /* _LINUX_ERR_H */
--- 
-1.9.1
-
-
+ 	for (i = 0; i < num_nodes; i++) {
+-		int ret;
+ 		size_t j;
+ 
+ 		node = icc_node_create(qnodes[i]->id);
 
