@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 137BDC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCA7C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC0A20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC0A20645
+	by mail.kernel.org (Postfix) with ESMTP id 6F89A20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F89A20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbeIHB6X (ORCPT
+        id S1728698AbeIHB60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:58:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42572 "EHLO
+        Fri, 7 Sep 2018 21:58:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42584 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbeIHB6X (ORCPT
+        with ESMTP id S1727598AbeIHB60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:58:23 -0400
+        Fri, 7 Sep 2018 21:58:26 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78562FA4;
-        Fri,  7 Sep 2018 21:15:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96214F07;
+        Fri,  7 Sep 2018 21:15:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 037/145] powerpc/powernv/pci: Work around races in PCI bridge enabling
-Date:   Fri,  7 Sep 2018 23:08:23 +0200
-Message-Id: <20180907210907.524998805@linuxfoundation.org>
+Subject: [PATCH 4.18 038/145] cxl: Fix wrong comparison in cxl_adapter_context_get()
+Date:   Fri,  7 Sep 2018 23:08:24 +0200
+Message-Id: <20180907210907.683169753@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,88 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Vaibhav Jain <vaibhav@linux.ibm.com>
 
-commit db2173198b9513f7add8009f225afa1f1c79bcc6 upstream.
+commit ef6cb5f1a048fdf91ccee6d63d2bfa293338502d upstream.
 
-The generic code is racy when multiple children of a PCI bridge try to
-enable it simultaneously.
+Function atomic_inc_unless_negative() returns a bool to indicate
+success/failure. However cxl_adapter_context_get() wrongly compares
+the return value against '>=0' which will always be true. The patch
+fixes this comparison to '==0' there by also fixing this compile time
+warning:
 
-This leads to drivers trying to access a device through a
-not-yet-enabled bridge, and this EEH errors under various
-circumstances when using parallel driver probing.
+	drivers/misc/cxl/main.c:290 cxl_adapter_context_get()
+	warn: 'atomic_inc_unless_negative(&adapter->contexts_num)' is unsigned
 
-There is work going on to fix that properly in the PCI core but it
-will take some time.
-
-x86 gets away with it because (outside of hotplug), the BIOS enables
-all the bridges at boot time.
-
-This patch does the same thing on powernv by enabling all bridges that
-have child devices at boot time, thus avoiding subsequent races. It's
-suitable for backporting to stable and distros, while the proper PCI
-fix will probably be significantly more invasive.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: stable@vger.kernel.org
+Fixes: 70b565bbdb91 ("cxl: Prevent adapter reset if an active context exists")
+Cc: stable@vger.kernel.org # v4.9+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c |   37 ++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/misc/cxl/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -3368,12 +3368,49 @@ static void pnv_pci_ioda_create_dbgfs(vo
- #endif /* CONFIG_DEBUG_FS */
+--- a/drivers/misc/cxl/main.c
++++ b/drivers/misc/cxl/main.c
+@@ -287,7 +287,7 @@ int cxl_adapter_context_get(struct cxl *
+ 	int rc;
+ 
+ 	rc = atomic_inc_unless_negative(&adapter->contexts_num);
+-	return rc >= 0 ? 0 : -EBUSY;
++	return rc ? 0 : -EBUSY;
  }
  
-+static void pnv_pci_enable_bridge(struct pci_bus *bus)
-+{
-+	struct pci_dev *dev = bus->self;
-+	struct pci_bus *child;
-+
-+	/* Empty bus ? bail */
-+	if (list_empty(&bus->devices))
-+		return;
-+
-+	/*
-+	 * If there's a bridge associated with that bus enable it. This works
-+	 * around races in the generic code if the enabling is done during
-+	 * parallel probing. This can be removed once those races have been
-+	 * fixed.
-+	 */
-+	if (dev) {
-+		int rc = pci_enable_device(dev);
-+		if (rc)
-+			pci_err(dev, "Error enabling bridge (%d)\n", rc);
-+		pci_set_master(dev);
-+	}
-+
-+	/* Perform the same to child busses */
-+	list_for_each_entry(child, &bus->children, node)
-+		pnv_pci_enable_bridge(child);
-+}
-+
-+static void pnv_pci_enable_bridges(void)
-+{
-+	struct pci_controller *hose;
-+
-+	list_for_each_entry(hose, &hose_list, list_node)
-+		pnv_pci_enable_bridge(hose->bus);
-+}
-+
- static void pnv_pci_ioda_fixup(void)
- {
- 	pnv_pci_ioda_setup_PEs();
- 	pnv_pci_ioda_setup_iommu_api();
- 	pnv_pci_ioda_create_dbgfs();
- 
-+	pnv_pci_enable_bridges();
-+
- #ifdef CONFIG_EEH
- 	pnv_eeh_post_init();
- #endif
+ void cxl_adapter_context_put(struct cxl *adapter)
 
 
