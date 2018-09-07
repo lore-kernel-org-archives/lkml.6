@@ -2,126 +2,99 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2405DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE75BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB1520844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:25:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB1520844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 754942075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:26:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 754942075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbeIGQGC (ORCPT
+        id S1728179AbeIGQHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 12:06:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41802 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728000AbeIGQGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 12:06:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63E92AD5A;
-        Fri,  7 Sep 2018 11:25:29 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 13:25:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        mpe@ellerman.id.au, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH V2 4/4] powerpc/mm/iommu: Allow migration of cma
- allocated pages during mm_iommu_get
-Message-ID: <20180907112528.GI19621@dhcp22.suse.cz>
-References: <20180906054342.25094-1-aneesh.kumar@linux.ibm.com>
- <20180906054342.25094-4-aneesh.kumar@linux.ibm.com>
- <20180906125356.GX14951@dhcp22.suse.cz>
- <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
- <20180907090312.GF19621@dhcp22.suse.cz>
- <8337fdcc-3344-04dd-ddb2-68f86912f333@linux.ibm.com>
+        Fri, 7 Sep 2018 12:07:17 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46686 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbeIGQHR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 12:07:17 -0400
+Received: by mail-qk1-f193.google.com with SMTP id j7-v6so9423250qkd.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 04:26:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e31LJ64CoqiFm20TRpYH1iGAbLuyF+mw9E9PK52/Iyg=;
+        b=Mqtk36nyDWqBUNU7pCws/OvBXRneFOeQrZjV6VOZ0YkQrS3/o320kbQgh4ecCYB4gH
+         FZgHK9ZuqfDwKeY95nbv/7KX7fO4JGojpjjEUAWFpfzBViTIQdz4P75bAbJVXd1S+eNv
+         l+DNmL3/dEtlGcK238h6ubpUYlZ71w8WNdilNhejyOudTCSpasE88WZYQrk/7eqmupaD
+         jyCjB/aiYHPA+sOHpqRSbrJjl26xfqzr26rBhiUGimpvfbFCldlCKYifAo0o4xrotBgQ
+         SeY9cLvllwy27BfHvnhkc+grvglfB+HiUXLHd/9BdrQAw740X0RvIlJzFo1HNSb8biFK
+         7cyw==
+X-Gm-Message-State: APzg51CWo53b0Vj0XOiQwh1USUrd+XSfE2jdFpjZ1frddQycEUrCvKQk
+        CqoLvutjzNbo1NPtNse8GMpc0ffVhn5xtX/vWO4=
+X-Google-Smtp-Source: ANB0Vdb0DsvvSnlHrYAWcL03/ankOlpHM6bAtBw6WBz2BI+cnT8PyDGf46/3G3e/ayHehmQeNqfWQmsrbnJxM9pMDgE=
+X-Received: by 2002:a37:1b91:: with SMTP id m17-v6mr5472433qkh.173.1536319606035;
+ Fri, 07 Sep 2018 04:26:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8337fdcc-3344-04dd-ddb2-68f86912f333@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180711144403.1022829-1-arnd@arndb.de> <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
+In-Reply-To: <105cb1cf-577a-043a-9b50-248a37090bdd@nvidia.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 7 Sep 2018 13:26:30 +0200
+Message-ID: <CAK8P3a1w0SrxFNRwjt1nWhQPdqgt=bZ8oqGaPE=z9iHp84R5mw@mail.gmail.com>
+Subject: Re: [PATCH] [v3] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
+To:     Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 07-09-18 16:45:09, Aneesh Kumar K.V wrote:
-> On 09/07/2018 02:33 PM, Michal Hocko wrote:
-> > On Thu 06-09-18 19:00:43, Aneesh Kumar K.V wrote:
-> > > On 09/06/2018 06:23 PM, Michal Hocko wrote:
-> > > > On Thu 06-09-18 11:13:42, Aneesh Kumar K.V wrote:
-> > > > > Current code doesn't do page migration if the page allocated is a compound page.
-> > > > > With HugeTLB migration support, we can end up allocating hugetlb pages from
-> > > > > CMA region. Also THP pages can be allocated from CMA region. This patch updates
-> > > > > the code to handle compound pages correctly.
-> > > > > 
-> > > > > This use the new helper get_user_pages_cma_migrate. It does one get_user_pages
-> > > > > with right count, instead of doing one get_user_pages per page. That avoids
-> > > > > reading page table multiple times.
-> > > > > 
-> > > > > The patch also convert the hpas member of mm_iommu_table_group_mem_t to a union.
-> > > > > We use the same storage location to store pointers to struct page. We cannot
-> > > > > update alll the code path use struct page *, because we access hpas in real mode
-> > > > > and we can't do that struct page * to pfn conversion in real mode.
-> > > > 
-> > > > I am not fmailiar with this code so bear with me. I am completely
-> > > > missing the purpose of this patch. The changelog doesn't really explain
-> > > > that AFAICS. I can only guess that you do not want to establish long
-> > > > pins on CMA pages, right? So whenever you are about to pin a page that
-> > > > is in CMA you migrate it away to a different !__GFP_MOVABLE page, right?
-> > > 
-> > > That is right.
-> > > 
-> > > > If that is the case then how do you handle pins which are already in
-> > > > zone_movable? I do not see any specific check for those.
-> > > 
-> > > 
-> > > > 
-> > > > Btw. why is this a proper thing to do? Problems with longterm pins are
-> > > > not only for CMA/ZONE_MOVABLE pages. Pinned pages are not reclaimable as
-> > > > well so there is a risk of OOMs if there are too many of them. We have
-> > > > discussed approaches that would allow to force pin invalidation/revocation
-> > > > at LSF/MM. Isn't that a more appropriate solution to the problem you are
-> > > > seeing?
-> > > > 
-> > > 
-> > > The CMA area is used on powerpc platforms to allocate guest specific page
-> > > table (hash page table). If we don't have sufficient free pages we fail to
-> > > allocate hash page table that result in failure to start guest.
-> > > 
-> > > Now with vfio, we end up pinning the entire guest RAM. There is a
-> > > possibility that these guest RAM  pages got allocated from CMA region. We
-> > > already do supporting migrating those pages out except for compound pages.
-> > > What this patch does is to start supporting compound page migration that got
-> > > allocated out of CMA region (ie, THP pages and hugetlb pages if platform
-> > > supported hugetlb migration).
-> > 
-> > This definitely belongs to the changelog.
-> > 
-> > > Now to do that I added a helper get_user_pages_cma_migrate().
-> > > 
-> > > I agree that long term pinned pages do have other issues. The patchset is
-> > > not solving that issue.
-> > 
-> > It would be great to note why a generic approach is not viable. I assume
-> > the main reason is that those pins are pretty much permanent for the
-> > guest lifetime so the situation has to be handled in advance. In other
-> > words, more information please.
-> > 
-> 
-> That is correct. I will add these details to commit message. And will also
-> do a cover letter for the patch series.
+On Fri, Sep 7, 2018 at 11:41 AM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+>
+> On 11/07/18 15:43, Arnd Bergmann wrote:
+> > Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
+> > a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
+> >
+> > ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
+> > ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
+> >
+> > This solves the problem by adding a silent symbol for the tcon_top module,
+> > building it as a separate module in exactly the cases that we need it,
+> > but in a way that it is reachable by the other modules.
+> >
+> > Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possible crtcs")
+> > Fixes: ef0cf6441fbb ("drm/sun4i: Add support for traversing graph with TCON TOP")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> I am seeing the following on today's -next (20180907) as well the last
+> few -next versions for that matter ...
+>
+> ERROR: "sun8i_tcon_top_de_config" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_set_hdmi_src" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-tcon.ko] undefined!
+>
+> Seems like this issue has cropped up again as Arnd's fix is present. I
+> am seeing this on ARM64 builds.
 
-OK, then the early migration makes some sense. Although I suspect this
-will lead to other issues (OOM in kernel zones) but revocation approach
-is clearly not usable. An excessive pinning simply sucks.
+I have not started build testing on linux-next since the merge window, but
+looking at the changes that got queued up, I find commits cf77d79b4e29
+("drm/sun4i: tcon: Add another way for matching mixers with tcon") and
+0305189afb32 ("drm/sun4i: tcon: Add support for R40 TCON") that both
+introduced a reference to the tcon_top file from sun4i_tcon.c.
 
-Thanks a lot for the updated information though!
--- 
-Michal Hocko
-SUSE Labs
+More IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) checks in
+the caller like I did in my patch would help, or alternatively one could
+decide to give up and just always include the TCON_TOP.
+
+      Arnd
