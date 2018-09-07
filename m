@@ -2,95 +2,178 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1867EC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C879C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0DFD2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:36:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="SmXm6mvt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DFD2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id C82B72086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:37:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82B72086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeIGVS2 (ORCPT
+        id S1726355AbeIGVTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:18:28 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42436 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbeIGVS1 (ORCPT
+        Fri, 7 Sep 2018 17:19:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48215 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbeIGVTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:18:27 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g23-v6so6821677plq.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=2kbaJjPILeU0B1EdO0Pi2txBfrE8aWx+C1uzYIpdRII=;
-        b=SmXm6mvt8j/P5n+OnDWBSFoxgiR9Mf+hK7XnRXiG5fK6TtaNGvpfAsQw0ka+a0ilzD
-         MF6APVBrcVSUdNr2wKjwd0+izdNzo38pYAhawAPGJQ8CyDMuWMZ7h6d0uKmQ35TrjyM3
-         ut9zuj3KY0b2MnC3DXAQM5Fotk4b8qXbvphkM0WjA1dDoVx81+wmcuCnDLS1bGAUig09
-         g239egus7Nf/BnN4T+Qlc062XrKc/lqfgIW/kXM5K3+y0TXu05OYx/Yq8QNFg5BCIhVJ
-         iMaRZylLl1qt2cWhT+omWe2hqMkGKmWQpt/B4hwVgqfdht7imMMAe3TpWq0rsgRtGOCS
-         IUww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=2kbaJjPILeU0B1EdO0Pi2txBfrE8aWx+C1uzYIpdRII=;
-        b=VEPVQsTHUTLsrTi4W39gV2m2rcQCkX3w1ss8dzJDrlgyksQMfo0a6ioKl8P/o5bniV
-         6va0Lsi/NKpPKcD4NSeUx6cLepIWsH8H2uf3N5s4FMInVg9nXc3fKzPyeGUBOQ/QJqGn
-         tQZmFM20CrkMvo6UyqG8D++Z3HQB5tYnhWm0zo9cCkWHyHdBy6uyy5W+17eV6lYvT7T6
-         ZV7vSXULN6QmPPMtwoj0NbGMlyv3GS2zHlErkroWS6zySHqOBqLQUJEa/7CnRQHmTDsh
-         8lRSTfHDpkEoTs8ruzjpHw9nkDWRId6DyiCuctJQiCUgE2Yc+lniZG3tmkTNck3RwKmo
-         2pbg==
-X-Gm-Message-State: APzg51AoQzWIrGLTuynInzzQDyJxDvIlzJhYYj4yAlcdLJhpf/k7bLQl
-        8ZJmkSChdSSzV6PnwAro53tgvA==
-X-Google-Smtp-Source: ANB0VdbDGAX7wzFxQSbQA/CSutNCAeUq9GsvweD/lTt7Ww2AGdSj1QBmAECdiOCPDD+Dgi0DdF2tmg==
-X-Received: by 2002:a17:902:b03:: with SMTP id 3-v6mr9023501plq.156.1536338204235;
-        Fri, 07 Sep 2018 09:36:44 -0700 (PDT)
-Received: from cakuba (89-66-82-92.dynamic.chello.pl. [89.66.82.92])
-        by smtp.gmail.com with ESMTPSA id g21-v6sm22414133pfe.41.2018.09.07.09.36.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 09:36:43 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 18:36:36 +0200
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     jun qian <hangdianqj@163.com>
-Cc:     Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        oss-drivers@netronome.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ethernet:netronome:nfp:move spin_lock_bh to spin_lock
- in tasklet
-Message-ID: <20180907183636.48a681f4@cakuba>
-In-Reply-To: <20180907162117.47361-1-hangdianqj@163.com>
-References: <20180907162117.47361-1-hangdianqj@163.com>
-Organization: Netronome Systems, Ltd.
+        Fri, 7 Sep 2018 17:19:22 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1fyJlJ-0002eG-Gy; Fri, 07 Sep 2018 16:37:37 +0000
+Subject: Re: [PATCH] apparmor: Fix network performance issue in
+ aa_label_sk_perm
+To:     Tony Jones <tonyj@suse.de>
+Cc:     seth.arnold@canonical.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20180907043357.4638-1-tonyj@suse.de>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
+Date:   Fri, 7 Sep 2018 09:37:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180907043357.4638-1-tonyj@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  7 Sep 2018 09:21:17 -0700, jun qian wrote:
-> As you are already in a tasklet, it is unnecessary to call spin_lock_bh.
+On 09/06/2018 09:33 PM, Tony Jones wrote:
+> The netperf benchmark shows a 5.73% reduction in throughput for 
+> small (64 byte) transfers by unconfined tasks.
 > 
-> Signed-off-by: jun qian <hangdianqj@163.com>
+> DEFINE_AUDIT_SK() in aa_label_sk_perm() should not be performed 
+> unconditionally, rather only when the label is confined.
+> 
+> netperf-tcp
+>                             56974a6fc^              56974a6fc
+> Min       64         563.48 (   0.00%)      531.17 (  -5.73%)
+> Min       128       1056.92 (   0.00%)      999.44 (  -5.44%)
+> Min       256       1945.95 (   0.00%)     1867.97 (  -4.01%)
+> Min       1024      6761.40 (   0.00%)     6364.23 (  -5.87%)
+> Min       2048     11110.53 (   0.00%)    10606.20 (  -4.54%)
+> Min       3312     13692.67 (   0.00%)    13158.41 (  -3.90%)
+> Min       4096     14926.29 (   0.00%)    14457.46 (  -3.14%)
+> Min       8192     18399.34 (   0.00%)    18091.65 (  -1.67%)
+> Min       16384    21384.13 (   0.00%)    21158.05 (  -1.06%)
+> Hmean     64         564.96 (   0.00%)      534.38 (  -5.41%)
+> Hmean     128       1064.42 (   0.00%)     1010.12 (  -5.10%)
+> Hmean     256       1965.85 (   0.00%)     1879.16 (  -4.41%)
+> Hmean     1024      6839.77 (   0.00%)     6478.70 (  -5.28%)
+> Hmean     2048     11154.80 (   0.00%)    10671.13 (  -4.34%)
+> Hmean     3312     13838.12 (   0.00%)    13249.01 (  -4.26%)
+> Hmean     4096     15009.99 (   0.00%)    14561.36 (  -2.99%)
+> Hmean     8192     18975.57 (   0.00%)    18326.54 (  -3.42%)
+> Hmean     16384    21440.44 (   0.00%)    21324.59 (  -0.54%)
+> Stddev    64           1.24 (   0.00%)        2.85 (-130.64%)
+> Stddev    128          4.51 (   0.00%)        6.53 ( -44.84%)
+> Stddev    256         11.67 (   0.00%)        8.50 (  27.16%)
+> Stddev    1024        48.33 (   0.00%)       75.07 ( -55.34%)
+> Stddev    2048        54.82 (   0.00%)       65.16 ( -18.86%)
+> Stddev    3312       153.57 (   0.00%)       56.29 (  63.35%)
+> Stddev    4096       100.25 (   0.00%)       88.50 (  11.72%)
+> Stddev    8192       358.13 (   0.00%)      169.99 (  52.54%)
+> Stddev    16384       43.99 (   0.00%)      141.82 (-222.39%)
+> 
+> Signed-off-by: Tony Jones <tonyj@suse.de>
+> Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket
+> mediation")
 
-FWIW you should put spaces after the colons.  It's generally a good
-practice to look at the prefix previous authors used for a given piece
-of code with 
+hey Tony,
 
-git log -- $file_path
+thanks for the patch, I am curious did you're investigation look
+into what parts of DEFINE_AUDIT_SK are causing the issue?
 
-This would be a better subject:
+regardless, I have pulled it into apparmor next
 
-nfp: replace spin_lock_bh with spin_lock in tasklet callback
+> ---
+>  security/apparmor/net.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/apparmor/net.c b/security/apparmor/net.c
+> index bb24cfa0a164..d5d72dd1ca1f 100644
+> --- a/security/apparmor/net.c
+> +++ b/security/apparmor/net.c
+> @@ -146,17 +146,20 @@ int aa_af_perm(struct aa_label *label, const char *op, u32 request, u16 family,
+>  static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
+>  			    struct sock *sk)
+>  {
+> -	struct aa_profile *profile;
+> -	DEFINE_AUDIT_SK(sa, op, sk);
+> +	int error = 0;
+>  
+>  	AA_BUG(!label);
+>  	AA_BUG(!sk);
+>  
+> -	if (unconfined(label))
+> -		return 0;
+> +	if (!unconfined(label)) {
+> +		struct aa_profile *profile;
+> +		DEFINE_AUDIT_SK(sa, op, sk);
+>  
+> -	return fn_for_each_confined(label, profile,
+> -			aa_profile_af_sk_perm(profile, &sa, request, sk));
+> +		error = fn_for_each_confined(label, profile,
+> +			    aa_profile_af_sk_perm(profile, &sa, request, sk));
+> +	}
+> +
+> +	return error;
+>  }
+>  
+>  int aa_sk_perm(const char *op, u32 request, struct sock *sk)
+> 
+
