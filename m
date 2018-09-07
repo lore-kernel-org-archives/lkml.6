@@ -2,73 +2,309 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF13EC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BFAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 878EF2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:57:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cf+AORGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878EF2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id EA75B2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA75B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeIGRif (ORCPT
+        id S1729620AbeIGRlE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:38:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56064 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbeIGRif (ORCPT
+        Fri, 7 Sep 2018 13:41:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47338 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729579AbeIGRlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:38:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hoYmGDjNXuRQo5qwI6bo14rhQyUc2nn/VukcE2VS5bI=; b=Cf+AORGdO2/34Z52xM61rBPm+
-        XDvxGuyq3PDbzPC0Qm//z0QT8g/2CwS1PZy1PMAGuQdJvoVCAZnjsuSmFQzS6rr6NEtUmWIqJPyAC
-        lXy2kzO0kfvv1ydGNqj8jVmPRtXg029rJ/B84ggu/4IuJAiVl+9HjjTKQzLmHDNxe6VvBlu6Wu0E5
-        6PEFezIY5YfgtA2XOKenPxOizMUK4X9aBVHK74PQ1G8UTXlqWzYbeI9wBbmrNmgHUB5HVtRT6NSk2
-        r78CqGz6Ps39kTVuc/mD4D1kxfXwtH0QH6A31cZeU9viQKQ05fMNYLaOlxFJu9V+tAIER7KRPWWFJ
-        MqeWBp0ww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fyGKT-00026Y-Fm; Fri, 07 Sep 2018 12:57:41 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2252620210312; Fri,  7 Sep 2018 14:57:40 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 14:57:40 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        dietmar.eggemann@arm.com, jhugo@codeaurora.org
-Subject: Re: [PATCH] sched/fair: fix load_balance redo for null imbalance
-Message-ID: <20180907125740.GJ24142@hirez.programming.kicks-ass.net>
-References: <1536306664-29827-1-git-send-email-vincent.guittot@linaro.org>
- <20180907113748.GV24106@hirez.programming.kicks-ass.net>
- <20180907123551.GA9955@linaro.org>
- <20180907125554.GA24106@hirez.programming.kicks-ass.net>
+        Fri, 7 Sep 2018 13:41:04 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w87CwdSR009161;
+        Fri, 7 Sep 2018 14:59:44 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2macwsnjsh-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 07 Sep 2018 14:59:44 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AF38731;
+        Fri,  7 Sep 2018 12:59:43 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 763502D4D;
+        Fri,  7 Sep 2018 12:59:43 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
+ (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 7 Sep
+ 2018 14:59:42 +0200
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Fri, 7 Sep 2018 14:59:43 +0200
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>
+CC:     Pascal PAILLET-LME <p.paillet@st.com>
+Subject: [PATCH V2 1/8] dt-bindings: mfd: document stpmic1
+Thread-Topic: [PATCH V2 1/8] dt-bindings: mfd: document stpmic1
+Thread-Index: AQHURqqlVqt95q0WBUO0V4GcSphbUQ==
+Date:   Fri, 7 Sep 2018 12:59:43 +0000
+Message-ID: <1536325173-16617-2-git-send-email-p.paillet@st.com>
+References: <1536325173-16617-1-git-send-email-p.paillet@st.com>
+In-Reply-To: <1536325173-16617-1-git-send-email-p.paillet@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907125554.GA24106@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 02:55:54PM +0200, Peter Zijlstra wrote:
-> > Beside this patch, I'm preparing another patch in fix small imbalance to
-> > ensure 1 task per CPU in similar situation but according to the comment above,
-> > we can reach this situation because of tasks priority
-> 
-> Didn't we all hate fix_small_imbalance() ?
+From: pascal paillet <p.paillet@st.com>
 
-That is, all that load_per_task business is complete rubbish in this
-cgroup world.
+stpmic1 is a pmic from STMicroelectronics. The stpmic1 integrates 10
+regulators and 3 switches with various capabilities.
+
+Signed-off-by: pascal paillet <p.paillet@st.com>
+---
+changes in v2:
+* the hardware component has been renamed from stpmu1 to stpmic1 !
+* replace _ with - in properties name
+* fix node names in example
+* remove regulator compatibles in example
+* add st,stpmic1.h to the patch
+
+Rob, I did not change the usage of the properties because it would lead to a lot
+of st properties; for example st,main-control-register would be replaced by:
+  st,power_cycling_on_turn_off
+  st,pwrctrl_enabled
+  st,pwrctrl_active_high
+should I go this way ?
+
+Rob, I did not found the standard property for st,onkey-press-seconds = <10>;
+
+ .../devicetree/bindings/mfd/st,stpmic1.txt         | 137 +++++++++++++++++++++
+ include/dt-bindings/mfd/st,stpmic1.h               |  46 +++++++
+ 2 files changed, 183 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+ create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
+
+diff --git a/Documentation/devicetree/bindings/mfd/st,stpmic1.txt b/Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+new file mode 100644
+index 0000000..9f2c516
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+@@ -0,0 +1,137 @@
++* STMicroelectronics STPMIC1 Power Management IC
++
++Required parent device properties:
++- compatible: "st,stpmic1"
++- reg: the I2C slave address for the stpmic1 chip
++- interrupts-extended: interrupt lines to use: second irq is for wakeup.
++- #interrupt-cells: should be 2.
++- interrupt-controller: describes the STPMIC1 as an interrupt
++  controller (has its own domain). interrupt number are the following:
++	/* Interrupt Register 1 (0x50 for latch) */
++	IT_SWOUT_R=0
++	IT_SWOUT_F=1
++	IT_VBUS_OTG_R=2
++	IT_VBUS_OTG_F=3
++	IT_WAKEUP_R=4
++	IT_WAKEUP_F=5
++	IT_PONKEY_R=6
++	IT_PONKEY_F=7
++	/* Interrupt Register 2 (0x51 for latch) */
++	IT_OVP_BOOST=8
++	IT_OCP_BOOST=9
++	IT_OCP_SWOUT=10
++	IT_OCP_OTG=11
++	IT_CURLIM_BUCK4=12
++	IT_CURLIM_BUCK3=13
++	IT_CURLIM_BUCK2=14
++	IT_CURLIM_BUCK1=15
++	/* Interrupt Register 3 (0x52 for latch) */
++	IT_SHORT_SWOUT=16
++	IT_SHORT_SWOTG=17
++	IT_CURLIM_LDO6=18
++	IT_CURLIM_LDO5=19
++	IT_CURLIM_LDO4=20
++	IT_CURLIM_LDO3=21
++	IT_CURLIM_LDO2=22
++	IT_CURLIM_LDO1=23
++	/* Interrupt Register 3 (0x52 for latch) */
++	IT_SWIN_R=24
++	IT_SWIN_F=25
++	IT_RESERVED_1=26
++	IT_RESERVED_2=27
++	IT_VINLOW_R=28
++	IT_VINLOW_F=29
++	IT_TWARN_R=30
++	IT_TWARN_F=31
++
++Optional parent device properties:
++- st,main-control-register:
++	-bit 1: Power cycling will be performed on turn OFF condition
++	-bit 2: PWRCTRL is functional
++	-bit 3: PWRCTRL active high
++- st,pads-pull-register:
++	-bit 1: WAKEUP pull down is not active
++	-bit 2: PWRCTRL pull up is active
++	-bit 3: PWRCTRL pull down is active
++	-bit 4: WAKEUP detector is disabled
++- st,vin-control-register:
++	-bit 0: VINLOW monitoring is enabled
++	-bit [1...3]: VINLOW rising threshold
++		000 VINOK_f + 50mV
++		001 VINOK_f + 100mV
++		010 VINOK_f + 150mV
++		011 VINOK_f + 200mV
++		100 VINOK_f + 250mV
++		101 VINOK_f + 300mV
++		110 VINOK_f + 350mV
++		111 VINOK_f + 400mV
++	-bit [4...5]: VINLOW hyst
++		00 100mV
++		01 200mV
++		10 300mV
++		11 400mV
++	-bit 6: SW_OUT detector is disabled
++	-bit 7: SW_IN detector is enabled.
++- st,usb-control-register:
++	-bit 3: SW_OUT current limit
++		0: 600mA
++		1: 1.1A
++	-bit 4: VBUS_OTG discharge is enabled
++	-bit 5: SW_OUT discharge is enabled
++	-bit 6: VBUS_OTG detection is enabled
++	-bit 7: BOOST_OVP is disabled
++
++
++stpmic1 consists is a varied group of sub-devices:
++
++Device			 Description
++------			------------
++st,stpmic1-onkey		: On key
++st,stpmic1-regulators	: Regulators
++st,stpmic1-wdt		: Watchdog
++
++each sub-device bindings is be described in associated driver
++documentation section.
++
++Example:
++
++pmic: stpmic1@33 {
++	compatible = "st,stpmic1";
++	reg = <0x33>;
++	interrupts = <0 2>;
++	interrupts-extended = <&intc GIC_SPI 149 IRQ_TYPE_NONE>,
++			      <&exti 55 1>;
++	st,version_status = <0x10>;
++	st,main-control-register=<0x0c>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	onkey {
++		compatible = "st,stpmic1-onkey";
++		interrupt-parent = <&pmic>;
++		interrupts = <IT_PONKEY_F 0>,<IT_PONKEY_R 1>;
++		interrupt-names = "onkey-falling", "onkey-rising";
++		st,onkey-pwroff-enabled;
++		st,onkey-long-press-seconds = <10>;
++	};
++
++	watchdog {
++		compatible = "st,stpmic1-wdt";
++	};
++
++	regulators {
++		compatible = "st,stpmic1-regulators";
++
++		vdd_core: buck1 {
++			regulator-name = "vdd_core";
++			regulator-boot-on;
++			regulator-min-microvolt = <700000>;
++			regulator-max-microvolt = <1200000>;
++		};
++		vdd: buck3 {
++			regulator-name = "vdd";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++			regulator-pull-down;
++		};
++	};
+diff --git a/include/dt-bindings/mfd/st,stpmic1.h b/include/dt-bindings/mfd/st,stpmic1.h
+new file mode 100644
+index 0000000..e32ac8f
+--- /dev/null
++++ b/include/dt-bindings/mfd/st,stpmic1.h
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
++ * Author: Philippe Peurichard <philippe.peurichard@st.com>,
++ * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
++ */
++
++#ifndef __DT_BINDINGS_STPMIC1_H__
++#define __DT_BINDINGS_STPMIC1_H__
++
++/* IRQ definitions */
++#define IT_PONKEY_F 0
++#define IT_PONKEY_R 1
++#define IT_WAKEUP_F 2
++#define IT_WAKEUP_R 3
++#define IT_VBUS_OTG_F 4
++#define IT_VBUS_OTG_R 5
++#define IT_SWOUT_F 6
++#define IT_SWOUT_R 7
++
++#define IT_CURLIM_BUCK1 8
++#define IT_CURLIM_BUCK2 9
++#define IT_CURLIM_BUCK3 10
++#define IT_CURLIM_BUCK4 11
++#define IT_OCP_OTG 12
++#define IT_OCP_SWOUT 13
++#define IT_OCP_BOOST 14
++#define IT_OVP_BOOST 15
++
++#define IT_CURLIM_LDO1 16
++#define IT_CURLIM_LDO2 17
++#define IT_CURLIM_LDO3 18
++#define IT_CURLIM_LDO4 19
++#define IT_CURLIM_LDO5 20
++#define IT_CURLIM_LDO6 21
++#define IT_SHORT_SWOTG 22
++#define IT_SHORT_SWOUT 23
++
++#define IT_TWARN_F 24
++#define IT_TWARN_R 25
++#define IT_VINLOW_F 26
++#define IT_VINLOW_R 27
++#define IT_SWIN_F 30
++#define IT_SWIN_R 31
++
++#endif /* __DT_BINDINGS_STPMIC1_H__ */
+-- 
+1.9.1
