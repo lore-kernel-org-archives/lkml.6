@@ -6,80 +6,116 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D910C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95540C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31B92075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:43:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31B92075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 47FF42075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FF42075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbeIGSYr (ORCPT
+        id S1729662AbeIGSZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:24:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:60610 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728481AbeIGSYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:24:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8138F7A9;
-        Fri,  7 Sep 2018 06:43:45 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 517D83F575;
-        Fri,  7 Sep 2018 06:43:45 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 754C11AE37BD; Fri,  7 Sep 2018 14:44:00 +0100 (BST)
-Date:   Fri, 7 Sep 2018 14:44:00 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, jannh@google.com, ascannell@google.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] mm: move tlb_table_flush to tlb_flush_mmu_free
-Message-ID: <20180907134359.GA12187@arm.com>
-References: <20180823084709.19717-1-npiggin@gmail.com>
- <20180823084709.19717-2-npiggin@gmail.com>
- <fa7c625dfbbe103b37bc3ab5ea4b7283fd13b998.camel@surriel.com>
+        Fri, 7 Sep 2018 14:25:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726598AbeIGSZj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:25:39 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w87DiYcx094422
+        for <linux-kernel@vger.kernel.org>; Fri, 7 Sep 2018 09:44:36 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mbrb5wjrp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:44:36 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 7 Sep 2018 14:44:28 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Sep 2018 14:44:24 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w87DiNTC30736496
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Sep 2018 13:44:23 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAF02AE058;
+        Fri,  7 Sep 2018 16:43:43 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4D11FAE051;
+        Fri,  7 Sep 2018 16:43:42 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.199.46.141])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Fri,  7 Sep 2018 16:43:41 +0100 (BST)
+Date:   Fri, 7 Sep 2018 19:14:20 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jirka Hladky <jhladky@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jakub Ra??ek <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kkolakow@redhat.com" <kkolakow@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [SCHEDULER] Performance drop in 4.19 compared to 4.18 kernel
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <CAE4VaGC+FcE4cTUwzTLuCRd8rnd-=MhSZHfjKstiRTKcYq-39g@mail.gmail.com>
+ <20180907125649.GA3995@linux.vnet.ibm.com>
+ <20180907131923.GB24106@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <fa7c625dfbbe103b37bc3ab5ea4b7283fd13b998.camel@surriel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180907131923.GB24106@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18090713-0020-0000-0000-000002C2BF06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18090713-0021-0000-0000-0000210FFC85
+Message-Id: <20180907134420.GD3995@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809070140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 04:29:59PM -0400, Rik van Riel wrote:
-> On Thu, 2018-08-23 at 18:47 +1000, Nicholas Piggin wrote:
-> > There is no need to call this from tlb_flush_mmu_tlbonly, it
-> > logically belongs with tlb_flush_mmu_free. This allows some
-> > code consolidation with a subsequent fix.
+* Peter Zijlstra <peterz@infradead.org> [2018-09-07 15:19:23]:
+
+> On Fri, Sep 07, 2018 at 06:26:49PM +0530, Srikar Dronamraju wrote:
+> 
+> > Can you please pick
 > > 
-> > Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+> > 
+> > 1. 69bb3230297e881c797bbc4b3dbf73514078bc9d sched/numa: Stop multiple tasks
+> > from moving to the cpu at the same time
+> > 2. dc62cfdac5e5b7a61cd8a2bd4190e80b9bb408fc sched/numa: Avoid task migration
+> > for small numa improvement
+> > 3. 76e18a67cdd9e3609716c8a074c03168734736f9 sched/numa: Pass destination cpu as
+> > a parameter to migrate_task_rq
+> > 4.  489c19b440ebdbabffe530b9a41389d0a8b315d9 sched/numa: Reset scan rate
+> > whenever task moves across nodes
+> > 5.  b7e9ae1ae3825f35cd0f38f1f0c8e91ea145bc30 sched/numa: Limit the
+> > conditions where scan period is reset
+> > 
+> > from https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/kernel/sched
 > 
-> Reviewed-by: Rik van Riel <riel@surriel.com>
+> That is not a stable tree; the whole thing is re-generated from my quilt
+> set every time I feel like it.
 > 
-> This patch also fixes an infinite recursion bug
-> with CONFIG_HAVE_RCU_TABLE_FREE enabled, which
-> has this call trace:
+> It is likely those commit ids will no longer exist in a few hours.
 > 
-> tlb_table_flush
->   -> tlb_table_invalidate
->      -> tlb_flush_mmu_tlbonly
->         -> tlb_table_flush
->            -> ... (infinite recursion)
-> 
-> This should probably be applied sooner rather than
-> later.
 
-It's already in mainline with a cc stable afaict.
+Okay, I will forward the relevant mails to Jirka.
 
-Will
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
