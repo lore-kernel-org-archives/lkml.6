@@ -2,252 +2,150 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF77C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B0BC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8792086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93442075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:33:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pdYupuzs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8792086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=invisiblethingslab.com
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="qJkxx708"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93442075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbeIGUNp (ORCPT
+        id S1730248AbeIGUOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:13:45 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:55207 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727993AbeIGUNo (ORCPT
+        Fri, 7 Sep 2018 16:14:38 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42233 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbeIGUOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:13:44 -0400
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.west.internal (Postfix) with ESMTP id 802903F2;
-        Fri,  7 Sep 2018 11:32:17 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Fri, 07 Sep 2018 11:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=NMk6PXoQUKoQYta4lntG2iWYQxHrW
-        v0r3tp30o9uqpY=; b=pdYupuzsuC4pRdy9NxGFJ0JKRIMk0xSNZpUn4X8oupDvR
-        IQAd+KaPSFV1U0slHYXUMmImYfgSKSxUw0c1cD3FOtE3Dyqew/duSC6ElXjxOzMk
-        tZYvPvqgCO/PsbS/hqoS3sRrH6yhh/jkQHhQZhyRp/+8brpTJbIrMSIxj8cv7OE3
-        hyLOG4lBUUglNL1GUvPau7FH1cDZBsRoV5IuIGGlqdX6rUNkJY0Yl29vzfAXnY/J
-        kJKFLDuqNMjDse85HDgHph9x/adEN0pMA4ff/Ik4z3nSx2if4pakovx/i3jzSo2g
-        wBCvSNc6GoxKh4A8x2gY+SQ+/hdzlD41IV2hRYezA==
-X-ME-Proxy: <xmx:AJqSWxtRjC6IWYn7R5aFb-oSLSaSFNhk16Sn3nfL6SgT6mx7mH_utg>
-    <xmx:AJqSW_pYvzl4YDiyOURpd8vokEW9K05lK3HYCJWZzoM2pomqDY-rzw>
-    <xmx:AJqSW1p8mTOdm9r9s9dwgtf_JCVpTE_bl7MMcZl0bIwgleDiOE9PNA>
-    <xmx:AJqSW-Yezg_Xt8Zh4dWIUWuTi4Rnzkjjr6SciG4M1UKN-hUP48MrvQ>
-    <xmx:AJqSWz-sQQ0HLu8JqwCR9hddcnCBhymhlfXFdRyQK7dPzB2IKybjrA>
-    <xmx:AZqSW2OHC64A8qs0voD_EoUdXQkCO-rrnpFR-WTzmrtv9bzZqgayRg>
-X-ME-Sender: <xms:AJqSW40imRM4VyFj1lypubOUPmUSR566dmbP1WxkoFQ88mC1rMzv6Q>
-Received: from localhost.localdomain (ip5b40bfaa.dynamic.kabel-deutschland.de [91.64.191.170])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D58BA10292;
-        Fri,  7 Sep 2018 11:32:13 -0400 (EDT)
-From:   =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>
-To:     xen-devel@lists.xenproject.org
-Cc:     =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION)
-Subject: [PATCH v2] xen/balloon: add runtime control for scrubbing ballooned out pages
-Date:   Fri,  7 Sep 2018 17:31:14 +0200
-Message-Id: <20180907153117.17258-1-marmarek@invisiblethingslab.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 7 Sep 2018 16:14:38 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z11-v6so12360196lff.9
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 08:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oQ7tOSQmSo0LW4X37FAdoAzEWGq6wkKIGNpN4dGVPoA=;
+        b=qJkxx708kKhBJZr+Rrsn+RsaoyGhNNT2iKO5I+Ox8/Za92YTOZTJj8Oo7+uictHFFz
+         DXQIV9uCXXe+8hRV9BgFNiI/rtjNnuAqqdACsGhTRewL6sEz04StWOJMyrHUqEbkctFl
+         QEIbmwK17mR1s3Uqdll+EF1Y+0DTpwsib+MmeJYju24XgRPgujc4cQ37df4PvTrEi7eE
+         ssF90qThw0TtH8m4Jgw6Y4mSjewANkCLkMojQ9VhoEo/OP1Zm8LzeY8YCZLbnWZSl/48
+         ugfhF+Fq3n+l8lHsTgGI7QfYN857hoEcNDbFjlPeq7Ix8H9vlyh++o/iohMxFTm84DCk
+         f3TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=oQ7tOSQmSo0LW4X37FAdoAzEWGq6wkKIGNpN4dGVPoA=;
+        b=V3IYrYbxUPumW7jMspbO4DUgYxdsU/CZkw8eQmtUf7nYAXRn0c3erGUrcvNkK8SBj7
+         uVqUX7EQjPMwfu7pylVLNbDXq0sPDjoakbfGPak5IHlvaOmzbkw9FcdUKiPzlHUWxz5k
+         mieVoZsQwpulbjLKMvrdP49skOkaQLL9wpZEHkKgZC1T9qBwQAA2nfSSx1KhIQ971edm
+         VXsp7Ur6tREeXshzQdOLbTZDTaCbmfoFc2buh4hKSShf3uUU42OXY1hnR0SO1HFHwKgC
+         SvikiI+muMYXj3FrU6iaNFrfV//BnfLvtyfLM6zO/aWLjonwGijRB0w5TF6twiK0a4NG
+         FSjw==
+X-Gm-Message-State: APzg51B+oGGRj7WyE8/7n/W8VhX+i7Qs4YVgYVg9J3Y/wspzYYno8TIU
+        TGGqIgWa7pW1hbR5kOwZUhyD+ondKoI=
+X-Google-Smtp-Source: ANB0VdaH3hFoaKeJGVQPGIjR4uoWc158EN9EwfNQlBozuO85ES6vcOmeHJYDQSyLsmv33p9gLJVXMw==
+X-Received: by 2002:a19:c016:: with SMTP id q22-v6mr5274926lff.8.1536334390667;
+        Fri, 07 Sep 2018 08:33:10 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.85.58])
+        by smtp.gmail.com with ESMTPSA id d16-v6sm1325268lfa.42.2018.09.07.08.33.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 08:33:09 -0700 (PDT)
+Subject: Re: [PATCH v3 2/2] net: ethernet: i40evf: fix underlying build error
+To:     Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
+        jeffrey.t.kirsher@intel.com
+Cc:     jacob.e.keller@intel.com, davem@davemloft.net,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1536319175-3660-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+ <1536319175-3660-3-git-send-email-dongsheng.wang@hxt-semitech.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <59fd149c-bacc-c39c-b0d8-a4fb9366f26a@cogentembedded.com>
+Date:   Fri, 7 Sep 2018 18:33:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Organization: Invisible Things Lab
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1536319175-3660-3-git-send-email-dongsheng.wang@hxt-semitech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Scrubbing pages on initial balloon down can take some time, especially
-in nested virtualization case (nested EPT is slow). When HVM/PVH guest is
-started with memory= significantly lower than maxmem=, all the extra
-pages will be scrubbed before returning to Xen. But since most of them
-weren't used at all at that point, Xen needs to populate them first
-(from populate-on-demand pool). In nested virt case (Xen inside KVM)
-this slows down the guest boot by 15-30s with just 1.5GB needed to be
-returned to Xen.
+On 09/07/2018 02:19 PM, Wang Dongsheng wrote:
 
-Add runtime parameter to enable/disable it, to allow initially disabling
-scrubbing, then enable it back during boot (for example in initramfs).
-Such usage relies on assumption that a) most pages ballooned out during
-initial boot weren't used at all, and b) even if they were, very few
-secrets are in the guest at that time (before any serious userspace
-kicks in).
-Convert CONFIG_XEN_SCRUB_PAGES to CONFIG_XEN_SCRUB_PAGES_DEFAULT (also
-enabled by default), controlling default value for the new runtime
-switch.
+> Can't have non-inline function in a header file.
+> There is a risk of "Multiple definition" from cross-including.
+> 
+> Tested on: x86_64, make ARCH=i386
+> 
+> Modules section .text:
+> i40e: 00019380 <__i40e_add_stat_strings>:
+> i40evf: 00006b00 <__i40e_add_stat_strings>:
+> 
+> Buildin section .text:
+> i40e: c351ca60 <__i40e_add_stat_strings>:
+> i40evf: c354f2c0 <__i40e_add_stat_strings>:
+> 
+> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+> ---
+> V3: add static 
+> ---
+>  .../intel/i40evf/i40e_ethtool_stats.h         | 23 +-----------------
+>  .../ethernet/intel/i40evf/i40evf_ethtool.c    | 24 +++++++++++++++++++
+>  2 files changed, 25 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
+> index 60b595dd8c39..62ab67a77753 100644
+> --- a/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
+> +++ b/drivers/net/ethernet/intel/i40evf/i40e_ethtool_stats.h
+> @@ -181,29 +181,8 @@ i40evf_add_queue_stats(u64 **data, struct i40e_ring *ring)
+>  	*data += size;
+>  }
+>  
+> -/**
+> - * __i40e_add_stat_strings - copy stat strings into ethtool buffer
+> - * @p: ethtool supplied buffer
+> - * @stats: stat definitions array
+> - * @size: size of the stats array
+> - *
+> - * Format and copy the strings described by stats into the buffer pointed at
+> - * by p.
+> - **/
+>  static void __i40e_add_stat_strings(u8 **p, const struct i40e_stats stats[],
 
-Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+   There's no point to keeping *static* function in the header file (unless it's
+also *inline*).
 
----
-Changes in v2:
- - move sysfs control to /sys/devices/system/xen_memory
- - use core_param() to avoid confusing prefix for the option name
- - document option
- - change CONFIG_XEN_SCRUB_PAGES to CONFIG_XEN_SCRUB_PAGES_DEFAULT,
- controlling only the default value for the runtime option
----
- .../ABI/stable/sysfs-devices-system-xen_memory         |  9 +++++++++
- Documentation/admin-guide/kernel-parameters.txt        |  6 ++++++
- drivers/xen/Kconfig                                    | 10 +++++++---
- drivers/xen/mem-reservation.c                          |  8 ++++++++
- drivers/xen/xen-balloon.c                              |  3 +++
- include/xen/mem-reservation.h                          |  7 ++++---
- 6 files changed, 37 insertions(+), 6 deletions(-)
+> -				    const unsigned int size, ...)
+> -{
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < size; i++) {
+> -		va_list args;
+> -
+> -		va_start(args, size);
+> -		vsnprintf(*p, ETH_GSTRING_LEN, stats[i].stat_string, args);
+> -		*p += ETH_GSTRING_LEN;
+> -		va_end(args);
+> -	}
+> -}
+> +				    const unsigned int size, ...);
+>  
+>  /**
+>   * 40e_add_stat_strings - copy stat strings into ethtool buffer
+[...]
 
-diff --git a/Documentation/ABI/stable/sysfs-devices-system-xen_memory b/Documentation/ABI/stable/sysfs-devices-system-xen_memory
-index caa311d59ac1..6d83f95a8a8e 100644
---- a/Documentation/ABI/stable/sysfs-devices-system-xen_memory
-+++ b/Documentation/ABI/stable/sysfs-devices-system-xen_memory
-@@ -75,3 +75,12 @@ Contact:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
- Description:
- 		Amount (in KiB) of low (or normal) memory in the
- 		balloon.
-+
-+What:		/sys/devices/system/xen_memory/xen_memory0/scrub_pages
-+Date:		September 2018
-+KernelVersion:	4.20
-+Contact:	xen-devel@lists.xenproject.org
-+Description:
-+		Control scrubbing pages before returning them to Xen for others domains
-+		use. Can be set with xen_scrub_pages cmdline
-+		parameter. Default value controlled with CONFIG_XEN_SCRUB_PAGES_DEFAULT.
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9871e649ffef..0f20282629de 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4994,6 +4994,12 @@
- 			Disables the PV optimizations forcing the HVM guest to
- 			run as generic HVM guest with no PV drivers.
- 
-+	xen_scrub_pages=	[XEN]
-+			Boolean option to control scrubbing pages before giving them back
-+			to Xen, for use by other domains. Can be also changed at runtime
-+			with /sys/devices/system/xen_memory/xen_memory0/scrub_pages.
-+			Default value controlled with CONFIG_XEN_SCRUB_PAGES_DEFAULT.
-+
- 	xirc2ps_cs=	[NET,PCMCIA]
- 			Format:
- 			<irq>,<irq_mask>,<io>,<full_duplex>,<do_sound>,<lockup_hack>[,<irq2>[,<irq3>[,<irq4>]]]
-diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
-index b459edfacff3..90d387b50ab7 100644
---- a/drivers/xen/Kconfig
-+++ b/drivers/xen/Kconfig
-@@ -79,15 +79,19 @@ config XEN_BALLOON_MEMORY_HOTPLUG_LIMIT
- 	  This value is used to allocate enough space in internal
- 	  tables needed for physical memory administration.
- 
--config XEN_SCRUB_PAGES
--	bool "Scrub pages before returning them to system"
-+config XEN_SCRUB_PAGES_DEFAULT
-+	bool "Scrub pages before returning them to system by default"
- 	depends on XEN_BALLOON
- 	default y
- 	help
- 	  Scrub pages before returning them to the system for reuse by
- 	  other domains.  This makes sure that any confidential data
- 	  is not accidentally visible to other domains.  Is it more
--	  secure, but slightly less efficient.
-+	  secure, but slightly less efficient. This can be controlled with
-+	  xen_scrub_pages=0 parameter and
-+	  /sys/devices/system/xen_memory/xen_memory0/scrub_pages.
-+	  This option only sets the default value.
-+
- 	  If in doubt, say yes.
- 
- config XEN_DEV_EVTCHN
-diff --git a/drivers/xen/mem-reservation.c b/drivers/xen/mem-reservation.c
-index 084799c6180e..14276e2d76fe 100644
---- a/drivers/xen/mem-reservation.c
-+++ b/drivers/xen/mem-reservation.c
-@@ -14,6 +14,14 @@
- 
- #include <xen/interface/memory.h>
- #include <xen/mem-reservation.h>
-+#include <linux/moduleparam.h>
-+
-+#ifdef CONFIG_XEN_SCRUB_PAGES_DEFAULT
-+bool __read_mostly xen_scrub_pages = true;
-+#else
-+bool __read_mostly xen_scrub_pages = false;
-+#endif
-+core_param(xen_scrub_pages, xen_scrub_pages, bool, 0);
- 
- /*
-  * Use one extent per PAGE_SIZE to avoid to break down the page into
-diff --git a/drivers/xen/xen-balloon.c b/drivers/xen/xen-balloon.c
-index 294f35ce9e46..63c1494a8d73 100644
---- a/drivers/xen/xen-balloon.c
-+++ b/drivers/xen/xen-balloon.c
-@@ -44,6 +44,7 @@
- #include <xen/xenbus.h>
- #include <xen/features.h>
- #include <xen/page.h>
-+#include <xen/mem-reservation.h>
- 
- #define PAGES2KB(_p) ((_p)<<(PAGE_SHIFT-10))
- 
-@@ -137,6 +138,7 @@ static DEVICE_ULONG_ATTR(schedule_delay, 0444, balloon_stats.schedule_delay);
- static DEVICE_ULONG_ATTR(max_schedule_delay, 0644, balloon_stats.max_schedule_delay);
- static DEVICE_ULONG_ATTR(retry_count, 0444, balloon_stats.retry_count);
- static DEVICE_ULONG_ATTR(max_retry_count, 0644, balloon_stats.max_retry_count);
-+static DEVICE_BOOL_ATTR(scrub_pages, 0644, xen_scrub_pages);
- 
- static ssize_t show_target_kb(struct device *dev, struct device_attribute *attr,
- 			      char *buf)
-@@ -203,6 +205,7 @@ static struct attribute *balloon_attrs[] = {
- 	&dev_attr_max_schedule_delay.attr.attr,
- 	&dev_attr_retry_count.attr.attr,
- 	&dev_attr_max_retry_count.attr.attr,
-+	&dev_attr_scrub_pages.attr.attr,
- 	NULL
- };
- 
-diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
-index 80b52b4945e9..a2ab516fcd2c 100644
---- a/include/xen/mem-reservation.h
-+++ b/include/xen/mem-reservation.h
-@@ -17,11 +17,12 @@
- 
- #include <xen/page.h>
- 
-+extern bool xen_scrub_pages;
-+
- static inline void xenmem_reservation_scrub_page(struct page *page)
- {
--#ifdef CONFIG_XEN_SCRUB_PAGES
--	clear_highpage(page);
--#endif
-+	if (xen_scrub_pages)
-+		clear_highpage(page);
- }
- 
- #ifdef CONFIG_XEN_HAVE_PVMMU
--- 
-2.17.1
-
+MBR, Sergei
