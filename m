@@ -6,104 +6,122 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539CBC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8411FC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEBC20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:02:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CEBC20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 362292075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:04:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 362292075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeIHBol (ORCPT
+        id S1727534AbeIHBrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:44:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39240 "EHLO mail.kernel.org"
+        Fri, 7 Sep 2018 21:47:35 -0400
+Received: from mga04.intel.com ([192.55.52.120]:53670 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726681AbeIHBmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:42:13 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22BCB20855;
-        Fri,  7 Sep 2018 20:59:31 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1fyNqk-0001iL-5O; Fri, 07 Sep 2018 16:59:30 -0400
-Message-Id: <20180907205930.057848815@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:58:59 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com
-Subject: [PATCH RT 02/24] locallock: provide {get,put}_locked_ptr() variants
-References: <20180907205857.262840394@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+        id S1725999AbeIHBrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 21:47:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 14:04:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
+   d="scan'208";a="68392367"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.20])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Sep 2018 14:04:40 -0700
+Message-ID: <1536354280.11460.28.camel@intel.com>
+Subject: Re: [RFC][PATCH 5/8] x86/mm: fix exception table comments
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, tglx@linutronix.de, x86@kernel.org,
+        luto@kernel.org
+Date:   Fri, 07 Sep 2018 14:04:40 -0700
+In-Reply-To: <20180907194900.DF3B41C0@viggo.jf.intel.com>
+References: <20180907194852.3C351B82@viggo.jf.intel.com>
+         <20180907194900.DF3B41C0@viggo.jf.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14.63-rt41-rc2 stable review patch.
-If anyone has any objections, please let me know.
+On Fri, 2018-09-07 at 12:49 -0700, Dave Hansen wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> The comments here are wrong.  They are too absolute about where
+> faults can occur when running in the kernel.  The comments are
+> also a bit hard to match up with the code.
+> 
+> Trim down the comments, and make them more precise.
+> 
+> Also add a comment explaining why we are doing the
+> bad_area_nosemaphore() path here.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: x86@kernel.org
+> Cc: Andy Lutomirski <luto@kernel.org>
+> ---
+> 
+>  b/arch/x86/mm/fault.c |   27 ++++++++++++++-------------
+>  1 file changed, 14 insertions(+), 13 deletions(-)
+> 
+> diff -puN arch/x86/mm/fault.c~pkeys-fault-warnings-03 arch/x86/mm/fault.c
+> --- a/arch/x86/mm/fault.c~pkeys-fault-warnings-03	2018-09-07 11:21:47.696751898 -0700
+> +++ b/arch/x86/mm/fault.c	2018-09-07 11:21:47.700751898 -0700
+> @@ -1349,24 +1349,25 @@ void do_user_addr_space_fault(struct pt_
+>  		flags |= FAULT_FLAG_INSTRUCTION;
+>  
+>  	/*
+> -	 * When running in the kernel we expect faults to occur only to
+> -	 * addresses in user space.  All other faults represent errors in
+> -	 * the kernel and should generate an OOPS.  Unfortunately, in the
+> -	 * case of an erroneous fault occurring in a code path which already
+> -	 * holds mmap_sem we will deadlock attempting to validate the fault
+> -	 * against the address space.  Luckily the kernel only validly
+> -	 * references user space from well defined areas of code, which are
+> -	 * listed in the exceptions table.
+> +	 * Kernel-mode access to the user address space should only occur
+> +	 * inside well-defined areas of code listed in the exception
+> +	 * tables.  But, an erroneous kernel fault occurring outside one of
+> +	 * those areas which also holds mmap_sem might deadlock attempting
+> +	 * to validate the fault against the address space.
+>  	 *
+> -	 * As the vast majority of faults will be valid we will only perform
+> -	 * the source reference check when there is a possibility of a
+> -	 * deadlock. Attempt to lock the address space, if we cannot we then
+> -	 * validate the source. If this is invalid we can skip the address
+> -	 * space check, thus avoiding the deadlock:
+> +	 * Only do the expensive exception table search when we might be at
+> +	 * risk of a deadlock:
+> +	 * 1. We failed to acquire mmap_sem, and
+> +	 * 2. The access was an explicit kernel-mode access
+> +	 *    (X86_PF_USER=0).
 
-------------------
+Might be worth reminding the reader that X86_PF_USER will be set in
+sw_error_code for implicit accesses.  I saw "explicit" and my mind
+immediately jumped to hw_error_code for whatever reason.  E.g.:
 
-From: Julia Cartwright <julia@ni.com>
+	* 2. The access was an explicit kernel-mode access (we set X86_PF_USER
+	*    in sw_error_code for implicit kernel-mode accesses).
 
-[ Upstream commit 3d45cf23db4f76cd356ebb0aa4cdaa7d92d1a64e ]
-
-Provide a set of locallocked accessors for pointers to per-CPU data;
-this is useful for dynamically-allocated per-CPU regions, for example.
-
-These are symmetric with the {get,put}_cpu_ptr() per-CPU accessor
-variants.
-
-Signed-off-by: Julia Cartwright <julia@ni.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- include/linux/locallock.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/include/linux/locallock.h b/include/linux/locallock.h
-index d658c2552601..921eab83cd34 100644
---- a/include/linux/locallock.h
-+++ b/include/linux/locallock.h
-@@ -222,6 +222,14 @@ static inline int __local_unlock_irqrestore(struct local_irq_lock *lv,
- 
- #define put_locked_var(lvar, var)	local_unlock(lvar);
- 
-+#define get_locked_ptr(lvar, var)					\
-+	({								\
-+		local_lock(lvar);					\
-+		this_cpu_ptr(var);					\
-+	})
-+
-+#define put_locked_ptr(lvar, var)	local_unlock(lvar);
-+
- #define local_lock_cpu(lvar)						\
- 	({								\
- 		local_lock(lvar);					\
-@@ -262,6 +270,8 @@ static inline void local_irq_lock_init(int lvar) { }
- 
- #define get_locked_var(lvar, var)		get_cpu_var(var)
- #define put_locked_var(lvar, var)		put_cpu_var(var)
-+#define get_locked_ptr(lvar, var)		get_cpu_ptr(var)
-+#define put_locked_ptr(lvar, var)		put_cpu_ptr(var)
- 
- #define local_lock_cpu(lvar)			get_cpu()
- #define local_unlock_cpu(lvar)			put_cpu()
--- 
-2.18.0
-
-
+>  	 */
+>  	if (unlikely(!down_read_trylock(&mm->mmap_sem))) {
+>  		if (!(sw_error_code & X86_PF_USER) &&
+>  		    !search_exception_tables(regs->ip)) {
+> +			/*
+> +			 * Fault from code in kernel from
+> +			 * which we do not expect faults.
+> +			 */
+>  			bad_area_nosemaphore(regs, sw_error_code, address, NULL);
+>  			return;
+>  		}
+> _
