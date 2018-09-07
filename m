@@ -2,112 +2,247 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FE0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171D2C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286C020645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:29:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0SUTw9D9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286C020645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BF1BA20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:29:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1BA20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeIHBLx (ORCPT
+        id S1727368AbeIHBLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:11:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeIHBLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:11:52 -0400
-Received: from mail-qt0-f181.google.com (mail-qt0-f181.google.com [209.85.216.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 7 Sep 2018 21:11:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45424 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726032AbeIHBLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 21:11:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC8B220879;
-        Fri,  7 Sep 2018 20:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536352156;
-        bh=qaTN1sLAoeF2hUo9r8Pc8zfcetm74aPR5ccLPi03ij0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0SUTw9D9BeFNMT5o0w5IOq9Qq4GPH8asGBAGCSdLD+82/wgI21oSiel29VgRO7o9r
-         TFsXjXPpeSVNZrPUwwtffzR4uEBF6N0e3nhzggKjy3fb8AcNX6hRW8HnqH2TTyaKpG
-         TuG9BaZggjEc1PCQ62qDD99KtyTZXb6C7kT18FJg=
-Received: by mail-qt0-f181.google.com with SMTP id g44-v6so17556776qtb.12;
-        Fri, 07 Sep 2018 13:29:15 -0700 (PDT)
-X-Gm-Message-State: APzg51BB2CPqYNI69FvNjicNMdBlrAAc8hgHBvBCJbP8zHVCcNwv0c7R
-        CZP/MB1I9OECtTcNQ4zAt9BUh2AaSbas2M5Qbw==
-X-Google-Smtp-Source: ANB0Vdab3hT61u1M8M/lHOL0mWGQ/USdGai/hWOrTMd+yeGvnL96ZvpFeSxppjPt10TdKLI1ogg9PQzqaJMzE9dHMxc=
-X-Received: by 2002:a0c:db87:: with SMTP id m7-v6mr7110948qvk.90.1536352155200;
- Fri, 07 Sep 2018 13:29:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180907185414.2630-1-paul.burton@mips.com>
-In-Reply-To: <20180907185414.2630-1-paul.burton@mips.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 7 Sep 2018 15:29:03 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+n4e5_ptuh89CJibViGS_bgHz0A+Ki-uwtcGU38+mHXQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+n4e5_ptuh89CJibViGS_bgHz0A+Ki-uwtcGU38+mHXQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] of/fdt: Allow architectures to override
- CONFIG_CMDLINE logic
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Linux-MIPS <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
-        Jaedon Shin <jaedon.shin@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 4C30E4B765;
+        Fri,  7 Sep 2018 20:29:12 +0000 (UTC)
+Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF9822027EB7;
+        Fri,  7 Sep 2018 20:29:11 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v9 3/4] ipc: Allow boot time extension of IPCMNI from 32k to 8M
+Date:   Fri,  7 Sep 2018 16:28:56 -0400
+Message-Id: <1536352137-12003-4-git-send-email-longman@redhat.com>
+In-Reply-To: <1536352137-12003-1-git-send-email-longman@redhat.com>
+References: <1536352137-12003-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 07 Sep 2018 20:29:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 07 Sep 2018 20:29:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 1:55 PM Paul Burton <paul.burton@mips.com> wrote:
->
-> The CONFIG_CMDLINE-related logic in early_init_dt_scan_chosen() falls
-> back to copying CONFIG_CMDLINE into boot_command_line/data if the DT has
-> a /chosen node but that node has no bootargs property or a bootargs
-> property of length zero.
+The maximum number of unique System V IPC identifiers was limited to
+32k.  That limit should be big enough for most use cases.
 
-The Risc-V guys found a similar issue if chosen is missing[1]. I
-started a patch[2] to address that, but then looking at the different
-arches wasn't sure if I'd break something. I don't recall for sure,
-but it may have been MIPS that worried me.
+However, there are some users out there requesting for more, especially
+those that are migrating from Solaris which uses 24 bits for unique
+identifiers. To satisfy the need of those users, a new boot time kernel
+option "ipcmni_extend" is added to extend the IPCMNI value to 8M. This
+is a 256X increase which hopefully is big enough for them.
 
-> This is problematic for the MIPS architecture because we support
-> concatenating arguments from either the DT or the bootloader with those
-> from CONFIG_CMDLINE, but the behaviour of early_init_dt_scan_chosen()
-> gives us no way of knowing whether boot_command_line contains arguments
-> from DT or already contains CONFIG_CMDLINE. This can lead to us
-> concatenating CONFIG_CMDLINE with itself, duplicating command line
-> arguments which can be problematic (eg. for earlycon which will attempt
-> to register the same console twice & warn about it).
+The use of this new option will change the pattern of the IPC identifiers
+returned by functions like shmget(2). An application that depends on
+such pattern may not work properly.  So it should only be used if the
+users really need more than 32k of unique IPC numbers.
 
-If CONFIG_CMDLINE_EXTEND is set, you know it contains CONFIG_CMDLINE.
-But I guess part of the problem is MIPS using its own kconfig options.
+This new option does have the side effect of reducing the maximum number
+of unique sequence numbers from 64k down to 256. So it is a trade-off.
 
-> Move the CONFIG_CMDLINE-related logic to a weak function that
-> architectures can provide their own version of, such that we continue to
-> use the existing logic for architectures where it's suitable but also
-> allow MIPS to override this behaviour such that the architecture code
-> knows when CONFIG_CMDLINE is used.
+The computation of a new IPC id is not done in the performance critical
+path.  So a little bit of additional overhead shouldn't have any real
+performance impact.
 
-More arch specific functions is not what I want. Really, all the
-cmdline manipulating logic doesn't belong in DT code, but it shouldn't
-be in the arch specific code either IMO. Really it should be some
-common kernel function which calls into the DT code to retrieve the DT
-bootargs and that's it. Then you can skip calling that kernel function
-if you really need non-standard handling.
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  3 ++
+ ipc/ipc_sysctl.c                                | 12 ++++++-
+ ipc/util.c                                      | 10 +++---
+ ipc/util.h                                      | 44 ++++++++++++++++++++-----
+ 4 files changed, 54 insertions(+), 15 deletions(-)
 
-Perhaps you should consider filling DT bootargs with the cmdline from
-bootloader. IOW, make the legacy case look like the non-legacy case
-early, and then the kernel doesn't have to deal with both cases later
-on.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9871e64..9bd184d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1773,6 +1773,9 @@
+ 	ip=		[IP_PNP]
+ 			See Documentation/filesystems/nfs/nfsroot.txt.
+ 
++	ipcmni_extend	[KNL] Extend the maximum number of unique System V
++			IPC identifiers from 32,768 to 8,388,608.
++
+ 	irqaffinity=	[SMP] Set the default irq affinity mask
+ 			The argument is a cpu list, as described above.
+ 
+diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+index 49f9bf4..73b7782 100644
+--- a/ipc/ipc_sysctl.c
++++ b/ipc/ipc_sysctl.c
+@@ -120,7 +120,8 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+ static int zero;
+ static int one = 1;
+ static int int_max = INT_MAX;
+-static int ipc_mni = IPCMNI;
++int ipc_mni = IPCMNI;
++int ipc_mni_shift = IPCMNI_SHIFT;
+ 
+ static struct ctl_table ipc_kern_table[] = {
+ 	{
+@@ -246,3 +247,12 @@ static int __init ipc_sysctl_init(void)
+ }
+ 
+ device_initcall(ipc_sysctl_init);
++
++static int __init ipc_mni_extend(char *str)
++{
++	ipc_mni = IPCMNI_EXTEND;
++	ipc_mni_shift = IPCMNI_EXTEND_SHIFT;
++	pr_info("IPCMNI extended to %d.\n", ipc_mni);
++	return 0;
++}
++early_param("ipcmni_extend", ipc_mni_extend);
+diff --git a/ipc/util.c b/ipc/util.c
+index 0af0575..07ae117 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -110,7 +110,7 @@ static int __init ipc_init(void)
+  * @ids: ipc identifier set
+  *
+  * Set up the sequence range to use for the ipc identifier range (limited
+- * below IPCMNI) then initialise the keys hashtable and ids idr.
++ * below ipc_mni) then initialise the keys hashtable and ids idr.
+  */
+ void ipc_init_ids(struct ipc_ids *ids)
+ {
+@@ -226,7 +226,7 @@ static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
+ 				0, GFP_NOWAIT);
+ 	}
+ 	if (idx >= 0)
+-		new->id = SEQ_MULTIPLIER * new->seq + idx;
++		new->id = (new->seq << IPCMNI_SEQ_SHIFT) + idx;
+ 	return idx;
+ }
+ 
+@@ -254,8 +254,8 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	/* 1) Initialize the refcount so that ipc_rcu_putref works */
+ 	refcount_set(&new->refcount, 1);
+ 
+-	if (limit > IPCMNI)
+-		limit = IPCMNI;
++	if (limit > ipc_mni)
++		limit = ipc_mni;
+ 
+ 	if (ids->in_use >= limit)
+ 		return -ENOSPC;
+@@ -738,7 +738,7 @@ static struct kern_ipc_perm *sysvipc_find_ipc(struct ipc_ids *ids, loff_t pos,
+ 	if (total >= ids->in_use)
+ 		return NULL;
+ 
+-	for (; pos < IPCMNI; pos++) {
++	for (; pos < ipc_mni; pos++) {
+ 		ipc = idr_find(&ids->ipcs_idr, pos);
+ 		if (ipc != NULL) {
+ 			*new_pos = pos + 1;
+diff --git a/ipc/util.h b/ipc/util.h
+index 65108c1..f11a25a 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -15,8 +15,34 @@
+ #include <linux/err.h>
+ #include <linux/ipc_namespace.h>
+ 
+-#define IPCMNI 32768  /* <= MAX_INT limit for ipc arrays (including sysctl changes) */
+-#define SEQ_MULTIPLIER	(IPCMNI)
++/*
++ * The IPC ID contains 2 separate numbers - index and sequence number.
++ * By default,
++ *   bits  0-14: index (32k, 15 bits)
++ *   bits 15-30: sequence number (64k, 16 bits)
++ *
++ * When IPCMNI extension mode is turned on, the composition changes:
++ *   bits  0-22: index (8M, 23 bits)
++ *   bits 23-30: sequence number (256, 8 bits)
++ */
++#define IPCMNI_SHIFT		15
++#define IPCMNI_EXTEND_SHIFT	23
++#define IPCMNI			(1 << IPCMNI_SHIFT)
++#define IPCMNI_EXTEND		(1 << IPCMNI_EXTEND_SHIFT)
++
++#ifdef CONFIG_SYSVIPC_SYSCTL
++extern int ipc_mni;
++extern int ipc_mni_shift;
++
++#define IPCMNI_SEQ_SHIFT	ipc_mni_shift
++#define IPCMNI_IDX_MASK		((1 << ipc_mni_shift) - 1)
++
++#else /* CONFIG_SYSVIPC_SYSCTL */
++
++#define ipc_mni 		IPCMNI
++#define IPCMNI_SEQ_SHIFT	IPCMNI_SHIFT
++#define IPCMNI_IDX_MASK		((1 << IPCMNI_SHIFT) - 1)
++#endif /* CONFIG_SYSVIPC_SYSCTL */
+ 
+ void sem_init(void);
+ void msg_init(void);
+@@ -96,9 +122,9 @@ void __init ipc_init_proc_interface(const char *path, const char *header,
+ #define IPC_MSG_IDS	1
+ #define IPC_SHM_IDS	2
+ 
+-#define ipcid_to_idx(id) ((id) % SEQ_MULTIPLIER)
+-#define ipcid_to_seqx(id) ((id) / SEQ_MULTIPLIER)
+-#define IPCID_SEQ_MAX min_t(int, INT_MAX/SEQ_MULTIPLIER, USHRT_MAX)
++#define ipcid_to_idx(id)  ((id) & IPCMNI_IDX_MASK)
++#define ipcid_to_seqx(id) ((id) >> IPCMNI_SEQ_SHIFT)
++#define IPCID_SEQ_MAX	  (INT_MAX >> IPCMNI_SEQ_SHIFT)
+ 
+ /* must be called with ids->rwsem acquired for writing */
+ int ipc_addid(struct ipc_ids *, struct kern_ipc_perm *, int);
+@@ -123,8 +149,8 @@ static inline int ipc_get_maxidx(struct ipc_ids *ids)
+ 	if (ids->in_use == 0)
+ 		return -1;
+ 
+-	if (ids->in_use == IPCMNI)
+-		return IPCMNI - 1;
++	if (ids->in_use == ipc_mni)
++		return ipc_mni - 1;
+ 
+ 	return ids->max_idx;
+ }
+@@ -219,10 +245,10 @@ void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
+ 
+ static inline int sem_check_semmni(struct ipc_namespace *ns) {
+ 	/*
+-	 * Check semmni range [0, IPCMNI]
++	 * Check semmni range [0, ipc_mni]
+ 	 * semmni is the last element of sem_ctls[4] array
+ 	 */
+-	return ((ns->sem_ctls[3] < 0) || (ns->sem_ctls[3] > IPCMNI))
++	return ((ns->sem_ctls[3] < 0) || (ns->sem_ctls[3] > ipc_mni))
+ 		? -ERANGE : 0;
+ }
+ 
+-- 
+1.8.3.1
 
-Rob
-
-[1] https://lkml.org/lkml/2018/3/14/701
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git dt/cmdline
