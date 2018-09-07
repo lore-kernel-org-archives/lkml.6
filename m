@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D695C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4806CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5AE2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5AE2083D
+	by mail.kernel.org (Postfix) with ESMTP id 0752420844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0752420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729819AbeIHCQU (ORCPT
+        id S1729826AbeIHCQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:16:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51656 "EHLO
+        Fri, 7 Sep 2018 22:16:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51688 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728926AbeIHCQU (ORCPT
+        with ESMTP id S1728550AbeIHCQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:16:20 -0400
+        Fri, 7 Sep 2018 22:16:24 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADE64D6B;
-        Fri,  7 Sep 2018 21:33:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1636F54;
+        Fri,  7 Sep 2018 21:33:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
-        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
-        Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>
-Subject: [PATCH 4.9 02/63] net: mac802154: tx: expand tailroom if necessary
-Date:   Fri,  7 Sep 2018 23:09:33 +0200
-Message-Id: <20180907211013.089716732@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.9 20/63] dm cache metadata: save in-core policy_hint_size to on-disk superblock
+Date:   Fri,  7 Sep 2018 23:09:51 +0200
+Message-Id: <20180907211014.100025304@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -52,48 +49,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit f9c52831133050c6b82aa8b6831c92da2bbf2a0b upstream.
+commit fd2fa95416188a767a63979296fa3e169a9ef5ec upstream.
 
-This patch is necessary if case of AF_PACKET or other socket interface
-which I am aware of it and didn't allocated the necessary room.
+policy_hint_size starts as 0 during __write_initial_superblock().  It
+isn't until the policy is loaded that policy_hint_size is set in-core
+(cmd->policy_hint_size).  But it never got recorded in the on-disk
+superblock because __commit_transaction() didn't deal with transfering
+the in-core cmd->policy_hint_size to the on-disk superblock.
 
-Reported-by: David Palma <david.palma@ntnu.no>
-Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
+The in-core cmd->policy_hint_size gets initialized by metadata_open()'s
+__begin_transaction_flags() which re-reads all superblock fields.
+Because the superblock's policy_hint_size was never properly stored, when
+the cache was created, hints_array_available() would always return false
+when re-activating a previously created cache.  This means
+__load_mappings() always considered the hints invalid and never made use
+of the hints (these hints served to optimize).
+
+Another detremental side-effect of this oversight is the cache_check
+utility would fail with: "invalid hint width: 0"
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac802154/tx.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/md/dm-cache-metadata.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/mac802154/tx.c
-+++ b/net/mac802154/tx.c
-@@ -63,8 +63,21 @@ ieee802154_tx(struct ieee802154_local *l
- 	int ret;
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -344,7 +344,7 @@ static int __write_initial_superblock(st
+ 	disk_super->version = cpu_to_le32(MAX_CACHE_VERSION);
+ 	memset(disk_super->policy_name, 0, sizeof(disk_super->policy_name));
+ 	memset(disk_super->policy_version, 0, sizeof(disk_super->policy_version));
+-	disk_super->policy_hint_size = 0;
++	disk_super->policy_hint_size = cpu_to_le32(0);
  
- 	if (!(local->hw.flags & IEEE802154_HW_TX_OMIT_CKSUM)) {
--		u16 crc = crc_ccitt(0, skb->data, skb->len);
-+		struct sk_buff *nskb;
-+		u16 crc;
+ 	__copy_sm_root(cmd, disk_super);
  
-+		if (unlikely(skb_tailroom(skb) < IEEE802154_FCS_LEN)) {
-+			nskb = skb_copy_expand(skb, 0, IEEE802154_FCS_LEN,
-+					       GFP_ATOMIC);
-+			if (likely(nskb)) {
-+				consume_skb(skb);
-+				skb = nskb;
-+			} else {
-+				goto err_tx;
-+			}
-+		}
-+
-+		crc = crc_ccitt(0, skb->data, skb->len);
- 		put_unaligned_le16(crc, skb_put(skb, 2));
- 	}
+@@ -659,6 +659,7 @@ static int __commit_transaction(struct d
+ 	disk_super->policy_version[0] = cpu_to_le32(cmd->policy_version[0]);
+ 	disk_super->policy_version[1] = cpu_to_le32(cmd->policy_version[1]);
+ 	disk_super->policy_version[2] = cpu_to_le32(cmd->policy_version[2]);
++	disk_super->policy_hint_size = cpu_to_le32(cmd->policy_hint_size);
  
+ 	disk_super->read_hits = cpu_to_le32(cmd->stats.read_hits);
+ 	disk_super->read_misses = cpu_to_le32(cmd->stats.read_misses);
 
 
