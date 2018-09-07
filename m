@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34F3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A388C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55482077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:53:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55482077C
+	by mail.kernel.org (Postfix) with ESMTP id B2DB42077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:55:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2DB42077C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbeIGSev (ORCPT
+        id S1728786AbeIGSgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:34:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45776 "EHLO mail.kernel.org"
+        Fri, 7 Sep 2018 14:36:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbeIGSev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:34:51 -0400
+        id S1726598AbeIGSgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:36:40 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 601982075E;
-        Fri,  7 Sep 2018 13:53:46 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 09:53:44 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id 236F82075E;
+        Fri,  7 Sep 2018 13:55:35 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 09:55:33 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
-Message-ID: <20180907095344.75465afd@gandalf.local.home>
-In-Reply-To: <20180907093055.GL24082@hirez.programming.kicks-ass.net>
+Message-ID: <20180907095533.5b5febc2@gandalf.local.home>
+In-Reply-To: <20180907134532.GD24106@hirez.programming.kicks-ass.net>
 References: <20180905213334.03375777@vmware.local.home>
-        <20180906023151.GA749@jagdpanzerIV>
-        <20180907074531.GM24106@hirez.programming.kicks-ass.net>
-        <20180907082834.vjycyvt6nddpb4la@pathway.suse.cz>
-        <20180907093055.GL24082@hirez.programming.kicks-ass.net>
+        <20180907073448.GL24106@hirez.programming.kicks-ass.net>
+        <20180907094148.2444acc6@gandalf.local.home>
+        <20180907134532.GD24106@hirez.programming.kicks-ass.net>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -54,26 +52,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018 11:30:55 +0200
+On Fri, 7 Sep 2018 15:45:32 +0200
 Peter Zijlstra <peterz@infradead.org> wrote:
 
-> > That said, I am not against this change. Especially the inlining
-> > is a good move. Note that lockdep_off()/lockdep_on() must not
-> > be traced as well.  
-> 
-> Hard to trace an inline funcion; we could make it __always_inline to
-> feel better.
+> Yes really, we should not muck with the IRQ state from NMI context.
 
-In the old days, you would need to make it __always_inline, because if
-gcc didn't inline it (and it did so in the past), it would be traced
-and would re-introduce this bug. But I've hit this issue too many times
-in the past, that I added "notrace" to the "inline" definition, where
-all "inline" labeled functions are also "notrace".
-
-lockdep.o has the -pg option removed in the Makefile so that all
-functions in lockdep.c is notrace, which is why it was fine to keep it
-there.
-
-But adding __always_inline may not be a bad idea regardless.
+Right, and we didn't. Your patch didn't change anything, but allow for
+printk_nmi_enter/exit() to be traced by ftrace, but that's wrong to
+begin with because it ftrace_nmi_enter() hasn't been called yet.
 
 -- Steve
