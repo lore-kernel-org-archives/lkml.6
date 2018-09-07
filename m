@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73D3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC79C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 915D020645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 915D020645
+	by mail.kernel.org (Postfix) with ESMTP id E06032083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06032083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbeIHCMW (ORCPT
+        id S1729629AbeIHCMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:12:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48956 "EHLO
+        Fri, 7 Sep 2018 22:12:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48962 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbeIHCMW (ORCPT
+        with ESMTP id S1728095AbeIHCMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:12:22 -0400
+        Fri, 7 Sep 2018 22:12:25 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA700ED1;
-        Fri,  7 Sep 2018 21:29:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10B6AED1;
+        Fri,  7 Sep 2018 21:29:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 70/89] ubifs: Fix memory leak in lprobs self-check
-Date:   Fri,  7 Sep 2018 23:10:04 +0200
-Message-Id: <20180907210900.676612566@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Silvio Cesare <silvio.cesare@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 71/89] Revert "UBIFS: Fix potential integer overflow in allocation"
+Date:   Fri,  7 Sep 2018 23:10:05 +0200
+Message-Id: <20180907210900.763002018@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,43 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Weinberger <richard@nod.at>
 
-commit eef19816ada3abd56d9f20c88794cc2fea83ebb2 upstream.
+commit 08acbdd6fd736b90f8d725da5a0de4de2dd6de62 upstream.
 
-Allocate the buffer after we return early.
-Otherwise memory is being leaked.
+This reverts commit 353748a359f1821ee934afc579cf04572406b420.
+It bypassed the linux-mtd review process and fixes the issue not as it
+should.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Silvio Cesare <silvio.cesare@gmail.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/lprops.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/ubifs/journal.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/ubifs/lprops.c
-+++ b/fs/ubifs/lprops.c
-@@ -1091,10 +1091,6 @@ static int scan_check_cb(struct ubifs_in
- 		}
- 	}
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -1283,11 +1283,10 @@ static int truncate_data_node(const stru
+ 			      int *new_len)
+ {
+ 	void *buf;
+-	int err, compr_type;
+-	u32 dlen, out_len, old_dlen;
++	int err, dlen, compr_type, out_len, old_dlen;
  
--	buf = __vmalloc(c->leb_size, GFP_NOFS, PAGE_KERNEL);
--	if (!buf)
--		return -ENOMEM;
--
- 	/*
- 	 * After an unclean unmount, empty and freeable LEBs
- 	 * may contain garbage - do not scan them.
-@@ -1113,6 +1109,10 @@ static int scan_check_cb(struct ubifs_in
- 		return LPT_SCAN_CONTINUE;
- 	}
+ 	out_len = le32_to_cpu(dn->size);
+-	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
++	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
+ 	if (!buf)
+ 		return -ENOMEM;
  
-+	buf = __vmalloc(c->leb_size, GFP_NOFS, PAGE_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
- 	sleb = ubifs_scan(c, lnum, 0, buf, 0);
- 	if (IS_ERR(sleb)) {
- 		ret = PTR_ERR(sleb);
 
 
