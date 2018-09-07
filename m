@@ -2,101 +2,194 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D6EC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1236BC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 607772075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80AC62075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Aw/xoY3K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607772075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AYCgIe4c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80AC62075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbeIGPUE (ORCPT
+        id S1728608AbeIGPXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:20:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36786 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeIGPUE (ORCPT
+        Fri, 7 Sep 2018 11:23:14 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39246 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbeIGPXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:20:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FTAtw5774pMBq3PvE4S+C40zYALtjuNk8mQNPZQ2Cck=; b=Aw/xoY3KHHllawf0MJS9+J1Ec
-        rCbjEkypY6Nxh+dsTQ3zG0ukGWSYkiMMyl1VjT45ukvvlQqPknSPtbNzRuSdTP68iR65hN1+BivC6
-        f/5D258CRmbd3Z4CETpfPFSbIX38NiTz3ENc9/8HN/euVHrsfSfANmK4BSMk/pc8jIPlU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fyEAt-0005Jr-6O; Fri, 07 Sep 2018 10:39:39 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D25181122A6D; Fri,  7 Sep 2018 11:39:38 +0100 (BST)
-Date:   Fri, 7 Sep 2018 11:39:38 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>
-Subject: Re: [PATCH AUTOSEL 4.18 043/131] ASoC: soc-pcm: Use delay set in
- component pointer function
-Message-ID: <20180907103938.GB17459@sirena.org.uk>
-References: <20180902064601.183036-1-alexander.levin@microsoft.com>
- <20180902064601.183036-43-alexander.levin@microsoft.com>
- <20180903111626.GC10302@sirena.org.uk>
- <20180907002313.GB16300@sasha-vm>
+        Fri, 7 Sep 2018 11:23:13 -0400
+Received: by mail-io1-f65.google.com with SMTP id l7-v6so1172255iok.6
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 03:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+pdgGxpNt76Ff97dz/GB4hRiYCEs6CJ/RGMqyekc/Og=;
+        b=AYCgIe4cxkQdzKL8fC8K3Rik/V6ZYJTEWaL9n40P/0D7NeQYZ5PcuHNDBXQG4DpeKw
+         n7IWRvwUsRQXSE2Ic1UrQ4RbHnU7cAOC3lQc86iXXJvK6ASr6/259/5pJirUpfHUVNMJ
+         pjrA6UMb6enwq1pDYE4fL8Mt1ztX++4m1mN2Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+pdgGxpNt76Ff97dz/GB4hRiYCEs6CJ/RGMqyekc/Og=;
+        b=KpNwVKOUZntERx0eI/BJeyOl6MIFwGfORldr3OgjNvJvSYjqdusqiHxbbL13hRv144
+         zG+FtSTIakjo36j7YwF1A0SdBsdcJkY4GxQfnATU08ataP2zPYaBoNQdLYXt69CnBkRz
+         syeS5M4ASAWTaUrANTsJt2WjCErnsKaF4Kxwx1PzpPLHyPGWkSrwI/s51wFQtMlquZkV
+         QBCT9MYfJlikzTi281OyrtBRxSSDKFcfDFrUtHjnfw/s7zyaMVC6ffshlMlYl8cEXZem
+         C5NL6TgN8naWrKztL2UlfwfTGafK6raWsbveHt2yJ6WmfTZnxlzf6dHTeBNBzjOsmLL2
+         LuXQ==
+X-Gm-Message-State: APzg51ACnYAktjQS5MzUAX9vXEg8a0fGJu3VfgMKXJLXF3ahyCRuUDFd
+        9hmk15R/CF/tzW0hjGAkYk5o61+Yf2yvgfIK7tLFgg==
+X-Google-Smtp-Source: ANB0VdaK6ibMVHQ3dk/7WjTjGS+LeOsoKgNOeleW/ICpjglM33zSqed5SHgfGIWKy+aDcZMxU7wjxWQmsJULVXzvOOQ=
+X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr5856688ioa.60.1536316971412;
+ Fri, 07 Sep 2018 03:42:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
-Content-Disposition: inline
-In-Reply-To: <20180907002313.GB16300@sasha-vm>
-X-Cookie: Do not fold, spindle or mutilate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:1c06:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 03:42:51 -0700 (PDT)
+In-Reply-To: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 7 Sep 2018 12:42:51 +0200
+Message-ID: <CAKv+Gu8F76ngzr_zgAXZhDPNb2SobYc4A8L3Rq-h1kMrbFqK+A@mail.gmail.com>
+Subject: Re: [PATCH V4 0/3] Add efi page fault handler to recover from page
+To:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7 September 2018 at 01:27, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>
+> There may exist some buggy UEFI firmware implementations that access efi
+> memory regions other than EFI_RUNTIME_SERVICES_<CODE/DATA> even after
+> the kernel has assumed control of the platform. This violates UEFI
+> specification. Hence, provide a debug config option which when enabled
+> recovers from page faults caused by buggy firmware.
+>
+> Page faults triggered by firmware happen at ring 0 and if unhandled,
+> hangs the kernel. So, provide an efi specific page fault handler to:
+> 1. Avoid panics/hangs caused by buggy firmware.
+> 2. Shout loud that the firmware is buggy and hence is not a kernel bug.
+>
+> The efi page fault handler will check if the access is by
+> efi_reset_system().
+> 1. If so, then the efi page fault handler will reboot the machine
+>    through BIOS and not through efi_reset_system().
+> 2. If not, then the efi page fault handler will freeze efi_rts_wq and
+>    schedules a new process.
+>
 
---XF85m9dhOBO43t/C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks Sai! I am pretty happy how this patch set turned out. It still
+requires the blessing of the x86 maintainers, of course, but from my
+pov, this is good to go (but I will fold patch #3 into #2)
 
-On Fri, Sep 07, 2018 at 12:23:14AM +0000, Sasha Levin wrote:
-> On Mon, Sep 03, 2018 at 12:16:26PM +0100, Mark Brown wrote:
+Thomas, Ingo, Peter, Andy, Boris: any remaining concerns?
 
-> >I'm worried that if anyone notices this at all they will have already
-> >compensated for the delays in userspace and therefore this will cause
-> >them to see problems as they get double compenstation for delays.
 
-> But what happens when they update to a newer Stable? They're going to
-> hit that issue anyways.
-
-Yes, but taking an entire new kernel release is something that'd
-normally warrant a lot more integration testing than just merging in a
-new stable release.
-
---XF85m9dhOBO43t/C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluSVWoACgkQJNaLcl1U
-h9CWVwf+PIg7RJUhayqWzGO70kdg/6gVyVmbK48vhPFX2J0Kzu+nAl80Gqn/dcDP
-Yj3PrkT6YMy8K0swI8MTuUPuIbbjlbBhsos28X0PpNtd6nXexpp2JzRe/t/urjNl
-lWYpQQUv/7KVBvyHShiyV+OlV7NzY3yieWj4Na6/uQUv2CihAkUnGpAOxE48Nz1m
-uDcjgoeHKylIA6YPW2vU0AcOgGKvlwEafUNpD0TvQtbjcJ2juuCxW6LFMl8iBc3K
-q5/UqU4oOSjUCKHHhX1s9Z0FTdqe0FmXSGfn0NrUQG0vVPaBxJfv5gqEL6FTCgFb
-5xdLah+J2CSlkOosKRFsxf7k3694DQ==
-=cT0y
------END PGP SIGNATURE-----
-
---XF85m9dhOBO43t/C--
+> This issue was reported by Al Stone when he saw that reboot via EFI hangs
+> the machine. Upon debugging, I found that it's efi_reset_system() that's
+> touching memory regions which it shouldn't. To reproduce the same
+> behavior, I have hacked OVMF and made efi_reset_system() buggy. Along
+> with efi_reset_system(), I have also modified get_next_high_mono_count()
+> and set_virtual_address_map(). They illegally access both boot time and
+> other efi regions.
+>
+> Testing the patch set:
+> ----------------------
+> 1. Download buggy firmware from here [1].
+> 2. Run a qemu instance with this buggy BIOS and boot mainline kernel.
+> Add reboot=efi to the kernel command line arguments and after the kernel
+> is up and running, type "reboot". The kernel should hang while rebooting.
+> 3. With the same setup, boot kernel after applying patches and the
+> reboot should work fine. Also please notice warning/error messages
+> printed by kernel.
+>
+> Changes from RFC to V1:
+> -----------------------
+> 1. Drop "long jump" technique of dealing with illegal access and instead
+>    use scheduling away from efi_rts_wq.
+>
+> Changes from V1 to V2:
+> ----------------------
+> 1. Shortened config name to CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS from
+>    CONFIG_EFI_WARN_ON_ILLEGAL_ACCESSES.
+> 2. Made the config option available only to expert users.
+> 3. efi_free_boot_services() should be called only when
+>    CONFIG_EFI_WARN_ON_ILLEGAL_ACCESS is not enabled. Previously, this
+>    was part of init/main.c file. As it is an architecture agnostic code,
+>    moved the change to arch/x86/platform/efi/quirks.c file.
+>
+> Changes from V2 to V3:
+> ----------------------
+> 1. Drop treating illegal access to EFI_BOOT_SERVICES_<CODE/DATA> regions
+>    separatley from illegal accesses to other regions like
+>    EFI_CONVENTIONAL_MEMORY or EFI_LOADER_<CODE/DATA>.
+>    In previous versions, illegal access to EFI_BOOT_SERVICES_<CODE/DATA>
+>    regions were handled by mapping requested region to efi_pgd but from
+>    V3 they are handled similar to illegal access to other regions i.e by
+>    freezing efi_rts_wq and scheduling new process.
+> 2. Change __efi_init_fixup attribute to __efi_init.
+>
+> Changes from V3 to V4:
+> ----------------------
+> 1. Drop saving original memory map passed by kernel. It also means less
+>    checks in efi page fault handler.
+> 2. Change the config name to EFI_PAGE_FAULT_HANDLER to reflect it's
+>    functionality more appropriatley.
+>
+> Note:
+> -----
+> Patch set based on "next" branch in efi tree.
+>
+> [1] https://drive.google.com/drive/folders/1VozKTms92ifyVHAT0ZDQe55ZYL1UE5wt
+>
+> Sai Praneeth (3):
+>   efi: Make efi_rts_work accessible to efi page fault handler
+>   x86/efi: Add efi page fault handler to recover from page faults caused
+>         by the firmware
+>   x86/efi: Introduce EFI_PAGE_FAULT_HANDLER
+>
+>  arch/x86/Kconfig                        | 18 +++++++++
+>  arch/x86/include/asm/efi.h              |  9 +++++
+>  arch/x86/mm/fault.c                     |  9 +++++
+>  arch/x86/platform/efi/quirks.c          | 70 +++++++++++++++++++++++++++++++++
+>  drivers/firmware/efi/runtime-wrappers.c | 60 ++++++++--------------------
+>  include/linux/efi.h                     | 37 +++++++++++++++++
+>  6 files changed, 159 insertions(+), 44 deletions(-)
+>
+> Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+> Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Cc: Al Stone <astone@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>
+> --
+> 2.7.4
+>
