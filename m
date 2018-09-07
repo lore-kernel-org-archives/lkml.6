@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FEBC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCA9C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B04A02083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B04A02083D
+	by mail.kernel.org (Postfix) with ESMTP id 439452083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439452083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbeIHCVf (ORCPT
+        id S1729199AbeIHCVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:21:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52686 "EHLO
+        Fri, 7 Sep 2018 22:21:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52694 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728013AbeIHCVf (ORCPT
+        with ESMTP id S1727607AbeIHCVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:21:35 -0400
+        Fri, 7 Sep 2018 22:21:53 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 417A9D6B;
-        Fri,  7 Sep 2018 21:38:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5B0DD6B;
+        Fri,  7 Sep 2018 21:38:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.9 37/63] xtensa: increase ranges in ___invalidate_{i,d}cache_all
-Date:   Fri,  7 Sep 2018 23:10:08 +0200
-Message-Id: <20180907211015.021158363@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.9 38/63] pnfs/blocklayout: off by one in bl_map_stripe()
+Date:   Fri,  7 Sep 2018 23:10:09 +0200
+Message-Id: <20180907211015.070194778@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -49,48 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit fec3259c9f747c039f90e99570540114c8d81a14 upstream.
+commit 0914bb965e38a055e9245637aed117efbe976e91 upstream.
 
-Cache invalidation macros use cache line size to iterate over
-invalidated cache lines, assuming that all cache ways are invalidated by
-single instruction, but xtensa ISA recommends to not assume that for
-future compatibility:
-  In some implementations all ways at index Addry-1..z are invalidated
-  regardless of the specified way, but for future compatibility this
-  behavior should not be assumed.
+"dev->nr_children" is the number of children which were parsed
+successfully in bl_parse_stripe().  It could be all of them and then, in
+that case, it is equal to v->stripe.volumes_count.  Either way, the >
+should be >= so that we don't go beyond the end of what we're supposed
+to.
 
-Iterate over all cache ways in ___invalidate_icache_all and
-___invalidate_dcache_all.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # 3.17+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/include/asm/cacheasm.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/blocklayout/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/xtensa/include/asm/cacheasm.h
-+++ b/arch/xtensa/include/asm/cacheasm.h
-@@ -123,7 +123,7 @@
- 	.macro	___invalidate_dcache_all ar at
+--- a/fs/nfs/blocklayout/dev.c
++++ b/fs/nfs/blocklayout/dev.c
+@@ -203,7 +203,7 @@ static bool bl_map_stripe(struct pnfs_bl
+ 	chunk = div_u64(offset, dev->chunk_size);
+ 	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
  
- #if XCHAL_DCACHE_SIZE
--	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
-+	__loop_cache_all \ar \at dii XCHAL_DCACHE_SIZE \
- 			 XCHAL_DCACHE_LINEWIDTH 1020
- #endif
- 
-@@ -133,7 +133,7 @@
- 	.macro	___invalidate_icache_all ar at
- 
- #if XCHAL_ICACHE_SIZE
--	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
-+	__loop_cache_all \ar \at iii XCHAL_ICACHE_SIZE \
- 			 XCHAL_ICACHE_LINEWIDTH 1020
- #endif
- 
+-	if (chunk_idx > dev->nr_children) {
++	if (chunk_idx >= dev->nr_children) {
+ 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
+ 			__func__, chunk_idx, offset, dev->chunk_size);
+ 		/* error, should not happen */
 
 
