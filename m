@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA317C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16468C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9113520645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9113520645
+	by mail.kernel.org (Postfix) with ESMTP id C089720861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:23:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C089720861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728622AbeIHCGQ (ORCPT
+        id S1728639AbeIHCGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:06:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46704 "EHLO
+        Fri, 7 Sep 2018 22:06:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeIHCGP (ORCPT
+        with ESMTP id S1728125AbeIHCGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:06:15 -0400
+        Fri, 7 Sep 2018 22:06:33 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7514EF6;
-        Fri,  7 Sep 2018 21:23:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4AE97EF6;
+        Fri,  7 Sep 2018 21:23:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bill Baker <bill.baker@oracle.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Helen Chao <helen.chao@oracle.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.18 100/145] NFSv4 client live hangs after live data migration recovery
-Date:   Fri,  7 Sep 2018 23:09:26 +0200
-Message-Id: <20180907210912.113049223@linuxfoundation.org>
+Subject: [PATCH 4.18 101/145] NFSv4: Fix locking in pnfs_generic_recover_commit_reqs
+Date:   Fri,  7 Sep 2018 23:09:27 +0200
+Message-Id: <20180907210912.183954508@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,129 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bill Baker <Bill.Baker@Oracle.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 0f90be132cbf1537d87a6a8b9e80867adac892f6 upstream.
+commit d0fbb1d8a194c0ec0180c1d073ad709e45503a43 upstream.
 
-After a live data migration event at the NFS server, the client may send
-I/O requests to the wrong server, causing a live hang due to repeated
-recovery events.  On the wire, this will appear as an I/O request failing
-with NFS4ERR_BADSESSION, followed by successful CREATE_SESSION, repeatedly.
-NFS4ERR_BADSSESSION is returned because the session ID being used was
-issued by the other server and is not valid at the old server.
+The use of the inode->i_lock was converted to a mutex, but we forgot
+to remove the old inode unlock/lock() pair that allowed the layout
+segment to be put inside the loop.
 
-The failure is caused by async worker threads having cached the transport
-(xprt) in the rpc_task structure.  After the migration recovery completes,
-the task is redispatched and the task resends the request to the wrong
-server based on the old value still present in tk_xprt.
-
-The solution is to recompute the tk_xprt field of the rpc_task structure
-so that the request goes to the correct server.
-
-Signed-off-by: Bill Baker <bill.baker@oracle.com>
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-Tested-by: Helen Chao <helen.chao@oracle.com>
-Fixes: fb43d17210ba ("SUNRPC: Use the multipath iterator to assign a ...")
-Cc: stable@vger.kernel.org # v4.9+
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: e824f99adaaf1 ("NFSv4: Use a mutex to protect the per-inode commit...")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4proc.c           |    9 ++++++++-
- include/linux/sunrpc/clnt.h |    1 +
- net/sunrpc/clnt.c           |   28 ++++++++++++++++++++--------
- 3 files changed, 29 insertions(+), 9 deletions(-)
+ fs/nfs/pnfs_nfs.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -581,8 +581,15 @@ nfs4_async_handle_exception(struct rpc_t
- 		ret = -EIO;
- 	return ret;
- out_retry:
--	if (ret == 0)
-+	if (ret == 0) {
- 		exception->retry = 1;
-+		/*
-+		 * For NFS4ERR_MOVED, the client transport will need to
-+		 * be recomputed after migration recovery has completed.
-+		 */
-+		if (errorcode == -NFS4ERR_MOVED)
-+			rpc_task_release_transport(task);
-+	}
- 	return ret;
- }
+--- a/fs/nfs/pnfs_nfs.c
++++ b/fs/nfs/pnfs_nfs.c
+@@ -61,7 +61,7 @@ EXPORT_SYMBOL_GPL(pnfs_generic_commit_re
  
---- a/include/linux/sunrpc/clnt.h
-+++ b/include/linux/sunrpc/clnt.h
-@@ -156,6 +156,7 @@ int		rpc_switch_client_transport(struct
- 
- void		rpc_shutdown_client(struct rpc_clnt *);
- void		rpc_release_client(struct rpc_clnt *);
-+void		rpc_task_release_transport(struct rpc_task *);
- void		rpc_task_release_client(struct rpc_task *);
- 
- int		rpcb_create_local(struct net *);
---- a/net/sunrpc/clnt.c
-+++ b/net/sunrpc/clnt.c
-@@ -965,10 +965,20 @@ out:
- }
- EXPORT_SYMBOL_GPL(rpc_bind_new_program);
- 
-+void rpc_task_release_transport(struct rpc_task *task)
-+{
-+	struct rpc_xprt *xprt = task->tk_xprt;
-+
-+	if (xprt) {
-+		task->tk_xprt = NULL;
-+		xprt_put(xprt);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(rpc_task_release_transport);
-+
- void rpc_task_release_client(struct rpc_task *task)
- {
- 	struct rpc_clnt *clnt = task->tk_client;
--	struct rpc_xprt *xprt = task->tk_xprt;
- 
- 	if (clnt != NULL) {
- 		/* Remove from client task list */
-@@ -979,12 +989,14 @@ void rpc_task_release_client(struct rpc_
- 
- 		rpc_release_client(clnt);
+ /* The generic layer is about to remove the req from the commit list.
+  * If this will make the bucket empty, it will need to put the lseg reference.
+- * Note this must be called holding i_lock
++ * Note this must be called holding nfsi->commit_mutex
+  */
+ void
+ pnfs_generic_clear_request_commit(struct nfs_page *req,
+@@ -149,9 +149,7 @@ restart:
+ 		if (list_empty(&b->written)) {
+ 			freeme = b->wlseg;
+ 			b->wlseg = NULL;
+-			spin_unlock(&cinfo->inode->i_lock);
+ 			pnfs_put_lseg(freeme);
+-			spin_lock(&cinfo->inode->i_lock);
+ 			goto restart;
+ 		}
  	}
-+	rpc_task_release_transport(task);
-+}
+@@ -167,7 +165,7 @@ static void pnfs_generic_retry_commit(st
+ 	LIST_HEAD(pages);
+ 	int i;
  
--	if (xprt != NULL) {
--		task->tk_xprt = NULL;
--
--		xprt_put(xprt);
--	}
-+static
-+void rpc_task_set_transport(struct rpc_task *task, struct rpc_clnt *clnt)
-+{
-+	if (!task->tk_xprt)
-+		task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
+-	spin_lock(&cinfo->inode->i_lock);
++	mutex_lock(&NFS_I(cinfo->inode)->commit_mutex);
+ 	for (i = idx; i < fl_cinfo->nbuckets; i++) {
+ 		bucket = &fl_cinfo->buckets[i];
+ 		if (list_empty(&bucket->committing))
+@@ -177,12 +175,12 @@ static void pnfs_generic_retry_commit(st
+ 		list_for_each(pos, &bucket->committing)
+ 			cinfo->ds->ncommitting--;
+ 		list_splice_init(&bucket->committing, &pages);
+-		spin_unlock(&cinfo->inode->i_lock);
++		mutex_unlock(&NFS_I(cinfo->inode)->commit_mutex);
+ 		nfs_retry_commit(&pages, freeme, cinfo, i);
+ 		pnfs_put_lseg(freeme);
+-		spin_lock(&cinfo->inode->i_lock);
++		mutex_lock(&NFS_I(cinfo->inode)->commit_mutex);
+ 	}
+-	spin_unlock(&cinfo->inode->i_lock);
++	mutex_unlock(&NFS_I(cinfo->inode)->commit_mutex);
  }
  
- static
-@@ -992,8 +1004,7 @@ void rpc_task_set_client(struct rpc_task
- {
+ static unsigned int
+@@ -222,13 +220,13 @@ void pnfs_fetch_commit_bucket_list(struc
+ 	struct list_head *pos;
  
- 	if (clnt != NULL) {
--		if (task->tk_xprt == NULL)
--			task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
-+		rpc_task_set_transport(task, clnt);
- 		task->tk_client = clnt;
- 		atomic_inc(&clnt->cl_count);
- 		if (clnt->cl_softrtry)
-@@ -1512,6 +1523,7 @@ call_start(struct rpc_task *task)
- 		clnt->cl_program->version[clnt->cl_vers]->counts[idx]++;
- 	clnt->cl_stats->rpccnt++;
- 	task->tk_action = call_reserve;
-+	rpc_task_set_transport(task, clnt);
+ 	bucket = &cinfo->ds->buckets[data->ds_commit_index];
+-	spin_lock(&cinfo->inode->i_lock);
++	mutex_lock(&NFS_I(cinfo->inode)->commit_mutex);
+ 	list_for_each(pos, &bucket->committing)
+ 		cinfo->ds->ncommitting--;
+ 	list_splice_init(&bucket->committing, pages);
+ 	data->lseg = bucket->clseg;
+ 	bucket->clseg = NULL;
+-	spin_unlock(&cinfo->inode->i_lock);
++	mutex_unlock(&NFS_I(cinfo->inode)->commit_mutex);
+ 
  }
  
- /*
 
 
