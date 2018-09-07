@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804AFC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B058C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299AF2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299AF2083D
+	by mail.kernel.org (Postfix) with ESMTP id DA5AB20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:29:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5AB20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729578AbeIHCMD (ORCPT
+        id S1729592AbeIHCMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:12:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48920 "EHLO
+        Fri, 7 Sep 2018 22:12:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729080AbeIHCMC (ORCPT
+        with ESMTP id S1729355AbeIHCMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:12:02 -0400
+        Fri, 7 Sep 2018 22:12:05 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DD61ACC;
-        Fri,  7 Sep 2018 21:29:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9E1FDBC;
+        Fri,  7 Sep 2018 21:29:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 20/89] powerpc/powernv/pci: Work around races in PCI bridge enabling
-Date:   Fri,  7 Sep 2018 23:09:14 +0200
-Message-Id: <20180907210855.049663307@linuxfoundation.org>
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 59/89] block, bfq: return nbytes and not zero from struct cftype .write() method
+Date:   Fri,  7 Sep 2018 23:09:53 +0200
+Message-Id: <20180907210859.437211521@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,88 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-commit db2173198b9513f7add8009f225afa1f1c79bcc6 upstream.
+commit fc8ebd01deeb12728c83381f6ec923e4a192ffd3 upstream.
 
-The generic code is racy when multiple children of a PCI bridge try to
-enable it simultaneously.
+The value that struct cftype .write() method returns is then directly
+returned to userspace as the value returned by write() syscall, so it
+should be the number of bytes actually written (or consumed) and not zero.
 
-This leads to drivers trying to access a device through a
-not-yet-enabled bridge, and this EEH errors under various
-circumstances when using parallel driver probing.
+Returning zero from write() syscall makes programs like /bin/echo or bash
+spin.
 
-There is work going on to fix that properly in the PCI core but it
-will take some time.
-
-x86 gets away with it because (outside of hotplug), the BIOS enables
-all the bridges at boot time.
-
-This patch does the same thing on powernv by enabling all bridges that
-have child devices at boot time, thus avoiding subsequent races. It's
-suitable for backporting to stable and distros, while the proper PCI
-fix will probably be significantly more invasive.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: e21b7a0b9887 ("block, bfq: add full hierarchical scheduling and cgroups support")
 Cc: stable@vger.kernel.org
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c |   37 ++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ block/bfq-cgroup.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -3286,12 +3286,49 @@ static void pnv_pci_ioda_create_dbgfs(vo
- #endif /* CONFIG_DEBUG_FS */
+--- a/block/bfq-cgroup.c
++++ b/block/bfq-cgroup.c
+@@ -887,7 +887,8 @@ static ssize_t bfq_io_set_weight(struct
+ 	if (ret)
+ 		return ret;
+ 
+-	return bfq_io_set_weight_legacy(of_css(of), NULL, weight);
++	ret = bfq_io_set_weight_legacy(of_css(of), NULL, weight);
++	return ret ?: nbytes;
  }
  
-+static void pnv_pci_enable_bridge(struct pci_bus *bus)
-+{
-+	struct pci_dev *dev = bus->self;
-+	struct pci_bus *child;
-+
-+	/* Empty bus ? bail */
-+	if (list_empty(&bus->devices))
-+		return;
-+
-+	/*
-+	 * If there's a bridge associated with that bus enable it. This works
-+	 * around races in the generic code if the enabling is done during
-+	 * parallel probing. This can be removed once those races have been
-+	 * fixed.
-+	 */
-+	if (dev) {
-+		int rc = pci_enable_device(dev);
-+		if (rc)
-+			pci_err(dev, "Error enabling bridge (%d)\n", rc);
-+		pci_set_master(dev);
-+	}
-+
-+	/* Perform the same to child busses */
-+	list_for_each_entry(child, &bus->children, node)
-+		pnv_pci_enable_bridge(child);
-+}
-+
-+static void pnv_pci_enable_bridges(void)
-+{
-+	struct pci_controller *hose;
-+
-+	list_for_each_entry(hose, &hose_list, list_node)
-+		pnv_pci_enable_bridge(hose->bus);
-+}
-+
- static void pnv_pci_ioda_fixup(void)
- {
- 	pnv_pci_ioda_setup_PEs();
- 	pnv_pci_ioda_setup_iommu_api();
- 	pnv_pci_ioda_create_dbgfs();
- 
-+	pnv_pci_enable_bridges();
-+
- #ifdef CONFIG_EEH
- 	eeh_init();
- 	eeh_addr_cache_build();
+ static int bfqg_print_stat(struct seq_file *sf, void *v)
 
 
