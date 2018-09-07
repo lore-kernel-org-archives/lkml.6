@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514B2C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62ABDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143D02083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143D02083D
+	by mail.kernel.org (Postfix) with ESMTP id 22E0E20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E0E20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbeIHCLZ (ORCPT
+        id S1729475AbeIHCL2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:11:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48818 "EHLO
+        Fri, 7 Sep 2018 22:11:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbeIHCLY (ORCPT
+        with ESMTP id S1728632AbeIHCL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:11:24 -0400
+        Fri, 7 Sep 2018 22:11:28 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DDCC2ACC;
-        Fri,  7 Sep 2018 21:28:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14E02ACC;
+        Fri,  7 Sep 2018 21:28:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 54/89] PM / sleep: wakeup: Fix build error caused by missing SRCU support
-Date:   Fri,  7 Sep 2018 23:09:48 +0200
-Message-Id: <20180907210858.863485086@linuxfoundation.org>
+        stable@vger.kernel.org, Bandan Das <bsd@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 55/89] KVM: VMX: fixes for vmentry_l1d_flush module parameter
+Date:   Fri,  7 Sep 2018 23:09:49 +0200
+Message-Id: <20180907210858.955193543@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -50,53 +50,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 3df6f61fff49632492490fb6e42646b803a9958a upstream.
+commit 0027ff2a75f9dcf0537ac0a65c5840b0e21a4950 upstream.
 
-Commit ea0212f40c6 (power: auto select CONFIG_SRCU) made the code in
-drivers/base/power/wakeup.c use SRCU instead of RCU, but it forgot to
-select CONFIG_SRCU in Kconfig, which leads to the following build
-error if CONFIG_SRCU is not selected somewhere else:
+Two bug fixes:
 
-drivers/built-in.o: In function `wakeup_source_remove':
-(.text+0x3c6fc): undefined reference to `synchronize_srcu'
-drivers/built-in.o: In function `pm_print_active_wakeup_sources':
-(.text+0x3c7a8): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `pm_print_active_wakeup_sources':
-(.text+0x3c84c): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
-(.text+0x3d1d8): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
-(.text+0x3d228): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
-(.text+0x3d24c): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
-(.text+0x3d29c): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o:(.data+0x4158): undefined reference to `process_srcu'
+1) missing entries in the l1d_param array; this can cause a host crash
+if an access attempts to reach the missing entry. Future-proof the get
+function against any overflows as well.  However, the two entries
+VMENTER_L1D_FLUSH_EPT_DISABLED and VMENTER_L1D_FLUSH_NOT_REQUIRED must
+not be accepted by the parse function, so disable them there.
 
-Fix this error by selecting CONFIG_SRCU when PM_SLEEP is enabled.
+2) invalid values must be rejected even if the CPU does not have the
+bug, so test for them before checking boot_cpu_has(X86_BUG_L1TF)
 
-Fixes: ea0212f40c6 (power: auto select CONFIG_SRCU)
-Cc: 4.2+ <stable@vger.kernel.org> # 4.2+
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-[ rjw: Minor subject/changelog fixups ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+... and a small refactoring, since the .cmd field is redundant with
+the index in the array.
+
+Reported-by: Bandan Das <bsd@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/power/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/vmx.c |   26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -105,6 +105,7 @@ config PM_SLEEP
- 	def_bool y
- 	depends on SUSPEND || HIBERNATE_CALLBACKS
- 	select PM
-+	select SRCU
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -200,12 +200,14 @@ static enum vmx_l1d_flush_state __read_m
  
- config PM_SLEEP_SMP
- 	def_bool y
+ static const struct {
+ 	const char *option;
+-	enum vmx_l1d_flush_state cmd;
++	bool for_parse;
+ } vmentry_l1d_param[] = {
+-	{"auto",	VMENTER_L1D_FLUSH_AUTO},
+-	{"never",	VMENTER_L1D_FLUSH_NEVER},
+-	{"cond",	VMENTER_L1D_FLUSH_COND},
+-	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
++	[VMENTER_L1D_FLUSH_AUTO]	 = {"auto", true},
++	[VMENTER_L1D_FLUSH_NEVER]	 = {"never", true},
++	[VMENTER_L1D_FLUSH_COND]	 = {"cond", true},
++	[VMENTER_L1D_FLUSH_ALWAYS]	 = {"always", true},
++	[VMENTER_L1D_FLUSH_EPT_DISABLED] = {"EPT disabled", false},
++	[VMENTER_L1D_FLUSH_NOT_REQUIRED] = {"not required", false},
+ };
+ 
+ #define L1D_CACHE_ORDER 4
+@@ -289,8 +291,9 @@ static int vmentry_l1d_flush_parse(const
+ 
+ 	if (s) {
+ 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
+-			if (sysfs_streq(s, vmentry_l1d_param[i].option))
+-				return vmentry_l1d_param[i].cmd;
++			if (vmentry_l1d_param[i].for_parse &&
++			    sysfs_streq(s, vmentry_l1d_param[i].option))
++				return i;
+ 		}
+ 	}
+ 	return -EINVAL;
+@@ -300,13 +303,13 @@ static int vmentry_l1d_flush_set(const c
+ {
+ 	int l1tf, ret;
+ 
+-	if (!boot_cpu_has(X86_BUG_L1TF))
+-		return 0;
+-
+ 	l1tf = vmentry_l1d_flush_parse(s);
+ 	if (l1tf < 0)
+ 		return l1tf;
+ 
++	if (!boot_cpu_has(X86_BUG_L1TF))
++		return 0;
++
+ 	/*
+ 	 * Has vmx_init() run already? If not then this is the pre init
+ 	 * parameter parsing. In that case just store the value and let
+@@ -326,6 +329,9 @@ static int vmentry_l1d_flush_set(const c
+ 
+ static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
+ {
++	if (WARN_ON_ONCE(l1tf_vmx_mitigation >= ARRAY_SIZE(vmentry_l1d_param)))
++		return sprintf(s, "???\n");
++
+ 	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
+ }
+ 
 
 
