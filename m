@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8458FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE51EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDAF20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CDAF20844
+	by mail.kernel.org (Postfix) with ESMTP id 5ACC82075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:01:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACC82075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeIHBnf (ORCPT
+        id S1728066AbeIHBnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:43:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39394 "EHLO mail.kernel.org"
+        Fri, 7 Sep 2018 21:43:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbeIHBmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727620AbeIHBmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 21:42:14 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05F012086E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 672CF20873;
         Fri,  7 Sep 2018 20:59:32 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fyNql-0001lj-1n; Fri, 07 Sep 2018 16:59:31 -0400
-Message-Id: <20180907205930.950515188@goodmis.org>
+        id 1fyNql-0001mo-BY; Fri, 07 Sep 2018 16:59:31 -0400
+Message-Id: <20180907205931.250248170@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:59:05 -0400
+Date:   Fri, 07 Sep 2018 16:59:07 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -44,7 +44,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         tom.zanussi@linux.intel.com
-Subject: [PATCH RT 08/24] Revert "x86: UV: raw_spinlock conversion"
+Subject: [PATCH RT 10/24] irqchip/gic-v3-its: Make its_lock a raw_spin_lock_t
 References: <20180907205857.262840394@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -60,254 +60,63 @@ If anyone has any objections, please let me know.
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 2a9c45d8f89112458364285cbe2b0729561953f1 ]
+[ Upstream commit c7a3334c762a9b1dd2e39cb2ded00ce66e8a06d1 ]
 
-Drop the Ultraviolet patch. UV looks broken upstream for PREEMPT, too.
-Mike is the only person I know that has such a thing and he isn't going
-to fix this upstream (from 1526977462.6491.1.camel@gmx.de):
+The its_lock lock is held while a new device is added to the list and
+during setup while the CPU is booted. Even on -RT the CPU-bootup is
+performed with disabled interrupts.
 
-|From: Mike Galbraith <gleep@gmx.de>
-|On Tue, 2018-05-22 at 08:50 +0200, Sebastian Andrzej Siewior wrote:
-|>
-|> Regarding the preempt_disable() in the original patch in uv_read_rtc():
-|> This looks essential for PREEMPT configs. Is it possible to get this
-|> tested by someone or else get rid of the UV code? It looks broken for
-|> "uv_get_min_hub_revision_id() != 1".
-|
-|I suspect SGI cares not one whit about PREEMPT.
-|
-|> Why does PREEMPT_RT require migrate_disable() but PREEMPT only is fine
-|> as-is? This does not look right.
-|
-|UV is not ok with a PREEMPT config, it's just that for RT it's dirt
-|simple to shut it up, whereas for PREEMPT, preempt_disable() across
-|uv_bau_init() doesn't cut it due to allocations, and whatever else I
-|would have met before ending the whack-a-mole game.
-|
-|If I were in your shoes, I think I'd just stop caring about UV until a
-|real user appears.  AFAIK, I'm the only guy who ever ran RT on UV, and
-|I only did so because SUSE asked me to look into it.. years ago now.
-|
-|        -Mike
+Make its_lock a raw_spin_lock_t.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/include/asm/uv/uv_bau.h | 14 +++++++-------
- arch/x86/platform/uv/tlb_uv.c    | 26 +++++++++++++-------------
- arch/x86/platform/uv/uv_time.c   | 20 ++++++++------------
- 3 files changed, 28 insertions(+), 32 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/uv/uv_bau.h b/arch/x86/include/asm/uv/uv_bau.h
-index 2ac6e347bdc5..7cac79802ad2 100644
---- a/arch/x86/include/asm/uv/uv_bau.h
-+++ b/arch/x86/include/asm/uv/uv_bau.h
-@@ -643,9 +643,9 @@ struct bau_control {
- 	cycles_t		send_message;
- 	cycles_t		period_end;
- 	cycles_t		period_time;
--	raw_spinlock_t		uvhub_lock;
--	raw_spinlock_t		queue_lock;
--	raw_spinlock_t		disable_lock;
-+	spinlock_t		uvhub_lock;
-+	spinlock_t		queue_lock;
-+	spinlock_t		disable_lock;
- 	/* tunables */
- 	int			max_concurr;
- 	int			max_concurr_const;
-@@ -847,15 +847,15 @@ static inline int atom_asr(short i, struct atomic_short *v)
-  * to be lowered below the current 'v'.  atomic_add_unless can only stop
-  * on equal.
-  */
--static inline int atomic_inc_unless_ge(raw_spinlock_t *lock, atomic_t *v, int u)
-+static inline int atomic_inc_unless_ge(spinlock_t *lock, atomic_t *v, int u)
- {
--	raw_spin_lock(lock);
-+	spin_lock(lock);
- 	if (atomic_read(v) >= u) {
--		raw_spin_unlock(lock);
-+		spin_unlock(lock);
- 		return 0;
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 2ea39a83737f..e8217ebe8c1e 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -148,7 +148,7 @@ static struct {
+ } vpe_proxy;
+ 
+ static LIST_HEAD(its_nodes);
+-static DEFINE_SPINLOCK(its_lock);
++static DEFINE_RAW_SPINLOCK(its_lock);
+ static struct rdists *gic_rdists;
+ static struct irq_domain *its_parent;
+ 
+@@ -1850,7 +1850,7 @@ static void its_cpu_init_collection(void)
+ 	struct its_node *its;
+ 	int cpu;
+ 
+-	spin_lock(&its_lock);
++	raw_spin_lock(&its_lock);
+ 	cpu = smp_processor_id();
+ 
+ 	list_for_each_entry(its, &its_nodes, entry) {
+@@ -1892,7 +1892,7 @@ static void its_cpu_init_collection(void)
+ 		its_send_invall(its, &its->collections[cpu]);
  	}
- 	atomic_inc(v);
--	raw_spin_unlock(lock);
-+	spin_unlock(lock);
- 	return 1;
+ 
+-	spin_unlock(&its_lock);
++	raw_spin_unlock(&its_lock);
  }
  
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index 5607611df740..34f9a9ce6236 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -740,9 +740,9 @@ static void destination_plugged(struct bau_desc *bau_desc,
+ static struct its_device *its_find_device(struct its_node *its, u32 dev_id)
+@@ -3041,9 +3041,9 @@ static int __init its_probe_one(struct resource *res,
+ 	if (err)
+ 		goto out_free_tables;
  
- 		quiesce_local_uvhub(hmaster);
+-	spin_lock(&its_lock);
++	raw_spin_lock(&its_lock);
+ 	list_add(&its->entry, &its_nodes);
+-	spin_unlock(&its_lock);
++	raw_spin_unlock(&its_lock);
  
--		raw_spin_lock(&hmaster->queue_lock);
-+		spin_lock(&hmaster->queue_lock);
- 		reset_with_ipi(&bau_desc->distribution, bcp);
--		raw_spin_unlock(&hmaster->queue_lock);
-+		spin_unlock(&hmaster->queue_lock);
- 
- 		end_uvhub_quiesce(hmaster);
- 
-@@ -762,9 +762,9 @@ static void destination_timeout(struct bau_desc *bau_desc,
- 
- 		quiesce_local_uvhub(hmaster);
- 
--		raw_spin_lock(&hmaster->queue_lock);
-+		spin_lock(&hmaster->queue_lock);
- 		reset_with_ipi(&bau_desc->distribution, bcp);
--		raw_spin_unlock(&hmaster->queue_lock);
-+		spin_unlock(&hmaster->queue_lock);
- 
- 		end_uvhub_quiesce(hmaster);
- 
-@@ -785,7 +785,7 @@ static void disable_for_period(struct bau_control *bcp, struct ptc_stats *stat)
- 	cycles_t tm1;
- 
- 	hmaster = bcp->uvhub_master;
--	raw_spin_lock(&hmaster->disable_lock);
-+	spin_lock(&hmaster->disable_lock);
- 	if (!bcp->baudisabled) {
- 		stat->s_bau_disabled++;
- 		tm1 = get_cycles();
-@@ -798,7 +798,7 @@ static void disable_for_period(struct bau_control *bcp, struct ptc_stats *stat)
- 			}
- 		}
- 	}
--	raw_spin_unlock(&hmaster->disable_lock);
-+	spin_unlock(&hmaster->disable_lock);
- }
- 
- static void count_max_concurr(int stat, struct bau_control *bcp,
-@@ -861,7 +861,7 @@ static void record_send_stats(cycles_t time1, cycles_t time2,
-  */
- static void uv1_throttle(struct bau_control *hmaster, struct ptc_stats *stat)
- {
--	raw_spinlock_t *lock = &hmaster->uvhub_lock;
-+	spinlock_t *lock = &hmaster->uvhub_lock;
- 	atomic_t *v;
- 
- 	v = &hmaster->active_descriptor_count;
-@@ -995,7 +995,7 @@ static int check_enable(struct bau_control *bcp, struct ptc_stats *stat)
- 	struct bau_control *hmaster;
- 
- 	hmaster = bcp->uvhub_master;
--	raw_spin_lock(&hmaster->disable_lock);
-+	spin_lock(&hmaster->disable_lock);
- 	if (bcp->baudisabled && (get_cycles() >= bcp->set_bau_on_time)) {
- 		stat->s_bau_reenabled++;
- 		for_each_present_cpu(tcpu) {
-@@ -1007,10 +1007,10 @@ static int check_enable(struct bau_control *bcp, struct ptc_stats *stat)
- 				tbcp->period_giveups = 0;
- 			}
- 		}
--		raw_spin_unlock(&hmaster->disable_lock);
-+		spin_unlock(&hmaster->disable_lock);
- 		return 0;
- 	}
--	raw_spin_unlock(&hmaster->disable_lock);
-+	spin_unlock(&hmaster->disable_lock);
- 	return -1;
- }
- 
-@@ -1942,9 +1942,9 @@ static void __init init_per_cpu_tunables(void)
- 		bcp->cong_reps			= congested_reps;
- 		bcp->disabled_period		= sec_2_cycles(disabled_period);
- 		bcp->giveup_limit		= giveup_limit;
--		raw_spin_lock_init(&bcp->queue_lock);
--		raw_spin_lock_init(&bcp->uvhub_lock);
--		raw_spin_lock_init(&bcp->disable_lock);
-+		spin_lock_init(&bcp->queue_lock);
-+		spin_lock_init(&bcp->uvhub_lock);
-+		spin_lock_init(&bcp->disable_lock);
- 	}
- }
- 
-diff --git a/arch/x86/platform/uv/uv_time.c b/arch/x86/platform/uv/uv_time.c
-index badf377efc21..b082d71b08ee 100644
---- a/arch/x86/platform/uv/uv_time.c
-+++ b/arch/x86/platform/uv/uv_time.c
-@@ -57,7 +57,7 @@ static DEFINE_PER_CPU(struct clock_event_device, cpu_ced);
- 
- /* There is one of these allocated per node */
- struct uv_rtc_timer_head {
--	raw_spinlock_t	lock;
-+	spinlock_t	lock;
- 	/* next cpu waiting for timer, local node relative: */
- 	int		next_cpu;
- 	/* number of cpus on this node: */
-@@ -177,7 +177,7 @@ static __init int uv_rtc_allocate_timers(void)
- 				uv_rtc_deallocate_timers();
- 				return -ENOMEM;
- 			}
--			raw_spin_lock_init(&head->lock);
-+			spin_lock_init(&head->lock);
- 			head->ncpus = uv_blade_nr_possible_cpus(bid);
- 			head->next_cpu = -1;
- 			blade_info[bid] = head;
-@@ -231,7 +231,7 @@ static int uv_rtc_set_timer(int cpu, u64 expires)
- 	unsigned long flags;
- 	int next_cpu;
- 
--	raw_spin_lock_irqsave(&head->lock, flags);
-+	spin_lock_irqsave(&head->lock, flags);
- 
- 	next_cpu = head->next_cpu;
- 	*t = expires;
-@@ -243,12 +243,12 @@ static int uv_rtc_set_timer(int cpu, u64 expires)
- 		if (uv_setup_intr(cpu, expires)) {
- 			*t = ULLONG_MAX;
- 			uv_rtc_find_next_timer(head, pnode);
--			raw_spin_unlock_irqrestore(&head->lock, flags);
-+			spin_unlock_irqrestore(&head->lock, flags);
- 			return -ETIME;
- 		}
- 	}
- 
--	raw_spin_unlock_irqrestore(&head->lock, flags);
-+	spin_unlock_irqrestore(&head->lock, flags);
  	return 0;
- }
  
-@@ -267,7 +267,7 @@ static int uv_rtc_unset_timer(int cpu, int force)
- 	unsigned long flags;
- 	int rc = 0;
- 
--	raw_spin_lock_irqsave(&head->lock, flags);
-+	spin_lock_irqsave(&head->lock, flags);
- 
- 	if ((head->next_cpu == bcpu && uv_read_rtc(NULL) >= *t) || force)
- 		rc = 1;
-@@ -279,7 +279,7 @@ static int uv_rtc_unset_timer(int cpu, int force)
- 			uv_rtc_find_next_timer(head, pnode);
- 	}
- 
--	raw_spin_unlock_irqrestore(&head->lock, flags);
-+	spin_unlock_irqrestore(&head->lock, flags);
- 
- 	return rc;
- }
-@@ -299,17 +299,13 @@ static int uv_rtc_unset_timer(int cpu, int force)
- static u64 uv_read_rtc(struct clocksource *cs)
- {
- 	unsigned long offset;
--	u64 cycles;
- 
--	preempt_disable();
- 	if (uv_get_min_hub_revision_id() == 1)
- 		offset = 0;
- 	else
- 		offset = (uv_blade_processor_id() * L1_CACHE_BYTES) % PAGE_SIZE;
- 
--	cycles = (u64)uv_read_local_mmr(UVH_RTC | offset);
--	preempt_enable();
--	return cycles;
-+	return (u64)uv_read_local_mmr(UVH_RTC | offset);
- }
- 
- /*
 -- 
 2.18.0
 
