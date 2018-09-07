@@ -2,89 +2,114 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C829C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69278C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73CA20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:18:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73CA20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E710206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:20:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E710206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeIGJ5c (ORCPT
+        id S1727579AbeIGJ7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 05:57:32 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:55689 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725986AbeIGJ5c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 05:57:32 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08580496|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CnYt5vt_1536297468;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CnYt5vt_1536297468)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Fri, 07 Sep 2018 13:17:48 +0800
-Date:   Fri, 7 Sep 2018 13:17:47 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V3 17/26] csky: Misc headers
-Message-ID: <20180907051747.GC13356@guoren-Inspiron-7460>
-References: <cover.1536138304.git.ren_guo@c-sky.com>
- <66335e5f59c186b291f8c3c98c9dadbd61d0cd3e.1536138304.git.ren_guo@c-sky.com>
- <CAK8P3a2pOYNB6LtFB6hJ3WMXzJsj5wwNKvBK4_dP-4uPKas-Pw@mail.gmail.com>
+        Fri, 7 Sep 2018 05:59:36 -0400
+Received: from mga05.intel.com ([192.55.52.43]:53790 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbeIGJ7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 05:59:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 22:20:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
+   d="scan'208";a="89711020"
+Received: from unknown (HELO [10.239.13.3]) ([10.239.13.3])
+  by orsmga002.jf.intel.com with ESMTP; 06 Sep 2018 22:19:55 -0700
+Message-ID: <5B920B96.6080803@intel.com>
+Date:   Fri, 07 Sep 2018 13:24:38 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2pOYNB6LtFB6hJ3WMXzJsj5wwNKvBK4_dP-4uPKas-Pw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+To:     Andi Kleen <ak@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Liang, Kan" <kan.liang@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>
+Subject: Re: [PATCH v2 6/8] perf/x86/intel/lbr: guest requesting KVM for lbr
+ stack save/restore
+References: <1536233456-12173-1-git-send-email-wei.w.wang@intel.com> <1536233456-12173-7-git-send-email-wei.w.wang@intel.com> <20180907032707.GN27886@tassilo.jf.intel.com>
+In-Reply-To: <20180907032707.GN27886@tassilo.jf.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 04:16:30PM +0200, Arnd Bergmann wrote:
-> On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> 
-> > diff --git a/arch/csky/boot/dts/qemu.dts b/arch/csky/boot/dts/qemu.dts
-> > new file mode 100644
-> > index 0000000..d36e4cd
-> > --- /dev/null
-> > +++ b/arch/csky/boot/dts/qemu.dts
-> > @@ -0,0 +1,77 @@
-> > +/dts-v1/;
-> > +/ {
-> > +       compatible = "csky,qemu";
-> > +       #address-cells = <1>;
-> > +       #size-cells = <1>;
-> > +       interrupt-parent = <&intc>;
-> 
-> Ideally, qemu would supply a dtb file that matches the current configuration,
-> as we do for instance on the ARM 'virt' machine. This allows you
-> much more flexibility in running all kinds of options, as well as extending
-> qemu later with new features.
-So, I should remove qemu.dts in next version patch?
+On 09/07/2018 11:27 AM, Andi Kleen wrote:
+> On Thu, Sep 06, 2018 at 07:30:54PM +0800, Wei Wang wrote:
+>> This patch adds an interface to enable a guest to request KVM to save
+>> and restore the lbr stack on vCPU context switching.
+>>
+>> KVM couldn't capture the info about whether the guest is actively using
+>> the lbr feature via the lbr enable bit in the debugctl MSR, because that
+>> control bit is frequently enabled and disabled by the guest, and in some
+>> csaes, it is disabled even when the guest is actively using the lbr
+>> feature. For example, perf_pmu_sched_task in the guest disables the bit
+>> before reading out the lbr stack. In this case, the bit is disabled though
+>> the guest is still using the lbr feature.
+>>
+>> So, a KVM-specific MSR, MSR_KVM_PV_LBR_CTRL, is used by the guest at a
+>> proper place to tell KVM if the LBR is actively in use or not. Basically,
+>> the lbr user callstack mode needs the lbr stack to be saved/restored on a
+>> context switching, so we set the ACTIVE bit of MSR_KVM_PV_LBR_CTRL only
+>> when the user callstack mode is used. The KVM hypervisor will add the lbr
+>> stack save/restore support on vCPU switching after the ACTIVE bit is set.
+> PV is difficult because it requires changing all the users.
 
-> > +
-> > +               timer0: timer@0xffffd000 {
-> > +                       compatible = "snps,dw-apb-timer";
-> > +                       reg = <0xffffd000 0x1000>;
-> > +                       clocks = <&dummy_apb>;
-> > +                       clock-names = "timer";
-> > +                       interrupts = <1>;
-> > +               };
-> > +
-> > +               timer1: timer@0xffffd014 {
-> 
-> Drop the leading '0x' in the unit-address here (in all devices)
-Ok
+It needs changes of the guest driver, but remains transparent to guest 
+user applications (e.g. the perf tool).
+Btw, we tested it, and it works in guest as good as on the native linux.
+
+This was thought of as the hardest part of this work. Let me just 
+clarify it a little bit:
+
+The fundamental function we want to achieve is
+#1 when the vCPU is actively using the LBR feature,  save/restore the 
+lbr stack when the vCPU is scheduled out/in;
+#2 when the vCPU is NOT actively using the LBR feature, DON'T 
+save/restore the lbr stack when the vCPU is scheduled out/in;
+
+The key problem we need to solve is: how does the host know if the guest 
+is actively using the lbr feature or not?
+
+>
+> Maybe a better approach would be a lazy restore of the LBRs:
+>
+> Don't restore the LBRs on context switch, but set the LBR MSRs to intercept.
+> Then on the first access restore the LBRs and allow direct access to the
+> MSRs again.
+>
+> Also when the LBRs haven't been set to direct access the state doesn't
+> need to be saved.
+
+This could achieve the above #1, but how would it solve #2 above? That 
+is, after the guest uses the lbr feature for a while, the lbr stack has 
+been passed through, then the guest doesn't use lbr any more, but the 
+vCPU will still save/restore on switching?
+(Host cannot know that the guest is not using lbr by the debugctl[0], 
+the commit log above has some explanations about this)
+
+Best,
+Wei
+
+
