@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B88C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC70C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D79C2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D79C2075E
+	by mail.kernel.org (Postfix) with ESMTP id 0BCAB2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BCAB2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbeIHB4H (ORCPT
+        id S1728055AbeIHB4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:56:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40744 "EHLO
+        Fri, 7 Sep 2018 21:56:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40754 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727984AbeIHB4H (ORCPT
+        with ESMTP id S1727984AbeIHB4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:56:07 -0400
+        Fri, 7 Sep 2018 21:56:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC72AF81;
-        Fri,  7 Sep 2018 21:13:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE8FAF07;
+        Fri,  7 Sep 2018 21:13:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hari Bathini <hbathini@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        stable@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 026/145] powerpc/fadump: handle crash memory ranges array index overflow
-Date:   Fri,  7 Sep 2018 23:08:12 +0200
-Message-Id: <20180907210905.872033536@linuxfoundation.org>
+Subject: [PATCH 4.18 027/145] powerpc/64s: Fix page table fragment refcount race vs speculative references
+Date:   Fri,  7 Sep 2018 23:08:13 +0200
+Message-Id: <20180907210906.048696408@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,253 +52,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 1bd6a1c4b80a28d975287630644e6b47d0f977a5 upstream.
+commit 4231aba000f5a4583dd9f67057aadb68c3eca99d upstream.
 
-Crash memory ranges is an array of memory ranges of the crashing kernel
-to be exported as a dump via /proc/vmcore file. The size of the array
-is set based on INIT_MEMBLOCK_REGIONS, which works alright in most cases
-where memblock memory regions count is less than INIT_MEMBLOCK_REGIONS
-value. But this count can grow beyond INIT_MEMBLOCK_REGIONS value since
-commit 142b45a72e22 ("memblock: Add array resizing support").
+The page table fragment allocator uses the main page refcount racily
+with respect to speculative references. A customer observed a BUG due
+to page table page refcount underflow in the fragment allocator. This
+can be caused by the fragment allocator set_page_count stomping on a
+speculative reference, and then the speculative failure handler
+decrements the new reference, and the underflow eventually pops when
+the page tables are freed.
 
-On large memory systems with a few DLPAR operations, the memblock memory
-regions count could be larger than INIT_MEMBLOCK_REGIONS value. On such
-systems, registering fadump results in crash or other system failures
-like below:
+Fix this by using a dedicated field in the struct page for the page
+table fragment allocator.
 
-  task: c00007f39a290010 ti: c00000000b738000 task.ti: c00000000b738000
-  NIP: c000000000047df4 LR: c0000000000f9e58 CTR: c00000000010f180
-  REGS: c00000000b73b570 TRAP: 0300   Tainted: G          L   X  (4.4.140+)
-  MSR: 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22004484  XER: 20000000
-  CFAR: c000000000008500 DAR: 000007a450000000 DSISR: 40000000 SOFTE: 0
-  ...
-  NIP [c000000000047df4] smp_send_reschedule+0x24/0x80
-  LR [c0000000000f9e58] resched_curr+0x138/0x160
-  Call Trace:
-    resched_curr+0x138/0x160 (unreliable)
-    check_preempt_curr+0xc8/0xf0
-    ttwu_do_wakeup+0x38/0x150
-    try_to_wake_up+0x224/0x4d0
-    __wake_up_common+0x94/0x100
-    ep_poll_callback+0xac/0x1c0
-    __wake_up_common+0x94/0x100
-    __wake_up_sync_key+0x70/0xa0
-    sock_def_readable+0x58/0xa0
-    unix_stream_sendmsg+0x2dc/0x4c0
-    sock_sendmsg+0x68/0xa0
-    ___sys_sendmsg+0x2cc/0x2e0
-    __sys_sendmsg+0x5c/0xc0
-    SyS_socketcall+0x36c/0x3f0
-    system_call+0x3c/0x100
-
-as array index overflow is not checked for while setting up crash memory
-ranges causing memory corruption. To resolve this issue, dynamically
-allocate memory for crash memory ranges and resize it incrementally,
-in units of pagesize, on hitting array size limit.
-
-Fixes: 2df173d9e85d ("fadump: Initialize elfcore header and add PT_LOAD program headers.")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-[mpe: Just use PAGE_SIZE directly, fixup variable placement]
+Fixes: 5c1f6ee9a31c ("powerpc: Reduce PTE table memory wastage")
+Cc: stable@vger.kernel.org # v3.10+
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/fadump.h |    3 -
- arch/powerpc/kernel/fadump.c      |   91 ++++++++++++++++++++++++++++++++------
- 2 files changed, 77 insertions(+), 17 deletions(-)
+ arch/powerpc/mm/mmu_context_book3s64.c |    8 ++++----
+ arch/powerpc/mm/pgtable-book3s64.c     |   17 +++++++++++------
+ include/linux/mm_types.h               |    5 ++++-
+ 3 files changed, 19 insertions(+), 11 deletions(-)
 
---- a/arch/powerpc/include/asm/fadump.h
-+++ b/arch/powerpc/include/asm/fadump.h
-@@ -195,9 +195,6 @@ struct fadump_crash_info_header {
- 	struct cpumask	online_mask;
- };
- 
--/* Crash memory ranges */
--#define INIT_CRASHMEM_RANGES	(INIT_MEMBLOCK_REGIONS + 2)
--
- struct fad_crash_memory_ranges {
- 	unsigned long long	base;
- 	unsigned long long	size;
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -47,8 +47,10 @@ static struct fadump_mem_struct fdm;
- static const struct fadump_mem_struct *fdm_active;
- 
- static DEFINE_MUTEX(fadump_mutex);
--struct fad_crash_memory_ranges crash_memory_ranges[INIT_CRASHMEM_RANGES];
-+struct fad_crash_memory_ranges *crash_memory_ranges;
-+int crash_memory_ranges_size;
- int crash_mem_ranges;
-+int max_crash_mem_ranges;
- 
- /* Scan the Firmware Assisted dump configuration details. */
- int __init early_init_dt_scan_fw_dump(unsigned long node,
-@@ -868,38 +870,88 @@ static int __init process_fadump(const s
- 	return 0;
- }
- 
--static inline void fadump_add_crash_memory(unsigned long long base,
--					unsigned long long end)
-+static void free_crash_memory_ranges(void)
-+{
-+	kfree(crash_memory_ranges);
-+	crash_memory_ranges = NULL;
-+	crash_memory_ranges_size = 0;
-+	max_crash_mem_ranges = 0;
-+}
-+
-+/*
-+ * Allocate or reallocate crash memory ranges array in incremental units
-+ * of PAGE_SIZE.
-+ */
-+static int allocate_crash_memory_ranges(void)
-+{
-+	struct fad_crash_memory_ranges *new_array;
-+	u64 new_size;
-+
-+	new_size = crash_memory_ranges_size + PAGE_SIZE;
-+	pr_debug("Allocating %llu bytes of memory for crash memory ranges\n",
-+		 new_size);
-+
-+	new_array = krealloc(crash_memory_ranges, new_size, GFP_KERNEL);
-+	if (new_array == NULL) {
-+		pr_err("Insufficient memory for setting up crash memory ranges\n");
-+		free_crash_memory_ranges();
-+		return -ENOMEM;
-+	}
-+
-+	crash_memory_ranges = new_array;
-+	crash_memory_ranges_size = new_size;
-+	max_crash_mem_ranges = (new_size /
-+				sizeof(struct fad_crash_memory_ranges));
-+	return 0;
-+}
-+
-+static inline int fadump_add_crash_memory(unsigned long long base,
-+					  unsigned long long end)
- {
- 	if (base == end)
--		return;
-+		return 0;
-+
-+	if (crash_mem_ranges == max_crash_mem_ranges) {
-+		int ret;
-+
-+		ret = allocate_crash_memory_ranges();
-+		if (ret)
-+			return ret;
-+	}
- 
- 	pr_debug("crash_memory_range[%d] [%#016llx-%#016llx], %#llx bytes\n",
- 		crash_mem_ranges, base, end - 1, (end - base));
- 	crash_memory_ranges[crash_mem_ranges].base = base;
- 	crash_memory_ranges[crash_mem_ranges].size = end - base;
- 	crash_mem_ranges++;
-+	return 0;
- }
- 
--static void fadump_exclude_reserved_area(unsigned long long start,
-+static int fadump_exclude_reserved_area(unsigned long long start,
- 					unsigned long long end)
- {
- 	unsigned long long ra_start, ra_end;
-+	int ret = 0;
- 
- 	ra_start = fw_dump.reserve_dump_area_start;
- 	ra_end = ra_start + fw_dump.reserve_dump_area_size;
- 
- 	if ((ra_start < end) && (ra_end > start)) {
- 		if ((start < ra_start) && (end > ra_end)) {
--			fadump_add_crash_memory(start, ra_start);
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(start, ra_start);
-+			if (ret)
-+				return ret;
-+
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		} else if (start < ra_start) {
--			fadump_add_crash_memory(start, ra_start);
-+			ret = fadump_add_crash_memory(start, ra_start);
- 		} else if (ra_end < end) {
--			fadump_add_crash_memory(ra_end, end);
-+			ret = fadump_add_crash_memory(ra_end, end);
- 		}
- 	} else
--		fadump_add_crash_memory(start, end);
-+		ret = fadump_add_crash_memory(start, end);
-+
-+	return ret;
- }
- 
- static int fadump_init_elfcore_header(char *bufp)
-@@ -939,10 +991,11 @@ static int fadump_init_elfcore_header(ch
-  * Traverse through memblock structure and setup crash memory ranges. These
-  * ranges will be used create PT_LOAD program headers in elfcore header.
-  */
--static void fadump_setup_crash_memory_ranges(void)
-+static int fadump_setup_crash_memory_ranges(void)
- {
- 	struct memblock_region *reg;
- 	unsigned long long start, end;
-+	int ret;
- 
- 	pr_debug("Setup crash memory ranges.\n");
- 	crash_mem_ranges = 0;
-@@ -953,7 +1006,9 @@ static void fadump_setup_crash_memory_ra
- 	 * specified during fadump registration. We need to create a separate
- 	 * program header for this chunk with the correct offset.
- 	 */
--	fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	ret = fadump_add_crash_memory(RMA_START, fw_dump.boot_memory_size);
-+	if (ret)
-+		return ret;
- 
- 	for_each_memblock(memory, reg) {
- 		start = (unsigned long long)reg->base;
-@@ -973,8 +1028,12 @@ static void fadump_setup_crash_memory_ra
- 		}
- 
- 		/* add this range excluding the reserved dump area. */
--		fadump_exclude_reserved_area(start, end);
-+		ret = fadump_exclude_reserved_area(start, end);
-+		if (ret)
-+			return ret;
+--- a/arch/powerpc/mm/mmu_context_book3s64.c
++++ b/arch/powerpc/mm/mmu_context_book3s64.c
+@@ -200,9 +200,9 @@ static void pte_frag_destroy(void *pte_f
+ 	/* drop all the pending references */
+ 	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
+ 	/* We allow PTE_FRAG_NR fragments from a PTE page */
+-	if (page_ref_sub_and_test(page, PTE_FRAG_NR - count)) {
++	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
+ 		pgtable_page_dtor(page);
+-		free_unref_page(page);
++		__free_page(page);
  	}
-+
-+	return 0;
  }
  
- /*
-@@ -1097,6 +1156,7 @@ static int register_fadump(void)
- {
- 	unsigned long addr;
- 	void *vaddr;
-+	int ret;
+@@ -215,9 +215,9 @@ static void pmd_frag_destroy(void *pmd_f
+ 	/* drop all the pending references */
+ 	count = ((unsigned long)pmd_frag & ~PAGE_MASK) >> PMD_FRAG_SIZE_SHIFT;
+ 	/* We allow PTE_FRAG_NR fragments from a PTE page */
+-	if (page_ref_sub_and_test(page, PMD_FRAG_NR - count)) {
++	if (atomic_sub_and_test(PMD_FRAG_NR - count, &page->pt_frag_refcount)) {
+ 		pgtable_pmd_page_dtor(page);
+-		free_unref_page(page);
++		__free_page(page);
+ 	}
+ }
  
+--- a/arch/powerpc/mm/pgtable-book3s64.c
++++ b/arch/powerpc/mm/pgtable-book3s64.c
+@@ -270,6 +270,8 @@ static pmd_t *__alloc_for_pmdcache(struc
+ 		return NULL;
+ 	}
+ 
++	atomic_set(&page->pt_frag_refcount, 1);
++
+ 	ret = page_address(page);
  	/*
- 	 * If no memory is reserved then we can not register for firmware-
-@@ -1105,7 +1165,9 @@ static int register_fadump(void)
- 	if (!fw_dump.reserve_dump_area_size)
- 		return -ENODEV;
+ 	 * if we support only one fragment just return the
+@@ -285,7 +287,7 @@ static pmd_t *__alloc_for_pmdcache(struc
+ 	 * count.
+ 	 */
+ 	if (likely(!mm->context.pmd_frag)) {
+-		set_page_count(page, PMD_FRAG_NR);
++		atomic_set(&page->pt_frag_refcount, PMD_FRAG_NR);
+ 		mm->context.pmd_frag = ret + PMD_FRAG_SIZE;
+ 	}
+ 	spin_unlock(&mm->page_table_lock);
+@@ -308,9 +310,10 @@ void pmd_fragment_free(unsigned long *pm
+ {
+ 	struct page *page = virt_to_page(pmd);
  
--	fadump_setup_crash_memory_ranges();
-+	ret = fadump_setup_crash_memory_ranges();
-+	if (ret)
-+		return ret;
- 
- 	addr = be64_to_cpu(fdm.rmr_region.destination_address) + be64_to_cpu(fdm.rmr_region.source_len);
- 	/* Initialize fadump crash info header. */
-@@ -1183,6 +1245,7 @@ void fadump_cleanup(void)
- 	} else if (fw_dump.dump_registered) {
- 		/* Un-register Firmware-assisted dump if it was registered. */
- 		fadump_unregister_dump(&fdm);
-+		free_crash_memory_ranges();
+-	if (put_page_testzero(page)) {
++	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
++	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
+ 		pgtable_pmd_page_dtor(page);
+-		free_unref_page(page);
++		__free_page(page);
  	}
  }
  
+@@ -352,6 +355,7 @@ static pte_t *__alloc_for_ptecache(struc
+ 			return NULL;
+ 	}
+ 
++	atomic_set(&page->pt_frag_refcount, 1);
+ 
+ 	ret = page_address(page);
+ 	/*
+@@ -367,7 +371,7 @@ static pte_t *__alloc_for_ptecache(struc
+ 	 * count.
+ 	 */
+ 	if (likely(!mm->context.pte_frag)) {
+-		set_page_count(page, PTE_FRAG_NR);
++		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
+ 		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
+ 	}
+ 	spin_unlock(&mm->page_table_lock);
+@@ -390,10 +394,11 @@ void pte_fragment_free(unsigned long *ta
+ {
+ 	struct page *page = virt_to_page(table);
+ 
+-	if (put_page_testzero(page)) {
++	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
++	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
+ 		if (!kernel)
+ 			pgtable_page_dtor(page);
+-		free_unref_page(page);
++		__free_page(page);
+ 	}
+ }
+ 
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -139,7 +139,10 @@ struct page {
+ 			unsigned long _pt_pad_1;	/* compound_head */
+ 			pgtable_t pmd_huge_pte; /* protected by page->ptl */
+ 			unsigned long _pt_pad_2;	/* mapping */
+-			struct mm_struct *pt_mm;	/* x86 pgds only */
++			union {
++				struct mm_struct *pt_mm; /* x86 pgds only */
++				atomic_t pt_frag_refcount; /* powerpc */
++			};
+ #if ALLOC_SPLIT_PTLOCKS
+ 			spinlock_t *ptl;
+ #else
 
 
