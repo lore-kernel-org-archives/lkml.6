@@ -4,62 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74555C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037E1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D63620844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B9622083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:49:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PyYdC3tc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D63620844
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="j0h2VZph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9622083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbeIGF1F (ORCPT
+        id S1730714AbeIGFSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:27:05 -0400
-Received: from mail-eopbgr700105.outbound.protection.outlook.com ([40.107.70.105]:7696
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:18:54 -0400
+Received: from mail-bn3nam01on0093.outbound.protection.outlook.com ([104.47.33.93]:60384
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730686AbeIGFSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:18:55 -0400
+        id S1730670AbeIGFSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:18:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=63gbotlpCfBMasCP4jL/Eax6743EllK2KzXd3Nk8hkY=;
- b=PyYdC3tccy23lbPgcsyk3uxuNcPlztya+NXa9X/U5KhqdQbLAarrO/YNtVHY30H4rV6xtsvZCYHJRV2QclZRQ5pMbhFxvYQnWAlwbHoEbJnyv6VD9tgbCGHc9GrsraocOTgk7OMxJUI+etWmNi2s+rlHFeVIQR2cHgKXyfwrjpk=
+ bh=r4qTCG/xVAKh7EOCfv7OoTBO9J8HMBozYrZ9PTMKhHg=;
+ b=j0h2VZphCn+YsXzh2hlfQKwx5SBMLSUeTtLWrApFLEyOi1P1chaJt6T6uBEqVmWymgv7Cf40HekFfwovOZrZqTM5NAA5B1ZqIqi9K9C9EiXbKNjQ/gTWOSqVZp28UGhITxSZUSlyAVwKfWCZA99R71vRo2/PKNi3JiRqyBxCwME=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0149.namprd21.prod.outlook.com (10.173.189.19) with Microsoft SMTP
+ CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.7; Fri, 7 Sep 2018 00:40:42 +0000
+ 15.20.1143.1; Fri, 7 Sep 2018 00:40:38 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:40:42 +0000
+ 00:40:38 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Randy Dunlap <rdunlap@infradead.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+CC:     Andreas Gruenbacher <agruenba@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 15/43] mtd/maps: fix solutionengine.c printk
- format warnings
-Thread-Topic: [PATCH AUTOSEL 4.9 15/43] mtd/maps: fix solutionengine.c printk
- format warnings
-Thread-Index: AQHURkMYSmCefvi2DkaVtvUKsJpOnw==
-Date:   Fri, 7 Sep 2018 00:38:29 +0000
-Message-ID: <20180907003816.57852-15-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 06/43] gfs2: Special-case rindex for gfs2_grow
+Thread-Topic: [PATCH AUTOSEL 4.9 06/43] gfs2: Special-case rindex for
+ gfs2_grow
+Thread-Index: AQHURkMVbg0V5rFYfkSlUhq3hq1tZQ==
+Date:   Fri, 7 Sep 2018 00:38:23 +0000
+Message-ID: <20180907003816.57852-6-alexander.levin@microsoft.com>
 References: <20180907003816.57852-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003816.57852-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -68,104 +57,84 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0149;6:nERjt923oRbHw5RDJlQ7FDKozOIRn3dnuEo5eMmw9JcWYqaKbIZz9jTIRgKF2tymkh7cDQh00iTT+TCWeA/uRd9x0FE1hgTd9vM7qcWxXTWOJ8LhWicSXhxjbjtsDUWgNf3cVVjuNg0WXmYdTZZGLzAzAmPO0gHUYwgnP54hg3cEehFTj9reWd0CrPxf8SoIUqYaQPdkX5QpZtpQAD7hR1IPqnrdI6FbQacmdmEUbGpdXOm5Pz2txOjiVkla70hiYYx3l18YNg0e46JysvOTDUzT/b792IGD+VBYRnTx0aTD2sjXOiARn7nHzZOk6kq0840g4++rISRhSa8AkvYm/UA/TiMPJG2H963mDz56LCFEp02h2i9vfR/RCjdBXA7EtfgNc3f/pY3spbb8QSMBAmC56nKtIswosDUhZfPo8YrgOYxjZbPwlCLMtX4bR1Z/APk/zRs9Bg/YmyOvJGwtNw==;5:VMX1SQr2A4JAeF7mM4mDNETiv4YztrJGUSvOndtM4zoznRFlkBHzZ5ne5i4FPvIzFs+Z2WfIWPkFZAAlzuHL+BuNpwyTWanlx67iz8yWxdencaJBUmWJIzcViejibJleiB5iK3s9CcJTwhcXV/aP5xdVcyRgmlu8Tz7t8OQzoOw=;7:63h+0+ryvvg+PuLm6ZjLy/3W4p6Dlu/hTyw1psLE328d5mqnh+tGqBd29vmeTRzwxRCifRKb1LewSuJlA/UJTqULtmnxA9JirKAE3Fe+y2XfsAx8o4HA99qdxVpW9hiPgVwh8GZM1WzSxGVkYonrNyq/KtA25cdvVEkQI1GGuJJshUnkK4vQmeCP6gp5sMEftfJbGruwclNS4xLklEfCdJaSPL0i4XH8foSVAQlapGqub9oLlu/GiXYsf6pe9VZk
-x-ms-office365-filtering-correlation-id: 43a619d2-ffcc-4b65-f88c-08d6145a8aa7
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:kXSZW7AWN0Cpe5uurEJoTwj3m4O+NuZvFAwFmCVQiFTL1v3M4Do+QVC/ehBXpc2zusRhXnSDrwclFHiT2MD3opPoPd38V3oM7fVpc6UYKgyq3/Mg5K+LL2V9dNUWw4PRdLCBwrgDKlaRqoNQxZzWTqywuEMBFlXUeGmYEFMs4c+UAuiVCUFlDYY0/Wuljhc2/mAP58hf6IGSmJcqR1q9Eiy3znZrKuJBa8A65cwfNotF2yjaWXr/RG6dEZbAjzPw8omt8zxrbHAx4e61HbyGvHPpZbnibjWiFngVsBws+Az/TBpIWtOloTdGgrwv9mEMFTi4T32KCle7uFtZ1qNbP3B2oKU7fcCXjPIRPMweQQ1xv7lb0dUivtB+DEUunkuvzhwLgD+FEybYDN+tMJ8IV2IvrEZCiyt0pdTFouvQQtz5OhRMkkehAu+s0/3SaXCE/pB1+tLV7fwgXH+XwlRceA==;5:3pF/xOviaSJfCOa0x8VBl9tg3DNmNjxywyLjKiLhzJPoT8pf7VTHx4XCRqNSKUy6I7zN5PP0RXdnuqZcVrwL4X53XTdlXDo7z5vdXOlBm0/wHyeMwKKKFagQBuDJvU1MoGfazzdyXMhGC+z2e9nr5qIMUlsd4Z5vfzrtjOOIz9M=;7:Q5Anvt4HWhoEZUBSIXmsibLHfnL51DEsWcrM5hJfCJZwebfpBorV1IvEG4qFSFcHmfaP09fn6xfgEEIBq70ybgtbcT18IVl+ReqIZGXMpYyrZ6140jcco9EWhgy9IVPPMThM+EpM8CgbqDuECYiEcThvGAy96Yt0Rdb+NkTGp3Ct0bMnTNNnfliY64X6p/S+CFicd6X2ACA/m3GYMsfJp0uAavCOVoAWmxV4uzGE8BpeA2aXV8nilIeXE2SUR3ad
+x-ms-office365-filtering-correlation-id: f76ee8c9-74c6-40d0-b245-08d6145a887e
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0149;
-x-ms-traffictypediagnostic: CY4PR21MB0149:
-x-microsoft-antispam-prvs: <CY4PR21MB014934FEE23054C7E9D65A1BFB000@CY4PR21MB0149.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0149;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0149;
-x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(39860400002)(396003)(136003)(189003)(199004)(476003)(2616005)(105586002)(76176011)(446003)(486006)(14444005)(6666003)(2900100001)(256004)(217873002)(66066001)(22452003)(1076002)(6346003)(316002)(86362001)(25786009)(4326008)(26005)(110136005)(102836004)(54906003)(86612001)(107886003)(39060400002)(6116002)(11346002)(7416002)(5660300001)(6506007)(2501003)(6486002)(5250100002)(14454004)(7736002)(8936002)(68736007)(3846002)(53936002)(97736004)(6436002)(10090500001)(6512007)(305945005)(478600001)(99286004)(106356001)(81156014)(2906002)(10290500003)(36756003)(81166006)(186003)(8676002)(72206003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0149;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
+x-ms-traffictypediagnostic: CY4PR21MB0855:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: dYQYBU+XnE6jEG+KkICkxnpXMGpwLpnBZ8EjgDpLW0ooOxj01IC3a0BrkXNaDe/544J9Yeupiy0ldupFfm3QQYLjom2lkh4tHW4CSfy+5Lfg+UZ88vfI2N5x1l1ZpwKXXIIrOTLzUtBZERamIQGSEt0B/JJqjgF9ZKCEPIrAoMTcQcAYW7Amls5ZG1K8S0a0BFBWTnfo85TjZk7Igz/kd5GkxajXZriyzyRRqLUWT/RMycNbTKPigAocUlN+Tu+OP+DykS99UzetsTUGOS015KBXBhZRSq1dJlfkFMZmZvgLtAMDwKwBH4Yj5qe0aNPo6zbf1Ad1YTMt7L+0+HSHJKQDzLoaKtWCw7cNit3wF4U=
+x-microsoft-antispam-prvs: <CY4PR21MB08551AB661D8FD35F0FF8F95FB000@CY4PR21MB0855.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
+x-forefront-prvs: 07880C4932
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(366004)(376002)(39860400002)(189003)(199004)(53936002)(316002)(97736004)(2900100001)(86612001)(25786009)(86362001)(2906002)(6512007)(54906003)(107886003)(68736007)(110136005)(4326008)(81156014)(10290500003)(14454004)(8936002)(66066001)(81166006)(8676002)(3846002)(6116002)(478600001)(72206003)(7736002)(305945005)(1076002)(106356001)(105586002)(6506007)(76176011)(10090500001)(6486002)(99286004)(256004)(36756003)(2501003)(26005)(186003)(6666003)(5250100002)(14444005)(6436002)(5660300001)(102836004)(217873002)(476003)(2616005)(486006)(22452003)(11346002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: gQlbvhT7tgb6dXTBEAwzOo38TFx8BMykmWNl9Fm0cNR96C0weR5wqiYukiXZrTe6/rxUweqy2D+ZpYVKqUh2ZeZI9kSSdBJidsIN7IHyy1KNp1zwRB0ULGlZJi6PBvgekGed/j4zydrekmqs+MwA7GxbA8ESzMeblA4hhdwanasC8TprhtGKSkU6UXGmB6rETYBzcYreZpXePBnndpdp/LZxhyEWdpk4DRLz/1x3DN+3LYl6eNtchTLyj/Ndjm1EhoXEUkzFCVWkW2a8O7sNcJA0hKDvuzCTbXz9htDd0dSDbAcLPKfDzjCaNVaaolH/iOFYh81znT+p/NUNXobz6qRXbPLDRoTTqL3C9hKOOQQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43a619d2-ffcc-4b65-f88c-08d6145a8aa7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:38:29.7102
+X-MS-Exchange-CrossTenant-Network-Message-Id: f76ee8c9-74c6-40d0-b245-08d6145a887e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:38:23.1402
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0149
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit 1d25e3eeed1d987404e2d2e451eebac8c15cecc1 ]
+[ Upstream commit 776125785a87ff05d49938bd5b9f336f2a05bff6 ]
 
-Fix 2 printk format warnings (this driver is currently only used by
-arch/sh/) by using "%pap" instead of "%lx".
+To speed up the common case of appending to a file,
+gfs2_write_alloc_required presumes that writing beyond the end of a file
+will always require additional blocks to be allocated.  This assumption
+is incorrect for preallocates files, but there are no negative
+consequences as long as *some* space is still left on the filesystem.
 
-Fixes these build warnings:
+One special file that always has some space preallocated beyond the end
+of the file is the rindex: when growing a filesystem, gfs2_grow adds one
+or more new resource groups and appends records describing those
+resource groups to the rindex; the preallocated space ensures that this
+is always possible.
 
-../drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
-../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument=
- of type 'long unsigned int', but argument 2 has type 'resource_size_t' {ak=
-a 'unsigned int'} [-Wformat=3D]
-../drivers/mtd/maps/solutionengine.c:62:54: note: format string is defined =
-here
-  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n=
-",
-                                                  ~~~~^
-                                                  %08x
-../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument=
- of type 'long unsigned int', but argument 3 has type 'resource_size_t' {ak=
-a 'unsigned int'} [-Wformat=3D]
-../drivers/mtd/maps/solutionengine.c:62:72: note: format string is defined =
-here
-  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n=
-",
-                                                                    ~~~~^
-                                                                    %08x
+However, when a filesystem is completely full, gfs2_write_alloc_required
+will indicate that an additional allocation is required, and appending
+the next record to the rindex will fail even though space for that
+record has already been preallocated.  To fix that, skip the incorrect
+optimization in gfs2_write_alloc_required, but for the rindex only.
+Other writes to preallocated space beyond the end of the file are still
+allowed to fail on completely full filesystems.
 
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mtd/maps/solutionengine.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/gfs2/bmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/maps/solutionengine.c b/drivers/mtd/maps/solutione=
-ngine.c
-index bb580bc16445..c07f21b20463 100644
---- a/drivers/mtd/maps/solutionengine.c
-+++ b/drivers/mtd/maps/solutionengine.c
-@@ -59,9 +59,9 @@ static int __init init_soleng_maps(void)
- 			return -ENXIO;
- 		}
- 	}
--	printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n=
-",
--	       soleng_flash_map.phys & 0x1fffffff,
--	       soleng_eprom_map.phys & 0x1fffffff);
-+	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
-+	       &soleng_flash_map.phys,
-+	       &soleng_eprom_map.phys);
- 	flash_mtd->owner =3D THIS_MODULE;
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index fc5da4cbe88c..39af17b407f0 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -1472,7 +1472,7 @@ int gfs2_write_alloc_required(struct gfs2_inode *ip, =
+u64 offset,
+ 	end_of_file =3D (i_size_read(&ip->i_inode) + sdp->sd_sb.sb_bsize - 1) >> =
+shift;
+ 	lblock =3D offset >> shift;
+ 	lblock_stop =3D (offset + len + sdp->sd_sb.sb_bsize - 1) >> shift;
+-	if (lblock_stop > end_of_file)
++	if (lblock_stop > end_of_file && ip !=3D GFS2_I(sdp->sd_rindex))
+ 		return 1;
 =20
- 	eprom_mtd =3D do_map_probe("map_rom", &soleng_eprom_map);
+ 	size =3D (lblock_stop - lblock) << shift;
 --=20
 2.17.1
