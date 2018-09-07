@@ -2,142 +2,291 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E98C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9B7C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0355206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:52:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="H7Dqdqq9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0355206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by mail.kernel.org (Postfix) with ESMTP id 033D92083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:52:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033D92083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbeIHCYq (ORCPT
+        id S1729332AbeIHCft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:24:46 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:62448 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729673AbeIHCYp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:24:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536356510; x=1567892510;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JHgdqofGPw7S35H43SLYQDxxWOv3XzAe65kUZqWe60I=;
-  b=H7Dqdqq9gNHwxKvO6h5wTGidjh0SMm7O1awLgQrV9DmFVcv0oxfUGy8A
-   vbpBvdodKygE62S+Hwsy9lnj0EgeTGChkLZlob/yeCyKgvqRKsZQgVdIa
-   pLBjKs0MW7OfgzYRZtHTIigdpe1Y3WquXkoKmtweuy01dvpGXhGvXUyuS
-   Y=;
-X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="355980823"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-a7fdc47a.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:41:48 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2b-a7fdc47a.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LfhIF005892
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:41:45 GMT
-Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LffTL027270
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:41:42 +0200
-Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LffjU027269;
-        Fri, 7 Sep 2018 23:41:41 +0200
-From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC 15/60] sched: Introduce parent_cfs_rq() and use it
-Date:   Fri,  7 Sep 2018 23:40:02 +0200
-Message-Id: <20180907214047.26914-16-jschoenh@amazon.de>
-X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
-In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Sep 2018 22:35:49 -0400
+Received: from smtp2-g21.free.fr ([212.27.42.2]:52781 "EHLO smtp2-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726032AbeIHCfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 22:35:48 -0400
+Received: from sed.home (unknown [IPv6:2a01:cb1d:1a3:2a00:dacb:8aff:fef1:ed46])
+        (Authenticated sender: sed)
+        by smtp2-g21.free.fr (Postfix) with ESMTPSA id 8B2232003B4;
+        Fri,  7 Sep 2018 23:52:29 +0200 (CEST)
+From:   Cedric Roux <sed@free.fr>
+To:     kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Cedric Roux <sed@free.fr>
+Subject: [PATCH v3 1/2] ARM: s3c24xx: formatting cleanup in mach-mini2440.c
+Date:   Fri,  7 Sep 2018 23:54:45 +0200
+Message-Id: <20180907215446.15160-1-sed@free.fr>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out the logic to retrieve the parent CFS runqueue of another
-CFS runqueue into its own function and replace open-coded variants.
+Running:
+    scripts/checkpatch.pl -f arch/arm/mach-s3c24xx/mach-mini2440.c
+revealed several errors and warnings.
 
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
+They were all removed, except one which is an #if 0 around the declaration
+of a gpio pin. This needs some more investigation and I prefer to let it
+here. This is not some dead code.
+
+'printk' was replaced by 'pr_info'.
+
+Signed-off-by: Cedric Roux <sed@free.fr>
 ---
- kernel/sched/fair.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 80 ++++++++++++++-------------
+ 1 file changed, 43 insertions(+), 37 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9f0ce4555c26..82cdd75e88b9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -282,11 +282,18 @@ static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
- 	return grp->my_q;
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index f9fc1f8d2b28..4a0bf6abba8c 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -64,8 +64,8 @@ static struct map_desc mini2440_iodesc[] __initdata = {
+ };
+ 
+ #define UCON S3C2410_UCON_DEFAULT
+-#define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
+-#define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
++#define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
++#define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
+ 
+ 
+ static struct s3c2410_uartcfg mini2440_uartcfgs[] __initdata = {
+@@ -104,8 +104,8 @@ static struct s3c2410_udc_mach_info mini2440_udc_cfg __initdata = {
+ /*
+  * This macro simplifies the table bellow
+  */
+-#define _LCD_DECLARE(_clock,_xres,margin_left,margin_right,hsync, \
+-			_yres,margin_top,margin_bottom,vsync, refresh) \
++#define _LCD_DECLARE(_clock, _xres, margin_left, margin_right, hsync, \
++			_yres, margin_top, margin_bottom, vsync, refresh) \
+ 	.width = _xres, \
+ 	.xres = _xres, \
+ 	.height = _yres, \
+@@ -128,7 +128,7 @@ static struct s3c2410fb_display mini2440_lcd_cfg[] __initdata = {
+ 	[0] = {	/* mini2440 + 3.5" TFT + touchscreen */
+ 		_LCD_DECLARE(
+ 			7,			/* The 3.5 is quite fast */
+-			240, 21, 38, 6, 	/* x timing */
++			240, 21, 38, 6,		/* x timing */
+ 			320, 4, 4, 2,		/* y timing */
+ 			60),			/* refresh rate */
+ 		.lcdcon5	= (S3C2410_LCDCON5_FRM565 |
+@@ -140,7 +140,7 @@ static struct s3c2410fb_display mini2440_lcd_cfg[] __initdata = {
+ 	[1] = { /* mini2440 + 7" TFT + touchscreen */
+ 		_LCD_DECLARE(
+ 			10,			/* the 7" runs slower */
+-			800, 40, 40, 48, 	/* x timing */
++			800, 40, 40, 48,	/* x timing */
+ 			480, 29, 3, 3,		/* y timing */
+ 			50),			/* refresh rate */
+ 		.lcdcon5	= (S3C2410_LCDCON5_FRM565 |
+@@ -148,7 +148,7 @@ static struct s3c2410fb_display mini2440_lcd_cfg[] __initdata = {
+ 				   S3C2410_LCDCON5_INVVFRAME |
+ 				   S3C2410_LCDCON5_PWREN),
+ 	},
+-	/* The VGA shield can outout at several resolutions. All share 
++	/* The VGA shield can outout at several resolutions. All share
+ 	 * the same timings, however, anything smaller than 1024x768
+ 	 * will only be displayed in the top left corner of a 1024x768
+ 	 * XGA output unless you add optional dip switches to the shield.
+@@ -158,9 +158,10 @@ static struct s3c2410fb_display mini2440_lcd_cfg[] __initdata = {
+ 		_LCD_DECLARE(
+ 			10,
+ 			1024, 1, 2, 2,		/* y timing */
+-			768, 200, 16, 16, 	/* x timing */
++			768, 200, 16, 16,	/* x timing */
+ 			24),	/* refresh rate, maximum stable,
+-				 tested with the FPGA shield */
++				 * tested with the FPGA shield
++				 */
+ 		.lcdcon5	= (S3C2410_LCDCON5_FRM565 |
+ 				   S3C2410_LCDCON5_HWSWP),
+ 	},
+@@ -196,7 +197,8 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+ 
+ 	/* Enable VD[2..7], VD[10..15], VD[18..23] and VCLK, syncs, VDEN
+ 	 * and disable the pull down resistors on pins we are using for LCD
+-	 * data. */
++	 * data.
++	 */
+ 
+ 	.gpcup		= (0xf << 1) | (0x3f << 10),
+ 
+@@ -232,10 +234,10 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+ /* MMC/SD  */
+ 
+ static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+-   .gpio_detect   = S3C2410_GPG(8),
+-   .gpio_wprotect = S3C2410_GPH(8),
+-   .set_power     = NULL,
+-   .ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
++	.gpio_detect   = S3C2410_GPG(8),
++	.gpio_wprotect = S3C2410_GPH(8),
++	.set_power     = NULL,
++	.ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
+ };
+ 
+ /* NAND Flash on MINI2440 board */
+@@ -254,7 +256,8 @@ static struct mtd_partition mini2440_default_nand_part[] __initdata = {
+ 	[2] = {
+ 		.name	= "kernel",
+ 		/* 5 megabytes, for a kernel with no modules
+-		 * or a uImage with a ramdisk attached */
++		 * or a uImage with a ramdisk attached
++		 */
+ 		.size	= 0x00500000,
+ 		.offset	= SZ_256K + SZ_128K,
+ 	},
+@@ -271,7 +274,7 @@ static struct s3c2410_nand_set mini2440_nand_sets[] __initdata = {
+ 		.nr_chips	= 1,
+ 		.nr_partitions	= ARRAY_SIZE(mini2440_default_nand_part),
+ 		.partitions	= mini2440_default_nand_part,
+-		.flash_bbt 	= 1, /* we use u-boot to create a BBT */
++		.flash_bbt	= 1, /* we use u-boot to create a BBT */
+ 	},
+ };
+ 
+@@ -290,7 +293,7 @@ static struct s3c2410_platform_nand mini2440_nand_info __initdata = {
+ static struct resource mini2440_dm9k_resource[] = {
+ 	[0] = DEFINE_RES_MEM(MACH_MINI2440_DM9K_BASE, 4),
+ 	[1] = DEFINE_RES_MEM(MACH_MINI2440_DM9K_BASE + 4, 4),
+-	[2] = DEFINE_RES_NAMED(IRQ_EINT7, 1, NULL, IORESOURCE_IRQ \
++	[2] = DEFINE_RES_NAMED(IRQ_EINT7, 1, NULL, IORESOURCE_IRQ
+ 						| IORESOURCE_IRQ_HIGHEDGE),
+ };
+ 
+@@ -362,7 +365,8 @@ static struct gpio_keys_button mini2440_buttons[] = {
+ 	},
+ #if 0
+ 	/* this pin is also known as TCLK1 and seems to already
+-	 * marked as "in use" somehow in the kernel -- possibly wrongly */
++	 * marked as "in use" somehow in the kernel -- possibly wrongly
++	 */
+ 	{
+ 		.gpio		= S3C2410_GPG(11),	/* K6 */
+ 		.code		= KEY_F6,
+@@ -564,7 +568,8 @@ static char mini2440_features_str[12] __initdata = "0tb";
+ static int __init mini2440_features_setup(char *str)
+ {
+ 	if (str)
+-		strlcpy(mini2440_features_str, str, sizeof(mini2440_features_str));
++		strlcpy(mini2440_features_str, str,
++			sizeof(mini2440_features_str));
+ 	return 1;
  }
  
-+static inline struct cfs_rq *parent_cfs_rq(struct cfs_rq *cfs_rq)
-+{
-+	if (!cfs_rq->tg->parent)
-+		return NULL;
-+	return cfs_rq->tg->parent->cfs_rq[cpu_of(rq_of(cfs_rq))];
-+}
-+
- static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+@@ -583,10 +588,10 @@ struct mini2440_features_t {
+ };
+ 
+ static void __init mini2440_parse_features(
+-		struct mini2440_features_t * features,
+-		const char * features_str )
++		struct mini2440_features_t *features,
++		const char *features_str)
  {
- 	if (!cfs_rq->on_list) {
- 		struct rq *rq = rq_of(cfs_rq);
--		int cpu = cpu_of(rq);
-+		struct cfs_rq *pcfs_rq = parent_cfs_rq(cfs_rq);
- 		/*
- 		 * Ensure we either appear before our parent (if already
- 		 * enqueued) or force our parent to appear after us when it is
-@@ -296,8 +303,7 @@ static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 		 * tmp_alone_branch either when the branch is connected
- 		 * to a tree or when we reach the beg of the tree
- 		 */
--		if (cfs_rq->tg->parent &&
--		    cfs_rq->tg->parent->cfs_rq[cpu]->on_list) {
-+		if (pcfs_rq && pcfs_rq->on_list) {
- 			/*
- 			 * If parent is already on the list, we add the child
- 			 * just before. Thanks to circular linked property of
-@@ -305,14 +311,14 @@ static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 			 * of the list that starts by parent.
- 			 */
- 			list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
--				&(cfs_rq->tg->parent->cfs_rq[cpu]->leaf_cfs_rq_list));
-+					  &pcfs_rq->leaf_cfs_rq_list);
- 			/*
- 			 * The branch is now connected to its tree so we can
- 			 * reset tmp_alone_branch to the beginning of the
- 			 * list.
- 			 */
- 			rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
--		} else if (!cfs_rq->tg->parent) {
-+		} else if (!pcfs_rq) {
- 			/*
- 			 * cfs rq without parent should be put
- 			 * at the tail of the list.
-@@ -4716,7 +4722,7 @@ static void sync_throttle(struct cfs_rq *cfs_rq)
- 	if (!cfs_bandwidth_used())
- 		return;
+-	const char * fp = features_str;
++	const char *fp = features_str;
  
--	pcfs_rq = cfs_rq->tg->parent->cfs_rq[cpu_of(rq_of(cfs_rq))];
-+	pcfs_rq = parent_cfs_rq(cfs_rq);
+ 	features->count = 0;
+ 	features->done = 0;
+@@ -598,13 +603,14 @@ static void __init mini2440_parse_features(
+ 		switch (f) {
+ 		case '0'...'9':	/* tft screen */
+ 			if (features->done & FEATURE_SCREEN) {
+-				printk(KERN_INFO "MINI2440: '%c' ignored, "
+-					"screen type already set\n", f);
++				pr_info("MINI2440: '%c' ignored, screen type already set\n",
++					f);
+ 			} else {
+ 				int li = f - '0';
++
+ 				if (li >= ARRAY_SIZE(mini2440_lcd_cfg))
+-					printk(KERN_INFO "MINI2440: "
+-						"'%c' out of range LCD mode\n", f);
++					pr_info("MINI2440: '%c' out of range LCD mode\n",
++						f);
+ 				else {
+ 					features->optional[features->count++] =
+ 							&s3c_device_lcd;
+@@ -615,8 +621,8 @@ static void __init mini2440_parse_features(
+ 			break;
+ 		case 'b':
+ 			if (features->done & FEATURE_BACKLIGHT)
+-				printk(KERN_INFO "MINI2440: '%c' ignored, "
+-					"backlight already set\n", f);
++				pr_info("MINI2440: '%c' ignored, backlight already set\n",
++					f);
+ 			else {
+ 				features->optional[features->count++] =
+ 						&mini2440_led_backlight;
+@@ -624,13 +630,13 @@ static void __init mini2440_parse_features(
+ 			features->done |= FEATURE_BACKLIGHT;
+ 			break;
+ 		case 't':
+-			printk(KERN_INFO "MINI2440: '%c' ignored, "
+-				"touchscreen not compiled in\n", f);
++			pr_info("MINI2440: '%c' ignored, touchscreen not compiled in\n",
++				f);
+ 			break;
+ 		case 'c':
+ 			if (features->done & FEATURE_CAMERA)
+-				printk(KERN_INFO "MINI2440: '%c' ignored, "
+-					"camera already registered\n", f);
++				pr_info("MINI2440: '%c' ignored, camera already registered\n",
++					f);
+ 			else
+ 				features->optional[features->count++] =
+ 					&s3c_device_camif;
+@@ -645,7 +651,7 @@ static void __init mini2440_init(void)
+ 	struct mini2440_features_t features = { 0 };
+ 	int i;
  
- 	cfs_rq->throttle_count = pcfs_rq->throttle_count;
- 	cfs_rq->throttled_clock_task = rq_clock_task(rq_of(cfs_rq));
+-	printk(KERN_INFO "MINI2440: Option string mini2440=%s\n",
++	pr_info("MINI2440: Option string mini2440=%s\n",
+ 			mini2440_features_str);
+ 
+ 	/* Parse the feature string */
+@@ -674,17 +680,17 @@ static void __init mini2440_init(void)
+ 		mini2440_fb_info.displays =
+ 			&mini2440_lcd_cfg[features.lcd_index];
+ 
+-		printk(KERN_INFO "MINI2440: LCD");
++		pr_info("MINI2440: LCD");
+ 		for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
+ 			if (li == features.lcd_index)
+-				printk(" [%d:%dx%d]", li,
++				pr_info(" [%d:%dx%d]", li,
+ 					mini2440_lcd_cfg[li].width,
+ 					mini2440_lcd_cfg[li].height);
+ 			else
+-				printk(" %d:%dx%d", li,
++				pr_info(" %d:%dx%d", li,
+ 					mini2440_lcd_cfg[li].width,
+ 					mini2440_lcd_cfg[li].height);
+-		printk("\n");
++		pr_info("\n");
+ 		s3c24xx_fb_set_platdata(&mini2440_fb_info);
+ 	}
+ 
 -- 
-2.9.3.1.gcba166c.dirty
+2.18.0
 
