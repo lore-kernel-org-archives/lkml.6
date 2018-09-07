@@ -2,113 +2,112 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 537A4C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA5AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166DD20861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:02:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166DD20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CA1802077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:03:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1802077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbeIGNmJ (ORCPT
+        id S1728203AbeIGNnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:42:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:57186 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbeIGNmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:42:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 655627A9;
-        Fri,  7 Sep 2018 02:02:10 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.Emea.Arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B8F33F557;
-        Fri,  7 Sep 2018 02:02:06 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 10:02:04 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling
- depend on schedutil
-Message-ID: <20180907090202.6cmbm7wyr2uumkhu@queper01-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180906143842.xlxcg5notwdaflww@queper01-lin>
- <1545744.fI5ZvP8FO0@aspire.rjw.lan>
- <4111046.18AB1cFGcU@aspire.rjw.lan>
+        Fri, 7 Sep 2018 09:43:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49134 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725843AbeIGNnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:43:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 57E50AF6A;
+        Fri,  7 Sep 2018 09:03:13 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 11:03:12 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        mpe@ellerman.id.au, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH V2 4/4] powerpc/mm/iommu: Allow migration of cma
+ allocated pages during mm_iommu_get
+Message-ID: <20180907090312.GF19621@dhcp22.suse.cz>
+References: <20180906054342.25094-1-aneesh.kumar@linux.ibm.com>
+ <20180906054342.25094-4-aneesh.kumar@linux.ibm.com>
+ <20180906125356.GX14951@dhcp22.suse.cz>
+ <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4111046.18AB1cFGcU@aspire.rjw.lan>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 07 Sep 2018 at 10:56:12 (+0200), Rafael J. Wysocki wrote:
-> On Friday, September 7, 2018 10:52:01 AM CEST Rafael J. Wysocki wrote:
-> > On Thursday, September 6, 2018 4:38:44 PM CEST Quentin Perret wrote:
-> > > Hi Rafael,
+On Thu 06-09-18 19:00:43, Aneesh Kumar K.V wrote:
+> On 09/06/2018 06:23 PM, Michal Hocko wrote:
+> > On Thu 06-09-18 11:13:42, Aneesh Kumar K.V wrote:
+> > > Current code doesn't do page migration if the page allocated is a compound page.
+> > > With HugeTLB migration support, we can end up allocating hugetlb pages from
+> > > CMA region. Also THP pages can be allocated from CMA region. This patch updates
+> > > the code to handle compound pages correctly.
 > > > 
-> > > On Thursday 06 Sep 2018 at 11:18:55 (+0200), Rafael J. Wysocki wrote:
-> > > > I'm not a particular fan of notifiers to be honest and you don't need
-> > > > to add an extra chain just in order to be able to register a callback
-> > > > from a single user.
+> > > This use the new helper get_user_pages_cma_migrate. It does one get_user_pages
+> > > with right count, instead of doing one get_user_pages per page. That avoids
+> > > reading page table multiple times.
 > > > 
-> > > Right. I agree there are alternatives to using notifiers. I used them
-> > > because they're existing infrastructure, and because they let me do what
-> > > I want without too much troubles, which are two important points.
-> > > 
-> > > > That can be achieved with a single callback
-> > > > pointer too, but also you could just call a function exported by the
-> > > > scheduler directly from where in the cpufreq code it needs to be
-> > > > called.
-> > > 
-> > > Are you thinking about something comparable to what is done in
-> > > cpufreq_add_update_util_hook() (kernel/sched/cpufreq.c) for example ?
-> > > That would probably have the same drawback as my current implementation,
-> > > that is that the scheduler is notified of _all_ governor changes, not
-> > > only changes to/from sugov although this is the only thing we care about
-> > > for EAS.
+> > > The patch also convert the hpas member of mm_iommu_table_group_mem_t to a union.
+> > > We use the same storage location to store pointers to struct page. We cannot
+> > > update alll the code path use struct page *, because we access hpas in real mode
+> > > and we can't do that struct page * to pfn conversion in real mode.
 > > 
-> > Well, why don't you implement it as something like "if the governor changes
-> > from sugov to something else (or the other way around), call this function
-> > from the scheduler"?
+> > I am not fmailiar with this code so bear with me. I am completely
+> > missing the purpose of this patch. The changelog doesn't really explain
+> > that AFAICS. I can only guess that you do not want to establish long
+> > pins on CMA pages, right? So whenever you are about to pin a page that
+> > is in CMA you migrate it away to a different !__GFP_MOVABLE page, right?
+> 
+> That is right.
+> 
+> > If that is the case then how do you handle pins which are already in
+> > zone_movable? I do not see any specific check for those.
+> 
+> 
+> > 
+> > Btw. why is this a proper thing to do? Problems with longterm pins are
+> > not only for CMA/ZONE_MOVABLE pages. Pinned pages are not reclaimable as
+> > well so there is a risk of OOMs if there are too many of them. We have
+> > discussed approaches that would allow to force pin invalidation/revocation
+> > at LSF/MM. Isn't that a more appropriate solution to the problem you are
+> > seeing?
+> > 
+> 
+> The CMA area is used on powerpc platforms to allocate guest specific page
+> table (hash page table). If we don't have sufficient free pages we fail to
+> allocate hash page table that result in failure to start guest.
+> 
+> Now with vfio, we end up pinning the entire guest RAM. There is a
+> possibility that these guest RAM  pages got allocated from CMA region. We
+> already do supporting migrating those pages out except for compound pages.
+> What this patch does is to start supporting compound page migration that got
+> allocated out of CMA region (ie, THP pages and hugetlb pages if platform
+> supported hugetlb migration).
 
-Yes that work too ...
+This definitely belongs to the changelog.
 
-> That said, governors are stopped and started in a few cases other than just
-> changing the governor, so maybe you want the EAS side to be notified whenever
-> sugov is stopped and started after all?
+> Now to do that I added a helper get_user_pages_cma_migrate().
+> 
+> I agree that long term pinned pages do have other issues. The patchset is
+> not solving that issue.
 
-Right, so sugov_start/sugov_stop could be an option in this case ... And
-that would leave the CPUFreq core untouched. I'll try to write something :-)
-
-Thanks,
-Quentin
+It would be great to note why a generic approach is not viable. I assume
+the main reason is that those pins are pretty much permanent for the
+guest lifetime so the situation has to be handled in advance. In other
+words, more information please. 
+-- 
+Michal Hocko
+SUSE Labs
