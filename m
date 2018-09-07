@@ -2,102 +2,86 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FACC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 106D3C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F48620652
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:15:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F48620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B8F4220844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:15:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I4P4C9IP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F4220844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbeIGX5g (ORCPT
+        id S1726434AbeIGX5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 19:57:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:8814 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725963AbeIGX5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 19:57:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 12:15:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
-   d="scan'208";a="68373907"
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Sep 2018 12:13:58 -0700
-Received: from orsmsx161.amr.corp.intel.com (10.22.240.84) by
- ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 7 Sep 2018 12:13:56 -0700
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.8]) by
- ORSMSX161.amr.corp.intel.com ([169.254.4.174]) with mapi id 14.03.0319.002;
- Fri, 7 Sep 2018 12:13:56 -0700
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: RE: [PATCH V4 0/3] Add efi page fault handler to recover from page
-Thread-Topic: [PATCH V4 0/3] Add efi page fault handler to recover from page
-Thread-Index: AQHURjlkSYU05F00bkKzUccpg9YwmqTlo/GA//+MHCA=
-Date:   Fri, 7 Sep 2018 19:13:55 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F485BA631@ORSMSX114.amr.corp.intel.com>
-References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <CACi5LpP4=VprRuabhKVXWy+JmKB1WNri+OA3aMSw=Q7-obo_TA@mail.gmail.com>
-In-Reply-To: <CACi5LpP4=VprRuabhKVXWy+JmKB1WNri+OA3aMSw=Q7-obo_TA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmY3MDQ5YjUtMDIxOS00YTMwLWI1NjctZDhhNmFmOWU3N2Y5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWWxkRXU2QzhMcWl3bTZQXC9GWGl3QjRKRkp5U2c4Mm5xWTlyRk5tMWU3WmJTSGZWQ2FYUjlRVWY5QUlsc3Q0NW8ifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 7 Sep 2018 19:57:52 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46731 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbeIGX5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 19:57:52 -0400
+Received: by mail-io1-f68.google.com with SMTP id y12-v6so2367470ioj.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Gfg6ISZaZNpZ8Q79IXSwnUlsNEeCWFHxWTTFk3Vs1+Y=;
+        b=I4P4C9IPpQHNyJ09laFgNm6oicOk7PF4WiEqlfg8i1ku8Ym2LwXN3NJp/ptbf8liv8
+         jR+m6aDgZ6NzE+8+NhABDs3JvlMazPbSVDHcGrw2kOhKJlbxYFrqFJBy48sZhgVvDDBh
+         xcUFltHeoeVhVZDlOZYSQsvOysfwTpQp+/vbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gfg6ISZaZNpZ8Q79IXSwnUlsNEeCWFHxWTTFk3Vs1+Y=;
+        b=bsuqHt+tEeD15yCALmmK19ew23+hTLOAW+Z8gppwDLRwuv7vLdz+h+j9W3PKEKsVra
+         k8D73i+x1Z3Xo+/WO817C9jnZZ7go5fNCCO/TDWPBFnnA2oiv9pNqPEofZsj1Zf4954/
+         YKm6Zf/VeK+eno0rpuV2Kv/WyqikgEmVt2O98hTTdmz0JUVfwvvBv1Rwx/9reo+twDDy
+         4LpOi8UZEVLnREhkLN2SCU0G5XauqGz6FMrOYbd2VUEHHffghsWRtDh292sn5HvUyWv/
+         jvLSZxV8bge3ZDK8OHMhYpmteOXPj6kXHwOZ7t9ck55mj68kWyhovsdGWxI0zOARbpQ7
+         vHqA==
+X-Gm-Message-State: APzg51C2jXr0v9G9gKaJHkXzwHDdv+Eza5t95nB6sb8PYPQ11+zy2bL1
+        6qx0LieBl5AOd0w+/nWKq60PGV6LidcrIYnMEpY=
+X-Google-Smtp-Source: ANB0VdbewwbZc+SAw51KRTbQHTlhRMVP3gIKplyAinZGSgcg3zfn/mAbXJiAzrvxjIc0qyDy5UcPvGHa+Khl7VkV0NU=
+X-Received: by 2002:a6b:f815:: with SMTP id o21-v6mr8163107ioh.203.1536347731962;
+ Fri, 07 Sep 2018 12:15:31 -0700 (PDT)
 MIME-Version: 1.0
+References: <4cb8dd19-a252-10c1-8dea-5479ced463fb@synopsys.com>
+In-Reply-To: <4cb8dd19-a252-10c1-8dea-5479ced463fb@synopsys.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 7 Sep 2018 12:15:21 -0700
+Message-ID: <CA+55aFyQiPApQeMOP9EG8Km+Y-aUBwxXc_8bqRyeSVMSy0nF_w@mail.gmail.com>
+Subject: Re: [GIT PULL] ARC updates for 4.19-rc3
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Will Deacon <Will.Deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Eugeniy.Paltsev@synopsys.com, Christoph Hellwig <hch@lst.de>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBUaGFua3MgU2FpIGZvciB0aGlzIHdvcmsuIEkgdGhpbmsgdGhpcyBhIHN0ZXAgaW4gdGhlIHJp
-Z2h0IGRpcmVjdGlvbi4NCj4gSSB0ZXN0ZWQgdGhpcyBvbiBxZW11IHg4Nl82NCB3aXRoIE9WTUYg
-ZmlybXdhcmUgbW9kaWZpZWQgdG8gYWNjZXNzIHNvbWUNCj4gcmFuZG9tIGFkZHJlc3MgaW4gdGhl
-IEVGSV9SZXNlcnZlZF9SZWdpb24uIEkgd2FzIGFibGUgdG8gcmVib290IHRoZSBxZW11DQo+IGlu
-c3RhbmNlIHN1Y2Nlc3NmdWxseSB3aXRoIHRoZSBwYXRjaGVzIChzZWUgbG9ncyBiZWxvdykgd2hp
-bGUgd2l0aG91dCB0aGUNCj4gcGF0Y2hzZXQsIHJlYm9vdCBlYXJsaWVyIHVzZWQgdG8gZ2V0IHN0
-dWNrLg0KPiANCj4gU28sIGZlZWwgZnJlZSB0byBhZGQ6DQo+IFRlc3RlZC1ieTogQmh1cGVzaCBT
-aGFybWEgPGJoc2hhcm1hQHJlZGhhdC5jb20+DQo+IA0KDQpUaGFua3MgYSBsb3QgQmh1cGVzaCwg
-Zm9yIHRyeWluZyB0aGUgcGF0Y2hlcyBhbmQgYXMgeW91IHNhaWQsIHRoZSBwYXRjaGVzIG5lZWQg
-YSBsb3QgDQptb3JlIHRlc3Rpbmcgb24gcmVhbCBtYWNoaW5lcy4NCg0KPiBRZW11IENvbnNvbGUg
-TG9nczoNCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0KPiAjIHJlYm9vdA0KPiAN
-Cj4gPHNuaXAuLj4NCj4gDQo+IFsgICAxMS40MDAwMDRdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUg
-XS0tLS0tLS0tLS0tLQ0KPiBbICAgMTEuNDAwMTM3XSBbRmlybXdhcmUgQnVnXTogUGFnZSBmYXVs
-dCBjYXVzZWQgYnkgZmlybXdhcmUgYXQgUEE6IDB4N2U5MjQxMDANCj4gWyAgIDExLjQwMDQ4NF0g
-V0FSTklORzogQ1BVOiAwIFBJRDogMTExMSBhdA0KPiBhcmNoL3g4Ni9wbGF0Zm9ybS9lZmkvcXVp
-cmtzLmM6NjkxDQo+IGVmaV9yZWNvdmVyX2Zyb21fcGFnZV9mYXVsdCsweDNiLzB4ZjANCj4gWyAg
-IDExLjQwMDc1MV0gTW9kdWxlcyBsaW5rZWQgaW46DQo+IFsgICAxMS40MDA5OTJdIENQVTogMCBQ
-SUQ6IDExMTEgQ29tbTogaW5pdCBOb3QgdGFpbnRlZCA0LjE4LjAtcmM1KyAjMQ0KPiBbICAgMTEu
-NDAxMTQ2XSBIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAx
-OTk2KSwNCj4gQklPUyAwLjAuMCAwMi8wNi8yMDE1DQo+IFsgICAxMS40MDEzOTddIFJJUDogMDAx
-MDplZmlfcmVjb3Zlcl9mcm9tX3BhZ2VfZmF1bHQrMHgzYi8weGYwDQoNCltzbmlwcGVkIHN0YWNr
-IHRyYWNlXQ0KDQo+IFsgICAxMS40MTAzNzhdICA/IGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdm
-cmFtZSsweDQ0LzB4YTkNCj4gWyAgIDExLjQxMDU1NF0gLS0tWyBlbmQgdHJhY2UgYWQzZDBhMjIw
-YTg4YTQ1YiBdLS0tDQo+IFsgICAxMS40MTA3NDJdIGVmaTogZWZpX3Jlc2V0X3N5c3RlbSgpIGJ1
-Z2d5ISBSZWJvb3QgdGhyb3VnaCBCSU9TDQoNClRoYW5rcyBmb3IgdGhlIGxvZywgaXQgbG9va3Mg
-Z29vZCB0byBtZS4NCg==
+On Fri, Sep 7, 2018 at 11:21 AM Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-4.19-rc3
+
+That "tags/arc-4.19-rc3" actually a real signed tag from you, but it
+doesn't point to any of your new work. In fact, it just points to my
+"Linux 4.15-rc1" commit from last year.
+
+Which is presumably also why your pull request didn't contain a diffstat.
+
+Hmm?
+
+               Linus
