@@ -2,90 +2,74 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE35AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1564CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A1BF2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:33:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="Qgt/lBP+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A1BF2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id CB8982077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:34:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB8982077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbeIGVPW (ORCPT
+        id S1726543AbeIGVQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:15:22 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45667 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbeIGVPW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:15:22 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i26-v6so7259706pfo.12
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=tEIuLLe9PUfFRv2Bgo3DJ5r8ldqFsGz/X7WhewxB/tY=;
-        b=Qgt/lBP+KgwGQQ4u94UIHF/4pEKFdtQib072Y6MJIjYEZmZIaGV5M7g7aoJME6ywLv
-         rHGEkTPRBpaWyHfzgUeeFVXnkeGy3SVO5UIfrFF9kwamRaT0tEWInDpoi2iW4+YtN9R0
-         SXogn63mARtVv/TBuBrg/f4WTMX1Q3ghL6J6f5esbMKmuB+RyZJJuuVSjL/qz5ZmPSPS
-         Yz4lQHTKVFCfsT4AUCOx10L9ce2mNdowDgVG1PfP5A0KCTDpTvXK2H6I0DhPEVFiDP5R
-         rDatfCM17NRdEIsRfqQugRcdul2tdBqDB77t9GWvmCZ+PCSRxpIv6ioLsLzS3GsYC6ge
-         Bc4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=tEIuLLe9PUfFRv2Bgo3DJ5r8ldqFsGz/X7WhewxB/tY=;
-        b=WwzvXokT5gRfLH0vIm3hId9WcrJhV/UakSy48XWS59Smpvc0FZQiGEov1jnT+eTgct
-         KoOtN+Sy+9WJY2BDlfO/zjQZpMhZX9eTk5ckIOHfNNBqvsam3zqDOP8Y5mdoX345BAxs
-         YB+8vh9n2qq1Q2jgPRLPGtS3MfqspWx8H2RDoN/l0mkCM4Ao7rwnEyfT9ssCA4qNvi4f
-         dpxl/345TZ4cXzCDYB9WvzZCISjckNp4+3h4BmyonTPeSv+E36U4zQg/FBQFBmn2UOFE
-         rzZqW/OpIFmPqZWEZ7XZYJ1vYM70bcEBpAbbsOBwybV7GSnxcMPEb0J40ZlC4sKlPZP2
-         5X2g==
-X-Gm-Message-State: APzg51DHh7mTKzgErMer74QJjDyl16BCmyXmtIAyPAJqvFOdc3bzQAar
-        mnDgQnXRGrrSB3mvcd9lgsxYelA7jqQ=
-X-Google-Smtp-Source: ANB0VdYrBQhSRrSPT8IoGPZxcIPtColathFFQVuEez2Ucs6LHWuOAY8pgbky4QigQFf0n3ii+WRFmQ==
-X-Received: by 2002:a62:9541:: with SMTP id p62-v6mr9588115pfd.194.1536338019738;
-        Fri, 07 Sep 2018 09:33:39 -0700 (PDT)
-Received: from cakuba (89-66-82-92.dynamic.chello.pl. [89.66.82.92])
-        by smtp.gmail.com with ESMTPSA id k4-v6sm14761965pfj.30.2018.09.07.09.33.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 09:33:39 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 18:33:31 +0200
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     jun qian <hangdianqj@163.com>
-Cc:     Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        oss-drivers@netronome.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ethernet:netronome:nfp:move spin_lock_bh to spin_lock
- in tasklet
-Message-ID: <20180907183331.7ed99ae3@cakuba>
-In-Reply-To: <20180907162117.47361-1-hangdianqj@163.com>
-References: <20180907162117.47361-1-hangdianqj@163.com>
-Organization: Netronome Systems, Ltd.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Sep 2018 17:16:05 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:60412 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726248AbeIGVQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:16:04 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id CBB41C025E;
+        Fri,  7 Sep 2018 18:34:21 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id 3D974C0F67; Fri,  7 Sep 2018 18:34:20 +0200 (CEST)
+Received: from localhost.localdomain (collins [192.168.1.129])
+        by gagarine.paulk.fr (Postfix) with ESMTP id 14BF8C0F44;
+        Fri,  7 Sep 2018 18:33:55 +0200 (CEST)
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+        Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH 0/2] Follow-up patches for Cedrus v9
+Date:   Fri,  7 Sep 2018 18:33:45 +0200
+Message-Id: <20180907163347.32312-1-contact@paulk.fr>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  7 Sep 2018 09:21:17 -0700, jun qian wrote:
-> As you are already in a tasklet, it is unnecessary to call spin_lock_bh.
-> 
-> Signed-off-by: jun qian <hangdianqj@163.com>
+This brings the requested modifications on top of version 9 of the
+Cedrus VPU driver, that implements stateless video decoding using the
+Request API.
 
-We had more of those at some point, I wonder if you(r tool) can find
-them :)
+Paul Kocialkowski (2):
+  media: cedrus: Fix error reporting in request validation
+  media: cedrus: Add TODO file with tasks to complete before unstaging
 
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+ drivers/staging/media/sunxi/cedrus/TODO     |  7 +++++++
+ drivers/staging/media/sunxi/cedrus/cedrus.c | 15 ++++++++++++---
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/staging/media/sunxi/cedrus/TODO
+
+-- 
+2.18.0
+
