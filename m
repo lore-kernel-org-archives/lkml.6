@@ -4,59 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25248C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09E8C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD319204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 624F820861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:25:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFlx4YzX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD319204EC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pgh9G8de"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624F820861
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbeIGLEn (ORCPT
+        id S1727606AbeIGLEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 07:04:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36017 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbeIGLEn (ORCPT
+        Fri, 7 Sep 2018 07:04:46 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32970 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbeIGLEp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 07:04:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e1-v6so4659383wrt.3;
-        Thu, 06 Sep 2018 23:25:19 -0700 (PDT)
+        Fri, 7 Sep 2018 07:04:45 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v90-v6so13772107wrc.0;
+        Thu, 06 Sep 2018 23:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Fo4uTu35nfqETk1eWWm0rsB3UI2a2lLeir3RiOJ544s=;
-        b=LFlx4YzX5Ya7qjOtnIVcTKcznS6oeSSl96/9Eol2DoVDZV4tfaciINHpN5I28FWHp5
-         FG+kdQfb8vZtSonZm3U4no34XsHQOlhf4Y9GmoBSPYK8ekVWtjiHQzdvJSlxEPt/8U+g
-         zxEH+zMHN6dGDO3DcgmSh83wEbx+CUSvQgO8+277LyiMTom+cSSwCZXPvI73+fMFG+7N
-         dXQ+EGHqUX5PQrpDh7Eh2X+v7NhTKJ/FgDZw7ssdxbxRVuDDsevkauPGWdHAN5ZE2YfC
-         lgL1CiEcDuf2esZnwYcvGdzEtx/U/5gBnlbNVOW1zuwKXbdKJUNsosBpSIAJeJ+LCY0D
-         kDyA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=G0d4E4UUBGUZ+uqudEZiIppK0s4vLLe5noMqkvJPkuU=;
+        b=Pgh9G8deVvztHjVCwyJuRM0Ll6p/RwKoE5lKIPkqaSYFJe7qQ2sasOolra9ymO+Z+2
+         T9QWgs+2b9wumUqRt/bfnO+lNtf4ITFhaP1yo0RuugFQRpf7WBNO8+YdZ8/gV6XnveGN
+         bnMmAHFYUiM2+jLgrvIsjpm2bdh110HQSJJq5Z1SAq+gw/gItdo3WGKxzCio39lLss0y
+         rfUDac+tuLoBzYNruVTM9MzpXPETZKg7qC6peESB6mVJ8QnEzXxh7VdS5thpZJQsHOEA
+         W3CCBKtZ3Oa8iP26tYaZt3w1rRY+Sb7b4ylMWCpXE1GLlyDIoD7QAzsbE3D29/OhR+f6
+         Q7rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Fo4uTu35nfqETk1eWWm0rsB3UI2a2lLeir3RiOJ544s=;
-        b=lG+kZoVIAFw3ZatCQOchiOrT7t92BpYEHQOvdefnZuPzpL0yclmRaDrlbeL2lbagxb
-         ROu3HO4RWHNxZbEakUoxtvxQHRzFef5+iA1zHteWzA3flDHSgJh4QW018xd6U9MxVN6v
-         7NBbYPWYFCtYcrk2ogII6DZY5x0fDA9eE4pkN0vW5olANbPZtXKQmLIGbV7pV5dVWt1V
-         8JTYFlhZb9vZw6nRlka9ad0Z815Fmw3rdB0/dxWPa45XOMcbx56+oXu0nbbKpcMH7xzc
-         37zB7/K7l1BaDRlVDJrtjwNSbu8E5WvDeJhr9yXmOhzLwQGlJxdjfq7NYKUdmLfbQm8K
-         cCsw==
-X-Gm-Message-State: APzg51ATqQUZBxQHlEsR8yzNSEw7STZH+Pse8fOb4yAb/UJrsjHRwhK0
-        OSlHM8gSmg2Irpf15Cl8vdk=
-X-Google-Smtp-Source: ANB0VdYTWL2yOchrIoG9vcULbX7veGh8LNTcSKTcf8Y3FzjiOgnNtos3Ep7jw0Hit8PVEqHbLRL7HA==
-X-Received: by 2002:adf:a3d9:: with SMTP id m25-v6mr4974145wrb.1.1536301519078;
-        Thu, 06 Sep 2018 23:25:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=G0d4E4UUBGUZ+uqudEZiIppK0s4vLLe5noMqkvJPkuU=;
+        b=IVlA3dNQH3qWvt9F/5S/bXrWWxai3QcgWr8dxYNTsL/peqMuallZV247MVVLm2bC1x
+         5nuGpQ9ibVZKg0KC4+PUoxvnHzAiM5JGL7K08sASwF2O1fJ5wHy8bspt0Jar8SVkCADL
+         OPt6D92eR8bXiibppaouQ1wRskJNWLyV45i3jhE+0YmUHqO2JuvciRPWg1EoF4nNrv7R
+         Y2kdn+eRC/bUwuZEFEPAX9IuF6TDN4b9xDDo6qIWqEI2u46TFz9ZZ2zdIjnd49+0oQsl
+         i+szVl6RxRQ/5lyTNB8dAz2ygWcUQ0R2QBYygJ5gLXmFYi606tpXQTexEW8Ee+qDFcuE
+         Uqqg==
+X-Gm-Message-State: APzg51BOKnhttDe9C0fGkrnpOP37YuEBWsjE0qpeYDk1ZW12keIy75iI
+        UZF78XK4Vq1WPweOpKczIBs=
+X-Google-Smtp-Source: ANB0VdbHcQABVeP+3wDtH9ye0milPJ4WQpEcq3N4Md1LnllLiKvm4bV3NzGKaau9GlVQnbp7CC/6Rw==
+X-Received: by 2002:adf:93c2:: with SMTP id 60-v6mr4495773wrp.81.1536301520318;
+        Thu, 06 Sep 2018 23:25:20 -0700 (PDT)
 Received: from NewMoon.iit.local ([90.147.180.254])
-        by smtp.gmail.com with ESMTPSA id w10-v6sm8387233wrp.31.2018.09.06.23.25.17
+        by smtp.gmail.com with ESMTPSA id w10-v6sm8387233wrp.31.2018.09.06.23.25.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Sep 2018 23:25:18 -0700 (PDT)
+        Thu, 06 Sep 2018 23:25:19 -0700 (PDT)
 From:   Andrea Merello <andrea.merello@gmail.com>
 To:     vkoul@kernel.org, dan.j.williams@intel.com,
         michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
@@ -65,71 +66,99 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, radhey.shyam.pandey@xilinx.com,
         Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH v5 1/7] dmaengine: xilinx_dma: commonize DMA copy size calculation
-Date:   Fri,  7 Sep 2018 08:24:56 +0200
-Message-Id: <20180907062502.8241-1-andrea.merello@gmail.com>
+Subject: [PATCH v5 2/7] dmaengine: xilinx_dma: in axidma slave_sg and dma_cyclic mode align split descriptors
+Date:   Fri,  7 Sep 2018 08:24:57 +0200
+Message-Id: <20180907062502.8241-2-andrea.merello@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180907062502.8241-1-andrea.merello@gmail.com>
+References: <20180907062502.8241-1-andrea.merello@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes a bit of duplicated code by introducing a new
-function that implements calculations for DMA copy size.
+Whenever a single or cyclic transaction is prepared, the driver
+could eventually split it over several SG descriptors in order
+to deal with the HW maximum transfer length.
 
-Suggested-by: Vinod Koul <vkoul@kernel.org>
+This could end up in DMA operations starting from a misaligned
+address. This seems fatal for the HW if DRE (Data Realignment Engine)
+is not enabled.
+
+This patch eventually adjusts the transfer size in order to make sure
+all operations start from an aligned address.
+
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
 Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
 ---
+Changes in v2:
+        - don't introduce copy_mask field, rather rely on already-esistent
+          copy_align field. Suggested by Radhey Shyam Pandey
+        - reword title
+Changes in v3:
+	- fix bug introduced in v2: wrong copy size when DRE is enabled
+	- use implementation suggested by Radhey Shyam Pandey
 Changes in v4:
-	- introduce this patch in the patch series
+	- rework on the top of 1/6
 Changes in v5:
-	None
+	- fix typo in commit title
+	- add hint about "DRE" meaning in commit message
 ---
- drivers/dma/xilinx/xilinx_dma.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/dma/xilinx/xilinx_dma.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-index 27b523530c4a..a3aaa0e34cc7 100644
+index a3aaa0e34cc7..aaa6de8a70e4 100644
 --- a/drivers/dma/xilinx/xilinx_dma.c
 +++ b/drivers/dma/xilinx/xilinx_dma.c
-@@ -952,6 +952,19 @@ static int xilinx_dma_alloc_chan_resources(struct dma_chan *dchan)
- 	return 0;
+@@ -954,15 +954,28 @@ static int xilinx_dma_alloc_chan_resources(struct dma_chan *dchan)
+ 
+ /**
+  * xilinx_dma_calc_copysize - Calculate the amount of data to copy
++ * @chan: Driver specific DMA channel
+  * @size: Total data that needs to be copied
+  * @done: Amount of data that has been already copied
+  *
+  * Return: Amount of data that has to be copied
+  */
+-static int xilinx_dma_calc_copysize(int size, int done)
++static int xilinx_dma_calc_copysize(struct xilinx_dma_chan *chan,
++				    int size, int done)
+ {
+-	return min_t(size_t, size - done,
++	size_t copy = min_t(size_t, size - done,
+ 		     XILINX_DMA_MAX_TRANS_LEN);
++
++	if ((copy + done < size) &&
++	    chan->xdev->common.copy_align) {
++		/*
++		 * If this is not the last descriptor, make sure
++		 * the next one will be properly aligned
++		 */
++		copy = rounddown(copy,
++				 (1 << chan->xdev->common.copy_align));
++	}
++	return copy;
  }
  
-+/**
-+ * xilinx_dma_calc_copysize - Calculate the amount of data to copy
-+ * @size: Total data that needs to be copied
-+ * @done: Amount of data that has been already copied
-+ *
-+ * Return: Amount of data that has to be copied
-+ */
-+static int xilinx_dma_calc_copysize(int size, int done)
-+{
-+	return min_t(size_t, size - done,
-+		     XILINX_DMA_MAX_TRANS_LEN);
-+}
-+
  /**
-  * xilinx_dma_tx_status - Get DMA transaction status
-  * @dchan: DMA channel
-@@ -1791,8 +1804,8 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
+@@ -1804,7 +1817,7 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
  			 * Calculate the maximum number of bytes to transfer,
  			 * making sure it is less than the hw limit
  			 */
--			copy = min_t(size_t, sg_dma_len(sg) - sg_used,
--				     XILINX_DMA_MAX_TRANS_LEN);
-+			copy = xilinx_dma_calc_copysize(sg_dma_len(sg),
-+							sg_used);
+-			copy = xilinx_dma_calc_copysize(sg_dma_len(sg),
++			copy = xilinx_dma_calc_copysize(chan, sg_dma_len(sg),
+ 							sg_used);
  			hw = &segment->hw;
  
- 			/* Fill in the descriptor */
-@@ -1896,8 +1909,7 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_dma_cyclic(
+@@ -1909,7 +1922,8 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_dma_cyclic(
  			 * Calculate the maximum number of bytes to transfer,
  			 * making sure it is less than the hw limit
  			 */
--			copy = min_t(size_t, period_len - sg_used,
--				     XILINX_DMA_MAX_TRANS_LEN);
-+			copy = xilinx_dma_calc_copysize(period_len, sg_used);
+-			copy = xilinx_dma_calc_copysize(period_len, sg_used);
++			copy = xilinx_dma_calc_copysize(chan,
++							period_len, sg_used);
  			hw = &segment->hw;
  			xilinx_axidma_buf(chan, hw, buf_addr, sg_used,
  					  period_len * i);
