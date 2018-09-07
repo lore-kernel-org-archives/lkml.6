@@ -2,164 +2,156 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93F1C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E14204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E14204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C89F5206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:23:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z69EaHtr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C89F5206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeIGN7j (ORCPT
+        id S1728296AbeIGODh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:59:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52904 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727093AbeIGN7i (ORCPT
+        Fri, 7 Sep 2018 10:03:37 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35662 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeIGODg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:59:38 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w879InFM099396
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Sep 2018 05:19:35 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mbp219duw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 05:19:35 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Fri, 7 Sep 2018 10:19:33 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Sep 2018 10:19:27 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w879JQSK63766580
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 09:19:26 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2176842041;
-        Fri,  7 Sep 2018 12:19:20 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B31342045;
-        Fri,  7 Sep 2018 12:19:18 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.207.119])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  7 Sep 2018 12:19:18 +0100 (BST)
-Date:   Fri, 7 Sep 2018 12:19:22 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        mingo@redhat.com, Michael Ellerman <mpe@ellerman.id.au>,
-        paul.burton@mips.com, Thomas Gleixner <tglx@linutronix.de>,
-        tony.luck@intel.com, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 07/29] memblock: remove _virt from APIs returning
- virtual address
-References: <1536163184-26356-8-git-send-email-rppt@linux.vnet.ibm.com>
- <CABGGiswdb1x-=vqrgxZ9i2dnLdsgtXq4+5H9Y1JRd90YVMW69A@mail.gmail.com>
- <20180905172017.GA2203@rapoport-lnx>
- <20180906072800.GN14951@dhcp22.suse.cz>
- <20180906124321.GD27492@rapoport-lnx>
- <20180906130102.GY14951@dhcp22.suse.cz>
- <20180906133958.GM27492@rapoport-lnx>
- <20180906134627.GZ14951@dhcp22.suse.cz>
- <20180907084211.GA19153@rapoport-lnx>
- <20180907084756.GD19621@dhcp22.suse.cz>
+        Fri, 7 Sep 2018 10:03:36 -0400
+Received: by mail-yw1-f65.google.com with SMTP id 14-v6so5165996ywe.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 02:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CPMX2U/+GDmuntzdpi16LobMjhTM3x3EDMSFlNOCPmI=;
+        b=Z69EaHtr1C4HiEmd6XGQPnqrgi2tb6Jyy3RHxWbcYZv7LC0MUHKt+MWFYMmrLFdXmq
+         YSF5EF9KKiQ75rJIRGVLYTrdIDt1k/oabsRUB97A6hFQ4ujJ+scpYNl3AmMNigXS+Ev/
+         +Smedr4L0Ob83lP20SwsIU+Mk0c7JoEBHtZsg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CPMX2U/+GDmuntzdpi16LobMjhTM3x3EDMSFlNOCPmI=;
+        b=rtcr4uGThhx07XO81zvpZcejOxlTDZQ1Qcq46BgMcpmWOEGNiQnqImIWjcFvWMGFs/
+         ahSGVcARf1Q2AjrCZGqUnaqx6moIKKxB/O8S5tesiuVaXNX1WdBCmw0dJ5E9SuGgDhdN
+         sF5xuq8HCjuVDBLFmCsKvyvFVscrTHPsyZxDneTeKHKLNfhy7aiBanGeBGkBDfskc6jI
+         FTJnrB/3e4F+jk4+u4JBHvOf5ksdxlYduGJQ7EB5wHh7Wlr6+Cl3vdDFIE7ro3NLw04u
+         57H1wgYt+5b3Da+vV4f8foUz0k7n6pD7lrGCJ9jJUcHX4OVPqMLM3SPId9l4+lyHLq96
+         qDUg==
+X-Gm-Message-State: APzg51Bz8tnv21JV9EgLPGRxgrQ23GLuzv07Ha2Jbbg+aPVZ8LZ6D/93
+        uFbnO41gXPpWLC9GNvOFBwN1s/q3tdN5+w==
+X-Google-Smtp-Source: ANB0VdYmGE4W8Pw0NPbEFQ6M+3lbX+Ju+PshLJ2xXwWfHO39eUEoCbtswpIwGqCmybu+eOJeNodAng==
+X-Received: by 2002:a81:5dc1:: with SMTP id r184-v6mr3438697ywb.122.1536312213113;
+        Fri, 07 Sep 2018 02:23:33 -0700 (PDT)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id q194-v6sm2605936ywg.91.2018.09.07.02.23.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 02:23:32 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id o17-v6so5228022yba.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 02:23:32 -0700 (PDT)
+X-Received: by 2002:a25:acc6:: with SMTP id x6-v6mr441205ybd.293.1536311808369;
+ Fri, 07 Sep 2018 02:16:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907084756.GD19621@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18090709-0016-0000-0000-00000201B183
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18090709-0017-0000-0000-000032586100
-Message-Id: <20180907091922.GB19153@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809070096
+References: <20180830144541.17740-1-vivek.gautam@codeaurora.org> <20180830144541.17740-3-vivek.gautam@codeaurora.org>
+In-Reply-To: <20180830144541.17740-3-vivek.gautam@codeaurora.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 7 Sep 2018 18:16:37 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5B7YR03Jm1upOg2nsaKOb1iDD7-WGo-qx7S8m-nounCvA@mail.gmail.com>
+Message-ID: <CAAFQd5B7YR03Jm1upOg2nsaKOb1iDD7-WGo-qx7S8m-nounCvA@mail.gmail.com>
+Subject: Re: [PATCH v16 2/5] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Clark <robdclark@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>, sboyd@kernel.org,
+        jcrouse@codeaurora.org, Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:47:56AM +0200, Michal Hocko wrote:
-> On Fri 07-09-18 11:42:12, Mike Rapoport wrote:
-> > On Thu, Sep 06, 2018 at 03:46:27PM +0200, Michal Hocko wrote:
-> > > On Thu 06-09-18 16:39:58, Mike Rapoport wrote:
-> > > > On Thu, Sep 06, 2018 at 03:01:02PM +0200, Michal Hocko wrote:
-> > > > > On Thu 06-09-18 15:43:21, Mike Rapoport wrote:
-> > > > > > On Thu, Sep 06, 2018 at 09:28:00AM +0200, Michal Hocko wrote:
-> > > > > > > On Wed 05-09-18 20:20:18, Mike Rapoport wrote:
-> > > > > > > > On Wed, Sep 05, 2018 at 12:04:36PM -0500, Rob Herring wrote:
-> > > > > > > > > On Wed, Sep 5, 2018 at 11:00 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > The conversion is done using
-> > > > > > > > > >
-> > > > > > > > > > sed -i 's@memblock_virt_alloc@memblock_alloc@g' \
-> > > > > > > > > >         $(git grep -l memblock_virt_alloc)
-> > > > > > > > > 
-> > > > > > > > > What's the reason to do this? It seems like a lot of churn even if a
-> > > > > > > > > mechanical change.
-> > > > > > > > 
-> > > > > > > > I felt that memblock_virt_alloc_ is too long for a prefix, e.g:
-> > > > > > > > memblock_virt_alloc_node_nopanic, memblock_virt_alloc_low_nopanic.
-> > > > > > > > 
-> > > > > > > > And for consistency I've changed the memblock_virt_alloc as well.
-> > > > > > > 
-> > > > > > > I would keep the current API unless the name is terribly misleading or
-> > > > > > > it can be improved a lot. Neither seems to be the case here. So I would
-> > > > > > > rather stick with the status quo.
-> > > > > > 
-> > > > > > I'm ok with the memblock_virt_alloc by itself, but having 'virt' in
-> > > > > > 'memblock_virt_alloc_try_nid_nopanic' and 'memblock_virt_alloc_low_nopanic'
-> > > > > > reduces code readability in my opinion.
-> > > > > 
-> > > > > Well, is _nopanic really really useful in the name. Do we even need/want
-> > > > > implicit panic/nopanic semantic? The code should rather check for the
-> > > > > return value and decide depending on the code path. I suspect removing
-> > > > > panic/nopanic would make the API slightly lighter.
-> > > >  
-> > > > I agree that panic/nopanic should be removed. But I prefer to start with
-> > > > equivalent replacement to make it as automated as possible and update
-> > > > memblock API when the dust settles a bit.
-> > > 
-> > > Yes, I agree with that approach. But that also doesn't justify the
-> > > renaming
-> > 
-> > Well, the renaming is automated :)
-> 
-> Yes, it is. It also adds churn to the code so I tend to prefer an
-> existing naming unless it is completely misleading or incomprehensible.
-> 
-> Is this something to lose sleep over. Absolutely not! Does it make sense
-> to discuss further? I do not think so. If you strongly believe that the
-> renaming is a good thing then just do it.
+Hi Vivek,
 
-I won't lose my sleep over it, but I do believe that renaming is a good thing. 
-I think that in the end we'll be able to reduce the memblock allocation API
-to a handful of memblock_alloc_ variants instead of ~20 we have now.
+On Thu, Aug 30, 2018 at 11:46 PM Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+>
+> From: Sricharan R <sricharan@codeaurora.org>
+>
+> The smmu device probe/remove and add/remove master device callbacks
+> gets called when the smmu is not linked to its master, that is without
+> the context of the master device. So calling runtime apis in those places
+> separately.
+> Global locks are also initialized before enabling runtime pm as the
+> runtime_resume() calls device_reset() which does tlb_sync_global()
+> that ultimately requires locks to be initialized.
+>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> [vivek: Cleanup pm runtime calls]
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/iommu/arm-smmu.c | 89 +++++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 81 insertions(+), 8 deletions(-)
+[snip]
+> @@ -2215,10 +2281,17 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
+>         if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
+>                 dev_err(&pdev->dev, "removing device with active domains!\n");
+>
+> +       arm_smmu_rpm_get(smmu);
+>         /* Turn the thing off */
+>         writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+> +       arm_smmu_rpm_put(smmu);
+> +
+> +       if (pm_runtime_enabled(smmu->dev))
+> +               pm_runtime_force_suspend(smmu->dev);
+> +       else
+> +               clk_bulk_disable(smmu->num_clks, smmu->clks);
+>
+> -       clk_bulk_disable_unprepare(smmu->num_clks, smmu->clks);
+> +       clk_bulk_unprepare(smmu->num_clks, smmu->clks);
 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+Aren't we missing pm_runtime_disable() here? We'll have the enable
+count unbalanced if the driver is removed and probed again.
 
--- 
-Sincerely yours,
-Mike.
+Also, if we add pm_runtime_disable(), we can reorder things a bit and
+simplify into:
 
+       arm_smmu_rpm_get(smmu);
+
+       /* Turn the thing off */
+       writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+
+       if (pm_runtime_enabled())
+               pm_runtime_disable();
+        arm_smmu_rpm_put(smmu);
+
+        clk_bulk_disable_unprepare(smmu->num_clks, smmu->clks);
+
+Best regards,
+Tomasz
