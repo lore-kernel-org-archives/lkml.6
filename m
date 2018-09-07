@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D9FC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00E9C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51242083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51242083D
+	by mail.kernel.org (Postfix) with ESMTP id 97E442083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:38:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E442083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729966AbeIHCVZ (ORCPT
+        id S1729664AbeIHCVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:21:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52674 "EHLO
+        Fri, 7 Sep 2018 22:21:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52680 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728961AbeIHCVY (ORCPT
+        with ESMTP id S1728013AbeIHCVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:21:24 -0400
+        Fri, 7 Sep 2018 22:21:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48578D6B;
-        Fri,  7 Sep 2018 21:38:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE5B3D6B;
+        Fri,  7 Sep 2018 21:38:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bandan Das <bsd@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 35/63] KVM: VMX: fixes for vmentry_l1d_flush module parameter
-Date:   Fri,  7 Sep 2018 23:10:06 +0200
-Message-Id: <20180907211014.911404613@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.9 36/63] xtensa: limit offsets in __loop_cache_{all,page}
+Date:   Fri,  7 Sep 2018 23:10:07 +0200
+Message-Id: <20180907211014.966061455@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -50,94 +49,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 0027ff2a75f9dcf0537ac0a65c5840b0e21a4950 upstream.
+commit be75de25251f7cf3e399ca1f584716a95510d24a upstream.
 
-Two bug fixes:
+When building kernel for xtensa cores with big cache lines (e.g. 128
+bytes or more) __loop_cache_all and __loop_cache_page may generate
+assembly instructions with immediate fields that are too big. This
+results in the following build errors:
 
-1) missing entries in the l1d_param array; this can cause a host crash
-if an access attempts to reach the missing entry. Future-proof the get
-function against any overflows as well.  However, the two entries
-VMENTER_L1D_FLUSH_EPT_DISABLED and VMENTER_L1D_FLUSH_NOT_REQUIRED must
-not be accepted by the parse function, so disable them there.
+  arch/xtensa/mm/misc.S: Assembler messages:
+  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '256'
+  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '384'
+  arch/xtensa/kernel/head.S: Assembler messages:
+  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '256'
+  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '384'
+  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '256'
+  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '384'
+  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '256'
+  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '384'
 
-2) invalid values must be rejected even if the CPU does not have the
-bug, so test for them before checking boot_cpu_has(X86_BUG_L1TF)
+Add parameter max_immed to these macros and use it to limit values of
+immediate operands. Extract common code of these macros into the new
+macro __loop_cache_unroll.
 
-... and a small refactoring, since the .cmd field is redundant with
-the index in the array.
-
-Reported-by: Bandan Das <bsd@redhat.com>
 Cc: stable@vger.kernel.org
-Fixes: a7b9020b06ec6d7c3f3b0d4ef1a9eba12654f4f7
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ arch/xtensa/include/asm/cacheasm.h |   65 ++++++++++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 25 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -198,12 +198,14 @@ static enum vmx_l1d_flush_state __read_m
+--- a/arch/xtensa/include/asm/cacheasm.h
++++ b/arch/xtensa/include/asm/cacheasm.h
+@@ -31,16 +31,32 @@
+  *
+  */
  
- static const struct {
- 	const char *option;
--	enum vmx_l1d_flush_state cmd;
-+	bool for_parse;
- } vmentry_l1d_param[] = {
--	{"auto",	VMENTER_L1D_FLUSH_AUTO},
--	{"never",	VMENTER_L1D_FLUSH_NEVER},
--	{"cond",	VMENTER_L1D_FLUSH_COND},
--	{"always",	VMENTER_L1D_FLUSH_ALWAYS},
-+	[VMENTER_L1D_FLUSH_AUTO]	 = {"auto", true},
-+	[VMENTER_L1D_FLUSH_NEVER]	 = {"never", true},
-+	[VMENTER_L1D_FLUSH_COND]	 = {"cond", true},
-+	[VMENTER_L1D_FLUSH_ALWAYS]	 = {"always", true},
-+	[VMENTER_L1D_FLUSH_EPT_DISABLED] = {"EPT disabled", false},
-+	[VMENTER_L1D_FLUSH_NOT_REQUIRED] = {"not required", false},
- };
+-	.macro	__loop_cache_all ar at insn size line_width
  
- #define L1D_CACHE_ORDER 4
-@@ -287,8 +289,9 @@ static int vmentry_l1d_flush_parse(const
- 
- 	if (s) {
- 		for (i = 0; i < ARRAY_SIZE(vmentry_l1d_param); i++) {
--			if (sysfs_streq(s, vmentry_l1d_param[i].option))
--				return vmentry_l1d_param[i].cmd;
-+			if (vmentry_l1d_param[i].for_parse &&
-+			    sysfs_streq(s, vmentry_l1d_param[i].option))
-+				return i;
- 		}
- 	}
- 	return -EINVAL;
-@@ -298,13 +301,13 @@ static int vmentry_l1d_flush_set(const c
- {
- 	int l1tf, ret;
- 
--	if (!boot_cpu_has(X86_BUG_L1TF))
--		return 0;
--
- 	l1tf = vmentry_l1d_flush_parse(s);
- 	if (l1tf < 0)
- 		return l1tf;
- 
-+	if (!boot_cpu_has(X86_BUG_L1TF))
-+		return 0;
+-	movi	\ar, 0
++	.macro	__loop_cache_unroll ar at insn size line_width max_immed
 +
- 	/*
- 	 * Has vmx_init() run already? If not then this is the pre init
- 	 * parameter parsing. In that case just store the value and let
-@@ -324,6 +327,9 @@ static int vmentry_l1d_flush_set(const c
- 
- static int vmentry_l1d_flush_get(char *s, const struct kernel_param *kp)
- {
-+	if (WARN_ON_ONCE(l1tf_vmx_mitigation >= ARRAY_SIZE(vmentry_l1d_param)))
-+		return sprintf(s, "???\n");
++	.if	(1 << (\line_width)) > (\max_immed)
++	.set	_reps, 1
++	.elseif	(2 << (\line_width)) > (\max_immed)
++	.set	_reps, 2
++	.else
++	.set	_reps, 4
++	.endif
 +
- 	return sprintf(s, "%s\n", vmentry_l1d_param[l1tf_vmx_mitigation].option);
- }
++	__loopi	\ar, \at, \size, (_reps << (\line_width))
++	.set	_index, 0
++	.rep	_reps
++	\insn	\ar, _index << (\line_width)
++	.set	_index, _index + 1
++	.endr
++	__endla	\ar, \at, _reps << (\line_width)
++
++	.endm
++
  
+-	__loopi	\ar, \at, \size, (4 << (\line_width))
+-	\insn	\ar, 0 << (\line_width)
+-	\insn	\ar, 1 << (\line_width)
+-	\insn	\ar, 2 << (\line_width)
+-	\insn	\ar, 3 << (\line_width)
+-	__endla	\ar, \at, 4 << (\line_width)
++	.macro	__loop_cache_all ar at insn size line_width max_immed
++
++	movi	\ar, 0
++	__loop_cache_unroll \ar, \at, \insn, \size, \line_width, \max_immed
+ 
+ 	.endm
+ 
+@@ -57,14 +73,9 @@
+ 	.endm
+ 
+ 
+-	.macro	__loop_cache_page ar at insn line_width
++	.macro	__loop_cache_page ar at insn line_width max_immed
+ 
+-	__loopi	\ar, \at, PAGE_SIZE, 4 << (\line_width)
+-	\insn	\ar, 0 << (\line_width)
+-	\insn	\ar, 1 << (\line_width)
+-	\insn	\ar, 2 << (\line_width)
+-	\insn	\ar, 3 << (\line_width)
+-	__endla	\ar, \at, 4 << (\line_width)
++	__loop_cache_unroll \ar, \at, \insn, PAGE_SIZE, \line_width, \max_immed
+ 
+ 	.endm
+ 
+@@ -72,7 +83,8 @@
+ 	.macro	___unlock_dcache_all ar at
+ 
+ #if XCHAL_DCACHE_LINE_LOCKABLE && XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -81,7 +93,8 @@
+ 	.macro	___unlock_icache_all ar at
+ 
+ #if XCHAL_ICACHE_LINE_LOCKABLE && XCHAL_ICACHE_SIZE
+-	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE XCHAL_ICACHE_LINEWIDTH
++	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE \
++		XCHAL_ICACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -90,7 +103,8 @@
+ 	.macro	___flush_invalidate_dcache_all ar at
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -99,7 +113,8 @@
+ 	.macro	___flush_dcache_all ar at
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -109,7 +124,7 @@
+ 
+ #if XCHAL_DCACHE_SIZE
+ 	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
+-			 XCHAL_DCACHE_LINEWIDTH
++			 XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -119,7 +134,7 @@
+ 
+ #if XCHAL_ICACHE_SIZE
+ 	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
+-			 XCHAL_ICACHE_LINEWIDTH
++			 XCHAL_ICACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -166,7 +181,7 @@
+ 	.macro	___flush_invalidate_dcache_page ar as
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -175,7 +190,7 @@
+ 	.macro ___flush_dcache_page ar as
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -184,7 +199,7 @@
+ 	.macro	___invalidate_dcache_page ar as
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -193,7 +208,7 @@
+ 	.macro	___invalidate_icache_page ar as
+ 
+ #if XCHAL_ICACHE_SIZE
+-	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH
++	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
 
 
