@@ -6,231 +6,212 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2571FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9112CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97932086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:12:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97932086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 48FB02083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:13:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FB02083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbeIGRxX (ORCPT
+        id S1729276AbeIGRyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 13:53:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55498 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727817AbeIGRxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 13:53:23 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E5CC5400E9A8;
-        Fri,  7 Sep 2018 13:12:27 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-125-2.rdu2.redhat.com [10.10.125.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF1062166BA3;
-        Fri,  7 Sep 2018 13:12:27 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Allan Xavier <allan.x.xavier@oracle.com>
-Subject: [PATCH] objtool: Support per-function rodata sections
-Date:   Fri,  7 Sep 2018 08:12:01 -0500
-Message-Id: <099bdc375195c490dda04db777ee0b95d566ded1.1536325914.git.jpoimboe@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 07 Sep 2018 13:12:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 07 Sep 2018 13:12:27 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+        Fri, 7 Sep 2018 13:54:23 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:59876 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727597AbeIGRyX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 13:54:23 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id yGZbfjGvBw2L8yGZefDdtu; Fri, 07 Sep 2018 15:13:27 +0200
+Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
+To:     Paul Kocialkowski <contact@paulk.fr>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20180906222442.14825-1-contact@paulk.fr>
+ <20180906222442.14825-6-contact@paulk.fr>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4b30c0bf-e525-1868-f625-569d4a104aa0@xs4all.nl>
+Date:   Fri, 7 Sep 2018 15:13:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180906222442.14825-6-contact@paulk.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGQL09xJVHW7qF5ZfUhqf7e0HDvWkMRvRkhj6ADtntIGwV5ZaiPt57bmF89ye4cJHUlVkSKukXPJb2aj+Rudh3k4Je+DB3vF/xspAzdr265xNpoYSDom
+ WwILXgd73r4kpvWiMinpPJ5C6pD4PK0x8iSuqeFc9fztWzB5T4pgCmTKKVhn93XC+WlguMML1At2P9XfxHoEkQBp7cLm9Ckg3KXJO4B7P/hzCyuMotlISM2J
+ aEGvXCpBv8/dmgq8W7Al0+gd6pFDdeDGWPwg82J3RNrqcCa6K6lV0Shgn0JXmaXhy9J50QPs7PB3WKt53F9vDQBfgIIpMOJpLsmQaonazwZgDP9X9eXRs2m5
+ PkETTA4ySvJV2vUWXGVueUJpQq+WcPV0SdhvOauxTVShL4J5Fw2+DjvO3tBu4728YLFtas7C4Xc8MFlApMroDKHFR9zFjwhiU1XeorSqxR74aBoCXLNEmCZj
+ g4Agm/iR8IZKKmr2/X57nq6p0YkNeAjFpTgxgax+dXK789OOozda7pFKVVIEsxJYlVEuURuDLLCnkjB2fcXKbT856td8GVPLKou94lZGUIcZVHyiKDaAIMJz
+ Dpkox90BrVaAhfqz0GIj5a+jieT7MmGRzXsicV0qNRHkuLKYkp3sZsqdpglKd+sMclasz5RmbQl6414W7G69fnfjWlcEubqUoN9ijYsUTWw+HEg6/L86X8yZ
+ p4OHhmQRGqzHa4EWSncS/BjcpbCRCXZbDOfIeXR27VZ6U0VGCexQjD6Qp0tT6GjnvC5kNizaSY6vSYL++s9qOcgVf7q8xElEfBngmVPd0fGC84iqCW1n5COp
+ NDySGhBxut8HzRWVWca11YWNRQ5Bxxz1WqWNeHwhpbOH3EsJ9BdLuNIw7gsthUaTRHbKlbW/GUa3l6cDc16KdPVDQCEcdOFqGS8NEspFrK3yY3yr5wv+jQWO
+ hrpxGw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Allan Xavier <allan.x.xavier@oracle.com>
+On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
+> From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> 
+> This introduces the Cedrus VPU driver that supports the VPU found in
+> Allwinner SoCs, also known as Video Engine. It is implemented through
+> a V4L2 M2M decoder device and a media device (used for media requests).
+> So far, it only supports MPEG-2 decoding.
+> 
+> Since this VPU is stateless, synchronization with media requests is
+> required in order to ensure consistency between frame headers that
+> contain metadata about the frame to process and the raw slice data that
+> is used to generate the frame.
+> 
+> This driver was made possible thanks to the long-standing effort
+> carried out by the linux-sunxi community in the interest of reverse
+> engineering, documenting and implementing support for the Allwinner VPU.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Add support for processing switch jump tables in objects with multiple
-.rodata sections, such as those created by '-ffunction-sections' and
-'-fdata-sections'.  Currently, objtool always looks in .rodata for jump
-table information, which results in many "sibling call from callable
-instruction with modified stack frame" warnings with objects compiled
-using those flags.
+One high-level comment:
 
-The fix is comprised of three parts:
+Can you add a TODO file for this staging driver? This can be done in
+a follow-up patch.
 
-1. Flagging all .rodata sections when importing ELF information for
-   easier checking later.
+It should contain what needs to be done to get this out of staging:
 
-2. Keeping a reference to the section each relocation is from in order
-   to get the list_head for the other relocations in that section.
+- Request API needs to stabilize
+- Userspace support for stateless codecs must be created
+- Ideally one other stateless decoder driver and at least one
+  stateless encoder driver should be implemented to ensure that nothing
+  was forgotten in the Request API.
+- Anything else?
 
-3. Finding jump tables by following relocations to .rodata sections,
-   rather than always referencing a single global .rodata section.
+And a few last code comments:
 
-The patch has been tested without data sections enabled and no
-differences in the resulting orc unwind information were seen.
+> ---
+>  MAINTAINERS                                   |   7 +
+>  drivers/staging/media/Kconfig                 |   2 +
+>  drivers/staging/media/Makefile                |   1 +
+>  drivers/staging/media/sunxi/Kconfig           |  15 +
+>  drivers/staging/media/sunxi/Makefile          |   1 +
+>  drivers/staging/media/sunxi/cedrus/Kconfig    |  14 +
+>  drivers/staging/media/sunxi/cedrus/Makefile   |   3 +
+>  drivers/staging/media/sunxi/cedrus/cedrus.c   | 422 ++++++++++++++
+>  drivers/staging/media/sunxi/cedrus/cedrus.h   | 165 ++++++
+>  .../staging/media/sunxi/cedrus/cedrus_dec.c   |  70 +++
+>  .../staging/media/sunxi/cedrus/cedrus_dec.h   |  27 +
+>  .../staging/media/sunxi/cedrus/cedrus_hw.c    | 322 +++++++++++
+>  .../staging/media/sunxi/cedrus/cedrus_hw.h    |  30 +
+>  .../staging/media/sunxi/cedrus/cedrus_mpeg2.c | 237 ++++++++
+>  .../staging/media/sunxi/cedrus/cedrus_regs.h  | 233 ++++++++
+>  .../staging/media/sunxi/cedrus/cedrus_video.c | 544 ++++++++++++++++++
+>  .../staging/media/sunxi/cedrus/cedrus_video.h |  30 +
+>  17 files changed, 2123 insertions(+)
+>  create mode 100644 drivers/staging/media/sunxi/Kconfig
+>  create mode 100644 drivers/staging/media/sunxi/Makefile
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
+> 
 
-Note that as objtool adds terminators to end of each .text section the
-unwind information generated between a function+data sections build and
-a normal build aren't directly comparable. Manual inspection suggests
-that objtool is now generating the correct information, or at least
-making more of an effort to do so than it did previously.
+<snip>
 
-Signed-off-by: Allan Xavier <allan.x.xavier@oracle.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- tools/objtool/check.c | 38 ++++++++++++++++++++++++++++++++------
- tools/objtool/check.h |  4 ++--
- tools/objtool/elf.c   |  1 +
- tools/objtool/elf.h   |  3 ++-
- 4 files changed, 37 insertions(+), 9 deletions(-)
+> +static int cedrus_request_validate(struct media_request *req)
+> +{
+> +	struct media_request_object *obj;
+> +	struct v4l2_ctrl_handler *parent_hdl, *hdl;
+> +	struct cedrus_ctx *ctx = NULL;
+> +	struct v4l2_ctrl *ctrl_test;
+> +	unsigned int i;
+> +
+> +	if (vb2_request_buffer_cnt(req) != 1)
+> +		return -ENOENT;
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 2928939b98ec..0414a0d52262 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -836,7 +836,7 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
- 	struct symbol *pfunc = insn->func->pfunc;
- 	unsigned int prev_offset = 0;
- 
--	list_for_each_entry_from(rela, &file->rodata->rela->rela_list, list) {
-+	list_for_each_entry_from(rela, &table->rela_sec->rela_list, list) {
- 		if (rela == next_table)
- 			break;
- 
-@@ -926,6 +926,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
- {
- 	struct rela *text_rela, *rodata_rela;
- 	struct instruction *orig_insn = insn;
-+	struct section *rodata_sec;
- 	unsigned long table_offset;
- 
- 	/*
-@@ -953,10 +954,13 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		/* look for a relocation which references .rodata */
- 		text_rela = find_rela_by_dest_range(insn->sec, insn->offset,
- 						    insn->len);
--		if (!text_rela || text_rela->sym != file->rodata->sym)
-+		if (!text_rela || text_rela->sym->type != STT_SECTION ||
-+		    !text_rela->sym->sec->rodata)
- 			continue;
- 
- 		table_offset = text_rela->addend;
-+		rodata_sec = text_rela->sym->sec;
-+
- 		if (text_rela->type == R_X86_64_PC32)
- 			table_offset += 4;
- 
-@@ -964,10 +968,10 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		 * Make sure the .rodata address isn't associated with a
- 		 * symbol.  gcc jump tables are anonymous data.
- 		 */
--		if (find_symbol_containing(file->rodata, table_offset))
-+		if (find_symbol_containing(rodata_sec, table_offset))
- 			continue;
- 
--		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
-+		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
- 		if (rodata_rela) {
- 			/*
- 			 * Use of RIP-relative switch jumps is quite rare, and
-@@ -1052,7 +1056,7 @@ static int add_switch_table_alts(struct objtool_file *file)
- 	struct symbol *func;
- 	int ret;
- 
--	if (!file->rodata || !file->rodata->rela)
-+	if (!file->rodata)
- 		return 0;
- 
- 	for_each_sec(file, sec) {
-@@ -1198,10 +1202,33 @@ static int read_retpoline_hints(struct objtool_file *file)
- 	return 0;
- }
- 
-+static void mark_rodata(struct objtool_file *file)
-+{
-+	struct section *sec;
-+	bool found = false;
-+
-+	/*
-+	 * This searches for the .rodata section or multiple .rodata.func_name
-+	 * sections if -fdata-sections is being used. The .str.1.1 and .str.1.8
-+	 * rodata sections are ignored as they don't contain jump tables.
-+	 */
-+	for_each_sec(file, sec) {
-+		if (!strncmp(sec->name, ".rodata", 7) &&
-+		    !strstr(sec->name, ".str1.")) {
-+			sec->rodata = true;
-+			found = true;
-+		}
-+	}
-+
-+	file->rodata = found;
-+}
-+
- static int decode_sections(struct objtool_file *file)
- {
- 	int ret;
- 
-+	mark_rodata(file);
-+
- 	ret = decode_instructions(file);
- 	if (ret)
- 		return ret;
-@@ -2171,7 +2198,6 @@ int check(const char *_objname, bool orc)
- 	INIT_LIST_HEAD(&file.insn_list);
- 	hash_init(file.insn_hash);
- 	file.whitelist = find_section_by_name(file.elf, ".discard.func_stack_frame_non_standard");
--	file.rodata = find_section_by_name(file.elf, ".rodata");
- 	file.c_file = find_section_by_name(file.elf, ".comment");
- 	file.ignore_unreachables = no_unreachable;
- 	file.hints = false;
-diff --git a/tools/objtool/check.h b/tools/objtool/check.h
-index 95700a2bcb7c..e6e8a655b556 100644
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -60,8 +60,8 @@ struct objtool_file {
- 	struct elf *elf;
- 	struct list_head insn_list;
- 	DECLARE_HASHTABLE(insn_hash, 16);
--	struct section *rodata, *whitelist;
--	bool ignore_unreachables, c_file, hints;
-+	struct section *whitelist;
-+	bool ignore_unreachables, c_file, hints, rodata;
- };
- 
- int check(const char *objname, bool orc);
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 7ec85d567598..f7082de1ee82 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -379,6 +379,7 @@ static int read_relas(struct elf *elf)
- 			rela->offset = rela->rela.r_offset;
- 			symndx = GELF_R_SYM(rela->rela.r_info);
- 			rela->sym = find_symbol_by_index(elf, symndx);
-+			rela->rela_sec = sec;
- 			if (!rela->sym) {
- 				WARN("can't find rela entry symbol %d for %s",
- 				     symndx, sec->name);
-diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
-index de5cd2ddded9..bc97ed86b9cd 100644
---- a/tools/objtool/elf.h
-+++ b/tools/objtool/elf.h
-@@ -48,7 +48,7 @@ struct section {
- 	char *name;
- 	int idx;
- 	unsigned int len;
--	bool changed, text;
-+	bool changed, text, rodata;
- };
- 
- struct symbol {
-@@ -68,6 +68,7 @@ struct rela {
- 	struct list_head list;
- 	struct hlist_node hash;
- 	GElf_Rela rela;
-+	struct section *rela_sec;
- 	struct symbol *sym;
- 	unsigned int type;
- 	unsigned long offset;
--- 
-2.17.1
+I would return ENOENT if there are no buffers, and EINVAL if there are too
+many. Returning ENOENT in the latter case would be very confusing.
 
+I also highly recommend that you add v4l2_info lines for these errors.
+
+> +
+> +	list_for_each_entry(obj, &req->objects, list) {
+> +		struct vb2_buffer *vb;
+> +
+> +		if (vb2_request_object_is_buffer(obj)) {
+> +			vb = container_of(obj, struct vb2_buffer, req_obj);
+> +			ctx = vb2_get_drv_priv(vb->vb2_queue);
+> +
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!ctx)
+> +		return -ENOENT;
+> +
+> +	parent_hdl = &ctx->hdl;
+> +
+> +	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
+> +	if (!hdl) {
+> +		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
+
+Should be v4l2_info: it is not a driver error, it is just an info message.
+
+> +		return -ENOENT;
+> +	}
+> +
+> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
+> +		if (cedrus_controls[i].codec != ctx->current_codec ||
+> +		    !cedrus_controls[i].required)
+> +			continue;
+> +
+> +		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
+> +			cedrus_controls[i].id);
+> +		if (!ctrl_test) {
+> +			v4l2_err(&ctx->dev->v4l2_dev,
+> +				 "Missing required codec control\n");
+
+Ditto.
+
+> +			return -ENOENT;
+> +		}
+> +	}
+> +
+> +	v4l2_ctrl_request_hdl_put(hdl);
+> +
+> +	return vb2_request_validate(req);
+> +}
+
+Not worth making a v10, but you can do this in a follow-up patch.
+
+Once I have the two follow-up patches I'll make a pull request.
+
+Regards,
+
+	Hans
