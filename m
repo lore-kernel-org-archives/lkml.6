@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08ECEC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F06CCC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEE8E2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE8E2075B
+	by mail.kernel.org (Postfix) with ESMTP id A6FBB2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6FBB2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbeIHC1m (ORCPT
+        id S1731034AbeIHC1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:27:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57858 "EHLO
+        Fri, 7 Sep 2018 22:27:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbeIHC1l (ORCPT
+        with ESMTP id S1726568AbeIHC1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:27:41 -0400
+        Fri, 7 Sep 2018 22:27:47 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BD54F100B;
-        Fri,  7 Sep 2018 21:44:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1ECA9F36;
+        Fri,  7 Sep 2018 21:44:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Watson <cjwatson@ubuntu.com>,
-        Christian Brauner <christian@brauner.io>,
-        Serge Hallyn <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 3.18 28/29] getxattr: use correct xattr length
-Date:   Fri,  7 Sep 2018 23:10:49 +0200
-Message-Id: <20180907210911.364844106@linuxfoundation.org>
+        stable@vger.kernel.org, Shan Hai <shan.hai@oracle.com>,
+        Coly Li <colyli@suse.de>, Shenghui Wang <shhuiw@foxmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 3.18 29/29] bcache: release dc->writeback_lock properly in bch_writeback_thread()
+Date:   Fri,  7 Sep 2018 23:10:50 +0200
+Message-Id: <20180907210911.420133477@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
 References: <20180907210909.523240901@linuxfoundation.org>
@@ -52,134 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Brauner <christian@brauner.io>
+From: Shan Hai <shan.hai@oracle.com>
 
-commit 82c9a927bc5df6e06b72d206d24a9d10cced4eb5 upstream.
+commit 3943b040f11ed0cc6d4585fd286a623ca8634547 upstream.
 
-When running in a container with a user namespace, if you call getxattr
-with name = "system.posix_acl_access" and size % 8 != 4, then getxattr
-silently skips the user namespace fixup that it normally does resulting in
-un-fixed-up data being returned.
-This is caused by posix_acl_fix_xattr_to_user() being passed the total
-buffer size and not the actual size of the xattr as returned by
-vfs_getxattr().
-This commit passes the actual length of the xattr as returned by
-vfs_getxattr() down.
+The writeback thread would exit with a lock held when the cache device
+is detached via sysfs interface, fix it by releasing the held lock
+before exiting the while-loop.
 
-A reproducer for the issue is:
-
-  touch acl_posix
-
-  setfacl -m user:0:rwx acl_posix
-
-and the compile:
-
-  #define _GNU_SOURCE
-  #include <errno.h>
-  #include <stdio.h>
-  #include <stdlib.h>
-  #include <string.h>
-  #include <sys/types.h>
-  #include <unistd.h>
-  #include <attr/xattr.h>
-
-  /* Run in user namespace with nsuid 0 mapped to uid != 0 on the host. */
-  int main(int argc, void **argv)
-  {
-          ssize_t ret1, ret2;
-          char buf1[128], buf2[132];
-          int fret = EXIT_SUCCESS;
-          char *file;
-
-          if (argc < 2) {
-                  fprintf(stderr,
-                          "Please specify a file with "
-                          "\"system.posix_acl_access\" permissions set\n");
-                  _exit(EXIT_FAILURE);
-          }
-          file = argv[1];
-
-          ret1 = getxattr(file, "system.posix_acl_access",
-                          buf1, sizeof(buf1));
-          if (ret1 < 0) {
-                  fprintf(stderr, "%s - Failed to retrieve "
-                                  "\"system.posix_acl_access\" "
-                                  "from \"%s\"\n", strerror(errno), file);
-                  _exit(EXIT_FAILURE);
-          }
-
-          ret2 = getxattr(file, "system.posix_acl_access",
-                          buf2, sizeof(buf2));
-          if (ret2 < 0) {
-                  fprintf(stderr, "%s - Failed to retrieve "
-                                  "\"system.posix_acl_access\" "
-                                  "from \"%s\"\n", strerror(errno), file);
-                  _exit(EXIT_FAILURE);
-          }
-
-          if (ret1 != ret2) {
-                  fprintf(stderr, "The value of \"system.posix_acl_"
-                                  "access\" for file \"%s\" changed "
-                                  "between two successive calls\n", file);
-                  _exit(EXIT_FAILURE);
-          }
-
-          for (ssize_t i = 0; i < ret2; i++) {
-                  if (buf1[i] == buf2[i])
-                          continue;
-
-                  fprintf(stderr,
-                          "Unexpected different in byte %zd: "
-                          "%02x != %02x\n", i, buf1[i], buf2[i]);
-                  fret = EXIT_FAILURE;
-          }
-
-          if (fret == EXIT_SUCCESS)
-                  fprintf(stderr, "Test passed\n");
-          else
-                  fprintf(stderr, "Test failed\n");
-
-          _exit(fret);
-  }
-and run:
-
-  ./tester acl_posix
-
-On a non-fixed up kernel this should return something like:
-
-  root@c1:/# ./t
-  Unexpected different in byte 16: ffffffa0 != 00
-  Unexpected different in byte 17: ffffff86 != 00
-  Unexpected different in byte 18: 01 != 00
-
-and on a fixed kernel:
-
-  root@c1:~# ./t
-  Test passed
-
-Cc: stable@vger.kernel.org
-Fixes: 2f6f0654ab61 ("userns: Convert vfs posix_acl support to use kuids and kgids")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199945
-Reported-by: Colin Watson <cjwatson@ubuntu.com>
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Acked-by: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Fixes: fadd94e05c02 (bcache: quit dc->writeback_thread when BCACHE_DEV_DETACHING is set)
+Signed-off-by: Shan Hai <shan.hai@oracle.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Tested-by: Shenghui Wang <shhuiw@foxmail.com>
+Cc: stable@vger.kernel.org #4.17+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/writeback.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -455,7 +455,7 @@ getxattr(struct dentry *d, const char __
- 	if (error > 0) {
- 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
- 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
--			posix_acl_fix_xattr_to_user(kvalue, size);
-+			posix_acl_fix_xattr_to_user(kvalue, error);
- 		if (size && copy_to_user(value, kvalue, error))
- 			error = -EFAULT;
- 	} else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -462,8 +462,10 @@ static int bch_writeback_thread(void *ar
+ 			 * data on cache. BCACHE_DEV_DETACHING flag is set in
+ 			 * bch_cached_dev_detach().
+ 			 */
+-			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags))
++			if (test_bit(BCACHE_DEV_DETACHING, &dc->disk.flags)) {
++				up_write(&dc->writeback_lock);
+ 				break;
++			}
+ 		}
+ 
+ 		up_write(&dc->writeback_lock);
 
 
