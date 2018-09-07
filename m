@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A0C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC45FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F56206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F052083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="AdZHTMwg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F56206BB
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PS99KC1q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F052083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbeIHC3T (ORCPT
+        id S1731262AbeIHC3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:29:19 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:38194 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728423AbeIHC3S (ORCPT
+        Fri, 7 Sep 2018 22:29:24 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:31852 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730347AbeIHC3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:29:18 -0400
+        Fri, 7 Sep 2018 22:29:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536356780; x=1567892780;
+  t=1536356783; x=1567892783;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=xiA9e/0TVd+Bdu43gcIQLAmuMtJ63yHOesR7OpWU3bM=;
-  b=AdZHTMwghe/Oqv3PqwOk30Ds3lVLRTUQMZSzKW8sTX2U7zPLYlVfIH7A
-   4QNP4g7tsH1IrqVKhR2/h/1Q2+VfA0q/isa962AAwKoiL3qF2FhtqV/C4
-   hO36emvzw++2jGEchgLRQBzIYN8Yg6v9qQCLXu4dVF3jxgbrXj8JE7ESU
-   w=;
+  bh=iPBbmqmep3+XtgUFEEskUtxQgZvwKaFpny2qtCURQcE=;
+  b=PS99KC1q/ElTGHZj7zf90vwjbjsLLFajDyuzM28iBc5hWUbAGAuBiUyu
+   rxhuIfs5TSXi0KSuMT+B9S4Z1qolzCxbdqgoeJ6kMdCEdJtOptnXe+9Ke
+   8wsIQQddOez9gHjS2Ha9jnvgqPZHYvPIuEzemOnQp5WOCdADDDEiyF46s
+   Q=;
 X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="752286792"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:43:45 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87Lg2rm034611
+   d="scan'208";a="757370704"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-7c3c5f85.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:43:48 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2a-7c3c5f85.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LgBNp035985
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:42:05 GMT
+        Fri, 7 Sep 2018 21:42:13 GMT
 Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87Lg1CR027380
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87LgA8k027458
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:42:01 +0200
+        Fri, 7 Sep 2018 23:42:10 +0200
 Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87Lg0SS027373;
-        Fri, 7 Sep 2018 23:42:00 +0200
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87Lg9HB027457;
+        Fri, 7 Sep 2018 23:42:09 +0200
 From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
         linux-kernel@vger.kernel.org
-Subject: [RFC 23/60] cosched: Add core data structures for coscheduling
-Date:   Fri,  7 Sep 2018 23:40:10 +0200
-Message-Id: <20180907214047.26914-24-jschoenh@amazon.de>
+Subject: [RFC 28/60] cosched: Add is_sd_se() to distinguish SD-SEs from TG-SEs
+Date:   Fri,  7 Sep 2018 23:40:15 +0200
+Message-Id: <20180907214047.26914-29-jschoenh@amazon.de>
 X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
 In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
 References: <20180907214047.26914-1-jschoenh@amazon.de>
@@ -70,222 +70,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For coscheduling, we will set up hierarchical runqueues that correspond
-to larger fractions of the system. They will be organized along the
-scheduling domains.
+Add a function is_sd_se() to easily distinguish SD-SEs from a TG-SEs.
 
-Although it is overkill at the moment, we keep a full struct rq per
-scheduling domain. The existing code is so used to pass struct rq
-around, that it would be a large refactoring effort to concentrate the
-actually needed fields of struct rq in a smaller structure. Also, we
-will probably need more fields in the future.
+Internally, we distinguish tasks, SD-SEs, and TG-SEs based on the my_q
+field. For tasks it is empty, for TG-SEs it is a pointer, and for
+SD-SEs it is a magic value.
 
-Extend struct rq and struct cfs_rq with extra structs encapsulating
-all purely coscheduling related fields: struct sdrq_data and struct
-sdrq, respectively.
-
-Extend struct task_group, so that we can keep track of the hierarchy
-and how this task_group should behave. We can now distinguish between
-regular task groups and scheduled task groups. The former work as usual,
-while the latter actively utilize the hierarchical aspect and represent
-SEs of a lower hierarchy level at a higher level within the parent task
-group, causing SEs at the lower level to get coscheduled.
+Also modify propagate_entity_load_avg() to not page fault on SD-SEs.
 
 Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- kernel/sched/sched.h | 151 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
+ kernel/sched/fair.c  | 12 +++++-------
+ kernel/sched/sched.h | 14 ++++++++++++++
+ 2 files changed, 19 insertions(+), 7 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 18b1d81951f1..9cbdd027d449 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -279,6 +279,8 @@ static inline struct cfs_rq *cfs_rq_of(struct sched_entity *se)
+ /* runqueue "owned" by this group */
+ static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ {
++	if (grp->my_q == INDIRECT_GROUP)
++		return NULL;
+ 	return grp->my_q;
+ }
+ 
+@@ -3240,13 +3242,9 @@ static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum
+ /* Update task and its cfs_rq load average */
+ static inline int propagate_entity_load_avg(struct sched_entity *se)
+ {
+-	struct cfs_rq *cfs_rq, *gcfs_rq;
+-
+-	if (entity_is_task(se))
+-		return 0;
++	struct cfs_rq *cfs_rq, *gcfs_rq = group_cfs_rq(se);
+ 
+-	gcfs_rq = group_cfs_rq(se);
+-	if (!gcfs_rq->propagate)
++	if (!gcfs_rq || !gcfs_rq->propagate)
+ 		return 0;
+ 
+ 	gcfs_rq->propagate = 0;
+@@ -9931,7 +9929,7 @@ void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
+ 	/* se is NULL for root_task_group */
+ 	if (se) {
+ 		set_entity_cfs(se, parent);
+-		se->my_q = cfs_rq;
++		se->my_q = cfs_rq ?: INDIRECT_GROUP;
+ 
+ 		/* guarantee group entities always have weight */
+ 		update_load_set(&se->load, NICE_0_LOAD);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b36e61914a42..1bce6061ac45 100644
+index 456b266b8a2c..5e2d231b1dbf 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -368,6 +368,27 @@ struct task_group {
- #endif
- #endif
+@@ -1146,6 +1146,13 @@ static inline struct rq *parent_rq(struct rq *rq)
+ 		return NULL;
+ 	return container_of(rq->sdrq_data.parent, struct rq, sdrq_data);
+ }
++
++#define INDIRECT_GROUP		ERR_PTR(-EREMOTE)
++
++static inline bool is_sd_se(struct sched_entity *se)
++{
++	return se->my_q == INDIRECT_GROUP;
++}
+ #else /* !CONFIG_COSCHEDULING */
+ static inline int node_of(struct rq *rq)
+ {
+@@ -1161,6 +1168,13 @@ static inline struct rq *parent_rq(struct rq *rq)
+ {
+ 	return NULL;
+ }
++
++#define INDIRECT_GROUP		NULL
++
++static inline bool is_sd_se(struct sched_entity *se)
++{
++	return false;
++}
+ #endif /* !CONFIG_COSCHEDULING */
  
-+#ifdef CONFIG_COSCHEDULING
-+	/*
-+	 * References the top of this task-group's RQ hierarchy. This is
-+	 * static and does not change. It is used as entry-point to traverse
-+	 * the structure on creation/destruction.
-+	 */
-+	struct cfs_rq *top_cfsrq;
-+
-+	/* Protects .scheduled from concurrent modifications */
-+	raw_spinlock_t lock;
-+
-+	/*
-+	 * Indicates the level at which this task group is scheduled:
-+	 * 0 == bottom level == regular task group
-+	 * >0 == scheduled task group
-+	 *
-+	 * Modifications are (for now) requested by the user.
-+	 */
-+	int scheduled;
-+#endif
-+
- #ifdef CONFIG_RT_GROUP_SCHED
- 	struct sched_rt_entity	**rt_se;
- 	struct rt_rq		**rt_rq;
-@@ -485,6 +506,120 @@ struct rq_flags {
- #endif
- };
- 
-+#ifdef CONFIG_COSCHEDULING
-+struct sdrq_data {
-+	/*
-+	 * Leader for this part of the hierarchy.
-+	 *
-+	 * The leader CPU is responsible for scheduling decisions and any
-+	 * required maintenance.
-+	 *
-+	 * Leadership is variable and may be taken while the hierarchy level
-+	 * is locked.
-+	 */
-+	int leader;
-+
-+	/* Height within the hierarchy: leaf == 0, parent == child + 1 */
-+	int level;
-+
-+	/* Parent runqueue */
-+	struct sdrq_data *parent;
-+
-+	/*
-+	 * SD-RQ from which SEs get selected.
-+	 *
-+	 * This is set by the parent's leader and defines the current
-+	 * schedulable subset of tasks within this part of the hierarchy.
-+	 */
-+	struct sdrq *current_sdrq;
-+
-+	/* CPUs making up this part of the hierarchy */
-+	const struct cpumask *span;
-+
-+	/* Number of CPUs within this part of the hierarchy */
-+	unsigned int span_weight;
-+
-+	/*
-+	 * Determines if the corresponding SD-RQs are to be allocated on
-+	 * a specific NUMA node.
-+	 */
-+	int numa_node;
-+
-+	/* Storage for rq_flags, when we need to lock multiple runqueues. */
-+	struct rq_flags rf;
-+
-+	/* Do we have the parent runqueue locked? */
-+	bool parent_locked;
-+
-+	/*
-+	 * In case the CPU has been forced into idle, the idle_se references the
-+	 * scheduling entity responsible for this. Only used on bottom level at
-+	 * the moment.
-+	 */
-+	struct sched_entity *idle_se;
-+};
-+
-+struct sdrq {
-+	/* Common information for all SD-RQs at the same position */
-+	struct sdrq_data *data;
-+
-+	/* SD hierarchy */
-+	struct sdrq *sd_parent;		/* parent of this node */
-+	struct list_head children;	/* children of this node */
-+	struct list_head siblings;	/* link to parent's children list */
-+
-+	/*
-+	 * is_root == 1 => link via tg_se into tg_parent->cfs_rq
-+	 * is_root == 0 => link via sd_parent->sd_se into sd_parent->cfs_rq
-+	 */
-+	int is_root;
-+
-+	/*
-+	 * SD-SE: an SE to be enqueued in .cfs_rq to represent this
-+	 * node's children in order to make their members schedulable.
-+	 *
-+	 * In the bottom layer .sd_se has to be NULL for various if-conditions
-+	 * and loop terminations. On other layers .sd_se points to .__sd_se.
-+	 *
-+	 * .__sd_se is unused within the bottom layer.
-+	 */
-+	struct sched_entity *sd_se;
-+	struct sched_entity __sd_se;
-+
-+	/* Accumulated load of all SD-children */
-+	atomic64_t sdse_load;
-+
-+	/*
-+	 * Reference to the SD-runqueue at the same hierarchical position
-+	 * in the parent task group.
-+	 */
-+	struct sdrq *tg_parent;
-+	struct list_head tg_children;	/* child TGs of this node */
-+	struct list_head tg_siblings;	/* link to parent's children list */
-+
-+	/*
-+	 * TG-SE: a SE to be enqueued in .tg_parent->cfs_rq.
-+	 *
-+	 * In the case of a regular TG it is enqueued if .cfs_rq is not empty.
-+	 * In the case of a scheduled TG it is enqueued if .cfs_rq is not empty
-+	 * and this SD-RQ acts as a root SD within its TG.
-+	 *
-+	 * .tg_se takes over the role of .cfs_rq->my_se and points to the same
-+	 * SE over its life-time, while .cfs_rq->my_se now points to either the
-+	 * TG-SE or the SD-SE (or NULL in the parts of the root task group).
-+	 */
-+	struct sched_entity *tg_se;
-+
-+	/*
-+	 * CFS runqueue of this SD runqueue.
-+	 *
-+	 * FIXME: Now that struct sdrq is embedded in struct cfs_rq, we could
-+	 *        drop this.
-+	 */
-+	struct cfs_rq *cfs_rq;
-+};
-+#endif /* CONFIG_COSCHEDULING */
-+
- /* CFS-related fields in a runqueue */
- struct cfs_rq {
- 	struct load_weight	load;
-@@ -544,6 +679,12 @@ struct cfs_rq {
- 	u64			last_h_load_update;
- 	struct sched_entity	*h_load_next;
- #endif /* CONFIG_FAIR_GROUP_SCHED */
-+
-+#ifdef CONFIG_COSCHEDULING
-+	/* Extra info needed for hierarchical scheduling */
-+	struct sdrq sdrq;
-+#endif
-+
- #endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
-@@ -817,6 +958,11 @@ struct rq {
- 	struct rt_rq		rt;
- 	struct dl_rq		dl;
- 
-+#ifdef CONFIG_COSCHEDULING
-+	/* Extra information for hierarchical scheduling */
-+	struct sdrq_data sdrq_data;
-+#endif
-+
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	/* list of leaf cfs_rq on this CPU: */
- 	struct list_head	leaf_cfs_rq_list;
-@@ -935,6 +1081,11 @@ struct sched_domain_shared {
- 	atomic_t	ref;
- 	atomic_t	nr_busy_cpus;
- 	int		has_idle_cores;
-+
-+#ifdef CONFIG_COSCHEDULING
-+	/* Top level runqueue for this sched_domain */
-+	struct rq rq;
-+#endif
- };
- 
- static inline int cpu_of(struct rq *rq)
+ #ifdef CONFIG_COSCHEDULING
 -- 
 2.9.3.1.gcba166c.dirty
 
