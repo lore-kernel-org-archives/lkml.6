@@ -2,149 +2,147 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866A8C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60D4C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF2920844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H6Dsll6j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AF2920844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 66B382083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66B382083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbeIHCNu (ORCPT
+        id S1729486AbeIHCOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:13:50 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:42832 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728116AbeIHCNt (ORCPT
+        Fri, 7 Sep 2018 22:14:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49078 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbeIHCOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:13:49 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w87LIgTO041626;
-        Fri, 7 Sep 2018 21:30:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ELuhaeRrH1vi0zwKqxYfMNq5b292N1qzRMsQ/4Wy+Ig=;
- b=H6Dsll6jgPhQZndHt84H4g+l6Sv4tfCHbIbbUaBmAciFf5aI8vyDUJQuEWJ7QUrxZp4u
- A29mSG1Rohtqs4e9BIH48Qk9R9ybSx5PwKOzx5Cdw8UzOZ36S8smU5p2QhVhh+lzOGp1
- LiiNK+n5Pm/tB6zQZ0OMi5BBgsAjJllpePxwF5JVxxi/Wkaop42YtMt8n3qnb2/oZSoq
- DdgQpcvSG7cJxtdIgp0kU6H144ClvbjZCzqmg1dRtJ7v3I9GkfWzgOGZQDzaV7jE4mCc
- q+1x3ar3DHwfmJ1oX3H6whcFxfeScJi7Cq4uu8AE/N27ur834SRRs/cL70Lya9HkiEvJ Ng== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2m7kdr4pq4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Sep 2018 21:30:17 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w87LUFBS032468
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Sep 2018 21:30:15 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w87LUD7s029850;
-        Fri, 7 Sep 2018 21:30:13 GMT
-Received: from [192.168.1.16] (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 07 Sep 2018 14:30:12 -0700
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-To:     Julian Stecklina <jsteckli@amazon.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Woodhouse <dwmw@amazon.co.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        juerg.haefliger@hpe.com, deepa.srinivasan@oracle.com,
-        Jim Mattson <jmattson@google.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        joao.m.martins@oracle.com, pradeep.vincent@oracle.com,
-        Andi Kleen <ak@linux.intel.com>, kanth.ghatraju@oracle.com,
-        Liran Alon <liran.alon@oracle.com>,
-        Kees Cook <keescook@google.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        chris.hyser@oracle.com, Tyler Hicks <tyhicks@canonical.com>,
-        John Haxby <john.haxby@oracle.com>,
-        Jon Masters <jcm@redhat.com>
-References: <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <80a75259-e38b-be94-dc4a-827eddfae931@oracle.com>
-Date:   Fri, 7 Sep 2018 15:30:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 22:14:06 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8A59E84;
+        Fri,  7 Sep 2018 21:31:14 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eddie Horng <eddie.horng@mediatek.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.14 82/89] cap_inode_getsecurity: use d_find_any_alias() instead of d_find_alias()
+Date:   Fri,  7 Sep 2018 23:10:16 +0200
+Message-Id: <20180907210901.917991477@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
+References: <20180907210852.341064285@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9009 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809070210
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/30/2018 10:00 AM, Julian Stecklina wrote:
-> Hey everyone,
-> 
-> On Mon, 20 Aug 2018 15:27 Linus Torvalds <torvalds@linux-foundation.org> wrote:
->> On Mon, Aug 20, 2018 at 3:02 PM Woodhouse, David <dwmw@amazon.co.uk> wrote:
->>>
->>> It's the *kernel* we don't want being able to access those pages,
->>> because of the multitude of unfixable cache load gadgets.
->>
->> Ahh.
->>
->> I guess the proof is in the pudding. Did somebody try to forward-port
->> that patch set and see what the performance is like?
-> 
-> I've been spending some cycles on the XPFO patch set this week. For the
-> patch set as it was posted for v4.13, the performance overhead of
-> compiling a Linux kernel is ~40% on x86_64[1]. The overhead comes almost
-> completely from TLB flushing. If we can live with stale TLB entries
-> allowing temporary access (which I think is reasonable), we can remove
-> all TLB flushing (on x86). This reduces the overhead to 2-3% for
-> kernel compile.
-> 
-> There were no problems in forward-porting the patch set to master.
-> You can find the result here, including a patch makes the TLB flushing
-> configurable:
-> http://git.infradead.org/users/jsteckli/linux-xpfo.git/shortlog/refs/heads/xpfo-master
-> 
-> It survived some casual stress-ng runs. I can rerun the benchmarks on
-> this version, but I doubt there is any change.
-> 
->> It used to be just 500 LOC. Was that because they took horrible
->> shortcuts?
-> 
-> The patch is still fairly small. As for the horrible shortcuts, I let
-> others comment on that.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-Looks like the performance impact can be whole lot worse. On my test 
-system with 2 Xeon Platinum 8160 (HT enabled) CPUs and 768 GB of memory, 
-I am seeing very high penalty with XPFO when building 4.18.6 kernel 
-sources with "make -j60":
+From: Eddie.Horng <eddie.horng@mediatek.com>
 
-              No XPFO patch   XPFO patch(No TLB flush)  XPFO(TLB Flush)
-sys time      52m 54.036s       55m 47.897s              434m 8.645s
+commit 355139a8dba446cc11a424cddbf7afebc3041ba1 upstream.
 
-That is ~8% worse with TLB flush disabled and ~720% worse with TLB flush 
-enabled. This test was with kernel sources being compiled on an ext4 
-filesystem. XPFO seems to affect ext2 even more. With ext2 filesystem, 
-impact was ~18.6% and ~900%.
+The code in cap_inode_getsecurity(), introduced by commit 8db6c34f1dbc
+("Introduce v3 namespaced file capabilities"), should use
+d_find_any_alias() instead of d_find_alias() do handle unhashed dentry
+correctly. This is needed, for example, if execveat() is called with an
+open but unlinked overlayfs file, because overlayfs unhashes dentry on
+unlink.
+This is a regression of real life application, first reported at
+https://www.spinics.net/lists/linux-unionfs/msg05363.html
 
---
-Khalid
+Below reproducer and setup can reproduce the case.
+  const char* exec="echo";
+  const char *newargv[] = { "echo", "hello", NULL};
+  const char *newenviron[] = { NULL };
+  int fd, err;
+
+  fd = open(exec, O_PATH);
+  unlink(exec);
+  err = syscall(322/*SYS_execveat*/, fd, "", newargv, newenviron,
+AT_EMPTY_PATH);
+  if(err<0)
+    fprintf(stderr, "execveat: %s\n", strerror(errno));
+
+gcc compile into ~/test/a.out
+mount -t overlay -orw,lowerdir=/mnt/l,upperdir=/mnt/u,workdir=/mnt/w
+none /mnt/m
+cd /mnt/m
+cp /bin/echo .
+~/test/a.out
+
+Expected result:
+hello
+Actually result:
+execveat: Invalid argument
+dmesg:
+Invalid argument reading file caps for /dev/fd/3
+
+The 2nd reproducer and setup emulates similar case but for
+regular filesystem:
+  const char* exec="echo";
+  int fd, err;
+  char buf[256];
+
+  fd = open(exec, O_RDONLY);
+  unlink(exec);
+  err = fgetxattr(fd, "security.capability", buf, 256);
+  if(err<0)
+    fprintf(stderr, "fgetxattr: %s\n", strerror(errno));
+
+gcc compile into ~/test_fgetxattr
+
+cd /tmp
+cp /bin/echo .
+~/test_fgetxattr
+
+Result:
+fgetxattr: Invalid argument
+
+On regular filesystem, for example, ext4 read xattr from
+disk and return to execveat(), will not trigger this issue, however,
+the overlay attr handler pass real dentry to vfs_getxattr() will.
+This reproducer calls fgetxattr() with an unlinked fd, involkes
+vfs_getxattr() then reproduced the case that d_find_alias() in
+cap_inode_getsecurity() can't find the unlinked dentry.
+
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Serge E. Hallyn <serge@hallyn.com>
+Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+Cc: <stable@vger.kernel.org> # v4.14
+Signed-off-by: Eddie Horng <eddie.horng@mediatek.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ security/commoncap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -388,7 +388,7 @@ int cap_inode_getsecurity(struct inode *
+ 	if (strcmp(name, "capability") != 0)
+ 		return -EOPNOTSUPP;
+ 
+-	dentry = d_find_alias(inode);
++	dentry = d_find_any_alias(inode);
+ 	if (!dentry)
+ 		return -EINVAL;
+ 
 
 
