@@ -6,40 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37689C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBE1C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2EC20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2EC20844
+	by mail.kernel.org (Postfix) with ESMTP id 2C72220844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C72220844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730880AbeIHC0W (ORCPT
+        id S1730893AbeIHC00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:26:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56894 "EHLO
+        Fri, 7 Sep 2018 22:26:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729993AbeIHC0W (ORCPT
+        with ESMTP id S1729993AbeIHC0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:26:22 -0400
+        Fri, 7 Sep 2018 22:26:25 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0C26BBF;
-        Fri,  7 Sep 2018 21:43:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84F52C9A;
+        Fri,  7 Sep 2018 21:43:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, stable@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 17/29] mm/tlb: Remove tlb_remove_table() non-concurrent condition
-Date:   Fri,  7 Sep 2018 23:10:38 +0200
-Message-Id: <20180907210910.759447458@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 3.18 18/29] osf_getdomainname(): use copy_to_user()
+Date:   Fri,  7 Sep 2018 23:10:39 +0200
+Message-Id: <20180907210910.816346587@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
 References: <20180907210909.523240901@linuxfoundation.org>
@@ -56,52 +49,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit a6f572084fbee8b30f91465f4a085d7a90901c57 upstream.
+commit 9ba3eb5103cf56f0daaf07de4507df76e7813ed7 upstream.
 
-Will noted that only checking mm_users is incorrect; we should also
-check mm_count in order to cover CPUs that have a lazy reference to
-this mm (and could do speculative TLB operations).
-
-If removing this turns out to be a performance issue, we can
-re-instate a more complete check, but in tlb_table_flush() eliding the
-call_rcu_sched().
-
-Fixes: 267239116987 ("mm, powerpc: move the RCU page-table freeing into generic code")
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Rik van Riel <riel@surriel.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: stable@kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory.c |    9 ---------
- 1 file changed, 9 deletions(-)
+ arch/alpha/kernel/osf_sys.c |   23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -359,15 +359,6 @@ void tlb_remove_table(struct mmu_gather
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -560,25 +560,20 @@ SYSCALL_DEFINE0(getdtablesize)
+  */
+ SYSCALL_DEFINE2(osf_getdomainname, char __user *, name, int, namelen)
  {
- 	struct mmu_table_batch **batch = &tlb->batch;
+-	unsigned len;
+-	int i;
++	int len, err = 0;
++	char *kname;
  
--	/*
--	 * When there's less then two users of this mm there cannot be a
--	 * concurrent page-table walk.
--	 */
--	if (atomic_read(&tlb->mm->mm_users) < 2) {
--		__tlb_remove_table(table);
--		return;
--	}
+-	if (!access_ok(VERIFY_WRITE, name, namelen))
+-		return -EFAULT;
 -
- 	if (*batch == NULL) {
- 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
- 		if (*batch == NULL) {
+-	len = namelen;
+-	if (len > 32)
+-		len = 32;
++	if (namelen > 32)
++		namelen = 32;
+ 
+ 	down_read(&uts_sem);
+-	for (i = 0; i < len; ++i) {
+-		__put_user(utsname()->domainname[i], name + i);
+-		if (utsname()->domainname[i] == '\0')
+-			break;
+-	}
++	kname = utsname()->domainname;
++	len = strnlen(kname, namelen);
++	if (copy_to_user(name, kname, min(len + 1, namelen)))
++		err = -EFAULT;
+ 	up_read(&uts_sem);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ /*
 
 
