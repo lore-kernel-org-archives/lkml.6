@@ -2,117 +2,288 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17665C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DEBC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B563F20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:34:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B563F20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 3F49320869
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 04:35:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F49320869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbeIGJNE (ORCPT
+        id S1726318AbeIGJOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 05:13:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52696 "EHLO mx1.suse.de"
+        Fri, 7 Sep 2018 05:14:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51952 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725933AbeIGJNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 05:13:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C8852AD75;
-        Fri,  7 Sep 2018 04:33:59 +0000 (UTC)
-From:   Tony Jones <tonyj@suse.de>
-To:     john.johansen@canonical.com
-Cc:     seth.arnold@canonical.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] apparmor: Fix network performance issue in aa_label_sk_perm
-Date:   Thu,  6 Sep 2018 21:33:57 -0700
-Message-Id: <20180907043357.4638-1-tonyj@suse.de>
-X-Mailer: git-send-email 2.18.0
+        id S1725805AbeIGJOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 05:14:37 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 753AE8077105;
+        Fri,  7 Sep 2018 04:35:33 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-59.pek2.redhat.com [10.72.12.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B5EB10F1BED;
+        Fri,  7 Sep 2018 04:35:26 +0000 (UTC)
+Date:   Fri, 7 Sep 2018 12:35:24 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Cc:     Zi Yan <zi.yan@cs.rutgers.edu>, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: hugepage: mark splitted page dirty when needed
+Message-ID: <20180907043524.GM16937@xz-x1>
+References: <20180904075510.22338-1-peterx@redhat.com>
+ <20180904080115.o2zj4mlo7yzjdqfl@kshutemo-mobl1>
+ <D3B32B41-61D5-47B3-B1FC-77B0F71ADA47@cs.rutgers.edu>
+ <20180905073037.GA23021@xz-x1>
+ <20180905125522.x2puwfn5sr2zo3go@kshutemo-mobl1>
+ <20180906113933.GG16937@xz-x1>
+ <20180906140842.jzf7tluzocb5nv3f@kshutemo-mobl1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180906140842.jzf7tluzocb5nv3f@kshutemo-mobl1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 04:35:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 07 Sep 2018 04:35:33 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The netperf benchmark shows a 5.73% reduction in throughput for 
-small (64 byte) transfers by unconfined tasks.
+On Thu, Sep 06, 2018 at 05:08:42PM +0300, Kirill A. Shutemov wrote:
+> On Thu, Sep 06, 2018 at 07:39:33PM +0800, Peter Xu wrote:
+> > On Wed, Sep 05, 2018 at 03:55:22PM +0300, Kirill A. Shutemov wrote:
+> > > On Wed, Sep 05, 2018 at 03:30:37PM +0800, Peter Xu wrote:
+> > > > On Tue, Sep 04, 2018 at 10:00:28AM -0400, Zi Yan wrote:
+> > > > > On 4 Sep 2018, at 4:01, Kirill A. Shutemov wrote:
+> > > > > 
+> > > > > > On Tue, Sep 04, 2018 at 03:55:10PM +0800, Peter Xu wrote:
+> > > > > >> When splitting a huge page, we should set all small pages as dirty if
+> > > > > >> the original huge page has the dirty bit set before.  Otherwise we'll
+> > > > > >> lose the original dirty bit.
+> > > > > >
+> > > > > > We don't lose it. It got transfered to struct page flag:
+> > > > > >
+> > > > > > 	if (pmd_dirty(old_pmd))
+> > > > > > 		SetPageDirty(page);
+> > > > > >
+> > > > > 
+> > > > > Plus, when split_huge_page_to_list() splits a THP, its subroutine __split_huge_page()
+> > > > > propagates the dirty bit in the head page flag to all subpages in __split_huge_page_tail().
+> > > > 
+> > > > Hi, Kirill, Zi,
+> > > > 
+> > > > Thanks for your responses!
+> > > > 
+> > > > Though in my test the huge page seems to be splitted not by
+> > > > split_huge_page_to_list() but by explicit calls to
+> > > > change_protection().  The stack looks like this (again, this is a
+> > > > customized kernel, and I added an explicit dump_stack() there):
+> > > > 
+> > > >   kernel:  dump_stack+0x5c/0x7b
+> > > >   kernel:  __split_huge_pmd+0x192/0xdc0
+> > > >   kernel:  ? update_load_avg+0x8b/0x550
+> > > >   kernel:  ? update_load_avg+0x8b/0x550
+> > > >   kernel:  ? account_entity_enqueue+0xc5/0xf0
+> > > >   kernel:  ? enqueue_entity+0x112/0x650
+> > > >   kernel:  change_protection+0x3a2/0xab0
+> > > >   kernel:  mwriteprotect_range+0xdd/0x110
+> > > >   kernel:  userfaultfd_ioctl+0x50b/0x1210
+> > > >   kernel:  ? do_futex+0x2cf/0xb20
+> > > >   kernel:  ? tty_write+0x1d2/0x2f0
+> > > >   kernel:  ? do_vfs_ioctl+0x9f/0x610
+> > > >   kernel:  do_vfs_ioctl+0x9f/0x610
+> > > >   kernel:  ? __x64_sys_futex+0x88/0x180
+> > > >   kernel:  ksys_ioctl+0x70/0x80
+> > > >   kernel:  __x64_sys_ioctl+0x16/0x20
+> > > >   kernel:  do_syscall_64+0x55/0x150
+> > > >   kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > > 
+> > > > At the very time the userspace is sending an UFFDIO_WRITEPROTECT ioctl
+> > > > to kernel space, which is handled by mwriteprotect_range().  In case
+> > > > you'd like to refer to the kernel, it's basically this one from
+> > > > Andrea's (with very trivial changes):
+> > > > 
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git userfault
+> > > > 
+> > > > So... do we have two paths to split the huge pages separately?
+> > > 
+> > > We have two entiries that can be split: page table enties and underlying
+> > > compound page.
+> > > 
+> > > split_huge_pmd() (and variants of it) split the PMD entry into a PTE page
+> > > table. It doens't touch underlying compound page. The page still can be
+> > > mapped in other place as huge.
+> > > 
+> > > split_huge_page() (and ivariants of it) split compound page into a number
+> > > of 4k (or whatever PAGE_SIZE is). The operation requires splitting all
+> > > PMD, but not other way around.
+> > > 
+> > > > 
+> > > > Another (possibly very naive) question is: could any of you hint me
+> > > > how the page dirty bit is finally applied to the PTEs?  These two
+> > > > dirty flags confused me for a few days already (the SetPageDirty() one
+> > > > which sets the page dirty flag, and the pte_mkdirty() which sets that
+> > > > onto the real PTEs).
+> > > 
+> > > Dirty bit from page table entries transferes to sturct page flug and used
+> > > for decision making in reclaim path.
+> > 
+> > Thanks for explaining.  It's much clearer for me.
+> > 
+> > Though for the issue I have encountered, I am still confused on why
+> > that dirty bit can be ignored for the splitted PTEs.  Indeed we have:
+> > 
+> > 	if (pmd_dirty(old_pmd))
+> > 		SetPageDirty(page);
+> > 
+> > However to me this only transfers (as you explained above) the dirty
+> > bit (AFAIU it's possibly set by the hardware when the page is written)
+> > to the page struct of the compound page.  It did not really apply to
+> > every small page of the splitted huge page.  As you also explained,
+> > this __split_huge_pmd() only splits the PMD entry but it keeps the
+> > compound huge page there, then IMHO it should also apply the dirty
+> > bits from the huge page to all the small page entries, no?
+> 
+> The bit on compound page represents all small subpages. PageDirty() on any
+> subpage will return you true if the compound page is dirty.
 
-DEFINE_AUDIT_SK() in aa_label_sk_perm() should not be performed 
-unconditionally, rather only when the label is confined.
+Ah I didn't notice this before (since PageDirty is defined with
+PF_HEAD), thanks for pointing out.
 
-netperf-tcp
-                            56974a6fc^              56974a6fc
-Min       64         563.48 (   0.00%)      531.17 (  -5.73%)
-Min       128       1056.92 (   0.00%)      999.44 (  -5.44%)
-Min       256       1945.95 (   0.00%)     1867.97 (  -4.01%)
-Min       1024      6761.40 (   0.00%)     6364.23 (  -5.87%)
-Min       2048     11110.53 (   0.00%)    10606.20 (  -4.54%)
-Min       3312     13692.67 (   0.00%)    13158.41 (  -3.90%)
-Min       4096     14926.29 (   0.00%)    14457.46 (  -3.14%)
-Min       8192     18399.34 (   0.00%)    18091.65 (  -1.67%)
-Min       16384    21384.13 (   0.00%)    21158.05 (  -1.06%)
-Hmean     64         564.96 (   0.00%)      534.38 (  -5.41%)
-Hmean     128       1064.42 (   0.00%)     1010.12 (  -5.10%)
-Hmean     256       1965.85 (   0.00%)     1879.16 (  -4.41%)
-Hmean     1024      6839.77 (   0.00%)     6478.70 (  -5.28%)
-Hmean     2048     11154.80 (   0.00%)    10671.13 (  -4.34%)
-Hmean     3312     13838.12 (   0.00%)    13249.01 (  -4.26%)
-Hmean     4096     15009.99 (   0.00%)    14561.36 (  -2.99%)
-Hmean     8192     18975.57 (   0.00%)    18326.54 (  -3.42%)
-Hmean     16384    21440.44 (   0.00%)    21324.59 (  -0.54%)
-Stddev    64           1.24 (   0.00%)        2.85 (-130.64%)
-Stddev    128          4.51 (   0.00%)        6.53 ( -44.84%)
-Stddev    256         11.67 (   0.00%)        8.50 (  27.16%)
-Stddev    1024        48.33 (   0.00%)       75.07 ( -55.34%)
-Stddev    2048        54.82 (   0.00%)       65.16 ( -18.86%)
-Stddev    3312       153.57 (   0.00%)       56.29 (  63.35%)
-Stddev    4096       100.25 (   0.00%)       88.50 (  11.72%)
-Stddev    8192       358.13 (   0.00%)      169.99 (  52.54%)
-Stddev    16384       43.99 (   0.00%)      141.82 (-222.39%)
+> 
+> > These dirty bits are really important to my scenario since AFAIU the
+> > change_protection() call is using these dirty bits to decide whether
+> > it should append the WRITE bit - it finally corresponds to the lines
+> > in change_pte_range():
+> > 
+> >         /* Avoid taking write faults for known dirty pages */
+> >         if (dirty_accountable && pte_dirty(ptent) &&
+> >                         (pte_soft_dirty(ptent) ||
+> >                                 !(vma->vm_flags & VM_SOFTDIRTY))) {
+> >                 ptent = pte_mkwrite(ptent);
+> >         }
+> > 
+> > So when mprotect() with that range (my case is UFFDIO_WRITEPROTECT,
+> > which is similar) although we pass in the new protocol with VM_WRITE
+> > here it'll still mask it since the dirty bit is not set, then the
+> > userspace program (in my case, the QEMU thread that handles write
+> > protect failures) can never fixup the write-protected page fault.
+> 
+> I don't follow here.
+> 
+> The code you quoting above is an apportunistic optimization and should not
+> be mission-critical. The dirty and writable bits can go away as soon as
+> you drop page table lock for the page.
 
-Signed-off-by: Tony Jones <tonyj@suse.de>
-Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket
-mediation")
----
- security/apparmor/net.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Indeed it's an optimization, IIUC it tries to avoid an extra but
+possibly useless write-protect page fault when the dirty bits are
+already set after all.  However that's a bit trickly here - in my use
+case the write-protect page faults will be handled by one of the QEMU
+thread that reads the userfaultfd handle, so the fault must be handled
+there instead of inside kernel otherwise there'll be nested page
+faults forever (and userfaultfd will detect that then send a SIGBUS
+instead).
 
-diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-index bb24cfa0a164..d5d72dd1ca1f 100644
---- a/security/apparmor/net.c
-+++ b/security/apparmor/net.c
-@@ -146,17 +146,20 @@ int aa_af_perm(struct aa_label *label, const char *op, u32 request, u16 family,
- static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
- 			    struct sock *sk)
- {
--	struct aa_profile *profile;
--	DEFINE_AUDIT_SK(sa, op, sk);
-+	int error = 0;
- 
- 	AA_BUG(!label);
- 	AA_BUG(!sk);
- 
--	if (unconfined(label))
--		return 0;
-+	if (!unconfined(label)) {
-+		struct aa_profile *profile;
-+		DEFINE_AUDIT_SK(sa, op, sk);
- 
--	return fn_for_each_confined(label, profile,
--			aa_profile_af_sk_perm(profile, &sa, request, sk));
-+		error = fn_for_each_confined(label, profile,
-+			    aa_profile_af_sk_perm(profile, &sa, request, sk));
-+	}
+I'll try to explain with some more details on how I understand what
+happened.  This should also answer Zi's question so I'll avoid
+replying twice there.  Please feel free to correct me.
+
+Firstly, below should be the correct steps to handle a userspace write
+protect page fault using Andrea's userfault-wp tree (I only mentioned
+the page fault steps and ignored most of the irrelevant setup
+procedures):
+
+1. QEMU write-protects page P using UFFDIO_WRITEPROTECT ioctl, then
+   the write bit removed from PTE, so QEMU can capture any further
+   writes to the page
+
+   ... (time passes)...
+
+2. [vCPU thread] Guest writes to the page P, trigger wp page fault
+
+3. [vCPU thread] Since the page (and the whole vma) is tracked by
+   userfault-wp, it goes into handle_userfault() to notify userspace
+   about the page fault and waits...
+
+4. [userfault thread] Gets the message about the page fault, do
+   anything it like with the page P (mostly copy it somewhere), and
+   fixup the page fault by another UFFDIO_WRITEPROTECT ioctl, this
+   time to reset the write bit.  After that, it'll wake up the vCPU
+   thread
+
+5. [vCPU thread] Got waked up, retry the page fault by returning a
+   VM_FAULT_RETRY in handle_userfault().  Then this time we'll see the
+   PTE with write bit set correctly.  vCPU continues execution.
+
+Then let's consider THP here, where we might miss the dirty page for
+the PTE of the small page P.  In that case at step (4) when we want to
+recover the write bit we'll fail since the dirty bit is missing in the
+small PTE, so the write bit will still be cleared (expecting that the
+next page fault will fill it up).  However in step (5) we can't really
+fill in the write bit since we'll fault again into the
+handle_userfault() before that happens and then it goes back to step
+(3) then it can actualy loop forever if without the loop detection
+code in handle_userfault().
+
+So I think now I understand that setting up the dirty bit in the
+compound page should be enough, then would below change acceptable
+instead?
+
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 6d331620b9e5..0d4a8129a5e7 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -73,6 +73,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                                             
+                if (pte_present(oldpte)) {
+                        pte_t ptent;
+                        bool preserve_write = prot_numa && pte_write(oldpte);
++                       bool dirty;
+
+                        /*
+                         * Avoid trapping faults against the zero or KSM
+@@ -115,8 +116,18 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                                          
+                        if (preserve_write)
+                                ptent = pte_mk_savedwrite(ptent);
+
++                       /*
++                        * The extra PageDirty() check will make sure
++                        * we'll capture the dirty page even if the
++                        * PTE dirty bit unset.  One case is when the
++                        * PTE is splitted from a huge PMD, in that
++                        * case the dirty flag might only be set on
++                        * the compound page instead of this PTE.
++                        */
++                       dirty = pte_dirty(ptent) || PageDirty(pte_page(ptent));
 +
-+	return error;
- }
- 
- int aa_sk_perm(const char *op, u32 request, struct sock *sk)
--- 
-2.18.0
+                        /* Avoid taking write faults for known dirty pages */
+-                       if (dirty_accountable && pte_dirty(ptent) &&
++                       if (dirty_accountable && dirty &&
+                                        (pte_soft_dirty(ptent) ||
+                                         !(vma->vm_flags & VM_SOFTDIRTY))) {
+                                ptent = pte_mkwrite(ptent);
 
+I tested that this change can also fix my problem (QEMU will not get
+SIGBUS after write protection starts).
+
+Thanks,
+
+-- 
+Peter Xu
