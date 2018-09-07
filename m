@@ -6,102 +6,106 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF740C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B36C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE8D20652
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFECD20879
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 07:46:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="VTG9g92E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE8D20652
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="KjudEoSU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFECD20879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeIGM01 (ORCPT
+        id S1727844AbeIGM02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:26:27 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41570 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeIGM00 (ORCPT
+        Fri, 7 Sep 2018 08:26:28 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41613 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeIGM01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:26:26 -0400
-Received: by mail-lf1-f65.google.com with SMTP id l26-v6so11273713lfc.8
+        Fri, 7 Sep 2018 08:26:27 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17-v6so11490348ljy.8
         for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 00:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Xae1vLN5TCyHnrzDeiLfXPJiftORjKN4z8WIfgTNiTU=;
-        b=VTG9g92EFMtXijjWUJs0O2M1lG/8plRMQSvo/+YETbS2+U6dtF7kL+vH9HfxBwii0u
-         OZ/k54RkwnzxgnSdYjtZo2J9lyCGtc2hrhTM39G43wZ4J1E8teDn+6fb6/LwCBshQaoW
-         7rN2XBxMi3+ospNtTMDPapmCEXNSmdSPw+VuA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=a1RTPO9qIQEpQtoAwM1pLWp2VNLlW/F/d+npIJiW/qA=;
+        b=KjudEoSU9bgyjraVpfMHrbGX930Fgzh+k5L7HSAEXgblNrp3p4fsVtsgAPomQHDtFl
+         372/gck2EdCcJszZ/dd/SpOvFsJIgcq/aEDhCq6eVtW47+IXcSwswV0vAwYidpE1FUP4
+         ZRuVNFoh98sbbV2xXRoKcGz2pzIVoCbNKF3zY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Xae1vLN5TCyHnrzDeiLfXPJiftORjKN4z8WIfgTNiTU=;
-        b=iEyPej/mRtvZmZR/yeTemlusbvMqAEHAxrX1Bbhwo10AlQdLtP/HTCrbN9jBVgU6yn
-         oA9P+rbs4G+Aeog+LoHgHl8ms4rPhM0r4Gh57lC1uaxZlnPgSX8XT0gKRthOul1+vrqg
-         xcxzHLigAOyGTZY+h/vtrMIjj1h+pVHFHXhGYYc5HifZ502IE3MM3d8a3ZaxdEPj13Zn
-         pWCqd48xIM/I02Mq6sNfxRnlToA+EbyRDOzxF/206ndyGhZjurCdPVu3ty16LEl3uduh
-         NXruWWnYaI9VDBr9SIac6S5sHrPm68D9GdCkypLy2R/kbbu4Q03pa2K2AYv6QGqo6cO7
-         HclQ==
-X-Gm-Message-State: APzg51AKdMYPJZahJdOFDmSBbrFUOhMa8SGLMf8BTIVqPE6slGLlPoZ+
-        I9BiDuFo2nnpBtUWLMDOFPhvWw==
-X-Google-Smtp-Source: ANB0Vdbf96+qVz3cWXSMjaGPodrgx6YeeWA2jSzKABvAM9NidHkyBDwVwGIA9+TTKcvquWdezireTg==
-X-Received: by 2002:a19:4a09:: with SMTP id x9-v6mr4342389lfa.80.1536306404315;
-        Fri, 07 Sep 2018 00:46:44 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=a1RTPO9qIQEpQtoAwM1pLWp2VNLlW/F/d+npIJiW/qA=;
+        b=Kd+RwA+mqVy9gJLGrfUPUDlSC5H8EDBFEVyacu3MDEAinpVhyNPuRWiaXdWz7NVipA
+         W0F3L3JRVIGai8Gwoq31mMKc55fIsABSz4rGutxJul+A5U74v70c4hcuWahCL2ohQh04
+         IJBv+9zk97zstoN4rGr3oVosuNj9vnTwOnKLuPKxU4YZ9l9ufgpZQqJuLNmXeT4T0hzO
+         qAp2wZMfzOpVFVybT/zE4HqvX7V467Kpwo5F7kb2MGzrJsDxQD9Nuj+OocGbNegKsaeR
+         RD8fPD10fSmPJPETmWDeq8lgsTUpADtkHbHsRToz49IL3QNPrso/b+5ynldKgPCKMe2d
+         toEA==
+X-Gm-Message-State: APzg51DtWbv8KjUF7zYXnDtjqBZ4sh8ZKC6KVIQlLCbJwvsuQT1K/M8D
+        QUEcwIX1GpE3xgD1NYosiZL2dg==
+X-Google-Smtp-Source: ANB0VdaHlNtneZ3jdIgGLpVTvHZEIeULs+PuAUZTth4nGABsYVsilsxIV5GgHtfmbE3IUkrl2aU63A==
+X-Received: by 2002:a2e:5617:: with SMTP id k23-v6mr3981045ljb.86.1536306405263;
+        Fri, 07 Sep 2018 00:46:45 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 96-v6sm1183005lfu.40.2018.09.07.00.46.42
+        by smtp.gmail.com with ESMTPSA id 96-v6sm1183005lfu.40.2018.09.07.00.46.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 07 Sep 2018 00:46:43 -0700 (PDT)
+        Fri, 07 Sep 2018 00:46:44 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     David Howells <dhowells@redhat.com>
 Cc:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 1/2] string: make kmemdup_nul take and return void*, not char*
-Date:   Fri,  7 Sep 2018 09:46:39 +0200
-Message-Id: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
+Subject: [PATCH 2/2] rxrpc: use kmemdup_nul in rxrpc_krb5_decode_principal
+Date:   Fri,  7 Sep 2018 09:46:40 +0200
+Message-Id: <20180907074640.27348-2-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
+References: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows kmemdup_nul to be used in cases where the source pointer is
-not a char* or const char*, but the result should nevertheless have a
-nul char after the memcpy'ed data.
-
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/string.h | 2 +-
- mm/util.c              | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This depends on patch 1/2.
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 4a5a0eb7df51..b44a2254bc6b 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -169,7 +169,7 @@ extern char *kstrdup(const char *s, gfp_t gfp) __malloc;
- extern const char *kstrdup_const(const char *s, gfp_t gfp);
- extern char *kstrndup(const char *s, size_t len, gfp_t gfp);
- extern void *kmemdup(const void *src, size_t len, gfp_t gfp);
--extern char *kmemdup_nul(const char *s, size_t len, gfp_t gfp);
-+extern void *kmemdup_nul(const void *s, size_t len, gfp_t gfp);
- 
- extern char **argv_split(gfp_t gfp, const char *str, int *argcp);
- extern void argv_free(char **argv);
-diff --git a/mm/util.c b/mm/util.c
-index 9e3ebd2ef65f..15ef23f1176e 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -128,7 +128,7 @@ EXPORT_SYMBOL(kmemdup);
-  * @len: The size of the data
-  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-  */
--char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-+void *kmemdup_nul(const void *s, size_t len, gfp_t gfp)
- {
- 	char *buf;
+ net/rxrpc/key.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/net/rxrpc/key.c b/net/rxrpc/key.c
+index e7f6b8823eb6..42f0ca9265c2 100644
+--- a/net/rxrpc/key.c
++++ b/net/rxrpc/key.c
+@@ -252,11 +252,9 @@ static int rxrpc_krb5_decode_principal(struct krb5_principal *princ,
+ 		paddedlen = (tmp + 3) & ~3;
+ 		if (paddedlen > toklen)
+ 			return -EINVAL;
+-		princ->name_parts[loop] = kmalloc(tmp + 1, GFP_KERNEL);
++		princ->name_parts[loop] = kmemdup_nul(xdr, tmp, GFP_KERNEL);
+ 		if (!princ->name_parts[loop])
+ 			return -ENOMEM;
+-		memcpy(princ->name_parts[loop], xdr, tmp);
+-		princ->name_parts[loop][tmp] = 0;
+ 		toklen -= paddedlen;
+ 		xdr += paddedlen >> 2;
+ 	}
+@@ -270,11 +268,9 @@ static int rxrpc_krb5_decode_principal(struct krb5_principal *princ,
+ 	paddedlen = (tmp + 3) & ~3;
+ 	if (paddedlen > toklen)
+ 		return -EINVAL;
+-	princ->realm = kmalloc(tmp + 1, GFP_KERNEL);
++	princ->realm = kmemdup_nul(xdr, tmp, GFP_KERNEL);
+ 	if (!princ->realm)
+ 		return -ENOMEM;
+-	memcpy(princ->realm, xdr, tmp);
+-	princ->realm[tmp] = 0;
+ 	toklen -= paddedlen;
+ 	xdr += paddedlen >> 2;
  
 -- 
 2.16.4
