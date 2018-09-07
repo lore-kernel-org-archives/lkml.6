@@ -2,121 +2,124 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0202DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B6FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA4C20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CEE820645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:45:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CVg8DpIn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA4C20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbIl3AQJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEE820645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeIGKY1 (ORCPT
+        id S1727638AbeIGKYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 06:24:27 -0400
-Received: from mail-sg2apc01on0104.outbound.protection.outlook.com ([104.47.125.104]:47057
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725831AbeIGKY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 06:24:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qhabijY7TkUCLwadEk5JFYtChb5wMKp7JStvw8Cq340=;
- b=CVg8DpInoO6OWMMS5hR6EumXQhUi/Sbn+MK0d3gWOlLTykpMG9/8LsTq36t8qE3SzDyG79+DuyXXV2nteKsjKo253OuGE5xNMxE86CxTy8SrAoL37KvMJ3MYYkVviDD1dCUab8Kb8lNJmrDiIKePNYT8HlfxMeRASvsP96o5Cuo=
-Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) by
- HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.8; Fri, 7 Sep 2018 05:45:02 +0000
-Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
- ([fe80::194c:c2f9:171:1890]) by HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
- ([fe80::194c:c2f9:171:1890%5]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 05:45:02 +0000
-From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: [ 1/1] KVM/MMU: Fix comment in walk_shadow_page_lockless_end()
-Thread-Topic: [ 1/1] KVM/MMU: Fix comment in walk_shadow_page_lockless_end()
-Thread-Index: AQHURm3rRLjBa2U4Tk6nztIarmBuhw==
-Date:   Fri, 7 Sep 2018 05:45:02 +0000
-Message-ID: <20180907054446.37674-1-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tianyu.Lan@microsoft.com; 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK0P153MB0129;6:IKiwK1Vx+ERmCpZ7ky70P5OPAigtvHgg+BIchC3Tf6lHpw8iPqrVoaF2zh0DGgSG2zFMXOytLby9DVIUC+JddSO+IrmBOv4ZH+WaQ6A9UdY9JCE9QAYph+7+osUq7YrxkHEaBr0D28PuRWdU4puFZCiCWKp1W3bGL3ruKe76FGObxG41VaeUw9k3k0igHfq/iDPt33DYRwF/dDdgev+4gLaiqb3hkHl9DSOkDd1F8whuh6M34d4CQvY+RUrG0HiCEz6DS93yy2gKjK9wZ1nsr/ccBwL8jbnm7ZXFqzWPgZJaSJCbf0r/ebspjEF7xEx5bdNVRwJaKqZmPnbiDJoXOWQcCgZNCnRj+lxdEu3uxs0QLwSATswlAljUIkTP0iJNWDxKhFp9owMQle/gOz82jN77HcdUHaYI/EyV0WER8QCNE3zJeig3+lUtebortNTmJHvimBAtajqXDkArnOOY7w==;5:+4Lpd7xhUhXcb4AQ1kN4QBmySuioeWugnLYTPgGoNRsiq9Gw2kGlh9yMzxuCg0EdPpGxrBsy0onYwYF8ltw8LWo1lP+0Hyo6I/mCNLiAONhyCL9+e7T2foLsjEyc5xK40H/vOpByxEVSioQkl1xtRzeecAU+SPuYDVuPod/Hft0=;7:kODGClwinPdT0RoHJzv0vDLGSqoJflMqJcUNbwDNyRf9VRNvVFwsxVDvSVgM6axjMZDghMXsLYnMJRh2W/lfH5oES3QETyFh6o3d4tin/iWgiq8fu28qm67kQh4oYdWpdzI8WGMQG/QG6lDcdtIf4KbGEf+k6+o7azB8y8tPkABZ8kjnyUpZF1pNUnhpUTihYrPUvrnAG9WOqCFDWx4wnjbg0Gj3eFCoGdFJHl+uAJQ1jNUVRQxMXX0w7lM2PNpP
-x-ms-office365-filtering-correlation-id: b63cadde-9bab-4bb6-dbe2-08d614850e95
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0129;
-x-ms-traffictypediagnostic: HK0P153MB0129:
-x-microsoft-antispam-prvs: <HK0P153MB0129E3441B715F8192DBB47892000@HK0P153MB0129.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699050);SRVR:HK0P153MB0129;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0129;
-x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(346002)(376002)(396003)(136003)(199004)(189003)(256004)(14444005)(1671002)(6506007)(4326008)(109986005)(26005)(2900100001)(5250100002)(5660300001)(486006)(2616005)(36756003)(476003)(106356001)(6436002)(305945005)(72206003)(105586002)(7736002)(102836004)(97736004)(59246006)(6512007)(14454004)(6486002)(10290500003)(66066001)(53936002)(99286004)(25786009)(54906003)(2906002)(22452003)(316002)(6116002)(478600001)(3846002)(1076002)(8676002)(86362001)(86612001)(8936002)(10090500001)(81156014)(68736007)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0129;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: RYOwBIQFW1GipXwUNyPnqF2MjXa2sdoZ1WZWKKaxE/b220ntivCVDbzLgtwzaGudtKcjhWh0/AP0d17EKlZBpajWAwSuhKoYxfgMiNIKmGIFKm8otH1cxcL2P2Iv5wULTflEKCoMMX4SPX2KrS2yRHWcu5A+QUyZhESnbXXs7FoUEwNCpkmW44BGCPA+v8plk0UKEsobAX/F0wIgF5FJaW1zN3j2gou3G3sxTHkH8rr5vdXuz/YrH2bxXJ72GqldXMu0Xj9tw9iHvtXztm+dFKqBY0CldaReaEQL9yRTs4af87Y4s/YImIm0uKLxD2yjYke4FkbkYBIv9D2r/UlVS2629rTqtUTEcG11YeTU0K4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 7 Sep 2018 06:24:40 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46563 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbeIGKYk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 06:24:40 -0400
+Received: by mail-pg1-f195.google.com with SMTP id b129-v6so6394354pga.13;
+        Thu, 06 Sep 2018 22:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=wtqcbMNl0pf6NugApCz4YR3ywzHIzDsoFRlkHrnYNjA=;
+        b=CbIl3AQJfZy3qP9Xu0OmT4l9apv2JA5DFCMM+9/MN+jbPlwPpeLPM1ucpqMnxOjs/1
+         3kLrm1lVGAO8LDLmnExU7T1jG7gCNrnRE494KRpVChvSko9E7G/6qN8HGSH3ybbCFBwC
+         IhRTbSlwvUJhGu18S9L0rDWJsO3WJnBO03lGsGmN3QGrBOmMJSOJfVpWCRaad0dfesPh
+         dOdTPjuye0M63qkBHbwvRD7pLWlRJzbZ0gmKKu4h+Uw6/T3WBM/8ElsaE3JPvcNSIBmX
+         sToHGxC7MGRyRyczsXYQ8KYJW/5V3a6EcXgP2WmhvFxnKYaqG1+pNSJ12wzmmBd+OxRR
+         AYzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=wtqcbMNl0pf6NugApCz4YR3ywzHIzDsoFRlkHrnYNjA=;
+        b=l0LjL7Fpaobb0Z8wfjaXWY4SaU2afPDBJSIQWffL+dCnndxDRF66dj3FX/UBEVDNIL
+         6exLXkqrXmkY2AP5uOnBYDsQf555NWvzN22eMxYWRN7INGIC5zd60aDofIzJZsT8itNf
+         mZi39ZluIqAwDkm+cpqs+0JKPivrcZkJqqzsq+uEOekHlTlwZ4jg/XLBNMw97LBsAWOr
+         jXe2gR2uW9fMckGvpUOSESSU0Iw/0RNqbpZ6v+1+9TZCjjgg4UPjiFLO93zlYPaf/LeC
+         awNDBZAfkI3JnYQNtBG2u1WbhASGXpTK6Uz+8+DRnS7ma54LQMKPy1vap++uq1aE8Sow
+         OgCA==
+X-Gm-Message-State: APzg51ApOMMLSjRhHxURZBg95S+LWLYziws+GkGqZF/ufyi3emRNtqxs
+        jUjYeQ09czRFtlzBfB7IhmY=
+X-Google-Smtp-Source: ANB0VdZmuYkmbwhKfIK84lTDCqDtauFmxOoYr8eVpW6iScXOXRotU+xbicRNg5jX/c5407vRjKhPjQ==
+X-Received: by 2002:aa7:8713:: with SMTP id b19-v6mr6689809pfo.151.1536299123124;
+        Thu, 06 Sep 2018 22:45:23 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:9bbd])
+        by smtp.gmail.com with ESMTPSA id g66-v6sm9982760pfk.39.2018.09.06.22.45.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Sep 2018 22:45:22 -0700 (PDT)
+Date:   Thu, 6 Sep 2018 22:45:20 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Cc:     sfr@canb.auug.org.au, Daniel Borkmann <daniel@iogearbox.net>,
+        ast@kernel.org, Netdev <netdev@vger.kernel.org>,
+        linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20180907054518.jnnckempmerazwwh@ast-mbp.dhcp.thefacebook.com>
+References: <20180907101923.4d2a85c6@canb.auug.org.au>
+ <20180907002223.tpizglyhrwn26oox@ast-mbp.dhcp.thefacebook.com>
+ <CAJ+HfNgRd5ztzwJ9HtgnrDyf8F0ykODY_EGC91d9KiAfDbhcXA@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b63cadde-9bab-4bb6-dbe2-08d614850e95
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 05:45:02.4119
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0129
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ+HfNgRd5ztzwJ9HtgnrDyf8F0ykODY_EGC91d9KiAfDbhcXA@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kvm_commit_zap_page() has been renamed to kvm_mmu_commit_zap_page()
-This patch is to fix the commit.
+On Fri, Sep 07, 2018 at 07:21:05AM +0200, Björn Töpel wrote:
+> Den fre 7 sep. 2018 kl 02:23 skrev Alexei Starovoitov
+> <alexei.starovoitov@gmail.com>:
+> >
+> > On Fri, Sep 07, 2018 at 10:19:23AM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > After merging the bpf-next tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this:
+> > >
+> > > ERROR: ".xsk_reuseq_swap" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
+> > > ERROR: ".xsk_reuseq_free" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
+> > > ERROR: ".xsk_reuseq_prepare" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined
+> > >
+> > > Caused by commit
+> > >
+> > >   9654bd10da60 ("i40e: clean zero-copy XDP Rx ring on shutdown/reset")
+> > >
+> > > CONFIG_XDP_SOCKETS is not set for this build.
+> > >
+> > > I have used the version of the bfp-next tree from next-20180906 for today.
+> >
+> > merge conflict and build error...
+> > Bjorn, I'm thinking to toss the patches out of bpf-next and reapply
+> > cleaned up version of the patches...
+> > what do you think?
+> >
+> 
+> Yes, do that. I'll get back with a cleaned up v2.
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/kvm/mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Done.
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 7ccd29b95746..648b839a349d 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -947,7 +947,7 @@ static void walk_shadow_page_lockless_end(struct kvm_vc=
-pu *vcpu)
- {
- 	/*
- 	 * Make sure the write to vcpu->mode is not reordered in front of
--	 * reads to sptes.  If it does, kvm_commit_zap_page() can see us
-+	 * reads to sptes.  If it does, kvm_mmu_commit_zap_page() can see us
- 	 * OUTSIDE_GUEST_MODE and proceed to free the shadow page table.
- 	 */
- 	smp_store_release(&vcpu->mode, OUTSIDE_GUEST_MODE);
---=20
-2.14.4
+Unfortunately during interactive rebase that removed your commits git didn't
+preserve merge commits that came after yours,
+so Jesper's and Yonghong's cover letters are not in the git history.
+Yet all patches are in the same order.
+Explicit revert with trail in the git history would have been worse.
+patchworks + git isn't the most convenient workflow. sigh.
+
