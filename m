@@ -2,125 +2,138 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB48DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3F2C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 664372083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:05:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jeWQcoFr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664372083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id AA92320857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 03:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA92320857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbeIGHoS (ORCPT
+        id S1727142AbeIGHqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 03:44:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:35273 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbeIGHoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 03:44:18 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 7 Sep 2018 03:46:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45342 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725743AbeIGHqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 03:46:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4262PT5dHGz9s55;
-        Fri,  7 Sep 2018 13:05:33 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1536289538;
-        bh=QR3BAfqkp1HjnXKmy3uOBttZdgduvGSE/fDoyheLTmI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=jeWQcoFrowvbViNQjj99R+O2k3EgUmcv0czv7OKY4Q5s140yQ6DIMcUbpMf2VTtzU
-         nLQhu71t7P4Tw9tffCLyDPAPGvmRcDVSW4TbPbc88jB/iJg+ndSVUupto64jcLlgpX
-         znImCz/BaxTUHBHBZAl6/fpyMxFAhqUgyMgq7FGjhtc0WYWm4oNEDS4SBjMCzxSCqK
-         1+dETW1COSxrQE2vntb0BAv+c88adNEo3YoTcDCOib7Sn/9TGbKcjpKQblpRYH8+ST
-         jIPjxpKcLEdJomKzSG/Z3os5NLDygVn//xRyziSnyZ4EePX4VDB8ZR3/g6MGSHg6WK
-         zIIMGvRxbpK4g==
-Date:   Fri, 7 Sep 2018 13:05:33 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kees Cook <keescook@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: linux-next: manual merge of the kspp tree with the tip tree
-Message-ID: <20180907130533.03ba3119@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 2CB9785784;
+        Fri,  7 Sep 2018 03:07:41 +0000 (UTC)
+Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F059210073B1;
+        Fri,  7 Sep 2018 03:07:36 +0000 (UTC)
+Subject: Re: [PATCH net-next 01/11] net: sock: introduce SOCK_XDP
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
+References: <20180906040526.22518-1-jasowang@redhat.com>
+ <20180906040526.22518-2-jasowang@redhat.com>
+ <20180906125615-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <c176da90-9b03-e0ff-9e9f-570493530150@redhat.com>
+Date:   Fri, 7 Sep 2018 11:07:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ChvU3MaG=OK88FENH1qaAfo"; protocol="application/pgp-signature"
+In-Reply-To: <20180906125615-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 03:07:41 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 07 Sep 2018 03:07:41 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ChvU3MaG=OK88FENH1qaAfo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Kees,
 
-Today's linux-next merge of the kspp tree got a conflict in:
+On 2018年09月07日 00:56, Michael S. Tsirkin wrote:
+> On Thu, Sep 06, 2018 at 12:05:16PM +0800, Jason Wang wrote:
+>> This patch introduces a new sock flag - SOCK_XDP. This will be used
+>> for notifying the upper layer that XDP program is attached on the
+>> lower socket, and requires for extra headroom.
+>>
+>> TUN will be the first user.
+>>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> In fact vhost is the 1st user, right? So this can be
+> pushed out to become patch 10/11.
 
-  drivers/misc/lkdtm/core.c
+Better with an independent patch, since patch 10/11 can work without XDP.
 
-between commit:
+Thanks
 
-  bef459026b16 ("lkdtm: Test copy_to_user() on bad kernel pointer under KER=
-NEL_DS")
+>
+>> ---
+>>   drivers/net/tun.c  | 19 +++++++++++++++++++
+>>   include/net/sock.h |  1 +
+>>   2 files changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index ebd07ad82431..2c548bd20393 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -869,6 +869,9 @@ static int tun_attach(struct tun_struct *tun, struct file *file,
+>>   		tun_napi_init(tun, tfile, napi);
+>>   	}
+>>   
+>> +	if (rtnl_dereference(tun->xdp_prog))
+>> +		sock_set_flag(&tfile->sk, SOCK_XDP);
+>> +
+>>   	tun_set_real_num_queues(tun);
+>>   
+>>   	/* device is allowed to go away first, so no need to hold extra
+>> @@ -1241,13 +1244,29 @@ static int tun_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+>>   		       struct netlink_ext_ack *extack)
+>>   {
+>>   	struct tun_struct *tun = netdev_priv(dev);
+>> +	struct tun_file *tfile;
+>>   	struct bpf_prog *old_prog;
+>> +	int i;
+>>   
+>>   	old_prog = rtnl_dereference(tun->xdp_prog);
+>>   	rcu_assign_pointer(tun->xdp_prog, prog);
+>>   	if (old_prog)
+>>   		bpf_prog_put(old_prog);
+>>   
+>> +	for (i = 0; i < tun->numqueues; i++) {
+>> +		tfile = rtnl_dereference(tun->tfiles[i]);
+>> +		if (prog)
+>> +			sock_set_flag(&tfile->sk, SOCK_XDP);
+>> +		else
+>> +			sock_reset_flag(&tfile->sk, SOCK_XDP);
+>> +	}
+>> +	list_for_each_entry(tfile, &tun->disabled, next) {
+>> +		if (prog)
+>> +			sock_set_flag(&tfile->sk, SOCK_XDP);
+>> +		else
+>> +			sock_reset_flag(&tfile->sk, SOCK_XDP);
+>> +	}
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> diff --git a/include/net/sock.h b/include/net/sock.h
+>> index 433f45fc2d68..38cae35f6e16 100644
+>> --- a/include/net/sock.h
+>> +++ b/include/net/sock.h
+>> @@ -800,6 +800,7 @@ enum sock_flags {
+>>   	SOCK_SELECT_ERR_QUEUE, /* Wake select on error queue */
+>>   	SOCK_RCU_FREE, /* wait rcu grace period in sk_destruct() */
+>>   	SOCK_TXTIME,
+>> +	SOCK_XDP, /* XDP is attached */
+>>   };
+>>   
+>>   #define SK_FLAGS_TIMESTAMP ((1UL << SOCK_TIMESTAMP) | (1UL << SOCK_TIMESTAMPING_RX_SOFTWARE))
+>> -- 
+>> 2.17.1
 
-from the tip tree and commit:
-
-  f90d1e0c7804 ("lkdtm: Add a test for STACKLEAK")
-
-from the kspp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/misc/lkdtm/core.c
-index 5a755590d3dc,aca26d81e9b8..000000000000
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@@ -183,7 -183,7 +183,8 @@@ static const struct crashtype crashtype
-  	CRASHTYPE(USERCOPY_STACK_FRAME_FROM),
-  	CRASHTYPE(USERCOPY_STACK_BEYOND),
-  	CRASHTYPE(USERCOPY_KERNEL),
- +	CRASHTYPE(USERCOPY_KERNEL_DS),
-+ 	CRASHTYPE(STACKLEAK_ERASING),
-  };
- =20
- =20
-
---Sig_/ChvU3MaG=OK88FENH1qaAfo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluR6v0ACgkQAVBC80lX
-0GwklAf/eZ1gx5K7IRC8oX8WYl4rP1kN6Y+2thbamwW0mfuQMzwlPlYrU6dgSFbG
-jXQdqt2NhZ3q9h/jnpQhJD0HbPm8rQa18Ir298iqfwN8qP+K5H/Yoj7g0gQmYnVM
-KKTu23JDZMMrpSKAl2RzF92o0cHoSkPhz0EzZksmuwqXPkvX0VuW8s0VBOi5eS3W
-xwXy8my1g245KYcun5pCDI/uqlKXKYnwjMRYepEkML0jsgw3x+GwslDNkuEE9kZz
-g0S4KL0nKmWBWdPFKMqohAv50YieFS+IcI9P5gA7CFHBcm5SBz/rFQDoWW6P+nss
-SA85stTSGWnljxSgFR3ylPaDw59r8g==
-=dNGN
------END PGP SIGNATURE-----
-
---Sig_/ChvU3MaG=OK88FENH1qaAfo--
