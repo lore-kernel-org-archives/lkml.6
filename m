@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAC9C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35BAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851DC20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851DC20645
+	by mail.kernel.org (Postfix) with ESMTP id 75F5620645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F5620645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbeIHCHR (ORCPT
+        id S1728502AbeIHCHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:07:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46806 "EHLO
+        Fri, 7 Sep 2018 22:07:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46812 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727764AbeIHCHQ (ORCPT
+        with ESMTP id S1727764AbeIHCHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:07:16 -0400
+        Fri, 7 Sep 2018 22:07:21 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 875AAF07;
-        Fri,  7 Sep 2018 21:24:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBDC5EF6;
+        Fri,  7 Sep 2018 21:24:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jeremy Cline <jcline@redhat.com>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.18 142/145] fs/quota: Fix spectre gadget in do_quotactl
-Date:   Fri,  7 Sep 2018 23:10:08 +0200
-Message-Id: <20180907210914.151800495@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.18 143/145] udf: Fix mounting of Win7 created UDF filesystems
+Date:   Fri,  7 Sep 2018 23:10:09 +0200
+Message-Id: <20180907210914.224791447@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,76 +49,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Cline <jcline@redhat.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 7b6924d94a60c6b8c1279ca003e8744e6cd9e8b1 upstream.
+commit ee4af50ca94f58afc3532662779b9cf80bbe27c8 upstream.
 
-'type' is user-controlled, so sanitize it after the bounds check to
-avoid using it in speculative execution. This covers the following
-potential gadgets detected with the help of smatch:
+Win7 is creating UDF filesystems with single partition with number 8192.
+Current partition descriptor scanning code does not handle this well as
+it incorrectly assumes that partition numbers will form mostly contiguous
+space of small numbers. This results in unmountable media due to errors
+like:
 
-* fs/ext4/super.c:5741 ext4_quota_read() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/ext4/super.c:5778 ext4_quota_write() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/f2fs/super.c:1552 f2fs_quota_read() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/f2fs/super.c:1608 f2fs_quota_write() warn: potential spectre issue
-  'sb_dqopt(sb)->files' [r]
-* fs/quota/dquot.c:412 mark_info_dirty() warn: potential spectre issue
-  'sb_dqopt(sb)->info' [w]
-* fs/quota/dquot.c:933 dqinit_needed() warn: potential spectre issue
-  'dquots' [r]
-* fs/quota/dquot.c:2112 dquot_commit_info() warn: potential spectre
-  issue 'dqopt->ops' [r]
-* fs/quota/dquot.c:2362 vfs_load_quota_inode() warn: potential spectre
-  issue 'dqopt->files' [w] (local cap)
-* fs/quota/dquot.c:2369 vfs_load_quota_inode() warn: potential spectre
-  issue 'dqopt->ops' [w] (local cap)
-* fs/quota/dquot.c:2370 vfs_load_quota_inode() warn: potential spectre
-  issue 'dqopt->info' [w] (local cap)
-* fs/quota/quota.c:110 quota_getfmt() warn: potential spectre issue
-  'sb_dqopt(sb)->info' [r]
-* fs/quota/quota_v2.c:84 v2_check_quota_file() warn: potential spectre
-  issue 'quota_magics' [w]
-* fs/quota/quota_v2.c:85 v2_check_quota_file() warn: potential spectre
-  issue 'quota_versions' [w]
-* fs/quota/quota_v2.c:96 v2_read_file_info() warn: potential spectre
-  issue 'dqopt->info' [r]
-* fs/quota/quota_v2.c:172 v2_write_file_info() warn: potential spectre
-  issue 'dqopt->info' [r]
+UDF-fs: error (device dm-1): udf_read_tagged: tag version 0x0000 != 0x0002 || 0x0003, block 0
+UDF-fs: warning (device dm-1): udf_fill_super: No fileset found
 
-Additionally, a quick inspection indicates there are array accesses with
-'type' in quota_on() and quota_off() functions which are also addressed
-by this.
+Fix the problem by handling partition descriptors in a way that sparse
+partition numbering does not matter.
 
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Reported-and-tested-by: jean-luc malet <jeanluc.malet@gmail.com>
+CC: stable@vger.kernel.org
+Fixes: 7b78fd02fb19530fd101ae137a1f46aa466d9bb6
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/quota/quota.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/udf/super.c |   31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -18,6 +18,7 @@
- #include <linux/quotaops.h>
- #include <linux/types.h>
- #include <linux/writeback.h>
-+#include <linux/nospec.h>
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -1570,10 +1570,16 @@ static void udf_load_logicalvolint(struc
+  */
+ #define PART_DESC_ALLOC_STEP 32
  
- static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
- 				     qid_t id)
-@@ -703,6 +704,7 @@ static int do_quotactl(struct super_bloc
++struct part_desc_seq_scan_data {
++	struct udf_vds_record rec;
++	u32 partnum;
++};
++
+ struct desc_seq_scan_data {
+ 	struct udf_vds_record vds[VDS_POS_LENGTH];
+ 	unsigned int size_part_descs;
+-	struct udf_vds_record *part_descs_loc;
++	unsigned int num_part_descs;
++	struct part_desc_seq_scan_data *part_descs_loc;
+ };
  
- 	if (type >= (XQM_COMMAND(cmd) ? XQM_MAXQUOTAS : MAXQUOTAS))
- 		return -EINVAL;
-+	type = array_index_nospec(type, MAXQUOTAS);
- 	/*
- 	 * Quota not supported on this fs? Check this before s_quota_types
- 	 * since they needn't be set if quota is not supported at all.
+ static struct udf_vds_record *handle_partition_descriptor(
+@@ -1582,10 +1588,14 @@ static struct udf_vds_record *handle_par
+ {
+ 	struct partitionDesc *desc = (struct partitionDesc *)bh->b_data;
+ 	int partnum;
++	int i;
+ 
+ 	partnum = le16_to_cpu(desc->partitionNumber);
+-	if (partnum >= data->size_part_descs) {
+-		struct udf_vds_record *new_loc;
++	for (i = 0; i < data->num_part_descs; i++)
++		if (partnum == data->part_descs_loc[i].partnum)
++			return &(data->part_descs_loc[i].rec);
++	if (data->num_part_descs >= data->size_part_descs) {
++		struct part_desc_seq_scan_data *new_loc;
+ 		unsigned int new_size = ALIGN(partnum, PART_DESC_ALLOC_STEP);
+ 
+ 		new_loc = kcalloc(new_size, sizeof(*new_loc), GFP_KERNEL);
+@@ -1597,7 +1607,7 @@ static struct udf_vds_record *handle_par
+ 		data->part_descs_loc = new_loc;
+ 		data->size_part_descs = new_size;
+ 	}
+-	return &(data->part_descs_loc[partnum]);
++	return &(data->part_descs_loc[data->num_part_descs++].rec);
+ }
+ 
+ 
+@@ -1647,6 +1657,7 @@ static noinline int udf_process_sequence
+ 
+ 	memset(data.vds, 0, sizeof(struct udf_vds_record) * VDS_POS_LENGTH);
+ 	data.size_part_descs = PART_DESC_ALLOC_STEP;
++	data.num_part_descs = 0;
+ 	data.part_descs_loc = kcalloc(data.size_part_descs,
+ 				      sizeof(*data.part_descs_loc),
+ 				      GFP_KERNEL);
+@@ -1658,7 +1669,6 @@ static noinline int udf_process_sequence
+ 	 * are in it.
+ 	 */
+ 	for (; (!done && block <= lastblock); block++) {
+-
+ 		bh = udf_read_tagged(sb, block, block, &ident);
+ 		if (!bh)
+ 			break;
+@@ -1730,13 +1740,10 @@ static noinline int udf_process_sequence
+ 	}
+ 
+ 	/* Now handle prevailing Partition Descriptors */
+-	for (i = 0; i < data.size_part_descs; i++) {
+-		if (data.part_descs_loc[i].block) {
+-			ret = udf_load_partdesc(sb,
+-						data.part_descs_loc[i].block);
+-			if (ret < 0)
+-				return ret;
+-		}
++	for (i = 0; i < data.num_part_descs; i++) {
++		ret = udf_load_partdesc(sb, data.part_descs_loc[i].rec.block);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	return 0;
 
 
