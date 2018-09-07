@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD45C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A165C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5D52083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5D52083D
+	by mail.kernel.org (Postfix) with ESMTP id 2C2842083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2842083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbeIHCWn (ORCPT
+        id S1730083AbeIHCWp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:22:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52838 "EHLO
+        Fri, 7 Sep 2018 22:22:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52848 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727850AbeIHCWm (ORCPT
+        with ESMTP id S1727850AbeIHCWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:22:42 -0400
+        Fri, 7 Sep 2018 22:22:44 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 482F9E9A;
-        Fri,  7 Sep 2018 21:39:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74924E9A;
+        Fri,  7 Sep 2018 21:39:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.4 19/47] vmw_balloon: VMCI_DOORBELL_SET does not check status
-Date:   Fri,  7 Sep 2018 23:10:15 +0200
-Message-Id: <20180907210906.432110618@linuxfoundation.org>
+        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
+        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: [PATCH 4.4 02/47] net: mac802154: tx: expand tailroom if necessary
+Date:   Fri,  7 Sep 2018 23:09:58 +0200
+Message-Id: <20180907210904.776221337@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
@@ -50,76 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Alexander Aring <aring@mojatatu.com>
 
-commit ce664331b2487a5d244a51cbdd8cb54f866fbe5d upstream.
+commit f9c52831133050c6b82aa8b6831c92da2bbf2a0b upstream.
 
-When vmballoon_vmci_init() sets a doorbell using VMCI_DOORBELL_SET, for
-some reason it does not consider the status and looks at the result.
-However, the hypervisor does not update the result - it updates the
-status. This might cause VMCI doorbell not to be enabled, resulting in
-degraded performance.
+This patch is necessary if case of AF_PACKET or other socket interface
+which I am aware of it and didn't allocated the necessary room.
 
-Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
+Reported-by: David Palma <david.palma@ntnu.no>
+Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |   37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ net/mac802154/tx.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1036,29 +1036,30 @@ static void vmballoon_vmci_cleanup(struc
-  */
- static int vmballoon_vmci_init(struct vmballoon *b)
- {
--	int error = 0;
-+	unsigned long error, dummy;
+--- a/net/mac802154/tx.c
++++ b/net/mac802154/tx.c
+@@ -72,8 +72,21 @@ ieee802154_tx(struct ieee802154_local *l
+ 	int ret;
  
--	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) != 0) {
--		error = vmci_doorbell_create(&b->vmci_doorbell,
--				VMCI_FLAG_DELAYED_CB,
--				VMCI_PRIVILEGE_FLAG_RESTRICTED,
--				vmballoon_doorbell, b);
--
--		if (error == VMCI_SUCCESS) {
--			VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET,
--					b->vmci_doorbell.context,
--					b->vmci_doorbell.resource, error);
--			STATS_INC(b->stats.doorbell_set);
--		}
--	}
-+	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) == 0)
-+		return 0;
+ 	if (!(local->hw.flags & IEEE802154_HW_TX_OMIT_CKSUM)) {
+-		u16 crc = crc_ccitt(0, skb->data, skb->len);
++		struct sk_buff *nskb;
++		u16 crc;
  
--	if (error != 0) {
--		vmballoon_vmci_cleanup(b);
-+	error = vmci_doorbell_create(&b->vmci_doorbell, VMCI_FLAG_DELAYED_CB,
-+				     VMCI_PRIVILEGE_FLAG_RESTRICTED,
-+				     vmballoon_doorbell, b);
- 
--		return -EIO;
--	}
-+	if (error != VMCI_SUCCESS)
-+		goto fail;
++		if (unlikely(skb_tailroom(skb) < IEEE802154_FCS_LEN)) {
++			nskb = skb_copy_expand(skb, 0, IEEE802154_FCS_LEN,
++					       GFP_ATOMIC);
++			if (likely(nskb)) {
++				consume_skb(skb);
++				skb = nskb;
++			} else {
++				goto err_tx;
++			}
++		}
 +
-+	error = VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET, b->vmci_doorbell.context,
-+				   b->vmci_doorbell.resource, dummy);
-+
-+	STATS_INC(b->stats.doorbell_set);
-+
-+	if (error != VMW_BALLOON_SUCCESS)
-+		goto fail;
++		crc = crc_ccitt(0, skb->data, skb->len);
+ 		put_unaligned_le16(crc, skb_put(skb, 2));
+ 	}
  
- 	return 0;
-+fail:
-+	vmballoon_vmci_cleanup(b);
-+	return -EIO;
- }
- 
- /*
 
 
