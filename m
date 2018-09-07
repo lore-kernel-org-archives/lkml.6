@@ -5,87 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05807C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FACC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FBE62075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:12:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FBE62075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 1F48620652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:15:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F48620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbeIGXyU (ORCPT
+        id S1726307AbeIGX5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 19:54:20 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:36912 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbeIGXyU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 19:54:20 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyMAh-0008Um-CY; Fri, 07 Sep 2018 21:11:59 +0200
-Date:   Fri, 7 Sep 2018 21:11:58 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Philipp Eppelt <philipp.eppelt@kernkonzept.com>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: x86/apic: MSI address malformed for "flat" driver
-In-Reply-To: <d407ee89-3d6c-b55d-d633-abf7644e9766@kernkonzept.com>
-Message-ID: <alpine.DEB.2.21.1809072012310.1402@nanos.tec.linutronix.de>
-References: <d407ee89-3d6c-b55d-d633-abf7644e9766@kernkonzept.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 7 Sep 2018 19:57:36 -0400
+Received: from mga05.intel.com ([192.55.52.43]:8814 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725963AbeIGX5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 19:57:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 12:15:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
+   d="scan'208";a="68373907"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Sep 2018 12:13:58 -0700
+Received: from orsmsx161.amr.corp.intel.com (10.22.240.84) by
+ ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 7 Sep 2018 12:13:56 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.8]) by
+ ORSMSX161.amr.corp.intel.com ([169.254.4.174]) with mapi id 14.03.0319.002;
+ Fri, 7 Sep 2018 12:13:56 -0700
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: RE: [PATCH V4 0/3] Add efi page fault handler to recover from page
+Thread-Topic: [PATCH V4 0/3] Add efi page fault handler to recover from page
+Thread-Index: AQHURjlkSYU05F00bkKzUccpg9YwmqTlo/GA//+MHCA=
+Date:   Fri, 7 Sep 2018 19:13:55 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F485BA631@ORSMSX114.amr.corp.intel.com>
+References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <CACi5LpP4=VprRuabhKVXWy+JmKB1WNri+OA3aMSw=Q7-obo_TA@mail.gmail.com>
+In-Reply-To: <CACi5LpP4=VprRuabhKVXWy+JmKB1WNri+OA3aMSw=Q7-obo_TA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmY3MDQ5YjUtMDIxOS00YTMwLWI1NjctZDhhNmFmOWU3N2Y5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWWxkRXU2QzhMcWl3bTZQXC9GWGl3QjRKRkp5U2c4Mm5xWTlyRk5tMWU3WmJTSGZWQ2FYUjlRVWY5QUlsc3Q0NW8ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2018, Philipp Eppelt wrote:
-> 
-> The "flat" driver defines the MSI addressing scheme to be used as
-> logical addressing in flat mode. The MSI msg address is composed
-> accordingly, but sets MSI_ADDR_REDIRECTION_CPU which is a zero at bit[3].
-
-Correct. That's what it means:
-
-  * When RH is 0, the interrupt is directed to the processor listed in the
-    Destination ID field.
-
-So for DM:
-
-  * If RH is 0, then the DM bit is ignored and the message is sent ahead
-    independent of whether the physical or logical destination mode is
-    used.
-
-which is means that the delivery does not do any magic redirections,
-because the Redirection Hint is off. If RH is set, then the delivery can
-redirect according to the rules in the DM section. We are not using that
-because we want targeted single CPU delivery.
-
-The interpretation of the DID field is purely depending on the local APIC
-itself by matching the APIC ID against the DID field. And the local APIC ID
-of CPU0 is 1 << 0, i.e. 0x1 which matches the MSI message you see.
-
-> Currently, irq_msi_compose_msg composes for the "flat" driver an address
-> like 0xfee0'1004 for a 64-bit single-core system without IO-APIC and MSI
-> remapping and no ACPI (a virtual system).
-
-The DM field is irrelevant if RH is 0. If RH is one and DM is 1 then you
-can do group stuff and other magic, but we don't use that for 'external'
-interrupts.
-
-Where it _is_ used though is in the IPI delivery so that IPIs to multiple
-CPUs require only a single APIC write, while with physical mode it's
-necessary to write a single message to each CPU.
-
-Hope that helps.
-
-Thanks,
-
-	tglx
+PiBUaGFua3MgU2FpIGZvciB0aGlzIHdvcmsuIEkgdGhpbmsgdGhpcyBhIHN0ZXAgaW4gdGhlIHJp
+Z2h0IGRpcmVjdGlvbi4NCj4gSSB0ZXN0ZWQgdGhpcyBvbiBxZW11IHg4Nl82NCB3aXRoIE9WTUYg
+ZmlybXdhcmUgbW9kaWZpZWQgdG8gYWNjZXNzIHNvbWUNCj4gcmFuZG9tIGFkZHJlc3MgaW4gdGhl
+IEVGSV9SZXNlcnZlZF9SZWdpb24uIEkgd2FzIGFibGUgdG8gcmVib290IHRoZSBxZW11DQo+IGlu
+c3RhbmNlIHN1Y2Nlc3NmdWxseSB3aXRoIHRoZSBwYXRjaGVzIChzZWUgbG9ncyBiZWxvdykgd2hp
+bGUgd2l0aG91dCB0aGUNCj4gcGF0Y2hzZXQsIHJlYm9vdCBlYXJsaWVyIHVzZWQgdG8gZ2V0IHN0
+dWNrLg0KPiANCj4gU28sIGZlZWwgZnJlZSB0byBhZGQ6DQo+IFRlc3RlZC1ieTogQmh1cGVzaCBT
+aGFybWEgPGJoc2hhcm1hQHJlZGhhdC5jb20+DQo+IA0KDQpUaGFua3MgYSBsb3QgQmh1cGVzaCwg
+Zm9yIHRyeWluZyB0aGUgcGF0Y2hlcyBhbmQgYXMgeW91IHNhaWQsIHRoZSBwYXRjaGVzIG5lZWQg
+YSBsb3QgDQptb3JlIHRlc3Rpbmcgb24gcmVhbCBtYWNoaW5lcy4NCg0KPiBRZW11IENvbnNvbGUg
+TG9nczoNCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0KPiAjIHJlYm9vdA0KPiAN
+Cj4gPHNuaXAuLj4NCj4gDQo+IFsgICAxMS40MDAwMDRdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUg
+XS0tLS0tLS0tLS0tLQ0KPiBbICAgMTEuNDAwMTM3XSBbRmlybXdhcmUgQnVnXTogUGFnZSBmYXVs
+dCBjYXVzZWQgYnkgZmlybXdhcmUgYXQgUEE6IDB4N2U5MjQxMDANCj4gWyAgIDExLjQwMDQ4NF0g
+V0FSTklORzogQ1BVOiAwIFBJRDogMTExMSBhdA0KPiBhcmNoL3g4Ni9wbGF0Zm9ybS9lZmkvcXVp
+cmtzLmM6NjkxDQo+IGVmaV9yZWNvdmVyX2Zyb21fcGFnZV9mYXVsdCsweDNiLzB4ZjANCj4gWyAg
+IDExLjQwMDc1MV0gTW9kdWxlcyBsaW5rZWQgaW46DQo+IFsgICAxMS40MDA5OTJdIENQVTogMCBQ
+SUQ6IDExMTEgQ29tbTogaW5pdCBOb3QgdGFpbnRlZCA0LjE4LjAtcmM1KyAjMQ0KPiBbICAgMTEu
+NDAxMTQ2XSBIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAx
+OTk2KSwNCj4gQklPUyAwLjAuMCAwMi8wNi8yMDE1DQo+IFsgICAxMS40MDEzOTddIFJJUDogMDAx
+MDplZmlfcmVjb3Zlcl9mcm9tX3BhZ2VfZmF1bHQrMHgzYi8weGYwDQoNCltzbmlwcGVkIHN0YWNr
+IHRyYWNlXQ0KDQo+IFsgICAxMS40MTAzNzhdICA/IGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdm
+cmFtZSsweDQ0LzB4YTkNCj4gWyAgIDExLjQxMDU1NF0gLS0tWyBlbmQgdHJhY2UgYWQzZDBhMjIw
+YTg4YTQ1YiBdLS0tDQo+IFsgICAxMS40MTA3NDJdIGVmaTogZWZpX3Jlc2V0X3N5c3RlbSgpIGJ1
+Z2d5ISBSZWJvb3QgdGhyb3VnaCBCSU9TDQoNClRoYW5rcyBmb3IgdGhlIGxvZywgaXQgbG9va3Mg
+Z29vZCB0byBtZS4NCg==
