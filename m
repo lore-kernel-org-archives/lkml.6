@@ -4,61 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F34C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5522BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F152083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED8DF2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PrmHjEjl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F152083D
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="AXfkI8G1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED8DF2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbeIHC0F (ORCPT
+        id S1730835AbeIHC0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:26:05 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:52451 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730791AbeIHC0D (ORCPT
+        Fri, 7 Sep 2018 22:26:07 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:13133 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730791AbeIHC0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:26:03 -0400
+        Fri, 7 Sep 2018 22:26:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1536356587; x=1567892587;
+  t=1536356591; x=1567892591;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=K9aJ8DJEQMllulzw2sihXE8g9779xgpbghjXne0iJJI=;
-  b=PrmHjEjl3QCJ+oLgDG3iM+WZxkw+bZEauj48c6NYl8d3DsQvWM2Zyc+y
-   QfL/zpAJkEzwN7yjIqc+MZwPGntLS07ayelyWSZ4oEXedl56zImm6KqEX
-   4B2YcjfFVYZ0CiKIVviFrbdUFVTGRBP1jLkSSA/MWxRDQgsCg60c82HUf
-   8=;
+  bh=fL5FyRBsnH3lytedn56yQzL76vKd4bPrtf5yNw52c4E=;
+  b=AXfkI8G1d6dthi3Yj0ZpAWZGvVt0sDLGmdUBKn48YQRkh2eRvbpnuXZX
+   NsSWRzB+R2vLSbArWiE+MI2wbRfXT5bWnvktvuuEQZii8VMhkgeud5VQo
+   X+PEsVXPjuGQ9dEAjJhSSNGuXeHdcsIXhu0bHWcOrOObcmu8O3X2XsxK9
+   4=;
 X-IronPort-AV: E=Sophos;i="5.53,343,1531785600"; 
-   d="scan'208";a="737530522"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:43:03 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
-        by email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w87LgtLs043641
+   d="scan'208";a="696510041"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Sep 2018 21:43:10 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w87Lh4uu021881
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Fri, 7 Sep 2018 21:42:57 GMT
+        Fri, 7 Sep 2018 21:43:07 GMT
 Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87Lgr0r027801
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTPS id w87Lh2di027857
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Sep 2018 23:42:54 +0200
+        Fri, 7 Sep 2018 23:43:03 +0200
 Received: (from jschoenh@localhost)
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87LgrPC027800;
-        Fri, 7 Sep 2018 23:42:53 +0200
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Submit) id w87Lh1YA027856;
+        Fri, 7 Sep 2018 23:43:01 +0200
 From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
         linux-kernel@vger.kernel.org
-Subject: [RFC 52/60] cosched: Support SD-SEs in enqueuing and dequeuing
-Date:   Fri,  7 Sep 2018 23:40:39 +0200
-Message-Id: <20180907214047.26914-53-jschoenh@amazon.de>
+Subject: [RFC 57/60] cosched: Add sysfs interface to configure coscheduling on cgroups
+Date:   Fri,  7 Sep 2018 23:40:44 +0200
+Message-Id: <20180907214047.26914-58-jschoenh@amazon.de>
 X-Mailer: git-send-email 2.9.3.1.gcba166c.dirty
 In-Reply-To: <20180907214047.26914-1-jschoenh@amazon.de>
 References: <20180907214047.26914-1-jschoenh@amazon.de>
@@ -70,230 +69,188 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SD-SEs require some attention during enqueuing and dequeuing. In some
-aspects they behave similar to TG-SEs, for example, we must not dequeue
-a SD-SE if it still represents other load. But SD-SEs are also different
-due to the concurrent load updates by multiple CPUs and that we need to
-be careful when to access it, as an SD-SE belongs to the next hierarchy
-level which is protected by a different lock.
+Add the sysfs interface to configure the scheduling domain hierarchy
+level at which coscheduling should happen for a cgroup. By default,
+task groups are created with a value of zero corresponding to regular
+task groups without any coscheduling.
 
-Make sure to propagate enqueues and dequeues correctly, and to notify
-the leader when needed.
+Note, that you cannot specify a value that goes beyond that of the
+root task group. The value for the root task group cannot be configured
+via this interface. It has to be configured with a command line
+argument, which will be added later.
 
-Additionally, we define cfs_rq->h_nr_running to refer to number tasks
-and SD-SEs below the CFS runqueue without drilling down into SD-SEs.
-(Phrased differently, h_nr_running counts non-TG-SEs along the task
-group hierarchy.) This makes later adjustments for load-balancing
-more natural, as SD-SEs now appear similar to tasks, allowing to
-balance coscheduled sets individually.
+The function sdrq_update_root() will be filled in a follow-up commit.
 
 Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
 ---
- kernel/sched/fair.c | 107 +++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 102 insertions(+), 5 deletions(-)
+ kernel/sched/core.c    | 44 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/cosched.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h   |  4 ++++
+ 3 files changed, 101 insertions(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 483db54ee20a..bc219c9c3097 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4600,17 +4600,40 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 		/* throttled entity or throttle-on-deactivate */
- 		if (!se->on_rq)
- 			break;
-+		if (is_sd_se(se)) {
-+			/*
-+			 * don't dequeue sd_se if it represents other
-+			 * children besides the dequeued one
-+			 */
-+			if (se->load.weight)
-+				dequeue = 0;
-+
-+			task_delta = 1;
-+		}
- 
- 		if (dequeue)
- 			dequeue_entity(qcfs_rq, se, DEQUEUE_SLEEP);
-+		if (dequeue && is_sd_se(se)) {
-+			/*
-+			 * If we dequeued an SD-SE and we are not the leader,
-+			 * the leader might want to select another task group
-+			 * right now.
-+			 *
-+			 * FIXME: Change leadership instead?
-+			 */
-+			if (leader_of(se) != cpu_of(rq))
-+				resched_cpu_locked(leader_of(se));
-+		}
-+		if (!dequeue && is_sd_se(se))
-+			break;
- 		qcfs_rq->h_nr_running -= task_delta;
- 
- 		if (qcfs_rq->load.weight)
- 			dequeue = 0;
- 	}
- 
--	if (!se)
--		sub_nr_running(rq, task_delta);
-+	if (!se || !is_cpu_rq(hrq_of(cfs_rq_of(se))))
-+		sub_nr_running(rq, cfs_rq->h_nr_running);
- 
- 	rq_chain_unlock(&rc);
- 
-@@ -4641,8 +4664,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
- 	struct sched_entity *se;
- 	int enqueue = 1;
--	long task_delta;
-+	long task_delta, orig_task_delta;
- 	struct rq_chain rc;
-+#ifdef CONFIG_COSCHEDULING
-+	int lcpu = rq->sdrq_data.leader;
-+#endif
- 
- 	SCHED_WARN_ON(!is_cpu_rq(rq));
- 
-@@ -4669,24 +4695,40 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
- 		return;
- 
- 	task_delta = cfs_rq->h_nr_running;
-+	orig_task_delta = task_delta;
- 	rq_chain_init(&rc, rq);
- 	for_each_sched_entity(se) {
- 		rq_chain_lock(&rc, se);
- 		update_sdse_load(se);
- 		if (se->on_rq)
- 			enqueue = 0;
-+		if (is_sd_se(se))
-+			task_delta = 1;
- 
- 		cfs_rq = cfs_rq_of(se);
- 		if (enqueue)
- 			enqueue_entity(cfs_rq, se, ENQUEUE_WAKEUP);
-+		if (!enqueue && is_sd_se(se))
-+			break;
- 		cfs_rq->h_nr_running += task_delta;
- 
- 		if (cfs_rq_throttled(cfs_rq))
- 			break;
-+
-+#ifdef CONFIG_COSCHEDULING
-+		/*
-+		 * FIXME: Pro-actively reschedule the leader, can't tell
-+		 *        currently whether we actually have to.
-+		 */
-+		if (lcpu != cfs_rq->sdrq.data->leader) {
-+			lcpu = cfs_rq->sdrq.data->leader;
-+			resched_cpu_locked(lcpu);
-+		}
-+#endif /* CONFIG_COSCHEDULING */
- 	}
- 
--	if (!se)
--		add_nr_running(rq, task_delta);
-+	if (!se || !is_cpu_rq(hrq_of(cfs_rq_of(se))))
-+		add_nr_running(rq, orig_task_delta);
- 
- 	rq_chain_unlock(&rc);
- 
-@@ -5213,6 +5255,9 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 75de3b83a8c6..ad2ff9bc535c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6336,6 +6336,9 @@ void sched_offline_group(struct task_group *tg)
  {
- 	struct cfs_rq *cfs_rq;
- 	struct rq_chain rc;
+ 	unsigned long flags;
+ 
++	/* Don't let offlining/destruction worry about coscheduling aspects */
++	cosched_set_scheduled(tg, 0);
++
+ 	/* End participation in shares distribution: */
+ 	unregister_fair_sched_group(tg);
+ 
+@@ -6529,7 +6532,33 @@ static u64 cpu_shares_read_u64(struct cgroup_subsys_state *css,
+ 
+ 	return (u64) scale_load_down(tg->shares);
+ }
++#endif /* CONFIG_FAIR_GROUP_SCHED */
++
 +#ifdef CONFIG_COSCHEDULING
-+	int lcpu = rq->sdrq_data.leader;
++static int cpu_scheduled_write_u64(struct cgroup_subsys_state *css, struct cftype *cftype,
++				   u64 val)
++{
++	struct task_group *tg = css_tg(css);
++
++	if (tg == &root_task_group)
++		return -EACCES;
++
++	if (val > root_task_group.scheduled)
++		return -EINVAL;
++
++	cosched_set_scheduled(tg, val);
++	return 0;
++}
+ 
++static u64 cpu_scheduled_read_u64(struct cgroup_subsys_state *css, struct cftype *cft)
++{
++	struct task_group *tg = css_tg(css);
++
++	return cosched_get_scheduled(tg);
++}
++#endif /* !CONFIG_COSCHEDULING */
++
++#ifdef CONFIG_FAIR_GROUP_SCHED
+ #ifdef CONFIG_CFS_BANDWIDTH
+ static DEFINE_MUTEX(cfs_constraints_mutex);
+ 
+@@ -6825,6 +6854,13 @@ static struct cftype cpu_legacy_files[] = {
+ 		.write_u64 = cpu_shares_write_u64,
+ 	},
+ #endif
++#ifdef CONFIG_COSCHEDULING
++	{
++		.name = "scheduled",
++		.read_u64 = cpu_scheduled_read_u64,
++		.write_u64 = cpu_scheduled_write_u64,
++	},
 +#endif
- 
- 	rq_chain_init(&rc, rq);
- 	for_each_sched_entity(se) {
-@@ -5221,6 +5266,8 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 		if (se->on_rq)
- 			break;
- 		cfs_rq = cfs_rq_of(se);
-+		if (is_sd_se(se))
-+			task_delta = 1;
- 		enqueue_entity(cfs_rq, se, flags);
- 
- 		/*
-@@ -5234,6 +5281,22 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 		cfs_rq->h_nr_running += task_delta;
- 
- 		flags = ENQUEUE_WAKEUP;
-+
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	{
+ 		.name = "cfs_quota_us",
+@@ -7012,6 +7048,14 @@ static struct cftype cpu_files[] = {
+ 		.write_s64 = cpu_weight_nice_write_s64,
+ 	},
+ #endif
 +#ifdef CONFIG_COSCHEDULING
++	/* FIXME: This is not conform to cgroup-v2 conventions. */
++	{
++		.name = "scheduled",
++		.read_u64 = cpu_scheduled_read_u64,
++		.write_u64 = cpu_scheduled_write_u64,
++	},
++#endif
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	{
+ 		.name = "max",
+diff --git a/kernel/sched/cosched.c b/kernel/sched/cosched.c
+index f2d51079b3db..7c8b8c8d2814 100644
+--- a/kernel/sched/cosched.c
++++ b/kernel/sched/cosched.c
+@@ -515,6 +515,59 @@ void cosched_offline_group(struct task_group *tg)
+ 		list_del_rcu(&cfs->sdrq.tg_siblings);
+ }
+ 
++static void sdrq_update_root(struct sdrq *sdrq)
++{
++	/* TBD */
++}
++
++void cosched_set_scheduled(struct task_group *tg, int level)
++{
++	struct cfs_rq *cfs_rq;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&tg->lock, flags);
++
++	/*
++	 * Update the is_root-fields of all hierarchical CFS runqueues in this
++	 * task group. To avoid repetitive enqueues and dequeues on every level
++	 * change, we chose pre- or post-order traversal.
++	 */
++	if (level > tg->scheduled) {
 +		/*
-+		 * FIXME: Pro-actively reschedule the leader, can't tell
-+		 *        currently whether we actually have to.
-+		 *
-+		 *        There are some cases that slip through
-+		 *        check_preempt_curr(), like the leader not getting
-+		 *        notified (and not becoming aware of the addition
-+		 *        timely), when an RT task is running.
++		 * roots move upwards: start reconfiguration at the top, so
++		 * that everything is dequeued/enqueued only when we reach
++		 * the previous scheduling level.
 +		 */
-+		if (lcpu != cfs_rq->sdrq.data->leader) {
-+			lcpu = cfs_rq->sdrq.data->leader;
-+			resched_cpu_locked(lcpu);
-+		}
-+#endif /* CONFIG_COSCHEDULING */
- 	}
- 
- 	for_each_sched_entity(se) {
-@@ -5241,6 +5304,9 @@ bool enqueue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 		rq_chain_lock(&rc, se);
- 		update_sdse_load(se);
- 		cfs_rq = cfs_rq_of(se);
++		tg->scheduled = level;
++		taskgroup_for_each_cfsrq_topdown(tg, cfs_rq)
++			sdrq_update_root(&cfs_rq->sdrq);
++	}
++	if (level < tg->scheduled) {
++		/*
++		 * roots move downwards: start reconfiguration at the bottom,
++		 * so that we do the dequeuing/enqueuing immediately, when we
++		 * reach the new scheduling level.
++		 */
++		tg->scheduled = level;
++		taskgroup_for_each_cfsrq(tg, cfs_rq)
++			sdrq_update_root(&cfs_rq->sdrq);
++	}
 +
-+		if (is_sd_se(se))
-+			task_delta = 0;
- 		cfs_rq->h_nr_running += task_delta;
- 
- 		if (cfs_rq_throttled(cfs_rq))
-@@ -5304,8 +5370,36 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 		rq_chain_lock(&rc, se);
- 		update_sdse_load(se);
- 		cfs_rq = cfs_rq_of(se);
++	raw_spin_unlock_irqrestore(&tg->lock, flags);
++}
 +
-+		if (is_sd_se(se)) {
-+			/*
-+			 * don't dequeue sd_se if it represents other
-+			 * children besides the dequeued one
-+			 */
-+			if (se->load.weight)
-+				break;
++int cosched_get_scheduled(struct task_group *tg)
++{
++	unsigned long flags;
++	int level;
 +
-+			/* someone else did our job */
-+			if (!se->on_rq)
-+				break;
++	raw_spin_lock_irqsave(&tg->lock, flags);
++	level = tg->scheduled;
++	raw_spin_unlock_irqrestore(&tg->lock, flags);
 +
-+			task_delta = 1;
-+		}
++	return level;
++}
 +
- 		dequeue_entity(cfs_rq, se, flags);
- 
-+		if (is_sd_se(se)) {
-+			/*
-+			 * If we dequeued an SD-SE and we are not the leader,
-+			 * the leader might want to select another task group
-+			 * right now.
-+			 *
-+			 * FIXME: Change leadership instead?
-+			 */
-+			if (leader_of(se) != cpu_of(rq))
-+				resched_cpu_locked(leader_of(se));
-+		}
-+
- 		/*
- 		 * end evaluation on encountering a throttled cfs_rq
- 		 *
-@@ -5339,6 +5433,9 @@ bool dequeue_entity_fair(struct rq *rq, struct sched_entity *se, int flags,
- 		rq_chain_lock(&rc, se);
- 		update_sdse_load(se);
- 		cfs_rq = cfs_rq_of(se);
-+
-+		if (is_sd_se(se))
-+			task_delta = 0;
- 		cfs_rq->h_nr_running -= task_delta;
- 
- 		if (cfs_rq_throttled(cfs_rq))
+ /*****************************************************************************
+  * Locking related functions
+  *****************************************************************************/
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index f6146feb7e55..e257451e05a5 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1212,6 +1212,8 @@ void cosched_init_sdrq(struct task_group *tg, struct cfs_rq *cfs,
+ 		       struct cfs_rq *sd_parent, struct cfs_rq *tg_parent);
+ void cosched_online_group(struct task_group *tg);
+ void cosched_offline_group(struct task_group *tg);
++void cosched_set_scheduled(struct task_group *tg, int level);
++int cosched_get_scheduled(struct task_group *tg);
+ struct rq *rq_lock_owned(struct rq *rq, struct rq_owner_flags *orf);
+ void rq_unlock_owned(struct rq *rq, struct rq_owner_flags *orf);
+ void rq_chain_init(struct rq_chain *rc, struct rq *rq);
+@@ -1226,6 +1228,8 @@ static inline void cosched_init_sdrq(struct task_group *tg, struct cfs_rq *cfs,
+ 				     struct cfs_rq *tg_parent) { }
+ static inline void cosched_online_group(struct task_group *tg) { }
+ static inline void cosched_offline_group(struct task_group *tg) { }
++static inline void cosched_set_scheduled(struct task_group *tg, int level) { }
++static inline int cosched_get_scheduled(struct task_group *tg) { return 0; }
+ static inline struct rq *rq_lock_owned(struct rq *rq, struct rq_owner_flags *orf) { return rq; }
+ static inline void rq_unlock_owned(struct rq *rq, struct rq_owner_flags *orf) { }
+ static inline void rq_chain_init(struct rq_chain *rc, struct rq *rq) { }
 -- 
 2.9.3.1.gcba166c.dirty
 
