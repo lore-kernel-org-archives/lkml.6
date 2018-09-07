@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DD8C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB571C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3C020844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3C020844
+	by mail.kernel.org (Postfix) with ESMTP id 724052083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724052083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbeIHCUO (ORCPT
+        id S1729741AbeIHCUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52522 "EHLO
+        Fri, 7 Sep 2018 22:20:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52532 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbeIHCUN (ORCPT
+        with ESMTP id S1728071AbeIHCUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:13 -0400
+        Fri, 7 Sep 2018 22:20:17 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9B93D6B;
-        Fri,  7 Sep 2018 21:37:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9FE5D6B;
+        Fri,  7 Sep 2018 21:37:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         Silvio Cesare <silvio.cesare@gmail.com>,
         Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.9 50/63] Revert "UBIFS: Fix potential integer overflow in allocation"
-Date:   Fri,  7 Sep 2018 23:10:21 +0200
-Message-Id: <20180907211015.741024679@linuxfoundation.org>
+Subject: [PATCH 4.9 51/63] ubifs: Check data node size before truncate
+Date:   Fri,  7 Sep 2018 23:10:22 +0200
+Message-Id: <20180907211015.785112491@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -53,32 +53,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Weinberger <richard@nod.at>
 
-commit 08acbdd6fd736b90f8d725da5a0de4de2dd6de62 upstream.
+commit 95a22d2084d72ea067d8323cc85677dba5d97cae upstream.
 
-This reverts commit 353748a359f1821ee934afc579cf04572406b420.
-It bypassed the linux-mtd review process and fixes the issue not as it
-should.
+Check whether the size is within bounds before using it.
+If the size is not correct, abort and dump the bad data node.
 
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Silvio Cesare <silvio.cesare@gmail.com>
 Cc: stable@vger.kernel.org
+Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+Reported-by: Silvio Cesare <silvio.cesare@gmail.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/journal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ubifs/journal.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 --- a/fs/ubifs/journal.c
 +++ b/fs/ubifs/journal.c
-@@ -1265,7 +1265,7 @@ static int recomp_data_node(const struct
- 	int err, len, compr_type, out_len;
- 
- 	out_len = le32_to_cpu(dn->size);
--	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
-+	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
- 	if (!buf)
- 		return -ENOMEM;
- 
+@@ -1344,7 +1344,16 @@ int ubifs_jnl_truncate(struct ubifs_info
+ 		else if (err)
+ 			goto out_free;
+ 		else {
+-			if (le32_to_cpu(dn->size) <= dlen)
++			int dn_len = le32_to_cpu(dn->size);
++
++			if (dn_len <= 0 || dn_len > UBIFS_BLOCK_SIZE) {
++				ubifs_err(c, "bad data node (block %u, inode %lu)",
++					  blk, inode->i_ino);
++				ubifs_dump_node(c, dn);
++				goto out_free;
++			}
++
++			if (dn_len <= dlen)
+ 				dlen = 0; /* Nothing to do */
+ 			else {
+ 				int compr_type = le16_to_cpu(dn->compr_type);
 
 
