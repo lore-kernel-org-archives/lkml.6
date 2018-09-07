@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE6AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE03C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2792083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2792083D
+	by mail.kernel.org (Postfix) with ESMTP id 24DFA20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DFA20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbeIHCKN (ORCPT
+        id S1729268AbeIHCKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:10:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48652 "EHLO
+        Fri, 7 Sep 2018 22:10:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeIHCKM (ORCPT
+        with ESMTP id S1728024AbeIHCKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:10:12 -0400
+        Fri, 7 Sep 2018 22:10:16 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0421F23;
-        Fri,  7 Sep 2018 21:27:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25A07F23;
+        Fri,  7 Sep 2018 21:27:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4.14 39/89] extcon: Release locking when sending the notification of connector state
-Date:   Fri,  7 Sep 2018 23:09:33 +0200
-Message-Id: <20180907210857.056083719@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 22/89] ib_srpt: Fix a use-after-free in srpt_close_ch()
+Date:   Fri,  7 Sep 2018 23:09:16 +0200
+Message-Id: <20180907210855.244073674@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,50 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chanwoo Choi <cw00.choi@samsung.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit 8a9dbb779fe882325b9a0238494a7afaff2eb444 upstream.
+commit 995250959d22fc341b5424e3343b0ce5df672461 upstream.
 
-Previously, extcon used the spinlock before calling the notifier_call_chain
-to prevent the scheduled out of task and to prevent the notification delay.
-When spinlock is locked for sending the notification, deadlock issue
-occured on the side of extcon consumer device. To fix this issue,
-extcon consumer device should always use the work. it is always not
-reasonable to use work.
+Avoid that KASAN reports the following:
 
-To fix this issue on extcon consumer device, release locking when sending
-the notification of connector state.
+BUG: KASAN: use-after-free in srpt_close_ch+0x4f/0x1b0 [ib_srpt]
+Read of size 4 at addr ffff880151180cb8 by task check/4681
 
-Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to support the notification")
-Cc: stable@vger.kernel.org
-Cc: Roger Quadros <rogerq@ti.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+CPU: 15 PID: 4681 Comm: check Not tainted 4.18.0-rc2-dbg+ #4
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+ dump_stack+0xa4/0xf5
+ print_address_description+0x6f/0x270
+ kasan_report+0x241/0x360
+ __asan_load4+0x78/0x80
+ srpt_close_ch+0x4f/0x1b0 [ib_srpt]
+ srpt_set_enabled+0xf7/0x1e0 [ib_srpt]
+ srpt_tpg_enable_store+0xb8/0x120 [ib_srpt]
+ configfs_write_file+0x14e/0x1d0 [configfs]
+ __vfs_write+0xd2/0x3b0
+ vfs_write+0x101/0x270
+ ksys_write+0xab/0x120
+ __x64_sys_write+0x43/0x50
+ do_syscall_64+0x77/0x230
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: aaf45bd83eba ("IB/srpt: Detect session shutdown reliably")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/extcon/extcon.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/extcon/extcon.c
-+++ b/drivers/extcon/extcon.c
-@@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev,
- 		return index;
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -1713,8 +1713,7 @@ static bool srpt_close_ch(struct srpt_rd
+ 	int ret;
  
- 	spin_lock_irqsave(&edev->lock, flags);
--
- 	state = !!(edev->state & BIT(index));
-+	spin_unlock_irqrestore(&edev->lock, flags);
+ 	if (!srpt_set_ch_state(ch, CH_DRAINING)) {
+-		pr_debug("%s-%d: already closed\n", ch->sess_name,
+-			 ch->qp->qp_num);
++		pr_debug("%s: already closed\n", ch->sess_name);
+ 		return false;
+ 	}
  
- 	/*
- 	 * Call functions in a raw notifier chain for the specific one
-@@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev,
- 	 */
- 	raw_notifier_call_chain(&edev->nh_all, state, edev);
- 
-+	spin_lock_irqsave(&edev->lock, flags);
- 	/* This could be in interrupt handler */
- 	prop_buf = (char *)get_zeroed_page(GFP_ATOMIC);
- 	if (!prop_buf) {
 
 
