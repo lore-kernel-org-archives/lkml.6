@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D52C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665EDC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFCEB20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFCEB20844
+	by mail.kernel.org (Postfix) with ESMTP id 28EED20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EED20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbeIHCOk (ORCPT
+        id S1728163AbeIHCO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:14:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49150 "EHLO
+        Fri, 7 Sep 2018 22:14:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeIHCOk (ORCPT
+        with ESMTP id S1725999AbeIHCO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:14:40 -0400
+        Fri, 7 Sep 2018 22:14:58 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4D08E84;
-        Fri,  7 Sep 2018 21:31:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20D55E84;
+        Fri,  7 Sep 2018 21:32:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 89/89] arm64: mm: always enable CONFIG_HOLES_IN_ZONE
-Date:   Fri,  7 Sep 2018 23:10:23 +0200
-Message-Id: <20180907210902.604627636@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 62/89] NFSv4: Fix locking in pnfs_generic_recover_commit_reqs
+Date:   Fri,  7 Sep 2018 23:09:56 +0200
+Message-Id: <20180907210859.801338159@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -53,100 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit f52bb98f5aded4c43e52f5ce19fb83f7261e9e73 upstream.
+commit d0fbb1d8a194c0ec0180c1d073ad709e45503a43 upstream.
 
-Commit 6d526ee26ccd ("arm64: mm: enable CONFIG_HOLES_IN_ZONE for NUMA")
-only enabled HOLES_IN_ZONE for NUMA systems because the NUMA code was
-choking on the missing zone for nomap pages. This problem doesn't just
-apply to NUMA systems.
+The use of the inode->i_lock was converted to a mutex, but we forgot
+to remove the old inode unlock/lock() pair that allowed the layout
+segment to be put inside the loop.
 
-If the architecture doesn't set HAVE_ARCH_PFN_VALID, pfn_valid() will
-return true if the pfn is part of a valid sparsemem section.
-
-When working with multiple pages, the mm code uses pfn_valid_within()
-to test each page it uses within the sparsemem section is valid. On
-most systems memory comes in MAX_ORDER_NR_PAGES chunks which all
-have valid/initialised struct pages. In this case pfn_valid_within()
-is optimised out.
-
-Systems where this isn't true (e.g. due to nomap) should set
-HOLES_IN_ZONE and provide HAVE_ARCH_PFN_VALID so that mm tests each
-page as it works with it.
-
-Currently non-NUMA arm64 systems can't enable HOLES_IN_ZONE, leading to
-a VM_BUG_ON():
-
-| page:fffffdff802e1780 is uninitialized and poisoned
-| raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-| raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffff
-| page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-| ------------[ cut here ]------------
-| kernel BUG at include/linux/mm.h:978!
-| Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-[...]
-| CPU: 1 PID: 25236 Comm: dd Not tainted 4.18.0 #7
-| Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-| pstate: 40000085 (nZcv daIf -PAN -UAO)
-| pc : move_freepages_block+0x144/0x248
-| lr : move_freepages_block+0x144/0x248
-| sp : fffffe0071177680
-[...]
-| Process dd (pid: 25236, stack limit = 0x0000000094cc07fb)
-| Call trace:
-|  move_freepages_block+0x144/0x248
-|  steal_suitable_fallback+0x100/0x16c
-|  get_page_from_freelist+0x440/0xb20
-|  __alloc_pages_nodemask+0xe8/0x838
-|  new_slab+0xd4/0x418
-|  ___slab_alloc.constprop.27+0x380/0x4a8
-|  __slab_alloc.isra.21.constprop.26+0x24/0x34
-|  kmem_cache_alloc+0xa8/0x180
-|  alloc_buffer_head+0x1c/0x90
-|  alloc_page_buffers+0x68/0xb0
-|  create_empty_buffers+0x20/0x1ec
-|  create_page_buffers+0xb0/0xf0
-|  __block_write_begin_int+0xc4/0x564
-|  __block_write_begin+0x10/0x18
-|  block_write_begin+0x48/0xd0
-|  blkdev_write_begin+0x28/0x30
-|  generic_perform_write+0x98/0x16c
-|  __generic_file_write_iter+0x138/0x168
-|  blkdev_write_iter+0x80/0xf0
-|  __vfs_write+0xe4/0x10c
-|  vfs_write+0xb4/0x168
-|  ksys_write+0x44/0x88
-|  sys_write+0xc/0x14
-|  el0_svc_naked+0x30/0x34
-| Code: aa1303e0 90001a01 91296421 94008902 (d4210000)
-| ---[ end trace 1601ba47f6e883fe ]---
-
-Remove the NUMA dependency.
-
-Link: https://www.spinics.net/lists/arm-kernel/msg671851.html
-Cc: <stable@vger.kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reported-by: Mikulas Patocka <mpatocka@redhat.com>
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Tested-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: e824f99adaaf1 ("NFSv4: Use a mutex to protect the per-inode commit...")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+ fs/nfs/pnfs_nfs.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -693,7 +693,6 @@ config NEED_PER_CPU_EMBED_FIRST_CHUNK
+--- a/fs/nfs/pnfs_nfs.c
++++ b/fs/nfs/pnfs_nfs.c
+@@ -61,7 +61,7 @@ EXPORT_SYMBOL_GPL(pnfs_generic_commit_re
  
- config HOLES_IN_ZONE
- 	def_bool y
--	depends on NUMA
+ /* The generic layer is about to remove the req from the commit list.
+  * If this will make the bucket empty, it will need to put the lseg reference.
+- * Note this must be called holding i_lock
++ * Note this must be called holding nfsi->commit_mutex
+  */
+ void
+ pnfs_generic_clear_request_commit(struct nfs_page *req,
+@@ -149,9 +149,7 @@ restart:
+ 		if (list_empty(&b->written)) {
+ 			freeme = b->wlseg;
+ 			b->wlseg = NULL;
+-			spin_unlock(&cinfo->inode->i_lock);
+ 			pnfs_put_lseg(freeme);
+-			spin_lock(&cinfo->inode->i_lock);
+ 			goto restart;
+ 		}
+ 	}
+@@ -167,7 +165,7 @@ static void pnfs_generic_retry_commit(st
+ 	LIST_HEAD(pages);
+ 	int i;
  
- source kernel/Kconfig.preempt
- source kernel/Kconfig.hz
+-	spin_lock(&cinfo->inode->i_lock);
++	mutex_lock(&NFS_I(cinfo->inode)->commit_mutex);
+ 	for (i = idx; i < fl_cinfo->nbuckets; i++) {
+ 		bucket = &fl_cinfo->buckets[i];
+ 		if (list_empty(&bucket->committing))
+@@ -177,12 +175,12 @@ static void pnfs_generic_retry_commit(st
+ 		list_for_each(pos, &bucket->committing)
+ 			cinfo->ds->ncommitting--;
+ 		list_splice_init(&bucket->committing, &pages);
+-		spin_unlock(&cinfo->inode->i_lock);
++		mutex_unlock(&NFS_I(cinfo->inode)->commit_mutex);
+ 		nfs_retry_commit(&pages, freeme, cinfo, i);
+ 		pnfs_put_lseg(freeme);
+-		spin_lock(&cinfo->inode->i_lock);
++		mutex_lock(&NFS_I(cinfo->inode)->commit_mutex);
+ 	}
+-	spin_unlock(&cinfo->inode->i_lock);
++	mutex_unlock(&NFS_I(cinfo->inode)->commit_mutex);
+ }
+ 
+ static unsigned int
+@@ -222,13 +220,13 @@ void pnfs_fetch_commit_bucket_list(struc
+ 	struct list_head *pos;
+ 
+ 	bucket = &cinfo->ds->buckets[data->ds_commit_index];
+-	spin_lock(&cinfo->inode->i_lock);
++	mutex_lock(&NFS_I(cinfo->inode)->commit_mutex);
+ 	list_for_each(pos, &bucket->committing)
+ 		cinfo->ds->ncommitting--;
+ 	list_splice_init(&bucket->committing, pages);
+ 	data->lseg = bucket->clseg;
+ 	bucket->clseg = NULL;
+-	spin_unlock(&cinfo->inode->i_lock);
++	mutex_unlock(&NFS_I(cinfo->inode)->commit_mutex);
+ 
+ }
+ 
 
 
