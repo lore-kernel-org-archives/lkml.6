@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777E9C43143
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F2AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E2C2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E2C2083D
+	by mail.kernel.org (Postfix) with ESMTP id 7A1C32083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:30:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1C32083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbeIHCNd (ORCPT
+        id S1729755AbeIHCNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:13:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49024 "EHLO
+        Fri, 7 Sep 2018 22:13:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49038 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbeIHCNc (ORCPT
+        with ESMTP id S1729299AbeIHCNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:13:32 -0400
+        Fri, 7 Sep 2018 22:13:37 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00B1CED1;
-        Fri,  7 Sep 2018 21:30:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A94F8E84;
+        Fri,  7 Sep 2018 21:30:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.14 60/89] pnfs/blocklayout: off by one in bl_map_stripe()
-Date:   Fri,  7 Sep 2018 23:09:54 +0200
-Message-Id: <20180907210859.529643670@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.14 78/89] udlfb: set optimal write delay
+Date:   Fri,  7 Sep 2018 23:10:12 +0200
+Message-Id: <20180907210901.490220583@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,37 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 0914bb965e38a055e9245637aed117efbe976e91 upstream.
+commit bb24153a3f13dd0dbc1f8055ad97fe346d598f66 upstream.
 
-"dev->nr_children" is the number of children which were parsed
-successfully in bl_parse_stripe().  It could be all of them and then, in
-that case, it is equal to v->stripe.volumes_count.  Either way, the >
-should be >= so that we don't go beyond the end of what we're supposed
-to.
+The default delay 5 jiffies is too much when the kernel is compiled with
+HZ=100 - it results in jumpy cursor in Xwindow.
 
-Fixes: 5c83746a0cf2 ("pnfs/blocklayout: in-kernel GETDEVICEINFO XDR parsing")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org # 3.17+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+In order to find out the optimal delay, I benchmarked the driver on
+1280x720x30fps video. I found out that with HZ=1000, 10ms is acceptable,
+but with HZ=250 or HZ=300, we need 4ms, so that the video is played
+without any frame skips.
+
+This patch changes the delay to this value.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/blocklayout/dev.c |    2 +-
+ include/video/udlfb.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfs/blocklayout/dev.c
-+++ b/fs/nfs/blocklayout/dev.c
-@@ -204,7 +204,7 @@ static bool bl_map_stripe(struct pnfs_bl
- 	chunk = div_u64(offset, dev->chunk_size);
- 	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
+--- a/include/video/udlfb.h
++++ b/include/video/udlfb.h
+@@ -88,7 +88,7 @@ struct dlfb_data {
+ #define MIN_RAW_PIX_BYTES	2
+ #define MIN_RAW_CMD_BYTES	(RAW_HEADER_BYTES + MIN_RAW_PIX_BYTES)
  
--	if (chunk_idx > dev->nr_children) {
-+	if (chunk_idx >= dev->nr_children) {
- 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
- 			__func__, chunk_idx, offset, dev->chunk_size);
- 		/* error, should not happen */
+-#define DL_DEFIO_WRITE_DELAY    5 /* fb_deferred_io.delay in jiffies */
++#define DL_DEFIO_WRITE_DELAY    msecs_to_jiffies(HZ <= 300 ? 4 : 10) /* optimal value for 720p video */
+ #define DL_DEFIO_WRITE_DISABLE  (HZ*60) /* "disable" with long delay */
+ 
+ /* remove these once align.h patch is taken into kernel */
 
 
