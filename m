@@ -2,134 +2,104 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36945C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E79C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0092075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC0092075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 73E7B2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:02:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="h2xxGVZu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E7B2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbeIGKkR (ORCPT
+        id S1726922AbeIGKla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 06:40:17 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:30717 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725843AbeIGKkR (ORCPT
+        Fri, 7 Sep 2018 06:41:30 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41505 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbeIGKla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 06:40:17 -0400
-X-UUID: 478b746226a545d090490d301732464f-20180907
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1431538089; Fri, 07 Sep 2018 14:00:51 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 7 Sep 2018 14:00:49 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 7 Sep 2018 14:00:48 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [RESEND PATCH] usb: mtu3: disable vbus rise/fall interrupts of ltssm
-Date:   Fri, 7 Sep 2018 14:00:39 +0800
-Message-ID: <6e7bed46598dfb65f43c2490802a51a8b50cd257.1536299914.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Fri, 7 Sep 2018 06:41:30 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z96-v6so13660386wrb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 23:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=yRl6O8mdS6Rtdeo6LPSg3ZAaXExdHmlA49U0m5uKiyU=;
+        b=h2xxGVZuThGzxvhn30t9E17Bl962UYpfWkFWJz4vetHUISJE6uvB8+y0wEhI3HB5UO
+         9WMJLh9W3iMOae6rvqaY7BvVif/u86Rb6XzX4RL27hgw5p6XBnCkJ+yjJgCTgDjuCPii
+         we4F7bSF/SG5yeCf1orCrPXriI1txviMTOPlTAM7dlkR5uecN2S6zQaHOj5dTz5ZLO7Y
+         F50WSxsn32Ww/dhpQFeIuQ++Ycd7I/yneol0u9bt0DhsEart8GeJa/l2PlAbrXtvtQw9
+         wanjYF52k1xUPr4/ix4VqGmy0fNwqqhw1bdDfoP1vOJlxOCsq/Fkl3MWHujY/fWiHPbn
+         IO9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=yRl6O8mdS6Rtdeo6LPSg3ZAaXExdHmlA49U0m5uKiyU=;
+        b=gn5MVdN8U9zMoABpFNewC9JiRDmv5w/O3tsgGa8ZIQKLscnkZZmoMC2dcM5paD15hs
+         gSxkWtx/NENUxRYJsCTJgQ77kTfg6EhXf7cIHQakdz+xjDRzhrJDfZXA7TnABKoiLbmL
+         jySbJfaHEV71g4qAutwcIl6rygcdLqE5HrY9IWmnyMh3alGhWA2PSklUYgtS2Mu4NBLy
+         f/5dFMgDY6U/ibPXZ6Z8Zniq/SEl95CpHMMgHnQb51JCQ9Jk92wwtbtO9DqVRMQ+Ety2
+         1KHjQcWMnPjFoOdXf162DpMZlzn9XxTssprF8hFzKgtM+9mQzRtEr+bUYw+XW8NY7gZL
+         rlbg==
+X-Gm-Message-State: APzg51DsEDqoVzPcFP4abddDsDTKZ4j4j5vfEOb9bAmob4ST56u5eThU
+        XkPGeXePd8now6IgXSBt738vJ76I0e9TyA==
+X-Google-Smtp-Source: ANB0VdbMWG6D2cz+R8KB6dO++p8BDjFCc3Nd/4DVpRMbr9KG4azVhjC0jIzgJ0UqxWyjyYL0P++96A==
+X-Received: by 2002:adf:e8c1:: with SMTP id k1-v6mr4669911wrn.43.1536300130073;
+        Thu, 06 Sep 2018 23:02:10 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id h82-v6sm5775603wme.11.2018.09.06.23.02.09
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 06 Sep 2018 23:02:09 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        linux-i2c@vger.kernel.org, wsa@the-dreams.de
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Heiko Schocher <hs@denx.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        u-boot@lists.denx.de, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] i2c: xiic: Record xilinx i2c with Zynq fragment
+Date:   Fri,  7 Sep 2018 08:02:05 +0200
+Message-Id: <a36257084b0816bd84bb1caacdcde586b7fcb007.1536300108.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vbus rise & fall interrupts are used to enable and disable
-U3 function of device automatically, this cause some issues when
-class driver is initialized as deactivated, and will skip over
-software-controlled connect by pullup(), but UDC wants to keep
-disconnect until usb_gadget_activate() is called which calls
-pullup() if needed. So we disable vbus rise & fall interrupts
-and just use pullup() to enable & disable U3 function, and reset
-mtu3 state when disconnect instead when vbus fall.
+Include xilinx soft i2c controller to Zynq fragment to make clear who is
+responsible for it.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/usb/mtu3/mtu3_core.c   |  4 ++--
- drivers/usb/mtu3/mtu3_gadget.c | 22 ++++++++++++++--------
- 2 files changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index d045d84..ae70b9b 100644
---- a/drivers/usb/mtu3/mtu3_core.c
-+++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -185,8 +185,8 @@ static void mtu3_intr_enable(struct mtu3 *mtu)
+Normally we are handling all these drivers via one fragment to make sure
+that there is only one central contact. Another reason is that people are
+changing and their responsibility is moving time to time.
+
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9ad052aeac39..d870cb57c887 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2311,6 +2311,7 @@ F:	drivers/clocksource/cadence_ttc_timer.c
+ F:	drivers/i2c/busses/i2c-cadence.c
+ F:	drivers/mmc/host/sdhci-of-arasan.c
+ F:	drivers/edac/synopsys_edac.c
++F:	drivers/i2c/busses/i2c-xiic.c
  
- 	if (mtu->is_u3_ip) {
- 		/* Enable U3 LTSSM interrupts */
--		value = HOT_RST_INTR | WARM_RST_INTR | VBUS_RISE_INTR |
--		    VBUS_FALL_INTR | ENTER_U3_INTR | EXIT_U3_INTR;
-+		value = HOT_RST_INTR | WARM_RST_INTR |
-+			ENTER_U3_INTR | EXIT_U3_INTR;
- 		mtu3_writel(mbase, U3D_LTSSM_INTR_ENABLE, value);
- 	}
- 
-diff --git a/drivers/usb/mtu3/mtu3_gadget.c b/drivers/usb/mtu3/mtu3_gadget.c
-index 5c60a8c..bbcd333 100644
---- a/drivers/usb/mtu3/mtu3_gadget.c
-+++ b/drivers/usb/mtu3/mtu3_gadget.c
-@@ -585,6 +585,17 @@ static int mtu3_gadget_stop(struct usb_gadget *g)
- 	.udc_stop = mtu3_gadget_stop,
- };
- 
-+static void mtu3_state_reset(struct mtu3 *mtu)
-+{
-+	mtu->address = 0;
-+	mtu->ep0_state = MU3D_EP0_STATE_SETUP;
-+	mtu->may_wakeup = 0;
-+	mtu->u1_enable = 0;
-+	mtu->u2_enable = 0;
-+	mtu->delayed_status = false;
-+	mtu->test_mode = false;
-+}
-+
- static void init_hw_ep(struct mtu3 *mtu, struct mtu3_ep *mep,
- 		u32 epnum, u32 is_in)
- {
-@@ -702,6 +713,7 @@ void mtu3_gadget_disconnect(struct mtu3 *mtu)
- 		spin_lock(&mtu->lock);
- 	}
- 
-+	mtu3_state_reset(mtu);
- 	usb_gadget_set_state(&mtu->g, USB_STATE_NOTATTACHED);
- }
- 
-@@ -712,12 +724,6 @@ void mtu3_gadget_reset(struct mtu3 *mtu)
- 	/* report disconnect, if we didn't flush EP state */
- 	if (mtu->g.speed != USB_SPEED_UNKNOWN)
- 		mtu3_gadget_disconnect(mtu);
--
--	mtu->address = 0;
--	mtu->ep0_state = MU3D_EP0_STATE_SETUP;
--	mtu->may_wakeup = 0;
--	mtu->u1_enable = 0;
--	mtu->u2_enable = 0;
--	mtu->delayed_status = false;
--	mtu->test_mode = false;
-+	else
-+		mtu3_state_reset(mtu);
- }
+ ARM64 PORT (AARCH64 ARCHITECTURE)
+ M:	Catalin Marinas <catalin.marinas@arm.com>
 -- 
 1.9.1
 
