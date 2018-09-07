@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058ACC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A57C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5FCD2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5FCD2083D
+	by mail.kernel.org (Postfix) with ESMTP id C784320844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:31:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C784320844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729800AbeIHCOO (ORCPT
+        id S1729524AbeIHCOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:14:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49098 "EHLO
+        Fri, 7 Sep 2018 22:14:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49132 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbeIHCON (ORCPT
+        with ESMTP id S1728364AbeIHCOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:14:13 -0400
+        Fri, 7 Sep 2018 22:14:30 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4678CED1;
-        Fri,  7 Sep 2018 21:31:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 173CAED1;
+        Fri,  7 Sep 2018 21:31:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 84/89] crypto: vmx - Fix sleep-in-atomic bugs
-Date:   Fri,  7 Sep 2018 23:10:18 +0200
-Message-Id: <20180907210902.104207671@linuxfoundation.org>
+        stable@vger.kernel.org, Bill Baker <bill.baker@oracle.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Helen Chao <helen.chao@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 61/89] NFSv4 client live hangs after live data migration recovery
+Date:   Fri,  7 Sep 2018 23:09:55 +0200
+Message-Id: <20180907210859.664391046@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -50,162 +52,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Bill Baker <Bill.Baker@Oracle.com>
 
-commit 0522236d4f9c5ab2e79889cb020d1acbe5da416e upstream.
+commit 0f90be132cbf1537d87a6a8b9e80867adac892f6 upstream.
 
-This patch fixes sleep-in-atomic bugs in AES-CBC and AES-XTS VMX
-implementations. The problem is that the blkcipher_* functions should
-not be called in atomic context.
+After a live data migration event at the NFS server, the client may send
+I/O requests to the wrong server, causing a live hang due to repeated
+recovery events.  On the wire, this will appear as an I/O request failing
+with NFS4ERR_BADSESSION, followed by successful CREATE_SESSION, repeatedly.
+NFS4ERR_BADSSESSION is returned because the session ID being used was
+issued by the other server and is not valid at the old server.
 
-The bugs can be reproduced via the AF_ALG interface by trying to
-encrypt/decrypt sufficiently large buffers (at least 64 KiB) using the
-VMX implementations of 'cbc(aes)' or 'xts(aes)'. Such operations then
-trigger BUG in crypto_yield():
+The failure is caused by async worker threads having cached the transport
+(xprt) in the rpc_task structure.  After the migration recovery completes,
+the task is redispatched and the task resends the request to the wrong
+server based on the old value still present in tk_xprt.
 
-[  891.863680] BUG: sleeping function called from invalid context at include/crypto/algapi.h:424
-[  891.864622] in_atomic(): 1, irqs_disabled(): 0, pid: 12347, name: kcapi-enc
-[  891.864739] 1 lock held by kcapi-enc/12347:
-[  891.864811]  #0: 00000000f5d42c46 (sk_lock-AF_ALG){+.+.}, at: skcipher_recvmsg+0x50/0x530
-[  891.865076] CPU: 5 PID: 12347 Comm: kcapi-enc Not tainted 4.19.0-0.rc0.git3.1.fc30.ppc64le #1
-[  891.865251] Call Trace:
-[  891.865340] [c0000003387578c0] [c000000000d67ea4] dump_stack+0xe8/0x164 (unreliable)
-[  891.865511] [c000000338757910] [c000000000172a58] ___might_sleep+0x2f8/0x310
-[  891.865679] [c000000338757990] [c0000000006bff74] blkcipher_walk_done+0x374/0x4a0
-[  891.865825] [c0000003387579e0] [d000000007e73e70] p8_aes_cbc_encrypt+0x1c8/0x260 [vmx_crypto]
-[  891.865993] [c000000338757ad0] [c0000000006c0ee0] skcipher_encrypt_blkcipher+0x60/0x80
-[  891.866128] [c000000338757b10] [c0000000006ec504] skcipher_recvmsg+0x424/0x530
-[  891.866283] [c000000338757bd0] [c000000000b00654] sock_recvmsg+0x74/0xa0
-[  891.866403] [c000000338757c10] [c000000000b00f64] ___sys_recvmsg+0xf4/0x2f0
-[  891.866515] [c000000338757d90] [c000000000b02bb8] __sys_recvmsg+0x68/0xe0
-[  891.866631] [c000000338757e30] [c00000000000bbe4] system_call+0x5c/0x70
+The solution is to recompute the tk_xprt field of the rpc_task structure
+so that the request goes to the correct server.
 
-Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
-Fixes: c07f5d3da643 ("crypto: vmx - Adding support for XTS")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Bill Baker <bill.baker@oracle.com>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Tested-by: Helen Chao <helen.chao@oracle.com>
+Fixes: fb43d17210ba ("SUNRPC: Use the multipath iterator to assign a ...")
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aes_cbc.c |   30 ++++++++++++++----------------
- drivers/crypto/vmx/aes_xts.c |   21 ++++++++++++++-------
- 2 files changed, 28 insertions(+), 23 deletions(-)
+ fs/nfs/nfs4proc.c           |    9 ++++++++-
+ include/linux/sunrpc/clnt.h |    1 +
+ net/sunrpc/clnt.c           |   28 ++++++++++++++++++++--------
+ 3 files changed, 29 insertions(+), 9 deletions(-)
 
---- a/drivers/crypto/vmx/aes_cbc.c
-+++ b/drivers/crypto/vmx/aes_cbc.c
-@@ -107,24 +107,23 @@ static int p8_aes_cbc_encrypt(struct blk
- 		ret = crypto_skcipher_encrypt(req);
- 		skcipher_request_zero(req);
- 	} else {
--		preempt_disable();
--		pagefault_disable();
--		enable_kernel_vsx();
--
- 		blkcipher_walk_init(&walk, dst, src, nbytes);
- 		ret = blkcipher_walk_virt(desc, &walk);
- 		while ((nbytes = walk.nbytes)) {
-+			preempt_disable();
-+			pagefault_disable();
-+			enable_kernel_vsx();
- 			aes_p8_cbc_encrypt(walk.src.virt.addr,
- 					   walk.dst.virt.addr,
- 					   nbytes & AES_BLOCK_MASK,
- 					   &ctx->enc_key, walk.iv, 1);
-+			disable_kernel_vsx();
-+			pagefault_enable();
-+			preempt_enable();
-+
- 			nbytes &= AES_BLOCK_SIZE - 1;
- 			ret = blkcipher_walk_done(desc, &walk, nbytes);
- 		}
--
--		disable_kernel_vsx();
--		pagefault_enable();
--		preempt_enable();
- 	}
- 
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -547,8 +547,15 @@ nfs4_async_handle_exception(struct rpc_t
+ 		ret = -EIO;
  	return ret;
-@@ -147,24 +146,23 @@ static int p8_aes_cbc_decrypt(struct blk
- 		ret = crypto_skcipher_decrypt(req);
- 		skcipher_request_zero(req);
- 	} else {
--		preempt_disable();
--		pagefault_disable();
--		enable_kernel_vsx();
--
- 		blkcipher_walk_init(&walk, dst, src, nbytes);
- 		ret = blkcipher_walk_virt(desc, &walk);
- 		while ((nbytes = walk.nbytes)) {
-+			preempt_disable();
-+			pagefault_disable();
-+			enable_kernel_vsx();
- 			aes_p8_cbc_encrypt(walk.src.virt.addr,
- 					   walk.dst.virt.addr,
- 					   nbytes & AES_BLOCK_MASK,
- 					   &ctx->dec_key, walk.iv, 0);
-+			disable_kernel_vsx();
-+			pagefault_enable();
-+			preempt_enable();
-+
- 			nbytes &= AES_BLOCK_SIZE - 1;
- 			ret = blkcipher_walk_done(desc, &walk, nbytes);
- 		}
--
--		disable_kernel_vsx();
--		pagefault_enable();
--		preempt_enable();
- 	}
- 
- 	return ret;
---- a/drivers/crypto/vmx/aes_xts.c
-+++ b/drivers/crypto/vmx/aes_xts.c
-@@ -116,32 +116,39 @@ static int p8_aes_xts_crypt(struct blkci
- 		ret = enc? crypto_skcipher_encrypt(req) : crypto_skcipher_decrypt(req);
- 		skcipher_request_zero(req);
- 	} else {
-+		blkcipher_walk_init(&walk, dst, src, nbytes);
-+
-+		ret = blkcipher_walk_virt(desc, &walk);
-+
- 		preempt_disable();
- 		pagefault_disable();
- 		enable_kernel_vsx();
- 
--		blkcipher_walk_init(&walk, dst, src, nbytes);
--
--		ret = blkcipher_walk_virt(desc, &walk);
- 		iv = walk.iv;
- 		memset(tweak, 0, AES_BLOCK_SIZE);
- 		aes_p8_encrypt(iv, tweak, &ctx->tweak_key);
- 
-+		disable_kernel_vsx();
-+		pagefault_enable();
-+		preempt_enable();
-+
- 		while ((nbytes = walk.nbytes)) {
-+			preempt_disable();
-+			pagefault_disable();
-+			enable_kernel_vsx();
- 			if (enc)
- 				aes_p8_xts_encrypt(walk.src.virt.addr, walk.dst.virt.addr,
- 						nbytes & AES_BLOCK_MASK, &ctx->enc_key, NULL, tweak);
- 			else
- 				aes_p8_xts_decrypt(walk.src.virt.addr, walk.dst.virt.addr,
- 						nbytes & AES_BLOCK_MASK, &ctx->dec_key, NULL, tweak);
-+			disable_kernel_vsx();
-+			pagefault_enable();
-+			preempt_enable();
- 
- 			nbytes &= AES_BLOCK_SIZE - 1;
- 			ret = blkcipher_walk_done(desc, &walk, nbytes);
- 		}
--
--		disable_kernel_vsx();
--		pagefault_enable();
--		preempt_enable();
- 	}
+ out_retry:
+-	if (ret == 0)
++	if (ret == 0) {
+ 		exception->retry = 1;
++		/*
++		 * For NFS4ERR_MOVED, the client transport will need to
++		 * be recomputed after migration recovery has completed.
++		 */
++		if (errorcode == -NFS4ERR_MOVED)
++			rpc_task_release_transport(task);
++	}
  	return ret;
  }
+ 
+--- a/include/linux/sunrpc/clnt.h
++++ b/include/linux/sunrpc/clnt.h
+@@ -156,6 +156,7 @@ int		rpc_switch_client_transport(struct
+ 
+ void		rpc_shutdown_client(struct rpc_clnt *);
+ void		rpc_release_client(struct rpc_clnt *);
++void		rpc_task_release_transport(struct rpc_task *);
+ void		rpc_task_release_client(struct rpc_task *);
+ 
+ int		rpcb_create_local(struct net *);
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -965,10 +965,20 @@ out:
+ }
+ EXPORT_SYMBOL_GPL(rpc_bind_new_program);
+ 
++void rpc_task_release_transport(struct rpc_task *task)
++{
++	struct rpc_xprt *xprt = task->tk_xprt;
++
++	if (xprt) {
++		task->tk_xprt = NULL;
++		xprt_put(xprt);
++	}
++}
++EXPORT_SYMBOL_GPL(rpc_task_release_transport);
++
+ void rpc_task_release_client(struct rpc_task *task)
+ {
+ 	struct rpc_clnt *clnt = task->tk_client;
+-	struct rpc_xprt *xprt = task->tk_xprt;
+ 
+ 	if (clnt != NULL) {
+ 		/* Remove from client task list */
+@@ -979,12 +989,14 @@ void rpc_task_release_client(struct rpc_
+ 
+ 		rpc_release_client(clnt);
+ 	}
++	rpc_task_release_transport(task);
++}
+ 
+-	if (xprt != NULL) {
+-		task->tk_xprt = NULL;
+-
+-		xprt_put(xprt);
+-	}
++static
++void rpc_task_set_transport(struct rpc_task *task, struct rpc_clnt *clnt)
++{
++	if (!task->tk_xprt)
++		task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
+ }
+ 
+ static
+@@ -992,8 +1004,7 @@ void rpc_task_set_client(struct rpc_task
+ {
+ 
+ 	if (clnt != NULL) {
+-		if (task->tk_xprt == NULL)
+-			task->tk_xprt = xprt_iter_get_next(&clnt->cl_xpi);
++		rpc_task_set_transport(task, clnt);
+ 		task->tk_client = clnt;
+ 		atomic_inc(&clnt->cl_count);
+ 		if (clnt->cl_softrtry)
+@@ -1529,6 +1540,7 @@ call_start(struct rpc_task *task)
+ 		clnt->cl_program->version[clnt->cl_vers]->counts[idx]++;
+ 	clnt->cl_stats->rpccnt++;
+ 	task->tk_action = call_reserve;
++	rpc_task_set_transport(task, clnt);
+ }
+ 
+ /*
 
 
