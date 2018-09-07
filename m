@@ -2,230 +2,124 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB13C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA2AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C8F204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9127204EC
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:30:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=easymile.com header.i=@easymile.com header.b="iNSD8Jwc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C8F204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=easymile.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="ffCahTeD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9127204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbeIGLIU (ORCPT
+        id S1727568AbeIGLJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 07:08:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40836 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbeIGLIU (ORCPT
+        Fri, 7 Sep 2018 07:09:55 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:13588 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeIGLJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 07:08:20 -0400
-Received: by mail-wm0-f68.google.com with SMTP id 207-v6so13332282wme.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Sep 2018 23:28:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=easymile.com; s=easymile;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jIBJ46vwXNcPJqhdtJKI/sAshI4Ao2xwzBVd+GgHKf8=;
-        b=iNSD8JwcWwEhxLKqz+zBPIugroOd04loGA3mvVgTWe30Og0OVBEnI+ddcqUiX471To
-         RJAnK5uDr1Aik4v3ZfQAgQwxp5d4PpesWpDxu5ukeCIShutJHrIhlKs6yi0yATwvvpfM
-         fvLFTb/MR2VKqOvIwUQhhxgdaQ7iwic4Y166o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jIBJ46vwXNcPJqhdtJKI/sAshI4Ao2xwzBVd+GgHKf8=;
-        b=ihJ9XHbawtuwtm0+nbOX+pIid8xGR0FnkiGlUlPPNYwIqCWRHJh9kdmjn7ID2EM3NB
-         eIMR5zdtZfied1Iri5WwecQKY707S43/ESBTkspNoNf1MRsvxwen1+fO10l3DVrkS2/O
-         gMDknvSrD0qmm8c0V6pInP08EqcA4AFjgTxK9KCOHAuQ/M9gbB7+36PADeFXA4TuGGJW
-         3zb1LWzOuUNokY20RpsOlWbkRPD9u70v0XYzuBQi8d/QehUzNpNbsYOBsV0pjdDNFT8m
-         m2KQ1L0jLTdRrg6P7iralc3dCaGJ27b4AF2vH7TIJy/vZeLzOLadN5kr64bavQ+8jMWo
-         bFCA==
-X-Gm-Message-State: APzg51B+RGkczfBOtsXW9vTWMBJIRIriZPgdRYUOOWm4jhxsM1AFJP9u
-        uasfVp5q3hkeYkwKW8Hosize3Q==
-X-Google-Smtp-Source: ANB0VdaVKhMU5ePL3qQhli3k1T6JkMDKfMGZEb8kCWwJTi0rWXdhxMjCXhkWn8QlmwcM5FJuxzpdLw==
-X-Received: by 2002:a1c:ac1:: with SMTP id 184-v6mr4102352wmk.119.1536301734395;
-        Thu, 06 Sep 2018 23:28:54 -0700 (PDT)
-Received: from super_plancton ([185.116.129.142])
-        by smtp.gmail.com with ESMTPSA id 200-v6sm11573588wmv.6.2018.09.06.23.28.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Sep 2018 23:28:53 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 08:28:51 +0200
-From:   Camille Bordignon <camille.bordignon@easymile.com>
-To:     "Neftin, Sasha" <sasha.neftin@intel.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
-        Netdev <netdev@vger.kernel.org>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Intel-wired-lan] e1000e driver stuck at 10Mbps after
- reconnection
-Message-ID: <20180907062851.GA7336@super_plancton>
-References: <20180806115913.GA21556@super_plancton>
- <CAKgT0UcUV8bQRAhyevfnvwE+yWnWjwAkH0WumUoUK4Fa9SCzhg@mail.gmail.com>
- <20180807064222.GA30741@super_plancton>
- <001556a4-c49c-b96b-0be8-b3c4be7bb09c@intel.com>
- <c1e2cf13-6bcc-498d-03ea-7c3792d675cb@intel.com>
+        Fri, 7 Sep 2018 07:09:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536301826;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=cwEJ9C8V6KAN2Ttw1o9DQLmvSmDwpPXA3xq2qVepOkM=;
+        b=ffCahTeDft1nuzwN9V4VT0UoGZRJrN3iK0QaQb8TrwUnp17t2QylMWMwc6uH+yQQ3y
+        V1hJ1k6qoEPyLUTp75EIqrhHAJtIdCnwNZGEJEIQrolciCGMq9/vdAJmTR+u+f2b/Ogr
+        mYB8jPul8gQe2Ok+9GVtdxN5Dk56Jk5ktjQ94BlhPN+zhhAOCJqTMGapvzH71dZzmAlq
+        nA/cL9D5A7m7vDjv1mHfRyFtsnUGF12Jg2Q/qvKp6sBqnWS0uJdNPzCcTDth27Pjco+j
+        RaId4NjV8GZG0CN33JqpedAwm8LDvpNT2G+GmYJTNsZGtUFGhO3jKBy1ZERZnD45lf5b
+        JYyw==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc0/lb4QMstw0mqi/C51hpW50R4vli8caicjAbM"
+X-RZG-CLASS-ID: mo00
+Received: from sender
+        by smtp.strato.de (RZmta 44.0 AUTH)
+        with ESMTPSA id L0862bu876UPD8e
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 7 Sep 2018 08:30:25 +0200 (CEST)
+From:   Olaf Hering <olaf@aepfle.de>
+To:     xen-devel@lists.xenproject.org
+Cc:     Olaf Hering <olaf@aepfle.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] xen: avoid crash in disable_hotplug_cpu
+Date:   Fri,  7 Sep 2018 08:30:23 +0200
+Message-Id: <20180907063023.16913-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c1e2cf13-6bcc-498d-03ea-7c3792d675cb@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mercredi 08 août 2018 à 18:00:28 (+0300), Neftin, Sasha a écrit :
-> On 8/8/2018 17:24, Neftin, Sasha wrote:
-> > On 8/7/2018 09:42, Camille Bordignon wrote:
-> > > Le lundi 06 août 2018 à 15:45:29 (-0700), Alexander Duyck a écrit :
-> > > > On Mon, Aug 6, 2018 at 4:59 AM, Camille Bordignon
-> > > > <camille.bordignon@easymile.com> wrote:
-> > > > > Hello,
-> > > > > 
-> > > > > Recently we experienced some issues with intel NIC (I219-LM
-> > > > > and I219-V).
-> > > > > It seems that after a wire reconnection, auto-negotation "fails" and
-> > > > > link speed drips to 10 Mbps.
-> > > > > 
-> > > > >  From kernel logs:
-> > > > > [17616.346150] e1000e: enp0s31f6 NIC Link is Down
-> > > > > [17627.003322] e1000e: enp0s31f6 NIC Link is Up 10 Mbps Full
-> > > > > Duplex, Flow Control: None
-> > > > > [17627.003325] e1000e 0000:00:1f.6 enp0s31f6: 10/100 speed:
-> > > > > disabling TSO
-> > > > > 
-> > > > > 
-> > > > > $ethtool enp0s31f6
-> > > > > Settings for enp0s31f6:
-> > > > >          Supported ports: [ TP ]
-> > > > >          Supported link modes:   10baseT/Half 10baseT/Full
-> > > > >                                  100baseT/Half 100baseT/Full
-> > > > >                                  1000baseT/Full
-> > > > >          Supported pause frame use: No
-> > > > >          Supports auto-negotiation: Yes
-> > > > >          Supported FEC modes: Not reported
-> > > > >          Advertised link modes:  10baseT/Half 10baseT/Full
-> > > > >                                  100baseT/Half 100baseT/Full
-> > > > >                                  1000baseT/Full
-> > > > >          Advertised pause frame use: No
-> > > > >          Advertised auto-negotiation: Yes
-> > > > >          Advertised FEC modes: Not reported
-> > > > >          Speed: 10Mb/s
-> > > > >          Duplex: Full
-> > > > >          Port: Twisted Pair
-> > > > >          PHYAD: 1
-> > > > >          Transceiver: internal
-> > > > >          Auto-negotiation: on
-> > > > >          MDI-X: on (auto)
-> > > > >          Supports Wake-on: pumbg
-> > > > >          Wake-on: g
-> > > > >          Current message level: 0x00000007 (7)
-> > > > >                                 drv probe link
-> > > > >          Link detected: yes
-> > > > > 
-> > > > > 
-> > > > > Notice that if disconnection last less than about 5 seconds,
-> > > > > nothing wrong happens.
-> > > > > And if after last failure, disconnection / connection occurs again and
-> > > > > last less than 5 seconds, link speed is back to 1000 Mbps.
-> > > > > 
-> > > > > [18075.350678] e1000e: enp0s31f6 NIC Link is Down
-> > > > > [18078.716245] e1000e: enp0s31f6 NIC Link is Up 1000 Mbps
-> > > > > Full Duplex, Flow Control: None
-> > > > > 
-> > > > > The following patch seems to fix this issue.
-> > > > > However I don't clearly understand why.
-> > > > > 
-> > > > > diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > > > b/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > > > index 3ba0c90e7055..763c013960f1 100644
-> > > > > --- a/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > > > +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-> > > > > @@ -5069,7 +5069,7 @@ static bool e1000e_has_link(struct
-> > > > > e1000_adapter *adapter)
-> > > > >          case e1000_media_type_copper:
-> > > > >                  if (hw->mac.get_link_status) {
-> > > > >                          ret_val = hw->mac.ops.check_for_link(hw);
-> > > > > -                       link_active = !hw->mac.get_link_status;
-> > > > > +                       link_active = false;
-> > > > >                  } else {
-> > > > >                          link_active = true;
-> > > > >                  }
-> > > > > 
-> > > > > Maybe this is related to watchdog task.
-> > > > > 
-> > > > > I've found out this fix by comparing with last commit that works fine :
-> > > > > commit 0b76aae741abb9d16d2c0e67f8b1e766576f897d.
-> > > > > However I don't know if this information is relevant.
-> > > > > 
-> > > > > Thank you.
-> > > > > Camille Bordignon
-> > > > 
-> > > > What kernel were you testing this on? I know there have been a number
-> > > > of changes over the past few months in this area and it would be
-> > > > useful to know exactly what code base you started out with and what
-> > > > the latest version of the kernel is you have tested.
-> > > > 
-> > > > Looking over the code change the net effect of it should be to add a 2
-> > > > second delay from the time the link has changed until you actually
-> > > > check the speed/duplex configuration. It is possible we could be
-> > > > seeing some sort of timing issue and adding the 2 second delay after
-> > > > the link event is enough time for things to stabilize and detect the
-> > > > link at 1000 instead of 10/100.
-> > > > 
-> > > > - Alex
-> > > 
-> > > We've found out this issue using Fedora 27 (4.17.11-100.fc27.x86_64).
-> > > 
-> > > Then I've tested wth a more recent version of the driver v4.18-rc7 but
-> > > behavior looks the same.
-> > > 
-> > > Thanks for you reply.
-> > > 
-> > > Camille Bordignon
-> > > _______________________________________________
-> > > Intel-wired-lan mailing list
-> > > Intel-wired-lan@osuosl.org
-> > > https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
-> > > 
-> > I've agree with Alex. Let's try add 2s delay after a link event. Please,
-> > let us know if it will solve your problem.
-> > Also, I would like recommend try work with different link partner and
-> > see if you see same problem.
-> > _______________________________________________
-> > Intel-wired-lan mailing list
-> > Intel-wired-lan@osuosl.org
-> > https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
-> Camille,
-> My apologies, I wrong understand Alex. Please, do not try add delay. Please,
-> check if you see same problem with different link partners.
-> Thanks,
-> Sasha
-Hello,
+The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
 
-I recently figured out that neither the previous patch nor commit
-0b76aae741abb9d16d2c0e67f8b1e766576f897d fix this issue.
+BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+RIP: e030:device_offline+0x9/0xb0
+Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+Call Trace:
+ handle_vcpu_hotplug_event+0xb5/0xc0
+ xenwatch_thread+0x80/0x140
+ ? wait_woken+0x80/0x80
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x40/0x40
+ ret_from_fork+0x3a/0x50
 
-In these cases, after reproducing the issue, when ethernet wire is connected
-kernel logs mention full speed (1000 Mbps) but actually it seems it is not.
-The problem persists.
+This happens because handle_vcpu_hotplug_event is called twice. In the
+first iteration cpu_present is still true, in the second iteration
+cpu_present is false which causes get_cpu_device to return NULL.
+In case of cpu#0, cpu_online is apparently always true.
 
-I made some simple tests with a web browser and a dowload speed test
-site (fast.com). As a result speed was always around 8 Mbps.
+Fix this crash by checking if the cpu can be hotplugged, which is false
+for a cpu that was just removed.
 
-And again after a quick ethernet wire disconnection / reconnection, same
-test is around 500 Mbps.
+Also check if the cpu was actually offlined by device_remove, otherwise
+leave the cpu_present state as it is.
 
-I feel very confused.
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
+ drivers/xen/cpu_hotplug.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Camille Bordignon
+diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+index d4265c8ebb22..68f9f663da08 100644
+--- a/drivers/xen/cpu_hotplug.c
++++ b/drivers/xen/cpu_hotplug.c
+@@ -19,11 +19,15 @@ static void enable_hotplug_cpu(int cpu)
+ 
+ static void disable_hotplug_cpu(int cpu)
+ {
++	if (!cpu_is_hotpluggable(cpu))
++		return;
+ 	if (cpu_online(cpu)) {
+ 		lock_device_hotplug();
+ 		device_offline(get_cpu_device(cpu));
+ 		unlock_device_hotplug();
+ 	}
++	if (cpu_online(cpu))
++		return;
+ 	if (cpu_present(cpu))
+ 		xen_arch_unregister_cpu(cpu);
+ 
