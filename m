@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9536CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33AEC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 592AD20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 592AD20645
+	by mail.kernel.org (Postfix) with ESMTP id 627C620645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627C620645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbeIHB7j (ORCPT
+        id S1728974AbeIHB7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:59:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42776 "EHLO
+        Fri, 7 Sep 2018 21:59:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbeIHB7i (ORCPT
+        with ESMTP id S1728379AbeIHB7m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:59:38 -0400
+        Fri, 7 Sep 2018 21:59:42 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E3CBFAA;
-        Fri,  7 Sep 2018 21:16:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9C56F07;
+        Fri,  7 Sep 2018 21:16:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 088/145] PM / sleep: wakeup: Fix build error caused by missing SRCU support
-Date:   Fri,  7 Sep 2018 23:09:14 +0200
-Message-Id: <20180907210911.328946929@linuxfoundation.org>
+        stable@vger.kernel.org, Lihua Yao <ylhuajnu@163.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.18 089/145] ALSA: ac97: fix device initialization in the compat layer
+Date:   Fri,  7 Sep 2018 23:09:15 +0200
+Message-Id: <20180907210911.395027770@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,53 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: zhangyi (F) <yi.zhang@huawei.com>
+From: Lihua Yao <ylhuajnu@163.com>
 
-commit 3df6f61fff49632492490fb6e42646b803a9958a upstream.
+commit c7b8170790c19293acd835dc50b8247ec207d4a3 upstream.
 
-Commit ea0212f40c6 (power: auto select CONFIG_SRCU) made the code in
-drivers/base/power/wakeup.c use SRCU instead of RCU, but it forgot to
-select CONFIG_SRCU in Kconfig, which leads to the following build
-error if CONFIG_SRCU is not selected somewhere else:
+ac97->dev is an object of 'struct device' type. It should be initialized
+via device_initialize() or device_register().
 
-drivers/built-in.o: In function `wakeup_source_remove':
-(.text+0x3c6fc): undefined reference to `synchronize_srcu'
-drivers/built-in.o: In function `pm_print_active_wakeup_sources':
-(.text+0x3c7a8): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `pm_print_active_wakeup_sources':
-(.text+0x3c84c): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
-(.text+0x3d1d8): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `device_wakeup_arm_wake_irqs':
-(.text+0x3d228): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
-(.text+0x3d24c): undefined reference to `__srcu_read_lock'
-drivers/built-in.o: In function `device_wakeup_disarm_wake_irqs':
-(.text+0x3d29c): undefined reference to `__srcu_read_unlock'
-drivers/built-in.o:(.data+0x4158): undefined reference to `process_srcu'
-
-Fix this error by selecting CONFIG_SRCU when PM_SLEEP is enabled.
-
-Fixes: ea0212f40c6 (power: auto select CONFIG_SRCU)
-Cc: 4.2+ <stable@vger.kernel.org> # 4.2+
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-[ rjw: Minor subject/changelog fixups ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 74426fbff66e ("ALSA: ac97: add an ac97 bus")
+Signed-off-by: Lihua Yao <ylhuajnu@163.com>
+Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/power/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ sound/ac97/snd_ac97_compat.c |   19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -105,6 +105,7 @@ config PM_SLEEP
- 	def_bool y
- 	depends on SUSPEND || HIBERNATE_CALLBACKS
- 	select PM
-+	select SRCU
+--- a/sound/ac97/snd_ac97_compat.c
++++ b/sound/ac97/snd_ac97_compat.c
+@@ -15,6 +15,11 @@
  
- config PM_SLEEP_SMP
- 	def_bool y
+ #include "ac97_core.h"
+ 
++static void compat_ac97_release(struct device *dev)
++{
++	kfree(to_ac97_t(dev));
++}
++
+ static void compat_ac97_reset(struct snd_ac97 *ac97)
+ {
+ 	struct ac97_codec_device *adev = to_ac97_device(ac97->private_data);
+@@ -65,21 +70,31 @@ static struct snd_ac97_bus compat_soc_ac
+ struct snd_ac97 *snd_ac97_compat_alloc(struct ac97_codec_device *adev)
+ {
+ 	struct snd_ac97 *ac97;
++	int ret;
+ 
+ 	ac97 = kzalloc(sizeof(struct snd_ac97), GFP_KERNEL);
+ 	if (ac97 == NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	ac97->dev = adev->dev;
+ 	ac97->private_data = adev;
+ 	ac97->bus = &compat_soc_ac97_bus;
++
++	ac97->dev.parent = &adev->dev;
++	ac97->dev.release = compat_ac97_release;
++	dev_set_name(&ac97->dev, "%s-compat", dev_name(&adev->dev));
++	ret = device_register(&ac97->dev);
++	if (ret) {
++		put_device(&ac97->dev);
++		return ERR_PTR(ret);
++	}
++
+ 	return ac97;
+ }
+ EXPORT_SYMBOL_GPL(snd_ac97_compat_alloc);
+ 
+ void snd_ac97_compat_release(struct snd_ac97 *ac97)
+ {
+-	kfree(ac97);
++	device_unregister(&ac97->dev);
+ }
+ EXPORT_SYMBOL_GPL(snd_ac97_compat_release);
+ 
 
 
