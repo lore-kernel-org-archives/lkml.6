@@ -2,115 +2,113 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3461C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 699A0C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A40F2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:53:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+5wp4UH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A40F2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 047EC20652
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 22:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047EC20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeIHDgy (ORCPT
+        id S1727315AbeIHDib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 23:36:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeIHDgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 23:36:54 -0400
-Received: from [192.168.0.101] (unknown [121.237.67.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 7 Sep 2018 23:38:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726307AbeIHDib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 23:38:31 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06E3A20652;
-        Fri,  7 Sep 2018 22:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536360822;
-        bh=jsG4Wrnox5IAveYdrbWwI0F/N2seuKEjTcvCKpR9tYw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=h+5wp4UHwX1mwdWWDxpaLIdSxUGANgZvY0l+7fysV4KhJrVgPO/wLsECtkgkE/sxQ
-         +Wo9XDMtWcaZkbBCb2BrIASjzK0slCfM8GuIbVI0kI6HotBAWboS1Xax22I4cBoqoH
-         XKfMap/x2IsvWfsS16tjxHGh2/vvdtW8DTSYfdhg=
-Subject: Re: [PATCH 2/2] f2fs: fix to avoid quota inode leak in ->put_super
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        by mx1.redhat.com (Postfix) with ESMTPS id E04DF401EF3F;
+        Fri,  7 Sep 2018 22:55:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D544A9E8A;
+        Fri,  7 Sep 2018 22:55:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix cell specification to permit an empty address list
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-References: <20180906124436.89193-1-yuchao0@huawei.com>
- <20180906124436.89193-2-yuchao0@huawei.com>
- <20180907223852.GA96592@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <0efd4233-95bf-e4fe-47ca-ae69fd3881e5@kernel.org>
-Date:   Sat, 8 Sep 2018 06:53:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Date:   Fri, 07 Sep 2018 23:55:17 +0100
+Message-ID: <153636091769.18957.14379129624965539718.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20180907223852.GA96592@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 07 Sep 2018 22:55:18 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 07 Sep 2018 22:55:18 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I can see it in dev, thanks for merging. ;)
+Fix the cell specification mechanism to allow cells to be pre-created
+without having to specify at least one address (the addresses will be
+upcalled for).
 
-On 2018/9/8 6:38, Jaegeuk Kim wrote:
-> I merged as one. Please check dev. :)
-> 
-> On 09/06, Chao Yu wrote:
->> generic/019 reports below error:
->>
->>  __quota_error: 1160 callbacks suppressed
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
->>
->> If we failed in below path due to fail to write dquot block, we will miss
->> to release quota inode, fix it.
->>
->> - f2fs_put_super
->>  - f2fs_quota_off_umount
->>   - f2fs_quota_off
->>    - f2fs_quota_sync   <-- failed
->>    - dquot_quota_off   <-- missed to call
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index c026aaccf218..328f58647f4c 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1900,10 +1900,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
->>  	for (type = 0; type < MAXQUOTAS; type++) {
->>  		err = f2fs_quota_off(sb, type);
->>  		if (err) {
->> +			int ret = dquot_quota_off(sb, type);
->> +
->>  			f2fs_msg(sb, KERN_ERR,
->>  				"Fail to turn off disk quota "
->> -				"(type: %d, err: %d), Please "
->> -				"run fsck to fix it.", type, err);
->> +				"(type: %d, err: %d, ret:%d), Please "
->> +				"run fsck to fix it.", type, err, ret);
->>  			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>  		}
->>  	}
->> -- 
->> 2.18.0.rc1
+This allows the cell information preload service to avoid the need to issue
+loads of DNS lookups during boot to get the addresses for each cell (500+
+lookups for the 'standard' cell list[*]).  The lookups can be done later as
+each cell is accessed through the filesystem.
+
+Also remove the print statement that prints a line every time a new cell is
+added.
+
+[*] There are 144 cells in the list.  Each cell is first looked up for an
+    SRV record, and if that fails, for an AFSDB record.  These get a list
+    of server names, each of which then has to be looked up to get the
+    addresses for that server.  E.g.:
+
+	dig srv _afs3-vlserver._udp.grand.central.org
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/proc.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+index 0c3285c8db95..476dcbb79713 100644
+--- a/fs/afs/proc.c
++++ b/fs/afs/proc.c
+@@ -98,13 +98,13 @@ static int afs_proc_cells_write(struct file *file, char *buf, size_t size)
+ 		goto inval;
+ 
+ 	args = strchr(name, ' ');
+-	if (!args)
+-		goto inval;
+-	do {
+-		*args++ = 0;
+-	} while(*args == ' ');
+-	if (!*args)
+-		goto inval;
++	if (args) {
++		do {
++			*args++ = 0;
++		} while(*args == ' ');
++		if (!*args)
++			goto inval;
++	}
+ 
+ 	/* determine command to perform */
+ 	_debug("cmd=%s name=%s args=%s", buf, name, args);
+@@ -120,7 +120,6 @@ static int afs_proc_cells_write(struct file *file, char *buf, size_t size)
+ 
+ 		if (test_and_set_bit(AFS_CELL_FL_NO_GC, &cell->flags))
+ 			afs_put_cell(net, cell);
+-		printk("kAFS: Added new cell '%s'\n", name);
+ 	} else {
+ 		goto inval;
+ 	}
+
