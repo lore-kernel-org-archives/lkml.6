@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D100C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74113C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1B02083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1B02083D
+	by mail.kernel.org (Postfix) with ESMTP id 36A1420844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36A1420844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbeIHCPV (ORCPT
+        id S1729530AbeIHCPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:15:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50480 "EHLO
+        Fri, 7 Sep 2018 22:15:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50686 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbeIHCPU (ORCPT
+        with ESMTP id S1727416AbeIHCPY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:15:20 -0400
+        Fri, 7 Sep 2018 22:15:24 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CFC3F54;
-        Fri,  7 Sep 2018 21:32:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75867F4A;
+        Fri,  7 Sep 2018 21:32:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Ashok Raj" <ashok.raj@intel.com>,
         "Lu Baolu" <baolu.lu@linux.intel.com>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 66/89] iommu/vt-d: Add definitions for PFSID
-Date:   Fri,  7 Sep 2018 23:10:00 +0200
-Message-Id: <20180907210900.246141383@linuxfoundation.org>
+Subject: [PATCH 4.14 67/89] iommu/vt-d: Fix dev iotlb pfsid use
+Date:   Fri,  7 Sep 2018 23:10:01 +0200
+Message-Id: <20180907210900.352477253@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -54,14 +54,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-commit 0f725561e168485eff7277d683405c05b192f537 upstream.
+commit 1c48db44924298ad0cb5a6386b88017539be8822 upstream.
 
-When SRIOV VF device IOTLB is invalidated, we need to provide
-the PF source ID such that IOMMU hardware can gauge the depth
-of invalidation queue which is shared among VFs. This is needed
-when device invalidation throttle (DIT) capability is supported.
-
-This patch adds bit definitions for checking and tracking PFSID.
+PFSID should be used in the invalidation descriptor for flushing
+device IOTLBs on SRIOV VFs.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: stable@vger.kernel.org
@@ -71,45 +67,79 @@ Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    1 +
- include/linux/intel-iommu.h |    3 +++
- 2 files changed, 4 insertions(+)
+ drivers/iommu/dmar.c        |    6 +++---
+ drivers/iommu/intel-iommu.c |   17 ++++++++++++++++-
+ include/linux/intel-iommu.h |    5 ++---
+ 3 files changed, 21 insertions(+), 7 deletions(-)
 
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1336,8 +1336,8 @@ void qi_flush_iotlb(struct intel_iommu *
+ 	qi_submit_sync(&desc, iommu);
+ }
+ 
+-void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+-			u64 addr, unsigned mask)
++void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
++			u16 qdep, u64 addr, unsigned mask)
+ {
+ 	struct qi_desc desc;
+ 
+@@ -1352,7 +1352,7 @@ void qi_flush_dev_iotlb(struct intel_iom
+ 		qdep = 0;
+ 
+ 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
+-		   QI_DIOTLB_TYPE;
++		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
+ 
+ 	qi_submit_sync(&desc, iommu);
+ }
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -422,6 +422,7 @@ struct device_domain_info {
- 	struct list_head global; /* link to global list */
- 	u8 bus;			/* PCI bus number */
- 	u8 devfn;		/* PCI devfn number */
-+	u16 pfsid;		/* SRIOV physical function source ID */
- 	u8 pasid_supported:3;
- 	u8 pasid_enabled:1;
- 	u8 pri_supported:1;
+@@ -1503,6 +1503,20 @@ static void iommu_enable_dev_iotlb(struc
+ 		return;
+ 
+ 	pdev = to_pci_dev(info->dev);
++	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
++	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
++	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
++	 * reserved, which should be set to 0.
++	 */
++	if (!ecap_dit(info->iommu->ecap))
++		info->pfsid = 0;
++	else {
++		struct pci_dev *pf_pdev;
++
++		/* pdev will be returned if device is not a vf */
++		pf_pdev = pci_physfn(pdev);
++		info->pfsid = PCI_DEVID(pf_pdev->bus->number, pf_pdev->devfn);
++	}
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ 	/* The PCIe spec, in its wisdom, declares that the behaviour of
+@@ -1568,7 +1582,8 @@ static void iommu_flush_dev_iotlb(struct
+ 
+ 		sid = info->bus << 8 | info->devfn;
+ 		qdep = info->ats_qdep;
+-		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
++		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
++				qdep, addr, mask);
+ 	}
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+ }
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -112,6 +112,7 @@
-  * Extended Capability Register
-  */
+@@ -453,9 +453,8 @@ extern void qi_flush_context(struct inte
+ 			     u8 fm, u64 type);
+ extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+ 			  unsigned int size_order, u64 type);
+-extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+-			       u64 addr, unsigned mask);
+-
++extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
++			u16 qdep, u64 addr, unsigned mask);
+ extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
  
-+#define ecap_dit(e)		((e >> 41) & 0x1)
- #define ecap_pasid(e)		((e >> 40) & 0x1)
- #define ecap_pss(e)		((e >> 35) & 0x1f)
- #define ecap_eafs(e)		((e >> 34) & 0x1)
-@@ -281,6 +282,7 @@ enum {
- #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
- #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
- #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-+#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
- #define QI_DEV_IOTLB_SIZE	1
- #define QI_DEV_IOTLB_MAX_INVS	32
- 
-@@ -305,6 +307,7 @@ enum {
- #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
- #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
- #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
-+#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
- #define QI_DEV_EIOTLB_MAX_INVS	32
- 
- #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
+ extern int dmar_ir_support(void);
 
 
