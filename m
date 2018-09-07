@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F55C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB34C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB72720844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:51:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB72720844
+	by mail.kernel.org (Postfix) with ESMTP id 91CE320844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91CE320844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeIHAd6 (ORCPT
+        id S1727328AbeIHAeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:33:58 -0400
-Received: from mga17.intel.com ([192.55.52.151]:2878 "EHLO mga17.intel.com"
+        Fri, 7 Sep 2018 20:34:00 -0400
+Received: from mga14.intel.com ([192.55.52.115]:31262 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbeIHAd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:33:57 -0400
+        id S1726187AbeIHAeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 20:34:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 12:51:29 -0700
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 12:51:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,343,1531810800"; 
-   d="scan'208";a="88584859"
+   d="scan'208";a="89881383"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga001.jf.intel.com with ESMTP; 07 Sep 2018 12:51:29 -0700
-Subject: [RFC][PATCH 4/8] x86/mm: add clarifying comments for user addr space
+  by orsmga002.jf.intel.com with ESMTP; 07 Sep 2018 12:51:31 -0700
+Subject: [RFC][PATCH 5/8] x86/mm: fix exception table comments
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         sean.j.christopherson@intel.com, peterz@infradead.org,
         tglx@linutronix.de, x86@kernel.org, luto@kernel.org
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Fri, 07 Sep 2018 12:48:58 -0700
+Date:   Fri, 07 Sep 2018 12:49:00 -0700
 References: <20180907194852.3C351B82@viggo.jf.intel.com>
 In-Reply-To: <20180907194852.3C351B82@viggo.jf.intel.com>
-Message-Id: <20180907194858.FD74A39F@viggo.jf.intel.com>
+Message-Id: <20180907194900.DF3B41C0@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-The SMAP and Reserved checking do not have nice comments.  Add
-some to clarify and make it match everything else.
+The comments here are wrong.  They are too absolute about where
+faults can occur when running in the kernel.  The comments are
+also a bit hard to match up with the code.
+
+Trim down the comments, and make them more precise.
+
+Also add a comment explaining why we are doing the
+bad_area_nosemaphore() path here.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
@@ -60,28 +66,49 @@ Cc: x86@kernel.org
 Cc: Andy Lutomirski <luto@kernel.org>
 ---
 
- b/arch/x86/mm/fault.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ b/arch/x86/mm/fault.c |   27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff -puN arch/x86/mm/fault.c~pkeys-fault-warnings-02 arch/x86/mm/fault.c
---- a/arch/x86/mm/fault.c~pkeys-fault-warnings-02	2018-09-07 11:21:47.182751900 -0700
-+++ b/arch/x86/mm/fault.c	2018-09-07 11:21:47.185751900 -0700
-@@ -1274,9 +1274,17 @@ void do_user_addr_space_fault(struct pt_
- 	if (unlikely(kprobes_fault(regs)))
- 		return;
+diff -puN arch/x86/mm/fault.c~pkeys-fault-warnings-03 arch/x86/mm/fault.c
+--- a/arch/x86/mm/fault.c~pkeys-fault-warnings-03	2018-09-07 11:21:47.696751898 -0700
++++ b/arch/x86/mm/fault.c	2018-09-07 11:21:47.700751898 -0700
+@@ -1349,24 +1349,25 @@ void do_user_addr_space_fault(struct pt_
+ 		flags |= FAULT_FLAG_INSTRUCTION;
  
-+	/*
-+	 * Reserved bits are never expected to be set on
-+	 * entries in the user portion of the page tables.
-+	 */
- 	if (unlikely(hw_error_code & X86_PF_RSVD))
- 		pgtable_bad(regs, hw_error_code, address);
- 
-+	/*
-+	 * Check for invalid kernel (supervisor) access to user
-+	 * pages in the user address space.
-+	 */
- 	if (unlikely(smap_violation(hw_error_code, regs))) {
- 		bad_area_nosemaphore(regs, hw_error_code, address, NULL);
- 		return;
+ 	/*
+-	 * When running in the kernel we expect faults to occur only to
+-	 * addresses in user space.  All other faults represent errors in
+-	 * the kernel and should generate an OOPS.  Unfortunately, in the
+-	 * case of an erroneous fault occurring in a code path which already
+-	 * holds mmap_sem we will deadlock attempting to validate the fault
+-	 * against the address space.  Luckily the kernel only validly
+-	 * references user space from well defined areas of code, which are
+-	 * listed in the exceptions table.
++	 * Kernel-mode access to the user address space should only occur
++	 * inside well-defined areas of code listed in the exception
++	 * tables.  But, an erroneous kernel fault occurring outside one of
++	 * those areas which also holds mmap_sem might deadlock attempting
++	 * to validate the fault against the address space.
+ 	 *
+-	 * As the vast majority of faults will be valid we will only perform
+-	 * the source reference check when there is a possibility of a
+-	 * deadlock. Attempt to lock the address space, if we cannot we then
+-	 * validate the source. If this is invalid we can skip the address
+-	 * space check, thus avoiding the deadlock:
++	 * Only do the expensive exception table search when we might be at
++	 * risk of a deadlock:
++	 * 1. We failed to acquire mmap_sem, and
++	 * 2. The access was an explicit kernel-mode access
++	 *    (X86_PF_USER=0).
+ 	 */
+ 	if (unlikely(!down_read_trylock(&mm->mmap_sem))) {
+ 		if (!(sw_error_code & X86_PF_USER) &&
+ 		    !search_exception_tables(regs->ip)) {
++			/*
++			 * Fault from code in kernel from
++			 * which we do not expect faults.
++			 */
+ 			bad_area_nosemaphore(regs, sw_error_code, address, NULL);
+ 			return;
+ 		}
 _
