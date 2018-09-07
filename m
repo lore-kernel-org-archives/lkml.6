@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD4BC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC65C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD7F20861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD7F20861
+	by mail.kernel.org (Postfix) with ESMTP id 4D12820844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D12820844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbeIHB4t (ORCPT
+        id S1728290AbeIHB4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:56:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41554 "EHLO
+        Fri, 7 Sep 2018 21:56:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41672 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbeIHB4s (ORCPT
+        with ESMTP id S1727217AbeIHB4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:56:48 -0400
+        Fri, 7 Sep 2018 21:56:51 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75EDCFEB;
-        Fri,  7 Sep 2018 21:14:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC2D81026;
+        Fri,  7 Sep 2018 21:14:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frederic Barrat <fbarrat@linux.ibm.com>,
-        Alastair DSilva <alastair@d-silva.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 039/145] ocxl: Fix page fault handler in case of fault on dying process
-Date:   Fri,  7 Sep 2018 23:08:25 +0200
-Message-Id: <20180907210907.758021684@linuxfoundation.org>
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.18 040/145] IB/mlx5: Honor cnt_set_id_valid flag instead of set_id
+Date:   Fri,  7 Sep 2018 23:08:26 +0200
+Message-Id: <20180907210907.827913941@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,93 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frederic Barrat <fbarrat@linux.ibm.com>
+From: Parav Pandit <parav@mellanox.com>
 
-commit d497ebf5fb3a026c0817f8c96cde578787f24093 upstream.
+commit 921c0f5ba58e4064deb18b4985a202508fc5527f upstream.
 
-If a process exits without doing proper cleanup, there's a window
-where an opencapi device can try to access the memory of the dying
-process and may trigger a page fault. That's an expected scenario and
-the ocxl driver holds a reference on the mm_struct of the process
-until the opencapi device is notified of the process exiting.
-However, if mm_users is already at 0, i.e. the address space of the
-process has already been destroyed, the driver shouldn't try resolving
-the page fault, as it will fail, but it can also try accessing already
-freed data.
+It is incorrect to depend on set_id value to know if counters were
+allocated or not. set_id_valid field is set to true when counters
+were allocated. Therefore, use set_id_valid while deciding to
+free counters.
 
-It is fixed by only calling the bottom half of the page fault handler
-if mm_users is greater than 0 and get a reference on mm_users instead
-of mm_count. Otherwise, we can safely return a translation fault to
-the device, as its associated memory context is being removed. The
-opencapi device will be properly cleaned up shortly after when closing
-the file descriptors.
-
-Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
-Cc: stable@vger.kernel.org # v4.16+
-Signed-off-by: Frederic Barrat <fbarrat@linux.ibm.com>
-Reviewed-By: Alastair D'Silva <alastair@d-silva.org>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: <stable@vger.kernel.org> # 4.15
+Fixes: aac4492ef23a ("IB/mlx5: Update counter implementation for dual port RoCE")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/ocxl/link.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/infiniband/hw/mlx5/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/ocxl/link.c
-+++ b/drivers/misc/ocxl/link.c
-@@ -136,7 +136,7 @@ static void xsl_fault_handler_bh(struct
- 	int rc;
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -4694,7 +4694,7 @@ static void mlx5_ib_dealloc_counters(str
+ 	int i;
  
- 	/*
--	 * We need to release a reference on the mm whenever exiting this
-+	 * We must release a reference on mm_users whenever exiting this
- 	 * function (taken in the memory fault interrupt handler)
- 	 */
- 	rc = copro_handle_mm_fault(fault->pe_data.mm, fault->dar, fault->dsisr,
-@@ -172,7 +172,7 @@ static void xsl_fault_handler_bh(struct
- 	}
- 	r = RESTART;
- ack:
--	mmdrop(fault->pe_data.mm);
-+	mmput(fault->pe_data.mm);
- 	ack_irq(spa, r);
- }
- 
-@@ -184,6 +184,7 @@ static irqreturn_t xsl_fault_handler(int
- 	struct pe_data *pe_data;
- 	struct ocxl_process_element *pe;
- 	int lpid, pid, tid;
-+	bool schedule = false;
- 
- 	read_irq(spa, &dsisr, &dar, &pe_handle);
- 	trace_ocxl_fault(spa->spa_mem, pe_handle, dsisr, dar, -1);
-@@ -226,14 +227,19 @@ static irqreturn_t xsl_fault_handler(int
- 	}
- 	WARN_ON(pe_data->mm->context.id != pid);
- 
--	spa->xsl_fault.pe = pe_handle;
--	spa->xsl_fault.dar = dar;
--	spa->xsl_fault.dsisr = dsisr;
--	spa->xsl_fault.pe_data = *pe_data;
--	mmgrab(pe_data->mm); /* mm count is released by bottom half */
--
-+	if (mmget_not_zero(pe_data->mm)) {
-+			spa->xsl_fault.pe = pe_handle;
-+			spa->xsl_fault.dar = dar;
-+			spa->xsl_fault.dsisr = dsisr;
-+			spa->xsl_fault.pe_data = *pe_data;
-+			schedule = true;
-+			/* mm_users count released by bottom half */
-+	}
- 	rcu_read_unlock();
--	schedule_work(&spa->xsl_fault.fault_work);
-+	if (schedule)
-+		schedule_work(&spa->xsl_fault.fault_work);
-+	else
-+		ack_irq(spa, ADDRESS_ERROR);
- 	return IRQ_HANDLED;
- }
- 
+ 	for (i = 0; i < dev->num_ports; i++) {
+-		if (dev->port[i].cnts.set_id)
++		if (dev->port[i].cnts.set_id_valid)
+ 			mlx5_core_dealloc_q_counter(dev->mdev,
+ 						    dev->port[i].cnts.set_id);
+ 		kfree(dev->port[i].cnts.names);
 
 
