@@ -1,125 +1,140 @@
 Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA2AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA87AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9127204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 443FA206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 06:33:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="ffCahTeD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9127204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUFVyuZk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443FA206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeIGLJz (ORCPT
+        id S1727529AbeIGLNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 07:09:55 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:13588 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbeIGLJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 07:09:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1536301826;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=cwEJ9C8V6KAN2Ttw1o9DQLmvSmDwpPXA3xq2qVepOkM=;
-        b=ffCahTeDft1nuzwN9V4VT0UoGZRJrN3iK0QaQb8TrwUnp17t2QylMWMwc6uH+yQQ3y
-        V1hJ1k6qoEPyLUTp75EIqrhHAJtIdCnwNZGEJEIQrolciCGMq9/vdAJmTR+u+f2b/Ogr
-        mYB8jPul8gQe2Ok+9GVtdxN5Dk56Jk5ktjQ94BlhPN+zhhAOCJqTMGapvzH71dZzmAlq
-        nA/cL9D5A7m7vDjv1mHfRyFtsnUGF12Jg2Q/qvKp6sBqnWS0uJdNPzCcTDth27Pjco+j
-        RaId4NjV8GZG0CN33JqpedAwm8LDvpNT2G+GmYJTNsZGtUFGhO3jKBy1ZERZnD45lf5b
-        JYyw==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc0/lb4QMstw0mqi/C51hpW50R4vli8caicjAbM"
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.0 AUTH)
-        with ESMTPSA id L0862bu876UPD8e
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 7 Sep 2018 08:30:25 +0200 (CEST)
-From:   Olaf Hering <olaf@aepfle.de>
-To:     xen-devel@lists.xenproject.org
-Cc:     Olaf Hering <olaf@aepfle.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] xen: avoid crash in disable_hotplug_cpu
-Date:   Fri,  7 Sep 2018 08:30:23 +0200
-Message-Id: <20180907063023.16913-1-olaf@aepfle.de>
-X-Mailer: git-send-email 2.16.4
+        Fri, 7 Sep 2018 07:13:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbeIGLNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 07:13:01 -0400
+Received: from mail-wm0-f54.google.com (mail-wm0-f54.google.com [74.125.82.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1D1A2086B;
+        Fri,  7 Sep 2018 06:33:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536302016;
+        bh=ZJDGwRrjCiLRTv40v5nwRCEVIRjFUsHnUO7uLnnU6oI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qUFVyuZkEByluFS1cMxthdyODqotaSpnGWP1phj/bjC3EioO009Qze2ALLDUkXFbB
+         rqgY2l0BDKwXwjvs3Rxv+jIsBxBW12HpgWb8/T9AiSPIf9iHh+dlijBF/GF/chWh8d
+         c2iMr2l1xDoHOKHsMwG99DwTt3I6ardriMgQQd8c=
+Received: by mail-wm0-f54.google.com with SMTP id n11-v6so13394374wmc.2;
+        Thu, 06 Sep 2018 23:33:35 -0700 (PDT)
+X-Gm-Message-State: APzg51AuDz1db6/c+3LKE7W6pHj1jS0JxUFfSI/snB49Ik+SmJFggfDR
+        p6svT4jy37Dj+9U/cseIW19XaEkQjFwmOufIF3Y=
+X-Google-Smtp-Source: ANB0VdbGAidbHr/60TtaV5Lizg7kEoLegJ7/1lW2BlOE94aRBnt5D8APperqTGIEY28gBfQoNZ3a29nTPj6CvbTaZrA=
+X-Received: by 2002:a7b:c215:: with SMTP id x21-v6mr3670764wmi.72.1536302014171;
+ Thu, 06 Sep 2018 23:33:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180907003716.57737-1-alexander.levin@microsoft.com> <20180907003716.57737-27-alexander.levin@microsoft.com>
+In-Reply-To: <20180907003716.57737-27-alexander.levin@microsoft.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 7 Sep 2018 08:33:22 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdjrVxb4-G2d52KU_MKFPnV5SjmAwr3fW6v8iA1Z32WSQ@mail.gmail.com>
+Message-ID: <CAJKOXPdjrVxb4-G2d52KU_MKFPnV5SjmAwr3fW6v8iA1Z32WSQ@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.14 27/67] ARM: exynos: Define EINT_WAKEUP_MASK
+ registers for S5Pv210 and Exynos5433
+To:     Alexander.Levin@microsoft.com
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
+On Fri, 7 Sep 2018 at 02:54, Sasha Levin <Alexander.Levin@microsoft.com> wrote:
+>
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> [ Upstream commit e5cda42c16d89720c29678f51d95a119490ef7d8 ]
+>
+> S5Pv210 and Exynos5433/Exynos7 have different address of
+> EINT_WAKEUP_MASK register.  Rename existing S5P_EINT_WAKEUP_MASK to
+> avoid confusion and add new ones.
 
-BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
-Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
-RIP: e030:device_offline+0x9/0xb0
-Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
-RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
-R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
-R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
-FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
-CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
-Call Trace:
- handle_vcpu_hotplug_event+0xb5/0xc0
- xenwatch_thread+0x80/0x140
- ? wait_woken+0x80/0x80
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x40/0x40
- ret_from_fork+0x3a/0x50
+This should not be backported to stable. It does not fix anything but
+prepares the code for a8be2af0218c ("pinctrl: samsung: Write external
+wakeup interrupt mask").
 
-This happens because handle_vcpu_hotplug_event is called twice. In the
-first iteration cpu_present is still true, in the second iteration
-cpu_present is false which causes get_cpu_device to return NULL.
-In case of cpu#0, cpu_online is apparently always true.
+Best regards,
+Krzysztof
 
-Fix this crash by checking if the cpu can be hotplugged, which is false
-for a cpu that was just removed.
-
-Also check if the cpu was actually offlined by device_remove, otherwise
-leave the cpu_present state as it is.
-
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- drivers/xen/cpu_hotplug.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
-index d4265c8ebb22..68f9f663da08 100644
---- a/drivers/xen/cpu_hotplug.c
-+++ b/drivers/xen/cpu_hotplug.c
-@@ -19,11 +19,15 @@ static void enable_hotplug_cpu(int cpu)
- 
- static void disable_hotplug_cpu(int cpu)
- {
-+	if (!cpu_is_hotpluggable(cpu))
-+		return;
- 	if (cpu_online(cpu)) {
- 		lock_device_hotplug();
- 		device_offline(get_cpu_device(cpu));
- 		unlock_device_hotplug();
- 	}
-+	if (cpu_online(cpu))
-+		return;
- 	if (cpu_present(cpu))
- 		xen_arch_unregister_cpu(cpu);
- 
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> ---
+>  arch/arm/mach-exynos/suspend.c              | 2 +-
+>  include/linux/soc/samsung/exynos-regs-pmu.h | 6 +++++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index b529ba04ed16..a6a4ba334147 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -279,7 +279,7 @@ static int exynos5420_cpu_suspend(unsigned long arg)
+>  static void exynos_pm_set_wakeup_mask(void)
+>  {
+>         /* Set wake-up mask registers */
+> -       pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
+> +       pmu_raw_writel(exynos_get_eint_wake_mask(), EXYNOS_EINT_WAKEUP_MASK);
+>         pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
+>  }
+>
+> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+> index bebdde5dccd6..f248e7e079b7 100644
+> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+> @@ -46,7 +46,7 @@
+>  #define EXYNOS_SWRESET                         0x0400
+>
+>  #define S5P_WAKEUP_STAT                                0x0600
+> -#define S5P_EINT_WAKEUP_MASK                   0x0604
+> +#define EXYNOS_EINT_WAKEUP_MASK                        0x0604
+>  #define S5P_WAKEUP_MASK                                0x0608
+>  #define S5P_WAKEUP_MASK2                               0x0614
+>
+> @@ -184,6 +184,9 @@
+>  #define S5P_CORE_WAKEUP_FROM_LOCAL_CFG         (0x3 << 8)
+>  #define S5P_CORE_AUTOWAKEUP_EN                 (1 << 31)
+>
+> +/* Only for S5Pv210 */
+> +#define S5PV210_EINT_WAKEUP_MASK       0xC004
+> +
+>  /* Only for EXYNOS4210 */
+>  #define S5P_CMU_CLKSTOP_LCD1_LOWPWR    0x1154
+>  #define S5P_CMU_RESET_LCD1_LOWPWR      0x1174
+> @@ -645,6 +648,7 @@
+>                                          | EXYNOS5420_KFC_USE_STANDBY_WFI3)
+>
+>  /* For EXYNOS5433 */
+> +#define EXYNOS5433_EINT_WAKEUP_MASK                            (0x060C)
+>  #define EXYNOS5433_USBHOST30_PHY_CONTROL                       (0x0728)
+>  #define EXYNOS5433_PAD_RETENTION_AUD_OPTION                    (0x3028)
+>  #define EXYNOS5433_PAD_RETENTION_MMC2_OPTION                   (0x30C8)
+> --
+> 2.17.1
