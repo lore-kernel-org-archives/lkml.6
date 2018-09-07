@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A8DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8458FC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0ECB20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0ECB20844
+	by mail.kernel.org (Postfix) with ESMTP id 2CDAF20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CDAF20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeIHBnf (ORCPT
+        id S1728059AbeIHBnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 7 Sep 2018 21:43:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39336 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:39394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727674AbeIHBmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726667AbeIHBmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 21:42:14 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACC4820878;
+        by mail.kernel.org (Postfix) with ESMTPSA id 05F012086E;
         Fri,  7 Sep 2018 20:59:32 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fyNql-0001ns-Nn; Fri, 07 Sep 2018 16:59:31 -0400
-Message-Id: <20180907205931.634338824@goodmis.org>
+        id 1fyNql-0001lj-1n; Fri, 07 Sep 2018 16:59:31 -0400
+Message-Id: <20180907205930.950515188@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:59:09 -0400
+Date:   Fri, 07 Sep 2018 16:59:05 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -44,8 +44,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         tom.zanussi@linux.intel.com
-Subject: [PATCH RT 12/24] irqchip/gic-v3-its: Move ITS ->pend_page allocation into an early
- CPU up hook
+Subject: [PATCH RT 08/24] Revert "x86: UV: raw_spinlock conversion"
 References: <20180907205857.262840394@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -61,134 +60,254 @@ If anyone has any objections, please let me know.
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit e083f14dc2e98ced872bf077b4d1cccf95b7e4f8 ]
+[ Upstream commit 2a9c45d8f89112458364285cbe2b0729561953f1 ]
 
-The AP-GIC-starting hook allocates memory for the ->pend_page while the
-CPU is started during boot-up. This callback is invoked on the target
-CPU with disabled interrupts.
-This does not work on -RT beacuse memory allocations are not possible
-with disabled interrupts.
-Move the memory allocation to an earlier hotplug step which invoked with
-enabled interrupts on the boot CPU.
+Drop the Ultraviolet patch. UV looks broken upstream for PREEMPT, too.
+Mike is the only person I know that has such a thing and he isn't going
+to fix this upstream (from 1526977462.6491.1.camel@gmx.de):
+
+|From: Mike Galbraith <gleep@gmx.de>
+|On Tue, 2018-05-22 at 08:50 +0200, Sebastian Andrzej Siewior wrote:
+|>
+|> Regarding the preempt_disable() in the original patch in uv_read_rtc():
+|> This looks essential for PREEMPT configs. Is it possible to get this
+|> tested by someone or else get rid of the UV code? It looks broken for
+|> "uv_get_min_hub_revision_id() != 1".
+|
+|I suspect SGI cares not one whit about PREEMPT.
+|
+|> Why does PREEMPT_RT require migrate_disable() but PREEMPT only is fine
+|> as-is? This does not look right.
+|
+|UV is not ok with a PREEMPT config, it's just that for RT it's dirt
+|simple to shut it up, whereas for PREEMPT, preempt_disable() across
+|uv_bau_init() doesn't cut it due to allocations, and whatever else I
+|would have met before ending the whack-a-mole game.
+|
+|If I were in your shoes, I think I'd just stop caring about UV until a
+|real user appears.  AFAIK, I'm the only guy who ever ran RT on UV, and
+|I only did so because SUSE asked me to look into it.. years ago now.
+|
+|        -Mike
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 60 ++++++++++++++++++++++----------
- 1 file changed, 41 insertions(+), 19 deletions(-)
+ arch/x86/include/asm/uv/uv_bau.h | 14 +++++++-------
+ arch/x86/platform/uv/tlb_uv.c    | 26 +++++++++++++-------------
+ arch/x86/platform/uv/uv_time.c   | 20 ++++++++------------
+ 3 files changed, 28 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index e8217ebe8c1e..60533a795124 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -165,6 +165,7 @@ static DEFINE_RAW_SPINLOCK(vmovp_lock);
- static DEFINE_IDA(its_vpeid_ida);
+diff --git a/arch/x86/include/asm/uv/uv_bau.h b/arch/x86/include/asm/uv/uv_bau.h
+index 2ac6e347bdc5..7cac79802ad2 100644
+--- a/arch/x86/include/asm/uv/uv_bau.h
++++ b/arch/x86/include/asm/uv/uv_bau.h
+@@ -643,9 +643,9 @@ struct bau_control {
+ 	cycles_t		send_message;
+ 	cycles_t		period_end;
+ 	cycles_t		period_time;
+-	raw_spinlock_t		uvhub_lock;
+-	raw_spinlock_t		queue_lock;
+-	raw_spinlock_t		disable_lock;
++	spinlock_t		uvhub_lock;
++	spinlock_t		queue_lock;
++	spinlock_t		disable_lock;
+ 	/* tunables */
+ 	int			max_concurr;
+ 	int			max_concurr_const;
+@@ -847,15 +847,15 @@ static inline int atom_asr(short i, struct atomic_short *v)
+  * to be lowered below the current 'v'.  atomic_add_unless can only stop
+  * on equal.
+  */
+-static inline int atomic_inc_unless_ge(raw_spinlock_t *lock, atomic_t *v, int u)
++static inline int atomic_inc_unless_ge(spinlock_t *lock, atomic_t *v, int u)
+ {
+-	raw_spin_lock(lock);
++	spin_lock(lock);
+ 	if (atomic_read(v) >= u) {
+-		raw_spin_unlock(lock);
++		spin_unlock(lock);
+ 		return 0;
+ 	}
+ 	atomic_inc(v);
+-	raw_spin_unlock(lock);
++	spin_unlock(lock);
+ 	return 1;
+ }
  
- #define gic_data_rdist()		(raw_cpu_ptr(gic_rdists->rdist))
-+#define gic_data_rdist_cpu(cpu)		(per_cpu_ptr(gic_rdists->rdist, cpu))
- #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
- #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index 5607611df740..34f9a9ce6236 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -740,9 +740,9 @@ static void destination_plugged(struct bau_desc *bau_desc,
  
-@@ -1734,15 +1735,17 @@ static int its_alloc_collections(struct its_node *its)
+ 		quiesce_local_uvhub(hmaster);
+ 
+-		raw_spin_lock(&hmaster->queue_lock);
++		spin_lock(&hmaster->queue_lock);
+ 		reset_with_ipi(&bau_desc->distribution, bcp);
+-		raw_spin_unlock(&hmaster->queue_lock);
++		spin_unlock(&hmaster->queue_lock);
+ 
+ 		end_uvhub_quiesce(hmaster);
+ 
+@@ -762,9 +762,9 @@ static void destination_timeout(struct bau_desc *bau_desc,
+ 
+ 		quiesce_local_uvhub(hmaster);
+ 
+-		raw_spin_lock(&hmaster->queue_lock);
++		spin_lock(&hmaster->queue_lock);
+ 		reset_with_ipi(&bau_desc->distribution, bcp);
+-		raw_spin_unlock(&hmaster->queue_lock);
++		spin_unlock(&hmaster->queue_lock);
+ 
+ 		end_uvhub_quiesce(hmaster);
+ 
+@@ -785,7 +785,7 @@ static void disable_for_period(struct bau_control *bcp, struct ptc_stats *stat)
+ 	cycles_t tm1;
+ 
+ 	hmaster = bcp->uvhub_master;
+-	raw_spin_lock(&hmaster->disable_lock);
++	spin_lock(&hmaster->disable_lock);
+ 	if (!bcp->baudisabled) {
+ 		stat->s_bau_disabled++;
+ 		tm1 = get_cycles();
+@@ -798,7 +798,7 @@ static void disable_for_period(struct bau_control *bcp, struct ptc_stats *stat)
+ 			}
+ 		}
+ 	}
+-	raw_spin_unlock(&hmaster->disable_lock);
++	spin_unlock(&hmaster->disable_lock);
+ }
+ 
+ static void count_max_concurr(int stat, struct bau_control *bcp,
+@@ -861,7 +861,7 @@ static void record_send_stats(cycles_t time1, cycles_t time2,
+  */
+ static void uv1_throttle(struct bau_control *hmaster, struct ptc_stats *stat)
+ {
+-	raw_spinlock_t *lock = &hmaster->uvhub_lock;
++	spinlock_t *lock = &hmaster->uvhub_lock;
+ 	atomic_t *v;
+ 
+ 	v = &hmaster->active_descriptor_count;
+@@ -995,7 +995,7 @@ static int check_enable(struct bau_control *bcp, struct ptc_stats *stat)
+ 	struct bau_control *hmaster;
+ 
+ 	hmaster = bcp->uvhub_master;
+-	raw_spin_lock(&hmaster->disable_lock);
++	spin_lock(&hmaster->disable_lock);
+ 	if (bcp->baudisabled && (get_cycles() >= bcp->set_bau_on_time)) {
+ 		stat->s_bau_reenabled++;
+ 		for_each_present_cpu(tcpu) {
+@@ -1007,10 +1007,10 @@ static int check_enable(struct bau_control *bcp, struct ptc_stats *stat)
+ 				tbcp->period_giveups = 0;
+ 			}
+ 		}
+-		raw_spin_unlock(&hmaster->disable_lock);
++		spin_unlock(&hmaster->disable_lock);
+ 		return 0;
+ 	}
+-	raw_spin_unlock(&hmaster->disable_lock);
++	spin_unlock(&hmaster->disable_lock);
+ 	return -1;
+ }
+ 
+@@ -1942,9 +1942,9 @@ static void __init init_per_cpu_tunables(void)
+ 		bcp->cong_reps			= congested_reps;
+ 		bcp->disabled_period		= sec_2_cycles(disabled_period);
+ 		bcp->giveup_limit		= giveup_limit;
+-		raw_spin_lock_init(&bcp->queue_lock);
+-		raw_spin_lock_init(&bcp->uvhub_lock);
+-		raw_spin_lock_init(&bcp->disable_lock);
++		spin_lock_init(&bcp->queue_lock);
++		spin_lock_init(&bcp->uvhub_lock);
++		spin_lock_init(&bcp->disable_lock);
+ 	}
+ }
+ 
+diff --git a/arch/x86/platform/uv/uv_time.c b/arch/x86/platform/uv/uv_time.c
+index badf377efc21..b082d71b08ee 100644
+--- a/arch/x86/platform/uv/uv_time.c
++++ b/arch/x86/platform/uv/uv_time.c
+@@ -57,7 +57,7 @@ static DEFINE_PER_CPU(struct clock_event_device, cpu_ced);
+ 
+ /* There is one of these allocated per node */
+ struct uv_rtc_timer_head {
+-	raw_spinlock_t	lock;
++	spinlock_t	lock;
+ 	/* next cpu waiting for timer, local node relative: */
+ 	int		next_cpu;
+ 	/* number of cpus on this node: */
+@@ -177,7 +177,7 @@ static __init int uv_rtc_allocate_timers(void)
+ 				uv_rtc_deallocate_timers();
+ 				return -ENOMEM;
+ 			}
+-			raw_spin_lock_init(&head->lock);
++			spin_lock_init(&head->lock);
+ 			head->ncpus = uv_blade_nr_possible_cpus(bid);
+ 			head->next_cpu = -1;
+ 			blade_info[bid] = head;
+@@ -231,7 +231,7 @@ static int uv_rtc_set_timer(int cpu, u64 expires)
+ 	unsigned long flags;
+ 	int next_cpu;
+ 
+-	raw_spin_lock_irqsave(&head->lock, flags);
++	spin_lock_irqsave(&head->lock, flags);
+ 
+ 	next_cpu = head->next_cpu;
+ 	*t = expires;
+@@ -243,12 +243,12 @@ static int uv_rtc_set_timer(int cpu, u64 expires)
+ 		if (uv_setup_intr(cpu, expires)) {
+ 			*t = ULLONG_MAX;
+ 			uv_rtc_find_next_timer(head, pnode);
+-			raw_spin_unlock_irqrestore(&head->lock, flags);
++			spin_unlock_irqrestore(&head->lock, flags);
+ 			return -ETIME;
+ 		}
+ 	}
+ 
+-	raw_spin_unlock_irqrestore(&head->lock, flags);
++	spin_unlock_irqrestore(&head->lock, flags);
  	return 0;
  }
  
--static struct page *its_allocate_pending_table(gfp_t gfp_flags)
-+static struct page *its_allocate_pending_table(unsigned int cpu)
- {
- 	struct page *pend_page;
-+	unsigned int order;
- 	/*
- 	 * The pending pages have to be at least 64kB aligned,
- 	 * hence the 'max(LPI_PENDBASE_SZ, SZ_64K)' below.
- 	 */
--	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
--				get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
-+	order = get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K));
-+	pend_page = alloc_pages_node(cpu_to_node(cpu), GFP_KERNEL | __GFP_ZERO,
-+				     order);
- 	if (!pend_page)
- 		return NULL;
+@@ -267,7 +267,7 @@ static int uv_rtc_unset_timer(int cpu, int force)
+ 	unsigned long flags;
+ 	int rc = 0;
  
-@@ -1758,6 +1761,28 @@ static void its_free_pending_table(struct page *pt)
- 		   get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
+-	raw_spin_lock_irqsave(&head->lock, flags);
++	spin_lock_irqsave(&head->lock, flags);
+ 
+ 	if ((head->next_cpu == bcpu && uv_read_rtc(NULL) >= *t) || force)
+ 		rc = 1;
+@@ -279,7 +279,7 @@ static int uv_rtc_unset_timer(int cpu, int force)
+ 			uv_rtc_find_next_timer(head, pnode);
+ 	}
+ 
+-	raw_spin_unlock_irqrestore(&head->lock, flags);
++	spin_unlock_irqrestore(&head->lock, flags);
+ 
+ 	return rc;
+ }
+@@ -299,17 +299,13 @@ static int uv_rtc_unset_timer(int cpu, int force)
+ static u64 uv_read_rtc(struct clocksource *cs)
+ {
+ 	unsigned long offset;
+-	u64 cycles;
+ 
+-	preempt_disable();
+ 	if (uv_get_min_hub_revision_id() == 1)
+ 		offset = 0;
+ 	else
+ 		offset = (uv_blade_processor_id() * L1_CACHE_BYTES) % PAGE_SIZE;
+ 
+-	cycles = (u64)uv_read_local_mmr(UVH_RTC | offset);
+-	preempt_enable();
+-	return cycles;
++	return (u64)uv_read_local_mmr(UVH_RTC | offset);
  }
  
-+static int its_alloc_pend_page(unsigned int cpu)
-+{
-+	struct page *pend_page;
-+	phys_addr_t paddr;
-+
-+	pend_page = gic_data_rdist_cpu(cpu)->pend_page;
-+	if (pend_page)
-+		return 0;
-+
-+	pend_page = its_allocate_pending_table(cpu);
-+	if (!pend_page) {
-+		pr_err("Failed to allocate PENDBASE for CPU%d\n",
-+		       smp_processor_id());
-+		return -ENOMEM;
-+	}
-+
-+	paddr = page_to_phys(pend_page);
-+	pr_info("CPU%d: using LPI pending table @%pa\n", cpu, &paddr);
-+	gic_data_rdist_cpu(cpu)->pend_page = pend_page;
-+	return 0;
-+}
-+
- static void its_cpu_init_lpis(void)
- {
- 	void __iomem *rbase = gic_data_rdist_rd_base();
-@@ -1766,21 +1791,8 @@ static void its_cpu_init_lpis(void)
- 
- 	/* If we didn't allocate the pending table yet, do it now */
- 	pend_page = gic_data_rdist()->pend_page;
--	if (!pend_page) {
--		phys_addr_t paddr;
--
--		pend_page = its_allocate_pending_table(GFP_NOWAIT);
--		if (!pend_page) {
--			pr_err("Failed to allocate PENDBASE for CPU%d\n",
--			       smp_processor_id());
--			return;
--		}
--
--		paddr = page_to_phys(pend_page);
--		pr_info("CPU%d: using LPI pending table @%pa\n",
--			smp_processor_id(), &paddr);
--		gic_data_rdist()->pend_page = pend_page;
--	}
-+	if (!pend_page)
-+		return;
- 
- 	/* Disable LPIs */
- 	val = readl_relaxed(rbase + GICR_CTLR);
-@@ -2599,7 +2611,7 @@ static int its_vpe_init(struct its_vpe *vpe)
- 		return vpe_id;
- 
- 	/* Allocate VPT */
--	vpt_page = its_allocate_pending_table(GFP_KERNEL);
-+	vpt_page = its_allocate_pending_table(raw_smp_processor_id());
- 	if (!vpt_page) {
- 		its_vpe_id_free(vpe_id);
- 		return -ENOMEM;
-@@ -3282,6 +3294,16 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
- 	if (err)
- 		return err;
- 
-+	err = cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "irqchip/arm/gicv3:prepare",
-+				its_alloc_pend_page, NULL);
-+	if (err < 0) {
-+		pr_warn("ITS: Can't register CPU-hoplug callback.\n");
-+		return err;
-+	}
-+	err = its_alloc_pend_page(smp_processor_id());
-+	if (err < 0)
-+		return err;
-+
- 	list_for_each_entry(its, &its_nodes, entry)
- 		has_v4 |= its->is_v4;
- 
+ /*
 -- 
 2.18.0
 
