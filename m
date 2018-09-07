@@ -2,88 +2,130 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC16CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F6AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC8E20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:45:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DC8E20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id BDC2D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 16:47:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTZV5JNw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC2D2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbeIGV1M (ORCPT
+        id S1726443AbeIGV3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:27:12 -0400
-Received: from muru.com ([72.249.23.125]:55444 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbeIGV1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:27:12 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 4AD1280CF;
-        Fri,  7 Sep 2018 16:49:29 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 09:45:24 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] mtd: rawnand: ams-delta: Cleanups and
- optimizations
-Message-ID: <20180907164524.GH5662@atomide.com>
-References: <20180813223448.21316-1-jmkrzyszt@gmail.com>
- <20180820213904.13475-1-jmkrzyszt@gmail.com>
- <20180905084757.432e7c19@xps13>
- <1855340.fVHtouTg44@z50>
+        Fri, 7 Sep 2018 17:29:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35118 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbeIGV3J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:29:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 7-v6so7283897pgf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 09:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4Zcw7h74TEmUiVi34KaQtuJuhSGWP774pgj+PuL3Wl0=;
+        b=DTZV5JNwA9sIweofvVQe5vbG99OWt0I3Tj+FOHESPvG4hV9u+N58gQOnJdTT3u3SAx
+         4b2NtFmItVZe5DY9Yyhs+CZPwny6KWaxbLjn/mXJAzvGQzg7RHq+2QP+sLKFDGRStDzx
+         KdtPV9Ss7ESgwH9HkmtP+S4z9plqv/aYG8uPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4Zcw7h74TEmUiVi34KaQtuJuhSGWP774pgj+PuL3Wl0=;
+        b=C9958uKliGIyczQp5IVkJ2KYl7ZpObU1PGyU1Q8nPzhblnUkGAMWKV25N4MzulRmLp
+         ukleIFk6QSj2lh5S7nxY+5kE9zX4JGIh9VioI3rUQGJux324u3Lc4950p7xETe2z1SLZ
+         z3sXeJdYiHSf3xOuUPaRVCNPeJhawNaN+cTifWnb4+1WBovp0TmesZ/sFGIBEeiHQG+J
+         jic62TnM3nYbGa1/B2p6Z1lNYZOeWhfb0ZSseXS4icsxSqIp9+XCG39YOjFl1V1MvEDm
+         hHb47L+1/vEjvrWUF5j1gosz1ubFnO+w6lE1VbaCzKbr52HTXQAoAWyJRHPpor6+qCYu
+         A8MA==
+X-Gm-Message-State: APzg51ApFBk+5zR16QRhdUmiQiKWP0iY7eYO2xPzhdUHOH1S2u9TR67X
+        qcZY32fcslM4sP5TvDB9ija33tVqUH0=
+X-Google-Smtp-Source: ANB0VdYE7SmR9ckank+hKLbqot4GXANZB2eRM8uGLvrQDhKpbMkzgjj6hYQv38b0kCfmCvOtHoFPbA==
+X-Received: by 2002:a62:fd06:: with SMTP id p6-v6mr9490947pfh.167.1536338843746;
+        Fri, 07 Sep 2018 09:47:23 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm17497918pfp.6.2018.09.07.09.47.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 09:47:23 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 09:51:19 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     frowand.list@gmail.com
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] ARM: qcom_defconfig: Enable MAILBOX
+Message-ID: <20180907165119.GD3286@tuxbook-pro>
+References: <1536295488-12296-1-git-send-email-frowand.list@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1855340.fVHtouTg44@z50>
+In-Reply-To: <1536295488-12296-1-git-send-email-frowand.list@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu 06 Sep 21:44 PDT 2018, frowand.list@gmail.com wrote:
 
-* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180905 20:56]:
-> On Wednesday, September 5, 2018 8:47:57 AM CEST Miquel Raynal wrote:
-> > Patch 2/3 does not apply on nand/next. Indeed the driver does not look
-> > the same as in the diff.
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> That's because I built it on top of my former series from the mid of July, 
-> containing "[PATCH v2 2/3 v4] mtd: rawnand: ams-delta: use GPIO lookup table". 
-> It was acked by you, Miquel, and supposed to be merged via linux-omap tree.
-
-Hmm I thought the plan was for dependencies to clear and then
-merge the rest via various driver trees.. Or at least I don't have
-the patch above tagged anywhere for me to merge. Then again, I
-try to forget everything posted before -rc1 just to stay sane :)
-
-> > I don't see any changes on my side that could
-> > explain this so perhaps you could rebase on top of 4.19-rc2 (or
-> > nand/next, as you wish) and resend the series?
+> Problem:
+> ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
+> added a "depends on MAILBOX") to RPMSG_QCOM_SMD, thus RPMSG_QCOM_SMD
+> becomes unset since MAILBOX was not enabled in qcom_defconfig and is
+> not otherwise selected for the dragonboard.  When the resulting
+> kernel is booted the mmc device which contains the root file system
+> is not available.
 > 
-> As far as I can see, Tony hasn't applied that series yet, so maybe I can still 
-> move that patch out of there and insert it into this series in front of the 
-> other 3 patches and resend. That would however make patch 3/3 of that old 
-> series depend on this one.
+> Fix:
+> add CONFIG_MAILBOX to qcom_defconfig
 > 
-> Tony, what do you think?
+> Fixes: ab460a2e72da ("rpmsg: qcom_smd: Access APCS through mailbox framework"
+> added a "depends on MAILBOX")
+> 
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 
-Yes please resend based on v4.19-rc1 or MTD next. If there
-are still pending dependencies, please let us know and we can
-set up an immutable branch against v4.19-rc1 with those for
-MTD and me to merge in as needed.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+> 
+> Bjorn suggested that multi_v7_defconfig might need this same fix
+> but I don't have a target to test on so I have not included that
+> change in this patch
+> 
+
+multi_v7_defconfig should boot on 8974 as well, but I would not be a
+surprise if there are other things missing there.
 
 Regards,
+Bjorn
 
-Tony
+> Tested on Qualcomm APQ8074 Dragonboard
+> 
+>  arch/arm/configs/qcom_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+> index 6aa7046fb91f..bd6440f23493 100644
+> --- a/arch/arm/configs/qcom_defconfig
+> +++ b/arch/arm/configs/qcom_defconfig
+> @@ -207,6 +207,7 @@ CONFIG_MSM_MMCC_8974=y
+>  CONFIG_MSM_IOMMU=y
+>  CONFIG_HWSPINLOCK=y
+>  CONFIG_HWSPINLOCK_QCOM=y
+> +CONFIG_MAILBOX=y
+>  CONFIG_REMOTEPROC=y
+>  CONFIG_QCOM_ADSP_PIL=y
+>  CONFIG_QCOM_Q6V5_PIL=y
+> -- 
+> Frank Rowand <frank.rowand@sony.com>
+> 
