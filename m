@@ -2,115 +2,94 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB9FC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0AAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2AE2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2AE2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 764A02075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764A02075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbeIGTJd (ORCPT
+        id S1729870AbeIGTKB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:09:33 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:45468 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeIGTJd (ORCPT
+        Fri, 7 Sep 2018 15:10:01 -0400
+Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:40781 "EHLO
+        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727783AbeIGTKB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:09:33 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fyHjy-0007PH-AR; Fri, 07 Sep 2018 10:28:06 -0400
-Message-ID: <b686a7e397b992cf7a32b2e5e7c3503919a8c717.camel@surriel.com>
-Subject: Re: [RFC PATCH 1/2] mm: move tlb_table_flush to tlb_flush_mmu_free
-From:   Rik van Riel <riel@surriel.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, jannh@google.com, ascannell@google.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch@vger.kernel.org
-Date:   Fri, 07 Sep 2018 10:28:05 -0400
-In-Reply-To: <20180907134359.GA12187@arm.com>
-References: <20180823084709.19717-1-npiggin@gmail.com>
-         <20180823084709.19717-2-npiggin@gmail.com>
-         <fa7c625dfbbe103b37bc3ab5ea4b7283fd13b998.camel@surriel.com>
-         <20180907134359.GA12187@arm.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-IFHu9I6W7+At+9sCwKHu"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Fri, 7 Sep 2018 15:10:01 -0400
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp02.blacknight.com (Postfix) with ESMTPS id 3A69F986EE
+        for <linux-kernel@vger.kernel.org>; Fri,  7 Sep 2018 14:28:48 +0000 (UTC)
+Received: (qmail 8748 invoked from network); 7 Sep 2018 14:28:48 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.88])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 7 Sep 2018 14:28:48 -0000
+Date:   Fri, 7 Sep 2018 15:28:46 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] sched/numa: Do not move imbalanced load purely on
+ the basis of an idle CPU
+Message-ID: <20180907142846.GG1719@techsingularity.net>
+References: <20180907101139.20760-1-mgorman@techsingularity.net>
+ <20180907101139.20760-5-mgorman@techsingularity.net>
+ <20180907113309.GU24106@hirez.programming.kicks-ass.net>
+ <20180907123739.GE1719@techsingularity.net>
+ <20180907124432.GN24082@hirez.programming.kicks-ass.net>
+ <20180907134201.GC3995@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180907134201.GC3995@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 07, 2018 at 07:12:01PM +0530, Srikar Dronamraju wrote:
+> > Yeah, I was afraid it would.. Srikar, can you also evaluate, I suspect
+> > we'll have to pick one of these two patches.
+> 
+> I can surely run some benchmarks between the two patches.
+> However comparing  Mel's patch with
+> http://lkml.kernel.org/r/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> 
+> Mel's patch
+> 
+>   	if (!cur) {
+>  -		if (maymove || imp > env->best_imp)
+>  +		if (maymove)
+>   			goto assign;
+>   		else
+> http://lkml.kernel.org/r/1533276841-16341-4-git-send-email-srikar@linux.vnet.ibm.com
+> 
+> 
+>  	if (!cur) {
+> -		if (maymove || imp > env->best_imp)
+> +		if (maymove && moveimp >= env->best_imp)
+>  			goto assign;
+>  		else
+> 
+> In Mel's fix, if we already found a candidate task to swap and then encounter a
+> idle cpu, we are going ahead and overwriting the swap candidate. There is
+> always a chance that swap candidate is a better fit than moving to idle cpu.
+> 
 
---=-IFHu9I6W7+At+9sCwKHu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+There is a chance but to find out, the task has to be dequeued and requeued
+on a maybe. An idle CPU is less disruptive and the only task affected is
+migrating to the preferred node where, based on previous fault behaviour,
+should have better locality. It's also a simplier patch but I'm going to
+be biased towards my own patch, the tests will decide one way or the other.
 
-On Fri, 2018-09-07 at 14:44 +0100, Will Deacon wrote:
-> On Thu, Sep 06, 2018 at 04:29:59PM -0400, Rik van Riel wrote:
-> > On Thu, 2018-08-23 at 18:47 +1000, Nicholas Piggin wrote:
-> > > There is no need to call this from tlb_flush_mmu_tlbonly, it
-> > > logically belongs with tlb_flush_mmu_free. This allows some
-> > > code consolidation with a subsequent fix.
-> > >=20
-> > > Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-> >=20
-> > Reviewed-by: Rik van Riel <riel@surriel.com>
-> >=20
-> > This patch also fixes an infinite recursion bug
-> > with CONFIG_HAVE_RCU_TABLE_FREE enabled, which
-> > has this call trace:
-> >=20
-> > tlb_table_flush
-> >   -> tlb_table_invalidate
-> >      -> tlb_flush_mmu_tlbonly
-> >         -> tlb_table_flush
-> >            -> ... (infinite recursion)
-> >=20
-> > This should probably be applied sooner rather than
-> > later.
->=20
-> It's already in mainline with a cc stable afaict.
-
-Sure enough, it is.
-
-I guess I have too many kernel trees on this
-system, and was looking at the wrong one somehow.
-
---=20
-All Rights Reversed.
-
---=-IFHu9I6W7+At+9sCwKHu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluSivUACgkQznnekoTE
-3oPhFwf/Qd/rrFLYEKAcJENv34o7Gk0YNVmPKKhyg9sj8nteRac1mnyeVpqmXfWW
-4yDdUx6glji8FWttmnTcpbb/frJlwsKFYBsoYDxBc/D73sTf+3Q8aAbhYAYGzcDq
-GNANhQ1BQXNHL5YfEZtpCFha66ZpAAPEMr+1PI6/k4oMWIOW+EqXko92WP+Vwr9I
-jfYaqKq9UfwFmy/ftaynlXP8yQjlSc2mYTA1SOEuAyiquvBH3TZo2f7bALCA1wP/
-i0lLnEPvFwlgxXDg5l2d/aQxbW4j2KnFLZ3AJMZpPhTfcWanSVSpkxOfZlmXQnPp
-DgV4H7ZrKkvWgRg8+/l1CpXX4ulpRA==
-=4rvN
------END PGP SIGNATURE-----
-
---=-IFHu9I6W7+At+9sCwKHu--
-
+-- 
+Mel Gorman
+SUSE Labs
