@@ -2,183 +2,63 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F63C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FA1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24CE22075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:32:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M0NVfrBV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CE22075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id D8D352075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:32:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D352075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeIGWOp (ORCPT
+        id S1727723AbeIGWOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:14:45 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55094 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbeIGWOp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:14:45 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w87HTK1F102495;
-        Fri, 7 Sep 2018 17:32:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=+Nav+lhIqvmn3zpOqX66qqLT+Diq1MGdmodYs3nA00U=;
- b=M0NVfrBVkloV2t9YuKPnr7DlT+C/r1TpM56IwK0sQdMTx1DWu9Gg5TXtAZT/A8ClhM6g
- TeP77slqTSo89ogA28f976RgscJT6FJfeQfqnnunI4SlJn6uNGtPCG9gF87az5mCggO4
- ADdz21NYewwISWmp7ySCObO7XypCoHpKuM8wCxqqBRylBGRM9YsTn1pedLM/9H4W8DpB
- kks6qlbeAd6iv1cI0OfTXog85ZmWBL6/vX12ygMhRZqhfeFk9oSb5pqvIcL+zKKyBfVv
- x0dUbu/X2dv4KyDYrcm1zPqQDp2YbIoRPHDfluf0alN7hLzsr+9c+eIlizHPSAgT+PYE zg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2m7jqq3xf4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Sep 2018 17:32:41 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w87HWZb4012665
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Sep 2018 17:32:35 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w87HWZIq022596;
-        Fri, 7 Sep 2018 17:32:35 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 07 Sep 2018 10:32:35 -0700
-Subject: Re: [PATCH AUTOSEL 4.18 69/88] xen-netfront: fix queue name setting
-To:     Sasha Levin <Alexander.Levin@microsoft.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     vkuznets <vkuznets@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>
-References: <20180907003547.57567-1-alexander.levin@microsoft.com>
- <20180907003547.57567-69-alexander.levin@microsoft.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <5f24d66d-57d4-4424-d524-58a6d0687f02@oracle.com>
-Date:   Fri, 7 Sep 2018 13:33:55 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 7 Sep 2018 18:14:53 -0400
+Received: from namei.org ([65.99.196.166]:46392 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727261AbeIGWOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 18:14:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w87HWoM7027269;
+        Fri, 7 Sep 2018 17:32:50 GMT
+Date:   Sat, 8 Sep 2018 03:32:50 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+cc:     David Howells <dhowells@redhat.com>,
+        Denis Kenzior <denkenz@gmail.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+In-Reply-To: <25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
+Message-ID: <alpine.LRH.2.21.1809080332420.25924@namei.org>
+References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <alpine.LRH.2.21.1809061007140.23269@namei.org> <25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180907003547.57567-69-alexander.levin@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9009 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809070174
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 08:36 PM, Sasha Levin wrote:
-> From: Vitaly Kuznetsov <vkuznets@redhat.com>
->
-> [ Upstream commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 ]
->
-> Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
-> open") changed the initialization order: xennet_create_queues() now
-> happens before we do register_netdev() so using netdev->name in
-> xennet_init_queue() is incorrect, we end up with the following in
-> /proc/interrupts:
->
->  60:        139          0   xen-dyn    -event     eth%d-q0-tx
->  61:        265          0   xen-dyn    -event     eth%d-q0-rx
->  62:        234          0   xen-dyn    -event     eth%d-q1-tx
->  63:          1          0   xen-dyn    -event     eth%d-q1-rx
->
-> and this looks ugly. Actually, using early netdev name (even when it's
-> already set) is also not ideal: nowadays we tend to rename eth devices
-> and queue name may end up not corresponding to the netdev name.
->
-> Use nodename from xenbus device for queue naming: this can't change in VM's
-> lifetime. Now /proc/interrupts looks like
->
->  62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
->  63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
->  64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
->  65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
->
-> Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+On Fri, 7 Sep 2018, Marcel Holtmann wrote:
 
+> Hi James,
+> 
+> >> Here's a set of patches that does the following, if you could pull it please:
+> > 
+> > Thanks, it would be good to see more review / acks, though.
+> 
+> so I have reviewed and tested this code. In addition, we have test cases for it in ELL (embedded linux library).
+> 
+> Tested-by: Marcel Holtmann <marcel@holtmann.org>
+> Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
 
-You also want to pull commit 21f2706b20100bb3db378461ab9b8e2035309b5b.
+Thanks!
 
--boris
-
-
-> ---
->  drivers/net/xen-netfront.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-> index 9dd2ca62d84a..5a14b917eee2 100644
-> --- a/drivers/net/xen-netfront.c
-> +++ b/drivers/net/xen-netfront.c
-> @@ -1610,7 +1610,7 @@ static int xennet_init_queue(struct netfront_queue *queue)
->  	timer_setup(&queue->rx_refill_timer, rx_refill_timeout, 0);
->  
->  	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
-> -		 queue->info->netdev->name, queue->id);
-> +		 queue->info->xbdev->nodename, queue->id);
->  
->  	/* Initialise tx_skbs as a free chain containing every entry. */
->  	queue->tx_skb_freelist = 0;
+-- 
+James Morris
+<jmorris@namei.org>
 
