@@ -2,85 +2,121 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BED7C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A890DC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D053B204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D053B204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 5CAA12075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:06:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CAA12075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbeIGVrR (ORCPT
+        id S1726763AbeIGVsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:47:17 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52239 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeIGVrR (ORCPT
+        Fri, 7 Sep 2018 17:48:41 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:52350 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeIGVsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:47:17 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fyKCB-0003jr-RT; Fri, 07 Sep 2018 18:05:24 +0100
-Message-ID: <1536339923.3024.112.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 31/43] mm: fix cache mode tracking in
- vm_insert_mixed()
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Date:   Fri, 07 Sep 2018 18:05:23 +0100
-In-Reply-To: <20180814171519.142204859@linuxfoundation.org>
-References: <20180814171517.014285600@linuxfoundation.org>
-         <20180814171519.142204859@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Sep 2018 17:48:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 856CAC083E;
+        Fri,  7 Sep 2018 17:06:49 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id r7GgfzySB-I9; Fri,  7 Sep 2018 17:06:49 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 9EF38C108F;
+        Fri,  7 Sep 2018 17:06:37 +0000 (UTC)
+Subject: Re: [PATCH 1/2] Fix cg_read_strcmp()
+To:     jgkamat@fb.com
+Cc:     linux-kselftest@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org, jaygkamat@gmail.com,
+        Shuah Khan <shuah@kernel.org>
+References: <20180905010827.27743-1-jgkamat@fb.com>
+ <20180907164924.13789-1-jgkamat@fb.com>
+ <20180907164924.13789-2-jgkamat@fb.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <bed84882-b194-7e45-0db6-08b02bc672d5@kernel.org>
+Date:   Fri, 7 Sep 2018 11:06:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180907164924.13789-2-jgkamat@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-14 at 19:18 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
+On 09/07/2018 10:49 AM, jgkamat@fb.com wrote:
+> From: Jay Kamat <jgkamat@fb.com>
 > 
-> ------------------
+> Fix a couple issues with cg_read_strcmp(), to improve correctness of
+> cgroup tests
+> - Fix cg_read_strcmp() always returning 0 for empty "needle" strings
+> - Fix a memory leak in cg_read_strcmp()
 > 
-> From: Dan Williams <dan.j.williams@intel.com>
+> Fixes: 84092dbcf901 ("selftests: cgroup: add memory controller self-tests")
 > 
-> commit 87744ab3832b83ba71b931f86f9cfdb000d07da5 upstream
+> Signed-off-by: Jay Kamat <jgkamat@fb.com>
+> ---
+>  tools/testing/selftests/cgroup/cgroup_util.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
 > 
-> vm_insert_mixed() unlike vm_insert_pfn_prot() and vmf_insert_pfn_pmd(),
-> fails to check the pgprot_t it uses for the mapping against the one
-> recorded in the memtype tracking tree.  Add the missing call to
-> track_pfn_insert() to preclude cases where incompatible aliased mappings
-> are established for a given physical address range.
-[...]
+> diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+> index 1e9e3c470561..8b644ea39725 100644
+> --- a/tools/testing/selftests/cgroup/cgroup_util.c
+> +++ b/tools/testing/selftests/cgroup/cgroup_util.c
+> @@ -89,17 +89,28 @@ int cg_read(const char *cgroup, const char *control, char *buf, size_t len)
+>  int cg_read_strcmp(const char *cgroup, const char *control,
+>  		   const char *expected)
+>  {
+> -	size_t size = strlen(expected) + 1;
+> +	size_t size;
+>  	char *buf;
+> +	int ret;
+> +
+> +	/* Handle the case of comparing against empty string */
+> +	if (!expected)
+> +		size = 32;
 
-This apparently breaks a number of DRM drivers.  The upstream fixes
-are:
+This doesn't look right. I would think expected shouldn't be null?
+It gets used below.
 
-8ef4227615e1 x86/io: add interface to reserve io memtype for a resource range. (v1.1)
-7cf321d118a8 drm/drivers: add support for using the arch wc mapping API.
+> +	else
+> +		size = strlen(expected) + 1;
+>  
+>  	buf = malloc(size);
+>  	if (!buf)
+>  		return -1;
+>  
+> -	if (cg_read(cgroup, control, buf, size))
+> +	if (cg_read(cgroup, control, buf, size)) {
+> +		free(buf);
+>  		return -1;
+> +	}
+>  
+> -	return strcmp(expected, buf);
+> +	ret = strcmp(expected, buf);
 
-They appear to apply cleanly to 4.4-stable.  They are included in 4.9
-so no other stable branch needs them.
+If expected is null, what's the point in running the test?
+Is  empty "needle" string a valid test scenario?
 
-Ben.
+> +	free(buf);
+> +	return ret;
+>  }
+>  
+>  int cg_read_strstr(const char *cgroup, const char *control, const char *needle)
+> 
 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+thanks,
+-- Shuah
