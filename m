@@ -6,112 +6,81 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B24C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDB1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44342077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:34:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44342077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 708582077C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708582077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeIGPO3 (ORCPT
+        id S1728596AbeIGPPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:14:29 -0400
-Received: from sauhun.de ([88.99.104.3]:52788 "EHLO pokefinder.org"
+        Fri, 7 Sep 2018 11:15:02 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52862 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727651AbeIGPO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:14:29 -0400
-Received: from localhost (p54B3324C.dip0.t-ipconnect.de [84.179.50.76])
-        by pokefinder.org (Postfix) with ESMTPSA id 595DD2C27DA;
-        Fri,  7 Sep 2018 12:34:08 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 12:34:07 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        linux-i2c@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Heiko Schocher <hs@denx.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        u-boot@lists.denx.de, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] i2c: xiic: Record xilinx i2c with Zynq fragment
-Message-ID: <20180907103407.GA2310@kunai>
-References: <a36257084b0816bd84bb1caacdcde586b7fcb007.1536300108.git.michal.simek@xilinx.com>
+        id S1726295AbeIGPPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 11:15:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 03:34:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,342,1531810800"; 
+   d="scan'208";a="87997650"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 07 Sep 2018 03:34:39 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 07 Sep 2018 13:34:38 +0300
+Date:   Fri, 7 Sep 2018 13:34:38 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] usb: typec: don't disable sink or source on
+ initialization
+Message-ID: <20180907103438.GI25121@kuha.fi.intel.com>
+References: <20180906192644.24587-1-angus@akkea.ca>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a36257084b0816bd84bb1caacdcde586b7fcb007.1536300108.git.michal.simek@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180906192644.24587-1-angus@akkea.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++Guenter
 
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 07, 2018 at 08:02:05AM +0200, Michal Simek wrote:
-> Include xilinx soft i2c controller to Zynq fragment to make clear who is
-> responsible for it.
->=20
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-
-Cool, thanks!
-
+On Thu, Sep 06, 2018 at 01:26:44PM -0600, Angus Ainslie (Purism) wrote:
+> If the board is being powered by USB disabling the source and sink
+> can remove power from the board. Default to source and sink enabled.
+> 
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 > ---
->=20
-> Normally we are handling all these drivers via one fragment to make sure
-> that there is only one central contact. Another reason is that people are
-> changing and their responsibility is moving time to time.
+>  drivers/usb/typec/tcpm.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+> index ca7bedb46f7f..a1b819cf31da 100644
+> --- a/drivers/usb/typec/tcpm.c
+> +++ b/drivers/usb/typec/tcpm.c
+> @@ -2462,9 +2462,11 @@ static int tcpm_init_vbus(struct tcpm_port *port)
+>  {
+>  	int ret;
+>  
+> -	ret = port->tcpc->set_vbus(port->tcpc, false, false);
+> -	port->vbus_source = false;
+> -	port->vbus_charge = false;
+> +	/* default to source and sink enabled in case USB is our only power
+> +	 * source */
+> +	ret = port->tcpc->set_vbus(port->tcpc, true, true);
+> +	port->vbus_source = true;
+> +	port->vbus_charge = true;
+>  	return ret;
+>  }
 
-This is fine with me, but what about sorting the entries? I don't care
-much because it is "your" entry, yet I thought I mention it. Let me know
-if I should apply this as-is nonetheless.
-
->=20
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9ad052aeac39..d870cb57c887 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2311,6 +2311,7 @@ F:	drivers/clocksource/cadence_ttc_timer.c
->  F:	drivers/i2c/busses/i2c-cadence.c
->  F:	drivers/mmc/host/sdhci-of-arasan.c
->  F:	drivers/edac/synopsys_edac.c
-> +F:	drivers/i2c/busses/i2c-xiic.c
-> =20
->  ARM64 PORT (AARCH64 ARCHITECTURE)
->  M:	Catalin Marinas <catalin.marinas@arm.com>
-> --=20
-> 1.9.1
->=20
-
---cWoXeonUoKmBZSoM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluSVBsACgkQFA3kzBSg
-KbbEug//buRTxmtHceupLcIT66UIG6brSA1TTPw70N4k1xCG+KA7jWZQLyGDkMeR
-1ugM2doAtD2gMt3BJmqJ5S1K/RuYB5ACQhMt7FRUjtuvIggBkoqwRXUdX209/TE9
-3Kxn8Kv8sgbWRKTFVOts8UdJqjxG82zzc6yp3WLfoG5i/X8ZR7ZqAvQGgnvmi/Tl
-CyznZs9SiODOI8iN+Pcjb+uKfiy0l49RXm9Uv5ABOL3OSkGx6I80PsnrKaMx8cmU
-a9h3Df9jsr+G0qUsZnmT43kgfBFN3V8KJaE4XcreMh5jLcjozmr+xDnmwouyISWg
-Z0Wa1TMnokieIqo6IMLLVdUyLRZ3uOtDdu0BqKk9Rl4d+UB0c42ek3fvz0krciDG
-pj8FLKdPFVWZnH25GmufCw/7NmYFkNYhx0CY35m2f+91ZFZyjmwbzxn45Q6Ge03x
-TwkvkWvVLNlxoK+lS1jxArwKQx/vdX+/91Scwjypa5sZA+VzGfCQ3H9+ZUYBp3Ph
-usiFgryGZBCu79GWmzkNIhsq//hHnlEIQIOQwbYTYuq4NW9VXW2zVqgQZZdhUWGG
-qmvJheYEbLqVMQTrOVJ6yVb5UvCZ67a6JI+EfxCdeqbYO1gTQ7m+yiYVl73sPHyn
-rtzGhJTA3iNeXvLvxd771gShUShMryMpMdKWfCgfuVvgaDHmP8U=
-=IS0r
------END PGP SIGNATURE-----
-
---cWoXeonUoKmBZSoM--
+-- 
+heikki
