@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35BAC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE188C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F5620645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F5620645
+	by mail.kernel.org (Postfix) with ESMTP id 8BBC02075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBC02075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbeIHCHV (ORCPT
+        id S1728504AbeIHCHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:07:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46812 "EHLO
+        Fri, 7 Sep 2018 22:07:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46818 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727764AbeIHCHV (ORCPT
+        with ESMTP id S1727789AbeIHCHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:07:21 -0400
+        Fri, 7 Sep 2018 22:07:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBDC5EF6;
-        Fri,  7 Sep 2018 21:24:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48745EF6;
+        Fri,  7 Sep 2018 21:24:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.18 143/145] udf: Fix mounting of Win7 created UDF filesystems
-Date:   Fri,  7 Sep 2018 23:10:09 +0200
-Message-Id: <20180907210914.224791447@linuxfoundation.org>
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.18 144/145] cpuidle: menu: Retain tick when shallow state is selected
+Date:   Fri,  7 Sep 2018 23:10:10 +0200
+Message-Id: <20180907210914.266185643@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -49,111 +50,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit ee4af50ca94f58afc3532662779b9cf80bbe27c8 upstream.
+commit 757ab15c3f4968b5a29caf3fe8b67660ce84c3cd upstream.
 
-Win7 is creating UDF filesystems with single partition with number 8192.
-Current partition descriptor scanning code does not handle this well as
-it incorrectly assumes that partition numbers will form mostly contiguous
-space of small numbers. This results in unmountable media due to errors
-like:
+The case addressed by commit 5ef499cd571c (cpuidle: menu: Handle
+stopped tick more aggressively) in the stopped tick case is present
+when the tick has not been stopped yet too.  Namely, if only two CPU
+idle states, shallow state A with target residency significantly
+below the tick boundary and deep state B with target residency
+significantly above it, are available and the predicted idle
+duration is above the tick boundary, but below the target residency
+of state B, state A will be selected and the CPU may spend indefinite
+amount of time in it, which is not quite energy-efficient.
 
-UDF-fs: error (device dm-1): udf_read_tagged: tag version 0x0000 != 0x0002 || 0x0003, block 0
-UDF-fs: warning (device dm-1): udf_fill_super: No fileset found
+However, if the tick has not been stopped yet and the governor is
+about to select a shallow idle state for the CPU even though the idle
+duration predicted by it is above the tick boundary, it should be
+fine to wake up the CPU early, so the tick can be retained then and
+the governor will have a chance to select a deeper state when it runs
+next time.
 
-Fix the problem by handling partition descriptors in a way that sparse
-partition numbering does not matter.
+[Note that when this really happens, it will make the idle duration
+ predictor believe that the CPU might be idle longer than predicted,
+ which will make it more likely to predict longer idle durations going
+ forward, but that will also cause deeper idle states to be selected
+ going forward, on average, which is what's needed here.]
 
-Reported-and-tested-by: jean-luc malet <jeanluc.malet@gmail.com>
-CC: stable@vger.kernel.org
-Fixes: 7b78fd02fb19530fd101ae137a1f46aa466d9bb6
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
+Reported-by: Leo Yan <leo.yan@linaro.org>
+Cc: 4.17+ <stable@vger.kernel.org> # 4.17+: 5ef499cd571c (cpuidle: menu: Handle ...)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/udf/super.c |   31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -1570,10 +1570,16 @@ static void udf_load_logicalvolint(struc
-  */
- #define PART_DESC_ALLOC_STEP 32
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -380,9 +380,20 @@ static int menu_select(struct cpuidle_dr
+ 		if (idx == -1)
+ 			idx = i; /* first enabled state */
+ 		if (s->target_residency > data->predicted_us) {
+-			if (!tick_nohz_tick_stopped())
++			if (data->predicted_us < TICK_USEC)
+ 				break;
  
-+struct part_desc_seq_scan_data {
-+	struct udf_vds_record rec;
-+	u32 partnum;
-+};
++			if (!tick_nohz_tick_stopped()) {
++				/*
++				 * If the state selected so far is shallow,
++				 * waking up early won't hurt, so retain the
++				 * tick in that case and let the governor run
++				 * again in the next iteration of the loop.
++				 */
++				expected_interval = drv->states[idx].target_residency;
++				break;
++			}
 +
- struct desc_seq_scan_data {
- 	struct udf_vds_record vds[VDS_POS_LENGTH];
- 	unsigned int size_part_descs;
--	struct udf_vds_record *part_descs_loc;
-+	unsigned int num_part_descs;
-+	struct part_desc_seq_scan_data *part_descs_loc;
- };
- 
- static struct udf_vds_record *handle_partition_descriptor(
-@@ -1582,10 +1588,14 @@ static struct udf_vds_record *handle_par
- {
- 	struct partitionDesc *desc = (struct partitionDesc *)bh->b_data;
- 	int partnum;
-+	int i;
- 
- 	partnum = le16_to_cpu(desc->partitionNumber);
--	if (partnum >= data->size_part_descs) {
--		struct udf_vds_record *new_loc;
-+	for (i = 0; i < data->num_part_descs; i++)
-+		if (partnum == data->part_descs_loc[i].partnum)
-+			return &(data->part_descs_loc[i].rec);
-+	if (data->num_part_descs >= data->size_part_descs) {
-+		struct part_desc_seq_scan_data *new_loc;
- 		unsigned int new_size = ALIGN(partnum, PART_DESC_ALLOC_STEP);
- 
- 		new_loc = kcalloc(new_size, sizeof(*new_loc), GFP_KERNEL);
-@@ -1597,7 +1607,7 @@ static struct udf_vds_record *handle_par
- 		data->part_descs_loc = new_loc;
- 		data->size_part_descs = new_size;
- 	}
--	return &(data->part_descs_loc[partnum]);
-+	return &(data->part_descs_loc[data->num_part_descs++].rec);
- }
- 
- 
-@@ -1647,6 +1657,7 @@ static noinline int udf_process_sequence
- 
- 	memset(data.vds, 0, sizeof(struct udf_vds_record) * VDS_POS_LENGTH);
- 	data.size_part_descs = PART_DESC_ALLOC_STEP;
-+	data.num_part_descs = 0;
- 	data.part_descs_loc = kcalloc(data.size_part_descs,
- 				      sizeof(*data.part_descs_loc),
- 				      GFP_KERNEL);
-@@ -1658,7 +1669,6 @@ static noinline int udf_process_sequence
- 	 * are in it.
- 	 */
- 	for (; (!done && block <= lastblock); block++) {
--
- 		bh = udf_read_tagged(sb, block, block, &ident);
- 		if (!bh)
- 			break;
-@@ -1730,13 +1740,10 @@ static noinline int udf_process_sequence
- 	}
- 
- 	/* Now handle prevailing Partition Descriptors */
--	for (i = 0; i < data.size_part_descs; i++) {
--		if (data.part_descs_loc[i].block) {
--			ret = udf_load_partdesc(sb,
--						data.part_descs_loc[i].block);
--			if (ret < 0)
--				return ret;
--		}
-+	for (i = 0; i < data.num_part_descs; i++) {
-+		ret = udf_load_partdesc(sb, data.part_descs_loc[i].rec.block);
-+		if (ret < 0)
-+			return ret;
- 	}
- 
- 	return 0;
+ 			/*
+ 			 * If the state selected so far is shallow and this
+ 			 * state's target residency matches the time till the
 
 
