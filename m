@@ -4,85 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C60C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4590AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7409A204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0328204EC
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:07:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="edgAGnAm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7409A204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhRaqV2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0328204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeIGVtE (ORCPT
+        id S1727282AbeIGVtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 17:49:04 -0400
-Received: from m12-17.163.com ([220.181.12.17]:44044 "EHLO m12-17.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725963AbeIGVtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 17:49:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=B72PEnuV855N8cV59A
-        1XctToscYSGNTF+WhMvsFSYrs=; b=edgAGnAm7piV3/P3NViQVj/HXNfJOQ+G6p
-        QciNblhkA28lMqeic1zJ0KYrLJspNaSQUq4Y/51A8FyzgiePvuKIb4csBS78ZOlt
-        M2VRO2MjNk0SGKL2Dv/PPJUTkVL883NmWLMSG/LNBpjq4D6nFDW3SSKVEXgpqeJr
-        Fmnqnn70A=
-Received: from localhost (unknown [183.156.140.9])
-        by smtp13 (Coremail) with SMTP id EcCowACXz98vsJJbG45MDQ--.377S5;
-        Sat, 08 Sep 2018 01:06:57 +0800 (CST)
-From:   jun qian <hangdianqj@163.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Cc:     oss-drivers@netronome.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jun qian <hangdianqj@163.com>
-Subject: [PATCH] nfp: replace spin_lock_bh with spin_lock in tasklet callback
-Date:   Fri,  7 Sep 2018 10:01:09 -0700
-Message-Id: <20180907170109.48150-1-hangdianqj@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: EcCowACXz98vsJJbG45MDQ--.377S5
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr43KryDtF1UWw15XFykAFb_yoWfurbE9w
-        1jgFyfGayDJF1Fkw12gr4aq34Ykw1DXr1fuF97KaySv3yDJFyrCw1kWF98JrnruF47Casr
-        Xr12vFy2y342vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU01GQDUUUUU==
-X-Originating-IP: [183.156.140.9]
-X-CM-SenderInfo: pkdqwvpldq1yi6rwjhhfrp/1tbiJxK6R1XloAEGawAAs0
+        Fri, 7 Sep 2018 17:49:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36672 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbeIGVtg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 17:49:36 -0400
+Received: by mail-wm0-f66.google.com with SMTP id j192-v6so15393537wmj.1;
+        Fri, 07 Sep 2018 10:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4z7lfRkt8clK10PtitRKJeyibyfa9VlNkLbMmorMb+w=;
+        b=WhRaqV2B6OnkZ7IYHS99H2UOk/0lH5JGZwHVNeap9k6FgmjTFfAqHhiPz5TwRCOT9/
+         IDXAWTuHxchXv0zrZqawzlCtOIsb4RaZPiE6ktCh/WsAwbuRUBAMkZQnKK3bjCEupoUH
+         50+ZQ0ggmbrquMk5nxs1a36HiSpYpMqWONn2RhzHkLG3VrWXdI2KgvpPeNynRaECKphc
+         JXf39Ktl+deb3ARSDtiSZ4OmYjbh78mTGLJqbAigKUFF4cCg4CFLxpuZ9iZ/sO8HYUOH
+         udNJCavOQovKVbb/mA4Zeu+GHyGB7rLT83riKGDlfIF71Xpl9NCmOiTH9rAKe9HKlda0
+         Jgbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4z7lfRkt8clK10PtitRKJeyibyfa9VlNkLbMmorMb+w=;
+        b=AulrcMnd54m50KRJHK3dVWMUuy5/YmLVE9YBKEqoy/ZJ43NVErgAx5Xv8UfkO+e7Id
+         gEgrpfvq/2p/zB+pVatTfdg+Y9o4zepfeEf77LxD6GjBaDfxK/xTFwEmc+DaJ4wKATgc
+         1U4RSb12FGrbq2J5pkv+702Tg0LFTkwY5fXPlhj3tk6NxCGq5mSA/OUmdEZHlDp1fL3X
+         zykYuT4TS5LAyX6kCTFo4+BPo8TTOpsclt6SJFyGE3boXE7Z90hVnZG4Xmq6jC9lb58h
+         SXbb8UDVTt3JiF2O2DImRLqe8HnSyJqymdxS+zHQEcScgnmh08CU4yCM++h19meimNDH
+         jMLQ==
+X-Gm-Message-State: APzg51CZO+dP0007VHN9q7PB/uvvvvs46CTw07UVG43xbarMEcaIFiMm
+        MXpVwe9L7U7XEts+ykSc1Eb7DHdH
+X-Google-Smtp-Source: ANB0VdZpOQwaPCqVhE0Y3LqiJ8XDw8FiaMU/Co01pZlhvsvSt2kvVUHXBj50UdtPmwB2nkdtXKEyGA==
+X-Received: by 2002:a1c:578a:: with SMTP id l132-v6mr5964512wmb.16.1536340063856;
+        Fri, 07 Sep 2018 10:07:43 -0700 (PDT)
+Received: from orange.redhat.com ([213.175.37.12])
+        by smtp.gmail.com with ESMTPSA id l7-v6sm11003167wrt.67.2018.09.07.10.07.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Sep 2018 10:07:43 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 4.19-rc3
+Date:   Fri,  7 Sep 2018 19:06:43 +0200
+Message-Id: <20180907170643.18214-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As you are already in a tasklet, it is unnecessary to call spin_lock_bh.
+Hi Linus,
 
-Signed-off-by: jun qian <hangdianqj@163.com>
----
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-index a8b9fbab5f73..084c983ec3c2 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -2075,10 +2075,10 @@ static void nfp_ctrl_poll(unsigned long arg)
- {
- 	struct nfp_net_r_vector *r_vec = (void *)arg;
- 
--	spin_lock_bh(&r_vec->lock);
-+	spin_lock(&r_vec->lock);
- 	nfp_net_tx_complete(r_vec->tx_ring, 0);
- 	__nfp_ctrl_tx_queued(r_vec);
--	spin_unlock_bh(&r_vec->lock);
-+	spin_unlock(&r_vec->lock);
- 
- 	nfp_ctrl_rx(r_vec);
- 
--- 
-2.17.1
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
+are available in the Git repository at:
 
+  https://github.com/ceph/ceph-client.git tags/ceph-for-4.19-rc3
 
+for you to fetch changes up to e92c0eaf754310f9f31e9229a3f7274a67478f82:
+
+  rbd: support cloning across namespaces (2018-09-06 16:18:04 +0200)
+
+----------------------------------------------------------------
+Two rbd patches to complete support for images within namespaces that
+went into -rc1 and a use-after-free fix.
+
+The rbd changes have been sitting in a branch for quite a while but
+couldn't be included into the -rc1 pull request because of a pending
+wire protocol backwards compatibility fixup that only got committed
+early this week.
+
+Said fixup ended up being really trivial -- just an extra byte added,
+so I decided to send these changes for -rc3.  If it's too late in the
+cycle for this follow-up to be pulled, let me know and I'll send the
+use-after-free fix separately; we will have the necessary stop gaps on
+the server side to prevent the current 4.19 code from doing anything
+unexpected.
+
+----------------------------------------------------------------
+Ilya Dryomov (3):
+      ceph: avoid a use-after-free in ceph_destroy_options()
+      rbd: factor out get_parent_info()
+      rbd: support cloning across namespaces
+
+ drivers/block/rbd.c | 235 +++++++++++++++++++++++++++++++++++++++-------------
+ fs/ceph/super.c     |  16 ++--
+ 2 files changed, 189 insertions(+), 62 deletions(-)
