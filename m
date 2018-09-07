@@ -2,110 +2,140 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A333C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBEAC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B08A2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:52:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEEQLcpK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B08A2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 80D802075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D802075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbeIGTdn (ORCPT
+        id S1729993AbeIGTfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:33:43 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43182 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbeIGTdn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:33:43 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j26-v6so7140920pfi.10
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 07:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=36zAY2DHWxvvT0VTL3boJ68P+qNVmbWa8NyNfWlGihs=;
-        b=MEEQLcpKfjQahwyI/CzENOnjPAeZNJkhX4lidOskuUsEq1v1i8BnAtA956tn3lIRL3
-         7iTludnPv+it6+Fw1B76DzcwRqo2IoSecxXKjpGppXcaR6LnaRNxZ5pTbqwt81IWCLUa
-         LrfULlujmZ8ZD2RwSCitlPRokNKLGkWwId/SeptVcAKLlVr9r2OyJqIdCepSrR7nTqmX
-         JSD+15ucJ1YY84/JzL4xjmP2o4i29D1DkF0l7fxS3/MbaFA8Z1MJjZnD9TfY0EgF2TJi
-         XrKiebNGVUzNE2ThoNw6OYUQlGTal3vLU07PJI7V3rXp+jLrhecty3YGUkRHVOuop4HC
-         JQYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=36zAY2DHWxvvT0VTL3boJ68P+qNVmbWa8NyNfWlGihs=;
-        b=KY2ZWwRXkCJmgbdPR/l9Ctuykm+lNrc5Yj9q4STof3EMDXxB5icqFMhYEdcIP+vTqy
-         EzMOaU0X8xl4b2VwLyhy3HUPPfqy5cdt5UboJmclCbRLeWOB+adAKRdKTRhi5aS02ch9
-         m0x3xJGoCOt+pwBD1gmuLR0yKaf+FQuygf4UE/hSyRRhxddWP/o7+amMc1P3TRou9M22
-         lmr9mN/Pka0vNNDEtOx8TBo4e/ANVF78st05JvpGIxF+SdFcqTQR8CtdvA0rfyzSx9uV
-         rSnKnWpS+HJR9qgWzT4bDAFbbYvC1vZ9dF/iew74cy1dHPqY//P4QA2Ulh5q8lVSxjXi
-         Lo8w==
-X-Gm-Message-State: APzg51CgilKrYhoGpVcLoZZTxgJz2GsKvtf5TyxIORQgL0XRAnIXT5as
-        tV+xyQiWxfLSWoRXGU4CipI=
-X-Google-Smtp-Source: ANB0VdamAs74NcCkFZjT60/aZc1QCU9HY5S+qtM8CM7B941+3c1fpFOdMOP1VpywNllXozklYpdUBg==
-X-Received: by 2002:a63:6849:: with SMTP id d70-v6mr8502822pgc.7.1536331946369;
-        Fri, 07 Sep 2018 07:52:26 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id s16-v6sm10401751pfm.114.2018.09.07.07.52.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 07:52:25 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Fri, 7 Sep 2018 23:52:21 +0900
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] printk/tracing: Do not trace printk_nmi_enter()
-Message-ID: <20180907145221.GE482@tigerII.localdomain>
-References: <20180905213334.03375777@vmware.local.home>
- <20180907073448.GL24106@hirez.programming.kicks-ass.net>
- <20180907094148.2444acc6@gandalf.local.home>
- <20180907134532.GD24106@hirez.programming.kicks-ass.net>
- <20180907095533.5b5febc2@gandalf.local.home>
- <20180907100128.64e08130@gandalf.local.home>
- <20180907140342.GH24106@hirez.programming.kicks-ass.net>
+        Fri, 7 Sep 2018 15:35:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44987 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725944AbeIGTfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:35:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9C39720787; Fri,  7 Sep 2018 16:53:49 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3F9A720701;
+        Fri,  7 Sep 2018 16:53:49 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 16:53:48 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH] mtd: rawnand: denali: add DT property to specify
+ skipped bytes in OOB
+Message-ID: <20180907165348.3e0027ee@bbrezillon>
+In-Reply-To: <CAK7LNAQJOD3mxwbiOSn5wpDsU23DhZcx9QB_ufFZB8LUnh1KdQ@mail.gmail.com>
+References: <1536317783-4942-1-git-send-email-yamada.masahiro@socionext.com>
+        <20180907160822.319047c8@bbrezillon>
+        <CAK7LNAQJOD3mxwbiOSn5wpDsU23DhZcx9QB_ufFZB8LUnh1KdQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907140342.GH24106@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/07/18 16:03), Peter Zijlstra wrote:
-> > 
-> > I would even argue that placing printk_nmi_enter() between
-> > lockdep_off() and ftrace_nmi_enter() is wrong because if in the future
-> > printk_nmi_enter() were to do any ftrace tracing, it wont be caught, as
-> > it was by having it before lockdep_off().
-> > 
-> > printk_nmi_enter() should not muck with IRQ state, nor should it do any
-> > ftrace tracing. Since ftrace mucks with IRQ state when it gets enabled
-> > or disabled, it will screw up lockdep, and lockdep will complain. That
-> > way we can use lockdep not being off to catch this bug.
+On Fri, 7 Sep 2018 23:42:53 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+
+> Hi Boris,
 > 
-> The very bestest solution is to rm -rf printk ;-)
+> 2018-09-07 23:08 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+> > Hi Masahiro,
+> >
+> > On Fri,  7 Sep 2018 19:56:23 +0900
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >  
+> >> NAND devices need additional data area (OOB) for error correction,
+> >> but it is also used for Bad Block Marker (BBM).  In many cases, the
+> >> first byte in OOB is used for BBM, but the location actually depends
+> >> on chip vendors.  The NAND controller should preserve the precious
+> >> BBM to keep track of bad blocks.
+> >>
+> >> In Denali IP, the SPARE_AREA_SKIP_BYTES register is used to specify
+> >> the number of bytes to skip from the start of OOB.  The ECC engine
+> >> will automatically skip the specified number of bytes when it gets
+> >> access to OOB area.
+> >>
+> >> The same value for SPARE_AREA_SKIP_BYTES should be used between
+> >> firmware and the operating system if you intend to use the NAND
+> >> device across the control hand-off.
+> >>
+> >> In fact, the current denali.c code expects firmware to have already
+> >> set the SPARE_AREA_SKIP_BYTES register, then reads the value out.
+> >>
+> >> If no firmware (or bootloader) has initialized the controller, the
+> >> register value is zero, which is the default after power-on-reset.
+> >>
+> >> In other words, the Linux driver cannot initialize the controller
+> >> by itself.  You cannot support the reset control either because
+> >> resetting the controller will get register values lost.
+> >>
+> >> This commit adds a way to specify it via DT.  If the property
+> >> "denali,oob-skip-bytes" exists, the value will be set to the register.  
+> >
+> > Hm, do we really need to make this config customizable? I mean, either
+> > you have a large-page NAND (page > 512 bytes) and the 2 first bytes
+> > must be reserved for the BBM or you have a small-page NAND and the BBM
+> > is at position 4 and 5. Are you sure people configure that differently?
+> > Don't you always have SPARE_AREA_SKIP_BYTES set to 6 or 2?  
+> 
+> 
+> As I said in the patch description,
+> I need to use the same SPARE_AREA_SKIP_BYTES value
+> across firmware, boot-loader, Linux, and whatever.
+> 
+> I want to set the value to 8 for my platform
+> because the on-chip boot ROM expects 8.
+> I cannot change it since the boot ROM is hard-wired.
+> 
+> 
+> The boot ROM skips 8 bytes in OOB
+> when it loads images from the on-board NAND device.
+> 
+> So, when I update the image from U-Boot or Linux,
+> I need to make sure to set the register to 8.
+> 
+> If I update the image with a different value,
+> the Boot ROM fails to boot.
+> 
+> 
+> 
+> When the system has booted from NAND,
+> the register is already set to 8.  It works.
+> 
+> However, when the system has booted from eMMC,
+> the register is not initialized by anyone.
+> I am searching for a way to set the register to 8
+> in this case.
+> 
+> 
+> The boot ROM in SOCFPGA might expect a different value,
+> I am not sure.
 
-Talented, capable and tremendously clever people had spent decades on
-making printk what it is today. I feel responsible for respecting that
-effort and, thus, my vote would be to keep printk around for a while.
-... we also support !CONFIG_PRINTK builds ;)
-
-	-ss
+Okay, then why not having a per-compatible value if it's related to the
+BootROM? Unless the BootROM is part of the FPGA and can be
+reprogrammed. I'd really prefer not having a generic property that
+allows you to put anything you want.
