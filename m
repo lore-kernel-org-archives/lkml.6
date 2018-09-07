@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A2DC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB00C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E047420855
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E047420855
+	by mail.kernel.org (Postfix) with ESMTP id 9C3F820645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3F820645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbeIHCLD (ORCPT
+        id S1729420AbeIHCLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:11:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48762 "EHLO
+        Fri, 7 Sep 2018 22:11:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48782 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729175AbeIHCLC (ORCPT
+        with ESMTP id S1728541AbeIHCLJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:11:02 -0400
+        Fri, 7 Sep 2018 22:11:09 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D96BCACC;
-        Fri,  7 Sep 2018 21:28:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F28EDBC;
+        Fri,  7 Sep 2018 21:28:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 23/89] RDMA/rxe: Set wqe->status correctly if an unexpected response is received
-Date:   Fri,  7 Sep 2018 23:09:17 +0200
-Message-Id: <20180907210855.343547999@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.14 50/89] mfd: hi655x: Fix regmap area declared size for hi655x
+Date:   Fri,  7 Sep 2018 23:09:44 +0200
+Message-Id: <20180907210858.481084300@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -51,33 +51,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Rafael David Tinoco <rafael.tinoco@linaro.org>
 
-commit 61b717d041b1976530f68f8b539b2e3a7dd8e39c upstream.
+commit 6afebb70ee7a4bde106dc1a875e7ac7997248f84 upstream.
 
-Every function that returns COMPST_ERROR must set wqe->status to another
-value than IB_WC_SUCCESS before returning COMPST_ERROR. Fix the only code
-path for which this is not yet the case.
+Fixes https://bugs.linaro.org/show_bug.cgi?id=3903
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+LTP Functional tests have caused a bad paging request when triggering
+the regmap_read_debugfs() logic of the device PMIC Hi6553 (reading
+regmap/f8000000.pmic/registers file during read_all test):
+
+Unable to handle kernel paging request at virtual address ffff0
+[ffff00000984e000] pgd=0000000077ffe803, pud=0000000077ffd803,0
+Internal error: Oops: 96000007 [#1] SMP
+...
+Hardware name: HiKey Development Board (DT)
+...
+Call trace:
+ regmap_mmio_read8+0x24/0x40
+ regmap_mmio_read+0x48/0x70
+ _regmap_bus_reg_read+0x38/0x48
+ _regmap_read+0x68/0x170
+ regmap_read+0x50/0x78
+ regmap_read_debugfs+0x1a0/0x308
+ regmap_map_read_file+0x48/0x58
+ full_proxy_read+0x68/0x98
+ __vfs_read+0x48/0x80
+ vfs_read+0x94/0x150
+ SyS_read+0x6c/0xd8
+ el0_svc_naked+0x30/0x34
+Code: aa1e03e0 d503201f f9400280 8b334000 (39400000)
+
+Investigations have showed that, when triggered by debugfs read()
+handler, the mmio regmap logic was reading a bigger (16k) register area
+than the one mapped by devm_ioremap_resource() during hi655x-pmic probe
+time (4k).
+
+This commit changes hi655x's max register, according to HW specs, to be
+the same as the one declared in the pmic device in hi6220's dts, fixing
+the issue.
+
+Cc: <stable@vger.kernel.org> #v4.9 #v4.14 #v4.16 #v4.17
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rxe/rxe_comp.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/hi655x-pmic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_comp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_comp.c
-@@ -276,6 +276,7 @@ static inline enum comp_state check_ack(
- 	case IB_OPCODE_RC_RDMA_READ_RESPONSE_MIDDLE:
- 		if (wqe->wr.opcode != IB_WR_RDMA_READ &&
- 		    wqe->wr.opcode != IB_WR_RDMA_READ_WITH_INV) {
-+			wqe->status = IB_WC_FATAL_ERR;
- 			return COMPST_ERROR;
- 		}
- 		reset_retry_counters(qp);
+--- a/drivers/mfd/hi655x-pmic.c
++++ b/drivers/mfd/hi655x-pmic.c
+@@ -49,7 +49,7 @@ static struct regmap_config hi655x_regma
+ 	.reg_bits = 32,
+ 	.reg_stride = HI655X_STRIDE,
+ 	.val_bits = 8,
+-	.max_register = HI655X_BUS_ADDR(0xFFF),
++	.max_register = HI655X_BUS_ADDR(0x400) - HI655X_STRIDE,
+ };
+ 
+ static struct resource pwrkey_resources[] = {
 
 
