@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F32C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E55C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E738C2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E738C2083D
+	by mail.kernel.org (Postfix) with ESMTP id 9534C2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9534C2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbeIHCPo (ORCPT
+        id S1729730AbeIHCPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:15:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51378 "EHLO
+        Fri, 7 Sep 2018 22:15:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51396 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728669AbeIHCPn (ORCPT
+        with ESMTP id S1728282AbeIHCPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:15:43 -0400
+        Fri, 7 Sep 2018 22:15:48 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BBB6CD6B;
-        Fri,  7 Sep 2018 21:32:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4B7ED6B;
+        Fri,  7 Sep 2018 21:32:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 12/63] cxl: Fix wrong comparison in cxl_adapter_context_get()
-Date:   Fri,  7 Sep 2018 23:09:43 +0200
-Message-Id: <20180907211013.672350762@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 13/63] ib_srpt: Fix a use-after-free in srpt_close_ch()
+Date:   Fri,  7 Sep 2018 23:09:44 +0200
+Message-Id: <20180907211013.737284910@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -53,42 +50,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Jain <vaibhav@linux.ibm.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit ef6cb5f1a048fdf91ccee6d63d2bfa293338502d upstream.
+commit 995250959d22fc341b5424e3343b0ce5df672461 upstream.
 
-Function atomic_inc_unless_negative() returns a bool to indicate
-success/failure. However cxl_adapter_context_get() wrongly compares
-the return value against '>=0' which will always be true. The patch
-fixes this comparison to '==0' there by also fixing this compile time
-warning:
+Avoid that KASAN reports the following:
 
-	drivers/misc/cxl/main.c:290 cxl_adapter_context_get()
-	warn: 'atomic_inc_unless_negative(&adapter->contexts_num)' is unsigned
+BUG: KASAN: use-after-free in srpt_close_ch+0x4f/0x1b0 [ib_srpt]
+Read of size 4 at addr ffff880151180cb8 by task check/4681
 
-Fixes: 70b565bbdb91 ("cxl: Prevent adapter reset if an active context exists")
-Cc: stable@vger.kernel.org # v4.9+
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+CPU: 15 PID: 4681 Comm: check Not tainted 4.18.0-rc2-dbg+ #4
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+ dump_stack+0xa4/0xf5
+ print_address_description+0x6f/0x270
+ kasan_report+0x241/0x360
+ __asan_load4+0x78/0x80
+ srpt_close_ch+0x4f/0x1b0 [ib_srpt]
+ srpt_set_enabled+0xf7/0x1e0 [ib_srpt]
+ srpt_tpg_enable_store+0xb8/0x120 [ib_srpt]
+ configfs_write_file+0x14e/0x1d0 [configfs]
+ __vfs_write+0xd2/0x3b0
+ vfs_write+0x101/0x270
+ ksys_write+0xab/0x120
+ __x64_sys_write+0x43/0x50
+ do_syscall_64+0x77/0x230
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fixes: aaf45bd83eba ("IB/srpt: Detect session shutdown reliably")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/cxl/main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/misc/cxl/main.c
-+++ b/drivers/misc/cxl/main.c
-@@ -293,7 +293,7 @@ int cxl_adapter_context_get(struct cxl *
- 	int rc;
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -1701,8 +1701,7 @@ static bool srpt_close_ch(struct srpt_rd
+ 	int ret;
  
- 	rc = atomic_inc_unless_negative(&adapter->contexts_num);
--	return rc >= 0 ? 0 : -EBUSY;
-+	return rc ? 0 : -EBUSY;
- }
+ 	if (!srpt_set_ch_state(ch, CH_DRAINING)) {
+-		pr_debug("%s-%d: already closed\n", ch->sess_name,
+-			 ch->qp->qp_num);
++		pr_debug("%s: already closed\n", ch->sess_name);
+ 		return false;
+ 	}
  
- void cxl_adapter_context_put(struct cxl *adapter)
 
 
