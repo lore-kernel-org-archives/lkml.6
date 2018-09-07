@@ -2,86 +2,76 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03ADEC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667A6C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5627206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:53:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5627206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 29A81206BB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A81206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeIHCgB (ORCPT
+        id S1730289AbeIHCgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:36:01 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53362 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeIHCgA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:36:00 -0400
-Received: from localhost (unknown [207.32.164.225])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 40883147BB355;
-        Fri,  7 Sep 2018 14:53:02 -0700 (PDT)
-Date:   Fri, 07 Sep 2018 14:53:01 -0700 (PDT)
-Message-Id: <20180907.145301.1015987862616643832.davem@davemloft.net>
-To:     mail@maciej.szmigiero.name
-Cc:     nic_swsd@realtek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, a3at.mail@gmail.com,
-        hkallweit1@gmail.com
-Subject: Re: [PATCH] r8169: set TxConfig register after TX / RX is enabled,
- just like RxConfig
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <fd32f0db-373a-2ee4-8a99-5fe6c5441606@maciej.szmigiero.name>
-References: <fd32f0db-373a-2ee4-8a99-5fe6c5441606@maciej.szmigiero.name>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 07 Sep 2018 14:53:02 -0700 (PDT)
+        Fri, 7 Sep 2018 22:36:04 -0400
+Received: from smtp2-g21.free.fr ([212.27.42.2]:54471 "EHLO smtp2-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726032AbeIHCgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 22:36:03 -0400
+Received: from sed.home (unknown [IPv6:2a01:cb1d:1a3:2a00:dacb:8aff:fef1:ed46])
+        (Authenticated sender: sed)
+        by smtp2-g21.free.fr (Postfix) with ESMTPSA id 276922003C6;
+        Fri,  7 Sep 2018 23:52:50 +0200 (CEST)
+From:   Cedric Roux <sed@free.fr>
+To:     kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Cedric Roux <sed@free.fr>
+Subject: [PATCH v3 2/2] ARM: s3c24xx: Correct SD card write protect detection on Mini2440
+Date:   Fri,  7 Sep 2018 23:54:46 +0200
+Message-Id: <20180907215446.15160-2-sed@free.fr>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180907215446.15160-1-sed@free.fr>
+References: <20180907215446.15160-1-sed@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Date: Fri, 7 Sep 2018 20:15:22 +0200
+The mini2440 computer uses "active high" to signal that the "write protect"
+of the inserted MMC is set. The current code uses the opposite, leading to
+a wrong detection of write protection. The solution is simply to use
+".wprotect_invert = 1" in the description of the MMC.
 
-> Commit 3559d81e76bf ("r8169: simplify rtl_hw_start_8169") changed order of
-> two register writes:
-> 1) Caused RxConfig to be written before TX / RX is enabled,
-> 2) Caused TxConfig to be written before TX / RX is enabled.
-> 
-> At least on XIDs 10000000 ("RTL8169sb/8110sb") and
-> 18000000 ("RTL8169sc/8110sc") such writes are ignored by the chip, leaving
-> values in these registers intact.
-> 
-> Change 1) was reverted by
-> commit 05212ba8132b42 ("r8169: set RxConfig after tx/rx is enabled for RTL8169sb/8110sb devices"),
-> however change 2) wasn't.
-> 
-> In practice, this caused TxConfig's "InterFrameGap time" and "Max DMA Burst
-> Size per Tx DMA Burst" bits to be zero dramatically reducing TX performance
-> (in my tests it dropped from around 500Mbps to around 50Mbps).
-> 
-> This patch fixes the issue by moving TxConfig register write a bit later in
-> the code so it happens after TX / RX is already enabled.
-> 
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> Fixes: 05212ba8132b42 ("r8169: set RxConfig after tx/rx is enabled for RTL8169sb/8110sb devices")
-> ---
-> "Fixes" tag points to the RxConfig fix instead of the actual commit that
-> introduced this regression to maintain patch ordering since the RxConfig fix
-> partially affects the same code lines as this fix.
+Signed-off-by: Cedric Roux <sed@free.fr>
+---
+ arch/arm/mach-s3c24xx/mach-mini2440.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index 4a0bf6abba8c..bfce7971d741 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -234,10 +234,11 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+ /* MMC/SD  */
+ 
+ static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+-	.gpio_detect   = S3C2410_GPG(8),
+-	.gpio_wprotect = S3C2410_GPH(8),
+-	.set_power     = NULL,
+-	.ocr_avail     = MMC_VDD_32_33|MMC_VDD_33_34,
++	.gpio_detect     = S3C2410_GPG(8),
++	.gpio_wprotect   = S3C2410_GPH(8),
++	.wprotect_invert = 1,
++	.set_power       = NULL,
++	.ocr_avail       = MMC_VDD_32_33|MMC_VDD_33_34,
+ };
+ 
+ /* NAND Flash on MINI2440 board */
+-- 
+2.18.0
 
-Please, in the future, always put your Fixes: tag first in the set of tags.
-
-Thank you.
