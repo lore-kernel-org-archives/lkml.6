@@ -2,132 +2,185 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834E3C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419DFC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2031920861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nW7bx6+F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2031920861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+	by mail.kernel.org (Postfix) with ESMTP id D42B62075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 08:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42B62075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeIGM6E (ORCPT
+        id S1728097AbeIGM6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 08:58:04 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42145 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbeIGM6E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 08:58:04 -0400
-Received: by mail-ed1-f66.google.com with SMTP id l5so10912020edw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 01:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=N2nxlAPwxCY787lzi2fWINFuw6kMiTtSA+BaIRlVVdE=;
-        b=nW7bx6+FX6MuobpiNK93j+S9ZGNeI/hBMyS89GouGnTHZ7V6MLuc1NYVZCUbzCgLQL
-         FPj8IVCweZKFQ2RKmwmJbjiJN+NFIMW2XnRhdA+cUiga/ACETl/uOTX9Sikbimst8Yag
-         i6peVuJkiNNKfLHw7OXUEDBlvi67+FNDOd8kOnhfpsnJI2ldc3+r9r7PLqZduf7qICuG
-         U8CkMf2iiS8nmk3h0w/dtw+s0bIqSTNBWxrMXrzkTsjTB3oX3B3UFzUO7hbx0+CFQ2w3
-         SyOnu1UyAclJIbPJxe8fcDiPa6AYnDffKB3Od+l/ED3OGnuvj4T65FfgdmIT+L4F/b+C
-         s8qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=N2nxlAPwxCY787lzi2fWINFuw6kMiTtSA+BaIRlVVdE=;
-        b=gfPaJOPDDBcvvBAVK8X+ywCVahMNzkvnmnqZn5Gm1HqqPcGWImlsKnE/IWhHiL8aAG
-         6mwIocwu/t8irjmApa2xX0uazXi29aPVhQiruUC+/kd474lyhkuoc1nv2y/7R77gkkdJ
-         kIYyRfABLsjfuU5HllRi7kPzemx3DeAbbeW+MlhmzqS0SFjOEucu3CTKiVxjN9YWFmg5
-         yZji5KTcJq2xIGel6G6VUawMzMjsUPRVsipjAiJE1qkasg11gt71uRS5R3/84RSah6Lv
-         NsJkq3nSdku0m1ziy915AUC3E4oh1fOMaXFCxjZfRJRqeLauFeCfhji7lk0zh9ieSLLD
-         0ptw==
-X-Gm-Message-State: APzg51BfOHGdhFemdgZO4JsIp6t8m3SRxHNBQqud5vY3cC4HWpaBZG6d
-        niu2pV6j1rkmKTL+Kc0/nhY=
-X-Google-Smtp-Source: ANB0VdaNZEhKJVWIjDeUcobZVRbxRIPYW/CtWOc76rGeR6HDBgbo3uMMykz5JaQaw+QRIiQFN8N0tg==
-X-Received: by 2002:a50:a9a4:: with SMTP id n33-v6mr7741856edc.208.1536308294592;
-        Fri, 07 Sep 2018 01:18:14 -0700 (PDT)
-Received: from dell.be.48ers.dk (d51A5BC31.access.telenet.be. [81.165.188.49])
-        by smtp.gmail.com with ESMTPSA id w20-v6sm9301172edc.12.2018.09.07.01.18.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 01:18:13 -0700 (PDT)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peko@dell.be.48ers.dk>)
-        id 1fyBy0-0005dO-VV; Fri, 07 Sep 2018 10:18:12 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Cc:     Peter Korsgaard <peter@korsgaard.com>
-Subject: [PATCH v2] ttyprintk: make the printk log level configurable
-Date:   Fri,  7 Sep 2018 10:18:10 +0200
-Message-Id: <20180907081810.21615-1-peter@korsgaard.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 7 Sep 2018 08:58:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727847AbeIGM6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 08:58:10 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 281F0402315B;
+        Fri,  7 Sep 2018 08:18:21 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-85.pek2.redhat.com [10.72.12.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4754910075D3;
+        Fri,  7 Sep 2018 08:18:10 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        ebiederm@xmission.com, joro@8bytes.org, thomas.lendacky@amd.com,
+        dyoung@redhat.com, kexec@lists.infradead.org,
+        iommu@lists.linux-foundation.org, bhe@redhat.com
+Subject: [PATCH 0/4 v7] Support kdump for AMD secure memory encryption(SME)
+Date:   Fri,  7 Sep 2018 16:18:01 +0800
+Message-Id: <20180907081805.368-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 07 Sep 2018 08:18:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 07 Sep 2018 08:18:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some use cases it is handy to use a different printk log level than the
-default (info) for the messages written to ttyprintk, so add a Kconfig
-option similar to what we have for default console loglevel.
+When SME is enabled on AMD machine, we also need to support kdump. Because
+the memory is encrypted in the first kernel, we will remap the old memory
+to the kdump kernel for dumping data, and SME is also enabled in the kdump
+kernel, otherwise the old memory can not be decrypted.
 
-Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
----
-Changes since v1:
-- Leave [U] prefix in printk invocation and drop space before it as
-  suggested by Joe Perces.
+For the kdump, it is necessary to distinguish whether the memory is encrypted.
+Furthermore, we should also know which part of the memory is encrypted or
+decrypted. We will appropriately remap the memory according to the specific
+situation in order to tell cpu how to access the memory.
 
- drivers/char/Kconfig     | 8 ++++++++
- drivers/char/ttyprintk.c | 4 +++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+As we know, a page of memory that is marked as encrypted, which will be
+automatically decrypted when read from DRAM, and will also be automatically
+encrypted when written to DRAM. If the old memory is encrypted, we have to
+remap the old memory with the memory encryption mask, which will automatically
+decrypt the old memory when we read those data.
 
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index ce277ee0a28a..14a7f023f20b 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -66,6 +66,14 @@ config TTY_PRINTK
- 
- 	  If unsure, say N.
- 
-+config TTY_PRINTK_LEVEL
-+	depends on TTY_PRINTK
-+	int "ttyprintk log level (1-7)"
-+	range 1 7
-+	default "6"
-+	help
-+	  Printk log level to use for ttyprintk messages.
-+
- config PRINTER
- 	tristate "Parallel printer support"
- 	depends on PARPORT
-diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-index 67549ce88cc9..88808dbba486 100644
---- a/drivers/char/ttyprintk.c
-+++ b/drivers/char/ttyprintk.c
-@@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
-  */
- #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
- #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
-+#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL)
-+
- static int tpk_curr;
- 
- static char tpk_buffer[TPK_STR_SIZE + 4];
-@@ -45,7 +47,7 @@ static void tpk_flush(void)
- {
- 	if (tpk_curr > 0) {
- 		tpk_buffer[tpk_curr] = '\0';
--		pr_info("[U] %s\n", tpk_buffer);
-+		printk(TPK_PREFIX "[U] %s\n", tpk_buffer);
- 		tpk_curr = 0;
- 	}
- }
+For kdump(SME), there are two cases that doesn't support:
+
+ ----------------------------------------------
+| first-kernel | second-kernel | kdump support |
+|      (mem_encrypt=on|off)    |   (yes|no)    |
+|--------------+---------------+---------------|
+|     on       |     on        |     yes       |
+|     off      |     off       |     yes       |
+|     on       |     off       |     no        |
+|     off      |     on        |     no        |
+|______________|_______________|_______________|
+
+1. SME is enabled in the first kernel, but SME is disabled in kdump kernel
+In this case, because the old memory is encrypted, we can't decrypt the
+old memory.
+
+2. SME is disabled in the first kernel, but SME is enabled in kdump kernel
+It is unnecessary to support in this case, because the old memory is
+unencrypted, the old memory can be dumped as usual, we don't need to enable
+SME in kdump kernel. Another, If we must support the scenario, it will
+increase the complexity of the code, we will have to consider how to pass
+the SME flag from the first kernel to the kdump kernel, in order to let the
+kdump kernel know that whether the old memory is encrypted.
+
+There are two methods to pass the SME flag to the kdump kernel. The first
+method is to modify the assembly code, which includes some common code and
+the path is too long. The second method is to use kexec tool, which could
+require the SME flag to be exported in the first kernel by "proc" or "sysfs",
+kexec tools will read the SME flag from "proc" or "sysfs" when we use kexec
+tools to load image, subsequently the SME flag will be saved in boot_params,
+we can properly remap the old memory according to the previously saved SME
+flag. But it is too expensive to do this.
+
+This patches are only for SME kdump, the patches don't support SEV kdump.
+
+Test tools:
+makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+Note: This patch can only dump vmcore in the case of SME enabled.
+
+crash-7.2.3: https://github.com/crash-utility/crash.git
+commit 001f77a05585 (Fix for Linux 4.19-rc1 and later kernels that contain
+                     kernel commit7290d58095712a89f845e1bca05334796dd49ed2)
+
+kexec-tools-2.0.17: git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
+commit b9de21ef51a7 (kexec: fix for "Unhandled rela relocation: R_X86_64_PLT32" error)
+Note:
+Before you load the kernel and initramfs for kdump, this patch(http://lists.infradead.org/pipermail/kexec/2018-September/021460.html)
+must be merged to kexec-tools, and then the kdump kernel will work well. Because there
+is a patch which is removed based on v6(x86/ioremap: strengthen the logic in early_memremap_pgprot_adjust()
+to adjust encryption mask).
+
+Test environment:
+HP ProLiant DL385Gen10 AMD EPYC 7251
+8-Core Processor
+32768 MB memory
+600 GB disk space
+
+Linux 4.19-rc2:
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+commit 57361846b52bc686112da6ca5368d11210796804
+
+Reference:
+AMD64 Architecture Programmer's Manual
+https://support.amd.com/TechDocs/24593.pdf
+
+Changes since v6:
+1. There is a patch which is removed based on v6.
+(x86/ioremap: strengthen the logic in early_memremap_pgprot_adjust() to adjust encryption mask)
+Dave Young suggests that this patch can be removed and fix the kexec-tools.
+Reference: http://lists.infradead.org/pipermail/kexec/2018-September/021460.html)
+2. Update the patch log.
+
+Some known issues:
+1. about SME
+Upstream kernel will hang on HP machine(DL385Gen10 AMD EPYC 7251) when
+we execute the kexec command as follow:
+
+# kexec -l /boot/vmlinuz-4.19.0-rc2+ --initrd=/boot/initramfs-4.19.0-rc2+.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug nokaslr"
+# kexec -e (or reboot)
+
+But this issue can not be reproduced on speedway machine, and this issue
+is irrelevant to my posted patches.
+
+The kernel log:
+[ 1248.932239] kexec_core: Starting new kernel
+early console in extract_kernel
+input_data: 0x000000087e91c3b4
+input_len: 0x000000000067fcbd
+output: 0x000000087d400000
+output_len: 0x0000000001b6fa90
+kernel_total_size: 0x0000000001a9d000
+trampoline_32bit: 0x0000000000099000
+
+Decompressing Linux...
+Parsing ELF...        [---Here the system will hang]
+
+
+Lianbo Jiang (4):
+  x86/ioremap: add a function ioremap_encrypted() to remap kdump old
+    memory
+  kexec: allocate unencrypted control pages for kdump in case SME is
+    enabled
+  amd_iommu: remap the device table of IOMMU with the memory encryption
+    mask for kdump
+  kdump/vmcore: support encrypted old memory with SME enabled
+
+ arch/x86/include/asm/io.h            |  3 ++
+ arch/x86/kernel/Makefile             |  1 +
+ arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++
+ arch/x86/mm/ioremap.c                | 25 ++++++++-----
+ drivers/iommu/amd_iommu_init.c       | 14 ++++++--
+ fs/proc/vmcore.c                     | 21 +++++++----
+ include/linux/crash_dump.h           | 12 +++++++
+ kernel/kexec_core.c                  | 12 +++++++
+ 8 files changed, 125 insertions(+), 16 deletions(-)
+ create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
+
 -- 
-2.11.0
+2.17.1
 
