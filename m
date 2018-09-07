@@ -4,53 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC59EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A2EC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0F020844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:56:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A082083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ZM/vdSqX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0F020844
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NXIDkc45"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A082083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729948AbeIGFe1 (ORCPT
+        id S1729495AbeIGFPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:34:27 -0400
-Received: from mail-eopbgr710095.outbound.protection.outlook.com ([40.107.71.95]:48060
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:15:47 -0400
+Received: from mail-sn1nam02on0091.outbound.protection.outlook.com ([104.47.36.91]:3440
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728044AbeIGFPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:15:49 -0400
+        id S1729437AbeIGFPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:15:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OCWhcMhm5Jz0+eXtQLn+C8eZscpHTLcr8yilSl+9YDI=;
- b=ZM/vdSqX5czYrPnDe3h6dae7A+ufEH6/JWp2yxtu43Wsp9Q3BKrrHWJm5dGsVnir7DwNiSXmZK/teVRd5lGpazr/NKJzGGM0tYCa4y65tmXzesfROCFxUAcT3O6D+friCkTkriQcNCzGAHbrQS1P2TSJndk5K+LuFefMKuGIrko=
+ bh=I0Yfg+UTbnc2+nQPJhFM410hH7URHMxhFvOwke/dAaE=;
+ b=NXIDkc45Y5djO02ZduHdfT+zokMcd/+tuyD/o4rjLDL/eMOSp37HWH8yZCtHUrIUzb+ypV+jUn97UDCH9VJA8SgDwPzHzQ1W1he/Ta3tDWmLANHdnHcerSj+OyLU6WZ2Z47GVVpWa1X4dvwmatMHdduk+d+cq5nAygjGP4IQ55I=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
+ CY4PR21MB0118.namprd21.prod.outlook.com (10.173.189.12) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.6; Fri, 7 Sep 2018 00:37:38 +0000
+ 15.20.1143.8; Fri, 7 Sep 2018 00:37:36 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:37:38 +0000
+ 00:37:36 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Azael Avalos <coproscefalo@gmail.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 81/88] regulator: qcom_spmi: Fix warning Bad
- of_node_put()
-Thread-Topic: [PATCH AUTOSEL 4.18 81/88] regulator: qcom_spmi: Fix warning Bad
- of_node_put()
-Thread-Index: AQHURkLcVQddM5979kCFJf1UZ9oPRg==
-Date:   Fri, 7 Sep 2018 00:36:48 +0000
-Message-ID: <20180907003547.57567-81-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 75/88] platform/x86: toshiba_acpi: Fix defined
+ but not used build warnings
+Thread-Topic: [PATCH AUTOSEL 4.18 75/88] platform/x86: toshiba_acpi: Fix
+ defined but not used build warnings
+Thread-Index: AQHURkLabngQPVbD4UuAqad7rtSqww==
+Date:   Fri, 7 Sep 2018 00:36:45 +0000
+Message-ID: <20180907003547.57567-75-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,137 +63,81 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:KrkavnTiIk6RURPrm0DUATERNNhf+WczCBaweBrnkyxU4fZtcK90SlQkKkYHg0DzCTyhZeMeObgxTsQosu+beznFYH+v9P6hfB3CsLxbAvsJK8HKV3EQYhqw3Sxerh0G+e8ttcsDUiSa2SXfFu0N1+Kri8ebY9oIGeZMP7EMp9PWBsP898zimuNLs5e5xogVK4H03aq/+wqLuLXrLMnPW/7u3M4nrE/efQa4C7DflpfUirBMgrBfxd0DBa/iv/3XDUDeKIrBqxKX2argm+kHS6Z2TCBnid38TXiQGmGa0aHNRYwSkiF79EaICxmVva5TKYJNvg096Q8uLpS/OKaxO4EqGUR7Y++W+a8IZIsYCw4BbhdDs60sC+QfnBZWFyRK7hR5qVCqrt7YzcHkgVZesgTjVsDmeh3TwOgMpot+enJtk/7jJ2tPMAN23pMvjskXG9ogZeOgcHuvmNOtmOS2Tw==;5:ltQ5QWBzjgq7f8+VgChlUg1SyzS4GwydiNA4W9WiMhGnvav4wt80HqfLmFU9gDrUVOe02guJTEIcFfPd2B3jBXypX+30TSwEE0+RgtQASiBaF6LxO9jkPUKLfbyyrjMD2nwXpkzdJJ4YzNmNLsfa8g14/d9MDIUy2ergX0g44Ak=;7:vWP5D8oiGGPQ/2NTPtRskyPoehwFBsFHjl3TiXLrad/ZgTckVkot0rhIApwXO3dmU+/n0Abs35i1+ERAJEcUGLVqDWYk+wVbncxZbSLApV9VnpdFBRlVQaGVXovRhVA6NZOEIuV70g2XTW0HQXOjxNz36Wcy8LsnqdcuQT1XljNJTqgh+8mVFGUEWzr6L5lYfUBZypCl6FXAexOZf8xmHz0I1unYLOcAk1XUix6H1lsQ6UMu8Hlt1aJ957WArFOk
-x-ms-office365-filtering-correlation-id: c7cf6e25-46b4-42b8-f334-08d6145a1cce
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0118;6:YGW/6aGir4/n+r+9iA00IYg9FjRpq7xfhxTRTS3sa3Ohg8V+AY0ZbzlX875g8a4OlYmTXnMyq8YP2T1lNA5a8mYP/tQ/NwYGRZoDDOybNSyfoM2ir8VDGTA00H07zye848Nw9rkpbAZq32dvPXk+/Ua3xpT/jJblM7G07pjSy5zRHPOalr+sPhymKUQl9LKnFAVsQCjvWiJwU/jAV22ape6YTyPTINcvRDJ4oPiXHbMv4eIZk6LpXVCIyzNxgtmd5FfGe0BIUiJmAvQzP7Ml0ElNlXLFL+dluhJpcCk8921Cvs1IBiN8Se+ONGd0nCzt4FlexvMuz6ZN6YsTQNB8eh52ntlydp5i2kEyFBbOKvZYS598frEyco74GrM+zT5PljKaKOthY5DbAqnV5gIdOv4JSJXDnSYsAouvg/1yBSDYcfctIZpy8JXO/KvHLSsubIHO/yCZnJ2KLHwXk0LnCA==;5:te2C1jRI1MxtOuOsKByk4/oK9aXeL9f3p91NjiQK0y9tcFqDm8VqE+tcCeePB7ulOWs9b01s2szoDLUzYdkJot7Q/BE/URsZN19LDmINGnBUwPz4+Vla6JBs5YrefRtNAFY3TsldM4Q0a6XqG8kyrhoAw3wQFgJx/KhXP5fckF0=;7:7MNfjGcb0ISVxsHFhAIzbYJfm2smlFWH03v2w55geN+6+LHxVs3MoYsukvZrY1NoQxCQdv3yCKIc5QoiCpPJ+lWIOUWauE/igd0uib7il1ZKGA9BGRdhUyqVqvlNkOftaSAXmYmjmhS5Iw5g+2Fn4QNl29Wb/y00ycUlduhRW19aZJIQxLbPAq69jwHvSRu1U4ICYLe66qq5eU3HBbNi9Bdxrkw4RyswipX2h85PDBEdcUUhcGSduUp6sw3EOB5p
+x-ms-office365-filtering-correlation-id: 2cea3536-ec19-4c3b-aba7-08d6145a1b82
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0839;
-x-ms-traffictypediagnostic: CY4PR21MB0839:
-x-microsoft-antispam-prvs: <CY4PR21MB08391C9330FBEBB138E558B1FB000@CY4PR21MB0839.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0839;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0839;
-x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(136003)(346002)(39860400002)(189003)(199004)(10290500003)(99286004)(10090500001)(105586002)(106356001)(102836004)(76176011)(97736004)(6512007)(53936002)(2900100001)(6346003)(316002)(54906003)(110136005)(256004)(14444005)(26005)(6436002)(107886003)(2906002)(86362001)(575784001)(186003)(478600001)(5660300001)(6486002)(446003)(476003)(68736007)(7736002)(86612001)(11346002)(8936002)(1076002)(22452003)(25786009)(2501003)(36756003)(2616005)(486006)(81166006)(81156014)(66066001)(6666003)(217873002)(4326008)(6506007)(5250100002)(6116002)(3846002)(305945005)(8676002)(72206003)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0118;
+x-ms-traffictypediagnostic: CY4PR21MB0118:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: hN0xu8E/ya9pZB6xrfiocflnx5Lo+bnxS548olaBRImO7406dvxv8IP3pVY90HqEF3uS6LgN66fGXJ829VzOzyc9eyEe0yZceVl0pdXvjx29acxiW+uQJrkfqwM89rcF0PaknUx9ffvObIjch5s/91TtR8W82o/Dx9OWFkjOXTRcTNSK67+XZy4NsdK9KLVkmLo7ZIlGOTKEM8LkSKV2rwdkxPzO65cq7ioA5fT5Cik6H7VFGDPZXHp54uFmrFG+X7P5unjEOYk1jYZ3fhnaV8koDvstlMZ6jWsG3usp1gmD7wqkOl579iIiBs8KPFtoqx46rbGPm1gwBwS5c/MyB+u9BVC/X4WtFlJEI1LPZq0=
+x-microsoft-antispam-prvs: <CY4PR21MB011824C271215FC634DF1467FB000@CY4PR21MB0118.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231344)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0118;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0118;
+x-forefront-prvs: 07880C4932
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(136003)(366004)(189003)(199004)(97736004)(2900100001)(53936002)(316002)(39060400002)(86612001)(25786009)(86362001)(2906002)(6512007)(68736007)(110136005)(54906003)(107886003)(4326008)(10290500003)(14454004)(81156014)(81166006)(66066001)(8936002)(8676002)(478600001)(6116002)(3846002)(72206003)(305945005)(7736002)(1076002)(106356001)(105586002)(36756003)(99286004)(186003)(26005)(5250100002)(14444005)(446003)(6666003)(256004)(217873002)(10090500001)(76176011)(5660300001)(6436002)(11346002)(6486002)(6506007)(102836004)(2501003)(22452003)(476003)(486006)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0118;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: /cS29PffANW6Fse5Ldn6GHtg8GkE2zBIhXCx11KrRkLJDQFgUOJ4ecn5nrAcWNTtHQT4KBChuJDbeBccYh4zhVWn+2I5uGPPp2YOglckZcu+TF7ZtbqlGBdRye2P4pb+k9SM6SOsVNejRk8I0v6vcfBtHJ1oGt+wwamex4KKlg+uZvwBHK6qhASGe9ShdVHVUxTVan4v497v02Fnj2u0/5mzRZol9K+JEUVkSizyWD6SR/0wllzRtJkD57FmluJk0ci5Ib+m81goG357XlwkSFnq0GNtKRwkhOxOaTPi5+v3toE+0e4HsD3QLG5xFLAC0A+l5HAOaZFWjzb1Tcwrp6zfCWEbyTTBLQDR1RXnp4Q=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7cf6e25-46b4-42b8-f334-08d6145a1cce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:48.9207
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cea3536-ec19-4c3b-aba7-08d6145a1b82
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:45.2506
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0839
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit fffe7f52eb5db41eedadba9a8038e982dcfaee0c ]
+[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
 
-For of_find_node_by_name(), you typically pass what the previous call
-returned. Therefore, of_find_node_by_name() increases the refcount of
-the returned node, and decreases the refcount of the node passed as the
-first argument.
+Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
 
-of_find_node_by_name() is incorrectly used, and produces a warning.
-Fix the warning by using the more suitable function
-of_get_child_by_name().
+../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show=
+' defined but not used [-Wunused-function]
 
-Also add a missing of_node_put() for the returned value, since this was
-previously being leaked.
-
-OF: ERROR: Bad of_node_put() on /soc/qcom,spmi@400f000/pmic@3/regulators
-CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W         4.18.0-rc4-00223-=
-gefd7b360b70e #12
-Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
-Call trace:
- dump_backtrace+0x0/0x1a8
- show_stack+0x14/0x20
- dump_stack+0x90/0xb4
- of_node_release+0x74/0x78
- kobject_put+0x90/0x1f0
- of_node_put+0x14/0x20
- of_find_node_by_name+0x80/0xd8
- qcom_spmi_regulator_probe+0x30c/0x508
-
-Fixes: 0caecaa87202 ("regulator: qcom_spmi: Add support for SAW")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Azael Avalos <coproscefalo@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/regulator/qcom_spmi-regulator.c | 32 +++++++++++++++----------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+ drivers/platform/x86/toshiba_acpi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qc=
-om_spmi-regulator.c
-index 8d5cd624b4b8..ba3d5e63ada6 100644
---- a/drivers/regulator/qcom_spmi-regulator.c
-+++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -1752,7 +1752,8 @@ static int qcom_spmi_regulator_probe(struct platform_=
-device *pdev)
- 	const char *name;
- 	struct device *dev =3D &pdev->dev;
- 	struct device_node *node =3D pdev->dev.of_node;
--	struct device_node *syscon;
-+	struct device_node *syscon, *reg_node;
-+	struct property *reg_prop;
- 	int ret, lenp;
- 	struct list_head *vreg_list;
+diff --git a/drivers/platform/x86/toshiba_acpi.c b/drivers/platform/x86/tos=
+hiba_acpi.c
+index eef76bfa5d73..e50941c3ba54 100644
+--- a/drivers/platform/x86/toshiba_acpi.c
++++ b/drivers/platform/x86/toshiba_acpi.c
+@@ -34,6 +34,7 @@
+ #define TOSHIBA_ACPI_VERSION	"0.24"
+ #define PROC_INTERFACE_VERSION	1
 =20
-@@ -1780,10 +1781,13 @@ static int qcom_spmi_regulator_probe(struct platfor=
-m_device *pdev)
++#include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -1682,7 +1683,7 @@ static const struct file_operations keys_proc_fops =
+=3D {
+ 	.write		=3D keys_proc_write,
+ };
 =20
- 	for (reg =3D match->data; reg->name; reg++) {
-=20
--		if (saw_regmap && \
--		    of_find_property(of_find_node_by_name(node, reg->name), \
--				     "qcom,saw-slave", &lenp)) {
--			continue;
-+		if (saw_regmap) {
-+			reg_node =3D of_get_child_by_name(node, reg->name);
-+			reg_prop =3D of_find_property(reg_node, "qcom,saw-slave",
-+						    &lenp);
-+			of_node_put(reg_node);
-+			if (reg_prop)
-+				continue;
- 		}
-=20
- 		vreg =3D devm_kzalloc(dev, sizeof(*vreg), GFP_KERNEL);
-@@ -1816,13 +1820,17 @@ static int qcom_spmi_regulator_probe(struct platfor=
-m_device *pdev)
- 		if (ret)
- 			continue;
-=20
--		if (saw_regmap && \
--		    of_find_property(of_find_node_by_name(node, reg->name), \
--				     "qcom,saw-leader", &lenp)) {
--			spmi_saw_ops =3D *(vreg->desc.ops);
--			spmi_saw_ops.set_voltage_sel =3D \
--				spmi_regulator_saw_set_voltage;
--			vreg->desc.ops =3D &spmi_saw_ops;
-+		if (saw_regmap) {
-+			reg_node =3D of_get_child_by_name(node, reg->name);
-+			reg_prop =3D of_find_property(reg_node, "qcom,saw-leader",
-+						    &lenp);
-+			of_node_put(reg_node);
-+			if (reg_prop) {
-+				spmi_saw_ops =3D *(vreg->desc.ops);
-+				spmi_saw_ops.set_voltage_sel =3D
-+					spmi_regulator_saw_set_voltage;
-+				vreg->desc.ops =3D &spmi_saw_ops;
-+			}
- 		}
-=20
- 		config.dev =3D dev;
+-static int version_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
+ 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
 --=20
 2.17.1
