@@ -2,131 +2,130 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB8DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C037C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD5C2075E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:55:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD5C2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2975B2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 19:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2975B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeIHAhe (ORCPT
+        id S1727423AbeIHAhq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 20:37:34 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46950 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbeIHAhe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 20:37:34 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 203-v6so13158958ljj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 12:55:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=BIBU7gkAa9Pzi0dv7OCWVm0IvhEG0kaPDCv+qAO33jk=;
-        b=TKuXhId3feBCR4ArpVEeFaeBYd+KBL3FmFF7EFRr6TbgNkZVOao3/nb2YkHgsrW4iB
-         ql9GbdPZIzDhc+iua/oBpunxVeQA943rS1W/VQgMeiYirlD9UJ7LoagD5KJZzUuLhMkF
-         ryCNn2Mw0cU/A2LShKXjQ6jRrq5Eo0YBga7E6WgR3ElFv4gwqtI7OPblOlgcVQ6Pqsc5
-         UaFrfsKhE2yA7I/TmUqBLtZt+EYP1ojOGXN1Yf+0JU7lDImywNdyZUunk8+m70Bi/VF8
-         J5hqwm9/foKvFHGq8os50KKbX4CEnJgMNJ2HP6rcUVLc/IClK2/YmhFjRk4Hy1Mv7oKE
-         jy2Q==
-X-Gm-Message-State: APzg51CeyTW3pPPeOz/jmKirNjHvLNyGNRuWEcXP9d24k8VVkiR0DgDk
-        7glWxiNXpye23ZTjegS0nrWnBWcAakTQZzT4xUPQxA==
-X-Google-Smtp-Source: ANB0VdYOgmo3cmBt9QjzRWRqsXXydkIlw5MPumxA+xzDq9CbcEiv73M/S+3XkLYKn33UDV7zqGvvpO6/H94Paf33YzU=
-X-Received: by 2002:a2e:8:: with SMTP id 8-v6mr5887985lja.112.1536350104170;
- Fri, 07 Sep 2018 12:55:04 -0700 (PDT)
+        Fri, 7 Sep 2018 20:37:46 -0400
+Received: from sauhun.de ([88.99.104.3]:55500 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725987AbeIHAhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 20:37:46 -0400
+Received: from localhost (p54B3324C.dip0.t-ipconnect.de [84.179.50.76])
+        by pokefinder.org (Postfix) with ESMTPSA id 45FD62C27DA;
+        Fri,  7 Sep 2018 21:55:15 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 21:55:14 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PULL REQUEST] i2c for 4.19
+Message-ID: <20180907195510.GA1561@kunai>
 MIME-Version: 1.0
-Received: by 2002:a2e:30a:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 12:55:01 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1809072116530.1402@nanos.tec.linutronix.de>
-References: <1536276468-28499-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1536276468-28499-4-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180907112207.GS24106@hirez.programming.kicks-ass.net> <FFF73D592F13FD46B8700F0A279B802F485BA5C1@ORSMSX114.amr.corp.intel.com>
- <e10acaa8-f5d8-85f3-219c-86fafd793a87@redhat.com> <FFF73D592F13FD46B8700F0A279B802F485BA620@ORSMSX114.amr.corp.intel.com>
- <alpine.DEB.2.21.1809072116530.1402@nanos.tec.linutronix.de>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Sat, 8 Sep 2018 01:25:01 +0530
-Message-ID: <CACi5LpM4QoRn5bAwR-ZJHhaih7N41HYGx6MPZXAY78jFsbu9dg@mail.gmail.com>
-Subject: Re: [PATCH V4 3/3] x86/efi: Introduce EFI_PAGE_FAULT_HANDLER
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        Al Stone <astone@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 8, 2018 at 12:52 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Fri, 7 Sep 2018, Prakhya, Sai Praneeth wrote:
->> > > So, if Thomas, Ingo, Andy, Ard and Boris are ok.. I will make it as
->> > > default (i.e. without config).
->
-> Yes, that's the right thing to do.
->
->> > Also, some distributions already have specific ways to handle buggy
->> > firmwares which can be at times dependent on the underlying hardware
->> > and the firmware versions.
->
-> If the distro patched their kernel to deal with buggy firmware, then:
->
->  1) why did they not upstream it ?
 
-Because some of the kernel fixes are (for such cases), well to be
-honest, ugly.. and probably not suitable for placement in quirks
-files/common code present upstream as they introduce lots of #ifdef
-jugglery.
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also the x86 machines with such buggy BIOS firmwares are too old (but
-still used in some production environment) and the OS workarounds are
-suggested by the vendors themselves and they historically had issues
-getting the quirks upstream.
+Linus,
 
->  2) why should we worry about that ?
+I2C has for you:
 
-As this allows one to still promote upgrading such machines to
-upstream kernel versions and keep the kernel running on them as close
-as possible to mainline.
+* bugfixes for uniphier, i801, and xiic drivers
+* ID removal (never produced) for imx
+* one MAINTAINER addition
 
->> > I would suggest that we enable this under a CONFIG for the first round
->> > and once it is tested with wider variety of x86 machines which have
->> > buggy or orphaned firmware and linux (and reboot) works fine with them,
->> > we can drop the CONFIG option in future and enable this by default.
->
-> Sure and then nobody enables it and the affected machines still crash or
-> hang on reboot. The whole thing is simple enough now to make it
-> unconditional.
-
-Instead, why not the make the CONFIG option default to Y. At least it
-gives us an opportunity to turn it off if needed for backported/distro
-kernels on such broken platforms which might need more testing with
-the EFI page fault approach.
-
-That should serve both the purposes. Just my 2 cents.
+Please pull.
 
 Thanks,
-Bhupesh
 
->> Sounds fair to me, but, I would like to wait for someone experienced to
->> make the final call.
->
-> Please get rid of that config knob. Buggy firmware exists and we better
-> deal with it by default.
->
-> Thanks,
->
->         tglx
->
+   Wolfram
+
+
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
+
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+
+for you to fetch changes up to da4dfaf8428d9f71e2ac4f736bacb81adab36504:
+
+  i2c: xiic: Record xilinx i2c with Zynq fragment (2018-09-07 13:04:45 +0200)
+
+----------------------------------------------------------------
+Fabio Estevam (2):
+      dt-bindings: imx-lpi2c: Remove mx8dv compatible entry
+      i2c: imx-lpi2c: Remove mx8dv compatible entry
+
+Felipe Balbi (1):
+      i2c: i801: fix DNV's SMBCTRL register offset
+
+Masahiro Yamada (2):
+      i2c: uniphier: issue STOP only for last message or I2C_M_STOP
+      i2c: uniphier-f: issue STOP only for last message or I2C_M_STOP
+
+Michal Simek (1):
+      i2c: xiic: Record xilinx i2c with Zynq fragment
+
+Shubhrajyoti Datta (1):
+      i2c: xiic: Make the start and the byte count write atomic
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Jean Delvare (1):
+      (Rev.) i2c: i801: fix DNV's SMBCTRL register offset
+
+ Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.txt | 3 +--
+ MAINTAINERS                                             | 1 +
+ drivers/i2c/busses/i2c-i801.c                           | 7 ++++++-
+ drivers/i2c/busses/i2c-imx-lpi2c.c                      | 1 -
+ drivers/i2c/busses/i2c-uniphier-f.c                     | 7 ++-----
+ drivers/i2c/busses/i2c-uniphier.c                       | 7 ++-----
+ drivers/i2c/busses/i2c-xiic.c                           | 4 ++++
+ 7 files changed, 16 insertions(+), 14 deletions(-)
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluS15oACgkQFA3kzBSg
+KbYlKhAAjhxSklpQf1qvX7VacL7zvMxs6WpM4uO8knElyDRzDk8OXBT13B21UhwW
+wXJnMaR5YYfdYASi5Zhuxf/drwaqwU25H+nlkvKwJ6RdeFh8D+Ws2zM3+cKMoNYy
+kZ1iJjzr9+O/xOiYeyfKEUba1bD9BlpFhdy1sx8+AV0hN6WI6dEBskTPC7hH96xw
+FT2BZvUie2oWIdId48jbBKzaj32zhd+pmtIn29tYSBWR9hA7mfDm6V4LIlQq9AJs
+bka4CO57kDXyRRue0A8TU48P/D+LMP8LHi49HSfQTNpsPgd1yECPU0jsunDmfQN7
+zzeZAlBY4ExfUY/DQ5mV9L7gncPRAXVX9nfKdqZYObBRWxqEcpP4fiJTQBOIicj3
+ztWuie68wQ7FqAQo40uJ189fJgn51w0nmpSiCgPlhspQSiGwpLorZk3+fQfIYlR3
+v3Y8LoeQ0md+wNRV9JenkkzCXZuCh5gtuR3DcD5ZaN56l0Wjgj1+X1Cc48btE7jF
+FmH3f854ZJ8nvm3bxTxIzcKxRaQe7B58uvsHr0cUWwL7CAPlrtDjL9BJr+w4Oym7
+Bmfh0DNSObhPmlWe1RRYWejRELgDbGzy0gVN4pLDcEtIeJSNLp7V0wxBRkmmlCpw
+wfLsIUsQHVk4kTcaHXRll0SYHEMIPdjbkIU79zpxIBx5uwSNv+0=
+=+Rf3
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
