@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0352AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFE4C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B982E20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B982E20645
+	by mail.kernel.org (Postfix) with ESMTP id 8F0A120645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0A120645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbeIHCLc (ORCPT
+        id S1729503AbeIHCLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:11:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48832 "EHLO
+        Fri, 7 Sep 2018 22:11:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728212AbeIHCLb (ORCPT
+        with ESMTP id S1728060AbeIHCLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:11:31 -0400
+        Fri, 7 Sep 2018 22:11:34 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37BDDACC;
-        Fri,  7 Sep 2018 21:28:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F135ACC;
+        Fri,  7 Sep 2018 21:28:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 56/89] KVM: PPC: Book3S: Fix guest DMA when guest partially backed by THP pages
-Date:   Fri,  7 Sep 2018 23:09:50 +0200
-Message-Id: <20180907210859.082538107@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.14 57/89] xtensa: limit offsets in __loop_cache_{all,page}
+Date:   Fri,  7 Sep 2018 23:09:51 +0200
+Message-Id: <20180907210859.236858998@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -50,118 +49,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 8cfbdbdc24815417a3ab35101ccf706b9a23ff17 upstream.
+commit be75de25251f7cf3e399ca1f584716a95510d24a upstream.
 
-Commit 76fa4975f3ed ("KVM: PPC: Check if IOMMU page is contained in
-the pinned physical page", 2018-07-17) added some checks to ensure
-that guest DMA mappings don't attempt to map more than the guest is
-entitled to access. However, errors in the logic mean that legitimate
-guest requests to map pages for DMA are being denied in some
-situations. Specifically, if the first page of the range passed to
-mm_iommu_get() is mapped with a normal page, and subsequent pages are
-mapped with transparent huge pages, we end up with mem->pageshift ==
-0. That means that the page size checks in mm_iommu_ua_to_hpa() and
-mm_iommu_up_to_hpa_rm() will always fail for every page in that
-region, and thus the guest can never map any memory in that region for
-DMA, typically leading to a flood of error messages like this:
+When building kernel for xtensa cores with big cache lines (e.g. 128
+bytes or more) __loop_cache_all and __loop_cache_page may generate
+assembly instructions with immediate fields that are too big. This
+results in the following build errors:
 
-  qemu-system-ppc64: VFIO_MAP_DMA: -22
-  qemu-system-ppc64: vfio_dma_map(0x10005f47780, 0x800000000000000, 0x10000, 0x7fff63ff0000) = -22 (Invalid argument)
+  arch/xtensa/mm/misc.S: Assembler messages:
+  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '256'
+  arch/xtensa/mm/misc.S:464: Error: operand 2 of 'diwbi' has invalid value '384'
+  arch/xtensa/kernel/head.S: Assembler messages:
+  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '256'
+  arch/xtensa/kernel/head.S:172: Error: operand 2 of 'diu' has invalid value '384'
+  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '256'
+  arch/xtensa/kernel/head.S:176: Error: operand 2 of 'iiu' has invalid value '384'
+  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '256'
+  arch/xtensa/kernel/head.S:255: Error: operand 2 of 'diwb' has invalid value '384'
 
-The logic errors in mm_iommu_get() are:
+Add parameter max_immed to these macros and use it to limit values of
+immediate operands. Extract common code of these macros into the new
+macro __loop_cache_unroll.
 
-  (a) use of 'ua' not 'ua + (i << PAGE_SHIFT)' in the find_linux_pte()
-      call (meaning that find_linux_pte() returns the pte for the
-      first address in the range, not the address we are currently up
-      to);
-  (b) use of 'pageshift' as the variable to receive the hugepage shift
-      returned by find_linux_pte() - for a normal page this gets set
-      to 0, leading to us setting mem->pageshift to 0 when we conclude
-      that the pte returned by find_linux_pte() didn't match the page
-      we were looking at;
-  (c) comparing 'compshift', which is a page order, i.e. log base 2 of
-      the number of pages, with 'pageshift', which is a log base 2 of
-      the number of bytes.
-
-To fix these problems, this patch introduces 'cur_ua' to hold the
-current user address and uses that in the find_linux_pte() call;
-introduces 'pteshift' to hold the hugepage shift found by
-find_linux_pte(); and compares 'pteshift' with 'compshift +
-PAGE_SHIFT' rather than 'compshift'.
-
-The patch also moves the local_irq_restore to the point after the PTE
-pointer returned by find_linux_pte() has been dereferenced because
-otherwise the PTE could change underneath us, and adds a check to
-avoid doing the find_linux_pte() call once mem->pageshift has been
-reduced to PAGE_SHIFT, as an optimization.
-
-Fixes: 76fa4975f3ed ("KVM: PPC: Check if IOMMU page is contained in the pinned physical page")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/mmu_context_iommu.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/xtensa/include/asm/cacheasm.h |   65 ++++++++++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 25 deletions(-)
 
---- a/arch/powerpc/mm/mmu_context_iommu.c
-+++ b/arch/powerpc/mm/mmu_context_iommu.c
-@@ -130,6 +130,7 @@ long mm_iommu_get(struct mm_struct *mm,
- 	long i, j, ret = 0, locked_entries = 0;
- 	unsigned int pageshift;
- 	unsigned long flags;
-+	unsigned long cur_ua;
- 	struct page *page = NULL;
+--- a/arch/xtensa/include/asm/cacheasm.h
++++ b/arch/xtensa/include/asm/cacheasm.h
+@@ -31,16 +31,32 @@
+  *
+  */
  
- 	mutex_lock(&mem_list_mutex);
-@@ -178,7 +179,8 @@ long mm_iommu_get(struct mm_struct *mm,
- 	}
+-	.macro	__loop_cache_all ar at insn size line_width
  
- 	for (i = 0; i < entries; ++i) {
--		if (1 != get_user_pages_fast(ua + (i << PAGE_SHIFT),
-+		cur_ua = ua + (i << PAGE_SHIFT);
-+		if (1 != get_user_pages_fast(cur_ua,
- 					1/* pages */, 1/* iswrite */, &page)) {
- 			ret = -EFAULT;
- 			for (j = 0; j < i; ++j)
-@@ -197,7 +199,7 @@ long mm_iommu_get(struct mm_struct *mm,
- 		if (is_migrate_cma_page(page)) {
- 			if (mm_iommu_move_page_from_cma(page))
- 				goto populate;
--			if (1 != get_user_pages_fast(ua + (i << PAGE_SHIFT),
-+			if (1 != get_user_pages_fast(cur_ua,
- 						1/* pages */, 1/* iswrite */,
- 						&page)) {
- 				ret = -EFAULT;
-@@ -211,20 +213,21 @@ long mm_iommu_get(struct mm_struct *mm,
- 		}
- populate:
- 		pageshift = PAGE_SHIFT;
--		if (PageCompound(page)) {
-+		if (mem->pageshift > PAGE_SHIFT && PageCompound(page)) {
- 			pte_t *pte;
- 			struct page *head = compound_head(page);
- 			unsigned int compshift = compound_order(head);
-+			unsigned int pteshift;
+-	movi	\ar, 0
++	.macro	__loop_cache_unroll ar at insn size line_width max_immed
++
++	.if	(1 << (\line_width)) > (\max_immed)
++	.set	_reps, 1
++	.elseif	(2 << (\line_width)) > (\max_immed)
++	.set	_reps, 2
++	.else
++	.set	_reps, 4
++	.endif
++
++	__loopi	\ar, \at, \size, (_reps << (\line_width))
++	.set	_index, 0
++	.rep	_reps
++	\insn	\ar, _index << (\line_width)
++	.set	_index, _index + 1
++	.endr
++	__endla	\ar, \at, _reps << (\line_width)
++
++	.endm
++
  
- 			local_irq_save(flags); /* disables as well */
--			pte = find_linux_pte(mm->pgd, ua, NULL, &pageshift);
--			local_irq_restore(flags);
-+			pte = find_linux_pte(mm->pgd, cur_ua, NULL, &pteshift);
+-	__loopi	\ar, \at, \size, (4 << (\line_width))
+-	\insn	\ar, 0 << (\line_width)
+-	\insn	\ar, 1 << (\line_width)
+-	\insn	\ar, 2 << (\line_width)
+-	\insn	\ar, 3 << (\line_width)
+-	__endla	\ar, \at, 4 << (\line_width)
++	.macro	__loop_cache_all ar at insn size line_width max_immed
++
++	movi	\ar, 0
++	__loop_cache_unroll \ar, \at, \insn, \size, \line_width, \max_immed
  
- 			/* Double check it is still the same pinned page */
- 			if (pte && pte_page(*pte) == head &&
--					pageshift == compshift)
--				pageshift = max_t(unsigned int, pageshift,
-+			    pteshift == compshift + PAGE_SHIFT)
-+				pageshift = max_t(unsigned int, pteshift,
- 						PAGE_SHIFT);
-+			local_irq_restore(flags);
- 		}
- 		mem->pageshift = min(mem->pageshift, pageshift);
- 		mem->hpas[i] = page_to_pfn(page) << PAGE_SHIFT;
+ 	.endm
+ 
+@@ -57,14 +73,9 @@
+ 	.endm
+ 
+ 
+-	.macro	__loop_cache_page ar at insn line_width
++	.macro	__loop_cache_page ar at insn line_width max_immed
+ 
+-	__loopi	\ar, \at, PAGE_SIZE, 4 << (\line_width)
+-	\insn	\ar, 0 << (\line_width)
+-	\insn	\ar, 1 << (\line_width)
+-	\insn	\ar, 2 << (\line_width)
+-	\insn	\ar, 3 << (\line_width)
+-	__endla	\ar, \at, 4 << (\line_width)
++	__loop_cache_unroll \ar, \at, \insn, PAGE_SIZE, \line_width, \max_immed
+ 
+ 	.endm
+ 
+@@ -72,7 +83,8 @@
+ 	.macro	___unlock_dcache_all ar at
+ 
+ #if XCHAL_DCACHE_LINE_LOCKABLE && XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diu XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -81,7 +93,8 @@
+ 	.macro	___unlock_icache_all ar at
+ 
+ #if XCHAL_ICACHE_LINE_LOCKABLE && XCHAL_ICACHE_SIZE
+-	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE XCHAL_ICACHE_LINEWIDTH
++	__loop_cache_all \ar \at iiu XCHAL_ICACHE_SIZE \
++		XCHAL_ICACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -90,7 +103,8 @@
+ 	.macro	___flush_invalidate_dcache_all ar at
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diwbi XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -99,7 +113,8 @@
+ 	.macro	___flush_dcache_all ar at
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_all \ar \at diwb XCHAL_DCACHE_SIZE \
++		XCHAL_DCACHE_LINEWIDTH 240
+ #endif
+ 
+ 	.endm
+@@ -109,7 +124,7 @@
+ 
+ #if XCHAL_DCACHE_SIZE
+ 	__loop_cache_all \ar \at dii __stringify(DCACHE_WAY_SIZE) \
+-			 XCHAL_DCACHE_LINEWIDTH
++			 XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -119,7 +134,7 @@
+ 
+ #if XCHAL_ICACHE_SIZE
+ 	__loop_cache_all \ar \at iii __stringify(ICACHE_WAY_SIZE) \
+-			 XCHAL_ICACHE_LINEWIDTH
++			 XCHAL_ICACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -166,7 +181,7 @@
+ 	.macro	___flush_invalidate_dcache_page ar as
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhwbi XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -175,7 +190,7 @@
+ 	.macro ___flush_dcache_page ar as
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhwb XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -184,7 +199,7 @@
+ 	.macro	___invalidate_dcache_page ar as
+ 
+ #if XCHAL_DCACHE_SIZE
+-	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH
++	__loop_cache_page \ar \as dhi XCHAL_DCACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
+@@ -193,7 +208,7 @@
+ 	.macro	___invalidate_icache_page ar as
+ 
+ #if XCHAL_ICACHE_SIZE
+-	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH
++	__loop_cache_page \ar \as ihi XCHAL_ICACHE_LINEWIDTH 1020
+ #endif
+ 
+ 	.endm
 
 
