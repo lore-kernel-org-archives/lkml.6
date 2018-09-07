@@ -2,91 +2,122 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4ADFC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA0DC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7624E20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9A8B2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 13:58:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m9UYVjJC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7624E20844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7uBJ4wx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A8B2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbeIGSj3 (ORCPT
+        id S1728943AbeIGSkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 14:39:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46638 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727718AbeIGSj2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 14:39:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TCnKgmT5DcseuwWIzumYqCQNmDAnfRFSpzpGJJq83FE=; b=m9UYVjJC7BOildnlrC9Y1iYfy
-        gaVSq+THbUAmz1RUHjMQ/teWNL1jIVpv2ywbLB1RS+XkWobeWkgePM1mcDzZb7V5maWOr5LPOeN2X
-        kMSh8XotOOUZ0fRjOCafsUrwNr3JZltyvbnjzt5scna75sNzic9VV9S8Ezy8B5m2urNz/+HBPJDba
-        7pyO6BTXV7TH/Ul2Y1cBRpDIhVOUC57mVkZyamfZ4+EGCGZUWaBTL2tYJdSaqiMxeWttw2B3se00m
-        iAnd0/P+tP50MHKwewcP4RqBI0/E40vLdg8QExwP77oKusLIn7x4f5OVMdZQ17xf0hN/K7/CFlC6J
-        qD18o2oKA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fyHH8-00085K-T6; Fri, 07 Sep 2018 13:58:19 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 66CAA2024DB84; Fri,  7 Sep 2018 15:58:17 +0200 (CEST)
-Date:   Fri, 7 Sep 2018 15:58:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] perf: enum overflow in uapi/linux/perf_event.h
-Message-ID: <20180907135817.GF24106@hirez.programming.kicks-ass.net>
-References: <a70172863fa7d3c138f788b18d36524bd45b0a73.1536326078.git.christophe.leroy@c-s.fr>
- <20180907134246.GC24106@hirez.programming.kicks-ass.net>
- <ae32181d-37b2-1a13-3c72-66775e05ff88@c-s.fr>
+        Fri, 7 Sep 2018 14:40:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728425AbeIGSkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:40:00 -0400
+Received: from mail-qt0-f180.google.com (mail-qt0-f180.google.com [209.85.216.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 481342086C;
+        Fri,  7 Sep 2018 13:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536328734;
+        bh=MfTug/iTVVYLYrBOImjYweSW9EABMIC911TalAFi2uQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=h7uBJ4wx0ayV/c+11F5HXpDHD6hgcP6P4Un86ZYk3RHERag8iF9YOroQ0WCslbm+h
+         g5+gABZJgZ3NGMRTDMaTnOumd4LnR0E98qC7QxGNsihvwMzvhxK74yj2eSMALGgaQf
+         1pww8+2mV4xOPKCZjGh9jhUrryZdFT26qg/HbVww=
+Received: by mail-qt0-f180.google.com with SMTP id d4-v6so16242003qtn.13;
+        Fri, 07 Sep 2018 06:58:54 -0700 (PDT)
+X-Gm-Message-State: APzg51DHGUicmjtlJbCiv+QrBDOZf0UJaXYMflu9YH+c3tSHfFZRCpbY
+        0L9+4otZekSR2/XoeZbUp2/yjkfY4limgldk6g==
+X-Google-Smtp-Source: ANB0VdalvyQXxwaC+S6OUE6+dSkOs304rHHwRJDWYU/ib2PUO4NwrV37UF2DoOendwOr+RfXlJClGhhb87zeV1YWLb8=
+X-Received: by 2002:ad4:414b:: with SMTP id z11-v6mr5899881qvp.77.1536328733418;
+ Fri, 07 Sep 2018 06:58:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae32181d-37b2-1a13-3c72-66775e05ff88@c-s.fr>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180905193738.19325-1-robh@kernel.org> <CAHTX3d+BFKM-jFo8Ww_dXwAzsDVoWqE==erfwVTeijHfh8kkOw@mail.gmail.com>
+In-Reply-To: <CAHTX3d+BFKM-jFo8Ww_dXwAzsDVoWqE==erfwVTeijHfh8kkOw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 7 Sep 2018 08:58:41 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLvLoekvxcaBMxrboJzqS=NyB69NHLShos+LhETj7zNwQ@mail.gmail.com>
+Message-ID: <CAL_JsqLvLoekvxcaBMxrboJzqS=NyB69NHLShos+LhETj7zNwQ@mail.gmail.com>
+Subject: Re: [PATCH 00/21] DT cpu node iterator
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Ley Foon Tan <lftan@altera.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Salter <msalter@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        nios2-dev@lists.rocketboards.org,
+        Openrisc <openrisc@lists.librecores.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Rich Felker <dalias@libc.org>,
+        Simon Horman <horms@verge.net.au>,
+        Stafford Horne <shorne@gmail.com>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, vitb@kernel.crashing.org,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org, linux-clk <linux-clk@vger.kernel.org>,
+        linux-edac@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 01:50:18PM +0000, Christophe Leroy wrote:
-> 
-> 
-> On 09/07/2018 01:42 PM, Peter Zijlstra wrote:
-> > On Fri, Sep 07, 2018 at 01:27:19PM +0000, Christophe Leroy wrote:
-> > > On PPC32, enums are 32 bits, so __PERF_SAMPLE_CALLCHAIN_EARLY is
-> > > out of scope. The following sparse warning is encountered:
-> > > 
-> > >    CHECK   arch/powerpc/kernel/process.c
-> > > ./include/uapi/linux/perf_event.h:147:56: warning: cast truncates bits from constant value (8000000000000000 becomes 0)
-> > 
-> > Urgh... what compiler is that? I've not seen anything like that from the
-> > build bots.
-> > 
-> 
-> [root@pc16082vm linux-powerpc]# sparse --version
-> 0.5.2
-> 
-> [root@pc16082vm linux-powerpc]# ppc-linux-gcc --version
-> ppc-linux-gcc (GCC) 5.4.0
+On Fri, Sep 7, 2018 at 7:54 AM Michal Simek <monstr@monstr.eu> wrote:
+>
+> Hi Rob,
+>
+> 2018-09-05 21:37 GMT+02:00 Rob Herring <robh@kernel.org>:
+>>
+>> This series adds an iterator for cpu nodes and converts users over to use
+>> it or of_get_cpu_node in some cases. This allows us to remove the
+>> dependency on device_type property for cpu nodes though removing that
+>> from DTS files will have to wait for some time. In some cases, this makes
+>> the DT search more strict by only looking in /cpus child nodes rather
+>> than any node with the device_type == cpu. The iterator also honors the
+>> status property which is often forgotten.
+>>
+>> I've only tested on ARM under QEMU and compiled powerpc.
+>
+>
+>
+> Do you have this somewhere in your tree not to apply 21 patches by hand?
 
-Ah, that's a sparse warning. But does your GCC agree? The thing is,
-sparse uses the C enum spec, but I suspect GCC uses the C++ enum spec
-and it all works fine.
+Yes, dt/cpu-type branch on my kernel.org tree.
+
+Rob
