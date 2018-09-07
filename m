@@ -2,115 +2,107 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E36C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0CBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1D2E2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:15:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1D2E2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 247CC2075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:19:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kllTi29t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247CC2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeIGEw6 (ORCPT
+        id S1727951AbeIGE51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 00:52:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:52460 "EHLO foss.arm.com"
+        Fri, 7 Sep 2018 00:57:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:46195 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeIGEw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 00:52:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 461B07A9;
-        Thu,  6 Sep 2018 17:14:58 -0700 (PDT)
-Received: from [10.103.100.29] (unknown [10.103.100.29])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0D7F3F557;
-        Thu,  6 Sep 2018 17:14:57 -0700 (PDT)
-Subject: Re: [PATCH v6 04/14] PM / EM: Expose the Energy Model in sysfs
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-5-quentin.perret@arm.com>
- <c012c934-d861-eba6-0c67-63e8308ae37b@arm.com>
- <20180906140914.noe3yz7xrb4g5sf4@queper01-lin>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <fe196eda-5e97-b115-0c24-b484428d2ac2@arm.com>
-Date:   Thu, 6 Sep 2018 17:14:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726293AbeIGE51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 00:57:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 425yjm2jjVz9s55;
+        Fri,  7 Sep 2018 10:19:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1536279564;
+        bh=gTQPDbjVgsYLeTiyAflWtPEdIbISyZ+KCSsXdDOk5gw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kllTi29tCoqUpizxsOySbZsZsT705j+Z7e+4vnZCFfYhkXv2voMzldsZr7KfaTPCb
+         qyUSUuEBBnKgkSiz/rntDzKKzYNDXdwUzecQdP9byAWdmi4u8VNteGHax+IP8kKfEk
+         UeVh0kI1NEWyOfFX7ARToFNw0hZONaY32bvgv1OZNwZJ8Pa8YK9BGvw7Se3uOM1M5R
+         j9NuCrk0pU/YZisoBWfUlDNVnpNXsLOmzE34wGuBdBZCoHp3jNfaEeGpVUo7qZHdWv
+         YSu3d3M7UlTAbFrxZQ7aYBf5b8cPIqWeJzAlVKKLYhvXwciVhAzMZkIztU7QU+gNCt
+         8uVoJ/38D830A==
+Date:   Fri, 7 Sep 2018 10:19:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBl?= =?UTF-8?B?bA==?= 
+        <bjorn.topel@intel.com>
+Subject: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20180907101923.4d2a85c6@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180906140914.noe3yz7xrb4g5sf4@queper01-lin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qSYX_iRFPcE6o1KMvibSdYY"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 07:09 AM, Quentin Perret wrote:
-> Hi Dietmar,
-> 
-> On Wednesday 05 Sep 2018 at 23:56:43 (-0700), Dietmar Eggemann wrote:
->> On 08/20/2018 02:44 AM, Quentin Perret wrote:
->>> Expose the Energy Model (read-only) of all performance domains in sysfs
->>> for convenience. To do so, add a kobject to the CPU subsystem under the
->>> umbrella of which a kobject for each performance domain is attached.
->>>
->>> The resulting hierarchy is as follows for a platform with two
->>> performance domains for example:
->>>
->>>      /sys/devices/system/cpu/energy_model
->>>      ├── pd0
->>>      │   ├── cost
->>>      │   ├── cpus
->>>      │   ├── frequency
->>>      │   └── power
->>
->> cpus (cpumask of the perf domain), frequency (OPP's of the perf domain) and
->> power (values at those OPP's) are somehow easy to grasp, cost is definitely
->> not.
->>
->> You have this nice description in em_pd_energy() what cost actually is.
->> IMHO, might be worth repeating this at least in the patch header here.
-> 
-> Hmm, this patch introduces the sysfs interface, not the 'cost' field
-> itself. As long as 'cost' is documented in the patch that introduces it
-> we should be good no ? I mean this patch header tells you _where_ the
-> fields of the structure are exposed. _What_ the structure is all about
-> is a different story.
+--Sig_/qSYX_iRFPcE6o1KMvibSdYY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Mmmh, so maybe a EAS related documentation file explaining this 
-interface as well, which can be introduced later is the solution here?
+Hi all,
 
-I'm just not 100% convinced that those cost values are self-explanatory 
-like the other three items:
+After merging the bpf-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-root@h960:~# ls /sys/devices/system/cpu/energy_model/pd0/
-cost
-cpus
-frequency
-power
+ERROR: ".xsk_reuseq_swap" [drivers/net/ethernet/intel/i40e/i40e.ko] undefin=
+ed!
+ERROR: ".xsk_reuseq_free" [drivers/net/ethernet/intel/i40e/i40e.ko] undefin=
+ed!
+ERROR: ".xsk_reuseq_prepare" [drivers/net/ethernet/intel/i40e/i40e.ko] unde=
+fined
 
-root@h960:~# cat /sys/devices/system/cpu/energy_model/pd0/*
-96 129 163 201 245
-0-3
-533000 999000 1402000 1709000 1844000
-28 70 124 187 245
+Caused by commit
 
-> But yeah, in any case, a reminder shouldn't hurt I guess, if you really
-> want one :-)
+  9654bd10da60 ("i40e: clean zero-copy XDP Rx ring on shutdown/reset")
 
-Nothing which should hold this patch-set back though.
+CONFIG_XDP_SOCKETS is not set for this build.
+
+I have used the version of the bfp-next tree from next-20180906 for today.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/qSYX_iRFPcE6o1KMvibSdYY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluRxAsACgkQAVBC80lX
+0GwmEQgAiWmG1iITZcZF5FhWViHP1MiECvbv99kcl3NYUqxLPR0lMdtLkJbGxESd
++iSKb3AKxA2VFOh0xMSfxQbsTP/vw/WFoejIDk72q+VefR7pppkPf7VsCPsW4cdx
+HZoUdPoTD6Z18iid7oGirCxr1JF9jgBaOWdcA3x8fn0v8IjZNfSNOriqkDQ7+mbj
+wxsSiM08vcTINF9K/vWqf/6zgYpn7Xq6AG6opT7nmxZ1vr9qkUVXj28hPmUwWYNK
+46703M6iZhLkMF47kgCNc68z2B1o91u+wa8vwoOCE90hlODw226DSeRHj9s0eopN
+d5xGNXHbdspVN43ORS0ZFiuovMi+oQ==
+=C2jJ
+-----END PGP SIGNATURE-----
+
+--Sig_/qSYX_iRFPcE6o1KMvibSdYY--
