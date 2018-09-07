@@ -6,52 +6,51 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F311EC43143
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E824C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F70820861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:36:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36D4C20857
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 00:36:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="M6qasF92"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F70820861
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CGnR0EYs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D4C20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeIGFOT (ORCPT
+        id S1728750AbeIGFOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 01:14:19 -0400
-Received: from mail-eopbgr710107.outbound.protection.outlook.com ([40.107.71.107]:21288
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Fri, 7 Sep 2018 01:14:20 -0400
+Received: from mail-eopbgr690135.outbound.protection.outlook.com ([40.107.69.135]:4506
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728631AbeIGFOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 01:14:18 -0400
+        id S1728506AbeIGFOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 01:14:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IfbsnoqNqIYS6vUmgvTogG9oASp5fkIBTKHeRAM8ZdA=;
- b=M6qasF92ZAwEBwlYbK7GL/JpCHF3J3H4zML93MF7Zr93CYYXpXqJRdJaz5J8HTqzT8Jo4Zf5tzBzkRt006gilNVj8PEP+JbSG6q3TOctVfLwwP/1GCJCu7tchMrZZY1gBQ76vDZnu1fKi4D/JXX64rY3kXQo/hcK/8d3A5yuf1c=
+ bh=5G0ao51ajZKQ9G25DRvlSUntjy/We+u7YVFNzZBAx/s=;
+ b=CGnR0EYsX8Yq0OW1E5R4Gr176v/lwvvgUnfxLBeiXaA02kV8uasQq1kQM66A0mrTTEQHvlGHakOw5zHicS69StSrNdRai1//D07b25myacxsAMybpLM2d97fYPt3D3Nt2HOGYhYDpQnGdvgiLnBa1eiHuEhNwRo61EJd+39pVdE=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0824.namprd21.prod.outlook.com (10.173.192.10) with Microsoft SMTP
+ CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.8; Fri, 7 Sep 2018 00:36:10 +0000
+ 15.20.1143.1; Fri, 7 Sep 2018 00:36:01 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1143.008; Fri, 7 Sep 2018
- 00:36:10 +0000
+ 00:36:01 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 26/88] MIPS: ath79: fix system restart
-Thread-Topic: [PATCH AUTOSEL 4.18 26/88] MIPS: ath79: fix system restart
-Thread-Index: AQHURkLGVhbUtghsRkKFroQGQUHNIA==
-Date:   Fri, 7 Sep 2018 00:36:10 +0000
-Message-ID: <20180907003547.57567-26-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 12/88] amd-xgbe: use dma_mapping_error to check
+ map errors
+Thread-Topic: [PATCH AUTOSEL 4.18 12/88] amd-xgbe: use dma_mapping_error to
+ check map errors
+Thread-Index: AQHURkLAToYAuEj3QEuY4tDqj/9CbA==
+Date:   Fri, 7 Sep 2018 00:36:01 +0000
+Message-ID: <20180907003547.57567-12-alexander.levin@microsoft.com>
 References: <20180907003547.57567-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180907003547.57567-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,83 +59,82 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0824;6:r8BVJGA/+GCu1vB1sGQfgjtib54OkX++FspiVdZef/JvnWurxXIxDB20ySky5cbTMgiBu1PUvuAuLlS4aLbRTvzVJi4bbLOtpEGnfFFb/YRIUFRG5VdGJejTMn25hZVCGkna19spvrVfh02IxJQJeEjZJKOCFTinjcddrrnOFg+D1Sj0nV5o9vEcejImQbepR4ELGCZbCC81u1WaZjpE7mCqYr6bp74rtFvp/8AjFfZbXfaQOy3jLMmzA4v2I/bJvJKa3AxywlCxcogi36wAFcUyLPASu0yVQwSAIRodPpsSndMC8iKVKJHu9GWAK9JLxPZxerzwInahoKSZf24RNG6L2Cb7+WFB1UkJw+bPnP42gNqVOLmOgSTIQnPd77vJuBfWLIXT3UCTgWfvdnQyDAV5Oh5CfmSjkYZXByIWSKR0gEz6bpfwXH47DSKP5O/swtiqUpEs7Xjid57HRaRz2w==;5:KStOmLU2pX7UK+MfvofBINrEslxErY8WvGQQ0rV4YhgDgYdA7/o2sNrKbcpUVsUwTuaqz6PpLLRbaSe9B0uEEAM8C8MuC/1X8tkwZ4bEF2vhXt4jgXAykcJrBzgLyhQdlEaRdF0tkmVHMUEJPTQnWqEXYuXhfpyKXXZa7ddcZio=;7:bW3aZ02xniRjTvDP5WsD8YhZBcT/TpFgulhkPv2ciinqOvD/NQJxPAxZg8aK9YiYpNldKwRS/9j6JkOM+UpOr3ffTU9yF1k/I/mrfoEPJsODtebhRUOTw4L8VW6uwJ6D6j5MWZcQo+TIe3eXyqP+7zKmEEPlKTnbLiP0M8huyFEe9KBsbaqd+YOCKM2reZTGoIRJTAELTuh7QxrFiuKEGIBBh7UkAxVDXJODw0pZiqdvssa2e0GrDiyzVSVeXWys
-x-ms-office365-filtering-correlation-id: 8bb08c57-e02c-478b-22f8-08d61459e8af
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:p493MaA7YFOldlcCYx9Flq+pzCLpclchWrdk5+B+Mlhz2NWXaCkTvFR03D8y5kv9Xz6jwiBh7vmzPH+PwR5Az/y7KinT7XWzUn5fxe4sE21CIGCJl/8PAZmrkKEpI47g5VegApOrfUMyD1KK8JQNZO98/4WCIr3VmJYBEU+af84Zb+IpoJfYhRYG9A8O5zfFJ5BLWspxfAbKWLzSNxR3rnlSPboJ3pyaMcMmO2hOkXkEjGoz9Coi2KW8ua0q+OiYohN8PfB7GvhZXxpshxob7UhhjOoDXpMi89XBm2OjEdPrs0JS+0JUEiFGS84q5JfL9D/j31GSIy8Q+9JzJTNf0BpQ2QoSp+lPvpZN7mSu/YKYAq9YFrNPpF9YdygVLD2JYG6fjBzLRCwxCfxgVAuLneRV4RMSXB5UJfUyyqLLDvKyiQxvoEqMkxPsYzhNwdG7fVxgCMD+YkFE0XahqAOy/A==;5:m3iQDqvj+WvzxjMcziHRSGSZstNjaQlvVegNtckdMfR7NJXiEvhZWcO1elHU2H2aURTdimyOINEhoFiDtaqg1QDgKVPoxWygE/k7cztQT2i0ub+Gyoe95djqmK3NskaTDOWkHAxbryQXi8S3qeWFifc9NYLxxwV/DvKl3Wpt3Kc=;7:g1dTZOh7Y8P3GWJhwsu2xTxGGSx9W3g56eXIT6t1Cf5Wgc33Vh9P3zaB7903iZEXv28eLrd5CZjVIxlFFmsbqvKstJu3mUoKSGOfpM83imk/ldNNosptLOCjUNid+EieQIaPgUM+R/kOMiJtIj3QU+kIAcgWUsoVjjty9mCkYwX4D1pYgLkRSrYaZxpfegm/+63xGVyKeftvC3unKMGPuMXAWfE7Nl9CtyWS1Wjs1NwRHsIE0m0fRp8alkrtwMIE
+x-ms-office365-filtering-correlation-id: 2c2701e9-bbe5-404f-b097-08d61459e352
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0824;
-x-ms-traffictypediagnostic: CY4PR21MB0824:
-x-microsoft-antispam-prvs: <CY4PR21MB0824B7CE64DBF278C7BB3A27FB000@CY4PR21MB0824.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231344)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0824;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0824;
-x-forefront-prvs: 07880C4932
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(376002)(346002)(136003)(199004)(189003)(22452003)(14444005)(256004)(102836004)(6506007)(217873002)(10290500003)(186003)(26005)(5660300001)(4326008)(6346003)(966005)(81156014)(81166006)(110136005)(54906003)(72206003)(316002)(575784001)(1076002)(6116002)(3846002)(8936002)(107886003)(14454004)(86612001)(2900100001)(105586002)(106356001)(5250100002)(86362001)(76176011)(2501003)(6306002)(53936002)(10090500001)(68736007)(66066001)(36756003)(6436002)(99286004)(6512007)(486006)(25786009)(2906002)(6486002)(478600001)(7736002)(305945005)(2616005)(476003)(11346002)(97736004)(8676002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0824;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
+x-ms-traffictypediagnostic: CY4PR21MB0773:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: ZVRlJF6SoHUDdoHnSL0r6i1s0rs6K70D7GnnJyvBYdOlR/Bv90VMhmQ1Sj6SMwBc0fgPJrjsPqiLplwG1gLcWif7chyA5xoeHgZxmssXev/7uCh2gPNsvbTNsUxsOsOqiUYDQopwMUW8mpAZd9WvDTAiYqBv8boV1DwPLTi0/GAwgR3AFwycS4hZQTQoDp5YqnIv7dTPtNNLXflpVrjiOLGkiBuGH1I0FoF5zIEqzxh1es1jnNB6ioIFIw0M50e2Xo5LS/hAUC3D1xKL/HkwNYYvXF9Ihvofs1KQMNnhXzJzRny+wdbdZAJl4919OnuV3M03KaK1lZf76AF2fJDynlyePN9sq2Z9uvhfk2du45A=
+x-microsoft-antispam-prvs: <CY4PR21MB077302B95B4D72A21EB6A74CFB000@CY4PR21MB0773.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231344)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
+x-forefront-prvs: 07880C4932
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(8676002)(5660300001)(106356001)(6436002)(25786009)(110136005)(54906003)(6506007)(105586002)(2906002)(486006)(53936002)(446003)(2616005)(476003)(4326008)(11346002)(5250100002)(107886003)(2501003)(86612001)(97736004)(6512007)(478600001)(3846002)(72206003)(6116002)(10290500003)(76176011)(68736007)(14454004)(1076002)(66066001)(26005)(575784001)(6486002)(99286004)(8936002)(36756003)(81166006)(86362001)(14444005)(256004)(102836004)(81156014)(305945005)(186003)(22452003)(2900100001)(7736002)(10090500001)(316002)(217873002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0zqNc44RxHj+iU1KtpEIM0FL9ZQ2LRAm+sF8+tm8PG2qK8F4X6TS21e/l6ZeY7ehm3fU473qdzpo4XxrjTfuyH1xMplPJlvGZWIhJr/bDuxyFnjl4RsrnZElr7z4Pr9DIO7bGEpId4bFcoxj01UCHSKV4ZlbXlHNht67p8fLTQqYwaKNbdfJC+wUV9jdjfkJWuet5VGpMlGaBkkeggmSP990/8UT/t2WQyWs0QBFT+06G+jtbIzSGZYQnf2qfinw1CUq+4I/6BcWQbnZKSxkQUY7K+HPrXKxhjfW3m/TK4RMfOKFPhjSF1yVLfo2q5aEO4CNRqf1tbsNCvd+KJ6QjMS1H1yYDRolVKRtFbXk68U=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bb08c57-e02c-478b-22f8-08d61459e8af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:10.5888
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c2701e9-bbe5-404f-b097-08d61459e352
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2018 00:36:01.5804
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0824
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0773
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Fietkau <nbd@nbd.name>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit f8a7bfe1cb2c1ebfa07775c9c8ac0ad3ba8e5ff5 ]
+[ Upstream commit b24dbfe9ce03d9f83306616f22fb0e04e8960abe ]
 
-This patch disables irq on reboot to fix hang issues that were observed
-due to pending interrupts.
+The dma_mapping_error() returns true or false, but we want
+to return -ENOMEM if there was an error.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19913/
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Fixes: 174fd2597b0b ("amd-xgbe: Implement split header receive support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/mips/ath79/setup.c                  | 1 +
- arch/mips/include/asm/mach-ath79/ath79.h | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/ethernet/amd/xgbe/xgbe-desc.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
-index f206dafbb0a3..26a058d58d37 100644
---- a/arch/mips/ath79/setup.c
-+++ b/arch/mips/ath79/setup.c
-@@ -40,6 +40,7 @@ static char ath79_sys_type[ATH79_SYS_TYPE_LEN];
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c b/drivers/net/ethern=
+et/amd/xgbe/xgbe-desc.c
+index cc1e4f820e64..533094233659 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
+@@ -289,7 +289,7 @@ static int xgbe_alloc_pages(struct xgbe_prv_data *pdata=
+,
+ 	struct page *pages =3D NULL;
+ 	dma_addr_t pages_dma;
+ 	gfp_t gfp;
+-	int order, ret;
++	int order;
 =20
- static void ath79_restart(char *command)
- {
-+	local_irq_disable();
- 	ath79_device_reset_set(AR71XX_RESET_FULL_CHIP);
- 	for (;;)
- 		if (cpu_wait)
-diff --git a/arch/mips/include/asm/mach-ath79/ath79.h b/arch/mips/include/a=
-sm/mach-ath79/ath79.h
-index 441faa92c3cd..6e6c0fead776 100644
---- a/arch/mips/include/asm/mach-ath79/ath79.h
-+++ b/arch/mips/include/asm/mach-ath79/ath79.h
-@@ -134,6 +134,7 @@ static inline u32 ath79_pll_rr(unsigned reg)
- static inline void ath79_reset_wr(unsigned reg, u32 val)
- {
- 	__raw_writel(val, ath79_reset_base + reg);
-+	(void) __raw_readl(ath79_reset_base + reg); /* flush */
- }
+ again:
+ 	order =3D alloc_order;
+@@ -316,10 +316,9 @@ static int xgbe_alloc_pages(struct xgbe_prv_data *pdat=
+a,
+ 	/* Map the pages */
+ 	pages_dma =3D dma_map_page(pdata->dev, pages, 0,
+ 				 PAGE_SIZE << order, DMA_FROM_DEVICE);
+-	ret =3D dma_mapping_error(pdata->dev, pages_dma);
+-	if (ret) {
++	if (dma_mapping_error(pdata->dev, pages_dma)) {
+ 		put_page(pages);
+-		return ret;
++		return -ENOMEM;
+ 	}
 =20
- static inline u32 ath79_reset_rr(unsigned reg)
+ 	pa->pages =3D pages;
 --=20
 2.17.1
