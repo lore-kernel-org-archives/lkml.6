@@ -3,36 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25360C2BC8D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E12C04ABF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D6E2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D6E2075B
+	by mail.kernel.org (Postfix) with ESMTP id C123C20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 20:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C123C20844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeIHBmQ (ORCPT
+        id S1727955AbeIHBmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:42:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39352 "EHLO mail.kernel.org"
+        Fri, 7 Sep 2018 21:42:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727739AbeIHBmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:42:15 -0400
+        id S1727791AbeIHBmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 21:42:16 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C02C2087E;
-        Fri,  7 Sep 2018 20:59:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 960702088E;
+        Fri,  7 Sep 2018 20:59:34 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1fyNqm-0001rf-Ko; Fri, 07 Sep 2018 16:59:32 -0400
-Message-Id: <20180907205932.529511011@goodmis.org>
+        id 1fyNqn-0001vO-LJ; Fri, 07 Sep 2018 16:59:33 -0400
+Message-Id: <20180907205933.547534163@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 07 Sep 2018 16:59:14 -0400
+Date:   Fri, 07 Sep 2018 16:59:20 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -44,7 +43,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         tom.zanussi@linux.intel.com
-Subject: [PATCH RT 17/24] crypto: cryptd - add a lock instead preempt_disable/local_bh_disable
+Subject: [PATCH RT 23/24] Revert "softirq: keep the softirq pending check RT-only"
 References: <20180907205857.262840394@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -58,86 +57,43 @@ If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 21aedb30d85979697f79a72a084e5d781e323663 ]
+This reverts commit 5536f5491a2e098ba34995662dfc0e82d66d65c9.
 
-cryptd has a per-CPU lock which protected with local_bh_disable() and
-preempt_disable().
-Add an explicit spin_lock to make the locking context more obvious and
-visible to lockdep. Since it is a per-CPU lock, there should be no lock
-contention on the actual spinlock.
-There is a small race-window where we could be migrated to another CPU
-after the cpu_queue has been obtain. This is not a problem because the
-actual ressource is protected by the spinlock.
+Sebastian says that the stable commits:
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+ 0a0e0829f9901 ("nohz: Fix missing tick reprogram when interrupting an inline softirq")
+ 80d20d35af1ed ("nohz: Fix local_timer_softirq_pending()")
+
+Make this commit obsolete, thus it should be reverted.
+
+Link: http://lkml.kernel.org/r/20180906193028.jvyp2dj3rto4ax7s@linutronix.de
+
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- crypto/cryptd.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ kernel/softirq.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/crypto/cryptd.c b/crypto/cryptd.c
-index 248f6ba41688..54b7985c8caa 100644
---- a/crypto/cryptd.c
-+++ b/crypto/cryptd.c
-@@ -37,6 +37,7 @@
- struct cryptd_cpu_queue {
- 	struct crypto_queue queue;
- 	struct work_struct work;
-+	spinlock_t qlock;
- };
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 996b03fb8c53..ec801952785a 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -842,13 +842,8 @@ static inline void tick_irq_exit(void)
+ 	int cpu = smp_processor_id();
  
- struct cryptd_queue {
-@@ -115,6 +116,7 @@ static int cryptd_init_queue(struct cryptd_queue *queue,
- 		cpu_queue = per_cpu_ptr(queue->cpu_queue, cpu);
- 		crypto_init_queue(&cpu_queue->queue, max_cpu_qlen);
- 		INIT_WORK(&cpu_queue->work, cryptd_queue_worker);
-+		spin_lock_init(&cpu_queue->qlock);
+ 	/* Make sure that timer wheel updates are propagated */
+-#ifdef CONFIG_PREEMPT_RT_BASE
+ 	if ((idle_cpu(cpu) || tick_nohz_full_cpu(cpu)) &&
+-	    !need_resched() && !local_softirq_pending())
+-#else
+-	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu))
+-#endif
+-	{
++	    !need_resched() && !local_softirq_pending()) {
+ 		if (!in_irq())
+ 			tick_nohz_irq_exit();
  	}
- 	return 0;
- }
-@@ -139,8 +141,10 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
- 	atomic_t *refcnt;
- 	bool may_backlog;
- 
--	cpu = get_cpu();
--	cpu_queue = this_cpu_ptr(queue->cpu_queue);
-+	cpu_queue = raw_cpu_ptr(queue->cpu_queue);
-+	spin_lock_bh(&cpu_queue->qlock);
-+	cpu = smp_processor_id();
-+
- 	err = crypto_enqueue_request(&cpu_queue->queue, request);
- 
- 	refcnt = crypto_tfm_ctx(request->tfm);
-@@ -157,7 +161,7 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
- 	atomic_inc(refcnt);
- 
- out_put_cpu:
--	put_cpu();
-+	spin_unlock_bh(&cpu_queue->qlock);
- 
- 	return err;
- }
-@@ -173,16 +177,11 @@ static void cryptd_queue_worker(struct work_struct *work)
- 	cpu_queue = container_of(work, struct cryptd_cpu_queue, work);
- 	/*
- 	 * Only handle one request at a time to avoid hogging crypto workqueue.
--	 * preempt_disable/enable is used to prevent being preempted by
--	 * cryptd_enqueue_request(). local_bh_disable/enable is used to prevent
--	 * cryptd_enqueue_request() being accessed from software interrupts.
- 	 */
--	local_bh_disable();
--	preempt_disable();
-+	spin_lock_bh(&cpu_queue->qlock);
- 	backlog = crypto_get_backlog(&cpu_queue->queue);
- 	req = crypto_dequeue_request(&cpu_queue->queue);
--	preempt_enable();
--	local_bh_enable();
-+	spin_unlock_bh(&cpu_queue->qlock);
- 
- 	if (!req)
- 		return;
 -- 
 2.18.0
 
