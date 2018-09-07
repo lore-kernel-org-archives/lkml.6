@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFE3C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7139C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF2842083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:39:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF2842083D
+	by mail.kernel.org (Postfix) with ESMTP id 9026A2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 12:40:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9026A2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbeIGRTe (ORCPT
+        id S1729330AbeIGRTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 7 Sep 2018 13:19:34 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58605 "EHLO
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52089 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729233AbeIGRTc (ORCPT
+        with ESMTP id S1729218AbeIGRTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 7 Sep 2018 13:19:32 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <sha@pengutronix.de>)
-        id 1fyG27-0007bz-Od; Fri, 07 Sep 2018 14:38:43 +0200
+        id 1fyG27-0007bu-Jz; Fri, 07 Sep 2018 14:38:43 +0200
 Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <sha@pengutronix.de>)
-        id 1fyG26-00062I-GY; Fri, 07 Sep 2018 14:38:42 +0200
+        id 1fyG26-000623-E9; Fri, 07 Sep 2018 14:38:42 +0200
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-mtd@lists.infradead.org
 Cc:     David Gstir <david@sigma-star.at>,
         Richard Weinberger <richard@nod.at>, kernel@pengutronix.de,
         linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 14/25] ubifs: authentication: Add hashes to index nodes
-Date:   Fri,  7 Sep 2018 14:36:35 +0200
-Message-Id: <20180907123646.12688-15-s.hauer@pengutronix.de>
+Subject: [PATCH 09/25] ubifs: Format changes for authentication support
+Date:   Fri,  7 Sep 2018 14:36:30 +0200
+Message-Id: <20180907123646.12688-10-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907123646.12688-1-s.hauer@pengutronix.de>
 References: <20180907123646.12688-1-s.hauer@pengutronix.de>
@@ -51,381 +51,201 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With this patch the hashes over the index nodes stored in the tree node
-cache are written to flash and are checked when read back from flash.
-The hash of the root index node is stored in the master node.
+This patch adds the changes to the on disk format needed for
+authentication support. We'll add:
 
-During journal replay the hashes are regenerated from the read nodes
-and stored in the tree node cache. This means the nodes must previously
-be authenticated by other means. This is done in a later patch.
+* a HMAC covering super block node
+* a HMAC covering the master node
+* a hash over the root index node to the master node
+* a hash over the LPT to the master node
+* a flag to the filesystem flag indicating the filesystem is
+  authenticated
+* an authentication node necessary to authenticate the nodes written
+  to the journal heads while they are written.
+* a HMAC of a well known message to the super block node to be able
+  to check if the correct key is provided
+
+And finally, not visible in this patch, nevertheless explained here:
+
+* hashes over the referenced child nodes in each branch of a index node
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- fs/ubifs/master.c     |  3 +++
- fs/ubifs/misc.h       |  5 +++--
- fs/ubifs/replay.c     | 29 ++++++++++++++++++-----------
- fs/ubifs/tnc.c        | 12 ++++++++++++
- fs/ubifs/tnc_commit.c | 27 +++++++++++++++++++++++++++
- fs/ubifs/tnc_misc.c   | 15 ++++++++++++++-
- fs/ubifs/ubifs.h      |  4 ++++
- 7 files changed, 81 insertions(+), 14 deletions(-)
+ fs/ubifs/debug.c       |  6 ++++++
+ fs/ubifs/super.c       |  1 +
+ fs/ubifs/ubifs-media.h | 46 +++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 50 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ubifs/master.c b/fs/ubifs/master.c
-index 9df4a41bba52..0ca9d3513b4d 100644
---- a/fs/ubifs/master.c
-+++ b/fs/ubifs/master.c
-@@ -305,6 +305,8 @@ int ubifs_read_master(struct ubifs_info *c)
- 	c->lst.total_dead  = le64_to_cpu(c->mst_node->total_dead);
- 	c->lst.total_dark  = le64_to_cpu(c->mst_node->total_dark);
+diff --git a/fs/ubifs/debug.c b/fs/ubifs/debug.c
+index 564e330d05b1..c49ff50fdceb 100644
+--- a/fs/ubifs/debug.c
++++ b/fs/ubifs/debug.c
+@@ -165,6 +165,8 @@ const char *dbg_ntype(int type)
+ 		return "commit start node";
+ 	case UBIFS_ORPH_NODE:
+ 		return "orphan node";
++	case UBIFS_AUTH_NODE:
++		return "auth node";
+ 	default:
+ 		return "unknown node";
+ 	}
+@@ -542,6 +544,10 @@ void ubifs_dump_node(const struct ubifs_info *c, const void *node)
+ 			       (unsigned long long)le64_to_cpu(orph->inos[i]));
+ 		break;
+ 	}
++	case UBIFS_AUTH_NODE:
++	{
++		break;
++	}
+ 	default:
+ 		pr_err("node type %d was not recognized\n",
+ 		       (int)ch->node_type);
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index c197492802c2..143044e0378f 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -579,6 +579,7 @@ static int init_constants_early(struct ubifs_info *c)
+ 	c->ranges[UBIFS_REF_NODE].len  = UBIFS_REF_NODE_SZ;
+ 	c->ranges[UBIFS_TRUN_NODE].len = UBIFS_TRUN_NODE_SZ;
+ 	c->ranges[UBIFS_CS_NODE].len   = UBIFS_CS_NODE_SZ;
++	c->ranges[UBIFS_AUTH_NODE].len = UBIFS_AUTH_NODE_SZ;
  
-+	ubifs_copy_hash(c, c->mst_node->hash_root_idx, c->zroot.hash);
+ 	c->ranges[UBIFS_INO_NODE].min_len  = UBIFS_INO_NODE_SZ;
+ 	c->ranges[UBIFS_INO_NODE].max_len  = UBIFS_MAX_INO_NODE_SZ;
+diff --git a/fs/ubifs/ubifs-media.h b/fs/ubifs/ubifs-media.h
+index e8c23c9d4f4a..8b7c1844014f 100644
+--- a/fs/ubifs/ubifs-media.h
++++ b/fs/ubifs/ubifs-media.h
+@@ -286,6 +286,7 @@ enum {
+ #define UBIFS_IDX_NODE_SZ  sizeof(struct ubifs_idx_node)
+ #define UBIFS_CS_NODE_SZ   sizeof(struct ubifs_cs_node)
+ #define UBIFS_ORPH_NODE_SZ sizeof(struct ubifs_orph_node)
++#define UBIFS_AUTH_NODE_SZ sizeof(struct ubifs_auth_node)
+ /* Extended attribute entry nodes are identical to directory entry nodes */
+ #define UBIFS_XENT_NODE_SZ UBIFS_DENT_NODE_SZ
+ /* Only this does not have to be multiple of 8 bytes */
+@@ -300,6 +301,12 @@ enum {
+ /* The largest UBIFS node */
+ #define UBIFS_MAX_NODE_SZ UBIFS_MAX_INO_NODE_SZ
+ 
++/* The maxmimum size of a hash, enough for sha512 */
++#define UBIFS_MAX_HASH_LEN 64
 +
- 	c->calc_idx_sz = c->bi.old_idx_sz;
++/* The maxmimum size of a hmac, enough for hmac(sha512) */
++#define UBIFS_MAX_HMAC_LEN 64
++
+ /*
+  * xattr name of UBIFS encryption context, we don't use a prefix
+  * nor a long name to not waste space on the flash.
+@@ -365,6 +372,7 @@ enum {
+  * UBIFS_IDX_NODE: index node
+  * UBIFS_CS_NODE: commit start node
+  * UBIFS_ORPH_NODE: orphan node
++ * UBIFS_AUTH_NODE: authentication node
+  * UBIFS_NODE_TYPES_CNT: count of supported node types
+  *
+  * Note, we index arrays by these numbers, so keep them low and contiguous.
+@@ -384,6 +392,7 @@ enum {
+ 	UBIFS_IDX_NODE,
+ 	UBIFS_CS_NODE,
+ 	UBIFS_ORPH_NODE,
++	UBIFS_AUTH_NODE,
+ 	UBIFS_NODE_TYPES_CNT,
+ };
  
- 	if (c->mst_node->flags & cpu_to_le32(UBIFS_MST_NO_ORPHS))
-@@ -378,6 +380,7 @@ int ubifs_write_master(struct ubifs_info *c)
- 	c->mst_offs = offs;
- 	c->mst_node->highest_inum = cpu_to_le64(c->highest_inum);
- 
-+	ubifs_copy_hash(c, c->zroot.hash, c->mst_node->hash_root_idx);
- 	err = ubifs_write_node(c, c->mst_node, len, lnum, offs);
- 	if (err)
- 		return err;
-diff --git a/fs/ubifs/misc.h b/fs/ubifs/misc.h
-index 21d35d7dd975..6f87237fdbf4 100644
---- a/fs/ubifs/misc.h
-+++ b/fs/ubifs/misc.h
-@@ -197,7 +197,8 @@ static inline int ubifs_return_leb(struct ubifs_info *c, int lnum)
+@@ -421,15 +430,19 @@ enum {
+  * UBIFS_FLG_DOUBLE_HASH: store a 32bit cookie in directory entry nodes to
+  *			  support 64bit cookies for lookups by hash
+  * UBIFS_FLG_ENCRYPTION: this filesystem contains encrypted files
++ * UBIFS_FLG_AUTHENTICATION: this filesystem contains hashes for authentication
   */
- static inline int ubifs_idx_node_sz(const struct ubifs_info *c, int child_cnt)
- {
--	return UBIFS_IDX_NODE_SZ + (UBIFS_BRANCH_SZ + c->key_len) * child_cnt;
-+	return UBIFS_IDX_NODE_SZ + (UBIFS_BRANCH_SZ + c->key_len + c->hash_len)
-+				   * child_cnt;
- }
+ enum {
+ 	UBIFS_FLG_BIGLPT = 0x02,
+ 	UBIFS_FLG_SPACE_FIXUP = 0x04,
+ 	UBIFS_FLG_DOUBLE_HASH = 0x08,
+ 	UBIFS_FLG_ENCRYPTION = 0x10,
++	UBIFS_FLG_AUTHENTICATION = 0x20,
+ };
+ 
+-#define UBIFS_FLG_MASK (UBIFS_FLG_BIGLPT|UBIFS_FLG_SPACE_FIXUP|UBIFS_FLG_DOUBLE_HASH|UBIFS_FLG_ENCRYPTION)
++#define UBIFS_FLG_MASK (UBIFS_FLG_BIGLPT | UBIFS_FLG_SPACE_FIXUP | \
++		UBIFS_FLG_DOUBLE_HASH | UBIFS_FLG_ENCRYPTION | \
++		UBIFS_FLG_AUTHENTICATION)
  
  /**
-@@ -212,7 +213,7 @@ struct ubifs_branch *ubifs_idx_branch(const struct ubifs_info *c,
- 				      int bnum)
- {
- 	return (struct ubifs_branch *)((void *)idx->branches +
--				       (UBIFS_BRANCH_SZ + c->key_len) * bnum);
-+			(UBIFS_BRANCH_SZ + c->key_len + c->hash_len) * bnum);
- }
+  * struct ubifs_ch - common header node.
+@@ -633,6 +646,10 @@ struct ubifs_pad_node {
+  * @time_gran: time granularity in nanoseconds
+  * @uuid: UUID generated when the file system image was created
+  * @ro_compat_version: UBIFS R/O compatibility version
++ * @hmac: HMAC to authenticate the superblock node
++ * @hmac_wkm: HMAC of a well known message (the string "UBIFS") as a convenience
++ *            to the user to check if the correct key is passed.
++ * @hash_algo: The hash algo used for this filesystem (one of enum hash_algo)
+  */
+ struct ubifs_sb_node {
+ 	struct ubifs_ch ch;
+@@ -660,7 +677,10 @@ struct ubifs_sb_node {
+ 	__le32 time_gran;
+ 	__u8 uuid[16];
+ 	__le32 ro_compat_version;
+-	__u8 padding2[3968];
++	__u8 hmac[UBIFS_MAX_HMAC_LEN];
++	__u8 hmac_wkm[UBIFS_MAX_HMAC_LEN];
++	__le16 hash_algo;
++	__u8 padding2[3838];
+ } __packed;
  
  /**
-diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
-index bccb35f72277..1c6ceb6265aa 100644
---- a/fs/ubifs/replay.c
-+++ b/fs/ubifs/replay.c
-@@ -56,6 +56,7 @@ struct replay_entry {
- 	int lnum;
- 	int offs;
- 	int len;
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- 	unsigned int deletion:1;
- 	unsigned long long sqnum;
- 	struct list_head list;
-@@ -228,7 +229,7 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
- 			err = ubifs_tnc_remove_nm(c, &r->key, &r->nm);
- 		else
- 			err = ubifs_tnc_add_nm(c, &r->key, r->lnum, r->offs,
--					       r->len, NULL, &r->nm);
-+					       r->len, r->hash, &r->nm);
- 	} else {
- 		if (r->deletion)
- 			switch (key_type(c, &r->key)) {
-@@ -248,7 +249,7 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
- 			}
- 		else
- 			err = ubifs_tnc_add(c, &r->key, r->lnum, r->offs,
--					    r->len, NULL);
-+					    r->len, r->hash);
- 		if (err)
- 			return err;
- 
-@@ -352,9 +353,9 @@ static void destroy_replay_list(struct ubifs_info *c)
-  * in case of success and a negative error code in case of failure.
+@@ -695,6 +715,9 @@ struct ubifs_sb_node {
+  * @empty_lebs: number of empty logical eraseblocks
+  * @idx_lebs: number of indexing logical eraseblocks
+  * @leb_cnt: count of LEBs used by file-system
++ * @hash_root_idx: the hash of the root index node
++ * @hash_lpt: the hash of the LPT
++ * @hmac: HMAC to authenticate the master node
+  * @padding: reserved for future, zeroes
   */
- static int insert_node(struct ubifs_info *c, int lnum, int offs, int len,
--		       union ubifs_key *key, unsigned long long sqnum,
--		       int deletion, int *used, loff_t old_size,
--		       loff_t new_size)
-+		       const u8 *hash, union ubifs_key *key,
-+		       unsigned long long sqnum, int deletion, int *used,
-+		       loff_t old_size, loff_t new_size)
- {
- 	struct replay_entry *r;
+ struct ubifs_mst_node {
+@@ -727,7 +750,10 @@ struct ubifs_mst_node {
+ 	__le32 empty_lebs;
+ 	__le32 idx_lebs;
+ 	__le32 leb_cnt;
+-	__u8 padding[344];
++	__u8 hash_root_idx[UBIFS_MAX_HASH_LEN];
++	__u8 hash_lpt[UBIFS_MAX_HASH_LEN];
++	__u8 hmac[UBIFS_MAX_HMAC_LEN];
++	__u8 padding[152];
+ } __packed;
  
-@@ -372,6 +373,7 @@ static int insert_node(struct ubifs_info *c, int lnum, int offs, int len,
- 	r->lnum = lnum;
- 	r->offs = offs;
- 	r->len = len;
-+	ubifs_copy_hash(c, hash, r->hash);
- 	r->deletion = !!deletion;
- 	r->sqnum = sqnum;
- 	key_copy(c, key, &r->key);
-@@ -400,8 +402,9 @@ static int insert_node(struct ubifs_info *c, int lnum, int offs, int len,
-  * negative error code in case of failure.
+ /**
+@@ -746,12 +772,26 @@ struct ubifs_ref_node {
+ 	__u8 padding[28];
+ } __packed;
+ 
++/**
++ * struct ubifs_auth_node - node for authenticating other nodes
++ * @ch: common header
++ * @hmac: The HMAC
++ */
++struct ubifs_auth_node {
++	struct ubifs_ch ch;
++	__u8 hmac[];
++} __packed;
++
+ /**
+  * struct ubifs_branch - key/reference/length branch
+  * @lnum: LEB number of the target node
+  * @offs: offset within @lnum
+  * @len: target node length
+  * @key: key
++ *
++ * In an authenticated UBIFS we have the hash of the referenced node after @key.
++ * This can't be added to the struct type definition because @key is a
++ * dynamically sized element already.
   */
- static int insert_dent(struct ubifs_info *c, int lnum, int offs, int len,
--		       union ubifs_key *key, const char *name, int nlen,
--		       unsigned long long sqnum, int deletion, int *used)
-+		       const u8 *hash, union ubifs_key *key,
-+		       const char *name, int nlen, unsigned long long sqnum,
-+		       int deletion, int *used)
- {
- 	struct replay_entry *r;
- 	char *nbuf;
-@@ -425,6 +428,7 @@ static int insert_dent(struct ubifs_info *c, int lnum, int offs, int len,
- 	r->lnum = lnum;
- 	r->offs = offs;
- 	r->len = len;
-+	ubifs_copy_hash(c, hash, r->hash);
- 	r->deletion = !!deletion;
- 	r->sqnum = sqnum;
- 	key_copy(c, key, &r->key);
-@@ -582,6 +586,7 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 	 */
- 
- 	list_for_each_entry(snod, &sleb->nodes, list) {
-+		u8 hash[UBIFS_HASH_ARR_SZ];
- 		int deletion = 0;
- 
- 		cond_resched();
-@@ -591,6 +596,8 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 			goto out_dump;
- 		}
- 
-+		ubifs_node_calc_hash(c, snod->node, hash);
-+
- 		if (snod->sqnum > c->max_sqnum)
- 			c->max_sqnum = snod->sqnum;
- 
-@@ -602,7 +609,7 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 
- 			if (le32_to_cpu(ino->nlink) == 0)
- 				deletion = 1;
--			err = insert_node(c, lnum, snod->offs, snod->len,
-+			err = insert_node(c, lnum, snod->offs, snod->len, hash,
- 					  &snod->key, snod->sqnum, deletion,
- 					  &used, 0, new_size);
- 			break;
-@@ -614,7 +621,7 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 					  key_block(c, &snod->key) *
- 					  UBIFS_BLOCK_SIZE;
- 
--			err = insert_node(c, lnum, snod->offs, snod->len,
-+			err = insert_node(c, lnum, snod->offs, snod->len, hash,
- 					  &snod->key, snod->sqnum, deletion,
- 					  &used, 0, new_size);
- 			break;
-@@ -628,7 +635,7 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 			if (err)
- 				goto out_dump;
- 
--			err = insert_dent(c, lnum, snod->offs, snod->len,
-+			err = insert_dent(c, lnum, snod->offs, snod->len, hash,
- 					  &snod->key, dent->name,
- 					  le16_to_cpu(dent->nlen), snod->sqnum,
- 					  !le64_to_cpu(dent->inum), &used);
-@@ -654,7 +661,7 @@ static int replay_bud(struct ubifs_info *c, struct bud_entry *b)
- 			 * functions which expect nodes to have keys.
- 			 */
- 			trun_key_init(c, &key, le32_to_cpu(trun->inum));
--			err = insert_node(c, lnum, snod->offs, snod->len,
-+			err = insert_node(c, lnum, snod->offs, snod->len, hash,
- 					  &key, snod->sqnum, 1, &used,
- 					  old_size, new_size);
- 			break;
-diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
-index bb5f989a6e06..25572ffea163 100644
---- a/fs/ubifs/tnc.c
-+++ b/fs/ubifs/tnc.c
-@@ -488,6 +488,12 @@ static int try_read_node(const struct ubifs_info *c, void *buf, int type,
- 	if (crc != node_crc)
- 		return 0;
- 
-+	err = ubifs_node_check_hash(c, buf, zbr->hash);
-+	if (err) {
-+		ubifs_bad_hash(c, buf, zbr->hash, lnum, offs);
-+		return 0;
-+	}
-+
- 	return 1;
- }
- 
-@@ -1713,6 +1719,12 @@ static int validate_data_node(struct ubifs_info *c, void *buf,
- 		goto out;
- 	}
- 
-+	err = ubifs_node_check_hash(c, buf, zbr->hash);
-+	if (err) {
-+		ubifs_bad_hash(c, buf, zbr->hash, zbr->lnum, zbr->offs);
-+		return err;
-+	}
-+
- 	len = le32_to_cpu(ch->len);
- 	if (len != zbr->len) {
- 		ubifs_err(c, "bad node length %d, expected %d", len, zbr->len);
-diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
-index dba87d09b989..dbcd2c350b65 100644
---- a/fs/ubifs/tnc_commit.c
-+++ b/fs/ubifs/tnc_commit.c
-@@ -38,6 +38,7 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
- 			 struct ubifs_znode *znode, int lnum, int offs, int len)
- {
- 	struct ubifs_znode *zp;
-+	u8 hash[UBIFS_HASH_ARR_SZ];
- 	int i, err;
- 
- 	/* Make index node */
-@@ -52,6 +53,7 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
- 		br->lnum = cpu_to_le32(zbr->lnum);
- 		br->offs = cpu_to_le32(zbr->offs);
- 		br->len = cpu_to_le32(zbr->len);
-+		ubifs_copy_hash(c, zbr->hash, ubifs_branch_hash(c, br));
- 		if (!zbr->lnum || !zbr->len) {
- 			ubifs_err(c, "bad ref in znode");
- 			ubifs_dump_znode(c, znode);
-@@ -62,6 +64,7 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
- 		}
- 	}
- 	ubifs_prepare_node(c, idx, len, 0);
-+	ubifs_node_calc_hash(c, idx, hash);
- 
- 	znode->lnum = lnum;
- 	znode->offs = offs;
-@@ -78,10 +81,12 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
- 		zbr->lnum = lnum;
- 		zbr->offs = offs;
- 		zbr->len = len;
-+		ubifs_copy_hash(c, hash, zbr->hash);
- 	} else {
- 		c->zroot.lnum = lnum;
- 		c->zroot.offs = offs;
- 		c->zroot.len = len;
-+		ubifs_copy_hash(c, hash, c->zroot.hash);
- 	}
- 	c->calc_idx_sz += ALIGN(len, 8);
- 
-@@ -647,6 +652,8 @@ static int get_znodes_to_commit(struct ubifs_info *c)
- 			znode->cnext = c->cnext;
- 			break;
- 		}
-+		znode->cparent = znode->parent;
-+		znode->ciip = znode->iip;
- 		znode->cnext = cnext;
- 		znode = cnext;
- 		cnt += 1;
-@@ -840,6 +847,8 @@ static int write_index(struct ubifs_info *c)
- 	}
- 
- 	while (1) {
-+		u8 hash[UBIFS_HASH_ARR_SZ];
-+
- 		cond_resched();
- 
- 		znode = cnext;
-@@ -857,6 +866,7 @@ static int write_index(struct ubifs_info *c)
- 			br->lnum = cpu_to_le32(zbr->lnum);
- 			br->offs = cpu_to_le32(zbr->offs);
- 			br->len = cpu_to_le32(zbr->len);
-+			ubifs_copy_hash(c, zbr->hash, ubifs_branch_hash(c, br));
- 			if (!zbr->lnum || !zbr->len) {
- 				ubifs_err(c, "bad ref in znode");
- 				ubifs_dump_znode(c, znode);
-@@ -868,6 +878,23 @@ static int write_index(struct ubifs_info *c)
- 		}
- 		len = ubifs_idx_node_sz(c, znode->child_cnt);
- 		ubifs_prepare_node(c, idx, len, 0);
-+		ubifs_node_calc_hash(c, idx, hash);
-+
-+		mutex_lock(&c->tnc_mutex);
-+
-+		if (znode->cparent)
-+			ubifs_copy_hash(c, hash,
-+					znode->cparent->zbranch[znode->ciip].hash);
-+
-+		if (znode->parent) {
-+			if (!ubifs_zn_obsolete(znode))
-+				ubifs_copy_hash(c, hash,
-+					znode->parent->zbranch[znode->iip].hash);
-+		} else {
-+			ubifs_copy_hash(c, hash, c->zroot.hash);
-+		}
-+
-+		mutex_unlock(&c->tnc_mutex);
- 
- 		/* Determine the index node position */
- 		if (lnum == -1) {
-diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
-index 6ce75999f273..d1815e959007 100644
---- a/fs/ubifs/tnc_misc.c
-+++ b/fs/ubifs/tnc_misc.c
-@@ -293,6 +293,12 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
- 		return err;
- 	}
- 
-+	err = ubifs_node_check_hash(c, idx, zzbr->hash);
-+	if (err) {
-+		ubifs_bad_hash(c, idx, zzbr->hash, lnum, offs);
-+		return err;
-+	}
-+
- 	znode->child_cnt = le16_to_cpu(idx->child_cnt);
- 	znode->level = le16_to_cpu(idx->level);
- 
-@@ -309,13 +315,14 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
- 	}
- 
- 	for (i = 0; i < znode->child_cnt; i++) {
--		const struct ubifs_branch *br = ubifs_idx_branch(c, idx, i);
-+		struct ubifs_branch *br = ubifs_idx_branch(c, idx, i);
- 		struct ubifs_zbranch *zbr = &znode->zbranch[i];
- 
- 		key_read(c, &br->key, &zbr->key);
- 		zbr->lnum = le32_to_cpu(br->lnum);
- 		zbr->offs = le32_to_cpu(br->offs);
- 		zbr->len  = le32_to_cpu(br->len);
-+		ubifs_copy_hash(c, ubifs_branch_hash(c, br), zbr->hash);
- 		zbr->znode = NULL;
- 
- 		/* Validate branch */
-@@ -497,5 +504,11 @@ int ubifs_tnc_read_node(struct ubifs_info *c, struct ubifs_zbranch *zbr,
- 		return -EINVAL;
- 	}
- 
-+	err = ubifs_node_check_hash(c, node, zbr->hash);
-+	if (err) {
-+		ubifs_bad_hash(c, node, zbr->hash, zbr->lnum, zbr->offs);
-+		return err;
-+	}
-+
- 	return 0;
- }
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index a7e423347e6d..67bfd58d28d4 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -765,6 +765,8 @@ struct ubifs_zbranch {
-  * struct ubifs_znode - in-memory representation of an indexing node.
-  * @parent: parent znode or NULL if it is the root
-  * @cnext: next znode to commit
-+ * @cparent: parent node for this commit
-+ * @ciip: index in cparent's zbranch array
-  * @flags: znode flags (%DIRTY_ZNODE, %COW_ZNODE or %OBSOLETE_ZNODE)
-  * @time: last access time (seconds)
-  * @level: level of the entry in the TNC tree
-@@ -782,6 +784,8 @@ struct ubifs_zbranch {
- struct ubifs_znode {
- 	struct ubifs_znode *parent;
- 	struct ubifs_znode *cnext;
-+	struct ubifs_znode *cparent;
-+	int ciip;
- 	unsigned long flags;
- 	time64_t time;
- 	int level;
+ struct ubifs_branch {
+ 	__le32 lnum;
 -- 
 2.18.0
 
