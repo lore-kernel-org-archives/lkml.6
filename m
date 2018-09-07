@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BCBC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6546C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E452075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E452075B
+	by mail.kernel.org (Postfix) with ESMTP id 80C342075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:13:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C342075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbeIHB4B (ORCPT
+        id S1728007AbeIHB4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:56:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40704 "EHLO
+        Fri, 7 Sep 2018 21:56:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40718 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbeIHB4A (ORCPT
+        with ESMTP id S1727984AbeIHB4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:56:00 -0400
+        Fri, 7 Sep 2018 21:56:03 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AA86F81;
-        Fri,  7 Sep 2018 21:13:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E24FFA4;
+        Fri,  7 Sep 2018 21:13:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yannik Sembritzki <yannik@sembritzki.me>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 024/145] Replace magic for trusting the secondary keyring with #define
-Date:   Fri,  7 Sep 2018 23:08:10 +0200
-Message-Id: <20180907210905.585422810@linuxfoundation.org>
+        David Howells <dhowells@redhat.com>, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        stable@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 025/145] Fix kexec forbidding kernels signed with keys in the secondary keyring to boot
+Date:   Fri,  7 Sep 2018 23:08:11 +0200
+Message-Id: <20180907210905.703424333@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -54,68 +54,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yannik Sembritzki <yannik@sembritzki.me>
 
-commit 817aef260037f33ee0f44c17fe341323d3aebd6d upstream.
+commit ea93102f32244e3f45c8b26260be77ed0cc1d16c upstream.
 
-Replace the use of a magic number that indicates that verify_*_signature()
-should use the secondary keyring with a symbol.
+The split of .system_keyring into .builtin_trusted_keys and
+.secondary_trusted_keys broke kexec, thereby preventing kernels signed by
+keys which are now in the secondary keyring from being kexec'd.
 
+Fix this by passing VERIFY_USE_SECONDARY_KEYRING to
+verify_pefile_signature().
+
+Fixes: d3bfe84129f6 ("certs: Add a secondary system keyring that can be added to dynamically")
 Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: kexec@lists.infradead.org
 Cc: keyrings@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org
+Cc: stable@kernel.org
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- certs/system_keyring.c                  |    3 ++-
- crypto/asymmetric_keys/pkcs7_key_type.c |    2 +-
- include/linux/verification.h            |    6 ++++++
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ arch/x86/kernel/kexec-bzimage64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -15,6 +15,7 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-+#include <linux/verification.h>
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include <crypto/pkcs7.h>
-@@ -230,7 +231,7 @@ int verify_pkcs7_signature(const void *d
- 
- 	if (!trusted_keys) {
- 		trusted_keys = builtin_trusted_keys;
--	} else if (trusted_keys == (void *)1UL) {
-+	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
- 		trusted_keys = secondary_trusted_keys;
- #else
---- a/crypto/asymmetric_keys/pkcs7_key_type.c
-+++ b/crypto/asymmetric_keys/pkcs7_key_type.c
-@@ -63,7 +63,7 @@ static int pkcs7_preparse(struct key_pre
- 
- 	return verify_pkcs7_signature(NULL, 0,
- 				      prep->data, prep->datalen,
--				      (void *)1UL, usage,
-+				      VERIFY_USE_SECONDARY_KEYRING, usage,
- 				      pkcs7_view_content, prep);
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -532,7 +532,7 @@ static int bzImage64_cleanup(void *loade
+ static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
+ {
+ 	return verify_pefile_signature(kernel, kernel_len,
+-				       NULL,
++				       VERIFY_USE_SECONDARY_KEYRING,
+ 				       VERIFYING_KEXEC_PE_SIGNATURE);
  }
- 
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -13,6 +13,12 @@
- #define _LINUX_VERIFICATION_H
- 
- /*
-+ * Indicate that both builtin trusted keys and secondary trusted keys
-+ * should be used.
-+ */
-+#define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-+
-+/*
-  * The use to which an asymmetric key is being put.
-  */
- enum key_being_used_for {
+ #endif
 
 
