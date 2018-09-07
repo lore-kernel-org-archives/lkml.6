@@ -6,81 +6,121 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D97F4C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 471ECC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C1382086B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1382086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 06A0A20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 14:34:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A0A20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729901AbeIGTPM (ORCPT
+        id S1729894AbeIGTP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 15:15:12 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:1054 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727659AbeIGTPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 15:15:12 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 426Kgl3MMfz9ttFX;
-        Fri,  7 Sep 2018 16:33:55 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id KZTHsUm-_W7V; Fri,  7 Sep 2018 16:33:55 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 426Kgl2nWhz9ttFT;
-        Fri,  7 Sep 2018 16:33:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1EAFE8B94C;
-        Fri,  7 Sep 2018 16:33:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id iLhzZ55TFrse; Fri,  7 Sep 2018 16:33:59 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BD2ED8B950;
-        Fri,  7 Sep 2018 16:33:58 +0200 (CEST)
-Subject: Re: Conflict between sparse and commit cafa0010cd51f ("Raise the
- minimum required gcc version to 4.6")
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-To:     Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org
-References: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr>
-Message-ID: <1324e7d6-83f8-f40f-ad34-c46e4ad3139b@c-s.fr>
-Date:   Fri, 7 Sep 2018 16:33:58 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Fri, 7 Sep 2018 15:15:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47420 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727659AbeIGTP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 15:15:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12C97AD53;
+        Fri,  7 Sep 2018 14:34:44 +0000 (UTC)
+Subject: Re: [PATCH v4] xen: avoid crash in disable_hotplug_cpu
+To:     Olaf Hering <olaf@aepfle.de>, xen-devel@lists.xenproject.org
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180907143135.29608-1-olaf@aepfle.de>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8cc45ae5-5609-09b8-1f57-32b40f1f22b5@suse.com>
+Date:   Fri, 7 Sep 2018 16:34:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <81a5fd11-366c-0897-4143-d8d041420a41@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180907143135.29608-1-olaf@aepfle.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc linux-sparse@vger.kernel.org
+On 07/09/18 16:31, Olaf Hering wrote:
+> The command 'xl vcpu-set 0 0', issued in dom0, will crash dom0:
+> 
+> BUG: unable to handle kernel NULL pointer dereference at 00000000000002d8
+> PGD 0 P4D 0
+> Oops: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 7 PID: 65 Comm: xenwatch Not tainted 4.19.0-rc2-1.ga9462db-default #1 openSUSE Tumbleweed (unreleased)
+> Hardware name: Intel Corporation S5520UR/S5520UR, BIOS S5500.86B.01.00.0050.050620101605 05/06/2010
+> RIP: e030:device_offline+0x9/0xb0
+> Code: 77 24 00 e9 ce fe ff ff 48 8b 13 e9 68 ff ff ff 48 8b 13 e9 29 ff ff ff 48 8b 13 e9 ea fe ff ff 90 66 66 66 66 90 41 54 55 53 <f6> 87 d8 02 00 00 01 0f 85 88 00 00 00 48 c7 c2 20 09 60 81 31 f6
+> RSP: e02b:ffffc90040f27e80 EFLAGS: 00010203
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff8801f3800000 RSI: ffffc90040f27e70 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff820e47b3 R09: 0000000000000000
+> R10: 0000000000007ff0 R11: 0000000000000000 R12: ffffffff822e6d30
+> R13: dead000000000200 R14: dead000000000100 R15: ffffffff8158b4e0
+> FS:  00007ffa595158c0(0000) GS:ffff8801f39c0000(0000) knlGS:0000000000000000
+> CS:  e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000000002d8 CR3: 00000001d9602000 CR4: 0000000000002660
+> Call Trace:
+>  handle_vcpu_hotplug_event+0xb5/0xc0
+>  xenwatch_thread+0x80/0x140
+>  ? wait_woken+0x80/0x80
+>  kthread+0x112/0x130
+>  ? kthread_create_worker_on_cpu+0x40/0x40
+>  ret_from_fork+0x3a/0x50
+> 
+> This happens because handle_vcpu_hotplug_event is called twice. In the
+> first iteration cpu_present is still true, in the second iteration
+> cpu_present is false which causes get_cpu_device to return NULL.
+> In case of cpu#0, cpu_online is apparently always true.
+> 
+> Fix this crash by checking if the cpu can be hotplugged, which is false
+> for a cpu that was just removed.
+> 
+> Also check if the cpu was actually offlined by device_remove, otherwise
+> leave the cpu_present state as it is.
+> 
+> Rearrange to code to do all work with device_hotplug_lock held.
+> 
+> Signed-off-by: Olaf Hering <olaf@aepfle.de>
 
-Le 07/09/2018 à 14:22, Christophe Leroy a écrit :
-> Since commit cafa0010cd51f ("Raise the minimum required gcc version to 
-> 4.6"), sparse check fails as follows:
-> 
-> [root@pc16082vm linux-powerpc]# make C=2 arch/powerpc/kernel/process.o
->    CALL    scripts/checksyscalls.sh
->    CHECK   scripts/mod/empty.c
-> ./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too 
-> old - please upgrade it.
->    CHECK   arch/powerpc/kernel/process.c
-> ./include/linux/compiler-gcc.h:14:3: error: Sorry, your compiler is too 
-> old - please upgrade it.
-> 
-> 
-> I have sparse version 0.5.2
-> 
-> What can be done to fix that ?
-> 
-> Christophe
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+
+Juergen
