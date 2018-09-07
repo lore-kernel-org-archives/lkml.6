@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477B7C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC74C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0AC020844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AC020844
+	by mail.kernel.org (Postfix) with ESMTP id 28C4120844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28C4120844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbeIHCWH (ORCPT
+        id S1729996AbeIHCWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:22:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52724 "EHLO
+        Fri, 7 Sep 2018 22:22:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbeIHCWG (ORCPT
+        with ESMTP id S1727780AbeIHCWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:22:06 -0400
+        Fri, 7 Sep 2018 22:22:10 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCB4ED6B;
-        Fri,  7 Sep 2018 21:39:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1503D6B;
+        Fri,  7 Sep 2018 21:39:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
-        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
-        Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>
-Subject: [PATCH 4.4 01/47] net: 6lowpan: fix reserved space for single frames
-Date:   Fri,  7 Sep 2018 23:09:57 +0200
-Message-Id: <20180907210904.711733036@linuxfoundation.org>
+        stable@vger.kernel.org, Yiwen Jiang <jiangyiwen@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Dominique Martinet <dominique.martinet@cea.fr>
+Subject: [PATCH 4.4 10/47] 9p/virtio: fix off-by-one error in sg list bounds check
+Date:   Fri,  7 Sep 2018 23:10:06 +0200
+Message-Id: <20180907210905.382288041@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210904.607934824@linuxfoundation.org>
 References: <20180907210904.607934824@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,57 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Aring <aring@mojatatu.com>
+From: jiangyiwen <jiangyiwen@huawei.com>
 
-commit ac74f87c789af40936a80131c4759f3e72579c3a upstream.
+commit 23cba9cbde0bba05d772b335fe5f66aa82b9ad19 upstream.
 
-This patch fixes patch add handling to take care tail and headroom for
-single 6lowpan frames. We need to be sure we have a skb with the right
-head and tailroom for single frames. This patch do it by using
-skb_copy_expand() if head and tailroom is not enough allocated by upper
-layer.
+Because the value of limit is VIRTQUEUE_NUM, if index is equal to
+limit, it will cause sg array out of bounds, so correct the judgement
+of BUG_ON.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195059
-Reported-by: David Palma <david.palma@ntnu.no>
-Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
+Link: http://lkml.kernel.org/r/5B63D5F6.6080109@huawei.com
+Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reported-By: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Jun Piao <piaojun@huawei.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ieee802154/6lowpan/tx.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ net/9p/trans_virtio.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ieee802154/6lowpan/tx.c
-+++ b/net/ieee802154/6lowpan/tx.c
-@@ -265,9 +265,24 @@ netdev_tx_t lowpan_xmit(struct sk_buff *
- 	/* We must take a copy of the skb before we modify/replace the ipv6
- 	 * header as the header could be used elsewhere
- 	 */
--	skb = skb_unshare(skb, GFP_ATOMIC);
--	if (!skb)
--		return NET_XMIT_DROP;
-+	if (unlikely(skb_headroom(skb) < ldev->needed_headroom ||
-+		     skb_tailroom(skb) < ldev->needed_tailroom)) {
-+		struct sk_buff *nskb;
-+
-+		nskb = skb_copy_expand(skb, ldev->needed_headroom,
-+				       ldev->needed_tailroom, GFP_ATOMIC);
-+		if (likely(nskb)) {
-+			consume_skb(skb);
-+			skb = nskb;
-+		} else {
-+			kfree_skb(skb);
-+			return NET_XMIT_DROP;
-+		}
-+	} else {
-+		skb = skb_unshare(skb, GFP_ATOMIC);
-+		if (!skb)
-+			return NET_XMIT_DROP;
-+	}
- 
- 	ret = lowpan_header(skb, ldev, &dgram_size, &dgram_offset);
- 	if (ret < 0) {
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -192,7 +192,7 @@ static int pack_sg_list(struct scatterli
+ 		s = rest_of_page(data);
+ 		if (s > count)
+ 			s = count;
+-		BUG_ON(index > limit);
++		BUG_ON(index >= limit);
+ 		/* Make sure we don't terminate early. */
+ 		sg_unmark_end(&sg[index]);
+ 		sg_set_buf(&sg[index++], data, s);
+@@ -237,6 +237,7 @@ pack_sg_list_p(struct scatterlist *sg, i
+ 		s = PAGE_SIZE - data_off;
+ 		if (s > count)
+ 			s = count;
++		BUG_ON(index >= limit);
+ 		/* Make sure we don't terminate early. */
+ 		sg_unmark_end(&sg[index]);
+ 		sg_set_page(&sg[index++], pdata[i++], s, data_off);
 
 
