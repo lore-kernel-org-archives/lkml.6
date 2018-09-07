@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEEBC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AD5C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A6B20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A6B20645
+	by mail.kernel.org (Postfix) with ESMTP id 50CDB20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50CDB20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbeIHB6f (ORCPT
+        id S1728738AbeIHB6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:58:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42602 "EHLO
+        Fri, 7 Sep 2018 21:58:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42608 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbeIHB6c (ORCPT
+        with ESMTP id S1728181AbeIHB6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:58:32 -0400
+        Fri, 7 Sep 2018 21:58:36 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA644F07;
-        Fri,  7 Sep 2018 21:15:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DFA6F07;
+        Fri,  7 Sep 2018 21:15:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.18 062/145] Drivers: hv: vmbus: Fix the offer_in_progress in vmbus_process_offer()
-Date:   Fri,  7 Sep 2018 23:08:48 +0200
-Message-Id: <20180907210909.679498645@linuxfoundation.org>
+        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 4.18 071/145] vmw_balloon: VMCI_DOORBELL_SET does not check status
+Date:   Fri,  7 Sep 2018 23:08:57 +0200
+Message-Id: <20180907210910.338848174@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,40 +50,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Nadav Amit <namit@vmware.com>
 
-commit 50229128727f7e11840ca1b2b501f880818d56b6 upstream.
+commit ce664331b2487a5d244a51cbdd8cb54f866fbe5d upstream.
 
-I didn't really hit a real bug, but just happened to spot the bug:
-we have decreased the counter at the beginning of vmbus_process_offer(),
-so we mustn't decrease it again.
+When vmballoon_vmci_init() sets a doorbell using VMCI_DOORBELL_SET, for
+some reason it does not consider the status and looks at the result.
+However, the hypervisor does not update the result - it updates the
+status. This might cause VMCI doorbell not to be enabled, resulting in
+degraded performance.
 
-Fixes: 6f3d791f3006 ("Drivers: hv: vmbus: Fix rescind handling issues")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 Cc: stable@vger.kernel.org
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Stable <stable@vger.kernel.org> # 4.14 and above
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/channel_mgmt.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/misc/vmw_balloon.c |   37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -527,10 +527,8 @@ static void vmbus_process_offer(struct v
- 		struct hv_device *dev
- 			= newchannel->primary_channel->device_obj;
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -1036,29 +1036,30 @@ static void vmballoon_vmci_cleanup(struc
+  */
+ static int vmballoon_vmci_init(struct vmballoon *b)
+ {
+-	int error = 0;
++	unsigned long error, dummy;
  
--		if (vmbus_add_channel_kobj(dev, newchannel)) {
--			atomic_dec(&vmbus_connection.offer_in_progress);
-+		if (vmbus_add_channel_kobj(dev, newchannel))
- 			goto err_free_chan;
+-	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) != 0) {
+-		error = vmci_doorbell_create(&b->vmci_doorbell,
+-				VMCI_FLAG_DELAYED_CB,
+-				VMCI_PRIVILEGE_FLAG_RESTRICTED,
+-				vmballoon_doorbell, b);
+-
+-		if (error == VMCI_SUCCESS) {
+-			VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET,
+-					b->vmci_doorbell.context,
+-					b->vmci_doorbell.resource, error);
+-			STATS_INC(b->stats.doorbell_set);
 -		}
+-	}
++	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) == 0)
++		return 0;
  
- 		if (channel->sc_creation_callback != NULL)
- 			channel->sc_creation_callback(newchannel);
+-	if (error != 0) {
+-		vmballoon_vmci_cleanup(b);
++	error = vmci_doorbell_create(&b->vmci_doorbell, VMCI_FLAG_DELAYED_CB,
++				     VMCI_PRIVILEGE_FLAG_RESTRICTED,
++				     vmballoon_doorbell, b);
+ 
+-		return -EIO;
+-	}
++	if (error != VMCI_SUCCESS)
++		goto fail;
++
++	error = VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET, b->vmci_doorbell.context,
++				   b->vmci_doorbell.resource, dummy);
++
++	STATS_INC(b->stats.doorbell_set);
++
++	if (error != VMW_BALLOON_SUCCESS)
++		goto fail;
+ 
+ 	return 0;
++fail:
++	vmballoon_vmci_cleanup(b);
++	return -EIO;
+ }
+ 
+ /*
 
 
