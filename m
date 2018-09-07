@@ -2,125 +2,89 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA0CC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A447BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5184F2077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF252083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 17:27:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3D3Ztpi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5184F2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="myKKd6I6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF252083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeIGWJa (ORCPT
+        id S1727639AbeIGWJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 18:09:30 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:38223 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbeIGWJa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 18:09:30 -0400
-Received: by mail-yb1-f193.google.com with SMTP id e18-v6so5729664ybq.5;
-        Fri, 07 Sep 2018 10:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iqig52G65T1oK5BZ8bJW4GpEe9IWDxjBJiK5Ly/PDlo=;
-        b=W3D3ZtpiNJc27H1HB8ioZhJWEiXGPm9/5ONMzbWyxOaj21TqcWhqZpB84JWJsC+CgI
-         gS/3Ht110XWa6B5moexvgg3Mp87rwMUaKfoeTcoIjyoHqTq4pyqg37k/6RsPLGi2geYF
-         Op314hKbcmqwwAZtA0HQr8ym/TCLiYkVsncFTntIf5Go1ETM6sluyG92UfQZncXkmmPF
-         p9F9aBqEUIVqrRK2Xr8SZSrb60XKVuvFwPBX9Zw6zs/R0I5FztandOqBJBpCGo9LMUqb
-         6k5TFSynVNhm4UG6lAs5I5UeXjdR2ZWz9o366CNAnHvdkhp2y1PIhacEmP0xL4T2qVg2
-         lw/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iqig52G65T1oK5BZ8bJW4GpEe9IWDxjBJiK5Ly/PDlo=;
-        b=b+O8CIB0h/xcpZ6yYyGrQYTyKzxoWX7xN5+1AqRLewD3iSSb6RwFjGdaDEyeija+w0
-         kR9oMMvRtkD9mtaeufXVKzHKW8Q3YG0B2fDQ89knXcoBJjvW3MOXWEX/g4kiXe4xRiot
-         v59qp55e1nkWf2D1W2P4tNxpzhQRVk7CQ7Gdq4u79RksjRgsyMtUwRpLbg+cwylTJNHE
-         VsyJJSAHk/6QRJ8pXacgo0vFbX4a3P80A81oiSQQM5YBbJbaxXpq5tUcnn6hUMP5a8Tn
-         BkmObLM9R4zP5kXJmNC9Y1RgALT0vDm2CoxAlftfHdtCQvvne7XWr3FzigpvX60njeqH
-         +VVw==
-X-Gm-Message-State: APzg51DKTjYi14IxdZNWiRnnNA1WNUellLPTYa7qIG8O1BIJSK2UOlX0
-        M4mGDbiMgf6cKgoGQymD3fk=
-X-Google-Smtp-Source: ANB0VdZ1lSHAXnJqpm5awz8TtQ1gteaL20wRWrnpG6ZNJlejsCYUa44XveXHwVx5G74nRVQUWYgPeg==
-X-Received: by 2002:a25:a2c9:: with SMTP id c9-v6mr4491657ybn.27.1536341253270;
-        Fri, 07 Sep 2018 10:27:33 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:70a9])
-        by smtp.gmail.com with ESMTPSA id t124-v6sm5539292ywt.105.2018.09.07.10.27.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 10:27:32 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 10:27:30 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Dennis Zhou <dennisszhou@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/12] blkcg: convert blkg_lookup_create to find closest
- blkg
-Message-ID: <20180907172730.GB1100574@devbig004.ftw2.facebook.com>
-References: <20180906211045.29055-1-dennisszhou@gmail.com>
- <20180906211045.29055-4-dennisszhou@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906211045.29055-4-dennisszhou@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Fri, 7 Sep 2018 18:09:35 -0400
+Received: from m12-15.163.com ([220.181.12.15]:59576 "EHLO m12-15.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725963AbeIGWJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 18:09:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=wskbfu9PoVt18paWqN
+        jzNRbWi9VPmOfU2FcnPWqS3ko=; b=myKKd6I6P2x6VsF8+csl5uDFJBSFHJW1GV
+        uxd3hw/aTv4o3RomcrwwFUMdq0NTuWBrYKuKgnpvZvDOq77in++mRdvjMJn/qL0Q
+        XMc2mK+LYiozGDTD9hf6HfCBEix8Jy5eJQX6sc7sJG7FUmB+u98m60OuAKG/x2MN
+        EqHpqX+sY=
+Received: from localhost (unknown [183.156.140.9])
+        by smtp11 (Coremail) with SMTP id D8CowAAHYMsDtZJbkGTKGQ--.3266S5;
+        Sat, 08 Sep 2018 01:27:33 +0800 (CST)
+From:   jun qian <hangdianqj@163.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jun qian <hangdianqj@163.com>
+Subject: [PATCH] block: umem: replace spin_lock_bh with spin_lock in tasklet callback
+Date:   Fri,  7 Sep 2018 10:27:20 -0700
+Message-Id: <20180907172720.48621-1-hangdianqj@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: D8CowAAHYMsDtZJbkGTKGQ--.3266S5
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr43KryDAF1fCr1fCr1kuFg_yoWfCwcEvr
+        yrWF9IgrWqkwn0kr1Yv3ZxZryqka1jgFn5KFy2qa43J3srZas3Gw1vqrW3ZryDuFyxC3sx
+        u342q347ur1xKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU81SoJUUUUU==
+X-Originating-IP: [183.156.140.9]
+X-CM-SenderInfo: pkdqwvpldq1yi6rwjhhfrp/1tbiRAW6R1SIX1xGYQAAsE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+As you are already in a tasklet, it is unnecessary to call spin_lock_bh.
 
-On Thu, Sep 06, 2018 at 05:10:36PM -0400, Dennis Zhou wrote:
-> @@ -2021,9 +2021,7 @@ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
->  {
->  	if (unlikely(bio->bi_blkg))
->  		return -EBUSY;
-> +	bio->bi_blkg = blkg_try_get_closest(blkg);
->  	return 0;
+Signed-off-by: jun qian <hangdianqj@163.com>
+---
+ drivers/block/umem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It prolly would be a good idea to point out that the associated blkg
-might not be the same one passed in.  Maybe this gets cleared up later
-in the series?
-
-> @@ -298,14 +297,23 @@ struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
->  	while (true) {
->  		struct blkcg *pos = blkcg;
->  		struct blkcg *parent = blkcg_parent(blkcg);
-> -
-> -		while (parent && !__blkg_lookup(parent, q, false)) {
-> +		struct blkcg_gq *ret_blkg = NULL;
-> +
-> +		while (parent) {
-> +			blkg = __blkg_lookup(parent, q, false);
-> +			if (blkg) {
-> +				/* remember closest blkg */
-> +				ret_blkg = blkg;
-> +				break;
-> +			}
->  			pos = parent;
->  			parent = blkcg_parent(parent);
->  		}
->  
->  		blkg = blkg_create(pos, q, NULL);
-> -		if (pos == blkcg || IS_ERR(blkg))
-> +		if (IS_ERR(blkg))
-> +			return ret_blkg ?: q->root_blkg;
-
-Why not ret_blkg here?
-
-Thanks.
-
+diff --git a/drivers/block/umem.c b/drivers/block/umem.c
+index 5c7fb8cc4149..9094ca60949c 100644
+--- a/drivers/block/umem.c
++++ b/drivers/block/umem.c
+@@ -421,7 +421,7 @@ static void process_page(unsigned long data)
+ 	struct cardinfo *card = (struct cardinfo *)data;
+ 	unsigned int dma_status = card->dma_status;
+ 
+-	spin_lock_bh(&card->lock);
++	spin_lock(&card->lock);
+ 	if (card->Active < 0)
+ 		goto out_unlock;
+ 	page = &card->mm_pages[card->Active];
+@@ -496,7 +496,7 @@ static void process_page(unsigned long data)
+ 		mm_start_io(card);
+ 	}
+  out_unlock:
+-	spin_unlock_bh(&card->lock);
++	spin_unlock(&card->lock);
+ 
+ 	while (return_bio) {
+ 		struct bio *bio = return_bio;
 -- 
-tejun
+2.17.1
+
+
+
