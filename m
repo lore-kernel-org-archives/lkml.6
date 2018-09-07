@@ -2,268 +2,140 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A2EC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801D0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6872083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:25:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6872083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 431D82086B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 15:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431D82086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbeIGUG4 (ORCPT
+        id S1730101AbeIGUHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 16:06:56 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:60158 "EHLO leonov.paulk.fr"
+        Fri, 7 Sep 2018 16:07:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:33542 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729517AbeIGUGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 16:06:55 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 97F77C025F;
-        Fri,  7 Sep 2018 17:25:30 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 335EAC0F71; Fri,  7 Sep 2018 17:25:29 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 5852EC0F69;
-        Fri,  7 Sep 2018 17:24:43 +0200 (CEST)
-Message-ID: <84cd11cd7efd2301ee70e92a71bd915d2f38c41e.camel@paulk.fr>
-Subject: Re: [PATCH v9 5/9] media: platform: Add Cedrus VPU decoder driver
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1728248AbeIGUHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 16:07:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A666718A;
+        Fri,  7 Sep 2018 08:26:07 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.Emea.Arm.com [10.4.13.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47D8D3F614;
+        Fri,  7 Sep 2018 08:26:03 -0700 (PDT)
+Date:   Fri, 7 Sep 2018 16:26:00 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, cpandya@codeaurora.org,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>, Jacob.Bramley@arm.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        eugenis@google.com, Kees Cook <keescook@chromium.org>,
+        Ruben.Ayrapetyan@arm.com,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-mm <linux-mm@kvack.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Date:   Fri, 07 Sep 2018 17:24:40 +0200
-In-Reply-To: <4b30c0bf-e525-1868-f625-569d4a104aa0@xs4all.nl>
-References: <20180906222442.14825-1-contact@paulk.fr>
-         <20180906222442.14825-6-contact@paulk.fr>
-         <4b30c0bf-e525-1868-f625-569d4a104aa0@xs4all.nl>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-pfNOvWR/bi0bWWWe83Jr"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee.Smith@arm.com, Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by
+ sparse
+Message-ID: <20180907152600.myidisza5o4kdmvf@armageddon.cambridge.arm.com>
+References: <cover.1535629099.git.andreyknvl@google.com>
+ <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
+ <CA+55aFyW9N2tSb2bQvkthbVVyY6nt5yFeWQRLHp1zruBmb5ocw@mail.gmail.com>
+ <CA+55aFy2t_MHgr_CgwbhtFkL+djaCq2qMM1G+f2DwJ0qEr1URQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFy2t_MHgr_CgwbhtFkL+djaCq2qMM1G+f2DwJ0qEr1URQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 06, 2018 at 02:16:19PM -0700, Linus Torvalds wrote:
+> On Thu, Sep 6, 2018 at 2:13 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > So for example:
+> >
+> > >  static inline compat_uptr_t ptr_to_compat(void __user *uptr)
+> > >  {
+> > > -       return (u32)(unsigned long)uptr;
+> > > +       return (u32)(__force unsigned long)uptr;
+> > >  }
+> >
+> > this actually looks correct.
+> 
+> Side note: I do think that while the above is correct, the rest of the
+> patch shows that we might be better off simply not havign the warning
+> for address space changes at all for the "cast a pointer to an integer
+> type" case.
+> 
+> When you cast to a non-pointer type, the address space issue simply
+> doesn't exist at all, so the warning makes less sense.
 
---=-pfNOvWR/bi0bWWWe83Jr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+That's actually a new (potential) issue introduced by these patches. The
+arm64 architecture has a feature called Top Byte Ignore (TBI, a.k.a.
+tagged pointers) where the top 8-bit of a 64-bit pointer can be set to
+anything and the hardware automatically ignores it when dereferencing.
+The arm64 user/kernel ABI currently mandates that any pointer passed
+from user space to the kernel must have the top byte 0.
 
-Hi,
+This patchset is proposing to relax the ABI so that user pointers with a
+non-zero top byte can be actually passed via kernel syscalls. It
+basically moves the responsibility to remove the pointer tag (where
+needed) from user to the kernel (and for some good reasons, user space
+can't always do it given the way hwasan is implemented in LLVM).
 
-Le vendredi 07 septembre 2018 =C3=A0 15:13 +0200, Hans Verkuil a =C3=A9crit=
- :
-> On 09/07/2018 12:24 AM, Paul Kocialkowski wrote:
-> > From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
-> > This introduces the Cedrus VPU driver that supports the VPU found in
-> > Allwinner SoCs, also known as Video Engine. It is implemented through
-> > a V4L2 M2M decoder device and a media device (used for media requests).
-> > So far, it only supports MPEG-2 decoding.
-> >=20
-> > Since this VPU is stateless, synchronization with media requests is
-> > required in order to ensure consistency between frame headers that
-> > contain metadata about the frame to process and the raw slice data that
-> > is used to generate the frame.
-> >=20
-> > This driver was made possible thanks to the long-standing effort
-> > carried out by the linux-sunxi community in the interest of reverse
-> > engineering, documenting and implementing support for the Allwinner VPU=
-.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
->=20
-> One high-level comment:
->=20
-> Can you add a TODO file for this staging driver? This can be done in
-> a follow-up patch.
+The downside is that now a tagged user pointer may not represent just a
+virtual address but address|tag, so things like access_ok() or
+find_extended_vma() need to untag (clear the top byte of) the pointer
+before use. Note that copy_from_user() etc. can safely dereference a
+tagged user pointer as the tag is automatically ignored by the hardware.
 
-Definitely, I'll do that soon!
+The arm64 maintainers asked for a more reliable approach to identifying
+existing and new cases where such explicit untagging is required and one
+of the proposals was a sparse option. Based on some observations, it
+seems that untagging is needed when a pointer is cast to a long and the
+pointer tag information can be dropped. With the sparse patch, there are
+lots of warnings where we actually can preserve the tag (e.g. compat
+user pointers should be ignored since the top 32-bit are always 0), so
+Andrey is trying to mask such warnings out so that we can detect new
+potential issues as the kernel evolves.
 
-> It should contain what needs to be done to get this out of staging:
->=20
-> - Request API needs to stabilize
-> - Userspace support for stateless codecs must be created
-> - Ideally one other stateless decoder driver and at least one
->   stateless encoder driver should be implemented to ensure that nothing
->   was forgotten in the Request API.
-> - Anything else?
+So it's not about casting to another pointer; it's rather about no
+longer using the value as a user pointer but as an actual (untyped,
+untagged) virtual address.
 
-I still fell rather unsure about the codec metadata controls, so it
-would be good to wait for more feedback on that specific point too.
-They definitely fit our driver's needs and I also checked them against
-the spec to spot missing elements, but I'm still worried I might have
-missed something relevant there. Are there use cases currently not
-covered by their current verison?
+There may be better options to address this but I haven't seen any
+concrete proposal so far. Or we could simply consider that we've found
+all places where it matters and not bother with any static analysis
+tools (but for the time being it's still worth investigating whether we
+can do better than this).
 
-> And a few last code comments:
->=20
-> > ---
-> >  MAINTAINERS                                   |   7 +
-> >  drivers/staging/media/Kconfig                 |   2 +
-> >  drivers/staging/media/Makefile                |   1 +
-> >  drivers/staging/media/sunxi/Kconfig           |  15 +
-> >  drivers/staging/media/sunxi/Makefile          |   1 +
-> >  drivers/staging/media/sunxi/cedrus/Kconfig    |  14 +
-> >  drivers/staging/media/sunxi/cedrus/Makefile   |   3 +
-> >  drivers/staging/media/sunxi/cedrus/cedrus.c   | 422 ++++++++++++++
-> >  drivers/staging/media/sunxi/cedrus/cedrus.h   | 165 ++++++
-> >  .../staging/media/sunxi/cedrus/cedrus_dec.c   |  70 +++
-> >  .../staging/media/sunxi/cedrus/cedrus_dec.h   |  27 +
-> >  .../staging/media/sunxi/cedrus/cedrus_hw.c    | 322 +++++++++++
-> >  .../staging/media/sunxi/cedrus/cedrus_hw.h    |  30 +
-> >  .../staging/media/sunxi/cedrus/cedrus_mpeg2.c | 237 ++++++++
-> >  .../staging/media/sunxi/cedrus/cedrus_regs.h  | 233 ++++++++
-> >  .../staging/media/sunxi/cedrus/cedrus_video.c | 544 ++++++++++++++++++
-> >  .../staging/media/sunxi/cedrus/cedrus_video.h |  30 +
-> >  17 files changed, 2123 insertions(+)
-> >  create mode 100644 drivers/staging/media/sunxi/Kconfig
-> >  create mode 100644 drivers/staging/media/sunxi/Makefile
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
-> >  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
-> >=20
->=20
-> <snip>
->=20
-> > +static int cedrus_request_validate(struct media_request *req)
-> > +{
-> > +	struct media_request_object *obj;
-> > +	struct v4l2_ctrl_handler *parent_hdl, *hdl;
-> > +	struct cedrus_ctx *ctx =3D NULL;
-> > +	struct v4l2_ctrl *ctrl_test;
-> > +	unsigned int i;
-> > +
-> > +	if (vb2_request_buffer_cnt(req) !=3D 1)
-> > +		return -ENOENT;
->=20
-> I would return ENOENT if there are no buffers, and EINVAL if there are to=
-o
-> many. Returning ENOENT in the latter case would be very confusing.
->=20
-> I also highly recommend that you add v4l2_info lines for these errors.
+> It's really just he "pointer to one address space" being cast to
+> "pointer to another address space" that should really warn, and that
+> might need that "__force" thing.
 
-Yes that seems much clearer. I'll send that as a follow-up patch.
+I think sparse already warns if changing the address space of a pointer.
 
-> > +
-> > +	list_for_each_entry(obj, &req->objects, list) {
-> > +		struct vb2_buffer *vb;
-> > +
-> > +		if (vb2_request_object_is_buffer(obj)) {
-> > +			vb =3D container_of(obj, struct vb2_buffer, req_obj);
-> > +			ctx =3D vb2_get_drv_priv(vb->vb2_queue);
-> > +
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	if (!ctx)
-> > +		return -ENOENT;
-> > +
-> > +	parent_hdl =3D &ctx->hdl;
-> > +
-> > +	hdl =3D v4l2_ctrl_request_hdl_find(req, parent_hdl);
-> > +	if (!hdl) {
-> > +		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
->=20
-> Should be v4l2_info: it is not a driver error, it is just an info message=
-.
-
-Oh, my mistake.
-
-> > +		return -ENOENT;
-> > +	}
-> > +
-> > +	for (i =3D 0; i < CEDRUS_CONTROLS_COUNT; i++) {
-> > +		if (cedrus_controls[i].codec !=3D ctx->current_codec ||
-> > +		    !cedrus_controls[i].required)
-> > +			continue;
-> > +
-> > +		ctrl_test =3D v4l2_ctrl_request_hdl_ctrl_find(hdl,
-> > +			cedrus_controls[i].id);
-> > +		if (!ctrl_test) {
-> > +			v4l2_err(&ctx->dev->v4l2_dev,
-> > +				 "Missing required codec control\n");
->=20
-> Ditto.
->
-> > +			return -ENOENT;
-> > +		}
-> > +	}
-> > +
-> > +	v4l2_ctrl_request_hdl_put(hdl);
-> > +
-> > +	return vb2_request_validate(req);
-> > +}
->=20
-> Not worth making a v10, but you can do this in a follow-up patch.
->=20
-> Once I have the two follow-up patches I'll make a pull request.
-
-Excellent! I'm really glad we're approaching the end of it.
-
-Cheers,
-
-Paul
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-pfNOvWR/bi0bWWWe83Jr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluSmDgACgkQhP3B6o/u
-lQxJmxAAjRHm8+yIxMz5a6A5PQOC+rhKe0d3MbpBroMOj1NoOlG2T9EMlFozb1z2
-sxRfXyL09WE3DxDFGWew4AL0aKTLGw9mTlzfBJojIMB2gOf7vc6teZ6NL6fOfA+w
-suyBFdtM6MLglOlOwJUCI+MoqZg7+l3R6KFb4aX4dJ4mlC0UrH3k82DCJLUpZdXN
-YhtUz2JqV4+s7FQ42KM7p+6cZd40E5QyLBBLNWFjP3X72r/kfGybXKTxLY4iqJYE
-yiU2uIXv6N8ll5+l1LhlDY/KAtLBo4Zkw9XFvBLae7l6+E0BCxcflBFfsdqdV/s3
-T/s9KUcGA3A/6tNveeTBhUkn6veMTt4RhgHQw6eyUao/1INumc9Q/yTKUroQo7AP
-WhYeC6SAdltZ3bclv/Pk94QWo7tgm0EL8Ad3M0HT9zjjb7dk5oCP2BJqv4zBXJNs
-VCmgM0D9CB7gYvjomNNy+nfj3V4R7OYxn9783Foya0n8j4G7LRdmWyqzJ3y8bn5r
-/Un92sN7ANcDgandFhnLCmMvgbyw9Jo/aC1nVUJk8w7idXdu7kgi9mdp8gWc10MV
-aE8YnqiJhEZqvhaWD8ZoEo+7JM247Am77kg1vE51GJTSa7Wt5sV11X7QSqQLe4ch
-V1GN0saRIG2cJyZdAUsujghbsnJwoTFaCPVwdieEml+QY+L6Shs=
-=kob7
------END PGP SIGNATURE-----
-
---=-pfNOvWR/bi0bWWWe83Jr--
-
+-- 
+Catalin
