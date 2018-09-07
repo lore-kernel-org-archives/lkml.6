@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D97C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27068C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22ECB20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22ECB20645
+	by mail.kernel.org (Postfix) with ESMTP id D5DB520645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:16:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5DB520645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeIHB7U (ORCPT
+        id S1728911AbeIHB7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:59:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42730 "EHLO
+        Fri, 7 Sep 2018 21:59:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42744 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728102AbeIHB7U (ORCPT
+        with ESMTP id S1727181AbeIHB7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:59:20 -0400
+        Fri, 7 Sep 2018 21:59:22 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3ED31F07;
-        Fri,  7 Sep 2018 21:16:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9600DFA4;
+        Fri,  7 Sep 2018 21:16:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 083/145] ACPICA: Clear status of all events when entering sleep states
-Date:   Fri,  7 Sep 2018 23:09:09 +0200
-Message-Id: <20180907210911.051367559@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Kalauskas <peskal@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 084/145] drivers/block/zram/zram_drv.c: fix bug storing backing_dev
+Date:   Fri,  7 Sep 2018 23:09:10 +0200
+Message-Id: <20180907210911.106357077@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,54 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Peter Kalauskas <peskal@google.com>
 
-commit f317c7dc12b73eb9d67fdae404563deb907dcfb7 upstream.
+commit c8bd134a4bddafe5917d163eea73873932c15e83 upstream.
 
-Commit fa85015c0d95 (ACPICA: Clear status of all events when entering
-S5) made the sleep state entry code in ACPICA clear the status of all
-ACPI events when entering S5 to fix a functional regression reported
-against commit 18996f2db918 (ACPICA: Events: Stop unconditionally
-clearing ACPI IRQs during suspend/resume).  However, it is reported
-now that the regression also affects system states other than S5 on
-some systems and causes them to wake up from sleep prematurely.
+The call to strlcpy in backing_dev_store is incorrect. It should take
+the size of the destination buffer instead of the size of the source
+buffer.  Additionally, ignore the newline character (\n) when reading
+the new file_name buffer. This makes it possible to set the backing_dev
+as follows:
 
-For this reason, make the code in question clear the status of all
-ACPI events when entering all sleep states (in addition to S5) to
-avoid the premature wakeups (this may cause some wakeup events to
-be missed in theory, but the likelihood of that is small and the
-change here simply restores the previous behavior of the code).
+	echo /dev/sdX > /sys/block/zram0/backing_dev
 
-Fixes: 18996f2db918 (ACPICA: Events: Stop unconditionally clearing ACPI IRQs during suspend/resume)
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: 4.17+ <stable@vger.kernel.org> # 4.17+: fa85015c0d95 ACPICA: Clear status ...
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The reason it worked before was the fact that strlcpy() copies 'len - 1'
+bytes, which is strlen(buf) - 1 in our case, so it accidentally didn't
+copy the trailing new line symbol.  Which also means that "echo -n
+/dev/sdX" most likely was broken.
+
+Signed-off-by: Peter Kalauskas <peskal@google.com>
+Link: http://lkml.kernel.org/r/20180813061623.GC64836@rodete-desktop-imager.corp.google.com
+Acked-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: <stable@vger.kernel.org>    [4.14+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/hwsleep.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/block/zram/zram_drv.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/acpica/hwsleep.c
-+++ b/drivers/acpi/acpica/hwsleep.c
-@@ -56,14 +56,9 @@ acpi_status acpi_hw_legacy_sleep(u8 slee
- 	if (ACPI_FAILURE(status)) {
- 		return_ACPI_STATUS(status);
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -337,6 +337,7 @@ static ssize_t backing_dev_store(struct
+ 		struct device_attribute *attr, const char *buf, size_t len)
+ {
+ 	char *file_name;
++	size_t sz;
+ 	struct file *backing_dev = NULL;
+ 	struct inode *inode;
+ 	struct address_space *mapping;
+@@ -357,7 +358,11 @@ static ssize_t backing_dev_store(struct
+ 		goto out;
  	}
--	/*
--	 * If the target sleep state is S5, clear all GPEs and fixed events too
--	 */
--	if (sleep_state == ACPI_STATE_S5) {
--		status = acpi_hw_clear_acpi_status();
--		if (ACPI_FAILURE(status)) {
--			return_ACPI_STATUS(status);
--		}
-+	status = acpi_hw_clear_acpi_status();
-+	if (ACPI_FAILURE(status)) {
-+		return_ACPI_STATUS(status);
- 	}
- 	acpi_gbl_system_awake_and_running = FALSE;
  
+-	strlcpy(file_name, buf, len);
++	strlcpy(file_name, buf, PATH_MAX);
++	/* ignore trailing newline */
++	sz = strlen(file_name);
++	if (sz > 0 && file_name[sz - 1] == '\n')
++		file_name[sz - 1] = 0x00;
+ 
+ 	backing_dev = filp_open(file_name, O_RDWR|O_LARGEFILE, 0);
+ 	if (IS_ERR(backing_dev)) {
 
 
