@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C44C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DABF0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EAC620645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EAC620645
+	by mail.kernel.org (Postfix) with ESMTP id 8565D20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8565D20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728559AbeIHB5z (ORCPT
+        id S1728573AbeIHB56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:57:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42462 "EHLO
+        Fri, 7 Sep 2018 21:57:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42478 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeIHB5y (ORCPT
+        with ESMTP id S1727488AbeIHB55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:57:54 -0400
+        Fri, 7 Sep 2018 21:57:57 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65435F07;
-        Fri,  7 Sep 2018 21:15:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F916F07;
+        Fri,  7 Sep 2018 21:15:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 057/145] dm cache metadata: save in-core policy_hint_size to on-disk superblock
-Date:   Fri,  7 Sep 2018 23:08:43 +0200
-Message-Id: <20180907210909.279012359@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.18 058/145] dm cache metadata: set dirty on all cache blocks after a crash
+Date:   Fri,  7 Sep 2018 23:08:44 +0200
+Message-Id: <20180907210909.365379981@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -49,53 +50,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit fd2fa95416188a767a63979296fa3e169a9ef5ec upstream.
+commit 5b1fe7bec8a8d0cc547a22e7ddc2bd59acd67de4 upstream.
 
-policy_hint_size starts as 0 during __write_initial_superblock().  It
-isn't until the policy is loaded that policy_hint_size is set in-core
-(cmd->policy_hint_size).  But it never got recorded in the on-disk
-superblock because __commit_transaction() didn't deal with transfering
-the in-core cmd->policy_hint_size to the on-disk superblock.
+Quoting Documentation/device-mapper/cache.txt:
 
-The in-core cmd->policy_hint_size gets initialized by metadata_open()'s
-__begin_transaction_flags() which re-reads all superblock fields.
-Because the superblock's policy_hint_size was never properly stored, when
-the cache was created, hints_array_available() would always return false
-when re-activating a previously created cache.  This means
-__load_mappings() always considered the hints invalid and never made use
-of the hints (these hints served to optimize).
+  The 'dirty' state for a cache block changes far too frequently for us
+  to keep updating it on the fly.  So we treat it as a hint.  In normal
+  operation it will be written when the dm device is suspended.  If the
+  system crashes all cache blocks will be assumed dirty when restarted.
 
-Another detremental side-effect of this oversight is the cache_check
-utility would fail with: "invalid hint width: 0"
+This got broken in commit f177940a8091 ("dm cache metadata: switch to
+using the new cursor api for loading metadata") in 4.9, which removed
+the code that consulted cmd->clean_when_opened (CLEAN_SHUTDOWN on-disk
+flag) when loading cache blocks.  This results in data corruption on an
+unclean shutdown with dirty cache blocks on the fast device.  After the
+crash those blocks are considered clean and may get evicted from the
+cache at any time.  This can be demonstrated by doing a lot of reads
+to trigger individual evictions, but uncache is more predictable:
+
+  ### Disable auto-activation in lvm.conf to be able to do uncache in
+  ### time (i.e. see uncache doing flushing) when the fix is applied.
+
+  # xfs_io -d -c 'pwrite -b 4M -S 0xaa 0 1G' /dev/vdb
+  # vgcreate vg_cache /dev/vdb /dev/vdc
+  # lvcreate -L 1G -n lv_slowdev vg_cache /dev/vdb
+  # lvcreate -L 512M -n lv_cachedev vg_cache /dev/vdc
+  # lvcreate -L 256M -n lv_metadev vg_cache /dev/vdc
+  # lvconvert --type cache-pool --cachemode writeback vg_cache/lv_cachedev --poolmetadata vg_cache/lv_metadev
+  # lvconvert --type cache vg_cache/lv_slowdev --cachepool vg_cache/lv_cachedev
+  # xfs_io -d -c 'pwrite -b 4M -S 0xbb 0 512M' /dev/mapper/vg_cache-lv_slowdev
+  # xfs_io -d -c 'pread -v 254M 512' /dev/mapper/vg_cache-lv_slowdev | head -n 2
+  0fe00000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  0fe00010:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  # dmsetup status vg_cache-lv_slowdev
+  0 2097152 cache 8 27/65536 128 8192/8192 1 100 0 0 0 8192 7065 2 metadata2 writeback 2 migration_threshold 2048 smq 0 rw -
+                                                            ^^^^
+                                7065 * 64k = 441M yet to be written to the slow device
+  # echo b >/proc/sysrq-trigger
+
+  # vgchange -ay vg_cache
+  # xfs_io -d -c 'pread -v 254M 512' /dev/mapper/vg_cache-lv_slowdev | head -n 2
+  0fe00000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  0fe00010:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  # lvconvert --uncache vg_cache/lv_slowdev
+  Flushing 0 blocks for cache vg_cache/lv_slowdev.
+  Logical volume "lv_cachedev" successfully removed
+  Logical volume vg_cache/lv_slowdev is not cached.
+  # xfs_io -d -c 'pread -v 254M 512' /dev/mapper/vg_cache-lv_slowdev | head -n 2
+  0fe00000:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
+  0fe00010:  aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa  ................
+
+This is the case with both v1 and v2 cache pool metatata formats.
+
+After applying this patch:
+
+  # vgchange -ay vg_cache
+  # xfs_io -d -c 'pread -v 254M 512' /dev/mapper/vg_cache-lv_slowdev | head -n 2
+  0fe00000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  0fe00010:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  # lvconvert --uncache vg_cache/lv_slowdev
+  Flushing 3724 blocks for cache vg_cache/lv_slowdev.
+  ...
+  Flushing 71 blocks for cache vg_cache/lv_slowdev.
+  Logical volume "lv_cachedev" successfully removed
+  Logical volume vg_cache/lv_slowdev is not cached.
+  # xfs_io -d -c 'pread -v 254M 512' /dev/mapper/vg_cache-lv_slowdev | head -n 2
+  0fe00000:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
+  0fe00010:  bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
 
 Cc: stable@vger.kernel.org
+Fixes: f177940a8091 ("dm cache metadata: switch to using the new cursor api for loading metadata")
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-cache-metadata.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/dm-cache-metadata.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 --- a/drivers/md/dm-cache-metadata.c
 +++ b/drivers/md/dm-cache-metadata.c
-@@ -363,7 +363,7 @@ static int __write_initial_superblock(st
- 	disk_super->version = cpu_to_le32(cmd->version);
- 	memset(disk_super->policy_name, 0, sizeof(disk_super->policy_name));
- 	memset(disk_super->policy_version, 0, sizeof(disk_super->policy_version));
--	disk_super->policy_hint_size = 0;
-+	disk_super->policy_hint_size = cpu_to_le32(0);
+@@ -1323,6 +1323,7 @@ static int __load_mapping_v1(struct dm_c
  
- 	__copy_sm_root(cmd, disk_super);
+ 	dm_oblock_t oblock;
+ 	unsigned flags;
++	bool dirty = true;
  
-@@ -701,6 +701,7 @@ static int __commit_transaction(struct d
- 	disk_super->policy_version[0] = cpu_to_le32(cmd->policy_version[0]);
- 	disk_super->policy_version[1] = cpu_to_le32(cmd->policy_version[1]);
- 	disk_super->policy_version[2] = cpu_to_le32(cmd->policy_version[2]);
-+	disk_super->policy_hint_size = cpu_to_le32(cmd->policy_hint_size);
+ 	dm_array_cursor_get_value(mapping_cursor, (void **) &mapping_value_le);
+ 	memcpy(&mapping, mapping_value_le, sizeof(mapping));
+@@ -1333,8 +1334,10 @@ static int __load_mapping_v1(struct dm_c
+ 			dm_array_cursor_get_value(hint_cursor, (void **) &hint_value_le);
+ 			memcpy(&hint, hint_value_le, sizeof(hint));
+ 		}
++		if (cmd->clean_when_opened)
++			dirty = flags & M_DIRTY;
  
- 	disk_super->read_hits = cpu_to_le32(cmd->stats.read_hits);
- 	disk_super->read_misses = cpu_to_le32(cmd->stats.read_misses);
+-		r = fn(context, oblock, to_cblock(cb), flags & M_DIRTY,
++		r = fn(context, oblock, to_cblock(cb), dirty,
+ 		       le32_to_cpu(hint), hints_valid);
+ 		if (r) {
+ 			DMERR("policy couldn't load cache block %llu",
+@@ -1362,7 +1365,7 @@ static int __load_mapping_v2(struct dm_c
+ 
+ 	dm_oblock_t oblock;
+ 	unsigned flags;
+-	bool dirty;
++	bool dirty = true;
+ 
+ 	dm_array_cursor_get_value(mapping_cursor, (void **) &mapping_value_le);
+ 	memcpy(&mapping, mapping_value_le, sizeof(mapping));
+@@ -1373,8 +1376,9 @@ static int __load_mapping_v2(struct dm_c
+ 			dm_array_cursor_get_value(hint_cursor, (void **) &hint_value_le);
+ 			memcpy(&hint, hint_value_le, sizeof(hint));
+ 		}
++		if (cmd->clean_when_opened)
++			dirty = dm_bitset_cursor_get_value(dirty_cursor);
+ 
+-		dirty = dm_bitset_cursor_get_value(dirty_cursor);
+ 		r = fn(context, oblock, to_cblock(cb), dirty,
+ 		       le32_to_cpu(hint), hints_valid);
+ 		if (r) {
 
 
