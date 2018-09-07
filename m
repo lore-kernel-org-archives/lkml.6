@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86C3C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28645C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAD92083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAD92083D
+	by mail.kernel.org (Postfix) with ESMTP id DE24520844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:44:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE24520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730988AbeIHC10 (ORCPT
+        id S1730999AbeIHC1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:27:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57752 "EHLO
+        Fri, 7 Sep 2018 22:27:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbeIHC10 (ORCPT
+        with ESMTP id S1726568AbeIHC1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:27:26 -0400
+        Fri, 7 Sep 2018 22:27:30 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19A2AF36;
-        Fri,  7 Sep 2018 21:44:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40A32F36;
+        Fri,  7 Sep 2018 21:44:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 3.18 24/29] ubifs: Fix synced_i_size calculation for xattr inodes
-Date:   Fri,  7 Sep 2018 23:10:45 +0200
-Message-Id: <20180907210911.141394003@linuxfoundation.org>
+        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 3.18 25/29] pwm: tiehrpwm: Fix disabling of output of PWMs
+Date:   Fri,  7 Sep 2018 23:10:46 +0200
+Message-Id: <20180907210911.199608658@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
 References: <20180907210909.523240901@linuxfoundation.org>
@@ -49,41 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Vignesh R <vigneshr@ti.com>
 
-commit 59965593205fa4044850d35ee3557cf0b7edcd14 upstream.
+commit 38dabd91ff0bde33352ca3cc65ef515599b77a05 upstream.
 
-In ubifs_jnl_update() we sync parent and child inodes to the flash,
-in case of xattrs, the parent inode (AKA host inode) has a non-zero
-data_len. Therefore we need to adjust synced_i_size too.
+pwm-tiehrpwm driver disables PWM output by putting it in low output
+state via active AQCSFRC register in ehrpwm_pwm_disable(). But, the
+AQCSFRC shadow register is not updated. Therefore, when shadow AQCSFRC
+register is re-enabled in ehrpwm_pwm_enable() (say to enable second PWM
+output), previous settings are lost as shadow register value is loaded
+into active register. This results in things like PWMA getting enabled
+automatically, when PWMB is enabled and vice versa. Fix this by
+updating AQCSFRC shadow register as well during ehrpwm_pwm_disable().
 
-This issue was reported by ubifs self tests unter a xattr related work
-load.
-UBIFS error (ubi0:0 pid 1896): dbg_check_synced_i_size: ui_size is 4, synced_i_size is 0, but inode is clean
-UBIFS error (ubi0:0 pid 1896): dbg_check_synced_i_size: i_ino 65, i_mode 0x81a4, i_size 4
-
-Cc: <stable@vger.kernel.org>
-Fixes: 1e51764a3c2a ("UBIFS: add new flash file system")
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Fixes: 19891b20e7c2 ("pwm: pwm-tiehrpwm: PWM driver support for EHRPWM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/journal.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pwm/pwm-tiehrpwm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/ubifs/journal.c
-+++ b/fs/ubifs/journal.c
-@@ -656,6 +656,11 @@ int ubifs_jnl_update(struct ubifs_info *
- 	spin_lock(&ui->ui_lock);
- 	ui->synced_i_size = ui->ui_size;
- 	spin_unlock(&ui->ui_lock);
-+	if (xent) {
-+		spin_lock(&host_ui->ui_lock);
-+		host_ui->synced_i_size = host_ui->ui_size;
-+		spin_unlock(&host_ui->ui_lock);
-+	}
- 	mark_inode_clean(c, ui);
- 	mark_inode_clean(c, host_ui);
- 	return 0;
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -384,6 +384,8 @@ static void ehrpwm_pwm_disable(struct pw
+ 		aqcsfrc_mask = AQCSFRC_CSFA_MASK;
+ 	}
+ 
++	/* Update shadow register first before modifying active register */
++	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
+ 	/*
+ 	 * Changes to immediate action on Action Qualifier. This puts
+ 	 * Action Qualifier control on PWM output from next TBCLK
 
 
