@@ -6,122 +6,198 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F102C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892A7C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5350620861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2768120861
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:10:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="NqHGPz13"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5350620861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="H+jLhHyu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2768120861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verdurent.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeIGNsb (ORCPT
+        id S1728253AbeIGNuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:48:31 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33481 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeIGNsb (ORCPT
+        Fri, 7 Sep 2018 09:50:02 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37229 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeIGNuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:48:31 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s12-v6so11712819ljj.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 02:08:30 -0700 (PDT)
+        Fri, 7 Sep 2018 09:50:02 -0400
+Received: by mail-oi0-f65.google.com with SMTP id p84-v6so26014396oic.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 02:10:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S6ksY+JgxvRu27FYNP4ougPia55cCaLuq3qHA7AI/Mw=;
-        b=NqHGPz13d/ZyQfcXYnWJ/ad1YmCuiY0E43LfbKAzjImAMoL9uldBmxGC/tt6iUMKfn
-         DFIy1Ll8uHFSo2sQSFA90hjtP/YA7p8zLmqRx+XZgdbPjh7UYihfNKJJKyOKVIzqyfaL
-         oB3GduJATEeY7krTRBSK5W9J0Vsf+n6hZfS4yOmVHoifbpDS5qjlVhUFUiR7bzEFJD0U
-         4HmmSU4PTdzuZCoSHNCOVwH3zAg91peUqMauhGdiUnb+Zqpulz6Tzc6b9wAhh26qoby/
-         2VCSjIwI4zw+hRp0wkDjTrXhsCX9PJgTdwUwBJWqp6HziJUj1p9qDYGaGXeUF5boE4ai
-         4e0g==
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LYrc8IKn7rSv/p3ceJbS3mXhFV2T5pWwm2SJNHKqeFk=;
+        b=H+jLhHyu+W+ABq8HYW86DD8aLNzHUdDPDEUs587+pP3d9nDl41mc1WYfM8pon533MW
+         KotlJjss3uPGN9wV75BTWY0lN2tr9X0zufo7dCAvBrTxaHaWFI1/oX7kA3J5NqNxyhH7
+         CChJKpaHDyV9yVJSaqmI05P+9EDcIKEFKsC26LkHpbEL8/OkCE2816BclFfJFReUE6Sk
+         3IL4rJ+ze9vtGq/IlM6YvI2foDkBAEFH/QufY0cuRYdq2MflA1aJKhBMIIYKp1Mbstig
+         BrUUhWyqru3/gvGErQyO3ySWnTvZW0e59pDyPSfsj/wY0VsBv1yWrF0bMDb3GMA6M9/d
+         RcBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S6ksY+JgxvRu27FYNP4ougPia55cCaLuq3qHA7AI/Mw=;
-        b=XBcD6S4+QD5ZXMQC0OQWLu9HPGyZwsTFIpkpF4qGW/OZWncJHv5KRvAF+jrZGa/EIW
-         zNuBx3Jj2Pr+DxIF8Lzz4Ujw/FX9CiQiDynvxSHBkHAoIcdn0vmJnq8t0wbI0uROkd3e
-         85Vw+qM064O4qB2uGk9whEk2sza7GCO06TlNJviJRyKMTX//JGXw6d7s3TaOL/8yh1+x
-         mwvDYDiUQO3KJ9qhut6yV0F6GWM8nr5msoyzabDtyLWfKrHHydAZ5uN+V3KPj+2PSJl8
-         oj0VI10BkqIuKHKMESbinTPs7ZO2SoUlJTLrFScQ2SAwh6l4EMx09PGwG8j0eJE3BDHS
-         uQew==
-X-Gm-Message-State: APzg51BzwtN/aDcefGqrAlSb8YRBRvntQ+RuCPmIsuJlBKYUIR1iTbIs
-        AZJQtxXdNF0oQAkK3sfB9BYQiQ==
-X-Google-Smtp-Source: ANB0VdZ/NBicuQoL/7npiEBLyA5Quv5ObHheQSvLNWStgesQCAC1aYTvOIrrRzLdXO1iOHDG8TlzIg==
-X-Received: by 2002:a2e:750d:: with SMTP id q13-v6mr4121068ljc.148.1536311309917;
-        Fri, 07 Sep 2018 02:08:29 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.85.38])
-        by smtp.gmail.com with ESMTPSA id p74-v6sm1207104lfg.88.2018.09.07.02.08.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Sep 2018 02:08:28 -0700 (PDT)
-Subject: Re: [PATCH] phy: renesas: convert to SPDX identifiers
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Simon Horman <horms+renesas@verge.net.au>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b35ae4e1-2905-3587-6ffe-0f8886ba0968@cogentembedded.com>
-Date:   Fri, 7 Sep 2018 12:08:28 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LYrc8IKn7rSv/p3ceJbS3mXhFV2T5pWwm2SJNHKqeFk=;
+        b=k6E4D3sb2SyC4tMlCh6XUhNt1kXt4x+m9hwBazhiYVkrmoZC+EheFnajtObh6bF1JM
+         Y9aGhKxEv83f1D6PEhgo5QRWlNOHLd8a0ncotl+9+QRSF0WINa8JjkC0tCxUG2024rZD
+         vMib29Jf4GHDVqX8pEGlaY25jRh28UQiLEO8KrDZ0Zm20LBsT5nIPxhHy6/5VTbz8pne
+         QfMSxm0kxeDXx38EnXOE5vCSKggbiplxgNQ57s1jjjVR+gNr9w2vvmx1z+jMzua600aX
+         0xFqt5+jBoVq5PcTNmu95FklkFBiNhGIbk3cEnlB89gwoKBd98jIVxzaTgdKx4HxzxYX
+         IOug==
+X-Gm-Message-State: APzg51CVYeOUzOd4nt7aal+TnYse4j1iyrNXv8tNdLu/2ALL8sPPRb0J
+        IqBzh8a1G2Kea4kv7yFYnNaEnxvcsy2pnbdNhnC7JA==
+X-Google-Smtp-Source: ANB0VdZcir0YTuCU78imbf6L3sHCU77egD7rwmKxe6c1SBIGk8J6PByHksOAugWhtmDAnh2020o0MzrZU88rY2sFbOc=
+X-Received: by 2002:aca:a6d4:: with SMTP id t81-v6mr6821424oij.113.1536311401722;
+ Fri, 07 Sep 2018 02:10:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4a:684a:0:0:0:0:0 with HTTP; Fri, 7 Sep 2018 02:10:00 -0700 (PDT)
+In-Reply-To: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20180410124240epcas2p25c8979583c41f147ac34c49faf30aa14@epcas2p2.samsung.com>
+ <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Fri, 7 Sep 2018 14:40:00 +0530
+Message-ID: <CAHLCerM21eVkxigVN7vJvSCOfbyc2ow+R16LCA8QJ724b1+9xQ@mail.gmail.com>
+Subject: Re: [PATCH 00/17] thermal: enable/check sensor after its setup is finished
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/7/2018 5:08 AM, Kuninori Morimoto wrote:
+Hi Bartlomiej,
 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> This patch updates license to use SPDX-License-Identifier
-> instead of verbose license text.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->   drivers/phy/renesas/Kconfig              | 1 +
->   drivers/phy/renesas/Makefile             | 1 +
->   drivers/phy/renesas/phy-rcar-gen2.c      | 5 +----
->   drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 +----
->   drivers/phy/renesas/phy-rcar-gen3-usb3.c | 5 +----
->   5 files changed, 5 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
-> index 4bd390c..e340a92 100644
-> --- a/drivers/phy/renesas/Kconfig
-> +++ b/drivers/phy/renesas/Kconfig
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->   #
->   # Phy drivers for Renesas platforms
->   #
+Do you have an updated version of this patchset on 4.19-rc1 somewhere
+that I can look at? I might be seeing this issue on the QCom TSENS
+driver and would like to verify.
 
-    Again, there was no license on that file...
+Regards,
+Amit
 
-> diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile
-> index 4b76fc4..b599ff8 100644
-> --- a/drivers/phy/renesas/Makefile
-> +++ b/drivers/phy/renesas/Makefile
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->   obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
->   obj-$(CONFIG_PHY_RCAR_GEN3_PCIE)	+= phy-rcar-gen3-pcie.o
->   obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
-
-    ... on this file as well.
-
-     Otherwise looked valid.
-
-MBR, Sergei
+On Tue, Apr 10, 2018 at 6:11 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Hi,
+>
+> [devm]_thermal_zone_of_sensor_register() is used to register
+> thermal sensor by thermal drivers using DeviceTree. Besides
+> registering sensor this function also immediately enables it
+> (using ->set_mode method) and then checks it with a update call
+> to the thermal core (which ends up using ->get_temp method).
+> For many DT thermal drivers this causes a problem because
+> [devm]_thermal_zone_of_sensor_register() need to be called in
+> order to obtain data about thermal trips which are then used to
+> finish hardware sensor setup (only after which ->get_temp can
+> be used). The issue has been observed when using Samsung Exynos
+> thermal driver and fixed internally in the driver in commit
+> d8efad71e5b6 ("thermal: exynos: Reading temperature makes sense
+> only when TMU is turned on"). However after this commit there
+> are now following warnings from the thermal core visible:
+>
+> [    3.453602] thermal thermal_zone0: failed to read out thermal zone (-22)
+> [    3.483468] thermal thermal_zone1: failed to read out thermal zone (-22)
+> [    3.505965] thermal thermal_zone2: failed to read out thermal zone (-22)
+> [    3.528455] thermal thermal_zone3: failed to read out thermal zone (-22)
+> [    3.550939] thermal thermal_zone4: failed to read out thermal zone (-22)
+>
+> This patchset attempts to directly address the thermal core
+> problem with [devm]_thermal_zone_of_sensor_register() and
+> affected DT thermal drivers. In order to achieve this sensor
+> registration, enable and check operations are separated and
+> corresponding drivers are modified to use the new helpers to
+> enable and check sensor explicitly.
+>
+> Tested on Exynos5422 based Odroid-XU3 Lite board (aforementioned
+> warnings from the thermal core are now gone).
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>
+> Bartlomiej Zolnierkiewicz (17):
+>   thermal: add thermal_zone_device_toggle() helper
+>   thermal: separate sensor registration and enable
+>   thermal: add thermal_zone_device_check() helper
+>   thermal: do sensor checking explicitly in drivers
+>   thermal: bcm2835: enable/check sensor after its setup is finished
+>   thermal: brcmstb: enable/check sensor after its setup is finished
+>   thermal: hisi_thermal: enable/check sensor after its setup is finished
+>   thermal: qcom: tsens: enable/check sensor after its setup is finished
+>   thermal: qoriq: enable/check sensor after its setup is finished
+>   thermal: rcar_gen3_thermal: enable/check sensor after its setup is
+>     finished
+>   thermal: rockchip_thermal: enable/check sensor after its setup is
+>     finished
+>   thermal: exynos: enable/check sensor after its setup is finished
+>   thermal: tegra: enable/check sensor after its setup is finished
+>   thermal: ti-soc-thermal: enable/check sensor after its setup is
+>     finished
+>   thermal: uniphier: enable/check sensor after its setup is
+>     finished
+>   thermal: zx2967: enable/check sensor after its setup is finished
+>   thermal: warn on attempts to read temperature on disabled sensors
+>
+>  drivers/acpi/thermal.c                             |  5 ++--
+>  drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  1 -
+>  drivers/platform/x86/acerhdf.c                     |  6 +++-
+>  drivers/regulator/max8973-regulator.c              |  3 +-
+>  drivers/thermal/broadcom/bcm2835_thermal.c         |  3 ++
+>  drivers/thermal/broadcom/brcmstb_thermal.c         |  3 ++
+>  drivers/thermal/broadcom/ns-thermal.c              |  3 ++
+>  drivers/thermal/da9062-thermal.c                   |  7 ++---
+>  drivers/thermal/db8500_thermal.c                   |  5 +++-
+>  drivers/thermal/hisi_thermal.c                     | 22 ++++----------
+>  drivers/thermal/imx_thermal.c                      |  3 +-
+>  drivers/thermal/int340x_thermal/int3400_thermal.c  |  1 +
+>  drivers/thermal/intel_bxt_pmic_thermal.c           |  3 +-
+>  drivers/thermal/intel_soc_dts_iosf.c               |  3 +-
+>  drivers/thermal/max77620_thermal.c                 |  6 ++--
+>  drivers/thermal/mtk_thermal.c                      |  3 ++
+>  drivers/thermal/of-thermal.c                       |  6 ++--
+>  drivers/thermal/qcom-spmi-temp-alarm.c             |  5 +++-
+>  drivers/thermal/qcom/tsens.c                       |  6 ++++
+>  drivers/thermal/qoriq_thermal.c                    |  3 ++
+>  drivers/thermal/rcar_gen3_thermal.c                |  7 +++--
+>  drivers/thermal/rcar_thermal.c                     |  8 +++--
+>  drivers/thermal/rockchip_thermal.c                 | 34 ++++++++++------------
+>  drivers/thermal/samsung/exynos_tmu.c               |  7 ++++-
+>  drivers/thermal/st/st_thermal_memmap.c             |  3 +-
+>  drivers/thermal/tango_thermal.c                    |  5 ++++
+>  drivers/thermal/tegra/soctherm.c                   |  3 ++
+>  drivers/thermal/tegra/tegra-bpmp-thermal.c         |  3 ++
+>  drivers/thermal/thermal-generic-adc.c              |  3 ++
+>  drivers/thermal/thermal_core.c                     | 14 ++++-----
+>  drivers/thermal/thermal_helpers.c                  | 33 +++++++++++++++++++++
+>  drivers/thermal/thermal_sysfs.c                    | 17 +++++++----
+>  drivers/thermal/ti-soc-thermal/ti-thermal-common.c |  7 ++++-
+>  drivers/thermal/uniphier_thermal.c                 |  6 +++-
+>  drivers/thermal/x86_pkg_temp_thermal.c             |  2 +-
+>  drivers/thermal/zx2967_thermal.c                   |  3 ++
+>  include/linux/thermal.h                            |  5 ++++
+>  37 files changed, 173 insertions(+), 84 deletions(-)
+>
+> --
+> 1.9.1
