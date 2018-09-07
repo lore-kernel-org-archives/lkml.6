@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F5DC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C76C7C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBBCE2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBCE2075B
+	by mail.kernel.org (Postfix) with ESMTP id 88D422075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D422075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeIHBzf (ORCPT
+        id S1727788AbeIHBzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:55:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40520 "EHLO
+        Fri, 7 Sep 2018 21:55:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40580 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbeIHBze (ORCPT
+        with ESMTP id S1727716AbeIHBzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:55:34 -0400
+        Fri, 7 Sep 2018 21:55:35 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DEBCFB1;
-        Fri,  7 Sep 2018 21:12:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E6AB2F81;
+        Fri,  7 Sep 2018 21:12:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Janousek <tomi@nomi.cz>,
-        Przemek Socha <soprwa@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Patrick Steinhardt <ps@pks.im>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 015/145] block: really disable runtime-pm for blk-mq
-Date:   Fri,  7 Sep 2018 23:08:01 +0200
-Message-Id: <20180907210904.821207439@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Omar Sandoval <osandov@fb.com>,
+        Alexandru Moise <00moses.alexander00@gmail.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 017/145] block: Introduce blk_exit_queue()
+Date:   Fri,  7 Sep 2018 23:08:03 +0200
+Message-Id: <20180907210904.966396533@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -54,48 +55,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit b233f127042dba991229e3882c6217c80492f6ef upstream.
+commit 4cf6324b17e96b7b7ab4021c6929500934d46750 upstream.
 
-Runtime PM isn't ready for blk-mq yet, and commit 765e40b675a9 ("block:
-disable runtime-pm for blk-mq") tried to disable it. Unfortunately,
-it can't take effect in that way since user space still can switch
-it on via 'echo auto > /sys/block/sdN/device/power/control'.
+This patch does not change any functionality.
 
-This patch disables runtime-pm for blk-mq really by pm_runtime_disable()
-and fixes all kinds of PM related kernel crash.
-
-Cc: Tomas Janousek <tomi@nomi.cz>
-Cc: Przemek Socha <soprwa@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Omar Sandoval <osandov@fb.com>
+Cc: Alexandru Moise <00moses.alexander00@gmail.com>
+Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
 Cc: <stable@vger.kernel.org>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Patrick Steinhardt <ps@pks.im>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ block/blk-core.c |   54 ++++++++++++++++++++++++++++++------------------------
+ block/blk.h      |    1 +
+ 2 files changed, 31 insertions(+), 24 deletions(-)
 
 --- a/block/blk-core.c
 +++ b/block/blk-core.c
-@@ -3764,9 +3764,11 @@ EXPORT_SYMBOL(blk_finish_plug);
-  */
- void blk_pm_runtime_init(struct request_queue *q, struct device *dev)
- {
--	/* not support for RQF_PM and ->rpm_status in blk-mq yet */
--	if (q->mq_ops)
-+	/* Don't enable runtime PM for blk-mq until it is ready */
-+	if (q->mq_ops) {
-+		pm_runtime_disable(dev);
- 		return;
-+	}
+@@ -715,6 +715,35 @@ void blk_set_queue_dying(struct request_
+ }
+ EXPORT_SYMBOL_GPL(blk_set_queue_dying);
  
- 	q->dev = dev;
- 	q->rpm_status = RPM_ACTIVE;
++/* Unconfigure the I/O scheduler and dissociate from the cgroup controller. */
++void blk_exit_queue(struct request_queue *q)
++{
++	/*
++	 * Since the I/O scheduler exit code may access cgroup information,
++	 * perform I/O scheduler exit before disassociating from the block
++	 * cgroup controller.
++	 */
++	if (q->elevator) {
++		ioc_clear_queue(q);
++		elevator_exit(q, q->elevator);
++		q->elevator = NULL;
++	}
++
++	/*
++	 * Remove all references to @q from the block cgroup controller before
++	 * restoring @q->queue_lock to avoid that restoring this pointer causes
++	 * e.g. blkcg_print_blkgs() to crash.
++	 */
++	blkcg_exit_queue(q);
++
++	/*
++	 * Since the cgroup code may dereference the @q->backing_dev_info
++	 * pointer, only decrease its reference count after having removed the
++	 * association with the block cgroup controller.
++	 */
++	bdi_put(q->backing_dev_info);
++}
++
+ /**
+  * blk_cleanup_queue - shutdown a request queue
+  * @q: request queue to shutdown
+@@ -780,30 +809,7 @@ void blk_cleanup_queue(struct request_qu
+ 	 */
+ 	WARN_ON_ONCE(q->kobj.state_in_sysfs);
+ 
+-	/*
+-	 * Since the I/O scheduler exit code may access cgroup information,
+-	 * perform I/O scheduler exit before disassociating from the block
+-	 * cgroup controller.
+-	 */
+-	if (q->elevator) {
+-		ioc_clear_queue(q);
+-		elevator_exit(q, q->elevator);
+-		q->elevator = NULL;
+-	}
+-
+-	/*
+-	 * Remove all references to @q from the block cgroup controller before
+-	 * restoring @q->queue_lock to avoid that restoring this pointer causes
+-	 * e.g. blkcg_print_blkgs() to crash.
+-	 */
+-	blkcg_exit_queue(q);
+-
+-	/*
+-	 * Since the cgroup code may dereference the @q->backing_dev_info
+-	 * pointer, only decrease its reference count after having removed the
+-	 * association with the block cgroup controller.
+-	 */
+-	bdi_put(q->backing_dev_info);
++	blk_exit_queue(q);
+ 
+ 	if (q->mq_ops)
+ 		blk_mq_free_queue(q);
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -130,6 +130,7 @@ void blk_free_flush_queue(struct blk_flu
+ int blk_init_rl(struct request_list *rl, struct request_queue *q,
+ 		gfp_t gfp_mask);
+ void blk_exit_rl(struct request_queue *q, struct request_list *rl);
++void blk_exit_queue(struct request_queue *q);
+ void blk_rq_bio_prep(struct request_queue *q, struct request *rq,
+ 			struct bio *bio);
+ void blk_queue_bypass_start(struct request_queue *q);
 
 
