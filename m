@@ -2,112 +2,258 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA5AC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587C7C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA1802077C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:03:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1802077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EEBB42075B
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 09:07:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEBB42075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbeIGNnO (ORCPT
+        id S1728173AbeIGNr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 09:43:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49134 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725843AbeIGNnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 09:43:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 57E50AF6A;
-        Fri,  7 Sep 2018 09:03:13 +0000 (UTC)
-Date:   Fri, 7 Sep 2018 11:03:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        mpe@ellerman.id.au, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH V2 4/4] powerpc/mm/iommu: Allow migration of cma
- allocated pages during mm_iommu_get
-Message-ID: <20180907090312.GF19621@dhcp22.suse.cz>
-References: <20180906054342.25094-1-aneesh.kumar@linux.ibm.com>
- <20180906054342.25094-4-aneesh.kumar@linux.ibm.com>
- <20180906125356.GX14951@dhcp22.suse.cz>
- <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
+        Fri, 7 Sep 2018 09:47:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59925 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727093AbeIGNr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 09:47:56 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8DFF6206FF; Fri,  7 Sep 2018 11:07:55 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-30-219.w90-88.abo.wanadoo.fr [90.88.15.219])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 59D5B206FF;
+        Fri,  7 Sep 2018 11:07:45 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 11:07:44 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH 02/10] phy: Add configuration interface
+Message-ID: <20180907090744.5mkcw4odtu7iypbm@flea>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+ <8397722.XVQDA25ZU6@avalon>
+ <20180906144807.pn753tgfyovvheil@flea>
+ <2403687.Gdit31W5bd@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aamqqanzorijin73"
 Content-Disposition: inline
-In-Reply-To: <50d355bf-17d0-ee01-ec35-7f04e79ca277@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2403687.Gdit31W5bd@avalon>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 06-09-18 19:00:43, Aneesh Kumar K.V wrote:
-> On 09/06/2018 06:23 PM, Michal Hocko wrote:
-> > On Thu 06-09-18 11:13:42, Aneesh Kumar K.V wrote:
-> > > Current code doesn't do page migration if the page allocated is a compound page.
-> > > With HugeTLB migration support, we can end up allocating hugetlb pages from
-> > > CMA region. Also THP pages can be allocated from CMA region. This patch updates
-> > > the code to handle compound pages correctly.
-> > > 
-> > > This use the new helper get_user_pages_cma_migrate. It does one get_user_pages
-> > > with right count, instead of doing one get_user_pages per page. That avoids
-> > > reading page table multiple times.
-> > > 
-> > > The patch also convert the hpas member of mm_iommu_table_group_mem_t to a union.
-> > > We use the same storage location to store pointers to struct page. We cannot
-> > > update alll the code path use struct page *, because we access hpas in real mode
-> > > and we can't do that struct page * to pfn conversion in real mode.
-> > 
-> > I am not fmailiar with this code so bear with me. I am completely
-> > missing the purpose of this patch. The changelog doesn't really explain
-> > that AFAICS. I can only guess that you do not want to establish long
-> > pins on CMA pages, right? So whenever you are about to pin a page that
-> > is in CMA you migrate it away to a different !__GFP_MOVABLE page, right?
-> 
-> That is right.
-> 
-> > If that is the case then how do you handle pins which are already in
-> > zone_movable? I do not see any specific check for those.
-> 
-> 
-> > 
-> > Btw. why is this a proper thing to do? Problems with longterm pins are
-> > not only for CMA/ZONE_MOVABLE pages. Pinned pages are not reclaimable as
-> > well so there is a risk of OOMs if there are too many of them. We have
-> > discussed approaches that would allow to force pin invalidation/revocation
-> > at LSF/MM. Isn't that a more appropriate solution to the problem you are
-> > seeing?
-> > 
-> 
-> The CMA area is used on powerpc platforms to allocate guest specific page
-> table (hash page table). If we don't have sufficient free pages we fail to
-> allocate hash page table that result in failure to start guest.
-> 
-> Now with vfio, we end up pinning the entire guest RAM. There is a
-> possibility that these guest RAM  pages got allocated from CMA region. We
-> already do supporting migrating those pages out except for compound pages.
-> What this patch does is to start supporting compound page migration that got
-> allocated out of CMA region (ie, THP pages and hugetlb pages if platform
-> supported hugetlb migration).
 
-This definitely belongs to the changelog.
+--aamqqanzorijin73
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Now to do that I added a helper get_user_pages_cma_migrate().
-> 
-> I agree that long term pinned pages do have other issues. The patchset is
-> not solving that issue.
+On Thu, Sep 06, 2018 at 07:51:05PM +0300, Laurent Pinchart wrote:
+> On Thursday, 6 September 2018 17:48:07 EEST Maxime Ripard wrote:
+> > On Wed, Sep 05, 2018 at 04:39:46PM +0300, Laurent Pinchart wrote:
+> > > On Wednesday, 5 September 2018 12:16:33 EEST Maxime Ripard wrote:
+> > >> The phy framework is only allowing to configure the power state of t=
+he
+> > >> PHY using the init and power_on hooks, and their power_off and exit
+> > >> counterparts.
+> > >>=20
+> > >> While it works for most, simple, PHYs supported so far, some more
+> > >> advanced PHYs need some configuration depending on runtime parameter=
+s.
+> > >> These PHYs have been supported by a number of means already, often by
+> > >> using ad-hoc drivers in their consumer drivers.
+> > >>=20
+> > >> That doesn't work too well however, when a consumer device needs to =
+deal
+> > >=20
+> > > s/deal/deal with/
+> > >=20
+> > >> multiple PHYs, or when multiple consumers need to deal with the same=
+ PHY
+> > >> (a DSI driver and a CSI driver for example).
+> > >>=20
+> > >> So we'll add a new interface, through two funtions, phy_validate and
+> > >> phy_configure. The first one will allow to check that a current
+> > >> configuration, for a given mode, is applicable. It will also allow t=
+he
+> > >> PHY driver to tune the settings given as parameters as it sees fit.
+> > >>=20
+> > >> phy_configure will actually apply that configuration in the phy itse=
+lf.
+> > >>=20
+> > >> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > >> ---
+> > >>=20
+> > >>  drivers/phy/phy-core.c  | 62 ++++++++++++++++++++++++++++++++++++++=
++++-
+> > >>  include/linux/phy/phy.h | 42 ++++++++++++++++++++++++++++-
+> > >>  2 files changed, 104 insertions(+)
+> > >>=20
+> > >> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> > >> index 35fd38c5a4a1..6eaf655e370f 100644
+> > >> --- a/drivers/phy/phy-core.c
+> > >> +++ b/drivers/phy/phy-core.c
+> > >> @@ -408,6 +408,68 @@ int phy_calibrate(struct phy *phy)
+> > >>  EXPORT_SYMBOL_GPL(phy_calibrate);
+> > >> =20
+> > >>  /**
+> > >> + * phy_configure() - Changes the phy parameters
+> > >> + * @phy: the phy returned by phy_get()
+> > >> + * @mode: phy_mode the configuration is applicable to.
+> > >> + * @opts: New configuration to apply
+> > >> + *
+> > >> + * Used to change the PHY parameters. phy_init() must have
+> > >> + * been called on the phy.
+> > >> + *
+> > >> + * Returns: 0 if successful, an negative error code otherwise
+> > >> + */
+> > >> +int phy_configure(struct phy *phy, enum phy_mode mode,
+> > >> +		  union phy_configure_opts *opts)
+> > >> +{
+> > >> +	int ret;
+> > >> +
+> > >> +	if (!phy)
+> > >> +		return -EINVAL;
+> > >> +
+> > >> +	if (!phy->ops->configure)
+> > >> +		return 0;
+> > >=20
+> > > Shouldn't you report an error to the caller ? If a caller expects the=
+ PHY
+> > > to be configurable, I would assume that silently ignoring the request=
+ed
+> > > configuration won't work great.
+> >=20
+> > I'm not sure. I also expect a device having to interact with multiple
+> > PHYs, some of them needing some configuration while some other do
+> > not. In that scenario, returning 0 seems to be the right thing to do.
+>=20
+> It could be up to the caller to decide whether to ignore the error or not=
+ when=20
+> the operation isn't implemented. I expect that a call requiring specific=
+=20
+> configuration parameters for a given PHY might want to bail out if the=20
+> configuration can't be applied. On the other hand that should never happe=
+n=20
+> when the system is designed correctly, as vendors are not supposed to shi=
+p=20
+> kernels that would be broken by design (as in requiring a configure opera=
+tion=20
+> but not providing it).
 
-It would be great to note why a generic approach is not viable. I assume
-the main reason is that those pins are pretty much permanent for the
-guest lifetime so the situation has to be handled in advance. In other
-words, more information please. 
--- 
-Michal Hocko
-SUSE Labs
+I'll do as Andrew (and you) suggested then.
+
+> > >> @@ -60,6 +66,38 @@ struct phy_ops {
+> > >>  	int	(*power_on)(struct phy *phy);
+> > >>  	int	(*power_off)(struct phy *phy);
+> > >>  	int	(*set_mode)(struct phy *phy, enum phy_mode mode);
+> > >> +
+> > >> +	/**
+> > >> +	 * @configure:
+> > >> +	 *
+> > >> +	 * Optional.
+> > >> +	 *
+> > >> +	 * Used to change the PHY parameters. phy_init() must have
+> > >> +	 * been called on the phy.
+> > >> +	 *
+> > >> +	 * Returns: 0 if successful, an negative error code otherwise
+> > >> +	 */
+> > >> +	int	(*configure)(struct phy *phy, enum phy_mode mode,
+> > >> +			     union phy_configure_opts *opts);
+> > >=20
+> > > Is this function allowed to modify opts ? If so, to what extent ? If =
+not,
+> > > the pointer should be made const.
+> >=20
+> > That's a pretty good question. I guess it could modify it to the same
+> > extent than validate could. Would that make sense?
+>=20
+> It would, or we could say that PHY users are required to call the validat=
+e=20
+> function first, and the the configure function will return an error if th=
+e=20
+> passed configuration isn't valid. That would avoid double-validation when=
+ the=20
+> PHY user uses .validate().
+
+I usually prefer to have a function being able to check its input on
+its own. Especially, the sole use case we have right now is DRM, and
+DRM would typically call phy_validate X+1 times (X being the number of
+modes), once for each mode in mode_valid and once in atomic_check.
+
+> > >> +	/**
+> > >> +	 * @validate:
+> > >> +	 *
+> > >> +	 * Optional.
+> > >> +	 *
+> > >> +	 * Used to check that the current set of parameters can be
+> > >> +	 * handled by the phy. Implementations are free to tune the
+> > >> +	 * parameters passed as arguments if needed by some
+> > >> +	 * implementation detail or constraints. It must not change
+> > >> +	 * any actual configuration of the PHY, so calling it as many
+> > >> +	 * times as deemed fit by the consumer must have no side
+> > >> +	 * effect.
+> > >> +	 *
+> > >> +	 * Returns: 0 if the configuration can be applied, an negative
+> > >> +	 * error code otherwise
+> > >=20
+> > > When should this operation modify the passed parameters, and when sho=
+uld
+> > > it return an error ? I understand that your goal is to implement a
+> > > negotiation mechanism for the PHY parameters, and to be really useful=
+ I
+> > > think we need to document it more precisely.
+> >=20
+> > My initial idea was to reject a configuration that wouldn't be
+> > achievable by the PHY, ie you're asking something that is outside of
+> > the operating boundaries, while you would be able to change settings
+> > that would be operational, but sub-optimal.
+>=20
+> I'm fine with that, let's document it explicitly.
+
+ACK.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--aamqqanzorijin73
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSP98ACgkQ0rTAlCFN
+r3Squg//X11u4l+Nts+h9ENgjjrqLmtUBSWEM3fTSep0c/HEZgDME5Cco5O8IiJ9
+wiUAJL0A2FMgXsVfEDe0lfQ7kUh6lI3ADHajtmmCdx7r8Q14MQQAHVVb+BFjIqbs
+pwGzjhgX+9K+8a94LvIFjCNg+0tauj0IB8XXi3DSHpcWLKz5M+eYTiy/kTUe8eIu
+qbENL+/k8zOzxpzXxrHHoUDYhCB5sVCh1me+DX5P34rMy5tjzeLf7FHnJgYTyyNC
+wEFbEpSGD2Xy52gTKHlaqjb0SbcDJLYWzzq7Vw3S4DgcIMggBv0KDT18Ggco0Vv9
+whUfszicI5T5qtROCzqGV6ajiO/3GfTzoiN17d2q3obIrnmVUvpwm/WUm9TvawgE
+hJLv11or1t8PSqSy3YDSf2lmPEsPWuLvtWixPDmzJdAIRWnGuIdn8KRuQpcbIqjz
+0P1VxwOiy7w+LXLeZHImIwJgx+Mpj6Os/FDsFXT71wVDRRj6D30CF40azKsiAWkh
+/FgF7DTFlEkYLj1ndLtHksk5XwGfdvj1pqvaOKfcC5ozocLTwV4JGcxJ3gyVghOd
+UHNbcfZc7DiYY4Scoq95GV/lHPORrdPpJiPV5AZq+TckbqLwksc3Rml+oYZMjJkO
+/BmbiOfQKxlXavbpB4MM4Zj2s4jcsljzqdbFNe9aEoBcG6GMEu0=
+=sm0Q
+-----END PGP SIGNATURE-----
+
+--aamqqanzorijin73--
