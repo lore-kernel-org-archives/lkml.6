@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82346C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D695C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4115A20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4115A20844
+	by mail.kernel.org (Postfix) with ESMTP id 4B5AE2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:33:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5AE2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbeIHCQQ (ORCPT
+        id S1729819AbeIHCQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:16:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51622 "EHLO
+        Fri, 7 Sep 2018 22:16:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729287AbeIHCQQ (ORCPT
+        with ESMTP id S1728926AbeIHCQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:16:16 -0400
+        Fri, 7 Sep 2018 22:16:20 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 94532D6B;
-        Fri,  7 Sep 2018 21:33:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADE64D6B;
+        Fri,  7 Sep 2018 21:33:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 19/63] dm thin: stop no_space_timeout worker when switching to write-mode
-Date:   Fri,  7 Sep 2018 23:09:50 +0200
-Message-Id: <20180907211014.047121581@linuxfoundation.org>
+        stable@vger.kernel.org, David Palma <david.palma@ntnu.no>,
+        Rabi Narayan Sahoo <rabinarayans0828@gmail.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: [PATCH 4.9 02/63] net: mac802154: tx: expand tailroom if necessary
+Date:   Fri,  7 Sep 2018 23:09:33 +0200
+Message-Id: <20180907211013.089716732@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -50,56 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hou Tao <houtao1@huawei.com>
+From: Alexander Aring <aring@mojatatu.com>
 
-commit 75294442d896f2767be34f75aca7cc2b0d01301f upstream.
+commit f9c52831133050c6b82aa8b6831c92da2bbf2a0b upstream.
 
-Now both check_for_space() and do_no_space_timeout() will read & write
-pool->pf.error_if_no_space.  If these functions run concurrently, as
-shown in the following case, the default setting of "queue_if_no_space"
-can get lost.
+This patch is necessary if case of AF_PACKET or other socket interface
+which I am aware of it and didn't allocated the necessary room.
 
-precondition:
-    * error_if_no_space = false (aka "queue_if_no_space")
-    * pool is in Out-of-Data-Space (OODS) mode
-    * no_space_timeout worker has been queued
-
-CPU 0:                          CPU 1:
-// delete a thin device
-process_delete_mesg()
-// check_for_space() invoked by commit()
-set_pool_mode(pool, PM_WRITE)
-    pool->pf.error_if_no_space = \
-     pt->requested_pf.error_if_no_space
-
-				// timeout, pool is still in OODS mode
-				do_no_space_timeout
-				    // "queue_if_no_space" config is lost
-				    pool->pf.error_if_no_space = true
-    pool->pf.mode = new_mode
-
-Fix it by stopping no_space_timeout worker when switching to write mode.
-
-Fixes: bcc696fac11f ("dm thin: stay in out-of-data-space mode once no_space_timeout expires")
+Reported-by: David Palma <david.palma@ntnu.no>
+Reported-by: Rabi Narayan Sahoo <rabinarayans0828@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-thin.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/mac802154/tx.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -2518,6 +2518,8 @@ static void set_pool_mode(struct pool *p
- 	case PM_WRITE:
- 		if (old_mode != new_mode)
- 			notify_of_pool_mode_change(pool, "write");
-+		if (old_mode == PM_OUT_OF_DATA_SPACE)
-+			cancel_delayed_work_sync(&pool->no_space_timeout);
- 		pool->out_of_data_space = false;
- 		pool->pf.error_if_no_space = pt->requested_pf.error_if_no_space;
- 		dm_pool_metadata_read_write(pool->pmd);
+--- a/net/mac802154/tx.c
++++ b/net/mac802154/tx.c
+@@ -63,8 +63,21 @@ ieee802154_tx(struct ieee802154_local *l
+ 	int ret;
+ 
+ 	if (!(local->hw.flags & IEEE802154_HW_TX_OMIT_CKSUM)) {
+-		u16 crc = crc_ccitt(0, skb->data, skb->len);
++		struct sk_buff *nskb;
++		u16 crc;
+ 
++		if (unlikely(skb_tailroom(skb) < IEEE802154_FCS_LEN)) {
++			nskb = skb_copy_expand(skb, 0, IEEE802154_FCS_LEN,
++					       GFP_ATOMIC);
++			if (likely(nskb)) {
++				consume_skb(skb);
++				skb = nskb;
++			} else {
++				goto err_tx;
++			}
++		}
++
++		crc = crc_ccitt(0, skb->data, skb->len);
+ 		put_unaligned_le16(crc, skb_put(skb, 2));
+ 	}
+ 
 
 
