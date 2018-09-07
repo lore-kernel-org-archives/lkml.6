@@ -2,172 +2,93 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6BDC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3DBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C58C520861
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 10:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DF7820844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 11:04:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="neLsIV6W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58C520861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yzZHaAUk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF7820844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbeIGPjB (ORCPT
+        id S1728762AbeIGPoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 11:39:01 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:52249 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728685AbeIGPjB (ORCPT
+        Fri, 7 Sep 2018 11:44:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55286 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727978AbeIGPoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 11:39:01 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id w87AucWC006019;
-        Fri, 7 Sep 2018 19:56:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w87AucWC006019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536317799;
-        bh=W6nKaDCq5H+lRotH516n4i68olVKz8rMPFmQkHcI3Hg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=neLsIV6WnRN35Gsm+j1zOfq9HZhHjvGz8TAniln5FJdhtqqOLK0s9X7NUv6LHHlge
-         riMP1b5Jwhy+7tL6R0a7TXrCkGKUEoA61p4jSXHALcvsENszPOqjZidropwLDGoASZ
-         eGmd4h//Ce+h6NQi8cLpeJm8htICozE2d1lcm+JTWyW0ycLWzGlwNMfBflCm/PlOCU
-         howZl9Pf5nF+isQUpXu4OnipdwlMg3TVadK20d9cSnwn/eLi6YouOb9Mt0c7hG+nao
-         CR6ZtCTpDWdjmoVtSqkN53y0k7X73Kp6Qj94o6QEi/SssBeFVvw2TGfpE9xhs+aiiu
-         L74SiMnDyOGGg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] mtd: rawnand: denali: add DT property to specify skipped bytes in OOB
-Date:   Fri,  7 Sep 2018 19:56:23 +0900
-Message-Id: <1536317783-4942-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 7 Sep 2018 11:44:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Zj9m3bL7/GgZO6pd5S6/GDfgJpek/j4NHkhjpGW5ueg=; b=yzZHaAUklP+KBx3mEVEfW/ZMY
+        vXFpwnbTFa85MRnCiD5xEt7/JkNQRFdeVjiDTEbgwoYWKG+4KyLCo4K2uM3rL+0tcAkeNRDioOpe8
+        C5QbbmQ/iF7OyOrgqdjEKvM2ayJZKh7rX49/A1CS7//fQRCcsTP3hdmZsC86biJlwipQlWGp4hPGa
+        5z+iT6cMkXuvfP7TaWJHOFK25JDinH83ZOWYgj7JqIJZdYtpYMTfdJmJjy4MXP09G626dIC7khjoR
+        dNxQiBI8tCDiEqi0+BUbBj1KELBV78HL2v5Kh9O4ngzC/PCs2ZkWhOMxwSMiDvInRoWNcmqc1o4In
+        lL2SfuVrw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fyEYb-0001GO-Mh; Fri, 07 Sep 2018 11:04:10 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 447A3201F9C46; Fri,  7 Sep 2018 13:04:07 +0200 (CEST)
+Date:   Fri, 7 Sep 2018 13:04:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
+ IO v4
+Message-ID: <20180907110407.GQ24106@hirez.programming.kicks-ass.net>
+References: <20180828172258.3185-1-hannes@cmpxchg.org>
+ <20180905214303.GA30178@cmpxchg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905214303.GA30178@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NAND devices need additional data area (OOB) for error correction,
-but it is also used for Bad Block Marker (BBM).  In many cases, the
-first byte in OOB is used for BBM, but the location actually depends
-on chip vendors.  The NAND controller should preserve the precious
-BBM to keep track of bad blocks.
+On Wed, Sep 05, 2018 at 05:43:03PM -0400, Johannes Weiner wrote:
+> On Tue, Aug 28, 2018 at 01:22:49PM -0400, Johannes Weiner wrote:
+> > This version 4 of the PSI series incorporates feedback from Peter and
+> > fixes two races in the lockless aggregator that Suren found in his
+> > testing and which caused the sample calculation to sometimes underflow
+> > and record bogusly large samples; details at the bottom of this email.
+> 
+> Peter, do the changes from v3 look sane to you?
+> 
+> If there aren't any further objections, I was hoping we could get this
+> lined up for 4.20.
 
-In Denali IP, the SPARE_AREA_SKIP_BYTES register is used to specify
-the number of bytes to skip from the start of OOB.  The ECC engine
-will automatically skip the specified number of bytes when it gets
-access to OOB area.
+I suppose it looks ok, there's a few small nits, but nothing big.
 
-The same value for SPARE_AREA_SKIP_BYTES should be used between
-firmware and the operating system if you intend to use the NAND
-device across the control hand-off.
+I still hate psi_ttwu_dequeue(), but I don't really know what to about
+that.
 
-In fact, the current denali.c code expects firmware to have already
-set the SPARE_AREA_SKIP_BYTES register, then reads the value out.
-
-If no firmware (or bootloader) has initialized the controller, the
-register value is zero, which is the default after power-on-reset.
-
-In other words, the Linux driver cannot initialize the controller
-by itself.  You cannot support the reset control either because
-resetting the controller will get register values lost.
-
-This commit adds a way to specify it via DT.  If the property
-"denali,oob-skip-bytes" exists, the value will be set to the register.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-I thought this feature was common enough, but I could not find
-any relevant property.
-
-I added "denali," vendor prefix.  If you have a better property name
-(or a better way to specify the value), please suggest it.
-
-
- Documentation/devicetree/bindings/mtd/denali-nand.txt |  3 +++
- drivers/mtd/nand/raw/denali.c                         | 14 +++++++++-----
- drivers/mtd/nand/raw/denali_dt.c                      |  6 ++++++
- 3 files changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-index f33da87..453faca 100644
---- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
-@@ -22,6 +22,9 @@ Optional properties:
-       8, 16, 24  for "socionext,uniphier-denali-nand-v5a"
-       8, 16      for "socionext,uniphier-denali-nand-v5b"
-   - nand-ecc-maximize: see nand.txt for details
-+  - denali,oob-skip-bytes: number of bytes to reserve from the start of OOB.
-+    The reserved bytes should not be used for ECC or any other purpose.
-+    It is generally intended to preserve bad block markers.
- 
- The device tree may optionally contain sub-nodes describing partitions of the
- address space. See partition.txt for more detail.
-diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-index d1ae968..3ef3f0d 100644
---- a/drivers/mtd/nand/raw/denali.c
-+++ b/drivers/mtd/nand/raw/denali.c
-@@ -1050,12 +1050,16 @@ static void denali_hw_init(struct denali_nand_info *denali)
- 		denali->revision = swab16(ioread32(denali->reg + REVISION));
- 
- 	/*
--	 * tell driver how many bit controller will skip before
--	 * writing ECC code in OOB, this register may be already
--	 * set by firmware. So we read this value out.
--	 * if this value is 0, just let it be.
-+	 * If oob_skip_bytes is specified (e.g. by DT property), set it to the
-+	 * reigster. Otherwise, read the value out that may be set by firmware.
- 	 */
--	denali->oob_skip_bytes = ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
-+	if (denali->oob_skip_bytes)
-+		iowrite32(denali->oob_skip_bytes,
-+			  denali->reg + SPARE_AREA_SKIP_BYTES);
-+	else
-+		denali->oob_skip_bytes = ioread32(denali->reg +
-+						  SPARE_AREA_SKIP_BYTES);
-+
- 	denali_detect_max_banks(denali);
- 	iowrite32(0x0F, denali->reg + RB_PIN_ENABLED);
- 	iowrite32(CHIP_EN_DONT_CARE__FLAG, denali->reg + CHIP_ENABLE_DONT_CARE);
-diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-index 7c6a8a4..bc93675 100644
---- a/drivers/mtd/nand/raw/denali_dt.c
-+++ b/drivers/mtd/nand/raw/denali_dt.c
-@@ -78,6 +78,7 @@ static int denali_dt_probe(struct platform_device *pdev)
- 	struct denali_dt *dt;
- 	const struct denali_dt_data *data;
- 	struct denali_nand_info *denali;
-+	u32 oob_skip;
- 	int ret;
- 
- 	dt = devm_kzalloc(dev, sizeof(*dt), GFP_KERNEL);
-@@ -155,6 +156,11 @@ static int denali_dt_probe(struct platform_device *pdev)
- 		denali->clk_x_rate = 200000000;
- 	}
- 
-+	ret = of_property_read_u32(dev->of_node, "denali,oob-skip-bytes",
-+				   &oob_skip);
-+	if (!ret)
-+		denali->oob_skip_bytes = oob_skip;
-+
- 	ret = denali_init(denali);
- 	if (ret)
- 		goto out_disable_clk_ecc;
--- 
-2.7.4
-
+So yeah, grudingly acked. Did you want me to pick this up through the
+scheduler tree since most of this lives there?
