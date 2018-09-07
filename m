@@ -2,101 +2,159 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5138AC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA6EC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D145F2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:49:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D145F2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 33BDE2064D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 01:50:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="HBpyYSal"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BDE2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbeIGG1r (ORCPT
+        id S1728688AbeIGG2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:27:47 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39875 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726237AbeIGG1r (ORCPT
+        Fri, 7 Sep 2018 02:28:40 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:16324 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727714AbeIGG2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:27:47 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07651889|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03272;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.CnUOxOu_1536284878;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CnUOxOu_1536284878)
-          by smtp.aliyun-inc.com(10.147.41.231);
-          Fri, 07 Sep 2018 09:47:58 +0800
-Date:   Fri, 7 Sep 2018 09:47:57 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V3 05/26] csky: System Call
-Message-ID: <20180907014757.GB8288@guoren-Inspiron-7460>
-References: <cover.1536138304.git.ren_guo@c-sky.com>
- <bff609c9d2c5f0085448cc7d4227614ab7b7116a.1536138304.git.ren_guo@c-sky.com>
- <CAK8P3a1W5yvymAHKLTP5EwLm_usUqVBBE_86pRp0TmxrTiTfjA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1W5yvymAHKLTP5EwLm_usUqVBBE_86pRp0TmxrTiTfjA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 7 Sep 2018 02:28:40 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie2.idc.renesas.com with ESMTP; 07 Sep 2018 10:50:15 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 563716493B;
+        Fri,  7 Sep 2018 10:50:15 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,340,1531753200"; 
+   d="scan'208";a="290234268"
+Received: from mail-ty1jpn01lp0175.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.175])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 07 Sep 2018 10:50:15 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9zjdtD4g+IrTczMAu1Xj3HZVBnESXsg0skcCrgA8ED4=;
+ b=HBpyYSalBZpqHUSEYUar5FFiHvCoZ/Ie37xTRtIIPBMp/C8xZAUr5AjZyla6XgouqCBWwqnOb+YU8QgSM9nBzCPFdx6bqQ1uhnAvRoWoaOzGmjUZquLUpupIVVwplkobygFyCGEsHqDJZ9piIA3ofPOkcU6QAw4EP+lLzvRh34g=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1868.jpnprd01.prod.outlook.com (2603:1096:403:8::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.18; Fri, 7 Sep 2018 01:50:13 +0000
+Message-ID: <87ftymqdzh.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH resend 0/2] irqchip: convert to SPDX for Renesas drivers
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-Kernel <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 7 Sep 2018 01:50:13 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: OS2PR01CA0140.jpnprd01.prod.outlook.com (2603:1096:602::34)
+ To TY1PR01MB1868.jpnprd01.prod.outlook.com (2603:1096:403:8::22)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2825acb7-9f39-4902-4479-08d6146440e0
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1868;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;3:n8M94vuy1oxX1jOCDT/t9vphgvDqobepRyNO8IEM8ARPhXNtrv1Yld80fn6UzTiiHU1Fh43JqoPOAWosg8CU1LsDLHtEc9xL+69PdeQd43OpQuwVYig0EAMkAX0bDbX61tQdk7y+2Z5Ju/rl83vTNSobicLv0RlilbJ39umV3+kj2CHkPG02p17V1oq/XRsSqTc8glXzjfd8VClB6kF3E9RZmyyahAp3OUwM2gseEMfc36+UbUlSExckdipeK6RR;25:X2C3DW2GMc/WgWk8WF06FzMcipvqmwteJgIL1XropLRFcXO0UhDsbkbmqWBWUjLUlR0UnDDE4qRm9OyBlkG8p8k9kUCvp3CcJdQMxdUk4cVB5yj50lmp7iF19VGBj7t44wpvmhplze0nU4i4dn0KyOYKbg1jXGJQ7i0ayaKh5adkdOwLNDVY2PjOgSAGvtO3OfRAkcRpyqL/Q6C2VpXlkPCouOPch/xjABUBaEOiHD5O+DiCE1ECkiz0HyOEkDJgJrlgBgW0HikC5NlcHU77bnJ302O47mSsdO0+ydbFgp3wk3Lfs2I5CAPLruGDCLbQ8tQgaavVNxC6qt9DMriyjg==;31:GKxPyrOtgftKit3TDOhIQBbYCVXpW3sehOICMisKfEsT+tCbFIAtqOVzYu/qA/op8AqJjQVWTDK0MWBuZy95YxaNPIjRG8TrHRTLvZ+Wp2xbXoztbskqT294NOdgS6ymh8dMPpNUIlpiiv3OyRbBvqW8HVuafExois4ZqsZWYmzU/wGaRoXjBvHmADityyCxuHMOKeAcENdH1fKImsR5vjNALrhJYF3dRlkxnil5mik=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1868:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;20:tEI7TUJ5MfaXzJRpaK2Mp2h5Hs9jlwXzHlk3HZ4gW2Kvd3/vpvwuJu40QOY4quS9XzIhSs3huDZY0uYeN4hjoYIDvyrWzVdQMNgKMmoOYVx8hLjZn/Pes/VvJDWCiF7cqHlYBVNRX/OTLy6yH6viFgnl1rbfdD+ogkAQoumNXocGi1Ik8qcm4wfme8CzbYXUpmCB/c+AAJG5noOMeQUIzEpzmO4zIufBrHW5uvIDp/ntrEMyFf5o4N6v3S9iAPks0UBXw+EHP5D0T0NCbAO6/TuwcxHckDv/d3nEaDQsp3v1m8U5Ri4xCtRItHOyMOeEmtXLQh+lL4OO3CWzJumx8py8gdcMj8ex6gqSuOWDuuw89X7i1hwHSRx1ZH+Zvbkt3jhusWd/sJclcsjy+Gd3I9OIDE3I+UcSZ5XLHGDuCphBibSshbdJrFxR9mYgPRUl3n+LIMunn6zvzVc9OvX7ShYHxMiLtg9XoZ0BvGFafjSba58B4fUq3H3T9CtQ9oXz;4:F0mip1diFYbW0DoAgdQ3P2ZDNye3TASUHZhPGmiTDeBxlJDH9/yRRftCPYuqHdFTL8kvTiMTiRSp/uFqD0nNlSGbFzELCnVBPFXAcSEHl8lMxLXUMpEnOcW0ykRg/S7QFl76STD7tVjh5+WY4gFDY5n07yKKXhcdwjQ/p1omSQY5HvY2ynjU9xXAtnV0pxIAuYJHasKkn2uyKSBiudtvyKzLtTE+uUHzOZV3cxSHKhUcaNQa4xGhc08kMEZTlt6AnWL/qGIBu2rmjr+QhRXSvQ==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB1868F003F2ACD031A4B9E456D4000@TY1PR01MB1868.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:TY1PR01MB1868;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1868;
+X-Forefront-PRVS: 07880C4932
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(346002)(136003)(39860400002)(199004)(189003)(106356001)(50466002)(105586002)(16586007)(316002)(86362001)(23726003)(97736004)(3846002)(6116002)(53416004)(5660300001)(4326008)(26005)(386003)(8936002)(6486002)(81166006)(7696005)(52116002)(54906003)(110136005)(8676002)(25786009)(2906002)(956004)(58126008)(68736007)(81156014)(486006)(69596002)(36756003)(2616005)(16526019)(305945005)(66066001)(476003)(47776003)(7736002)(186003)(478600001)(53936002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1868;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1868;23:hrukbi2NPTWsHKD1tfACxp+vj8Yll//SLU/Ik0i+W?=
+ =?us-ascii?Q?gT02bx3uqxkw/Hxkd/PTnL9mII1mlPDtdLcZ4DYYiw5mKyRo2nEeiEoR5HNg?=
+ =?us-ascii?Q?6XbiK1ALB8tSb7W7d9nr7atnuy/pS7nX3KnW3/j4Cq+zZo9V0N4x++ND7Hu/?=
+ =?us-ascii?Q?LErXmLzr+zzC9usoyCQfszY0TQHFk02hwS7bCxfbw+pBt3kkSCVVFyRXZAq4?=
+ =?us-ascii?Q?K1zpGWA3IXXBb1M8yAMoGhxidvl7FGHZu3ItiUD+UHj9+TwMWdfNPQm6CZJS?=
+ =?us-ascii?Q?GSvkuGEpPY6K5rbH8WoCrwgZY1eietiJRNh0odD0I6/27D699MeSWMe4+xe5?=
+ =?us-ascii?Q?2q/WBZC4xhVmYi0+3N+1eD6su9acTJdJ3VTW4tmRNxSqQOnekyHvVZD/I6Ma?=
+ =?us-ascii?Q?ZxyQsismmbs+ksFv3WgfkFP9mgPUkzWPxtFDg4h0EqAz5auKLvi+B5C2hg+e?=
+ =?us-ascii?Q?fEds0EOH82WBvOQVImP8hsn7hablI0bv9ly59JcqLGFg3peVSxcVNbtNQZmV?=
+ =?us-ascii?Q?ar5OSlh2SRKjY4LwlzMGt2e4piLBsNjQlDgM2q7LuWN4D0t7vYlBZmGa4Mwr?=
+ =?us-ascii?Q?btXEUeFQV1XgO0ypG/92jTipz/0k6ALCrzKC/Z8krA4WTJBeQDUtn7TIKTV5?=
+ =?us-ascii?Q?3HsuLoPPnax8IdPFigHv9yXzGwy5zGppj8svOOLq/rfdSfd6C/oZntgfv93g?=
+ =?us-ascii?Q?z0KtyqFlFZPnJ8CrZtCy0tfUsj7NFNbJXOLN1dKBaRz68T0tUa7N4a8Hv+/z?=
+ =?us-ascii?Q?Ar6MKnMMkkkOETbIjbW8uOu6ccl/C4M787eV8AfCLYccK4qYG8L3kgmai4yU?=
+ =?us-ascii?Q?LIGaw51PjMAwzLlDb4NHl73snXYwM20wbOrHYMsJElAON2crTws4TsjKh+T0?=
+ =?us-ascii?Q?bkeKX1z5cnkypc1PiF/EvGW/B8T0EsqFf3KYx+u2Ip6+jUjI6b2/i11Fqa3K?=
+ =?us-ascii?Q?iHmccmsWd3o+crhzqcyLV/kUm8Ui8aOBTAXP876PkIocwhSF6UXCG87XfIxD?=
+ =?us-ascii?Q?jMc7ujJB/t+MDEHwZo3ZT62SkkghBlgMXWmbsV6yXVZsub33h7UQb3s7XDNx?=
+ =?us-ascii?Q?r2W/JjHDQq2AyPqPTXMAoHw+VYJDwxzjI2LYbm9Lk84QTfeVqPFvsYqO+mWA?=
+ =?us-ascii?Q?tzxNwXHVFQTtAP5DA5M41KrVt4N7H0M?=
+X-Microsoft-Antispam-Message-Info: jPLgVmrGQ3MbZ51fz5epj79SAYA5/tHh/l1pXA75TfVus1rPWnE8mfUonfH08VF5v4GhRPUwCbKBtPxdzqOx0+yXELtYgNq4g9qHVdrnEDQ4DNnIhv1JZBW3grErEIFZhOP7Dk4PW7kG0n6Hk4cFFi+6FDOjfcdjK6IaT9oh6MuEUZThZiVqgf7bhiwrMK3wxU36kTbWHvo2LcH9ip8EVlVtiDH87N8AjGue6MF/80rnu9XOsTahCzSc/IqIfMBqxzLl2zd9E/ZqblaleIZXHlwtEfZ5ROvgSTqksjo0WKW0guLSNZmyI+X90Gq0yFBuJaeavTl0tUrF6DBeRAVgBLBLcuKkZUKWeNbhaaEo4hc=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;6:Nqt+1M7FHgfMz1ERylLnxnrhNlxnJRkABUJvWS/AWjKzOXDvycvOtXPXyNd7rOxUG9EL/5Nf/ZSIKmtGYwtC4L5YcR+SI5j6c8wMimaDXSCO14vSxGjj//2f/nP8mJuJEcH7YY2gOFDiV3DyzGUrguTwIxDOJbIC74TxpOx//CQaz4QDM2bHjbxBogbI0ASvFYA/sJ6feBBosqp7GkPKC0HPX8isq8b2U36Edn2EwDFI3yDimSEVjArGA4itzLfsSrQzinXEjqpY0fPlH5avFeDiHzXeE1HzaDpWpjDEdQzXDrvKT67nBDgLqyR967yFXMqamJLwLz4YIMyRqA3/nsWj7aZlVBVr3nPGzXsqFtqbR3H7c+CGIgh/bJolopPi/gV1sBE8ZXNnrwjdwonL2y5dikwlz8WwqvPVfa9uxXIyezu6itFEwfFXqIlTY/DCMxe/F4wLV0LKmBR3xgnykA==;5:E91gDhqkdtYyvO8W9ao/wAymkITpnZfGr59HI8czIQkoVbb0qEaEK85DFXkqvD6TZ2o/6KFno2mmgaMm4BfCuYmDvCeMLRSEIx6jo6sIfxLXmKcusooPr+P4oNQ7wzQSLI/+0BOABV25sbcWo6AVBk6i9nICLrDOWvUdnNCjXAA=;7:carhwE1Q243Yt9PG+2hBpO1WBMWKSr05osIqHiryjABn6N0MdadCqL3LByRGbdLM8LlZ3X70lKJs7laleO5H1P85gSEAOZnAw+36Ku5Wj6heWJG5ao1DJdumTp8JL6oWck7SNtMzIY++PfgnysJhbiIKpiFHyleUksA4RWyCswc0XFJqqyJHWTDsLhapBfPeCN49uTQbNF6SDYm8JWJkhmOns+HmCT0z0LnQiXdP9DzcquWP1ZVlJsg5C0UAY/Hr
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1868;20:FzE7tCMzBVdGSOD5VzELiF2gRMAlpJ68B66iqcgd14u3pUl578hK/xIwjtDsjn+PQVgKVD5cA12H2l3dYzezGDItDRpt4fEDFu/N71+z67oeMhEjYM6N52XTjRGEcpahHHRqhUtvq4lxnKYBE9vHx8sRaKs1hqtefXVyhDTG2ZE=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 01:50:13.5197 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2825acb7-9f39-4902-4479-08d6146440e0
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1868
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 04:10:49PM +0200, Arnd Bergmann wrote:
-> On Wed, Sep 5, 2018 at 2:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> 
-> > +SYSCALL_DEFINE6(mmap2,
-> > +       unsigned long, addr,
-> > +       unsigned long, len,
-> > +       unsigned long, prot,
-> > +       unsigned long, flags,
-> > +       unsigned long, fd,
-> > +       off_t, offset)
-> > +{
-> > +       if (unlikely(offset & (~PAGE_MASK >> 12)))
-> > +               return -EINVAL;
-> > +       return sys_mmap_pgoff(addr, len, prot, flags, fd,
-> > +               offset >> (PAGE_SHIFT - 12));
-> > +}
-> 
-> Please call ksys_mmap_pgoff() instead of sys_mmap_pgoff() here.
-Ok.
 
-> The prototype in include/asm-generic/syscalls.h uses 'unsigned long'
-> for the last argument as well, not off_t.
-Ok, unsigned long for last argument.
- 
-> > +struct mmap_arg_struct {
-> > +       unsigned long addr;
-> > +       unsigned long len;
-> > +       unsigned long prot;
-> > +       unsigned long flags;
-> > +       unsigned long fd;
-> > +       unsigned long offset;
-> > +};
-> > +
-> > +SYSCALL_DEFINE1(mmap,
-> > +       struct mmap_arg_struct *, arg)
-> 
-> Something is still wrong here, there should be no way to
-> call sys_mmap(), since it's not in the syscall table.
-You are right, remove it.
+Hi Thomas, Marc, Jason
 
-> > +       return sys_fadvise64_64(fd, offset, len, advice);
-> > +}
-> 
-> And call ksys_fadvise64_64() here.
-Ok.
+2weeks passed. I resend this patch again
 
- Guo Ren
+Kuninori Morimoto (2):
+  pinctrl: sh-pfc: convert to SPDX identifiers
+  pinctrl: rza1: convert to SPDX identifiers
+
+ drivers/pinctrl/pinctrl-rza1.c           |  5 +----
+ drivers/pinctrl/sh-pfc/Kconfig           |  1 +
+ drivers/pinctrl/sh-pfc/core.c            |  5 +----
+ drivers/pinctrl/sh-pfc/core.h            |  7 ++-----
+ drivers/pinctrl/sh-pfc/gpio.c            |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-emev2.c       |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c     | 15 +--------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c     | 15 +--------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 10 +---------
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c     | 14 +-------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 15 +--------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c     |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c     |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c     |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c    |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7203.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c      | 15 +--------------
+ drivers/pinctrl/sh-pfc/pfc-sh7720.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7723.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7724.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7757.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7785.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-sh7786.c      |  5 +----
+ drivers/pinctrl/sh-pfc/pfc-shx3.c        |  5 +----
+ drivers/pinctrl/sh-pfc/pinctrl.c         |  5 +----
+ drivers/pinctrl/sh-pfc/sh_pfc.h          |  7 ++-----
+ 33 files changed, 35 insertions(+), 184 deletions(-)
+
+-- 
+2.7.4
+
