@@ -2,139 +2,267 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB912C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A57AC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871832083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:21:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871832083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 864BB2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864BB2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbeIGHAH convert rfc822-to-8bit (ORCPT
+        id S1729089AbeIGHBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 03:00:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:39507 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbeIGHAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 03:00:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 19:21:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
-   d="scan'208";a="71019199"
-Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.86])
-  by orsmga007.jf.intel.com with SMTP; 06 Sep 2018 19:21:36 -0700
-Received: by ubuntu (sSMTP sendmail emulation); Fri, 07 Sep 2018 10:21:35 +0800
-Message-ID: <1536286895.6128.4.camel@intel.com>
-Subject: Re: [PATCH v2 2/9] nios2: build .dtb files in dts directory
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     nios2-dev@lists.rocketboards.org
-Date:   Fri, 07 Sep 2018 10:21:35 +0800
-In-Reply-To: <20180905235327.5996-3-robh@kernel.org>
-References: <20180905235327.5996-1-robh@kernel.org>
-         <20180905235327.5996-3-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        Fri, 7 Sep 2018 03:01:43 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41321 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726293AbeIGHBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 03:01:43 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 799F2EC87F2AA;
+        Fri,  7 Sep 2018 10:23:09 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 7 Sep 2018
+ 10:23:03 +0800
+Date:   Fri, 7 Sep 2018 10:21:15 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH 1/7] vfio/sdmdev: Add documents for WarpDrive framework
+Message-ID: <20180907022115.GH230707@Turing-Arch-b>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180903005204.26041-2-nek.in.cn@gmail.com>
+ <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-05 at 18:53 -0500, Rob Herring wrote:
-> Align nios2 with other architectures which build the dtb files in the
-> same directory as the dts files. This is also in line with most other
-> build targets which are located in the same directory as the source.
-> This move will help enable the 'dtbs' target which builds all the
-> dtbs
-> regardless of kernel config.
+On Thu, Sep 06, 2018 at 11:36:36AM -0700, Randy Dunlap wrote:
+> Date: Thu, 6 Sep 2018 11:36:36 -0700
+> From: Randy Dunlap <rdunlap@infradead.org>
+> To: Kenneth Lee <nek.in.cn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+>  Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
+>  <davem@davemloft.net>, Joerg Roedel <joro@8bytes.org>, Alex Williamson
+>  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
+>  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
+>  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
+>  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
+>  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
+>  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+>  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+>  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
+>  Sanjay Kumar <sanjay.k.kumar@intel.com>
+> CC: linuxarm@huawei.com
+> Subject: Re: [PATCH 1/7] vfio/sdmdev: Add documents for WarpDrive framework
+> User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+>  Thunderbird/52.9.1
+> Message-ID: <56f5f66d-f6d9-f4fa-40ca-e4a8bad170c1@infradead.org>
 > 
-> This transition could break some scripts if they expect dtb files in
-> the old location.
+> Hi,
 > 
-> Cc: Ley Foon Tan <lftan@altera.com>
-> Cc: nios2-dev@lists.rocketboards.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Please ack so I can take the whole series via the DT tree.
+> On 09/02/2018 05:51 PM, Kenneth Lee wrote:
+> > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > 
+> > WarpDrive is a common user space accelerator framework.  Its main component
+> > in Kernel is called sdmdev, Share Domain Mediated Device. It exposes
+> > the hardware capabilities to the user space via vfio-mdev. So processes in
+> > user land can obtain a "queue" by open the device and direct access the
+> > hardware MMIO space or do DMA operation via VFIO interface.
+> > 
+> > WarpDrive is intended to be used with Jean Philippe Brucker's SVA
+> > patchset to support multi-process. But This is not a must.  Without the
+> > SVA patches, WarpDrive can still work for one process for every hardware
+> > device.
+> > 
+> > This patch add detail documents for the framework.
+> > 
+> > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+> > ---
+> >  Documentation/00-INDEX                |   2 +
+> >  Documentation/warpdrive/warpdrive.rst | 100 ++++
+> >  Documentation/warpdrive/wd-arch.svg   | 728 ++++++++++++++++++++++++++
+> >  3 files changed, 830 insertions(+)
+> >  create mode 100644 Documentation/warpdrive/warpdrive.rst
+> >  create mode 100644 Documentation/warpdrive/wd-arch.svg
 > 
->  arch/nios2/Makefile          | 4 ++--
->  arch/nios2/boot/Makefile     | 4 ----
->  arch/nios2/boot/dts/Makefile | 1 +
->  3 files changed, 3 insertions(+), 6 deletions(-)
->  create mode 100644 arch/nios2/boot/dts/Makefile
+> > diff --git a/Documentation/warpdrive/warpdrive.rst b/Documentation/warpdrive/warpdrive.rst
+> > new file mode 100644
+> > index 000000000000..6d2a5d1e08c4
+> > --- /dev/null
+> > +++ b/Documentation/warpdrive/warpdrive.rst
+> > @@ -0,0 +1,100 @@
+> > +Introduction of WarpDrive
+> > +=========================
+> > +
+> > +*WarpDrive* is a general accelerator framework for user space. It intends to
+> > +provide interface for the user process to send request to hardware
+> > +accelerator without heavy user-kernel interaction cost.
+> > +
+> > +The *WarpDrive* user library is supposed to provide a pipe-based API, such as:
 > 
-> diff --git a/arch/nios2/Makefile b/arch/nios2/Makefile
-> index 8673a79dca9c..50eece1c6adb 100644
-> --- a/arch/nios2/Makefile
-> +++ b/arch/nios2/Makefile
-> @@ -59,10 +59,10 @@ archclean:
->         $(Q)$(MAKE) $(clean)=$(nios2-boot)
+> Do you say "is supposed to" because it doesn't do that (yet)?
+> Or you could just change that to say:
 > 
->  %.dtb: | scripts
-> -       $(Q)$(MAKE) $(build)=$(nios2-boot) $(nios2-boot)/$@
-> +       $(Q)$(MAKE) $(build)=$(nios2-boot)/dts $(nios2-boot)/dts/$@
+>    The WarpDrive user library provides a pipe-based API, such as:
 > 
->  dtbs:
-> -       $(Q)$(MAKE) $(build)=$(nios2-boot) $(nios2-boot)/$@
-> +       $(Q)$(MAKE) $(build)=$(nios2-boot)/dts
-> 
->  $(BOOT_TARGETS): vmlinux
->         $(Q)$(MAKE) $(build)=$(nios2-boot) $(nios2-boot)/$@
-> diff --git a/arch/nios2/boot/Makefile b/arch/nios2/boot/Makefile
-> index 2ba23a679732..007586094dde 100644
-> --- a/arch/nios2/boot/Makefile
-> +++ b/arch/nios2/boot/Makefile
-> @@ -47,10 +47,6 @@ obj-$(CONFIG_NIOS2_DTB_SOURCE_BOOL) +=
-> linked_dtb.o
-> 
->  targets += $(dtb-y)
-> 
-> -# Rule to build device tree blobs with make command
-> -$(obj)/%.dtb: $(src)/dts/%.dts FORCE
-> -       $(call if_changed_dep,dtc)
-> -
->  $(obj)/dtbs: $(addprefix $(obj)/, $(dtb-y))
-> 
->  install:
-> diff --git a/arch/nios2/boot/dts/Makefile
-> b/arch/nios2/boot/dts/Makefile
-> new file mode 100644
-> index 000000000000..f66554cd5c45
-> --- /dev/null
-> +++ b/arch/nios2/boot/dts/Makefile
-> @@ -0,0 +1 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> --
-> 2.17.1
-> 
-Hi Rob
 
-I have synced your all-dtbs branch from here: https://git.kernel.org/pu
-b/scm/linux/kernel/git/robh/linux.git/log/?h=all-dtbs
+Actually, I tried to say it can be defined like this. But people can choose
+other implementation with the same kernel API.
 
-It shows error when compile kernel image and also when "make
-dtbs_install".
+I will say it explicitly in the future version. Thank you.
 
+> 
+> > +        ::
+> > +        int wd_request_queue(struct wd_queue *q);
+> > +        void wd_release_queue(struct wd_queue *q);
+> > +
+> > +        int wd_send(struct wd_queue *q, void *req);
+> > +        int wd_recv(struct wd_queue *q, void **req);
+> > +        int wd_recv_sync(struct wd_queue *q, void **req);
+> > +        int wd_flush(struct wd_queue *q);
+> > +
+> > +*wd_request_queue* creates the pipe connection, *queue*, between the
+> > +application and the hardware. The application sends request and pulls the
+> > +answer back by asynchronized wd_send/wd_recv, which directly interact with the
+> > +hardware (by MMIO or share memory) without syscall.
+> > +
+> > +*WarpDrive* maintains a unified application address space among all involved
+> > +accelerators.  With the following APIs: ::
+> 
+> Seems like an extra '.' there.  How about:
+> 
+>   accelerators with the following APIs: ::
+> 
 
+Err, the "with..." clause belong to the following "The referred process
+space...".
 
-make dtbs_install
-make[1]: *** No rule to make target
-'arch/nios2/boot/dts/arch/nios2/boot/dts/10m50_devboard.dtb', needed by
-'arch/nios2/boot/dts/arch/nios2/boot/dts/10m50_devboard.dtb.S'.  Stop.
-Makefile:1229: recipe for target 'dtbs' failed
-make: *** [dtbs] Error 2
+> > +
+> > +        int wd_mem_share(struct wd_queue *q, const void *addr,
+> > +                         size_t size, int flags);
+> > +        void wd_mem_unshare(struct wd_queue *q, const void *addr, size_t size);
+> > +
+> > +The referred process space shared by these APIs can be directly referred by the
+> > +hardware. The process can also dedicate its whole process space with flags,
+> > +*WD_SHARE_ALL* (not in this patch yet).
+> > +
+> > +The name *WarpDrive* is simply a cool and general name meaning the framework
+> > +makes the application faster. As it will be explained in this text later, the
+> > +facility in kernel is called *SDMDEV*, namely "Share Domain Mediated Device".
+> > +
+> > +
+> > +How does it work
+> > +================
+> > +
+> > +*WarpDrive* is built upon *VFIO-MDEV*. The queue is wrapped as *mdev* in VFIO.
+> > +So memory sharing can be done via standard VFIO standard DMA interface.
+> > +
+> > +The architecture is illustrated as follow figure:
+> > +
+> > +.. image:: wd-arch.svg
+> > +        :alt: WarpDrive Architecture
+> > +
+> > +Accelerator driver shares its capability via *SDMDEV* API: ::
+> > +
+> > +        vfio_sdmdev_register(struct vfio_sdmdev *sdmdev);
+> > +        vfio_sdmdev_unregister(struct vfio_sdmdev *sdmdev);
+> > +        vfio_sdmdev_wake_up(struct spimdev_queue *q);
+> > +
+> > +*vfio_sdmdev_register* is a helper function to register the hardware to the
+> > +*VFIO_MDEV* framework. The queue creation is done by *mdev* creation interface.
+> > +
+> > +*WarpDrive* User library mmap the mdev to access its mmio space and shared
+> 
+> s/mmio/MMIO/
+> 
+> > +memory. Request can be sent to, or receive from, hardware in this mmap-ed
+> > +space until the queue is full or empty.
+> > +
+> > +The user library can wait on the queue by ioctl(VFIO_SDMDEV_CMD_WAIT) the mdev
+> > +if the queue is full or empty. If the queue status is changed, the hardware
+> > +driver use *vfio_sdmdev_wake_up* to wake up the waiting process.
+> > +
+> > +
+> > +Multiple processes support
+> > +==========================
+> > +
+> > +In the latest mainline kernel (4.18) when this document is written,
+> > +multi-process is not supported in VFIO yet.
+> > +
+> > +Jean Philippe Brucker has a patchset to enable it[1]_. We have tested it
+> > +with our hardware (which is known as *D06*). It works well. *WarpDrive* rely
+> > +on them to support multiple processes. If it is not enabled, *WarpDrive* can
+> > +still work, but it support only one mdev for a process, which will share the
+> > +same io map table with kernel. (But it is not going to be a security problem,
+> > +since the user application cannot access the kernel address space)
+> > +
+> > +When multiprocess is support, mdev can be created based on how many
+> > +hardware resource (queue) is available. Because the VFIO framework accepts only
+> > +one open from one mdev iommu_group. Mdev become the smallest unit for process
+> > +to use queue. And the mdev will not be released if the user process exist. So
+> > +it will need a resource agent to manage the mdev allocation for the user
+> > +process. This is not in this document's range.
+> > +
+> > +
+> > +Legacy Mode Support
+> > +===================
+> > +For the hardware on which IOMMU is not support, WarpDrive can run on *NOIOMMU*
+> > +mode. That require some update to the mdev driver, which is not included in
+> > +this version yet.
+> > +
+> > +
+> > +References
+> > +==========
+> > +.. [1] https://patchwork.kernel.org/patch/10394851/
+> > +
+> > +.. vim: tw=78
+> 
+> thanks,
+> -- 
+> ~Randy
 
-Regards
-Ley Foon
+-- 
+			-Kenneth(Hisilicon)
+
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
+
