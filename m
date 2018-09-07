@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA620C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B1CC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5564120645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5564120645
+	by mail.kernel.org (Postfix) with ESMTP id F0BFD20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:24:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BFD20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeIHCG4 (ORCPT
+        id S1728784AbeIHCHB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:06:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46756 "EHLO
+        Fri, 7 Sep 2018 22:07:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46766 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728482AbeIHCG4 (ORCPT
+        with ESMTP id S1728453AbeIHCHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:06:56 -0400
+        Fri, 7 Sep 2018 22:07:01 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8293F01;
-        Fri,  7 Sep 2018 21:24:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15C19EF6;
+        Fri,  7 Sep 2018 21:24:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mauro Rossi <issor.oruam@gmail.com>,
-        Dave Watson <davejwatson@fb.com>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.18 137/145] crypto: aesni - Use unaligned loads from gcm_context_data
-Date:   Fri,  7 Sep 2018 23:10:03 +0200
-Message-Id: <20180907210913.798796607@linuxfoundation.org>
+Subject: [PATCH 4.18 138/145] crypto: arm64/sm4-ce - check for the right CPU feature bit
+Date:   Fri,  7 Sep 2018 23:10:04 +0200
+Message-Id: <20180907210913.855922153@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -51,283 +50,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Watson <davejwatson@fb.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit e5b954e8d11fdde55eed35017370a3a0d8837754 upstream.
+commit 7fa885e2a22fd0f91a2c23d9275f5021f618ff5a upstream.
 
-A regression was reported bisecting to 1476db2d12
-"Move HashKey computation from stack to gcm_context".  That diff
-moved HashKey computation from the stack, which was explicitly aligned
-in the asm, to a struct provided from the C code, depending on
-AESNI_ALIGN_ATTR for alignment.   It appears some compilers may not
-align this struct correctly, resulting in a crash on the movdqa
-instruction when attempting to encrypt or decrypt data.
+ARMv8.2 specifies special instructions for the SM3 cryptographic hash
+and the SM4 symmetric cipher. While it is unlikely that a core would
+implement one and not the other, we should only use SM4 instructions
+if the SM4 CPU feature bit is set, and we currently check the SM3
+feature bit instead. So fix that.
 
-Fix by using unaligned loads for the HashKeys.  On modern
-hardware there is no perf difference between the unaligned and
-aligned loads.  All other accesses to gcm_context_data already use
-unaligned loads.
-
-Reported-by: Mauro Rossi <issor.oruam@gmail.com>
-Fixes: 1476db2d12 ("Move HashKey computation from stack to gcm_context")
+Fixes: e99ce921c468 ("crypto: arm64 - add support for SM4...")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Dave Watson <davejwatson@fb.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/aesni-intel_asm.S |   66 +++++++++++++++++++-------------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
+ arch/arm64/crypto/sm4-ce-glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/crypto/aesni-intel_asm.S
-+++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -223,34 +223,34 @@ ALL_F:      .octa 0xffffffffffffffffffff
- 	pcmpeqd TWOONE(%rip), \TMP2
- 	pand	POLY(%rip), \TMP2
- 	pxor	\TMP2, \TMP3
--	movdqa	\TMP3, HashKey(%arg2)
-+	movdqu	\TMP3, HashKey(%arg2)
+--- a/arch/arm64/crypto/sm4-ce-glue.c
++++ b/arch/arm64/crypto/sm4-ce-glue.c
+@@ -69,5 +69,5 @@ static void __exit sm4_ce_mod_fini(void)
+ 	crypto_unregister_alg(&sm4_ce_alg);
+ }
  
- 	movdqa	   \TMP3, \TMP5
- 	pshufd	   $78, \TMP3, \TMP1
- 	pxor	   \TMP3, \TMP1
--	movdqa	   \TMP1, HashKey_k(%arg2)
-+	movdqu	   \TMP1, HashKey_k(%arg2)
- 
- 	GHASH_MUL  \TMP5, \TMP3, \TMP1, \TMP2, \TMP4, \TMP6, \TMP7
- # TMP5 = HashKey^2<<1 (mod poly)
--	movdqa	   \TMP5, HashKey_2(%arg2)
-+	movdqu	   \TMP5, HashKey_2(%arg2)
- # HashKey_2 = HashKey^2<<1 (mod poly)
- 	pshufd	   $78, \TMP5, \TMP1
- 	pxor	   \TMP5, \TMP1
--	movdqa	   \TMP1, HashKey_2_k(%arg2)
-+	movdqu	   \TMP1, HashKey_2_k(%arg2)
- 
- 	GHASH_MUL  \TMP5, \TMP3, \TMP1, \TMP2, \TMP4, \TMP6, \TMP7
- # TMP5 = HashKey^3<<1 (mod poly)
--	movdqa	   \TMP5, HashKey_3(%arg2)
-+	movdqu	   \TMP5, HashKey_3(%arg2)
- 	pshufd	   $78, \TMP5, \TMP1
- 	pxor	   \TMP5, \TMP1
--	movdqa	   \TMP1, HashKey_3_k(%arg2)
-+	movdqu	   \TMP1, HashKey_3_k(%arg2)
- 
- 	GHASH_MUL  \TMP5, \TMP3, \TMP1, \TMP2, \TMP4, \TMP6, \TMP7
- # TMP5 = HashKey^3<<1 (mod poly)
--	movdqa	   \TMP5, HashKey_4(%arg2)
-+	movdqu	   \TMP5, HashKey_4(%arg2)
- 	pshufd	   $78, \TMP5, \TMP1
- 	pxor	   \TMP5, \TMP1
--	movdqa	   \TMP1, HashKey_4_k(%arg2)
-+	movdqu	   \TMP1, HashKey_4_k(%arg2)
- .endm
- 
- # GCM_INIT initializes a gcm_context struct to prepare for encoding/decoding.
-@@ -271,7 +271,7 @@ ALL_F:      .octa 0xffffffffffffffffffff
- 	movdqu %xmm0, CurCount(%arg2) # ctx_data.current_counter = iv
- 
- 	PRECOMPUTE \SUBKEY, %xmm1, %xmm2, %xmm3, %xmm4, %xmm5, %xmm6, %xmm7,
--	movdqa HashKey(%arg2), %xmm13
-+	movdqu HashKey(%arg2), %xmm13
- 
- 	CALC_AAD_HASH %xmm13, \AAD, \AADLEN, %xmm0, %xmm1, %xmm2, %xmm3, \
- 	%xmm4, %xmm5, %xmm6
-@@ -997,7 +997,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	pshufd	  $78, \XMM5, \TMP6
- 	pxor	  \XMM5, \TMP6
- 	paddd     ONE(%rip), \XMM0		# INCR CNT
--	movdqa	  HashKey_4(%arg2), \TMP5
-+	movdqu	  HashKey_4(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP4           # TMP4 = a1*b1
- 	movdqa    \XMM0, \XMM1
- 	paddd     ONE(%rip), \XMM0		# INCR CNT
-@@ -1016,7 +1016,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	pxor	  (%arg1), \XMM2
- 	pxor	  (%arg1), \XMM3
- 	pxor	  (%arg1), \XMM4
--	movdqa	  HashKey_4_k(%arg2), \TMP5
-+	movdqu	  HashKey_4_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP6           # TMP6 = (a1+a0)*(b1+b0)
- 	movaps 0x10(%arg1), \TMP1
- 	AESENC	  \TMP1, \XMM1              # Round 1
-@@ -1031,7 +1031,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	movdqa	  \XMM6, \TMP1
- 	pshufd	  $78, \XMM6, \TMP2
- 	pxor	  \XMM6, \TMP2
--	movdqa	  HashKey_3(%arg2), \TMP5
-+	movdqu	  HashKey_3(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1           # TMP1 = a1 * b1
- 	movaps 0x30(%arg1), \TMP3
- 	AESENC    \TMP3, \XMM1              # Round 3
-@@ -1044,7 +1044,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	AESENC	  \TMP3, \XMM2
- 	AESENC	  \TMP3, \XMM3
- 	AESENC	  \TMP3, \XMM4
--	movdqa	  HashKey_3_k(%arg2), \TMP5
-+	movdqu	  HashKey_3_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP2           # TMP2 = (a1+a0)*(b1+b0)
- 	movaps 0x50(%arg1), \TMP3
- 	AESENC	  \TMP3, \XMM1              # Round 5
-@@ -1058,7 +1058,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	movdqa	  \XMM7, \TMP1
- 	pshufd	  $78, \XMM7, \TMP2
- 	pxor	  \XMM7, \TMP2
--	movdqa	  HashKey_2(%arg2), \TMP5
-+	movdqu	  HashKey_2(%arg2), \TMP5
- 
-         # Multiply TMP5 * HashKey using karatsuba
- 
-@@ -1074,7 +1074,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	AESENC	  \TMP3, \XMM2
- 	AESENC	  \TMP3, \XMM3
- 	AESENC	  \TMP3, \XMM4
--	movdqa	  HashKey_2_k(%arg2), \TMP5
-+	movdqu	  HashKey_2_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP2           # TMP2 = (a1+a0)*(b1+b0)
- 	movaps 0x80(%arg1), \TMP3
- 	AESENC	  \TMP3, \XMM1             # Round 8
-@@ -1092,7 +1092,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	movdqa	  \XMM8, \TMP1
- 	pshufd	  $78, \XMM8, \TMP2
- 	pxor	  \XMM8, \TMP2
--	movdqa	  HashKey(%arg2), \TMP5
-+	movdqu	  HashKey(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1          # TMP1 = a1*b1
- 	movaps 0x90(%arg1), \TMP3
- 	AESENC	  \TMP3, \XMM1            # Round 9
-@@ -1121,7 +1121,7 @@ aes_loop_par_enc_done\@:
- 	AESENCLAST \TMP3, \XMM2
- 	AESENCLAST \TMP3, \XMM3
- 	AESENCLAST \TMP3, \XMM4
--	movdqa    HashKey_k(%arg2), \TMP5
-+	movdqu    HashKey_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP2          # TMP2 = (a1+a0)*(b1+b0)
- 	movdqu	  (%arg4,%r11,1), \TMP3
- 	pxor	  \TMP3, \XMM1                 # Ciphertext/Plaintext XOR EK
-@@ -1205,7 +1205,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	pshufd	  $78, \XMM5, \TMP6
- 	pxor	  \XMM5, \TMP6
- 	paddd     ONE(%rip), \XMM0		# INCR CNT
--	movdqa	  HashKey_4(%arg2), \TMP5
-+	movdqu	  HashKey_4(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP4           # TMP4 = a1*b1
- 	movdqa    \XMM0, \XMM1
- 	paddd     ONE(%rip), \XMM0		# INCR CNT
-@@ -1224,7 +1224,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	pxor	  (%arg1), \XMM2
- 	pxor	  (%arg1), \XMM3
- 	pxor	  (%arg1), \XMM4
--	movdqa	  HashKey_4_k(%arg2), \TMP5
-+	movdqu	  HashKey_4_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP6           # TMP6 = (a1+a0)*(b1+b0)
- 	movaps 0x10(%arg1), \TMP1
- 	AESENC	  \TMP1, \XMM1              # Round 1
-@@ -1239,7 +1239,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	movdqa	  \XMM6, \TMP1
- 	pshufd	  $78, \XMM6, \TMP2
- 	pxor	  \XMM6, \TMP2
--	movdqa	  HashKey_3(%arg2), \TMP5
-+	movdqu	  HashKey_3(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1           # TMP1 = a1 * b1
- 	movaps 0x30(%arg1), \TMP3
- 	AESENC    \TMP3, \XMM1              # Round 3
-@@ -1252,7 +1252,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	AESENC	  \TMP3, \XMM2
- 	AESENC	  \TMP3, \XMM3
- 	AESENC	  \TMP3, \XMM4
--	movdqa	  HashKey_3_k(%arg2), \TMP5
-+	movdqu	  HashKey_3_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP2           # TMP2 = (a1+a0)*(b1+b0)
- 	movaps 0x50(%arg1), \TMP3
- 	AESENC	  \TMP3, \XMM1              # Round 5
-@@ -1266,7 +1266,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	movdqa	  \XMM7, \TMP1
- 	pshufd	  $78, \XMM7, \TMP2
- 	pxor	  \XMM7, \TMP2
--	movdqa	  HashKey_2(%arg2), \TMP5
-+	movdqu	  HashKey_2(%arg2), \TMP5
- 
-         # Multiply TMP5 * HashKey using karatsuba
- 
-@@ -1282,7 +1282,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	AESENC	  \TMP3, \XMM2
- 	AESENC	  \TMP3, \XMM3
- 	AESENC	  \TMP3, \XMM4
--	movdqa	  HashKey_2_k(%arg2), \TMP5
-+	movdqu	  HashKey_2_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP2           # TMP2 = (a1+a0)*(b1+b0)
- 	movaps 0x80(%arg1), \TMP3
- 	AESENC	  \TMP3, \XMM1             # Round 8
-@@ -1300,7 +1300,7 @@ TMP6 XMM0 XMM1 XMM2 XMM3 XMM4 XMM5 XMM6
- 	movdqa	  \XMM8, \TMP1
- 	pshufd	  $78, \XMM8, \TMP2
- 	pxor	  \XMM8, \TMP2
--	movdqa	  HashKey(%arg2), \TMP5
-+	movdqu	  HashKey(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1          # TMP1 = a1*b1
- 	movaps 0x90(%arg1), \TMP3
- 	AESENC	  \TMP3, \XMM1            # Round 9
-@@ -1329,7 +1329,7 @@ aes_loop_par_dec_done\@:
- 	AESENCLAST \TMP3, \XMM2
- 	AESENCLAST \TMP3, \XMM3
- 	AESENCLAST \TMP3, \XMM4
--	movdqa    HashKey_k(%arg2), \TMP5
-+	movdqu    HashKey_k(%arg2), \TMP5
- 	PCLMULQDQ 0x00, \TMP5, \TMP2          # TMP2 = (a1+a0)*(b1+b0)
- 	movdqu	  (%arg4,%r11,1), \TMP3
- 	pxor	  \TMP3, \XMM1                 # Ciphertext/Plaintext XOR EK
-@@ -1405,10 +1405,10 @@ TMP7 XMM1 XMM2 XMM3 XMM4 XMMDst
- 	movdqa	  \XMM1, \TMP6
- 	pshufd	  $78, \XMM1, \TMP2
- 	pxor	  \XMM1, \TMP2
--	movdqa	  HashKey_4(%arg2), \TMP5
-+	movdqu	  HashKey_4(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP6       # TMP6 = a1*b1
- 	PCLMULQDQ 0x00, \TMP5, \XMM1       # XMM1 = a0*b0
--	movdqa	  HashKey_4_k(%arg2), \TMP4
-+	movdqu	  HashKey_4_k(%arg2), \TMP4
- 	PCLMULQDQ 0x00, \TMP4, \TMP2       # TMP2 = (a1+a0)*(b1+b0)
- 	movdqa	  \XMM1, \XMMDst
- 	movdqa	  \TMP2, \XMM1              # result in TMP6, XMMDst, XMM1
-@@ -1418,10 +1418,10 @@ TMP7 XMM1 XMM2 XMM3 XMM4 XMMDst
- 	movdqa	  \XMM2, \TMP1
- 	pshufd	  $78, \XMM2, \TMP2
- 	pxor	  \XMM2, \TMP2
--	movdqa	  HashKey_3(%arg2), \TMP5
-+	movdqu	  HashKey_3(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1       # TMP1 = a1*b1
- 	PCLMULQDQ 0x00, \TMP5, \XMM2       # XMM2 = a0*b0
--	movdqa	  HashKey_3_k(%arg2), \TMP4
-+	movdqu	  HashKey_3_k(%arg2), \TMP4
- 	PCLMULQDQ 0x00, \TMP4, \TMP2       # TMP2 = (a1+a0)*(b1+b0)
- 	pxor	  \TMP1, \TMP6
- 	pxor	  \XMM2, \XMMDst
-@@ -1433,10 +1433,10 @@ TMP7 XMM1 XMM2 XMM3 XMM4 XMMDst
- 	movdqa	  \XMM3, \TMP1
- 	pshufd	  $78, \XMM3, \TMP2
- 	pxor	  \XMM3, \TMP2
--	movdqa	  HashKey_2(%arg2), \TMP5
-+	movdqu	  HashKey_2(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1       # TMP1 = a1*b1
- 	PCLMULQDQ 0x00, \TMP5, \XMM3       # XMM3 = a0*b0
--	movdqa	  HashKey_2_k(%arg2), \TMP4
-+	movdqu	  HashKey_2_k(%arg2), \TMP4
- 	PCLMULQDQ 0x00, \TMP4, \TMP2       # TMP2 = (a1+a0)*(b1+b0)
- 	pxor	  \TMP1, \TMP6
- 	pxor	  \XMM3, \XMMDst
-@@ -1446,10 +1446,10 @@ TMP7 XMM1 XMM2 XMM3 XMM4 XMMDst
- 	movdqa	  \XMM4, \TMP1
- 	pshufd	  $78, \XMM4, \TMP2
- 	pxor	  \XMM4, \TMP2
--	movdqa	  HashKey(%arg2), \TMP5
-+	movdqu	  HashKey(%arg2), \TMP5
- 	PCLMULQDQ 0x11, \TMP5, \TMP1	    # TMP1 = a1*b1
- 	PCLMULQDQ 0x00, \TMP5, \XMM4       # XMM4 = a0*b0
--	movdqa	  HashKey_k(%arg2), \TMP4
-+	movdqu	  HashKey_k(%arg2), \TMP4
- 	PCLMULQDQ 0x00, \TMP4, \TMP2       # TMP2 = (a1+a0)*(b1+b0)
- 	pxor	  \TMP1, \TMP6
- 	pxor	  \XMM4, \XMMDst
+-module_cpu_feature_match(SM3, sm4_ce_mod_init);
++module_cpu_feature_match(SM4, sm4_ce_mod_init);
+ module_exit(sm4_ce_mod_fini);
 
 
