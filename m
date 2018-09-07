@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DABC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FE2C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 435BB2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 435BB2083D
+	by mail.kernel.org (Postfix) with ESMTP id 7A0602083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0602083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbeIHCUf (ORCPT
+        id S1729784AbeIHCUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:20:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52546 "EHLO
+        Fri, 7 Sep 2018 22:20:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52572 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbeIHCUe (ORCPT
+        with ESMTP id S1727655AbeIHCUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:20:34 -0400
+        Fri, 7 Sep 2018 22:20:42 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91C3AD6B;
-        Fri,  7 Sep 2018 21:37:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED90DE9A;
+        Fri,  7 Sep 2018 21:37:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4.9 53/63] pwm: tiehrpwm: Fix disabling of output of PWMs
-Date:   Fri,  7 Sep 2018 23:10:24 +0200
-Message-Id: <20180907211015.895278141@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.9 55/63] udlfb: set optimal write delay
+Date:   Fri,  7 Sep 2018 23:10:26 +0200
+Message-Id: <20180907211016.001288382@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
@@ -50,39 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 38dabd91ff0bde33352ca3cc65ef515599b77a05 upstream.
+commit bb24153a3f13dd0dbc1f8055ad97fe346d598f66 upstream.
 
-pwm-tiehrpwm driver disables PWM output by putting it in low output
-state via active AQCSFRC register in ehrpwm_pwm_disable(). But, the
-AQCSFRC shadow register is not updated. Therefore, when shadow AQCSFRC
-register is re-enabled in ehrpwm_pwm_enable() (say to enable second PWM
-output), previous settings are lost as shadow register value is loaded
-into active register. This results in things like PWMA getting enabled
-automatically, when PWMB is enabled and vice versa. Fix this by
-updating AQCSFRC shadow register as well during ehrpwm_pwm_disable().
+The default delay 5 jiffies is too much when the kernel is compiled with
+HZ=100 - it results in jumpy cursor in Xwindow.
 
-Fixes: 19891b20e7c2 ("pwm: pwm-tiehrpwm: PWM driver support for EHRPWM")
+In order to find out the optimal delay, I benchmarked the driver on
+1280x720x30fps video. I found out that with HZ=1000, 10ms is acceptable,
+but with HZ=250 or HZ=300, we need 4ms, so that the video is played
+without any frame skips.
+
+This patch changes the delay to this value.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pwm/pwm-tiehrpwm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/video/udlfb.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -382,6 +382,8 @@ static void ehrpwm_pwm_disable(struct pw
- 		aqcsfrc_mask = AQCSFRC_CSFA_MASK;
- 	}
+--- a/include/video/udlfb.h
++++ b/include/video/udlfb.h
+@@ -87,7 +87,7 @@ struct dlfb_data {
+ #define MIN_RAW_PIX_BYTES	2
+ #define MIN_RAW_CMD_BYTES	(RAW_HEADER_BYTES + MIN_RAW_PIX_BYTES)
  
-+	/* Update shadow register first before modifying active register */
-+	ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
- 	/*
- 	 * Changes to immediate action on Action Qualifier. This puts
- 	 * Action Qualifier control on PWM output from next TBCLK
+-#define DL_DEFIO_WRITE_DELAY    5 /* fb_deferred_io.delay in jiffies */
++#define DL_DEFIO_WRITE_DELAY    msecs_to_jiffies(HZ <= 300 ? 4 : 10) /* optimal value for 720p video */
+ #define DL_DEFIO_WRITE_DISABLE  (HZ*60) /* "disable" with long delay */
+ 
+ /* remove these once align.h patch is taken into kernel */
 
 
