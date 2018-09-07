@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE7BC4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34338C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37BE20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37BE20645
+	by mail.kernel.org (Postfix) with ESMTP id ED50820645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:27:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED50820645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbeIHCK1 (ORCPT
+        id S1729312AbeIHCKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:10:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48680 "EHLO
+        Fri, 7 Sep 2018 22:10:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48692 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbeIHCK0 (ORCPT
+        with ESMTP id S1728159AbeIHCKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:10:26 -0400
+        Fri, 7 Sep 2018 22:10:37 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B955D9A;
-        Fri,  7 Sep 2018 21:27:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 784CEACC;
+        Fri,  7 Sep 2018 21:27:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.14 42/89] vmw_balloon: VMCI_DOORBELL_SET does not check status
-Date:   Fri,  7 Sep 2018 23:09:36 +0200
-Message-Id: <20180907210857.408147290@linuxfoundation.org>
+Subject: [PATCH 4.14 43/89] vmw_balloon: fix VMCI use when balloon built into kernel
+Date:   Fri,  7 Sep 2018 23:09:37 +0200
+Message-Id: <20180907210857.538276978@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
 References: <20180907210852.341064285@linuxfoundation.org>
@@ -52,13 +52,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-commit ce664331b2487a5d244a51cbdd8cb54f866fbe5d upstream.
+commit c3cc1b0fc27508da53fe955a3b23d03964410682 upstream.
 
-When vmballoon_vmci_init() sets a doorbell using VMCI_DOORBELL_SET, for
-some reason it does not consider the status and looks at the result.
-However, the hypervisor does not update the result - it updates the
-status. This might cause VMCI doorbell not to be enabled, resulting in
-degraded performance.
+Currently, when all modules, including VMCI and VMware balloon are built
+into the kernel, the initialization of the balloon happens before the
+VMCI is probed. As a result, the balloon fails to initialize the VMCI
+doorbell, which it uses to get asynchronous requests for balloon size
+changes.
+
+The problem can be seen in the logs, in the form of the following
+message:
+	"vmw_balloon: failed to initialize vmci doorbell"
+
+The driver would work correctly but slightly less efficiently, probing
+for requests periodically. This patch changes the balloon to be
+initialized using late_initcall() instead of module_init() to address
+this issue. It does not address a situation in which VMCI is built as a
+module and the balloon is built into the kernel.
 
 Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 Cc: stable@vger.kernel.org
@@ -67,59 +77,26 @@ Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |   37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ drivers/misc/vmw_balloon.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -1036,29 +1036,30 @@ static void vmballoon_vmci_cleanup(struc
-  */
- static int vmballoon_vmci_init(struct vmballoon *b)
- {
--	int error = 0;
-+	unsigned long error, dummy;
- 
--	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) != 0) {
--		error = vmci_doorbell_create(&b->vmci_doorbell,
--				VMCI_FLAG_DELAYED_CB,
--				VMCI_PRIVILEGE_FLAG_RESTRICTED,
--				vmballoon_doorbell, b);
--
--		if (error == VMCI_SUCCESS) {
--			VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET,
--					b->vmci_doorbell.context,
--					b->vmci_doorbell.resource, error);
--			STATS_INC(b->stats.doorbell_set);
--		}
--	}
-+	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) == 0)
-+		return 0;
- 
--	if (error != 0) {
--		vmballoon_vmci_cleanup(b);
-+	error = vmci_doorbell_create(&b->vmci_doorbell, VMCI_FLAG_DELAYED_CB,
-+				     VMCI_PRIVILEGE_FLAG_RESTRICTED,
-+				     vmballoon_doorbell, b);
- 
--		return -EIO;
--	}
-+	if (error != VMCI_SUCCESS)
-+		goto fail;
-+
-+	error = VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET, b->vmci_doorbell.context,
-+				   b->vmci_doorbell.resource, dummy);
-+
-+	STATS_INC(b->stats.doorbell_set);
-+
-+	if (error != VMW_BALLOON_SUCCESS)
-+		goto fail;
+@@ -1297,7 +1297,14 @@ static int __init vmballoon_init(void)
  
  	return 0;
-+fail:
-+	vmballoon_vmci_cleanup(b);
-+	return -EIO;
  }
+-module_init(vmballoon_init);
++
++/*
++ * Using late_initcall() instead of module_init() allows the balloon to use the
++ * VMCI doorbell even when the balloon is built into the kernel. Otherwise the
++ * VMCI is probed only after the balloon is initialized. If the balloon is used
++ * as a module, late_initcall() is equivalent to module_init().
++ */
++late_initcall(vmballoon_init);
  
- /*
+ static void __exit vmballoon_exit(void)
+ {
 
 
