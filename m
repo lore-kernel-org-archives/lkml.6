@@ -2,114 +2,111 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69278C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3EBC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E710206BB
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:20:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E710206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2456B20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 05:21:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pz1AAtTY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2456B20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeIGJ7g (ORCPT
+        id S1727635AbeIGKAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 05:59:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:53790 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeIGJ7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 05:59:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 22:20:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
-   d="scan'208";a="89711020"
-Received: from unknown (HELO [10.239.13.3]) ([10.239.13.3])
-  by orsmga002.jf.intel.com with ESMTP; 06 Sep 2018 22:19:55 -0700
-Message-ID: <5B920B96.6080803@intel.com>
-Date:   Fri, 07 Sep 2018 13:24:38 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Fri, 7 Sep 2018 06:00:31 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:32819 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeIGKAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 06:00:30 -0400
+Received: by mail-qt0-f172.google.com with SMTP id r37-v6so15065759qtc.0;
+        Thu, 06 Sep 2018 22:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7q29B1CjI2KiKs0fvTpfEQyuz4g6P+UF7eVoKM4vzr8=;
+        b=Pz1AAtTYbZn+07FvHpgXnA4GHLJgxtHJpbRBtdr+IbRArLtpsBGNVTPpq/A6WPmvPR
+         roH67dF9maxm/IltpqbWZYMVjz6+wzEz5BzGbd/U/P8a2cXoTji3lY1M/DlUAHtJ9p/K
+         GfaVO/wiHGNIARukzvawnW8v4DyOu2ZoMRypADBiTLelh/EkMMNIF/Ypfd3ewVzLLlPR
+         +Q2UMMADClKiaBZtXe5Doh276pY82zUPIkNcrCahwANBKFjiUV6Sz0EczyevP6KGzhhL
+         dilfyg4jiYWzXGeJPaGzw5P5q0JV8WnXWbhfg8fy2PMH812VtAUW+yvsqLDGk2fB2IWX
+         81Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7q29B1CjI2KiKs0fvTpfEQyuz4g6P+UF7eVoKM4vzr8=;
+        b=ZECQMMIL37fO7iF1ltHpCE16QhCCHT8Q1NMLIfhHdF58DhlfRNFeKUPNo7558eH9IC
+         PmREElEp3ArDgq5hCB0vTY+OnVViqF11iB4c4v1TSps5HWkAEIsImBeXTRmJ7MIMs6Vg
+         ayLxd+PsBuS82oZuda0sCSL++ju5eb26K/5VbOM493Aw3o2pDn2Q0x2uAm/+26ZGKb+B
+         QwDXKMnJsqjxYnweiPGr5Eri99TVIH/WPRpU0ndT0Asqp9thQ/7k2Pw59w99bwK2VIwK
+         14FD7EX5Bx8sSLK8JQbwUdSfAu7CPhr3xkgUSnYkQFGDfSQ9dG4ebCYwe4GGL9aCxggG
+         EtRg==
+X-Gm-Message-State: APzg51CStyXGDYkZrw57Men6UYQj5/4QrzQl1kjPfTV037qkZkjr8xvb
+        GRUBxuap7AYIu4YwRb8ZbwSFvTF9kf0Iiy0UKaM=
+X-Google-Smtp-Source: ANB0VdbmxsLoLoOQ1xYrS9/qFyay0pMg8cvIqU2X/1orHzIlaHChNS788PPwIkQTs7ABo5k9C5ym10qQZDxb9VU2xzU=
+X-Received: by 2002:a0c:f208:: with SMTP id h8-v6mr4590426qvk.55.1536297677311;
+ Thu, 06 Sep 2018 22:21:17 -0700 (PDT)
 MIME-Version: 1.0
-To:     Andi Kleen <ak@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Liang, Kan" <kan.liang@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Xu, Like" <like.xu@intel.com>
-Subject: Re: [PATCH v2 6/8] perf/x86/intel/lbr: guest requesting KVM for lbr
- stack save/restore
-References: <1536233456-12173-1-git-send-email-wei.w.wang@intel.com> <1536233456-12173-7-git-send-email-wei.w.wang@intel.com> <20180907032707.GN27886@tassilo.jf.intel.com>
-In-Reply-To: <20180907032707.GN27886@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20180907101923.4d2a85c6@canb.auug.org.au> <20180907002223.tpizglyhrwn26oox@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20180907002223.tpizglyhrwn26oox@ast-mbp.dhcp.thefacebook.com>
+From:   =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Date:   Fri, 7 Sep 2018 07:21:05 +0200
+Message-ID: <CAJ+HfNgRd5ztzwJ9HtgnrDyf8F0ykODY_EGC91d9KiAfDbhcXA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     sfr@canb.auug.org.au, Daniel Borkmann <daniel@iogearbox.net>,
+        ast@kernel.org, Netdev <netdev@vger.kernel.org>,
+        linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 11:27 AM, Andi Kleen wrote:
-> On Thu, Sep 06, 2018 at 07:30:54PM +0800, Wei Wang wrote:
->> This patch adds an interface to enable a guest to request KVM to save
->> and restore the lbr stack on vCPU context switching.
->>
->> KVM couldn't capture the info about whether the guest is actively using
->> the lbr feature via the lbr enable bit in the debugctl MSR, because that
->> control bit is frequently enabled and disabled by the guest, and in some
->> csaes, it is disabled even when the guest is actively using the lbr
->> feature. For example, perf_pmu_sched_task in the guest disables the bit
->> before reading out the lbr stack. In this case, the bit is disabled though
->> the guest is still using the lbr feature.
->>
->> So, a KVM-specific MSR, MSR_KVM_PV_LBR_CTRL, is used by the guest at a
->> proper place to tell KVM if the LBR is actively in use or not. Basically,
->> the lbr user callstack mode needs the lbr stack to be saved/restored on a
->> context switching, so we set the ACTIVE bit of MSR_KVM_PV_LBR_CTRL only
->> when the user callstack mode is used. The KVM hypervisor will add the lbr
->> stack save/restore support on vCPU switching after the ACTIVE bit is set.
-> PV is difficult because it requires changing all the users.
-
-It needs changes of the guest driver, but remains transparent to guest 
-user applications (e.g. the perf tool).
-Btw, we tested it, and it works in guest as good as on the native linux.
-
-This was thought of as the hardest part of this work. Let me just 
-clarify it a little bit:
-
-The fundamental function we want to achieve is
-#1 when the vCPU is actively using the LBR feature,  save/restore the 
-lbr stack when the vCPU is scheduled out/in;
-#2 when the vCPU is NOT actively using the LBR feature, DON'T 
-save/restore the lbr stack when the vCPU is scheduled out/in;
-
-The key problem we need to solve is: how does the host know if the guest 
-is actively using the lbr feature or not?
-
+Den fre 7 sep. 2018 kl 02:23 skrev Alexei Starovoitov
+<alexei.starovoitov@gmail.com>:
 >
-> Maybe a better approach would be a lazy restore of the LBRs:
+> On Fri, Sep 07, 2018 at 10:19:23AM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > After merging the bpf-next tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > ERROR: ".xsk_reuseq_swap" [drivers/net/ethernet/intel/i40e/i40e.ko] und=
+efined!
+> > ERROR: ".xsk_reuseq_free" [drivers/net/ethernet/intel/i40e/i40e.ko] und=
+efined!
+> > ERROR: ".xsk_reuseq_prepare" [drivers/net/ethernet/intel/i40e/i40e.ko] =
+undefined
+> >
+> > Caused by commit
+> >
+> >   9654bd10da60 ("i40e: clean zero-copy XDP Rx ring on shutdown/reset")
+> >
+> > CONFIG_XDP_SOCKETS is not set for this build.
+> >
+> > I have used the version of the bfp-next tree from next-20180906 for tod=
+ay.
 >
-> Don't restore the LBRs on context switch, but set the LBR MSRs to intercept.
-> Then on the first access restore the LBRs and allow direct access to the
-> MSRs again.
+> merge conflict and build error...
+> Bjorn, I'm thinking to toss the patches out of bpf-next and reapply
+> cleaned up version of the patches...
+> what do you think?
 >
-> Also when the LBRs haven't been set to direct access the state doesn't
-> need to be saved.
 
-This could achieve the above #1, but how would it solve #2 above? That 
-is, after the guest uses the lbr feature for a while, the lbr stack has 
-been passed through, then the guest doesn't use lbr any more, but the 
-vCPU will still save/restore on switching?
-(Host cannot know that the guest is not using lbr by the debugctl[0], 
-the commit log above has some explanations about this)
-
-Best,
-Wei
+Yes, do that. I'll get back with a cleaned up v2.
 
 
+Thanks,
+Bj=C3=B6rn
