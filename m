@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37710C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F55C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED0A720645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED0A720645
+	by mail.kernel.org (Postfix) with ESMTP id B784D20645
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:17:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B784D20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbeIHCAJ (ORCPT
+        id S1729049AbeIHCAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 22:00:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43830 "EHLO
+        Fri, 7 Sep 2018 22:00:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44158 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729016AbeIHCAJ (ORCPT
+        with ESMTP id S1728154AbeIHCAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 22:00:09 -0400
+        Fri, 7 Sep 2018 22:00:13 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 508B7E2F;
-        Fri,  7 Sep 2018 21:17:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88740E8C;
+        Fri,  7 Sep 2018 21:17:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.18 066/145] iio: ad9523: Fix return value for ad952x_store()
-Date:   Fri,  7 Sep 2018 23:08:52 +0200
-Message-Id: <20180907210909.988782293@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 4.18 067/145] extcon: Release locking when sending the notification of connector state
+Date:   Fri,  7 Sep 2018 23:08:53 +0200
+Message-Id: <20180907210910.062413244@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -52,40 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 
-commit 9a5094ca29ea9b1da301b31fd377c0c0c4c23034 upstream.
+commit 8a9dbb779fe882325b9a0238494a7afaff2eb444 upstream.
 
-A sysfs write callback function needs to either return the number of
-consumed characters or an error.
+Previously, extcon used the spinlock before calling the notifier_call_chain
+to prevent the scheduled out of task and to prevent the notification delay.
+When spinlock is locked for sending the notification, deadlock issue
+occured on the side of extcon consumer device. To fix this issue,
+extcon consumer device should always use the work. it is always not
+reasonable to use work.
 
-The ad952x_store() function currently returns 0 if the input value was "0",
-this will signal that no characters have been consumed and the function
-will be called repeatedly in a loop indefinitely. Fix this by returning
-number of supplied characters to indicate that the whole input string has
-been consumed.
+To fix this issue on extcon consumer device, release locking when sending
+the notification of connector state.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Fixes: cd1678f96329 ("iio: frequency: New driver for AD9523 SPI Low Jitter Clock Generator")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to support the notification")
+Cc: stable@vger.kernel.org
+Cc: Roger Quadros <rogerq@ti.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/frequency/ad9523.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/extcon/extcon.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/frequency/ad9523.c
-+++ b/drivers/iio/frequency/ad9523.c
-@@ -508,7 +508,7 @@ static ssize_t ad9523_store(struct devic
- 		return ret;
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev,
+ 		return index;
  
- 	if (!state)
--		return 0;
-+		return len;
+ 	spin_lock_irqsave(&edev->lock, flags);
+-
+ 	state = !!(edev->state & BIT(index));
++	spin_unlock_irqrestore(&edev->lock, flags);
  
- 	mutex_lock(&indio_dev->mlock);
- 	switch ((u32)this_attr->address) {
+ 	/*
+ 	 * Call functions in a raw notifier chain for the specific one
+@@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev,
+ 	 */
+ 	raw_notifier_call_chain(&edev->nh_all, state, edev);
+ 
++	spin_lock_irqsave(&edev->lock, flags);
+ 	/* This could be in interrupt handler */
+ 	prop_buf = (char *)get_zeroed_page(GFP_ATOMIC);
+ 	if (!prop_buf) {
 
 
