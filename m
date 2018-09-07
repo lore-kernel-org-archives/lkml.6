@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B95C4321E
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8FAC4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C1E2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C1E2075B
+	by mail.kernel.org (Postfix) with ESMTP id D3C8B2075E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 21:12:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C8B2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeIHBzW (ORCPT
+        id S1727702AbeIHBz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 21:55:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39876 "EHLO
+        Fri, 7 Sep 2018 21:55:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIHBzV (ORCPT
+        with ESMTP id S1726002AbeIHBz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 21:55:21 -0400
+        Fri, 7 Sep 2018 21:55:26 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21930FBE;
-        Fri,  7 Sep 2018 21:12:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44968FAE;
+        Fri,  7 Sep 2018 21:12:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 013/145] block: fix infinite loop if the device loses discard capability
-Date:   Fri,  7 Sep 2018 23:07:59 +0200
-Message-Id: <20180907210904.663692213@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.18 011/145] mmc: renesas_sdhi_internal_dmac: fix #define RST_RESERVED_BITS
+Date:   Fri,  7 Sep 2018 23:07:57 +0200
+Message-Id: <20180907210904.529097262@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
 References: <20180907210903.617721278@linuxfoundation.org>
@@ -50,53 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit b88aef36b87c9787a4db724923ec4f57dfd513f3 upstream.
+commit 9faf870e559a710c44e747ba20383ea82d8ac5d2 upstream.
 
-If __blkdev_issue_discard is in progress and a device mapper device is
-reloaded with a table that doesn't support discard,
-q->limits.max_discard_sectors is set to zero. This results in infinite
-loop in __blkdev_issue_discard.
+The DM_CM_RST register actually has bits 0-31 defaulting to 1s and bits
+32-63 defaulting to 0s -- fix off-by-one in #define RST_RESERVED_BITS.
 
-This patch checks if max_discard_sectors is zero and aborts with
--EOPNOTSUPP.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Tested-by: Zdenek Kabelac <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: 2a68ea7896e3 ("mmc: renesas-sdhi: add support for R-Car Gen3 SDHI DMAC")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-lib.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -68,6 +68,8 @@ int __blkdev_issue_discard(struct block_
- 		 */
- 		req_sects = min_t(sector_t, nr_sects,
- 					q->limits.max_discard_sectors);
-+		if (!req_sects)
-+			goto fail;
- 		if (req_sects > UINT_MAX >> 9)
- 			req_sects = UINT_MAX >> 9;
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -45,7 +45,7 @@
+ /* DM_CM_RST */
+ #define RST_DTRANRST1		BIT(9)
+ #define RST_DTRANRST0		BIT(8)
+-#define RST_RESERVED_BITS	GENMASK_ULL(32, 0)
++#define RST_RESERVED_BITS	GENMASK_ULL(31, 0)
  
-@@ -105,6 +107,14 @@ int __blkdev_issue_discard(struct block_
- 
- 	*biop = bio;
- 	return 0;
-+
-+fail:
-+	if (bio) {
-+		submit_bio_wait(bio);
-+		bio_put(bio);
-+	}
-+	*biop = NULL;
-+	return -EOPNOTSUPP;
- }
- EXPORT_SYMBOL(__blkdev_issue_discard);
- 
+ /* DM_CM_INFO1 and DM_CM_INFO1_MASK */
+ #define INFO1_CLEAR		0
 
 
