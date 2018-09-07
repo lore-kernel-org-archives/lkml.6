@@ -2,133 +2,207 @@ Return-Path: <SRS0=+2vW=LV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F02C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE996C4321E
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA5FF20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA5FF20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EC8920844
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Sep 2018 02:08:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="b00gpmg2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC8920844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbeIGGqz convert rfc822-to-8bit (ORCPT
+        id S1728922AbeIGGrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Sep 2018 02:46:55 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48665 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbeIGGqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Sep 2018 02:46:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Sep 2018 19:08:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,340,1531810800"; 
-   d="scan'208";a="68183565"
-Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.86])
-  by fmsmga007.fm.intel.com with SMTP; 06 Sep 2018 19:08:21 -0700
-Received: by ubuntu (sSMTP sendmail emulation); Fri, 07 Sep 2018 10:08:20 +0800
-Message-ID: <1536286099.6128.1.camel@intel.com>
-Subject: Re: [PATCH v2 6/9] kbuild: consolidate Devicetree dtb build rules
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ley Foon Tan <lftan@altera.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-kbuild@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-mips@linux-mips.org,
-        nios2-dev@lists.rocketboards.org, linuxppc-dev@lists.ozlabs.org,
-        linux-xtensa@linux-xtensa.org
-Date:   Fri, 07 Sep 2018 10:08:19 +0800
-In-Reply-To: <20180905235327.5996-7-robh@kernel.org>
-References: <20180905235327.5996-1-robh@kernel.org>
-         <20180905235327.5996-7-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        Fri, 7 Sep 2018 02:47:02 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:49321 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727841AbeIGGrB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Sep 2018 02:47:01 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie2.idc.renesas.com with ESMTP; 07 Sep 2018 11:08:33 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 23B5F65A9A;
+        Fri,  7 Sep 2018 11:08:33 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,340,1531753200"; 
+   d="scan'208";a="291791696"
+Received: from mail-os2jpn01lp0152.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.152])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Sep 2018 11:08:32 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=26VLRJn/O3uL25wiSodKfAHIw6RLz8O4TCkBbM5jZWQ=;
+ b=b00gpmg2e37KYIQwGd5cmv7+kdAghPhpgzwwJZDlDL+X9NvIpDBknwOpOWL71ivI8wBK/i/FuLOaLcUiEvRIQqxvGAEMZkCKFNTkG238G3O1tppFQwiwx8ajuCOiOLIHeBsfKde0XjovDQvPd5ap/yJ0ubluG9GmjuBy5Myclwc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1867.jpnprd01.prod.outlook.com (2603:1096:403:2::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1101.17; Fri, 7 Sep 2018 02:08:30 +0000
+Message-ID: <87zhwuoykl.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH] phy: renesas: convert to SPDX identifiers
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Simon Horman <horms+renesas@verge.net.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 7 Sep 2018 02:08:30 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: OSAPR01CA0155.jpnprd01.prod.outlook.com
+ (2603:1096:604:d::23) To TY1PR01MB1867.jpnprd01.prod.outlook.com
+ (2603:1096:403:2::23)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 665571f3-b8f0-4cbe-19ca-08d61466cf0a
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1867;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1867;3:MKP/CDj3F+QUAtVNkJzJlY8tLXS9KSDOaLvua2RyxD3W13RBzdX89RXM+PwGGwadZJMXhMCoya6eHQk0GZubQvA+pv4FlQJF9xQ9dwL8n7wK31A8JG7ELF46YETyB+0mqx3wZ1/WO8Z5A/VerfLtFspYTClyTzt822erz+41NK236nkl66EWIHX/c6PWZJGf+nyeXpINs0A0mm2dUMAf4zMlA1qJgUfgnx9q4puPHbJssXp7XQ8wXPrSd4JK5ptZ;25:9cMqSmdaQyfnC5qZ2Qlf8xELZFb9U4PYwJT6zjQ9t19oUbdpgr/m8FuVGETAMq4wWUK/FmVgYWShCfzyWjLPUS1ysu/AmWgzowRnq0ufTzpOCR7nzUXAuOqXpK9BKyvB2spBnE0/5WRu+BtittvFaoiF/EIDfeOrdzZnqyJsHdkvxFj1ym2uN/r1jyvswP2Ka8YZO+tDH30dlTvgH73dgYrovbOjIfipQBHkZjPyms5gs1bxegfaQoq1Lw7rNX35p1Os4+xceHLsVBFWhEs94NMPYR3Ow5VwB3RCEoaAnqKeKemNj/OZgwujKuoH8XlZ041BVvdhAYOES5ownbrkjA==;31:8S9/p90alME1ofYcGlLuF1KXi5gM/6FELpVlJj28SK2AxHfOS2KRjxXdKnCXgfqwn7yLA3HypMOY65m4tl91yijP7d0Bz6ehQvMGHy+4RtxgOHZ+RXmdOiBDxmPDmtYOccgvCRY4VpY2CbWOuPqYGQbMO+4GOysaPwp+wwZ/doQerNFOMEVuJtNCzhF7zpUn6/9Znb8E9W9CflvtIcmL3UHNuBKHL2dq3onl6fyZyT8=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1867:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1867;20:8X7sVHiJJIsVLHy31IGt458dpg6YL2IUJWpRlS0dJCl59wdBpbV6wWa1D/jyvIISMqqBbszpCMIcJTdv52yAo96RlfoOsDfDgHSx48lhr8mL2eNYGy/EwK4Rng2sSDpqDiXZwo5ahDao2xt/Vf78PEfhglaM/areJv1itTee4Fut/Ogu898w/2Ogk354tKwbx+GqhMmJkD6sXdkwAilyZiFpqe9x5XdpeIQMFQqlcK8K7lVhD7u2j1DQH1RXNR7/pyyMSUIt8XnyI/vX+uuE3XLJcrHA4rNpOqO1+aMIGUbtO2yTwNIkYjG5PycSSPJ3edRtVE2YowZBH6HKdoZPb5IJ06eVnMXQmA9A2A0jgYf3knb7Uh+ItbNzRKN6HH/fr1tYprHkNCD1M5p0ynPjchIKNfP/mM+ktjGtdjKevFyAssGQCYPS2pwJkPjZVzv4LdvdmnkLl6V1pcdYvWIYCOdIyTnkbnUwo0p7mvKTOHUQawrMDX+HRUyJaZCMw0gY;4:N3QR6oOwvdMErILBW/OeuhoNqKIy9oEkBLuW1cxEasjTrp9Kthv2XuY17NQ0VGVDzZIFiKqNNmlj+taVi4sYUGYQ3NuJMayDklhOp1hnMltvTeqQNIgnn52q4rK09vN3/xlKAL3Q4USnRz332agANZ6fsedAQ7LjE2LCleZyn7lrOLbqaoFjwXa7XoTBz5Bf+NEEIPolhjd2A1hhPcuQesA6LhYe30hJloj34cOrOJjn5u3ADtDHZpAW3AIw3Z1GKeDTOsBWGdDEDZcbCC6I9Q==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB18673B485EBE967764237262D4000@TY1PR01MB1867.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:TY1PR01MB1867;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1867;
+X-Forefront-PRVS: 07880C4932
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(366004)(39860400002)(189003)(199004)(4326008)(86362001)(23726003)(3846002)(6116002)(8676002)(68736007)(53936002)(53416004)(106356001)(105586002)(5660300001)(97736004)(6636002)(478600001)(36756003)(305945005)(7736002)(81156014)(8936002)(81166006)(52116002)(7696005)(486006)(50466002)(54906003)(386003)(66066001)(6486002)(2906002)(47776003)(26005)(186003)(16526019)(25786009)(110136005)(69596002)(58126008)(316002)(16586007)(476003)(956004)(2616005)(1857600001)(2004002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1867;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1867;23:+Dytj1sdYnTHFJF4hvNtzg6vCjt+XRTvaAj/XBTDD?=
+ =?us-ascii?Q?xPbCBPw4dq9ny6kLuQ5AmSH4V7YoXK3bopzYL+cCfQAuItN0jjL2RAc10jec?=
+ =?us-ascii?Q?X75+ln5aFhPFimgu6rJ+iPhiLi9khhCDpD+3/oancjjRNpXtostEdVEMvfck?=
+ =?us-ascii?Q?SHhLMBz8ntx7IYeL3z4QkZQ3EvzV29cPHixQdkqBfSP2C3VQ3I7+8MVBjTjj?=
+ =?us-ascii?Q?dm2oVpjSClngyHtwtS4raKRid21q5DYG5Mm8nxd55MbcY+CwomhovZlsOkfi?=
+ =?us-ascii?Q?mvAi5EaYCqkd+XjLMO2ckcEDlCgewJnicgAnhFTEN/BRtl2mlWQtdxPu/PVb?=
+ =?us-ascii?Q?TwHJAZqyBTW8cfCiT/X7pECyePcbibwod/ZW3igExkHQslZQAfqnwVKJCTZX?=
+ =?us-ascii?Q?9DaTKJLTgeqcRdslSkS+NdwvmpYYqJ1+viLdkTB13ISNlPBkEa1hNg/Sw61k?=
+ =?us-ascii?Q?2g9ElXgxA8I9u5tLAwCpXnCjzJYpyIKX84r2WLNfkkCi0eVfWdSZGMMYV0fu?=
+ =?us-ascii?Q?OyGAua8nyZCz9Z5I/HEzzGf1K8qUumRqVRAICJLwkJXmU0qW95eXB8KCS3Sl?=
+ =?us-ascii?Q?ezZdzmW430undHFKr4qczY8Hds+oNM+8mU604IJXy4rM71713S5MKtWq6s0B?=
+ =?us-ascii?Q?0Fl2Pj3JJyjYtfgpm9QOlMBpslfPfsdkNDjRdEukOuFIVcFx5XiNPlXhproV?=
+ =?us-ascii?Q?7SreTeYs1Dv+fUMzNYm4TITBaNmxiiNeAOdHrdlpATKDSaYbRiGwhXlTjBCW?=
+ =?us-ascii?Q?zhFVTqrt+gQSweLQuSitE+2MblXJiVHjOL/Pg53zhXbYgU4ztYtIbc/sMp+i?=
+ =?us-ascii?Q?L6YFgTPyH0W7RQ6bHoRiFiD/kSeYpGOO7SfXHlwbtbu4AdQ66ROJRuSd7eBn?=
+ =?us-ascii?Q?vUFNZcNbity4A6fWt71Z83W0wAxeOcpiiEds8H/JUqAsB+heOBGewbp04i+O?=
+ =?us-ascii?Q?ftwMYBYedDnZmiju0FNCEU0S6uHlFLT293/d7hlqL9Z4O/I90gXHL+PGbutH?=
+ =?us-ascii?Q?/dWmHfuzd82SSl43ZLI4VWAqJIUOO51aPqYHCIMTVzvUKiDz3Y9VIQ3eeVOh?=
+ =?us-ascii?Q?5ujy/A0o1x2vBKSlpHD8k5QK6kgOBVxj5T1hyUwFQ2PN8VZ9JfSQlnLpVkg8?=
+ =?us-ascii?Q?yDL05XX3xm7RObOXpBggW7l/LCicQkdAR/u+TMbcz6fp/vNGISvpL0eKheJq?=
+ =?us-ascii?Q?hJQepr9iSZYi5gTEW2ng6Dbz+D7ts6/s0vb?=
+X-Microsoft-Antispam-Message-Info: tCBeyRklKPHXXKgrIzfkMDtjYBRzkm9QHcmSuQaiwrFenZK6EPUcjgqjjGNg+Ydg/O0MSX2+JbwiH8Ff0i4PnT9Zjb8VMzinpH5F0lvHYtvRFMotNQGcuJwc1WKkiUZzUOZXsKuSx8F2z/bJdlFajVLixUsU0SfoOt2VeX4WuPgT+rVI4ZrZ2oZzKoI0/xixEnMut6YBhGZp7q2OOiItp1KaO4MCf1ke1iOhlvv7zCMomvereiDgEmbSmYMx86ecIQi7h+5l/AI5HcVyxeYN7FBQP2QSbz/RaMcJACOGwKvIhj4p7x3atPNiKYGQ3iJjKjCj+Kc+XP23tOhu19x9txAfLu/I+1JCj/+vpVqwypQ=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1867;6:GaEkc9HmA9HDrGYeviI2z/XTwugJ1iDqkRUa+EdGMukL1Y3cYsLMp1qCo2FB/3/LjkvHzag/yq5IK/K1amdOFpkzgg/BHcWibaJ2JG2832rRbwKI7Tmi/JQBQNsssaHDL8aRrYG8hhBEfJLUj8WVHgbGogc+Qn7zh/30bfq+SINR8E9g8VTIzdXyfEdHpwxg0UBwDK8inUgR2dbKwX01Hajn3goB6tHHr9lxd5m4EIIFUBzicPvx2gfJXnLs3UMYZMPogsWARr6HIS8u9EJUBQq8Y4rtPvORg9BWtmtQUL9eOO9m9VZwukz1gVv9EiFMeFhp9hGZ0BS2LKUjq0MrlW9B2bPj2+MX4U8S0xZ5foEVRWQhjKUk0i0vuDox5y2AgfyUC3sCyaQ+xRPBzwI14dBvxBFMd59oOu0l+tCxo72tIV+LVx+IRVJQvwlg3UxiEpCi5fnr6+oSorHva7+ZwA==;5:OJ6PdKY7ig5728hf+5d6J19HL5b3wzcAl6SSpD7vIlRE70zzT/ppwAvpxZfgIKOaX00DbIQ8mlZhRZevOnndmn4cG18Htx1K38+66SWtsPG+qesiounEc5GjSxKNeMgMehd1iB952YogxlVXjXI/bmHv5fylwB0sqMkJ1wyBs9E=;7:QYBQGYX5ELU1MWN+02oFCtzI6Rvf4jGL1QjzwUoYLh6MMH9IfHIUNHKwxSdsG/pfxjJ0rCuCI2BCrLgseZYKMgRRxIPxEiSP4jzZ1Lrbqqf+1euvP/XKeI/1UkGJUI7bT1xsqN5Xi1K79RSvFU5wMDve4MF8/o9joQoG866zwr9kW2b8iCyoFeqOodOHvWmLzIY5C3M6T5H4HhOuQgzW+vI/Hx5BNMNfZDhlLaqzVRYBVgecQ0ItMbm5BkTI6J3i
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1867;20:DidsspQzK+Wiq/KeQx6w0sx2zNtQvCA+F2clPgITXKPoxbMRsreOkVOo6DSiC2D0GUauVGlc8ZEKoBFkxDQ4pFIRDvwPGBI8P6xbVg85gETmNDNT0slRXcRJgl/KOMXZnZytMd7hskj7JWNQnzJ2qR3BwKbIP00BQ12H6/AGmkk=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2018 02:08:30.9925
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 665571f3-b8f0-4cbe-19ca-08d61466cf0a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1867
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-05 at 18:53 -0500, Rob Herring wrote:
-> There is nothing arch specific about building dtb files other than
-> their
-> location under /arch/*/boot/dts/. Keeping each arch aligned is a
-> pain.
-> The dependencies and supported targets are all slightly different.
-> Also, a cross-compiler for each arch is needed, but really the host
-> compiler preprocessor is perfectly fine for building dtbs. Move the
-> build rules to a common location and remove the arch specific ones.
-> This
-> is done in a single step to avoid warnings about overriding rules.
-> 
-> The build dependencies had been a mixture of 'scripts' and/or
-> 'prepare'.
-> These pull in several dependencies some of which need a target
-> compiler
-> (specifically devicetable-offsets.h) and aren't needed to build dtbs.
-> All that is really needed is dtc, so adjust the dependencies to only
-> be
-> dtc.
-> 
-> This change enables support 'dtbs_install' on some arches which were
-> missing the target.
-> 
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Vineet Gupta <vgupta@synopsys.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Cc: Michal Simek <monstr@monstr.eu>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: James Hogan <jhogan@kernel.org>
-> Cc: Ley Foon Tan <lftan@altera.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-snps-arc@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: uclinux-h8-devel@lists.sourceforge.jp
-> Cc: linux-mips@linux-mips.org
-> Cc: nios2-dev@lists.rocketboards.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-xtensa@linux-xtensa.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Please ack so I can take the whole series via the DT tree.
-> 
-For nios2:
 
-Acked-by: Ley Foon Tan <ley.foon.tan@intel.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
+This patch updates license to use SPDX-License-Identifier
+instead of verbose license text.
 
-Regards
-Ley Foon
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ drivers/phy/renesas/Kconfig              | 1 +
+ drivers/phy/renesas/Makefile             | 1 +
+ drivers/phy/renesas/phy-rcar-gen2.c      | 5 +----
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 +----
+ drivers/phy/renesas/phy-rcar-gen3-usb3.c | 5 +----
+ 5 files changed, 5 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
+index 4bd390c..e340a92 100644
+--- a/drivers/phy/renesas/Kconfig
++++ b/drivers/phy/renesas/Kconfig
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ #
+ # Phy drivers for Renesas platforms
+ #
+diff --git a/drivers/phy/renesas/Makefile b/drivers/phy/renesas/Makefile
+index 4b76fc4..b599ff8 100644
+--- a/drivers/phy/renesas/Makefile
++++ b/drivers/phy/renesas/Makefile
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_PHY_RCAR_GEN2)		+= phy-rcar-gen2.o
+ obj-$(CONFIG_PHY_RCAR_GEN3_PCIE)	+= phy-rcar-gen3-pcie.o
+ obj-$(CONFIG_PHY_RCAR_GEN3_USB2)	+= phy-rcar-gen3-usb2.o
+diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
+index 97d4dd6..72eeb06 100644
+--- a/drivers/phy/renesas/phy-rcar-gen2.c
++++ b/drivers/phy/renesas/phy-rcar-gen2.c
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Renesas R-Car Gen2 PHY driver
+  *
+  * Copyright (C) 2014 Renesas Solutions Corp.
+  * Copyright (C) 2014 Cogent Embedded, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/clk.h>
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index fb8f05e..3d57ea1 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Renesas R-Car Gen3 for USB2.0 PHY driver
+  *
+@@ -6,10 +7,6 @@
+  * This is based on the phy-rcar-gen2 driver:
+  * Copyright (C) 2014 Renesas Solutions Corp.
+  * Copyright (C) 2014 Cogent Embedded, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/extcon-provider.h>
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb3.c b/drivers/phy/renesas/phy-rcar-gen3-usb3.c
+index 88c83c9..566b4cf 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb3.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb3.c
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Renesas R-Car Gen3 for USB3.0 PHY driver
+  *
+  * Copyright (C) 2017 Renesas Electronics Corporation
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include <linux/clk.h>
+-- 
+2.7.4
+
