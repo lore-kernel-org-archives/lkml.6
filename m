@@ -2,114 +2,166 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534DDC4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 12:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A15A0C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 12:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0575020652
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 12:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA3920652
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 12:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sRJYTQcF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0575020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=lekensteyn.nl header.i=@lekensteyn.nl header.b="JQJA1LW2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FA3920652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lekensteyn.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbeIHQ7q (ORCPT
+        id S1726906AbeIHRAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 12:59:46 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35909 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeIHQ7p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 12:59:45 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j192-v6so17056748wmj.1
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 05:14:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PvsALzrsw4nqSt3f8pvk9D27HsfunCKCVYXpWnhTqCI=;
-        b=sRJYTQcFB7Mtz5TscxKTlaQoHuT3O4eQ8nnMGX6Zkn3ExkqYHMUIgEfbnt7bF8NBH/
-         NlA4Dz12wYjAD3y9iKBJZ1ANVc2ONr1AMoLBGp5d6O751NnIpCyVNLnsiZ0Nrf8ilTU1
-         7lvlxzMNHToFvgyB/HNCYxreEZ8lNDGFTMDziJCJjprbCcLlmfpmUm+mdbw1kGx7zdmu
-         LfTYD+VjHFs54HJtcK8ZLgvl3fYkTlmslvi/JMyJ0UewzMjDbRLx2yE83xTU4LmGZ/Ay
-         BwfGnPV2iUQ6tFxvA+MQUZSj9YtSOc1TRtroPDILWLj3SEi0hOXbP8UVUONR+5Gg2frO
-         SHAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PvsALzrsw4nqSt3f8pvk9D27HsfunCKCVYXpWnhTqCI=;
-        b=toZ2jYqnwXxGsP+ms2wGzZcc9+wuykRt3khKOBchJLmc/JGDm4FDS9dA89qm0WNw9e
-         eduQTc8Zqfw90qPbbpf7kM9HhF8AUtwIPEZaOMRCsNsom3FLsJqFuy9Y80ihsQD+Z3us
-         tgcZVcD6NurQdF+QgX16ikwXrAP7fJIL4CuMuAuonVJI5FPBxAwhvrqMo4WCO5HLByeC
-         EVOXGVgUTRR/ObCenq07DVKeDMgO7Qt+6zXVFDVumF5V+x6HG6Nlb0PkTkqBd0Vq2kMy
-         6a5/M0iw8AuKraHrbmrYmMrrY/TbL+e4Y2RWmkyNPU5cOPP8B5CLAm4PfIl3cz7ohZj7
-         HG4A==
-X-Gm-Message-State: APzg51Ab8JY7n6shs1ABbF1BC8CXoVKap8cfuuw40Sey1qnF3Lv7ZSGg
-        Jc6z5dTBR0TqbnKbbLWS78Y=
-X-Google-Smtp-Source: ANB0VdbkJwyivVC6UpIjPPklnVgrsNKD+Q5xP4N9g6rnsaOf1CNMMzv81k7CpNBFJwj2uhVKnUif4A==
-X-Received: by 2002:a1c:6386:: with SMTP id x128-v6mr8440739wmb.104.1536408849109;
-        Sat, 08 Sep 2018 05:14:09 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm9096458wrt.89.2018.09.08.05.14.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 05:14:08 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 3/3] staging: rtl8188eu: fix lines over 80 characters in rtw_led.c
-Date:   Sat,  8 Sep 2018 14:13:53 +0200
-Message-Id: <20180908121353.16137-3-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180908121353.16137-1-straube.linux@gmail.com>
-References: <20180908121353.16137-1-straube.linux@gmail.com>
+        Sat, 8 Sep 2018 13:00:11 -0400
+Received: from lekensteyn.nl ([178.21.112.251]:50095 "EHLO lekensteyn.nl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726452AbeIHRAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 13:00:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lekensteyn.nl; s=s2048-2015-q1;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=Cig1wufPRmfiNYuTEumO7BBS8hgZrHganRBzMnmrRtM=;
+        b=JQJA1LW2gsbW7euwK/cvolUKY7ObMA95C6CvEvDSEVIGQPoLKm9Y14ZZwNmOg6VQyEjuc4CKFGIgbvTquD1NwsL+KtufdyUtoz2Q2w+kI86iNHMOfJJiwRoOax1/c0seo5QwnQ5xxMCGigaW5bE6OElWSsc030CEtrVmyNu7zyjNirUnRyhOMwKf0AmsG00oSJHVrocR5Dsw+j7VIl2FZykIzfy9/qH2csgGdMVAFa7pTosXfPWkgh4WwGbQhYBTW0BX0tTA4qJd7ujdOksLIMnEZMDn2vCPVPP6/9Yl/XdZqPAlYoobqUNgXpIP0tt9/53x5kgRVK5ldWElyZpjEA==;
+Received: by lekensteyn.nl with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <peter@lekensteyn.nl>)
+        id 1fyc84-0005jb-JY; Sat, 08 Sep 2018 14:14:22 +0200
+Date:   Sat, 8 Sep 2018 14:14:22 +0200
+From:   Peter Wu <peter@lekensteyn.nl>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Daniel Drake <drake@endlessm.com>, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux@endlessm.com,
+        nouveau@lists.freedesktop.org, linux-pm@vger.kernel.org,
+        kherbst@redhat.com, andriy.shevchenko@linux.intel.com,
+        rafael.j.wysocki@intel.com, keith.busch@intel.com,
+        mika.westerberg@linux.intel.com, jonathan.derrick@intel.com,
+        kugel@rockbox.org, davem@davemloft.net, hkallweit1@gmail.com,
+        netdev@vger.kernel.org, nic_swsd@realtek.com,
+        linux-kernel@vger.kernel.org, Dave Jones <davej@codemonkey.org.uk>,
+        Luming Yu <luming.yu@intel.com>
+Subject: Re: [PATCH] PCI: Reprogram bridge prefetch registers on resume
+Message-ID: <20180908121422.GA10676@al>
+References: <20180907053614.6540-1-drake@endlessm.com>
+ <20180907150515.GA28739@al>
+ <20180907222647.GD250890@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907222647.GD250890@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wrap lines over 80 characters where appropriate to
-clear checkpatch warnings.
+On Fri, Sep 07, 2018 at 05:26:47PM -0500, Bjorn Helgaas wrote:
+> [+cc LKML, Dave, Luming]
+> 
+> On Fri, Sep 07, 2018 at 05:05:15PM +0200, Peter Wu wrote:
+> > On Fri, Sep 07, 2018 at 01:36:14PM +0800, Daniel Drake wrote:
+> > <..>
+> > > Thomas Martitz reports that this workaround also solves an issue where
+> > > the AMD Radeon Polaris 10 GPU on the HP Zbook 14u G5 is unresponsive
+> > > after S3 suspend/resume.
+> > 
+> > Where was this claimed? It is not stated in the linked bug:
+> > (https://bugs.freedesktop.org/show_bug.cgi?id=105760
+> > 
+> > > On resume, reprogram the PCI bridge prefetch registers, including the
+> > > magic register mentioned above.
+> > > 
+> > > This matches Win10 behaviour, which also rewrites these registers
+> > > during S3 resume (checked with qemu tracing).
+> > 
+> > Windows 10 unconditionally rewrites these registers (BAR, I/O Base +
+> > Limit, Memory Base + Limit, etc. from top to bottom), see annotations:
+> > https://www.spinics.net/lists/linux-pci/msg75856.html
+> > 
+> > Linux has a generic "restore" operation that works backwards from the
+> > end of the PCI config space to the beginning, see
+> > pci_restore_config_space. Do you have a dmesg where you see the
+> > "restoring config space at offset" messages?
+> > 
+> > Would it be reasonable to unconditionally write these registers in
+> > pci_restore_config_dword, like Windows does?
+> 
+> That sounds reasonable to me.
+> 
+> We did write them unconditionally, prior to 04d9c1a1100b ("[PATCH]
+> PCI: Improve PCI config space writeback") [1].  That commit apparently
+> fixed suspend on some laptop.
+> 
+> But at that time, we restored the config space in order of dword 0, 1,
+> 2, ... 15, which means we restored the command register before the
+> BARs and windows, and it's conceivable that the problem was the
+> ordering, not the rewriting of the same value.
+> 
+> Only a week later, we reversed the order with 8b8c8d280ab2 ("[PATCH]
+> PCI: reverse pci config space restore order") [2], which seems like a
+> good idea and even includes a spec reference.  I found similar
+> language in the Intel ICH 10 datasheet, sec 14.1.3 [3].
+> 
+> So it seems reasonable to me to try writing them unconditionally in
+> reverse order (the same order we use today).
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_led.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Some fields are readonly (device/vendor ID), others have side-effects
+(write-to-clear semantics like Master Data Parity Error in the Status
+register).
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_led.c b/drivers/staging/rtl8188eu/core/rtw_led.c
-index d51494eb11ab..98106e77a9f6 100644
---- a/drivers/staging/rtl8188eu/core/rtw_led.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_led.c
-@@ -95,10 +95,12 @@ static void SwLedBlink1(struct LED_871x *pLed)
- 	/*  Change LED according to BlinkingLedState specified. */
- 	if (pLed->BlinkingLedState == RTW_LED_ON) {
- 		SwLedOn(padapter, pLed);
--		RT_TRACE(_module_rtl8712_led_c_, _drv_info_, ("Blinktimes (%d): turn on\n", pLed->BlinkTimes));
-+		RT_TRACE(_module_rtl8712_led_c_, _drv_info_,
-+			 ("Blinktimes (%d): turn on\n", pLed->BlinkTimes));
- 	} else {
- 		SwLedOff(padapter, pLed);
--		RT_TRACE(_module_rtl8712_led_c_, _drv_info_, ("Blinktimes (%d): turn off\n", pLed->BlinkTimes));
-+		RT_TRACE(_module_rtl8712_led_c_, _drv_info_,
-+			 ("Blinktimes (%d): turn off\n", pLed->BlinkTimes));
- 	}
- 
- 	if (padapter->pwrctrlpriv.rf_pwrstate != rf_on) {
-@@ -449,7 +451,8 @@ static void SwLedControlMode1(struct adapter *padapter, enum LED_CTL_MODE LedAct
- 		break;
- 	}
- 
--	RT_TRACE(_module_rtl8712_led_c_, _drv_info_, ("Led %d\n", pLed->CurrLedState));
-+	RT_TRACE(_module_rtl8712_led_c_, _drv_info_,
-+		 ("Led %d\n", pLed->CurrLedState));
- }
- 
- /*  */
--- 
-2.18.0
+So in addition to always write the registers, what about writing only a
+subset? Following the logic applied by Windows, for Type-1:
 
+- Restore memory-related stuff:
+  - Restore BAR0 (offset 0x10, dword).
+  - Restore BAR1 (offset 0x14, dword).
+  - Restore I/O Base + Limit (offset 0x1c, WORD, not dword).
+  - Restore Memory Base + Limit (offset 0x20, dword).
+  - Restore Prefetchable Memory Base + Limit (offset 0x24, dword).
+  - Restore Prefetchable Base Upper 32 bits (offset 0x28, dword).
+    (+wait for 500us, why?)
+  - Restore Prefetchable Limit Upper 32 bits (offset 0x2c, dword).
+    (+wait for 500us, why?)
+  - Restore I/O Base + Limit Upper 32 bits (offset 0x30, dword).
+    (+wait for 500us, why?)
+  - Restore Expansion ROM Address (offset 0x38, dword).
+- Restore at offset 0x3c:
+  - Restore Interrupt Line (offset 0x3c, byte).
+  - Restore Bridge Control (offset 0x3e, word).
+    (+read value again, why? Some kind of flush?)
+- Restore at offset 0x18:
+  - Restore Primary Bus Number (offset 0x18, byte).
+  - Restore Secondary Bus Number (offset 0x19, byte).
+  - Restore Subordinate Bus Number (offset 0x1a, byte).
+  - (Restore Secondary Status (offset 0x1b, byte)? Not seen in Windows.)
+- Restore at offset 0x0c:
+  - Cacheline Size (offset 0x0c, byte).
+  - Primary Latency Timer (offset 0x0d, byte).
+- Restore at offset 0x04:
+  - Restore command register.
+    (+wait for 500us)
+  - (Actually Windows clears BM+Mem+I/O bits, then sets
+    PCIE.DeviceControl=7, PCIE.DeviceControl2=0 and then enables
+    BM+Mem+I/O again).
+  - Restore (or write to clear?) Status (offset 0x06, word).
+- Note that the following fields are omitted (mostly readonly):
+  - Device ID + Vendor ID (offset 0x00, dword).
+  - Revision ID + Class Code  (offset 0x08, dword).
+  - Header Type + BIST (offset 0x0e, byte + byte).
+  - Capabilities Pointer + Reserved (offset 0x34, dword).
+  - Interrupt Pin (offset 0x3d, byte).
+
+This is more complicated than the current loop, but the logic of writing
+addresses first and then configuring others sound reasonable to me.
+
+Kind regards,
+Peter
+
+> 
+> [1] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=04d9c1a1100b
+> [2] http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8b8c8d280ab2
+> [3] Intel ICH 10 IBL 373635
