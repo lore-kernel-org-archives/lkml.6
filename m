@@ -2,109 +2,63 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA28DC4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD40AC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9418220855
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9418220855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=CARNet.hr
+	by mail.kernel.org (Postfix) with ESMTP id 607B4206BB
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607B4206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeIHMT3 (ORCPT
+        id S1726498AbeIHMfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 08:19:29 -0400
-Received: from mail.CARNet.hr ([161.53.123.6]:60269 "EHLO mail.carnet.hr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726346AbeIHMT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 08:19:29 -0400
-Received: from [2001:b68:ff:12::131] (port=51580 helo=gavran.carpriv.carnet.hr)
-        by mail.carnet.hr with esmtps (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <Valentin.Vidic@CARNet.hr>)
-        id 1fyXlK-0002Pl-HB; Sat, 08 Sep 2018 09:34:35 +0200
-Received: by gavran.carpriv.carnet.hr (Postfix, from userid 1000)
-        id 1B930202EF; Sat,  8 Sep 2018 09:34:32 +0200 (CEST)
-Date:   Sat, 8 Sep 2018 09:34:32 +0200
-From:   Valentin Vidic <Valentin.Vidic@CARNet.hr>
-To:     drbd-user@lists.linbit.com
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
-Message-ID: <20180908073432.GP26705@gavran.carpriv.carnet.hr>
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <20180905103649.edugijsjx4v2fbxd@mac.bytemobile.com>
- <20180905162756.GA26705@gavran.carpriv.carnet.hr>
- <20180907120337.GB11834@soda.linbit>
- <20180907121348.GM26705@gavran.carpriv.carnet.hr>
- <20180907132828.GC11834@soda.linbit>
- <20180907164500.GN26705@gavran.carpriv.carnet.hr>
- <20180907171459.GO26705@gavran.carpriv.carnet.hr>
+        Sat, 8 Sep 2018 08:35:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58854 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726253AbeIHMfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 08:35:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5278CAF3F;
+        Sat,  8 Sep 2018 07:50:30 +0000 (UTC)
+Date:   Sat, 8 Sep 2018 09:50:27 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v4 2/2] x86/speculation: Enable cross-hyperthread spectre
+ v2 STIBP mitigation
+In-Reply-To: <alpine.DEB.2.21.1809080839110.1402@nanos.tec.linutronix.de>
+Message-ID: <nycvar.YFH.7.76.1809080947580.15880@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1809061013160.15880@cbobk.fhfr.pm> <alpine.LRH.2.00.1809061032540.3446@gjva.wvxbf.pm> <alpine.DEB.2.21.1809072222430.1402@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1809072322230.15880@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1809080839110.1402@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907171459.GO26705@gavran.carpriv.carnet.hr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
-Subject: Re: [DRBD-user] [PATCH] xen-blkback: Switch to closed state after
- releasing the backing device
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 07:14:59PM +0200, Valentin Vidic wrote:
-> In fact the first one is the original code path before I modified
-> blkback.  The problem is it gets executed async from workqueue so
-> it might not always run before the call to drbdadm secondary.
+On Sat, 8 Sep 2018, Thomas Gleixner wrote:
 
-As the DRBD device gets released only when the last IO request
-has finished, I found a way to check and wait for this in the
-block-drbd script:
+> If after changing the SMT to enable a normal hotplug operation happens 
+> then you need to update the MSR as well.
 
---- block-drbd.orig     2018-09-08 09:07:23.499648515 +0200
-+++ block-drbd  2018-09-08 09:28:12.892193649 +0200
-@@ -230,6 +230,24 @@
- and so cannot be mounted ${m2}${when}."
- }
- 
-+wait_for_inflight()
-+{
-+  local dev="$1"
-+  local inflight="/sys/block/${dev#/dev/}/inflight"
-+  local rd wr
-+
-+  if ! [ -f "$inflight" ]; then
-+    return
-+  fi
-+
-+  while true; do
-+    read rd wr < $inflight
-+    if [ "$rd" = "0" -a "$wr" = "0" ]; then
-+      return
-+    fi
-+    sleep 1
-+  done
-+}
- 
- t=$(xenstore_read_default "$XENBUS_PATH/type" 'MISSING')
- 
-@@ -285,6 +303,8 @@
-         drbd_lrole="${drbd_role%%/*}"
-         drbd_dev="$(drbdadm sh-dev $drbd_resource)"
- 
-+        wait_for_inflight $drbd_dev
-+
-         if [ "$drbd_lrole" != 'Secondary' ]; then
-           drbdadm secondary $drbd_resource
-         fi
+Ah, right you are, thanks. Will fix in v5.
 
 -- 
-Valentin
+Jiri Kosina
+SUSE Labs
+
