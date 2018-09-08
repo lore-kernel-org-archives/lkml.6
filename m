@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24750C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72F0C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF46220844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E25620869
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:44:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMIQ4kCf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF46220844
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRtUdEHk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E25620869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbeIHO33 (ORCPT
+        id S1726709AbeIHO3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 10:29:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37673 "EHLO
+        Sat, 8 Sep 2018 10:29:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38227 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbeIHO32 (ORCPT
+        with ESMTP id S1726634AbeIHO3a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 10:29:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u12-v6so17098090wrr.4
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 02:44:18 -0700 (PDT)
+        Sat, 8 Sep 2018 10:29:30 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w11-v6so17148411wrc.5
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 02:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MmfwamrxWV/LWnq5Utn94RtScJeC6TOhXJ2MTGXrvz4=;
-        b=dMIQ4kCfyuCIjShJOF4lbAtYEgWxeNIA1D4SRSVWpCw91+qW0p3UTzdM5WGoE+26mO
-         3RoZ/AYW5WxOBuaZAC3yYAZBb5nfLpWCcRgbD7BADjoJJoWw2a8GVpMTiVAJTsB49OsI
-         xIjat0Jn8z5rItP5W1qWsU0mHW7VwSCpMVpHnVyW6kL/n00mUXf5a/0Zk1u4UAQOOEdE
-         +6oxe5iskgBUbxVJRGEHULc/tITpTGZOFPWN1cgtKkwPP5ZdarUx3j6t+e1ZyKn/5V8a
-         iNF0QqUnDoNH+6wowf7v06PQJjGIu6AOeijTYY1Z03Ix1xP5KWU/BBtWCEKIZJBEbyjE
-         ClKQ==
+        bh=Tp4C1yWWvB+8ko/eDTyTNS3saAJMERwxTlp8QikV5sE=;
+        b=YRtUdEHkANcX8yk2rah+gf3JzAqVPcsEtNdhCIiuJV8GiVVCzIpj5OVZ3VcuviTPH6
+         AqfAMZDFtfSNLCGj6GVkXQYPGzS1mbvJN4Hmn5qq42XTBng0H9o8iZxOkPEztAfo/TVU
+         ehJYDj178eNY7XTXYzoaumy4Ws/Rplbsm0wJ0E3b3vcw58XkhhNSI6OX5ZYz0C0PNuRG
+         ZqwmpekBSIiT4hCsLD2T60phNkVz4QG0rWnb9YMlK+1zcuzBlf5Pb5aIREeSveoSbRrA
+         OhpfbLPjcFatfJaP63b//Z35wkxJ32lh9mTDWR4t2HpuIIfnbrSedxiRRsk+v67UO+Q5
+         Szww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MmfwamrxWV/LWnq5Utn94RtScJeC6TOhXJ2MTGXrvz4=;
-        b=aGpQvEejzlx48J4UcN6FOyx/gM9rnupiOgGPTES6tJLWzYDtArfQ8ih1irEWd/aiN8
-         vkhULPkmmETeKmspNO9iQaoPmFr0ml1xJxI0k5tVkS0pAiVzfLzD/6690TOjsICqv9xS
-         TVQSMJxntbJ5mMoKxdMFYXY1Ek837HAMtkrx0v/WrO/VFsQjBgd35x9o4+hzJ4tBSQby
-         DTGkuF43flcjAqL5OYA27HNrx11U3MAmZlaLFjZBeCJqwGtepvgERIOeUi+lxMs6LwW0
-         YFMVDwnzH9cgCFiq0PV4HbTEbXEebiIkw/AOLDcDXU+xDL/UlI6xDqCW38lKLV8qjfH9
-         4HUA==
-X-Gm-Message-State: APzg51C5PYb9uuShjkDi0lRV8fBWInxp+77Cp7n2KB18WWI2yUTKitIM
-        9aYpmRd0dOvKzgpKJbMIaAf6Bf6c
-X-Google-Smtp-Source: ANB0VdYA986aWMVnWgNb0ULlgEvqxsIo3xh8d++WFcL4LU+h+D15AVAiWSujuras6+sLsiVlqUmhHw==
-X-Received: by 2002:a05:6000:c:: with SMTP id h12mr9311347wrx.103.1536399857700;
-        Sat, 08 Sep 2018 02:44:17 -0700 (PDT)
+        bh=Tp4C1yWWvB+8ko/eDTyTNS3saAJMERwxTlp8QikV5sE=;
+        b=C+s+jITDqGkGBylEWEXtcxRcpy9VttQSWtqsIBlvu1qS6nvNmtNyne8HzqPg5/HMTo
+         WoxBj48yut2PfjiHb4hhw8ln+gFPt4onu3j3J2esDGs3L+3rnUgApv+dWlDLCoIMsbqM
+         ttkljUS4rUh3uiCAX7IhfZLl4rGNRzl86CZr2woB72W9a0iAtepmFuAIedTHKvrvH3cc
+         +8C4j7KbGbQZ280vJgXvgMyZibKB4WeQzE9PUyMiRqWBg4fx5rRxFM20fP0BMEJLO0Qn
+         IqY+Geb09YsDvL6T7y8HiG6Yzrue/AnF/ItnlsbYs0hfFjq+L/JUOEg9teh1EFSC/XB0
+         YhsQ==
+X-Gm-Message-State: APzg51Dfkmtz3wYuUNlKcZjQ57kZlCpsGjfn6va3smUuXofUQwAr+d/8
+        dE8IFprHD8t0yMZyPjRMQKpRZl7F
+X-Google-Smtp-Source: ANB0VdZfeaywSsFktf5rlFJpKCB/LGYbZkhsI358QSo2YiYWcKTegEfUjHB84fWBk2X/I5BDXk00jA==
+X-Received: by 2002:adf:8103:: with SMTP id 3-v6mr8919650wrm.213.1536399860464;
+        Sat, 08 Sep 2018 02:44:20 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id t132-v6sm13975018wmf.24.2018.09.08.02.44.16
+        by smtp.gmail.com with ESMTPSA id t132-v6sm13975018wmf.24.2018.09.08.02.44.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 02:44:16 -0700 (PDT)
+        Sat, 08 Sep 2018 02:44:19 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 2/4] staging:rtl8192u: Refactor GET_COMMAND_PACKET_FRAG_THRESHOLD - Style
-Date:   Sat,  8 Sep 2018 10:44:07 +0100
-Message-Id: <20180908094409.4043-3-johnfwhitmore@gmail.com>
+Subject: [PATCH 4/4] staging:rtl8192u: Remove typedef from enum opt_rst_type_e - Style
+Date:   Sat,  8 Sep 2018 10:44:09 +0100
+Message-Id: <20180908094409.4043-5-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180908094409.4043-1-johnfwhitmore@gmail.com>
 References: <20180908094409.4043-1-johnfwhitmore@gmail.com>
@@ -73,32 +73,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MACRO GET_COMMAND_PACKET_FRAG_THRESHOLD causes a number of
-checkpatch issues so has been refactored to use braces around the
-parameter 'v' to avoid precedence issues, and to add spaces around
-operators.
+Remove the typedef directive from enumerated type opt_rst_type_e,
+this change clears the checkpatch issue with defining new types in
+the code.
 
-These changes are coding style changes which should have no impact
-on runtime code execution.
+This is a coding style change which should not impact runtime
+code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r819xU_firmware.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192u/r819xU_firmware.c | 2 +-
+ drivers/staging/rtl8192u/r819xU_firmware.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/staging/rtl8192u/r819xU_firmware.c b/drivers/staging/rtl8192u/r819xU_firmware.c
+index 15fd026638fe..c3ea906f3af3 100644
+--- a/drivers/staging/rtl8192u/r819xU_firmware.c
++++ b/drivers/staging/rtl8192u/r819xU_firmware.c
+@@ -208,7 +208,7 @@ bool init_firmware(struct net_device *dev)
+ 	u32			file_length = 0;
+ 	u8			*mapped_file = NULL;
+ 	u32			init_step = 0;
+-	opt_rst_type_e	rst_opt = OPT_SYSTEM_RESET;
++	enum opt_rst_type_e	   rst_opt = OPT_SYSTEM_RESET;
+ 	enum firmware_init_step_e  starting_state = FW_INIT_STEP0_BOOT;
+ 
+ 	rt_firmware		*pfirmware = priv->pFirmware;
 diff --git a/drivers/staging/rtl8192u/r819xU_firmware.h b/drivers/staging/rtl8192u/r819xU_firmware.h
-index 794dca7dcd95..e78e547044b4 100644
+index 870301853480..b84344c1e62b 100644
 --- a/drivers/staging/rtl8192u/r819xU_firmware.h
 +++ b/drivers/staging/rtl8192u/r819xU_firmware.h
-@@ -3,7 +3,7 @@
- #define __INC_FIRMWARE_H
+@@ -11,9 +11,9 @@ enum firmware_init_step_e {
+ 	FW_INIT_STEP2_DATA = 2,
+ };
  
- #define GET_COMMAND_PACKET_FRAG_THRESHOLD(v) \
--	(4*(v/4) - 8 - USB_HWDESC_HEADER_LEN)
-+	(4 * ((v) / 4) - 8 - USB_HWDESC_HEADER_LEN)
+-typedef enum _opt_rst_type {
++enum opt_rst_type_e {
+ 	OPT_SYSTEM_RESET = 0,
+ 	OPT_FIRMWARE_RESET = 1,
+-} opt_rst_type_e;
++};
  
- typedef enum _firmware_init_step {
- 	FW_INIT_STEP0_BOOT = 0,
+ #endif
 -- 
 2.18.0
 
