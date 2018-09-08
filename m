@@ -2,84 +2,141 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65A8C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2DEC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5820920844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:06:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5820920844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id CAC0C20855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC0C20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbeIHGuF (ORCPT
+        id S1726284AbeIHG7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 02:50:05 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:41894 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726119AbeIHGuE (ORCPT
+        Sat, 8 Sep 2018 02:59:04 -0400
+Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:36876
+        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726032AbeIHG7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 02:50:04 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09661493|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CntLYcq_1536372347;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CntLYcq_1536372347)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Sat, 08 Sep 2018 10:05:47 +0800
-Date:   Sat, 8 Sep 2018 10:05:46 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V3 21/26] dt-bindings: interrupt-controller: C-SKY APB
- intc
-Message-ID: <20180908020545.GA29088@guoren-Inspiron-7460>
-References: <cover.1536138304.git.ren_guo@c-sky.com>
- <62dae1828ade759584bbf1507fe4a9e69d247a50.1536138304.git.ren_guo@c-sky.com>
- <CABGGiswB5OUU7JDP+-s3s8ONkXZY2AAvSijQedsNtZ6p8LqZeA@mail.gmail.com>
- <20180906021254.GC29405@guoren-Inspiron-7460>
- <CAK8P3a3h4KxkvAXZV+=7T6vdiQdOd0quos9BUtX-E=Q2H_0rfA@mail.gmail.com>
- <CAL_JsqLhLdoGO=WNHZ0aRxXD4dqZhXHxB7Y1q651ABXi_kOXEQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLhLdoGO=WNHZ0aRxXD4dqZhXHxB7Y1q651ABXi_kOXEQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sat, 8 Sep 2018 02:59:04 -0400
+Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
+        by : HOSTING RELAY : with ESMTP
+        id ySlDfkWUF4ToEySlDfAVX2; Fri, 07 Sep 2018 19:14:17 -0700
+x-originating-ip: 107.180.71.197
+Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
+        (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
+        id 1fySlD-0005DR-Ns; Fri, 07 Sep 2018 19:14:07 -0700
+From:   Long Li <longli@linuxonhyperv.com>
+To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc:     Long Li <longli@microsoft.com>
+Subject: [Patch v3 01/16] CIFS: Add support for direct pages in rdata
+Date:   Sat,  8 Sep 2018 02:13:33 +0000
+Message-Id: <20180908021348.19956-2-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180908021348.19956-1-longli@linuxonhyperv.com>
+References: <20180908021348.19956-1-longli@linuxonhyperv.com>
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfIfGN4mRFPBQgnHRoeQJ6PejviETpxrjv5MN0mrQyc6A8Vxcjoidhhk7+9pWVEygPVnIFy+joCHMdP+eYaWXOoMI+Ejn7wz0n/L0HTayLx+gzwppLsUU
+ DTQ0ofbcm/13FOZdmDdkR4KggWnqEh6olmpwlZ1UF06dscXVCe09QX4KsjuKsCRKwGPVR7dhohWJI8G3luANjSDXSHyR7YgghKeRiCqovjn8fQz2KQOQvTAX
+ /JhRFna6P/MvpgLoOLnT3iZb2dFQZ/Fkew5kqWlGFDhns0sJMfI+TmUen7T6fcNvmMCZLxqLURWew/BM1AF48xjg2t5LNWPnOYrt6w/YYNISKwRvSBSrD/QI
+ eKONr3TFFhoyzsZL0Hokkqf+7678Deq5YwLfoDE+t+sR5mQC50MOk+C5PmM42AXGl4vZHnjN
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 10:13:13AM -0500, Rob Herring wrote:
-> On Thu, Sep 6, 2018 at 8:05 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Thu, Sep 6, 2018 at 4:13 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > >
-> > > On Wed, Sep 05, 2018 at 07:43:10PM -0500, Rob Herring wrote:
-> > > > On Wed, Sep 5, 2018 at 7:10 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > > > >
-> > > > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > > > > +
-> > > > > +       intc: interrupt-controller {
-> > > >
-> > > > Needs a unit-address.
-> > > Ok, change it to:
-> > >             intc: interrupt-controller@0x00500000 {
-> >
-> > The unit address has no leading 0x or leading zeroes, so
-> > interrupt-controller@500000
-> 
-> Please build your dts files with W=12 and it will tell you this and
-> other errors. And then update any examples based on that.
-Got it, thx for the tip.
+From: Long Li <longli@microsoft.com>
 
- Guo Ren
+Add a function to allocate rdata without allocating pages for data
+transfer. This gives the caller an option to pass a number of pages
+that point to the data buffer.
+
+rdata is reponsible for free those pages after it's done.
+
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/cifsglob.h |  3 +--
+ fs/cifs/file.c     | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 5 deletions(-)
+
+diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+index 80a34ce..166e140 100644
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1173,14 +1173,13 @@ struct cifs_readdata {
+ 	struct kvec			iov[2];
+ #ifdef CONFIG_CIFS_SMB_DIRECT
+ 	struct smbd_mr			*mr;
+-	struct page			**direct_pages;
+ #endif
+ 	unsigned int			pagesz;
+ 	unsigned int			page_offset;
+ 	unsigned int			tailsz;
+ 	unsigned int			credits;
+ 	unsigned int			nr_pages;
+-	struct page			*pages[];
++	struct page			**pages;
+ };
+ 
+ struct cifs_writedata;
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 23fd430..1c98293 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -2880,13 +2880,13 @@ cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from)
+ }
+ 
+ static struct cifs_readdata *
+-cifs_readdata_alloc(unsigned int nr_pages, work_func_t complete)
++cifs_readdata_direct_alloc(struct page **pages, work_func_t complete)
+ {
+ 	struct cifs_readdata *rdata;
+ 
+-	rdata = kzalloc(sizeof(*rdata) + (sizeof(struct page *) * nr_pages),
+-			GFP_KERNEL);
++	rdata = kzalloc(sizeof(*rdata), GFP_KERNEL);
+ 	if (rdata != NULL) {
++		rdata->pages = pages;
+ 		kref_init(&rdata->refcount);
+ 		INIT_LIST_HEAD(&rdata->list);
+ 		init_completion(&rdata->done);
+@@ -2896,6 +2896,22 @@ cifs_readdata_alloc(unsigned int nr_pages, work_func_t complete)
+ 	return rdata;
+ }
+ 
++static struct cifs_readdata *
++cifs_readdata_alloc(unsigned int nr_pages, work_func_t complete)
++{
++	struct page **pages =
++		kzalloc(sizeof(struct page *) * nr_pages, GFP_KERNEL);
++	struct cifs_readdata *ret = NULL;
++
++	if (pages) {
++		ret = cifs_readdata_direct_alloc(pages, complete);
++		if (!ret)
++			kfree(pages);
++	}
++
++	return ret;
++}
++
+ void
+ cifs_readdata_release(struct kref *refcount)
+ {
+@@ -2910,6 +2926,7 @@ cifs_readdata_release(struct kref *refcount)
+ 	if (rdata->cfile)
+ 		cifsFileInfo_put(rdata->cfile);
+ 
++	kvfree(rdata->pages);
+ 	kfree(rdata);
+ }
+ 
+-- 
+2.7.4
+
