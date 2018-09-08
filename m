@@ -2,127 +2,110 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74163C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 05:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DABEBC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 05:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F2F20844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 05:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76E532086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 05:23:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFDZ4h1m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F2F20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=prjkt-io.20150623.gappssmtp.com header.i=@prjkt-io.20150623.gappssmtp.com header.b="x5GjGe7S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E532086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prjkt.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeIHJqe (ORCPT
+        id S1726496AbeIHKH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 05:46:34 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:47045 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeIHJqe (ORCPT
+        Sat, 8 Sep 2018 06:07:56 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41677 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeIHKH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 05:46:34 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u24-v6so7934346pfn.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 22:02:11 -0700 (PDT)
+        Sat, 8 Sep 2018 06:07:56 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s15-v6so7948762pgv.8
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 22:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RJCpMmAsSMsAZuHbC3RM1J2E2E/2J6/EivqPn3wdhDs=;
-        b=KFDZ4h1mOfK1VWnohBMn1k7W0Syhu4dKifBj1YCrEQyvYoxJ/Ij8OTMfmCofr4QLlo
-         g6lmLH4o+y5R4LjtIZzUkBdVMvHum+hUGQ+qnSVC5ZgO7hfeuu281bya7tH22ov7ZdFj
-         BNpofQ6FPDysTsonF4VoNUxyx5SnhKPCn80fs=
+        d=prjkt-io.20150623.gappssmtp.com; s=20150623;
+        h=date:disposition-notification-to:return-receipt-to:user-agent
+         :in-reply-to:references:mime-version:content-transfer-encoding
+         :subject:to:cc:from:message-id;
+        bh=wI6Q16khXeVUO4k+zPVVpYgTsOg91H82PpCe3hYvOwc=;
+        b=x5GjGe7SKIoRU/PK9iUKexdTZLFTDc7NBcdSlHLHQF2f58N7vA2X9vryxtgCdNR1MY
+         sa2rtwwIMfqr7BuTwTEP0l4GPR0HVB9lBnX2xB1KznTnzFkbMPXjxXgilGyTefb+TZe8
+         /T6c2fn9k9i4bQd+jxfw07HjaRMauDyj3W5NhXu/Q74kJYzKRF/P9lVKK0EAot5kE0xW
+         Jmi4r4nzcqExR+/wuveJ9Jp6DDuOt/AXLbL7bUk/Xo3kD0QfoRpf9r7LAmmEGHIn5SVs
+         hw1bD5lF+xdSVfDwSL56FkFuID54AByNGHf8gW+mzfyMEBMb0MTma8ahaOzvBhQTKPxP
+         QEBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RJCpMmAsSMsAZuHbC3RM1J2E2E/2J6/EivqPn3wdhDs=;
-        b=UAw0HwLk7PiiH4DGUcVVDnx6XWg7hvdVLdA/4vzEK9GNgGrSqL4u6R5fUJ2aipe8+S
-         RrkYyPqJn8q1F/CWO2R90BomITcGcCF0o3UkpMh++ki2fuPrIGCK6gcK6DmVLBz6xWaO
-         uc0IGxIr9hLM+IRL+sH9gelkt6CREIKUbs9eSNjCKB7yEA0+fRlqNRobAF5ofz+tCUSB
-         AdWZ7W7hUi9Zj2dwnh6dbkXaDST7GDSbIZrXvr0J82OWLsppunNw3XMgesuPu9Vse6DM
-         Z942zAB1/PXeI/moxzLN92W5FnuOsdcYPs16JAoP1yUSdl8bHbhkMn9MxP7i6Nx5sy6v
-         momQ==
-X-Gm-Message-State: APzg51B7YKO7JhCisjDa3KJ/WmW8+LopB/npsiKgPAWLRe5+idcqnPnx
-        hGi/QWcF5t8tG43LeINNxeCHzw==
-X-Google-Smtp-Source: ANB0VdbELknsv06zhhlUpKPB91jBvMiFXwfGxIBe/F7bILq/Vj0BXI94FsGMoPVs4YYfGOIqkV/55A==
-X-Received: by 2002:a62:a05:: with SMTP id s5-v6mr12222045pfi.147.1536382931016;
-        Fri, 07 Sep 2018 22:02:11 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm12494714pfn.53.2018.09.07.22.02.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Sep 2018 22:02:10 -0700 (PDT)
-Date:   Fri, 7 Sep 2018 22:02:08 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, rteysseyre@gmail.com,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20180908050208.GY2523@minitux>
-References: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:date:disposition-notification-to
+         :return-receipt-to:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=wI6Q16khXeVUO4k+zPVVpYgTsOg91H82PpCe3hYvOwc=;
+        b=uCdp1/sf2Z6ICkOvcbt2/oVEP9y/zGOmq7RQAzz+nvOhMDqyDO/jUwkV8jaIkDO+FA
+         qWW4Rp5QUrhwEE0hAnP7yIdZBvLzhLaUbdE6eO3tuqleTLZAXUZBN6z+0KZ2ekDXik35
+         irqtQvObUpz5hMYEVVuC3eiTnh0MB6MEJEWH/eG2C8CJ5l6tvbN+HRUN+8OGTNkaU5Vb
+         TOkaHgBdwYb4RiOceUV5rsP6cdUFF8OY4ipDRtdwv6fI9SbZWWwN7Had5xVV48XGVZUi
+         SioJhCnCSALR3aT09tiiMPmoqEBTwlbvwg5ljAlc8ajhBHkr60FMCaPn1VmXutLQNg68
+         q5hA==
+X-Gm-Message-State: APzg51CbDtCWEvGZYylr+XzaLzxYAOW8POPgDP8K6yvZ2vvpkvJGTcro
+        nwYOZKziJ+pNKknJW3wxvkjdoHDBNq9f/Q==
+X-Google-Smtp-Source: ANB0VdbLLTdNHln4lNOOaQ4Ut0kFo0bfLOoUNKSVNN2ojclqipvcjd0JiVSOIVd2LmEbVzaMxTH+gg==
+X-Received: by 2002:a62:205d:: with SMTP id g90-v6mr12338499pfg.253.1536384209409;
+        Fri, 07 Sep 2018 22:23:29 -0700 (PDT)
+Received: from ?IPv6:2402:3a80:9d3:81d9:e0fe:c0b9:5c08:e60d? ([2402:3a80:9d3:81d9:e0fe:c0b9:5c08:e60d])
+        by smtp.gmail.com with ESMTPSA id b18-v6sm11032103pgk.15.2018.09.07.22.23.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 22:23:28 -0700 (PDT)
+Date:   Sat, 08 Sep 2018 10:53:22 +0530
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180907210909.523240901@linuxfoundation.org>
+References: <20180907210909.523240901@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a502ec29251c019ddad8f3314ab45fc0f6feaf7.1536027873.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3.18 00/29] 3.18.122-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+CC:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+From:   Harsh 'Shandilya <harsh@prjkt.io>
+Message-ID: <5188E506-7DCF-46B1-BE91-086EB2356D69@prjkt.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04 Sep 04:01 PDT 2018, Baolin Wang wrote:
-
-> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-pattern b/Documentation/ABI/testing/sysfs-class-led-trigger-pattern
-[..]
-> +What:		/sys/class/leds/<led>/hw_pattern
-> +Date:		September 2018
-> +KernelVersion:	4.20
-> +Description:
-> +		Specify a hardware pattern for the LED, for LED hardware that
-> +		supports autonomously controlling brightness over time, according
-> +		to some preprogrammed hardware patterns.
-> +
-> +		Since different LED hardware can have different semantics of
-> +		hardware patterns, each driver is expected to provide its own
-> +		description for the hardware patterns in their ABI documentation
-> +		file.
-> +
-
-So, after a full circle we're back at drivers with support for hardware
-patterns should have their own ABI for setting that pattern.
-
-The controls for my hardware is:
-* a list of brightness values
-* the rate of the pattern
-* a flag to indicate that the pattern should be played from start
-  to end, end to start or start to end to start
-* a boolean indicating if the pattern should be played once or repeated
-  indefinitely.
-
-Given that the interface now is hw specific, what benefit is there to
-attempt to cram these 4 knobs into "hw_pattern"? Or am I allowed to
-create additional files for the latter three?
-
-> +What:		/sys/class/leds/<led>/repeat
-> +Date:		September 2018
-> +KernelVersion:	4.20
-> +Description:
-> +		Specify a pattern repeat number. 0 means repeat indefinitely.
-> +
-> +		This file will always return the originally written repeat
-> +		number.
-
-I'm still convinced that this will confuse our users and to me it would
-be more logical if this denotes the number of times the pattern should
-be repeated, with e.g. negative numbers denoting infinite.
-
-In particular I expect to have to explain why my driver expects that you
-write 0 in the file named "repeat" to make it repeat and 1 to make it
-not repeat.
-
-Regards,
-Bjorn
+On 8 September 2018 2:40:21 AM IST, Greg Kroah-Hartman <gregkh@linuxfoundat=
+ion=2Eorg> wrote:
+>This is the start of the stable review cycle for the 3=2E18=2E122 release=
+=2E
+>There are 29 patches in this series, all will be posted as a response
+>to this one=2E  If anyone has any issues with these being applied, please
+>let me know=2E
+>
+>Responses should be made by Sun Sep  9 21:08:52 UTC 2018=2E
+>Anything received after that time might be too late=2E
+>
+>The whole patch series can be found in one patch at:
+>	https://www=2Ekernel=2Eorg/pub/linux/kernel/v3=2Ex/stable-review/patch-3=
+=2E18=2E122-rc1=2Egz
+>or in the git tree and branch at:
+>	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+=2Egit
+>linux-3=2E18=2Ey
+>and the diffstat can be found below=2E
+>
+>thanks,
+>
+>greg k-h
+Cleanly merges and builds with Werror in my oneplus3 tree=2E No immediate =
+regressions noticed=2E Thanks for the update=2E
+--
+Harsh Shandilya, PRJKT Development LLC
