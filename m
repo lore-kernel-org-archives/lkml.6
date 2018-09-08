@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE37EC43143
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F814C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5F720873
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57C7B20868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhLeyyvB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C5F720873
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uen7wqXT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C7B20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeIICM0 (ORCPT
+        id S1727984AbeIICM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 22:12:26 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52189 "EHLO
+        Sat, 8 Sep 2018 22:12:28 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54193 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727675AbeIICM0 (ORCPT
+        with ESMTP id S1727639AbeIICM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 22:12:26 -0400
-Received: by mail-wm0-f65.google.com with SMTP id y2-v6so17810395wma.1;
-        Sat, 08 Sep 2018 14:25:14 -0700 (PDT)
+        Sat, 8 Sep 2018 22:12:27 -0400
+Received: by mail-wm0-f65.google.com with SMTP id b19-v6so17838872wme.3;
+        Sat, 08 Sep 2018 14:25:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0nSFCzTHwEx3uHSnN/pA7EXvGdKx2RttjcOzGdkhYLw=;
-        b=KhLeyyvBiiTvGHA2l/MgHVAheDHnUHUap6la6Ws/7+8XzYp6AaI1QDAVkMIE/j3ISl
-         n0zUwgI+Umcoa3yA/vjVMgkoQKveTmAKNK3o5pOn+qtAfkZDQ8V1iCzuMXdCZsqX3ohZ
-         KgI9vRcKAM/3BnFaOzXRqTHXHOz2Ritco3ADpNz6djt7MrKKfJheGxMsjpG6M/poxqHi
-         xJ0ZMcahnyK0WLiPqbPouIRVhKNS5Tc0EXpl75Xr3ULcUKAd7isJE3d/147k/E0Y7jlz
-         5vkIORpKanfGQyBAmpZ0eG2DkEWN8oHEUW5egak5R4WrVvyktWGa2yTaOdlTwDks7cq8
-         uMpg==
+        bh=KSmd8Leci7Jq2YnVlQ1QxGK80ki+uToFeuQJJ1eS4UY=;
+        b=Uen7wqXT0mq9RVEAdjuqREsxTm7Jx/iFihAQFMJNSr0hRPAx38opm1T0w3nS/7/HbI
+         Ebh7AIVW1lndVKYV68rIxR7YgjTnlcb++TVT8AXYM7TbjgPAnhPvMo9IpB4dST44wm2J
+         BAt0JTiFvo01vEbzPVW4D6K8/pe6Ey+qVYpBSiLGMNxtZm+FrOCvI2aViBZT8WkmTeyO
+         xB1PlTq131NRnJuDUTBzy+4WKh89Xq8wxXozS+2udpzD21ORlPZsK40Tq893tvIOrtxI
+         SSAQh1N9VjwVOisEEBBFxH0WtBD1XtYimf42YRtuBNeRzGRxhe7hpEUfgeqyOJDM5xg7
+         SDZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0nSFCzTHwEx3uHSnN/pA7EXvGdKx2RttjcOzGdkhYLw=;
-        b=Wj3JtosCwYIH0Ai/16eyrE9EchJ5RD14/Oq/OoZcuEWKWVQeIWOfolfGstkFqC/KBB
-         uPfuvXmdfdzCV/diogkOlV/V51Rve1mrabnQiZaQkzKuzL/R7aZOSVFitIOs4WHUsKec
-         bDBJflgoYOnn+tuXgahECPTJh/AmAos4aMeySon5X/GMQpiiRNl1P96dgktQ7eRNNUuS
-         gPkqAjt36LrwaR49WqyRZUFCJO1dXjnqXjvv1LeN3cxV9U1OkNvbb41aBMT+zLG57PkH
-         Ba6feHUq8YHmdWcUrJPvuL9CH0cSHDnvJfCRTsuEHlPcXhYmi3eM/Fb4h4RjXPxtf9Wn
-         YEVA==
-X-Gm-Message-State: APzg51BQSGLKS+1NVSMlDQnmadaIU/KqmVKSrioxGhAZG00BkA0FoLvD
-        0vCOItPMjoT5Sbys7C9oEcU=
-X-Google-Smtp-Source: ANB0Vda4cYjjLDTyfra+DpSXqz0mLHcju9sfvpEK1tRD7bzO6njH//3EJy0r/lyGSe7jp50JkUkRXQ==
-X-Received: by 2002:a1c:c203:: with SMTP id s3-v6mr9296987wmf.65.1536441914016;
-        Sat, 08 Sep 2018 14:25:14 -0700 (PDT)
+        bh=KSmd8Leci7Jq2YnVlQ1QxGK80ki+uToFeuQJJ1eS4UY=;
+        b=Mwk+YEtkusz03Xn3L1Asa4tbx757/5OfDkAdaOSNNSuxr33+tI//N/u/ZxyWb+osvk
+         DBfe7dD3L9OYsxtwm08lPEH4HZ5qEYtpw7YGUqt7tUBjzsHA9ch+dp0PcnXrXMFESHdr
+         lJ9Uu/mcyeruP9/BfnilB7FAoWmDcNLmigWJH+Ps6ow/g2dtOFnNtulEHpX2L007IDSb
+         wq9aGAL4RaeIlWP1eZz/1JwVdm3e20J7ZikaxwEpUAHpQ7qr6QoPLqyP5ljBQEOC7D5b
+         sw1oiTZSDY1VzBR66w1z5oMNqUVAcHaWKAtypXz1E2ACnf+k07ENsiXxGPO/C63zYwxJ
+         o9fQ==
+X-Gm-Message-State: APzg51B4bmeWThF0hfq9AOYfjVNfgecWnhSTXzcYxtz8OeyqPhdBnayE
+        v1HiQcwsbIa6+a2IsR9qwHU=
+X-Google-Smtp-Source: ANB0VdbHuUJHMw0TTomA/pmYGntt/+sLJUUXtgiINqMfe2ovNHBwfb76Q5ChCVCv3hvxzP3npXtyrw==
+X-Received: by 2002:a1c:a94d:: with SMTP id s74-v6mr9266511wme.39.1536441918160;
+        Sat, 08 Sep 2018 14:25:18 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.12
+        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 14:25:13 -0700 (PDT)
+        Sat, 08 Sep 2018 14:25:17 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -74,10 +74,11 @@ Cc:     linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         linux-sparse@vger.kernel.org
-Subject: [PATCH v4 02/13] Compiler Attributes: always use the extra-underscores syntax
-Date:   Sat,  8 Sep 2018 23:24:48 +0200
-Message-Id: <20180908212459.19736-3-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v4 05/13] Compiler Attributes: naked was fixed in gcc 4.6
+Date:   Sat,  8 Sep 2018 23:24:51 +0200
+Message-Id: <20180908212459.19736-6-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,18 +86,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The attribute syntax optionally allows to surround attribute names
-with "__" in order to avoid collisions with macros of the same name
-(see https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html).
+Commit 9c695203a7dd ("compiler-gcc.h: gcc-4.5 needs noclone
+and noinline on __naked functions") added noinline and noclone
+as a workaround for a gcc 4.5 bug, which was resolved in 4.6.0.
 
-This homogenizes all attributes to use the syntax with underscores.
-While there are currently only a handful of cases of some TUs defining
-macros like "error" which may collide with the attributes,
-this should prevent futures surprises.
+Since now the minimum gcc supported version is 4.6,
+we can clean it up.
 
-This has been done only for "standard" attributes supported by
-the major compilers. In other words, those of third-party tools
-(e.g. sparse, plugins...) have not been changed for the moment.
+See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=44290
+and https://godbolt.org/z/h6NMIL
 
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
@@ -110,225 +108,34 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Joe Perches <joe@perches.com>
 Cc: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-sparse@vger.kernel.org
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-clang.h |  2 +-
- include/linux/compiler-gcc.h   | 14 ++++++------
- include/linux/compiler-intel.h |  2 +-
- include/linux/compiler.h       |  8 +++----
- include/linux/compiler_types.h | 40 +++++++++++++++++-----------------
- 5 files changed, 33 insertions(+), 33 deletions(-)
+ include/linux/compiler-gcc.h | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index b1ce500fe8b3..d11cad61ba5c 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -21,7 +21,7 @@
- #define __SANITIZE_ADDRESS__
- #endif
- 
--#define __no_sanitize_address __attribute__((no_sanitize("address")))
-+#define __no_sanitize_address __attribute__((__no_sanitize__("address")))
- 
- /*
-  * Not all versions of clang implement the the type-generic versions
 diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 0a2d06677d83..371b6fa2d074 100644
+index 76f4907ef707..4cd5e9264bce 100644
 --- a/include/linux/compiler-gcc.h
 +++ b/include/linux/compiler-gcc.h
-@@ -76,7 +76,7 @@
- #endif
- 
- #ifdef RETPOLINE
--#define __noretpoline __attribute__((indirect_branch("keep")))
-+#define __noretpoline __attribute__((__indirect_branch__("keep")))
- #endif
- 
- /*
-@@ -91,15 +91,15 @@
-  * GCC 4.[56] currently fail to enforce this, so we must do so ourselves.
-  * See GCC PR44290.
+@@ -77,14 +77,8 @@
+  * to trace naked functions because then mcount is called without
+  * stack and frame pointer being set up and there is no chance to
+  * restore the lr register to the value before mcount was called.
+- *
+- * The asm() bodies of naked functions often depend on standard calling
+- * conventions, therefore they must be noinline and noclone.
+- *
+- * GCC 4.[56] currently fail to enforce this, so we must do so ourselves.
+- * See GCC PR44290.
   */
--#define __naked		__attribute__((naked)) noinline __noclone notrace
-+#define __naked		__attribute__((__naked__)) noinline __noclone notrace
+-#define __naked		__attribute__((__naked__)) noinline __noclone notrace
++#define __naked		__attribute__((__naked__)) notrace
  
  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
  
- #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
- 
- #ifndef __CHECKER__
--#define __compiletime_warning(message) __attribute__((warning(message)))
--#define __compiletime_error(message) __attribute__((error(message)))
-+#define __compiletime_warning(message) __attribute__((__warning__(message)))
-+#define __compiletime_error(message) __attribute__((__error__(message)))
- 
- #ifdef LATENT_ENTROPY_PLUGIN
- #define __latent_entropy __attribute__((latent_entropy))
-@@ -148,7 +148,7 @@
-  * optimizer that something else uses this function or variable, thus preventing
-  * this.
-  */
--#define __visible	__attribute__((externally_visible))
-+#define __visible	__attribute__((__externally_visible__))
- 
- /* gcc version specific checks */
- 
-@@ -205,7 +205,7 @@
-  * should not be applied to that function.
-  * Conflicts with inlining: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
-  */
--#define __no_sanitize_address __attribute__((no_sanitize_address))
-+#define __no_sanitize_address __attribute__((__no_sanitize_address__))
- #endif
- 
- #if GCC_VERSION >= 50100
-@@ -213,7 +213,7 @@
-  * Mark structures as requiring designated initializers.
-  * https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
-  */
--#define __designated_init __attribute__((designated_init))
-+#define __designated_init __attribute__((__designated_init__))
- #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
- #endif
- 
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index 4c7f9befa9f6..fef8bb3e53ef 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -42,4 +42,4 @@
-  * and may be redefined here because they should not be shared with other
-  * compilers, like clang.
-  */
--#define __visible	__attribute__((externally_visible))
-+#define __visible	__attribute__((__externally_visible__))
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 7c0157d50964..ec4a28bad2c6 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -24,7 +24,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 			long ______r;					\
- 			static struct ftrace_likely_data		\
- 				__attribute__((__aligned__(4)))		\
--				__attribute__((section("_ftrace_annotated_branch"))) \
-+				__attribute__((__section__("_ftrace_annotated_branch"))) \
- 				______f = {				\
- 				.data.func = __func__,			\
- 				.data.file = __FILE__,			\
-@@ -60,7 +60,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 		int ______r;						\
- 		static struct ftrace_branch_data			\
- 			__attribute__((__aligned__(4)))			\
--			__attribute__((section("_ftrace_branch")))	\
-+			__attribute__((__section__("_ftrace_branch")))	\
- 			______f = {					\
- 				.func = __func__,			\
- 				.file = __FILE__,			\
-@@ -146,7 +146,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 	extern typeof(sym) sym;					\
- 	static const unsigned long __kentry_##sym		\
- 	__used							\
--	__attribute__((section("___kentry" "+" #sym ), used))	\
-+	__attribute__((__section__("___kentry" "+" #sym ), used))	\
- 	= (unsigned long)&sym;
- #endif
- 
-@@ -287,7 +287,7 @@ unsigned long read_word_at_a_time(const void *addr)
-  * visible to the compiler.
-  */
- #define __ADDRESSABLE(sym) \
--	static void * __attribute__((section(".discard.addressable"), used)) \
-+	static void * __attribute__((__section__(".discard.addressable"), used)) \
- 		__PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
- 
- /**
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index b6534292ea33..2bc0f94df38e 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -195,26 +195,26 @@ struct ftrace_likely_data {
-  * would be.
-  * [...]
-  */
--#define __pure			__attribute__((pure))
--#define __aligned(x)		__attribute__((aligned(x)))
--#define __aligned_largest	__attribute__((aligned))
--#define __printf(a, b)		__attribute__((format(printf, a, b)))
--#define __scanf(a, b)		__attribute__((format(scanf, a, b)))
--#define __maybe_unused		__attribute__((unused))
--#define __always_unused		__attribute__((unused))
--#define __mode(x)		__attribute__((mode(x)))
-+#define __pure			__attribute__((__pure__))
-+#define __aligned(x)		__attribute__((__aligned__(x)))
-+#define __aligned_largest	__attribute__((__aligned__))
-+#define __printf(a, b)		__attribute__((__format__(printf, a, b)))
-+#define __scanf(a, b)		__attribute__((__format__(scanf, a, b)))
-+#define __maybe_unused		__attribute__((__unused__))
-+#define __always_unused		__attribute__((__unused__))
-+#define __mode(x)		__attribute__((__mode__(x)))
- #define __malloc		__attribute__((__malloc__))
- #define __used			__attribute__((__used__))
--#define __noreturn		__attribute__((noreturn))
--#define __packed		__attribute__((packed))
--#define __weak			__attribute__((weak))
--#define __alias(symbol)		__attribute__((alias(#symbol)))
--#define __cold			__attribute__((cold))
-+#define __noreturn		__attribute__((__noreturn__))
-+#define __packed		__attribute__((__packed__))
-+#define __weak			__attribute__((__weak__))
-+#define __alias(symbol)		__attribute__((__alias__(#symbol)))
-+#define __cold			__attribute__((__cold__))
- #define __section(S)		__attribute__((__section__(#S)))
- 
- 
- #ifdef CONFIG_ENABLE_MUST_CHECK
--#define __must_check		__attribute__((warn_unused_result))
-+#define __must_check		__attribute__((__warn_unused_result__))
- #else
- #define __must_check
- #endif
-@@ -222,7 +222,7 @@ struct ftrace_likely_data {
- #if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
- #define notrace			__attribute__((hotpatch(0, 0)))
- #else
--#define notrace			__attribute__((no_instrument_function))
-+#define notrace			__attribute__((__no_instrument_function__))
- #endif
- 
- #define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
-@@ -234,7 +234,7 @@ struct ftrace_likely_data {
-  * defined so the gnu89 semantics are the default.
-  */
- #ifdef __GNUC_STDC_INLINE__
--# define __gnu_inline	__attribute__((gnu_inline))
-+# define __gnu_inline	__attribute__((__gnu_inline__))
- #else
- # define __gnu_inline
- #endif
-@@ -254,17 +254,17 @@ struct ftrace_likely_data {
- #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
- 	!defined(CONFIG_OPTIMIZE_INLINING)
- #define inline \
--	inline __attribute__((always_inline, unused)) notrace __gnu_inline
-+	inline __attribute__((__always_inline__, __unused__)) notrace __gnu_inline
- #else
--#define inline inline	__attribute__((unused)) notrace __gnu_inline
-+#define inline inline	__attribute__((__unused__)) notrace __gnu_inline
- #endif
- 
- #define __inline__ inline
- #define __inline inline
--#define noinline	__attribute__((noinline))
-+#define noinline	__attribute__((__noinline__))
- 
- #ifndef __always_inline
--#define __always_inline inline __attribute__((always_inline))
-+#define __always_inline inline __attribute__((__always_inline__))
- #endif
- 
- /*
 -- 
 2.17.1
 
