@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A93C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BFFC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF7B20652
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DEA72075A
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:15:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=obeliks.de header.i=@obeliks.de header.b="Ek1iwRyu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF7B20652
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=obeliks.de header.i=@obeliks.de header.b="P9Ko+FkA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEA72075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nospam.obeliks.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbeIHR7x (ORCPT
+        id S1726824AbeIHSBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 13:59:53 -0400
-Received: from scopuli.esotechnik.de ([79.143.188.15]:39048 "EHLO
+        Sat, 8 Sep 2018 14:01:05 -0400
+Received: from scopuli.esotechnik.de ([79.143.188.15]:34604 "EHLO
         mail.esotechnik.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeIHR7w (ORCPT
+        with ESMTP id S1726351AbeIHSBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 13:59:52 -0400
-Received: by mail.esotechnik.net (Postfix) with ESMTPSA id 0A1EDAE0B82;
-        Sat,  8 Sep 2018 15:14:05 +0200 (CEST)
+        Sat, 8 Sep 2018 14:01:05 -0400
+Received: by mail.esotechnik.net (Postfix) with ESMTPSA id B7F69AE0B81;
+        Sat,  8 Sep 2018 15:14:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=obeliks.de; s=jul2017;
-        t=1536412445; h=from:from:sender:reply-to:subject:subject:date:date:
+        t=1536412444; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=qWG7AqkXahklo3swWdltiDpxSLZ0ILQ8gXrfFQJlO9Q=;
-        b=Ek1iwRyulz07b2/C8pbm93gIdsqxKWeIihqQj5t6D/5w6rihsbYxw94p+GKk0/u+kctupR
-        a93yg0H7gZVVd9jhntgAXAp1/Gli0MkIn85V66B79NdFHTPm9v69Q+vsdyvc+ZNDkbX325
-        ak/DXMhdRikjeo+Arv7XGW9D409iqcWa3yyZAykO10gz22P7fq9AbfAk5/QU4qZddS6FcZ
-        l8IfaLNtTweHCygiFXtlTRFkC/Nrpw/94z1rxd00gtEkJxAeVcZVkRAwFIZzQt19q5+glb
-        t12ayBSATstp9JR4rbsYVeLJ48JKHAGSEyjT6mUtDt+CGJNBbDtzrlHT0fPKEg==
+        bh=KKNvow+69WIinFVpWVF4EiDGXbeRhgfewo1YQpRXles=;
+        b=P9Ko+FkAO3tdX/86EPfFAhN5sSX26nJslEAVTWlDSq1jopLowW0cuRiJYcKSdZA8uL+0HK
+        Ffgiso9bZUmWRg64e/IoNo+GAQu+ha8nPjNxDVcOjZzAL7ZGW1jlNaQL07l5fd3lbYDows
+        dj99OdKSqvsUh7BIwMUzAx3b6CkU/GjvSfhX8zAf96f/KKtougZivCO00bQ21Ntq+62Qzk
+        9xHGORXFwfLii2/Gza69Motn9VFvuQbeqjV7obLQxwlFArOhu+W3czDR5PAMWO2/oHyOqk
+        G9toib5cnLMq+7ZPZyAoUViwwnOiLDG4FRFdvzy53nFhyUhrfQNbpMfFNRkyzg==
 From:   Bernhard Frauendienst <kernel@nospam.obeliks.de>
 To:     David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -49,9 +49,9 @@ Cc:     Bernhard Frauendienst <kernel@nospam.obeliks.de>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] dt-bindings: add bindings for mtd-concat devices
-Date:   Sat,  8 Sep 2018 15:13:44 +0200
-Message-Id: <20180908131345.8145-3-kernel@nospam.obeliks.de>
+Subject: [PATCH v3 1/3] mtd: core: add get_mtd_device_by_node
+Date:   Sat,  8 Sep 2018 15:13:43 +0200
+Message-Id: <20180908131345.8145-2-kernel@nospam.obeliks.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180908131345.8145-1-kernel@nospam.obeliks.de>
 References: <20180908131345.8145-1-kernel@nospam.obeliks.de>
@@ -60,56 +60,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document virtual mtd-concat device bindings.
+Add function to retrieve a mtd device by its OF node. Since drivers can
+assign arbitrary names to mtd devices in the absence of a label
+property, there is no other reliable way to retrieve a mtd device for a
+given OF node.
 
 Signed-off-by: Bernhard Frauendienst <kernel@nospam.obeliks.de>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- .../devicetree/bindings/mtd/mtd-concat.txt    | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/mtd-concat.txt
+ drivers/mtd/mtdcore.c   | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/mtd/mtd.h |  2 ++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mtd/mtd-concat.txt b/Documentation/devicetree/bindings/mtd/mtd-concat.txt
-new file mode 100644
-index 000000000000..2daf3157b163
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/mtd-concat.txt
-@@ -0,0 +1,36 @@
-+Virtual MTD concat device
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 97ac219c082e..87dd63926bc9 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -926,6 +926,44 @@ struct mtd_info *get_mtd_device_nm(const char *name)
+ }
+ EXPORT_SYMBOL_GPL(get_mtd_device_nm);
+ 
++/**
++ *	get_mtd_device_by_node - obtain a validated handle for an MTD device
++ *	by of_node
++ *	@of_node: OF node of MTD device to open
++ *
++ *	This function returns MTD device description structure in case of
++ *	success and an error code in case of failure.
++ */
++struct mtd_info *get_mtd_device_by_node(const struct device_node *of_node)
++{
++	int err = -ENODEV;
++	struct mtd_info *mtd = NULL, *other;
 +
-+Requires properties:
-+- devices: list of phandles to mtd nodes that should be concatenated
++	mutex_lock(&mtd_table_mutex);
 +
-+Example:
-+
-+&spi {
-+	flash0: flash@0 {
-+		...
-+	};
-+	flash1: flash@1 {
-+		...
-+	};
-+};
-+
-+flash {
-+	compatible = "mtd-concat";
-+
-+	devices = <&flash0 &flash1>;
-+
-+	partitions {
-+		compatible = "fixed-partitions";
-+
-+		partition@0 {
-+			label = "boot";
-+			reg = <0x0000000 0x0040000>;
-+			read-only;
-+		};
-+
-+		partition@40000 {
-+			label = "firmware";
-+			reg = <0x0040000 0x1fc0000>;
-+		};
++	mtd_for_each_device(other) {
++		if (of_node == other->dev.of_node) {
++			mtd = other;
++			break;
++		}
 +	}
++
++	if (!mtd)
++		goto out_unlock;
++
++	err = __get_mtd_device(mtd);
++	if (err)
++		goto out_unlock;
++
++	mutex_unlock(&mtd_table_mutex);
++	return mtd;
++
++out_unlock:
++	mutex_unlock(&mtd_table_mutex);
++	return ERR_PTR(err);
 +}
++EXPORT_SYMBOL_GPL(get_mtd_device_by_node);
++
+ void put_mtd_device(struct mtd_info *mtd)
+ {
+ 	mutex_lock(&mtd_table_mutex);
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index cd0be91bdefa..fe71358f8eaa 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -570,6 +570,8 @@ extern struct mtd_info *get_mtd_device(struct mtd_info *mtd, int num);
+ extern int __get_mtd_device(struct mtd_info *mtd);
+ extern void __put_mtd_device(struct mtd_info *mtd);
+ extern struct mtd_info *get_mtd_device_nm(const char *name);
++extern struct mtd_info *get_mtd_device_by_node(
++		const struct device_node *of_node);
+ extern void put_mtd_device(struct mtd_info *mtd);
+ 
+ 
 -- 
 2.18.0
 
