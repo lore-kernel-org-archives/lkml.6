@@ -7,62 +7,63 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64544C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4BEC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1100720870
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7731820868
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfvASppx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1100720870
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvHgldHW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7731820868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbeIICMb (ORCPT
+        id S1728038AbeIICMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 22:12:31 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33415 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbeIICMb (ORCPT
+        Sat, 8 Sep 2018 22:12:34 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42166 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727675AbeIICMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 22:12:31 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v90-v6so18168223wrc.0;
-        Sat, 08 Sep 2018 14:25:21 -0700 (PDT)
+        Sat, 8 Sep 2018 22:12:32 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v17-v6so18096703wrr.9;
+        Sat, 08 Sep 2018 14:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Uz4AzMih6EiI5/W9aglDJg253rzEWbsVW4idFIjJeXQ=;
-        b=GfvASppxzIARsLg0IgW/5IQPp33XWoJQDu7Za/q5e1gfp6vhyt7GqQr8iZxOuCPL2I
-         s5SQpvREQbvh4HUMwh0fJ5b9NCyFCRyXwxm/iLZEOUqX8AbbDy8jelMr6ojX5edVIjw0
-         kWw9xjE1Zbu8vYqGMBJN8aJPXmpq8ix/pVsAePlUu5Qii3g6A35nB2+ZYIT2ta5+2jLZ
-         SX1hJPAgD0kG99Qz06yBQeF3eICRJrVrR/khz+iJCTQn/t5z3BCJytwp8rSYzzse5NoQ
-         9yYxJ4LBajfsnFjasI8+Rj1XWF7gZdrPzOS0JPczb404x++zXYoFGpjGKO1gAhefmbTs
-         hocA==
+        bh=6YrBEO0ygu8L4Ye+S5Cs5/KXj10wa1TGIrvc4xjTIE8=;
+        b=EvHgldHWJ9yTjlt9WKbvrsxI2XNYJsmXJqatrgWL3/T9J8Db4ja7kvy8hT2YJwVIeV
+         +vIyfRWrpMqNSjYZC8JKTf4ijPKm6WhmUVGUUGo0fQqT4iAUozV9WNH1fOqNbHsCsKJh
+         uw0v8iLCO5jBu00MK0VliyJrR+9sJGqyIpDl+B8LtPZ8y9T3q2MY1G5HpvMCbZvVFGpn
+         LI65owTdkUy546pxeFNE4311moxcKBOij9r8LsUqAghnD+gdMq8LkTwjr/HSLcHNcqfd
+         XUXKRQ82wxE1zlu8RaIIyKaOZxIKiefitmZDenlP4pW6AYUR2PCyw9cB2UW9n0RoS1nK
+         3h6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Uz4AzMih6EiI5/W9aglDJg253rzEWbsVW4idFIjJeXQ=;
-        b=dAU1J9JZ92ckfCLfATaqUe6nMYDJduo/MF9/lNLRNKb7ivbyn7cd+xaCxir0+6+eHQ
-         U+jI3BFrSO2evgm5J4WgHx8IZm4obqphxY7sBCMJfIF4u/VYCUoJeuIidZdTCO/HO0M9
-         EAwmYKvkKO1lX+19+8GBRjbzdtARsPAK+8Xsgx+9z3eBvJ6nBJI5Zxw8wM1rru697VUj
-         OPBsSSJX39JPUGl4lAhif8FZDdAHJuIqemlQ/1T9Y4qFOcncibFPXvxqFL9z3nFU4lxy
-         Yh92xY0RDLD5vcwF58Bu7wtrUvmmp/0JITq5QrgCmh0za3k9Fg1N+H5apC8iGiRxmy4d
-         DCgw==
-X-Gm-Message-State: APzg51Alu/ZFr9h4GgOwFi4Apfxc3rPGy0rdWq87ApNysh6sq/ELyiHj
-        HrHM4/wItybdMG2BjYEm/68=
-X-Google-Smtp-Source: ANB0VdZ6WMq8qHMBMavCADXAwbaFHJf6G2VdK/SbMd75aRc8VOzWtxDKeeBDXD9HO1oQltid5uJixQ==
-X-Received: by 2002:a5d:4648:: with SMTP id j8-v6mr9734310wrs.52.1536441921172;
-        Sat, 08 Sep 2018 14:25:21 -0700 (PDT)
+        bh=6YrBEO0ygu8L4Ye+S5Cs5/KXj10wa1TGIrvc4xjTIE8=;
+        b=AJtoMX2sDqdLHd3U1tSwpof+SXC1HE5buFml2u3gVCdBwqpV5hyYX7qbbCV9qgLoTl
+         p2UA3XoKgT8PVh8O9IXQh/lZxAw7zK/92Ss6LzZo4tJq49X+iK8b5EMZ6CHWb3ZXbLF5
+         QRmmH2qNyBZUmn7jYeRPqniupajEOdcv9uNtBEx0PQITepCJSUP5wBQm7pA1Q6IXeVpG
+         ls0tOiRYHeJ1+PfilPxQrcX1ZjDa4BEBiRmlPUo62bD2QVc8MLwTDW78Ykw3Jrww7rzj
+         6RcES//AXdvF9TRod8UBvGX9jZnu/ATeyPIGbMXlCB2FxIDvBb3H+m2NEN8UNjP33Zzq
+         Y5eg==
+X-Gm-Message-State: APzg51A5xU9nxYB+5TRgRDHuOT/6MxsViY1DO084t5p7DLTHaSyMCCyv
+        LAytOh0eJZSvvp/KP+5vdzg=
+X-Google-Smtp-Source: ANB0VdbJw4sXyQW6AFzux/pccqaJdJQ5f0+n7vG8hEvsPuqGxAOzWWeTUvcwhRf4NP9IgrpYiZIdGg==
+X-Received: by 2002:adf:a292:: with SMTP id s18-v6mr10815063wra.100.1536441922499;
+        Sat, 08 Sep 2018 14:25:22 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.19
+        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 14:25:20 -0700 (PDT)
+        Sat, 08 Sep 2018 14:25:22 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Eli Friedman <efriedma@codeaurora.org>,
         Christopher Li <sparse@chrisli.org>,
         Kees Cook <keescook@chromium.org>,
@@ -73,10 +74,11 @@ Cc:     linux-kernel@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         linux-sparse@vger.kernel.org
-Subject: [PATCH v4 07/13] Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
-Date:   Sat,  8 Sep 2018 23:24:53 +0200
-Message-Id: <20180908212459.19736-8-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v4 08/13] Compiler Attributes: add missing SPDX ID in compiler_types.h
+Date:   Sat,  8 Sep 2018 23:24:54 +0200
+Message-Id: <20180908212459.19736-9-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,29 +86,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse knows about a few more attributes now, so we can remove
-the __CHECKER__ conditions from them (which, in turn, allow us
-to move some of them later on to compiler_attributes.h).
-
-  * assume_aligned: since sparse's commit ffc860b ("sparse:
-    ignore __assume_aligned__ attribute"), included in 0.5.1
-
-  * error: since sparse's commit 0a04210 ("sparse: Add 'error'
-    to ignored attributes"), included in 0.5.0
-
-  * hotpatch: since sparse's commit 6043210 ("sparse/parse.c:
-    ignore hotpatch attribute"), included in 0.5.1
-
-  * warning: since sparse's commit 977365d ("Avoid "attribute
-    'warning': unknown attribute" warning"), included in 0.4.2
-
-On top of that, __must_be_array does not need it either because:
-
-  * Even ancient versions of sparse do not have a problem
-
-  * BUILD_BUG_ON_ZERO() is currently disabled for __CHECKER__
-
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Cc: Eli Friedman <efriedma@codeaurora.org>
 Cc: Christopher Li <sparse@chrisli.org>
 Cc: Kees Cook <keescook@chromium.org>
@@ -117,75 +98,23 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Joe Perches <joe@perches.com>
 Cc: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-sparse@vger.kernel.org
-Acked-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-gcc.h   | 6 ++----
- include/linux/compiler.h       | 4 ----
- include/linux/compiler_types.h | 2 +-
- 3 files changed, 3 insertions(+), 9 deletions(-)
+ include/linux/compiler_types.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 3b32bbfa5a49..1ca6a51cfaa9 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -76,14 +76,12 @@
- 
- #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
- 
--#ifndef __CHECKER__
- #define __compiletime_warning(message) __attribute__((__warning__(message)))
- #define __compiletime_error(message) __attribute__((__error__(message)))
- 
--#ifdef LATENT_ENTROPY_PLUGIN
-+#if defined(LATENT_ENTROPY_PLUGIN) && !defined(__CHECKER__)
- #define __latent_entropy __attribute__((latent_entropy))
- #endif
--#endif /* __CHECKER__ */
- 
- /*
-  * calling noreturn functions, __builtin_unreachable() and __builtin_trap()
-@@ -131,7 +129,7 @@
- 
- /* gcc version specific checks */
- 
--#if GCC_VERSION >= 40900 && !defined(__CHECKER__)
-+#if GCC_VERSION >= 40900
- /*
-  * __assume_aligned(n, k): Tell the optimizer that the returned
-  * pointer can be assumed to be k modulo n. The second argument is
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 165b1d5683ed..4030a2940d6b 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -357,11 +357,7 @@ static inline void *offset_to_ptr(const int *off)
- 	compiletime_assert(__native_word(t),				\
- 		"Need native word sized stores/loads for atomicity.")
- 
--#ifdef __CHECKER__
--#define __must_be_array(a)	0
--#else
- /* &a[0] degrades to a pointer: a different type from an array */
- #define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
--#endif
- 
- #endif /* __LINUX_COMPILER_H */
 diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 5ff9cda893f4..a3eceb3ad1b3 100644
+index a3eceb3ad1b3..ed7c0e4a180e 100644
 --- a/include/linux/compiler_types.h
 +++ b/include/linux/compiler_types.h
-@@ -218,7 +218,7 @@ struct ftrace_likely_data {
- #define __must_check
- #endif
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __LINUX_COMPILER_TYPES_H
+ #define __LINUX_COMPILER_TYPES_H
  
--#if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
-+#if defined(CC_USING_HOTPATCH)
- #define notrace			__attribute__((hotpatch(0, 0)))
- #else
- #define notrace			__attribute__((__no_instrument_function__))
 -- 
 2.17.1
 
