@@ -2,184 +2,179 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE697C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D329C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 22:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BAB52086E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:26:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdNsgtfZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BAB52086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DB04020844
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 22:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04020844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeIICNW (ORCPT
+        id S1727840AbeIICyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 22:13:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38756 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727694AbeIICM0 (ORCPT
+        Sat, 8 Sep 2018 22:54:19 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:54983 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727608AbeIICyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 22:12:26 -0400
-Received: by mail-wm0-f66.google.com with SMTP id t25-v6so17659934wmi.3;
-        Sat, 08 Sep 2018 14:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5ELqCquol9uLIAR1HjMyJP27IPe/3rVJEhfvVxeS1Hw=;
-        b=PdNsgtfZbphrH97gnteJQxvLOwe/d9Q+XERb2klYepe2du+0JFriuRKlFW5zlVrSlp
-         wEHw71QQNZQCn1TUNywM77KsmigEt2PjX9ygYwegEIls8fBF+YnToXIFxuXFib3I9zM9
-         vW8S1GEGkrqkKFNq3wr26d743ZwNGHFMDVzeKklGZd3Jd8jjw9ARybQ7XA+Tk4vnHC4e
-         9BBg+em0tK8Bp56JmEuuWdBw7bNFoJM8sMBOgrWlbHQj20ECqcK4HGJzmw+zuFWKXuuH
-         0nK7hpBKZCegDXj7QWurqL3N3rps6wyhLrlE19McafIxKH1UhZ+n9fu4Tw3ot7X4hSQ3
-         rFUA==
+        Sat, 8 Sep 2018 22:54:18 -0400
+Received: by mail-it0-f69.google.com with SMTP id r19-v6so33188076itc.4
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 15:07:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5ELqCquol9uLIAR1HjMyJP27IPe/3rVJEhfvVxeS1Hw=;
-        b=qM1/DQVy4uN//tn52Wowb3SYWniVN/f8ZVFgRvDh11CLsX3yxyM8gF2mVKl4Dvfw33
-         uYCXD3czJYIdkYrTBpZnm+XNhaeUyNPm1XY8XBNIjPE6XJl0am6UMGvfrNy9Nf5JfvsZ
-         Bv4/AKc3WJUDgHsb0x+wGfC1bQzHi42Bkws0Y6T4GNxBuWkj/K0qCjuFrLlOvc7508HT
-         iCuorK+4utQJKRSD9NwvgYX8S3e74IoP1tokD+ay5GJgfEFsSFFxjvFE/n6xe6/z1q9f
-         8FYhs/CUqzeUHKgOCImhthoCb4AFqk4lNyt3/wn7x/1QgxcPKH2H3rAeUSvee3ii8sOZ
-         J5XQ==
-X-Gm-Message-State: APzg51Bkn/LYrzgZ3UuicibkXjaDaXZO2wEZbimpnlcE6PsWzLU7IM1D
-        a7RTrWJOu2WhMqXaceiTYMs=
-X-Google-Smtp-Source: ANB0VdbHFFPDnydgS7Un3kwKCFgxdeK7cKjFUdxBeznpMjQA27/VceL0cvMLw96OnDDHhRk+WB6mBg==
-X-Received: by 2002:a1c:f913:: with SMTP id x19-v6mr8759501wmh.63.1536441916672;
-        Sat, 08 Sep 2018 14:25:16 -0700 (PDT)
-Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 14:25:16 -0700 (PDT)
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        linux-sparse@vger.kernel.org
-Subject: [PATCH v4 04/13] Compiler Attributes: homogenize __must_be_array
-Date:   Sat,  8 Sep 2018 23:24:50 +0200
-Message-Id: <20180908212459.19736-5-miguel.ojeda.sandonis@gmail.com>
-In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
-References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=0aDyMHM1PQR04rkZA5v3aByCXkpKkkzXL54RsaXfJ7M=;
+        b=aXQVsc7xTAR8Y7dIXBV+L5RowPcD1akMrWakQxoqwuT+GO6zUZqyNgb/RN7i2OHDqu
+         /EjCnf/Ghwga6x7tcwzJ99AkHL13qoYRQirCAVbrGy9qCpLNWS5O/R/bwqKtTYYyhtR/
+         iikBsIdCSwnsy3cyWRuHSaFhf93aX70Qs+Y9+MLyG6RzKOD9ZkBpobqDQBLoMeg8FKS3
+         N5hoKG2pIN02vi29qLFBhXpqd1/il5HOHBCRnN8ZqpyC3m195OWHq1Wd/MYl31mou2IZ
+         NMPh/zNkQAjBEM5v910HTpjvKIAoJO0qo9UDRP9N9SpelziUhSgw9QocLrfCOB4XkOnL
+         8hMA==
+X-Gm-Message-State: APzg51AozdTrVR7VXshxq78kx4e9XLnQd2pOop5bV8p4LtGcP4rOA7r0
+        Ub+r1wWU0XhKIOWKYN43B6WSFQ2jMCgCUr86x3ftuFx8gx1J
+X-Google-Smtp-Source: ANB0VdZGmXgHFwBeyaZJfq7DP5lA+Bt4B72km8LxZsfglbU2+rOBJba6KGgi/3wZLQU5Muz6RHEkcVIYESDHtcliT28zogttq3F9
+MIME-Version: 1.0
+X-Received: by 2002:a02:565b:: with SMTP id o88-v6mr12136681jab.14.1536444423554;
+ Sat, 08 Sep 2018 15:07:03 -0700 (PDT)
+Date:   Sat, 08 Sep 2018 15:07:03 -0700
+In-Reply-To: <00000000000027a1e605741b2afa@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000154f6a05756358eb@google.com>
+Subject: Re: KASAN: use-after-free Read in __rhashtable_lookup (2)
+From:   syzbot <syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        santosh.shilimkar@oracle.com, sowmini.varadhan@oracle.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Different definitions of __must_be_array:
+syzbot has found a reproducer for the following crash on:
 
-  * gcc: disabled for __CHECKER__
+HEAD commit:    d7b686ebf704 Merge branch 'i2c/for-current' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1132d70a400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
+dashboard link: https://syzkaller.appspot.com/bug?extid=8967084bcac563795dc6
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b67e49400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11119e49400000
 
-  * clang: same definition as gcc's, but without __CHECKER__
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
 
-  * intel: the comment claims __builtin_types_compatible_p()
-    is unsupported; but icc seems to support it since 13.0.1
-    (released in 2012). See https://godbolt.org/z/S0l6QQ
+==================================================================
+BUG: KASAN: use-after-free in memcmp+0xe3/0x160 lib/string.c:861
+Read of size 1 at addr ffff8801ce73eb70 by task syz-executor383/11736
 
-Therefore, we can remove all of them and have a single definition
-in compiler.h
+CPU: 1 PID: 11736 Comm: syz-executor383 Not tainted 4.19.0-rc2+ #228
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  memcmp+0xe3/0x160 lib/string.c:861
+  memcmp include/linux/string.h:386 [inline]
+  rhashtable_compare include/linux/rhashtable.h:462 [inline]
+  __rhashtable_lookup.isra.8.constprop.20+0x73a/0xd00  
+include/linux/rhashtable.h:484
+  rhashtable_lookup include/linux/rhashtable.h:516 [inline]
+  rhashtable_lookup_fast include/linux/rhashtable.h:542 [inline]
+  rds_add_bound net/rds/bind.c:117 [inline]
+  rds_bind+0x7d2/0x1520 net/rds/bind.c:238
+  __sys_bind+0x331/0x440 net/socket.c:1481
+  __do_sys_bind net/socket.c:1492 [inline]
+  __se_sys_bind net/socket.c:1490 [inline]
+  __x64_sys_bind+0x73/0xb0 net/socket.c:1490
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x444e29
+Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2b ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffec4b12988 EFLAGS: 00000217 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444e29
+RDX: 0000000000000010 RSI: 00000000200002c0 RDI: 0000000000000006
+RBP: 0000000000000000 R08: 00000000004002e0 R09: 00000000004002e0
+R10: 0000000000000004 R11: 0000000000000217 R12: 00000000000333a3
+R13: 0000000000402170 R14: 0000000000000000 R15: 0000000000000000
 
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Eli Friedman <efriedma@codeaurora.org>
-Cc: Christopher Li <sparse@chrisli.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-sparse@vger.kernel.org
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
- include/linux/compiler-clang.h | 1 -
- include/linux/compiler-gcc.h   | 7 -------
- include/linux/compiler-intel.h | 3 ---
- include/linux/compiler.h       | 7 +++++++
- 4 files changed, 7 insertions(+), 11 deletions(-)
+Allocated by task 11738:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
+  sk_prot_alloc+0x69/0x2e0 net/core/sock.c:1462
+  sk_alloc+0x10d/0x1690 net/core/sock.c:1522
+  rds_create+0x14f/0x740 net/rds/af_rds.c:666
+  __sock_create+0x536/0x930 net/socket.c:1275
+  sock_create net/socket.c:1315 [inline]
+  __sys_socket+0x106/0x260 net/socket.c:1345
+  __do_sys_socket net/socket.c:1354 [inline]
+  __se_sys_socket net/socket.c:1352 [inline]
+  __x64_sys_socket+0x73/0xb0 net/socket.c:1352
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index d11cad61ba5c..fa9532f8d885 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -41,6 +41,5 @@
-  * compilers, like ICC.
-  */
- #define barrier() __asm__ __volatile__("" : : : "memory")
--#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
- #define __assume_aligned(a, ...)	\
- 	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 371b6fa2d074..76f4907ef707 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -68,13 +68,6 @@
-  */
- #define uninitialized_var(x) x = x
- 
--#ifdef __CHECKER__
--#define __must_be_array(a)	0
--#else
--/* &a[0] degrades to a pointer: a different type from an array */
--#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
--#endif
--
- #ifdef RETPOLINE
- #define __noretpoline __attribute__((__indirect_branch__("keep")))
- #endif
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index fef8bb3e53ef..6004b4588bd4 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -29,9 +29,6 @@
-  */
- #define OPTIMIZER_HIDE_VAR(var) barrier()
- 
--/* Intel ECC compiler doesn't support __builtin_types_compatible_p() */
--#define __must_be_array(a) 0
--
- #endif
- 
- /* icc has this, but it's called _bswap16 */
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ec4a28bad2c6..165b1d5683ed 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -357,4 +357,11 @@ static inline void *offset_to_ptr(const int *off)
- 	compiletime_assert(__native_word(t),				\
- 		"Need native word sized stores/loads for atomicity.")
- 
-+#ifdef __CHECKER__
-+#define __must_be_array(a)	0
-+#else
-+/* &a[0] degrades to a pointer: a different type from an array */
-+#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-+#endif
-+
- #endif /* __LINUX_COMPILER_H */
--- 
-2.17.1
+Freed by task 11738:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x83/0x290 mm/slab.c:3756
+  sk_prot_free net/core/sock.c:1503 [inline]
+  __sk_destruct+0x766/0xbd0 net/core/sock.c:1587
+  sk_destruct+0x78/0x90 net/core/sock.c:1595
+  __sk_free+0xcf/0x300 net/core/sock.c:1606
+  sk_free+0x42/0x50 net/core/sock.c:1617
+  sock_put include/net/sock.h:1691 [inline]
+  rds_release+0x3e8/0x570 net/rds/af_rds.c:91
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1139
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801ce73e700
+  which belongs to the cache RDS of size 1608
+The buggy address is located 1136 bytes inside of
+  1608-byte region [ffff8801ce73e700, ffff8801ce73ed48)
+The buggy address belongs to the page:
+page:ffffea000739cf80 count:1 mapcount:0 mapping:ffff8801cb1c0c40 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea00073a5348 ffffea000738ea48 ffff8801cb1c0c40
+raw: 0000000000000000 ffff8801ce73e000 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801ce73ea00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801ce73ea80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801ce73eb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                              ^
+  ffff8801ce73eb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801ce73ec00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
