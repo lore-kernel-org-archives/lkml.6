@@ -6,135 +6,116 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208DFC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61118C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E6320652
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:36:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E6320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 06E222086B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:41:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E222086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbeIHSWP (ORCPT
+        id S1726763AbeIHS0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 14:22:15 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:45326 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeIHSWO (ORCPT
+        Sat, 8 Sep 2018 14:26:53 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:35990 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbeIHS0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 14:22:14 -0400
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w88DaDRg046045;
-        Sat, 8 Sep 2018 22:36:13 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
- Sat, 08 Sep 2018 22:36:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w88Da7Qe046008
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 8 Sep 2018 22:36:12 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [PATCH] mm: memcontrol: print proper OOM header when no eligible
- victim left
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, Dmitry Vyukov <dvyukov@google.com>,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
+        Sat, 8 Sep 2018 14:26:52 -0400
+Received: from null ([172.19.249.150]) by mrelayeu.kundenserver.de (mreue012
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 1N5lvf-1fmdGq0KqJ-017GEG; Sat, 08
+ Sep 2018 15:40:43 +0200
+Date:   Sat, 8 Sep 2018 15:40:41 +0200 (CEST)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-References: <20180821160406.22578-1-hannes@cmpxchg.org>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <b94f9964-c785-20c1-34af-e9013770b89a@I-love.SAKURA.ne.jp>
-Date:   Sat, 8 Sep 2018 22:36:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Message-ID: <1706035173.39231.1536414041437@email.1und1.de>
+In-Reply-To: <20180904155858.8001-17-tiwai@suse.de>
+References: <20180904155858.8001-1-tiwai@suse.de>
+ <20180904155858.8001-17-tiwai@suse.de>
+Subject: Re: [PATCH 16/29] staging: bcm2835-audio: Drop superfluous mutex
+ lock during prepare
 MIME-Version: 1.0
-In-Reply-To: <20180821160406.22578-1-hannes@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:K+pzkF6JpWbsQeHFK/cTp6AT4muAOvNRqq52MxY0IR7eoelBS6C
+ mCQAg69hXsPfHUDphBRmYIQ6KNScBIfmyru95OXkQ1NBzK0vjZKL1IEz/4qsMYt7BZRHBBT
+ K5/olqxqsouEQ0O0y/9kU7sN9VQPNIAwcNwAdMclIG7DpmxWpi7R41Zn4AsQ/d9owfY6d9R
+ VqMuS8aqJn4QsWDHfwp+w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7S4ft3bFxbQ=:PFzBsbxSrzO4VtyG+CQ+UR
+ RJK8NiX+HqR5ObWbghD1Khe7qCiaXSH0dB7Nu55tBbwIW+8UKvKtRFjOnZWSZ/uUp5Xgu6seO
+ 6n6Pm3ubTbG4DX/fn4qPuMI68FnwIrrpH/SUEXc2TB/YK5YwCeoxftFYwba/6b4I3ew0jcJFa
+ YOXmBVmFzVmQB6OCJRvQdr6+AUUJUS0mW/kKFRlRR19w7arLKAE01x2kNZcQY5OTkx3987t0F
+ Z0vNS6wiRamJVeX/PbPOFvEy8PZxFjxWThNbn8nWhPv/Avmb2c+0DfKkoGtDBp8WuVKWjuRJr
+ HbgtX19aAWzeIN7ypfi9mKPWFoC/dUI6g/6TBOK47L0ODX54a+2Z+jyhUOEOVx2gXE+nIlvmL
+ IeSZX2AAHGhD1eJlutoqFIQwmI2qBR9V2DtWFh2riCHtR2IANsg+IcQbuXgB6uCuS/jyCUk0h
+ Vt2Y2J7rHS7NruOLvIJJYQEtMNM/g2A6YZOAyDHGjNsU16zXkptIOe/7w+xHl09Q2jdE/AfZU
+ PO8vATDfj7FVUFKisti0oGxMx8VMR/BpXRrUArliupL6SiMkTBD49B2u72qU8KlM9qP62PrkQ
+ ghpJzzn7FRu41NdXNtYf8HqXpyLjR5LSBoDne2Gv3x9aQGfRbxapMMzaY6vP92m8q6mvaEvqE
+ ZHLG7cDAW2tozyinT7MpExokIC1Gl0UlJu/nA/fRssRB8BwOjJvBH+R7pX2D/mttYTjYe91wz
+ fNTAYYuG6WeSyOoN
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/22 1:04, Johannes Weiner wrote:
-> When the memcg OOM killer runs out of killable tasks, it currently
-> prints a WARN with no further OOM context. This has caused some user
-> confusion.
+Hi,
+
+> Takashi Iwai <tiwai@suse.de> hat am 4. September 2018 um 17:58 geschrieben:
 > 
-> Warnings indicate a kernel problem. In a reported case, however, the
-> situation was triggered by a non-sensical memcg configuration (hard
-> limit set to 0). But without any VM context this wasn't obvious from
-> the report, and it took some back and forth on the mailing list to
-> identify what is actually a trivial issue.
 > 
-> Handle this OOM condition like we handle it in the global OOM killer:
-> dump the full OOM context and tell the user we ran out of tasks.
+> The chip->audio_mutex is used basically for protecting the opened
+> stream assignment, and the prepare callback is irrelevant with it.
 > 
-> This way the user can identify misconfigurations easily by themselves
-> and rectify the problem - without having to go through the hassle of
-> running into an obscure but unsettling warning, finding the
-> appropriate kernel mailing list and waiting for a kernel developer to
-> remote-analyze that the memcg configuration caused this.
-> 
-> If users cannot make sense of why the OOM killer was triggered or why
-> it failed, they will still report it to the mailing list, we know that
-> from experience. So in case there is an actual kernel bug causing
-> this, kernel developers will very likely hear about it.
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> Acked-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
 > ---
->  mm/memcontrol.c |  2 --
->  mm/oom_kill.c   | 13 ++++++++++---
->  2 files changed, 10 insertions(+), 5 deletions(-)
+>  drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
 > 
+> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+> index 1f9c940f1cc3..9659c25b9f9d 100644
+> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+> @@ -218,8 +218,6 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+>  	int channels;
+>  	int err;
+>  
+> -	mutex_lock(&chip->audio_mutex);
+> -
+>  	/* notify the vchiq that it should enter spdif passthrough mode by
+>  	 * setting channels=0 (see
+>  	 * https://github.com/raspberrypi/linux/issues/528)
+> @@ -233,7 +231,7 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+>  				       runtime->rate,
+>  				       snd_pcm_format_width(runtime->format));
+>  	if (err < 0)
+> -		goto out;
+> +		return err;
+>  
+>  	memset(&alsa_stream->pcm_indirect, 0, sizeof(alsa_stream->pcm_indirect));
+>  
+> @@ -246,9 +244,7 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+>  	alsa_stream->pos = 0;
+>  	alsa_stream->draining = false;
+>  
+> - out:
+> -	mutex_unlock(&chip->audio_mutex);
+> -	return err;
+> +	return 0;
 
-Now that above patch went to 4.19-rc3, please apply below one.
+looks like your are removing code which has been added in patch #14 ?
 
-From eb2bff2ed308da04785bcf541dd3f748286bfa23 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Sat, 8 Sep 2018 22:26:28 +0900
-Subject: [PATCH] mm, oom: Don't emit noises for failed SysRq-f.
-
-Due to commit d75da004c708c9fc ("oom: improve oom disable handling") and
-commit 3100dab2aa09dc6e ("mm: memcontrol: print proper OOM header when
-no eligible victim left"), all
-
-  kworker/0:1 invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=-1, oom_score_adj=0
-  (...snipped...)
-  Out of memory and no killable processes...
-  OOM request ignored. No task eligible
-
-lines are printed.
-Let's not emit "invoked oom-killer" lines when SysRq-f failed.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- mm/oom_kill.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa53..92122ef 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -1106,8 +1106,10 @@ bool out_of_memory(struct oom_control *oc)
- 	select_bad_process(oc);
- 	/* Found nothing?!?! */
- 	if (!oc->chosen) {
--		dump_header(oc, NULL);
--		pr_warn("Out of memory and no killable processes...\n");
-+		if (!is_sysrq_oom(oc)) {
-+			dump_header(oc, NULL);
-+			pr_warn("Out of memory and no killable processes...\n");
-+		}
- 		/*
- 		 * If we got here due to an actual allocation at the
- 		 * system level, we cannot survive this and will enter
--- 
-1.8.3.1
-
-
+>  }
+>  
+>  static void snd_bcm2835_pcm_transfer(struct snd_pcm_substream *substream,
+> -- 
+> 2.18.0
+>
