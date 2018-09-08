@@ -2,405 +2,320 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9181EC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 038DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360142086D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:29:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxUSsDEe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360142086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 980612086D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:30:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980612086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeIHTPA (ORCPT
+        id S1727097AbeIHTQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 15:15:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbeIHTPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 15:15:00 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAC0F2086B;
-        Sat,  8 Sep 2018 14:28:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536416939;
-        bh=uo61JTdP2YR+pE7Cscieg6G9z0jaQ+86OTfX8H4tE9M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MxUSsDEe/cnlJ9a7weQxtctH391i67jNvgiYIrZbc6nQlW0Fs0voLAfxEJNHTJrNK
-         nuZU4JySAdPhs/vbH0uh0FQnnM9CXcP3ci9XGmTn/zjXZ9NkBDmWvi0mbl6GaaJ8Zq
-         gVlOR4JjwDuaPnFzEXMNA6j2mFn9iKR3GxjldjmQ=
-Date:   Sat, 8 Sep 2018 15:28:55 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <pmeerw@pmeerw.net>,
-        <davem@davemloft.net>, <mchehab+samsung@kernel.org>,
-        <gregkh@linuxfoundation.org>, <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/3] iio: adxl372: Refactor the driver
-Message-ID: <20180908152855.53bbf177@archlinux>
-In-Reply-To: <1536070291-5335-1-git-send-email-stefan.popa@analog.com>
-References: <1536070291-5335-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 8 Sep 2018 15:16:18 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:53150 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbeIHTQS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 15:16:18 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MJEIl-1gHY0H0BsB-00KiV7; Sat, 08 Sep 2018 16:29:46 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     viro@zeniv.linux.org.uk, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: [PATCH 03/11] compat_ioctl: remove translation for sound ioctls
+Date:   Sat,  8 Sep 2018 16:28:09 +0200
+Message-Id: <20180908142837.2819693-3-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180908142837.2819693-1-arnd@arndb.de>
+References: <20180908142837.2819693-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:/ZZEpM3KA5ysIhGr/2Vm0fvqLLI1DZFXkHUEyO2IPY5ksptOeM/
+ PzsraGAeljHVM91wP+fwCQk6TS1oIcXNTe7s+GVGiV3UEpKtLEC0ahWyROQzZChzruuw2WC
+ rkX57/fX/L8DJdmGe5SJ4n7I1JN1aYFPSYmiGj88fXJsLqXKWPgrdPn/EZX7bqjnKaMUq5P
+ 8KeHbuEdLucTUCv8qK7UA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:CDfBQa5MfUQ=:okIMhwnIvlRBjsjgdKzLys
+ 6JRDISEglMpOk72eAlqHtj217XJtF/tTmoWZATbmQt4ddibV1R1RQ5W64Pzqpi1pS7tcgBUWr
+ WwSTco9pga74KyoXzdCaVv4DuZ5u5cSG1vm6H2dUqJIQ8xHfP12DvcMgiGgi2Wtm2QLmtjPDp
+ W36Nsu+O/kXPihn0ZBWGcZeunSpEuvu1F/ZPRjfWPrbKyB9I/yildSQUbGLtZBUmGIsMIE1I4
+ D+EYsVaIZAVMtylWzqdmFeV1QTMxW0Wg+q0TtQEgkuQFEFgsWlOcVwXQYYIVUP12P1TpiHHvz
+ /viacwEZHlthbcQULSRuchfS9Y0+wFKfpt53pD310tsCsGr955H72WH+Xzovo2IYo86ku6Wp3
+ fpxvXyPDd9AJ0w3bhzGONVoTGqrOA2B18mv7i0uOHnpD0QvQWucVcCptXCK5EOO4GIsOFGMFH
+ 4eARylgtwHnchrAhUVsu0WRfT7VHRdHbnWpi7my69H4TKDhQ7MlO0b5hOrNHfi78m7vwh93W6
+ aPwVIcjtwh8g/whHUvkeuTSLcVH/0VxZJYDKXzbaeA3Lgsj1DPM1UAU40j5Y7SOXjh6alUI+W
+ gVBaonhoGgfMKquZsuDvOwsUlzmzAtl2mREicwPaFpjLSRddZJ1KnT4Mz0ZO4UgZar5+fbZWf
+ 9qLzGAznrrg3Y7mQIx0rDkav/5uE8MfAVBZBAfFDvPAccm7TBE05yMFSO+neL7rgu1dA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018 17:11:31 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
+The SNDCTL_* and SOUND_* commands are the old OSS user interface.
 
-> This patch restructures the existing adxl372 driver by adding a module for
-> SPI and a header file, while the baseline module deals with the chip-logic.
-> 
-> This is a necessary step, as this driver should support in the future
-> a similar device which differs only in the type of interface used (I2C
-> instead of SPI).
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-One comment inline on an area where we haven't been that consistent...
+I checked all the sound ioctl commands listed in fs/compat_ioctl.c
+to see if we still need the translation handlers. Here is what I
+found:
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to play with it.
+- sound/oss/ is (almost) gone from the kernel, this is what actually
+  needed all the translations
+- The ALSA emulation for OSS correctly handles all compat_ioctl
+  commands already.
+- sound/oss/dmasound/ is the last holdout of the original OSS code,
+  this is only used on arch/m68k, which has no 64-bit mode and
+  hence needs no compat handlers
+- arch/um/drivers/hostaudio_kern.c may run in 64-bit mode with
+  32-bit x86 user space underneath it. This rare corner case is
+  the only one that still needs the compat handlers.
 
-Thanks,
+By adding a simple redirect of .compat_ioctl to .unlocked_ioctl in the
+UML driver, we can remove all the COMPATIBLE_IOCTL() annotations without
+a change in functionality. For completeness, I'm adding the same thing
+to the dmasound file, knowing that it makes no difference.
 
-Jonathan
+The compat_ioctl list contains one comment about SNDCTL_DSP_MAPINBUF and
+SNDCTL_DSP_MAPOUTBUF, which actually would need a translation handler
+if implemented. However, the native implementation just returns -EINVAL,
+so we don't care.
 
-> ---
->  MAINTAINERS                     |  1 +
->  drivers/iio/accel/Kconfig       | 11 +++++--
->  drivers/iio/accel/Makefile      |  1 +
->  drivers/iio/accel/adxl372.c     | 73 ++++++++++++++---------------------------
->  drivers/iio/accel/adxl372.h     | 15 +++++++++
->  drivers/iio/accel/adxl372_spi.c | 52 +++++++++++++++++++++++++++++
->  6 files changed, 102 insertions(+), 51 deletions(-)
->  create mode 100644 drivers/iio/accel/adxl372.h
->  create mode 100644 drivers/iio/accel/adxl372_spi.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2bfc9b0..2938632 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -548,6 +548,7 @@ M:	Stefan Popa <stefan.popa@analog.com>
->  W:	http://ez.analog.com/community/linux-device-drivers
->  S:	Supported
->  F:	drivers/iio/accel/adxl372.c
-> +F:	drivers/iio/accel/adxl372_spi.c
->  F:	Documentation/devicetree/bindings/iio/accel/adxl372.txt
->  
->  AF9013 MEDIA DRIVER
-> diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
-> index eae23d6..bed5da8 100644
-> --- a/drivers/iio/accel/Kconfig
-> +++ b/drivers/iio/accel/Kconfig
-> @@ -61,15 +61,20 @@ config ADXL345_SPI
->  	  for the core module.
->  
->  config ADXL372
-> -	tristate "Analog Devices ADXL372 3-Axis Accelerometer Driver"
-> -	depends on SPI
-> +	tristate
->  	select IIO_BUFFER
->  	select IIO_TRIGGERED_BUFFER
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/um/drivers/hostaudio_kern.c   |   1 +
+ fs/compat_ioctl.c                  | 157 -----------------------------
+ sound/core/oss/pcm_oss.c           |   4 +
+ sound/oss/dmasound/dmasound_core.c |   2 +
+ 4 files changed, 7 insertions(+), 157 deletions(-)
 
-Hmm. I'm in too minds about this (and it's come up quite a few times before).
-
-The issue is trading off configuration complexity against flexibility to
-configure a minimum build.
-
-So either:
-1. Two config options for the user to select.
-2. One option that will build the i2c / spi dependent on their being support
-   for these busses built.
-
-This second is what for example the bmc150 does in this same file. The
-It leads to a cleaner menuconfig.
-The first is done by mma7455.
-
-At somepoint we should probably decide to clean this up but for now there
-is a mix so I'm not going to block this patch on making that decision.
-
-> +
-> +config ADXL372_SPI
-> +	tristate "Analog Devices ADXL372 3-Axis Accelerometer SPI Driver"
-> +	depends on SPI
-> +	select ADXL372
-> +	select REGMAP_SPI
->  	help
->  	  Say yes here to add support for the Analog Devices ADXL372 triaxial
->  	  acceleration sensor.
->  	  To compile this driver as a module, choose M here: the
-> -	  module will be called adxl372.
-> +	  module will be called adxl372_spi.
->  
->  config BMA180
->  	tristate "Bosch BMA180/BMA250 3-Axis Accelerometer Driver"
-> diff --git a/drivers/iio/accel/Makefile b/drivers/iio/accel/Makefile
-> index 5758ffc..c9c5db9 100644
-> --- a/drivers/iio/accel/Makefile
-> +++ b/drivers/iio/accel/Makefile
-> @@ -10,6 +10,7 @@ obj-$(CONFIG_ADXL345) += adxl345_core.o
->  obj-$(CONFIG_ADXL345_I2C) += adxl345_i2c.o
->  obj-$(CONFIG_ADXL345_SPI) += adxl345_spi.o
->  obj-$(CONFIG_ADXL372) += adxl372.o
-> +obj-$(CONFIG_ADXL372_SPI) += adxl372_spi.o
->  obj-$(CONFIG_BMA180) += bma180.o
->  obj-$(CONFIG_BMA220) += bma220_spi.o
->  obj-$(CONFIG_BMC150_ACCEL) += bmc150-accel-core.o
-> diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
-> index fdaaa58..f1df89d 100644
-> --- a/drivers/iio/accel/adxl372.c
-> +++ b/drivers/iio/accel/adxl372.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  /*
-> - * ADXL372 3-Axis Digital Accelerometer SPI driver
-> + * ADXL372 3-Axis Digital Accelerometer core driver
->   *
->   * Copyright 2018 Analog Devices Inc.
->   */
-> @@ -20,6 +20,8 @@
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
->  
-> +#include "adxl372.h"
-> +
->  /* ADXL372 registers definition */
->  #define ADXL372_DEVID			0x00
->  #define ADXL372_DEVID_MST		0x01
-> @@ -246,7 +248,8 @@ static const struct iio_chan_spec adxl372_channels[] = {
->  };
->  
->  struct adxl372_state {
-> -	struct spi_device		*spi;
-> +	int				irq;
-> +	struct device			*dev;
->  	struct regmap			*regmap;
->  	struct iio_trigger		*dready_trig;
->  	enum adxl372_fifo_mode		fifo_mode;
-> @@ -565,7 +568,7 @@ static int adxl372_setup(struct adxl372_state *st)
->  		return ret;
->  
->  	if (regval != ADXL372_DEVID_VAL) {
-> -		dev_err(&st->spi->dev, "Invalid chip id %x\n", regval);
-> +		dev_err(st->dev, "Invalid chip id %x\n", regval);
->  		return -ENODEV;
->  	}
->  
-> @@ -891,56 +894,45 @@ static const struct iio_info adxl372_info = {
->  	.hwfifo_set_watermark = adxl372_set_watermark,
->  };
->  
-> -static bool adxl372_readable_noinc_reg(struct device *dev, unsigned int reg)
-> +bool adxl372_readable_noinc_reg(struct device *dev, unsigned int reg)
->  {
->  	return (reg == ADXL372_FIFO_DATA);
->  }
-> +EXPORT_SYMBOL_GPL(adxl372_readable_noinc_reg);
->  
-> -static const struct regmap_config adxl372_spi_regmap_config = {
-> -	.reg_bits = 7,
-> -	.pad_bits = 1,
-> -	.val_bits = 8,
-> -	.read_flag_mask = BIT(0),
-> -	.readable_noinc_reg = adxl372_readable_noinc_reg,
-> -};
-> -
-> -static int adxl372_probe(struct spi_device *spi)
-> +int adxl372_probe(struct device *dev, struct regmap *regmap,
-> +		  int irq, const char *name)
->  {
->  	struct iio_dev *indio_dev;
->  	struct adxl372_state *st;
-> -	struct regmap *regmap;
->  	int ret;
->  
-> -	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
->  	if (!indio_dev)
->  		return -ENOMEM;
->  
->  	st = iio_priv(indio_dev);
-> -	spi_set_drvdata(spi, indio_dev);
-> -
-> -	st->spi = spi;
-> -
-> -	regmap = devm_regmap_init_spi(spi, &adxl372_spi_regmap_config);
-> -	if (IS_ERR(regmap))
-> -		return PTR_ERR(regmap);
-> +	dev_set_drvdata(dev, indio_dev);
->  
-> +	st->dev = dev;
->  	st->regmap = regmap;
-> +	st->irq = irq;
->  
->  	indio_dev->channels = adxl372_channels;
->  	indio_dev->num_channels = ARRAY_SIZE(adxl372_channels);
->  	indio_dev->available_scan_masks = adxl372_channel_masks;
-> -	indio_dev->dev.parent = &spi->dev;
-> -	indio_dev->name = spi_get_device_id(spi)->name;
-> +	indio_dev->dev.parent = dev;
-> +	indio_dev->name = name;
->  	indio_dev->info = &adxl372_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
->  
->  	ret = adxl372_setup(st);
->  	if (ret < 0) {
-> -		dev_err(&st->spi->dev, "ADXL372 setup failed\n");
-> +		dev_err(dev, "ADXL372 setup failed\n");
->  		return ret;
->  	}
->  
-> -	ret = devm_iio_triggered_buffer_setup(&st->spi->dev,
-> +	ret = devm_iio_triggered_buffer_setup(dev,
->  					      indio_dev, NULL,
->  					      adxl372_trigger_handler,
->  					      &adxl372_buffer_ops);
-> @@ -949,8 +941,8 @@ static int adxl372_probe(struct spi_device *spi)
->  
->  	iio_buffer_set_attrs(indio_dev->buffer, adxl372_fifo_attributes);
->  
-> -	if (st->spi->irq) {
-> -		st->dready_trig = devm_iio_trigger_alloc(&st->spi->dev,
-> +	if (st->irq) {
-> +		st->dready_trig = devm_iio_trigger_alloc(dev,
->  							 "%s-dev%d",
->  							 indio_dev->name,
->  							 indio_dev->id);
-> @@ -958,15 +950,15 @@ static int adxl372_probe(struct spi_device *spi)
->  			return -ENOMEM;
->  
->  		st->dready_trig->ops = &adxl372_trigger_ops;
-> -		st->dready_trig->dev.parent = &st->spi->dev;
-> +		st->dready_trig->dev.parent = dev;
->  		iio_trigger_set_drvdata(st->dready_trig, indio_dev);
-> -		ret = devm_iio_trigger_register(&st->spi->dev, st->dready_trig);
-> +		ret = devm_iio_trigger_register(dev, st->dready_trig);
->  		if (ret < 0)
->  			return ret;
->  
->  		indio_dev->trig = iio_trigger_get(st->dready_trig);
->  
-> -		ret = devm_request_threaded_irq(&st->spi->dev, st->spi->irq,
-> +		ret = devm_request_threaded_irq(dev, st->irq,
->  					iio_trigger_generic_data_rdy_poll,
->  					NULL,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -975,24 +967,9 @@ static int adxl372_probe(struct spi_device *spi)
->  			return ret;
->  	}
->  
-> -	return devm_iio_device_register(&st->spi->dev, indio_dev);
-> +	return devm_iio_device_register(dev, indio_dev);
->  }
-> -
-> -static const struct spi_device_id adxl372_id[] = {
-> -	{ "adxl372", 0 },
-> -	{}
-> -};
-> -MODULE_DEVICE_TABLE(spi, adxl372_id);
-> -
-> -static struct spi_driver adxl372_driver = {
-> -	.driver = {
-> -		.name = KBUILD_MODNAME,
-> -	},
-> -	.probe = adxl372_probe,
-> -	.id_table = adxl372_id,
-> -};
-> -
-> -module_spi_driver(adxl372_driver);
-> +EXPORT_SYMBOL_GPL(adxl372_probe);
->  
->  MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices ADXL372 3-axis accelerometer driver");
-> diff --git a/drivers/iio/accel/adxl372.h b/drivers/iio/accel/adxl372.h
-> new file mode 100644
-> index 0000000..5da89b1
-> --- /dev/null
-> +++ b/drivers/iio/accel/adxl372.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * ADXL372 3-Axis Digital Accelerometer
-> + *
-> + * Copyright 2018 Analog Devices Inc.
-> + */
-> +
-> +#ifndef _ADXL372_H_
-> +#define _ADXL372_H_
-> +
-> +int adxl372_probe(struct device *dev, struct regmap *regmap,
-> +		  int irq, const char *name);
-> +bool adxl372_readable_noinc_reg(struct device *dev, unsigned int reg);
-> +
-> +#endif /* _ADXL372_H_ */
-> diff --git a/drivers/iio/accel/adxl372_spi.c b/drivers/iio/accel/adxl372_spi.c
-> new file mode 100644
-> index 0000000..e14e655
-> --- /dev/null
-> +++ b/drivers/iio/accel/adxl372_spi.c
-> @@ -0,0 +1,52 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * ADXL372 3-Axis Digital Accelerometer SPI driver
-> + *
-> + * Copyright 2018 Analog Devices Inc.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/spi/spi.h>
-> +
-> +#include "adxl372.h"
-> +
-> +static const struct regmap_config adxl372_spi_regmap_config = {
-> +	.reg_bits = 7,
-> +	.pad_bits = 1,
-> +	.val_bits = 8,
-> +	.read_flag_mask = BIT(0),
-> +	.readable_noinc_reg = adxl372_readable_noinc_reg,
-> +};
-> +
-> +static int adxl372_spi_probe(struct spi_device *spi)
-> +{
-> +	const struct spi_device_id *id = spi_get_device_id(spi);
-> +	struct regmap *regmap;
-> +
-> +	regmap = devm_regmap_init_spi(spi, &adxl372_spi_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	return adxl372_probe(&spi->dev, regmap, spi->irq, id->name);
-> +}
-> +
-> +static const struct spi_device_id adxl372_spi_id[] = {
-> +	{ "adxl372", 0 },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, adxl372_spi_id);
-> +
-> +static struct spi_driver adxl372_spi_driver = {
-> +	.driver = {
-> +		.name = "adxl372_spi",
-> +	},
-> +	.probe = adxl372_spi_probe,
-> +	.id_table = adxl372_spi_id,
-> +};
-> +
-> +module_spi_driver(adxl372_spi_driver);
-> +
-> +MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
-> +MODULE_DESCRIPTION("Analog Devices ADXL372 3-axis accelerometer SPI driver");
-> +MODULE_LICENSE("GPL");
+diff --git a/arch/um/drivers/hostaudio_kern.c b/arch/um/drivers/hostaudio_kern.c
+index 7f9dbdbc4eb7..0278a642a622 100644
+--- a/arch/um/drivers/hostaudio_kern.c
++++ b/arch/um/drivers/hostaudio_kern.c
+@@ -298,6 +298,7 @@ static const struct file_operations hostaudio_fops = {
+ 	.write          = hostaudio_write,
+ 	.poll           = hostaudio_poll,
+ 	.unlocked_ioctl	= hostaudio_ioctl,
++	.compat_ioctl	= hostaudio_ioctl,
+ 	.mmap           = NULL,
+ 	.open           = hostaudio_open,
+ 	.release        = hostaudio_release,
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index c2c73b802fb3..875516658c39 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -78,7 +78,6 @@
+ #include <linux/if_bonding.h>
+ #include <linux/watchdog.h>
+ 
+-#include <linux/soundcard.h>
+ #include <linux/lp.h>
+ #include <linux/ppdev.h>
+ 
+@@ -605,162 +604,6 @@ COMPATIBLE_IOCTL(SG_GET_KEEP_ORPHAN)
+ /* PPP stuff */
+ COMPATIBLE_IOCTL(PPPIOCGUNIT)
+ COMPATIBLE_IOCTL(PPPIOCGCHAN)
+-/* Big A */
+-/* sparc only */
+-/* Big Q for sound/OSS */
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_RESET)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_SYNC)
+-COMPATIBLE_IOCTL(SNDCTL_SYNTH_INFO)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_CTRLRATE)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_GETOUTCOUNT)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_GETINCOUNT)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_PERCMODE)
+-COMPATIBLE_IOCTL(SNDCTL_FM_LOAD_INSTR)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_TESTMIDI)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_RESETSAMPLES)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_NRSYNTHS)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_NRMIDIS)
+-COMPATIBLE_IOCTL(SNDCTL_MIDI_INFO)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_THRESHOLD)
+-COMPATIBLE_IOCTL(SNDCTL_SYNTH_MEMAVL)
+-COMPATIBLE_IOCTL(SNDCTL_FM_4OP_ENABLE)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_PANIC)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_OUTOFBAND)
+-COMPATIBLE_IOCTL(SNDCTL_SEQ_GETTIME)
+-COMPATIBLE_IOCTL(SNDCTL_SYNTH_ID)
+-COMPATIBLE_IOCTL(SNDCTL_SYNTH_CONTROL)
+-COMPATIBLE_IOCTL(SNDCTL_SYNTH_REMOVESAMPLE)
+-/* Big T for sound/OSS */
+-COMPATIBLE_IOCTL(SNDCTL_TMR_TIMEBASE)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_START)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_STOP)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_CONTINUE)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_TEMPO)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_SOURCE)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_METRONOME)
+-COMPATIBLE_IOCTL(SNDCTL_TMR_SELECT)
+-/* Little m for sound/OSS */
+-COMPATIBLE_IOCTL(SNDCTL_MIDI_PRETIME)
+-COMPATIBLE_IOCTL(SNDCTL_MIDI_MPUMODE)
+-COMPATIBLE_IOCTL(SNDCTL_MIDI_MPUCMD)
+-/* Big P for sound/OSS */
+-COMPATIBLE_IOCTL(SNDCTL_DSP_RESET)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SYNC)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SPEED)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_STEREO)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETBLKSIZE)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_CHANNELS)
+-COMPATIBLE_IOCTL(SOUND_PCM_WRITE_FILTER)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_POST)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SUBDIVIDE)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SETFRAGMENT)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETFMTS)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SETFMT)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETOSPACE)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETISPACE)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_NONBLOCK)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETCAPS)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETTRIGGER)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SETTRIGGER)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETIPTR)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETOPTR)
+-/* SNDCTL_DSP_MAPINBUF,  XXX needs translation */
+-/* SNDCTL_DSP_MAPOUTBUF,  XXX needs translation */
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SETSYNCRO)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_SETDUPLEX)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_GETODELAY)
+-COMPATIBLE_IOCTL(SNDCTL_DSP_PROFILE)
+-COMPATIBLE_IOCTL(SOUND_PCM_READ_RATE)
+-COMPATIBLE_IOCTL(SOUND_PCM_READ_CHANNELS)
+-COMPATIBLE_IOCTL(SOUND_PCM_READ_BITS)
+-COMPATIBLE_IOCTL(SOUND_PCM_READ_FILTER)
+-/* Big C for sound/OSS */
+-COMPATIBLE_IOCTL(SNDCTL_COPR_RESET)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_LOAD)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_RDATA)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_RCODE)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_WDATA)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_WCODE)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_RUN)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_HALT)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_SENDMSG)
+-COMPATIBLE_IOCTL(SNDCTL_COPR_RCVMSG)
+-/* Big M for sound/OSS */
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_VOLUME)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_BASS)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_TREBLE)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_SYNTH)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_PCM)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_SPEAKER)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_LINE)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_MIC)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_CD)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_IMIX)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_ALTPCM)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_RECLEV)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_IGAIN)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_OGAIN)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_LINE1)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_LINE2)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_LINE3)
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_DIGITAL1))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_DIGITAL2))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_DIGITAL3))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_PHONEIN))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_PHONEOUT))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_VIDEO))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_RADIO))
+-COMPATIBLE_IOCTL(MIXER_READ(SOUND_MIXER_MONITOR))
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_MUTE)
+-/* SOUND_MIXER_READ_ENHANCE,  same value as READ_MUTE */
+-/* SOUND_MIXER_READ_LOUD,  same value as READ_MUTE */
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_RECSRC)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_DEVMASK)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_RECMASK)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_STEREODEVS)
+-COMPATIBLE_IOCTL(SOUND_MIXER_READ_CAPS)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_VOLUME)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_BASS)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_TREBLE)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_SYNTH)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_PCM)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_SPEAKER)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_LINE)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_MIC)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_CD)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_IMIX)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_ALTPCM)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_RECLEV)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_IGAIN)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_OGAIN)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_LINE1)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_LINE2)
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_LINE3)
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_DIGITAL1))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_DIGITAL2))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_DIGITAL3))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_PHONEIN))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_PHONEOUT))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_VIDEO))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_RADIO))
+-COMPATIBLE_IOCTL(MIXER_WRITE(SOUND_MIXER_MONITOR))
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_MUTE)
+-/* SOUND_MIXER_WRITE_ENHANCE,  same value as WRITE_MUTE */
+-/* SOUND_MIXER_WRITE_LOUD,  same value as WRITE_MUTE */
+-COMPATIBLE_IOCTL(SOUND_MIXER_WRITE_RECSRC)
+-COMPATIBLE_IOCTL(SOUND_MIXER_INFO)
+-COMPATIBLE_IOCTL(SOUND_OLD_MIXER_INFO)
+-COMPATIBLE_IOCTL(SOUND_MIXER_ACCESS)
+-COMPATIBLE_IOCTL(SOUND_MIXER_AGC)
+-COMPATIBLE_IOCTL(SOUND_MIXER_3DSE)
+-COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE1)
+-COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE2)
+-COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE3)
+-COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE4)
+-COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE5)
+-COMPATIBLE_IOCTL(SOUND_MIXER_GETLEVELS)
+-COMPATIBLE_IOCTL(SOUND_MIXER_SETLEVELS)
+-COMPATIBLE_IOCTL(OSS_GETVERSION)
+ /* Raw devices */
+ COMPATIBLE_IOCTL(RAW_SETBIND)
+ COMPATIBLE_IOCTL(RAW_GETBIND)
+diff --git a/sound/core/oss/pcm_oss.c b/sound/core/oss/pcm_oss.c
+index f8d4a419f3af..3f25c9d7b7df 100644
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -2732,6 +2732,10 @@ static long snd_pcm_oss_ioctl(struct file *file, unsigned int cmd, unsigned long
+ static long snd_pcm_oss_ioctl_compat(struct file *file, unsigned int cmd,
+ 				     unsigned long arg)
+ {
++	/*
++	 * Everything is compatbile except SNDCTL_DSP_MAPINBUF/SNDCTL_DSP_MAPOUTBUF,
++	 * which are not implemented for the native case either
++	 */
+ 	return snd_pcm_oss_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
+ }
+ #else
+diff --git a/sound/oss/dmasound/dmasound_core.c b/sound/oss/dmasound/dmasound_core.c
+index fc9bcd47d6a4..b6b5f5a5df9c 100644
+--- a/sound/oss/dmasound/dmasound_core.c
++++ b/sound/oss/dmasound/dmasound_core.c
+@@ -384,6 +384,7 @@ static const struct file_operations mixer_fops =
+ 	.owner		= THIS_MODULE,
+ 	.llseek		= no_llseek,
+ 	.unlocked_ioctl	= mixer_unlocked_ioctl,
++	.compat_ioctl	= mixer_unlocked_ioctl,
+ 	.open		= mixer_open,
+ 	.release	= mixer_release,
+ };
+@@ -1167,6 +1168,7 @@ static const struct file_operations sq_fops =
+ 	.write		= sq_write,
+ 	.poll		= sq_poll,
+ 	.unlocked_ioctl	= sq_unlocked_ioctl,
++	.compat_ioctl	= sq_unlocked_ioctl,
+ 	.open		= sq_open,
+ 	.release	= sq_release,
+ };
+-- 
+2.18.0
 
