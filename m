@@ -2,179 +2,190 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D329C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 22:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64ADC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 23:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB04020844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 22:13:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04020844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C88B62077B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 23:21:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88B62077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeIICyT (ORCPT
+        id S1726396AbeIIEIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 22:54:19 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:54983 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbeIICyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 22:54:18 -0400
-Received: by mail-it0-f69.google.com with SMTP id r19-v6so33188076itc.4
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 15:07:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=0aDyMHM1PQR04rkZA5v3aByCXkpKkkzXL54RsaXfJ7M=;
-        b=aXQVsc7xTAR8Y7dIXBV+L5RowPcD1akMrWakQxoqwuT+GO6zUZqyNgb/RN7i2OHDqu
-         /EjCnf/Ghwga6x7tcwzJ99AkHL13qoYRQirCAVbrGy9qCpLNWS5O/R/bwqKtTYYyhtR/
-         iikBsIdCSwnsy3cyWRuHSaFhf93aX70Qs+Y9+MLyG6RzKOD9ZkBpobqDQBLoMeg8FKS3
-         N5hoKG2pIN02vi29qLFBhXpqd1/il5HOHBCRnN8ZqpyC3m195OWHq1Wd/MYl31mou2IZ
-         NMPh/zNkQAjBEM5v910HTpjvKIAoJO0qo9UDRP9N9SpelziUhSgw9QocLrfCOB4XkOnL
-         8hMA==
-X-Gm-Message-State: APzg51AozdTrVR7VXshxq78kx4e9XLnQd2pOop5bV8p4LtGcP4rOA7r0
-        Ub+r1wWU0XhKIOWKYN43B6WSFQ2jMCgCUr86x3ftuFx8gx1J
-X-Google-Smtp-Source: ANB0VdZGmXgHFwBeyaZJfq7DP5lA+Bt4B72km8LxZsfglbU2+rOBJba6KGgi/3wZLQU5Muz6RHEkcVIYESDHtcliT28zogttq3F9
+        Sun, 9 Sep 2018 00:08:43 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:33544 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725792AbeIIEIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 00:08:43 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1fymXR-0003jI-0S; Sun, 09 Sep 2018 01:21:13 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH] pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
+To:     Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <86f282b4-5f86-2b3d-845f-80d34318ea98@maciej.szmigiero.name>
+Date:   Sun, 9 Sep 2018 01:21:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:565b:: with SMTP id o88-v6mr12136681jab.14.1536444423554;
- Sat, 08 Sep 2018 15:07:03 -0700 (PDT)
-Date:   Sat, 08 Sep 2018 15:07:03 -0700
-In-Reply-To: <00000000000027a1e605741b2afa@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000154f6a05756358eb@google.com>
-Subject: Re: KASAN: use-after-free Read in __rhashtable_lookup (2)
-From:   syzbot <syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        santosh.shilimkar@oracle.com, sowmini.varadhan@oracle.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Currently, "disable_clkrun" yenta_socket module parameter is only
+implemented for TI CardBus bridges.
+Add also an implementation for Ricoh bridges that have the necessary
+setting documented in publicly available datasheets.
 
-HEAD commit:    d7b686ebf704 Merge branch 'i2c/for-current' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1132d70a400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
-dashboard link: https://syzkaller.appspot.com/bug?extid=8967084bcac563795dc6
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b67e49400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11119e49400000
+Tested on a RL5C476II with a Sunrich C-160 CardBus NIC that doesn't work
+correctly unless the CLKRUN protocol is disabled.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
+Let's also make it clear in its description that the "disable_clkrun"
+module parameter only works on these two previously mentioned brands of
+CardBus bridges.
 
-==================================================================
-BUG: KASAN: use-after-free in memcmp+0xe3/0x160 lib/string.c:861
-Read of size 1 at addr ffff8801ce73eb70 by task syz-executor383/11736
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+---
+ drivers/pcmcia/ricoh.h        | 35 +++++++++++++++++++++++++++++++++++
+ drivers/pcmcia/yenta_socket.c |  3 ++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
-CPU: 1 PID: 11736 Comm: syz-executor383 Not tainted 4.19.0-rc2+ #228
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  memcmp+0xe3/0x160 lib/string.c:861
-  memcmp include/linux/string.h:386 [inline]
-  rhashtable_compare include/linux/rhashtable.h:462 [inline]
-  __rhashtable_lookup.isra.8.constprop.20+0x73a/0xd00  
-include/linux/rhashtable.h:484
-  rhashtable_lookup include/linux/rhashtable.h:516 [inline]
-  rhashtable_lookup_fast include/linux/rhashtable.h:542 [inline]
-  rds_add_bound net/rds/bind.c:117 [inline]
-  rds_bind+0x7d2/0x1520 net/rds/bind.c:238
-  __sys_bind+0x331/0x440 net/socket.c:1481
-  __do_sys_bind net/socket.c:1492 [inline]
-  __se_sys_bind net/socket.c:1490 [inline]
-  __x64_sys_bind+0x73/0xb0 net/socket.c:1490
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444e29
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 2b ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffec4b12988 EFLAGS: 00000217 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444e29
-RDX: 0000000000000010 RSI: 00000000200002c0 RDI: 0000000000000006
-RBP: 0000000000000000 R08: 00000000004002e0 R09: 00000000004002e0
-R10: 0000000000000004 R11: 0000000000000217 R12: 00000000000333a3
-R13: 0000000000402170 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 11738:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
-  sk_prot_alloc+0x69/0x2e0 net/core/sock.c:1462
-  sk_alloc+0x10d/0x1690 net/core/sock.c:1522
-  rds_create+0x14f/0x740 net/rds/af_rds.c:666
-  __sock_create+0x536/0x930 net/socket.c:1275
-  sock_create net/socket.c:1315 [inline]
-  __sys_socket+0x106/0x260 net/socket.c:1345
-  __do_sys_socket net/socket.c:1354 [inline]
-  __se_sys_socket net/socket.c:1352 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1352
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 11738:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3756
-  sk_prot_free net/core/sock.c:1503 [inline]
-  __sk_destruct+0x766/0xbd0 net/core/sock.c:1587
-  sk_destruct+0x78/0x90 net/core/sock.c:1595
-  __sk_free+0xcf/0x300 net/core/sock.c:1606
-  sk_free+0x42/0x50 net/core/sock.c:1617
-  sock_put include/net/sock.h:1691 [inline]
-  rds_release+0x3e8/0x570 net/rds/af_rds.c:91
-  __sock_release+0xd7/0x250 net/socket.c:579
-  sock_close+0x19/0x20 net/socket.c:1139
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801ce73e700
-  which belongs to the cache RDS of size 1608
-The buggy address is located 1136 bytes inside of
-  1608-byte region [ffff8801ce73e700, ffff8801ce73ed48)
-The buggy address belongs to the page:
-page:ffffea000739cf80 count:1 mapcount:0 mapping:ffff8801cb1c0c40 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00073a5348 ffffea000738ea48 ffff8801cb1c0c40
-raw: 0000000000000000 ffff8801ce73e000 0000000100000002 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801ce73ea00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ce73ea80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801ce73eb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                              ^
-  ffff8801ce73eb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ce73ec00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+diff --git a/drivers/pcmcia/ricoh.h b/drivers/pcmcia/ricoh.h
+index 01098c841f87..8ac7b138c094 100644
+--- a/drivers/pcmcia/ricoh.h
++++ b/drivers/pcmcia/ricoh.h
+@@ -119,6 +119,10 @@
+ #define  RL5C4XX_MISC_CONTROL           0x2F /* 8 bit */
+ #define  RL5C4XX_ZV_ENABLE              0x08
+ 
++/* Misc Control 3 Register */
++#define RL5C4XX_MISC3			0x00A2 /* 16 bit */
++#define  RL5C47X_MISC3_CB_CLKRUN_DIS	BIT(1)
++
+ #ifdef __YENTA_H
+ 
+ #define rl_misc(socket)		((socket)->private[0])
+@@ -156,6 +160,35 @@ static void ricoh_set_zv(struct yenta_socket *socket)
+         }
+ }
+ 
++static void ricoh_set_clkrun(struct yenta_socket *socket, bool quiet)
++{
++	u16 misc3;
++
++	/*
++	 * RL5C475II likely has this setting, too, however no datasheet
++	 * is publicly available for this chip
++	 */
++	if (socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C476 &&
++	    socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C478)
++		return;
++
++	if (socket->dev->revision < 0x80)
++		return;
++
++	misc3 = config_readw(socket, RL5C4XX_MISC3);
++	if (misc3 & RL5C47X_MISC3_CB_CLKRUN_DIS) {
++		if (!quiet)
++			dev_dbg(&socket->dev->dev,
++				"CLKRUN feature already disabled\n");
++	} else if (disable_clkrun) {
++		if (!quiet)
++			dev_info(&socket->dev->dev,
++				 "Disabling CLKRUN feature\n");
++		misc3 |= RL5C47X_MISC3_CB_CLKRUN_DIS;
++		config_writew(socket, RL5C4XX_MISC3, misc3);
++	}
++}
++
+ static void ricoh_save_state(struct yenta_socket *socket)
+ {
+ 	rl_misc(socket) = config_readw(socket, RL5C4XX_MISC);
+@@ -172,6 +205,7 @@ static void ricoh_restore_state(struct yenta_socket *socket)
+ 	config_writew(socket, RL5C4XX_16BIT_IO_0, rl_io(socket));
+ 	config_writew(socket, RL5C4XX_16BIT_MEM_0, rl_mem(socket));
+ 	config_writew(socket, RL5C4XX_CONFIG, rl_config(socket));
++	ricoh_set_clkrun(socket, true);
+ }
+ 
+ 
+@@ -197,6 +231,7 @@ static int ricoh_override(struct yenta_socket *socket)
+ 	config_writew(socket, RL5C4XX_CONFIG, config);
+ 
+ 	ricoh_set_zv(socket);
++	ricoh_set_clkrun(socket, false);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/pcmcia/yenta_socket.c b/drivers/pcmcia/yenta_socket.c
+index ab3da2262f0f..ac6a3f46b1e6 100644
+--- a/drivers/pcmcia/yenta_socket.c
++++ b/drivers/pcmcia/yenta_socket.c
+@@ -26,7 +26,8 @@
+ 
+ static bool disable_clkrun;
+ module_param(disable_clkrun, bool, 0444);
+-MODULE_PARM_DESC(disable_clkrun, "If PC card doesn't function properly, please try this option");
++MODULE_PARM_DESC(disable_clkrun,
++		 "If PC card doesn't function properly, please try this option (TI and Ricoh bridges only)");
+ 
+ static bool isa_probe = 1;
+ module_param(isa_probe, bool, 0444);
+-- 
+2.17.0
 
