@@ -2,120 +2,172 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB59C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F378EC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB4020844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:44:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THZIeH99"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB4020844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A092D20855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:45:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A092D20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbeIHO3k (ORCPT
+        id S1726777AbeIHOaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 10:29:40 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38227 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726629AbeIHO33 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 10:29:29 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w11-v6so17148377wrc.5
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 02:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bV18M6tQz4SD0cOnqE6q7CdYxWrRUJwwwIIEfru2n0M=;
-        b=THZIeH99pk03o/gRrSobSC9HHp0S4vnxo+zrmrjXvVVmWdMSq9SnfsNg1/YmRcm9lU
-         5LXfdAMspIvBh0CAuVccMz84ykAsK0iDFQ8tR17Kyn2bRjdlm2ag51gsrJwegzr0ryEp
-         clcGj0KA1awn5ICiRuoCyvBpjLUWlMZKDd20ip9Bm1HrHmnsVm8bo6gcOcKS4iQQEkik
-         CtB+5xsNKNSBb30IkqFPgzwcUS8ICXWiOJ/xml9tXNowP0VYg9Zvz5LC45PNJ9SUGYbZ
-         kCZLbe+i7yIwzXvRmf+5GKIXdfkb21Y1Tv4OZsDqsdCKH8JiaFbNqH6aEadoVcqWUz1F
-         MAJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bV18M6tQz4SD0cOnqE6q7CdYxWrRUJwwwIIEfru2n0M=;
-        b=Uae6K4nW3tAheKzMMxMTLkXQqa6hKJRJsG5kKubPc4e74Xr5ox0YmRDqps5Bpv+ZbO
-         Q1d+DvY51fX3ZoB9pz+pFq5Tiaz/rpBrPWWXuoO+iuWm4NbW+OSqFLxzDUMs/yrSDNJq
-         PmQWtBaXeHKNsh9WEun7aOq4RPDC6goKzCwtl48ZGdW1i35nNtH6FjKcs3jDwApOysxH
-         OVAxInqMblHwT77HZFGLf954dcHdAr3CqCAW/rcqIQtlAqMhdTpkbivOamBreFkJX9KP
-         e8sz5hYb1MHhC66aPpDd+JhjB2ld4buV82mzXomf/JL8sDy/6pCZvtrgCWfG1D9etiir
-         B9Pw==
-X-Gm-Message-State: APzg51DOGSifBkcK1HSFUiCWrfXO6LD/kMr8Juys42zkDztmv31nP1Bq
-        GQ4ZrRJ4AW5j91dxvsNb+HKm/qM+
-X-Google-Smtp-Source: ANB0VdZbsYzL+U80L/hfyUVdv4i8pmIG03K6apT3WT31naC8iUetBsY3OqHXbL7gktvBHnAi6v+Irg==
-X-Received: by 2002:adf:8367:: with SMTP id 94-v6mr8872438wrd.258.1536399859056;
-        Sat, 08 Sep 2018 02:44:19 -0700 (PDT)
-Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id t132-v6sm13975018wmf.24.2018.09.08.02.44.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 02:44:18 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 3/4] staging:rtl8192u: Remove typedef from firmware_init_step_e - Style
-Date:   Sat,  8 Sep 2018 10:44:08 +0100
-Message-Id: <20180908094409.4043-4-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180908094409.4043-1-johnfwhitmore@gmail.com>
-References: <20180908094409.4043-1-johnfwhitmore@gmail.com>
+        Sat, 8 Sep 2018 10:30:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42572 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726549AbeIHOaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 10:30:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0038C4010210;
+        Sat,  8 Sep 2018 09:45:20 +0000 (UTC)
+Received: from flask (unknown [10.43.2.80])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4B87563F63;
+        Sat,  8 Sep 2018 09:45:19 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Sat, 08 Sep 2018 11:45:18 +0200
+Date:   Sat, 8 Sep 2018 11:45:18 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for Linux 4.19-rc3
+Message-ID: <20180908094518.GB29799@flask>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sat, 08 Sep 2018 09:45:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sat, 08 Sep 2018 09:45:21 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the typedef directive from enumerated type firmware_init_step_e
-this clears the checkpatch issue with adding new types to the code.
+Linus,
 
-This is a coding style change which should have no impact on runtime
-code execution.
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/r819xU_firmware.c | 2 +-
- drivers/staging/rtl8192u/r819xU_firmware.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
-diff --git a/drivers/staging/rtl8192u/r819xU_firmware.c b/drivers/staging/rtl8192u/r819xU_firmware.c
-index 9c7e19aedff1..15fd026638fe 100644
---- a/drivers/staging/rtl8192u/r819xU_firmware.c
-+++ b/drivers/staging/rtl8192u/r819xU_firmware.c
-@@ -209,7 +209,7 @@ bool init_firmware(struct net_device *dev)
- 	u8			*mapped_file = NULL;
- 	u32			init_step = 0;
- 	opt_rst_type_e	rst_opt = OPT_SYSTEM_RESET;
--	firmware_init_step_e	starting_state = FW_INIT_STEP0_BOOT;
-+	enum firmware_init_step_e  starting_state = FW_INIT_STEP0_BOOT;
- 
- 	rt_firmware		*pfirmware = priv->pFirmware;
- 	const struct firmware	*fw_entry;
-diff --git a/drivers/staging/rtl8192u/r819xU_firmware.h b/drivers/staging/rtl8192u/r819xU_firmware.h
-index e78e547044b4..870301853480 100644
---- a/drivers/staging/rtl8192u/r819xU_firmware.h
-+++ b/drivers/staging/rtl8192u/r819xU_firmware.h
-@@ -5,11 +5,11 @@
- #define GET_COMMAND_PACKET_FRAG_THRESHOLD(v) \
- 	(4 * ((v) / 4) - 8 - USB_HWDESC_HEADER_LEN)
- 
--typedef enum _firmware_init_step {
-+enum firmware_init_step_e {
- 	FW_INIT_STEP0_BOOT = 0,
- 	FW_INIT_STEP1_MAIN = 1,
- 	FW_INIT_STEP2_DATA = 2,
--} firmware_init_step_e;
-+};
- 
- typedef enum _opt_rst_type {
- 	OPT_SYSTEM_RESET = 0,
--- 
-2.18.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
+
+for you to fetch changes up to bdf7ffc89922a52a4f08a12f7421ea24bb7626a0:
+
+  KVM: LAPIC: Fix pv ipis out-of-bounds access (2018-09-07 18:38:43 +0200)
+
+----------------------------------------------------------------
+KVM fixes for 4.19-rc3
+
+ARM:
+ - Fix a VFP corruption in 32-bit guest
+ - Add missing cache invalidation for CoW pages
+ - Two small cleanups
+
+s390:
+ - Fallout from the hugetlbfs support: pfmf interpretion and locking
+ - VSIE: fix keywrapping for nested guests
+
+PPC:
+ - Fix a bug where pages might not get marked dirty, causing
+   guest memory corruption on migration,
+ - Fix a bug causing reads from guest memory to use the wrong guest
+   real address for very large HPT guests (>256G of memory), leading to
+   failures in instruction emulation.
+
+x86:
+ - Fix out of bound access from malicious pv ipi hypercalls (introduced
+   in rc1)
+ - Fix delivery of pending interrupts when entering a nested guest,
+   preventing arbitrarily late injection
+ - Sanitize kvm_stat output after destroying a guest
+ - Fix infinite loop when emulating a nested guest page fault
+   and improve the surrounding emulation code
+ - Two minor cleanups
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      KVM: SVM: remove unused variable dst_vaddr_end
+
+Janosch Frank (2):
+      KVM: s390: Fix pfmf and conditional skey emulation
+      KVM: s390: Properly lock mm context allow_gmap_hpage_1m setting
+
+Liran Alon (1):
+      KVM: nVMX: Fix loss of pending IRQ/NMI before entering L2
+
+Marc Zyngier (3):
+      KVM: arm/arm64: Clean dcache to PoC when changing PTE due to CoW
+      arm64: KVM: Only force FPEXC32_EL2.EN if trapping FPSIMD
+      KVM: Remove obsolete kvm_unmap_hva notifier backend
+
+Paul Mackerras (2):
+      KVM: PPC: Book3S HV: Use correct pagesize in kvm_unmap_radix()
+      KVM: PPC: Book3S HV: Don't truncate HPTE index in xlate function
+
+Pierre Morel (1):
+      KVM: s390: vsie: copy wrapping keys to right place
+
+Radim Krčmář (3):
+      Merge tag 'kvm-ppc-fixes-4.19-1' of git://git.kernel.org/.../paulus/powerpc
+      Merge tag 'kvm-s390-master-4.19-1' of git://git.kernel.org/.../kvms390/linux
+      Merge tag 'kvm-arm-fixes-for-v4.19-v2' of git://git.kernel.org/.../kvmarm/kvmarm
+
+Sean Christopherson (8):
+      KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
+      KVM: x86: SVM: Set EMULTYPE_NO_REEXECUTE for RSM emulation
+      KVM: x86: Invert emulation re-execute behavior to make it opt-in
+      KVM: x86: Merge EMULTYPE_RETRY and EMULTYPE_ALLOW_REEXECUTE
+      KVM: x86: Default to not allowing emulation retry in kvm_mmu_page_fault
+      KVM: x86: Do not re-{try,execute} after failed emulation in L2
+      KVM: x86: Rename emulate_instruction() to kvm_emulate_instruction()
+      KVM: x86: Unexport x86_emulate_instruction()
+
+Stefan Raspl (7):
+      tools/kvm_stat: fix python3 issues
+      tools/kvm_stat: fix handling of invalid paths in debugfs provider
+      tools/kvm_stat: fix updates for dead guests
+      tools/kvm_stat: don't reset stats when setting PID filter for debugfs
+      tools/kvm_stat: handle guest removals more gracefully
+      tools/kvm_stat: indicate dead guests as such
+      tools/kvm_stat: re-animate display of dead guests
+
+Steven Price (1):
+      arm64: KVM: Remove pgd_lock
+
+Vitaly Kuznetsov (1):
+      KVM: nVMX: avoid redundant double assignment of nested_run_pending
+
+Wanpeng Li (1):
+      KVM: LAPIC: Fix pv ipis out-of-bounds access
+
+ arch/arm/include/asm/kvm_host.h        |  1 -
+ arch/arm64/include/asm/kvm_host.h      |  4 +--
+ arch/arm64/kvm/hyp/switch.c            |  9 ++++--
+ arch/mips/include/asm/kvm_host.h       |  1 -
+ arch/mips/kvm/mmu.c                    | 10 ------
+ arch/powerpc/kvm/book3s_64_mmu_hv.c    |  2 +-
+ arch/powerpc/kvm/book3s_64_mmu_radix.c |  6 ++--
+ arch/s390/include/asm/mmu.h            |  8 ++++-
+ arch/s390/kvm/kvm-s390.c               |  2 ++
+ arch/s390/kvm/priv.c                   | 30 ++++++++++-------
+ arch/s390/kvm/vsie.c                   |  3 +-
+ arch/x86/include/asm/kvm_host.h        | 22 ++++---------
+ arch/x86/kvm/lapic.c                   | 27 ++++++++++++----
+ arch/x86/kvm/mmu.c                     | 26 ++++++++-------
+ arch/x86/kvm/svm.c                     | 19 ++++++-----
+ arch/x86/kvm/vmx.c                     | 43 ++++++++++++++++++-------
+ arch/x86/kvm/x86.c                     | 28 +++++++++++++---
+ arch/x86/kvm/x86.h                     |  2 ++
+ tools/kvm/kvm_stat/kvm_stat            | 59 ++++++++++++++++++++++++++++------
+ virt/kvm/arm/mmu.c                     | 21 +++++-------
+ virt/kvm/arm/trace.h                   | 15 ---------
+ 21 files changed, 204 insertions(+), 134 deletions(-)
