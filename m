@@ -2,172 +2,55 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F378EC4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91B0C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A092D20855
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:45:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A092D20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E0492075B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 09:46:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0492075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeIHOaa (ORCPT
+        id S1726654AbeIHOcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 10:30:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42572 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726549AbeIHOaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 10:30:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0038C4010210;
-        Sat,  8 Sep 2018 09:45:20 +0000 (UTC)
-Received: from flask (unknown [10.43.2.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4B87563F63;
-        Sat,  8 Sep 2018 09:45:19 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Sat, 08 Sep 2018 11:45:18 +0200
-Date:   Sat, 8 Sep 2018 11:45:18 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.19-rc3
-Message-ID: <20180908094518.GB29799@flask>
+        Sat, 8 Sep 2018 10:32:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37440 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726472AbeIHOcC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 10:32:02 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fyZpG-0005oj-Pg; Sat, 08 Sep 2018 11:46:46 +0200
+Date:   Sat, 8 Sep 2018 11:46:46 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     zhong jiang <zhongjiang@huawei.com>
+cc:     longman@redhat.com, arnd@arndb.de, yang.shi@linux.alibaba.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/sg_pool: remove unnecessary null check when free
+ the object
+In-Reply-To: <5B9398CD.1060500@huawei.com>
+Message-ID: <alpine.DEB.2.21.1809081146010.1402@nanos.tec.linutronix.de>
+References: <1533054107-35657-1-git-send-email-zhongjiang@huawei.com> <5B9398CD.1060500@huawei.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sat, 08 Sep 2018 09:45:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sat, 08 Sep 2018 09:45:21 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sat, 8 Sep 2018, zhong jiang wrote:
+> Hi,  Thomas
+> 
+> Can you pick up the patch?
 
-The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
-
-  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
-
-for you to fetch changes up to bdf7ffc89922a52a4f08a12f7421ea24bb7626a0:
-
-  KVM: LAPIC: Fix pv ipis out-of-bounds access (2018-09-07 18:38:43 +0200)
-
-----------------------------------------------------------------
-KVM fixes for 4.19-rc3
-
-ARM:
- - Fix a VFP corruption in 32-bit guest
- - Add missing cache invalidation for CoW pages
- - Two small cleanups
-
-s390:
- - Fallout from the hugetlbfs support: pfmf interpretion and locking
- - VSIE: fix keywrapping for nested guests
-
-PPC:
- - Fix a bug where pages might not get marked dirty, causing
-   guest memory corruption on migration,
- - Fix a bug causing reads from guest memory to use the wrong guest
-   real address for very large HPT guests (>256G of memory), leading to
-   failures in instruction emulation.
-
-x86:
- - Fix out of bound access from malicious pv ipi hypercalls (introduced
-   in rc1)
- - Fix delivery of pending interrupts when entering a nested guest,
-   preventing arbitrarily late injection
- - Sanitize kvm_stat output after destroying a guest
- - Fix infinite loop when emulating a nested guest page fault
-   and improve the surrounding emulation code
- - Two minor cleanups
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      KVM: SVM: remove unused variable dst_vaddr_end
-
-Janosch Frank (2):
-      KVM: s390: Fix pfmf and conditional skey emulation
-      KVM: s390: Properly lock mm context allow_gmap_hpage_1m setting
-
-Liran Alon (1):
-      KVM: nVMX: Fix loss of pending IRQ/NMI before entering L2
-
-Marc Zyngier (3):
-      KVM: arm/arm64: Clean dcache to PoC when changing PTE due to CoW
-      arm64: KVM: Only force FPEXC32_EL2.EN if trapping FPSIMD
-      KVM: Remove obsolete kvm_unmap_hva notifier backend
-
-Paul Mackerras (2):
-      KVM: PPC: Book3S HV: Use correct pagesize in kvm_unmap_radix()
-      KVM: PPC: Book3S HV: Don't truncate HPTE index in xlate function
-
-Pierre Morel (1):
-      KVM: s390: vsie: copy wrapping keys to right place
-
-Radim Krčmář (3):
-      Merge tag 'kvm-ppc-fixes-4.19-1' of git://git.kernel.org/.../paulus/powerpc
-      Merge tag 'kvm-s390-master-4.19-1' of git://git.kernel.org/.../kvms390/linux
-      Merge tag 'kvm-arm-fixes-for-v4.19-v2' of git://git.kernel.org/.../kvmarm/kvmarm
-
-Sean Christopherson (8):
-      KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
-      KVM: x86: SVM: Set EMULTYPE_NO_REEXECUTE for RSM emulation
-      KVM: x86: Invert emulation re-execute behavior to make it opt-in
-      KVM: x86: Merge EMULTYPE_RETRY and EMULTYPE_ALLOW_REEXECUTE
-      KVM: x86: Default to not allowing emulation retry in kvm_mmu_page_fault
-      KVM: x86: Do not re-{try,execute} after failed emulation in L2
-      KVM: x86: Rename emulate_instruction() to kvm_emulate_instruction()
-      KVM: x86: Unexport x86_emulate_instruction()
-
-Stefan Raspl (7):
-      tools/kvm_stat: fix python3 issues
-      tools/kvm_stat: fix handling of invalid paths in debugfs provider
-      tools/kvm_stat: fix updates for dead guests
-      tools/kvm_stat: don't reset stats when setting PID filter for debugfs
-      tools/kvm_stat: handle guest removals more gracefully
-      tools/kvm_stat: indicate dead guests as such
-      tools/kvm_stat: re-animate display of dead guests
-
-Steven Price (1):
-      arm64: KVM: Remove pgd_lock
-
-Vitaly Kuznetsov (1):
-      KVM: nVMX: avoid redundant double assignment of nested_run_pending
-
-Wanpeng Li (1):
-      KVM: LAPIC: Fix pv ipis out-of-bounds access
-
- arch/arm/include/asm/kvm_host.h        |  1 -
- arch/arm64/include/asm/kvm_host.h      |  4 +--
- arch/arm64/kvm/hyp/switch.c            |  9 ++++--
- arch/mips/include/asm/kvm_host.h       |  1 -
- arch/mips/kvm/mmu.c                    | 10 ------
- arch/powerpc/kvm/book3s_64_mmu_hv.c    |  2 +-
- arch/powerpc/kvm/book3s_64_mmu_radix.c |  6 ++--
- arch/s390/include/asm/mmu.h            |  8 ++++-
- arch/s390/kvm/kvm-s390.c               |  2 ++
- arch/s390/kvm/priv.c                   | 30 ++++++++++-------
- arch/s390/kvm/vsie.c                   |  3 +-
- arch/x86/include/asm/kvm_host.h        | 22 ++++---------
- arch/x86/kvm/lapic.c                   | 27 ++++++++++++----
- arch/x86/kvm/mmu.c                     | 26 ++++++++-------
- arch/x86/kvm/svm.c                     | 19 ++++++-----
- arch/x86/kvm/vmx.c                     | 43 ++++++++++++++++++-------
- arch/x86/kvm/x86.c                     | 28 +++++++++++++---
- arch/x86/kvm/x86.h                     |  2 ++
- tools/kvm/kvm_stat/kvm_stat            | 59 ++++++++++++++++++++++++++++------
- virt/kvm/arm/mmu.c                     | 21 +++++-------
- virt/kvm/arm/trace.h                   | 15 ---------
- 21 files changed, 204 insertions(+), 134 deletions(-)
+I'm not picking up patches for lib/sg_pool. Why would I?
