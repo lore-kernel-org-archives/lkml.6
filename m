@@ -2,82 +2,83 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED1DC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CB9C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C418206BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C418206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id A8F10206BB
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F10206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbeIHSLV (ORCPT
+        id S1726763AbeIHSTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 14:11:21 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:35265 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbeIHSLV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 14:11:21 -0400
-Received: from null ([172.19.249.150]) by mrelayeu.kundenserver.de (mreue011
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1MT9v5-1gRSVw1Nbb-00Ue0f; Sat, 08
- Sep 2018 15:25:15 +0200
-Date:   Sat, 8 Sep 2018 15:25:14 +0200 (CEST)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Eric Anholt <eric@anholt.net>,
-        linux-rpi-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sat, 8 Sep 2018 14:19:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726452AbeIHSTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 14:19:31 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 61490804B4BA;
+        Sat,  8 Sep 2018 13:33:42 +0000 (UTC)
+Received: from localhost (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 642BB2166BA3;
+        Sat,  8 Sep 2018 13:33:40 +0000 (UTC)
+Date:   Sat, 8 Sep 2018 21:33:37 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     mingo@kernel.org, hpa@zytor.com, thgarnie@google.com,
+        kirill.shutemov@linux.intel.com, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Message-ID: <1366205674.39171.1536413114481@email.1und1.de>
-In-Reply-To: <20180904155858.8001-4-tiwai@suse.de>
-References: <20180904155858.8001-1-tiwai@suse.de>
- <20180904155858.8001-4-tiwai@suse.de>
-Subject: Re: [PATCH 03/29] staging: bcm2835-audio: Clean up include files in
- bcm2835-ctl.c
+Subject: Re: [PATCH 1/2] x86/mm/KASLR: Fix the wrong calculation of kalsr
+ region initial size
+Message-ID: <20180908133337.GT1740@192.168.1.3>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <alpine.DEB.2.21.1809081410230.1402@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:iz5pEEOEZW2o9GXkylVNfl7bjl1vrLVVhLc13HYCDv07SrJmlI5
- HuH9tz+Ous7UgKVKZ6ijYyTozqnfQtSCoiaWB7z/mnCylVZ3q7HAsYN6ADfxbQXmgJnuJ6A
- +68eFia93ta8idy/yrNnlqhtuZgRSfToMGnB4xdljvv5SFO1DrmOvcDJfhUgcne5BZWbXZu
- s9Nqs3n/TIUpjQ949UIUA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:sOIGpJ2mEp4=:bIb+qBJeiOZISoL83m9xAs
- vtcOWrESPJOnb1AqrcDBILYpwHJHMXAQ9triQQ/Ezs0d2IJCT971vzRiIuHH58mD3WN7xJo/R
- dwtLJeITBwcAnw0rcN91Z2t3yMCR0pRFKVv5RWgtBaYhdjYncVSSVbkoYY9o8SINutYKdUayS
- iMpXNIOijb3yIefBuptKXt341Wbfld4f22keN1xj7NMQD/98dAZZ40xcuxHUmC0fFlObFxmrP
- 088JGSF29dK2wLLCQ2YTlnpMJtgWMfdcgwxGQS/j6Gr/xwHvIoE41RhTTZjlffRSs72d9pOfQ
- ZruFBNyGOJ1+FKtrH2vQOZhHU8ughS+aekBRiv+Gf6bNM1kAIGRrxSDTCeS/Ilt+LuxNuahY/
- HYeTWc/V/1fm16W0Fif2VcOOS2havqSsPY2gx/cM/0zFQvaqFcExw0oB8IMjM5qmMcPe8CF/5
- 92yNWchQinny/N0epXm9xDvIA2xaRaXR8qkDAwhhHl8CgPR18mBfqpJgah1xdr2gJdLiAIbMm
- l3al85FUNjn8aK+wn6IG6pWNAMZofeCTrSB2JC9uT45U1LE2Uqocf4ySMarPEJL1Wj6X/2JKX
- XganE/E6SiVuM8n6kwWDfrk0hTI+Um6LI1RqE71VWG7LhujWk928szJ+b2Rq/hKSpgiWuqJbV
- aemlFsTnXT6lFG5caLBXWKmFHMVhWg7KQkAkazAwfGa/EaNd7kwsfqd3O/qK62zD/AFePiWNl
- tK6TBY+uw9EvuKLb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809081410230.1402@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 08 Sep 2018 13:33:42 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 08 Sep 2018 13:33:42 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-> Takashi Iwai <tiwai@suse.de> hat am 4. September 2018 um 17:58 geschrieben:
+On 09/08/18 at 02:10pm, Thomas Gleixner wrote:
+> On Wed, 29 Aug 2018, Baoquan He wrote:
 > 
+> > In memory KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate the
+> > initial size of the direct mapping region. This is right in the
+> > old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
+> > 46bit, and only 4-level mode was supported.
+> > 
+> > Later, in commit:
+> > b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52"),
+> > __PHYSICAL_MASK_SHIFT was changed to be 52 always, no matter it's
+> > 5-level or 4-level. This is wrong for 4-level paging. Then when
+> > adapt phyiscal memory region size based on available memory, it
+> > will overflow if the amount of system RAM and the padding is bigger
+> > than 64TB.
+> > 
+> > In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
+> > by replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
 > 
-> Only a few of them are really needed.
-> 
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->  .../vc04_services/bcm2835-audio/bcm2835-ctl.c     | 15 ---------------
+> This lacks a fixes tag .....
 
-I think this patch and patch #23 could be merge in case a new series is required.
+Sure, I will add fix tag in this patch, and arrange a new patchset
+according to discussion with Kirill after test.
 
-Stefan
+Thanks
+Baoquan
