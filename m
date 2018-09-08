@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1C9C43143
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC76C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0475220868
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 519C22086E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 21:25:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDN6zaJA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0475220868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0HTF6R5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519C22086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeIICMX (ORCPT
+        id S1727941AbeIICMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 22:12:23 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34241 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727694AbeIICMX (ORCPT
+        Sat, 8 Sep 2018 22:12:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39238 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbeIICMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 22:12:23 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j25-v6so2251478wmc.1;
-        Sat, 08 Sep 2018 14:25:13 -0700 (PDT)
+        Sat, 8 Sep 2018 22:12:24 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s14-v6so9150989wrw.6;
+        Sat, 08 Sep 2018 14:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZhryjHGsWzeSzxD0NW3OWSaZ8RANYxnQY/DMq4IP8+M=;
-        b=PDN6zaJAOlY1XuRcBrqYA9UYPmi9gdnl6lxlT10cB7BabphGmS/O6ge6sqj4qezLo9
-         cM5fhidKOz2HBOm7TfDcd69GqIajhkhl+DnTvI6dwL1ZMo3rWzXAP29M++Oylt6ahRko
-         lCrq/yGCd7bYldLZS32IUp1jcGgqcSHh4QVNOVobMcAJJXG0bEW/+ayafUPDLyEtMiPb
-         xljrlkl2ZcY/FWZkiSUdHzO3aU7mG28e1IqTjCIDXbaQ1mIa0dsz9W3cKBTYjsPd9v8V
-         /gilTekxovA8rhHh/oahfHEiNwzrcK0J9U4Y4zCyJK8QEp+IFnQk8RI0ZToRZT7XWBUu
-         3vyA==
+        bh=01rM1QtUoUf8J7p45IvdhY9Atu3kso7QHsx3BsqEdqk=;
+        b=k0HTF6R5jpzWOQaz8bWvePFRbhtJnFqqQK9dpLFbYA6xIWgjZCWNOAfDhsaXSnjmZY
+         bI3se4vxjfbLcpym/jkxMRi8RxZFjvs9/WyAzNXElGGj7BYIak/n/BTikqe+6kXVsDJK
+         wi4W7lSzKd86jiB72wgB+iDMBgZUPha8pF0x+/08LHShmwLJeZqN6BG3qL/sbpreNrvs
+         m102yp6Pyg+bdyscKAm7PV7VYW3p83e1Zc6+4KcTvjxW1gdaGXvsx8NxcXpKnRakPKTQ
+         WDlZduzTKZ5ZbJVnhaODqgulDKf5erKUO7uCGr+w6pc/OAFW2mnl2K+avz69FJr3hPpk
+         CISQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZhryjHGsWzeSzxD0NW3OWSaZ8RANYxnQY/DMq4IP8+M=;
-        b=cGsyl02bSS69ZPSqAM7jHaGY6S3IM3APTUXmaUBsXAZzD+Tgk0lx+CzAPGhfSrvAov
-         QBltqkV2sP5VvoSUCgvdBhPjT11qDOqb6gUKhlxcZNEGAUUftxonF4d1rG2tBGCCOPr2
-         h/29L3rr4u+FZwdXc0qersEeSNf5uJ3ClUohH6MWTgS8gSjIq3T9EuJKBodX171m0esc
-         MxSC2yOzvVXmRxptkY8TSX5ATeGIM/WDUZZgJmWldxzL3/nfzW5C7K3BTiAmnzYayzfo
-         T4U04DsHR77dS247IR1toC2bGlCwX5358HpDt3ZoxtIbSycAfq+/vG1O8rpKKdJ3ztoB
-         OcYA==
-X-Gm-Message-State: APzg51CeD73I7ASG+eNLxZzNQhwP1x9MAi5yeUhQmza0nDEuPhN2dXn2
-        inS9Mbp+qQ7ZEBta6H/9VD4=
-X-Google-Smtp-Source: ANB0VdaGRzqTk0KUdWnRvOm8fmIg34wdxIF3wZXxVMkKhhuw5RFiOZaFOIfw9KyDy2/REx1pQrrSqg==
-X-Received: by 2002:a1c:e54:: with SMTP id 81-v6mr8839361wmo.84.1536441912565;
-        Sat, 08 Sep 2018 14:25:12 -0700 (PDT)
+        bh=01rM1QtUoUf8J7p45IvdhY9Atu3kso7QHsx3BsqEdqk=;
+        b=Qv/uvxjWjBZEgyPVZi16eDI8kFLK6zUxm9JWeYa0q8DyhtesqpKRyAF4JgJlWat8hV
+         Qu6zzaIYEO0VQC9ZNIDJV1NG8gGYzbkB5FVzCY6PASgqTr/WqW2g0Vvz92GMXVxYaGE5
+         83UPCtfgXIu+tptY39oDwLk6DoHBoWqxZIJG+DIic5sQ4BN3sZLOeJZXZ9EFD3ks+O3i
+         itKwCosNrFib9L1HF8U0mpjj1sIgVfI1qf0Mu6IMoSRLljpBjJr3l8hrIwKhIU3eH7ew
+         BU8eswaFX+6eHG8chukywkdc1MjqKIuQsdGyowqVl+xZE+orKhtoBkQFtfWw6C+0v2fn
+         5oRg==
+X-Gm-Message-State: APzg51CaEEo88BSIZI0YnsGriRIIjOecbSekzv1ec1a04GTS6wShutEs
+        hrd1iJisTCJl+eFQfwY2eXY=
+X-Google-Smtp-Source: ANB0VdYTegW6cea7bQ9Ijv7SO/T0+aDqqm5ZChX6lPIWAmiDxZhHa9vqzDjjBXCqBfaJ9XsLdiGUFg==
+X-Received: by 2002:adf:f7c4:: with SMTP id a4-v6mr10531253wrq.86.1536441915355;
+        Sat, 08 Sep 2018 14:25:15 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.11
+        by smtp.gmail.com with ESMTPSA id u40-v6sm17340786wrc.43.2018.09.08.14.25.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 14:25:12 -0700 (PDT)
+        Sat, 08 Sep 2018 14:25:14 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -75,9 +75,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         linux-sparse@vger.kernel.org
-Subject: [PATCH v4 01/13] Compiler Attributes: remove unused attributes
-Date:   Sat,  8 Sep 2018 23:24:47 +0200
-Message-Id: <20180908212459.19736-2-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v4 03/13] Compiler Attributes: remove unneeded tests
+Date:   Sat,  8 Sep 2018 23:24:49 +0200
+Message-Id: <20180908212459.19736-4-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,8 +85,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__optimize and __deprecate_for_modules are unused in
-the whole kernel tree. Simply drop them.
+Attributes const and always_inline have tests around them
+which are unneeded, since they are supported by gcc >= 4.6,
+clang >= 3 and icc >= 13. https://godbolt.org/z/DFPq37
+
+In the case of gnu_inline, we do not need to test for
+__GNUC_STDC_INLINE__ because, regardless of the current
+inlining behavior, we can simply always force the old
+GCC inlining behavior by using the attribute in all cases.
 
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
@@ -105,51 +111,71 @@ Cc: linux-sparse@vger.kernel.org
 Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-gcc.h   | 2 --
- include/linux/compiler.h       | 4 ----
- include/linux/compiler_types.h | 1 -
- 3 files changed, 7 deletions(-)
+ include/linux/compiler_types.h | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 763bbad1e258..0a2d06677d83 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -95,8 +95,6 @@
- 
- #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
- 
--#define __optimize(level)	__attribute__((__optimize__(level)))
--
- #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
- 
- #ifndef __CHECKER__
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 681d866efb1e..7c0157d50964 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -301,10 +301,6 @@ static inline void *offset_to_ptr(const int *off)
- 
- #endif /* __ASSEMBLY__ */
- 
--#ifndef __optimize
--# define __optimize(level)
--#endif
--
- /* Compile time object size, -1 for unknown */
- #ifndef __compiletime_object_size
- # define __compiletime_object_size(obj) -1
 diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 3525c179698c..b6534292ea33 100644
+index 2bc0f94df38e..83475515bc39 100644
 --- a/include/linux/compiler_types.h
 +++ b/include/linux/compiler_types.h
-@@ -108,7 +108,6 @@ struct ftrace_likely_data {
+@@ -158,10 +158,6 @@ struct ftrace_likely_data {
+ 	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
+ 	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
  
- /* Don't. Just don't. */
- #define __deprecated
--#define __deprecated_for_modules
+-#ifndef __attribute_const__
+-#define __attribute_const__	__attribute__((__const__))
+-#endif
+-
+ #ifndef __noclone
+ #define __noclone
+ #endif
+@@ -196,6 +192,7 @@ struct ftrace_likely_data {
+  * [...]
+  */
+ #define __pure			__attribute__((__pure__))
++#define __attribute_const__	__attribute__((__const__))
+ #define __aligned(x)		__attribute__((__aligned__(x)))
+ #define __aligned_largest	__attribute__((__aligned__))
+ #define __printf(a, b)		__attribute__((__format__(printf, a, b)))
+@@ -211,6 +208,8 @@ struct ftrace_likely_data {
+ #define __alias(symbol)		__attribute__((__alias__(#symbol)))
+ #define __cold			__attribute__((__cold__))
+ #define __section(S)		__attribute__((__section__(#S)))
++#define __always_inline		inline __attribute__((__always_inline__))
++#define __gnu_inline		__attribute__((__gnu_inline__))
  
- #endif /* __KERNEL__ */
  
+ #ifdef CONFIG_ENABLE_MUST_CHECK
+@@ -227,18 +226,6 @@ struct ftrace_likely_data {
+ 
+ #define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
+ 
+-/*
+- * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
+- * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
+- * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
+- * defined so the gnu89 semantics are the default.
+- */
+-#ifdef __GNUC_STDC_INLINE__
+-# define __gnu_inline	__attribute__((__gnu_inline__))
+-#else
+-# define __gnu_inline
+-#endif
+-
+ /*
+  * Force always-inline if the user requests it so via the .config.
+  * GCC does not warn about unused static inline functions for
+@@ -263,10 +250,6 @@ struct ftrace_likely_data {
+ #define __inline inline
+ #define noinline	__attribute__((__noinline__))
+ 
+-#ifndef __always_inline
+-#define __always_inline inline __attribute__((__always_inline__))
+-#endif
+-
+ /*
+  * Rather then using noinline to prevent stack consumption, use
+  * noinline_for_stack instead.  For documentation reasons.
 -- 
 2.17.1
 
