@@ -2,164 +2,183 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2A3C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 17:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 284E9C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 17:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E732064D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 17:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3DEA2086B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 17:16:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="I1KoGShD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E732064D
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="nISu7xuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3DEA2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeIHVtL (ORCPT
+        id S1727417AbeIHWCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 17:49:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45010 "EHLO
+        Sat, 8 Sep 2018 18:02:32 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41460 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbeIHVtK (ORCPT
+        with ESMTP id S1726765AbeIHWCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 17:49:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id g6-v6so14341741lfb.11
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 10:02:44 -0700 (PDT)
+        Sat, 8 Sep 2018 18:02:32 -0400
+Received: by mail-lf1-f66.google.com with SMTP id l26-v6so14385690lfc.8
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 10:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gW4HoiBuk9T0sod+V1/9BFEH0nvLkGgnIrdbD5XAt+8=;
-        b=I1KoGShD54PcuKR7YIBg7S3PIDi2uUHskVE0bk97i9BOjHpnUb8uioki5N+EvLSRtU
-         abFVUSuwTGMnVDfBqYpQ4YhjcMJmll8WsytImzd+Vgxpr7footUDG6W0sjFGDiD8Uq29
-         +OWHyKvkGkrwkKeC8bdMu89wg+UTMkTxd9/f+WdhF4cGkftXp4yCugTOyoJeQcQVk0w5
-         uJ6nd9eWRNQKxEQrOtrZAMgicSG6N4LNCmyuWewEZWth6B51+anh4v6nMAw6QFCurHQc
-         2IOJlGKTRq0rZQyA2Pt9Ls0ObRwhUGjuH6rDCVN7YPEu20ywCZONQXsLKhuN/hdIMixC
-         Q5Dw==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=UgFx6b1cyqtQKKk3ZujClaN1xmtcqYYggEGFpn2jICU=;
+        b=nISu7xuPaf7nF/F3QwJgEdLPgAuM9bTX3/TGbVGbgHdWMNtXBdWu7tLhihTxIupeGY
+         nkKLQmKytw/vLMcyTkg1rtIAvcMkS/Qo5DVjYRPKXaC1bmjNEVrIdQ/i3XrjZTLPZ7sn
+         o31NnVT/FszVdv7NO38b3LntZZGJ5YvyDFtspvoqbieEaLEaT7zy8w1wEd3FZa+O/rzi
+         KOM/xO79ImIKQ9mARMD26Rj9QhFa6mV3rSzlqbubq/00iZt3iNOM7xSTc+Knxp7QFFwD
+         5+uWdFfftddhnsDmX2riGQ7E4Bu1APxsUpLz6KDuNDQCrSkMFOBas1HnyKARrykwrFrw
+         CVKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gW4HoiBuk9T0sod+V1/9BFEH0nvLkGgnIrdbD5XAt+8=;
-        b=BlWOO4X0shrF9lIswQ35BJ8A9mss9SOMvtqdwM1a6HCcLMBQqHdZVK+yL2zvD4FsWq
-         IytSz/lf38OJnA9AqhU8q1LL+bRGXyihz880yr76oUmGZ5qCoLcuVlUifbUj6+2DhVfJ
-         esNcnWCW/0ObDvuYJvHKRS6brzrTKPCS4t6gRGz9Z4mOBh50B42wUKfRIDLfQhBK59kr
-         rKdhUyIN8uSXlJbx5/E3rets7mMdK3v+6az7+NjKtTCQLhm0Td1pLQIaq8xVfbArGbw/
-         6wtJu7TXLYGXxVshS8GEiYLaB0jI7g26qptccD3yiW+9RWIksI5eNqzucNfbRMzhLtFY
-         umFw==
-X-Gm-Message-State: APzg51D8JSc9jyARYBdDJg3db/JXUcBbN4P4+Js3ofHS7rGEKHDB/Dm3
-        Jg8D6uh4WaFMlPmB9efnZtyzU1zulqSUPsKeuD1e3Q==
-X-Google-Smtp-Source: ANB0VdaB8y/6vNwcs9UTwZulWgXeCEjX38UYUYLN21/U6i3uNnyeI33+up6yYFC4Rr2e0AjD8F7pZhb8E/ff3d2yXPo=
-X-Received: by 2002:a19:6f0a:: with SMTP id k10-v6mr6000310lfc.143.1536426163863;
- Sat, 08 Sep 2018 10:02:43 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:6413:0:0:0:0:0 with HTTP; Sat, 8 Sep 2018 10:02:42 -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:180::1:7b1c]
-In-Reply-To: <CANn89iKgZkfwQ8nAGEfOzubOh69y285TNKB5Q518Wf_phbq2Yg@mail.gmail.com>
-References: <20180906192034.8467-1-olof@lixom.net> <CANn89i+akEWrHELBkZJQOxok-ZfYy+FNPUWdPEfB6c4YyWLqJA@mail.gmail.com>
- <20180907033257.2nlgiqm2t4jiwhzc@gondor.apana.org.au> <CAOesGMgRrb4D2S_qWwgo00iNxbCL9EEGfhD5Ji-2HMWuZeq0Yw@mail.gmail.com>
- <CANn89iKJcgMWb2Kmk6L9k=NkfBUKZ6BwriWr3O+N5Y0u5dy=9g@mail.gmail.com> <CANn89iKgZkfwQ8nAGEfOzubOh69y285TNKB5Q518Wf_phbq2Yg@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=UgFx6b1cyqtQKKk3ZujClaN1xmtcqYYggEGFpn2jICU=;
+        b=rvvIZmdtZgVgv06uAddNgcRj7gZ2pZhDU2DhzkKCb+DuHt38czlV+NRAzEtzYingZs
+         Cxb6OhaIoaRvbvc+C7wqtymahhP7cZFXsMb03ttRGcp1EiP/5o+4QoJ1N4/icrpyfovX
+         F1KR0N+IzFmDHF0eVjmUS4ngeEvtWDN5KSXcjHEuVBpdN/ijlS/CkCFUgxSN2ho9T4DF
+         UgHQ13ifM8OQQMYoCnSMquSOSHJBZM7Sg43gwVhRWvzNHzrwiT7QlX6c2NuAVDmLTAsg
+         czki/+t8K4vR7ajdReA6VqPttjJBF+wVLn77ECfiT2ob7UoriYUf5yA+/Rnn/txtidLp
+         LADg==
+X-Gm-Message-State: APzg51BkyRc+ongnl1HrfuBN+yYYRcoFSCzHXC3TlnbUV5scAArFokb5
+        AODGX9+NGBO1i0Eru9UiqNmQQQ==
+X-Google-Smtp-Source: ANB0VdY8f8FETkUI/GvuHLnFs7Lxpb/ae/PlN3PhxjF+2raTEMS38sKDWcfHR8JlJF/yV6wvrjy9sw==
+X-Received: by 2002:a19:c94a:: with SMTP id z71-v6mr8010923lff.34.1536426962711;
+        Sat, 08 Sep 2018 10:16:02 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id m20-v6sm1830992lfb.27.2018.09.08.10.16.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 08 Sep 2018 10:16:00 -0700 (PDT)
+Date:   Sat, 8 Sep 2018 10:15:34 -0700
 From:   Olof Johansson <olof@lixom.net>
-Date:   Sat, 8 Sep 2018 10:02:42 -0700
-Message-ID: <CAOesGMi31UA2d-Bj2jo53Wz_YV424-rD3qk9rS5_-Yng0VC=0w@mail.gmail.com>
-Subject: Re: [PATCH] net/sock: move memory_allocated over to percpu_counter variables
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        linux-decnet-user@lists.sourceforge.net,
-        kernel-team <kernel-team@fb.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     torvalds@linux-foundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20180908171534.umap5fj6bkyvhki2@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Linus,
 
-On Fri, Sep 7, 2018 at 12:21 AM, Eric Dumazet <edumazet@google.com> wrote:
-> On Fri, Sep 7, 2018 at 12:03 AM Eric Dumazet <edumazet@google.com> wrote:
->
->> Problem is : we have platforms with more than 100 cpus, and
->> sk_memory_allocated() cost will be too expensive,
->> especially if the host is under memory pressure, since all cpus will
->> touch their private counter.
->>
->> per cpu variables do not really scale, they were ok 10 years ago when
->> no more than 16 cpus were the norm.
->>
->> I would prefer change TCP to not aggressively call
->> __sk_mem_reduce_allocated() from tcp_write_timer()
->>
->> Ideally only tcp_retransmit_timer() should attempt to reduce forward
->> allocations, after recurring timeout.
->>
->> Note that after 20c64d5cd5a2bdcdc8982a06cb05e5e1bd851a3d ("net: avoid
->> sk_forward_alloc overflows")
->> we have better control over sockets having huge forward allocations.
->>
->> Something like :
->
-> Or something less risky :
+The following changes since commit a72b44a871c218e2a0580e68affa1d3528c0587a:
 
-I gave both of these patches a run, and neither do as well on the
-system that has slower atomics. :(
+  Merge tag 'omap-for-v4.19/fixes-v2-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into fixes (2018-09-01 18:22:19 -0700)
 
-The percpu version:
+are available in the git repository at:
 
-     8.05%  workload         [kernel.vmlinux]
-    [k] __do_softirq
-     7.04%  swapper          [kernel.vmlinux]
-    [k] cpuidle_enter_state
-     5.54%  workload         [kernel.vmlinux]
-    [k] _raw_spin_unlock_irqrestore
-     1.66%  swapper          [kernel.vmlinux]
-    [k] __do_softirq
-     1.55%  workload         [kernel.vmlinux]
-    [k] finish_task_switch
-     1.24%  swapper          [kernel.vmlinux]
-    [k] finish_task_switch
-     1.07%  workload         [kernel.vmlinux]
-    [k] net_rx_action
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
 
-The first patch from you still has significant amount of time spent in
-the atomics paths (non-inlined versions used):
+for you to fetch changes up to a132bb90414bfad4f8ee23cb45fe6946a89b167d:
 
-     7.87%  workload         [kernel.vmlinux]
-[k] __ll_sc_atomic64_sub
-     7.48%  workload         [kernel.vmlinux]
-[k] __do_softirq
-     5.05%  workload         [kernel.vmlinux]
-[k] _raw_spin_unlock_irqrestore
-     2.42%  workload         [kernel.vmlinux]
-[k] __ll_sc_atomic64_add_return
-     1.49%  swapper          [kernel.vmlinux]
-[k] cpuidle_enter_state
-     1.31%  workload         [kernel.vmlinux]
-[k] finish_task_switch
-     1.09%  workload         [kernel.vmlinux]
-[k] tcp_sendmsg_locked
-     1.08%  workload         [kernel.vmlinux]
-[k] __arch_copy_from_user
-     1.02%  workload         [kernel.vmlinux]
-[k] net_rx_action
+  Merge tag 'sunxi-fixes-for-4.19' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into fixes (2018-09-08 10:04:37 -0700)
 
-I think a lot of the overhead from percpu approach can be alleviated
-if we can use percpu_counter_read() instead of _sum() (i.e. no need to
-iterate through the local per-cpu recent delta). I don't know the TCP
-stack well enough to tell where it's OK to use a bit of slack in the
-numbers though -- by default count will at most be off by 32*online
-cpus. Might not be a significant number in reality.
+----------------------------------------------------------------
+ARM: SoC fixes
 
+A few more fixes who have trickled in:
+ - MMC bus width fixup for some Allwinner platforms
+ - Fix for NULL deref in ti-aemif when no platform data is passed in
+ - Fix div by 0 in SCMI code
+ - Add a missing module alias in a new RPi driver
 
--Olof
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      memory: ti-aemif: fix a potential NULL-pointer dereference
+
+Icenowy Zheng (1):
+      arm64: allwinner: dts: h6: fix Pine H64 MMC bus width
+
+Olof Johansson (2):
+      Merge tag 'arm-soc/for-4.19/drivers-fixes' of https://github.com/Broadcom/stblinux into fixes
+      Merge tag 'sunxi-fixes-for-4.19' of https://git.kernel.org/.../sunxi/linux into fixes
+
+Peter Robinson (1):
+      hwmon: rpi: add module alias to raspberrypi-hwmon
+
+Sudeep Holla (1):
+      firmware: arm_scmi: fix divide by zero when sustained_perf_level is zero
+
+ arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 2 ++
+ drivers/firmware/arm_scmi/perf.c                     | 8 +++++++-
+ drivers/hwmon/raspberrypi-hwmon.c                    | 1 +
+ drivers/memory/ti-aemif.c                            | 2 +-
+ 4 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+index ceffc40810ee..48daec7f78ba 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+@@ -46,6 +46,7 @@
+ 	pinctrl-0 = <&mmc0_pins>;
+ 	vmmc-supply = <&reg_cldo1>;
+ 	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
++	bus-width = <4>;
+ 	status = "okay";
+ };
+ 
+@@ -56,6 +57,7 @@
+ 	vqmmc-supply = <&reg_bldo2>;
+ 	non-removable;
+ 	cap-mmc-hw-reset;
++	bus-width = <8>;
+ 	status = "okay";
+ };
+ 
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 721e6c57beae..64342944d917 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -166,7 +166,13 @@ scmi_perf_domain_attributes_get(const struct scmi_handle *handle, u32 domain,
+ 					le32_to_cpu(attr->sustained_freq_khz);
+ 		dom_info->sustained_perf_level =
+ 					le32_to_cpu(attr->sustained_perf_level);
+-		dom_info->mult_factor =	(dom_info->sustained_freq_khz * 1000) /
++		if (!dom_info->sustained_freq_khz ||
++		    !dom_info->sustained_perf_level)
++			/* CPUFreq converts to kHz, hence default 1000 */
++			dom_info->mult_factor =	1000;
++		else
++			dom_info->mult_factor =
++					(dom_info->sustained_freq_khz * 1000) /
+ 					dom_info->sustained_perf_level;
+ 		memcpy(dom_info->name, attr->name, SCMI_MAX_STR_SIZE);
+ 	}
+diff --git a/drivers/hwmon/raspberrypi-hwmon.c b/drivers/hwmon/raspberrypi-hwmon.c
+index fb4e4a6bb1f6..be5ba4690895 100644
+--- a/drivers/hwmon/raspberrypi-hwmon.c
++++ b/drivers/hwmon/raspberrypi-hwmon.c
+@@ -164,3 +164,4 @@ module_platform_driver(rpi_hwmon_driver);
+ MODULE_AUTHOR("Stefan Wahren <stefan.wahren@i2se.com>");
+ MODULE_DESCRIPTION("Raspberry Pi voltage sensor driver");
+ MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:raspberrypi-hwmon");
+diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+index 31112f622b88..475e5b3790ed 100644
+--- a/drivers/memory/ti-aemif.c
++++ b/drivers/memory/ti-aemif.c
+@@ -411,7 +411,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 			if (ret < 0)
+ 				goto error;
+ 		}
+-	} else {
++	} else if (pdata) {
+ 		for (i = 0; i < pdata->num_sub_devices; i++) {
+ 			pdata->sub_devices[i].dev.parent = dev;
+ 			ret = platform_device_register(&pdata->sub_devices[i]);
