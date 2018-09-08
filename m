@@ -2,215 +2,156 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66F0C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB43FC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 17:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3612064D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:58:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiL2ir8N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3612064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 598A52064D
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 17:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598A52064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbeIHVpN (ORCPT
+        id S1727645AbeIHVrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 17:45:13 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44677 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbeIHVpN (ORCPT
+        Sat, 8 Sep 2018 17:47:22 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:50861 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeIHVrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 17:45:13 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r1-v6so8434750pgp.11;
-        Sat, 08 Sep 2018 09:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZC+x5YdYKHH5XIfsqdWsWQBrSjGQMwaEa1m4lU2A67g=;
-        b=fiL2ir8N2zxt6uuaphv/F356LjhungT/I9h7rS5peoJRmpq25UgBdIWu4KMHjXzM/Z
-         1OvTQUOAjb+KZyWq8LZ0ZFiP8o8A41zz6Wx8VWnP67u6h/NDStRM7D4uhdagnvFrm1NO
-         VKiZoZajfPjTf8ltTYVt05K5wldYK6ezShWGlG0tQWkK9XISChHfpBkq4/QtyUYtn26+
-         IZQx6e4+XnYFqJkFt05MXZHgXH/4LGmeN4+VwzD35yJ8mbOQjPKkwiPOnE640pjUJS01
-         +2F/GwEaYvccKglXZVCSHkVFkQ+2sDt3WjSKcavVXgj1SDQHKWL2Z6l4GSRldR1LUujg
-         Lyqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZC+x5YdYKHH5XIfsqdWsWQBrSjGQMwaEa1m4lU2A67g=;
-        b=aQm/t9A8GgusdPO7mEb24sCojF4DJtGRa8Hm/j7h6+MsIT3i1CGVTHJh4PQRB//Exm
-         EkQ/xaHtJR5cYSQxZ/15oS2/IWzrqChjicoPHCTDsNvZEh6KncgIqlUdcfuPaNRN2bJy
-         O865nMxKNJb5kUjhxHjUvR26xICanGef2FZTj3w4IrIpq7e/jYxSj+FSTecS8TPa4XAN
-         o6ArsMChNi0DtJcXbFdqe+h73gSwAXckIo8o/9/n1buiIEOCJK8JBqnUFXa38aoGX2Bd
-         ITVQYrlYSJjMoJF0Mqarr3VTEVMpsrSWspm1N0rUsFPPdS3ybj8D8zxHY73/Fo9oCrjl
-         lmOQ==
-X-Gm-Message-State: APzg51A+p8vWA1NtcXqv6DmyU96CcZiNFEYF0mrr8KdJsDJWPXK8BOJM
-        GZEn2tEmniDJCvQWqbdzbWoowqiK
-X-Google-Smtp-Source: ANB0VdZXLuJELpxpqnqdGruRIUy0vg01/5rtBt8swPR6Rns8Hp8GL0malg1/ZQBwlSObYMec4kuh6A==
-X-Received: by 2002:a63:6a06:: with SMTP id f6-v6mr14128093pgc.63.1536425928471;
-        Sat, 08 Sep 2018 09:58:48 -0700 (PDT)
-Received: from bogon.didichuxing.com ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id z6-v6sm14601209pgr.41.2018.09.08.09.58.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 09:58:47 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     edumazet@google.com, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next] tcp: show number of network segments in some SNMP counters
-Date:   Sun,  9 Sep 2018 00:58:18 +0800
-Message-Id: <1536425898-12059-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 8 Sep 2018 17:47:22 -0400
+Received: from null ([172.19.249.18]) by mrelayeu.kundenserver.de (mreue107
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1N5W4y-1foVQc1Rda-016zVV; Sat, 08
+ Sep 2018 19:00:36 +0200
+Date:   Sat, 8 Sep 2018 19:00:34 +0200 (CEST)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Message-ID: <1199025412.60278.1536426034839@email.1und1.de>
+In-Reply-To: <s5hd0to5598.wl-tiwai@suse.de>
+References: <20180904155858.8001-1-tiwai@suse.de>
+ <2050605805.39126.1536412690563@email.1und1.de>
+ <s5hd0to5598.wl-tiwai@suse.de>
+Subject: Re: [PATCH 00/29] staging: bcm2835-audio: Cleanups and fixes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:QWDAYi2lMkTJDrzYalC2ImMsS52yV+rb0W5oLwN3Nx59YrYv5Ni
+ ovIgTjkrLxJl/FBGr4jmd6IJ+JEPti/sTR69cl5Xq5oaJkpHV7Bo2uShrhQ9H0xpA8WP4XL
+ 4k2O/RA0opdz0ZIzIL9uwfBCFKxs9e5AyRxZk1urwbOpsCUgqxZdgtNbI+QVkL0e3sTdJEX
+ Uki4D1fCojFmORiGy9MFw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:p17z8WOkFXo=:aZgeXxwG6g5fkxgqHFxH/f
+ svLzhyw7dFFoP6PtXNVXhons+mx9xtNoLQ1To7pR4poJq+ElQ9SN0Heg9xtFYmnsjC1lrfH1Y
+ v9cMhaRynp2l9316qdvseXXDcIho8idtxIugxEV9Fq2ke749mBccKCX19ScBFono4MAFmMEsr
+ TKNyMLyaa31aM5W6LgYTmO4XsS5pMgho4ssWAzIxUSPswWmNovzni2FiaMdWKn3lCdeJ47NK8
+ CJSZ+HWZy6fJU2JURl4+mCADoLOws5Pu+AI1ovhawqmKVT9y7B3uPExCDWSMH3LdKQHGmzrFC
+ ipzvWX4GVpl2EiRpHOvzlvfUtpV/1CfkO1kA3b1FOEecfvON0IG/CvsY1KB9P9ba96y39mVZm
+ b9wvxYZMweMzjJVf0Ybp0Kj6W7IYHQPVpCVJk9OAU4eU5RLpDvjo5Gz3NkPEtNvwH9FONXmwJ
+ kO21sy/nKbLO8QIR05lz6Ie5KE9YrhHH+IPy9YtLQdjDsJMLFcw2XCEvvmz27KQlRTGBpuNC4
+ vvvsx7e67aj1/IOo8590juZJFXh9DeodRSliUUsgIBg++LDoJQLmIuHBuk0rjgrmeo5zRkp4N
+ YbtDY7p+B1m11RQOS2sC6etfngF5RCL1LL90Z3dldrfc1tdy5fRfh0u8hna9OZ8DKrGCXlYpD
+ WVojxUl2GCWwDM6Y/1jBQ/E+IbcJblKbGH8CCujq5LutT1J/AeNzOufTrpGRpKJBrJDrmsXZ7
+ 2AGFx1j57aTOSbk4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is better to show the number of network segments in bellow SNMP
-counters, because that could be more useful for the user.
-For example, the user could easily figure out how mant packets are
-dropped and how many packets are queued in the out-of-oder queue.
+Hi,
 
-- LINUX_MIB_TCPRCVQDROP
-- LINUX_MIB_TCPZEROWINDOWDROP
-- LINUX_MIB_TCPBACKLOGDROP
-- LINUX_MIB_TCPMINTTLDROP
-- LINUX_MIB_TCPOFODROP
-- LINUX_MIB_TCPOFOQUEUE
+> Takashi Iwai <tiwai@suse.de> hat am 8. September 2018 um 18:21 geschrieben:
+> 
+> 
+> On Sat, 08 Sep 2018 15:18:10 +0200,
+> Stefan Wahren wrote:
+> > 
+> > Hi Takashi,
+> > 
+> > > Takashi Iwai <tiwai@suse.de> hat am 4. September 2018 um 17:58 geschrieben:
+> > > 
+> > > 
+> > > Hi,
+> > > 
+> > > since I had an opportunity to play with RPi3B+ recently, I took a look
+> > > at the existing bcm2835-audio driver code and was amused very much :)
+> > > 
+> > > So here is the result, a cleanup and fix patch series.
+> > > 
+> > > Most of the patches are trivial cleanups, just brushing up, removing
+> > > many redundant and buggy codes, as well as code simplifications.
+> > > 
+> > > A big functional change is that now it uses non-atomic PCM ops, so
+> > > that we can kill the ugly workqueue usages.  Also, the resource
+> > > management was simplified.
+> > 
+> > first of all, thank you very much for this series.
+> > 
+> > Eric has no time as maintainer, so i will try to give you some feedback (beware of very little audio driver knowledge).
+> > 
+> > I functionally tested your patch series on a Raspberry Pi 1 B (bcm2835_defconfig), so this whole series is at least:
+> > 
+> > Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+> 
+> OK, thanks, I'll put to my series in case of resubmission.
+> Meanwhile I'll keep the series in topic/vc04 branch of sound.git
+> tree.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- net/ipv4/tcp_input.c | 18 ++++++++++++------
- net/ipv4/tcp_ipv4.c  |  9 ++++++---
- net/ipv6/tcp_ipv6.c  |  6 ++++--
- 3 files changed, 22 insertions(+), 11 deletions(-)
+does it mean this series should go through your tree instead of Greg's?
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 62508a2..90f449b 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4496,7 +4496,8 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 	tcp_ecn_check_ce(sk, skb);
- 
- 	if (unlikely(tcp_try_rmem_schedule(sk, skb, skb->truesize))) {
--		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPOFODROP);
-+		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPOFODROP,
-+			      tcp_skb_pcount(skb));
- 		tcp_drop(sk, skb);
- 		return;
- 	}
-@@ -4505,7 +4506,8 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- 	tp->pred_flags = 0;
- 	inet_csk_schedule_ack(sk);
- 
--	NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPOFOQUEUE);
-+	NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPOFOQUEUE,
-+		      tcp_skb_pcount(skb));
- 	seq = TCP_SKB_CB(skb)->seq;
- 	end_seq = TCP_SKB_CB(skb)->end_seq;
- 	SOCK_DEBUG(sk, "out of order segment: rcv_next %X seq %X - %X\n",
-@@ -4666,7 +4668,8 @@ int tcp_send_rcvq(struct sock *sk, struct msghdr *msg, size_t size)
- 	skb->len = size;
- 
- 	if (tcp_try_rmem_schedule(sk, skb, skb->truesize)) {
--		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPRCVQDROP);
-+		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRCVQDROP,
-+			      tcp_skb_pcount(skb));
- 		goto err_free;
- 	}
- 
-@@ -4725,7 +4728,8 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 	 */
- 	if (TCP_SKB_CB(skb)->seq == tp->rcv_nxt) {
- 		if (tcp_receive_window(tp) == 0) {
--			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPZEROWINDOWDROP);
-+			NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPZEROWINDOWDROP,
-+				      tcp_skb_pcount(skb));
- 			goto out_of_window;
- 		}
- 
-@@ -4734,7 +4738,8 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 		if (skb_queue_len(&sk->sk_receive_queue) == 0)
- 			sk_forced_mem_schedule(sk, skb->truesize);
- 		else if (tcp_try_rmem_schedule(sk, skb, skb->truesize)) {
--			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPRCVQDROP);
-+			NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRCVQDROP,
-+				      tcp_skb_pcount(skb));
- 			goto drop;
- 		}
- 
-@@ -4796,7 +4801,8 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 		 * remembering D-SACK for its head made in previous line.
- 		 */
- 		if (!tcp_receive_window(tp)) {
--			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPZEROWINDOWDROP);
-+			NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPZEROWINDOWDROP,
-+				      tcp_skb_pcount(skb));
- 			goto out_of_window;
- 		}
- 		goto queue_and_out;
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index 09547ef..f2fe14b 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -475,7 +475,8 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
- 		goto out;
- 
- 	if (unlikely(iph->ttl < inet_sk(sk)->min_ttl)) {
--		__NET_INC_STATS(net, LINUX_MIB_TCPMINTTLDROP);
-+		__NET_ADD_STATS(net, LINUX_MIB_TCPMINTTLDROP,
-+				tcp_skb_pcount(skb));
- 		goto out;
- 	}
- 
-@@ -1633,7 +1634,8 @@ bool tcp_add_backlog(struct sock *sk, struct sk_buff *skb)
- 
- 	if (unlikely(sk_add_backlog(sk, skb, limit))) {
- 		bh_unlock_sock(sk);
--		__NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPBACKLOGDROP);
-+		__NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPBACKLOGDROP,
-+				tcp_skb_pcount(skb));
- 		return true;
- 	}
- 	return false;
-@@ -1790,7 +1792,8 @@ int tcp_v4_rcv(struct sk_buff *skb)
- 		}
- 	}
- 	if (unlikely(iph->ttl < inet_sk(sk)->min_ttl)) {
--		__NET_INC_STATS(net, LINUX_MIB_TCPMINTTLDROP);
-+		__NET_ADD_STATS(net, LINUX_MIB_TCPMINTTLDROP,
-+				tcp_skb_pcount(skb));
- 		goto discard_and_relse;
- 	}
- 
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 03e6b7a..97dfc16 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -391,7 +391,8 @@ static void tcp_v6_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
- 		goto out;
- 
- 	if (ipv6_hdr(skb)->hop_limit < inet6_sk(sk)->min_hopcount) {
--		__NET_INC_STATS(net, LINUX_MIB_TCPMINTTLDROP);
-+		__NET_ADD_STATS(net, LINUX_MIB_TCPMINTTLDROP,
-+				tcp_skb_pcount(skb));
- 		goto out;
- 	}
- 
-@@ -1523,7 +1524,8 @@ static int tcp_v6_rcv(struct sk_buff *skb)
- 		}
- 	}
- 	if (hdr->hop_limit < inet6_sk(sk)->min_hopcount) {
--		__NET_INC_STATS(net, LINUX_MIB_TCPMINTTLDROP);
-+		__NET_ADD_STATS(net, LINUX_MIB_TCPMINTTLDROP,
-+				tcp_skb_pcount(skb));
- 		goto discard_and_relse;
- 	}
- 
--- 
-1.8.3.1
+> 
+> > Unfortunately there is still an corruption issue with underlying vchiq and multi_v7_defconfig, so no wider tests.
+> 
+> What is this corruption issue?
 
+Actual there are two of them.
+
+First one are incompatibilities of older VC4 firmware with commit 14dd37fc7b65 ("staging: vc04_services: Remove cache-line-size property (v3)"). There is a pull request for the Foundation kernel which hasn't been upstreamed yet [1].
+
+The second is documented here [2].
+
+[1] - https://github.com/raspberrypi/linux/pull/2666
+[2] - https://github.com/lategoodbye/rpi-zero/issues/23
+
+> 
+> > I don't know if you tested this series on a Raspberry Pi. Maybe you have some specific scenarios, which should be tested.
+> 
+> I have only a RPi3B+, and that's all what I've tested.
+
+Great, just of curiosity which config did you use?
+
+> It'd be great if the patch series could be tested in a wider range of
+> models, of course.
+> 
+> The patches are only about cleanups.  They corrected the bad usages of
+> audio APIs and its design, but basically I haven't touched the basic
+> functionality intentionally at all.  So the behavior should be kept as
+> before.
+> 
+> (Actually it'd be better to revisit the design later, especially about
+> the multi-cards option and the PCM route mixer control, but I left as
+> is for compatibility reason for now.)
+> 
+> > As a reviewer i have some suggestions, but only trivia. I don't know if it's a problem that this series hasn't been send to devel@driverdev.osuosl.org
+> 
+> No, it's just because that address isn't found in MAINTAINERS file.
+> If it should go through it, please correct the entry at first :)
+
+No, this is the mailing list for all staging driver. It is reported by get_maintainers.pl
+
+Stefan
+
+> 
+> 
+> Thanks!
+> 
+> Takashi
