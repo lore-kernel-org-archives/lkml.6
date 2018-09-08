@@ -2,47 +2,47 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UPPERCASE_50_75,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CD3C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB503C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 478C120869
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 478C120869
+	by mail.kernel.org (Postfix) with ESMTP id D3A8520844
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A8520844
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbeIHPxh (ORCPT
+        id S1727592AbeIHPxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 11:53:37 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:28557 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726315AbeIHPxg (ORCPT
+        Sat, 8 Sep 2018 11:53:36 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:5661 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726637AbeIHPxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 8 Sep 2018 11:53:36 -0400
-X-UUID: 7c6b2133253b4695b96f75283b25c4e1-20180908
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+X-UUID: 761a29d9d89e4a7cacd822fe68574b6a-20180908
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1785144748; Sat, 08 Sep 2018 19:07:43 +0800
+        with ESMTP id 1000029244; Sat, 08 Sep 2018 19:07:42 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
  mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Sat, 8 Sep 2018 19:07:42 +0800
+ 15.0.1210.3; Sat, 8 Sep 2018 19:07:41 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Sat, 8 Sep 2018 19:07:42 +0800
+ Transport; Sat, 8 Sep 2018 19:07:41 +0800
 From:   <sean.wang@mediatek.com>
 To:     <linus.walleij@linaro.org>, <linux-mediatek@lists.infradead.org>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 18/22] pinctrl: mediatek: add MT8183 pinctrl driver
-Date:   Sat, 8 Sep 2018 19:07:34 +0800
-Message-ID: <3fecbf66bd90553297ff6bc56194807ddb6b92ca.1536404280.git.sean.wang@mediatek.com>
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v2 12/22] pinctrl: mediatek: add MT7623 pinctrl driver based on generic pinctrl binding
+Date:   Sat, 8 Sep 2018 19:07:28 +0800
+Message-ID: <fe864a4557632eed07cad3727b1b180504d86aac.1536404280.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1536404280.git.sean.wang@mediatek.com>
 References: <cover.1536404280.git.sean.wang@mediatek.com>
@@ -54,534 +54,1441 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-Add MT8183 pinctrl driver based on  MediaTek pinctrl-paris core.
+Adding MT7623 pinctrl driver based on generic pinctrl binding, that is
+good example and demonstrates how to port any other MediaTek SoCs
+pinctrl-moore core when people really would like to use the generic
+pinctrl binding to support these MediaTek SoCs.
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/pinctrl/mediatek/Kconfig              |    7 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt8183.c     |  512 +++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h | 1916 +++++++++++++++++++++++++
- 4 files changed, 2436 insertions(+)
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8183.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h
+ drivers/pinctrl/mediatek/Kconfig          |    6 +
+ drivers/pinctrl/mediatek/Makefile         |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c | 1440 +++++++++++++++++++++++++++++
+ 3 files changed, 1447 insertions(+)
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7623.c
 
 diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 4a8086e..1cd5502 100644
+index f7d7a19..6124ef0 100644
 --- a/drivers/pinctrl/mediatek/Kconfig
 +++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -82,6 +82,13 @@ config PINCTRL_MT8173
- 	default ARM64 && ARCH_MEDIATEK
+@@ -32,6 +32,12 @@ config PINCTRL_MT2701
+ 	default MACH_MT2701
  	select PINCTRL_MTK
  
-+config PINCTRL_MT8183
-+	bool "Mediatek MT8183 pin control"
-+	depends on OF
-+	depends on ARM64 || COMPILE_TEST
-+	default ARM64 && ARCH_MEDIATEK
-+	select PINCTRL_MTK_PARIS
++config PINCTRL_MT7623
++	bool "Mediatek MT7623 pin control with generic binding"
++	depends on MACH_MT7623 || COMPILE_TEST
++	depends on PINCTRL_MTK_MOORE
++	default y
 +
- # For PMIC
- config PINCTRL_MT6397
- 	bool "Mediatek MT6397 pin control"
+ config PINCTRL_MT8135
+ 	bool "Mediatek MT8135 pin control"
+ 	depends on MACH_MT8135 || COMPILE_TEST
 diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
-index 8847dce..871e0e2 100644
+index 911d927..5df28e1 100644
 --- a/drivers/pinctrl/mediatek/Makefile
 +++ b/drivers/pinctrl/mediatek/Makefile
-@@ -13,4 +13,5 @@ obj-$(CONFIG_PINCTRL_MT8127)	+= pinctrl-mt8127.o
+@@ -10,5 +10,6 @@ obj-$(CONFIG_PINCTRL_MT2712)	+= pinctrl-mt2712.o
+ obj-$(CONFIG_PINCTRL_MT8135)	+= pinctrl-mt8135.o
+ obj-$(CONFIG_PINCTRL_MT8127)	+= pinctrl-mt8127.o
  obj-$(CONFIG_PINCTRL_MT7622)	+= pinctrl-mt7622.o
- obj-$(CONFIG_PINCTRL_MT7623)	+= pinctrl-mt7623.o
++obj-$(CONFIG_PINCTRL_MT7623)	+= pinctrl-mt7623.o
  obj-$(CONFIG_PINCTRL_MT8173)	+= pinctrl-mt8173.o
-+obj-$(CONFIG_PINCTRL_MT8183)	+= pinctrl-mt8183.o
  obj-$(CONFIG_PINCTRL_MT6397)	+= pinctrl-mt6397.o
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7623.c b/drivers/pinctrl/mediatek/pinctrl-mt7623.c
 new file mode 100644
-index 0000000..bd3f00b
+index 0000000..30d2289
 --- /dev/null
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-@@ -0,0 +1,512 @@
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7623.c
+@@ -0,0 +1,1440 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2018 MediaTek Inc.
++ * The MT7623 driver based on Linux generic pinctrl binding.
 + *
-+ * Author: Zhiyong Tao <zhiyong.tao@mediatek.com>
-+ *
++ * Copyright (C) 2015 - 2018 MediaTek Inc.
++ * Author: Biao Huang <biao.huang@mediatek.com>
++ *	   Ryder Lee <ryder.lee@mediatek.com>
++ *	   Sean Wang <sean.wang@mediatek.com>
 + */
 +
-+#include "pinctrl-mtk-mt8183.h"
-+#include "pinctrl-paris.h"
++#include "pinctrl-moore.h"
 +
-+/* MT8183 have multiple bases to program pin configuration listed as the below:
-+ * iocfg[0]:0x10005000, iocfg[1]:0x11F20000, iocfg[2]:0x11E80000,
-+ * iocfg[3]:0x11E70000, iocfg[4]:0x11E90000, iocfg[5]:0x11D30000,
-+ * iocfg[6]:0x11D20000, iocfg[7]:0x11C50000, iocfg[8]:0x11F30000.
-+ * _i_based could be used to indicate what base the pin should be mapped into.
++#define PIN_BOND_REG0		0xb10
++#define PIN_BOND_REG1		0xf20
++#define PIN_BOND_REG2		0xef0
++#define BOND_PCIE_CLR		(0x77 << 3)
++#define BOND_I2S_CLR		0x3
++#define BOND_MSDC0E_CLR		0x1
++
++#define PIN_FIELD15(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)	\
++	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
++		       _x_bits, 15, false)
++
++#define PIN_FIELD16(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)	\
++	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
++		       _x_bits, 16, 0)
++
++#define PINS_FIELD16(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)\
++	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
++		       _x_bits, 16, 1)
++
++#define MT7623_PIN(_number, _name, _eint_n, _drv_grp)			\
++	MTK_PIN(_number, _name, _eint_n, _drv_grp)
++
++static const struct mtk_pin_field_calc mt7623_pin_mode_range[] = {
++	PIN_FIELD15(0, 278, 0x760, 0x10, 0, 3),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_dir_range[] = {
++	PIN_FIELD16(0, 175, 0x0, 0x10, 0, 1),
++	PIN_FIELD16(176, 278, 0xc0, 0x10, 0, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_di_range[] = {
++	PIN_FIELD16(0, 278, 0x630, 0x10, 0, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_do_range[] = {
++	PIN_FIELD16(0, 278, 0x500, 0x10, 0, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_ies_range[] = {
++	PINS_FIELD16(0, 6, 0xb20, 0x10, 0, 1),
++	PINS_FIELD16(7, 9, 0xb20, 0x10, 1, 1),
++	PINS_FIELD16(10, 13, 0xb30, 0x10, 3, 1),
++	PINS_FIELD16(14, 15, 0xb30, 0x10, 13, 1),
++	PINS_FIELD16(16, 17, 0xb40, 0x10, 7, 1),
++	PINS_FIELD16(18, 29, 0xb40, 0x10, 13, 1),
++	PINS_FIELD16(30, 32, 0xb40, 0x10, 7, 1),
++	PINS_FIELD16(33, 37, 0xb40, 0x10, 13, 1),
++	PIN_FIELD16(38, 38, 0xb20, 0x10, 13, 1),
++	PINS_FIELD16(39, 42, 0xb40, 0x10, 13, 1),
++	PINS_FIELD16(43, 45, 0xb20, 0x10, 10, 1),
++	PINS_FIELD16(47, 48, 0xb20, 0x10, 11, 1),
++	PIN_FIELD16(49, 49, 0xb20, 0x10, 12, 1),
++	PINS_FIELD16(50, 52, 0xb20, 0x10, 13, 1),
++	PINS_FIELD16(53, 56, 0xb20, 0x10, 14, 1),
++	PINS_FIELD16(57, 58, 0xb20, 0x10, 15, 1),
++	PIN_FIELD16(59, 59, 0xb30, 0x10, 10, 1),
++	PINS_FIELD16(60, 62, 0xb30, 0x10, 0, 1),
++	PINS_FIELD16(63, 65, 0xb30, 0x10, 1, 1),
++	PINS_FIELD16(66, 71, 0xb30, 0x10, 2, 1),
++	PINS_FIELD16(72, 74, 0xb20, 0x10, 12, 1),
++	PINS_FIELD16(75, 76, 0xb30, 0x10, 3, 1),
++	PINS_FIELD16(77, 78, 0xb30, 0x10, 4, 1),
++	PINS_FIELD16(79, 82, 0xb30, 0x10, 5, 1),
++	PINS_FIELD16(83, 84, 0xb30, 0x10, 2, 1),
++	PIN_FIELD16(85, 85, 0xda0, 0x10, 4, 1),
++	PIN_FIELD16(86, 86, 0xd90, 0x10, 4, 1),
++	PINS_FIELD16(87, 90, 0xdb0, 0x10, 4, 1),
++	PINS_FIELD16(101, 104, 0xb30, 0x10, 6, 1),
++	PIN_FIELD16(105, 105, 0xd40, 0x10, 4, 1),
++	PIN_FIELD16(106, 106, 0xd30, 0x10, 4, 1),
++	PINS_FIELD16(107, 110, 0xd50, 0x10, 4, 1),
++	PINS_FIELD16(111, 115, 0xce0, 0x10, 4, 1),
++	PIN_FIELD16(116, 116, 0xcd0, 0x10, 4, 1),
++	PIN_FIELD16(117, 117, 0xcc0, 0x10, 4, 1),
++	PINS_FIELD16(118, 121, 0xce0, 0x10, 4, 1),
++	PINS_FIELD16(122, 125, 0xb30, 0x10, 7, 1),
++	PIN_FIELD16(126, 126, 0xb20, 0x10, 12, 1),
++	PINS_FIELD16(127, 142, 0xb30, 0x10, 9, 1),
++	PINS_FIELD16(143, 160, 0xb30, 0x10, 10, 1),
++	PINS_FIELD16(161, 168, 0xb30, 0x10, 12, 1),
++	PINS_FIELD16(169, 183, 0xb30, 0x10, 10, 1),
++	PINS_FIELD16(184, 186, 0xb30, 0x10, 9, 1),
++	PIN_FIELD16(187, 187, 0xb30, 0x10, 14, 1),
++	PIN_FIELD16(188, 188, 0xb20, 0x10, 13, 1),
++	PINS_FIELD16(189, 193, 0xb30, 0x10, 15, 1),
++	PINS_FIELD16(194, 198, 0xb40, 0x10, 0, 1),
++	PIN_FIELD16(199, 199, 0xb20, 0x10, 1, 1),
++	PINS_FIELD16(200, 202, 0xb40, 0x10, 1, 1),
++	PINS_FIELD16(203, 207, 0xb40, 0x10, 2, 1),
++	PINS_FIELD16(208, 209, 0xb40, 0x10, 3, 1),
++	PIN_FIELD16(210, 210, 0xb40, 0x10, 4, 1),
++	PINS_FIELD16(211, 235, 0xb40, 0x10, 5, 1),
++	PINS_FIELD16(236, 241, 0xb40, 0x10, 6, 1),
++	PINS_FIELD16(242, 243, 0xb40, 0x10, 7, 1),
++	PINS_FIELD16(244, 247, 0xb40, 0x10, 8, 1),
++	PIN_FIELD16(248, 248, 0xb40, 0x10, 9, 1),
++	PINS_FIELD16(249, 257, 0xfc0, 0x10, 4, 1),
++	PIN_FIELD16(258, 258, 0xcb0, 0x10, 4, 1),
++	PIN_FIELD16(259, 259, 0xc90, 0x10, 4, 1),
++	PIN_FIELD16(260, 260, 0x3a0, 0x10, 4, 1),
++	PIN_FIELD16(261, 261, 0xd50, 0x10, 4, 1),
++	PINS_FIELD16(262, 277, 0xb40, 0x10, 12, 1),
++	PIN_FIELD16(278, 278, 0xb40, 0x10, 13, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_smt_range[] = {
++	PINS_FIELD16(0, 6, 0xb50, 0x10, 0, 1),
++	PINS_FIELD16(7, 9, 0xb50, 0x10, 1, 1),
++	PINS_FIELD16(10, 13, 0xb60, 0x10, 3, 1),
++	PINS_FIELD16(14, 15, 0xb60, 0x10, 13, 1),
++	PINS_FIELD16(16, 17, 0xb70, 0x10, 7, 1),
++	PINS_FIELD16(18, 29, 0xb70, 0x10, 13, 1),
++	PINS_FIELD16(30, 32, 0xb70, 0x10, 7, 1),
++	PINS_FIELD16(33, 37, 0xb70, 0x10, 13, 1),
++	PIN_FIELD16(38, 38, 0xb50, 0x10, 13, 1),
++	PINS_FIELD16(39, 42, 0xb70, 0x10, 13, 1),
++	PINS_FIELD16(43, 45, 0xb50, 0x10, 10, 1),
++	PINS_FIELD16(47, 48, 0xb50, 0x10, 11, 1),
++	PIN_FIELD16(49, 49, 0xb50, 0x10, 12, 1),
++	PINS_FIELD16(50, 52, 0xb50, 0x10, 13, 1),
++	PINS_FIELD16(53, 56, 0xb50, 0x10, 14, 1),
++	PINS_FIELD16(57, 58, 0xb50, 0x10, 15, 1),
++	PIN_FIELD16(59, 59, 0xb60, 0x10, 10, 1),
++	PINS_FIELD16(60, 62, 0xb60, 0x10, 0, 1),
++	PINS_FIELD16(63, 65, 0xb60, 0x10, 1, 1),
++	PINS_FIELD16(66, 71, 0xb60, 0x10, 2, 1),
++	PINS_FIELD16(72, 74, 0xb50, 0x10, 12, 1),
++	PINS_FIELD16(75, 76, 0xb60, 0x10, 3, 1),
++	PINS_FIELD16(77, 78, 0xb60, 0x10, 4, 1),
++	PINS_FIELD16(79, 82, 0xb60, 0x10, 5, 1),
++	PINS_FIELD16(83, 84, 0xb60, 0x10, 2, 1),
++	PIN_FIELD16(85, 85, 0xda0, 0x10, 11, 1),
++	PIN_FIELD16(86, 86, 0xd90, 0x10, 11, 1),
++	PIN_FIELD16(87, 87, 0xdc0, 0x10, 3, 1),
++	PIN_FIELD16(88, 88, 0xdc0, 0x10, 7, 1),
++	PIN_FIELD16(89, 89, 0xdc0, 0x10, 11, 1),
++	PIN_FIELD16(90, 90, 0xdc0, 0x10, 15, 1),
++	PINS_FIELD16(101, 104, 0xb60, 0x10, 6, 1),
++	PIN_FIELD16(105, 105, 0xd40, 0x10, 11, 1),
++	PIN_FIELD16(106, 106, 0xd30, 0x10, 11, 1),
++	PIN_FIELD16(107, 107, 0xd60, 0x10, 3, 1),
++	PIN_FIELD16(108, 108, 0xd60, 0x10, 7, 1),
++	PIN_FIELD16(109, 109, 0xd60, 0x10, 11, 1),
++	PIN_FIELD16(110, 110, 0xd60, 0x10, 15, 1),
++	PIN_FIELD16(111, 111, 0xd00, 0x10, 15, 1),
++	PIN_FIELD16(112, 112, 0xd00, 0x10, 11, 1),
++	PIN_FIELD16(113, 113, 0xd00, 0x10, 7, 1),
++	PIN_FIELD16(114, 114, 0xd00, 0x10, 3, 1),
++	PIN_FIELD16(115, 115, 0xd10, 0x10, 3, 1),
++	PIN_FIELD16(116, 116, 0xcd0, 0x10, 11, 1),
++	PIN_FIELD16(117, 117, 0xcc0, 0x10, 11, 1),
++	PIN_FIELD16(118, 118, 0xcf0, 0x10, 15, 1),
++	PIN_FIELD16(119, 119, 0xcf0, 0x10, 7, 1),
++	PIN_FIELD16(120, 120, 0xcf0, 0x10, 3, 1),
++	PIN_FIELD16(121, 121, 0xcf0, 0x10, 7, 1),
++	PINS_FIELD16(122, 125, 0xb60, 0x10, 7, 1),
++	PIN_FIELD16(126, 126, 0xb50, 0x10, 12, 1),
++	PINS_FIELD16(127, 142, 0xb60, 0x10, 9, 1),
++	PINS_FIELD16(143, 160, 0xb60, 0x10, 10, 1),
++	PINS_FIELD16(161, 168, 0xb60, 0x10, 12, 1),
++	PINS_FIELD16(169, 183, 0xb60, 0x10, 10, 1),
++	PINS_FIELD16(184, 186, 0xb60, 0x10, 9, 1),
++	PIN_FIELD16(187, 187, 0xb60, 0x10, 14, 1),
++	PIN_FIELD16(188, 188, 0xb50, 0x10, 13, 1),
++	PINS_FIELD16(189, 193, 0xb60, 0x10, 15, 1),
++	PINS_FIELD16(194, 198, 0xb70, 0x10, 0, 1),
++	PIN_FIELD16(199, 199, 0xb50, 0x10, 1, 1),
++	PINS_FIELD16(200, 202, 0xb70, 0x10, 1, 1),
++	PINS_FIELD16(203, 207, 0xb70, 0x10, 2, 1),
++	PINS_FIELD16(208, 209, 0xb70, 0x10, 3, 1),
++	PIN_FIELD16(210, 210, 0xb70, 0x10, 4, 1),
++	PINS_FIELD16(211, 235, 0xb70, 0x10, 5, 1),
++	PINS_FIELD16(236, 241, 0xb70, 0x10, 6, 1),
++	PINS_FIELD16(242, 243, 0xb70, 0x10, 7, 1),
++	PINS_FIELD16(244, 247, 0xb70, 0x10, 8, 1),
++	PIN_FIELD16(248, 248, 0xb70, 0x10, 9, 10),
++	PIN_FIELD16(249, 249, 0x140, 0x10, 3, 1),
++	PIN_FIELD16(250, 250, 0x130, 0x10, 15, 1),
++	PIN_FIELD16(251, 251, 0x130, 0x10, 11, 1),
++	PIN_FIELD16(252, 252, 0x130, 0x10, 7, 1),
++	PIN_FIELD16(253, 253, 0x130, 0x10, 3, 1),
++	PIN_FIELD16(254, 254, 0xf40, 0x10, 15, 1),
++	PIN_FIELD16(255, 255, 0xf40, 0x10, 11, 1),
++	PIN_FIELD16(256, 256, 0xf40, 0x10, 7, 1),
++	PIN_FIELD16(257, 257, 0xf40, 0x10, 3, 1),
++	PIN_FIELD16(258, 258, 0xcb0, 0x10, 11, 1),
++	PIN_FIELD16(259, 259, 0xc90, 0x10, 11, 1),
++	PIN_FIELD16(260, 260, 0x3a0, 0x10, 11, 1),
++	PIN_FIELD16(261, 261, 0x0b0, 0x10, 3, 1),
++	PINS_FIELD16(262, 277, 0xb70, 0x10, 12, 1),
++	PIN_FIELD16(278, 278, 0xb70, 0x10, 13, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_pullen_range[] = {
++	PIN_FIELD16(0, 278, 0x150, 0x10, 0, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_pullsel_range[] = {
++	PIN_FIELD16(0, 278, 0x280, 0x10, 0, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_drv_range[] = {
++	PINS_FIELD16(0, 6, 0xf50, 0x10, 0, 4),
++	PINS_FIELD16(7, 9, 0xf50, 0x10, 4, 4),
++	PINS_FIELD16(10, 13, 0xf50, 0x10, 4, 4),
++	PINS_FIELD16(14, 15, 0xf50, 0x10, 12, 4),
++	PINS_FIELD16(16, 17, 0xf60, 0x10, 0, 4),
++	PINS_FIELD16(18, 21, 0xf60, 0x10, 0, 4),
++	PINS_FIELD16(22, 26, 0xf60, 0x10, 8, 4),
++	PINS_FIELD16(27, 29, 0xf60, 0x10, 12, 4),
++	PINS_FIELD16(30, 32, 0xf60, 0x10, 0, 4),
++	PINS_FIELD16(33, 37, 0xf70, 0x10, 0, 4),
++	PIN_FIELD16(38, 38, 0xf70, 0x10, 4, 4),
++	PINS_FIELD16(39, 42, 0xf70, 0x10, 8, 4),
++	PINS_FIELD16(43, 45, 0xf70, 0x10, 12, 4),
++	PINS_FIELD16(47, 48, 0xf80, 0x10, 0, 4),
++	PIN_FIELD16(49, 49, 0xf80, 0x10, 4, 4),
++	PINS_FIELD16(50, 52, 0xf70, 0x10, 4, 4),
++	PINS_FIELD16(53, 56, 0xf80, 0x10, 12, 4),
++	PINS_FIELD16(60, 62, 0xf90, 0x10, 8, 4),
++	PINS_FIELD16(63, 65, 0xf90, 0x10, 12, 4),
++	PINS_FIELD16(66, 71, 0xfa0, 0x10, 0, 4),
++	PINS_FIELD16(72, 74, 0xf80, 0x10, 4, 4),
++	PIN_FIELD16(85, 85, 0xda0, 0x10, 0, 4),
++	PIN_FIELD16(86, 86, 0xd90, 0x10, 0, 4),
++	PINS_FIELD16(87, 90, 0xdb0, 0x10, 0, 4),
++	PIN_FIELD16(105, 105, 0xd40, 0x10, 0, 4),
++	PIN_FIELD16(106, 106, 0xd30, 0x10, 0, 4),
++	PINS_FIELD16(107, 110, 0xd50, 0x10, 0, 4),
++	PINS_FIELD16(111, 115, 0xce0, 0x10, 0, 4),
++	PIN_FIELD16(116, 116, 0xcd0, 0x10, 0, 4),
++	PIN_FIELD16(117, 117, 0xcc0, 0x10, 0, 4),
++	PINS_FIELD16(118, 121, 0xce0, 0x10, 0, 4),
++	PIN_FIELD16(126, 126, 0xf80, 0x10, 4, 4),
++	PIN_FIELD16(188, 188, 0xf70, 0x10, 4, 4),
++	PINS_FIELD16(189, 193, 0xfe0, 0x10, 8, 4),
++	PINS_FIELD16(194, 198, 0xfe0, 0x10, 12, 4),
++	PIN_FIELD16(199, 199, 0xf50, 0x10, 4, 4),
++	PINS_FIELD16(200, 202, 0xfd0, 0x10, 0, 4),
++	PINS_FIELD16(203, 207, 0xfd0, 0x10, 4, 4),
++	PINS_FIELD16(208, 209, 0xfd0, 0x10, 8, 4),
++	PIN_FIELD16(210, 210, 0xfd0, 0x10, 12, 4),
++	PINS_FIELD16(211, 235, 0xff0, 0x10, 0, 4),
++	PINS_FIELD16(236, 241, 0xff0, 0x10, 4, 4),
++	PINS_FIELD16(242, 243, 0xff0, 0x10, 8, 4),
++	PIN_FIELD16(248, 248, 0xf00, 0x10, 0, 4),
++	PINS_FIELD16(249, 256, 0xfc0, 0x10, 0, 4),
++	PIN_FIELD16(257, 257, 0xce0, 0x10, 0, 4),
++	PIN_FIELD16(258, 258, 0xcb0, 0x10, 0, 4),
++	PIN_FIELD16(259, 259, 0xc90, 0x10, 0, 4),
++	PIN_FIELD16(260, 260, 0x3a0, 0x10, 0, 4),
++	PIN_FIELD16(261, 261, 0xd50, 0x10, 0, 4),
++	PINS_FIELD16(262, 277, 0xf00, 0x10, 8, 4),
++	PIN_FIELD16(278, 278, 0xf70, 0x10, 8, 4),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_tdsel_range[] = {
++	PINS_FIELD16(262, 276, 0x4c0, 0x10, 0, 4),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_pupd_range[] = {
++	/* MSDC0 */
++	PIN_FIELD16(111, 111, 0xd00, 0x10, 12, 1),
++	PIN_FIELD16(112, 112, 0xd00, 0x10, 8, 1),
++	PIN_FIELD16(113, 113, 0xd00, 0x10, 4, 1),
++	PIN_FIELD16(114, 114, 0xd00, 0x10, 0, 1),
++	PIN_FIELD16(115, 115, 0xd10, 0x10, 0, 1),
++	PIN_FIELD16(116, 116, 0xcd0, 0x10, 8, 1),
++	PIN_FIELD16(117, 117, 0xcc0, 0x10, 8, 1),
++	PIN_FIELD16(118, 118, 0xcf0, 0x10, 12, 1),
++	PIN_FIELD16(119, 119, 0xcf0, 0x10, 8, 1),
++	PIN_FIELD16(120, 120, 0xcf0, 0x10, 4, 1),
++	PIN_FIELD16(121, 121, 0xcf0, 0x10, 0, 1),
++	/* MSDC1 */
++	PIN_FIELD16(105, 105, 0xd40, 0x10, 8, 1),
++	PIN_FIELD16(106, 106, 0xd30, 0x10, 8, 1),
++	PIN_FIELD16(107, 107, 0xd60, 0x10, 0, 1),
++	PIN_FIELD16(108, 108, 0xd60, 0x10, 10, 1),
++	PIN_FIELD16(109, 109, 0xd60, 0x10, 4, 1),
++	PIN_FIELD16(110, 110, 0xc60, 0x10, 12, 1),
++	/* MSDC1 */
++	PIN_FIELD16(85, 85, 0xda0, 0x10, 8, 1),
++	PIN_FIELD16(86, 86, 0xd90, 0x10, 8, 1),
++	PIN_FIELD16(87, 87, 0xdc0, 0x10, 0, 1),
++	PIN_FIELD16(88, 88, 0xdc0, 0x10, 10, 1),
++	PIN_FIELD16(89, 89, 0xdc0, 0x10, 4, 1),
++	PIN_FIELD16(90, 90, 0xdc0, 0x10, 12, 1),
++	/* MSDC0E */
++	PIN_FIELD16(249, 249, 0x140, 0x10, 0, 1),
++	PIN_FIELD16(250, 250, 0x130, 0x10, 12, 1),
++	PIN_FIELD16(251, 251, 0x130, 0x10, 8, 1),
++	PIN_FIELD16(252, 252, 0x130, 0x10, 4, 1),
++	PIN_FIELD16(253, 253, 0x130, 0x10, 0, 1),
++	PIN_FIELD16(254, 254, 0xf40, 0x10, 12, 1),
++	PIN_FIELD16(255, 255, 0xf40, 0x10, 8, 1),
++	PIN_FIELD16(256, 256, 0xf40, 0x10, 4, 1),
++	PIN_FIELD16(257, 257, 0xf40, 0x10, 0, 1),
++	PIN_FIELD16(258, 258, 0xcb0, 0x10, 8, 1),
++	PIN_FIELD16(259, 259, 0xc90, 0x10, 8, 1),
++	PIN_FIELD16(261, 261, 0x140, 0x10, 8, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_r1_range[] = {
++	/* MSDC0 */
++	PIN_FIELD16(111, 111, 0xd00, 0x10, 13, 1),
++	PIN_FIELD16(112, 112, 0xd00, 0x10, 9, 1),
++	PIN_FIELD16(113, 113, 0xd00, 0x10, 5, 1),
++	PIN_FIELD16(114, 114, 0xd00, 0x10, 1, 1),
++	PIN_FIELD16(115, 115, 0xd10, 0x10, 1, 1),
++	PIN_FIELD16(116, 116, 0xcd0, 0x10, 9, 1),
++	PIN_FIELD16(117, 117, 0xcc0, 0x10, 9, 1),
++	PIN_FIELD16(118, 118, 0xcf0, 0x10, 13, 1),
++	PIN_FIELD16(119, 119, 0xcf0, 0x10, 9, 1),
++	PIN_FIELD16(120, 120, 0xcf0, 0x10, 5, 1),
++	PIN_FIELD16(121, 121, 0xcf0, 0x10, 1, 1),
++	/* MSDC1 */
++	PIN_FIELD16(105, 105, 0xd40, 0x10, 9, 1),
++	PIN_FIELD16(106, 106, 0xd30, 0x10, 9, 1),
++	PIN_FIELD16(107, 107, 0xd60, 0x10, 1, 1),
++	PIN_FIELD16(108, 108, 0xd60, 0x10, 9, 1),
++	PIN_FIELD16(109, 109, 0xd60, 0x10, 5, 1),
++	PIN_FIELD16(110, 110, 0xc60, 0x10, 13, 1),
++	/* MSDC2 */
++	PIN_FIELD16(85, 85, 0xda0, 0x10, 9, 1),
++	PIN_FIELD16(86, 86, 0xd90, 0x10, 9, 1),
++	PIN_FIELD16(87, 87, 0xdc0, 0x10, 1, 1),
++	PIN_FIELD16(88, 88, 0xdc0, 0x10, 9, 1),
++	PIN_FIELD16(89, 89, 0xdc0, 0x10, 5, 1),
++	PIN_FIELD16(90, 90, 0xdc0, 0x10, 13, 1),
++	/* MSDC0E */
++	PIN_FIELD16(249, 249, 0x140, 0x10, 1, 1),
++	PIN_FIELD16(250, 250, 0x130, 0x10, 13, 1),
++	PIN_FIELD16(251, 251, 0x130, 0x10, 9, 1),
++	PIN_FIELD16(252, 252, 0x130, 0x10, 5, 1),
++	PIN_FIELD16(253, 253, 0x130, 0x10, 1, 1),
++	PIN_FIELD16(254, 254, 0xf40, 0x10, 13, 1),
++	PIN_FIELD16(255, 255, 0xf40, 0x10, 9, 1),
++	PIN_FIELD16(256, 256, 0xf40, 0x10, 5, 1),
++	PIN_FIELD16(257, 257, 0xf40, 0x10, 1, 1),
++	PIN_FIELD16(258, 258, 0xcb0, 0x10, 9, 1),
++	PIN_FIELD16(259, 259, 0xc90, 0x10, 9, 1),
++	PIN_FIELD16(261, 261, 0x140, 0x10, 9, 1),
++};
++
++static const struct mtk_pin_field_calc mt7623_pin_r0_range[] = {
++	/* MSDC0 */
++	PIN_FIELD16(111, 111, 0xd00, 0x10, 14, 1),
++	PIN_FIELD16(112, 112, 0xd00, 0x10, 10, 1),
++	PIN_FIELD16(113, 113, 0xd00, 0x10, 6, 1),
++	PIN_FIELD16(114, 114, 0xd00, 0x10, 2, 1),
++	PIN_FIELD16(115, 115, 0xd10, 0x10, 2, 1),
++	PIN_FIELD16(116, 116, 0xcd0, 0x10, 10, 1),
++	PIN_FIELD16(117, 117, 0xcc0, 0x10, 10, 1),
++	PIN_FIELD16(118, 118, 0xcf0, 0x10, 14, 1),
++	PIN_FIELD16(119, 119, 0xcf0, 0x10, 10, 1),
++	PIN_FIELD16(120, 120, 0xcf0, 0x10, 6, 1),
++	PIN_FIELD16(121, 121, 0xcf0, 0x10, 2, 1),
++	/* MSDC1 */
++	PIN_FIELD16(105, 105, 0xd40, 0x10, 10, 1),
++	PIN_FIELD16(106, 106, 0xd30, 0x10, 10, 1),
++	PIN_FIELD16(107, 107, 0xd60, 0x10, 2, 1),
++	PIN_FIELD16(108, 108, 0xd60, 0x10, 8, 1),
++	PIN_FIELD16(109, 109, 0xd60, 0x10, 6, 1),
++	PIN_FIELD16(110, 110, 0xc60, 0x10, 14, 1),
++	/* MSDC2 */
++	PIN_FIELD16(85, 85, 0xda0, 0x10, 10, 1),
++	PIN_FIELD16(86, 86, 0xd90, 0x10, 10, 1),
++	PIN_FIELD16(87, 87, 0xdc0, 0x10, 2, 1),
++	PIN_FIELD16(88, 88, 0xdc0, 0x10, 8, 1),
++	PIN_FIELD16(89, 89, 0xdc0, 0x10, 6, 1),
++	PIN_FIELD16(90, 90, 0xdc0, 0x10, 14, 1),
++	/* MSDC0E */
++	PIN_FIELD16(249, 249, 0x140, 0x10, 2, 1),
++	PIN_FIELD16(250, 250, 0x130, 0x10, 14, 1),
++	PIN_FIELD16(251, 251, 0x130, 0x10, 10, 1),
++	PIN_FIELD16(252, 252, 0x130, 0x10, 6, 1),
++	PIN_FIELD16(253, 253, 0x130, 0x10, 2, 1),
++	PIN_FIELD16(254, 254, 0xf40, 0x10, 14, 1),
++	PIN_FIELD16(255, 255, 0xf40, 0x10, 10, 1),
++	PIN_FIELD16(256, 256, 0xf40, 0x10, 6, 1),
++	PIN_FIELD16(257, 257, 0xf40, 0x10, 5, 1),
++	PIN_FIELD16(258, 258, 0xcb0, 0x10, 10, 1),
++	PIN_FIELD16(259, 259, 0xc90, 0x10, 10, 1),
++	PIN_FIELD16(261, 261, 0x140, 0x10, 10, 1),
++};
++
++static const struct mtk_pin_reg_calc mt7623_reg_cals[] = {
++	[PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt7623_pin_mode_range),
++	[PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt7623_pin_dir_range),
++	[PINCTRL_PIN_REG_DI] = MTK_RANGE(mt7623_pin_di_range),
++	[PINCTRL_PIN_REG_DO] = MTK_RANGE(mt7623_pin_do_range),
++	[PINCTRL_PIN_REG_SMT] = MTK_RANGE(mt7623_pin_smt_range),
++	[PINCTRL_PIN_REG_PULLSEL] = MTK_RANGE(mt7623_pin_pullsel_range),
++	[PINCTRL_PIN_REG_PULLEN] = MTK_RANGE(mt7623_pin_pullen_range),
++	[PINCTRL_PIN_REG_DRV] = MTK_RANGE(mt7623_pin_drv_range),
++	[PINCTRL_PIN_REG_TDSEL] = MTK_RANGE(mt7623_pin_tdsel_range),
++	[PINCTRL_PIN_REG_IES] = MTK_RANGE(mt7623_pin_ies_range),
++	[PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt7623_pin_pupd_range),
++	[PINCTRL_PIN_REG_R0] = MTK_RANGE(mt7623_pin_r0_range),
++	[PINCTRL_PIN_REG_R1] = MTK_RANGE(mt7623_pin_r1_range),
++};
++
++static const struct mtk_pin_desc mt7623_pins[] = {
++	MT7623_PIN(0, "PWRAP_SPI0_MI", 148, DRV_GRP3),
++	MT7623_PIN(1, "PWRAP_SPI0_MO", 149, DRV_GRP3),
++	MT7623_PIN(2, "PWRAP_INT", 150, DRV_GRP3),
++	MT7623_PIN(3, "PWRAP_SPI0_CK", 151, DRV_GRP3),
++	MT7623_PIN(4, "PWRAP_SPI0_CSN", 152, DRV_GRP3),
++	MT7623_PIN(5, "PWRAP_SPI0_CK2", 153, DRV_GRP3),
++	MT7623_PIN(6, "PWRAP_SPI0_CSN2", 154, DRV_GRP3),
++	MT7623_PIN(7, "SPI1_CSN", 155, DRV_GRP3),
++	MT7623_PIN(8, "SPI1_MI", 156, DRV_GRP3),
++	MT7623_PIN(9, "SPI1_MO", 157, DRV_GRP3),
++	MT7623_PIN(10, "RTC32K_CK", 158, DRV_GRP3),
++	MT7623_PIN(11, "WATCHDOG", 159, DRV_GRP3),
++	MT7623_PIN(12, "SRCLKENA", 160, DRV_GRP3),
++	MT7623_PIN(13, "SRCLKENAI", 161, DRV_GRP3),
++	MT7623_PIN(14, "URXD2", 162, DRV_GRP1),
++	MT7623_PIN(15, "UTXD2", 163, DRV_GRP1),
++	MT7623_PIN(16, "I2S5_DATA_IN", 164, DRV_GRP1),
++	MT7623_PIN(17, "I2S5_BCK", 165, DRV_GRP1),
++	MT7623_PIN(18, "PCM_CLK", 166, DRV_GRP1),
++	MT7623_PIN(19, "PCM_SYNC", 167, DRV_GRP1),
++	MT7623_PIN(20, "PCM_RX", EINT_NA, DRV_GRP1),
++	MT7623_PIN(21, "PCM_TX", EINT_NA, DRV_GRP1),
++	MT7623_PIN(22, "EINT0", 0, DRV_GRP1),
++	MT7623_PIN(23, "EINT1", 1, DRV_GRP1),
++	MT7623_PIN(24, "EINT2", 2, DRV_GRP1),
++	MT7623_PIN(25, "EINT3", 3, DRV_GRP1),
++	MT7623_PIN(26, "EINT4", 4, DRV_GRP1),
++	MT7623_PIN(27, "EINT5", 5, DRV_GRP1),
++	MT7623_PIN(28, "EINT6", 6, DRV_GRP1),
++	MT7623_PIN(29, "EINT7", 7, DRV_GRP1),
++	MT7623_PIN(30, "I2S5_LRCK", 12, DRV_GRP1),
++	MT7623_PIN(31, "I2S5_MCLK", 13, DRV_GRP1),
++	MT7623_PIN(32, "I2S5_DATA", 14, DRV_GRP1),
++	MT7623_PIN(33, "I2S1_DATA", 15, DRV_GRP1),
++	MT7623_PIN(34, "I2S1_DATA_IN", 16, DRV_GRP1),
++	MT7623_PIN(35, "I2S1_BCK", 17, DRV_GRP1),
++	MT7623_PIN(36, "I2S1_LRCK", 18, DRV_GRP1),
++	MT7623_PIN(37, "I2S1_MCLK", 19, DRV_GRP1),
++	MT7623_PIN(38, "I2S2_DATA", 20, DRV_GRP1),
++	MT7623_PIN(39, "JTMS", 21, DRV_GRP3),
++	MT7623_PIN(40, "JTCK", 22, DRV_GRP3),
++	MT7623_PIN(41, "JTDI", 23, DRV_GRP3),
++	MT7623_PIN(42, "JTDO", 24, DRV_GRP3),
++	MT7623_PIN(43, "NCLE", 25, DRV_GRP1),
++	MT7623_PIN(44, "NCEB1", 26, DRV_GRP1),
++	MT7623_PIN(45, "NCEB0", 27, DRV_GRP1),
++	MT7623_PIN(46, "IR", 28, DRV_FIXED),
++	MT7623_PIN(47, "NREB", 29, DRV_GRP1),
++	MT7623_PIN(48, "NRNB", 30, DRV_GRP1),
++	MT7623_PIN(49, "I2S0_DATA", 31, DRV_GRP1),
++	MT7623_PIN(50, "I2S2_BCK", 32, DRV_GRP1),
++	MT7623_PIN(51, "I2S2_DATA_IN", 33, DRV_GRP1),
++	MT7623_PIN(52, "I2S2_LRCK", 34, DRV_GRP1),
++	MT7623_PIN(53, "SPI0_CSN", 35, DRV_GRP1),
++	MT7623_PIN(54, "SPI0_CK", 36, DRV_GRP1),
++	MT7623_PIN(55, "SPI0_MI", 37, DRV_GRP1),
++	MT7623_PIN(56, "SPI0_MO", 38, DRV_GRP1),
++	MT7623_PIN(57, "SDA1", 39, DRV_FIXED),
++	MT7623_PIN(58, "SCL1", 40, DRV_FIXED),
++	MT7623_PIN(59, "RAMBUF_I_CLK", EINT_NA, DRV_FIXED),
++	MT7623_PIN(60, "WB_RSTB", 41, DRV_GRP3),
++	MT7623_PIN(61, "F2W_DATA", 42, DRV_GRP3),
++	MT7623_PIN(62, "F2W_CLK", 43, DRV_GRP3),
++	MT7623_PIN(63, "WB_SCLK", 44, DRV_GRP3),
++	MT7623_PIN(64, "WB_SDATA", 45, DRV_GRP3),
++	MT7623_PIN(65, "WB_SEN", 46, DRV_GRP3),
++	MT7623_PIN(66, "WB_CRTL0", 47, DRV_GRP3),
++	MT7623_PIN(67, "WB_CRTL1", 48, DRV_GRP3),
++	MT7623_PIN(68, "WB_CRTL2", 49, DRV_GRP3),
++	MT7623_PIN(69, "WB_CRTL3", 50, DRV_GRP3),
++	MT7623_PIN(70, "WB_CRTL4", 51, DRV_GRP3),
++	MT7623_PIN(71, "WB_CRTL5", 52, DRV_GRP3),
++	MT7623_PIN(72, "I2S0_DATA_IN", 53, DRV_GRP1),
++	MT7623_PIN(73, "I2S0_LRCK", 54, DRV_GRP1),
++	MT7623_PIN(74, "I2S0_BCK", 55, DRV_GRP1),
++	MT7623_PIN(75, "SDA0", 56, DRV_FIXED),
++	MT7623_PIN(76, "SCL0", 57, DRV_FIXED),
++	MT7623_PIN(77, "SDA2", 58, DRV_FIXED),
++	MT7623_PIN(78, "SCL2", 59, DRV_FIXED),
++	MT7623_PIN(79, "URXD0", 60, DRV_FIXED),
++	MT7623_PIN(80, "UTXD0", 61, DRV_FIXED),
++	MT7623_PIN(81, "URXD1", 62, DRV_FIXED),
++	MT7623_PIN(82, "UTXD1", 63, DRV_FIXED),
++	MT7623_PIN(83, "LCM_RST", 64, DRV_FIXED),
++	MT7623_PIN(84, "DSI_TE", 65, DRV_FIXED),
++	MT7623_PIN(85, "MSDC2_CMD", 66, DRV_GRP4),
++	MT7623_PIN(86, "MSDC2_CLK", 67, DRV_GRP4),
++	MT7623_PIN(87, "MSDC2_DAT0", 68, DRV_GRP4),
++	MT7623_PIN(88, "MSDC2_DAT1", 69, DRV_GRP4),
++	MT7623_PIN(89, "MSDC2_DAT2", 70, DRV_GRP4),
++	MT7623_PIN(90, "MSDC2_DAT3", 71, DRV_GRP4),
++	MT7623_PIN(91, "TDN3", EINT_NA, DRV_FIXED),
++	MT7623_PIN(92, "TDP3", EINT_NA, DRV_FIXED),
++	MT7623_PIN(93, "TDN2", EINT_NA, DRV_FIXED),
++	MT7623_PIN(94, "TDP2", EINT_NA, DRV_FIXED),
++	MT7623_PIN(95, "TCN", EINT_NA, DRV_FIXED),
++	MT7623_PIN(96, "TCP", EINT_NA, DRV_FIXED),
++	MT7623_PIN(97, "TDN1", EINT_NA, DRV_FIXED),
++	MT7623_PIN(98, "TDP1", EINT_NA, DRV_FIXED),
++	MT7623_PIN(99, "TDN0", EINT_NA, DRV_FIXED),
++	MT7623_PIN(100, "TDP0", EINT_NA, DRV_FIXED),
++	MT7623_PIN(101, "SPI2_CSN", 74, DRV_FIXED),
++	MT7623_PIN(102, "SPI2_MI", 75, DRV_FIXED),
++	MT7623_PIN(103, "SPI2_MO", 76, DRV_FIXED),
++	MT7623_PIN(104, "SPI2_CLK", 77, DRV_FIXED),
++	MT7623_PIN(105, "MSDC1_CMD", 78, DRV_GRP4),
++	MT7623_PIN(106, "MSDC1_CLK", 79, DRV_GRP4),
++	MT7623_PIN(107, "MSDC1_DAT0", 80, DRV_GRP4),
++	MT7623_PIN(108, "MSDC1_DAT1", 81, DRV_GRP4),
++	MT7623_PIN(109, "MSDC1_DAT2", 82, DRV_GRP4),
++	MT7623_PIN(110, "MSDC1_DAT3", 83, DRV_GRP4),
++	MT7623_PIN(111, "MSDC0_DAT7", 84, DRV_GRP4),
++	MT7623_PIN(112, "MSDC0_DAT6", 85, DRV_GRP4),
++	MT7623_PIN(113, "MSDC0_DAT5", 86, DRV_GRP4),
++	MT7623_PIN(114, "MSDC0_DAT4", 87, DRV_GRP4),
++	MT7623_PIN(115, "MSDC0_RSTB", 88, DRV_GRP4),
++	MT7623_PIN(116, "MSDC0_CMD", 89, DRV_GRP4),
++	MT7623_PIN(117, "MSDC0_CLK", 90, DRV_GRP4),
++	MT7623_PIN(118, "MSDC0_DAT3", 91, DRV_GRP4),
++	MT7623_PIN(119, "MSDC0_DAT2", 92, DRV_GRP4),
++	MT7623_PIN(120, "MSDC0_DAT1", 93, DRV_GRP4),
++	MT7623_PIN(121, "MSDC0_DAT0", 94, DRV_GRP4),
++	MT7623_PIN(122, "CEC", 95, DRV_FIXED),
++	MT7623_PIN(123, "HTPLG", 96, DRV_FIXED),
++	MT7623_PIN(124, "HDMISCK", 97, DRV_FIXED),
++	MT7623_PIN(125, "HDMISD", 98, DRV_FIXED),
++	MT7623_PIN(126, "I2S0_MCLK", 99, DRV_GRP1),
++	MT7623_PIN(127, "RAMBUF_IDATA0", EINT_NA, DRV_FIXED),
++	MT7623_PIN(128, "RAMBUF_IDATA1", EINT_NA, DRV_FIXED),
++	MT7623_PIN(129, "RAMBUF_IDATA2", EINT_NA, DRV_FIXED),
++	MT7623_PIN(130, "RAMBUF_IDATA3", EINT_NA, DRV_FIXED),
++	MT7623_PIN(131, "RAMBUF_IDATA4", EINT_NA, DRV_FIXED),
++	MT7623_PIN(132, "RAMBUF_IDATA5", EINT_NA, DRV_FIXED),
++	MT7623_PIN(133, "RAMBUF_IDATA6", EINT_NA, DRV_FIXED),
++	MT7623_PIN(134, "RAMBUF_IDATA7", EINT_NA, DRV_FIXED),
++	MT7623_PIN(135, "RAMBUF_IDATA8", EINT_NA, DRV_FIXED),
++	MT7623_PIN(136, "RAMBUF_IDATA9", EINT_NA, DRV_FIXED),
++	MT7623_PIN(137, "RAMBUF_IDATA10", EINT_NA, DRV_FIXED),
++	MT7623_PIN(138, "RAMBUF_IDATA11", EINT_NA, DRV_FIXED),
++	MT7623_PIN(139, "RAMBUF_IDATA12", EINT_NA, DRV_FIXED),
++	MT7623_PIN(140, "RAMBUF_IDATA13", EINT_NA, DRV_FIXED),
++	MT7623_PIN(141, "RAMBUF_IDATA14", EINT_NA, DRV_FIXED),
++	MT7623_PIN(142, "RAMBUF_IDATA15", EINT_NA, DRV_FIXED),
++	MT7623_PIN(143, "RAMBUF_ODATA0", EINT_NA, DRV_FIXED),
++	MT7623_PIN(144, "RAMBUF_ODATA1", EINT_NA, DRV_FIXED),
++	MT7623_PIN(145, "RAMBUF_ODATA2", EINT_NA, DRV_FIXED),
++	MT7623_PIN(146, "RAMBUF_ODATA3", EINT_NA, DRV_FIXED),
++	MT7623_PIN(147, "RAMBUF_ODATA4", EINT_NA, DRV_FIXED),
++	MT7623_PIN(148, "RAMBUF_ODATA5", EINT_NA, DRV_FIXED),
++	MT7623_PIN(149, "RAMBUF_ODATA6", EINT_NA, DRV_FIXED),
++	MT7623_PIN(150, "RAMBUF_ODATA7", EINT_NA, DRV_FIXED),
++	MT7623_PIN(151, "RAMBUF_ODATA8", EINT_NA, DRV_FIXED),
++	MT7623_PIN(152, "RAMBUF_ODATA9", EINT_NA, DRV_FIXED),
++	MT7623_PIN(153, "RAMBUF_ODATA10", EINT_NA, DRV_FIXED),
++	MT7623_PIN(154, "RAMBUF_ODATA11", EINT_NA, DRV_FIXED),
++	MT7623_PIN(155, "RAMBUF_ODATA12", EINT_NA, DRV_FIXED),
++	MT7623_PIN(156, "RAMBUF_ODATA13", EINT_NA, DRV_FIXED),
++	MT7623_PIN(157, "RAMBUF_ODATA14", EINT_NA, DRV_FIXED),
++	MT7623_PIN(158, "RAMBUF_ODATA15", EINT_NA, DRV_FIXED),
++	MT7623_PIN(159, "RAMBUF_BE0", EINT_NA, DRV_FIXED),
++	MT7623_PIN(160, "RAMBUF_BE1", EINT_NA, DRV_FIXED),
++	MT7623_PIN(161, "AP2PT_INT", EINT_NA, DRV_FIXED),
++	MT7623_PIN(162, "AP2PT_INT_CLR", EINT_NA, DRV_FIXED),
++	MT7623_PIN(163, "PT2AP_INT", EINT_NA, DRV_FIXED),
++	MT7623_PIN(164, "PT2AP_INT_CLR", EINT_NA, DRV_FIXED),
++	MT7623_PIN(165, "AP2UP_INT", EINT_NA, DRV_FIXED),
++	MT7623_PIN(166, "AP2UP_INT_CLR", EINT_NA, DRV_FIXED),
++	MT7623_PIN(167, "UP2AP_INT", EINT_NA, DRV_FIXED),
++	MT7623_PIN(168, "UP2AP_INT_CLR", EINT_NA, DRV_FIXED),
++	MT7623_PIN(169, "RAMBUF_ADDR0", EINT_NA, DRV_FIXED),
++	MT7623_PIN(170, "RAMBUF_ADDR1", EINT_NA, DRV_FIXED),
++	MT7623_PIN(171, "RAMBUF_ADDR2", EINT_NA, DRV_FIXED),
++	MT7623_PIN(172, "RAMBUF_ADDR3", EINT_NA, DRV_FIXED),
++	MT7623_PIN(173, "RAMBUF_ADDR4", EINT_NA, DRV_FIXED),
++	MT7623_PIN(174, "RAMBUF_ADDR5", EINT_NA, DRV_FIXED),
++	MT7623_PIN(175, "RAMBUF_ADDR6", EINT_NA, DRV_FIXED),
++	MT7623_PIN(176, "RAMBUF_ADDR7", EINT_NA, DRV_FIXED),
++	MT7623_PIN(177, "RAMBUF_ADDR8", EINT_NA, DRV_FIXED),
++	MT7623_PIN(178, "RAMBUF_ADDR9", EINT_NA, DRV_FIXED),
++	MT7623_PIN(179, "RAMBUF_ADDR10", EINT_NA, DRV_FIXED),
++	MT7623_PIN(180, "RAMBUF_RW", EINT_NA, DRV_FIXED),
++	MT7623_PIN(181, "RAMBUF_LAST", EINT_NA, DRV_FIXED),
++	MT7623_PIN(182, "RAMBUF_HP", EINT_NA, DRV_FIXED),
++	MT7623_PIN(183, "RAMBUF_REQ", EINT_NA, DRV_FIXED),
++	MT7623_PIN(184, "RAMBUF_ALE", EINT_NA, DRV_FIXED),
++	MT7623_PIN(185, "RAMBUF_DLE", EINT_NA, DRV_FIXED),
++	MT7623_PIN(186, "RAMBUF_WDLE", EINT_NA, DRV_FIXED),
++	MT7623_PIN(187, "RAMBUF_O_CLK", EINT_NA, DRV_FIXED),
++	MT7623_PIN(188, "I2S2_MCLK", 100, DRV_GRP1),
++	MT7623_PIN(189, "I2S3_DATA", 101, DRV_GRP1),
++	MT7623_PIN(190, "I2S3_DATA_IN", 102, DRV_GRP1),
++	MT7623_PIN(191, "I2S3_BCK", 103, DRV_GRP1),
++	MT7623_PIN(192, "I2S3_LRCK", 104, DRV_GRP1),
++	MT7623_PIN(193, "I2S3_MCLK", 105, DRV_GRP1),
++	MT7623_PIN(194, "I2S4_DATA", 106, DRV_GRP1),
++	MT7623_PIN(195, "I2S4_DATA_IN", 107, DRV_GRP1),
++	MT7623_PIN(196, "I2S4_BCK", 108, DRV_GRP1),
++	MT7623_PIN(197, "I2S4_LRCK", 109, DRV_GRP1),
++	MT7623_PIN(198, "I2S4_MCLK", 110, DRV_GRP1),
++	MT7623_PIN(199, "SPI1_CLK", 111, DRV_GRP3),
++	MT7623_PIN(200, "SPDIF_OUT", 112, DRV_GRP1),
++	MT7623_PIN(201, "SPDIF_IN0", 113, DRV_GRP1),
++	MT7623_PIN(202, "SPDIF_IN1", 114, DRV_GRP1),
++	MT7623_PIN(203, "PWM0", 115, DRV_GRP1),
++	MT7623_PIN(204, "PWM1", 116, DRV_GRP1),
++	MT7623_PIN(205, "PWM2", 117, DRV_GRP1),
++	MT7623_PIN(206, "PWM3", 118, DRV_GRP1),
++	MT7623_PIN(207, "PWM4", 119, DRV_GRP1),
++	MT7623_PIN(208, "AUD_EXT_CK1", 120, DRV_GRP1),
++	MT7623_PIN(209, "AUD_EXT_CK2", 121, DRV_GRP1),
++	MT7623_PIN(210, "AUD_CLOCK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(211, "DVP_RESET", EINT_NA, DRV_GRP3),
++	MT7623_PIN(212, "DVP_CLOCK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(213, "DVP_CS", EINT_NA, DRV_GRP3),
++	MT7623_PIN(214, "DVP_CK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(215, "DVP_DI", EINT_NA, DRV_GRP3),
++	MT7623_PIN(216, "DVP_DO", EINT_NA, DRV_GRP3),
++	MT7623_PIN(217, "AP_CS", EINT_NA, DRV_GRP3),
++	MT7623_PIN(218, "AP_CK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(219, "AP_DI", EINT_NA, DRV_GRP3),
++	MT7623_PIN(220, "AP_DO", EINT_NA, DRV_GRP3),
++	MT7623_PIN(221, "DVD_BCLK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(222, "T8032_CLK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(223, "AP_BCLK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(224, "HOST_CS", EINT_NA, DRV_GRP3),
++	MT7623_PIN(225, "HOST_CK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(226, "HOST_DO0", EINT_NA, DRV_GRP3),
++	MT7623_PIN(227, "HOST_DO1", EINT_NA, DRV_GRP3),
++	MT7623_PIN(228, "SLV_CS", EINT_NA, DRV_GRP3),
++	MT7623_PIN(229, "SLV_CK", EINT_NA, DRV_GRP3),
++	MT7623_PIN(230, "SLV_DI0", EINT_NA, DRV_GRP3),
++	MT7623_PIN(231, "SLV_DI1", EINT_NA, DRV_GRP3),
++	MT7623_PIN(232, "AP2DSP_INT", EINT_NA, DRV_GRP3),
++	MT7623_PIN(233, "AP2DSP_INT_CLR", EINT_NA, DRV_GRP3),
++	MT7623_PIN(234, "DSP2AP_INT", EINT_NA, DRV_GRP3),
++	MT7623_PIN(235, "DSP2AP_INT_CLR", EINT_NA, DRV_GRP3),
++	MT7623_PIN(236, "EXT_SDIO3", 122, DRV_GRP1),
++	MT7623_PIN(237, "EXT_SDIO2", 123, DRV_GRP1),
++	MT7623_PIN(238, "EXT_SDIO1", 124, DRV_GRP1),
++	MT7623_PIN(239, "EXT_SDIO0", 125, DRV_GRP1),
++	MT7623_PIN(240, "EXT_XCS", 126, DRV_GRP1),
++	MT7623_PIN(241, "EXT_SCK", 127, DRV_GRP1),
++	MT7623_PIN(242, "URTS2", 128, DRV_GRP1),
++	MT7623_PIN(243, "UCTS2", 129, DRV_GRP1),
++	MT7623_PIN(244, "HDMI_SDA_RX", 130, DRV_FIXED),
++	MT7623_PIN(245, "HDMI_SCL_RX", 131, DRV_FIXED),
++	MT7623_PIN(246, "MHL_SENCE", 132, DRV_FIXED),
++	MT7623_PIN(247, "HDMI_HPD_CBUS_RX", 69, DRV_FIXED),
++	MT7623_PIN(248, "HDMI_TESTOUTP_RX", 133, DRV_GRP1),
++	MT7623_PIN(249, "MSDC0E_RSTB", 134, DRV_GRP4),
++	MT7623_PIN(250, "MSDC0E_DAT7", 135, DRV_GRP4),
++	MT7623_PIN(251, "MSDC0E_DAT6", 136, DRV_GRP4),
++	MT7623_PIN(252, "MSDC0E_DAT5", 137, DRV_GRP4),
++	MT7623_PIN(253, "MSDC0E_DAT4", 138, DRV_GRP4),
++	MT7623_PIN(254, "MSDC0E_DAT3", 139, DRV_GRP4),
++	MT7623_PIN(255, "MSDC0E_DAT2", 140, DRV_GRP4),
++	MT7623_PIN(256, "MSDC0E_DAT1", 141, DRV_GRP4),
++	MT7623_PIN(257, "MSDC0E_DAT0", 142, DRV_GRP4),
++	MT7623_PIN(258, "MSDC0E_CMD", 143, DRV_GRP4),
++	MT7623_PIN(259, "MSDC0E_CLK", 144, DRV_GRP4),
++	MT7623_PIN(260, "MSDC0E_DSL", 145, DRV_GRP4),
++	MT7623_PIN(261, "MSDC1_INS", 146, DRV_GRP4),
++	MT7623_PIN(262, "G2_TXEN", 8, DRV_GRP1),
++	MT7623_PIN(263, "G2_TXD3", 9, DRV_GRP1),
++	MT7623_PIN(264, "G2_TXD2", 10, DRV_GRP1),
++	MT7623_PIN(265, "G2_TXD1", 11, DRV_GRP1),
++	MT7623_PIN(266, "G2_TXD0", EINT_NA, DRV_GRP1),
++	MT7623_PIN(267, "G2_TXC", EINT_NA, DRV_GRP1),
++	MT7623_PIN(268, "G2_RXC", EINT_NA, DRV_GRP1),
++	MT7623_PIN(269, "G2_RXD0", EINT_NA, DRV_GRP1),
++	MT7623_PIN(270, "G2_RXD1", EINT_NA, DRV_GRP1),
++	MT7623_PIN(271, "G2_RXD2", EINT_NA, DRV_GRP1),
++	MT7623_PIN(272, "G2_RXD3", EINT_NA, DRV_GRP1),
++	MT7623_PIN(273, "ESW_INT", 168, DRV_GRP1),
++	MT7623_PIN(274, "G2_RXDV", EINT_NA, DRV_GRP1),
++	MT7623_PIN(275, "MDC", EINT_NA, DRV_GRP1),
++	MT7623_PIN(276, "MDIO", EINT_NA, DRV_GRP1),
++	MT7623_PIN(277, "ESW_RST", EINT_NA, DRV_GRP1),
++	MT7623_PIN(278, "JTAG_RESET", 147, DRV_GRP3),
++	MT7623_PIN(279, "USB3_RES_BOND", EINT_NA, DRV_GRP1),
++};
++
++/* List all groups consisting of these pins dedicated to the enablement of
++ * certain hardware block and the corresponding mode for all of the pins.
++ * The hardware probably has multiple combinations of these pinouts.
 + */
 +
-+#define PIN_FIELD_BASE(_s_pin, _e_pin, _i_base, _s_addr, _x_addrs, _s_bit, _x_bits)	\
-+	PIN_FIELD_CALC(_s_pin, _e_pin, _i_base, _s_addr, _x_addrs, _s_bit,	\
-+		       _x_bits, 32, 0)
++/* AUDIO EXT CLK */
++static int mt7623_aud_ext_clk0_pins[] = { 208, };
++static int mt7623_aud_ext_clk0_funcs[] = { 1, };
++static int mt7623_aud_ext_clk1_pins[] = { 209, };
++static int mt7623_aud_ext_clk1_funcs[] = { 1, };
 +
-+#define PINS_FIELD_BASE(_s_pin, _e_pin, _i_base, _s_addr, _x_addrs, _s_bit, _x_bits)	\
-+	PIN_FIELD_CALC(_s_pin, _e_pin, _i_base, _s_addr, _x_addrs, _s_bit,	\
-+		      _x_bits, 32, 1)
++/* DISP PWM */
++static int mt7623_disp_pwm_0_pins[] = { 72, };
++static int mt7623_disp_pwm_0_funcs[] = { 5, };
++static int mt7623_disp_pwm_1_pins[] = { 203, };
++static int mt7623_disp_pwm_1_funcs[] = { 2, };
++static int mt7623_disp_pwm_2_pins[] = { 208, };
++static int mt7623_disp_pwm_2_funcs[] = { 5, };
 +
-+static const struct mtk_pin_field_calc mt8183_pin_mode_range[] = {
-+	PIN_FIELD(0, 192, 0x300, 0x10, 0, 4),
++/* ESW */
++static int mt7623_esw_int_pins[] = { 273, };
++static int mt7623_esw_int_funcs[] = { 1, };
++static int mt7623_esw_rst_pins[] = { 277, };
++static int mt7623_esw_rst_funcs[] = { 1, };
++
++/* EPHY */
++static int mt7623_ephy_pins[] = { 262, 263, 264, 265, 266, 267, 268,
++				  269, 270, 271, 272, 274, };
++static int mt7623_ephy_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
++
++/* EXT_SDIO */
++static int mt7623_ext_sdio_pins[] = { 236, 237, 238, 239, 240, 241, };
++static int mt7623_ext_sdio_funcs[] = { 1, 1, 1, 1, 1, 1, };
++
++/* HDMI RX */
++static int mt7623_hdmi_rx_pins[] = { 247, 248, };
++static int mt7623_hdmi_rx_funcs[] = { 1, 1 };
++static int mt7623_hdmi_rx_i2c_pins[] = { 244, 245, };
++static int mt7623_hdmi_rx_i2c_funcs[] = { 1, 1 };
++
++/* HDMI TX */
++static int mt7623_hdmi_cec_pins[] = { 122, };
++static int mt7623_hdmi_cec_funcs[] = { 1, };
++static int mt7623_hdmi_htplg_pins[] = { 123, };
++static int mt7623_hdmi_htplg_funcs[] = { 1, };
++static int mt7623_hdmi_i2c_pins[] = { 124, 125, };
++static int mt7623_hdmi_i2c_funcs[] = { 1, 1 };
++
++/* I2C */
++static int mt7623_i2c0_pins[] = { 75, 76, };
++static int mt7623_i2c0_funcs[] = { 1, 1, };
++static int mt7623_i2c1_0_pins[] = { 57, 58, };
++static int mt7623_i2c1_0_funcs[] = { 1, 1, };
++static int mt7623_i2c1_1_pins[] = { 242, 243, };
++static int mt7623_i2c1_1_funcs[] = { 4, 4, };
++static int mt7623_i2c1_2_pins[] = { 85, 86, };
++static int mt7623_i2c1_2_funcs[] = { 3, 3, };
++static int mt7623_i2c1_3_pins[] = { 105, 106, };
++static int mt7623_i2c1_3_funcs[] = { 3, 3, };
++static int mt7623_i2c1_4_pins[] = { 124, 125, };
++static int mt7623_i2c1_4_funcs[] = { 4, 4, };
++static int mt7623_i2c2_0_pins[] = { 77, 78, };
++static int mt7623_i2c2_0_funcs[] = { 1, 1, };
++static int mt7623_i2c2_1_pins[] = { 89, 90, };
++static int mt7623_i2c2_1_funcs[] = { 3, 3, };
++static int mt7623_i2c2_2_pins[] = { 109, 110, };
++static int mt7623_i2c2_2_funcs[] = { 3, 3, };
++static int mt7623_i2c2_3_pins[] = { 122, 123, };
++static int mt7623_i2c2_3_funcs[] = { 4, 4, };
++
++/* I2S */
++static int mt7623_i2s0_pins[] = { 49, 72, 73, 74, 126, };
++static int mt7623_i2s0_funcs[] = { 1, 1, 1, 1, 1, };
++static int mt7623_i2s1_pins[] = { 33, 34, 35, 36, 37, };
++static int mt7623_i2s1_funcs[] = { 1, 1, 1, 1, 1, };
++static int mt7623_i2s2_bclk_lrclk_mclk_pins[] = { 50, 52, 188, };
++static int mt7623_i2s2_bclk_lrclk_mclk_funcs[] = { 1, 1, 1, };
++static int mt7623_i2s2_data_in_pins[] = { 51, };
++static int mt7623_i2s2_data_in_funcs[] = { 1, };
++static int mt7623_i2s2_data_0_pins[] = { 203, };
++static int mt7623_i2s2_data_0_funcs[] = { 9, };
++static int mt7623_i2s2_data_1_pins[] = { 38,  };
++static int mt7623_i2s2_data_1_funcs[] = { 4, };
++static int mt7623_i2s3_bclk_lrclk_mclk_pins[] = { 191, 192, 193, };
++static int mt7623_i2s3_bclk_lrclk_mclk_funcs[] = { 1, 1, 1, };
++static int mt7623_i2s3_data_in_pins[] = { 190, };
++static int mt7623_i2s3_data_in_funcs[] = { 1, };
++static int mt7623_i2s3_data_0_pins[] = { 204, };
++static int mt7623_i2s3_data_0_funcs[] = { 9, };
++static int mt7623_i2s3_data_1_pins[] = { 2, };
++static int mt7623_i2s3_data_1_funcs[] = { 0, };
++static int mt7623_i2s4_pins[] = { 194, 195, 196, 197, 198, };
++static int mt7623_i2s4_funcs[] = { 1, 1, 1, 1, 1, };
++static int mt7623_i2s5_pins[] = { 16, 17, 30, 31, 32, };
++static int mt7623_i2s5_funcs[] = { 1, 1, 1, 1, 1, };
++
++/* IR */
++static int mt7623_ir_pins[] = { 46, };
++static int mt7623_ir_funcs[] = { 1, };
++
++/* LCD */
++static int mt7623_mipi_tx_pins[] = { 91, 92, 93, 94, 95, 96, 97, 98,
++				     99, 100, };
++static int mt7623_mipi_tx_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
++static int mt7623_dsi_te_pins[] = { 84, };
++static int mt7623_dsi_te_funcs[] = { 1, };
++static int mt7623_lcm_rst_pins[] = { 83, };
++static int mt7623_lcm_rst_funcs[] = { 1, };
++
++/* MDC/MDIO */
++static int mt7623_mdc_mdio_pins[] = { 275, 276, };
++static int mt7623_mdc_mdio_funcs[] = { 1, 1, };
++
++/* MSDC */
++static int mt7623_msdc0_pins[] = { 111, 112, 113, 114, 115, 116, 117, 118,
++				   119, 120, 121, };
++static int mt7623_msdc0_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
++static int mt7623_msdc1_pins[] = { 105, 106, 107, 108, 109, 110, };
++static int mt7623_msdc1_funcs[] = { 1, 1, 1, 1, 1, 1, };
++static int mt7623_msdc1_ins_pins[] = { 261, };
++static int mt7623_msdc1_ins_funcs[] = { 1, };
++static int mt7623_msdc1_wp_0_pins[] = { 29, };
++static int mt7623_msdc1_wp_0_funcs[] = { 1, };
++static int mt7623_msdc1_wp_1_pins[] = { 55, };
++static int mt7623_msdc1_wp_1_funcs[] = { 3, };
++static int mt7623_msdc1_wp_2_pins[] = { 209, };
++static int mt7623_msdc1_wp_2_funcs[] = { 2, };
++static int mt7623_msdc2_pins[] = { 85, 86, 87, 88, 89, 90, };
++static int mt7623_msdc2_funcs[] = { 1, 1, 1, 1, 1, 1, };
++static int mt7623_msdc3_pins[] = { 249, 250, 251, 252, 253, 254, 255, 256,
++				   257, 258, 259, 260, };
++static int mt7623_msdc3_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
++
++/* NAND */
++static int mt7623_nandc_pins[] = { 43, 47, 48, 111, 112, 113, 114, 115,
++				   116, 117, 118, 119, 120, 121, };
++static int mt7623_nandc_funcs[] = { 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4,
++				   4, 4, };
++static int mt7623_nandc_ceb0_pins[] = { 45, };
++static int mt7623_nandc_ceb0_funcs[] = { 1, };
++static int mt7623_nandc_ceb1_pins[] = { 44, };
++static int mt7623_nandc_ceb1_funcs[] = { 1, };
++
++/* RTC */
++static int mt7623_rtc_pins[] = { 10, };
++static int mt7623_rtc_funcs[] = { 1, };
++
++/* OTG */
++static int mt7623_otg_iddig0_0_pins[] = { 29, };
++static int mt7623_otg_iddig0_0_funcs[] = { 1, };
++static int mt7623_otg_iddig0_1_pins[] = { 44, };
++static int mt7623_otg_iddig0_1_funcs[] = { 2, };
++static int mt7623_otg_iddig0_2_pins[] = { 236, };
++static int mt7623_otg_iddig0_2_funcs[] = { 2, };
++static int mt7623_otg_iddig1_0_pins[] = { 27, };
++static int mt7623_otg_iddig1_0_funcs[] = { 2, };
++static int mt7623_otg_iddig1_1_pins[] = { 47, };
++static int mt7623_otg_iddig1_1_funcs[] = { 2, };
++static int mt7623_otg_iddig1_2_pins[] = { 238, };
++static int mt7623_otg_iddig1_2_funcs[] = { 2, };
++static int mt7623_otg_drv_vbus0_0_pins[] = { 28, };
++static int mt7623_otg_drv_vbus0_0_funcs[] = { 1, };
++static int mt7623_otg_drv_vbus0_1_pins[] = { 45, };
++static int mt7623_otg_drv_vbus0_1_funcs[] = { 2, };
++static int mt7623_otg_drv_vbus0_2_pins[] = { 237, };
++static int mt7623_otg_drv_vbus0_2_funcs[] = { 2, };
++static int mt7623_otg_drv_vbus1_0_pins[] = { 26, };
++static int mt7623_otg_drv_vbus1_0_funcs[] = { 2, };
++static int mt7623_otg_drv_vbus1_1_pins[] = { 48, };
++static int mt7623_otg_drv_vbus1_1_funcs[] = { 2, };
++static int mt7623_otg_drv_vbus1_2_pins[] = { 239, };
++static int mt7623_otg_drv_vbus1_2_funcs[] = { 2, };
++
++/* PCIE */
++static int mt7623_pcie0_0_perst_pins[] = { 208, };
++static int mt7623_pcie0_0_perst_funcs[] = { 3, };
++static int mt7623_pcie0_1_perst_pins[] = { 22, };
++static int mt7623_pcie0_1_perst_funcs[] = { 2, };
++static int mt7623_pcie1_0_perst_pins[] = { 209, };
++static int mt7623_pcie1_0_perst_funcs[] = { 3, };
++static int mt7623_pcie1_1_perst_pins[] = { 23, };
++static int mt7623_pcie1_1_perst_funcs[] = { 2, };
++static int mt7623_pcie2_0_perst_pins[] = { 24, };
++static int mt7623_pcie2_0_perst_funcs[] = { 2, };
++static int mt7623_pcie2_1_perst_pins[] = { 29, };
++static int mt7623_pcie2_1_perst_funcs[] = { 6, };
++static int mt7623_pcie0_0_wake_pins[] = { 28, };
++static int mt7623_pcie0_0_wake_funcs[] = { 6, };
++static int mt7623_pcie0_1_wake_pins[] = { 251, };
++static int mt7623_pcie0_1_wake_funcs[] = { 6, };
++static int mt7623_pcie1_0_wake_pins[] = { 27, };
++static int mt7623_pcie1_0_wake_funcs[] = { 6, };
++static int mt7623_pcie1_1_wake_pins[] = { 253, };
++static int mt7623_pcie1_1_wake_funcs[] = { 6, };
++static int mt7623_pcie2_0_wake_pins[] = { 26, };
++static int mt7623_pcie2_0_wake_funcs[] = { 6, };
++static int mt7623_pcie2_1_wake_pins[] = { 255, };
++static int mt7623_pcie2_1_wake_funcs[] = { 6, };
++static int mt7623_pcie0_clkreq_pins[] = { 250, };
++static int mt7623_pcie0_clkreq_funcs[] = { 6, };
++static int mt7623_pcie1_clkreq_pins[] = { 252, };
++static int mt7623_pcie1_clkreq_funcs[] = { 6, };
++static int mt7623_pcie2_clkreq_pins[] = { 254, };
++static int mt7623_pcie2_clkreq_funcs[] = { 6, };
++
++/* the pcie_*_rev are only used for MT7623 */
++static int mt7623_pcie0_0_rev_perst_pins[] = { 208, };
++static int mt7623_pcie0_0_rev_perst_funcs[] = { 11, };
++static int mt7623_pcie0_1_rev_perst_pins[] = { 22, };
++static int mt7623_pcie0_1_rev_perst_funcs[] = { 10, };
++static int mt7623_pcie1_0_rev_perst_pins[] = { 209, };
++static int mt7623_pcie1_0_rev_perst_funcs[] = { 11, };
++static int mt7623_pcie1_1_rev_perst_pins[] = { 23, };
++static int mt7623_pcie1_1_rev_perst_funcs[] = { 10, };
++static int mt7623_pcie2_0_rev_perst_pins[] = { 24, };
++static int mt7623_pcie2_0_rev_perst_funcs[] = { 11, };
++static int mt7623_pcie2_1_rev_perst_pins[] = { 29, };
++static int mt7623_pcie2_1_rev_perst_funcs[] = { 14, };
++
++/* PCM */
++static int mt7623_pcm_clk_0_pins[] = { 18, };
++static int mt7623_pcm_clk_0_funcs[] = { 1, };
++static int mt7623_pcm_clk_1_pins[] = { 17, };
++static int mt7623_pcm_clk_1_funcs[] = { 3, };
++static int mt7623_pcm_clk_2_pins[] = { 35, };
++static int mt7623_pcm_clk_2_funcs[] = { 3, };
++static int mt7623_pcm_clk_3_pins[] = { 50, };
++static int mt7623_pcm_clk_3_funcs[] = { 3, };
++static int mt7623_pcm_clk_4_pins[] = { 74, };
++static int mt7623_pcm_clk_4_funcs[] = { 3, };
++static int mt7623_pcm_clk_5_pins[] = { 191, };
++static int mt7623_pcm_clk_5_funcs[] = { 3, };
++static int mt7623_pcm_clk_6_pins[] = { 196, };
++static int mt7623_pcm_clk_6_funcs[] = { 3, };
++static int mt7623_pcm_sync_0_pins[] = { 19, };
++static int mt7623_pcm_sync_0_funcs[] = { 1, };
++static int mt7623_pcm_sync_1_pins[] = { 30, };
++static int mt7623_pcm_sync_1_funcs[] = { 3, };
++static int mt7623_pcm_sync_2_pins[] = { 36, };
++static int mt7623_pcm_sync_2_funcs[] = { 3, };
++static int mt7623_pcm_sync_3_pins[] = { 52, };
++static int mt7623_pcm_sync_3_funcs[] = { 31, };
++static int mt7623_pcm_sync_4_pins[] = { 73, };
++static int mt7623_pcm_sync_4_funcs[] = { 3, };
++static int mt7623_pcm_sync_5_pins[] = { 192, };
++static int mt7623_pcm_sync_5_funcs[] = { 3, };
++static int mt7623_pcm_sync_6_pins[] = { 197, };
++static int mt7623_pcm_sync_6_funcs[] = { 3, };
++static int mt7623_pcm_rx_0_pins[] = { 20, };
++static int mt7623_pcm_rx_0_funcs[] = { 1, };
++static int mt7623_pcm_rx_1_pins[] = { 16, };
++static int mt7623_pcm_rx_1_funcs[] = { 3, };
++static int mt7623_pcm_rx_2_pins[] = { 34, };
++static int mt7623_pcm_rx_2_funcs[] = { 3, };
++static int mt7623_pcm_rx_3_pins[] = { 51, };
++static int mt7623_pcm_rx_3_funcs[] = { 3, };
++static int mt7623_pcm_rx_4_pins[] = { 72, };
++static int mt7623_pcm_rx_4_funcs[] = { 3, };
++static int mt7623_pcm_rx_5_pins[] = { 190, };
++static int mt7623_pcm_rx_5_funcs[] = { 3, };
++static int mt7623_pcm_rx_6_pins[] = { 195, };
++static int mt7623_pcm_rx_6_funcs[] = { 3, };
++static int mt7623_pcm_tx_0_pins[] = { 21, };
++static int mt7623_pcm_tx_0_funcs[] = { 1, };
++static int mt7623_pcm_tx_1_pins[] = { 32, };
++static int mt7623_pcm_tx_1_funcs[] = { 3, };
++static int mt7623_pcm_tx_2_pins[] = { 33, };
++static int mt7623_pcm_tx_2_funcs[] = { 3, };
++static int mt7623_pcm_tx_3_pins[] = { 38, };
++static int mt7623_pcm_tx_3_funcs[] = { 3, };
++static int mt7623_pcm_tx_4_pins[] = { 49, };
++static int mt7623_pcm_tx_4_funcs[] = { 3, };
++static int mt7623_pcm_tx_5_pins[] = { 189, };
++static int mt7623_pcm_tx_5_funcs[] = { 3, };
++static int mt7623_pcm_tx_6_pins[] = { 194, };
++static int mt7623_pcm_tx_6_funcs[] = { 3, };
++
++/* PWM */
++static int mt7623_pwm_ch1_0_pins[] = { 203, };
++static int mt7623_pwm_ch1_0_funcs[] = { 1, };
++static int mt7623_pwm_ch1_1_pins[] = { 208, };
++static int mt7623_pwm_ch1_1_funcs[] = { 2, };
++static int mt7623_pwm_ch1_2_pins[] = { 72, };
++static int mt7623_pwm_ch1_2_funcs[] = { 4, };
++static int mt7623_pwm_ch1_3_pins[] = { 88, };
++static int mt7623_pwm_ch1_3_funcs[] = { 3, };
++static int mt7623_pwm_ch1_4_pins[] = { 108, };
++static int mt7623_pwm_ch1_4_funcs[] = { 3, };
++static int mt7623_pwm_ch2_0_pins[] = { 204, };
++static int mt7623_pwm_ch2_0_funcs[] = { 1, };
++static int mt7623_pwm_ch2_1_pins[] = { 53, };
++static int mt7623_pwm_ch2_1_funcs[] = { 5, };
++static int mt7623_pwm_ch2_2_pins[] = { 88, };
++static int mt7623_pwm_ch2_2_funcs[] = { 6, };
++static int mt7623_pwm_ch2_3_pins[] = { 108, };
++static int mt7623_pwm_ch2_3_funcs[] = { 6, };
++static int mt7623_pwm_ch2_4_pins[] = { 209, };
++static int mt7623_pwm_ch2_4_funcs[] = { 5, };
++static int mt7623_pwm_ch3_0_pins[] = { 205, };
++static int mt7623_pwm_ch3_0_funcs[] = { 1, };
++static int mt7623_pwm_ch3_1_pins[] = { 55, };
++static int mt7623_pwm_ch3_1_funcs[] = { 5, };
++static int mt7623_pwm_ch3_2_pins[] = { 89, };
++static int mt7623_pwm_ch3_2_funcs[] = { 6, };
++static int mt7623_pwm_ch3_3_pins[] = { 109, };
++static int mt7623_pwm_ch3_3_funcs[] = { 6, };
++static int mt7623_pwm_ch4_0_pins[] = { 206, };
++static int mt7623_pwm_ch4_0_funcs[] = { 1, };
++static int mt7623_pwm_ch4_1_pins[] = { 90, };
++static int mt7623_pwm_ch4_1_funcs[] = { 6, };
++static int mt7623_pwm_ch4_2_pins[] = { 110, };
++static int mt7623_pwm_ch4_2_funcs[] = { 6, };
++static int mt7623_pwm_ch4_3_pins[] = { 124, };
++static int mt7623_pwm_ch4_3_funcs[] = { 5, };
++static int mt7623_pwm_ch5_0_pins[] = { 207, };
++static int mt7623_pwm_ch5_0_funcs[] = { 1, };
++static int mt7623_pwm_ch5_1_pins[] = { 125, };
++static int mt7623_pwm_ch5_1_funcs[] = { 5, };
++
++/* PWRAP */
++static int mt7623_pwrap_pins[] = { 0, 1, 2, 3, 4, 5, 6, };
++static int mt7623_pwrap_funcs[] = { 1, 1, 1, 1, 1, 1, 1, };
++
++/* SPDIF */
++static int mt7623_spdif_in0_0_pins[] = { 56, };
++static int mt7623_spdif_in0_0_funcs[] = { 3, };
++static int mt7623_spdif_in0_1_pins[] = { 201, };
++static int mt7623_spdif_in0_1_funcs[] = { 1, };
++static int mt7623_spdif_in1_0_pins[] = { 54, };
++static int mt7623_spdif_in1_0_funcs[] = { 3, };
++static int mt7623_spdif_in1_1_pins[] = { 202, };
++static int mt7623_spdif_in1_1_funcs[] = { 1, };
++static int mt7623_spdif_out_pins[] = { 202, };
++static int mt7623_spdif_out_funcs[] = { 1, };
++
++/* SPI */
++static int mt7623_spi0_pins[] = { 53, 54, 55, 56, };
++static int mt7623_spi0_funcs[] = { 1, 1, 1, 1, };
++static int mt7623_spi1_pins[] = { 7, 199, 8, 9, };
++static int mt7623_spi1_funcs[] = { 1, 1, 1, 1, };
++static int mt7623_spi2_pins[] = { 101, 104, 102, 103, };
++static int mt7623_spi2_funcs[] = { 1, 1, 1, 1, };
++
++/* UART */
++static int mt7623_uart0_0_txd_rxd_pins[] = { 79, 80, };
++static int mt7623_uart0_0_txd_rxd_funcs[] = { 1, 1, };
++static int mt7623_uart0_1_txd_rxd_pins[] = { 87, 88, };
++static int mt7623_uart0_1_txd_rxd_funcs[] = { 5, 5, };
++static int mt7623_uart0_2_txd_rxd_pins[] = { 107, 108, };
++static int mt7623_uart0_2_txd_rxd_funcs[] = { 5, 5, };
++static int mt7623_uart0_3_txd_rxd_pins[] = { 123, 122, };
++static int mt7623_uart0_3_txd_rxd_funcs[] = { 5, 5, };
++static int mt7623_uart0_rts_cts_pins[] = { 22, 23, };
++static int mt7623_uart0_rts_cts_funcs[] = { 1, 1, };
++static int mt7623_uart1_0_txd_rxd_pins[] = { 81, 82, };
++static int mt7623_uart1_0_txd_rxd_funcs[] = { 1, 1, };
++static int mt7623_uart1_1_txd_rxd_pins[] = { 89, 90, };
++static int mt7623_uart1_1_txd_rxd_funcs[] = { 5, 5, };
++static int mt7623_uart1_2_txd_rxd_pins[] = { 109, 110, };
++static int mt7623_uart1_2_txd_rxd_funcs[] = { 5, 5, };
++static int mt7623_uart1_rts_cts_pins[] = { 24, 25, };
++static int mt7623_uart1_rts_cts_funcs[] = { 1, 1, };
++static int mt7623_uart2_0_txd_rxd_pins[] = { 14, 15, };
++static int mt7623_uart2_0_txd_rxd_funcs[] = { 1, 1, };
++static int mt7623_uart2_1_txd_rxd_pins[] = { 200, 201, };
++static int mt7623_uart2_1_txd_rxd_funcs[] = { 6, 6, };
++static int mt7623_uart2_rts_cts_pins[] = { 242, 243, };
++static int mt7623_uart2_rts_cts_funcs[] = { 1, 1, };
++static int mt7623_uart3_txd_rxd_pins[] = { 242, 243, };
++static int mt7623_uart3_txd_rxd_funcs[] = { 2, 2, };
++static int mt7623_uart3_rts_cts_pins[] = { 26, 27, };
++static int mt7623_uart3_rts_cts_funcs[] = { 1, 1, };
++
++/* Watchdog */
++static int mt7623_watchdog_0_pins[] = { 11, };
++static int mt7623_watchdog_0_funcs[] = { 1, };
++static int mt7623_watchdog_1_pins[] = { 121, };
++static int mt7623_watchdog_1_funcs[] = { 5, };
++
++static const struct group_desc mt7623_groups[] = {
++	PINCTRL_PIN_GROUP("aud_ext_clk0", mt7623_aud_ext_clk0),
++	PINCTRL_PIN_GROUP("aud_ext_clk1", mt7623_aud_ext_clk1),
++	PINCTRL_PIN_GROUP("dsi_te", mt7623_dsi_te),
++	PINCTRL_PIN_GROUP("disp_pwm_0", mt7623_disp_pwm_0),
++	PINCTRL_PIN_GROUP("disp_pwm_1", mt7623_disp_pwm_1),
++	PINCTRL_PIN_GROUP("disp_pwm_2", mt7623_disp_pwm_2),
++	PINCTRL_PIN_GROUP("ephy", mt7623_ephy),
++	PINCTRL_PIN_GROUP("esw_int", mt7623_esw_int),
++	PINCTRL_PIN_GROUP("esw_rst", mt7623_esw_rst),
++	PINCTRL_PIN_GROUP("ext_sdio", mt7623_ext_sdio),
++	PINCTRL_PIN_GROUP("hdmi_cec", mt7623_hdmi_cec),
++	PINCTRL_PIN_GROUP("hdmi_htplg", mt7623_hdmi_htplg),
++	PINCTRL_PIN_GROUP("hdmi_i2c", mt7623_hdmi_i2c),
++	PINCTRL_PIN_GROUP("hdmi_rx", mt7623_hdmi_rx),
++	PINCTRL_PIN_GROUP("hdmi_rx_i2c", mt7623_hdmi_rx_i2c),
++	PINCTRL_PIN_GROUP("i2c0", mt7623_i2c0),
++	PINCTRL_PIN_GROUP("i2c1_0", mt7623_i2c1_0),
++	PINCTRL_PIN_GROUP("i2c1_1", mt7623_i2c1_1),
++	PINCTRL_PIN_GROUP("i2c1_2", mt7623_i2c1_2),
++	PINCTRL_PIN_GROUP("i2c1_3", mt7623_i2c1_3),
++	PINCTRL_PIN_GROUP("i2c1_4", mt7623_i2c1_4),
++	PINCTRL_PIN_GROUP("i2c2_0", mt7623_i2c2_0),
++	PINCTRL_PIN_GROUP("i2c2_1", mt7623_i2c2_1),
++	PINCTRL_PIN_GROUP("i2c2_2", mt7623_i2c2_2),
++	PINCTRL_PIN_GROUP("i2c2_3", mt7623_i2c2_3),
++	PINCTRL_PIN_GROUP("i2s0", mt7623_i2s0),
++	PINCTRL_PIN_GROUP("i2s1", mt7623_i2s1),
++	PINCTRL_PIN_GROUP("i2s4", mt7623_i2s4),
++	PINCTRL_PIN_GROUP("i2s5", mt7623_i2s5),
++	PINCTRL_PIN_GROUP("i2s2_bclk_lrclk_mclk", mt7623_i2s2_bclk_lrclk_mclk),
++	PINCTRL_PIN_GROUP("i2s3_bclk_lrclk_mclk", mt7623_i2s3_bclk_lrclk_mclk),
++	PINCTRL_PIN_GROUP("i2s2_data_in", mt7623_i2s2_data_in),
++	PINCTRL_PIN_GROUP("i2s3_data_in", mt7623_i2s3_data_in),
++	PINCTRL_PIN_GROUP("i2s2_data_0", mt7623_i2s2_data_0),
++	PINCTRL_PIN_GROUP("i2s2_data_1", mt7623_i2s2_data_1),
++	PINCTRL_PIN_GROUP("i2s3_data_0", mt7623_i2s3_data_0),
++	PINCTRL_PIN_GROUP("i2s3_data_1", mt7623_i2s3_data_1),
++	PINCTRL_PIN_GROUP("ir", mt7623_ir),
++	PINCTRL_PIN_GROUP("lcm_rst", mt7623_lcm_rst),
++	PINCTRL_PIN_GROUP("mdc_mdio", mt7623_mdc_mdio),
++	PINCTRL_PIN_GROUP("mipi_tx", mt7623_mipi_tx),
++	PINCTRL_PIN_GROUP("msdc0", mt7623_msdc0),
++	PINCTRL_PIN_GROUP("msdc1", mt7623_msdc1),
++	PINCTRL_PIN_GROUP("msdc1_ins", mt7623_msdc1_ins),
++	PINCTRL_PIN_GROUP("msdc1_wp_0", mt7623_msdc1_wp_0),
++	PINCTRL_PIN_GROUP("msdc1_wp_1", mt7623_msdc1_wp_1),
++	PINCTRL_PIN_GROUP("msdc1_wp_2", mt7623_msdc1_wp_2),
++	PINCTRL_PIN_GROUP("msdc2", mt7623_msdc2),
++	PINCTRL_PIN_GROUP("msdc3", mt7623_msdc3),
++	PINCTRL_PIN_GROUP("nandc", mt7623_nandc),
++	PINCTRL_PIN_GROUP("nandc_ceb0", mt7623_nandc_ceb0),
++	PINCTRL_PIN_GROUP("nandc_ceb1", mt7623_nandc_ceb1),
++	PINCTRL_PIN_GROUP("otg_iddig0_0", mt7623_otg_iddig0_0),
++	PINCTRL_PIN_GROUP("otg_iddig0_1", mt7623_otg_iddig0_1),
++	PINCTRL_PIN_GROUP("otg_iddig0_2", mt7623_otg_iddig0_2),
++	PINCTRL_PIN_GROUP("otg_iddig1_0", mt7623_otg_iddig1_0),
++	PINCTRL_PIN_GROUP("otg_iddig1_1", mt7623_otg_iddig1_1),
++	PINCTRL_PIN_GROUP("otg_iddig1_2", mt7623_otg_iddig1_2),
++	PINCTRL_PIN_GROUP("otg_drv_vbus0_0", mt7623_otg_drv_vbus0_0),
++	PINCTRL_PIN_GROUP("otg_drv_vbus0_1", mt7623_otg_drv_vbus0_1),
++	PINCTRL_PIN_GROUP("otg_drv_vbus0_2", mt7623_otg_drv_vbus0_2),
++	PINCTRL_PIN_GROUP("otg_drv_vbus1_0", mt7623_otg_drv_vbus1_0),
++	PINCTRL_PIN_GROUP("otg_drv_vbus1_1", mt7623_otg_drv_vbus1_1),
++	PINCTRL_PIN_GROUP("otg_drv_vbus1_2", mt7623_otg_drv_vbus1_2),
++	PINCTRL_PIN_GROUP("pcie0_0_perst", mt7623_pcie0_0_perst),
++	PINCTRL_PIN_GROUP("pcie0_1_perst", mt7623_pcie0_1_perst),
++	PINCTRL_PIN_GROUP("pcie1_0_perst", mt7623_pcie1_0_perst),
++	PINCTRL_PIN_GROUP("pcie1_1_perst", mt7623_pcie1_1_perst),
++	PINCTRL_PIN_GROUP("pcie1_1_perst", mt7623_pcie1_1_perst),
++	PINCTRL_PIN_GROUP("pcie0_0_rev_perst", mt7623_pcie0_0_rev_perst),
++	PINCTRL_PIN_GROUP("pcie0_1_rev_perst", mt7623_pcie0_1_rev_perst),
++	PINCTRL_PIN_GROUP("pcie1_0_rev_perst", mt7623_pcie1_0_rev_perst),
++	PINCTRL_PIN_GROUP("pcie1_1_rev_perst", mt7623_pcie1_1_rev_perst),
++	PINCTRL_PIN_GROUP("pcie2_0_rev_perst", mt7623_pcie2_0_rev_perst),
++	PINCTRL_PIN_GROUP("pcie2_1_rev_perst", mt7623_pcie2_1_rev_perst),
++	PINCTRL_PIN_GROUP("pcie2_0_perst", mt7623_pcie2_0_perst),
++	PINCTRL_PIN_GROUP("pcie2_1_perst", mt7623_pcie2_1_perst),
++	PINCTRL_PIN_GROUP("pcie0_0_wake", mt7623_pcie0_0_wake),
++	PINCTRL_PIN_GROUP("pcie0_1_wake", mt7623_pcie0_1_wake),
++	PINCTRL_PIN_GROUP("pcie1_0_wake", mt7623_pcie1_0_wake),
++	PINCTRL_PIN_GROUP("pcie1_1_wake", mt7623_pcie1_1_wake),
++	PINCTRL_PIN_GROUP("pcie2_0_wake", mt7623_pcie2_0_wake),
++	PINCTRL_PIN_GROUP("pcie2_1_wake", mt7623_pcie2_1_wake),
++	PINCTRL_PIN_GROUP("pcie0_clkreq", mt7623_pcie0_clkreq),
++	PINCTRL_PIN_GROUP("pcie1_clkreq", mt7623_pcie1_clkreq),
++	PINCTRL_PIN_GROUP("pcie2_clkreq", mt7623_pcie2_clkreq),
++	PINCTRL_PIN_GROUP("pcm_clk_0", mt7623_pcm_clk_0),
++	PINCTRL_PIN_GROUP("pcm_clk_1", mt7623_pcm_clk_1),
++	PINCTRL_PIN_GROUP("pcm_clk_2", mt7623_pcm_clk_2),
++	PINCTRL_PIN_GROUP("pcm_clk_3", mt7623_pcm_clk_3),
++	PINCTRL_PIN_GROUP("pcm_clk_4", mt7623_pcm_clk_4),
++	PINCTRL_PIN_GROUP("pcm_clk_5", mt7623_pcm_clk_5),
++	PINCTRL_PIN_GROUP("pcm_clk_6", mt7623_pcm_clk_6),
++	PINCTRL_PIN_GROUP("pcm_sync_0", mt7623_pcm_sync_0),
++	PINCTRL_PIN_GROUP("pcm_sync_1", mt7623_pcm_sync_1),
++	PINCTRL_PIN_GROUP("pcm_sync_2", mt7623_pcm_sync_2),
++	PINCTRL_PIN_GROUP("pcm_sync_3", mt7623_pcm_sync_3),
++	PINCTRL_PIN_GROUP("pcm_sync_4", mt7623_pcm_sync_4),
++	PINCTRL_PIN_GROUP("pcm_sync_5", mt7623_pcm_sync_5),
++	PINCTRL_PIN_GROUP("pcm_sync_6", mt7623_pcm_sync_6),
++	PINCTRL_PIN_GROUP("pcm_rx_0", mt7623_pcm_rx_0),
++	PINCTRL_PIN_GROUP("pcm_rx_1", mt7623_pcm_rx_1),
++	PINCTRL_PIN_GROUP("pcm_rx_2", mt7623_pcm_rx_2),
++	PINCTRL_PIN_GROUP("pcm_rx_3", mt7623_pcm_rx_3),
++	PINCTRL_PIN_GROUP("pcm_rx_4", mt7623_pcm_rx_4),
++	PINCTRL_PIN_GROUP("pcm_rx_5", mt7623_pcm_rx_5),
++	PINCTRL_PIN_GROUP("pcm_rx_6", mt7623_pcm_rx_6),
++	PINCTRL_PIN_GROUP("pcm_tx_0", mt7623_pcm_tx_0),
++	PINCTRL_PIN_GROUP("pcm_tx_1", mt7623_pcm_tx_1),
++	PINCTRL_PIN_GROUP("pcm_tx_2", mt7623_pcm_tx_2),
++	PINCTRL_PIN_GROUP("pcm_tx_3", mt7623_pcm_tx_3),
++	PINCTRL_PIN_GROUP("pcm_tx_4", mt7623_pcm_tx_4),
++	PINCTRL_PIN_GROUP("pcm_tx_5", mt7623_pcm_tx_5),
++	PINCTRL_PIN_GROUP("pcm_tx_6", mt7623_pcm_tx_6),
++	PINCTRL_PIN_GROUP("pwm_ch1_0", mt7623_pwm_ch1_0),
++	PINCTRL_PIN_GROUP("pwm_ch1_1", mt7623_pwm_ch1_1),
++	PINCTRL_PIN_GROUP("pwm_ch1_2", mt7623_pwm_ch1_2),
++	PINCTRL_PIN_GROUP("pwm_ch1_3", mt7623_pwm_ch1_3),
++	PINCTRL_PIN_GROUP("pwm_ch1_4", mt7623_pwm_ch1_4),
++	PINCTRL_PIN_GROUP("pwm_ch2_0", mt7623_pwm_ch2_0),
++	PINCTRL_PIN_GROUP("pwm_ch2_1", mt7623_pwm_ch2_1),
++	PINCTRL_PIN_GROUP("pwm_ch2_2", mt7623_pwm_ch2_2),
++	PINCTRL_PIN_GROUP("pwm_ch2_3", mt7623_pwm_ch2_3),
++	PINCTRL_PIN_GROUP("pwm_ch2_4", mt7623_pwm_ch2_4),
++	PINCTRL_PIN_GROUP("pwm_ch3_0", mt7623_pwm_ch3_0),
++	PINCTRL_PIN_GROUP("pwm_ch3_1", mt7623_pwm_ch3_1),
++	PINCTRL_PIN_GROUP("pwm_ch3_2", mt7623_pwm_ch3_2),
++	PINCTRL_PIN_GROUP("pwm_ch3_3", mt7623_pwm_ch3_3),
++	PINCTRL_PIN_GROUP("pwm_ch4_0", mt7623_pwm_ch4_0),
++	PINCTRL_PIN_GROUP("pwm_ch4_1", mt7623_pwm_ch4_1),
++	PINCTRL_PIN_GROUP("pwm_ch4_2", mt7623_pwm_ch4_2),
++	PINCTRL_PIN_GROUP("pwm_ch4_3", mt7623_pwm_ch4_3),
++	PINCTRL_PIN_GROUP("pwm_ch5_0", mt7623_pwm_ch5_0),
++	PINCTRL_PIN_GROUP("pwm_ch5_1", mt7623_pwm_ch5_1),
++	PINCTRL_PIN_GROUP("pwrap", mt7623_pwrap),
++	PINCTRL_PIN_GROUP("rtc", mt7623_rtc),
++	PINCTRL_PIN_GROUP("spdif_in0_0", mt7623_spdif_in0_0),
++	PINCTRL_PIN_GROUP("spdif_in0_1", mt7623_spdif_in0_1),
++	PINCTRL_PIN_GROUP("spdif_in1_0", mt7623_spdif_in1_0),
++	PINCTRL_PIN_GROUP("spdif_in1_1", mt7623_spdif_in1_1),
++	PINCTRL_PIN_GROUP("spdif_out", mt7623_spdif_out),
++	PINCTRL_PIN_GROUP("spi0", mt7623_spi0),
++	PINCTRL_PIN_GROUP("spi1", mt7623_spi1),
++	PINCTRL_PIN_GROUP("spi2", mt7623_spi2),
++	PINCTRL_PIN_GROUP("uart0_0_txd_rxd",  mt7623_uart0_0_txd_rxd),
++	PINCTRL_PIN_GROUP("uart0_1_txd_rxd",  mt7623_uart0_1_txd_rxd),
++	PINCTRL_PIN_GROUP("uart0_2_txd_rxd",  mt7623_uart0_2_txd_rxd),
++	PINCTRL_PIN_GROUP("uart0_3_txd_rxd",  mt7623_uart0_3_txd_rxd),
++	PINCTRL_PIN_GROUP("uart1_0_txd_rxd",  mt7623_uart1_0_txd_rxd),
++	PINCTRL_PIN_GROUP("uart1_1_txd_rxd",  mt7623_uart1_1_txd_rxd),
++	PINCTRL_PIN_GROUP("uart1_2_txd_rxd",  mt7623_uart1_2_txd_rxd),
++	PINCTRL_PIN_GROUP("uart2_0_txd_rxd",  mt7623_uart2_0_txd_rxd),
++	PINCTRL_PIN_GROUP("uart2_1_txd_rxd",  mt7623_uart2_1_txd_rxd),
++	PINCTRL_PIN_GROUP("uart3_txd_rxd",  mt7623_uart3_txd_rxd),
++	PINCTRL_PIN_GROUP("uart0_rts_cts",  mt7623_uart0_rts_cts),
++	PINCTRL_PIN_GROUP("uart1_rts_cts",  mt7623_uart1_rts_cts),
++	PINCTRL_PIN_GROUP("uart2_rts_cts",  mt7623_uart2_rts_cts),
++	PINCTRL_PIN_GROUP("uart3_rts_cts",  mt7623_uart3_rts_cts),
++	PINCTRL_PIN_GROUP("watchdog_0", mt7623_watchdog_0),
++	PINCTRL_PIN_GROUP("watchdog_1", mt7623_watchdog_1),
 +};
 +
-+static const struct mtk_pin_field_calc mt8183_pin_dir_range[] = {
-+	PIN_FIELD(0, 192, 0x0, 0x10, 0, 1),
++/* Joint those groups owning the same capability in user point of view which
++ * allows that people tend to use through the device tree.
++ */
++static const char *mt7623_aud_clk_groups[] = { "aud_ext_clk0",
++					       "aud_ext_clk1", };
++static const char *mt7623_disp_pwm_groups[] = { "disp_pwm_0", "disp_pwm_1",
++						"disp_pwm_2", };
++static const char *mt7623_ethernet_groups[] = { "esw_int", "esw_rst",
++						"ephy", "mdc_mdio", };
++static const char *mt7623_ext_sdio_groups[] = { "ext_sdio", };
++static const char *mt7623_hdmi_groups[] = { "hdmi_cec", "hdmi_htplg",
++					    "hdmi_i2c", "hdmi_rx",
++					    "hdmi_rx_i2c", };
++static const char *mt7623_i2c_groups[] = { "i2c0", "i2c1_0", "i2c1_1",
++					   "i2c1_2", "i2c1_3", "i2c1_4",
++					   "i2c2_0", "i2c2_1", "i2c2_2",
++					   "i2c2_3", };
++static const char *mt7623_i2s_groups[] = { "i2s0", "i2s1",
++					   "i2s2_bclk_lrclk_mclk",
++					   "i2s3_bclk_lrclk_mclk",
++					   "i2s4", "i2s5",
++					   "i2s2_data_in", "i2s3_data_in",
++					   "i2s2_data_0", "i2s2_data_1",
++					   "i2s3_data_0", "i2s3_data_1", };
++static const char *mt7623_ir_groups[] = { "ir", };
++static const char *mt7623_lcd_groups[] = { "dsi_te", "lcm_rst", "mipi_tx", };
++static const char *mt7623_msdc_groups[] = { "msdc0", "msdc1", "msdc1_ins",
++					    "msdc1_wp_0", "msdc1_wp_1",
++					    "msdc1_wp_2", "msdc2",
++						"msdc3", };
++static const char *mt7623_nandc_groups[] = { "nandc", "nandc_ceb0",
++					     "nandc_ceb1", };
++static const char *mt7623_otg_groups[] = { "otg_iddig0_0", "otg_iddig0_1",
++					    "otg_iddig0_2", "otg_iddig1_0",
++					    "otg_iddig1_1", "otg_iddig1_2",
++					    "otg_drv_vbus0_0",
++					    "otg_drv_vbus0_1",
++					    "otg_drv_vbus0_2",
++					    "otg_drv_vbus1_0",
++					    "otg_drv_vbus1_1",
++					    "otg_drv_vbus1_2", };
++static const char *mt7623_pcie_groups[] = { "pcie0_0_perst", "pcie0_1_perst",
++					    "pcie1_0_perst", "pcie1_1_perst",
++					    "pcie2_0_perst", "pcie2_1_perst",
++					    "pcie0_0_rev_perst",
++					    "pcie0_1_rev_perst",
++					    "pcie1_0_rev_perst",
++					    "pcie1_1_rev_perst",
++					    "pcie2_0_rev_perst",
++					    "pcie2_1_rev_perst",
++					    "pcie0_0_wake", "pcie0_1_wake",
++					    "pcie2_0_wake", "pcie2_1_wake",
++					    "pcie0_clkreq", "pcie1_clkreq",
++					    "pcie2_clkreq", };
++static const char *mt7623_pcm_groups[] = { "pcm_clk_0", "pcm_clk_1",
++					   "pcm_clk_2", "pcm_clk_3",
++					   "pcm_clk_4", "pcm_clk_5",
++					   "pcm_clk_6", "pcm_sync_0",
++					   "pcm_sync_1", "pcm_sync_2",
++					   "pcm_sync_3", "pcm_sync_4",
++					   "pcm_sync_5", "pcm_sync_6",
++					   "pcm_rx_0", "pcm_rx_1",
++					   "pcm_rx_2", "pcm_rx_3",
++					   "pcm_rx_4", "pcm_rx_5",
++					   "pcm_rx_6", "pcm_tx_0",
++					   "pcm_tx_1", "pcm_tx_2",
++					   "pcm_tx_3", "pcm_tx_4",
++					   "pcm_tx_5", "pcm_tx_6", };
++static const char *mt7623_pwm_groups[] = { "pwm_ch1_0", "pwm_ch1_1",
++					   "pwm_ch1_2", "pwm_ch2_0",
++					   "pwm_ch2_1", "pwm_ch2_2",
++					   "pwm_ch3_0", "pwm_ch3_1",
++					   "pwm_ch3_2", "pwm_ch4_0",
++					   "pwm_ch4_1", "pwm_ch4_2",
++					   "pwm_ch4_3", "pwm_ch5_0",
++					   "pwm_ch5_1", "pwm_ch5_2",
++					   "pwm_ch6_0", "pwm_ch6_1",
++					   "pwm_ch6_2", "pwm_ch6_3",
++					   "pwm_ch7_0", "pwm_ch7_1",
++					   "pwm_ch7_2", };
++static const char *mt7623_pwrap_groups[] = { "pwrap", };
++static const char *mt7623_rtc_groups[] = { "rtc", };
++static const char *mt7623_spi_groups[] = { "spi0", "spi2", "spi2", };
++static const char *mt7623_spdif_groups[] = { "spdif_in0_0", "spdif_in0_1",
++					     "spdif_in1_0", "spdif_in1_1",
++					     "spdif_out", };
++static const char *mt7623_uart_groups[] = { "uart0_0_txd_rxd",
++					    "uart0_1_txd_rxd",
++					    "uart0_2_txd_rxd",
++					    "uart0_3_txd_rxd",
++					    "uart1_0_txd_rxd",
++					    "uart1_1_txd_rxd",
++					    "uart1_2_txd_rxd",
++					    "uart2_0_txd_rxd",
++					    "uart2_1_txd_rxd",
++					    "uart3_txd_rxd",
++					    "uart0_rts_cts",
++					    "uart1_rts_cts",
++					    "uart2_rts_cts",
++					    "uart3_rts_cts", };
++static const char *mt7623_wdt_groups[] = { "watchdog_0", "watchdog_1", };
++
++static const struct function_desc mt7623_functions[] = {
++	{"audck", mt7623_aud_clk_groups, ARRAY_SIZE(mt7623_aud_clk_groups)},
++	{"disp", mt7623_disp_pwm_groups, ARRAY_SIZE(mt7623_disp_pwm_groups)},
++	{"eth",	mt7623_ethernet_groups, ARRAY_SIZE(mt7623_ethernet_groups)},
++	{"sdio", mt7623_ext_sdio_groups, ARRAY_SIZE(mt7623_ext_sdio_groups)},
++	{"hdmi", mt7623_hdmi_groups, ARRAY_SIZE(mt7623_hdmi_groups)},
++	{"i2c", mt7623_i2c_groups, ARRAY_SIZE(mt7623_i2c_groups)},
++	{"i2s",	mt7623_i2s_groups, ARRAY_SIZE(mt7623_i2s_groups)},
++	{"ir",	mt7623_ir_groups, ARRAY_SIZE(mt7623_ir_groups)},
++	{"lcd", mt7623_lcd_groups, ARRAY_SIZE(mt7623_lcd_groups)},
++	{"msdc", mt7623_msdc_groups, ARRAY_SIZE(mt7623_msdc_groups)},
++	{"nand", mt7623_nandc_groups, ARRAY_SIZE(mt7623_nandc_groups)},
++	{"otg", mt7623_otg_groups, ARRAY_SIZE(mt7623_otg_groups)},
++	{"pcie", mt7623_pcie_groups, ARRAY_SIZE(mt7623_pcie_groups)},
++	{"pcm",	mt7623_pcm_groups, ARRAY_SIZE(mt7623_pcm_groups)},
++	{"pwm",	mt7623_pwm_groups, ARRAY_SIZE(mt7623_pwm_groups)},
++	{"pwrap", mt7623_pwrap_groups, ARRAY_SIZE(mt7623_pwrap_groups)},
++	{"rtc", mt7623_rtc_groups, ARRAY_SIZE(mt7623_rtc_groups)},
++	{"spi",	mt7623_spi_groups, ARRAY_SIZE(mt7623_spi_groups)},
++	{"spdif", mt7623_spdif_groups, ARRAY_SIZE(mt7623_spdif_groups)},
++	{"uart", mt7623_uart_groups, ARRAY_SIZE(mt7623_uart_groups)},
++	{"watchdog", mt7623_wdt_groups, ARRAY_SIZE(mt7623_wdt_groups)},
 +};
 +
-+static const struct mtk_pin_field_calc mt8183_pin_di_range[] = {
-+	PIN_FIELD(0, 192, 0x200, 0x10, 0, 1),
++static const struct mtk_eint_hw mt7623_eint_hw = {
++	.port_mask = 6,
++	.ports     = 6,
++	.ap_num    = 169,
++	.db_cnt    = 20,
 +};
 +
-+static const struct mtk_pin_field_calc mt8183_pin_do_range[] = {
-+	PIN_FIELD(0, 192, 0x100, 0x10, 0, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_ies_range[] = {
-+	PINS_FIELD_BASE(0, 3, 6, 0x000, 0x10, 3, 1),
-+	PINS_FIELD_BASE(4, 7, 6, 0x000, 0x10, 5, 1),
-+	PIN_FIELD_BASE(8, 8, 6, 0x000, 0x10, 0, 1),
-+	PINS_FIELD_BASE(9, 10, 6, 0x000, 0x10, 12, 1),
-+	PIN_FIELD_BASE(11, 11, 1, 0x000, 0x10, 3, 1),
-+	PIN_FIELD_BASE(12, 12, 1, 0x000, 0x10, 7, 1),
-+	PINS_FIELD_BASE(13, 16, 2, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(17, 20, 2, 0x000, 0x10, 3, 1),
-+	PINS_FIELD_BASE(21, 24, 2, 0x000, 0x10, 4, 1),
-+	PINS_FIELD_BASE(25, 28, 2, 0x000, 0x10, 5, 1),
-+	PIN_FIELD_BASE(29, 29, 2, 0x000, 0x10, 6, 1),
-+	PIN_FIELD_BASE(30, 30, 2, 0x000, 0x10, 7, 1),
-+	PINS_FIELD_BASE(31, 31, 2, 0x000, 0x10, 8, 1),
-+	PINS_FIELD_BASE(32, 34, 2, 0x000, 0x10, 7, 1),
-+	PINS_FIELD_BASE(35, 37, 3, 0x000, 0x10, 0, 1),
-+	PINS_FIELD_BASE(38, 40, 3, 0x000, 0x10, 1, 1),
-+	PINS_FIELD_BASE(41, 42, 3, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(43, 45, 3, 0x000, 0x10, 3, 1),
-+	PINS_FIELD_BASE(46, 47, 3, 0x000, 0x10, 4, 1),
-+	PINS_FIELD_BASE(48, 49, 3, 0x000, 0x10, 5, 1),
-+	PINS_FIELD_BASE(50, 51, 4, 0x000, 0x10, 0, 1),
-+	PINS_FIELD_BASE(52, 57, 4, 0x000, 0x10, 1, 1),
-+	PINS_FIELD_BASE(58, 60, 4, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(61, 64, 5, 0x000, 0x10, 0, 1),
-+	PINS_FIELD_BASE(65, 66, 5, 0x000, 0x10, 1, 1),
-+	PINS_FIELD_BASE(67, 68, 5, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(69, 71, 5, 0x000, 0x10, 3, 1),
-+	PINS_FIELD_BASE(72, 76, 5, 0x000, 0x10, 4, 1),
-+	PINS_FIELD_BASE(77, 80, 5, 0x000, 0x10, 5, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x000, 0x10, 6, 1),
-+	PINS_FIELD_BASE(82, 83, 5, 0x000, 0x10, 7, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x000, 0x10, 6, 1),
-+	PINS_FIELD_BASE(85, 88, 5, 0x000, 0x10, 8, 1),
-+	PIN_FIELD_BASE(89, 89, 6, 0x000, 0x10, 11, 1),
-+	PIN_FIELD_BASE(90, 90, 6, 0x000, 0x10, 1, 1),
-+	PINS_FIELD_BASE(91, 94, 6, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(95, 96, 6, 0x000, 0x10, 6, 1),
-+	PINS_FIELD_BASE(97, 98, 6, 0x000, 0x10, 7, 1),
-+	PIN_FIELD_BASE(99, 99, 6, 0x000, 0x10, 8, 1),
-+	PIN_FIELD_BASE(100, 100, 6, 0x000, 0x10, 9, 1),
-+	PINS_FIELD_BASE(101, 102, 6, 0x000, 0x10, 10, 1),
-+	PINS_FIELD_BASE(103, 104, 6, 0x000, 0x10, 13, 1),
-+	PINS_FIELD_BASE(105, 106, 6, 0x000, 0x10, 14, 1),
-+	PIN_FIELD_BASE(107, 107, 7, 0x000, 0x10, 0, 1),
-+	PIN_FIELD_BASE(108, 108, 7, 0x000, 0x10, 1, 1),
-+	PIN_FIELD_BASE(109, 109, 7, 0x000, 0x10, 2, 1),
-+	PIN_FIELD_BASE(110, 110, 7, 0x000, 0x10, 0, 1),
-+	PIN_FIELD_BASE(111, 111, 7, 0x000, 0x10, 3, 1),
-+	PIN_FIELD_BASE(112, 112, 7, 0x000, 0x10, 2, 1),
-+	PIN_FIELD_BASE(113, 113, 7, 0x000, 0x10, 4, 1),
-+	PIN_FIELD_BASE(114, 114, 7, 0x000, 0x10, 5, 1),
-+	PIN_FIELD_BASE(115, 115, 7, 0x000, 0x10, 6, 1),
-+	PIN_FIELD_BASE(116, 116, 7, 0x000, 0x10, 7, 1),
-+	PIN_FIELD_BASE(117, 117, 7, 0x000, 0x10, 8, 1),
-+	PIN_FIELD_BASE(118, 118, 7, 0x000, 0x10, 9, 1),
-+	PIN_FIELD_BASE(119, 119, 7, 0x000, 0x10, 10, 1),
-+	PIN_FIELD_BASE(120, 120, 7, 0x000, 0x10, 11, 1),
-+	PIN_FIELD_BASE(121, 121, 7, 0x000, 0x10, 12, 1),
-+	PIN_FIELD_BASE(122, 122, 8, 0x000, 0x10, 0, 1),
-+	PIN_FIELD_BASE(123, 123, 8, 0x000, 0x10, 1, 1),
-+	PIN_FIELD_BASE(124, 124, 8, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(125, 130, 8, 0x000, 0x10, 1, 1),
-+	PIN_FIELD_BASE(131, 131, 8, 0x000, 0x10, 3, 1),
-+	PIN_FIELD_BASE(132, 132, 8, 0x000, 0x10, 1, 1),
-+	PIN_FIELD_BASE(133, 133, 8, 0x000, 0x10, 4, 1),
-+	PIN_FIELD_BASE(134, 134, 1, 0x000, 0x10, 0, 1),
-+	PIN_FIELD_BASE(135, 135, 1, 0x000, 0x10, 1, 1),
-+	PINS_FIELD_BASE(136, 143, 1, 0x000, 0x10, 2, 1),
-+	PINS_FIELD_BASE(144, 147, 1, 0x000, 0x10, 4, 1),
-+	PIN_FIELD_BASE(148, 148, 1, 0x000, 0x10, 5, 1),
-+	PIN_FIELD_BASE(149, 149, 1, 0x000, 0x10, 6, 1),
-+	PINS_FIELD_BASE(150, 153, 1, 0x000, 0x10, 8, 1),
-+	PIN_FIELD_BASE(154, 154, 1, 0x000, 0x10, 9, 1),
-+	PINS_FIELD_BASE(155, 157, 1, 0x000, 0x10, 10, 1),
-+	PINS_FIELD_BASE(158, 160, 1, 0x000, 0x10, 8, 1),
-+	PINS_FIELD_BASE(161, 164, 2, 0x000, 0x10, 0, 1),
-+	PINS_FIELD_BASE(165, 166, 2, 0x000, 0x10, 1, 1),
-+	PINS_FIELD_BASE(167, 168, 4, 0x000, 0x10, 2, 1),
-+	PIN_FIELD_BASE(169, 169, 4, 0x000, 0x10, 3, 1),
-+	PINS_FIELD_BASE(170, 174, 4, 0x000, 0x10, 4, 1),
-+	PINS_FIELD_BASE(175, 176, 4, 0x000, 0x10, 3, 1),
-+	PINS_FIELD_BASE(177, 179, 6, 0x000, 0x10, 4, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_smt_range[] = {
-+	PINS_FIELD_BASE(0, 3, 6, 0x010, 0x10, 3, 1),
-+	PINS_FIELD_BASE(4, 7, 6, 0x010, 0x10, 5, 1),
-+	PIN_FIELD_BASE(8, 8, 6, 0x010, 0x10, 0, 1),
-+	PINS_FIELD_BASE(9, 10, 6, 0x010, 0x10, 12, 1),
-+	PIN_FIELD_BASE(11, 11, 1, 0x010, 0x10, 3, 1),
-+	PIN_FIELD_BASE(12, 12, 1, 0x010, 0x10, 7, 1),
-+	PINS_FIELD_BASE(13, 16, 2, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(17, 20, 2, 0x010, 0x10, 3, 1),
-+	PINS_FIELD_BASE(21, 24, 2, 0x010, 0x10, 4, 1),
-+	PINS_FIELD_BASE(25, 28, 2, 0x010, 0x10, 5, 1),
-+	PIN_FIELD_BASE(29, 29, 2, 0x010, 0x10, 6, 1),
-+	PIN_FIELD_BASE(30, 30, 2, 0x010, 0x10, 7, 1),
-+	PINS_FIELD_BASE(31, 31, 2, 0x010, 0x10, 8, 1),
-+	PINS_FIELD_BASE(32, 34, 2, 0x010, 0x10, 7, 1),
-+	PINS_FIELD_BASE(35, 37, 3, 0x010, 0x10, 0, 1),
-+	PINS_FIELD_BASE(38, 40, 3, 0x010, 0x10, 1, 1),
-+	PINS_FIELD_BASE(41, 42, 3, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(43, 45, 3, 0x010, 0x10, 3, 1),
-+	PINS_FIELD_BASE(46, 47, 3, 0x010, 0x10, 4, 1),
-+	PINS_FIELD_BASE(48, 49, 3, 0x010, 0x10, 5, 1),
-+	PINS_FIELD_BASE(50, 51, 4, 0x010, 0x10, 0, 1),
-+	PINS_FIELD_BASE(52, 57, 4, 0x010, 0x10, 1, 1),
-+	PINS_FIELD_BASE(58, 60, 4, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(61, 64, 5, 0x010, 0x10, 0, 1),
-+	PINS_FIELD_BASE(65, 66, 5, 0x010, 0x10, 1, 1),
-+	PINS_FIELD_BASE(67, 68, 5, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(69, 71, 5, 0x010, 0x10, 3, 1),
-+	PINS_FIELD_BASE(72, 76, 5, 0x010, 0x10, 4, 1),
-+	PINS_FIELD_BASE(77, 80, 5, 0x010, 0x10, 5, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x010, 0x10, 6, 1),
-+	PINS_FIELD_BASE(82, 83, 5, 0x010, 0x10, 7, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x010, 0x10, 6, 1),
-+	PINS_FIELD_BASE(85, 88, 5, 0x010, 0x10, 8, 1),
-+	PIN_FIELD_BASE(89, 89, 6, 0x010, 0x10, 11, 1),
-+	PIN_FIELD_BASE(90, 90, 6, 0x010, 0x10, 1, 1),
-+	PINS_FIELD_BASE(91, 94, 6, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(95, 96, 6, 0x010, 0x10, 6, 1),
-+	PINS_FIELD_BASE(97, 98, 6, 0x010, 0x10, 7, 1),
-+	PIN_FIELD_BASE(99, 99, 6, 0x010, 0x10, 8, 1),
-+	PIN_FIELD_BASE(100, 100, 6, 0x010, 0x10, 9, 1),
-+	PINS_FIELD_BASE(101, 102, 6, 0x010, 0x10, 10, 1),
-+	PINS_FIELD_BASE(103, 104, 6, 0x010, 0x10, 13, 1),
-+	PINS_FIELD_BASE(105, 106, 6, 0x010, 0x10, 14, 1),
-+	PIN_FIELD_BASE(107, 107, 7, 0x010, 0x10, 0, 1),
-+	PIN_FIELD_BASE(108, 108, 7, 0x010, 0x10, 1, 1),
-+	PIN_FIELD_BASE(109, 109, 7, 0x010, 0x10, 2, 1),
-+	PIN_FIELD_BASE(110, 110, 7, 0x010, 0x10, 0, 1),
-+	PIN_FIELD_BASE(111, 111, 7, 0x010, 0x10, 3, 1),
-+	PIN_FIELD_BASE(112, 112, 7, 0x010, 0x10, 2, 1),
-+	PIN_FIELD_BASE(113, 113, 7, 0x010, 0x10, 4, 1),
-+	PIN_FIELD_BASE(114, 114, 7, 0x010, 0x10, 5, 1),
-+	PIN_FIELD_BASE(115, 115, 7, 0x010, 0x10, 6, 1),
-+	PIN_FIELD_BASE(116, 116, 7, 0x010, 0x10, 7, 1),
-+	PIN_FIELD_BASE(117, 117, 7, 0x010, 0x10, 8, 1),
-+	PIN_FIELD_BASE(118, 118, 7, 0x010, 0x10, 9, 1),
-+	PIN_FIELD_BASE(119, 119, 7, 0x010, 0x10, 10, 1),
-+	PIN_FIELD_BASE(120, 120, 7, 0x010, 0x10, 11, 1),
-+	PIN_FIELD_BASE(121, 121, 7, 0x010, 0x10, 12, 1),
-+	PIN_FIELD_BASE(122, 122, 8, 0x010, 0x10, 0, 1),
-+	PIN_FIELD_BASE(123, 123, 8, 0x010, 0x10, 1, 1),
-+	PIN_FIELD_BASE(124, 124, 8, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(125, 130, 8, 0x010, 0x10, 1, 1),
-+	PIN_FIELD_BASE(131, 131, 8, 0x010, 0x10, 3, 1),
-+	PIN_FIELD_BASE(132, 132, 8, 0x010, 0x10, 1, 1),
-+	PIN_FIELD_BASE(133, 133, 8, 0x010, 0x10, 4, 1),
-+	PIN_FIELD_BASE(134, 134, 1, 0x010, 0x10, 0, 1),
-+	PIN_FIELD_BASE(135, 135, 1, 0x010, 0x10, 1, 1),
-+	PINS_FIELD_BASE(136, 143, 1, 0x010, 0x10, 2, 1),
-+	PINS_FIELD_BASE(144, 147, 1, 0x010, 0x10, 4, 1),
-+	PIN_FIELD_BASE(148, 148, 1, 0x010, 0x10, 5, 1),
-+	PIN_FIELD_BASE(149, 149, 1, 0x010, 0x10, 6, 1),
-+	PINS_FIELD_BASE(150, 153, 1, 0x010, 0x10, 8, 1),
-+	PIN_FIELD_BASE(154, 154, 1, 0x010, 0x10, 9, 1),
-+	PINS_FIELD_BASE(155, 157, 1, 0x010, 0x10, 10, 1),
-+	PINS_FIELD_BASE(158, 160, 1, 0x010, 0x10, 8, 1),
-+	PINS_FIELD_BASE(161, 164, 2, 0x010, 0x10, 0, 1),
-+	PINS_FIELD_BASE(165, 166, 2, 0x010, 0x10, 1, 1),
-+	PINS_FIELD_BASE(167, 168, 4, 0x010, 0x10, 2, 1),
-+	PIN_FIELD_BASE(169, 169, 4, 0x010, 0x10, 3, 1),
-+	PINS_FIELD_BASE(170, 174, 4, 0x010, 0x10, 4, 1),
-+	PINS_FIELD_BASE(175, 176, 4, 0x010, 0x10, 3, 1),
-+	PINS_FIELD_BASE(177, 179, 6, 0x010, 0x10, 4, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_pullen_range[] = {
-+	PIN_FIELD_BASE(0, 3, 6, 0x060, 0x10, 6, 1),
-+	PIN_FIELD_BASE(4, 7, 6, 0x060, 0x10, 11, 1),
-+	PIN_FIELD_BASE(8, 8, 6, 0x060, 0x10, 0, 1),
-+	PIN_FIELD_BASE(9, 10, 6, 0x060, 0x10, 26, 1),
-+	PIN_FIELD_BASE(11, 11, 1, 0x060, 0x10, 10, 1),
-+	PIN_FIELD_BASE(12, 12, 1, 0x060, 0x10, 17, 1),
-+	PIN_FIELD_BASE(13, 28, 2, 0x060, 0x10, 6, 1),
-+	PIN_FIELD_BASE(43, 49, 3, 0x060, 0x10, 8, 1),
-+	PIN_FIELD_BASE(50, 60, 4, 0x060, 0x10, 0, 1),
-+	PIN_FIELD_BASE(61, 88, 5, 0x060, 0x10, 0, 1),
-+	PIN_FIELD_BASE(89, 89, 6, 0x060, 0x10, 24, 1),
-+	PIN_FIELD_BASE(90, 90, 6, 0x060, 0x10, 1, 1),
-+	PIN_FIELD_BASE(95, 95, 6, 0x060, 0x10, 15, 1),
-+	PIN_FIELD_BASE(96, 102, 6, 0x060, 0x10, 17, 1),
-+	PIN_FIELD_BASE(103, 106, 6, 0x060, 0x10, 28, 1),
-+	PIN_FIELD_BASE(107, 121, 7, 0x060, 0x10, 0, 1),
-+	PIN_FIELD_BASE(134, 143, 1, 0x060, 0x10, 0, 1),
-+	PIN_FIELD_BASE(144, 149, 1, 0x060, 0x10, 11, 1),
-+	PIN_FIELD_BASE(150, 160, 1, 0x060, 0x10, 18, 1),
-+	PIN_FIELD_BASE(161, 166, 2, 0x060, 0x10, 0, 1),
-+	PIN_FIELD_BASE(167, 176, 4, 0x060, 0x10, 11, 1),
-+	PIN_FIELD_BASE(177, 177, 6, 0x060, 0x10, 10, 1),
-+	PIN_FIELD_BASE(178, 178, 6, 0x060, 0x10, 16, 1),
-+	PIN_FIELD_BASE(179, 179, 6, 0x060, 0x10, 25, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_pullsel_range[] = {
-+	PIN_FIELD_BASE(0, 3, 6, 0x080, 0x10, 6, 1),
-+	PIN_FIELD_BASE(4, 7, 6, 0x080, 0x10, 11, 1),
-+	PIN_FIELD_BASE(8, 8, 6, 0x080, 0x10, 0, 1),
-+	PIN_FIELD_BASE(9, 10, 6, 0x080, 0x10, 26, 1),
-+	PIN_FIELD_BASE(11, 11, 1, 0x080, 0x10, 10, 1),
-+	PIN_FIELD_BASE(12, 12, 1, 0x080, 0x10, 17, 1),
-+	PIN_FIELD_BASE(13, 28, 2, 0x080, 0x10, 6, 1),
-+	PIN_FIELD_BASE(43, 49, 3, 0x080, 0x10, 8, 1),
-+	PIN_FIELD_BASE(50, 60, 4, 0x080, 0x10, 0, 1),
-+	PIN_FIELD_BASE(61, 88, 5, 0x080, 0x10, 0, 1),
-+	PIN_FIELD_BASE(89, 89, 6, 0x080, 0x10, 24, 1),
-+	PIN_FIELD_BASE(90, 90, 6, 0x080, 0x10, 1, 1),
-+	PIN_FIELD_BASE(95, 95, 6, 0x080, 0x10, 15, 1),
-+	PIN_FIELD_BASE(96, 102, 6, 0x080, 0x10, 17, 1),
-+	PIN_FIELD_BASE(103, 106, 6, 0x080, 0x10, 28, 1),
-+	PIN_FIELD_BASE(107, 121, 7, 0x080, 0x10, 0, 1),
-+	PIN_FIELD_BASE(134, 143, 1, 0x080, 0x10, 0, 1),
-+	PIN_FIELD_BASE(144, 149, 1, 0x080, 0x10, 11, 1),
-+	PIN_FIELD_BASE(150, 160, 1, 0x080, 0x10, 18, 1),
-+	PIN_FIELD_BASE(161, 166, 2, 0x080, 0x10, 0, 1),
-+	PIN_FIELD_BASE(167, 176, 4, 0x080, 0x10, 11, 1),
-+	PIN_FIELD_BASE(177, 177, 6, 0x080, 0x10, 10, 1),
-+	PIN_FIELD_BASE(178, 178, 6, 0x080, 0x10, 16, 1),
-+	PIN_FIELD_BASE(179, 179, 6, 0x080, 0x10, 25, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_drv_range[] = {
-+	PINS_FIELD_BASE(0, 3, 6, 0x0A0, 0x10, 12, 3),
-+	PINS_FIELD_BASE(4, 7, 6, 0x0A0, 0x10, 20, 3),
-+	PIN_FIELD_BASE(8, 8, 6, 0x0A0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(9, 10, 6, 0x0B0, 0x10, 16, 3),
-+	PIN_FIELD_BASE(11, 11, 1, 0x0A0, 0x10, 12, 3),
-+	PIN_FIELD_BASE(12, 12, 1, 0x0A0, 0x10, 28, 3),
-+	PINS_FIELD_BASE(13, 16, 2, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(17, 20, 2, 0x0A0, 0x10, 12, 3),
-+	PINS_FIELD_BASE(21, 24, 2, 0x0A0, 0x10, 16, 3),
-+	PINS_FIELD_BASE(25, 28, 2, 0x0A0, 0x10, 20, 3),
-+	PIN_FIELD_BASE(29, 29, 2, 0x0A0, 0x10, 24, 3),
-+	PIN_FIELD_BASE(30, 30, 2, 0x0A0, 0x10, 28, 3),
-+	PINS_FIELD_BASE(31, 31, 2, 0x0B0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(32, 34, 2, 0x0A0, 0x10, 28, 3),
-+	PINS_FIELD_BASE(35, 37, 3, 0x0A0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(38, 40, 3, 0x0A0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(41, 42, 3, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(43, 45, 3, 0x0A0, 0x10, 12, 3),
-+	PINS_FIELD_BASE(46, 47, 3, 0x0A0, 0x10, 16, 3),
-+	PINS_FIELD_BASE(48, 49, 3, 0x0A0, 0x10, 20, 3),
-+	PINS_FIELD_BASE(50, 51, 4, 0x0A0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(52, 57, 4, 0x0A0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(58, 60, 4, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(61, 64, 5, 0x0A0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(65, 66, 5, 0x0A0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(67, 68, 5, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(69, 71, 5, 0x0A0, 0x10, 12, 3),
-+	PINS_FIELD_BASE(72, 76, 5, 0x0A0, 0x10, 16, 3),
-+	PINS_FIELD_BASE(77, 80, 5, 0x0A0, 0x10, 20, 3),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0A0, 0x10, 24, 3),
-+	PINS_FIELD_BASE(82, 83, 5, 0x0A0, 0x10, 28, 3),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0A0, 0x10, 24, 3),
-+	PINS_FIELD_BASE(85, 88, 5, 0x0B0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(89, 89, 6, 0x0B0, 0x10, 12, 3),
-+	PIN_FIELD_BASE(90, 90, 6, 0x0A0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(91, 94, 6, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(95, 96, 6, 0x0A0, 0x10, 24, 3),
-+	PINS_FIELD_BASE(97, 98, 6, 0x0A0, 0x10, 28, 3),
-+	PIN_FIELD_BASE(99, 99, 6, 0x0B0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(100, 100, 6, 0x0B0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(101, 102, 6, 0x0B0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(103, 104, 6, 0x0B0, 0x10, 20, 3),
-+	PINS_FIELD_BASE(105, 106, 6, 0x0B0, 0x10, 24, 3),
-+	PIN_FIELD_BASE(107, 107, 7, 0x0A0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(108, 108, 7, 0x0A0, 0x10, 4, 3),
-+	PIN_FIELD_BASE(109, 109, 7, 0x0A0, 0x10, 8, 3),
-+	PIN_FIELD_BASE(110, 110, 7, 0x0A0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(111, 111, 7, 0x0A0, 0x10, 4, 3),
-+	PIN_FIELD_BASE(112, 112, 7, 0x0A0, 0x10, 8, 3),
-+	PIN_FIELD_BASE(113, 113, 7, 0x0A0, 0x10, 16, 3),
-+	PIN_FIELD_BASE(114, 114, 7, 0x0A0, 0x10, 20, 3),
-+	PIN_FIELD_BASE(115, 115, 7, 0x0A0, 0x10, 24, 3),
-+	PIN_FIELD_BASE(116, 116, 7, 0x0A0, 0x10, 28, 3),
-+	PIN_FIELD_BASE(117, 117, 7, 0x0B0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(118, 118, 7, 0x0B0, 0x10, 4, 3),
-+	PIN_FIELD_BASE(119, 119, 7, 0x0B0, 0x10, 8, 3),
-+	PIN_FIELD_BASE(120, 120, 7, 0x0B0, 0x10, 12, 3),
-+	PIN_FIELD_BASE(121, 121, 7, 0x0B0, 0x10, 16, 3),
-+	PIN_FIELD_BASE(122, 122, 8, 0x0A0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(123, 123, 8, 0x0A0, 0x10, 4, 3),
-+	PIN_FIELD_BASE(124, 124, 8, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(125, 130, 8, 0x0A0, 0x10, 4, 3),
-+	PIN_FIELD_BASE(131, 131, 8, 0x0A0, 0x10, 12, 3),
-+	PIN_FIELD_BASE(132, 132, 8, 0x0A0, 0x10, 4, 3),
-+	PIN_FIELD_BASE(133, 133, 8, 0x0A0, 0x10, 16, 3),
-+	PIN_FIELD_BASE(134, 134, 1, 0x0A0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(135, 135, 1, 0x0A0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(136, 143, 1, 0x0A0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(144, 147, 1, 0x0A0, 0x10, 16, 3),
-+	PIN_FIELD_BASE(148, 148, 1, 0x0A0, 0x10, 20, 3),
-+	PIN_FIELD_BASE(149, 149, 1, 0x0A0, 0x10, 24, 3),
-+	PINS_FIELD_BASE(150, 153, 1, 0x0B0, 0x10, 0, 3),
-+	PIN_FIELD_BASE(154, 154, 1, 0x0B0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(155, 157, 1, 0x0B0, 0x10, 8, 3),
-+	PINS_FIELD_BASE(158, 160, 1, 0x0B0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(161, 164, 2, 0x0A0, 0x10, 0, 3),
-+	PINS_FIELD_BASE(165, 166, 2, 0x0A0, 0x10, 4, 3),
-+	PINS_FIELD_BASE(167, 168, 4, 0x0A0, 0x10, 8, 3),
-+	PIN_FIELD_BASE(169, 169, 4, 0x0A0, 0x10, 12, 3),
-+	PINS_FIELD_BASE(170, 174, 4, 0x0A0, 0x10, 16, 3),
-+	PINS_FIELD_BASE(175, 176, 4, 0x0A0, 0x10, 12, 3),
-+	PINS_FIELD_BASE(177, 179, 6, 0x0A0, 0x10, 16, 3),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_pupd_range[] = {
-+	PIN_FIELD_BASE(29, 29, 2, 0x0C0, 0x10, 2, 1),
-+	PIN_FIELD_BASE(30, 30, 2, 0x0C0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(31, 31, 2, 0x0C0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(32, 32, 2, 0x0C0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(33, 33, 2, 0x0C0, 0x10, 18, 1),
-+	PIN_FIELD_BASE(34, 34, 2, 0x0C0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(35, 35, 3, 0x0C0, 0x10, 2, 1),
-+	PIN_FIELD_BASE(36, 36, 3, 0x0C0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(37, 37, 3, 0x0C0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(38, 38, 3, 0x0C0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(39, 39, 3, 0x0C0, 0x10, 18, 1),
-+	PIN_FIELD_BASE(40, 40, 3, 0x0C0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(41, 41, 3, 0x0C0, 0x10, 26, 1),
-+	PIN_FIELD_BASE(42, 42, 3, 0x0C0, 0x10, 30, 1),
-+	PIN_FIELD_BASE(91, 91, 6, 0x0C0, 0x10, 2, 1),
-+	PIN_FIELD_BASE(92, 92, 6, 0x0C0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(93, 93, 6, 0x0C0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(94, 94, 6, 0x0C0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(122, 122, 8, 0x0C0, 0x10, 2, 1),
-+	PIN_FIELD_BASE(123, 123, 8, 0x0C0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(124, 124, 8, 0x0C0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(125, 125, 8, 0x0C0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(126, 126, 8, 0x0C0, 0x10, 18, 1),
-+	PIN_FIELD_BASE(127, 127, 8, 0x0C0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(128, 128, 8, 0x0C0, 0x10, 26, 1),
-+	PIN_FIELD_BASE(129, 129, 8, 0x0C0, 0x10, 30, 1),
-+	PIN_FIELD_BASE(130, 130, 8, 0x0D0, 0x10, 2, 1),
-+	PIN_FIELD_BASE(131, 131, 8, 0x0D0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(132, 132, 8, 0x0D0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 14, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_r0_range[] = {
-+	PIN_FIELD_BASE(29, 29, 2, 0x0C0, 0x10, 0, 1),
-+	PIN_FIELD_BASE(30, 30, 2, 0x0C0, 0x10, 4, 1),
-+	PIN_FIELD_BASE(31, 31, 2, 0x0C0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(32, 32, 2, 0x0C0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(33, 33, 2, 0x0C0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(34, 34, 2, 0x0C0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(35, 35, 3, 0x0C0, 0x10, 0, 1),
-+	PIN_FIELD_BASE(36, 36, 3, 0x0C0, 0x10, 4, 1),
-+	PIN_FIELD_BASE(37, 37, 3, 0x0C0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(38, 38, 3, 0x0C0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(39, 39, 3, 0x0C0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(40, 40, 3, 0x0C0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(41, 41, 3, 0x0C0, 0x10, 24, 1),
-+	PIN_FIELD_BASE(42, 42, 3, 0x0C0, 0x10, 28, 1),
-+	PIN_FIELD_BASE(91, 91, 6, 0x0C0, 0x10, 0, 1),
-+	PIN_FIELD_BASE(92, 92, 6, 0x0C0, 0x10, 4, 1),
-+	PIN_FIELD_BASE(93, 93, 6, 0x0C0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(94, 94, 6, 0x0C0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(122, 122, 8, 0x0C0, 0x10, 0, 1),
-+	PIN_FIELD_BASE(123, 123, 8, 0x0C0, 0x10, 4, 1),
-+	PIN_FIELD_BASE(124, 124, 8, 0x0C0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(125, 125, 8, 0x0C0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(126, 126, 8, 0x0C0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(127, 127, 8, 0x0C0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(128, 128, 8, 0x0C0, 0x10, 24, 1),
-+	PIN_FIELD_BASE(129, 129, 8, 0x0C0, 0x10, 28, 1),
-+	PIN_FIELD_BASE(130, 130, 8, 0x0D0, 0x10, 0, 1),
-+	PIN_FIELD_BASE(131, 131, 8, 0x0D0, 0x10, 4, 1),
-+	PIN_FIELD_BASE(132, 132, 8, 0x0D0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 12, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
-+	PIN_FIELD_BASE(29, 29, 2, 0x0C0, 0x10, 1, 1),
-+	PIN_FIELD_BASE(30, 30, 2, 0x0C0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(31, 31, 2, 0x0C0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(32, 32, 2, 0x0C0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(33, 33, 2, 0x0C0, 0x10, 17, 1),
-+	PIN_FIELD_BASE(34, 34, 2, 0x0C0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(35, 35, 3, 0x0C0, 0x10, 1, 1),
-+	PIN_FIELD_BASE(36, 36, 3, 0x0C0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(37, 37, 3, 0x0C0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(38, 38, 3, 0x0C0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(39, 39, 3, 0x0C0, 0x10, 17, 1),
-+	PIN_FIELD_BASE(40, 40, 3, 0x0C0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(41, 41, 3, 0x0C0, 0x10, 25, 1),
-+	PIN_FIELD_BASE(42, 42, 3, 0x0C0, 0x10, 29, 1),
-+	PIN_FIELD_BASE(91, 91, 6, 0x0C0, 0x10, 1, 1),
-+	PIN_FIELD_BASE(92, 92, 6, 0x0C0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(93, 93, 6, 0x0C0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(94, 94, 6, 0x0C0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(122, 122, 8, 0x0C0, 0x10, 1, 1),
-+	PIN_FIELD_BASE(123, 123, 8, 0x0C0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(124, 124, 8, 0x0C0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(125, 125, 8, 0x0C0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(126, 126, 8, 0x0C0, 0x10, 17, 1),
-+	PIN_FIELD_BASE(127, 127, 8, 0x0C0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(128, 128, 8, 0x0C0, 0x10, 25, 1),
-+	PIN_FIELD_BASE(129, 129, 8, 0x0C0, 0x10, 29, 1),
-+	PIN_FIELD_BASE(130, 130, 8, 0x0D0, 0x10, 1, 1),
-+	PIN_FIELD_BASE(131, 131, 8, 0x0D0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(132, 132, 8, 0x0D0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 13, 1),
-+};
-+
-+static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
-+	[PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8183_pin_mode_range),
-+	[PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8183_pin_dir_range),
-+	[PINCTRL_PIN_REG_DI] = MTK_RANGE(mt8183_pin_di_range),
-+	[PINCTRL_PIN_REG_DO] = MTK_RANGE(mt8183_pin_do_range),
-+	[PINCTRL_PIN_REG_SMT] = MTK_RANGE(mt8183_pin_smt_range),
-+	[PINCTRL_PIN_REG_IES] = MTK_RANGE(mt8183_pin_ies_range),
-+	[PINCTRL_PIN_REG_PULLEN] = MTK_RANGE(mt8183_pin_pullen_range),
-+	[PINCTRL_PIN_REG_PULLSEL] = MTK_RANGE(mt8183_pin_pullsel_range),
-+	[PINCTRL_PIN_REG_DRV] = MTK_RANGE(mt8183_pin_drv_range),
-+	[PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8183_pin_pupd_range),
-+	[PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8183_pin_r0_range),
-+	[PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8183_pin_r1_range),
-+};
-+
-+static const char * const mt8183_pinctrl_register_base_names[] = {
-+	"iocfg0", "iocfg1", "iocfg2", "iocfg3", "iocfg4", "iocfg5",
-+	"iocfg6", "iocfg7", "iocfg8",
-+};
-+
-+static const struct mtk_pin_soc mt8183_data = {
-+	.reg_cal = mt8183_reg_cals,
-+	.pins = mtk_pins_mt8183,
-+	.npins = ARRAY_SIZE(mtk_pins_mt8183),
-+	.ngrps = ARRAY_SIZE(mtk_pins_mt8183),
++static struct mtk_pin_soc mt7623_data = {
++	.reg_cal = mt7623_reg_cals,
++	.pins = (const struct pinctrl_pin_desc *)mt7623_pins,
++	.npins = ARRAY_SIZE(mt7623_pins),
++	.grps = mt7623_groups,
++	.ngrps = ARRAY_SIZE(mt7623_groups),
++	.funcs = mt7623_functions,
++	.nfuncs = ARRAY_SIZE(mt7623_functions),
++	.eint_hw = &mt7623_eint_hw,
 +	.gpio_m = 0,
++	.eint_m = 0,
 +	.ies_present = true,
-+	.base_names = mt8183_pinctrl_register_base_names,
-+	.nbase_names = ARRAY_SIZE(mt8183_pinctrl_register_base_names),
 +	.bias_disable_set = mtk_pinconf_bias_disable_set_rev1,
 +	.bias_disable_get = mtk_pinconf_bias_disable_get_rev1,
 +	.bias_set = mtk_pinconf_bias_set_rev1,
@@ -592,1951 +1499,51 @@ index 0000000..bd3f00b
 +	.adv_pull_set = mtk_pinconf_adv_pull_set,
 +};
 +
-+static const struct of_device_id mt8183_pinctrl_of_match[] = {
-+	{ .compatible = "mediatek,mt8183-pinctrl", },
-+	{ }
-+};
-+
-+static int mt8183_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return mtk_paris_pinctrl_probe(pdev, &mt8183_data);
-+}
-+
-+static struct platform_driver mt8183_pinctrl_driver = {
-+	.driver = {
-+		.name = "mt8183-pinctrl",
-+		.of_match_table = mt8183_pinctrl_of_match,
-+	},
-+	.probe = mt8183_pinctrl_probe,
-+};
-+
-+static int __init mt8183_pinctrl_init(void)
-+{
-+	return platform_driver_register(&mt8183_pinctrl_driver);
-+}
-+arch_initcall(mt8183_pinctrl_init);
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h
-new file mode 100644
-index 0000000..79adf5b
---- /dev/null
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h
-@@ -0,0 +1,1916 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Copyright (C) 2018 MediaTek Inc.
-+ *
-+ * Author: Zhiyong Tao <zhiyong.tao@mediatek.com>
-+ *
++ * There are some specific pins have mux functions greater than 8,
++ * and if we want to switch thees high modes we need to disable
++ * bonding constraints firstly.
 + */
++static void mt7623_bonding_disable(struct platform_device *pdev)
++{
++	struct mtk_pinctrl *hw = platform_get_drvdata(pdev);
 +
-+#ifndef __PINCTRL_MTK_MT8183_H
-+#define __PINCTRL_MTK_MT8183_H
++	mtk_rmw(hw, PIN_BOND_REG0, BOND_PCIE_CLR, BOND_PCIE_CLR);
++	mtk_rmw(hw, PIN_BOND_REG1, BOND_I2S_CLR, BOND_I2S_CLR);
++	mtk_rmw(hw, PIN_BOND_REG2, BOND_MSDC0E_CLR, BOND_MSDC0E_CLR);
++}
 +
-+#include "pinctrl-paris.h"
-+
-+static struct mtk_pin_desc mtk_pins_mt8183[] = {
-+	MTK_PIN(
-+		0, "GPIO0",
-+		MTK_EINT_FUNCTION(0, 0),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO0"),
-+		MTK_FUNCTION(1, "MRG_SYNC"),
-+		MTK_FUNCTION(2, "PCM0_SYNC"),
-+		MTK_FUNCTION(3, "TP_GPIO0_AO"),
-+		MTK_FUNCTION(4, "SRCLKENAI0"),
-+		MTK_FUNCTION(5, "SCP_SPI2_CS"),
-+		MTK_FUNCTION(6, "I2S3_MCK"),
-+		MTK_FUNCTION(7, "SPI2_CSB")
-+	),
-+	MTK_PIN(
-+		1, "GPIO1",
-+		MTK_EINT_FUNCTION(0, 1),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO1"),
-+		MTK_FUNCTION(1, "MRG_CLK"),
-+		MTK_FUNCTION(2, "PCM0_CLK"),
-+		MTK_FUNCTION(3, "TP_GPIO1_AO"),
-+		MTK_FUNCTION(4, "CLKM3"),
-+		MTK_FUNCTION(5, "SCP_SPI2_MO"),
-+		MTK_FUNCTION(6, "I2S3_BCK"),
-+		MTK_FUNCTION(7, "SPI2_MO")
-+	),
-+	MTK_PIN(
-+		2, "GPIO2",
-+		MTK_EINT_FUNCTION(0, 2),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO2"),
-+		MTK_FUNCTION(1, "MRG_DO"),
-+		MTK_FUNCTION(2, "PCM0_DO"),
-+		MTK_FUNCTION(3, "TP_GPIO2_AO"),
-+		MTK_FUNCTION(4, "SCL6"),
-+		MTK_FUNCTION(5, "SCP_SPI2_CK"),
-+		MTK_FUNCTION(6, "I2S3_LRCK"),
-+		MTK_FUNCTION(7, "SPI2_CLK")
-+	),
-+	MTK_PIN(
-+		3, "GPIO3",
-+		MTK_EINT_FUNCTION(0, 3),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO3"),
-+		MTK_FUNCTION(1, "MRG_DI"),
-+		MTK_FUNCTION(2, "PCM0_DI"),
-+		MTK_FUNCTION(3, "TP_GPIO3_AO"),
-+		MTK_FUNCTION(4, "SDA6"),
-+		MTK_FUNCTION(5, "TDM_MCK"),
-+		MTK_FUNCTION(6, "I2S3_DO"),
-+		MTK_FUNCTION(7, "SCP_VREQ_VAO")
-+	),
-+	MTK_PIN(
-+		4, "GPIO4",
-+		MTK_EINT_FUNCTION(0, 4),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO4"),
-+		MTK_FUNCTION(1, "PWM_B"),
-+		MTK_FUNCTION(2, "I2S0_MCK"),
-+		MTK_FUNCTION(3, "SSPM_UTXD_AO"),
-+		MTK_FUNCTION(4, "MD_URXD1"),
-+		MTK_FUNCTION(5, "TDM_BCK"),
-+		MTK_FUNCTION(6, "TP_GPIO4_AO"),
-+		MTK_FUNCTION(7, "DAP_MD32_SWD")
-+	),
-+	MTK_PIN(
-+		5, "GPIO5",
-+		MTK_EINT_FUNCTION(0, 5),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO5"),
-+		MTK_FUNCTION(1, "PWM_C"),
-+		MTK_FUNCTION(2, "I2S0_BCK"),
-+		MTK_FUNCTION(3, "SSPM_URXD_AO"),
-+		MTK_FUNCTION(4, "MD_UTXD1"),
-+		MTK_FUNCTION(5, "TDM_LRCK"),
-+		MTK_FUNCTION(6, "TP_GPIO5_AO"),
-+		MTK_FUNCTION(7, "DAP_MD32_SWCK")
-+	),
-+	MTK_PIN(
-+		6, "GPIO6",
-+		MTK_EINT_FUNCTION(0, 6),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO6"),
-+		MTK_FUNCTION(1, "PWM_A"),
-+		MTK_FUNCTION(2, "I2S0_LRCK"),
-+		MTK_FUNCTION(3, "IDDIG"),
-+		MTK_FUNCTION(4, "MD_URXD0"),
-+		MTK_FUNCTION(5, "TDM_DATA0"),
-+		MTK_FUNCTION(6, "TP_GPIO6_AO"),
-+		MTK_FUNCTION(7, "CMFLASH")
-+	),
-+	MTK_PIN(
-+		7, "GPIO7",
-+		MTK_EINT_FUNCTION(0, 7),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO7"),
-+		MTK_FUNCTION(1, "SPI1_B_MI"),
-+		MTK_FUNCTION(2, "I2S0_DI"),
-+		MTK_FUNCTION(3, "USB_DRVVBUS"),
-+		MTK_FUNCTION(4, "MD_UTXD0"),
-+		MTK_FUNCTION(5, "TDM_DATA1"),
-+		MTK_FUNCTION(6, "TP_GPIO7_AO"),
-+		MTK_FUNCTION(7, "DVFSRC_EXT_REQ")
-+	),
-+	MTK_PIN(
-+		8, "GPIO8",
-+		MTK_EINT_FUNCTION(0, 8),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO8"),
-+		MTK_FUNCTION(1, "SPI1_B_CSB"),
-+		MTK_FUNCTION(2, "ANT_SEL3"),
-+		MTK_FUNCTION(3, "SCL7"),
-+		MTK_FUNCTION(4, "CONN_MCU_TRST_B"),
-+		MTK_FUNCTION(5, "TDM_DATA2"),
-+		MTK_FUNCTION(6, "MD_INT0"),
-+		MTK_FUNCTION(7, "JTRSTN_SEL1")
-+	),
-+	MTK_PIN(
-+		9, "GPIO9",
-+		MTK_EINT_FUNCTION(0, 9),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO9"),
-+		MTK_FUNCTION(1, "SPI1_B_MO"),
-+		MTK_FUNCTION(2, "ANT_SEL4"),
-+		MTK_FUNCTION(3, "CMMCLK2"),
-+		MTK_FUNCTION(4, "CONN_MCU_DBGACK_N"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TRSTN"),
-+		MTK_FUNCTION(6, "IO_JTAG_TRSTN"),
-+		MTK_FUNCTION(7, "DBG_MON_B10")
-+	),
-+	MTK_PIN(
-+		10, "GPIO10",
-+		MTK_EINT_FUNCTION(0, 10),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO10"),
-+		MTK_FUNCTION(1, "SPI1_B_CLK"),
-+		MTK_FUNCTION(2, "ANT_SEL5"),
-+		MTK_FUNCTION(3, "CMMCLK3"),
-+		MTK_FUNCTION(4, "CONN_MCU_DBGI_N"),
-+		MTK_FUNCTION(5, "TDM_DATA3"),
-+		MTK_FUNCTION(6, "EXT_FRAME_SYNC"),
-+		MTK_FUNCTION(7, "DBG_MON_B11")
-+	),
-+	MTK_PIN(
-+		11, "GPIO11",
-+		MTK_EINT_FUNCTION(0, 11),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO11"),
-+		MTK_FUNCTION(1, "TP_URXD1_AO"),
-+		MTK_FUNCTION(2, "IDDIG"),
-+		MTK_FUNCTION(3, "SCL6"),
-+		MTK_FUNCTION(4, "UCTS1"),
-+		MTK_FUNCTION(5, "UCTS0"),
-+		MTK_FUNCTION(6, "SRCLKENAI1"),
-+		MTK_FUNCTION(7, "I2S5_MCK")
-+	),
-+	MTK_PIN(
-+		12, "GPIO12",
-+		MTK_EINT_FUNCTION(0, 12),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO12"),
-+		MTK_FUNCTION(1, "TP_UTXD1_AO"),
-+		MTK_FUNCTION(2, "USB_DRVVBUS"),
-+		MTK_FUNCTION(3, "SDA6"),
-+		MTK_FUNCTION(4, "URTS1"),
-+		MTK_FUNCTION(5, "URTS0"),
-+		MTK_FUNCTION(6, "I2S2_DI2"),
-+		MTK_FUNCTION(7, "I2S5_BCK")
-+	),
-+	MTK_PIN(
-+		13, "GPIO13",
-+		MTK_EINT_FUNCTION(0, 13),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO13"),
-+		MTK_FUNCTION(1, "DBPI_D0"),
-+		MTK_FUNCTION(2, "SPI5_MI"),
-+		MTK_FUNCTION(3, "PCM0_SYNC"),
-+		MTK_FUNCTION(4, "MD_URXD0"),
-+		MTK_FUNCTION(5, "ANT_SEL3"),
-+		MTK_FUNCTION(6, "I2S0_MCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B15")
-+	),
-+	MTK_PIN(
-+		14, "GPIO14",
-+		MTK_EINT_FUNCTION(0, 14),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO14"),
-+		MTK_FUNCTION(1, "DBPI_D1"),
-+		MTK_FUNCTION(2, "SPI5_CSB"),
-+		MTK_FUNCTION(3, "PCM0_CLK"),
-+		MTK_FUNCTION(4, "MD_UTXD0"),
-+		MTK_FUNCTION(5, "ANT_SEL4"),
-+		MTK_FUNCTION(6, "I2S0_BCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B16")
-+	),
-+	MTK_PIN(
-+		15, "GPIO15",
-+		MTK_EINT_FUNCTION(0, 15),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO15"),
-+		MTK_FUNCTION(1, "DBPI_D2"),
-+		MTK_FUNCTION(2, "SPI5_MO"),
-+		MTK_FUNCTION(3, "PCM0_DO"),
-+		MTK_FUNCTION(4, "MD_URXD1"),
-+		MTK_FUNCTION(5, "ANT_SEL5"),
-+		MTK_FUNCTION(6, "I2S0_LRCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B17")
-+	),
-+	MTK_PIN(
-+		16, "GPIO16",
-+		MTK_EINT_FUNCTION(0, 16),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO16"),
-+		MTK_FUNCTION(1, "DBPI_D3"),
-+		MTK_FUNCTION(2, "SPI5_CLK"),
-+		MTK_FUNCTION(3, "PCM0_DI"),
-+		MTK_FUNCTION(4, "MD_UTXD1"),
-+		MTK_FUNCTION(5, "ANT_SEL6"),
-+		MTK_FUNCTION(6, "I2S0_DI"),
-+		MTK_FUNCTION(7, "DBG_MON_B23")
-+	),
-+	MTK_PIN(
-+		17, "GPIO17",
-+		MTK_EINT_FUNCTION(0, 17),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO17"),
-+		MTK_FUNCTION(1, "DBPI_D4"),
-+		MTK_FUNCTION(2, "SPI4_MI"),
-+		MTK_FUNCTION(3, "CONN_MCU_TRST_B"),
-+		MTK_FUNCTION(4, "MD_INT0"),
-+		MTK_FUNCTION(5, "ANT_SEL7"),
-+		MTK_FUNCTION(6, "I2S3_MCK"),
-+		MTK_FUNCTION(7, "DBG_MON_A1")
-+	),
-+	MTK_PIN(
-+		18, "GPIO18",
-+		MTK_EINT_FUNCTION(0, 18),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO18"),
-+		MTK_FUNCTION(1, "DBPI_D5"),
-+		MTK_FUNCTION(2, "SPI4_CSB"),
-+		MTK_FUNCTION(3, "CONN_MCU_DBGI_N"),
-+		MTK_FUNCTION(4, "MD_INT0"),
-+		MTK_FUNCTION(5, "SCP_VREQ_VAO"),
-+		MTK_FUNCTION(6, "I2S3_BCK"),
-+		MTK_FUNCTION(7, "DBG_MON_A2")
-+	),
-+	MTK_PIN(
-+		19, "GPIO19",
-+		MTK_EINT_FUNCTION(0, 19),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO19"),
-+		MTK_FUNCTION(1, "DBPI_D6"),
-+		MTK_FUNCTION(2, "SPI4_MO"),
-+		MTK_FUNCTION(3, "CONN_MCU_TDO"),
-+		MTK_FUNCTION(4, "MD_INT2_C2K_UIM1_HOT_PLUG"),
-+		MTK_FUNCTION(5, "URXD1"),
-+		MTK_FUNCTION(6, "I2S3_LRCK"),
-+		MTK_FUNCTION(7, "DBG_MON_A3")
-+	),
-+	MTK_PIN(
-+		20, "GPIO20",
-+		MTK_EINT_FUNCTION(0, 20),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO20"),
-+		MTK_FUNCTION(1, "DBPI_D7"),
-+		MTK_FUNCTION(2, "SPI4_CLK"),
-+		MTK_FUNCTION(3, "CONN_MCU_DBGACK_N"),
-+		MTK_FUNCTION(4, "MD_INT1_C2K_UIM0_HOT_PLUG"),
-+		MTK_FUNCTION(5, "UTXD1"),
-+		MTK_FUNCTION(6, "I2S3_DO"),
-+		MTK_FUNCTION(7, "DBG_MON_A19")
-+	),
-+	MTK_PIN(
-+		21, "GPIO21",
-+		MTK_EINT_FUNCTION(0, 21),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO21"),
-+		MTK_FUNCTION(1, "DBPI_D8"),
-+		MTK_FUNCTION(2, "SPI3_MI"),
-+		MTK_FUNCTION(3, "CONN_MCU_TMS"),
-+		MTK_FUNCTION(4, "DAP_MD32_SWD"),
-+		MTK_FUNCTION(5, "CONN_MCU_AICE_TMSC"),
-+		MTK_FUNCTION(6, "I2S2_MCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B5")
-+	),
-+	MTK_PIN(
-+		22, "GPIO22",
-+		MTK_EINT_FUNCTION(0, 22),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO22"),
-+		MTK_FUNCTION(1, "DBPI_D9"),
-+		MTK_FUNCTION(2, "SPI3_CSB"),
-+		MTK_FUNCTION(3, "CONN_MCU_TCK"),
-+		MTK_FUNCTION(4, "DAP_MD32_SWCK"),
-+		MTK_FUNCTION(5, "CONN_MCU_AICE_TCKC"),
-+		MTK_FUNCTION(6, "I2S2_BCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B6")
-+	),
-+	MTK_PIN(
-+		23, "GPIO23",
-+		MTK_EINT_FUNCTION(0, 23),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO23"),
-+		MTK_FUNCTION(1, "DBPI_D10"),
-+		MTK_FUNCTION(2, "SPI3_MO"),
-+		MTK_FUNCTION(3, "CONN_MCU_TDI"),
-+		MTK_FUNCTION(4, "UCTS1"),
-+		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-+		MTK_FUNCTION(6, "I2S2_LRCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B7")
-+	),
-+	MTK_PIN(
-+		24, "GPIO24",
-+		MTK_EINT_FUNCTION(0, 24),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO24"),
-+		MTK_FUNCTION(1, "DBPI_D11"),
-+		MTK_FUNCTION(2, "SPI3_CLK"),
-+		MTK_FUNCTION(3, "SRCLKENAI0"),
-+		MTK_FUNCTION(4, "URTS1"),
-+		MTK_FUNCTION(5, "IO_JTAG_TCK"),
-+		MTK_FUNCTION(6, "I2S2_DI"),
-+		MTK_FUNCTION(7, "DBG_MON_B31")
-+	),
-+	MTK_PIN(
-+		25, "GPIO25",
-+		MTK_EINT_FUNCTION(0, 25),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO25"),
-+		MTK_FUNCTION(1, "DBPI_HSYNC"),
-+		MTK_FUNCTION(2, "ANT_SEL0"),
-+		MTK_FUNCTION(3, "SCL6"),
-+		MTK_FUNCTION(4, "KPCOL2"),
-+		MTK_FUNCTION(5, "IO_JTAG_TMS"),
-+		MTK_FUNCTION(6, "I2S1_MCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B0")
-+	),
-+	MTK_PIN(
-+		26, "GPIO26",
-+		MTK_EINT_FUNCTION(0, 26),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO26"),
-+		MTK_FUNCTION(1, "DBPI_VSYNC"),
-+		MTK_FUNCTION(2, "ANT_SEL1"),
-+		MTK_FUNCTION(3, "SDA6"),
-+		MTK_FUNCTION(4, "KPROW2"),
-+		MTK_FUNCTION(5, "IO_JTAG_TDI"),
-+		MTK_FUNCTION(6, "I2S1_BCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B1")
-+	),
-+	MTK_PIN(
-+		27, "GPIO27",
-+		MTK_EINT_FUNCTION(0, 27),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO27"),
-+		MTK_FUNCTION(1, "DBPI_DE"),
-+		MTK_FUNCTION(2, "ANT_SEL2"),
-+		MTK_FUNCTION(3, "SCL7"),
-+		MTK_FUNCTION(4, "DMIC_CLK"),
-+		MTK_FUNCTION(5, "IO_JTAG_TDO"),
-+		MTK_FUNCTION(6, "I2S1_LRCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B9")
-+	),
-+	MTK_PIN(
-+		28, "GPIO28",
-+		MTK_EINT_FUNCTION(0, 28),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO28"),
-+		MTK_FUNCTION(1, "DBPI_CK"),
-+		MTK_FUNCTION(2, "DVFSRC_EXT_REQ"),
-+		MTK_FUNCTION(3, "SDA7"),
-+		MTK_FUNCTION(4, "DMIC_DAT"),
-+		MTK_FUNCTION(5, "IO_JTAG_TRSTN"),
-+		MTK_FUNCTION(6, "I2S1_DO"),
-+		MTK_FUNCTION(7, "DBG_MON_B32")
-+	),
-+	MTK_PIN(
-+		29, "GPIO29",
-+		MTK_EINT_FUNCTION(0, 29),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO29"),
-+		MTK_FUNCTION(1, "MSDC1_CLK"),
-+		MTK_FUNCTION(2, "IO_JTAG_TCK"),
-+		MTK_FUNCTION(3, "UDI_TCK"),
-+		MTK_FUNCTION(4, "CONN_DSP_JCK"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TCK"),
-+		MTK_FUNCTION(6, "PCM1_CLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A6")
-+	),
-+	MTK_PIN(
-+		30, "GPIO30",
-+		MTK_EINT_FUNCTION(0, 30),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO30"),
-+		MTK_FUNCTION(1, "MSDC1_DAT3"),
-+		MTK_FUNCTION(2, "DAP_MD32_SWD"),
-+		MTK_FUNCTION(3, "CONN_MCU_AICE_TMSC"),
-+		MTK_FUNCTION(4, "CONN_DSP_JINTP"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TRSTN"),
-+		MTK_FUNCTION(6, "PCM1_DI"),
-+		MTK_FUNCTION(7, "DBG_MON_A7")
-+	),
-+	MTK_PIN(
-+		31, "GPIO31",
-+		MTK_EINT_FUNCTION(0, 31),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO31"),
-+		MTK_FUNCTION(1, "MSDC1_CMD"),
-+		MTK_FUNCTION(2, "IO_JTAG_TMS"),
-+		MTK_FUNCTION(3, "UDI_TMS"),
-+		MTK_FUNCTION(4, "CONN_DSP_JMS"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TMS"),
-+		MTK_FUNCTION(6, "PCM1_SYNC"),
-+		MTK_FUNCTION(7, "DBG_MON_A8")
-+	),
-+	MTK_PIN(
-+		32, "GPIO32",
-+		MTK_EINT_FUNCTION(0, 32),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO32"),
-+		MTK_FUNCTION(1, "MSDC1_DAT0"),
-+		MTK_FUNCTION(2, "IO_JTAG_TDI"),
-+		MTK_FUNCTION(3, "UDI_TDI"),
-+		MTK_FUNCTION(4, "CONN_DSP_JDI"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TDI"),
-+		MTK_FUNCTION(6, "PCM1_DO0"),
-+		MTK_FUNCTION(7, "DBG_MON_A9")
-+	),
-+	MTK_PIN(
-+		33, "GPIO33",
-+		MTK_EINT_FUNCTION(0, 33),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO33"),
-+		MTK_FUNCTION(1, "MSDC1_DAT2"),
-+		MTK_FUNCTION(2, "IO_JTAG_TRSTN"),
-+		MTK_FUNCTION(3, "UDI_NTRST"),
-+		MTK_FUNCTION(4, "DAP_MD32_SWCK"),
-+		MTK_FUNCTION(5, "CONN_MCU_AICE_TCKC"),
-+		MTK_FUNCTION(6, "PCM1_DO2"),
-+		MTK_FUNCTION(7, "DBG_MON_A10")
-+	),
-+	MTK_PIN(
-+		34, "GPIO34",
-+		MTK_EINT_FUNCTION(0, 34),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO34"),
-+		MTK_FUNCTION(1, "MSDC1_DAT1"),
-+		MTK_FUNCTION(2, "IO_JTAG_TDO"),
-+		MTK_FUNCTION(3, "UDI_TDO"),
-+		MTK_FUNCTION(4, "CONN_DSP_JDO"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TDO"),
-+		MTK_FUNCTION(6, "PCM1_DO1"),
-+		MTK_FUNCTION(7, "DBG_MON_A11")
-+	),
-+	MTK_PIN(
-+		35, "GPIO35",
-+		MTK_EINT_FUNCTION(0, 35),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO35"),
-+		MTK_FUNCTION(1, "MD1_SIM2_SIO"),
-+		MTK_FUNCTION(2, "CCU_JTAG_TDO"),
-+		MTK_FUNCTION(3, "MD1_SIM1_SIO"),
-+		MTK_FUNCTION(5, "SCP_JTAG_TDO"),
-+		MTK_FUNCTION(6, "CONN_DSP_JMS"),
-+		MTK_FUNCTION(7, "DBG_MON_A28")
-+	),
-+	MTK_PIN(
-+		36, "GPIO36",
-+		MTK_EINT_FUNCTION(0, 36),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO36"),
-+		MTK_FUNCTION(1, "MD1_SIM2_SRST"),
-+		MTK_FUNCTION(2, "CCU_JTAG_TMS"),
-+		MTK_FUNCTION(3, "MD1_SIM1_SRST"),
-+		MTK_FUNCTION(4, "CONN_MCU_AICE_TMSC"),
-+		MTK_FUNCTION(5, "SCP_JTAG_TMS"),
-+		MTK_FUNCTION(6, "CONN_DSP_JINTP"),
-+		MTK_FUNCTION(7, "DBG_MON_A29")
-+	),
-+	MTK_PIN(
-+		37, "GPIO37",
-+		MTK_EINT_FUNCTION(0, 37),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO37"),
-+		MTK_FUNCTION(1, "MD1_SIM2_SCLK"),
-+		MTK_FUNCTION(2, "CCU_JTAG_TDI"),
-+		MTK_FUNCTION(3, "MD1_SIM1_SCLK"),
-+		MTK_FUNCTION(5, "SCP_JTAG_TDI"),
-+		MTK_FUNCTION(6, "CONN_DSP_JDO"),
-+		MTK_FUNCTION(7, "DBG_MON_A30")
-+	),
-+	MTK_PIN(
-+		38, "GPIO38",
-+		MTK_EINT_FUNCTION(0, 38),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO38"),
-+		MTK_FUNCTION(1, "MD1_SIM1_SCLK"),
-+		MTK_FUNCTION(3, "MD1_SIM2_SCLK"),
-+		MTK_FUNCTION(4, "CONN_MCU_AICE_TCKC"),
-+		MTK_FUNCTION(7, "DBG_MON_A20")
-+	),
-+	MTK_PIN(
-+		39, "GPIO39",
-+		MTK_EINT_FUNCTION(0, 39),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO39"),
-+		MTK_FUNCTION(1, "MD1_SIM1_SRST"),
-+		MTK_FUNCTION(2, "CCU_JTAG_TCK"),
-+		MTK_FUNCTION(3, "MD1_SIM2_SRST"),
-+		MTK_FUNCTION(5, "SCP_JTAG_TCK"),
-+		MTK_FUNCTION(6, "CONN_DSP_JCK"),
-+		MTK_FUNCTION(7, "DBG_MON_A31")
-+	),
-+	MTK_PIN(
-+		40, "GPIO40",
-+		MTK_EINT_FUNCTION(0, 40),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO40"),
-+		MTK_FUNCTION(1, "MD1_SIM1_SIO"),
-+		MTK_FUNCTION(2, "CCU_JTAG_TRST"),
-+		MTK_FUNCTION(3, "MD1_SIM2_SIO"),
-+		MTK_FUNCTION(5, "SCP_JTAG_TRSTN"),
-+		MTK_FUNCTION(6, "CONN_DSP_JDI"),
-+		MTK_FUNCTION(7, "DBG_MON_A32")
-+	),
-+	MTK_PIN(
-+		41, "GPIO41",
-+		MTK_EINT_FUNCTION(0, 41),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO41"),
-+		MTK_FUNCTION(1, "IDDIG"),
-+		MTK_FUNCTION(2, "URXD1"),
-+		MTK_FUNCTION(3, "UCTS0"),
-+		MTK_FUNCTION(4, "SSPM_UTXD_AO"),
-+		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-+		MTK_FUNCTION(6, "DMIC_CLK")
-+	),
-+	MTK_PIN(
-+		42, "GPIO42",
-+		MTK_EINT_FUNCTION(0, 42),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO42"),
-+		MTK_FUNCTION(1, "USB_DRVVBUS"),
-+		MTK_FUNCTION(2, "UTXD1"),
-+		MTK_FUNCTION(3, "URTS0"),
-+		MTK_FUNCTION(4, "SSPM_URXD_AO"),
-+		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-+		MTK_FUNCTION(6, "DMIC_DAT")
-+	),
-+	MTK_PIN(
-+		43, "GPIO43",
-+		MTK_EINT_FUNCTION(0, 43),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO43"),
-+		MTK_FUNCTION(1, "DISP_PWM")
-+	),
-+	MTK_PIN(
-+		44, "GPIO44",
-+		MTK_EINT_FUNCTION(0, 44),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO44"),
-+		MTK_FUNCTION(1, "DSI_TE")
-+	),
-+	MTK_PIN(
-+		45, "GPIO45",
-+		MTK_EINT_FUNCTION(0, 45),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO45"),
-+		MTK_FUNCTION(1, "LCM_RST")
-+	),
-+	MTK_PIN(
-+		46, "GPIO46",
-+		MTK_EINT_FUNCTION(0, 46),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO46"),
-+		MTK_FUNCTION(1, "MD_INT2_C2K_UIM1_HOT_PLUG"),
-+		MTK_FUNCTION(2, "URXD1"),
-+		MTK_FUNCTION(3, "UCTS1"),
-+		MTK_FUNCTION(4, "CCU_UTXD_AO"),
-+		MTK_FUNCTION(5, "TP_UCTS1_AO"),
-+		MTK_FUNCTION(6, "IDDIG"),
-+		MTK_FUNCTION(7, "I2S5_LRCK")
-+	),
-+	MTK_PIN(
-+		47, "GPIO47",
-+		MTK_EINT_FUNCTION(0, 47),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO47"),
-+		MTK_FUNCTION(1, "MD_INT1_C2K_UIM0_HOT_PLUG"),
-+		MTK_FUNCTION(2, "UTXD1"),
-+		MTK_FUNCTION(3, "URTS1"),
-+		MTK_FUNCTION(4, "CCU_URXD_AO"),
-+		MTK_FUNCTION(5, "TP_URTS1_AO"),
-+		MTK_FUNCTION(6, "USB_DRVVBUS"),
-+		MTK_FUNCTION(7, "I2S5_DO")
-+	),
-+	MTK_PIN(
-+		48, "GPIO48",
-+		MTK_EINT_FUNCTION(0, 48),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO48"),
-+		MTK_FUNCTION(1, "SCL5")
-+	),
-+	MTK_PIN(
-+		49, "GPIO49",
-+		MTK_EINT_FUNCTION(0, 49),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO49"),
-+		MTK_FUNCTION(1, "SDA5")
-+	),
-+	MTK_PIN(
-+		50, "GPIO50",
-+		MTK_EINT_FUNCTION(0, 50),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO50"),
-+		MTK_FUNCTION(1, "SCL3")
-+	),
-+	MTK_PIN(
-+		51, "GPIO51",
-+		MTK_EINT_FUNCTION(0, 51),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO51"),
-+		MTK_FUNCTION(1, "SDA3")
-+	),
-+	MTK_PIN(
-+		52, "GPIO52",
-+		MTK_EINT_FUNCTION(0, 52),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO52"),
-+		MTK_FUNCTION(1, "BPI_ANT2")
-+	),
-+	MTK_PIN(
-+		53, "GPIO53",
-+		MTK_EINT_FUNCTION(0, 53),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO53"),
-+		MTK_FUNCTION(1, "BPI_ANT0")
-+	),
-+	MTK_PIN(
-+		54, "GPIO54",
-+		MTK_EINT_FUNCTION(0, 54),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO54"),
-+		MTK_FUNCTION(1, "BPI_OLAT1")
-+	),
-+	MTK_PIN(
-+		55, "GPIO55",
-+		MTK_EINT_FUNCTION(0, 55),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO55"),
-+		MTK_FUNCTION(1, "BPI_BUS8")
-+	),
-+	MTK_PIN(
-+		56, "GPIO56",
-+		MTK_EINT_FUNCTION(0, 56),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO56"),
-+		MTK_FUNCTION(1, "BPI_BUS9"),
-+		MTK_FUNCTION(2, "SCL_6306")
-+	),
-+	MTK_PIN(
-+		57, "GPIO57",
-+		MTK_EINT_FUNCTION(0, 57),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO57"),
-+		MTK_FUNCTION(1, "BPI_BUS10"),
-+		MTK_FUNCTION(2, "SDA_6306")
-+	),
-+	MTK_PIN(
-+		58, "GPIO58",
-+		MTK_EINT_FUNCTION(0, 58),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO58"),
-+		MTK_FUNCTION(1, "RFIC0_BSI_D2"),
-+		MTK_FUNCTION(2, "SPM_BSI_D2"),
-+		MTK_FUNCTION(3, "PWM_B")
-+	),
-+	MTK_PIN(
-+		59, "GPIO59",
-+		MTK_EINT_FUNCTION(0, 59),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO59"),
-+		MTK_FUNCTION(1, "RFIC0_BSI_D1"),
-+		MTK_FUNCTION(2, "SPM_BSI_D1")
-+	),
-+	MTK_PIN(
-+		60, "GPIO60",
-+		MTK_EINT_FUNCTION(0, 60),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO60"),
-+		MTK_FUNCTION(1, "RFIC0_BSI_D0"),
-+		MTK_FUNCTION(2, "SPM_BSI_D0")
-+	),
-+	MTK_PIN(
-+		61, "GPIO61",
-+		MTK_EINT_FUNCTION(0, 61),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO61"),
-+		MTK_FUNCTION(1, "MIPI1_SDATA")
-+	),
-+	MTK_PIN(
-+		62, "GPIO62",
-+		MTK_EINT_FUNCTION(0, 62),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO62"),
-+		MTK_FUNCTION(1, "MIPI1_SCLK")
-+	),
-+	MTK_PIN(
-+		63, "GPIO63",
-+		MTK_EINT_FUNCTION(0, 63),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO63"),
-+		MTK_FUNCTION(1, "MIPI0_SDATA")
-+	),
-+	MTK_PIN(
-+		64, "GPIO64",
-+		MTK_EINT_FUNCTION(0, 64),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO64"),
-+		MTK_FUNCTION(1, "MIPI0_SCLK")
-+	),
-+	MTK_PIN(
-+		65, "GPIO65",
-+		MTK_EINT_FUNCTION(0, 65),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO65"),
-+		MTK_FUNCTION(1, "MIPI3_SDATA"),
-+		MTK_FUNCTION(2, "BPI_OLAT2")
-+	),
-+	MTK_PIN(
-+		66, "GPIO66",
-+		MTK_EINT_FUNCTION(0, 66),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO66"),
-+		MTK_FUNCTION(1, "MIPI3_SCLK"),
-+		MTK_FUNCTION(2, "BPI_OLAT3")
-+	),
-+	MTK_PIN(
-+		67, "GPIO67",
-+		MTK_EINT_FUNCTION(0, 67),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO67"),
-+		MTK_FUNCTION(1, "MIPI2_SDATA")
-+	),
-+	MTK_PIN(
-+		68, "GPIO68",
-+		MTK_EINT_FUNCTION(0, 68),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO68"),
-+		MTK_FUNCTION(1, "MIPI2_SCLK")
-+	),
-+	MTK_PIN(
-+		69, "GPIO69",
-+		MTK_EINT_FUNCTION(0, 69),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO69"),
-+		MTK_FUNCTION(1, "BPI_BUS7")
-+	),
-+	MTK_PIN(
-+		70, "GPIO70",
-+		MTK_EINT_FUNCTION(0, 70),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO70"),
-+		MTK_FUNCTION(1, "BPI_BUS6")
-+	),
-+	MTK_PIN(
-+		71, "GPIO71",
-+		MTK_EINT_FUNCTION(0, 71),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO71"),
-+		MTK_FUNCTION(1, "BPI_BUS5")
-+	),
-+	MTK_PIN(
-+		72, "GPIO72",
-+		MTK_EINT_FUNCTION(0, 72),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO72"),
-+		MTK_FUNCTION(1, "BPI_BUS4")
-+	),
-+	MTK_PIN(
-+		73, "GPIO73",
-+		MTK_EINT_FUNCTION(0, 73),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO73"),
-+		MTK_FUNCTION(1, "BPI_BUS3")
-+	),
-+	MTK_PIN(
-+		74, "GPIO74",
-+		MTK_EINT_FUNCTION(0, 74),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO74"),
-+		MTK_FUNCTION(1, "BPI_BUS2")
-+	),
-+	MTK_PIN(
-+		75, "GPIO75",
-+		MTK_EINT_FUNCTION(0, 75),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO75"),
-+		MTK_FUNCTION(1, "BPI_BUS1")
-+	),
-+	MTK_PIN(
-+		76, "GPIO76",
-+		MTK_EINT_FUNCTION(0, 76),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO76"),
-+		MTK_FUNCTION(1, "BPI_BUS0")
-+	),
-+	MTK_PIN(
-+		77, "GPIO77",
-+		MTK_EINT_FUNCTION(0, 77),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO77"),
-+		MTK_FUNCTION(1, "BPI_ANT1")
-+	),
-+	MTK_PIN(
-+		78, "GPIO78",
-+		MTK_EINT_FUNCTION(0, 78),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO78"),
-+		MTK_FUNCTION(1, "BPI_OLAT0")
-+	),
-+	MTK_PIN(
-+		79, "GPIO79",
-+		MTK_EINT_FUNCTION(0, 79),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO79"),
-+		MTK_FUNCTION(1, "BPI_PA_VM1"),
-+		MTK_FUNCTION(2, "MIPI4_SDATA")
-+	),
-+	MTK_PIN(
-+		80, "GPIO80",
-+		MTK_EINT_FUNCTION(0, 80),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO80"),
-+		MTK_FUNCTION(1, "BPI_PA_VM0"),
-+		MTK_FUNCTION(2, "MIPI4_SCLK")
-+	),
-+	MTK_PIN(
-+		81, "GPIO81",
-+		MTK_EINT_FUNCTION(0, 81),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO81"),
-+		MTK_FUNCTION(1, "SDA1")
-+	),
-+	MTK_PIN(
-+		82, "GPIO82",
-+		MTK_EINT_FUNCTION(0, 82),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO82"),
-+		MTK_FUNCTION(1, "SDA0")
-+	),
-+	MTK_PIN(
-+		83, "GPIO83",
-+		MTK_EINT_FUNCTION(0, 83),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO83"),
-+		MTK_FUNCTION(1, "SCL0")
-+	),
-+	MTK_PIN(
-+		84, "GPIO84",
-+		MTK_EINT_FUNCTION(0, 84),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO84"),
-+		MTK_FUNCTION(1, "SCL1")
-+	),
-+	MTK_PIN(
-+		85, "GPIO85",
-+		MTK_EINT_FUNCTION(0, 85),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO85"),
-+		MTK_FUNCTION(1, "SPI0_MI"),
-+		MTK_FUNCTION(2, "SCP_SPI0_MI"),
-+		MTK_FUNCTION(3, "CLKM3"),
-+		MTK_FUNCTION(4, "I2S1_BCK"),
-+		MTK_FUNCTION(5, "MFG_DFD_JTAG_TDO"),
-+		MTK_FUNCTION(6, "DFD_TDO"),
-+		MTK_FUNCTION(7, "JTDO_SEL1")
-+	),
-+	MTK_PIN(
-+		86, "GPIO86",
-+		MTK_EINT_FUNCTION(0, 86),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO86"),
-+		MTK_FUNCTION(1, "SPI0_CSB"),
-+		MTK_FUNCTION(2, "SCP_SPI0_CS"),
-+		MTK_FUNCTION(3, "CLKM0"),
-+		MTK_FUNCTION(4, "I2S1_LRCK"),
-+		MTK_FUNCTION(5, "MFG_DFD_JTAG_TMS"),
-+		MTK_FUNCTION(6, "DFD_TMS"),
-+		MTK_FUNCTION(7, "JTMS_SEL1")
-+	),
-+	MTK_PIN(
-+		87, "GPIO87",
-+		MTK_EINT_FUNCTION(0, 87),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO87"),
-+		MTK_FUNCTION(1, "SPI0_MO"),
-+		MTK_FUNCTION(2, "SCP_SPI0_MO"),
-+		MTK_FUNCTION(3, "SDA1"),
-+		MTK_FUNCTION(4, "I2S1_DO"),
-+		MTK_FUNCTION(5, "MFG_DFD_JTAG_TDI"),
-+		MTK_FUNCTION(6, "DFD_TDI"),
-+		MTK_FUNCTION(7, "JTDI_SEL1")
-+	),
-+	MTK_PIN(
-+		88, "GPIO88",
-+		MTK_EINT_FUNCTION(0, 88),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO88"),
-+		MTK_FUNCTION(1, "SPI0_CLK"),
-+		MTK_FUNCTION(2, "SCP_SPI0_CK"),
-+		MTK_FUNCTION(3, "SCL1"),
-+		MTK_FUNCTION(4, "I2S1_MCK"),
-+		MTK_FUNCTION(5, "MFG_DFD_JTAG_TCK"),
-+		MTK_FUNCTION(6, "DFD_TCK_XI"),
-+		MTK_FUNCTION(7, "JTCK_SEL1")
-+	),
-+	MTK_PIN(
-+		89, "GPIO89",
-+		MTK_EINT_FUNCTION(0, 89),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO89"),
-+		MTK_FUNCTION(1, "SRCLKENAI0"),
-+		MTK_FUNCTION(2, "PWM_C"),
-+		MTK_FUNCTION(3, "I2S5_BCK"),
-+		MTK_FUNCTION(4, "ANT_SEL6"),
-+		MTK_FUNCTION(5, "SDA8"),
-+		MTK_FUNCTION(6, "CMVREF0"),
-+		MTK_FUNCTION(7, "DBG_MON_A21")
-+	),
-+	MTK_PIN(
-+		90, "GPIO90",
-+		MTK_EINT_FUNCTION(0, 90),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO90"),
-+		MTK_FUNCTION(1, "PWM_A"),
-+		MTK_FUNCTION(2, "CMMCLK2"),
-+		MTK_FUNCTION(3, "I2S5_LRCK"),
-+		MTK_FUNCTION(4, "SCP_VREQ_VAO"),
-+		MTK_FUNCTION(5, "SCL8"),
-+		MTK_FUNCTION(6, "PTA_RXD"),
-+		MTK_FUNCTION(7, "DBG_MON_A22")
-+	),
-+	MTK_PIN(
-+		91, "GPIO91",
-+		MTK_EINT_FUNCTION(0, 91),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO91"),
-+		MTK_FUNCTION(1, "KPROW1"),
-+		MTK_FUNCTION(2, "PWM_B"),
-+		MTK_FUNCTION(3, "I2S5_DO"),
-+		MTK_FUNCTION(4, "ANT_SEL7"),
-+		MTK_FUNCTION(5, "CMMCLK3"),
-+		MTK_FUNCTION(6, "PTA_TXD")
-+	),
-+	MTK_PIN(
-+		92, "GPIO92",
-+		MTK_EINT_FUNCTION(0, 92),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO92"),
-+		MTK_FUNCTION(1, "KPROW0")
-+	),
-+	MTK_PIN(
-+		93, "GPIO93",
-+		MTK_EINT_FUNCTION(0, 93),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO93"),
-+		MTK_FUNCTION(1, "KPCOL0"),
-+		MTK_FUNCTION(7, "DBG_MON_B27")
-+	),
-+	MTK_PIN(
-+		94, "GPIO94",
-+		MTK_EINT_FUNCTION(0, 94),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO94"),
-+		MTK_FUNCTION(1, "KPCOL1"),
-+		MTK_FUNCTION(2, "I2S2_DI2"),
-+		MTK_FUNCTION(3, "I2S5_MCK"),
-+		MTK_FUNCTION(4, "CMMCLK2"),
-+		MTK_FUNCTION(5, "SCP_SPI2_MI"),
-+		MTK_FUNCTION(6, "SRCLKENAI1"),
-+		MTK_FUNCTION(7, "SPI2_MI")
-+	),
-+	MTK_PIN(
-+		95, "GPIO95",
-+		MTK_EINT_FUNCTION(0, 95),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO95"),
-+		MTK_FUNCTION(1, "URXD0"),
-+		MTK_FUNCTION(2, "UTXD0"),
-+		MTK_FUNCTION(3, "MD_URXD0"),
-+		MTK_FUNCTION(4, "MD_URXD1"),
-+		MTK_FUNCTION(5, "SSPM_URXD_AO"),
-+		MTK_FUNCTION(6, "CCU_URXD_AO")
-+	),
-+	MTK_PIN(
-+		96, "GPIO96",
-+		MTK_EINT_FUNCTION(0, 96),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO96"),
-+		MTK_FUNCTION(1, "UTXD0"),
-+		MTK_FUNCTION(2, "URXD0"),
-+		MTK_FUNCTION(3, "MD_UTXD0"),
-+		MTK_FUNCTION(4, "MD_UTXD1"),
-+		MTK_FUNCTION(5, "SSPM_UTXD_AO"),
-+		MTK_FUNCTION(6, "CCU_UTXD_AO"),
-+		MTK_FUNCTION(7, "DBG_MON_B2")
-+	),
-+	MTK_PIN(
-+		97, "GPIO97",
-+		MTK_EINT_FUNCTION(0, 97),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO97"),
-+		MTK_FUNCTION(1, "UCTS0"),
-+		MTK_FUNCTION(2, "I2S2_MCK"),
-+		MTK_FUNCTION(3, "IDDIG"),
-+		MTK_FUNCTION(4, "CONN_MCU_TDO"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TDO"),
-+		MTK_FUNCTION(6, "IO_JTAG_TDO"),
-+		MTK_FUNCTION(7, "DBG_MON_B3")
-+	),
-+	MTK_PIN(
-+		98, "GPIO98",
-+		MTK_EINT_FUNCTION(0, 98),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO98"),
-+		MTK_FUNCTION(1, "URTS0"),
-+		MTK_FUNCTION(2, "I2S2_BCK"),
-+		MTK_FUNCTION(3, "USB_DRVVBUS"),
-+		MTK_FUNCTION(4, "CONN_MCU_TMS"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TMS"),
-+		MTK_FUNCTION(6, "IO_JTAG_TMS"),
-+		MTK_FUNCTION(7, "DBG_MON_B4")
-+	),
-+	MTK_PIN(
-+		99, "GPIO99",
-+		MTK_EINT_FUNCTION(0, 99),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO99"),
-+		MTK_FUNCTION(1, "CMMCLK0"),
-+		MTK_FUNCTION(4, "CONN_MCU_AICE_TMSC"),
-+		MTK_FUNCTION(7, "DBG_MON_B28")
-+	),
-+	MTK_PIN(
-+		100, "GPIO100",
-+		MTK_EINT_FUNCTION(0, 100),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO100"),
-+		MTK_FUNCTION(1, "CMMCLK1"),
-+		MTK_FUNCTION(2, "PWM_C"),
-+		MTK_FUNCTION(3, "MD_INT1_C2K_UIM0_HOT_PLUG"),
-+		MTK_FUNCTION(4, "CONN_MCU_AICE_TCKC"),
-+		MTK_FUNCTION(7, "DBG_MON_B29")
-+	),
-+	MTK_PIN(
-+		101, "GPIO101",
-+		MTK_EINT_FUNCTION(0, 101),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO101"),
-+		MTK_FUNCTION(1, "CLKM2"),
-+		MTK_FUNCTION(2, "I2S2_LRCK"),
-+		MTK_FUNCTION(3, "CMVREF1"),
-+		MTK_FUNCTION(4, "CONN_MCU_TCK"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TCK"),
-+		MTK_FUNCTION(6, "IO_JTAG_TCK")
-+	),
-+	MTK_PIN(
-+		102, "GPIO102",
-+		MTK_EINT_FUNCTION(0, 102),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO102"),
-+		MTK_FUNCTION(1, "CLKM1"),
-+		MTK_FUNCTION(2, "I2S2_DI"),
-+		MTK_FUNCTION(3, "DVFSRC_EXT_REQ"),
-+		MTK_FUNCTION(4, "CONN_MCU_TDI"),
-+		MTK_FUNCTION(5, "SSPM_JTAG_TDI"),
-+		MTK_FUNCTION(6, "IO_JTAG_TDI"),
-+		MTK_FUNCTION(7, "DBG_MON_B8")
-+	),
-+	MTK_PIN(
-+		103, "GPIO103",
-+		MTK_EINT_FUNCTION(0, 103),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO103"),
-+		MTK_FUNCTION(1, "SCL2")
-+	),
-+	MTK_PIN(
-+		104, "GPIO104",
-+		MTK_EINT_FUNCTION(0, 104),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO104"),
-+		MTK_FUNCTION(1, "SDA2")
-+	),
-+	MTK_PIN(
-+		105, "GPIO105",
-+		MTK_EINT_FUNCTION(0, 105),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO105"),
-+		MTK_FUNCTION(1, "SCL4")
-+	),
-+	MTK_PIN(
-+		106, "GPIO106",
-+		MTK_EINT_FUNCTION(0, 106),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO106"),
-+		MTK_FUNCTION(1, "SDA4")
-+	),
-+	MTK_PIN(
-+		107, "GPIO107",
-+		MTK_EINT_FUNCTION(0, 107),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO107"),
-+		MTK_FUNCTION(1, "DMIC_CLK"),
-+		MTK_FUNCTION(2, "ANT_SEL0"),
-+		MTK_FUNCTION(3, "CLKM0"),
-+		MTK_FUNCTION(4, "SDA7"),
-+		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-+		MTK_FUNCTION(6, "PWM_A"),
-+		MTK_FUNCTION(7, "DBG_MON_B12")
-+	),
-+	MTK_PIN(
-+		108, "GPIO108",
-+		MTK_EINT_FUNCTION(0, 108),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO108"),
-+		MTK_FUNCTION(1, "CMMCLK2"),
-+		MTK_FUNCTION(2, "ANT_SEL1"),
-+		MTK_FUNCTION(3, "CLKM1"),
-+		MTK_FUNCTION(4, "SCL8"),
-+		MTK_FUNCTION(5, "DAP_MD32_SWD"),
-+		MTK_FUNCTION(6, "PWM_B"),
-+		MTK_FUNCTION(7, "DBG_MON_B13")
-+	),
-+	MTK_PIN(
-+		109, "GPIO109",
-+		MTK_EINT_FUNCTION(0, 109),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO109"),
-+		MTK_FUNCTION(1, "DMIC_DAT"),
-+		MTK_FUNCTION(2, "ANT_SEL2"),
-+		MTK_FUNCTION(3, "CLKM2"),
-+		MTK_FUNCTION(4, "SDA8"),
-+		MTK_FUNCTION(5, "DAP_MD32_SWCK"),
-+		MTK_FUNCTION(6, "PWM_C"),
-+		MTK_FUNCTION(7, "DBG_MON_B14")
-+	),
-+	MTK_PIN(
-+		110, "GPIO110",
-+		MTK_EINT_FUNCTION(0, 110),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO110"),
-+		MTK_FUNCTION(1, "SCL7"),
-+		MTK_FUNCTION(2, "ANT_SEL0"),
-+		MTK_FUNCTION(3, "TP_URXD1_AO"),
-+		MTK_FUNCTION(4, "USB_DRVVBUS"),
-+		MTK_FUNCTION(5, "SRCLKENAI1"),
-+		MTK_FUNCTION(6, "KPCOL2"),
-+		MTK_FUNCTION(7, "URXD1")
-+	),
-+	MTK_PIN(
-+		111, "GPIO111",
-+		MTK_EINT_FUNCTION(0, 111),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO111"),
-+		MTK_FUNCTION(1, "CMMCLK3"),
-+		MTK_FUNCTION(2, "ANT_SEL1"),
-+		MTK_FUNCTION(3, "SRCLKENAI0"),
-+		MTK_FUNCTION(4, "SCP_VREQ_VAO"),
-+		MTK_FUNCTION(5, "MD_INT2_C2K_UIM1_HOT_PLUG"),
-+		MTK_FUNCTION(7, "DVFSRC_EXT_REQ")
-+	),
-+	MTK_PIN(
-+		112, "GPIO112",
-+		MTK_EINT_FUNCTION(0, 112),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO112"),
-+		MTK_FUNCTION(1, "SDA7"),
-+		MTK_FUNCTION(2, "ANT_SEL2"),
-+		MTK_FUNCTION(3, "TP_UTXD1_AO"),
-+		MTK_FUNCTION(4, "IDDIG"),
-+		MTK_FUNCTION(5, "AGPS_SYNC"),
-+		MTK_FUNCTION(6, "KPROW2"),
-+		MTK_FUNCTION(7, "UTXD1")
-+	),
-+	MTK_PIN(
-+		113, "GPIO113",
-+		MTK_EINT_FUNCTION(0, 113),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO113"),
-+		MTK_FUNCTION(1, "CONN_TOP_CLK"),
-+		MTK_FUNCTION(3, "SCL6"),
-+		MTK_FUNCTION(4, "AUXIF_CLK0"),
-+		MTK_FUNCTION(6, "TP_UCTS1_AO")
-+	),
-+	MTK_PIN(
-+		114, "GPIO114",
-+		MTK_EINT_FUNCTION(0, 114),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO114"),
-+		MTK_FUNCTION(1, "CONN_TOP_DATA"),
-+		MTK_FUNCTION(3, "SDA6"),
-+		MTK_FUNCTION(4, "AUXIF_ST0"),
-+		MTK_FUNCTION(6, "TP_URTS1_AO")
-+	),
-+	MTK_PIN(
-+		115, "GPIO115",
-+		MTK_EINT_FUNCTION(0, 115),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO115"),
-+		MTK_FUNCTION(1, "CONN_BT_CLK"),
-+		MTK_FUNCTION(2, "UTXD1"),
-+		MTK_FUNCTION(3, "PTA_TXD"),
-+		MTK_FUNCTION(4, "AUXIF_CLK1"),
-+		MTK_FUNCTION(5, "DAP_MD32_SWD"),
-+		MTK_FUNCTION(6, "TP_UTXD1_AO")
-+	),
-+	MTK_PIN(
-+		116, "GPIO116",
-+		MTK_EINT_FUNCTION(0, 116),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO116"),
-+		MTK_FUNCTION(1, "CONN_BT_DATA"),
-+		MTK_FUNCTION(2, "IPU_JTAG_TRST"),
-+		MTK_FUNCTION(4, "AUXIF_ST1"),
-+		MTK_FUNCTION(5, "DAP_MD32_SWCK"),
-+		MTK_FUNCTION(6, "TP_URXD2_AO"),
-+		MTK_FUNCTION(7, "DBG_MON_A0")
-+	),
-+	MTK_PIN(
-+		117, "GPIO117",
-+		MTK_EINT_FUNCTION(0, 117),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO117"),
-+		MTK_FUNCTION(1, "CONN_WF_HB0"),
-+		MTK_FUNCTION(2, "IPU_JTAG_TDO"),
-+		MTK_FUNCTION(6, "TP_UTXD2_AO"),
-+		MTK_FUNCTION(7, "DBG_MON_A4")
-+	),
-+	MTK_PIN(
-+		118, "GPIO118",
-+		MTK_EINT_FUNCTION(0, 118),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO118"),
-+		MTK_FUNCTION(1, "CONN_WF_HB1"),
-+		MTK_FUNCTION(2, "IPU_JTAG_TDI"),
-+		MTK_FUNCTION(5, "SSPM_URXD_AO"),
-+		MTK_FUNCTION(6, "TP_UCTS2_AO"),
-+		MTK_FUNCTION(7, "DBG_MON_A5")
-+	),
-+	MTK_PIN(
-+		119, "GPIO119",
-+		MTK_EINT_FUNCTION(0, 119),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO119"),
-+		MTK_FUNCTION(1, "CONN_WF_HB2"),
-+		MTK_FUNCTION(2, "IPU_JTAG_TCK"),
-+		MTK_FUNCTION(5, "SSPM_UTXD_AO"),
-+		MTK_FUNCTION(6, "TP_URTS2_AO")
-+	),
-+	MTK_PIN(
-+		120, "GPIO120",
-+		MTK_EINT_FUNCTION(0, 120),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO120"),
-+		MTK_FUNCTION(1, "CONN_WB_PTA"),
-+		MTK_FUNCTION(2, "IPU_JTAG_TMS"),
-+		MTK_FUNCTION(5, "CCU_URXD_AO")
-+	),
-+	MTK_PIN(
-+		121, "GPIO121",
-+		MTK_EINT_FUNCTION(0, 121),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO121"),
-+		MTK_FUNCTION(1, "CONN_HRST_B"),
-+		MTK_FUNCTION(2, "URXD1"),
-+		MTK_FUNCTION(3, "PTA_RXD"),
-+		MTK_FUNCTION(5, "CCU_UTXD_AO"),
-+		MTK_FUNCTION(6, "TP_URXD1_AO")
-+	),
-+	MTK_PIN(
-+		122, "GPIO122",
-+		MTK_EINT_FUNCTION(0, 122),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO122"),
-+		MTK_FUNCTION(1, "MSDC0_CMD"),
-+		MTK_FUNCTION(2, "SSPM_URXD2_AO"),
-+		MTK_FUNCTION(3, "ANT_SEL1"),
-+		MTK_FUNCTION(7, "DBG_MON_A12")
-+	),
-+	MTK_PIN(
-+		123, "GPIO123",
-+		MTK_EINT_FUNCTION(0, 123),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO123"),
-+		MTK_FUNCTION(1, "MSDC0_DAT0"),
-+		MTK_FUNCTION(3, "ANT_SEL0"),
-+		MTK_FUNCTION(7, "DBG_MON_A13")
-+	),
-+	MTK_PIN(
-+		124, "GPIO124",
-+		MTK_EINT_FUNCTION(0, 124),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO124"),
-+		MTK_FUNCTION(1, "MSDC0_CLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A14")
-+	),
-+	MTK_PIN(
-+		125, "GPIO125",
-+		MTK_EINT_FUNCTION(0, 125),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO125"),
-+		MTK_FUNCTION(1, "MSDC0_DAT2"),
-+		MTK_FUNCTION(3, "MRG_CLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A15")
-+	),
-+	MTK_PIN(
-+		126, "GPIO126",
-+		MTK_EINT_FUNCTION(0, 126),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO126"),
-+		MTK_FUNCTION(1, "MSDC0_DAT4"),
-+		MTK_FUNCTION(3, "ANT_SEL5"),
-+		MTK_FUNCTION(6, "UFS_MPHY_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_A16")
-+	),
-+	MTK_PIN(
-+		127, "GPIO127",
-+		MTK_EINT_FUNCTION(0, 127),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO127"),
-+		MTK_FUNCTION(1, "MSDC0_DAT6"),
-+		MTK_FUNCTION(3, "ANT_SEL4"),
-+		MTK_FUNCTION(6, "UFS_MPHY_SDA"),
-+		MTK_FUNCTION(7, "DBG_MON_A17")
-+	),
-+	MTK_PIN(
-+		128, "GPIO128",
-+		MTK_EINT_FUNCTION(0, 128),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO128"),
-+		MTK_FUNCTION(1, "MSDC0_DAT1"),
-+		MTK_FUNCTION(3, "ANT_SEL2"),
-+		MTK_FUNCTION(6, "UFS_UNIPRO_SDA"),
-+		MTK_FUNCTION(7, "DBG_MON_A18")
-+	),
-+	MTK_PIN(
-+		129, "GPIO129",
-+		MTK_EINT_FUNCTION(0, 129),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO129"),
-+		MTK_FUNCTION(1, "MSDC0_DAT5"),
-+		MTK_FUNCTION(3, "ANT_SEL3"),
-+		MTK_FUNCTION(6, "UFS_UNIPRO_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_A23")
-+	),
-+	MTK_PIN(
-+		130, "GPIO130",
-+		MTK_EINT_FUNCTION(0, 130),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO130"),
-+		MTK_FUNCTION(1, "MSDC0_DAT7"),
-+		MTK_FUNCTION(3, "MRG_DO"),
-+		MTK_FUNCTION(7, "DBG_MON_A24")
-+	),
-+	MTK_PIN(
-+		131, "GPIO131",
-+		MTK_EINT_FUNCTION(0, 131),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO131"),
-+		MTK_FUNCTION(1, "MSDC0_DSL"),
-+		MTK_FUNCTION(3, "MRG_SYNC"),
-+		MTK_FUNCTION(7, "DBG_MON_A25")
-+	),
-+	MTK_PIN(
-+		132, "GPIO132",
-+		MTK_EINT_FUNCTION(0, 132),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO132"),
-+		MTK_FUNCTION(1, "MSDC0_DAT3"),
-+		MTK_FUNCTION(3, "MRG_DI"),
-+		MTK_FUNCTION(7, "DBG_MON_A26")
-+	),
-+	MTK_PIN(
-+		133, "GPIO133",
-+		MTK_EINT_FUNCTION(0, 133),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO133"),
-+		MTK_FUNCTION(1, "MSDC0_RSTB"),
-+		MTK_FUNCTION(3, "AGPS_SYNC"),
-+		MTK_FUNCTION(7, "DBG_MON_A27")
-+	),
-+	MTK_PIN(
-+		134, "GPIO134",
-+		MTK_EINT_FUNCTION(0, 134),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO134"),
-+		MTK_FUNCTION(1, "RTC32K_CK")
-+	),
-+	MTK_PIN(
-+		135, "GPIO135",
-+		MTK_EINT_FUNCTION(0, 135),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO135"),
-+		MTK_FUNCTION(1, "WATCHDOG")
-+	),
-+	MTK_PIN(
-+		136, "GPIO136",
-+		MTK_EINT_FUNCTION(0, 136),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO136"),
-+		MTK_FUNCTION(1, "AUD_CLK_MOSI"),
-+		MTK_FUNCTION(2, "AUD_CLK_MISO"),
-+		MTK_FUNCTION(3, "I2S1_MCK"),
-+		MTK_FUNCTION(6, "UFS_UNIPRO_SCL")
-+	),
-+	MTK_PIN(
-+		137, "GPIO137",
-+		MTK_EINT_FUNCTION(0, 137),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO137"),
-+		MTK_FUNCTION(1, "AUD_SYNC_MOSI"),
-+		MTK_FUNCTION(2, "AUD_SYNC_MISO"),
-+		MTK_FUNCTION(3, "I2S1_BCK")
-+	),
-+	MTK_PIN(
-+		138, "GPIO138",
-+		MTK_EINT_FUNCTION(0, 138),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO138"),
-+		MTK_FUNCTION(1, "AUD_DAT_MOSI0"),
-+		MTK_FUNCTION(2, "AUD_DAT_MISO0"),
-+		MTK_FUNCTION(3, "I2S1_LRCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B24")
-+	),
-+	MTK_PIN(
-+		139, "GPIO139",
-+		MTK_EINT_FUNCTION(0, 139),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO139"),
-+		MTK_FUNCTION(1, "AUD_DAT_MOSI1"),
-+		MTK_FUNCTION(2, "AUD_DAT_MISO1"),
-+		MTK_FUNCTION(3, "I2S1_DO"),
-+		MTK_FUNCTION(6, "UFS_MPHY_SDA")
-+	),
-+	MTK_PIN(
-+		140, "GPIO140",
-+		MTK_EINT_FUNCTION(0, 140),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO140"),
-+		MTK_FUNCTION(1, "AUD_CLK_MISO"),
-+		MTK_FUNCTION(2, "AUD_CLK_MOSI"),
-+		MTK_FUNCTION(3, "I2S0_MCK"),
-+		MTK_FUNCTION(6, "UFS_UNIPRO_SDA")
-+	),
-+	MTK_PIN(
-+		141, "GPIO141",
-+		MTK_EINT_FUNCTION(0, 141),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO141"),
-+		MTK_FUNCTION(1, "AUD_SYNC_MISO"),
-+		MTK_FUNCTION(2, "AUD_SYNC_MOSI"),
-+		MTK_FUNCTION(3, "I2S0_BCK")
-+	),
-+	MTK_PIN(
-+		142, "GPIO142",
-+		MTK_EINT_FUNCTION(0, 142),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO142"),
-+		MTK_FUNCTION(1, "AUD_DAT_MISO0"),
-+		MTK_FUNCTION(2, "AUD_DAT_MOSI0"),
-+		MTK_FUNCTION(3, "I2S0_LRCK"),
-+		MTK_FUNCTION(4, "VOW_DAT_MISO"),
-+		MTK_FUNCTION(7, "DBG_MON_B25")
-+	),
-+	MTK_PIN(
-+		143, "GPIO143",
-+		MTK_EINT_FUNCTION(0, 143),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO143"),
-+		MTK_FUNCTION(1, "AUD_DAT_MISO1"),
-+		MTK_FUNCTION(2, "AUD_DAT_MOSI1"),
-+		MTK_FUNCTION(3, "I2S0_DI"),
-+		MTK_FUNCTION(4, "VOW_CLK_MISO"),
-+		MTK_FUNCTION(6, "UFS_MPHY_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_B26")
-+	),
-+	MTK_PIN(
-+		144, "GPIO144",
-+		MTK_EINT_FUNCTION(0, 144),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO144"),
-+		MTK_FUNCTION(1, "PWRAP_SPI0_MI"),
-+		MTK_FUNCTION(2, "PWRAP_SPI0_MO")
-+	),
-+	MTK_PIN(
-+		145, "GPIO145",
-+		MTK_EINT_FUNCTION(0, 145),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO145"),
-+		MTK_FUNCTION(1, "PWRAP_SPI0_CSN")
-+	),
-+	MTK_PIN(
-+		146, "GPIO146",
-+		MTK_EINT_FUNCTION(0, 146),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO146"),
-+		MTK_FUNCTION(1, "PWRAP_SPI0_MO"),
-+		MTK_FUNCTION(2, "PWRAP_SPI0_MI")
-+	),
-+	MTK_PIN(
-+		147, "GPIO147",
-+		MTK_EINT_FUNCTION(0, 147),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO147"),
-+		MTK_FUNCTION(1, "PWRAP_SPI0_CK")
-+	),
-+	MTK_PIN(
-+		148, "GPIO148",
-+		MTK_EINT_FUNCTION(0, 148),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO148"),
-+		MTK_FUNCTION(1, "SRCLKENA0")
-+	),
-+	MTK_PIN(
-+		149, "GPIO149",
-+		MTK_EINT_FUNCTION(0, 149),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO149"),
-+		MTK_FUNCTION(1, "SRCLKENA1")
-+	),
-+	MTK_PIN(
-+		150, "GPIO150",
-+		MTK_EINT_FUNCTION(0, 150),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO150"),
-+		MTK_FUNCTION(1, "PWM_A"),
-+		MTK_FUNCTION(2, "CMFLASH"),
-+		MTK_FUNCTION(3, "CLKM0"),
-+		MTK_FUNCTION(7, "DBG_MON_B30")
-+	),
-+	MTK_PIN(
-+		151, "GPIO151",
-+		MTK_EINT_FUNCTION(0, 151),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO151"),
-+		MTK_FUNCTION(1, "PWM_B"),
-+		MTK_FUNCTION(2, "CMVREF0"),
-+		MTK_FUNCTION(3, "CLKM1"),
-+		MTK_FUNCTION(7, "DBG_MON_B20")
-+	),
-+	MTK_PIN(
-+		152, "GPIO152",
-+		MTK_EINT_FUNCTION(0, 152),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO152"),
-+		MTK_FUNCTION(1, "PWM_C"),
-+		MTK_FUNCTION(2, "CMFLASH"),
-+		MTK_FUNCTION(3, "CLKM2"),
-+		MTK_FUNCTION(7, "DBG_MON_B21")
-+	),
-+	MTK_PIN(
-+		153, "GPIO153",
-+		MTK_EINT_FUNCTION(0, 153),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO153"),
-+		MTK_FUNCTION(1, "PWM_A"),
-+		MTK_FUNCTION(2, "CMVREF0"),
-+		MTK_FUNCTION(3, "CLKM3"),
-+		MTK_FUNCTION(7, "DBG_MON_B22")
-+	),
-+	MTK_PIN(
-+		154, "GPIO154",
-+		MTK_EINT_FUNCTION(0, 154),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO154"),
-+		MTK_FUNCTION(1, "SCP_VREQ_VAO"),
-+		MTK_FUNCTION(2, "DVFSRC_EXT_REQ"),
-+		MTK_FUNCTION(7, "DBG_MON_B18")
-+	),
-+	MTK_PIN(
-+		155, "GPIO155",
-+		MTK_EINT_FUNCTION(0, 155),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO155"),
-+		MTK_FUNCTION(1, "ANT_SEL0"),
-+		MTK_FUNCTION(2, "DVFSRC_EXT_REQ"),
-+		MTK_FUNCTION(3, "CMVREF1"),
-+		MTK_FUNCTION(7, "SCP_JTAG_TDI")
-+	),
-+	MTK_PIN(
-+		156, "GPIO156",
-+		MTK_EINT_FUNCTION(0, 156),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO156"),
-+		MTK_FUNCTION(1, "ANT_SEL1"),
-+		MTK_FUNCTION(2, "SRCLKENAI0"),
-+		MTK_FUNCTION(3, "SCL6"),
-+		MTK_FUNCTION(4, "KPCOL2"),
-+		MTK_FUNCTION(5, "IDDIG"),
-+		MTK_FUNCTION(7, "SCP_JTAG_TCK")
-+	),
-+	MTK_PIN(
-+		157, "GPIO157",
-+		MTK_EINT_FUNCTION(0, 157),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO157"),
-+		MTK_FUNCTION(1, "ANT_SEL2"),
-+		MTK_FUNCTION(2, "SRCLKENAI1"),
-+		MTK_FUNCTION(3, "SDA6"),
-+		MTK_FUNCTION(4, "KPROW2"),
-+		MTK_FUNCTION(5, "USB_DRVVBUS"),
-+		MTK_FUNCTION(7, "SCP_JTAG_TRSTN")
-+	),
-+	MTK_PIN(
-+		158, "GPIO158",
-+		MTK_EINT_FUNCTION(0, 158),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO158"),
-+		MTK_FUNCTION(1, "ANT_SEL3")
-+	),
-+	MTK_PIN(
-+		159, "GPIO159",
-+		MTK_EINT_FUNCTION(0, 159),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO159"),
-+		MTK_FUNCTION(1, "ANT_SEL4")
-+	),
-+	MTK_PIN(
-+		160, "GPIO160",
-+		MTK_EINT_FUNCTION(0, 160),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO160"),
-+		MTK_FUNCTION(1, "ANT_SEL5")
-+	),
-+	MTK_PIN(
-+		161, "GPIO161",
-+		MTK_EINT_FUNCTION(0, 161),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO161"),
-+		MTK_FUNCTION(1, "SPI1_A_MI"),
-+		MTK_FUNCTION(2, "SCP_SPI1_MI"),
-+		MTK_FUNCTION(3, "IDDIG"),
-+		MTK_FUNCTION(4, "ANT_SEL6"),
-+		MTK_FUNCTION(5, "KPCOL2"),
-+		MTK_FUNCTION(6, "PTA_RXD"),
-+		MTK_FUNCTION(7, "DBG_MON_B19")
-+	),
-+	MTK_PIN(
-+		162, "GPIO162",
-+		MTK_EINT_FUNCTION(0, 162),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO162"),
-+		MTK_FUNCTION(1, "SPI1_A_CSB"),
-+		MTK_FUNCTION(2, "SCP_SPI1_CS"),
-+		MTK_FUNCTION(3, "USB_DRVVBUS"),
-+		MTK_FUNCTION(4, "ANT_SEL5"),
-+		MTK_FUNCTION(5, "KPROW2"),
-+		MTK_FUNCTION(6, "PTA_TXD")
-+	),
-+	MTK_PIN(
-+		163, "GPIO163",
-+		MTK_EINT_FUNCTION(0, 163),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO163"),
-+		MTK_FUNCTION(1, "SPI1_A_MO"),
-+		MTK_FUNCTION(2, "SCP_SPI1_MO"),
-+		MTK_FUNCTION(3, "SDA1"),
-+		MTK_FUNCTION(4, "ANT_SEL4"),
-+		MTK_FUNCTION(5, "CMMCLK2"),
-+		MTK_FUNCTION(6, "DMIC_CLK")
-+	),
-+	MTK_PIN(
-+		164, "GPIO164",
-+		MTK_EINT_FUNCTION(0, 164),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO164"),
-+		MTK_FUNCTION(1, "SPI1_A_CLK"),
-+		MTK_FUNCTION(2, "SCP_SPI1_CK"),
-+		MTK_FUNCTION(3, "SCL1"),
-+		MTK_FUNCTION(4, "ANT_SEL3"),
-+		MTK_FUNCTION(5, "CMMCLK3"),
-+		MTK_FUNCTION(6, "DMIC_DAT")
-+	),
-+	MTK_PIN(
-+		165, "GPIO165",
-+		MTK_EINT_FUNCTION(0, 165),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO165"),
-+		MTK_FUNCTION(1, "PWM_B"),
-+		MTK_FUNCTION(2, "CMMCLK2"),
-+		MTK_FUNCTION(3, "SCP_VREQ_VAO"),
-+		MTK_FUNCTION(6, "TDM_MCK_2ND"),
-+		MTK_FUNCTION(7, "SCP_JTAG_TDO")
-+	),
-+	MTK_PIN(
-+		166, "GPIO166",
-+		MTK_EINT_FUNCTION(0, 166),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO166"),
-+		MTK_FUNCTION(1, "ANT_SEL6")
-+	),
-+	MTK_PIN(
-+		167, "GPIO167",
-+		MTK_EINT_FUNCTION(0, 167),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO167"),
-+		MTK_FUNCTION(1, "RFIC0_BSI_EN"),
-+		MTK_FUNCTION(2, "SPM_BSI_EN")
-+	),
-+	MTK_PIN(
-+		168, "GPIO168",
-+		MTK_EINT_FUNCTION(0, 168),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO168"),
-+		MTK_FUNCTION(1, "RFIC0_BSI_CK"),
-+		MTK_FUNCTION(2, "SPM_BSI_CK")
-+	),
-+	MTK_PIN(
-+		169, "GPIO169",
-+		MTK_EINT_FUNCTION(0, 169),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO169"),
-+		MTK_FUNCTION(1, "PWM_C"),
-+		MTK_FUNCTION(2, "CMMCLK3"),
-+		MTK_FUNCTION(3, "CMVREF1"),
-+		MTK_FUNCTION(4, "ANT_SEL7"),
-+		MTK_FUNCTION(5, "AGPS_SYNC"),
-+		MTK_FUNCTION(6, "TDM_BCK_2ND"),
-+		MTK_FUNCTION(7, "SCP_JTAG_TMS")
-+	),
-+	MTK_PIN(
-+		170, "GPIO170",
-+		MTK_EINT_FUNCTION(0, 170),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO170"),
-+		MTK_FUNCTION(1, "I2S1_BCK"),
-+		MTK_FUNCTION(2, "I2S3_BCK"),
-+		MTK_FUNCTION(3, "SCL7"),
-+		MTK_FUNCTION(4, "I2S5_BCK"),
-+		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-+		MTK_FUNCTION(6, "TDM_LRCK_2ND"),
-+		MTK_FUNCTION(7, "ANT_SEL3")
-+	),
-+	MTK_PIN(
-+		171, "GPIO171",
-+		MTK_EINT_FUNCTION(0, 184),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO171"),
-+		MTK_FUNCTION(1, "I2S1_LRCK"),
-+		MTK_FUNCTION(2, "I2S3_LRCK"),
-+		MTK_FUNCTION(3, "SDA7"),
-+		MTK_FUNCTION(4, "I2S5_LRCK"),
-+		MTK_FUNCTION(5, "URXD1"),
-+		MTK_FUNCTION(6, "TDM_DATA0_2ND"),
-+		MTK_FUNCTION(7, "ANT_SEL4")
-+	),
-+	MTK_PIN(
-+		172, "GPIO172",
-+		MTK_EINT_FUNCTION(0, 185),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO172"),
-+		MTK_FUNCTION(1, "I2S1_DO"),
-+		MTK_FUNCTION(2, "I2S3_DO"),
-+		MTK_FUNCTION(3, "SCL8"),
-+		MTK_FUNCTION(4, "I2S5_DO"),
-+		MTK_FUNCTION(5, "UTXD1"),
-+		MTK_FUNCTION(6, "TDM_DATA1_2ND"),
-+		MTK_FUNCTION(7, "ANT_SEL5")
-+	),
-+	MTK_PIN(
-+		173, "GPIO173",
-+		MTK_EINT_FUNCTION(0, 186),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO173"),
-+		MTK_FUNCTION(1, "I2S1_MCK"),
-+		MTK_FUNCTION(2, "I2S3_MCK"),
-+		MTK_FUNCTION(3, "SDA8"),
-+		MTK_FUNCTION(4, "I2S5_MCK"),
-+		MTK_FUNCTION(5, "UCTS0"),
-+		MTK_FUNCTION(6, "TDM_DATA2_2ND"),
-+		MTK_FUNCTION(7, "ANT_SEL6")
-+	),
-+	MTK_PIN(
-+		174, "GPIO174",
-+		MTK_EINT_FUNCTION(0, 187),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO174"),
-+		MTK_FUNCTION(1, "I2S2_DI"),
-+		MTK_FUNCTION(2, "I2S0_DI"),
-+		MTK_FUNCTION(3, "DVFSRC_EXT_REQ"),
-+		MTK_FUNCTION(4, "I2S2_DI2"),
-+		MTK_FUNCTION(5, "URTS0"),
-+		MTK_FUNCTION(6, "TDM_DATA3_2ND"),
-+		MTK_FUNCTION(7, "ANT_SEL7")
-+	),
-+	MTK_PIN(
-+		175, "GPIO175",
-+		MTK_EINT_FUNCTION(0, 188),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO175"),
-+		MTK_FUNCTION(1, "ANT_SEL7")
-+	),
-+	MTK_PIN(
-+		176, "GPIO176",
-+		MTK_EINT_FUNCTION(0, 189),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO176")
-+	),
-+	MTK_PIN(
-+		177, "GPIO177",
-+		MTK_EINT_FUNCTION(0, 190),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO177")
-+	),
-+	MTK_PIN(
-+		178, "GPIO178",
-+		MTK_EINT_FUNCTION(0, 191),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO178")
-+	),
-+	MTK_PIN(
-+		179, "GPIO179",
-+		MTK_EINT_FUNCTION(0, 192),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO179")
-+	),
-+	MTK_PIN(
-+		180, "GPIO180",
-+		MTK_EINT_FUNCTION(0, 171),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO180")
-+	),
-+	MTK_PIN(
-+		181, "GPIO181",
-+		MTK_EINT_FUNCTION(0, 172),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO181")
-+	),
-+	MTK_PIN(
-+		182, "GPIO182",
-+		MTK_EINT_FUNCTION(0, 173),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO182")
-+	),
-+	MTK_PIN(
-+		183, "GPIO183",
-+		MTK_EINT_FUNCTION(0, 174),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO183")
-+	),
-+	MTK_PIN(
-+		184, "GPIO184",
-+		MTK_EINT_FUNCTION(0, 175),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO184")
-+	),
-+	MTK_PIN(
-+		185, "GPIO185",
-+		MTK_EINT_FUNCTION(0, 177),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO185")
-+	),
-+	MTK_PIN(
-+		186, "GPIO186",
-+		MTK_EINT_FUNCTION(0, 178),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO186")
-+	),
-+	MTK_PIN(
-+		187, "GPIO187",
-+		MTK_EINT_FUNCTION(0, 179),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO187")
-+	),
-+	MTK_PIN(
-+		188, "GPIO188",
-+		MTK_EINT_FUNCTION(0, 180),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO188")
-+	),
-+	MTK_PIN(
-+		189, "GPIO189",
-+		MTK_EINT_FUNCTION(0, 181),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO189")
-+	),
-+	MTK_PIN(
-+		190, "GPIO190",
-+		MTK_EINT_FUNCTION(0, 182),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO190")
-+	),
-+	MTK_PIN(
-+		191, "GPIO191",
-+		MTK_EINT_FUNCTION(0, 183),
-+		DRV_GRP4,
-+		MTK_FUNCTION(0, "GPIO191")
-+	),
++static const struct of_device_id mt7623_pctrl_match[] = {
++	{ .compatible = "mediatek,mt7623-moore-pinctrl", },
++	{}
 +};
 +
-+#endif /* __PINCTRL_MTK_MT8183_H */
++static int mt7623_pinctrl_probe(struct platform_device *pdev)
++{
++	int err;
++
++	err = mtk_moore_pinctrl_probe(pdev, &mt7623_data);
++	if (err)
++		return err;
++
++	mt7623_bonding_disable(pdev);
++
++	return 0;
++}
++
++static struct platform_driver mtk_pinctrl_driver = {
++	.probe = mt7623_pinctrl_probe,
++	.driver = {
++		.name = "mt7623-moore-pinctrl",
++		.of_match_table = mt7623_pctrl_match,
++	},
++};
++
++static int __init mtk_pinctrl_init(void)
++{
++	return platform_driver_register(&mtk_pinctrl_driver);
++}
++arch_initcall(mtk_pinctrl_init);
 -- 
 2.7.4
 
