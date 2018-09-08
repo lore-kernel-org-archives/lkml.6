@@ -2,124 +2,191 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC1DC4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 03:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5F9C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 03:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F3520855
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 03:03:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SLywknPy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F3520855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 238952075A
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 03:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238952075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeIHHrh (ORCPT
+        id S1726355AbeIHIMn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 03:47:37 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9378 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726187AbeIHHrg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 03:47:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5b933be80000>; Fri, 07 Sep 2018 20:03:04 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 07 Sep 2018 20:02:59 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 07 Sep 2018 20:02:59 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Sep
- 2018 03:02:59 +0000
-Received: from [10.110.48.28] (10.110.48.28) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Sep 2018
- 03:02:59 +0000
-Subject: Re: [PATCH] drm/nouveau/secboot/acr: fix memory leak
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>
-CC:     <dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
+        Sat, 8 Sep 2018 04:12:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11672 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726175AbeIHIMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 04:12:42 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8860B4D0F4607;
+        Sat,  8 Sep 2018 11:28:36 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 8 Sep 2018
+ 11:28:31 +0800
+Subject: Re: [PATCH v2] staging: erofs: use explicit unsigned int type
+To:     =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>
+References: <20180830205605.19492-1-linux@weissschuh.net>
+ <20180907163912.3686-1-linux@weissschuh.net>
+CC:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
         <linux-kernel@vger.kernel.org>
-References: <20180724132719.GA32237@embeddedor.com>
- <d9e87a82-f70f-3eca-5f63-2450863e7099@embeddedor.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <f35a04a0-fa60-7905-96bf-36a0dfb055a8@nvidia.com>
-Date:   Fri, 7 Sep 2018 20:02:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <5c44a63b-041d-1fce-0748-53c0b44f5983@huawei.com>
+Date:   Sat, 8 Sep 2018 11:28:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <d9e87a82-f70f-3eca-5f63-2450863e7099@embeddedor.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
+In-Reply-To: <20180907163912.3686-1-linux@weissschuh.net>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1536375823; bh=VnqE71k8gOvwPc1Le74+jQ0l4I0e0gzRB9U3k43lV5g=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=SLywknPyp5ST0m6G3duyy5F1gH4htMpGFPqZo9/FQOMjuAZkTh+hFPGNvLNVqBGEn
-         CAbLrU36KFDS0C/Ori6IyCGfYiMGSNQwgISgJYBHRAdnrWsWriX5qwWjvLqvlsmqCP
-         5mQu0ATNwPbXgTZ8l6cGA27tRmdw+k2OWBVpJAkVaD34Ipf+R6fj8Gth6JFMXbN/iL
-         z9s/n4GyvyB9FOfClNlp75kbLLlX3o5uVzxoPMeD2g0UkNefW2ZPvYLXnabrj1Hp9X
-         ZUJnO2f+XVPWeqp6iKSwjwlR9hQ+wVFN1ZTiFCkV9y+4pqEhwg0FaE77kEmABCXPMf
-         lfNCO21Q3bWZQ==
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/2/18 12:51 PM, Gustavo A. R. Silva wrote:
-> Hi all,
+Hi Thomas,
+
+Thanks for your new patch.
+
+It seems that this patch also introduces 2 new 'WARNING: line over 80 characters',
+could you please fix it in the patch?
+
+On 2018/9/8 0:39, Thomas Weißschuh wrote:
+> Changes since v1:
 > 
-> Friendly ping! Who can take this?
+> * Removed changes that conflicted with
+>   [PATCH 1/6] staging: erofs: formatting fix in unzip_vle_lz4.c
+> * Added patch description
 > 
-> Thanks
-> --
-> Gustavo
+> -- >8 --
 > 
-> On 07/24/2018 08:27 AM, Gustavo A. R. Silva wrote:
->> In case memory resources for *bl_desc* were allocated, release
->> them before return.
->>
->> Addresses-Coverity-ID: 1472021 ("Resource leak")
->> Fixes: 0d466901552a ("drm/nouveau/secboot/acr: Remove VLA usage")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
->> index d02e183..5c14d6a 100644
->> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
->> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
->> @@ -801,6 +801,7 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
->>  		bl = acr->hsbl_unload_blob;
->>  	} else {
->>  		nvkm_error(_acr->subdev, "invalid secure boot blob!\n");
->> +		kfree(bl_desc);
->>  		return -EINVAL;
->>  	}
->>  
->>
+> Fix coding style issue "Prefer 'unsigned int' to bare use of 'unsigned'"
+> detected by checkpatch.pl
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> 
+> ---
+>  drivers/staging/erofs/data.c      |  4 +--
+>  drivers/staging/erofs/dir.c       | 14 ++++-----
+>  drivers/staging/erofs/inode.c     |  6 ++--
+>  drivers/staging/erofs/namei.c     | 28 +++++++++---------
+>  drivers/staging/erofs/super.c     |  2 +-
+>  drivers/staging/erofs/unzip_vle.c | 48 +++++++++++++++----------------
+>  drivers/staging/erofs/utils.c     |  2 +-
+>  drivers/staging/erofs/xattr.c     | 40 +++++++++++++-------------
+>  8 files changed, 72 insertions(+), 72 deletions(-)
+> 
+> diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
+> index 3c0d9159514e..e1916101ad75 100644
+> --- a/drivers/staging/erofs/data.c
+> +++ b/drivers/staging/erofs/data.c
+> @@ -202,7 +202,7 @@ static inline struct bio *erofs_read_raw_page(
+>  	struct address_space *mapping,
+>  	struct page *page,
+>  	erofs_off_t *last_block,
+> -	unsigned nblocks,
+> +	unsigned int nblocks,
+>  	bool ra)
+>  {
+>  	struct inode *inode = mapping->host;
+> @@ -236,7 +236,7 @@ static inline struct bio *erofs_read_raw_page(
+>  			.m_la = blknr_to_addr(current_block),
+>  		};
+>  		erofs_blk_t blknr;
+> -		unsigned blkoff;
+> +		unsigned int blkoff;
+>  
+>  		err = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
+>  		if (unlikely(err))
+> diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
+> index be6ae3b1bdbe..87f12b0f983f 100644
+> --- a/drivers/staging/erofs/dir.c
+> +++ b/drivers/staging/erofs/dir.c
+> @@ -24,8 +24,8 @@ static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
+>  };
+>  
+>  static int erofs_fill_dentries(struct dir_context *ctx,
+> -	void *dentry_blk, unsigned *ofs,
+> -	unsigned nameoff, unsigned maxsize)
+> +	void *dentry_blk, unsigned int *ofs,
+> +	unsigned int nameoff, unsigned int maxsize)
+>  {
+>  	struct erofs_dirent *de = dentry_blk;
+>  	const struct erofs_dirent *end = dentry_blk + nameoff;
+> @@ -36,7 +36,7 @@ static int erofs_fill_dentries(struct dir_context *ctx,
+>  		int de_namelen;
+>  		unsigned char d_type;
+>  #ifdef CONFIG_EROFS_FS_DEBUG
+> -		unsigned dbg_namelen;
+> +		unsigned int dbg_namelen;
+>  		unsigned char dbg_namebuf[EROFS_NAME_LEN];
+>  #endif
+>  
+> @@ -81,15 +81,15 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>  	struct inode *dir = file_inode(f);
+>  	struct address_space *mapping = dir->i_mapping;
+>  	const size_t dirsize = i_size_read(dir);
+> -	unsigned i = ctx->pos / EROFS_BLKSIZ;
+> -	unsigned ofs = ctx->pos % EROFS_BLKSIZ;
+> +	unsigned int i = ctx->pos / EROFS_BLKSIZ;
+> +	unsigned int ofs = ctx->pos % EROFS_BLKSIZ;
+>  	int err = 0;
+>  	bool initial = true;
+>  
+>  	while (ctx->pos < dirsize) {
+>  		struct page *dentry_page;
+>  		struct erofs_dirent *de;
+> -		unsigned nameoff, maxsize;
+> +		unsigned int nameoff, maxsize;
+>  
+>  		dentry_page = read_mapping_page(mapping, i, NULL);
+>  		if (IS_ERR(dentry_page))
+> @@ -109,7 +109,7 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>  			goto skip_this;
+>  		}
+>  
+> -		maxsize = min_t(unsigned, dirsize - ctx->pos + ofs, PAGE_SIZE);
+> +		maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, PAGE_SIZE);
 
-Hi Gustavo,
+WARNING: line over 80 characters
+#102: FILE: drivers/staging/erofs/dir.c:112:
++               maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, PAGE_SIZE);
 
-Seeing as how I've been working on this corner of Nouveau lately (don't ask, haha),
-I reviewed and also tested this. It looks good, you can add:
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+>  
+>  		/* search dirents at the arbitrary position */
+>  		if (unlikely(initial)) {
+> diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+> index fbf6ff25cd1b..70d34b0a97fe 100644
+> --- a/drivers/staging/erofs/inode.c
+> +++ b/drivers/staging/erofs/inode.c
+> @@ -19,7 +19,7 @@ static int read_inode(struct inode *inode, void *data)
+>  {
+>  	struct erofs_vnode *vi = EROFS_V(inode);
+>  	struct erofs_inode_v1 *v1 = data;
+> -	const unsigned advise = le16_to_cpu(v1->i_advise);
+> +	const unsigned int advise = le16_to_cpu(v1->i_advise);
+>  
+>  	vi->data_mapping_mode = __inode_data_mapping(advise);
+>  
+> @@ -112,7 +112,7 @@ static int read_inode(struct inode *inode, void *data)
+>   * try_lock since it takes no much overhead and
+>   * will success immediately.
+>   */
+> -static int fill_inline_data(struct inode *inode, void *data, unsigned m_pofs)
+> +static int fill_inline_data(struct inode *inode, void *data, unsigned int m_pofs)
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+WARNING: line over 80 characters
+#124: FILE: drivers/staging/erofs/inode.c:115:
++static int fill_inline_data(struct inode *inode, void *data, unsigned int m_pofs)
+
+Thanks,
+Gao Xiang
