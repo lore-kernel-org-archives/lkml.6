@@ -2,346 +2,117 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C73C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 15:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0641C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 15:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3482F206BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 15:10:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3482F206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 47CDC2086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 15:15:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f0eRBcJG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47CDC2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeIHT4Q (ORCPT
+        id S1727415AbeIHUBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 15:56:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34864 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbeIHT4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 15:56:15 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id ED26F207AD; Sat,  8 Sep 2018 17:10:07 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B5A00204AE;
-        Sat,  8 Sep 2018 17:09:57 +0200 (CEST)
-Date:   Sat, 8 Sep 2018 17:09:57 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Jeremy Gebben <jgebben@sweptlaser.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: abx80x: add basic watchdog support
-Message-ID: <20180908150957.GD2598@piout.net>
-References: <20180907151744.32634-1-jgebben@sweptlaser.com>
+        Sat, 8 Sep 2018 16:01:33 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45072 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeIHUBd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 16:01:33 -0400
+Received: by mail-pl1-f195.google.com with SMTP id j8-v6so7843019pll.12
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 08:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xNnKeX8f4L8LXFMMf6fbKC8tV2kOss2XzDq+uAEAtrQ=;
+        b=f0eRBcJGkYAaOik4lbxyFgA0liYjNpf46BGiDn+6LHIbQ3KTQC+3bGn6nA5AWtoA34
+         YNxQPIzQv1nbSOkQXWSv10RobecyzbawYKC4BXalrYj9cdMJQmSkSrzF6K5EHbvM7OD4
+         AGrCccr5EV0yW6iNJ+WzkzcJFwDwNnLts1yrFXEGpC747+QbuVHmkkyETlks0kK7/UNi
+         cNDfeeCvc6ZeUI28dYbDP36kCEdoZcjZEO6RcFn51yQeUJ/kP9nRBUFLf+rxJqWJ9n9E
+         s8cCTGPiJ7i50Ze5R4aF2jxTTkTHX7hjY/AXVW4x2q8MdMjY26/7jh8lci08O+DtaB7d
+         pLDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xNnKeX8f4L8LXFMMf6fbKC8tV2kOss2XzDq+uAEAtrQ=;
+        b=dRfp248AYSLgtr21OAM7S8fE5Bf6/m0WArLUrToZdYWEZb3KJQKId3S44hJpGAU/7o
+         vZyzGvulo547ovWMHN+JH1LlwCyZywmsePQEMRt9dLxMqJ9LlZrGRdIht8HAzQBpr2bF
+         CAJVEFvpuFWqEsnp0QAjj/knWKdmSvEIIOKEtPRulwiLrct3HScWx1l53A8SsKBUUAQf
+         XqdHgKv0zGIOKQEjS+wMer/xVDRx1Sp34e1KLV0RRKKoHri4D7he8thcSKbfSgLfxwB6
+         dinUOcpRe0QM00+XVERlSOdhUGAcfgFN6xhJxNd9KMq6Yhl/I6SCRYHvIEYc7wQenE0/
+         QuGQ==
+X-Gm-Message-State: APzg51BwvM0eluDunlNXb0bW3P8yVxEVS00y1cejncoGfYJrZt/I9Etc
+        qm80JWZIm5ge8VIYay4OJx2CL+0miuU2SAsrfJtrNA==
+X-Google-Smtp-Source: ANB0VdbZ7gl3at25YMba+dhVdeM3n096ncS/zQ217LxkTLYaUhHljJfitAqffQtC+qHt6MYQyKyM1CMFmYlbtJ005tw=
+X-Received: by 2002:a17:902:bf46:: with SMTP id u6-v6mr13247937pls.85.1536419724874;
+ Sat, 08 Sep 2018 08:15:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907151744.32634-1-jgebben@sweptlaser.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Sat, 8 Sep 2018 08:15:03
+ -0700 (PDT)
+In-Reply-To: <CAGXu5jLLYCGnN66UNeYqcPCPN4EAb=PzGLuQj4-UZr_A0AHp-g@mail.gmail.com>
+References: <000000000000e16cba057549aab6@google.com> <14d5bccf-f12d-0fc1-eddc-9fb24dc0cf14@I-love.SAKURA.ne.jp>
+ <CAGXu5jLLYCGnN66UNeYqcPCPN4EAb=PzGLuQj4-UZr_A0AHp-g@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sat, 8 Sep 2018 17:15:03 +0200
+Message-ID: <CACT4Y+Y5J_i1CpV3d5MFH0jZCqKyOTzaP8uDQ0CH3HD33m+UZA@mail.gmail.com>
+Subject: Re: BUG: bad usercopy in __check_object_size (2)
+To:     Kees Cook <keescook@google.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Sep 7, 2018 at 9:57 PM, Kees Cook <keescook@google.com> wrote:
+> On Fri, Sep 7, 2018 at 9:17 AM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> On 2018/09/08 0:29, syzbot wrote:
+>>> syzbot has found a reproducer for the following crash on:
+>>>
+>>> HEAD commit:    28619527b8a7 Merge git://git.kernel.org/pub/scm/linux/kern..
+>>> git tree:       bpf
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=124e64d1400000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=62e9b447c16085cf
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=a3c9d2673837ccc0f22b
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179f9cd1400000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b3e8be400000
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+a3c9d2673837ccc0f22b@syzkaller.appspotmail.com
+>>>
+>>>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>> RIP: 0033:0x440479
+>>> usercopy: Kernel memory overwrite attempt detected to spans multiple pages (offset 0, size 64)!
+>>
+>> Kees, is this because check_page_span() is failing to allow on-stack variable
+>>
+>>    u8 opcodes[OPCODE_BUFSIZE];
+>>
+>> which by chance crossed PAGE_SIZE boundary?
+>
+> There are a lot of failure conditions for the PAGESPAN check. This
+> might be one (and one that I'm hoping to solve separately).
 
-Please Cc the watchdog maintainers. Else, I have very few comments.
+Disabled CONFIG_HARDENED_USERCOPY_PAGESPAN on syzbot:
+https://github.com/google/syzkaller/commit/be20da425029ecd45b18e99fa5f09691ba0658ea
 
-On 07/09/2018 09:17:43-0600, Jeremy Gebben wrote:
-> The abx804 and abx805 chips have support for a simple watchdog
-> function that can trigger an external reset.
-> 
-> Signed-off-by: Jeremy Gebben <jgebben@sweptlaser.com>
-> ---
->  drivers/rtc/Kconfig      |  11 +++
->  drivers/rtc/rtc-abx80x.c | 160 ++++++++++++++++++++++++++++++++++++---
->  2 files changed, 159 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 7d7be60a2413..4771e3a89721 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -195,6 +195,17 @@ config RTC_DRV_ABX80X
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rtc-abx80x.
->  
-> +config RTC_DRV_ABX80X_WDT
-> +	bool "Abracon ABx80x Watchdog"
-> +	default y
-> +	depends on RTC_DRV_ABX80X
-> +	help
-> +	  If you say yes here you get watchdog support for Abracon ABX804 and ABX805
-> +	  clock chips. This watchdog supports timeouts up to 31 seconds with 1 second
-> +	  granularity.
-> +
-> +          This watchdog device is part of the rtc-abx80x module.
-> +
-
-I'm not sure it is worth having a separate config option for that. You
-may as well just always include the watchdog support code. However,
-doesn't it need to depend on CONFIG_WATCHDOG?
-
->  config RTC_DRV_AC100
->  	tristate "X-Powers AC100"
->  	depends on MFD_AC100
-> diff --git a/drivers/rtc/rtc-abx80x.c b/drivers/rtc/rtc-abx80x.c
-> index 2cefa67a1132..fa558939e944 100644
-> --- a/drivers/rtc/rtc-abx80x.c
-> +++ b/drivers/rtc/rtc-abx80x.c
-> @@ -17,6 +17,7 @@
->  #include <linux/i2c.h>
->  #include <linux/module.h>
->  #include <linux/rtc.h>
-> +#include <linux/watchdog.h>
->  
->  #define ABX8XX_REG_HTH		0x00
->  #define ABX8XX_REG_SC		0x01
-> @@ -37,6 +38,7 @@
->  
->  #define ABX8XX_REG_STATUS	0x0f
->  #define ABX8XX_STATUS_AF	BIT(2)
-> +#define ABX8XX_STATUS_WDT	BIT(6)
->  
->  #define ABX8XX_REG_CTRL1	0x10
->  #define ABX8XX_CTRL_WRITE	BIT(0)
-> @@ -61,6 +63,14 @@
->  #define ABX8XX_OSS_OF		BIT(1)
->  #define ABX8XX_OSS_OMODE	BIT(4)
->  
-> +#define ABX8XX_REG_WDT		0x1b
-> +#define ABX8XX_WDT_WDS		BIT(7)
-> +#define ABX8XX_WDT_BMB_MASK	0x7c
-> +#define ABX8XX_WDT_BMB_SHIFT	2
-> +#define ABX8XX_WDT_MAX_TIME	(ABX8XX_WDT_BMB_MASK >> ABX8XX_WDT_BMB_SHIFT)
-> +#define ABX8XX_WDT_WRB_MASK	0x03
-> +#define ABX8XX_WDT_WRB_1HZ	0x02
-> +
->  #define ABX8XX_REG_CFG_KEY	0x1f
->  #define ABX8XX_CFG_KEY_OSC	0xa1
->  #define ABX8XX_CFG_KEY_MISC	0x9d
-> @@ -80,20 +90,27 @@ enum abx80x_chip {AB0801, AB0803, AB0804, AB0805,
->  struct abx80x_cap {
->  	u16 pn;
->  	bool has_tc;
-> +	bool has_wdog;
->  };
->  
->  static struct abx80x_cap abx80x_caps[] = {
->  	[AB0801] = {.pn = 0x0801},
->  	[AB0803] = {.pn = 0x0803},
-> -	[AB0804] = {.pn = 0x0804, .has_tc = true},
-> -	[AB0805] = {.pn = 0x0805, .has_tc = true},
-> +	[AB0804] = {.pn = 0x0804, .has_tc = true, .has_wdog = true},
-> +	[AB0805] = {.pn = 0x0805, .has_tc = true, .has_wdog = true},
->  	[AB1801] = {.pn = 0x1801},
->  	[AB1803] = {.pn = 0x1803},
-> -	[AB1804] = {.pn = 0x1804, .has_tc = true},
-> -	[AB1805] = {.pn = 0x1805, .has_tc = true},
-> +	[AB1804] = {.pn = 0x1804, .has_tc = true, .has_wdog = true},
-> +	[AB1805] = {.pn = 0x1805, .has_tc = true, .has_wdog = true},
->  	[ABX80X] = {.pn = 0}
->  };
->  
-> +struct abx80x_priv {
-> +	struct rtc_device *rtc;
-> +	struct i2c_client *client;
-> +	struct watchdog_device wdog;
-> +};
-> +
-
-To make the watchdog part easier to review, you could separate the
-introduction of abx80x_priv in a preliminary patch and then introduce
-the watchdog code.
-
->  static int abx80x_is_rc_mode(struct i2c_client *client)
->  {
->  	int flags = 0;
-> @@ -218,7 +235,8 @@ static int abx80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  static irqreturn_t abx80x_handle_irq(int irq, void *dev_id)
->  {
->  	struct i2c_client *client = dev_id;
-> -	struct rtc_device *rtc = i2c_get_clientdata(client);
-> +	struct abx80x_priv *priv = i2c_get_clientdata(client);
-> +	struct rtc_device *rtc = priv->rtc;
->  	int status;
->  
->  	status = i2c_smbus_read_byte_data(client, ABX8XX_REG_STATUS);
-> @@ -228,6 +246,13 @@ static irqreturn_t abx80x_handle_irq(int irq, void *dev_id)
->  	if (status & ABX8XX_STATUS_AF)
->  		rtc_update_irq(rtc, 1, RTC_AF | RTC_IRQF);
->  
-> +	/*
-> +	 * It is unclear if we'll get an interrupt before the external
-> +	 * reset kicks in.
-> +	 */
-> +	if (status & ABX8XX_STATUS_WDT)
-> +		dev_err(&client->dev, "watchdog timeout interrupt!\n");
-> +
-
-dev_alert maybe?
-
->  	i2c_smbus_write_byte_data(client, ABX8XX_REG_STATUS, 0);
->  
->  	return IRQ_HANDLED;
-> @@ -529,11 +554,110 @@ static void rtc_calib_remove_sysfs_group(void *_dev)
->  	sysfs_remove_group(&dev->kobj, &rtc_calib_attr_group);
->  }
->  
-> +#ifdef CONFIG_RTC_DRV_ABX80X_WDT
-> +
-> +static inline u8 timeout_bits(unsigned int timeout)
-> +{
-> +	return ((timeout << ABX8XX_WDT_BMB_SHIFT) & ABX8XX_WDT_BMB_MASK) |
-> +		 ABX8XX_WDT_WRB_1HZ;
-> +}
-> +
-> +static int __abx80x_wdog_set_timeout(struct watchdog_device *wdog,
-> +				    unsigned int timeout)
-> +{
-> +	struct abx80x_priv *priv = watchdog_get_drvdata(wdog);
-> +	u8 val = ABX8XX_WDT_WDS | timeout_bits(timeout);
-> +
-> +	/*
-> +	 * Writing any timeout to the WDT register resets the watchdog timer.
-> +	 * Writing 0 disables it.
-> +	 */
-> +	return i2c_smbus_write_byte_data(priv->client, ABX8XX_REG_WDT, val);
-> +}
-> +
-> +static int abx80x_wdog_set_timeout(struct watchdog_device *wdog,
-> +				unsigned int new_timeout)
-> +{
-> +	int err = __abx80x_wdog_set_timeout(wdog, new_timeout);
-> +
-> +	if (err)
-> +		return err;
-> +
-> +	wdog->timeout = new_timeout;
-> +	return 0;
-> +}
-> +
-> +static int abx80x_wdog_ping(struct watchdog_device *wdog)
-> +{
-> +	return __abx80x_wdog_set_timeout(wdog, wdog->timeout);
-> +}
-> +
-> +static int abx80x_wdog_start(struct watchdog_device *wdog)
-> +{
-> +	int err = __abx80x_wdog_set_timeout(wdog, wdog->timeout);
-> +
-> +	if (err)
-> +		return err;
-> +
-> +	set_bit(WDOG_HW_RUNNING, &wdog->status);
-> +	return 0;
-> +}
-> +
-> +static int abx80x_wdog_stop(struct watchdog_device *wdog)
-> +{
-> +	int err = __abx80x_wdog_set_timeout(wdog, 0);
-> +
-> +	if (err)
-> +		return err;
-> +
-> +	clear_bit(WDOG_HW_RUNNING, &wdog->status);
-> +	return 0;
-> +}
-> +
-> +static const struct watchdog_info abx80x_wdog_info = {
-> +	.identity = "abx80x watchdog",
-> +	.options = WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE,
-> +};
-> +
-> +static const struct watchdog_ops abx80x_wdog_ops = {
-> +	.owner = THIS_MODULE,
-> +	.start = abx80x_wdog_start,
-> +	.stop = abx80x_wdog_stop,
-> +	.ping = abx80x_wdog_ping,
-> +	.set_timeout = abx80x_wdog_set_timeout,
-> +};
-> +
-> +static int abx80x_setup_watchdog(struct abx80x_priv *priv)
-> +{
-> +	int err;
-> +
-> +	priv->wdog.ops = &abx80x_wdog_ops;
-> +	priv->wdog.info = &abx80x_wdog_info;
-> +	priv->wdog.min_timeout = 1;
-> +	priv->wdog.max_timeout = ABX8XX_WDT_MAX_TIME;
-> +
-> +	err = devm_watchdog_register_device(&priv->client->dev,
-> +					    &priv->wdog);
-> +	if (err)
-> +		return err;
-> +
-> +	watchdog_set_drvdata(&priv->wdog, priv);
-> +	watchdog_init_timeout(&priv->wdog, ABX8XX_WDT_MAX_TIME,
-> +			      &priv->client->dev);
-> +	return 0;
-> +}
-> +#else
-> +static int abx80x_setup_watchdog(struct abx80x_priv *priv)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  static int abx80x_probe(struct i2c_client *client,
->  			const struct i2c_device_id *id)
->  {
->  	struct device_node *np = client->dev.of_node;
-> -	struct rtc_device *rtc;
-> +	struct abx80x_priv *priv;
->  	int i, data, err, trickle_cfg = -EINVAL;
->  	char buf[7];
->  	unsigned int part = id->driver_data;
-> @@ -610,13 +734,25 @@ static int abx80x_probe(struct i2c_client *client,
->  	if (err)
->  		return err;
->  
-> -	rtc = devm_rtc_allocate_device(&client->dev);
-> -	if (IS_ERR(rtc))
-> -		return PTR_ERR(rtc);
-> +	priv = devm_kzalloc(&client->dev, sizeof(struct abx80x_priv),
-> +			    GFP_KERNEL);
-> +	if (priv == NULL)
-> +		return -ENOMEM;
-> +
-> +	priv->rtc = devm_rtc_allocate_device(&client->dev);
-> +	if (IS_ERR(priv->rtc))
-> +		return PTR_ERR(priv->rtc);
->  
-> -	rtc->ops = &abx80x_rtc_ops;
-> +	priv->rtc->ops = &abx80x_rtc_ops;
-> +	priv->client = client;
->  
-> -	i2c_set_clientdata(client, rtc);
-> +	i2c_set_clientdata(client, priv);
-> +
-> +	if (abx80x_caps[part].has_wdog) {
-> +		err = abx80x_setup_watchdog(priv);
-> +		if (err)
-> +			return err;
-> +	}
->  
->  	if (client->irq > 0) {
->  		dev_info(&client->dev, "IRQ %d supplied\n", client->irq);
-> @@ -649,7 +785,7 @@ static int abx80x_probe(struct i2c_client *client,
->  		return err;
->  	}
->  
-> -	err = rtc_register_device(rtc);
-> +	err = rtc_register_device(priv->rtc);
->  
->  	return err;
->  }
-> -- 
-> 2.17.1
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+#syz invalid
