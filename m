@@ -5,73 +5,75 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 146D5C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 10:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193E8C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 10:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C095720844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 10:24:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C095720844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8045A20855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 10:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8045A20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbeIHPJa (ORCPT
+        id S1726668AbeIHPTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 11:09:30 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37472 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726472AbeIHPJa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 11:09:30 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyaPS-0006Jc-QO; Sat, 08 Sep 2018 12:24:10 +0200
-Date:   Sat, 8 Sep 2018 12:24:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Joerg Roedel <jroedel@suse.de>
-cc:     Meelis Roos <mroos@linux.ee>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Subject: Re: 32-bit PTI with THP = userspace corruption
-In-Reply-To: <20180831070722.wnulbbmillxkw7ke@suse.de>
-Message-ID: <alpine.DEB.2.21.1809081223450.1402@nanos.tec.linutronix.de>
-References: <alpine.LRH.2.21.1808301639570.15669@math.ut.ee> <20180830205527.dmemjwxfbwvkdzk2@suse.de> <alpine.LRH.2.21.1808310711380.17865@math.ut.ee> <20180831070722.wnulbbmillxkw7ke@suse.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 8 Sep 2018 11:19:03 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53585 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726506AbeIHPTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 11:19:03 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AAEFB1B22EC8C;
+        Sat,  8 Sep 2018 18:33:41 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Sat, 8 Sep 2018
+ 18:33:41 +0800
+Message-ID: <5B93A581.9090305@huawei.com>
+Date:   Sat, 8 Sep 2018 18:33:37 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     <longman@redhat.com>, <arnd@arndb.de>,
+        <yang.shi@linux.alibaba.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] lib/sg_pool: remove unnecessary null check when free
+ the object
+References: <1533054107-35657-1-git-send-email-zhongjiang@huawei.com> <5B9398CD.1060500@huawei.com> <alpine.DEB.2.21.1809081146010.1402@nanos.tec.linutronix.de> <5B939F01.7020802@huawei.com> <alpine.DEB.2.21.1809081221080.1402@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809081221080.1402@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018/9/8 18:21, Thomas Gleixner wrote:
+> On Sat, 8 Sep 2018, zhong jiang wrote:
+>
+>> On 2018/9/8 17:46, Thomas Gleixner wrote:
+>>> On Sat, 8 Sep 2018, zhong jiang wrote:
+>>>> Hi,  Thomas
+>>>>
+>>>> Can you pick up the patch?
+>>> I'm not picking up patches for lib/sg_pool. Why would I?
+>>>
+>> I am sorry for that. I regard you as maintainer for lib/sg_pool mistakely. 
+>> but I can get maintainer information nothing from get_maintainer.pl
+>> The code is not updated since 2016. 
+> Andrew Morton picks up such things.
+ Thank you for your tips.
 
-On Fri, 31 Aug 2018, Joerg Roedel wrote:
+ +to Andrew
 
-> On Fri, Aug 31, 2018 at 07:12:44AM +0300, Meelis Roos wrote:
-> > > Thanks for the report! I'll try to reproduce the problem tomorrow and
-> > > investigate it. Can you please check if any of the kernel configurations
-> > > that show the bug has CONFIG_X86_PAE set? If not, can you please test
-> > > if enabling this option still triggers the problem?
-> > 
-> > Will check, but out of my memery there were 2 G3 HP Proliants that did 
-> > not fit into the pattern (problem did not appear). I have more than 4G 
-> > RAM in those and HIGHMEM_4G there, maybe that's it?
-> 
-> Yeah, I thought a bit about it, and for legacy paging the PMD paging
-> level is the root-level where we do the mirroring between kernel and
-> user page-table for PTI. This means we also need to collect A/D bits
-> from both entries, which we don't do yet.
-> 
-> But that all means it shouldn't happen with CONFIG_X86_PAE=y.
-> 
-> I'll try to reproduce and work on a fix.
+  Thanks
+  zhong jiang
+> Thanks,
+>
+> 	tglx
+>
+> .
+>
 
-Any progress on this?
 
-Thanks,
-
-	tglx
