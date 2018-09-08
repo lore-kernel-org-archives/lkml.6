@@ -2,122 +2,126 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F72BC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 03:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD9FC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA4420855
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 03:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFA192075A
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:07:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7zHoK+L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA4420855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="VHWV/GrX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA192075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbeIHImG (ORCPT
+        id S1726472AbeIHIvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 04:42:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbeIHImF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 04:42:05 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 8 Sep 2018 04:51:31 -0400
+Received: from out002.mailprotect.be ([83.217.72.86]:38245 "EHLO
+        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeIHIvb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 04:51:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:reply-to:
+        sender:cc:bcc; bh=YtfjMd+iPuRa7buoCBS/zpjS0vBSmqrun2SNUwg5oRQ=; b=VHWV/GrXDtp
+        Q5KOMESxbL4EvIRsexnDRlbazyX44Iom06RBA28qLw7BzluC+nHgeKf/5+FCWev+shQ9RppRv34mc
+        iW5P9EdlsUNYiM/bO0JKjlp2CVcWnNZccrwb5Y8kH+ilVEcakzeY4RXwk58r/NIULUR6WcJDUt/r1
+        xKaATHJMcsul20yt7lg5jQRuZuL7xXp0+7JpTLWu27jZu+CVuSvAhTK7XXu87OxxvlDKxTX81smJq
+        Nv7kOP8PvbyguFkR6qnSxCimHEGX0TPuar3hFp7SaFNnv3hh2L/ugncvDiP16hWlHW1tDzq60gzOE
+        8FGe4xvWoE47aTyw416fS2A==;
+Received: from smtp-auth.mailprotect.be ([178.208.39.159])
+        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        (envelope-from <bvanassche@acm.org>)
+        id 1fyUWY-0007vg-Ex; Sat, 08 Sep 2018 06:07:07 +0200
+Received: from asus.site (c-174-62-111-89.hsd1.ca.comcast.net [174.62.111.89])
+        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2053920855;
-        Sat,  8 Sep 2018 03:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536379073;
-        bh=arwUWlO1pkWaHSXd2bTSDzEx3UalQy/6JHWxcc2vCRE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=q7zHoK+LE1meC/KdGOFnvjqhp9k1H9KKPYGsU98lotrS+SAnjb+ezt8vSMIKif8mm
-         O3v9d1p+aedETIw0RnNOhQYMMBsxI9KTrXb2vClcZf3gpqzVpKlFtNVwbHDx2WeFoU
-         Lod7/JHHKBrBfomzFVq62lrB34h3QEuCYwIsXv4k=
-Date:   Sat, 8 Sep 2018 12:57:49 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arnd@arndb.de
-Subject: Re: linux-next: build warnings from the build of Linus' tree
-Message-Id: <20180908125749.9c903e507a33046d5586e841@kernel.org>
-In-Reply-To: <ebad9c9d-a7d0-44cc-f000-bf5e500fcd24@linux.ibm.com>
-References: <20180824133206.4218c2e5@canb.auug.org.au>
-        <20180824172053.20fa197294f51496dcec5605@kernel.org>
-        <20180824204756.e787765461975cd1e27502dc@kernel.org>
-        <20180824224211.2934d7c0@canb.auug.org.au>
-        <20180826171058.e07f99e6e03f7497e5a46ed3@kernel.org>
-        <20180828072333.36af4d5d@canb.auug.org.au>
-        <20180828094341.d20d8fbcb9dca310d44df951@kernel.org>
-        <f0ca0036-abe1-4252-6d30-b810dd22097d@linux.ibm.com>
-        <20180907014209.49e2940f74615a1e4f544ffd@kernel.org>
-        <ebad9c9d-a7d0-44cc-f000-bf5e500fcd24@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id CFD90C1837;
+        Sat,  8 Sep 2018 06:06:56 +0200 (CEST)
+Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
+ rotational device
+To:     Xuewei Zhang <xueweiz@google.com>, Theodore Ts'o <tytso@mit.edu>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        ming.lei@redhat.com, hare@suse.de, hch@lst.de, pbonzini@redhat.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aditya Kali <adityakali@google.com>, groeck@chromium.org,
+        =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <maze@google.com>
+References: <20180906203719.209399-1-xueweiz@google.com>
+ <1536272873.26747.11.camel@acm.org> <20180906224210.GK5098@thunk.org>
+ <CAPtwhKoFE-eZcRkvhpJgyutGK91ZouwSjTRb-cwHLQjBkriksw@mail.gmail.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <26273801-8dd5-983a-ef09-f8eef21749ac@acm.org>
+Date:   Fri, 7 Sep 2018 21:06:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAPtwhKoFE-eZcRkvhpJgyutGK91ZouwSjTRb-cwHLQjBkriksw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: 178.208.39.159
+X-SpamExperts-Domain: mailprotect.be
+X-SpamExperts-Username: 178.208.39.128/27
+Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.06)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5o8cF3p86jO51RKz/iQ3DzJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO6vKcmAs6CbufrvwgXALYJ2A5LiDfh3lq6IyugVpruaU7sA8c0G8vPgpF/mOUR3AbCXA
+ rInbZ6qIwLyBZyJW/YCT9Ui8ESSPXhfBI/CVeVpLWv7L6YAFQCVyuHTI87HxBfWpAw+3oS8eQJ1j
+ rvdLDWC8eVP+pWyk8IQQ1lL3EHX54FFwuzjqg0YMSb5Z0gwwMsQa9E0mv5W8tg6akrbeq2/q3gKP
+ YN4pDx6T+Gom7LQv3fOjRDD9OGUKRZmyo9aj/eZNohDx+e40Z/8DK3FY6+L//vWhll9ubWTAaTwX
+ JtFJvdePI8pMO8g15dV4F8DQ+QgXAmY3WV/PikYBtj1zgVj/gbuP7hnUK8NQdLwsVWKI5h95nPh9
+ a549uEJDlX2zbVNiLZt/QXQnOBRD+jq1HsIsPYYqgCE9VHi2RrGTOb8LVtuU7LV93speZaHn7N0i
+ oBjisIUymzDZZZVpKet7jIJvhPVU8VsnjvDKPRgDOuBhGRQP6aoq2j5ibghWGduoTt0e4JZGLi4N
+ 7z34dRW8He8OS36jJS0vGLHCMBZ8qZbSH5hAeUS9cQyvi5qmSFkUknN5Z0HND1jmKFhIjcMZ2Hzp
+ D59QdM/f9KJhSSfjTAUyLIywuTEI0kISK7u1AZUYswhRnz2TBlRANbxfwyKJau9SJCaCv74Yh1P8
+ 2G5a6FUfCqKyMMr9DC5xv10I1RUEoMex+02z+OLc6JgtScTK+tB+krcu2EUkcwJAT4fgYEF9hqUv
+ gugTwCBLPD4olaNxG1Uzhk3emVQ3gGhRNfbGmn/DPdxtH4YeHcdUG7t52t8IQOrYSw1F+nigO8Hc
+ zQSiYxqZR3KVQgqF/fPYYAfEfshY5+rKdpQX0JCawTpXLsZHQ6Opvgt3P7LuE20sspzMMtco3f54
+ Vr05fWzzciEg6Ru2OdWr+Or9P0IHyk2pZXI5Aop9L1WAXCZ22036WHg8viWNUl/fumlD47sXPQEl
+ p1YRFZ4oobg8BBg3Jq+ntzj0/GqJg4E/KNK41fXYWiMK3hUu9uwJu0VOx5JgxLZ/jzH5BeM+PPvo
+ BWcDxsFUXzz0RLajaudc+HA3xjQwpRltQnLYM3A6BXfvel8OEFDbU53Bgg0jWhcETmPWhuXbFcbm
+ 0rFyn10wV+nM7dIy27DE7cdXogrgAlIbNoRIs8zFcDjnShMu2z+YCLdt1O36QJzT4QKoDPA69FJ5
+ 6j6TBEeRw33i5WSyISiVtdP1UgGt/UpwRJ/eXhAiot4MY812nNgiJt0ptDwHWmhqaO2WHXIzPWeB
+ 6FPJK/BpIbQy+VVErox5P1XXf9064N+GSqYoBRs3
+X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Sep 2018 14:50:59 +0200
-Peter Oberparleiter <oberpar@linux.ibm.com> wrote:
+On 09/06/18 16:03, Xuewei Zhang wrote:
+> On Thu, Sep 6, 2018 at 3:42 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>> There was a discussion about a number of *years* ago; blk-mq has been
+>> baking for a very long time.  In the early days of block_mq, the
+>> overwhelming percentage of the users of blk-mq where those who were
+>> using PCIe attached flash.  So when, I raised this question, the
+>> argument was that SSD users have no entropy.  Which I agree with; but
+>> now that blk-mq is the default, and hard drives are using blk-mq, it's
+>> time for a patch like Xuewei's.
+>
+> Besides Ted's point of "SSD users have no entropy", I think there are
+> two more reasons:
+> 1. setting QUEUE_FLAG_ADD_RANDOM has a more visible performance hit
+> on SSD disks than rotational disks.
+> 2. SSD disks provide less entropy than rotational disks.
+> I actually experimented on Container-Optimized OS, running on Google
+> Compute Engine with QUEUE_FLAG_ADD_RANDOM set.
+> Turns out the VM will have ~800 bit of entropy provided on boot on
+> rotational disk;
+> and will only have ~70 bit of entropy if running on SSD (and remember
+> there are ~50 bit contributed from other sources).
+> (in the above experiment, both disks were virtualized disks)
 
-> On 06.09.2018 18:42, Masami Hiramatsu wrote:
-> > Peter Oberparleiter <oberpar@linux.ibm.com> wrote:
-> >> I've attached a quick fix that should address both problems. I'd
-> >> appreciate if this patch could get some testing before I post proper fix
-> >> patches.
-> > 
-> > Hmm, I'm still not able to reproduce it on powerpc cross build even with
-> > CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y ... So, sorry I couldn't test this patch.
-> 
-> Maybe this is related to the compiler/binutils versions used. I'm using
-> Fedora 28's gcc-powerpc64 and binutils-powerpc64 packages:
-> 
-> powerpc64-linux-gnu-gcc (GCC) 7.1.1 20170622 (Red Hat Cross 7.1.1-3)
-> GNU ld version 2.29.1-4.fc28
-> 
-> For reference I'm also attaching the config that I used to reproduce the
-> problem on kernel v4.18.
-> 
-> >> diff --git a/arch/arm/kernel/vmlinux.lds.h b/arch/arm/kernel/vmlinux.lds.h
-> >> index ae5fdff18406..2ca33277a28b 100644
-> >> --- a/arch/arm/kernel/vmlinux.lds.h
-> >> +++ b/arch/arm/kernel/vmlinux.lds.h
-> >> @@ -48,6 +48,7 @@
-> >>
-> >>  #define ARM_DISCARD							\
-> >>  		*(.ARM.exidx.exit.text)					\
-> >> +		*(.ARM.exidx.text.exit)					\
-> > 
-> > BTW, why would we need this?
-> 
-> That's necessary to fix one of the two ARM linker failures reported via
-> https://lkml.org/lkml/2018/8/24/345
-> 
-> >>> `.text.exit' referenced in section `.ARM.exidx.text.exit' of
-> >>> kernel/trace/trace_clock.o: defined in discarded section `.text.exit'
-> >>> of kernel/trace/trace_clock.o
-> 
-> Section ".ARM.exidx.text.exit" refers to ".text.exit" which was
-> discarded. With the change above, the extraneous section
-> ".ARM.exidx.text.exit" is also discarded, resolving the linker failure.
+All of the above makes sense to me and is much less risky than changing
+QUEUE_FLAG_MQ_DEFAULT. Hence:
 
-OK, so your patch fixes following issue too?
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-https://patchwork.kernel.org/patch/10584685/
-
-In that case, we should drop above patch.
-
-Thank you,
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
