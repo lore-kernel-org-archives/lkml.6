@@ -2,120 +2,108 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3099FC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 01:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0D2C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 01:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0AD20844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 01:17:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lGNITIw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0AD20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id D661920855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 01:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D661920855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeIHGAN (ORCPT
+        id S1726293AbeIHGRy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 02:00:13 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41418 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbeIHGAM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 02:00:12 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k12-v6so30503728oiw.8
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Sep 2018 18:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gzAFH5NSuWBveeR4MPaOTk11ST2HN8AR5GuWbmgNR8U=;
-        b=lGNITIw5R0JxdBtXHOHOgU+4zh+tfVZgNIlMLw4++KhnHMo6Ds8lXUW9vR9o8Jhrm7
-         jUZ//sS9KcyUiRoNMj+AmUD7IcLU0P0dEse9g6xTitTWAusty5XXy/bjtII2BHbivnbO
-         v3Kj+G8FnL1GhXr4KHwq+PEYkWRzsxqGJXbjNpQruI86JApNtHSxYxsidYaoUOboAkCA
-         4c+ymwqBh47ETFaJqaX8KfeZzjPPsur/f6DJ7/yNeE4Exwfeul/KYFPjwrdrvWF5e+QP
-         dTT0b4oyp+DvSjsuDA4QK6v6le6muhpM7imUyb9s/Aek/ktDGhGurUFqYEiBgL9proPx
-         cQtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gzAFH5NSuWBveeR4MPaOTk11ST2HN8AR5GuWbmgNR8U=;
-        b=KJyx8g97yIy4mHECzx6BrjYiN7jt+tyLIH63TNdzLeMUGCDRLoKRGOOS3OyaTESqf7
-         08mtTUYUcdfNKeLCM7OmMjjgTn8y5h/yCrSkBC8m+ufSy7RZzT9Td8vWMir29xxCgd19
-         HoWvHRoAKnOFxe6gE6tXf6pkGh6zRzUNXueea8rXgTSjU2opMmOHxw+s7w1Eui/eWt5z
-         sJ5+ADWtA4jNotU3IEkpvFSbXLIgMpwDKRUrqmbdYLwMIrchaFmnNm0zQayb5JjQXGXW
-         kj9dy4qavTFIia0kNzzeaCAFwf5ToFEASIoaz2+925Wg8QFskhreCU4g452jlGjQlynT
-         EAUA==
-X-Gm-Message-State: APzg51BbMSv2/kCH/sJroqLkdhdQaerZYf8mplfJUsYFSBUR0FgEL1Si
-        TcTF8mmiqR+To+dilWPQNvG6dMp3wpBQRVdj4SdkBA==
-X-Google-Smtp-Source: ANB0VdYivjRn9LD40b7Cs89ps7hsSrtuDBrllaykv/0WrBoOlxOOUA+WbIpJhnMUA6x9ivGUHkenQWJHROjuH7K0R+k=
-X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr11036848oif.348.1536369395961;
- Fri, 07 Sep 2018 18:16:35 -0700 (PDT)
+        Sat, 8 Sep 2018 02:17:54 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61549 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725731AbeIHGRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 02:17:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Sep 2018 18:34:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,344,1531810800"; 
+   d="scan'208";a="81822586"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga003.jf.intel.com with ESMTP; 07 Sep 2018 18:34:03 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 7 Sep 2018 18:34:02 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.226]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.150]) with mapi id 14.03.0319.002;
+ Sat, 8 Sep 2018 09:34:01 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     Andi Kleen <ak@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Liang, Kan" <kan.liang@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>
+Subject: RE: [PATCH v2 6/8] perf/x86/intel/lbr: guest requesting KVM for lbr
+ stack save/restore
+Thread-Topic: [PATCH v2 6/8] perf/x86/intel/lbr: guest requesting KVM for
+ lbr stack save/restore
+Thread-Index: AQHURdld+pMdNtUyy0Sd+7QREiMBLqTjo3+AgACm8gCAAAzqgIAAkzuQ///PwwCAANSrMA==
+Date:   Sat, 8 Sep 2018 01:34:00 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7397924CB@shsmsx102.ccr.corp.intel.com>
+References: <1536233456-12173-1-git-send-email-wei.w.wang@intel.com>
+ <1536233456-12173-7-git-send-email-wei.w.wang@intel.com>
+ <20180907032707.GN27886@tassilo.jf.intel.com> <5B920B96.6080803@intel.com>
+ <20180907141051.GP27886@tassilo.jf.intel.com>
+ <286AC319A985734F985F78AFA26841F73978F75E@shsmsx102.ccr.corp.intel.com>
+ <20180907200510.GR27886@tassilo.jf.intel.com>
+In-Reply-To: <20180907200510.GR27886@tassilo.jf.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmFkOTRkYTMtMWU5ZS00OWZkLTgzZTQtZThmYTViMGVlNzhmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiakFzaytjRzR5Q3FKY3FwMzhpMWVCWmdzOFhUMFl3UXVCd2EwbzFMZ0hTS1RVT054UEo1Um5IVXBFbUtjUTZFeiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20180907194852.3C351B82@viggo.jf.intel.com> <20180907194902.63F36CFE@viggo.jf.intel.com>
-In-Reply-To: <20180907194902.63F36CFE@viggo.jf.intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 8 Sep 2018 03:16:09 +0200
-Message-ID: <CAG48ez2e8yJJjHeKRTbu46=5mbssZo84iMinBx6B5BgziDJiVQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 7/8] x86/mm/vsyscall: consider vsyscall page part of
- user address space
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        sean.j.christopherson@intel.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 8, 2018 at 2:28 AM Dave Hansen <dave.hansen@linux.intel.com> wrote:
-> The vsyscall page is weird.  It is in what is traditionally part of the
-> kernel address space.  But, it has user permissions and we handle faults
-> on it like we would on a user page: interrupts on.
->
-> Right now, we handle vsyscall emulation in the "bad_area" code, which
-> is used for both user-address-space and kernel-address-space faults.  Move
-> the handling to the user-address-space code *only* and ensure we get there
-> by "excluding" the vsyscall page from the kernel address space via a check
-> in fault_in_kernel_space().
-[...]
->  static int fault_in_kernel_space(unsigned long address)
->  {
-> +       /*
-> +        * The vsyscall page is at an address above TASK_SIZE_MAX,
-> +        * but is not considered part of the kernel address space.
-> +        */
-> +       if (is_vsyscall_vaddr(address))
-> +               return false;
+On Saturday, September 8, 2018 4:05 AM, Andi Kleen wrote:
+> > How would you realize the function of saving/restoring the lbr stack on the
+> host?
+> >
+> > Here, we create a perf event on the host (please see
+> guest_lbr_event_create on patch 7), which essentially satisfies all the
+> conditions (e.g. increases cpuc->lbr_users) that are required to have the lbr
+> stack saved/restored on the vCPU switching.
+> >
+> > If we want to stop the host side lbr stack save/restore for the vCPU, we
+> need accordingly to call guest_lbr_event_release (in patch 7) to destroy that
+> perf event (the host doesn't automatically stop saving the lbr stack for the
+> vCPU if that perf event is still there).
+> >
+> > When would you call that release function? (we all know that the lbr
+> > doesn't need to be saved when the guest is not using it, but we need
+> > to destroy that perf event to achieve "doesn't need to be saved")
+> 
+> Maybe set a timer on DEBUGCTL LBR=0 ? A timer would provide hysteresis,
+> so that quick toggles (like in a PMI handler) wouldn't do anything expensive.
 
-I think something should check for "#ifdef CONFIG_X86_64"? 32-bit
-doesn't have a vsyscall page, right? And this code probably shouldn't
-veer off into the userspace-area fault handling code for addresses in
-the range 0xff600000-0xff600fff... what is in that region on 32-bit?
-Modules or something like that?
-Maybe change is_vsyscall_vaddr() so that it always returns false on
-32-bit, or put both the definition of is_vsyscall_vaddr() and this
-code behind #ifdef guards.
-And, in a separate patch, maybe also #ifdef-guard the definition of
-VSYSCALL_ADDR in vsyscall.h? Nothing good is going to result from
-making a garbage VSYSCALL_ADDR available to 32-bit code.
+I'm not sure if this would solve the key problem. What would be the frequency to have the timer fired?
 
-> +#ifdef CONFIG_X86_64
-> +       /*
-> +        * Instruction fetch faults in the vsyscall page might need
-> +        * emulation.  The vsyscall page is at a high address
-> +        * (>PAGE_OFFSET), but is considered to be part of the user
-> +        * address space.
-> +        *
-> +        * The vsyscall page does not have a "real" VMA, so do this
-> +        * emulation before we go searching for VMAse
+- Let's say every 10ms, for example. The guest is disturbed by a timer interrupt (cause VMExit) every 10ms, though the guest doesn't use the lbr any more after the first use. The problem is switched to when do we call the release function to cancel the timer if we want to avoid that unnecessary disturbance to the guest.
 
-"VMAse"? Is that a typo?
+- When the timer fires, and it finds "DEBUGCTL LBR=0", it destroys the host side perf event, then the lbr stack isn't saved when the vCPU is scheduled out. As also mentioned in the commit log, perf_pmu_sched_task in the guest disables that bit before reading out the lbr stack (pmi is another example). Now, DEBUGCTL LBR=0", and before the guest read out the lbr stack, the vCPU may happen to be scheduled out, and another thread on the host is scheduled in and will get the lbr stack overwritten. So, before the guest reads out the lbr stack, the stack has already been polluted in this case.
+
+Best,
+Wei
