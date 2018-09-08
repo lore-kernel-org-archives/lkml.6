@@ -6,198 +6,159 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E281C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271B1C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 312412086E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312412086E
+	by mail.kernel.org (Postfix) with ESMTP id E0E612086B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:30:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E612086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeIHTQc (ORCPT
+        id S1727578AbeIHTQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 15:16:32 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:46373 "EHLO
+        Sat, 8 Sep 2018 15:16:40 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:44743 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeIHTQc (ORCPT
+        with ESMTP id S1726351AbeIHTQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 15:16:32 -0400
+        Sat, 8 Sep 2018 15:16:39 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MFsER-1g5WvQ3FwF-00HMTN; Sat, 08 Sep 2018 16:30:23 +0200
+ 1Mzhzd-1fc9Ql2W1Z-00vgsF; Sat, 08 Sep 2018 16:30:38 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     viro@zeniv.linux.org.uk
-Cc:     Arnd Bergmann <arnd@arndb.de>, Karsten Keil <isdn@linux-pingi.de>,
-        Paul Bolle <pebolle@tiscali.nl>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        gigaset307x-common@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 04/11] compat_ioctl: remove isdn ioctl translation
-Date:   Sat,  8 Sep 2018 16:28:10 +0200
-Message-Id: <20180908142837.2819693-4-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 05/11] compat_ioctl: remove IGNORE_IOCTL()
+Date:   Sat,  8 Sep 2018 16:28:11 +0200
+Message-Id: <20180908142837.2819693-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180908142837.2819693-1-arnd@arndb.de>
 References: <20180908142837.2819693-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:WgQp1kucjzT9wpU82gmyNa2NWeV+CUQUCZhKJKPf+jQrikhscCh
- oZ29mZnpA1q27MxKVC+RNzANQPqkL8aaFxXruUYtKZZIOK4WYLCJfpb9nwCLOrgrmyELvzQ
- pNw5Xncgxtu9+xUX2radRs5iruAzaP/9LjiFGHaV95QpvFsD9OLmU0L+s7QCat7aj+plFNj
- jSEeOB9uYBxMcrcqiRUig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:v6ytYpd0Njg=:PCa9TBvgLaTRpp//15zQuX
- ZDmAtx/uUtW7TaGRasUMQwQd37lmsWVzBf2lhZOQsWBh2aQeUeTnZCWHRzBKYZlnGTjD522BN
- 5MUGKDPsSI/uw2qJwm2UiswVZeViNXOTv/xVpCNPwm7tQmIcqRXmbl35ET7oBUHYQNUEWNLOf
- HCx2gaZsFrKnToX/rkpNJ2IyprghqiIWTmG+v65JrCK0ELzwDx2X2MaZJG/l/kyA6R96N+b6K
- hGjGY0CAt2QbCY87skNcgA752wQFVgtntsktgc9gP6rWkmLNTePzu4uJjeJ4crkP/7lh5u6bc
- Atj4arnpsx6VvT1lFqOcILC5p9hK4ejKmL01FgPgbYa2Ap7xTe2ZGHccVb9GKv8Tk1I0FHcsw
- 9qNvH8OJoMVnMkuCy0J23Ks7pGXgVtDG1Z/+z1/J2ZpE/gvJPml3n2ydb5g2hGu8d3aj0NiIR
- WX0zbg733ACCA/JnWN2qVBiI14KeZQ/xy1UDKzf8fE5/81fIokVdrq49yDVIObY6K+a+dUKos
- 4m+9xEGxtkA6oCD0N2pVBvNkjW/4JPq8QaQAhaJ/PXqN6xkbFBp404PoPTwtuG0YkTmOz1fo2
- EAoz0zUSK4iYN78V/c1ambpeAc5wQJKOQ6Z0wOeeISEH8GtQy1NR5fJ4TiSL4Nu/86oUrjaYm
- Eg6eMZLDjiWxVgfHq/pTswVQ4PpMgegoviJNbTl1c3C0GEZT6PKir9hYWSWeTpaH2Fb4=
+X-Provags-ID: V03:K1:nGbJ5rDoHoRTqGmMjwVxk1EKcIjD3EJ4qLojhrz8TGe5tT+v4vw
+ wShQKhuSiQodO+1Y/rvhQQgjbBFG15AfpNpwXsNKzDwJYzoro7wPQsg7PL/0+JHIIEYZYnt
+ g3HYDhDVdkqNc8lxT7dZFgKeqv2SkcIvgcJKiXi8zPQhW/jDSJkEZrkFUxpeEoOHkIx1p45
+ 6yAaspwr2GgTn84kY2izg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OdVvqWONxx8=:KOdinIiFeW80teagBmcu9c
+ Uj691wMWWSrTqvMjFTmBe02FhdKpw0F8AbYxxdqLevsZIs1+Qxhp/wEwpMWpIVjUoLwaZvO9j
+ Go9Wa4UZU34AnqZ68Ko8r/7B9zoQ0vIphOqsCvH2vHwBxq1zR13lu2xyzf3WfwBbngzb4uGK/
+ ECs4rWABxwvZr+MBt6wETmljILAgXjb86JzKyrv2g39wilYC2I7rTaGSvoIXMcBdD5dPvbpwC
+ XTZSSlOb1zX7Te9HuYVBW71GWwv2cPl4f+m8nRuyzX7WZtiHwxhDnSwwmmX9F34qOXQk3FVxs
+ IuTn8qHSAHdNRcQ/SJpWchhW8UtFmiizyr2Cs4bZ3dHXCuZnCHGNBFM/uCZszr7sVLTd7RPrz
+ qxnFO/D8yPkzgXq6HkkqhkVnydv0LWhmttmFkRD4Y/0yYyFdpFCPwD9MuI5M1QXyLS1l/GMb9
+ qpKbViThyCzbKpy3MiZqzumrdUsAS9Cffqsk7P/gmDoMl8GVBZGN2NOeR4lBTVsq40UC5CT9Y
+ 2x/jVkz4ze3rmX5nIDt1Ex+2VJhhi9vwvjLEpdmxBicQdvuBB1CvC9fhndg+uj90AKeT8mJPc
+ mlQtIOhATBWfmpHS26tMlT9DNfHAw4m5dgyU1Z4EZbRyuio49pdxZo/W0lnh2/JOU/LF7paab
+ rfwF1bsvbN1TanbDngbYB+0G3D8iFkiZa725mDpDQs4YyMBMryhNgEElTQnaOn2vM5Mo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neither the old isdn4linux interface nor the newer mISDN stack
-ever had working 32-bit compat mode as far as I can tell.
+Since commit 07d106d0a33d ("vfs: fix up ENOIOCTLCMD error handling"),
+we don't warn about unhandled compat-ioctl command code any more, but
+just return the same error that a native file descriptor returns when
+there is no handler.
 
-However, the CAPI stack and the Gigaset ISDN driver (implemented
-on top of either CAPI or i4l) have some ioctl commands that are
-correctly listed in fs/compat_ioctl.c.
-
-We can trivially move all of those into the two corresponding
-files that implement the native handlers by adding a compat_ioctl
-redirect to that.
-
-I did notice that treating CAPI_MANUFACTURER_CMD() as compatible
-is broken, so I'm also adding a handler for that, realizing that
-in all likelyhood, nobody is ever going to call it.
+This means the IGNORE_IOCTL() annotations are completely useless and
+can all be removed. TIOCSTART/TIOCSTOP and KDGHWCLK/KDSHWCLK fall into
+the same category, but for some reason were listed as COMPATIBLE_IOCTL().
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/isdn/capi/capi.c         | 31 +++++++++++++++++++++++++++++++
- drivers/isdn/gigaset/interface.c | 10 ++++++++++
- fs/compat_ioctl.c                | 22 ----------------------
- 3 files changed, 41 insertions(+), 22 deletions(-)
+ fs/compat_ioctl.c | 56 -----------------------------------------------
+ 1 file changed, 56 deletions(-)
 
-diff --git a/drivers/isdn/capi/capi.c b/drivers/isdn/capi/capi.c
-index ef5560b848ab..4851dc3941eb 100644
---- a/drivers/isdn/capi/capi.c
-+++ b/drivers/isdn/capi/capi.c
-@@ -942,6 +942,34 @@ capi_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	return ret;
- }
- 
-+#ifdef CONFIG_COMPAT
-+static long
-+capi_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	int ret;
-+
-+	if (cmd == CAPI_MANUFACTURER_CMD) {
-+		struct {
-+			unsigned long cmd;
-+			compat_uptr_t data;
-+		} mcmd32;
-+
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+		if (copy_from_user(&mcmd32, compat_ptr(arg), sizeof(mcmd32)))
-+			return -EFAULT;
-+
-+		mutex_lock(&capi_mutex);
-+		ret = capi20_manufacturer(mcmd32.cmd, compat_ptr(mcmd32.data));
-+		mutex_unlock(&capi_mutex);
-+
-+		return ret;
-+	}
-+
-+	return capi_unlocked_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
-+
- static int capi_open(struct inode *inode, struct file *file)
- {
- 	struct capidev *cdev;
-@@ -988,6 +1016,9 @@ static const struct file_operations capi_fops =
- 	.write		= capi_write,
- 	.poll		= capi_poll,
- 	.unlocked_ioctl	= capi_unlocked_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl	= capi_compat_ioctl,
-+#endif
- 	.open		= capi_open,
- 	.release	= capi_release,
- };
-diff --git a/drivers/isdn/gigaset/interface.c b/drivers/isdn/gigaset/interface.c
-index 600c79b030cd..faae8ae54802 100644
---- a/drivers/isdn/gigaset/interface.c
-+++ b/drivers/isdn/gigaset/interface.c
-@@ -233,6 +233,13 @@ static int if_ioctl(struct tty_struct *tty,
- 	return retval;
- }
- 
-+#ifdef CONFIG_COMPAT
-+static long if_compat_ioctl(struct tty_struct *tty, unsigned int cmd, unsigned long arg)
-+{
-+	return if_ioctl(tty, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
-+
- static int if_tiocmget(struct tty_struct *tty)
- {
- 	struct cardstate *cs = tty->driver_data;
-@@ -472,6 +479,9 @@ static const struct tty_operations if_ops = {
- 	.open =			if_open,
- 	.close =		if_close,
- 	.ioctl =		if_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl =		if_compat_ioctl,
-+#endif
- 	.write =		if_write,
- 	.write_room =		if_write_room,
- 	.chars_in_buffer =	if_chars_in_buffer,
 diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 875516658c39..7d8c5722fd0a 100644
+index 7d8c5722fd0a..b56a3842d61d 100644
 --- a/fs/compat_ioctl.c
 +++ b/fs/compat_ioctl.c
-@@ -61,9 +61,6 @@
- #include <net/bluetooth/hci_sock.h>
- #include <net/bluetooth/rfcomm.h>
+@@ -463,20 +463,7 @@ static int compat_ioctl_preallocate(struct file *file,
+ #define XFORM(i) (((i) ^ ((i) << 27) ^ ((i) << 17)) & 0xffffffff)
  
--#include <linux/capi.h>
--#include <linux/gigaset_dev.h>
+ #define COMPATIBLE_IOCTL(cmd) XFORM((u32)cmd),
+-/* ioctl should not be warned about even if it's not implemented.
+-   Valid reasons to use this:
+-   - It is implemented with ->compat_ioctl on some device, but programs
+-   call it on others too.
+-   - The ioctl is not implemented in the native kernel, but programs
+-   call it commonly anyways.
+-   Most other reasons are not valid. */
+-#define IGNORE_IOCTL(cmd) COMPATIBLE_IOCTL(cmd)
 -
+ static unsigned int ioctl_pointer[] = {
+-/* compatible ioctls first */
+-COMPATIBLE_IOCTL(0x4B50)   /* KDGHWCLK - not in the kernel, but don't complain */
+-COMPATIBLE_IOCTL(0x4B51)   /* KDSHWCLK - not in the kernel, but don't complain */
+-
+ /* Big T */
+ COMPATIBLE_IOCTL(TCGETA)
+ COMPATIBLE_IOCTL(TCSETA)
+@@ -553,9 +540,6 @@ COMPATIBLE_IOCTL(SCSI_IOCTL_SEND_COMMAND)
+ COMPATIBLE_IOCTL(SCSI_IOCTL_PROBE_HOST)
+ COMPATIBLE_IOCTL(SCSI_IOCTL_GET_PCI)
+ #endif
+-/* Big V (don't complain on serial console) */
+-IGNORE_IOCTL(VT_OPENQRY)
+-IGNORE_IOCTL(VT_GETMODE)
+ /*
+  * These two are only for the sbus rtc driver, but
+  * hwclock tries them on every rtc device first when
+@@ -569,11 +553,6 @@ COMPATIBLE_IOCTL(MTIOCTOP)
+ /* Socket level stuff */
+ COMPATIBLE_IOCTL(FIOQSIZE)
  #ifdef CONFIG_BLOCK
- #include <linux/cdrom.h>
- #include <linux/fd.h>
-@@ -670,25 +667,6 @@ COMPATIBLE_IOCTL(HIDPCONNADD)
- COMPATIBLE_IOCTL(HIDPCONNDEL)
- COMPATIBLE_IOCTL(HIDPGETCONNLIST)
- COMPATIBLE_IOCTL(HIDPGETCONNINFO)
--/* CAPI */
--COMPATIBLE_IOCTL(CAPI_REGISTER)
--COMPATIBLE_IOCTL(CAPI_GET_MANUFACTURER)
--COMPATIBLE_IOCTL(CAPI_GET_VERSION)
--COMPATIBLE_IOCTL(CAPI_GET_SERIAL)
--COMPATIBLE_IOCTL(CAPI_GET_PROFILE)
--COMPATIBLE_IOCTL(CAPI_MANUFACTURER_CMD)
--COMPATIBLE_IOCTL(CAPI_GET_ERRCODE)
--COMPATIBLE_IOCTL(CAPI_INSTALLED)
--COMPATIBLE_IOCTL(CAPI_GET_FLAGS)
--COMPATIBLE_IOCTL(CAPI_SET_FLAGS)
--COMPATIBLE_IOCTL(CAPI_CLR_FLAGS)
--COMPATIBLE_IOCTL(CAPI_NCCI_OPENCOUNT)
--COMPATIBLE_IOCTL(CAPI_NCCI_GETUNIT)
--/* Siemens Gigaset */
--COMPATIBLE_IOCTL(GIGASET_REDIR)
--COMPATIBLE_IOCTL(GIGASET_CONFIG)
--COMPATIBLE_IOCTL(GIGASET_BRKCHARS)
--COMPATIBLE_IOCTL(GIGASET_VERSION)
- /* Misc. */
- COMPATIBLE_IOCTL(0x41545900)		/* ATYIO_CLKR */
- COMPATIBLE_IOCTL(0x41545901)		/* ATYIO_CLKW */
+-/* md calls this on random blockdevs */
+-IGNORE_IOCTL(RAID_VERSION)
+-/* qemu/qemu-img might call these two on plain files for probing */
+-IGNORE_IOCTL(CDROM_DRIVE_STATUS)
+-IGNORE_IOCTL(FDGETPRM32)
+ /* SG stuff */
+ COMPATIBLE_IOCTL(SG_SET_TIMEOUT)
+ COMPATIBLE_IOCTL(SG_GET_TIMEOUT)
+@@ -684,41 +663,6 @@ COMPATIBLE_IOCTL(JSIOCGNAME(0))
+ COMPATIBLE_IOCTL(TIOCGLTC)
+ COMPATIBLE_IOCTL(TIOCSLTC)
+ #endif
+-#ifdef TIOCSTART
+-/*
+- * For these two we have definitions in ioctls.h and/or termios.h on
+- * some architectures but no actual implemention.  Some applications
+- * like bash call them if they are defined in the headers, so we provide
+- * entries here to avoid syslog message spew.
+- */
+-COMPATIBLE_IOCTL(TIOCSTART)
+-COMPATIBLE_IOCTL(TIOCSTOP)
+-#endif
+-
+-/* fat 'r' ioctls. These are handled by fat with ->compat_ioctl,
+-   but we don't want warnings on other file systems. So declare
+-   them as compatible here. */
+-#define VFAT_IOCTL_READDIR_BOTH32       _IOR('r', 1, struct compat_dirent[2])
+-#define VFAT_IOCTL_READDIR_SHORT32      _IOR('r', 2, struct compat_dirent[2])
+-
+-IGNORE_IOCTL(VFAT_IOCTL_READDIR_BOTH32)
+-IGNORE_IOCTL(VFAT_IOCTL_READDIR_SHORT32)
+-
+-#ifdef CONFIG_SPARC
+-/* Sparc framebuffers, handled in sbusfb_compat_ioctl() */
+-IGNORE_IOCTL(FBIOGTYPE)
+-IGNORE_IOCTL(FBIOSATTR)
+-IGNORE_IOCTL(FBIOGATTR)
+-IGNORE_IOCTL(FBIOSVIDEO)
+-IGNORE_IOCTL(FBIOGVIDEO)
+-IGNORE_IOCTL(FBIOSCURPOS)
+-IGNORE_IOCTL(FBIOGCURPOS)
+-IGNORE_IOCTL(FBIOGCURMAX)
+-IGNORE_IOCTL(FBIOPUTCMAP32)
+-IGNORE_IOCTL(FBIOGETCMAP32)
+-IGNORE_IOCTL(FBIOSCURSOR32)
+-IGNORE_IOCTL(FBIOGCURSOR32)
+-#endif
+ };
+ 
+ /*
 -- 
 2.18.0
 
