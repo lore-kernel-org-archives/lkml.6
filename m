@@ -2,154 +2,116 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D916C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 20:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821D3C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 20:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1148D20645
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 20:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2270920844
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 20:49:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="1JzLTG6A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1148D20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DirYPGuz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2270920844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeIIBXJ (ORCPT
+        id S1727787AbeIIBgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 21:23:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41727 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbeIIBXJ (ORCPT
+        Sat, 8 Sep 2018 21:36:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36009 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727694AbeIIBgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 21:23:09 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s15-v6so8576744pgv.8
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 13:36:09 -0700 (PDT)
+        Sat, 8 Sep 2018 21:36:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id e1-v6so9019021wrt.3;
+        Sat, 08 Sep 2018 13:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f9QE5Op2sxQPtdyoUwLTbkThRRP0odgRbRy4vVZ3GdE=;
-        b=1JzLTG6AI8K/3DmjdyIz19ChK8I5wegv2w3xkYj0CUBkcTfMEoL7wGkLqFflLJlPHi
-         qQ2Onup2nAWhFduozifE0x0jnA1EFgCRXn3BtHUul14YQtlvbTuVstU4a6TQq9d+C4ku
-         LmoC+NZf9vjXuowusqCBX8zskieg4GMje33YyEKuVRHKix2AQCLiWvgEY/ESPvlwGYYW
-         PFqsMZ3Lo398qfjv8h7NTl2B7BkAs3TDC6TvkKlS0oUIYFjsO/+uZM3/bUkYhhvv/up3
-         fhM04w+qGveKmSrHFCgxJXm4TTxEbHwq6ZwoHkzas/CuJ7v9LvkXrFCdVyBf9FKxURif
-         Hj3Q==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BqpDjtvaAQ4a/UpqTfDYlkLNzhD2kzMzJp1D0JotkPY=;
+        b=DirYPGuz9j9nQcssgAon6TYhLbYDHBxviDWcWNd0//0jiegIhBZRip+x0p6amuKbb7
+         WNd19Lx7VD2ey4yFWPtOey2QBUSD9ZRSD5PGREXwRT5c+rwisLefz1P+lz+Ag+HrOMZj
+         nXy8VNGSrlMXPnAGcbM0c4rDp0T1pS7m0GvnY/bGt6CRfojqkYpgyemIazyzIxF/OAQh
+         oS1AT4x6/oozBOVMZAyhi9Rszk3B6ihuuOTZXIxAWn1nagKtLkLMy4PbVSpggbbCUyV1
+         qCUdlbOugH9OVXAhjoXpntRH35ai2aXB1KsfLtZ/7J2ptRMAuyAO66VKtMHk98W6RzW6
+         NFaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f9QE5Op2sxQPtdyoUwLTbkThRRP0odgRbRy4vVZ3GdE=;
-        b=AFX9ecKV5EhG3j6u6tRpKG53F+NapMsN0K28GWvVwtZmRC/oCGZupW0ZcMsbYUn/a0
-         uscFqRHlAWvVBURrfOEhtjgqlpTRbGKhhW6KlBPhZNK2WMt9NQNjuO+LOVsQFKIxO/+g
-         YBGgMQiDJArM/aLoTqONjPSk8trjC1ru79Qz9WQwv9GBrntYOp3kdUZQrUDDeIuWrudX
-         fUA6hfWXsQ+ZFbAHx8HHqM5YlZmS6IX5HugY90vUa4oMgANBLYh1+obQm0VPiHWcB/a+
-         7W2c8GnD4aBuQAKBBlUdizNYoYyfQPxm4RUvXLg5oq0d/tFF91mI85BEtCa0h6Xsr13Q
-         t7PQ==
-X-Gm-Message-State: APzg51Auw4fMSw1Au25zaDSeRHsEgqlTrKl53JTPeW643zIEBFJTfhAB
-        yF5P3vzAZnD64bub6LyJruRNNw==
-X-Google-Smtp-Source: ANB0VdZTEQwkkBj9owpDMJMafsXhO27SHjDmwn6aS5g52RyFzgUlDWDt1IzdqQYbCXUEolCeiy1Qtw==
-X-Received: by 2002:a62:d94:: with SMTP id 20-v6mr15429276pfn.202.1536438968594;
-        Sat, 08 Sep 2018 13:36:08 -0700 (PDT)
-Received: from cisco.cisco.com ([172.56.30.142])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm20569207pfs.58.2018.09.08.13.36.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 08 Sep 2018 13:36:07 -0700 (PDT)
-Date:   Sat, 8 Sep 2018 14:35:56 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Tyler Hicks <tyhicks@canonical.com>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v6 1/5] seccomp: add a return code to trap to userspace
-Message-ID: <20180908203556.GF3444@cisco.cisco.com>
-References: <20180906152859.7810-1-tycho@tycho.ws>
- <20180906152859.7810-2-tycho@tycho.ws>
- <20180906221412.GA26209@sec>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BqpDjtvaAQ4a/UpqTfDYlkLNzhD2kzMzJp1D0JotkPY=;
+        b=HJaYwK4IPslFqVcIJYuYo2WXNbH93XOCCyYERNxgIC3MXDfQ6f5Tw2HJm0EBTLnLs7
+         S4qb48zQMSA5fqdj1qRLCh6s5EDnWM7NgbGhtUmXDwZiAKGETtDLzGa3wsod+J7Ju5zy
+         I+Nr4NfGun3j8d6UMRWnDv8dTwbNA66117J0veUeO7HpITpBxdXBEhOam9SL7s/jigBp
+         kMf5hdS/LqX8Y2Cx2LT7flkrakSC9MerPeGxit2PF448w8poUHAQcyuGYEJ74BeuOu//
+         /X9hCoye25VH2tWDdaOP2Io/mm9rPbSJxSM5zJDTWiWsbRnuZpOMSL4xMNCJYMAmh+xt
+         fDkg==
+X-Gm-Message-State: APzg51C4Tr7YauSVm39giUJ1nul0Yp9U+0pMTRIxg1GdDWSCWv4lpb4p
+        GMcIPhbvAjn9JUTMf7UdMGWs+NJy
+X-Google-Smtp-Source: ANB0VdarlLji1H0ldsVcBbpcEDo+GjJN+Lv+0mkVmH3/fKhEEESOfk6Kbo3Ln/yAxgTUlp42Po2EWw==
+X-Received: by 2002:adf:e44e:: with SMTP id t14-v6mr10001343wrm.96.1536439748576;
+        Sat, 08 Sep 2018 13:49:08 -0700 (PDT)
+Received: from [192.168.1.18] (civ14.neoplus.adsl.tpnet.pl. [83.31.45.14])
+        by smtp.gmail.com with ESMTPSA id j2-v6sm19405693wmj.5.2018.09.08.13.49.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 08 Sep 2018 13:49:07 -0700 (PDT)
+Subject: Re: [PATCH] leds: pwm: silently error out on EPROBE_DEFER
+To:     Jerome Brunet <jbrunet@baylibre.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180906135904.13803-1-jbrunet@baylibre.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <b9d1e9bf-956a-9560-d223-2b4c5a76b14f@gmail.com>
+Date:   Sat, 8 Sep 2018 22:49:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180906221412.GA26209@sec>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180906135904.13803-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 10:15:12PM +0000, Tyler Hicks wrote:
-> On 2018-09-06 09:28:55, Tycho Andersen wrote:
-> >  /**
-> >   * struct seccomp_filter - container for seccomp BPF programs
-> >   *
-> > @@ -66,6 +114,30 @@ struct seccomp_filter {
-> >  	bool log;
-> >  	struct seccomp_filter *prev;
-> >  	struct bpf_prog *prog;
-> > +
-> > +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
-> > +	/*
-> > +	 * A semaphore that users of this notification can wait on for
-> > +	 * changes. Actual reads and writes are still controlled with
-> > +	 * filter->notify_lock.
-> > +	 */
-> > +	struct semaphore request;
-> > +
-> > +	/* A lock for all notification-related accesses. */
-> > +	struct mutex notify_lock;
-> > +
-> > +	/* Is there currently an attached listener? */
-> > +	bool has_listener;
-> > +
-> > +	/* The id of the next request. */
-> > +	u64 next_id;
-> > +
-> > +	/* A list of struct seccomp_knotif elements. */
-> > +	struct list_head notifications;
-> > +
-> > +	/* A wait queue for poll. */
-> > +	wait_queue_head_t wqh;
-> > +#endif
+Hi Jerome,
+
+Thank you for the patch.
+
+On 09/06/2018 03:59 PM, Jerome Brunet wrote:
+> When probing, if we fail to get the pwm due to probe deferal, we shouldn't
+> print an error message. Just be silent in this case.
 > 
-> I suspect that these additions would benefit from better struct packing
-> since there could be a lot of seccomp_filter structs floating around in
-> memory on a system with a large number of running containers or
-> otherwise sandboxed processes.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/leds/leds-pwm.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> IIRC, there's a 3 byte hole following the log member that could be used
-> by has_listener, at least, and I'm not sure how the rest of the new
-> members affect things.
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index df80c89ebe7f..5d3faae51d59 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -100,8 +100,9 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+>  		led_data->pwm = devm_pwm_get(dev, led->name);
+>  	if (IS_ERR(led_data->pwm)) {
+>  		ret = PTR_ERR(led_data->pwm);
+> -		dev_err(dev, "unable to request PWM for %s: %d\n",
+> -			led->name, ret);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "unable to request PWM for %s: %d\n",
+> +				led->name, ret);
+>  		return ret;
+>  	}
+>  
+>
 
-So it turns out the additions are fairly major. The previous
-sizeof(struct seccomp_filter) == 24 bytes on x86_64, with the three
-byte hole you mentioned.
+Applied.
 
-The new members alone actual sizes are:
-
-sizeof(struct sempahore) request == 80
-sizeof(struct mutex) notify_lock == 128
-sizeof(struct list_head) notifications == 16
-sizeof(struct wait_queue_head_t) wqh == 72
-
-+ the base types of next_id, has_listener gives a grand total of 305
-additional bytes, assuming it's packed perfectly. That seems like
-quite a huge hit for everyone to endure, especially since it won't be
-perfectly packed.
-
-Instead, what if we add a struct notification, and a struct
-notification* to struct seccomp_filter? Then we can drop the bool
-has_listener because we can use a null test, and the 304 bytes are
-only paid by people who actually use this feature (as well as the cost
-of an additional indirection, but who cares, they're trapping to
-userspace anyway). Unless I hear any objections, I'll do this for v7
-:)
-
-Tycho
+-- 
+Best regards,
+Jacek Anaszewski
