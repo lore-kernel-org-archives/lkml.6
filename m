@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494FCC4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A3EC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D2B20855
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D2B20855
+	by mail.kernel.org (Postfix) with ESMTP id 94F4620855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:16:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F4620855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeIHG7e (ORCPT
+        id S1727188AbeIHG72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 02:59:34 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:47266
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727217AbeIHG7d (ORCPT
+        Sat, 8 Sep 2018 02:59:28 -0400
+Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:36876
+        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727108AbeIHG71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 02:59:33 -0400
+        Sat, 8 Sep 2018 02:59:27 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with ESMTP
-        id ySlqfRM9nWFPMySlqffd3l; Fri, 07 Sep 2018 19:14:46 -0700
+        id ySlkfkWmb4ToEySlkfAVkc; Fri, 07 Sep 2018 19:14:40 -0700
 x-originating-ip: 107.180.71.197
 Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
-        id 1fySlq-0005Ey-42; Fri, 07 Sep 2018 19:14:46 -0700
+        id 1fySlk-0005Eg-Ig; Fri, 07 Sep 2018 19:14:40 -0700
 From:   Long Li <longli@linuxonhyperv.com>
 To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc:     Long Li <longli@microsoft.com>
-Subject: [Patch v3 16/16] CIFS: Add direct I/O functions to file_operations
-Date:   Sat,  8 Sep 2018 02:13:48 +0000
-Message-Id: <20180908021348.19956-17-longli@linuxonhyperv.com>
+Subject: [Patch v3 13/16] CIFS: Pass page offset for encrypting
+Date:   Sat,  8 Sep 2018 02:13:45 +0000
+Message-Id: <20180908021348.19956-14-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180908021348.19956-1-longli@linuxonhyperv.com>
 References: <20180908021348.19956-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfO9i9NkqDAVnk9AUXf8aXYuIqSKVyxyuBE8JZPQj4tPiLTTpFL0EeIglNOuq0Epr7ZXKD8Ew/BqZkyvE4DdhGMk6nTAMk6eNQobESPKDhODEZU2+XhPd
- D8bgll7gtGYWqVSxIxsgCCu/vIukb/YbL9MjWg8+p3whwrHOvcGkKASbPo3lU6O3yf/9LZQMuScHGLpjm25KiTis1o/MZyoWhYnda/xJsrUP7mMlyFSsEFuy
- 038sBdZ7CS7Qf7f1tc1XDKcqEugl7jPIHWNPiJ9VF6jyCel5htdYLGg4DaUdHA0kqj0fWfJlmLDuccvqVV3ub7D7B+zQP6eh9LBqE+JHra/7+cHNUUZ4Bwjx
- OPZp9xEmGLOF9q2qEP+pLNXUFKeTGUOGaWUsx7IRht0ydG+358plbRe2Ozgsy18Txb1KLhQc
+X-CMAE-Envelope: MS4wfPShpMJxpLCl9pzlIXNUaZ5qjywJNO7H6CXS9/E3a1IWRmvPkp2LUIjna7+3hHAR5jMCIN7SIfFx1QRCvdagjxfoN8gaRFnVrObXigAK8EfPGeM0d0lp
+ F/E5HwqZrkBOW7KKyLS2ZKzJjZWBsGzGolE+chM+zkS0KGWuZ9Ogq6SAtE11lNsX8yuw0+f0XF1VVe4CRJ6HDVwJpNQOZY5ovol4iZucdj0kk1jnKwEkl6rk
+ 06XVgW1iig4I8gNsktrcAURz0Entty48fzFEFtJJQKXt2U43DyccjWDRugdIUXa3Wm3uQ2VdSws0XZGnnVl9oDePbel9SwaHqDgXR1aPz+m1jWUmPfjlDvW6
+ Qkm3HUr7JAQGLPxts7BTc/stNun9+XgjvAYEjuS7HK99jdSanywt/ZCtF9I1v0JJKaAshm9/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,47 +53,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-With direct read/write functions implemented, add them to file_operations.
+Encryption function needs to read data starting page offset from input
+buffer.
 
-Dircet I/O is used under two conditions:
-1. When mounting with "cache=none", CIFS uses direct I/O for all user file
-data transfer.
-2. When opening a file with O_DIRECT, CIFS uses direct I/O for all data
-transfer on this file.
+This doesn't affect decryption path since it allocates its own page
+buffers.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/cifsfs.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ fs/cifs/smb2ops.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 62f1662..f18091b 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1113,9 +1113,8 @@ const struct file_operations cifs_file_strict_ops = {
- };
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 1fa1c29..38d19b6 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2189,9 +2189,10 @@ init_sg(struct smb_rqst *rqst, u8 *sign)
+ 		smb2_sg_set_buf(&sg[i], rqst->rq_iov[i].iov_base,
+ 						rqst->rq_iov[i].iov_len);
+ 	for (j = 0; i < sg_len - 1; i++, j++) {
+-		unsigned int len = (j < rqst->rq_npages - 1) ? rqst->rq_pagesz
+-							: rqst->rq_tailsz;
+-		sg_set_page(&sg[i], rqst->rq_pages[j], len, 0);
++		unsigned int len, offset;
++
++		rqst_page_get_length(rqst, j, &len, &offset);
++		sg_set_page(&sg[i], rqst->rq_pages[j], len, offset);
+ 	}
+ 	smb2_sg_set_buf(&sg[sg_len - 1], sign, SMB2_SIGNATURE_SIZE);
+ 	return sg;
+@@ -2332,6 +2333,7 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, struct smb_rqst *new_rq,
+ 		return rc;
  
- const struct file_operations cifs_file_direct_ops = {
--	/* BB reevaluate whether they can be done with directio, no cache */
--	.read_iter = cifs_user_readv,
--	.write_iter = cifs_user_writev,
-+	.read_iter = cifs_direct_readv,
-+	.write_iter = cifs_direct_writev,
- 	.open = cifs_open,
- 	.release = cifs_close,
- 	.lock = cifs_lock,
-@@ -1169,9 +1168,8 @@ const struct file_operations cifs_file_strict_nobrl_ops = {
- };
+ 	new_rq->rq_pages = pages;
++	new_rq->rq_offset = old_rq->rq_offset;
+ 	new_rq->rq_npages = old_rq->rq_npages;
+ 	new_rq->rq_pagesz = old_rq->rq_pagesz;
+ 	new_rq->rq_tailsz = old_rq->rq_tailsz;
+@@ -2363,10 +2365,14 @@ smb3_init_transform_rq(struct TCP_Server_Info *server, struct smb_rqst *new_rq,
  
- const struct file_operations cifs_file_direct_nobrl_ops = {
--	/* BB reevaluate whether they can be done with directio, no cache */
--	.read_iter = cifs_user_readv,
--	.write_iter = cifs_user_writev,
-+	.read_iter = cifs_direct_readv,
-+	.write_iter = cifs_direct_writev,
- 	.open = cifs_open,
- 	.release = cifs_close,
- 	.fsync = cifs_fsync,
+ 	/* copy pages form the old */
+ 	for (i = 0; i < npages; i++) {
+-		char *dst = kmap(new_rq->rq_pages[i]);
+-		char *src = kmap(old_rq->rq_pages[i]);
+-		unsigned int len = (i < npages - 1) ? new_rq->rq_pagesz :
+-							new_rq->rq_tailsz;
++		char *dst, *src;
++		unsigned int offset, len;
++
++		rqst_page_get_length(new_rq, i, &len, &offset);
++
++		dst = (char *) kmap(new_rq->rq_pages[i]) + offset;
++		src = (char *) kmap(old_rq->rq_pages[i]) + offset;
++
+ 		memcpy(dst, src, len);
+ 		kunmap(new_rq->rq_pages[i]);
+ 		kunmap(old_rq->rq_pages[i]);
 -- 
 2.7.4
 
