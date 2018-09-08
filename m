@@ -2,78 +2,147 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3140C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A00E4C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24E520844
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:03:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24E520844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4CEF020844
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 11:07:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CEF020844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbeIHPtA (ORCPT
+        id S1726641AbeIHPxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 11:49:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37506 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIHPs7 (ORCPT
+        Sat, 8 Sep 2018 11:53:12 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:28557 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726315AbeIHPxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 11:48:59 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fyb1X-0006nF-Ox; Sat, 08 Sep 2018 13:03:31 +0200
-Date:   Sat, 8 Sep 2018 13:03:31 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-cc:     linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 00/10] Removing SEND_SIG_FORCED
-In-Reply-To: <87musyl3fa.fsf@xmission.com>
-Message-ID: <alpine.DEB.2.21.1809081302350.1402@nanos.tec.linutronix.de>
-References: <87musyl3fa.fsf@xmission.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 8 Sep 2018 11:53:12 -0400
+X-UUID: c6059b04d56e47ad80ec7912309c2dbd-20180908
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 222446201; Sat, 08 Sep 2018 19:07:41 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Sat, 8 Sep 2018 19:07:39 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Sat, 8 Sep 2018 19:07:39 +0800
+From:   <sean.wang@mediatek.com>
+To:     <linus.walleij@linaro.org>, <linux-mediatek@lists.infradead.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for MT8183 and MT6765
+Date:   Sat, 8 Sep 2018 19:07:16 +0800
+Message-ID: <cover.1536404280.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Sep 2018, Eric W. Biederman wrote:
- 
-> SEND_SIG_FORCED has two functions.  It forces a pid namespace init to
-> receive a signal it would ordinarily ignore, and it causes a siginfo to
-> not be allocated for a signal.
-> 
-> This patchset makes __send_signal a little bit smarter so that it can
-> detect when to apply these optimizations and the senders of signals
-> don't have to worry about them.
-> 
-> The coupling of forcing a signal to the pid namespace init and not
-> allocating siginfo resulted in serveral minor bugs where a signal
-> sent by the kernel was marked SI_USER suggesting another userspace
-> process sent that signal.  I have cc'd linux-api in case anyone cares
-> about these minor userspace visible differences.
-> 
-> Unless someone notices a bug I intend to merge these changes through my
-> tree during the next merge window.   While there are numerous fixes here
-> none of them appear to be the kind that fixes real world problems so I
-> don't see any urgency here.
-> 
-> Please look read and send my your review.  I will be out for about a
-> week so I will address any comments when I get back.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Went through it carefuly and could not spot anything. Great work!
+v2 and changes since v1:
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+add new patches
+* Add additional patch 17 to 22 to support MT8183 SoC
+
+update the existing patches
+* Patch 2: Removed unnecessary blank line and headers included.
+* Patch 4: Extended the size eint number can hold since it's possible more than 254 pins in certain SoC.
+* Patch 11: Added cosmetic patch and fixed an error logic on invalid condition.
+* Patch 14: Removed unused macro and given a better naming to the name of the default bases.
+
+v1:
+
+Irregular register arrangement and their logic access from various MediaTek
+SoCs being introduced already causes pinctrl-mtk-common to bloat and became
+really hard to maintain so that the patch creates pinctrl-mtk-common-v2 based
+on the core of mt7622 pinctrl to try make the register operations to be simple.
+
+The goals pinctrl-mtk-common-v2 want to achieve are to hopefully support
+all of MediaTek SoCs, and two kinds of dt-bindings being supported,
+Linux generic pinctrl dt-binding which mt762x like to support and MediaTek
+vendor per-pin dt-binding the other SoCs support the MT8183 and MT6765 incline
+to make use of.
+
+The patch starts to refactor MT7622 pinctrl driver first with splitting
+out these portable ways from there such as table-based register operation
+and the other operations in common in the both kinds of driver.
+
+Sean Wang (19):
+  pinctrl: mediatek: add pinctrl-mtk-common-v2 for all MediaTek pinctrls
+  pinctrl: mediatek: add pinctrl-moore that implements the generic
+    pinctrl dt-bindings
+  pinctrl: mediatek: extend struct mtk_pin_field_calc to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: extend struct mtk_pin_desc to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: extend struct mtk_pin_soc to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add driving strength related support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add drv register support to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add pull related support to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add advanced pull related support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add ies register support to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add pullen, pullsel register support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add MT7623 pinctrl driver based on generic pinctrl
+    binding
+  pinctrl: mediatek: use pin descriptor all in pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add multiple register bases support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: adjust error code and message when some register
+    not supported is found
+  pinctrl: mediatek: extend struct mtk_pin_desc which per-pin driver
+    depends on
+  pinctrl: mediatek: extend advanced pull support in
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: extend eint build to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add eint support to MT8183 pinctrl driver
+
+Zhiyong Tao (3):
+  pinctrl: mediatek: add pinctrl-paris that implements the vendor
+    dt-bindings
+  pinctrl: mediatek: add MT8183 pinctrl driver
+  pintcrl: mediatek: add pull tweaks for I2C related pins on MT8183
+
+ drivers/pinctrl/mediatek/Kconfig                 |   41 +-
+ drivers/pinctrl/mediatek/Makefile                |    4 +
+ drivers/pinctrl/mediatek/pinctrl-moore.c         |  689 ++++++++
+ drivers/pinctrl/mediatek/pinctrl-moore.h         |   53 +
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 1407 +++-------------
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c        | 1441 ++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mt8183.c        |  544 ++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |  670 ++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  288 ++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h    | 1916 ++++++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-paris.c         |  906 ++++++++++
+ drivers/pinctrl/mediatek/pinctrl-paris.h         |   65 +
+ 12 files changed, 6833 insertions(+), 1191 deletions(-)
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-moore.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-moore.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7623.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8183.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-paris.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-paris.h
+
+-- 
+2.7.4
 
