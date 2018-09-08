@@ -2,159 +2,97 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62984C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 782D1C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A672075A
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1569A20855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:32:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QRj0ysrg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A672075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXlZt8Wb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1569A20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbeIHI5W (ORCPT
+        id S1726565AbeIHJQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 04:57:22 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14883 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbeIHI5W (ORCPT
+        Sat, 8 Sep 2018 05:16:37 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44829 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726351AbeIHJQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 04:57:22 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5b934c430000>; Fri, 07 Sep 2018 21:12:53 -0700
-Received: from HQMAIL105.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 07 Sep 2018 21:13:05 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 07 Sep 2018 21:13:05 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Sep
- 2018 04:13:03 +0000
-Received: from [10.110.48.28] (10.110.48.28) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Sep 2018
- 04:13:02 +0000
-Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     Aaron Lu <aaron.lu@intel.com>, <alex.kogan@oracle.com>,
-        <akpm@linux-foundation.org>, <boqun.feng@gmail.com>,
-        <brouer@redhat.com>, <dave@stgolabs.net>, <dave.dice@oracle.com>,
-        Dhaval Giani <dhaval.giani@oracle.com>, <ktkhai@virtuozzo.com>,
-        <ldufour@linux.vnet.ibm.com>, <Pavel.Tatashin@microsoft.com>,
-        <paulmck@linux.vnet.ibm.com>, <shady.issa@oracle.com>,
-        <tariqt@mellanox.com>, <tglx@linutronix.de>,
-        <tim.c.chen@intel.com>, <vbabka@suse.cz>, <longman@redhat.com>,
-        <yang.shi@linux.alibaba.com>, <shy828301@gmail.com>,
-        Huang Ying <ying.huang@intel.com>,
-        <subhra.mazumdar@oracle.com>,
-        "Steven Sistare" <steven.sistare@oracle.com>, <jwadams@google.com>,
-        <ashwinch@google.com>, <sqazi@google.com>,
-        Shakeel Butt <shakeelb@google.com>, <walken@google.com>,
-        <rientjes@google.com>, <junaids@google.com>,
-        Neha Agarwal <nehaagarwal@google.com>
-References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <35c2c79f-efbe-f6b2-43a6-52da82145638@nvidia.com>
-Date:   Fri, 7 Sep 2018 21:13:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sat, 8 Sep 2018 05:16:37 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g6-v6so13544942lfb.11;
+        Fri, 07 Sep 2018 21:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AR5RJEH7Bt8sBFBDVo82zkiSv5HmJ+WSppN3IKyPjvA=;
+        b=eXlZt8WbO+zz8GEXPt11512ZDGDytVFY5mYyj3Kz1XsxAq1JMdx/KQbGG7EHWcgCUV
+         h0MafAsl6yBRzt10dqkiasDYnQfXiEJLYdhuvdbxyL9iXl8QPkZWpj1MgrDn5gQUij2Q
+         4fS6czSoHzW4iEU4ys1aOrjPj+xxW8Kyx5iAGtr3tckDOa+kIq1haeeJlyPzQl8QRJYl
+         M/838JNINQGS6DvPa8NI9AGa605pri0nArg+a3zin3UqvXvPv0mjPoV6IP/FReLWbfVI
+         MvMRp59cQ2pIAEq4cvG7bq4JSPsSxuM05AbiSJAVpsKVppKgqNGC02NLCNV+sBY14FUS
+         askg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AR5RJEH7Bt8sBFBDVo82zkiSv5HmJ+WSppN3IKyPjvA=;
+        b=fULYRzwPcLkxc0a+2NlazF3dYUT5dsz8J3J0qywWN+VAjRele/5ussjpMi1tb12ZIN
+         yO4SbZ+WVc8weh1Xg61gkC7KMKDS6PuhzcdnOcmCDFK35xU50R/XkcSEheKlKpzVQjxF
+         BnN+8gJe0ofqlJGsRYw9+ECjngds4EzrTTe/eYTQhLO/Uu+/bnvXD3WMJfVCA+EUFQgJ
+         f7UtX8KTeBYKkUIKCeXpSTQmqJ0nyw5hVHCL/u6freZxdR911fcn8pm6AAY8iYBdgE+I
+         7WuUl2ERFoj6b7fEIhOOmOnX2rjj27dH1ie5Sj7awQCUYarhgUxEA2+6q/I2Xemn+VSB
+         bRwg==
+X-Gm-Message-State: APzg51D4JdZiQphN3iFq7KpoPTAWlEToj93sfxp06XbrmChN7vZmskXo
+        wRZGqqgigZJqSeOJXdya79WkIJaRc9s=
+X-Google-Smtp-Source: ANB0VdYRuS4zcBJKATFTFNTF4MEkGOisyyaA6lyhXisP+7gJDpgM3LC1Kf0OZrYFxLQOjzPtX8RawA==
+X-Received: by 2002:a19:500f:: with SMTP id e15-v6mr6583863lfb.71.1536381137300;
+        Fri, 07 Sep 2018 21:32:17 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-202.elisa-laajakaista.fi. [91.159.62.202])
+        by smtp.gmail.com with ESMTPSA id s193-v6sm1589769lfe.50.2018.09.07.21.32.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Sep 2018 21:32:16 -0700 (PDT)
+Subject: Re: [PATCH] asm-generic: bug: add unlikely() to BUG_ON()
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     igor.stoppa@huawei.com, linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180907192119.4931-1-igor.stoppa@huawei.com>
+ <CAK8P3a3u0z+Rkt0=UUG04o-uNC_K1+N=h+_Ucd23N-r2H=fTLg@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <f59169de-fe5b-61b9-df36-321741682da9@gmail.com>
+Date:   Sat, 8 Sep 2018 07:32:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1536379973; bh=lH2zyiKvuhMiFdmRZqOjIYRa74EllMfamTb07ue177w=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=QRj0ysrgFlgGIDmHLokWaPtvxiZbht4ptiIw/HxI6FxC47K0vzg2aKwMjOGcmoyRg
-         BLrOREpg47JLqEtS4PVu+AK/NKbHWylJ8w1Lyifk3KU3f6ZIHKMvEiV2UQZXys/EvY
-         P3OAFTD93D2W7xTB5KJrPJYQXsROadJEs7fk/4W6WM5gEin5fYlzEo27XTjhGmy603
-         A/dKv1Q7o0EwNc7ZoLNvRGQWdRJsGFJ0SGHNPGwLBL6sRqwZi0gyB67/uX14N4QEMD
-         cUF7QzlTBL18Rby4oItsDcL7JBEBmOXLuNTzbtg9bzhZ0Vc4U2iwoX3wtKh7DT1jep
-         AW1oMGIHHWAnA==
+In-Reply-To: <CAK8P3a3u0z+Rkt0=UUG04o-uNC_K1+N=h+_Ucd23N-r2H=fTLg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/18 2:28 PM, Daniel Jordan wrote:
-> Pavel Tatashin, Ying Huang, and I are excited to be organizing a performa=
-nce and scalability microconference this year at Plumbers[*], which is happ=
-ening in Vancouver this year.=C2=A0 The microconference is scheduled for th=
-e morning of the second day (Wed, Nov 14).
->=20
-> We have a preliminary agenda and a list of confirmed and interested atten=
-dees (cc'ed), and are seeking more of both!
->=20
-> Some of the items on the agenda as it stands now are:
->=20
-> =C2=A0- Promoting huge page usage:=C2=A0 With memory sizes becoming ever =
-larger, huge pages are becoming more and more important to reduce TLB misse=
-s and the overhead of memory management itself--that is, to make the system=
- scalable with the memory size.=C2=A0 But there are still some remaining ga=
-ps that prevent huge pages from being deployed in some situations, such as =
-huge page allocation latency and memory fragmentation.
->=20
-> =C2=A0- Reducing the number of users of mmap_sem:=C2=A0 This semaphore is=
- frequently used throughout the kernel.=C2=A0 In order to facilitate scalin=
-g this longstanding bottleneck, these uses should be documented and unneces=
-sary users should be fixed.
->=20
-> =C2=A0- Parallelizing cpu-intensive kernel work:=C2=A0 Resolve problems o=
-f past approaches including extra threads interfering with other processes,=
- playing well with power management, and proper cgroup accounting for the e=
-xtra threads.=C2=A0 Bonus topic: proper accounting of workqueue threads run=
-ning on behalf of cgroups.
->=20
-> =C2=A0- Preserving userland during kexec with a hibernation-like mechanis=
-m.
->=20
-> These center around our interests, but having lots of topics to choose fr=
-om ensures we cover what's most important to the community, so we would lik=
-e to hear about additional topics and extensions to those listed here.=C2=
-=A0 This includes, but is certainly not limited to, work in progress that w=
-ould benefit from in-person discussion, real-world performance problems, an=
-d experimental and academic work.
->=20
-> If you haven't already done so, please let us know if you are interested =
-in attending, or have suggestions for other attendees.
-
-Hi Daniel and all,
-
-I'm interested in the first 3 of those 4 topics, so if it doesn't conflict =
-with HMM topics or
-fix-gup-with-dma topics, I'd like to attend. GPUs generally need to access =
-large chunks of
-memory, and that includes migrating (dma-copying) pages around. =20
-
-So for example a multi-threaded migration of huge pages between normal RAM =
-and GPU memory is an=20
-intriguing direction (and I realize that it's a well-known topic, already).=
- Doing that properly
-(how many threads to use?) seems like it requires scheduler interaction.
-
-It's also interesting that there are two main huge page systems (THP and Hu=
-getlbfs), and I sometimes
-wonder the obvious thing to wonder: are these sufficiently different to war=
-rant remaining separate,
-long-term?  Yes, I realize they're quite different in some ways, but still,=
- one wonders. :)
 
 
-thanks,
---=20
-John Hubbard
-NVIDIA
+On 07/09/18 23:41, Arnd Bergmann wrote:
+
+> Could you add a comment about -Wmaybe-uninitialized next to the definition?
+> Otherwise that is easily lost.
+> 
+> Also, I see that the file has two separate definitions of BUG_ON(), and the
+> other one does have an unlikely() in it already. Can you change both
+> to do the same thing with unlikely() or not unlikely()?
+
+ack
+
+--
+igor
