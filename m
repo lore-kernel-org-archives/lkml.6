@@ -2,109 +2,101 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F81CC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F00C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090A22086D
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:31:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyBQID4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090A22086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A6242086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:31:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6242086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeIHTRA (ORCPT
+        id S1727682AbeIHTRW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 15:17:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbeIHTRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 15:17:00 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8F8B2086B;
-        Sat,  8 Sep 2018 14:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536417060;
-        bh=hAz4g3xUknBVcFOra9Y3cl2crW8SE/n818PGTAmv2n4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UyBQID4D3HqxIwDp8/MwS6LqCMlA+zexyVFiibOLxDv6bcksWvYnLvRHp9wxpge2Q
-         H31BwgVOHeOLUNt7pmCx7JNjrOq7S9RtC/8Al+3ABqusCr21eiKaVRgO+WUTHsrsJj
-         wLI1qGgfq7Js9J9+znr8A5sfLO7/0ekWMv858DkY=
-Date:   Sat, 8 Sep 2018 15:30:55 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <pmeerw@pmeerw.net>,
-        <mark.rutland@arm.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: adxl372: Document the adxl372 I2C
- bindings
-Message-ID: <20180908153055.401efbec@archlinux>
-In-Reply-To: <1536070394-5679-1-git-send-email-stefan.popa@analog.com>
-References: <1536070394-5679-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 8 Sep 2018 15:17:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:35157 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbeIHTRW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 15:17:22 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mum2d-1fg1Jv33Jr-00rrOL; Sat, 08 Sep 2018 16:31:16 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     viro@zeniv.linux.org.uk
+Cc:     Arnd Bergmann <arnd@arndb.de>, "Theodore Ts'o" <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 06/11] compat_ioctl: remove /dev/random commands
+Date:   Sat,  8 Sep 2018 16:28:12 +0200
+Message-Id: <20180908142837.2819693-6-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180908142837.2819693-1-arnd@arndb.de>
+References: <20180908142837.2819693-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:aj9N/Luw1AgvpyHqFjV+g2BVt9SmQDi1RBBVWq/UXeUyPqlGStR
+ /6q8X4FurUmI69zE9AQv50siBmmPxPQrLpywDCyTYvYaof6kCkUtH82PYfXu4YDPhpepNHy
+ hOnac0kSL4cRiGT6opE22cuY3OqFJyTXqmiIdu9QGevCguoZ2io/nkvHw0r0uCs1QsQqK7C
+ /JRNr7SOwQ8tdku1OafmA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VCdWvQt2xfM=:lk2BnzLE5H9lWOjLg2MqeM
+ rBZDVqTB5qxaxwWmlgL3bDVaPOe+LTVuUA/PCtu/Gs0JMsZCiDjD2p2fBt+nHnlafA9jBnXBg
+ /zC6tTC/dZaMdb9jbGg4V9tZLKtYLgffy0yfDO6xT34P/iyc8eycOl4b9XryOTxBAKTCbrMEP
+ 2Vq5afSIArd6k3HDbzDba0aswtojUNNbXi3lJb8q22GddmUiRIVYsjwLN+j/QoBD+rxd3zGN2
+ PgrfURoFbbJIo6p4Rg8ytwxL/srNxzbNCU/SIRPhylly+GKRyKxsyUZT0sEdg1WyDeFXQ+FoM
+ jzbuNuQkWKf48lDaG2bfeQ06mg5d0H+ln42SWLQ7DdUmSF/azYRIA1yqM4nPr7VnU3MLes6X3
+ xuhWtwOjr24Z10B4z2Q9e60eDH3T5HQ1N4pUh5vdKQbDguq0A97d4vTaxRDv0oFPfzy7I3w0f
+ b+tignH1npdju6LuBO7x/fWFq3HltOGCf5GgVTCu7eB9uV5Hvrjk8hhPaJsHO1aGffIhMOmDi
+ 6ySWUq7E78EnNlgdzgH1jWKvVXiFdfIde1inuZLdT7KG5ERCR3UxzMinQFcML5JI5AfTpsITH
+ QWA7M6WUxkD0n5d18E6G/qHjAoiN4ZZlpMbMo1EkabJFKm0YuJj+5OA4pGpifYFnmzwbUCNyC
+ BdBzSRMiLUMzhwy1RjneNJsmPs50UGXYWZyGtKm6aYd8SKeUc0wulWjH8uxQ1TWE2neI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Sep 2018 17:13:14 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
+These are all handled by the random driver, so instead of listing
+each ioctl, we can just use the same function to deal with both
+native and compat commands.
 
-> The adxl372 is designed to communicate in either SPI or I2C protocol.
-> This patch adds the documentation of device tree bindings for adxl372
-> I2C.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Applied.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/char/random.c | 1 +
+ fs/compat_ioctl.c     | 7 -------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-Thanks,
-
-Jonathan
-
-> ---
->  Documentation/devicetree/bindings/iio/accel/adxl372.txt | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/accel/adxl372.txt b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-> index 9409984..a289964 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-> +++ b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-> @@ -4,14 +4,25 @@ http://www.analog.com/media/en/technical-documentation/data-sheets/adxl372.pdf
->  
->  Required properties:
->   - compatible : should be "adi,adxl372"
-> - - reg: SPI chip select number for the device
-> + - reg: the I2C address or SPI chip select number for the device
-> +
-> +Required properties for SPI bus usage:
->   - spi-max-frequency: Max SPI frequency to use
->  
->  Optional properties:
->   - interrupts: interrupt mapping for IRQ as documented in
->     Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
->  
-> -Example:
-> +Example for a I2C device node:
-> +
-> +	accelerometer@53 {
-> +		compatible = "adi,adxl372";
-> +		reg = <0x53>;
-> +		interrupt-parent = <&gpio>;
-> +		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-> +	};
-> +
-> +Example for a SPI device node:
->  
->  	accelerometer@0 {
->  		compatible = "adi,adxl372";
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index bf5f99fc36f1..103abf82444a 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -2021,6 +2021,7 @@ const struct file_operations random_fops = {
+ 	.write = random_write,
+ 	.poll  = random_poll,
+ 	.unlocked_ioctl = random_ioctl,
++	.compat_ioctl = random_ioctl,
+ 	.fasync = random_fasync,
+ 	.llseek = noop_llseek,
+ };
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index b56a3842d61d..eb29188d1dbb 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -594,13 +594,6 @@ COMPATIBLE_IOCTL(WDIOC_SETTIMEOUT)
+ COMPATIBLE_IOCTL(WDIOC_GETTIMEOUT)
+ COMPATIBLE_IOCTL(WDIOC_SETPRETIMEOUT)
+ COMPATIBLE_IOCTL(WDIOC_GETPRETIMEOUT)
+-/* Big R */
+-COMPATIBLE_IOCTL(RNDGETENTCNT)
+-COMPATIBLE_IOCTL(RNDADDTOENTCNT)
+-COMPATIBLE_IOCTL(RNDGETPOOL)
+-COMPATIBLE_IOCTL(RNDADDENTROPY)
+-COMPATIBLE_IOCTL(RNDZAPENTCNT)
+-COMPATIBLE_IOCTL(RNDCLEARPOOL)
+ /* Bluetooth */
+ COMPATIBLE_IOCTL(HCIDEVUP)
+ COMPATIBLE_IOCTL(HCIDEVDOWN)
+-- 
+2.18.0
 
