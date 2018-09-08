@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28DBC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A840CC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FB8206BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6281120869
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 07:03:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="phERi2AM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FB8206BB
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DCTEugh9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6281120869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbeIHLrP (ORCPT
+        id S1726495AbeIHLrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 07:47:15 -0400
-Received: from m12-17.163.com ([220.181.12.17]:57596 "EHLO m12-17.163.com"
+        Sat, 8 Sep 2018 07:47:46 -0400
+Received: from m12-17.163.com ([220.181.12.17]:60086 "EHLO m12-17.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726250AbeIHLrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 07:47:15 -0400
+        id S1726250AbeIHLrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 07:47:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=4+VoZ0djJB2YGUEDKz
-        3cEdCICv6LrzLq7yg2jO5KS6U=; b=phERi2AMlpxWrFDZ7NTRRrJaFn7EVn9W+P
-        wseWFeyWWGG7MI52pHCDvBiiJXDG0ndXkSoOp7HSQYlwgpk0TEPSsWjWJ5WoYfHF
-        2xKaXhH+FOBbsPm0DFrjVuI6DZuqVGvfRhv6kPTdqIN6epqKWg0Ne9sDhfq73iCo
-        e4JXHI+qI=
+        s=s110527; h=From:Subject:Date:Message-Id; bh=zxnrLSkGc6vUvHXjdY
+        NhYiVzCTuPTVbe0X3E3QH9XfU=; b=DCTEugh94tf1t/lL0tj5Uz/ecQbr4AVzpW
+        tjlGzRO96awf1KXwroHjbUGQs8o08VJo+1UL8LajNV0hjNy0eanqAGQliiO+rE1u
+        N5PPi5eIRIwnCw4hteI84Wm63Cff27fNZ7xjo8+glXH6gZ6LvoYkYhQ9/SvTAyzg
+        0wJ8L2Ayc=
 Received: from localhost.localdomain (unknown [49.65.59.196])
-        by smtp13 (Coremail) with SMTP id EcCowACndQqfc5Nb2qF5DQ--.34S4;
-        Sat, 08 Sep 2018 15:01:16 +0800 (CST)
+        by smtp13 (Coremail) with SMTP id EcCowACndQqfc5Nb2qF5DQ--.34S5;
+        Sat, 08 Sep 2018 15:01:48 +0800 (CST)
 From:   Dou Liyang <dou_liyang@163.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org
 Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         douly.fnst@cn.fujitsu.com
-Subject: [PATCH v2 1/2] irq/matrix: Split out the CPU finding code into a helper
-Date:   Sat,  8 Sep 2018 15:00:36 +0800
-Message-Id: <20180908070037.31154-1-dou_liyang@163.com>
+Subject: [PATCH v2 2/2] irq/matrix: Spread managed interrupts on allocation
+Date:   Sat,  8 Sep 2018 15:00:37 +0800
+Message-Id: <20180908070037.31154-2-dou_liyang@163.com>
 X-Mailer: git-send-email 2.14.3
-X-CM-TRANSID: EcCowACndQqfc5Nb2qF5DQ--.34S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1fKF13GFWxCryxGFW8Xrb_yoW5XryDpr
-        s7Kr1avr4UX3WIgw13tayDJFySvw1kXFs5Kw4Svr1SvFWxXr1aqr10vryUZFyUGF95Ca4j
-        yF90qr18Ca1DJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jv6wZUUUUU=
+In-Reply-To: <20180908070037.31154-1-dou_liyang@163.com>
+References: <20180908070037.31154-1-dou_liyang@163.com>
+X-CM-TRANSID: EcCowACndQqfc5Nb2qF5DQ--.34S5
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1fWryrGF45Gr1rtrWrZrb_yoWrGw4xpF
+        WkJry7ZFWUJ3Wqgw17ZayDAFZIy3s7ArsFv3s5u3sa9r93tr1IqF1qqw1DZF15Ar4rCayU
+        CFWDtryrZ3WUJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jm-eOUUUUU=
 X-Originating-IP: [49.65.59.196]
-X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiMR27olUMHupwJwAAsP
+X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiWR67olWBeyA9ywAAsn
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,104 +58,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-Linux finds the CPU which has the lowest vector allocation count to spread
-out the non managed interrupt across the possible target CPUs.
+Linux has spread out the non managed interrupt across the possible
+target CPUs to avoid vector space exhaustion.
 
-This common CPU finding code will also be used in managed case,
+But, the same situation may happen on the managed interrupts.
 
-So Split it out into a helper for preparation.
+Spread managed interrupt on allocation as well.
 
+Fixes: a0c9259dc4e1("irq/matrix: Spread interrupts on allocation")
 Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 ---
 Changelog v2 --> v1
 
  -Avoid a churn and the extra indentation suggested by tglx
 
- kernel/irq/matrix.c | 60 +++++++++++++++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 25 deletions(-)
+ arch/x86/kernel/apic/vector.c |  8 +++-----
+ include/linux/irq.h           |  3 ++-
+ kernel/irq/matrix.c           | 14 +++++++++++---
+ 3 files changed, 16 insertions(+), 9 deletions(-)
 
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index 9f148e3d45b4..b7fc290b4b98 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -313,14 +313,12 @@ assign_managed_vector(struct irq_data *irqd, const struct cpumask *dest)
+ 	struct apic_chip_data *apicd = apic_chip_data(irqd);
+ 	int vector, cpu;
+ 
+-	cpumask_and(vector_searchmask, vector_searchmask, affmsk);
+-	cpu = cpumask_first(vector_searchmask);
+-	if (cpu >= nr_cpu_ids)
+-		return -EINVAL;
++	cpumask_and(vector_searchmask, dest, affmsk);
++
+ 	/* set_affinity might call here for nothing */
+ 	if (apicd->vector && cpumask_test_cpu(apicd->cpu, vector_searchmask))
+ 		return 0;
+-	vector = irq_matrix_alloc_managed(vector_matrix, cpu);
++	vector = irq_matrix_alloc_managed(vector_matrix, vector_searchmask, &cpu);
+ 	trace_vector_alloc_managed(irqd->irq, vector, vector);
+ 	if (vector < 0)
+ 		return vector;
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 201de12a9957..c9bffda04a45 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -1151,7 +1151,8 @@ void irq_matrix_offline(struct irq_matrix *m);
+ void irq_matrix_assign_system(struct irq_matrix *m, unsigned int bit, bool replace);
+ int irq_matrix_reserve_managed(struct irq_matrix *m, const struct cpumask *msk);
+ void irq_matrix_remove_managed(struct irq_matrix *m, const struct cpumask *msk);
+-int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu);
++int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
++				unsigned int *mapped_cpu);
+ void irq_matrix_reserve(struct irq_matrix *m);
+ void irq_matrix_remove_reserved(struct irq_matrix *m);
+ int irq_matrix_alloc(struct irq_matrix *m, const struct cpumask *msk,
 diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
-index 5092494bf261..0cbcdef9337a 100644
+index 0cbcdef9337a..753b8b0ba045 100644
 --- a/kernel/irq/matrix.c
 +++ b/kernel/irq/matrix.c
-@@ -124,6 +124,26 @@ static unsigned int matrix_alloc_area(struct irq_matrix *m, struct cpumap *cm,
- 	return area;
- }
- 
-+/* Find the best CPU which has the lowest vector allocation count */
-+static int matrix_find_best_cpu(struct irq_matrix *m,
-+				const struct cpumask *msk, int *best_cpu)
-+{
-+	unsigned int cpu, maxavl = 0;
-+	struct cpumap *cm;
-+
-+	for_each_cpu(cpu, msk) {
-+		cm = per_cpu_ptr(m->maps, cpu);
-+
-+		if (!cm->online || cm->available <= maxavl)
-+			continue;
-+
-+		*best_cpu = cpu;
-+		maxavl = cm->available;
-+	}
-+
-+	return maxavl;
-+}
-+
- /**
-  * irq_matrix_assign_system - Assign system wide entry in the matrix
+@@ -259,11 +259,18 @@ void irq_matrix_remove_managed(struct irq_matrix *m, const struct cpumask *msk)
   * @m:		Matrix pointer
-@@ -322,35 +342,25 @@ void irq_matrix_remove_reserved(struct irq_matrix *m)
- int irq_matrix_alloc(struct irq_matrix *m, const struct cpumask *msk,
- 		     bool reserved, unsigned int *mapped_cpu)
+  * @cpu:	On which CPU the interrupt should be allocated
+  */
+-int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu)
++int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
++				unsigned int *mapped_cpu)
  {
--	unsigned int cpu, best_cpu, maxavl = 0;
+-	struct cpumap *cm = per_cpu_ptr(m->maps, cpu);
+ 	unsigned int bit, end = m->alloc_end;
 +	unsigned int best_cpu = UINT_MAX;
- 	struct cpumap *cm;
- 	unsigned int bit;
++	struct cpumap *cm;
  
--	best_cpu = UINT_MAX;
--	for_each_cpu(cpu, msk) {
--		cm = per_cpu_ptr(m->maps, cpu);
--
--		if (!cm->online || cm->available <= maxavl)
--			continue;
--
--		best_cpu = cpu;
--		maxavl = cm->available;
--	}
 +	if (!matrix_find_best_cpu(m, msk, &best_cpu))
 +		return -ENOSPC;
- 
--	if (maxavl) {
--		cm = per_cpu_ptr(m->maps, best_cpu);
--		bit = matrix_alloc_area(m, cm, 1, false);
--		if (bit < m->alloc_end) {
--			cm->allocated++;
--			cm->available--;
--			m->total_allocated++;
--			m->global_available--;
--			if (reserved)
--				m->global_reserved--;
--			*mapped_cpu = best_cpu;
--			trace_irq_matrix_alloc(bit, best_cpu, m, cm);
--			return bit;
--		}
++
 +	cm = per_cpu_ptr(m->maps, best_cpu);
-+	bit = matrix_alloc_area(m, cm, 1, false);
-+	if (bit < m->alloc_end) {
-+		cm->allocated++;
-+		cm->available--;
-+		m->total_allocated++;
-+		m->global_available--;
-+		if (reserved)
-+			m->global_reserved--;
-+		*mapped_cpu = best_cpu;
-+		trace_irq_matrix_alloc(bit, best_cpu, m, cm);
-+		return bit;
- 	}
- 	return -ENOSPC;
++	end = m->alloc_end;
+ 	/* Get managed bit which are not allocated */
+ 	bitmap_andnot(m->scratch_map, cm->managed_map, cm->alloc_map, end);
+ 	bit = find_first_bit(m->scratch_map, end);
+@@ -272,7 +279,8 @@ int irq_matrix_alloc_managed(struct irq_matrix *m, unsigned int cpu)
+ 	set_bit(bit, cm->alloc_map);
+ 	cm->allocated++;
+ 	m->total_allocated++;
+-	trace_irq_matrix_alloc_managed(bit, cpu, m, cm);
++	*mapped_cpu = best_cpu;
++	trace_irq_matrix_alloc_managed(bit, best_cpu, m, cm);
+ 	return bit;
  }
+ 
 -- 
 2.14.3
 
