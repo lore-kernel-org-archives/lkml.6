@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6DDC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDC3C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA9C720645
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:13:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA9C720645
+	by mail.kernel.org (Postfix) with ESMTP id AACEE2086B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:21:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACEE2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbeIHU7R (ORCPT
+        id S1727720AbeIHVIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 16:59:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34550 "EHLO mx1.suse.de"
+        Sat, 8 Sep 2018 17:08:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35482 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726314AbeIHU7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 16:59:17 -0400
+        id S1726880AbeIHVIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 17:08:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1591CAD4D;
-        Sat,  8 Sep 2018 16:12:59 +0000 (UTC)
-Date:   Sat, 08 Sep 2018 18:12:58 +0200
-Message-ID: <s5hftyk55o5.wl-tiwai@suse.de>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8125FAE92;
+        Sat,  8 Sep 2018 16:21:47 +0000 (UTC)
+Date:   Sat, 08 Sep 2018 18:21:47 +0200
+Message-ID: <s5hefe4559g.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Eric Anholt <eric@anholt.net>,
         linux-rpi-kernel@lists.infradead.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 16/29] staging: bcm2835-audio: Drop superfluous mutex lock during prepare
-In-Reply-To: <1706035173.39231.1536414041437@email.1und1.de>
+Subject: Re: [PATCH 03/29] staging: bcm2835-audio: Clean up include files in bcm2835-ctl.c
+In-Reply-To: <1366205674.39171.1536413114481@email.1und1.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
-        <20180904155858.8001-17-tiwai@suse.de>
-        <1706035173.39231.1536414041437@email.1und1.de>
+        <20180904155858.8001-4-tiwai@suse.de>
+        <1366205674.39171.1536413114481@email.1und1.de>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -49,7 +49,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 08 Sep 2018 15:40:41 +0200,
+On Sat, 08 Sep 2018 15:25:14 +0200,
 Stefan Wahren wrote:
 > 
 > Hi,
@@ -57,50 +57,15 @@ Stefan Wahren wrote:
 > > Takashi Iwai <tiwai@suse.de> hat am 4. September 2018 um 17:58 geschrieben:
 > > 
 > > 
-> > The chip->audio_mutex is used basically for protecting the opened
-> > stream assignment, and the prepare callback is irrelevant with it.
+> > Only a few of them are really needed.
 > > 
 > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
 > > ---
-> >  drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-> > index 1f9c940f1cc3..9659c25b9f9d 100644
-> > --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-> > +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
-> > @@ -218,8 +218,6 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
-> >  	int channels;
-> >  	int err;
-> >  
-> > -	mutex_lock(&chip->audio_mutex);
-> > -
-> >  	/* notify the vchiq that it should enter spdif passthrough mode by
-> >  	 * setting channels=0 (see
-> >  	 * https://github.com/raspberrypi/linux/issues/528)
-> > @@ -233,7 +231,7 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
-> >  				       runtime->rate,
-> >  				       snd_pcm_format_width(runtime->format));
-> >  	if (err < 0)
-> > -		goto out;
-> > +		return err;
-> >  
-> >  	memset(&alsa_stream->pcm_indirect, 0, sizeof(alsa_stream->pcm_indirect));
-> >  
-> > @@ -246,9 +244,7 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
-> >  	alsa_stream->pos = 0;
-> >  	alsa_stream->draining = false;
-> >  
-> > - out:
-> > -	mutex_unlock(&chip->audio_mutex);
-> > -	return err;
-> > +	return 0;
+> >  .../vc04_services/bcm2835-audio/bcm2835-ctl.c     | 15 ---------------
 > 
-> looks like your are removing code which has been added in patch #14 ?
+> I think this patch and patch #23 could be merge in case a new series is required.
 
-No, the patch #14 corrects the missing error path.  Without patch 14,
-the error from prepare is ignored.  And this patch gets rid of the
-superfluous mutex lock.
+OK, will do.
 
 
 thanks,
