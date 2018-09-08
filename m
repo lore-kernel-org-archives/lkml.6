@@ -2,83 +2,139 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CB9C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208DFC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F10206BB
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:33:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F10206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C6E6320652
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E6320652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbeIHSTb (ORCPT
+        id S1726796AbeIHSWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 14:19:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726452AbeIHSTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 14:19:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 61490804B4BA;
-        Sat,  8 Sep 2018 13:33:42 +0000 (UTC)
-Received: from localhost (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 642BB2166BA3;
-        Sat,  8 Sep 2018 13:33:40 +0000 (UTC)
-Date:   Sat, 8 Sep 2018 21:33:37 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     mingo@kernel.org, hpa@zytor.com, thgarnie@google.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org,
+        Sat, 8 Sep 2018 14:22:15 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:45326 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbeIHSWO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 14:22:14 -0400
+Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w88DaDRg046045;
+        Sat, 8 Sep 2018 22:36:13 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
+ Sat, 08 Sep 2018 22:36:13 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w88Da7Qe046008
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 8 Sep 2018 22:36:12 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH] mm: memcontrol: print proper OOM header when no eligible
+ victim left
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Dmitry Vyukov <dvyukov@google.com>,
+        linux-mm@kvack.org, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/mm/KASLR: Fix the wrong calculation of kalsr
- region initial size
-Message-ID: <20180908133337.GT1740@192.168.1.3>
-References: <20180829021754.21850-1-bhe@redhat.com>
- <alpine.DEB.2.21.1809081410230.1402@nanos.tec.linutronix.de>
+References: <20180821160406.22578-1-hannes@cmpxchg.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <b94f9964-c785-20c1-34af-e9013770b89a@I-love.SAKURA.ne.jp>
+Date:   Sat, 8 Sep 2018 22:36:06 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809081410230.1402@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 08 Sep 2018 13:33:42 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Sat, 08 Sep 2018 13:33:42 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <20180821160406.22578-1-hannes@cmpxchg.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/08/18 at 02:10pm, Thomas Gleixner wrote:
-> On Wed, 29 Aug 2018, Baoquan He wrote:
+On 2018/08/22 1:04, Johannes Weiner wrote:
+> When the memcg OOM killer runs out of killable tasks, it currently
+> prints a WARN with no further OOM context. This has caused some user
+> confusion.
 > 
-> > In memory KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate the
-> > initial size of the direct mapping region. This is right in the
-> > old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
-> > 46bit, and only 4-level mode was supported.
-> > 
-> > Later, in commit:
-> > b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52"),
-> > __PHYSICAL_MASK_SHIFT was changed to be 52 always, no matter it's
-> > 5-level or 4-level. This is wrong for 4-level paging. Then when
-> > adapt phyiscal memory region size based on available memory, it
-> > will overflow if the amount of system RAM and the padding is bigger
-> > than 64TB.
-> > 
-> > In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
-> > by replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> Warnings indicate a kernel problem. In a reported case, however, the
+> situation was triggered by a non-sensical memcg configuration (hard
+> limit set to 0). But without any VM context this wasn't obvious from
+> the report, and it took some back and forth on the mailing list to
+> identify what is actually a trivial issue.
 > 
-> This lacks a fixes tag .....
+> Handle this OOM condition like we handle it in the global OOM killer:
+> dump the full OOM context and tell the user we ran out of tasks.
+> 
+> This way the user can identify misconfigurations easily by themselves
+> and rectify the problem - without having to go through the hassle of
+> running into an obscure but unsettling warning, finding the
+> appropriate kernel mailing list and waiting for a kernel developer to
+> remote-analyze that the memcg configuration caused this.
+> 
+> If users cannot make sense of why the OOM killer was triggered or why
+> it failed, they will still report it to the mailing list, we know that
+> from experience. So in case there is an actual kernel bug causing
+> this, kernel developers will very likely hear about it.
+> 
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/memcontrol.c |  2 --
+>  mm/oom_kill.c   | 13 ++++++++++---
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+> 
 
-Sure, I will add fix tag in this patch, and arrange a new patchset
-according to discussion with Kirill after test.
+Now that above patch went to 4.19-rc3, please apply below one.
 
-Thanks
-Baoquan
+From eb2bff2ed308da04785bcf541dd3f748286bfa23 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Sat, 8 Sep 2018 22:26:28 +0900
+Subject: [PATCH] mm, oom: Don't emit noises for failed SysRq-f.
+
+Due to commit d75da004c708c9fc ("oom: improve oom disable handling") and
+commit 3100dab2aa09dc6e ("mm: memcontrol: print proper OOM header when
+no eligible victim left"), all
+
+  kworker/0:1 invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), nodemask=(null), order=-1, oom_score_adj=0
+  (...snipped...)
+  Out of memory and no killable processes...
+  OOM request ignored. No task eligible
+
+lines are printed.
+Let's not emit "invoked oom-killer" lines when SysRq-f failed.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ mm/oom_kill.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f10aa53..92122ef 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -1106,8 +1106,10 @@ bool out_of_memory(struct oom_control *oc)
+ 	select_bad_process(oc);
+ 	/* Found nothing?!?! */
+ 	if (!oc->chosen) {
+-		dump_header(oc, NULL);
+-		pr_warn("Out of memory and no killable processes...\n");
++		if (!is_sysrq_oom(oc)) {
++			dump_header(oc, NULL);
++			pr_warn("Out of memory and no killable processes...\n");
++		}
+ 		/*
+ 		 * If we got here due to an actual allocation at the
+ 		 * system level, we cannot survive this and will enter
+-- 
+1.8.3.1
+
+
