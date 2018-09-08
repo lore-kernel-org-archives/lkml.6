@@ -6,112 +6,100 @@ X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC12FC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44FCC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77AD32086B
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77AD32086B
+	by mail.kernel.org (Postfix) with ESMTP id A93552086B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 14:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93552086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeIHTOk (ORCPT
+        id S1727126AbeIHTOv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 15:14:40 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:60997 "EHLO
+        Sat, 8 Sep 2018 15:14:51 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:36077 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeIHTOk (ORCPT
+        with ESMTP id S1726351AbeIHTOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 15:14:40 -0400
+        Sat, 8 Sep 2018 15:14:51 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MtO4E-1fja7C2jHC-00us4C; Sat, 08 Sep 2018 16:28:40 +0200
+ 1MQusJ-1gC2Fg0z9r-00O0Hd; Sat, 08 Sep 2018 16:28:51 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     viro@zeniv.linux.org.uk
 Cc:     Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] compat_ioctl: remove keyboard ioctl translation
-Date:   Sat,  8 Sep 2018 16:28:07 +0200
-Message-Id: <20180908142837.2819693-1-arnd@arndb.de>
+Subject: [PATCH 02/11] compat_ioctl: remove HIDIO translation
+Date:   Sat,  8 Sep 2018 16:28:08 +0200
+Message-Id: <20180908142837.2819693-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:Gz8Xz6xl87kUTIzpUST9fXtlPaHTobfeRYO3+pf3eMsd4Ck/d85
- 5ItkPxs+5a6/WChTlqUCiSCyfh8vMMaaq+vt6J427MFBvlfz0IcKjuuhr+YBq9csEJaf3t/
- Lardw6pIIsDI9Qdb5nAariLPcws01/eOgBt/zzPwatnj+3m+UI+f4NLmAuV8P8t77MbGBiM
- 6ROJgVhNbg/T5UMmWoUfQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:27Pqvg3AFhU=:uNkLBf8C+9w11YLvPCfrPf
- 15h2unUxaZPoAptUKCID34yK2FtnaUcaJrIQ6Tm5mmmxvXAN26Y8rYJTkc8bQhZeB3kHPMxGx
- +zcZk/Ke02N+StrWkraTHvoPFCHqSCgsEadsVGl0QAP6BJ7EeD7wv5cet0AYnVfoFM4NxjGC9
- M2LktmpLkjKpnhNzAJLO4fIEeKsmzWYwOBVtWanqZH1qGhmPR2IxLsA0c7ANcLmEEc3t9GOTl
- A6dKJvpm1B3KWp6UukS5dVkq+Qogeg1BMuPAN+FNnQyFu2GjRkrQEvgGc7HGMbH5djP0nKO2x
- 9OREChJ84Dki6n78f9DLxuJ5qXJorRgnwfoTDSWdrHWdj2daFbs+kucIwG+B6oM5svcSB/2bq
- R4Jpk8qnnkyVzmEwoaJGC2mk+jjdycNs19+L4cGG204VmmiR0igUkGoRNbebrFTC9Zi1SFwKQ
- IjDS0rVubh1GkN3QctzogqsEXjT4+TSCbBUPY2w9ele9Jt8JHEY1mb1j0cZdGVrRb0yJE4tKL
- NeVsE2NB/ufXW4Z+fhPK5xSXAT+sh/bVGAhTy4skxaAi7xsCOwnGJogD7lLmHwvtcg6pkbbts
- ApNKoo6C1QRfzWg2FktyXpaB7BiqmaZ/lxrPo2lUgByhDqdCE5HAClW7nFAy5QKRPuHTSVzsY
- mQFckiMUPW+JIEDLpNlItot0oEnFAR34+V7WoB4ih+kOgEmhoI78deNqhshI/FhrK0oI=
+In-Reply-To: <20180908142837.2819693-1-arnd@arndb.de>
+References: <20180908142837.2819693-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:1I7Gcze/afAgmffd/3BD2ZlxrLv3YnhRyEl67SMr2RW79rV+nw6
+ 9xDXgu89vBFFY4343FDY/bphWCuqeVrHTjzmx5Qzr4mMnc3y2KPsd4mq9wtPFzoOiqt6m9V
+ tuZC3KfeiFYYBpUqReoiB0+vMrIbeHwbyGsCa7JxOdlhm50ruymRLiiEQ2DCc2Et3ZaTkC9
+ 1SJtdld4JYRTkl/VjXeBQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:IjpLeV6cdrY=:xBVd5L/OjCLh7ic+RKjJ/C
+ 4EnnCtZH6/a/caSeTKpIisQaejYJt1dN1yrVlhXIeWSJcLUn8NwW3oarsFFzS2qMFgITKT2Vi
+ ECD3fya2lOHkvFxrl7iu7wmAm21alDrfBvb70fxEDtRPldlDYtmIinDy+UCAVsJGtOycONMqe
+ kdG7ktr7tZk4uHXs/aYyogI1dWVZABadxX3s7TcHmruSuLRBoV5ovBvaBV6WPToooMrmvHe7s
+ QhQph8iWfpTNPntV9X3Vs7mNLBzLEbn57qZGx17t6YajDkxd0UUCleFWmq3P8ojGSiE846+qe
+ XXBADtVORCdbAdxffzyPFunXEmnvilnXPuV3DsFxNAOcE2pLYX/6K7bdFBO44OWDw5sUEwo9N
+ gfgAzB8dp5do2EywwW+2pCsqaWr3qEHegZot0cEsTbrKUWRCfpKFujCQ9j4xura8hwujKKlVC
+ yiHxAFRkiXGA1E+zv0iiWshs3fVlbrKmnzUTKOc4BpamyocMdQGW+ScLU860HHxlFtmqHizTn
+ Vr8ddQvaOSK5AZZEwD//5pvhpFIM1vMAKqY+BL+4eYrrf9OKwd++eRhuX3aTrv1k/bC9nDJlS
+ 9W9NjDPpW4hc9Rt8LLcJWE/xMNLxZYRq+R3qw+4P//PU+6O5l1Q/w4RuBidc0ZA4LGcCIsDhy
+ F6S76PTZzexI8tPc9Hq8X0pzd5+hTZ/ibPCrHw0KKQU2pGjq//10DQz2Tov+kChoGYFw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The KD* family of ioctls is implemented in two drivers:
-drivers/tty/vt and drivers/s390/char/tty3270.c. Both of them
-have compat handlers for all their ioctl commands, so translation
-in fs/compat_ioctl.c is never used.
+The two drivers implementing these both gained proper compat_ioctl()
+handlers a long time ago with commits bb6c8d8fa9b5 ("HID: hiddev:
+Add 32bit ioctl compatibilty") and ae5e49c79c05 ("HID: hidraw: add
+compatibility ioctl() for 32-bit applications."), so the lists in
+fs/compat_ioctl.c are no longer used.
 
-Commit fb07a5f857ac ("compat_ioctl: remove all VT ioctl handling")
-removed the compat handling for all the other VT ioctls back in
-2009, but it seems I missed the keyboard ones back then.
+It appears that the lists were also incomplete, so the translation
+didn't actually work correctly when it was still in use.
+
+Remove them as cleanup.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/compat_ioctl.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
+ fs/compat_ioctl.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
 diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 9237076bdcf5..4c2f83a386a2 100644
+index 4c2f83a386a2..c2c73b802fb3 100644
 --- a/fs/compat_ioctl.c
 +++ b/fs/compat_ioctl.c
-@@ -546,23 +546,6 @@ COMPATIBLE_IOCTL(FIGETBSZ)
- COMPATIBLE_IOCTL(FIFREEZE)
- COMPATIBLE_IOCTL(FITHAW)
- COMPATIBLE_IOCTL(FITRIM)
--COMPATIBLE_IOCTL(KDGETKEYCODE)
--COMPATIBLE_IOCTL(KDSETKEYCODE)
--COMPATIBLE_IOCTL(KDGKBTYPE)
--COMPATIBLE_IOCTL(KDGETMODE)
--COMPATIBLE_IOCTL(KDGKBMODE)
--COMPATIBLE_IOCTL(KDGKBMETA)
--COMPATIBLE_IOCTL(KDGKBENT)
--COMPATIBLE_IOCTL(KDSKBENT)
--COMPATIBLE_IOCTL(KDGKBSENT)
--COMPATIBLE_IOCTL(KDSKBSENT)
--COMPATIBLE_IOCTL(KDGKBDIACR)
--COMPATIBLE_IOCTL(KDSKBDIACR)
--COMPATIBLE_IOCTL(KDGKBDIACRUC)
--COMPATIBLE_IOCTL(KDSKBDIACRUC)
--COMPATIBLE_IOCTL(KDKBDREP)
--COMPATIBLE_IOCTL(KDGKBLED)
--COMPATIBLE_IOCTL(KDGETLED)
- #ifdef CONFIG_BLOCK
- /* Big S */
- COMPATIBLE_IOCTL(SCSI_IOCTL_GET_IDLUN)
-@@ -974,15 +957,6 @@ static long do_ioctl_trans(unsigned int cmd,
- 	case HOT_ADD_DISK:
- 	case SET_DISK_FAULTY:
- 	case SET_BITMAP_FILE:
--	/* Big K */
--	case KDSIGACCEPT:
--	case KIOCSOUND:
--	case KDMKTONE:
--	case KDSETMODE:
--	case KDSKBMODE:
--	case KDSKBMETA:
--	case KDSKBLED:
--	case KDSETLED:
- 		return vfs_ioctl(file, cmd, arg);
- 	}
- 
+@@ -853,23 +853,6 @@ COMPATIBLE_IOCTL(PCIIOC_CONTROLLER)
+ COMPATIBLE_IOCTL(PCIIOC_MMAP_IS_IO)
+ COMPATIBLE_IOCTL(PCIIOC_MMAP_IS_MEM)
+ COMPATIBLE_IOCTL(PCIIOC_WRITE_COMBINE)
+-/* hiddev */
+-COMPATIBLE_IOCTL(HIDIOCGVERSION)
+-COMPATIBLE_IOCTL(HIDIOCAPPLICATION)
+-COMPATIBLE_IOCTL(HIDIOCGDEVINFO)
+-COMPATIBLE_IOCTL(HIDIOCGSTRING)
+-COMPATIBLE_IOCTL(HIDIOCINITREPORT)
+-COMPATIBLE_IOCTL(HIDIOCGREPORT)
+-COMPATIBLE_IOCTL(HIDIOCSREPORT)
+-COMPATIBLE_IOCTL(HIDIOCGREPORTINFO)
+-COMPATIBLE_IOCTL(HIDIOCGFIELDINFO)
+-COMPATIBLE_IOCTL(HIDIOCGUSAGE)
+-COMPATIBLE_IOCTL(HIDIOCSUSAGE)
+-COMPATIBLE_IOCTL(HIDIOCGUCODE)
+-COMPATIBLE_IOCTL(HIDIOCGFLAG)
+-COMPATIBLE_IOCTL(HIDIOCSFLAG)
+-COMPATIBLE_IOCTL(HIDIOCGCOLLECTIONINDEX)
+-COMPATIBLE_IOCTL(HIDIOCGCOLLECTIONINFO)
+ /* joystick */
+ COMPATIBLE_IOCTL(JSIOCGVERSION)
+ COMPATIBLE_IOCTL(JSIOCGAXES)
 -- 
 2.18.0
 
