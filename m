@@ -2,138 +2,100 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BFFC4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C71EDC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEA72075A
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:15:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=obeliks.de header.i=@obeliks.de header.b="P9Ko+FkA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEA72075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nospam.obeliks.de
+	by mail.kernel.org (Postfix) with ESMTP id 6E9442075A
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 13:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9442075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbeIHSBF (ORCPT
+        id S1726679AbeIHSEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 14:01:05 -0400
-Received: from scopuli.esotechnik.de ([79.143.188.15]:34604 "EHLO
-        mail.esotechnik.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeIHSBF (ORCPT
+        Sat, 8 Sep 2018 14:04:21 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:33847 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbeIHSEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 14:01:05 -0400
-Received: by mail.esotechnik.net (Postfix) with ESMTPSA id B7F69AE0B81;
-        Sat,  8 Sep 2018 15:14:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=obeliks.de; s=jul2017;
-        t=1536412444; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=KKNvow+69WIinFVpWVF4EiDGXbeRhgfewo1YQpRXles=;
-        b=P9Ko+FkAO3tdX/86EPfFAhN5sSX26nJslEAVTWlDSq1jopLowW0cuRiJYcKSdZA8uL+0HK
-        Ffgiso9bZUmWRg64e/IoNo+GAQu+ha8nPjNxDVcOjZzAL7ZGW1jlNaQL07l5fd3lbYDows
-        dj99OdKSqvsUh7BIwMUzAx3b6CkU/GjvSfhX8zAf96f/KKtougZivCO00bQ21Ntq+62Qzk
-        9xHGORXFwfLii2/Gza69Motn9VFvuQbeqjV7obLQxwlFArOhu+W3czDR5PAMWO2/oHyOqk
-        G9toib5cnLMq+7ZPZyAoUViwwnOiLDG4FRFdvzy53nFhyUhrfQNbpMfFNRkyzg==
-From:   Bernhard Frauendienst <kernel@nospam.obeliks.de>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Bernhard Frauendienst <kernel@nospam.obeliks.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        Sat, 8 Sep 2018 14:04:21 -0400
+Received: from null ([172.19.249.150]) by mrelayeu.kundenserver.de (mreue001
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 0LpkNL-1fLBdU2IQJ-00fgVr; Sat, 08
+ Sep 2018 15:18:11 +0200
+Date:   Sat, 8 Sep 2018 15:18:10 +0200 (CEST)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] mtd: core: add get_mtd_device_by_node
-Date:   Sat,  8 Sep 2018 15:13:43 +0200
-Message-Id: <20180908131345.8145-2-kernel@nospam.obeliks.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180908131345.8145-1-kernel@nospam.obeliks.de>
-References: <20180908131345.8145-1-kernel@nospam.obeliks.de>
+Message-ID: <2050605805.39126.1536412690563@email.1und1.de>
+In-Reply-To: <20180904155858.8001-1-tiwai@suse.de>
+References: <20180904155858.8001-1-tiwai@suse.de>
+Subject: Re: [PATCH 00/29] staging: bcm2835-audio: Cleanups and fixes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:A0xKTVXw2cgmrIuAq+97jSTM5gRKMibWlh3FtUDrPO3Wudmzmql
+ hFj7ufvSm9hrgTyOFmiHqhTi3WfOk5rlERMJxFc/Q8gKhN6juUv9zPOIowdq6Z5V3EpI/53
+ HRdYW3q9JE5wEBfJpsnL/u5JzdltADDN5wb+1lizNjHpJb9CJInLxIWyszamfCjmf0zB+GU
+ mSGF/Wl8qnLV4gudVL7Kw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:SeY+r0hkc9s=:fFZyk8Og2mvfs0c42j4VK/
+ zEb+r1eLQZ6cRv9rzGcVRlxfnZOKTIcwl+9I6EbTkxBltoi2KpnIeoD38IDVQCypVwR54yStD
+ /kLki5cMFSr+mGO4L4OjgMXNQI4/60/TGAsC93yTv+YINDLtWYwaCiC/UZaWyeLNtJWCnAPxX
+ uRloTne0ncki6Xe0MD2lK8L5LRJannUlfSAhWicMVMXKhwWkBangWqMTIyZ7UaXJb20M4VMs9
+ zRER3RKq6HP+FJrfBn+7Hm2uDDFtyZyi26BNSNvARS8jHOLN4exZSVOBkzD04jHaJ4x9EVhaA
+ EKM35LxVc1D03aUDptE8NxZYmCvxdhxH0uRL+qIUMF0Lm/g390AAtoe5qoqbsoJ7Y9DvHiiS0
+ kdB8aJ83axnawU4MhGKlUiWnbIbJLfEj/miF6VAH0Uiq2iDXX8WIqSHs4WWG47w2w2ElPLyNk
+ W3Aw06DNDiIfpPNebXQ6xH/SOsI/oxQ01C/chZ3hHGcskofY9fMbE6cwpNGhcAwKCeu9Lh2yl
+ LHLiH4U1wAAc4s85EZlQQXw/+1MB+e1TUBMZ1oxOZbkLjlJHpLAuDXx62y4BIkk5eyi7YwIlz
+ s11lt57ElZZuLxMRM+ZkbFN3mbSO56++Si/TmyQ1kNX+6BMwUdZ1G7sqcqc/9I2NHMDqOswS8
+ sgEziO3bnpnQTasdsYe/D8xAAdPQVk4bDrDiVH2JWvNx5p+H/Lq8fzSEbpTYXO6T8MxZDIhpt
+ HX85juW8DW6Efza3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add function to retrieve a mtd device by its OF node. Since drivers can
-assign arbitrary names to mtd devices in the absence of a label
-property, there is no other reliable way to retrieve a mtd device for a
-given OF node.
+Hi Takashi,
 
-Signed-off-by: Bernhard Frauendienst <kernel@nospam.obeliks.de>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/mtd/mtdcore.c   | 38 ++++++++++++++++++++++++++++++++++++++
- include/linux/mtd/mtd.h |  2 ++
- 2 files changed, 40 insertions(+)
+> Takashi Iwai <tiwai@suse.de> hat am 4. September 2018 um 17:58 geschrieben:
+> 
+> 
+> Hi,
+> 
+> since I had an opportunity to play with RPi3B+ recently, I took a look
+> at the existing bcm2835-audio driver code and was amused very much :)
+> 
+> So here is the result, a cleanup and fix patch series.
+> 
+> Most of the patches are trivial cleanups, just brushing up, removing
+> many redundant and buggy codes, as well as code simplifications.
+> 
+> A big functional change is that now it uses non-atomic PCM ops, so
+> that we can kill the ugly workqueue usages.  Also, the resource
+> management was simplified.
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 97ac219c082e..87dd63926bc9 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -926,6 +926,44 @@ struct mtd_info *get_mtd_device_nm(const char *name)
- }
- EXPORT_SYMBOL_GPL(get_mtd_device_nm);
- 
-+/**
-+ *	get_mtd_device_by_node - obtain a validated handle for an MTD device
-+ *	by of_node
-+ *	@of_node: OF node of MTD device to open
-+ *
-+ *	This function returns MTD device description structure in case of
-+ *	success and an error code in case of failure.
-+ */
-+struct mtd_info *get_mtd_device_by_node(const struct device_node *of_node)
-+{
-+	int err = -ENODEV;
-+	struct mtd_info *mtd = NULL, *other;
-+
-+	mutex_lock(&mtd_table_mutex);
-+
-+	mtd_for_each_device(other) {
-+		if (of_node == other->dev.of_node) {
-+			mtd = other;
-+			break;
-+		}
-+	}
-+
-+	if (!mtd)
-+		goto out_unlock;
-+
-+	err = __get_mtd_device(mtd);
-+	if (err)
-+		goto out_unlock;
-+
-+	mutex_unlock(&mtd_table_mutex);
-+	return mtd;
-+
-+out_unlock:
-+	mutex_unlock(&mtd_table_mutex);
-+	return ERR_PTR(err);
-+}
-+EXPORT_SYMBOL_GPL(get_mtd_device_by_node);
-+
- void put_mtd_device(struct mtd_info *mtd)
- {
- 	mutex_lock(&mtd_table_mutex);
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index cd0be91bdefa..fe71358f8eaa 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -570,6 +570,8 @@ extern struct mtd_info *get_mtd_device(struct mtd_info *mtd, int num);
- extern int __get_mtd_device(struct mtd_info *mtd);
- extern void __put_mtd_device(struct mtd_info *mtd);
- extern struct mtd_info *get_mtd_device_nm(const char *name);
-+extern struct mtd_info *get_mtd_device_by_node(
-+		const struct device_node *of_node);
- extern void put_mtd_device(struct mtd_info *mtd);
- 
- 
--- 
-2.18.0
+first of all, thank you very much for this series.
 
+Eric has no time as maintainer, so i will try to give you some feedback (beware of very little audio driver knowledge).
+
+I functionally tested your patch series on a Raspberry Pi 1 B (bcm2835_defconfig), so this whole series is at least:
+
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+
+Unfortunately there is still an corruption issue with underlying vchiq and multi_v7_defconfig, so no wider tests.
+
+I don't know if you tested this series on a Raspberry Pi. Maybe you have some specific scenarios, which should be tested.
+
+As a reviewer i have some suggestions, but only trivia. I don't know if it's a problem that this series hasn't been send to devel@driverdev.osuosl.org
+
+Stefan
