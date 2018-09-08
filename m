@@ -2,50 +2,50 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C26C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96890C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64C1020855
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C1020855
+	by mail.kernel.org (Postfix) with ESMTP id 5B75820855
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 02:15:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B75820855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeIHG7V (ORCPT
+        id S1726984AbeIHG7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 02:59:21 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:36876
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726355AbeIHG7U (ORCPT
+        Sat, 8 Sep 2018 02:59:24 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:47266
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726924AbeIHG7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 02:59:20 -0400
+        Sat, 8 Sep 2018 02:59:23 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with ESMTP
-        id ySldfkWjQ4ToEySldfAViN; Fri, 07 Sep 2018 19:14:33 -0700
+        id ySlgfRM5iWFPMySlgffd0I; Fri, 07 Sep 2018 19:14:36 -0700
 x-originating-ip: 107.180.71.197
 Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
-        id 1fySld-0005EO-OY; Fri, 07 Sep 2018 19:14:33 -0700
+        id 1fySlg-0005EU-5L; Fri, 07 Sep 2018 19:14:36 -0700
 From:   Long Li <longli@linuxonhyperv.com>
 To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc:     Long Li <longli@microsoft.com>
-Subject: [Patch v3 10/16] CIFS: SMBD: Do not call ib_dereg_mr on invalidated memory registration
-Date:   Sat,  8 Sep 2018 02:13:42 +0000
-Message-Id: <20180908021348.19956-11-longli@linuxonhyperv.com>
+Subject: [Patch v3 11/16] CIFS: SMBD: Support page offset in memory registration
+Date:   Sat,  8 Sep 2018 02:13:43 +0000
+Message-Id: <20180908021348.19956-12-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180908021348.19956-1-longli@linuxonhyperv.com>
 References: <20180908021348.19956-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfEF7PbYxj4if/KW8L18SBQbmKh/DkP9wtJCZsTm/SLV6sLBKb+N3av9OkWDfiSQiS3JKiHwIkgEUzcZkZQOgLSNO/Pc0dJyzmSRHU1oQ5eN8+L025UTc
- nNmgjYFz3KqYtOombI42dIOhgQbr/3ssekJyjOL/z2QZEZKP2KD6mNy9Z+ACZboRP9a0RdRrssM26V5i0CoEihdDzWhqPVrTnf0N+Zy9sbesu4QSMSqU1DvF
- R/VrUWNWbcNeHOQO2ckrtk3MPY82MxQW3+cKkIfTgCfEK6Tfaln89J1z2cD5ZfgG2yDC8vP3ylaAHaH45RVyceYN671wYJi3aNcoUk7Io7PwlKCtzuz32Kb2
- +/NH2xwb1hT+BiOODVz/3NMix2GCRSNar7I/P5RJjPzAFWfays7gD/eVW267KsCdng2P8Ffk
+X-CMAE-Envelope: MS4wfPRKqq7KqWS+2BAnNMD97rp7y1p9MU57huo77hqlwytWEj7RAXnjh2FRYD95aNo55xHJN2IyZkCyibu9c3AwlMhMMOtbTPfL/w1cJMHOYWs8/0PgE+L0
+ s08yIOpqbagybchyiKkQMzTIxhlyzilw3KreZH01CXz0IwIQ6d4PP96aJB5x0nkZbzOwNRGc4R0Us69MP1VqQZy1BPJkZOJ+KHBpf8rtaFWH4gVmqz4Tp5gU
+ CGAWsv/O/6SxcWC25788HNiNKJFZIO0S0PsnWPZRP4/7TjILgtSl9/j5hws5H83Qx9tSPbU2MOmqyeFpLTMyBR/+YhBuYumqLiw/WwYZLvhDnvOUWkqt8/wP
+ LU3lCXq0Hk/4vAmu3nUyurX/k11IUcVz2cnIBoop7Sa18pJweGQC9yBhM9jEFuM6AlgVoorx
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,110 +53,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-It is not necessary to deregister a memory registration after it has been
-successfully invalidated.
+Change code to pass the correct page offset during memory registration for
+RDMA read/write.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/smbdirect.c | 82 ++++++++++++++++++++++++++---------------------------
- 1 file changed, 41 insertions(+), 41 deletions(-)
+ fs/cifs/smb2pdu.c   | 18 ++++++++++++------
+ fs/cifs/smbdirect.c | 29 +++++++++++++++++++++--------
+ fs/cifs/smbdirect.h |  2 +-
+ 3 files changed, 34 insertions(+), 15 deletions(-)
 
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index f603fbe..fc30774 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2623,8 +2623,8 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
+ 
+ 		rdata->mr = smbd_register_mr(
+ 				server->smbd_conn, rdata->pages,
+-				rdata->nr_pages, rdata->tailsz,
+-				true, need_invalidate);
++				rdata->nr_pages, rdata->page_offset,
++				rdata->tailsz, true, need_invalidate);
+ 		if (!rdata->mr)
+ 			return -ENOBUFS;
+ 
+@@ -3013,16 +3013,22 @@ smb2_async_writev(struct cifs_writedata *wdata,
+ 
+ 		wdata->mr = smbd_register_mr(
+ 				server->smbd_conn, wdata->pages,
+-				wdata->nr_pages, wdata->tailsz,
+-				false, need_invalidate);
++				wdata->nr_pages, wdata->page_offset,
++				wdata->tailsz, false, need_invalidate);
+ 		if (!wdata->mr) {
+ 			rc = -ENOBUFS;
+ 			goto async_writev_out;
+ 		}
+ 		req->Length = 0;
+ 		req->DataOffset = 0;
+-		req->RemainingBytes =
+-			cpu_to_le32((wdata->nr_pages-1)*PAGE_SIZE + wdata->tailsz);
++		if (wdata->nr_pages > 1)
++			req->RemainingBytes =
++				cpu_to_le32(
++					(wdata->nr_pages - 1) * wdata->pagesz -
++					wdata->page_offset + wdata->tailsz
++				);
++		else
++			req->RemainingBytes = cpu_to_le32(wdata->tailsz);
+ 		req->Channel = SMB2_CHANNEL_RDMA_V1_INVALIDATE;
+ 		if (need_invalidate)
+ 			req->Channel = SMB2_CHANNEL_RDMA_V1;
 diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index ba53c52..b470cd0 100644
+index b470cd0..f61daa9 100644
 --- a/fs/cifs/smbdirect.c
 +++ b/fs/cifs/smbdirect.c
-@@ -2296,50 +2296,50 @@ static void smbd_mr_recovery_work(struct work_struct *work)
- 	int rc;
+@@ -2475,7 +2475,7 @@ static struct smbd_mr *get_mr(struct smbd_connection *info)
+  */
+ struct smbd_mr *smbd_register_mr(
+ 	struct smbd_connection *info, struct page *pages[], int num_pages,
+-	int tailsz, bool writing, bool need_invalidate)
++	int offset, int tailsz, bool writing, bool need_invalidate)
+ {
+ 	struct smbd_mr *smbdirect_mr;
+ 	int rc, i;
+@@ -2498,17 +2498,30 @@ struct smbd_mr *smbd_register_mr(
+ 	smbdirect_mr->sgl_count = num_pages;
+ 	sg_init_table(smbdirect_mr->sgl, num_pages);
  
- 	list_for_each_entry(smbdirect_mr, &info->mr_list, list) {
--		if (smbdirect_mr->state == MR_INVALIDATED ||
--			smbdirect_mr->state == MR_ERROR) {
--
--			if (smbdirect_mr->state == MR_INVALIDATED) {
--				ib_dma_unmap_sg(
--					info->id->device, smbdirect_mr->sgl,
--					smbdirect_mr->sgl_count,
--					smbdirect_mr->dir);
--				smbdirect_mr->state = MR_READY;
--			} else if (smbdirect_mr->state == MR_ERROR) {
--
--				/* recover this MR entry */
--				rc = ib_dereg_mr(smbdirect_mr->mr);
--				if (rc) {
--					log_rdma_mr(ERR,
--						"ib_dereg_mr failed rc=%x\n",
--						rc);
--					smbd_disconnect_rdma_connection(info);
--				}
-+		if (smbdirect_mr->state == MR_INVALIDATED)
-+			ib_dma_unmap_sg(
-+				info->id->device, smbdirect_mr->sgl,
-+				smbdirect_mr->sgl_count,
-+				smbdirect_mr->dir);
-+		else if (smbdirect_mr->state == MR_ERROR) {
+-	for (i = 0; i < num_pages - 1; i++)
+-		sg_set_page(&smbdirect_mr->sgl[i], pages[i], PAGE_SIZE, 0);
++	log_rdma_mr(INFO, "num_pages=0x%x offset=0x%x tailsz=0x%x\n",
++			num_pages, offset, tailsz);
 +
-+			/* recover this MR entry */
-+			rc = ib_dereg_mr(smbdirect_mr->mr);
-+			if (rc) {
-+				log_rdma_mr(ERR,
-+					"ib_dereg_mr failed rc=%x\n",
-+					rc);
-+				smbd_disconnect_rdma_connection(info);
-+				continue;
-+			}
++	if (num_pages == 1) {
++		sg_set_page(&smbdirect_mr->sgl[0], pages[0], tailsz, offset);
++		goto skip_multiple_pages;
++	}
  
--				smbdirect_mr->mr = ib_alloc_mr(
--					info->pd, info->mr_type,
-+			smbdirect_mr->mr = ib_alloc_mr(
-+				info->pd, info->mr_type,
-+				info->max_frmr_depth);
-+			if (IS_ERR(smbdirect_mr->mr)) {
-+				log_rdma_mr(ERR,
-+					"ib_alloc_mr failed mr_type=%x "
-+					"max_frmr_depth=%x\n",
-+					info->mr_type,
- 					info->max_frmr_depth);
--				if (IS_ERR(smbdirect_mr->mr)) {
--					log_rdma_mr(ERR,
--						"ib_alloc_mr failed mr_type=%x "
--						"max_frmr_depth=%x\n",
--						info->mr_type,
--						info->max_frmr_depth);
--					smbd_disconnect_rdma_connection(info);
--				}
--
--				smbdirect_mr->state = MR_READY;
-+				smbd_disconnect_rdma_connection(info);
-+				continue;
- 			}
--			/* smbdirect_mr->state is updated by this function
--			 * and is read and updated by I/O issuing CPUs trying
--			 * to get a MR, the call to atomic_inc_return
--			 * implicates a memory barrier and guarantees this
--			 * value is updated before waking up any calls to
--			 * get_mr() from the I/O issuing CPUs
--			 */
--			if (atomic_inc_return(&info->mr_ready_count) == 1)
--				wake_up_interruptible(&info->wait_mr);
--		}
-+		} else
-+			/* This MR is being used, don't recover it */
-+			continue;
-+
-+		smbdirect_mr->state = MR_READY;
-+
-+		/* smbdirect_mr->state is updated by this function
-+		 * and is read and updated by I/O issuing CPUs trying
-+		 * to get a MR, the call to atomic_inc_return
-+		 * implicates a memory barrier and guarantees this
-+		 * value is updated before waking up any calls to
-+		 * get_mr() from the I/O issuing CPUs
-+		 */
-+		if (atomic_inc_return(&info->mr_ready_count) == 1)
-+			wake_up_interruptible(&info->wait_mr);
+-	sg_set_page(&smbdirect_mr->sgl[i], pages[i],
+-		tailsz ? tailsz : PAGE_SIZE, 0);
++	/* We have at least two pages to register */
++	sg_set_page(
++		&smbdirect_mr->sgl[0], pages[0], PAGE_SIZE - offset, offset);
++	i = 1;
++	while (i < num_pages - 1) {
++		sg_set_page(&smbdirect_mr->sgl[i], pages[i], PAGE_SIZE, 0);
++		i++;
++	}
++	sg_set_page(&smbdirect_mr->sgl[i], pages[i], tailsz, 0);
+ 
++skip_multiple_pages:
+ 	dir = writing ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+ 	smbdirect_mr->dir = dir;
+ 	rc = ib_dma_map_sg(info->id->device, smbdirect_mr->sgl, num_pages, dir);
+ 	if (!rc) {
+-		log_rdma_mr(INFO, "ib_dma_map_sg num_pages=%x dir=%x rc=%x\n",
++		log_rdma_mr(ERR, "ib_dma_map_sg num_pages=%x dir=%x rc=%x\n",
+ 			num_pages, dir, rc);
+ 		goto dma_map_error;
  	}
- }
+@@ -2516,8 +2529,8 @@ struct smbd_mr *smbd_register_mr(
+ 	rc = ib_map_mr_sg(smbdirect_mr->mr, smbdirect_mr->sgl, num_pages,
+ 		NULL, PAGE_SIZE);
+ 	if (rc != num_pages) {
+-		log_rdma_mr(INFO,
+-			"ib_map_mr_sg failed rc = %x num_pages = %x\n",
++		log_rdma_mr(ERR,
++			"ib_map_mr_sg failed rc = %d num_pages = %x\n",
+ 			rc, num_pages);
+ 		goto map_mr_error;
+ 	}
+diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
+index f9038da..1e419c2 100644
+--- a/fs/cifs/smbdirect.h
++++ b/fs/cifs/smbdirect.h
+@@ -321,7 +321,7 @@ struct smbd_mr {
+ /* Interfaces to register and deregister MR for RDMA read/write */
+ struct smbd_mr *smbd_register_mr(
+ 	struct smbd_connection *info, struct page *pages[], int num_pages,
+-	int tailsz, bool writing, bool need_invalidate);
++	int offset, int tailsz, bool writing, bool need_invalidate);
+ int smbd_deregister_mr(struct smbd_mr *mr);
  
+ #else
 -- 
 2.7.4
 
