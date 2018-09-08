@@ -2,126 +2,159 @@ Return-Path: <SRS0=P5JM=LW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD9FC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62984C4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA192075A
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:07:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A672075A
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 04:13:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="VHWV/GrX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA192075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QRj0ysrg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A672075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbeIHIvb (ORCPT
+        id S1726516AbeIHI5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 04:51:31 -0400
-Received: from out002.mailprotect.be ([83.217.72.86]:38245 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbeIHIvb (ORCPT
+        Sat, 8 Sep 2018 04:57:22 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14883 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeIHI5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 04:51:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:reply-to:
-        sender:cc:bcc; bh=YtfjMd+iPuRa7buoCBS/zpjS0vBSmqrun2SNUwg5oRQ=; b=VHWV/GrXDtp
-        Q5KOMESxbL4EvIRsexnDRlbazyX44Iom06RBA28qLw7BzluC+nHgeKf/5+FCWev+shQ9RppRv34mc
-        iW5P9EdlsUNYiM/bO0JKjlp2CVcWnNZccrwb5Y8kH+ilVEcakzeY4RXwk58r/NIULUR6WcJDUt/r1
-        xKaATHJMcsul20yt7lg5jQRuZuL7xXp0+7JpTLWu27jZu+CVuSvAhTK7XXu87OxxvlDKxTX81smJq
-        Nv7kOP8PvbyguFkR6qnSxCimHEGX0TPuar3hFp7SaFNnv3hh2L/ugncvDiP16hWlHW1tDzq60gzOE
-        8FGe4xvWoE47aTyw416fS2A==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1fyUWY-0007vg-Ex; Sat, 08 Sep 2018 06:07:07 +0200
-Received: from asus.site (c-174-62-111-89.hsd1.ca.comcast.net [174.62.111.89])
-        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id CFD90C1837;
-        Sat,  8 Sep 2018 06:06:56 +0200 (CEST)
-Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
- rotational device
-To:     Xuewei Zhang <xueweiz@google.com>, Theodore Ts'o <tytso@mit.edu>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        ming.lei@redhat.com, hare@suse.de, hch@lst.de, pbonzini@redhat.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aditya Kali <adityakali@google.com>, groeck@chromium.org,
-        =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <maze@google.com>
-References: <20180906203719.209399-1-xueweiz@google.com>
- <1536272873.26747.11.camel@acm.org> <20180906224210.GK5098@thunk.org>
- <CAPtwhKoFE-eZcRkvhpJgyutGK91ZouwSjTRb-cwHLQjBkriksw@mail.gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <26273801-8dd5-983a-ef09-f8eef21749ac@acm.org>
-Date:   Fri, 7 Sep 2018 21:06:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 8 Sep 2018 04:57:22 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5b934c430000>; Fri, 07 Sep 2018 21:12:53 -0700
+Received: from HQMAIL105.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 07 Sep 2018 21:13:05 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 07 Sep 2018 21:13:05 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Sep
+ 2018 04:13:03 +0000
+Received: from [10.110.48.28] (10.110.48.28) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 8 Sep 2018
+ 04:13:02 +0000
+Subject: Re: Plumbers 2018 - Performance and Scalability Microconference
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     Aaron Lu <aaron.lu@intel.com>, <alex.kogan@oracle.com>,
+        <akpm@linux-foundation.org>, <boqun.feng@gmail.com>,
+        <brouer@redhat.com>, <dave@stgolabs.net>, <dave.dice@oracle.com>,
+        Dhaval Giani <dhaval.giani@oracle.com>, <ktkhai@virtuozzo.com>,
+        <ldufour@linux.vnet.ibm.com>, <Pavel.Tatashin@microsoft.com>,
+        <paulmck@linux.vnet.ibm.com>, <shady.issa@oracle.com>,
+        <tariqt@mellanox.com>, <tglx@linutronix.de>,
+        <tim.c.chen@intel.com>, <vbabka@suse.cz>, <longman@redhat.com>,
+        <yang.shi@linux.alibaba.com>, <shy828301@gmail.com>,
+        Huang Ying <ying.huang@intel.com>,
+        <subhra.mazumdar@oracle.com>,
+        "Steven Sistare" <steven.sistare@oracle.com>, <jwadams@google.com>,
+        <ashwinch@google.com>, <sqazi@google.com>,
+        Shakeel Butt <shakeelb@google.com>, <walken@google.com>,
+        <rientjes@google.com>, <junaids@google.com>,
+        Neha Agarwal <nehaagarwal@google.com>
+References: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <35c2c79f-efbe-f6b2-43a6-52da82145638@nvidia.com>
+Date:   Fri, 7 Sep 2018 21:13:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <CAPtwhKoFE-eZcRkvhpJgyutGK91ZouwSjTRb-cwHLQjBkriksw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 178.208.39.159
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.06)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5o8cF3p86jO51RKz/iQ3DzJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO6vKcmAs6CbufrvwgXALYJ2A5LiDfh3lq6IyugVpruaU7sA8c0G8vPgpF/mOUR3AbCXA
- rInbZ6qIwLyBZyJW/YCT9Ui8ESSPXhfBI/CVeVpLWv7L6YAFQCVyuHTI87HxBfWpAw+3oS8eQJ1j
- rvdLDWC8eVP+pWyk8IQQ1lL3EHX54FFwuzjqg0YMSb5Z0gwwMsQa9E0mv5W8tg6akrbeq2/q3gKP
- YN4pDx6T+Gom7LQv3fOjRDD9OGUKRZmyo9aj/eZNohDx+e40Z/8DK3FY6+L//vWhll9ubWTAaTwX
- JtFJvdePI8pMO8g15dV4F8DQ+QgXAmY3WV/PikYBtj1zgVj/gbuP7hnUK8NQdLwsVWKI5h95nPh9
- a549uEJDlX2zbVNiLZt/QXQnOBRD+jq1HsIsPYYqgCE9VHi2RrGTOb8LVtuU7LV93speZaHn7N0i
- oBjisIUymzDZZZVpKet7jIJvhPVU8VsnjvDKPRgDOuBhGRQP6aoq2j5ibghWGduoTt0e4JZGLi4N
- 7z34dRW8He8OS36jJS0vGLHCMBZ8qZbSH5hAeUS9cQyvi5qmSFkUknN5Z0HND1jmKFhIjcMZ2Hzp
- D59QdM/f9KJhSSfjTAUyLIywuTEI0kISK7u1AZUYswhRnz2TBlRANbxfwyKJau9SJCaCv74Yh1P8
- 2G5a6FUfCqKyMMr9DC5xv10I1RUEoMex+02z+OLc6JgtScTK+tB+krcu2EUkcwJAT4fgYEF9hqUv
- gugTwCBLPD4olaNxG1Uzhk3emVQ3gGhRNfbGmn/DPdxtH4YeHcdUG7t52t8IQOrYSw1F+nigO8Hc
- zQSiYxqZR3KVQgqF/fPYYAfEfshY5+rKdpQX0JCawTpXLsZHQ6Opvgt3P7LuE20sspzMMtco3f54
- Vr05fWzzciEg6Ru2OdWr+Or9P0IHyk2pZXI5Aop9L1WAXCZ22036WHg8viWNUl/fumlD47sXPQEl
- p1YRFZ4oobg8BBg3Jq+ntzj0/GqJg4E/KNK41fXYWiMK3hUu9uwJu0VOx5JgxLZ/jzH5BeM+PPvo
- BWcDxsFUXzz0RLajaudc+HA3xjQwpRltQnLYM3A6BXfvel8OEFDbU53Bgg0jWhcETmPWhuXbFcbm
- 0rFyn10wV+nM7dIy27DE7cdXogrgAlIbNoRIs8zFcDjnShMu2z+YCLdt1O36QJzT4QKoDPA69FJ5
- 6j6TBEeRw33i5WSyISiVtdP1UgGt/UpwRJ/eXhAiot4MY812nNgiJt0ptDwHWmhqaO2WHXIzPWeB
- 6FPJK/BpIbQy+VVErox5P1XXf9064N+GSqYoBRs3
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+In-Reply-To: <1dc80ff6-f53f-ae89-be29-3408bf7d69cc@oracle.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1536379973; bh=lH2zyiKvuhMiFdmRZqOjIYRa74EllMfamTb07ue177w=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=QRj0ysrgFlgGIDmHLokWaPtvxiZbht4ptiIw/HxI6FxC47K0vzg2aKwMjOGcmoyRg
+         BLrOREpg47JLqEtS4PVu+AK/NKbHWylJ8w1Lyifk3KU3f6ZIHKMvEiV2UQZXys/EvY
+         P3OAFTD93D2W7xTB5KJrPJYQXsROadJEs7fk/4W6WM5gEin5fYlzEo27XTjhGmy603
+         A/dKv1Q7o0EwNc7ZoLNvRGQWdRJsGFJ0SGHNPGwLBL6sRqwZi0gyB67/uX14N4QEMD
+         cUF7QzlTBL18Rby4oItsDcL7JBEBmOXLuNTzbtg9bzhZ0Vc4U2iwoX3wtKh7DT1jep
+         AW1oMGIHHWAnA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/18 16:03, Xuewei Zhang wrote:
-> On Thu, Sep 6, 2018 at 3:42 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->> There was a discussion about a number of *years* ago; blk-mq has been
->> baking for a very long time.  In the early days of block_mq, the
->> overwhelming percentage of the users of blk-mq where those who were
->> using PCIe attached flash.  So when, I raised this question, the
->> argument was that SSD users have no entropy.  Which I agree with; but
->> now that blk-mq is the default, and hard drives are using blk-mq, it's
->> time for a patch like Xuewei's.
->
-> Besides Ted's point of "SSD users have no entropy", I think there are
-> two more reasons:
-> 1. setting QUEUE_FLAG_ADD_RANDOM has a more visible performance hit
-> on SSD disks than rotational disks.
-> 2. SSD disks provide less entropy than rotational disks.
-> I actually experimented on Container-Optimized OS, running on Google
-> Compute Engine with QUEUE_FLAG_ADD_RANDOM set.
-> Turns out the VM will have ~800 bit of entropy provided on boot on
-> rotational disk;
-> and will only have ~70 bit of entropy if running on SSD (and remember
-> there are ~50 bit contributed from other sources).
-> (in the above experiment, both disks were virtualized disks)
+On 9/4/18 2:28 PM, Daniel Jordan wrote:
+> Pavel Tatashin, Ying Huang, and I are excited to be organizing a performa=
+nce and scalability microconference this year at Plumbers[*], which is happ=
+ening in Vancouver this year.=C2=A0 The microconference is scheduled for th=
+e morning of the second day (Wed, Nov 14).
+>=20
+> We have a preliminary agenda and a list of confirmed and interested atten=
+dees (cc'ed), and are seeking more of both!
+>=20
+> Some of the items on the agenda as it stands now are:
+>=20
+> =C2=A0- Promoting huge page usage:=C2=A0 With memory sizes becoming ever =
+larger, huge pages are becoming more and more important to reduce TLB misse=
+s and the overhead of memory management itself--that is, to make the system=
+ scalable with the memory size.=C2=A0 But there are still some remaining ga=
+ps that prevent huge pages from being deployed in some situations, such as =
+huge page allocation latency and memory fragmentation.
+>=20
+> =C2=A0- Reducing the number of users of mmap_sem:=C2=A0 This semaphore is=
+ frequently used throughout the kernel.=C2=A0 In order to facilitate scalin=
+g this longstanding bottleneck, these uses should be documented and unneces=
+sary users should be fixed.
+>=20
+> =C2=A0- Parallelizing cpu-intensive kernel work:=C2=A0 Resolve problems o=
+f past approaches including extra threads interfering with other processes,=
+ playing well with power management, and proper cgroup accounting for the e=
+xtra threads.=C2=A0 Bonus topic: proper accounting of workqueue threads run=
+ning on behalf of cgroups.
+>=20
+> =C2=A0- Preserving userland during kexec with a hibernation-like mechanis=
+m.
+>=20
+> These center around our interests, but having lots of topics to choose fr=
+om ensures we cover what's most important to the community, so we would lik=
+e to hear about additional topics and extensions to those listed here.=C2=
+=A0 This includes, but is certainly not limited to, work in progress that w=
+ould benefit from in-person discussion, real-world performance problems, an=
+d experimental and academic work.
+>=20
+> If you haven't already done so, please let us know if you are interested =
+in attending, or have suggestions for other attendees.
 
-All of the above makes sense to me and is much less risky than changing
-QUEUE_FLAG_MQ_DEFAULT. Hence:
+Hi Daniel and all,
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+I'm interested in the first 3 of those 4 topics, so if it doesn't conflict =
+with HMM topics or
+fix-gup-with-dma topics, I'd like to attend. GPUs generally need to access =
+large chunks of
+memory, and that includes migrating (dma-copying) pages around. =20
 
+So for example a multi-threaded migration of huge pages between normal RAM =
+and GPU memory is an=20
+intriguing direction (and I realize that it's a well-known topic, already).=
+ Doing that properly
+(how many threads to use?) seems like it requires scheduler interaction.
+
+It's also interesting that there are two main huge page systems (THP and Hu=
+getlbfs), and I sometimes
+wonder the obvious thing to wonder: are these sufficiently different to war=
+rant remaining separate,
+long-term?  Yes, I realize they're quite different in some ways, but still,=
+ one wonders. :)
+
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
