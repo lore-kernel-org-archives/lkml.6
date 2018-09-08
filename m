@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDC3C4321E
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD5DC4321E
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AACEE2086B
-	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:21:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACEE2086B
+	by mail.kernel.org (Postfix) with ESMTP id B279E2086B
+	for <linux-kernel@archiver.kernel.org>; Sat,  8 Sep 2018 16:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B279E2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbeIHVIH (ORCPT
+        id S1727753AbeIHVIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 8 Sep 2018 17:08:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35482 "EHLO mx1.suse.de"
+        Sat, 8 Sep 2018 17:08:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35534 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726880AbeIHVIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 8 Sep 2018 17:08:07 -0400
+        id S1726880AbeIHVIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 8 Sep 2018 17:08:15 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8125FAE92;
-        Sat,  8 Sep 2018 16:21:47 +0000 (UTC)
-Date:   Sat, 08 Sep 2018 18:21:47 +0200
-Message-ID: <s5hefe4559g.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 56C1FAE96;
+        Sat,  8 Sep 2018 16:21:55 +0000 (UTC)
+Date:   Sat, 08 Sep 2018 18:21:55 +0200
+Message-ID: <s5hd0to5598.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Eric Anholt <eric@anholt.net>,
         linux-rpi-kernel@lists.infradead.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/29] staging: bcm2835-audio: Clean up include files in bcm2835-ctl.c
-In-Reply-To: <1366205674.39171.1536413114481@email.1und1.de>
+Subject: Re: [PATCH 00/29] staging: bcm2835-audio: Cleanups and fixes
+In-Reply-To: <2050605805.39126.1536412690563@email.1und1.de>
 References: <20180904155858.8001-1-tiwai@suse.de>
-        <20180904155858.8001-4-tiwai@suse.de>
-        <1366205674.39171.1536413114481@email.1und1.de>
+        <2050605805.39126.1536412690563@email.1und1.de>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -49,25 +48,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 08 Sep 2018 15:25:14 +0200,
+On Sat, 08 Sep 2018 15:18:10 +0200,
 Stefan Wahren wrote:
 > 
-> Hi,
+> Hi Takashi,
 > 
 > > Takashi Iwai <tiwai@suse.de> hat am 4. September 2018 um 17:58 geschrieben:
 > > 
 > > 
-> > Only a few of them are really needed.
+> > Hi,
 > > 
-> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > ---
-> >  .../vc04_services/bcm2835-audio/bcm2835-ctl.c     | 15 ---------------
+> > since I had an opportunity to play with RPi3B+ recently, I took a look
+> > at the existing bcm2835-audio driver code and was amused very much :)
+> > 
+> > So here is the result, a cleanup and fix patch series.
+> > 
+> > Most of the patches are trivial cleanups, just brushing up, removing
+> > many redundant and buggy codes, as well as code simplifications.
+> > 
+> > A big functional change is that now it uses non-atomic PCM ops, so
+> > that we can kill the ugly workqueue usages.  Also, the resource
+> > management was simplified.
 > 
-> I think this patch and patch #23 could be merge in case a new series is required.
+> first of all, thank you very much for this series.
+> 
+> Eric has no time as maintainer, so i will try to give you some feedback (beware of very little audio driver knowledge).
+> 
+> I functionally tested your patch series on a Raspberry Pi 1 B (bcm2835_defconfig), so this whole series is at least:
+> 
+> Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-OK, will do.
+OK, thanks, I'll put to my series in case of resubmission.
+Meanwhile I'll keep the series in topic/vc04 branch of sound.git
+tree.
+
+> Unfortunately there is still an corruption issue with underlying vchiq and multi_v7_defconfig, so no wider tests.
+
+What is this corruption issue?
+
+> I don't know if you tested this series on a Raspberry Pi. Maybe you have some specific scenarios, which should be tested.
+
+I have only a RPi3B+, and that's all what I've tested.
+It'd be great if the patch series could be tested in a wider range of
+models, of course.
+
+The patches are only about cleanups.  They corrected the bad usages of
+audio APIs and its design, but basically I haven't touched the basic
+functionality intentionally at all.  So the behavior should be kept as
+before.
+
+(Actually it'd be better to revisit the design later, especially about
+the multi-cards option and the PCM route mixer control, but I left as
+is for compatibility reason for now.)
+
+> As a reviewer i have some suggestions, but only trivia. I don't know if it's a problem that this series hasn't been send to devel@driverdev.osuosl.org
+
+No, it's just because that address isn't found in MAINTAINERS file.
+If it should go through it, please correct the entry at first :)
 
 
-thanks,
+Thanks!
 
 Takashi
