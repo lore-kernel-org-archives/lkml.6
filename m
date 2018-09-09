@@ -2,166 +2,100 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E58DC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EDCC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99F220865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82AB32075B
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIgSgenV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A99F220865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOew55sq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82AB32075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbeIITdn (ORCPT
+        id S1727671AbeIITif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 15:33:43 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37268 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbeIITdm (ORCPT
+        Sun, 9 Sep 2018 15:38:35 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40603 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbeIITif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 15:33:42 -0400
-Received: by mail-oi0-f65.google.com with SMTP id p84-v6so35537762oic.4;
-        Sun, 09 Sep 2018 07:43:48 -0700 (PDT)
+        Sun, 9 Sep 2018 15:38:35 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c126-v6so12743759qkd.7
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 07:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4ZHj/guxuBV4JlDmlZA6KWi8fwS2/XD6hEakjr67tcM=;
-        b=GIgSgenVgH85yA9XP+CF2pfdADTAH4nefHZ0l2GRIf/MsTcaxjZgwXUb488jm2pCg/
-         sPwCOawNFjYFKWZJhux+LrJ5Rb4GvvuKRk1g5KLbERBU+zW69UPWZ8J5k1W/SoCJl1jX
-         5O0hEd6zgAqUa9XVB+vzvrgIzR3P3ZDM0xfPYbxhYexlfB4tkFW84nSZq56trPhWMT5J
-         Pb0ASwZ54U5vXXCSYinLDJCh59LOalOeXzTFyoV8RXItkdsS4Ch8E/Y96MxwV5g3iEFM
-         G7d4n4okdPF6FkExwtwadxiza48VmgcHBprSO3YXlAacp/vpYnADCVNwUzArQIEwziPy
-         rTew==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bI8u8Gvb6WCXlrSi5I0fl1dSwkcMjdZ0wqgzEqGcuMU=;
+        b=LOew55sqg8oi/KoNbTgV0btD41PHCpHOkgeZaBN0IFsXGiGmn+/EfoDraHbq/fS0l3
+         n/bwL9R88OICd34DzcpHXl3NRlUjGtxG63Oc8/K9AlTnvlXXw4jIlhxNGMGktyejDZJW
+         Zhe3ullVnpXZqK+fVDb/AuPEYar+j9mK4nkhp9CzXSF7c+8LNaOHzM6616Jn5zWmmN/j
+         ocyzqbpDY/ipkR3e8RDME6vvAJEt0GE+76sCmFgmZ4axTjySqXEfgsq3aWovY3i0us/o
+         MoXFeLurscT1O3dWio1KZjCfgFn4z6pzLmffVLQ8ftjr2WAKq3f08gnKGXYu4VzhdMpS
+         2scg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4ZHj/guxuBV4JlDmlZA6KWi8fwS2/XD6hEakjr67tcM=;
-        b=niviDUw3hdE3R287wL8sKw+Gp29xvNLjaJRnCT8atqDU/j7pBY+8nLkeojT+s42gBT
-         DxP+rJ2ZkzFsK3HTgkkCTmZT1tBoCUW5zFfRCVCezYcZ/CLnUDvUvgt9vrUI16qJCO7Q
-         jIs445NtwNAjnPN1PRSrKaDgWJKR6lVFzNz2C/wy921mLjesyxRG458D9xRBniNVz1uM
-         /H3XLy+/8lKZVhwYXQ79sTNgkCVbrrqMZQNkzPRvBj9bjjW43NCepz9A6NC51Ygd6c00
-         JTjCX8VeafAkFssP+SqNjpO+6nGZGI9z6aLG4JH3omYQ7B6hWah6/McFaeld5CH6GxO8
-         Jriw==
-X-Gm-Message-State: APzg51DJTvaLM5WH2Txd3dfEGdCJr64vCzy2URrofrRxLgnOHsLbjWao
-        Rt8El2SbWOrXFp4VXcC7Foc=
-X-Google-Smtp-Source: ANB0VdYZh6MNi348k2t1xFyYDBK+ENlWaC/DeB5vI+UieL4DyMDOUd9EvMh0udXlSp8ONvmoIH+KQQ==
-X-Received: by 2002:aca:b702:: with SMTP id h2-v6mr18321428oif.66.1536504227914;
-        Sun, 09 Sep 2018 07:43:47 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id a144-v6sm33186324oii.30.2018.09.09.07.43.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Sep 2018 07:43:47 -0700 (PDT)
-Subject: Re: [PATCH] usb: typec: don't disable sink or source on
- initialization
-To:     Angus Ainslie <angus@akkea.ca>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <groeck7@gmail.com>
-References: <20180906192644.24587-1-angus@akkea.ca>
- <20180907103438.GI25121@kuha.fi.intel.com>
- <0adff11c-4836-4035-39a7-1cd2ea3ff74d@roeck-us.net>
- <00ed8e5a4ae0dd40181b8de534684960@www.akkea.ca>
- <690375f9-b721-51d5-7292-59acff44af7c@roeck-us.net>
- <363bd1128780d8de8e560b1b82ce361a@www.akkea.ca>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e48e7ff0-751c-a559-138d-0bb9411e18b0@roeck-us.net>
-Date:   Sun, 9 Sep 2018 07:43:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bI8u8Gvb6WCXlrSi5I0fl1dSwkcMjdZ0wqgzEqGcuMU=;
+        b=T7cr6wtxffWqDi36/ZncL5jO7uDql5kuWM2xhS/R92qEmmJIR5kmbS9UHLxUc2wIHX
+         vvcPYKkHCrd2KnIEsQsk0aAek5pB95vyQMix1PwzO/OelpLclrssK5m0zPzXL0Yr+D2e
+         SQJyy8ZsXPouW/zSd5gZt2QyHVaYsnQyNXgN7QRb3KLgnoBK+vbCOKtNyfKXpSDBjCB5
+         SyPH/eHiww16FYqPLijvq09sy/TNGPn/R8fF6LVknUTvujj+v0UupvDrX3eELQ5b1CJI
+         utm6YvF77/0Tl+kDmsIEnhIIOdLfKD04fG88vfTJqzRM7HOilxo60hHT7GaU+kHzT6v8
+         UgNg==
+X-Gm-Message-State: APzg51AvRvRd2ZU5TWfjTqC4pMW1MEf4DHrPJ4vho4C41QlUsLeGbMeb
+        WwrnaVf5YYjx/NIjbqBV98UcCtzILniRMlDPTyA=
+X-Google-Smtp-Source: ANB0VdZU3lzTW5uQepFFFzJuC611WwYbEW1jz/fhjefysnAAdtSSlXuOKvVDRTMiFePWcaq753x0oNUN3OTvtHP51LE=
+X-Received: by 2002:ae9:e118:: with SMTP id g24-v6mr11930787qkm.306.1536504519759;
+ Sun, 09 Sep 2018 07:48:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <363bd1128780d8de8e560b1b82ce361a@www.akkea.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 07:48:19 -0700 (PDT)
+In-Reply-To: <20180909093611.GA4614@zn.tnic>
+References: <20180908190553.GA4573@gmail.com> <20180909093611.GA4614@zn.tnic>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sun, 9 Sep 2018 16:48:19 +0200
+Message-ID: <CANiq72=RbankDmDSmD+jtvAFArGG-orMSayooGCAEa73_aOAuw@mail.gmail.com>
+Subject: Re: [PATCH] kernel/sched/core.c: Avoid unused variable on non-SMP configs
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/09/2018 07:36 AM, Angus Ainslie wrote:
-> On 2018-09-09 08:20, Guenter Roeck wrote:
->> On 09/09/2018 07:08 AM, Angus Ainslie wrote:
->>> Hi Guenter
->>>
->>> On 2018-09-07 06:55, Guenter Roeck wrote:
->>>> On 09/07/2018 03:34 AM, Heikki Krogerus wrote:
->>>>> +Guenter
->>>>>
->>>>> On Thu, Sep 06, 2018 at 01:26:44PM -0600, Angus Ainslie (Purism) wrote:
->>>>>> If the board is being powered by USB disabling the source and sink
->>>>>> can remove power from the board. Default to source and sink enabled.
->>>>>>
->>>>
->>>> Seems to me that might violate the specification, and cause trouble for systems
->>>> where vbus has to be off initially. It may be better to provide this kind of
->>>> information as configuration parameter instead of imposing it on everyone.
->>>>
->>>
->>> It felt like it would not be the correct thing to do either. I've tried re-arranging the code in tcpci.c to enable the sink before disabling the source but the only way I found to not disable the power was by setting both of those to true.
->>>
->>> What about adding some device tree entries for the initial vbus state and default to false if they are not present ?
->>>
->>> init-vbus-source and init-vbus-charge ?
->>>
->>
->> Yes, I think we should do something along that line. Another question is
->> if we could or should optionally pull the current state from the low level
->> driver, but that may be secondary.
->>
-> 
-> I thought of trying to do that but from reading the "PTN5110N PD PHY application programming guide" there didn't seem to be a direct way to read those parameters.
-> 
+On Sun, Sep 9, 2018 at 11:36 AM, Borislav Petkov <bp@alien8.de> wrote:
+>
+> Alternatively, if you don't want to let the crazy ifdeffery in that
+> function grow even more, you can simply do:
+>
+> ---
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 625bc9897f62..1728743360d4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -136,7 +136,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+>   * to sched_rt_avg_update. But I don't trust it...
+>   */
+>  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+> -       s64 steal = 0, irq_delta = 0;
+> +       s64 steal __maybe_unused = 0, irq_delta = 0;
+>  #endif
 
-Let's put that on the backburner (maybe it works for some other chips)
-and go with the devicetree property for now.
+Indeed. But note that the attribute needs to be written before the
+variable name so that it applies to both variables (or write it twice)
+--- see https://godbolt.org/z/cwOeXZ
 
-Guenter
+Also, if we go that route, I would simply remove the #ifdef entirely.
 
-
->> Thanks,
->> Guenter
->>
->>> Angus
->>>
->>>> Guenter
->>>>
->>>>>> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
->>>>>> ---
->>>>>>   drivers/usb/typec/tcpm.c | 8 +++++---
->>>>>>   1 file changed, 5 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
->>>>>> index ca7bedb46f7f..a1b819cf31da 100644
->>>>>> --- a/drivers/usb/typec/tcpm.c
->>>>>> +++ b/drivers/usb/typec/tcpm.c
->>>>>> @@ -2462,9 +2462,11 @@ static int tcpm_init_vbus(struct tcpm_port *port)
->>>>>>   {
->>>>>>       int ret;
->>>>>>   -    ret = port->tcpc->set_vbus(port->tcpc, false, false);
->>>>>> -    port->vbus_source = false;
->>>>>> -    port->vbus_charge = false;
->>>>>> +    /* default to source and sink enabled in case USB is our only power
->>>>>> +     * source */
->>>>
->>>> I am personally in favor of standard multi-line comments.
->>>>
->>>>>> +    ret = port->tcpc->set_vbus(port->tcpc, true, true);
->>>>>> +    port->vbus_source = true;
->>>>>> +    port->vbus_charge = true;
->>>>>>       return ret;
->>>>>>   }
->>>>>
->>>
->>>
-> 
-> 
-
+Cheers,
+Miguel
