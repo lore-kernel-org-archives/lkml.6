@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE40C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C710C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3353E20854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3353E20854
+	by mail.kernel.org (Postfix) with ESMTP id 242D220854
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:12:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242D220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeIJAC1 (ORCPT
+        id S1727033AbeIJAC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 20:02:27 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:44770 "EHLO leonov.paulk.fr"
+        Sun, 9 Sep 2018 20:02:56 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:44800 "EHLO leonov.paulk.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbeIJAC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 20:02:27 -0400
+        id S1726599AbeIJAC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 20:02:56 -0400
 Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id C2E7FC0262;
-        Sun,  9 Sep 2018 21:11:47 +0200 (CEST)
+        by leonov.paulk.fr (Postfix) with ESMTPS id 330EBC0206;
+        Sun,  9 Sep 2018 21:12:17 +0200 (CEST)
 Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 66119C0FFA; Sun,  9 Sep 2018 21:11:46 +0200 (CEST)
+        id E7FDCC0FFE; Sun,  9 Sep 2018 21:12:15 +0200 (CEST)
 Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id 3B48DC0FEA;
+        by gagarine.paulk.fr (Postfix) with ESMTP id 985D5C0FEC;
         Sun,  9 Sep 2018 21:10:21 +0200 (CEST)
 From:   Paul Kocialkowski <contact@paulk.fr>
 To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
@@ -48,9 +48,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH v2 2/4] media: cedrus: Add TODO file with tasks to complete before unstaging
-Date:   Sun,  9 Sep 2018 21:10:13 +0200
-Message-Id: <20180909191015.20902-3-contact@paulk.fr>
+Subject: [PATCH v2 3/4] media: cedrus: Wrap PHYS_PFN_OFFSET with ifdef and add dedicated comment
+Date:   Sun,  9 Sep 2018 21:10:14 +0200
+Message-Id: <20180909191015.20902-4-contact@paulk.fr>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180909191015.20902-1-contact@paulk.fr>
 References: <20180909191015.20902-1-contact@paulk.fr>
@@ -59,28 +59,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the elements listed are complete, the Cedrus driver will be ready
-to move out of the staging area of the kernel.
+Since PHYS_PFN_OFFSET is not defined for all architectures, it is
+requried to wrap it with ifdef so that it can be built on all
+architectures.
 
 Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
 ---
- drivers/staging/media/sunxi/cedrus/TODO | 7 +++++++
- 1 file changed, 7 insertions(+)
- create mode 100644 drivers/staging/media/sunxi/cedrus/TODO
+ drivers/staging/media/sunxi/cedrus/cedrus_hw.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/staging/media/sunxi/cedrus/TODO b/drivers/staging/media/sunxi/cedrus/TODO
-new file mode 100644
-index 000000000000..ec277ece47af
---- /dev/null
-+++ b/drivers/staging/media/sunxi/cedrus/TODO
-@@ -0,0 +1,7 @@
-+Before this stateless decoder driver can leave the staging area:
-+* The Request API needs to be stabilized;
-+* The codec-specific controls need to be thoroughly reviewed to ensure they
-+  cover all intended uses cases;
-+* Userspace support for the Request API needs to be reviewed;
-+* Another stateless decoder driver should be submitted;
-+* At least one stateless encoder driver should be submitted.
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+index f4307e8f7908..32adbcbe6175 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+@@ -199,8 +199,13 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+ 	/*
+ 	 * The VPU is only able to handle bus addresses so we have to subtract
+ 	 * the RAM offset to the physcal addresses.
++	 *
++	 * This information will eventually be obtained from device-tree.
+ 	 */
++
++#ifdef PHYS_PFN_OFFSET
+ 	dev->dev->dma_pfn_offset = PHYS_PFN_OFFSET;
++#endif
+ 
+ 	ret = of_reserved_mem_device_init(dev->dev);
+ 	if (ret && ret != -ENODEV) {
 -- 
 2.18.0
 
