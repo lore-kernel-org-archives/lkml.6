@@ -2,218 +2,171 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C53FC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9A0C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC8720866
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC8720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7E23920857
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:16:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPokKagq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E23920857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbeIJAEk (ORCPT
+        id S1726723AbeIJAG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 20:04:40 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:44858 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbeIJAEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 20:04:40 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 18000C027D;
-        Sun,  9 Sep 2018 21:14:00 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id 27978C0FF6; Sun,  9 Sep 2018 21:13:58 +0200 (CEST)
-Received: from collins (unknown [192.168.1.1])
-        by gagarine.paulk.fr (Postfix) with ESMTPSA id 506EFC0FE6;
-        Sun,  9 Sep 2018 21:13:43 +0200 (CEST)
-Message-ID: <f1527ee171087dc17b96ae6781e22991673efbff.camel@paulk.fr>
-Subject: Re: [PATCH 0/2] Follow-up patches for Cedrus v9
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     Hans Verkuil <hverkuil@xs4all.nl>, Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devel@driverdev.osuosl.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sun, 9 Sep 2018 20:06:59 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:38032 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbeIJAG7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 20:06:59 -0400
+Received: by mail-qt0-f172.google.com with SMTP id x7-v6so21836658qtk.5;
+        Sun, 09 Sep 2018 12:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8IM5HXX9iALCld5TYo2W5XXVQyoI596FJPC67mSYCDs=;
+        b=XPokKagqRcIPDXMEn2hQvuTIA8B47TStgaInL/obr3VXQql7Klisk6fBYOx95f83RS
+         HnNxddMMnbDykaNgm2jav+7QX5FKYW0d3DZ34msPiO6q+fB4wZXpy02/hrN6Wd/bPdpf
+         hQXFSbbqMwyR7IoNu7+C9NHQ7+N9JmFoLKUv8c30uhTfYxz4FoSjLcL0XxG5YEDNNgqQ
+         WYMUZ8xqhwLXn48a7yvCuyN9Msjn5sUd4V/eomzFdbbs6uhbLpj5xGfkINGY1MUy8Mu8
+         ShMSu3kW1pnT6qUJ2D3kRF5pAVIPGRQPGQXGXpnN+EPo2KQKYBngi2t0Typd3Cm73yUk
+         k9bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=8IM5HXX9iALCld5TYo2W5XXVQyoI596FJPC67mSYCDs=;
+        b=oUweI9vunyrq0g0oeUfHU0X4pL8wtAOQmRjM9HZqu/HaRgXRdV/4iDbSpniiTaGPJ1
+         3S0bj4d+h4LTFVyTyfvHVR7WUpA8F2KSaXkcCnPYyb82G3Yws5YneXvKpbZGuRmi4kSb
+         oIE8US0jX2ikzqNpddDpSRYwteWkTnXn98HM6RgMtIpUFsRyz3J8O/Tql6SO2YmQpc5w
+         XFCWkNY6bV4gacth76MOMUwFaaqkPDtCZcEmCOd5mnE5Ein5FbB7BGIto4OjdGNrcR1W
+         rH026o9wqeMoC+Bb96sqocd0hObJLajeNs0LjVWVxpeEl9YLHsbDcJCQhNrau8Nc4sMb
+         mtGg==
+X-Gm-Message-State: APzg51ACHO26kHZ9Ln5lisl7Jb98XeShr0hIZWcnrr8j2QgIrWVtbzbr
+        IW2XvvtA9QPtZ4cyG/SqFGUKz27dqdMNwCi10wY=
+X-Google-Smtp-Source: ANB0VdbjXWKQLY6nqpOPMGxKQy7GiCJfYRZhs4vyiYTcOCx3zY7XNaJG7COTer4SS8OiCXv3foiN97HVpgWRX4LU/6A=
+X-Received: by 2002:a0c:abca:: with SMTP id k10-v6mr12123994qvb.140.1536520578750;
+ Sun, 09 Sep 2018 12:16:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 12:15:58 -0700 (PDT)
+In-Reply-To: <20180909121901.5a36d0fd@lwn.net>
+References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+ <20180908212459.19736-13-miguel.ojeda.sandonis@gmail.com> <20180909121901.5a36d0fd@lwn.net>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sun, 9 Sep 2018 21:15:58 +0200
+Message-ID: <CANiq72ngDkFUoROFGPL9A=CQ+X5e6R+pfxuBXWx9DWxoryGnTw@mail.gmail.com>
+Subject: Re: [PATCH v4 12/13] Compiler Attributes: add Doc/process/programming-language.rst
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Randy Li <ayaka@soulik.info>, ezequiel@collabora.com,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Sun, 09 Sep 2018 21:13:40 +0200
-In-Reply-To: <7386a631-1753-22cb-955e-fd0f1ca7a2d1@xs4all.nl>
-References: <20180907163347.32312-1-contact@paulk.fr>
-         <11104c03-97ac-8b36-7d75-dfecb8fcce10@xs4all.nl>
-         <CAGb2v67F2a-kYFRb_f+CyhzkHf5+Y+h01=SE-rxJ=-Oj-ma1BA@mail.gmail.com>
-         <3c4e5a98-4dbd-9a8c-8dab-612a923f0eb9@xs4all.nl>
-         <e17313d436b8b8b778218f0ab309274e2ae2f1c4.camel@paulk.fr>
-         <7386a631-1753-22cb-955e-fd0f1ca7a2d1@xs4all.nl>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-rM16QRiM22KYzxHBC9Xs"
-X-Mailer: Evolution 3.28.5 
-Mime-Version: 1.0
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-sparse@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jonathan,
 
---=-rM16QRiM22KYzxHBC9Xs
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Sun, Sep 9, 2018 at 8:19 PM, Jonathan Corbet <corbet@lwn.net> wrote:
+> On Sat,  8 Sep 2018 23:24:58 +0200
+> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+>
+>>  Documentation/process/index.rst               |  1 +
+>>  .../process/programming-language.rst          | 45 +++++++++++++++++++
+>>  2 files changed, 46 insertions(+)
+>>  create mode 100644 Documentation/process/programming-language.rst
+>>
+> So I have some overall thoughts on the documentation; my apologies for
+> not getting to this until you got to v4...
 
-Hi,
+No problem at all! :-)
 
-Le dimanche 09 septembre 2018 =C3=A0 11:04 +0200, Hans Verkuil a =C3=A9crit=
- :
-> On 09/08/2018 09:42 PM, Paul Kocialkowski wrote:
-> > Hi,
-> >=20
-> > Le samedi 08 septembre 2018 =C3=A0 13:24 +0200, Hans Verkuil a =C3=A9cr=
-it :
-> > > On 09/08/2018 12:22 PM, Chen-Yu Tsai wrote:
-> > > > On Sat, Sep 8, 2018 at 6:06 PM Hans Verkuil <hverkuil@xs4all.nl> wr=
-ote:
-> > > > >=20
-> > > > > On 09/07/2018 06:33 PM, Paul Kocialkowski wrote:
-> > > > > > This brings the requested modifications on top of version 9 of =
-the
-> > > > > > Cedrus VPU driver, that implements stateless video decoding usi=
-ng the
-> > > > > > Request API.
-> > > > > >=20
-> > > > > > Paul Kocialkowski (2):
-> > > > > >   media: cedrus: Fix error reporting in request validation
-> > > > > >   media: cedrus: Add TODO file with tasks to complete before un=
-staging
-> > > > > >=20
-> > > > > >  drivers/staging/media/sunxi/cedrus/TODO     |  7 +++++++
-> > > > > >  drivers/staging/media/sunxi/cedrus/cedrus.c | 15 ++++++++++++-=
---
-> > > > > >  2 files changed, 19 insertions(+), 3 deletions(-)
-> > > > > >  create mode 100644 drivers/staging/media/sunxi/cedrus/TODO
-> > > > > >=20
-> > > > >=20
-> > > > > So close...
-> > > > >=20
-> > > > > When compiling under e.g. intel I get errors since it doesn't kno=
-w about
-> > > > > the sunxi_sram_claim/release function and the PHYS_PFN_OFFSET def=
-ine.
-> > > > >=20
-> > > > > Is it possible to add stub functions to linux/soc/sunxi/sunxi_sra=
-m.h
-> > > > > if CONFIG_SUNXI_SRAM is not defined? That would be the best fix f=
-or that.
-> > > > >=20
-> > > > > The use of PHYS_PFN_OFFSET is weird: are you sure this is the rig=
-ht
-> > > > > way? I see that drivers/of/device.c also sets dev->dma_pfn_offset=
-, which
-> > > > > makes me wonder if this information shouldn't come from the devic=
-e tree.
-> > > > >=20
-> > > > > You are the only driver that uses this define directly, which mak=
-es me
-> > > > > suspicious.
-> > > >=20
-> > > > On Allwinner platforms, some devices do DMA directly on the memory =
-BUS
-> > > > with the DRAM controller. In such cases, the DRAM has no offset. In=
- all
-> > > > other cases where the DMA goes through the common system bus and th=
-e DRAM
-> > > > offset is either 0x40000000 or 0x20000000, depending on the SoC. Si=
-nce the
-> > > > former case is not described in the device tree (this is being work=
-ed on
-> > > > by Maxime BTW), the dma_pfn_offset is not the value it should be. A=
-FAIK
-> > > > only the display and media subsystems (VPU, camera, TS) are wired t=
-his
-> > > > way.
-> > > >=20
-> > > > In drivers/gpu/drm/sun4i/sun4i_backend.c (the display driver) we us=
-e
-> > > > PHYS_OFFSET, which is pretty much the same thing.
-> > > >=20
-> > >=20
-> > > OK, in that case just put #ifdef PHYS_PFN_OFFSET around that line tog=
-ether
-> > > with a comment that this will eventually come from the device tree.
-> >=20
-> > That seems fine, although I'm less certain about what to do for the
-> > SRAM situation. Other drivers that use SUNXI_SRAM have a Kconfig select
-> > on it (that Cedrus lacks). Provided that the SRAM driver builds fine
-> > for non-sunxi configs, bringing-in that select would remove the need
-> > for dummy functions and also ensure that the actual implementation is
-> > always used on sunxi. Otherwise, there'd be a risk of having the dummy
-> > functions used (if the SRAM driver is not explicitly selected in the
-> > config), causing a hang when accessing the VPU.
->=20
-> You should certainly select this kernel config.
->=20
-> But the real problem seems to to be drivers/soc/Makefile where it says:
->=20
-> obj-$(CONFIG_ARCH_SUNXI)       +=3D sunxi/
->=20
-> I think this should be:
->=20
-> obj-y       +=3D sunxi/
->=20
-> Now all compiles fine on i686 with the cedrus driver selecting SUNXI_SRAM=
-.
+>
+> 1) I think the document is mistitled.  It's not really about the language
+>    that the kernel used, it's about compiler attributes.  So I would make
+>    both the name of the document and it introduction reflect that.
 
-I have just crafted a patch to the attention of Maxime to allow
-building the sunxi SRAM driver without selecting the sunxi
-architecture, the way you suggested.
+The idea here is to create a document explaining the programming
+language that the kernel uses (which we hadn't), taking the chance to
+describe the attributes (which in a way are extensions to the C
+language); in the future expanding it with other (non-attribute)
+extensions that we use. Of course, that is not done, but I thought
+starting it was a nice idea (meant for people coming from a C
+background that do not know the "dialect" used in Linux).
 
-With that, I just sent out v2 of the follow-up series for the Cedrus
-driver, which should cover the build issues encountered so far.
+Also other kind of very commonly used macros and functions used
+throughout the kernel could be summarized there as a summary for
+newcomers (e.g. stuff like `printk`/`pr_*`, `likely`/`unlikely`,
+`panic`, `EXPORT_SYMBOL`, `BUG_ON`/`WARN_ON`...), without writing full
+documentation there (but pointing to where they are described, either
+in the Docs or a source code if not).
 
-Hopefully everything should be in order this time!
+What do you think?
+
+>
+> 2) This is an ideal opportunity to document what all of those attributes
+>    actually mean.  I would guess that is the information many developers
+
+I thought about that, but the issue is that compilers already describe
+them: in the case of GCC, all of them are documented; some are in
+clang; icc is not well documented --- see the previous threads about
+this), so we would be duplicating that information (and it will become
+outdated as compilers are released and improve the documentation).
+This is the reason why the series removes most of the copy-pasted
+documentation from gcc and instead supplies a link for each attribute
+compiler_attributes.h to gcc & clang online docs.
+
+>    will come here looking for, and they'll go away frustrated.  The ideal
+>    thing to do, IMO, would be do say what each attribute means (rather
+>    than just which compilers support it) in a DOC section in the new
+>    compiler_attributes.h header, then use RST directives to pull all that
+>    information into this document.
+
+Initially my idea was to provide a table with the name and the links
+to each compiler docs; so that it could be easily used. However, when
+thinking about it, it seems that most people consulting such file
+would come from the actual source code, so they would have to move
+from there to the Doc/ file; so I did it the other way around (IIRC
+Nick also mentioned his preference for keeping them in the source
+code).
+
+Now, the idea of keeping them in the header but pulling them to the
+RST can be a good idea but I was unsure how to do it best. I took a
+look at how other RST files did it (the pull), but I thought (maybe
+wrongly) that I wouldn't be able to create a nice table (i.e. instead
+it would be a long list of attributes, which most people will not use
+-- and in my idea of a document describing all the extensions, it
+would be taking most of the space), so I discarded it. I am not sure
+about the future goals for the Docs/, so excuse me if I have the
+completely wrong idea, but in a way, in the current state, I see the
+kernel docs as articles/chapters/book on high-level concepts about the
+kernel, rather than a technical reference (i.e. the source code with a
+better formatting).
+
+Thanks a lot for reviewing!
 
 Cheers,
-
-Paul
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
-
---=-rM16QRiM22KYzxHBC9Xs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAluVcOQACgkQhP3B6o/u
-lQykqQ//QYbM/uJYNKugcZ9ryGjZRUbMLeeB+AeVyk++fcu65tchn5PZwGo8l6GP
-HQiz3cJAjrhrLqcJjufWgKy+CCs5N13TL9mFEYm7YR6D9kfRtiWVq+4p7KNGZjeX
-vLhMPdg4EbU/9bYliGTPzGfYCjezD8nh3KmHerh2K1Z6k4lExVdy10bNjISRhzmg
-n0aXFirWlPOlyZW4fQgeijsvVQLBfMRCHzBWUEsfoFP6yb4p/icdAkmWX9+8B08U
-8bosyiEmVqSg4YAw+h2/Vv/xO4a3udt+5MRd9TET3r2bYFaiQOsdj2B9c7EfncQj
-qdBfUiJYn70MfI975BXwQh3t1RyqJCAW8VvqxWpDts7Kw9cO/g5fLT1kgzH/gZnL
-mEETXLHipghEg/V7t6g1Hka/SSDm6FImujxbne1ALKAtFqtj0sA4zgzWipNLOkY8
-pEWA1vlxvpYGUBseWp62kdr/wUlslUGzDH+KqABPP0ZWbsw751mo7IFQ5YzB2AnK
-LCra2JXVPrz9y9ih8ZyOzGF0iLrNvaj8ed+JFozdT+T/FqqV8S6De7sY/CEDAM/U
-vPTVNBeiGB3hqTIhPWATubtE0CnsonbYrjN0xTzawjNZButQKyvHBW5xbZrVZBq2
-6MsCzFW8MvRuJX/5bYKq2gd1yCEjCyiKO6xN6I6ldxWQ9gqVyW0=
-=slNS
------END PGP SIGNATURE-----
-
---=-rM16QRiM22KYzxHBC9Xs--
-
+Miguel
