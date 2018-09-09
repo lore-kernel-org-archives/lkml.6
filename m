@@ -2,152 +2,131 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B809DC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 03:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED718C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 03:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A6020857
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 03:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68F792086B
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 03:58:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XnUoOVhn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A6020857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T82n2A4E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68F792086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbeIIIpX (ORCPT
+        id S1726654AbeIIIqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 04:45:23 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38787 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeIIIpW (ORCPT
+        Sun, 9 Sep 2018 04:46:36 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39081 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbeIIIqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 04:45:22 -0400
-Received: by mail-oi0-f66.google.com with SMTP id x197-v6so34241733oix.5
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 20:57:14 -0700 (PDT)
+        Sun, 9 Sep 2018 04:46:36 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i190-v6so8821654pgc.6;
+        Sat, 08 Sep 2018 20:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JrsZ0rGUyFzOkk97Ad9wAmZlJk6xgDsHpD/zd2pfqMc=;
-        b=XnUoOVhn3bOAK2E09JG1YJ882Ug4n4B/MeXJsXoRz6JsdT4EToOvLqpR5eKuCqwsjL
-         F0njaR/xPg6B78So9xpZ3/eHdezbfcPnHljhaklZwln2QUVCcmFHDtZOcRSxx2cunxSh
-         EmIK44lUiVTLZyngmirkNZU0mwM8SlP7swLWQ=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=psPoydgIbybMqu35uTV1t7Yblz2X139lg8lZPKMgRqY=;
+        b=T82n2A4EapwGqGWk6m3MBmKkn1aaU5Z+XaefmiYNy3YNP64maBeriK5YD2UioWObBh
+         +lpf0R++xoFdk6leu3fpMIaAVRzxwi50dI4EW6qEIggg+4SiM3SNUMdM9IVdvsT10VSW
+         giO1JjTOfDcxbgJrzXjZ0gtzhbLWn30+SW4ClhV94fzNBUj38oZ47/UI4if5hsd+tQaz
+         sfeddjEL761040rX4RVBsWPbAqTUrWh68jLzBP3YyGyyt9L+o9uK63gII6w64ML5UM7/
+         EZpszA1/oc5r8vIns/sNq7NDgaUin8PBhfVzkfWfjNCrCNjCTf3wYhdv909hPU/xyPxD
+         jY3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JrsZ0rGUyFzOkk97Ad9wAmZlJk6xgDsHpD/zd2pfqMc=;
-        b=h8Vpdhc1YUxzKRuyhADqoyVkvkxz3KmT+ZJEM04Ua49HHcB7n/Hfjo/GkCg9pU8f2M
-         TRnmEgc1L2zB+weJNHmuarUz4KzaR9qW0wWkI1jixHjOFAQeN5+6hG8LTfMhwNQUnOXe
-         oaZ/wFSBiHXX+FF8xtANmooD9PGKrQ7fAvgFQvlMjfF5yJk/58Bo7vLTiX3/6R2ASFBQ
-         F9nyEJ7f7VA9mS1nFUDd7bAay/48ECRT7qayz7bK6QFavhn6XSlzl8xHwrtwnJ4ElRzB
-         xz/WiXtvOnlRK6g1tLFAUd1hcl2ImM0XfWQt0Pp9x+SYam3ABSFJ6xH4ZqYMpyzlEOEF
-         Z3WA==
-X-Gm-Message-State: APzg51BZQLVsEwwSI83g082IJau9bVg5ykqtAn2lqifXo+4vH4/vYgCv
-        SLbsKKYy54wKsUtX7RL0R9nSPyE36t6ejw==
-X-Google-Smtp-Source: ANB0VdaVFk0+tiB+BLJ9atliWEsb2AMtJljCmVi2FU1NtFMx2MzPmrb4k43YVBAlAhEjZrVmvNyzdg==
-X-Received: by 2002:aca:38d5:: with SMTP id f204-v6mr16176340oia.195.1536465433549;
-        Sat, 08 Sep 2018 20:57:13 -0700 (PDT)
-Received: from mail-oi0-f41.google.com (mail-oi0-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm12243125oix.3.2018.09.08.20.57.11
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=psPoydgIbybMqu35uTV1t7Yblz2X139lg8lZPKMgRqY=;
+        b=WiyNBZSMzu411c2iLNtaBrx+Gvf65DKUXQbh1oF4F7Uu7/NNn6+BsTsuA0hkK/Z/vU
+         BTfrUd9vZQm5iQuS32YvWoZB+uRI9AabLqJk0vkW8o9vCeOX+bGe5uI9Zhw45XLJmxKV
+         dgF1B5DPFJi60gkSGWWeTU3Kbm8R4AwEkt5Cq6DW1A2Yb7Q7wQvA5ZYKDYdifM2K6NyV
+         7+JDi4y/a7I0yDNzEaazORjPf9YpixKe+hXXPSM/u499GfRbia3mGlsSPhmRAYMvMu9J
+         sjN46KTpDjsuBUMPX7/TiHM4DxoIJ6HJ038eeIh6xwgBvgmyOI4XHDIFgzQwybU4dFdc
+         F/zA==
+X-Gm-Message-State: APzg51Bzw6L+l1t4Ksd3p3qXhuwNY/qt8vUtd/qNPAMsrYnY0ZhVD6Xg
+        ZniU5saW6GH1GtD5jrMR1pUdOJGH
+X-Google-Smtp-Source: ANB0VdZFCvGwg5sC8ffib36mebNxyOyxPBBoGD0Wq1F4rqu3++BNCPDpWeQ4w10q4gZa/jRZn2ysvQ==
+X-Received: by 2002:a65:6292:: with SMTP id f18-v6mr15720800pgv.85.1536465507170;
+        Sat, 08 Sep 2018 20:58:27 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id b64-v6sm15981599pfg.66.2018.09.08.20.58.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 20:57:12 -0700 (PDT)
-Received: by mail-oi0-f41.google.com with SMTP id b15-v6so34196344oib.10
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 20:57:11 -0700 (PDT)
-X-Received: by 2002:aca:a94c:: with SMTP id s73-v6mr14956990oie.68.1536465431552;
- Sat, 08 Sep 2018 20:57:11 -0700 (PDT)
+        Sat, 08 Sep 2018 20:58:26 -0700 (PDT)
+Subject: Re: [PATCH 4.18 000/123] 4.18.6-stable review
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
+References: <20180903165719.499675257@linuxfoundation.org>
+ <20180904162434.GA16396@roeck-us.net> <20180905090110.GC30538@kroah.com>
+ <7d4d11ab-c769-44b4-0037-d1be7f45e2c8@roeck-us.net>
+ <CA+55aFzpnXYHNeog==-aWYO=V_67viGrMah1ZSdcDqcRO214-w@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <ec9bdd81-8dcd-38fa-0d96-cd7b1a550e92@roeck-us.net>
+Date:   Sat, 8 Sep 2018 20:58:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180907210904.607934824@linuxfoundation.org> <20180907210908.241189276@linuxfoundation.org>
-In-Reply-To: <20180907210908.241189276@linuxfoundation.org>
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-Date:   Sun, 9 Sep 2018 00:56:45 -0300
-X-Gmail-Original-Message-ID: <CABdQkv8Oxmy7ZcwAhKJ-tYJyqJCWba9+vtGCSgMS2aGymEzhsQ@mail.gmail.com>
-Message-ID: <CABdQkv8Oxmy7ZcwAhKJ-tYJyqJCWba9+vtGCSgMS2aGymEzhsQ@mail.gmail.com>
-Subject: Re: [PATCH 4.4 34/47] userns: move user access out of the mutex
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        jannh@google.com, christian@brauner.io, serge@hallyn.com,
-        ebiederm@xmission.com, dan.rue@linaro.org,
-        naresh.kamboju@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CA+55aFzpnXYHNeog==-aWYO=V_67viGrMah1ZSdcDqcRO214-w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg,
+On 09/05/2018 10:01 AM, Linus Torvalds wrote:
+> On Wed, Sep 5, 2018 at 8:34 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On 09/05/2018 02:01 AM, Greg Kroah-Hartman wrote:
+>>>> ---
+>>>> [ 9990.754641] watchdog: BUG: soft lockup - CPU#5 stuck for 22s! [kworker/5:1:155]
+>>>> [ 9990.762601] RIP: 0010:smp_call_function_many+0x208/0x270
+>>>> [ 9990.762601] Code: e8 0d d1 77 00 3b 05 cb f0 24 01 0f 83 86 fe ff ff 48 63 d0 49 8b 0c 24 48 03 0c d5 00 f7 11 a7 8b 51 18 83 e2 01 74 0a f3 90 <8b> 51 18 83 e2 01 75 f6 eb c7 0f b6 4d d0 4c 89 f2 4c 89 ee 44 89
+> 
+> It's stuck in this loop:
+> 
+>     loop:
+>          pause
+>          mov    0x18(%rcx),%edx
+>          and    $0x1,%edx
+>          jne    loop
+> 
+> which is csd_lock_wait().
+> 
+> Judging by the offset in smp_call_function_many(), it's the final one
+> (there's two: the other one is part of "csd_lock()"). But that's just
+> a guess.
+> 
+> Anyway, it means that we're waiting for another CPU to finish
+> processing an IPI - either a previous one we sent asynchronously (if
+> it's the earlier csd_lock() case) or the TLB IPI we just sent and
+> we're waiting for completion of.
+> 
+>> Not tested, but I see it in v4.17.19 and in v4.18.6-rc2. Turns out it is
+>> related to heavy load, not to suspend/resume. At this point I suspect that
+>> it may be an AMD/Ryzen specific problem - it looks like it disappears if I
+>> add "kernel.randomize_va_space = 0" to /etc/sysctl.conf. No idea if it is a
+>> CPU bug or some AMD specific code problem. I'll try to analyze it further.
+> 
+> Ouch. Some IPI sending/receiving problem would be very very painful to
+> debug if it's hw related.
+> 
 
-On Fri, Sep 7, 2018 at 6:41 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
->
-> ------------------
->
-> From: Jann Horn <jannh@google.com>
->
-> commit 5820f140edef111a9ea2ef414ab2428b8cb805b1 upstream.
->
-> The old code would hold the userns_state_mutex indefinitely if
-> memdup_user_nul stalled due to e.g. a userfault region. Prevent that by
-> moving the memdup_user_nul in front of the mutex_lock().
->
-> Note: This changes the error precedence of invalid buf/count/*ppos vs
-> map already written / capabilities missing.
->
-> Fixes: 22d917d80e84 ("userns: Rework the user_namespace adding uid/gid...")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
-> Acked-by: Christian Brauner <christian@brauner.io>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> ---
->  kernel/user_namespace.c |   22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
->
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -604,7 +604,16 @@ static ssize_t map_write(struct file *fi
->         struct uid_gid_extent *extent = NULL;
->         unsigned long page = 0;
->         char *kbuf, *pos, *next_line;
-> -       ssize_t ret = -EINVAL;
-> +       ssize_t ret;
-> +
-> +       /* Only allow < page size writes at the beginning of the file */
-> +       if ((*ppos != 0) || (count >= PAGE_SIZE))
-> +               return -EINVAL;
-> +
-> +       /* Slurp in the user data */
-> +       if (copy_from_user(kbuf, buf, count))
-> +               return -EFAULT;
-> +       kbuf[count] = '\0';
+Turns out this is a well known problem with Ryzen CPUs:
 
-Naresh will soon report issues found by LKFT on user_ns for 4.4 kernel
-for this review round.
+https://bugzilla.kernel.org/show_bug.cgi?id=196683
 
-selftests: mount_run_tests.sh [FAIL]
-write to /proc/self/uid_map failed: Bad address
-
-LTP: user_namespace2 1 TBROK : safe_macros.c:452: userns02.c:95:
-write(6,0x7ffc133113d0,18446744073709551615) failed: errno=EFAULT(14):
-Bad address
-
-I believe the EFAULT was caused because when changing code from
-"memdup_user_nul" to "copy_from_user", for the older kernels, you
-missed allocating the slab object for "kbuf", like memdup_user_nul()
-does.
-
-Note: This likely applies to 3.18 as well.
-
-We are finishing functional tests without this patch, but we wanted to
-make you aware right away.
-
-Best Regards,
-Rafael
+Guenter
