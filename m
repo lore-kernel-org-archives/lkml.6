@@ -6,124 +6,105 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591AFC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 07:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09780C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 07:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F34204EC
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 07:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 944EC204EC
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 07:06:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ObDW5zDZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F34204EC
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mTlqM40r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944EC204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbeIILwN (ORCPT
+        id S1726654AbeIILyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 07:52:13 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:54124 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbeIILwN (ORCPT
+        Sun, 9 Sep 2018 07:54:38 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:25229 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbeIILyi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 07:52:13 -0400
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w8973VJ3020107;
-        Sun, 9 Sep 2018 16:03:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w8973VJ3020107
+        Sun, 9 Sep 2018 07:54:38 -0400
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w8975de9006673;
+        Sun, 9 Sep 2018 16:05:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w8975de9006673
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536476611;
-        bh=ywZrNDZhbyp6Fa5/ppqnqeC/7/aiWrd7+1CGPOAq1cs=;
-        h=From:Date:Subject:To:Cc:From;
-        b=ObDW5zDZXc0ByG2j/4TgGqkz9jcWWEcSojkqecKIBhTWWWfveRZBxaIHo97+XVLd6
-         7aQvNABEp5CNStXe/NIyOXJTMDLF2sgZdRE8SmQlXNrP6sC2MPgb/ZSAs6CXvMf09A
-         8x+e04TnqmErx4dsMj1Y0sgNN0hMDFfEGfx4KI+xR1i+FunlDPizuDVltcyXSia8rN
-         QMS/funRV+JQv2okQtjbSmZrPSHHLDuFt/olpef4hux6TM7N8RFFSb9MsXJCZeGv95
-         OE0jzljsdWLiWkPBp1q0/JAUnIEhALttTW7YBnEOLv20fzcWwlclbCQx795/Irv5Hm
-         ppaKLCywKE5PA==
-X-Nifty-SrcIP: [209.85.221.169]
-Received: by mail-vk1-f169.google.com with SMTP id q184-v6so2267852vke.7;
-        Sun, 09 Sep 2018 00:03:31 -0700 (PDT)
-X-Gm-Message-State: APzg51CuFgjM4VTHHZnEE94aGvP+5mvccHt1+U2LxRbS1VIerc8DphXR
-        Vl75G33lT3WO9Z7xV1i9eKZEouugYR+KBXBaVEk=
-X-Google-Smtp-Source: ANB0VdbIJdA2WzPsKkEHj1c3ZuJg0I4q1B4sb502RhQzoaptS6AXT3x5/LAVhF3rl7uTmbshcMBx1zfpb069bTM8cJI=
-X-Received: by 2002:a1f:9004:: with SMTP id s4-v6mr4824629vkd.10.1536476610497;
- Sun, 09 Sep 2018 00:03:30 -0700 (PDT)
+        s=dec2015msa; t=1536476740;
+        bh=osU7bwDS0GcGU+SVxK3i3OKhMCnbqWpDeKUUduc6QRo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=mTlqM40rWtb4uJIkN1uuipjHwEMwRqQ5v+iZ9nvOweC5IvvzEQxMWnCsNelFkAF/z
+         qhR0+nKltXxTH967SkfDcrG5rxmQMtSsJPvizVmZ6x7HqCDjFmNbyyI4DRlB9r9El5
+         gzIucx94s0y4DRfLigGsjfR8BNalXhz6Wyf6VA8I9aH2SLWE4utJ0uhm/zem5maF6T
+         NTymZNuvIyhUPdUGhK7+zbclJSMSTsbSZNjf/GzZhSfzF6QyCHy8T8hCPiKL5TwMdm
+         Erias926TN1D9uFmHDLxz50mqzWzAZW4iqjBqtsOjMctwyT3FQ+nIaOG+a7Bnqu4ba
+         PfX1gjKUicBhA==
+X-Nifty-SrcIP: [209.85.221.182]
+Received: by mail-vk1-f182.google.com with SMTP id e139-v6so2270272vkf.6;
+        Sun, 09 Sep 2018 00:05:40 -0700 (PDT)
+X-Gm-Message-State: APzg51BJxdimT9tG80yH2NFbxHCSuO3pMUAW8TNOBP7/Lw7EGGy3JJ1m
+        /hRzq6Q4vz9UHGXodSDM2MWzGUu22Z2PY5K9eB4=
+X-Google-Smtp-Source: ANB0VdZWlFvmB6OMnrz22+X4yE2RYOaREkc1eY8mHVqsXspUjnRv00MaoYqLEfiKPPK1cDyNwu/wAJkPw7Z5d+HHjKI=
+X-Received: by 2002:a1f:de46:: with SMTP id v67-v6mr4856432vkg.55.1536476739054;
+ Sun, 09 Sep 2018 00:05:39 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 00:02:50 -0700 (PDT)
+Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 00:04:58 -0700 (PDT)
+In-Reply-To: <1536021744-2552-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1536021744-2552-1-git-send-email-yamada.masahiro@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 9 Sep 2018 16:02:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT7fEjvbBTQVHvK3k5qF6K61_k+g-TNLHjspKX2C_B7hA@mail.gmail.com>
-Message-ID: <CAK7LNAT7fEjvbBTQVHvK3k5qF6K61_k+g-TNLHjspKX2C_B7hA@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v4.19-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        masahiroy@kernel.org
+Date:   Sun, 9 Sep 2018 16:04:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQOY4fkkTnOwXs8YtS+q8UNTZ+iYgx1Jim=LQkRGNF5OQ@mail.gmail.com>
+Message-ID: <CAK7LNAQOY4fkkTnOwXs8YtS+q8UNTZ+iYgx1Jim=LQkRGNF5OQ@mail.gmail.com>
+Subject: Re: [PATCH] kallsyms: remove left-over Blackfin code
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Aaron Wu <Aaron.Wu@analog.com>,
+        Bryan Wu <cooloney@gmail.com>,
+        Robin Getz <robin.getz@analog.com>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+2018-09-04 9:42 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> These symbols were added by commit 028f042613c3 ("kallsyms: support
+> kernel symbols in Blackfin on-chip memory") for Blackfin.
+>
+> The Blackfin support was removed by commit 4ba66a976072 ("arch: remove
+> blackfin port").
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Please pull some Kbuild fixes.
-
-Thanks!
+Applied to linux-kbuild.
 
 
 
+>  scripts/kallsyms.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> index a9186a9..50af068 100644
+> --- a/scripts/kallsyms.c
+> +++ b/scripts/kallsyms.c
+> @@ -48,8 +48,6 @@ static unsigned long long relative_base;
+>  static struct addr_range text_ranges[] = {
+>         { "_stext",     "_etext"     },
+>         { "_sinittext", "_einittext" },
+> -       { "_stext_l1",  "_etext_l1"  }, /* Blackfin on-chip L1 inst SRAM */
+> -       { "_stext_l2",  "_etext_l2"  }, /* Blackfin on-chip L2 SRAM */
+>  };
+>  #define text_range_text     (&text_ranges[0])
+>  #define text_range_inittext (&text_ranges[1])
+> --
+> 2.7.4
+>
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v4.19
-
-for you to fetch changes up to f0b0d88a825149ef3b06656886bc211c71dcb852:
-
-  kbuild: modules_install: warn when missing System.map file
-(2018-09-09 09:14:07 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v4.19
-
- - make setlocalversion more robust about -dirty check
-
- - loosen the pkg-config requirement for Kconfig
-
- - change missing depmod to a warning from an error
-
- - warn modules_install when System.map is missing
-
-----------------------------------------------------------------
-Genki Sky (1):
-      scripts/setlocalversion: git: Make -dirty check more robust
-
-Lukas Bulwahn (1):
-      kconfig: remove a spurious self-assignment
-
-Masahiro Yamada (1):
-      kconfig: do not require pkg-config on make {menu,n}config
-
-Randy Dunlap (2):
-      kbuild: make missing $DEPMOD a Warning instead of an Error
-      kbuild: modules_install: warn when missing System.map file
-
- Documentation/process/changes.rst  |  2 +-
- scripts/depmod.sh                  |  5 +++--
- scripts/kconfig/Makefile           |  1 -
- scripts/kconfig/check-pkgconfig.sh |  8 --------
- scripts/kconfig/gconf-cfg.sh       |  7 +++++++
- scripts/kconfig/mconf-cfg.sh       | 25 ++++++++++++++-----------
- scripts/kconfig/mconf.c            |  1 -
- scripts/kconfig/nconf-cfg.sh       | 25 ++++++++++++++-----------
- scripts/kconfig/qconf-cfg.sh       |  7 +++++++
- scripts/setlocalversion            |  2 +-
- 10 files changed, 47 insertions(+), 36 deletions(-)
- delete mode 100644 scripts/kconfig/check-pkgconfig.sh
 
 
 -- 
