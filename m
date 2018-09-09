@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-1.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B749DC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E07C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628A820833
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:03:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628A820833
+	by mail.kernel.org (Postfix) with ESMTP id D39DB20833
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:04:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D39DB20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbeIIWx5 (ORCPT
+        id S1727127AbeIIWyb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 18:53:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57856 "EHLO
+        Sun, 9 Sep 2018 18:54:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57868 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726629AbeIIWx5 (ORCPT
+        with ESMTP id S1726629AbeIIWyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 18:53:57 -0400
+        Sun, 9 Sep 2018 18:54:31 -0400
 Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14499CB1;
-        Sun,  9 Sep 2018 18:03:29 +0000 (UTC)
-Date:   Sun, 9 Sep 2018 20:03:26 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45729CB1;
+        Sun,  9 Sep 2018 18:04:04 +0000 (UTC)
+Date:   Sun, 9 Sep 2018 20:04:01 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Guenter Roeck <linux@roeck-us.net>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
@@ -34,22 +34,22 @@ Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
 Subject: Re: [PATCH 4.9 00/63] 4.9.126-stable review
-Message-ID: <20180909180326.GA22151@kroah.com>
+Message-ID: <20180909180401.GB22151@kroah.com>
 References: <20180907211012.965501324@linuxfoundation.org>
  <e1fa8fda-e277-3c83-5e35-826df83f3cd5@roeck-us.net>
  <20180909085530.GC14455@kroah.com>
- <1231d8c4-0788-6d02-308a-176666b4a71f@roeck-us.net>
+ <e68e4449-1605-c906-b611-c4b596acb0cd@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1231d8c4-0788-6d02-308a-176666b4a71f@roeck-us.net>
+In-Reply-To: <e68e4449-1605-c906-b611-c4b596acb0cd@roeck-us.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 09, 2018 at 08:54:41AM -0700, Guenter Roeck wrote:
+On Sun, Sep 09, 2018 at 06:33:06AM -0700, Guenter Roeck wrote:
 > On 09/09/2018 01:55 AM, Greg Kroah-Hartman wrote:
 > > On Sat, Sep 08, 2018 at 02:14:53PM -0700, Guenter Roeck wrote:
 > > > On 09/07/2018 02:09 PM, Greg Kroah-Hartman wrote:
@@ -94,21 +94,13 @@ On Sun, Sep 09, 2018 at 08:54:41AM -0700, Guenter Roeck wrote:
 > > don't know if they have always been there or not.
 > > 
 > 
-> For v4.9.125-65-g0f793f1ec4f3:
-> 
-> Build results:
-> 	total: 151 pass: 150 fail: 1
-> Failed builds:
-> 	powerpc:allmodconfig
-> Qemu test results:
-> 	total: 301 pass: 301 fail: 0
-> 
-> arch/powerpc/kernel/fadump.c: In function 'free_crash_memory_ranges':
-> arch/powerpc/kernel/fadump.c:738:2: error: implicit declaration of function 'kfree'
-> 
-> arch/powerpc/kernel/fadump.c: In function 'allocate_crash_memory_ranges':
-> arch/powerpc/kernel/fadump.c:757:14: error: implicit declaration of function 'krealloc'
+> The warnings in the assembler file have been fixed with commit 8a583c0a8d31
+> ("powerpc: Fix invalid use of register expressions"). It is not marked
+> for stable, and does not cause actual failures, so I would not bother
+> applying it.
 
-Oops, forgot to fix that one.  Shoould now be resolved.
+Ok, if it's not bothering you, that's fine with me.
+
+thanks for testing all of these and letting me know.
 
 greg k-h
