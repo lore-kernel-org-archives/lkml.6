@@ -5,127 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E520AC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6A5C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D98B20857
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:14:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D98B20857
+	by mail.kernel.org (Postfix) with ESMTP id 02E6E20857
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E6E20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeIJBEx (ORCPT
+        id S1726743AbeIJBNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 21:04:53 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33072 "EHLO
+        Sun, 9 Sep 2018 21:13:38 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37966 "EHLO
         mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbeIJBEx (ORCPT
+        with ESMTP id S1726605AbeIJBNi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 21:04:53 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 8-v6so36423886oip.0;
-        Sun, 09 Sep 2018 13:14:04 -0700 (PDT)
+        Sun, 9 Sep 2018 21:13:38 -0400
+Received: by mail-oi0-f66.google.com with SMTP id x197-v6so36400022oix.5;
+        Sun, 09 Sep 2018 13:22:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ia86bkJ9m8uGLpDk5aTIYJRevY0u6R3hEBOP9EZsM6k=;
-        b=tdEdvnJ88GSd+cKNaAADdgfDdT/QEToBowQUWaZdk6+Bt6E0ff4HuU6rDQFXzE+CTD
-         xGdmZlunYe8bGx9GTvVAgtUo0m9zx+KHjy32o2LbePpIb8n3cSb1kovt5UuDZTlaVEPs
-         pW3nNiEbVRcDiFdqFLenOLOkzAklnA5fTv1MI08cfPz0ry9oHZaH5FSaezr8lIuhApZp
-         bA0tCA6imV+kCz2sRR4tc31t/sexxce6DjwBYALsRSpFXMitkTkne1K53rGJ7vhLZu+b
-         EJVWER5vr3H1Tt7j2Dmm8MIMW2nH/z9zOngzHd17MCO4pq34rOBbO5BJug8xSBjlbldg
-         CXbA==
-X-Gm-Message-State: APzg51BdRY2/J89iQka4yuSJtNlsWuXw5teuU9SLu/L5rLJk9n42GP1X
-        dBcQ3+9APRSRpApswb0JppVkS52C2FBKkP3WMIw=
-X-Google-Smtp-Source: ANB0VdaBIyKqYSyUpZdf9t8yuvlEaJZZara5ltc9bL+P1SRKyzgvIdsPa9fxE05bo4Z/fwH/zTwprXrlNuM8S4jMi8o=
-X-Received: by 2002:aca:aa06:: with SMTP id t6-v6mr19399448oie.152.1536524043596;
- Sun, 09 Sep 2018 13:14:03 -0700 (PDT)
+        bh=X+dMeOka9TY4dCNV3KChU1LDPCS+8dqySNYiXAZLRwc=;
+        b=VX1yre2ReG2TvdL59GaFhjxL6BsevMmAQSA6SYKkIs1HgJRz+BFAaSqJh82BC4TKjX
+         Fk73zsTwoNOd1RNAPwlm58Uz1vyZa0b5TFADqxY5pkgFmey5PJjx8t1TkapXzGwrsujm
+         h9W/G5WyyYh/+ZsS10NuTp0V266Mhdpa0PlTFdju0gwqlX8l76VB9akIAy6ef4jAzcqR
+         tWj00H2dLc0/hOf+9LzHUQlHPkQ9bZQQMUBOokWHpipUKZH1uMcdGP8kAovSSN4kf757
+         fzXeic3b/AJ0fR+eIxsvdfGkB1fCZduQbBl66MofNnIGF3GBArT782o7x3cuYEUDRu3C
+         qDng==
+X-Gm-Message-State: APzg51BGJfrRmac+tIXO0FtlVOTBgMjgUHlQbLBhXcY330MkGOSpOolP
+        oZ/6IRVMKxmP8zuQ0NcFo8sSqfbiyPaSy2CKJOQ=
+X-Google-Smtp-Source: ANB0VdbB2eZqYz8luHER+wdzfu4k50zLWBHL9dxl7NPS8zx0Uak7FUZRD9fGXV+/NHrnVNeYH2CvqRqQCjEL75e5DlE=
+X-Received: by 2002:aca:aa06:: with SMTP id t6-v6mr19425898oie.152.1536524566498;
+ Sun, 09 Sep 2018 13:22:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <CAJZ5v0jL_k36RPc6e8yUHxAYGXp7HHWK+hLnBZWnu5Oi__7j3w@mail.gmail.com>
- <20180906143842.xlxcg5notwdaflww@queper01-lin> <1545744.fI5ZvP8FO0@aspire.rjw.lan>
- <20180907152923.oxsmcqciez4yhmkk@queper01-lin>
-In-Reply-To: <20180907152923.oxsmcqciez4yhmkk@queper01-lin>
+References: <1534181989-22536-1-git-send-email-rishabhb@quicinc.com>
+In-Reply-To: <1534181989-22536-1-git-send-email-rishabhb@quicinc.com>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 9 Sep 2018 22:13:52 +0200
-Message-ID: <CAJZ5v0gs1Fb-Y1FbjmnxLNHQR=CSHFX_=KpDEkqRCYDJ9EJByQ@mail.gmail.com>
-Subject: Re: [PATCH v6 13/14] sched/topology: Make Energy Aware Scheduling
- depend on schedutil
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+Date:   Sun, 9 Sep 2018 22:22:35 +0200
+Message-ID: <CAJZ5v0hEFGCu8xv6MvwmVvspOwLveD4sPzU-=ewKfbrV9omzBw@mail.gmail.com>
+Subject: Re: [PATCH v1] dd: Invoke one probe retry cycle after some initcall levels
+To:     rishabhb@quicinc.com
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sodagudi Prasad <psodagud@codeaurora.org>,
+        ckadabi@codeaurora.org, tsoni@codeaurora.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Vikram Mulukutla <markivx@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 5:29 PM Quentin Perret <quentin.perret@arm.com> wrote:
+On Mon, Aug 13, 2018 at 7:40 PM Rishabh Bhatnagar <rishabhb@quicinc.com> wrote:
 >
-> On Friday 07 Sep 2018 at 10:52:01 (+0200), Rafael J. Wysocki wrote:
-> > On Thursday, September 6, 2018 4:38:44 PM CEST Quentin Perret wrote:
-> > > Hi Rafael,
-> > >
-> > > On Thursday 06 Sep 2018 at 11:18:55 (+0200), Rafael J. Wysocki wrote:
-> > > > I'm not a particular fan of notifiers to be honest and you don't need
-> > > > to add an extra chain just in order to be able to register a callback
-> > > > from a single user.
-> > >
-> > > Right. I agree there are alternatives to using notifiers. I used them
-> > > because they're existing infrastructure, and because they let me do what
-> > > I want without too much troubles, which are two important points.
-> > >
-> > > > That can be achieved with a single callback
-> > > > pointer too, but also you could just call a function exported by the
-> > > > scheduler directly from where in the cpufreq code it needs to be
-> > > > called.
-> > >
-> > > Are you thinking about something comparable to what is done in
-> > > cpufreq_add_update_util_hook() (kernel/sched/cpufreq.c) for example ?
-> > > That would probably have the same drawback as my current implementation,
-> > > that is that the scheduler is notified of _all_ governor changes, not
-> > > only changes to/from sugov although this is the only thing we care about
-> > > for EAS.
-> >
-> > Well, why don't you implement it as something like "if the governor changes
-> > from sugov to something else (or the other way around), call this function
-> > from the scheduler"?
+> From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 >
-> I just gave it a try and ended up with the diff below. It's basically
-> the exact same patch with a direct function call instead of a notifier.
-> (I also tried the sugov_start/stop thing I keep mentioning but it is
-> more complex, so let's see if the simplest solution could work first).
+> Drivers that are registered at an initcall level may have to
+> wait until late_init before the probe deferral mechanism can
+> retry their probe functions. It is possible that their
+> dependencies were resolved much earlier, in some cases even
+> before the next initcall level. Invoke one probe retry cycle
+> at every _sync initcall level after subsys initcall, allowing
+> these drivers to be probed earlier.
+> To give an example many Qualcomm drivers are dependent on the
+> regulator and bus driver. Both the regulator and bus driver
+> are probed in the subsys_initcall level. Now the probe of bus
+> driver requires regulator to be working. If the probe of bus
+> driver happens before regulator, then bus driver's probe will
+> be deferred and all other device's probes which depend on bus
+> driver will also be deferred.
+> The impact of this problem is reduced if we have this patch.
 >
-> What do you think ?
+> Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> ---
+>
+> Changes since v0:
+>  * Remove arch_initcall_sync(deferred_probe_initcall) from patch. This is not
+>    really needed as none of the devices are re-probed in arch_initcall_sync
+>    level.
+>
+>  drivers/base/dd.c | 32 ++++++++++++++++++++++++++------
+>  1 file changed, 26 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 1435d72..9aa41aa 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -224,23 +224,43 @@ void device_unblock_probing(void)
+>         driver_deferred_probe_trigger();
+>  }
+>
+> +static void enable_trigger_defer_cycle(void)
+> +{
+> +       driver_deferred_probe_enable = true;
 
-This generally works for me from the cpufreq perspective, but I would
-add "cpufreq" to the name of the new function, that is call it
-something like sched_cpufreq_governor_change().
+Isn't it sufficient to enable it once?
 
-Also do you really need the extra work item?  Governor changes are
-carried out in process context anyway.
+> +       driver_deferred_probe_trigger();
+> +       /*
+> +        * Sort as many dependencies as possible before the next initcall
+> +        * level
+> +        */
+> +       flush_work(&deferred_probe_work);
+> +}
+
+I would call this function driver_deferred_probe_sync() or similar to
+indicate that it is a synchronization point.
 
 Thanks,
 Rafael
