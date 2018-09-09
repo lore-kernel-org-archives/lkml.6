@@ -2,74 +2,73 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBEEC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E58CC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039F020854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039F020854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id DB0B320854
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:07:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XjvWeCp8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB0B320854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbeIIXzb (ORCPT
+        id S1727650AbeIIX54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 19:55:31 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:44678 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbeIIXzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 19:55:31 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 842F0C0206
-        for <linux-kernel@vger.kernel.org>; Sun,  9 Sep 2018 21:04:53 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id B2769C0F64; Sun,  9 Sep 2018 21:04:51 +0200 (CEST)
-Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id CAE29C0F60;
-        Sun,  9 Sep 2018 21:04:41 +0200 (CEST)
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH RESEND] drivers: soc: Allow building the sunxi driver without ARCH_SUNXI
-Date:   Sun,  9 Sep 2018 21:04:39 +0200
-Message-Id: <20180909190439.20425-1-contact@paulk.fr>
-X-Mailer: git-send-email 2.18.0
+        Sun, 9 Sep 2018 19:57:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46112 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbeIIX5z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 19:57:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KjrSwzQkP+9g54Mvyhd9RDVsRI9YxrzNh6JQadi5Mdg=; b=XjvWeCp8xyxu5aVrdh98Op4pd
+        o/YyEYPLNcTwomDweGta5D3icVkDBNPWyC8Ss/rzm0BhV7ucwHrb2PYuwvJbXzd7rFAxTvS0F9YPI
+        HjsGe0N7NCdHOSy8IqB22FX2VN7xBQuoTQa0Ga7bfX9c9owWzVeLN/pvZOsnMP4MwMnazZNQr8Z2Y
+        4BKswxE9CRXK5nTNFH29UwuwFDyfqjUtkVXOEDPAeNHoo7FIzEs+L12Ow2osTU9kMGYbsSd/OljnI
+        H8DFXqVpr75CFDQFtfmrN0yNcLO66Yqw4WmajRw2fcax6iciveIuJs4NEZ0yBnzCM/qNTg4M4ppHf
+        8q7guUh+Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fz53C-0004rX-D5; Sun, 09 Sep 2018 19:07:14 +0000
+Date:   Sun, 9 Sep 2018 12:07:14 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Wang Long <wanglong19@meituan.com>
+Cc:     akpm@linux-foundation.org, zwisler@kernel.org,
+        linux-kernel@vger.kernel.org, jack@suse.cz, heguanjun@meituan.com
+Subject: Re: [PATCH] radix-tree: optimization for radix_tree_init_maxnodes
+Message-ID: <20180909190714.GA20237@bombadil.infradead.org>
+References: <1536499260-126634-1-git-send-email-wanglong19@meituan.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536499260-126634-1-git-send-email-wanglong19@meituan.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes it possible to build the sunxi SRAM driver without building
-for the sunxi architecture. This allows selecting the driver when
-building the kernel in testing environments.
+On Sun, Sep 09, 2018 at 09:21:00PM +0800, Wang Long wrote:
+> if i == 0, height_to_maxnodes[i] = 0,
+> if i >= 1, height_to_maxnodes[i] = height_to_maxnodes[i-1]
+> 				+ __maxindex(i-1) + 1.
+> 
+> so delete height_to_maxindex and optimize the calculation of
+> height_to_maxnodes array.
 
-In particular, this is necessary for testing of the Cedrus driver, that
-selects the sunxi SRAM driver.
+Thanks for your patch.  Unfortunately, this entire function is scheduled
+for deletion, so I won't be applying it.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
----
- drivers/soc/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 113e884697fd..446166ba0bec 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -18,7 +18,7 @@ obj-y				+= qcom/
- obj-y				+= renesas/
- obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
- obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
--obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
-+obj-y				+= sunxi/
- obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
- obj-$(CONFIG_SOC_TI)		+= ti/
- obj-$(CONFIG_ARCH_U8500)	+= ux500/
--- 
-2.18.0
-
+If you're interested in the radix tree, I'd recommend looking at its
+replacement, the XArray.  The current version is at
+http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/heads/xarray
+but I'll be pushing another version out in the next few days.
