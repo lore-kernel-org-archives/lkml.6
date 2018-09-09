@@ -2,205 +2,168 @@ Return-Path: <SRS0=FvrY=LY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F116C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ACCC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C13202075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7514320866
+	for <linux-kernel@archiver.kernel.org>; Mon, 10 Sep 2018 02:48:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BBKMg6Tr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13202075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYszDmk7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7514320866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbeIJHjX (ORCPT
+        id S1726668AbeIJHkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Sep 2018 03:39:23 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39860 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbeIJHjX (ORCPT
+        Mon, 10 Sep 2018 03:40:08 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44294 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeIJHkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Sep 2018 03:39:23 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8A2la7Z055280;
-        Sun, 9 Sep 2018 21:47:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1536547656;
-        bh=C3tmGvPxiVk4SsDF0siTwrBFh5bcFYJRNFcBE2sPGMM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=BBKMg6TreakIN+U95pWZs0h0bEXTskmcSMLff8/55XXPRExX8GKmkwK/DpYIMYZy1
-         zAb1DBCxrLMUxk60zAqP9E08ZBrNTTexMcQM7M6AQAoxQnRRfjdQ3F84pq8FWTBeQZ
-         2z6citqdfsc5t5yDhtM48ssZZ21quu/Vl5G8TSoE=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A2lagB020590;
-        Sun, 9 Sep 2018 21:47:36 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sun, 9 Sep
- 2018 21:47:37 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sun, 9 Sep 2018 21:47:36 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8A2lXa4013944;
-        Sun, 9 Sep 2018 21:47:34 -0500
-Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
- base selection
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     "Andrew F. Davis" <afd@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180831191326.25106-1-afd@ti.com>
- <20180831191326.25106-2-afd@ti.com>
- <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com>
- <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
- <040ce524-f6e2-81a2-68db-57a645de22ea@ti.com>
- <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <7ffe6694-0bb1-d1ae-3d93-51f11a358cc0@ti.com>
-Date:   Mon, 10 Sep 2018 08:17:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 10 Sep 2018 03:40:08 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q127-v6so16535375ljq.11;
+        Sun, 09 Sep 2018 19:48:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=xW2XF0TCmP47kVJFv5etl9djcdcCMkcGG8atr2Hz/P0=;
+        b=UYszDmk7F6LdpYxaVvG44X9QraigSGyx+hPMg3Mt56ueBwJhuwc6JPkTuU3aJjQe5M
+         I+hI85ZgmeDRDhJt9Pj7LrQoVhhc8i4qvAVyqP9+QN17JAapd7IJoO8BfEUZhyYdzarP
+         V/mgZ3hAypIlYUDqKyVQrrwGiARHChz0xkgEyU5ZL7WnkVTqyFeiR/8TdbRwixMmmddp
+         SlEJ/po6IySNDC+NP1Z/fZWb19YmIRKfgdfRPv9OzoR+Xtd++KtAeux8X51pyb6MkVg/
+         HCRfi5xMKFcnRGMdHevBhTMaQrFnBRs0DyO2h6kasPpZKGqv/x8Lx50lQHG/QazpoDLn
+         3KOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=xW2XF0TCmP47kVJFv5etl9djcdcCMkcGG8atr2Hz/P0=;
+        b=l7Sp8k8l3X7dyRGJCrNvfyszmqlAJBd5DOu0GteHOsXruJEP5AQntNNkTZSr+B7Dfl
+         gWLSSpuLBiaivJj4w7GFRPlbW1d6/5r7TULONGWZC4nP3s2PUQzldmVr++aKcxNCTD9/
+         nC9xBdBexczjjc/3hVKoabOV9CHRAQn+uYe75jUKXEKGMHjkxsRY6CjNBG5WamICfvoU
+         Se7R5ilD98e/VQ0tV+3PUPAxFqb+MLHgp51pyWVNzeAfSgY5giGCiXhafWzF2YnnvMEr
+         F3aGicxyjsUuunYTX13AXmRFSo9igxnPK2WsW+ykPmk4tRWey9G4j6yc9+C6B72kbFTw
+         HjAA==
+X-Gm-Message-State: APzg51ACEIXkIbIaEt8vnDLqrnAojIz6dCdmMWZQLZ319dSjcPZg/ULy
+        nBvN0cJ8pluIvYjgzUoko4AahVnmFuw=
+X-Google-Smtp-Source: ANB0Vda/t0MDaWSIFwx1izKqB45uPqJndbhA82JW3DvnZLS/F55g+4rxzWPkn1uSEn4L8l0SJrEinw==
+X-Received: by 2002:a2e:2d2:: with SMTP id y79-v6mr10452509lje.100.1536533710384;
+        Sun, 09 Sep 2018 15:55:10 -0700 (PDT)
+Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm2401574ljg.12.2018.09.09.15.55.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 15:55:09 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/3] ARM: OMAP1: ams-delta: make board header file local to mach-omap1
+Date:   Mon, 10 Sep 2018 00:56:05 +0200
+Message-Id: <20180909225605.16463-4-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180909225605.16463-1-jmkrzyszt@gmail.com>
+References: <20180717231448.14958-1-jmkrzyszt@gmail.com>
+ <20180909225605.16463-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now as board header file is no longer included by drivers, move it to
+the root directory of mach-omap1.
 
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+ arch/arm/mach-omap1/ams-delta-fiq-handler.S              | 2 +-
+ arch/arm/mach-omap1/ams-delta-fiq.c                      | 3 +--
+ arch/arm/mach-omap1/board-ams-delta.c                    | 2 +-
+ arch/arm/mach-omap1/{include/mach => }/board-ams-delta.h | 2 +-
+ 4 files changed, 4 insertions(+), 5 deletions(-)
+ rename arch/arm/mach-omap1/{include/mach => }/board-ams-delta.h (98%)
 
-On Sunday 09 September 2018 01:11 AM, Grygorii Strashko wrote:
-> 
-> 
-> On 09/06/2018 09:16 AM, Keerthy wrote:
->>
->>
->> On Wednesday 05 September 2018 04:07 PM, Linus Walleij wrote:
->>> On Mon, Sep 3, 2018 at 7:40 AM Keerthy <j-keerthy@ti.com> wrote:
->>>> On Saturday 01 September 2018 12:43 AM, Andrew F. Davis wrote:
->>>>> Use dev_name to get a unique label and use -1 for a base to get our
->>>>> selection automatically. We pull in all GPIOs per chip now so this
->>>>> does not have the effect of out of order labels like before.
->>>>>
->>>>> We do these both together so we can drop all the static data in one
->>>>> patch. This also lets us normalize the return paths as we don't need
->>>>> any cleanup after this change.
->>>>
->>>> echo 28 > /sys/class/gpio/export
->>>> / # echo 28 > /sys/class/gpi[   12.839205] export_store: invalid GPIO 28
->>>> o/export
->>>> echo 2 > /sys/class/gp[   22.165728] export_store: invalid GPIO 2
->>>> io/export
->>>> / # echo 1 > /sys/class/gp[   25.961392] export_store: invalid GPIO 1
->>>> io/export
->>>> / # echo 3 > /sys/class/gp[   29.981918] export_store: invalid GPIO 3
->>>> io/export
->>>>
->>>> Export fails with this patch. I am testing this on keystone-k2g-evm.
->>>
->>> I think the GPIO got a new number didn't it?
->>>
->>> Did you check the gpio file in debugfs to see which number
->>> it got.
->>
->> Okay now its numbered differently:
->>
->> cat /sys/class/gpio/gpiochip340/ngpio
->> 144
->>
->> cat /sys/class/gpio/gpiochip272/ngpio
->> 68
-> 
-> could you or Andrew provide content of /debug/gpio before/after?
-> And ls /sys/class/gpio/?
+diff --git a/arch/arm/mach-omap1/ams-delta-fiq-handler.S b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+index ddc27638ba2a..2e2a17364dc9 100644
+--- a/arch/arm/mach-omap1/ams-delta-fiq-handler.S
++++ b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+@@ -17,9 +17,9 @@
+ #include <linux/platform_data/ams-delta-fiq.h>
+ 
+ #include <asm/assembler.h>
+-#include <mach/board-ams-delta.h>
+ 
+ #include "ams-delta-fiq.h"
++#include "board-ams-delta.h"
+ #include "iomap.h"
+ #include "soc.h"
+ 
+diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
+index b0dc7ddf5877..14c3d3f5255e 100644
+--- a/arch/arm/mach-omap1/ams-delta-fiq.c
++++ b/arch/arm/mach-omap1/ams-delta-fiq.c
+@@ -22,11 +22,10 @@
+ #include <linux/platform_data/ams-delta-fiq.h>
+ #include <linux/platform_device.h>
+ 
+-#include <mach/board-ams-delta.h>
+-
+ #include <asm/fiq.h>
+ 
+ #include "ams-delta-fiq.h"
++#include "board-ams-delta.h"
+ 
+ static struct fiq_handler fh = {
+ 	.name	= "ams-delta-fiq"
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index dd28d2614d7f..34cb63ff45b3 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -36,7 +36,6 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+-#include <mach/board-ams-delta.h>
+ #include <linux/platform_data/keypad-omap.h>
+ #include <mach/mux.h>
+ 
+@@ -45,6 +44,7 @@
+ #include <mach/usb.h>
+ 
+ #include "ams-delta-fiq.h"
++#include "board-ams-delta.h"
+ #include "iomap.h"
+ #include "common.h"
+ 
+diff --git a/arch/arm/mach-omap1/include/mach/board-ams-delta.h b/arch/arm/mach-omap1/board-ams-delta.h
+similarity index 98%
+rename from arch/arm/mach-omap1/include/mach/board-ams-delta.h
+rename to arch/arm/mach-omap1/board-ams-delta.h
+index ad6f865d1f16..1fbada29431a 100644
+--- a/arch/arm/mach-omap1/include/mach/board-ams-delta.h
++++ b/arch/arm/mach-omap1/board-ams-delta.h
+@@ -1,5 +1,5 @@
+ /*
+- * arch/arm/plat-omap/include/mach/board-ams-delta.h
++ * arch/arm/mach-omap1/board-ams-delta.h
+  *
+  * Copyright (C) 2006 Jonathan McDowell <noodles@earth.li>
+  *
+-- 
+2.16.4
 
-Output on K2G:
-
-Before
-======
-
-cat /debug/gpio
-gpiochip1: GPIOs 0-143, parent: platform/2603000.gpio, davinci_gpio.0:
-
-gpiochip2: GPIOs 144-211, parent: platform/260a000.gpio, davinci_gpio.1:
- gpio-156 (                    |cd                  ) in  lo
-
-gpiochip0: GPIOs 484-511, parent: platform/2620240.keystone_dsp_gpio,
-2620240.keystone_dsp_gpio:
-
- ls /sys/class/gpio/
-export       gpiochip0    gpiochip144  gpiochip484  unexport
-
-cat /sys/class/gpio/gpiochip0/label
-davinci_gpio.0
-
-cat /sys/class/gpio/gpiochip144/label
-davinci_gpio.1
-
-cat /sys/class/gpio/gpiochip144/ngpio
-68
-/ # cat /sys/class/gpio/gpiochip0/ngpio
-144
-
-
-After
-=====
-
- cat /debug/gpio
-gpiochip2: GPIOs 272-339, parent: platform/260a000.gpio, 260a000.gpio:
- gpio-284 (                    |cd                  ) in  lo
-
-gpiochip1: GPIOs 340-483, parent: platform/2603000.gpio, 2603000.gpio:
-
-gpiochip0: GPIOs 484-511, parent: platform/2620240.keystone_dsp_gpio,
-2620240.keystone_dsp_gpio:
-
-ls /sys/class/gpio/
-export       gpiochip272  gpiochip340  gpiochip484  unexport
-
-
-cat /sys/class/gpio/gpiochip340/label
-2603000.gpio
-/ # cat /sys/class/gpio/gpiochip272/label
-260a000.gpio
-/ # cat /sys/class/gpio/gpiochip272/label
-
-cat /sys/class/gpio/gpiochip272/ngpio
-68
-/ # cat /sys/class/gpio/gpiochip340/ngpio
-144
-
-In the case of SoCs that support multiple instances of Davinci GPIO IPs
-it is harder to figure out the right gpio number to export.
-
->>
->> So gpio bank2 and bank1 have different gpio numbers. Is that acceptable?
->>
->>>
->>> This is sadly the global numberspace that we are tying to
->>> get rid of (new apps/scripts should use the chardev).
->>>
->>> Are there applications that rely on the sysfs ABI on DaVinci?
->>>
->>> In that case base needs to be prerseved.
-> 
-> Not only base, but label also - /sys/class/gpio/gpiochip0/label, as this is
-> the way to find proper GPIO chip in sysfs using legacy GPIO ABI.
-> 
-> Linus, this platform is old and most of the users do not use new ABI (chardev),
-> so we could try change this, but need to be prepared for regressions reports.
-> 
-
-Totally agree with this.
