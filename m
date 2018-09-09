@@ -2,81 +2,113 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFE2C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B749DC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9D1420833
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D1420833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 628A820833
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:03:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628A820833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeIIWLt (ORCPT
+        id S1726844AbeIIWx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 18:11:49 -0400
-Received: from gate.crashing.org ([63.228.1.57]:55855 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726615AbeIIWLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 18:11:49 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w89H4QVV032538;
-        Sun, 9 Sep 2018 12:04:27 -0500
-Message-ID: <7427daf6570d519e6793eb96d2fbaa52714b0cd7.camel@kernel.crashing.org>
-Subject: Re: v4.17 regression: PowerMac G3 won't boot, was Re: [PATCH v5
- 1/3] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Finn Thain <fthain@telegraphics.com.au>
-Cc:     Stan Johnson <userm57@yahoo.com>, Rob Herring <robh+dt@kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Sun, 09 Sep 2018 19:04:25 +0200
-In-Reply-To: <d9e53e48794c2eade19309b73febd492e3c5eeeb.camel@kernel.crashing.org>
-References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
-         <1520208889-3908-2-git-send-email-frowand.list@gmail.com>
-         <alpine.LNX.2.21.1808301025480.73@nippy.intranet>
-         <0ad5dbfd-08f3-b97d-34b9-70fc9a729921@gmail.com>
-         <d9e53e48794c2eade19309b73febd492e3c5eeeb.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 9 Sep 2018 18:53:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57856 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726629AbeIIWx5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 18:53:57 -0400
+Received: from localhost (ip-213-127-74-90.ip.prioritytelecom.net [213.127.74.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14499CB1;
+        Sun,  9 Sep 2018 18:03:29 +0000 (UTC)
+Date:   Sun, 9 Sep 2018 20:03:26 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/63] 4.9.126-stable review
+Message-ID: <20180909180326.GA22151@kroah.com>
+References: <20180907211012.965501324@linuxfoundation.org>
+ <e1fa8fda-e277-3c83-5e35-826df83f3cd5@roeck-us.net>
+ <20180909085530.GC14455@kroah.com>
+ <1231d8c4-0788-6d02-308a-176666b4a71f@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1231d8c4-0788-6d02-308a-176666b4a71f@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-31 at 14:58 +1000, Benjamin Herrenschmidt wrote:
+On Sun, Sep 09, 2018 at 08:54:41AM -0700, Guenter Roeck wrote:
+> On 09/09/2018 01:55 AM, Greg Kroah-Hartman wrote:
+> > On Sat, Sep 08, 2018 at 02:14:53PM -0700, Guenter Roeck wrote:
+> > > On 09/07/2018 02:09 PM, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.9.126 release.
+> > > > There are 63 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Sun Sep  9 21:09:58 UTC 2018.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > 
+> > > Build results:
+> > > 	total: 151 pass: 149 fail: 2
+> > > Failed builds:
+> > > 	powerpc:defconfig
+> > > 	powerpc:allmodconfig
+> > > Qemu test results:
+> > > 	total: 301 pass: 285 fail: 16
+> > > Failed tests:
+> > > 	powerpc:mac99:ppc64_book3s_defconfig:nosmp:initrd
+> > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:initrd
+> > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:ide:rootfs
+> > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:mmc:rootfs
+> > > 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:scsi[DC395]:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:initrd
+> > > 	powerpc:pseries:pseries_defconfig:scsi:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:mmc:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:nvme:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:little:initrd
+> > > 	powerpc:pseries:pseries_defconfig:little:scsi:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:little:scsi[MEGASAS]:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:little:scsi[FUSION]:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:little:mmc:rootfs
+> > > 	powerpc:pseries:pseries_defconfig:little:nvme:rootfs
+> > > 	powerpc:powernv:powernv_defconfig:initrd
+> > > 
+> > > Details are available at https://kerneltests.org/builders/.
+> > 
+> > I've pushed out a -rc2 to fix this.  Hopefully.  There were a bunch of
+> > warnings for power that I don't think were caused by these series, I
+> > don't know if they have always been there or not.
+> > 
 > 
-> > A long shot, but something to consider, is that I failed to cover the
-> > cases of dynamic devicetree updates (removing nodes that contain a
-> > phandle) in ways other than overlays.  Michael Ellerman has reported
-> > such a problem for powerpc/mobility with of_detach_node().  A patch to
-> > fix that is one of the tasks I need to complete.
+> For v4.9.125-65-g0f793f1ec4f3:
 > 
-> The only thing I can think of is booting via the BootX bootloader on
-> those ancient macs results in a DT with no phandles. I didn't see an
-> obvious reason why that would cause that patch to break though.
+> Build results:
+> 	total: 151 pass: 150 fail: 1
+> Failed builds:
+> 	powerpc:allmodconfig
+> Qemu test results:
+> 	total: 301 pass: 301 fail: 0
+> 
+> arch/powerpc/kernel/fadump.c: In function 'free_crash_memory_ranges':
+> arch/powerpc/kernel/fadump.c:738:2: error: implicit declaration of function 'kfree'
+> 
+> arch/powerpc/kernel/fadump.c: In function 'allocate_crash_memory_ranges':
+> arch/powerpc/kernel/fadump.c:757:14: error: implicit declaration of function 'krealloc'
 
-Guys, we still don't have a fix for this one on its way upstream...
+Oops, forgot to fix that one.  Shoould now be resolved.
 
-My test patch just creates phandle properties for all nodes, that was
-not intended as a fix, more a way to check if the problem was related
-to the lack of phandles.
-
-I don't actually know why the new code causes things to fail when
-phandles are absent. This needs to be looked at.
-
-I'm travelling at the moment and generally caught up with other things,
-I haven't had a chance to dig, so just a heads up. I don't intend to
-submit my patch since it's just a band aid. We need to figure out what
-the actual problem is.
-
-Cheers,
-Ben.
-
-
+greg k-h
