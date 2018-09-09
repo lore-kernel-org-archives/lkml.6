@@ -2,86 +2,399 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6586FC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4061CC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CAFD20854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:10:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CAFD20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
+	by mail.kernel.org (Postfix) with ESMTP id C96C620866
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:11:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qQ6vLMfS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96C620866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbeIJABc (ORCPT
+        id S1726783AbeIJABs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 20:01:32 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:44710 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbeIJABb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 20:01:31 -0400
-Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
-        by leonov.paulk.fr (Postfix) with ESMTPS id 6685FC0262;
-        Sun,  9 Sep 2018 21:10:52 +0200 (CEST)
-Received: by gagarine.paulk.fr (Postfix, from userid 114)
-        id A668CC0FF8; Sun,  9 Sep 2018 21:10:50 +0200 (CEST)
-Received: from localhost.localdomain (collins [192.168.1.129])
-        by gagarine.paulk.fr (Postfix) with ESMTP id E468BC0FE6;
-        Sun,  9 Sep 2018 21:10:19 +0200 (CEST)
-From:   Paul Kocialkowski <contact@paulk.fr>
-To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH v2 0/4] Follow-up patches for Cedrus v9
-Date:   Sun,  9 Sep 2018 21:10:11 +0200
-Message-Id: <20180909191015.20902-1-contact@paulk.fr>
-X-Mailer: git-send-email 2.18.0
+        Sun, 9 Sep 2018 20:01:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46504 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbeIJABr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 20:01:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YYPe3SKLZbVnnXS72QyTsmyMN7lQEXDf5OdLhYHAnXs=; b=qQ6vLMfSYlNSnjBUv24DGIJ3/
+        KyETEtmf1A/eb78xO5KXx/pj8zB9H2gns0MZeYsSWXvoSFdeSrkhYs+d6a2L2zfh8wQu4wJFJkX7q
+        Od0y9f+jUziAT4QdVcciPbv+Td1YFr1pOndk1jxAxh11khdMBtrzY6e7Wm1DFU/x4CoPtpFItZVNc
+        WdFd/VMIo4mlB+ia9buHW7pCS5sxHdebsbDUJ5RzxgJEcdbSntVa+NT0vdNklYCdLYclwrf54wSmC
+        DYb4Yhw2Psqwqn2JG/z48UgmFSVRFgZp68xz+GjhVO/+Xj4q3ZItBlom4oZ13MhczS9lcI8xLHIk7
+        z6/G6eUVA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fz56u-0006wu-Jw; Sun, 09 Sep 2018 19:11:04 +0000
+Date:   Sun, 9 Sep 2018 12:11:04 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     syzbot <syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, bcrl@kvack.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: possible deadlock in free_ioctx_users
+Message-ID: <20180909191104.GB20237@bombadil.infradead.org>
+References: <00000000000024df4605757495a8@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000024df4605757495a8@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This brings the requested modifications on top of version 9 of the
-Cedrus VPU driver, that implements stateless video decoding using the
-Request API.
 
-Changes since v1:
-* Added two more commits to fix build issues with non-sunxi configs.
+I would be inclined to blame FUSE for this problem.
 
-In order to build correctly on non-sunxi platforms, the following commit
-is also required to select the sunxi SRAM driver:
-* drivers: soc: Allow building the sunxi driver without ARCH_SUNXI
-
-Paul Kocialkowski (4):
-  media: cedrus: Fix error reporting in request validation
-  media: cedrus: Add TODO file with tasks to complete before unstaging
-  media: cedrus: Wrap PHYS_PFN_OFFSET with ifdef and add dedicated
-    comment
-  media: cedrus: Select the sunxi SRAM driver in Kconfig
-
- drivers/staging/media/sunxi/cedrus/Kconfig     |  1 +
- drivers/staging/media/sunxi/cedrus/TODO        |  7 +++++++
- drivers/staging/media/sunxi/cedrus/cedrus.c    | 15 ++++++++++++---
- drivers/staging/media/sunxi/cedrus/cedrus_hw.c |  5 +++++
- 4 files changed, 25 insertions(+), 3 deletions(-)
- create mode 100644 drivers/staging/media/sunxi/cedrus/TODO
-
--- 
-2.18.0
-
+On Sun, Sep 09, 2018 at 11:41:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    f8f65382c98a Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=113260ae400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f59875069d721b6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d86c4426a01f60feddc7
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120baa9e400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13979cbe400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d86c4426a01f60feddc7@syzkaller.appspotmail.com
+> 
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> 
+> ========================================================
+> WARNING: possible irq lock inversion dependency detected
+> 4.19.0-rc2+ #229 Not tainted
+> --------------------------------------------------------
+> swapper/0/0 just changed the state of lock:
+> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq
+> include/linux/spinlock.h:354 [inline]
+> 00000000c02bddef (&(&ctx->ctx_lock)->rlock){..-.}, at:
+> free_ioctx_users+0xbc/0x710 fs/aio.c:603
+> but this lock took another, SOFTIRQ-unsafe lock in the past:
+>  (&fiq->waitq){+.+.}
+> 
+> 
+> and interrupts could create inverse lock ordering between them.
+> 
+> 
+> other info that might help us debug this:
+>  Possible interrupt unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&fiq->waitq);
+>                                local_irq_disable();
+>                                lock(&(&ctx->ctx_lock)->rlock);
+>                                lock(&fiq->waitq);
+>   <Interrupt>
+>     lock(&(&ctx->ctx_lock)->rlock);
+> 
+>  *** DEADLOCK ***
+> 
+> 2 locks held by swapper/0/0:
+>  #0: 0000000077c9a56b (rcu_callback){....}, at: __rcu_reclaim
+> kernel/rcu/rcu.h:226 [inline]
+>  #0: 0000000077c9a56b (rcu_callback){....}, at: rcu_do_batch
+> kernel/rcu/tree.c:2576 [inline]
+>  #0: 0000000077c9a56b (rcu_callback){....}, at: invoke_rcu_callbacks
+> kernel/rcu/tree.c:2880 [inline]
+>  #0: 0000000077c9a56b (rcu_callback){....}, at: __rcu_process_callbacks
+> kernel/rcu/tree.c:2847 [inline]
+>  #0: 0000000077c9a56b (rcu_callback){....}, at:
+> rcu_process_callbacks+0x1012/0x2670 kernel/rcu/tree.c:2864
+>  #1: 0000000031dcf310 (rcu_read_lock_sched){....}, at:
+> percpu_ref_call_confirm_rcu lib/percpu-refcount.c:119 [inline]
+>  #1: 0000000031dcf310 (rcu_read_lock_sched){....}, at:
+> percpu_ref_switch_to_atomic_rcu+0x2b7/0x820 lib/percpu-refcount.c:158
+> 
+> the shortest dependencies between 2nd lock and 1st lock:
+>  -> (&fiq->waitq){+.+.} ops: 4 {
+>     HARDIRQ-ON-W at:
+>                       lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>                       __raw_spin_lock include/linux/spinlock_api_smp.h:142
+> [inline]
+>                       _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+>                       spin_lock include/linux/spinlock.h:329 [inline]
+>                       flush_bg_queue+0x389/0x650 fs/fuse/dev.c:364
+>                       fuse_request_send_background_locked+0x2f5/0x5a0
+> fs/fuse/dev.c:598
+>                       fuse_request_send_background+0x135/0x180
+> fs/fuse/dev.c:606
+>                       cuse_send_init fs/fuse/cuse.c:458 [inline]
+>                       cuse_channel_open+0x6b0/0x963 fs/fuse/cuse.c:518
+>                       misc_open+0x3ca/0x560 drivers/char/misc.c:141
+>                       chrdev_open+0x25a/0x710 fs/char_dev.c:417
+>                       do_dentry_open+0x499/0x1250 fs/open.c:771
+>                       vfs_open+0xa0/0xd0 fs/open.c:880
+>                       do_last fs/namei.c:3418 [inline]
+>                       path_openat+0x12bf/0x5160 fs/namei.c:3534
+>                       do_filp_open+0x255/0x380 fs/namei.c:3564
+>                       do_sys_open+0x568/0x700 fs/open.c:1063
+>                       __do_sys_openat fs/open.c:1090 [inline]
+>                       __se_sys_openat fs/open.c:1084 [inline]
+>                       __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+>                       do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>                       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>     SOFTIRQ-ON-W at:
+>                       lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>                       __raw_spin_lock include/linux/spinlock_api_smp.h:142
+> [inline]
+>                       _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+>                       spin_lock include/linux/spinlock.h:329 [inline]
+>                       flush_bg_queue+0x389/0x650 fs/fuse/dev.c:364
+>                       fuse_request_send_background_locked+0x2f5/0x5a0
+> fs/fuse/dev.c:598
+>                       fuse_request_send_background+0x135/0x180
+> fs/fuse/dev.c:606
+>                       cuse_send_init fs/fuse/cuse.c:458 [inline]
+>                       cuse_channel_open+0x6b0/0x963 fs/fuse/cuse.c:518
+>                       misc_open+0x3ca/0x560 drivers/char/misc.c:141
+>                       chrdev_open+0x25a/0x710 fs/char_dev.c:417
+>                       do_dentry_open+0x499/0x1250 fs/open.c:771
+>                       vfs_open+0xa0/0xd0 fs/open.c:880
+>                       do_last fs/namei.c:3418 [inline]
+>                       path_openat+0x12bf/0x5160 fs/namei.c:3534
+>                       do_filp_open+0x255/0x380 fs/namei.c:3564
+>                       do_sys_open+0x568/0x700 fs/open.c:1063
+>                       __do_sys_openat fs/open.c:1090 [inline]
+>                       __se_sys_openat fs/open.c:1084 [inline]
+>                       __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+>                       do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>                       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>     INITIAL USE at:
+>                      lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>                      __raw_spin_lock include/linux/spinlock_api_smp.h:142
+> [inline]
+>                      _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+>                      spin_lock include/linux/spinlock.h:329 [inline]
+>                      flush_bg_queue+0x389/0x650 fs/fuse/dev.c:364
+>                      fuse_request_send_background_locked+0x2f5/0x5a0
+> fs/fuse/dev.c:598
+>                      fuse_request_send_background+0x135/0x180
+> fs/fuse/dev.c:606
+>                      cuse_send_init fs/fuse/cuse.c:458 [inline]
+>                      cuse_channel_open+0x6b0/0x963 fs/fuse/cuse.c:518
+>                      misc_open+0x3ca/0x560 drivers/char/misc.c:141
+>                      chrdev_open+0x25a/0x710 fs/char_dev.c:417
+>                      do_dentry_open+0x499/0x1250 fs/open.c:771
+>                      vfs_open+0xa0/0xd0 fs/open.c:880
+>                      do_last fs/namei.c:3418 [inline]
+>                      path_openat+0x12bf/0x5160 fs/namei.c:3534
+>                      do_filp_open+0x255/0x380 fs/namei.c:3564
+>                      do_sys_open+0x568/0x700 fs/open.c:1063
+>                      __do_sys_openat fs/open.c:1090 [inline]
+>                      __se_sys_openat fs/open.c:1084 [inline]
+>                      __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+>                      do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>                      entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>   }
+>   ... key      at: [<ffffffff8b4763c0>] __key.42168+0x0/0x40
+>   ... acquired at:
+>    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+>    _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+>    spin_lock include/linux/spinlock.h:329 [inline]
+>    aio_poll+0x760/0x1420 fs/aio.c:1747
+>    io_submit_one+0xab8/0x1090 fs/aio.c:1850
+>    __do_sys_io_submit fs/aio.c:1916 [inline]
+>    __se_sys_io_submit fs/aio.c:1887 [inline]
+>    __x64_sys_io_submit+0x1b9/0x5d0 fs/aio.c:1887
+>    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> -> (&(&ctx->ctx_lock)->rlock){..-.} ops: 2 {
+>    IN-SOFTIRQ-W at:
+>                     lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>                     __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128
+> [inline]
+>                     _raw_spin_lock_irq+0x61/0x80
+> kernel/locking/spinlock.c:160
+>                     spin_lock_irq include/linux/spinlock.h:354 [inline]
+>                     free_ioctx_users+0xbc/0x710 fs/aio.c:603
+>                     percpu_ref_put_many include/linux/percpu-refcount.h:284
+> [inline]
+>                     percpu_ref_put include/linux/percpu-refcount.h:300
+> [inline]
+>                     percpu_ref_call_confirm_rcu lib/percpu-refcount.c:123
+> [inline]
+>                     percpu_ref_switch_to_atomic_rcu+0x62c/0x820
+> lib/percpu-refcount.c:158
+>                     __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
+>                     rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+>                     invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
+>                     __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
+>                     rcu_process_callbacks+0xf23/0x2670
+> kernel/rcu/tree.c:2864
+>                     __do_softirq+0x30b/0xad8 kernel/softirq.c:292
+>                     invoke_softirq kernel/softirq.c:372 [inline]
+>                     irq_exit+0x17f/0x1c0 kernel/softirq.c:412
+>                     exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+>                     smp_apic_timer_interrupt+0x1cb/0x760
+> arch/x86/kernel/apic/apic.c:1056
+>                     apic_timer_interrupt+0xf/0x20
+> arch/x86/entry/entry_64.S:864
+>                     native_safe_halt+0x6/0x10
+> arch/x86/include/asm/irqflags.h:57
+>                     arch_safe_halt arch/x86/include/asm/paravirt.h:94
+> [inline]
+>                     default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
+>                     arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
+>                     default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+>                     cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+>                     do_idle+0x3db/0x5b0 kernel/sched/idle.c:262
+>                     cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
+>                     rest_init+0xe2/0xe5 init/main.c:442
+>                     start_kernel+0x8f4/0x92f init/main.c:739
+>                     x86_64_start_reservations+0x29/0x2b
+> arch/x86/kernel/head64.c:452
+>                     x86_64_start_kernel+0x76/0x79
+> arch/x86/kernel/head64.c:433
+>                     secondary_startup_64+0xa4/0xb0
+> arch/x86/kernel/head_64.S:242
+>    INITIAL USE at:
+>                    lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>                    __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128
+> [inline]
+>                    _raw_spin_lock_irq+0x61/0x80
+> kernel/locking/spinlock.c:160
+>                    spin_lock_irq include/linux/spinlock.h:354 [inline]
+>                    aio_poll+0x738/0x1420 fs/aio.c:1746
+>                    io_submit_one+0xab8/0x1090 fs/aio.c:1850
+>                    __do_sys_io_submit fs/aio.c:1916 [inline]
+>                    __se_sys_io_submit fs/aio.c:1887 [inline]
+>                    __x64_sys_io_submit+0x1b9/0x5d0 fs/aio.c:1887
+>                    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>  }
+>  ... key      at: [<ffffffff8b3dc960>] __key.50120+0x0/0x40
+>  ... acquired at:
+>    mark_lock_irq kernel/locking/lockdep.c:2756 [inline]
+>    mark_lock+0xa6b/0x1cb0 kernel/locking/lockdep.c:3128
+>    mark_irqflags kernel/locking/lockdep.c:3006 [inline]
+>    __lock_acquire+0x15f8/0x4ec0 kernel/locking/lockdep.c:3369
+>    lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>    __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+>    _raw_spin_lock_irq+0x61/0x80 kernel/locking/spinlock.c:160
+>    spin_lock_irq include/linux/spinlock.h:354 [inline]
+>    free_ioctx_users+0xbc/0x710 fs/aio.c:603
+>    percpu_ref_put_many include/linux/percpu-refcount.h:284 [inline]
+>    percpu_ref_put include/linux/percpu-refcount.h:300 [inline]
+>    percpu_ref_call_confirm_rcu lib/percpu-refcount.c:123 [inline]
+>    percpu_ref_switch_to_atomic_rcu+0x62c/0x820 lib/percpu-refcount.c:158
+>    __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
+>    rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+>    invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
+>    __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
+>    rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
+>    __do_softirq+0x30b/0xad8 kernel/softirq.c:292
+>    invoke_softirq kernel/softirq.c:372 [inline]
+>    irq_exit+0x17f/0x1c0 kernel/softirq.c:412
+>    exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+>    smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1056
+>    apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:864
+>    native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
+>    arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+>    default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
+>    arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
+>    default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+>    cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+>    do_idle+0x3db/0x5b0 kernel/sched/idle.c:262
+>    cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
+>    rest_init+0xe2/0xe5 init/main.c:442
+>    start_kernel+0x8f4/0x92f init/main.c:739
+>    x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+>    x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+>    secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+> 
+> 
+> stack backtrace:
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0-rc2+ #229
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+>  print_irq_inversion_bug.part.35+0x2c7/0x2d6 kernel/locking/lockdep.c:2622
+>  print_irq_inversion_bug kernel/locking/lockdep.c:2625 [inline]
+>  check_usage_forwards.cold.57+0x20/0x29 kernel/locking/lockdep.c:2647
+>  mark_lock_irq kernel/locking/lockdep.c:2756 [inline]
+>  mark_lock+0xa6b/0x1cb0 kernel/locking/lockdep.c:3128
+>  mark_irqflags kernel/locking/lockdep.c:3006 [inline]
+>  __lock_acquire+0x15f8/0x4ec0 kernel/locking/lockdep.c:3369
+>  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3901
+>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+>  _raw_spin_lock_irq+0x61/0x80 kernel/locking/spinlock.c:160
+>  spin_lock_irq include/linux/spinlock.h:354 [inline]
+>  free_ioctx_users+0xbc/0x710 fs/aio.c:603
+>  percpu_ref_put_many include/linux/percpu-refcount.h:284 [inline]
+>  percpu_ref_put include/linux/percpu-refcount.h:300 [inline]
+>  percpu_ref_call_confirm_rcu lib/percpu-refcount.c:123 [inline]
+>  percpu_ref_switch_to_atomic_rcu+0x62c/0x820 lib/percpu-refcount.c:158
+>  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
+>  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+>  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
+>  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
+>  rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
+>  __do_softirq+0x30b/0xad8 kernel/softirq.c:292
+>  invoke_softirq kernel/softirq.c:372 [inline]
+>  irq_exit+0x17f/0x1c0 kernel/softirq.c:412
+>  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+>  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1056
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:864
+>  </IRQ>
+> RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
+> Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 43 b9 02 fa 48 8b 45 d8 e9 ca
+> fe ff ff 48 89 df e8 32 b9 02 fa eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84 00
+> 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
+> RSP: 0018:ffffffff89407bb8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+> RAX: dffffc0000000000 RBX: 1ffffffff1280f7b RCX: 0000000000000000
+> RDX: 1ffffffff12a4538 RSI: 0000000000000001 RDI: ffffffff895229c0
+> RBP: ffffffff89407bb8 R08: ffffffff89475fc0 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff89407c78
+> R13: ffffffff8a3149a0 R14: 0000000000000000 R15: 0000000000000000
+>  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+>  default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
+>  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
+>  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+>  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+>  do_idle+0x3db/0x5b0 kernel/sched/idle.c:262
+>  cpu_startup_entry+0x10c/0x120 kernel/sched/idle.c:368
+>  rest_init+0xe2/0xe5 init/main.c:442
+>  start_kernel+0x8f4/0x92f init/main.c:739
+>  ? early_idt_handler_common+
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
