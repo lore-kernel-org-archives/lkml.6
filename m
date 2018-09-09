@@ -7,62 +7,61 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33364C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 337CDC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2FC20854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C608A20857
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 18:32:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j5xgwX/6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2FC20854
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S+Oo9sGX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C608A20857
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbeIIXSF (ORCPT
+        id S1727626AbeIIXWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 19:18:05 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45255 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbeIIXSE (ORCPT
+        Sun, 9 Sep 2018 19:22:47 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53767 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbeIIXWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 19:18:04 -0400
-Received: by mail-io1-f67.google.com with SMTP id e12-v6so5243784iok.12
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 11:27:34 -0700 (PDT)
+        Sun, 9 Sep 2018 19:22:47 -0400
+Received: by mail-it0-f65.google.com with SMTP id p79-v6so26798907itp.3
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 11:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=y43LSYpZCq8Hj7FQIK4BOw1AmFi1AHv1zjETebM6JYI=;
-        b=j5xgwX/61ilXCzwFoqMzYhHwdzZs547znAKy/BT7nIadm5L0If9WsUtxMINwdbcL2u
-         pWfJZNGxzm1zNnbQrz3P7jw7tu3HVgolFLtyHg2kokh1HQzeh/OGnXVAf7/3welIes9X
-         vziH7PQ3zOyHuD5NajfekmZHoO0Tef2KQLgInjNzqiUNJfszyDFHUhWBXA/mOEzwwGM/
-         qcTeN2k5abt9OId89okWJfTt2MIyMicihsxA3rsknkHu/uor390ovH4RqskfnDh/R12H
-         kNxckRZfxnmrr2iiGV11jDfPNMFkmuJVercEMJscnxQtaM6cX2alHa2Wj5TXoYqqYzXf
-         OOWA==
+        bh=Yqq5h6PEbHBqcX3OMbxyqNyRECeqrPDt9D9M8MhzC/Q=;
+        b=S+Oo9sGXBFFhVUn/oVl+Ve8VZZnKdq3XYkz8WhmGA8Vz852ODlyVA6PDTfMkXBM4fN
+         dOZzyCSPmmZBxCkDYo4e5tBsbQArmfLU9CrEIyCojbN3IWbyWs+swRkn+765EoJ4PZZq
+         cdg+8ttVXXcUD7xodDRYRksdgzLqD+PusYLlnCIRmXI+3w1ov8lBzGJZwbVD854N53Al
+         o8fLr6Fb0tDTqlMRIuycz9SsovTD9cJhKWJRDPi+vAtODIqHWrsCIKKpSLgWE2w6Mr7v
+         fN82V1Wuepbk9TiUorhhNYyju3YOoMZB28ZyR4dHOoOps7utOCNU1xZqrjWm6GcmAq7Z
+         YXUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=y43LSYpZCq8Hj7FQIK4BOw1AmFi1AHv1zjETebM6JYI=;
-        b=nXIFdI8R4GQmBdfFwU3bwpNmH6XYCu44go6SE0azjOG8bwkyyNyj91YSqiPynYHWVf
-         Vi46gNnKP+YCbBPjJzECWDFsrU8NJ/IsYlGH2Dk4QT1/PvCoIWDOVCL6vNKYMK0/K9S2
-         I0rXimDvAildylkAEGY2aXHJqqQt2UtZoYABUv0lq5oX+pSYAvjr+c6EPhBHppal1aTy
-         i5iHDQqujdN3VBPTGubdViWkkoZdmdqiflxsY9RMHfKuX8hpfXLjp25FW3VCoGmXajP4
-         ZgSUUtEZdjkaWDV33ZJ2Z/TMpCgryfNUlLBYlbryyinhjPvkCeSyckwMN5l1nt/Eideg
-         wZ3A==
-X-Gm-Message-State: APzg51BKbxpsQnDcbHPEpTCzLQpdjynLWysHnw/sR7UJjRX4YrTcLsZY
-        aIa7Rl0IroiL0DzCHFA5NHciKPN34HySRrGIE2Bv5g==
-X-Google-Smtp-Source: ANB0VdYh+TA10j8YB7E4BuPUxYi02sxH43QD/bFzp5ie7KKI4BNdw5pFi3Eli0iiozE2z1I2VC7jWK3Jxs3Mv6/J0VI=
-X-Received: by 2002:a6b:5a01:: with SMTP id o1-v6mr14739433iob.73.1536517653618;
- Sun, 09 Sep 2018 11:27:33 -0700 (PDT)
+        bh=Yqq5h6PEbHBqcX3OMbxyqNyRECeqrPDt9D9M8MhzC/Q=;
+        b=IFTIbbzSCvUyTGtx3SJQ1T1V3257G5Y5gfL9R8u4HMIFFu7bYmkJS4Z6fMmC6/QGeV
+         pKdGUKGUFCG5GZa7TUqcDQmo4TYaMF3TRSRdYb3p1Y/OYpUD7LR1eSHZYwsuLbjDgCLy
+         IxYudrjoGXPPEa+THbG5FrSnOf1OO789LsX0B4bUwdljR1YwpxSd0Xq/97A3a8CZNSQp
+         jr2+p5ZlR3Im9xoEapWKC3cOnIllEa2Vt4IlvuHuyZdpXQaLnNgslZn6X951MvGXrkXD
+         EEVlqr4inkRdmCsmHWdCho6BtYAAyNJOROZxvhB+yGLQNPBr1Mcw2PaZ9Z/I8qkNDpEn
+         nQQQ==
+X-Gm-Message-State: APzg51DGFTpFnKgoC37bsAv+bPRF86adnn6+d8C0ocjzU1lwRD1Y84Tk
+        g+KSDwlMcukgIVcSftlCCdDNGt6sjW2QJkMQ/yJN/w==
+X-Google-Smtp-Source: ANB0VdaL/ioksFYT2HzJUGgp9YSca9CQfgMuzE6/nnazwBG+VU4YK62GV1jD9B2KzNH4NbLHDnZYZSZMBpr5tJEnz2Y=
+X-Received: by 2002:a24:7f87:: with SMTP id r129-v6mr15007531itc.107.1536517935781;
+ Sun, 09 Sep 2018 11:32:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <1536462862-11767-1-git-send-email-laoar.shao@gmail.com>
-In-Reply-To: <1536462862-11767-1-git-send-email-laoar.shao@gmail.com>
+References: <1536462862-11767-1-git-send-email-laoar.shao@gmail.com> <1536462862-11767-2-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1536462862-11767-2-git-send-email-laoar.shao@gmail.com>
 From:   Eric Dumazet <edumazet@google.com>
-Date:   Sun, 9 Sep 2018 11:27:22 -0700
-Message-ID: <CANn89i+yXq2LgCn=oSoQJhx9dFSf570wjbV5Rzb+VrxfVZA1dQ@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next 1/2] tcp: show number of network segments in
- some SNMP counters
+Date:   Sun, 9 Sep 2018 11:32:04 -0700
+Message-ID: <CANn89iLN9H8tUhjMh1o0N7Ng8fPuXqQdpgkpBANpLwywaS3kNA@mail.gmail.com>
+Subject: Re: [PATCH v2 net-next 2/2] tcp: fix the error count of tcpInSegs
 To:     Yafang Shao <laoar.shao@gmail.com>
 Cc:     David Miller <davem@davemloft.net>,
         netdev <netdev@vger.kernel.org>,
@@ -75,36 +74,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sat, Sep 8, 2018 at 8:14 PM Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> It is better to show the number of network segments in bellow SNMP
-> counters, because that could be more useful for the user.
-> For example, the user could easily figure out how mant packets are
-> dropped and how many packets are queued in the out-of-oder queue.
->
-> - LINUX_MIB_TCPRCVQDROP
-> - LINUX_MIB_TCPZEROWINDOWDROP
-> - LINUX_MIB_TCPBACKLOGDROP
-> - LINUX_MIB_TCPMINTTLDROP
-> - LINUX_MIB_TCPOFODROP
-> - LINUX_MIB_TCPOFOQUEUE
->
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  net/ipv4/tcp_input.c | 18 ++++++++++++------
->  net/ipv4/tcp_ipv4.c  |  9 ++++++---
->  net/ipv6/tcp_ipv6.c  |  6 ++++--
->  3 files changed, 22 insertions(+), 11 deletions(-)
->
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index 62508a2..c2ce334 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -4496,7 +4496,8 @@ static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
->         tcp_ecn_check_ce(sk, skb);
->
->         if (unlikely(tcp_try_rmem_schedule(sk, skb, skb->truesize))) {
-> -               NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPOFODROP);
-> +               NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPOFODROP,
-> +                             max_t(u16, 1, skb_shinfo(skb)->gso_segs));
+> In RFC1213, the tcpInSegs is the total number of segments received.
+> While currently it is the total number of SKBs received.
+> The number of SKBs may be not equal with the numer of segments because of
+> GRO.
+> So fix this error count.
 >
 
-I am nacking this patch. These counters are counting events really.
+We have discussed this in the past and the consensus was it was too
+late to change this.
+
+IP counters have the same issue, so after your patch, we would have
+quite a difference between transport and network layers.
+
+Adding all these max_t(u16, 1, skb_shinfo(skb)->gso_segs)) everywhere add a cost
