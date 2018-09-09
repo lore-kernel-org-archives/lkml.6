@@ -2,111 +2,127 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09780C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 07:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B757CC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 08:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 944EC204EC
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 07:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACA720866
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 08:02:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mTlqM40r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944EC204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo4OCL8r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ACA720866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeIILyi (ORCPT
+        id S1726667AbeIIMux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 07:54:38 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:25229 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbeIILyi (ORCPT
+        Sun, 9 Sep 2018 08:50:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43822 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeIIMux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 07:54:38 -0400
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w8975de9006673;
-        Sun, 9 Sep 2018 16:05:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w8975de9006673
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536476740;
-        bh=osU7bwDS0GcGU+SVxK3i3OKhMCnbqWpDeKUUduc6QRo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=mTlqM40rWtb4uJIkN1uuipjHwEMwRqQ5v+iZ9nvOweC5IvvzEQxMWnCsNelFkAF/z
-         qhR0+nKltXxTH967SkfDcrG5rxmQMtSsJPvizVmZ6x7HqCDjFmNbyyI4DRlB9r9El5
-         gzIucx94s0y4DRfLigGsjfR8BNalXhz6Wyf6VA8I9aH2SLWE4utJ0uhm/zem5maF6T
-         NTymZNuvIyhUPdUGhK7+zbclJSMSTsbSZNjf/GzZhSfzF6QyCHy8T8hCPiKL5TwMdm
-         Erias926TN1D9uFmHDLxz50mqzWzAZW4iqjBqtsOjMctwyT3FQ+nIaOG+a7Bnqu4ba
-         PfX1gjKUicBhA==
-X-Nifty-SrcIP: [209.85.221.182]
-Received: by mail-vk1-f182.google.com with SMTP id e139-v6so2270272vkf.6;
-        Sun, 09 Sep 2018 00:05:40 -0700 (PDT)
-X-Gm-Message-State: APzg51BJxdimT9tG80yH2NFbxHCSuO3pMUAW8TNOBP7/Lw7EGGy3JJ1m
-        /hRzq6Q4vz9UHGXodSDM2MWzGUu22Z2PY5K9eB4=
-X-Google-Smtp-Source: ANB0VdZWlFvmB6OMnrz22+X4yE2RYOaREkc1eY8mHVqsXspUjnRv00MaoYqLEfiKPPK1cDyNwu/wAJkPw7Z5d+HHjKI=
-X-Received: by 2002:a1f:de46:: with SMTP id v67-v6mr4856432vkg.55.1536476739054;
- Sun, 09 Sep 2018 00:05:39 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 00:04:58 -0700 (PDT)
-In-Reply-To: <1536021744-2552-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1536021744-2552-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 9 Sep 2018 16:04:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQOY4fkkTnOwXs8YtS+q8UNTZ+iYgx1Jim=LQkRGNF5OQ@mail.gmail.com>
-Message-ID: <CAK7LNAQOY4fkkTnOwXs8YtS+q8UNTZ+iYgx1Jim=LQkRGNF5OQ@mail.gmail.com>
-Subject: Re: [PATCH] kallsyms: remove left-over Blackfin code
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Aaron Wu <Aaron.Wu@analog.com>,
-        Bryan Wu <cooloney@gmail.com>,
-        Robin Getz <robin.getz@analog.com>,
-        Rusty Russell <rusty@rustcorp.com.au>,
+        Sun, 9 Sep 2018 08:50:53 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k5-v6so18697561wre.10;
+        Sun, 09 Sep 2018 01:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jDGlzm2jPs1aAcPeol3KAmuPuPOupgwwIlOtgvzbT7Y=;
+        b=Lo4OCL8rtZLkMoRPAnf7Y3xdghpdpzRnVk5ti1mAh/VwIc8x97LZH6E9JLSlgmRJF6
+         jhj052NTXyPret9ZkbHVk10m3VP/D4tfJnYK43hy72mq8a8vr/xNGwN6Igb0bB2b0wxn
+         hIm5LTt95cA/XBEIw6otXMfkDNgPnLw205VAMRDEL1S8TyJMLusmsUJmGd5q90CxYNWa
+         6lWvxGdbLFbGDvmfQDl8A2aBXtPhRi3Xg0ciNveOJ3HOW5LRXN3kjT38LRs+M2+z7Eie
+         HkOhVotGmcN3w5iLnQiQJ2utwu+I+Rn9x/1eaVd5E/UQGUPZAFeqj61CCnpbRDAtkC/U
+         DKIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jDGlzm2jPs1aAcPeol3KAmuPuPOupgwwIlOtgvzbT7Y=;
+        b=lgNpMpjYFRALJ6mxxSYG1y+VK6G/dyLqqftEy0YCN2kGB/k+0fmGIhhWSC+cpJfIYA
+         Sp43awvUcfvoeemJkG5YcIMnwYNiWPi3MucD58qQZUBx1zHiF3xUeWFHcXvHfS/BNkLp
+         ZiiUTxxMpqv7e3BJS3EYBTlYl/ETjNsNfFJclHbFYzsKuowq2qyG/7o5BEEW9Lvf+NbE
+         ed18tkWbuI++ajZ59E7q9eXBBcKMsp/9mnEe8m10/qOVq3TWV/uZqUbbm6PFOwCrocdh
+         fqRZW6HDWChZXmy7Ya8rf5XNp2/cSQrciUX3MYUEZMCENFPlG5UdUNyd4xLaqcYFOGc9
+         1OdQ==
+X-Gm-Message-State: APzg51Cj8Hc4H36+wtf6twqRR2FFT6nq3xH9hdK53Qmjh6BMRo3JrD0u
+        RcJt4lbsIVjT+0FtNj9Lcds=
+X-Google-Smtp-Source: ANB0VdYERSgT1PkgxoG46SCG9P0SotK6brlUmrwGP251POmAuROkBHX7NAwnXCKeW0QHqtj2mMslSA==
+X-Received: by 2002:adf:eb0d:: with SMTP id s13-v6mr10999058wrn.174.1536480123545;
+        Sun, 09 Sep 2018 01:02:03 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4006:df00:469:6049:d9c:1c28])
+        by smtp.gmail.com with ESMTPSA id j20-v6sm8924583wmh.9.2018.09.09.01.02.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 01:02:02 -0700 (PDT)
+Date:   Sun, 9 Sep 2018 10:02:01 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-sparse@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 00/13] Compiler Attributes
+Message-ID: <20180909080200.xn7z4gctf2vrqzst@ltop.local>
+References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-04 9:42 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> These symbols were added by commit 028f042613c3 ("kallsyms: support
-> kernel symbols in Blackfin on-chip memory") for Blackfin.
->
-> The Blackfin support was removed by commit 4ba66a976072 ("arch: remove
-> blackfin port").
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+On Sat, Sep 08, 2018 at 11:24:46PM +0200, Miguel Ojeda wrote:
+> The Compiler Attributes series is an effort to disentangle
+> the include/linux/compiler*.h headers and bring them up to date.
+> 
+> The main idea behind the series is to use feature checking macros
+> (i.e. __has_attribute) instead of compiler version checks (e.g. GCC_VERSION),
+> which are compiler-agnostic (so they can be shared, reducing the size
+> of compiler-specific headers) and version-agnostic.
+> 
+> Other related improvements have been performed in the headers as well,
+> which on top of the use of __has_attribute it has amounted to a significant
+> simplification of these headers (e.g. GCC_VERSION is now only guarding 4
+> non-attribute macros).
+> 
+> This series should also help the efforts to support compiling the kernel
+> with clang and icc. A fair amount of documentation and comments have also
+> been added, clarified or removed; and the headers are now more readable,
+> which should help kernel developers in general.
+> 
+> The series was triggered due to the move to gcc >= 4.6. In turn, this series
+> has also triggered Sparse to gain the ability to recognize __has_attribute
+> on its own.
+> 
+> You can also fetch it from:
+> 
+>   https://github.com/ojeda/linux/tree/compiler-attributes-v4
+> 
+> Enjoy!
 
-Applied to linux-kbuild.
-
-
-
->  scripts/kallsyms.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-> index a9186a9..50af068 100644
-> --- a/scripts/kallsyms.c
-> +++ b/scripts/kallsyms.c
-> @@ -48,8 +48,6 @@ static unsigned long long relative_base;
->  static struct addr_range text_ranges[] = {
->         { "_stext",     "_etext"     },
->         { "_sinittext", "_einittext" },
-> -       { "_stext_l1",  "_etext_l1"  }, /* Blackfin on-chip L1 inst SRAM */
-> -       { "_stext_l2",  "_etext_l2"  }, /* Blackfin on-chip L2 SRAM */
->  };
->  #define text_range_text     (&text_ranges[0])
->  #define text_range_inittext (&text_ranges[1])
-> --
-> 2.7.4
->
-
+It's a nice and welcomed cleanup!
+Everything look good to me, so feel free to add my
+    Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+Cheers,
+-- Luc
