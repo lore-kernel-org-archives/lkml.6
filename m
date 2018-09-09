@@ -2,213 +2,123 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B0EC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1886AC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7994C20857
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:16:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B04D220865
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:21:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w9HaahVa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7994C20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RX22j/lT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B04D220865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeIIUGf (ORCPT
+        id S1727704AbeIIUHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 16:06:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbeIIUGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 16:06:35 -0400
-Received: from [192.168.0.101] (unknown [49.77.179.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA3BB20854;
-        Sun,  9 Sep 2018 15:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536506195;
-        bh=xQeLXlHtiY6SVf/ncPXzo1l9YtE8TnEryhPYuKn6LOw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=w9HaahVaEndoXHaMJEKpWsy5LuD2/fVQK2zAdrA5tLoRyNQ7ZeolLuFGHMjSp1uvx
-         sEoP1pkiNuShDpb84Ju5SJ7K+SA9EC5TlnApwGogTzww2Rq6ljBzPBspUHw8p+VPV1
-         rSxRoUr9plXngg+IJYH86F6DVG4cJdos5xQtKi4w=
-Subject: Re: [PATCH v2] staging: erofs: use explicit unsigned int type
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20180830205605.19492-1-linux@weissschuh.net>
- <20180907163912.3686-1-linux@weissschuh.net>
- <5c44a63b-041d-1fce-0748-53c0b44f5983@huawei.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <9f2c06f5-05db-a117-bb11-92c1ae517b09@kernel.org>
-Date:   Sun, 9 Sep 2018 23:16:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 9 Sep 2018 16:07:09 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:37358 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeIIUHJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 16:07:09 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so21443945qtl.4
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 08:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=iMVhczgmug9IhaQExwQJOrMwSU7YnXobCdbaxyQ4reg=;
+        b=RX22j/lTKExcINjEe6ZBczMcDGm4Wk5YdobDej6LB6uaDJ6IL2rndX5mV7tR+drZO1
+         550mKih1hlYnR0ZHYCjvd/p3EVj/lLlIKrehp+Wu/EHSKfM/66obYjVu7i5RlfmwFPs3
+         293JtQ8N1ywds0/kJv/RT4n7n94J7gGtqdjnkxe0shd1KPSbS7h/YXsxhUOa+Wlt7faK
+         n8cYi3tp0OY2qddu26WDCY3wPf32z3HYNaOPGJmgD25Gopuum2e8Tt9PkeFl9aZPSKFy
+         QuPfvqEdKGwfNKOr2rRTsdPzJG36Jw2WjINgVKMFDDmX3kAuVEt+9LYsBsBZBdji+MuS
+         6i6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=iMVhczgmug9IhaQExwQJOrMwSU7YnXobCdbaxyQ4reg=;
+        b=oFyU1b1iWdmDk+f1YMB2+bf3aaFQ64dM6QwCwar3mGRE/YYXwvV167Qt/QbzpyEcx2
+         e3a4hX22x402ORKJNR+D5/IYWkffba63/fWFUK5XIjlSVsbiDhg8vDkWSz1KlETwKD6x
+         Ivw11oYsF3jYWfzsC8lLj4cXTYpJ6baAnKzflR7j0zgxg0zqVVcgghyWFcjxXfH+FlRu
+         5MXmx2ClTkxufmoUcXeg2UVBa3rhw5a4mN6dGq/+2RBB6NiKfYjeHHEl6hvUcya/8YDi
+         9WL+J1T7K/Tti/3wreI2jH1JcZTRCe3RGxeckeRVJOW5b7IvF2LKy6naFhDbjKSQI5gf
+         O3Jw==
+X-Gm-Message-State: APzg51BQ03zAhEul/6d5Hr1Jz3PVwH0WT7N1hWOdtiUXqp5na7lkfEC2
+        2H5C9mK6pEHIYd8zNlgDTDi/+0XJ1KQXIBCbuJs=
+X-Google-Smtp-Source: ANB0Vdbaw615gP4Qowz3sNjFt7e/OsZFTDq6Hl6Ftuks/E4ijkcVECWMCMaElxDz2PLk0rccgi3X9jZS0x1zLlgcFhg=
+X-Received: by 2002:ac8:304a:: with SMTP id g10-v6mr13087625qte.136.1536506229104;
+ Sun, 09 Sep 2018 08:17:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5c44a63b-041d-1fce-0748-53c0b44f5983@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 08:16:48 -0700 (PDT)
+In-Reply-To: <20180907222109.163802-1-ndesaulniers@google.com>
+References: <20180907222109.163802-1-ndesaulniers@google.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sun, 9 Sep 2018 17:16:48 +0200
+Message-ID: <CANiq72=ToRYw2ujJapSndmO1YNy4xjOHcV136MLrstiLPO=ZAg@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/compiler*.h: add version detection to asm_volatile_goto
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Paul Burton <paul.burton@mips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Hi Nick,
 
-On 2018/9/8 11:28, Gao Xiang wrote:
-> Hi Thomas,
-> 
-> Thanks for your new patch.
-> 
-> It seems that this patch also introduces 2 new 'WARNING: line over 80 characters',
-> could you please fix it in the patch?
+On Sat, Sep 8, 2018 at 12:21 AM, Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> The comment above asm_volatile_goto mentions working around a GCC bug,
+> and links to a bug report that claims this has been fixed in newer
+> versions of GCC.  Testing shows that this was resolved in GCC 4.8.2.
+> asm_volatile_goto should also be defined for other compilers that
+> support asm goto.
+>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  include/linux/compiler-gcc.h   | 7 ++++++-
+>  include/linux/compiler_types.h | 4 ++++
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> index 763bbad1e258..149f411b4366 100644
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -171,7 +171,7 @@
+>  #endif
+>
+>  /*
+> - * GCC 'asm goto' miscompiles certain code sequences:
+> + * GCC < 4.8.2 'asm goto' miscompiles certain code sequences:
+>   *
 
-It will be better to fix that.
+Nice catch. Indeed, it seems broken since 4.5.3 and fixed in every
+version after 4.8.1 (at least the ones in godbolt).
 
-Some reviewed cleanup patches are merged before this patch, then I failed to add
-this one, so could you rebase on top of erofs dev branch in below link:
+Reviewed-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=erofs
+By the way, arch/arm64/include/asm/jump_label.h is the only place in
+the kernel using "asm goto" directly (e.g. the arm64 one isn't). Even
+if old gcc doesn't trigger the bug in that case, we should use the
+same everywhere for consistency, unless there is a special reason not
+to (not documented). I will send a patch.
 
-Thanks,
-
-> 
-> On 2018/9/8 0:39, Thomas Weißschuh wrote:
->> Changes since v1:
->>
->> * Removed changes that conflicted with
->>   [PATCH 1/6] staging: erofs: formatting fix in unzip_vle_lz4.c
->> * Added patch description
->>
->> -- >8 --
->>
->> Fix coding style issue "Prefer 'unsigned int' to bare use of 'unsigned'"
->> detected by checkpatch.pl
->>
->> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
->>
->> ---
->>  drivers/staging/erofs/data.c      |  4 +--
->>  drivers/staging/erofs/dir.c       | 14 ++++-----
->>  drivers/staging/erofs/inode.c     |  6 ++--
->>  drivers/staging/erofs/namei.c     | 28 +++++++++---------
->>  drivers/staging/erofs/super.c     |  2 +-
->>  drivers/staging/erofs/unzip_vle.c | 48 +++++++++++++++----------------
->>  drivers/staging/erofs/utils.c     |  2 +-
->>  drivers/staging/erofs/xattr.c     | 40 +++++++++++++-------------
->>  8 files changed, 72 insertions(+), 72 deletions(-)
->>
->> diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
->> index 3c0d9159514e..e1916101ad75 100644
->> --- a/drivers/staging/erofs/data.c
->> +++ b/drivers/staging/erofs/data.c
->> @@ -202,7 +202,7 @@ static inline struct bio *erofs_read_raw_page(
->>  	struct address_space *mapping,
->>  	struct page *page,
->>  	erofs_off_t *last_block,
->> -	unsigned nblocks,
->> +	unsigned int nblocks,
->>  	bool ra)
->>  {
->>  	struct inode *inode = mapping->host;
->> @@ -236,7 +236,7 @@ static inline struct bio *erofs_read_raw_page(
->>  			.m_la = blknr_to_addr(current_block),
->>  		};
->>  		erofs_blk_t blknr;
->> -		unsigned blkoff;
->> +		unsigned int blkoff;
->>  
->>  		err = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
->>  		if (unlikely(err))
->> diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
->> index be6ae3b1bdbe..87f12b0f983f 100644
->> --- a/drivers/staging/erofs/dir.c
->> +++ b/drivers/staging/erofs/dir.c
->> @@ -24,8 +24,8 @@ static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
->>  };
->>  
->>  static int erofs_fill_dentries(struct dir_context *ctx,
->> -	void *dentry_blk, unsigned *ofs,
->> -	unsigned nameoff, unsigned maxsize)
->> +	void *dentry_blk, unsigned int *ofs,
->> +	unsigned int nameoff, unsigned int maxsize)
->>  {
->>  	struct erofs_dirent *de = dentry_blk;
->>  	const struct erofs_dirent *end = dentry_blk + nameoff;
->> @@ -36,7 +36,7 @@ static int erofs_fill_dentries(struct dir_context *ctx,
->>  		int de_namelen;
->>  		unsigned char d_type;
->>  #ifdef CONFIG_EROFS_FS_DEBUG
->> -		unsigned dbg_namelen;
->> +		unsigned int dbg_namelen;
->>  		unsigned char dbg_namebuf[EROFS_NAME_LEN];
->>  #endif
->>  
->> @@ -81,15 +81,15 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
->>  	struct inode *dir = file_inode(f);
->>  	struct address_space *mapping = dir->i_mapping;
->>  	const size_t dirsize = i_size_read(dir);
->> -	unsigned i = ctx->pos / EROFS_BLKSIZ;
->> -	unsigned ofs = ctx->pos % EROFS_BLKSIZ;
->> +	unsigned int i = ctx->pos / EROFS_BLKSIZ;
->> +	unsigned int ofs = ctx->pos % EROFS_BLKSIZ;
->>  	int err = 0;
->>  	bool initial = true;
->>  
->>  	while (ctx->pos < dirsize) {
->>  		struct page *dentry_page;
->>  		struct erofs_dirent *de;
->> -		unsigned nameoff, maxsize;
->> +		unsigned int nameoff, maxsize;
->>  
->>  		dentry_page = read_mapping_page(mapping, i, NULL);
->>  		if (IS_ERR(dentry_page))
->> @@ -109,7 +109,7 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
->>  			goto skip_this;
->>  		}
->>  
->> -		maxsize = min_t(unsigned, dirsize - ctx->pos + ofs, PAGE_SIZE);
->> +		maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, PAGE_SIZE);
-> 
-> WARNING: line over 80 characters
-> #102: FILE: drivers/staging/erofs/dir.c:112:
-> +               maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, PAGE_SIZE);
-> 
-> 
->>  
->>  		/* search dirents at the arbitrary position */
->>  		if (unlikely(initial)) {
->> diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
->> index fbf6ff25cd1b..70d34b0a97fe 100644
->> --- a/drivers/staging/erofs/inode.c
->> +++ b/drivers/staging/erofs/inode.c
->> @@ -19,7 +19,7 @@ static int read_inode(struct inode *inode, void *data)
->>  {
->>  	struct erofs_vnode *vi = EROFS_V(inode);
->>  	struct erofs_inode_v1 *v1 = data;
->> -	const unsigned advise = le16_to_cpu(v1->i_advise);
->> +	const unsigned int advise = le16_to_cpu(v1->i_advise);
->>  
->>  	vi->data_mapping_mode = __inode_data_mapping(advise);
->>  
->> @@ -112,7 +112,7 @@ static int read_inode(struct inode *inode, void *data)
->>   * try_lock since it takes no much overhead and
->>   * will success immediately.
->>   */
->> -static int fill_inline_data(struct inode *inode, void *data, unsigned m_pofs)
->> +static int fill_inline_data(struct inode *inode, void *data, unsigned int m_pofs)
-> 
-> WARNING: line over 80 characters
-> #124: FILE: drivers/staging/erofs/inode.c:115:
-> +static int fill_inline_data(struct inode *inode, void *data, unsigned int m_pofs)
-> 
-> Thanks,
-> Gao Xiang
-> 
+Cheers,
+Miguel
