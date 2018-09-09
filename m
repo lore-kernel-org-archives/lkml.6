@@ -2,511 +2,458 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9768C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098C8C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BEE12075B
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D55520857
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 14:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="WZC49s0P";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fAFKZkEc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BEE12075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zHeGzUXM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D55520857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeIITYK (ORCPT
+        id S1727657AbeIIT0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 15:24:10 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41419 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbeIITYK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 15:24:10 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k12-v6so35479423oiw.8
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 07:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=JtKl1FJg14a2/S1PMbDfDzs+zQfywGg12uBh/CRBdM8=;
-        b=WZC49s0P4+rrZMCdl2m42NekFfll9hCBE6o37uf57tN3tgc7j77FF0gi9UPsvavkYb
-         kWali4dbf3S5/MWqIbPq/MnCwLNzQYJxmXEBUXDRIG/LWU3ao1/uJRGQTcFO/vU3udhI
-         2JMj/SpkiFI/HLj8kp8e9WmQ+umw77aVwp5d9lPAQjU8dUHDPB52otK64YPjK/BUlnCp
-         ZX1nOZGd1ouh4jO+iX+54jhEXWIEFsDHHAy953Pz6BHRO/YNpInfLc4H9FYZY4PZQ9al
-         1hf/hHRz8q9UOBgGwrW5PUXKnhROYsXmcfyzvsXc08eylZjf+I7EN8n6CcFAiiJg0/hn
-         yeiw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=JtKl1FJg14a2/S1PMbDfDzs+zQfywGg12uBh/CRBdM8=;
-        b=fAFKZkEcFioLAk00FfeufVCHEadCBfOXr2OywW+xcxSE9iRKbSJOOJnXOswDvU8CE0
-         MMa/fqkCFq1cDFfBTLFWydJHfPkAc4wI9banr9cmSl9fuERIK4aHfxlFMJddSUQa+tC2
-         ZTQYrEPV1DXtgxNTlPGwtRBkJC2gnP/UXLGdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=JtKl1FJg14a2/S1PMbDfDzs+zQfywGg12uBh/CRBdM8=;
-        b=AopWcbkGOVidtpdSwtglVvLE3u8K/E435gM1IhYNLgTj6PtDI2l/fAQ38UzU1aDaAU
-         esQvs65uVBcrR7t8pTKlpIqjE81+wtbLnp5CTXevGljgqfGChjE+PCOmfVviP7BcR+Um
-         QWZUvU8nYbAkzXIyzUafRcQumWxv6/dd+3dDr2w96WW903mjro9HjbOhadqP+lwJ6l3O
-         5np7dh1XY9RUlX/3w1RZAd24HaiPpP+fx3Fk3upShtQdrB6muKwlSe4vJTW6FNRZpL1f
-         KDq5rQNi597YXTG2/ML1SlXNRQPDrmqZXE9RgnzxiJkEvh3sCRRsL7UU78hi5AV6lPfz
-         4ZXA==
-X-Gm-Message-State: APzg51AtHK345ik3EjA3NlVzoy0Rjq6PEsLHFA/5gLnOlZ8QE+huB5lG
-        d5xl2kUoEcdqgeUNtDGo3sXC6O7u0wVlGD27eCrwJQ==
-X-Google-Smtp-Source: ANB0VdYHAKVz7KVj5nVtrZJdEXdbuP3uQLImtSZF6M4Msb3PJBRY68ddVQ0VCX+O3Vyj6gZ/mZ0Le79+Z66SOoY6ZGw=
-X-Received: by 2002:aca:a6d4:: with SMTP id t81-v6mr16641157oij.113.1536503656902;
- Sun, 09 Sep 2018 07:34:16 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4a:e05:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 07:34:16 -0700 (PDT)
-In-Reply-To: <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
-References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org> <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Sun, 9 Sep 2018 20:04:16 +0530
-X-Google-Sender-Auth: Pp5SVTg4LRWXw01nnBQSfd_wUwc
-Message-ID: <CAHLCerOAXeiYPKxvLVWrjUtHU8vTqGCESkAZXRixh-492MBCUg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <skannan@codeaurora.org>, evgreen@google.com
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 9 Sep 2018 15:26:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727241AbeIIT0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 15:26:03 -0400
+Received: from ubuntu.wanda.cn (unknown [49.77.179.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 159D02075B;
+        Sun,  9 Sep 2018 14:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536503769;
+        bh=lVGrk8cgbtBn8Fe5l6HoHGjk7Q3ZwqHphmO21E9f3hQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=zHeGzUXMuC2xbwltxQV28OH0rivBdJg4fyLacyXRMWgPgdxunZIucDrSbIZtW/+eO
+         lZI8eQejm03n+X53ifkT2Baoop5IKiuGuhV08FneJaQY6WwkUGZ9T4bDddbJO080XU
+         a9TO2y140VaIvxt6Vz/OZ4iAwW6cu/JWPvFMVBaw=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH v8] f2fs: guarantee journalled quota data by checkpoint
+Date:   Sun,  9 Sep 2018 14:28:06 +0800
+Message-Id: <20180909062806.24232-1-chao@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Taniya,
+From: Chao Yu <yuchao0@huawei.com>
 
-How much have you stressed this driver?
+For journalled quota mode, let checkpoint to flush dquot dirty data
+and quota file data to guarntee persistence of all quota sysfile in
+last checkpoint, by this way, we can avoid corrupting quota sysfile
+when encountering SPO.
 
-I tried it on top of an integration branch based on 4.19-rc2 that we
-maintain[1] and was able to get the board to reboot fairly easily with
-just a few "yes > /dev/null &" instances running in the background.
+The implementation is as below:
 
-I even tried with interconnect framework disabled to be sure, and it
-still reboots.
+1. add a global state SBI_QUOTA_NEED_FLUSH to indicate that there is
+cached dquot metadata changes in quota subsystem, and later checkpoint
+should:
+ a) flush dquot metadata into quota file.
+ b) flush quota file to storage to keep file usage be consistent.
 
-I'll continue trying to pinpoint the source of the problem, but it
-would be nice to know what tree you're testing against.
+2. add a global state SBI_QUOTA_NEED_REPAIR to indicate that quota
+operation failed due to -EIO or -ENOSPC, so later,
+ a) checkpoint will skip syncing dquot metadata.
+ b) CP_QUOTA_NEED_FSCK_FLAG will be set in last cp pack to give a
+    hint for fsck repairing.
 
-Regards,
-Amit
-[1] https://git.linaro.org/people/amit.kucheria/kernel.git/log/?h=integration/qcomlt-automerge-result
+3. add a global state SBI_QUOTA_SKIP_FLUSH, in checkpoint, if quota
+data updating is very heavy, it may cause hungtask in block_operation().
+To avoid this, if our retry time exceed threshold, let's just skip
+flushing and retry in next checkpoint().
 
-On Tue, Jul 24, 2018 at 4:12 PM, Taniya Das <tdas@codeaurora.org> wrote:
-> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this hardware engine.
->
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm       |  11 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-hw.c | 348 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 360 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
->
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 0cd8eb7..93a9d72 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -298,3 +298,14 @@ config ARM_PXA2xx_CPUFREQ
->           This add the CPUFreq driver support for Intel PXA2xx SOCs.
->
->           If in doubt, say N.
-> +
-> +config ARM_QCOM_CPUFREQ_HW
-> +       bool "QCOM CPUFreq HW driver"
-> +       depends on ARCH_QCOM
-> +       help
-> +        Support for the CPUFreq HW driver.
-> +        Some QCOM chipsets have a HW engine to offload the steps
-> +        necessary for changing the frequency of the CPUs. Firmware loaded
-> +        in this engine exposes a programming interface to the OS.
-> +        The driver implements the cpufreq interface for this HW engine.
-> +        Say Y if you want to support CPUFreq HW.
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index c1ffeab..ca48a1d 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)    += tegra124-cpufreq.o
->  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)     += tegra186-cpufreq.o
->  obj-$(CONFIG_ARM_TI_CPUFREQ)           += ti-cpufreq.o
->  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ) += vexpress-spc-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)      += qcom-cpufreq-hw.o
->
->
->  ##################################################################################
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> new file mode 100644
-> index 0000000..ea8f7d1
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -0,0 +1,348 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/cpufreq.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +
-> +#define INIT_RATE                      300000000UL
-> +#define LUT_MAX_ENTRIES                        40U
-> +#define CORE_COUNT_VAL(val)            (((val) & (GENMASK(18, 16))) >> 16)
-> +#define LUT_ROW_SIZE                   32
-> +
-> +enum {
-> +       REG_ENABLE,
-> +       REG_LUT_TABLE,
-> +       REG_PERF_STATE,
-> +
-> +       REG_ARRAY_SIZE,
-> +};
-> +
-> +struct cpufreq_qcom {
-> +       struct cpufreq_frequency_table *table;
-> +       struct device *dev;
-> +       void __iomem *reg_bases[REG_ARRAY_SIZE];
-> +       cpumask_t related_cpus;
-> +       unsigned int max_cores;
-> +       unsigned long xo_rate;
-> +};
-> +
-> +static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] = {
-> +       [REG_ENABLE]            = 0x0,
-> +       [REG_LUT_TABLE]         = 0x110,
-> +       [REG_PERF_STATE]        = 0x920,
-> +};
-> +
-> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> +
-> +static int
-> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-> +                            unsigned int index)
-> +{
-> +       struct cpufreq_qcom *c = policy->driver_data;
-> +
-> +       writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-> +
-> +       return 0;
-> +}
-> +
-> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-> +{
-> +       struct cpufreq_qcom *c;
-> +       struct cpufreq_policy *policy;
-> +       unsigned int index;
-> +
-> +       policy = cpufreq_cpu_get_raw(cpu);
-> +       if (!policy)
-> +               return 0;
-> +
-> +       c = policy->driver_data;
-> +
-> +       index = readl_relaxed(c->reg_bases[REG_PERF_STATE]);
-> +       index = min(index, LUT_MAX_ENTRIES - 1);
-> +
-> +       return policy->freq_table[index].frequency;
-> +}
-> +
-> +static unsigned int
-> +qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-> +                           unsigned int target_freq)
-> +{
-> +       struct cpufreq_qcom *c = policy->driver_data;
-> +       int index;
-> +
-> +       index = policy->cached_resolved_idx;
-> +       if (index < 0)
-> +               return 0;
-> +
-> +       writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-> +
-> +       return policy->freq_table[index].frequency;
-> +}
-> +
-> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +       struct cpufreq_qcom *c;
-> +
-> +       c = qcom_freq_domain_map[policy->cpu];
-> +       if (!c) {
-> +               pr_err("No scaling support for CPU%d\n", policy->cpu);
-> +               return -ENODEV;
-> +       }
-> +
-> +       cpumask_copy(policy->cpus, &c->related_cpus);
-> +
-> +       policy->fast_switch_possible = true;
-> +       policy->freq_table = c->table;
-> +       policy->driver_data = c;
-> +
-> +       return 0;
-> +}
-> +
-> +static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-> +       &cpufreq_freq_attr_scaling_available_freqs,
-> +       &cpufreq_freq_attr_scaling_boost_freqs,
-> +       NULL
-> +};
-> +
-> +static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-> +       .flags          = CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +                         CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-> +       .verify         = cpufreq_generic_frequency_table_verify,
-> +       .target_index   = qcom_cpufreq_hw_target_index,
-> +       .get            = qcom_cpufreq_hw_get,
-> +       .init           = qcom_cpufreq_hw_cpu_init,
-> +       .fast_switch    = qcom_cpufreq_hw_fast_switch,
-> +       .name           = "qcom-cpufreq-hw",
-> +       .attr           = qcom_cpufreq_hw_attr,
-> +       .boost_enabled  = true,
-> +};
-> +
-> +static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
-> +                                   struct cpufreq_qcom *c)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       void __iomem *base;
-> +       u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
-> +
-> +       c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-> +                               sizeof(*c->table), GFP_KERNEL);
-> +       if (!c->table)
-> +               return -ENOMEM;
-> +
-> +       base = c->reg_bases[REG_LUT_TABLE];
-> +
-> +       for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-> +               data = readl_relaxed(base + i * LUT_ROW_SIZE);
-> +               src = (data & GENMASK(31, 30)) >> 30;
-> +               lval = data & GENMASK(7, 0);
-> +               core_count = CORE_COUNT_VAL(data);
-> +
-> +               if (src)
-> +                       c->table[i].frequency = c->xo_rate * lval / 1000;
-> +               else
-> +                       c->table[i].frequency = INIT_RATE / 1000;
-> +
-> +               cur_freq = c->table[i].frequency;
-> +
-> +               dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-> +                       i, c->table[i].frequency, core_count);
-> +
-> +               if (core_count != c->max_cores)
-> +                       cur_freq = CPUFREQ_ENTRY_INVALID;
-> +
-> +               /*
-> +                * Two of the same frequencies with the same core counts means
-> +                * end of table.
-> +                */
-> +               if (i > 0 && c->table[i - 1].frequency ==
-> +                  c->table[i].frequency && prev_cc == core_count) {
-> +                       struct cpufreq_frequency_table *prev = &c->table[i - 1];
-> +
-> +                       if (prev_freq == CPUFREQ_ENTRY_INVALID)
-> +                               prev->flags = CPUFREQ_BOOST_FREQ;
-> +                       break;
-> +               }
-> +               prev_cc = core_count;
-> +               prev_freq = cur_freq;
-> +       }
-> +
-> +       c->table[i].frequency = CPUFREQ_TABLE_END;
-> +
-> +       return 0;
-> +}
-> +
-> +static int qcom_get_related_cpus(struct device_node *np, struct cpumask *m)
-> +{
-> +       struct device_node *cpu_np, *freq_np;
-> +       int cpu;
-> +
-> +       for_each_possible_cpu(cpu) {
-> +               cpu_np = of_cpu_device_node_get(cpu);
-> +               if (!cpu_np)
-> +                       continue;
-> +               freq_np = of_parse_phandle(cpu_np, "qcom,freq-domain", 0);
-> +               of_node_put(cpu_np);
-> +               if (!freq_np)
-> +                       continue;
-> +
-> +               if (freq_np == np)
-> +                       cpumask_set_cpu(cpu, m);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int qcom_cpu_resources_init(struct platform_device *pdev,
-> +                                  struct device_node *np, unsigned int cpu,
-> +                                  unsigned long xo_rate)
-> +{
-> +       struct cpufreq_qcom *c;
-> +       struct resource res;
-> +       struct device *dev = &pdev->dev;
-> +       const u16 *offsets;
-> +       int ret, i, cpu_first, cpu_r;
-> +       void __iomem *base;
-> +
-> +       if (qcom_freq_domain_map[cpu])
-> +               return 0;
-> +
-> +       c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
-> +       if (!c)
-> +               return -ENOMEM;
-> +
-> +       offsets = of_device_get_match_data(&pdev->dev);
-> +       if (!offsets)
-> +               return -EINVAL;
-> +
-> +       if (of_address_to_resource(np, 0, &res))
-> +               return -ENOMEM;
-> +
-> +       base = devm_ioremap_resource(dev, &res);
-> +       if (!base)
-> +               return -ENOMEM;
-> +
-> +       for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
-> +               c->reg_bases[i] = base + offsets[i];
-> +
-> +       /* HW should be in enabled state to proceed */
-> +       if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
-> +               dev_err(dev, "%s cpufreq hardware not enabled\n", np->name);
-> +               return -ENODEV;
-> +       }
-> +
-> +       ret = qcom_get_related_cpus(np, &c->related_cpus);
-> +       if (ret) {
-> +               dev_err(dev, "%s failed to get related CPUs\n", np->name);
-> +               return ret;
-> +       }
-> +
-> +       c->max_cores = cpumask_weight(&c->related_cpus);
-> +       if (!c->max_cores)
-> +               return -ENOENT;
-> +
-> +       c->xo_rate = xo_rate;
-> +
-> +       ret = qcom_cpufreq_hw_read_lut(pdev, c);
-> +       if (ret) {
-> +               dev_err(dev, "%s failed to read LUT\n", np->name);
-> +               return ret;
-> +       }
-> +
-> +       qcom_freq_domain_map[cpu] = c;
-> +
-> +       /* Related CPUs */
-> +       cpu_first = cpumask_first(&c->related_cpus);
-> +
-> +       for_each_cpu(cpu_r, &c->related_cpus) {
-> +               if (cpu_r != cpu_first)
-> +                       qcom_freq_domain_map[cpu_r] =
-> +                               qcom_freq_domain_map[cpu_first];
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int qcom_resources_init(struct platform_device *pdev)
-> +{
-> +       struct device_node *np, *cpu_np;
-> +       struct clk *clk;
-> +       unsigned int cpu;
-> +       int ret;
-> +
-> +       clk = devm_clk_get(&pdev->dev, "xo");
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-> +
-> +       for_each_possible_cpu(cpu) {
-> +               cpu_np = of_cpu_device_node_get(cpu);
-> +               if (!cpu_np) {
-> +                       dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
-> +                               cpu);
-> +                       continue;
-> +               }
-> +
-> +               np = of_parse_phandle(cpu_np, "qcom,freq-domain", 0);
-> +               of_node_put(cpu_np);
-> +               if (!np) {
-> +                       dev_err(&pdev->dev, "Failed to get freq-domain device\n");
-> +                       return -EINVAL;
-> +               }
-> +
-> +               ret = qcom_cpu_resources_init(pdev, np, cpu, clk_get_rate(clk));
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       devm_clk_put(&pdev->dev, clk);
-> +
-> +       return 0;
-> +}
-> +
-> +static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
-> +{
-> +       int rc;
-> +
-> +       /* Get the bases of cpufreq for domains */
-> +       rc = qcom_resources_init(pdev);
-> +       if (rc) {
-> +               dev_err(&pdev->dev, "CPUFreq resource init failed\n");
-> +               return rc;
-> +       }
-> +
-> +       rc = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
-> +       if (rc) {
-> +               dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
-> +               return rc;
-> +       }
-> +
-> +       dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id qcom_cpufreq_hw_match[] = {
-> +       { .compatible = "qcom,cpufreq-hw", .data = &cpufreq_qcom_std_offsets },
-> +       {}
-> +};
-> +
-> +static struct platform_driver qcom_cpufreq_hw_driver = {
-> +       .probe = qcom_cpufreq_hw_driver_probe,
-> +       .driver = {
-> +               .name = "qcom-cpufreq-hw",
-> +               .of_match_table = qcom_cpufreq_hw_match,
-> +       },
-> +};
-> +
-> +static int __init qcom_cpufreq_hw_init(void)
-> +{
-> +       return platform_driver_register(&qcom_cpufreq_hw_driver);
-> +}
-> +subsys_initcall(qcom_cpufreq_hw_init);
-> +
-> +MODULE_DESCRIPTION("QCOM firmware-based CPU Frequency driver");
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
->
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v8:
+- don't set DQUOT_NOLIST_DIRTY.
+ fs/f2fs/checkpoint.c    |  45 ++++++++++++++--
+ fs/f2fs/data.c          |   8 ++-
+ fs/f2fs/f2fs.h          |   7 +++
+ fs/f2fs/super.c         | 110 ++++++++++++++++++++++++++++++++++++----
+ include/linux/f2fs_fs.h |   1 +
+ 5 files changed, 154 insertions(+), 17 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 59d0472013f4..fb1db60e587d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1086,6 +1086,15 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
+ 	ckpt->next_free_nid = cpu_to_le32(last_nid);
+ }
+ 
++static bool __need_flush_quota(struct f2fs_sb_info *sbi)
++{
++	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
++		return false;
++	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
++		return false;
++	return is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH);
++}
++
+ /*
+  * Freeze all the FS-operations for checkpoint.
+  */
+@@ -1097,12 +1106,31 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		.for_reclaim = 0,
+ 	};
+ 	struct blk_plug plug;
+-	int err = 0;
++	int err = 0, cnt = 0;
+ 
+ 	blk_start_plug(&plug);
+ 
+-retry_flush_dents:
++retry_flush_quotas:
++	if (__need_flush_quota(sbi)) {
++		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
++			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
++			f2fs_lock_all(sbi);
++			goto retry_flush_dents;
++		}
++		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
++		err = f2fs_quota_sync(sbi->sb, -1);
++		if (err)
++			goto out;
++	}
++
+ 	f2fs_lock_all(sbi);
++	if (__need_flush_quota(sbi)) {
++		f2fs_unlock_all(sbi);
++		cond_resched();
++		goto retry_flush_quotas;
++	}
++
++retry_flush_dents:
+ 	/* write all the dirty dentry pages */
+ 	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
+ 		f2fs_unlock_all(sbi);
+@@ -1110,7 +1138,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		if (err)
+ 			goto out;
+ 		cond_resched();
+-		goto retry_flush_dents;
++		goto retry_flush_quotas;
+ 	}
+ 
+ 	/*
+@@ -1126,7 +1154,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		if (err)
+ 			goto out;
+ 		cond_resched();
+-		goto retry_flush_dents;
++		goto retry_flush_quotas;
+ 	}
+ 
+ retry_flush_nodes:
+@@ -1217,6 +1245,14 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+ 
++	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
++		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
++	else
++		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
++
++	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
++		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
++
+ 	/* set this flag to activate crc|cp_ver for recovery */
+ 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+ 	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+@@ -1424,6 +1460,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+ 	clear_sbi_flag(sbi, SBI_NEED_CP);
++	clear_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+ 	__set_cp_next_pack(sbi);
+ 
+ 	/*
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 26f38b224bb2..878bf17071f3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
+ 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+ 			S_ISDIR(inode->i_mode) ||
+ 			(S_ISREG(inode->i_mode) &&
+-			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
++			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
+ 			is_cold_data(page))
+ 		return true;
+ 	return false;
+@@ -1713,6 +1713,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+ 		return true;
+ 	if (S_ISDIR(inode->i_mode))
+ 		return true;
++	if (IS_NOQUOTA(inode))
++		return true;
+ 	if (f2fs_is_atomic_file(inode))
+ 		return true;
+ 	if (fio) {
+@@ -1957,7 +1959,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 	}
+ 
+ 	unlock_page(page);
+-	if (!S_ISDIR(inode->i_mode))
++	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
+ 		f2fs_balance_fs(sbi, need_balance_fs);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+@@ -2148,6 +2150,8 @@ static inline bool __should_serialize_io(struct inode *inode,
+ {
+ 	if (!S_ISREG(inode->i_mode))
+ 		return false;
++	if (IS_NOQUOTA(inode))
++		return false;
+ 	if (wbc->sync_mode != WB_SYNC_ALL)
+ 		return true;
+ 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3a8a60e6844c..b153f97de696 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -527,6 +527,9 @@ enum {
+ 
+ #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO count */
+ 
++/* maximum retry quota flush count */
++#define DEFAULT_RETRY_QUOTA_FLUSH_COUNT		8
++
+ #define F2FS_LINK_MAX	0xffffffff	/* maximum link count per file */
+ 
+ #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
+@@ -1089,6 +1092,9 @@ enum {
+ 	SBI_NEED_CP,				/* need to checkpoint */
+ 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+ 	SBI_IS_RECOVERED,			/* recovered orphan/data */
++	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
++	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
++	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+ };
+ 
+ enum {
+@@ -2828,6 +2834,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ int f2fs_inode_dirtied(struct inode *inode, bool sync);
+ void f2fs_inode_synced(struct inode *inode);
+ int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
++int f2fs_quota_sync(struct super_block *sb, int type);
+ void f2fs_quota_off_umount(struct super_block *sb);
+ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
+ int f2fs_sync_fs(struct super_block *sb, int sync);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 32402f0d9d40..77bd936cfc8c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1688,6 +1688,13 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+ 
+ static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+ {
++
++	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"quota sysfile may be corrupted, skip loading it");
++		return 0;
++	}
++
+ 	return dquot_quota_on_mount(sbi->sb, F2FS_OPTION(sbi).s_qf_names[type],
+ 					F2FS_OPTION(sbi).s_jquota_fmt, type);
+ }
+@@ -1758,7 +1765,14 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 		test_opt(F2FS_SB(sb), PRJQUOTA),
+ 	};
+ 
+-	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
++	if (is_set_ckpt_flags(F2FS_SB(sb), CP_QUOTA_NEED_FSCK_FLAG)) {
++		f2fs_msg(sb, KERN_ERR,
++			"quota file may be corrupted, skip loading it");
++		return 0;
++	}
++
++	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE;
++
+ 	for (type = 0; type < MAXQUOTAS; type++) {
+ 		qf_inum = f2fs_qf_ino(sb, type);
+ 		if (qf_inum) {
+@@ -1779,15 +1793,16 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 	return 0;
+ }
+ 
+-static int f2fs_quota_sync(struct super_block *sb, int type)
++int f2fs_quota_sync(struct super_block *sb, int type)
+ {
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+ 	int ret;
+ 
+ 	ret = dquot_writeback_dquots(sb, type);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/*
+ 	 * Now when everything is written we can discard the pagecache so
+@@ -1801,13 +1816,23 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
+ 
+ 		ret = filemap_write_and_wait(dqopt->files[cnt]->i_mapping);
+ 		if (ret)
+-			return ret;
++			goto out;
++
++		/* if we are using journalled quota */
++		if (f2fs_sb_has_quota_ino(sb) ||
++			F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
++			F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
++			F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
++			continue;
+ 
+ 		inode_lock(dqopt->files[cnt]);
+ 		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
+ 		inode_unlock(dqopt->files[cnt]);
+ 	}
+-	return 0;
++out:
++	if (ret)
++		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
+ }
+ 
+ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+@@ -1876,11 +1901,66 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 				"Fail to turn off disk quota "
+ 				"(type: %d, err: %d, ret:%d), Please "
+ 				"run fsck to fix it.", type, err, ret);
+-			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
++			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ 		}
+ 	}
+ }
+ 
++static int f2fs_dquot_commit(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_commit(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_acquire(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_acquire(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_release(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_release(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
++{
++	struct super_block *sb = dquot->dq_sb;
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++
++	/* if we are using journalled quota */
++	if (f2fs_sb_has_quota_ino(sb) ||
++		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
++
++	return dquot_mark_dquot_dirty(dquot);
++}
++
++static int f2fs_dquot_commit_info(struct super_block *sb, int type)
++{
++	int ret;
++
++	ret = dquot_commit_info(sb, type);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -1889,11 +1969,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ 
+ static const struct dquot_operations f2fs_quota_operations = {
+ 	.get_reserved_space = f2fs_get_reserved_space,
+-	.write_dquot	= dquot_commit,
+-	.acquire_dquot	= dquot_acquire,
+-	.release_dquot	= dquot_release,
+-	.mark_dirty	= dquot_mark_dquot_dirty,
+-	.write_info	= dquot_commit_info,
++	.write_dquot	= f2fs_dquot_commit,
++	.acquire_dquot	= f2fs_dquot_acquire,
++	.release_dquot	= f2fs_dquot_release,
++	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
++	.write_info	= f2fs_dquot_commit_info,
+ 	.alloc_dquot	= dquot_alloc,
+ 	.destroy_dquot	= dquot_destroy,
+ 	.get_projid	= f2fs_get_projid,
+@@ -1911,6 +1991,11 @@ static const struct quotactl_ops f2fs_quotactl_ops = {
+ 	.get_nextdqblk	= dquot_get_next_dqblk,
+ };
+ #else
++int f2fs_quota_sync(struct super_block *sb, int type)
++{
++	return 0;
++}
++
+ void f2fs_quota_off_umount(struct super_block *sb)
+ {
+ }
+@@ -2950,6 +3035,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_meta_inode;
+ 	}
+ 
++	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++
+ 	/* Initialize device list */
+ 	err = f2fs_scan_devices(sbi);
+ 	if (err) {
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index f70f8ac9c4f4..6a879a865343 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -118,6 +118,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+ #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+ #define CP_NOCRC_RECOVERY_FLAG	0x00000200
+ #define CP_TRIMMED_FLAG		0x00000100
+-- 
+2.18.0
+
