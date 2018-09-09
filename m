@@ -2,123 +2,100 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83E2C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 05:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB8CC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 06:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90FF220865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 05:39:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vhK6tiGe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FF220865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 33DF02087E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 06:55:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33DF02087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbeIIK2F (ORCPT
+        id S1726634AbeIILnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 06:28:05 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42137 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbeIIK2E (ORCPT
+        Sun, 9 Sep 2018 07:43:37 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:15854 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726527AbeIILnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 06:28:04 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y4-v6so8867459pgp.9
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 22:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=acp4CPFPVdU4dENC18UllOpvp1Ys7Qzn8tJAUDcSWxk=;
-        b=vhK6tiGe7ozCQ+3+U9bK1v8NTjaxugd/h+1wHMnmmT0RDO/8tnuBSCvJ3wJlF7OoTz
-         s2X8RwTxh0CK2lRLpGt6ju1LdsRiZobYfE1MKIBnRP15m6p9+iXpWLs+plaXLpIQXN2y
-         Zin/hhuytBLCvP6Jvs4fq6BxhHoqUPOQ0/VBHPfl2SahNQxzeU0lAVA0QwhbkDAe9Q5X
-         WL1Z41X7gutzjUMfA049tuTqOfatM3qbGhYW1sXLOurfRJkTAmMnVxjNItDhvG0NlhHL
-         vJPveKXz9zZ3pK0cVAHUq7mib2cAYZ9ai80NPPxJfTZ26bt5JJ+JCrB3uk+5lf7EsY8J
-         evOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=acp4CPFPVdU4dENC18UllOpvp1Ys7Qzn8tJAUDcSWxk=;
-        b=ZGroG8USnXoEEGlvOXT6h5+WS5ZY7GVFAS+VU7mKtV/bC+FQwkrCIHv0OuNlnqvSqw
-         UjeAW279H1LnlaEUwu/4Gbb7W5TcAKoBDQuWjOgFXWubzj/dTgyTvLmDxsmPu+r4Mck0
-         oER7W8ScVkQF0XIfcFEzD5mqkFIxuPExxRhrIcZcWR4R5VB9TR6cJEqUeQ3FMsIsiT/k
-         HWvFnVg6iiE3eduqs59kXj89ae7sPIyrXoH0c1L2m2LXXm2K6cQYAIlqHeA9nFfomHbL
-         Ym7NiElBTaISd28Xqd9TZo/RPoIZ2vBZXHoVLQXBtHNwwNBVTLB+sczeuK7i7hFT9rOn
-         HiRg==
-X-Gm-Message-State: APzg51CX3GPcCXak5rQCd+qqzSh4rfVh7Gwv39Zjt9Py65YVVXg2JYtD
-        8wHpwg9c1YAU52PE2qMVg+0=
-X-Google-Smtp-Source: ANB0VdYEAbh7fDODugtCKbqnE1zdLQ+FGOUy/Crqb1ch+CrBBKWOI1WBOKjliyRmH6DC0FSmHr1gMg==
-X-Received: by 2002:a62:ba0b:: with SMTP id k11-v6mr16961136pff.171.1536471580026;
-        Sat, 08 Sep 2018 22:39:40 -0700 (PDT)
-Received: from roar.au.ibm.com (115-64-249-220.tpgi.com.au. [115.64.249.220])
-        by smtp.gmail.com with ESMTPSA id 186-v6sm6491034pgg.56.2018.09.08.22.39.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 22:39:39 -0700 (PDT)
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>, Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Matteo Croce <mcroce@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org (op)
-Subject: [PATCH v2 3/3] tty: hvc: hvc_write() fix break condition
-Date:   Sun,  9 Sep 2018 15:39:16 +1000
-Message-Id: <20180909053916.14139-4-npiggin@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180909053916.14139-1-npiggin@gmail.com>
-References: <20180909053916.14139-1-npiggin@gmail.com>
+        Sun, 9 Sep 2018 07:43:37 -0400
+X-UUID: 69c528d3a3764e618852bb91a4c3e621-20180909
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <houlong.wei@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1533167121; Sun, 09 Sep 2018 14:54:43 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Sun, 9 Sep
+ 2018 14:54:42 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Sun, 9 Sep 2018 14:54:41 +0800
+Message-ID: <1536476081.29633.7.camel@mhfsdcap03>
+Subject: Re: [PATCH v23 4/4] soc: mediatek: Add Mediatek CMDQ helper
+From:   houlong wei <houlong.wei@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        CK Hu =?UTF-8?Q?=28=E8=83=A1=E4=BF=8A=E5=85=89=29?= 
+        <ck.hu@mediatek.com>,
+        "Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?=" 
+        <Bibby.Hsieh@mediatek.com>,
+        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
+        <Yt.Shen@mediatek.com>,
+        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
+        <Daoyuan.Huang@mediatek.com>,
+        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
+        <Jiaguang.Zhang@mediatek.com>,
+        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
+        <Dennis-YC.Hsieh@mediatek.com>,
+        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
+        <monica.wang@mediatek.com>,
+        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
+        <Hs.Liao@mediatek.com>,
+        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
+        <ginny.chen@mediatek.com>,
+        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
+        <enzhu.wang@mediatek.com>, <houlong.wei@mediatek.com>
+Date:   Sun, 9 Sep 2018 14:54:41 +0800
+In-Reply-To: <1534297570.21668.3.camel@mhfsdcap03>
+References: <1532482002-11164-1-git-send-email-houlong.wei@mediatek.com>
+         <1532482002-11164-5-git-send-email-houlong.wei@mediatek.com>
+         <1534297570.21668.3.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 550ddadcc758 ("tty: hvc: hvc_write() may sleep") broke the
-termination condition in case the driver stops accepting characters.
-This can result in unnecessary polling of the busy driver.
+On Wed, 2018-08-15 at 09:46 +0800, houlong wei wrote:
+> On Wed, 2018-07-25 at 09:26 +0800, Houlong Wei wrote:
+> > Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
+> >[...]
 
-Restore it by testing the hvc_push return code.
+Hello Matthias,
+   Sorry to disturb you. Could you please review this patch and give
+your comment? Thanks a lot.
 
-Tested-by: Matteo Croce <mcroce@redhat.com>
-Tested-by: Jason Gunthorpe <jgg@mellanox.com>
-Tested-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
----
- drivers/tty/hvc/hvc_console.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index bacf9b73ec98..27284a2dcd2b 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -522,6 +522,8 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
- 		return -EIO;
- 
- 	while (count > 0) {
-+		int ret = 0;
-+
- 		spin_lock_irqsave(&hp->lock, flags);
- 
- 		rsize = hp->outbuf_size - hp->n_outbuf;
-@@ -537,10 +539,13 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
- 		}
- 
- 		if (hp->n_outbuf > 0)
--			hvc_push(hp);
-+			ret = hvc_push(hp);
- 
- 		spin_unlock_irqrestore(&hp->lock, flags);
- 
-+		if (!ret)
-+			break;
-+
- 		if (count) {
- 			if (hp->n_outbuf > 0)
- 				hvc_flush(hp);
--- 
-2.18.0
+Regards
+Houlong
 
