@@ -2,142 +2,81 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1D1C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFE2C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6286C2075B
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:06:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hN8evliZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6286C2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id E9D1420833
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D1420833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbeIIV42 (ORCPT
+        id S1726838AbeIIWLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 17:56:28 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36334 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726629AbeIIV41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 17:56:27 -0400
-Received: by mail-oi0-f68.google.com with SMTP id r69-v6so35920291oie.3;
-        Sun, 09 Sep 2018 10:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g0rImkJbXK/2u4pnCxl8vbZIf3rx6dl/B9QfOyt759U=;
-        b=hN8evliZzqG21U4D2PRe06pm+i50O4LxVCILWQS7TjReVdPdv3L9RBnqa/XxPnnfcw
-         1O0exvMSQfJ2G2yXvhrNyNXg8/GgVGqy3Yz0y5/PWOu2YbGFsaLHAOz+0/n6dMMywpiE
-         BsMVlsdh8ENmByvTl3BsXg1ea3yBbLSaYN5Nkw+D/bDvGIHMStpFanzPu8NcUH4+8So5
-         v/CfXZMFX5YufPTFOzawCJMljSQhHza1GmPby1yE7+7Cq2Q05hrfQotsOB8QOLhCuLU5
-         AwBYbfawepLXpkQ+/meLud28ZPlNcesCls+7YjkzOjPkxatIY8i3HMqV3n2hH+E+P96v
-         jGxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g0rImkJbXK/2u4pnCxl8vbZIf3rx6dl/B9QfOyt759U=;
-        b=meVENQ0W21Gld898i/j7bHPFgr8VmSgt4jIOOjKuMq1qT5h4NN9SyD/5V9WNSl5wL9
-         +uOMk3yhjkjaRfK8n/0ZToZQNmg+swTIQi6Np1NIpKI2JgFyXTKM67Vxp4HFIR3SkFQE
-         6lSs8a2dGSfsgWpPzlJ/KAttcd3/3ijR6oDdrp0UCAzIKWuV1KmPTU/sFgsqADakI7xv
-         lXpGjhcyanbYacv/z8WyRwjntq2MUeSnUrBOVtdhBmTCatOOUWD5RR7koPXDehD04L0+
-         Wdxrl3Np6OIW5bxh9idJmbtT9tcBINLY7P653zOn6m7Hlb9ETX1ab5HQQWAc9Lw3c0og
-         pyhQ==
-X-Gm-Message-State: APzg51BQ0wiR0sQqsua7e+e4raurxfqLUYVez/vMi3TQpRgNJtjww/ov
-        c3zVvQT+x/lYnpL2NG5YHcmoLVCl
-X-Google-Smtp-Source: ANB0VdaFCP2Yzr8N0Bgrt697vTjyONKbZaedmXVw0Kp00A3oR54M6akZhq8O6tyPm1sppPrneLtJKQ==
-X-Received: by 2002:a54:4d9d:: with SMTP id y29-v6mr18675921oix.273.1536512769854;
-        Sun, 09 Sep 2018 10:06:09 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id p15-v6sm7636175oip.6.2018.09.09.10.06.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 09 Sep 2018 10:06:09 -0700 (PDT)
-Subject: Re: [PATCH 4.4 41/43] x86/mm/pat: Make set_memory_np() L1TF safe
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Michal Hocko <mhocko@suse.cz>
-Cc:     stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180814171517.014285600@linuxfoundation.org>
- <20180814171519.769320295@linuxfoundation.org>
- <1536511561.3024.115.camel@codethink.co.uk>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <5438e0f8-f5e0-99ef-fbdd-b5f4a079f254@roeck-us.net>
-Date:   Sun, 9 Sep 2018 10:06:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1536511561.3024.115.camel@codethink.co.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sun, 9 Sep 2018 18:11:49 -0400
+Received: from gate.crashing.org ([63.228.1.57]:55855 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726615AbeIIWLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 18:11:49 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w89H4QVV032538;
+        Sun, 9 Sep 2018 12:04:27 -0500
+Message-ID: <7427daf6570d519e6793eb96d2fbaa52714b0cd7.camel@kernel.crashing.org>
+Subject: Re: v4.17 regression: PowerMac G3 won't boot, was Re: [PATCH v5
+ 1/3] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Frank Rowand <frowand.list@gmail.com>,
+        Finn Thain <fthain@telegraphics.com.au>
+Cc:     Stan Johnson <userm57@yahoo.com>, Rob Herring <robh+dt@kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Sun, 09 Sep 2018 19:04:25 +0200
+In-Reply-To: <d9e53e48794c2eade19309b73febd492e3c5eeeb.camel@kernel.crashing.org>
+References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
+         <1520208889-3908-2-git-send-email-frowand.list@gmail.com>
+         <alpine.LNX.2.21.1808301025480.73@nippy.intranet>
+         <0ad5dbfd-08f3-b97d-34b9-70fc9a729921@gmail.com>
+         <d9e53e48794c2eade19309b73febd492e3c5eeeb.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/09/2018 09:46 AM, Ben Hutchings wrote:
-> On Tue, 2018-08-14 at 19:18 +0200, Greg Kroah-Hartman wrote:
->> 4.4-stable review patch.  If anyone has any objections, please let me know.
->>
->> ------------------
->>
->> From: Andi Kleen <ak@linux.intel.com>
->>
->> commit 958f79b9ee55dfaf00c8106ed1c22a2919e0028b upstream
-> [...]
->> --- a/arch/x86/include/asm/pgtable.h
->> +++ b/arch/x86/include/asm/pgtable.h
->> @@ -378,12 +378,39 @@ static inline pmd_t pfn_pmd(unsigned lon
->>>   	return __pmd(pfn | massage_pgprot(pgprot));
->>   }
->>   
->> +static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
->> +{
->> +	phys_addr_t pfn = page_nr << PAGE_SHIFT;
->> +	pfn ^= protnone_mask(pgprot_val(pgprot));
->> +	pfn &= PHYSICAL_PUD_PAGE_MASK;
->> +	return __pud(pfn | massage_pgprot(pgprot));
->> +}
-> [...]
+On Fri, 2018-08-31 at 14:58 +1000, Benjamin Herrenschmidt wrote:
 > 
-> This (and the backport to 4.9) are missing the fix from commit
-> e14d7dfb41f5 "x86/speculation/l1tf: Fix up pte->pfn conversion for
-> PAE", as that was applied earlier in the series.  But since PAE implies
-> only 3-level paging I don't know how the PUD functions get used or
-> whether this actually matters.
+> > A long shot, but something to consider, is that I failed to cover the
+> > cases of dynamic devicetree updates (removing nodes that contain a
+> > phandle) in ways other than overlays.  Michael Ellerman has reported
+> > such a problem for powerpc/mobility with of_detach_node().  A patch to
+> > fix that is one of the tasks I need to complete.
 > 
-Excellent find.
+> The only thing I can think of is booting via the BootX bootloader on
+> those ancient macs results in a DT with no phandles. I didn't see an
+> obvious reason why that would cause that patch to break though.
 
-e14d7dfb41f5 (re-)applies cleanly to both 4.4.y and 4.9.y. Since most of its
-changes are already applied, the only remaining change is
+Guys, we still don't have a fix for this one on its way upstream...
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index c535012bdb56..5736306bdaab 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -420,7 +420,7 @@ static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
+My test patch just creates phandle properties for all nodes, that was
+not intended as a fix, more a way to check if the problem was related
+to the lack of phandles.
 
-  static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
-  {
--       phys_addr_t pfn = page_nr << PAGE_SHIFT;
-+       phys_addr_t pfn = (phys_addr_t)page_nr << PAGE_SHIFT;
-         pfn ^= protnone_mask(pgprot_val(pgprot));
-         pfn &= PHYSICAL_PUD_PAGE_MASK;
-         return __pud(pfn | massage_pgprot(pgprot));
+I don't actually know why the new code causes things to fail when
+phandles are absent. This needs to be looked at.
 
-after cherry-picking it into both branches.
+I'm travelling at the moment and generally caught up with other things,
+I haven't had a chance to dig, so just a heads up. I don't intend to
+submit my patch since it's just a band aid. We need to figure out what
+the actual problem is.
 
-I think we should re-apply it to both 4.4.y and 4.9.y be on the safe side.
+Cheers,
+Ben.
 
-Thanks,
-Guenter
+
