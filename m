@@ -2,103 +2,146 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534A0C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 13:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17353C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 13:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7C7C20866
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 13:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABB3D20854
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 13:33:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=meituan.com header.i=@meituan.com header.b="ddAk+4gq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7C7C20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=meituan.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Av7rfvGO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABB3D20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeIISTR (ORCPT
+        id S1727416AbeIISWw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 14:19:17 -0400
-Received: from mx-fe5-210.meituan.com ([103.37.138.210]:44087 "EHLO
-        mx02.meituan.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726929AbeIISTR (ORCPT
+        Sun, 9 Sep 2018 14:22:52 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38226 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbeIISWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 14:19:17 -0400
-X-Greylist: delayed 470 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Sep 2018 14:19:14 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by dx-it-mx02.dx.sankuai.com (Postfix) with ESMTP id 2D5AA297C475;
-        Sun,  9 Sep 2018 21:21:31 +0800 (CST)
-Received: from mx02.meituan.com ([127.0.0.1])
-        by localhost (dx-it-mx02.dx.sankuai.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id UoZvdoxtktc3; Sun,  9 Sep 2018 21:21:29 +0800 (CST)
-Received: from localhost (localhost [127.0.0.1])
-        by dx-it-mx02.dx.sankuai.com (Postfix) with ESMTP id F3FB7297C46A;
-        Sun,  9 Sep 2018 21:21:28 +0800 (CST)
-DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com F3FB7297C46A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meituan.com;
-        s=20130113; t=1536499289;
-        bh=RGgnpuYQjJpjqPBY8lWvTUiTCoGVisbdsAJqt+Sf3Qw=;
-        h=From:To:Subject:Date:Message-Id;
-        b=ddAk+4gqbeb4rflM6d5y+FcZVVQtm3wRIDUy5AjrQlsf7q/DCxRrXhn2d7WFIowUC
-         TwjVTZNtLr6yJFqTPfopZ2mhUA7DMWvQk4pWwF4YUGxS6Ngfou7RccCCv7+VYH2VCD
-         gTgcKuS5ubqWDQwM7tEFoaRo2KnX/71dRrt3ekFQ=
-X-Virus-Scanned: amavisd-new at dx-it-mx02.dx.sankuai.com
-Received: from mx02.meituan.com ([127.0.0.1])
-        by localhost (dx-it-mx02.dx.sankuai.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LvDQ1GMDhaXG; Sun,  9 Sep 2018 21:21:28 +0800 (CST)
-Received: from localhost.yf.sankuai.com (unknown [103.37.142.38])
-        by dx-it-mx02.dx.sankuai.com (Postfix) with ESMTPA id 3F79E297C470;
-        Sun,  9 Sep 2018 21:21:05 +0800 (CST)
-From:   Wang Long <wanglong19@meituan.com>
-To:     willy@infradead.org, akpm@linux-foundation.org,
-        wanglong19@meituan.com, zwisler@kernel.org
-Cc:     linux-kernel@vger.kernel.org, jack@suse.cz, heguanjun@meituan.com
-Subject: [PATCH] radix-tree: optimization for radix_tree_init_maxnodes
-Date:   Sun,  9 Sep 2018 21:21:00 +0800
-Message-Id: <1536499260-126634-1-git-send-email-wanglong19@meituan.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sun, 9 Sep 2018 14:22:52 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t84-v6so7294952pgb.5;
+        Sun, 09 Sep 2018 06:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8pKHvxMXlmqO4Gji242FDuFftvTWSYCW9hCt3WnVx5Q=;
+        b=Av7rfvGOoD8Bo3EOFeGSJYW662jbbuFt8MeLoM+/U0BUXCV6kcuIMfvt5rKwfdIcgM
+         T4eWQMJ/1aLPRiEq28eRGTE3p4D+Ed+JrYJph3+Oe1cjlKqohIjO0re73sjc724sdI47
+         T/QHA0vtk6XApMkKaxV8QDxJSOlHk7XtQiEm3CGq/KBwt9JdPjnL9YnBc505j2ZPhXLD
+         eEyemTM3zu7apa4k7LPvuLAaAMbKr+5P8wTI/p/JvVqowOrt6VIoeuqAYRIl1r4JMXfQ
+         qZSTTo2Axe+/rEYrJaybLtkZ3GF/hQObCfaULySMF2r4dAIv4y/RswjMD/4jfBhzeN0g
+         YMTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8pKHvxMXlmqO4Gji242FDuFftvTWSYCW9hCt3WnVx5Q=;
+        b=i6yG6A65UVReLSSynyx1aGAC52b/aLKETX1EhTTcoB7K4Hs78IqOeBQrwOsOxwRBgT
+         JYh15RPMSO5JjMehzi+w+79X9CdN2utWU8Vs98Az3NPFWq/g4Xk2JZgVui4fQt2ez1eq
+         /ZET+kF0fhjPZege4/823Uhno6x0kNCEyJ2+4ug1VcPzypBHZgx3+kYhg2vqfWQiuByI
+         i1c1qX+/78weq3rblw0N7n9A6NglZkJt0iV9VT+LVznTe9emEZVqeHaiXH7+2UC2a2sa
+         JdHywp9ZEO0n9u3d1M5ZIZDh2bFN+1wp1n51BA2dhRoxaVsY7F2qPsaCF6FDCrVQNmJu
+         oCEg==
+X-Gm-Message-State: APzg51AxEhVBHa3plNeG5Oh1rPJ/c+AgTL68ZXkxdvUCwdNJKH6SakOm
+        hUEDO/Bv2qePd9gHWl/nhHlfbRKs
+X-Google-Smtp-Source: ANB0Vdb+WL41+iPzUIyBRBOXFx3DCwChy/W1WoJv1C847QJa/tndtZtqZJ/X9Z2DnH6UK32t1tdtmg==
+X-Received: by 2002:a63:9409:: with SMTP id m9-v6mr17781832pge.13.1536499988678;
+        Sun, 09 Sep 2018 06:33:08 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r18-v6sm16511820pgj.51.2018.09.09.06.33.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 06:33:08 -0700 (PDT)
+Subject: Re: [PATCH 4.9 00/63] 4.9.126-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180907211012.965501324@linuxfoundation.org>
+ <e1fa8fda-e277-3c83-5e35-826df83f3cd5@roeck-us.net>
+ <20180909085530.GC14455@kroah.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e68e4449-1605-c906-b611-c4b596acb0cd@roeck-us.net>
+Date:   Sun, 9 Sep 2018 06:33:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180909085530.GC14455@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if i == 0, height_to_maxnodes[i] = 0,
-if i >= 1, height_to_maxnodes[i] = height_to_maxnodes[i-1]
-				+ __maxindex(i-1) + 1.
+On 09/09/2018 01:55 AM, Greg Kroah-Hartman wrote:
+> On Sat, Sep 08, 2018 at 02:14:53PM -0700, Guenter Roeck wrote:
+>> On 09/07/2018 02:09 PM, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 4.9.126 release.
+>>> There are 63 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Sun Sep  9 21:09:58 UTC 2018.
+>>> Anything received after that time might be too late.
+>>>
+>>
+>> Build results:
+>> 	total: 151 pass: 149 fail: 2
+>> Failed builds:
+>> 	powerpc:defconfig
+>> 	powerpc:allmodconfig
+>> Qemu test results:
+>> 	total: 301 pass: 285 fail: 16
+>> Failed tests:
+>> 	powerpc:mac99:ppc64_book3s_defconfig:nosmp:initrd
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:initrd
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:ide:rootfs
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:mmc:rootfs
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:scsi[DC395]:rootfs
+>> 	powerpc:pseries:pseries_defconfig:initrd
+>> 	powerpc:pseries:pseries_defconfig:scsi:rootfs
+>> 	powerpc:pseries:pseries_defconfig:mmc:rootfs
+>> 	powerpc:pseries:pseries_defconfig:nvme:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:initrd
+>> 	powerpc:pseries:pseries_defconfig:little:scsi:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:scsi[MEGASAS]:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:scsi[FUSION]:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:mmc:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:nvme:rootfs
+>> 	powerpc:powernv:powernv_defconfig:initrd
+>>
+>> Details are available at https://kerneltests.org/builders/.
+> 
+> I've pushed out a -rc2 to fix this.  Hopefully.  There were a bunch of
+> warnings for power that I don't think were caused by these series, I
+> don't know if they have always been there or not.
+> 
 
-so delete height_to_maxindex and optimize the calculation of
-height_to_maxnodes array.
+The warnings in the assembler file have been fixed with commit 8a583c0a8d31
+("powerpc: Fix invalid use of register expressions"). It is not marked
+for stable, and does not cause actual failures, so I would not bother
+applying it.
 
-Signed-off-by: Wang Long <wanglong19@meituan.com>
----
- lib/radix-tree.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Most of the "may be used uninitialized" warnings are still reported in
+ToT.
 
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index bc03ecc..af02b2c 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -2242,14 +2242,11 @@ static __init unsigned long __maxindex(unsigned int height)
- 
- static __init void radix_tree_init_maxnodes(void)
- {
--	unsigned long height_to_maxindex[RADIX_TREE_MAX_PATH + 1];
--	unsigned int i, j;
--
--	for (i = 0; i < ARRAY_SIZE(height_to_maxindex); i++)
--		height_to_maxindex[i] = __maxindex(i);
--	for (i = 0; i < ARRAY_SIZE(height_to_maxnodes); i++) {
--		for (j = i; j > 0; j--)
--			height_to_maxnodes[i] += height_to_maxindex[j - 1] + 1;
-+	unsigned int i;
-+
-+	for (i = 1; i < ARRAY_SIZE(height_to_maxnodes); i++) {
-+		height_to_maxnodes[i] = height_to_maxnodes[i - 1]
-+					+  __maxindex(i - 1) + 1;
- 	}
- }
- 
--- 
-1.8.3.1
+You missed this one in v4.9.y:
 
+arch/powerpc/kernel/fadump.c: In function 'free_crash_memory_ranges':
+/opt/buildbot/slave/stable-queue-4.9/build/arch/powerpc/kernel/fadump.c:738:2: error: implicit declaration of function 'kfree'
+
+Other kernels build fine so far. Builds are still ongoing, but the ppc problems
+are fixed in those.
+
+Guenter
