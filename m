@@ -2,61 +2,62 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCBAC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 05:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F26CC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 05:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD2B20865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 05:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14C5720865
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 05:39:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PB0Wfw5k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD2B20865
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSybMdkJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C5720865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbeIIK1v (ORCPT
+        id S1726665AbeIIK14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 06:27:51 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33598 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbeIIK1v (ORCPT
+        Sun, 9 Sep 2018 06:27:56 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46006 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbeIIK1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 06:27:51 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so8893029pfn.0
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 22:39:27 -0700 (PDT)
+        Sun, 9 Sep 2018 06:27:55 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x26-v6so8865706pge.12
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 22:39:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vYEqOFn5R0amTaBE1RExEK3d6KlvYS2EmaOK7vztr18=;
-        b=PB0Wfw5kQY/ittHpIzJtbVPfRpGFxreL6ZTxu1dZzfmRQpj7rIkfRN+WC3If/zFD1M
-         b1uLNjuhWMEdBe8Hdsu5ZzhiMNs3ywW9juNPjU/NgfQN/ot8srzit3cy2B2MaAF4WhJy
-         yarKKBuAUhRsira/DnddSyaE8cVcCZL5tPlugbbTPIRJof2g7gc7KLF/YYC7q23wBVfY
-         qTiIOnqbuMDJ7lsWvTpJaTdGhLMuiDv3BOdcg2GWN+rw7q6xdhIAQdyFrVCNZTC8/MjT
-         cx617QZd9mKp5kwP2kpKdwSUM2E8HGcsIbNns5jtvvHY0MGTphiomg0c+oFSkPTezQlL
-         PMGA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/XM2bEjP2l6mAKBckMIHQpAlR1oQczo6/YDJmHp6Oek=;
+        b=lSybMdkJ2d3BEs7dnoQMXNJQbSSaHiFmeuKOVq5Tn1WOGHPYLkJRor/kuH3bzRibYg
+         jXpototJNce9477W/Hg72zz9G5RV7wPD/iTlZtMM9ry9dvHv2WpAM+w5z/qXafFiegiH
+         cwJx+ov+VrGl/tGyBfNgSqmyg2Md98+LpBacNpNsh5iZu6/WfoQAmqQOdRgimibIZMsQ
+         XgBTxyIudTMywPVHMRVSl6xgE+dDduMMMWaPmbbugQtUhQP5XPVQeOAj8Hy/g5Fa7/tP
+         mA97n1reiP1o453UhRUZBr4igacbeXa0Ds1T6qSPFJVDIC8rA8GgDItsAFv0ICPUwX/E
+         qvdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vYEqOFn5R0amTaBE1RExEK3d6KlvYS2EmaOK7vztr18=;
-        b=IvMYi4W1WAVLLK8avcThjUmO424AjRNQ2wanULs4r/MoHAo1Z6Mc0DDkCnsFDVkfP4
-         i79pFbgKFrubAJEaZaiUOp6idgBaWajGXZlhmAaSuDHZvxRlrhUwSqSmwjTtzg30Fe0g
-         Zoa1uMvUojOQKW8ucw41RZqOimK7V9LmqTcB6H9LQr3KkKyPlcAWTvX60pioweqrUCBx
-         ywhhrCcSW6ickNDy4TkisGjmpbM40wxCYHFgae9lF72t6JWP2/ZUnnqQYKDStjkFIija
-         YrUvbjUdQqD403Aa7G9Qpmv8ucaDy/x2ulmmqf9bnAqBdoLjeaxCgP4PdJKtffZtoJq+
-         SveQ==
-X-Gm-Message-State: APzg51CDo7t2ROJcIrnlmEvH0Bwr3FXvRDzW6IS5az6f9y5tbISlmwz3
-        1NGYAVBHPQI1UxkL/lZfOds=
-X-Google-Smtp-Source: ANB0VdaxAcWpFsxw+ywNrKLXrXM8K/QwLfcKiMPHUNf0mmdnQHCgwUsGlQFhUaMTiwMITPHRk/AcKw==
-X-Received: by 2002:a63:ec14:: with SMTP id j20-v6mr16246808pgh.28.1536471566858;
-        Sat, 08 Sep 2018 22:39:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/XM2bEjP2l6mAKBckMIHQpAlR1oQczo6/YDJmHp6Oek=;
+        b=hcvM/IT9szHQf8pVfZ4I5nguKjwMv8YqcdZwmprnAtirGe77j4LVeygMdGDkGSFLI7
+         Z0PbmMIdM9ily/kF6uZpsqbDhOYPgH5dttlchDgtm7xSAV+AvdcC6pu0rODxId0d7cxp
+         BFZjviGyrQxFAuVoUsLzEPhdhfCTLWnDfQNl20hUCuy5KP9rzmRIGVlR9ENzGCksCfL+
+         EQztwX+Fy4M1lrXwQLSaK4iZdKu1+RlRjHv0tv0wl2MMNYMLnf7Vr51yKAWSh2Fhbze2
+         Awrh2RRbqT4l+ao3zvXPLKsXT+DfaSjQrhMulHfOwdWU/AyNxR6LYGtL8qsKhH9rD7Vx
+         mgQA==
+X-Gm-Message-State: APzg51CHCGUGfU8ngx+FjdcE8ZTDIedi4cnqlcjx9CTych3/LZZv34ej
+        pJQ496Dz/6kdrGaLsTHbh5Y=
+X-Google-Smtp-Source: ANB0VdZD+P/XLubPK8Pf6Gh1XC244PzMoG1Tiaj01UTZmYo6jVlPvtsrIjqR+/zL469R0bL9m/gNcg==
+X-Received: by 2002:a63:f14d:: with SMTP id o13-v6mr16000602pgk.236.1536471571186;
+        Sat, 08 Sep 2018 22:39:31 -0700 (PDT)
 Received: from roar.au.ibm.com (115-64-249-220.tpgi.com.au. [115.64.249.220])
-        by smtp.gmail.com with ESMTPSA id 186-v6sm6491034pgg.56.2018.09.08.22.39.22
+        by smtp.gmail.com with ESMTPSA id 186-v6sm6491034pgg.56.2018.09.08.22.39.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Sep 2018 22:39:25 -0700 (PDT)
+        Sat, 08 Sep 2018 22:39:30 -0700 (PDT)
 From:   Nicholas Piggin <npiggin@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Nicholas Piggin <npiggin@gmail.com>, Jiri Slaby <jslaby@suse.com>,
@@ -65,32 +66,56 @@ Cc:     Nicholas Piggin <npiggin@gmail.com>, Jiri Slaby <jslaby@suse.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org (op)
-Subject: [PATCH v2 0/3] tty: hvc: latency break regression fixes
-Date:   Sun,  9 Sep 2018 15:39:13 +1000
-Message-Id: <20180909053916.14139-1-npiggin@gmail.com>
+Subject: [PATCH v2 1/3] tty: hvc: hvc_poll() fix read loop hang
+Date:   Sun,  9 Sep 2018 15:39:14 +1000
+Message-Id: <20180909053916.14139-2-npiggin@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180909053916.14139-1-npiggin@gmail.com>
+References: <20180909053916.14139-1-npiggin@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-sending this one with the used-uinitialized warning in patch
-3 fixed.
+Commit ec97eaad1383 ("tty: hvc: hvc_poll() break hv read loop") causes
+the virtio console to hang at times (e.g., if you paste a bunch of
+characters to it.
 
-Greg these patches are needed to fix regressions in this merge
-window, please consider them for your tty tree.
+The reason is that get_chars must return 0 before we can be sure the
+driver will kick or poll input again, but this change only scheduled a
+poll if get_chars had returned a full count. Change this to poll on
+any > 0 count.
 
-Thanks,
-Nick
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Reported-by: Jason Gunthorpe <jgg@mellanox.com>
+Tested-by: Matteo Croce <mcroce@redhat.com>
+Tested-by: Jason Gunthorpe <jgg@mellanox.com>
+Tested-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+---
+ drivers/tty/hvc/hvc_console.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Nicholas Piggin (3):
-  tty: hvc: hvc_poll() fix read loop hang
-  tty: hvc: hvc_poll() fix read loop batching
-  tty: hvc: hvc_write() fix break condition
-
- drivers/tty/hvc/hvc_console.c | 38 ++++++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
+index 5414c4a87bea..c917749708d2 100644
+--- a/drivers/tty/hvc/hvc_console.c
++++ b/drivers/tty/hvc/hvc_console.c
+@@ -717,10 +717,13 @@ static int __hvc_poll(struct hvc_struct *hp, bool may_sleep)
+ #endif /* CONFIG_MAGIC_SYSRQ */
+ 		tty_insert_flip_char(&hp->port, buf[i], 0);
+ 	}
+-	if (n == count)
+-		poll_mask |= HVC_POLL_READ;
+ 	read_total = n;
+ 
++	/*
++	 * Latency break, schedule another poll immediately.
++	 */
++	poll_mask |= HVC_POLL_READ;
++
+  out:
+ 	/* Wakeup write queue if necessary */
+ 	if (hp->do_wakeup) {
 -- 
 2.18.0
 
