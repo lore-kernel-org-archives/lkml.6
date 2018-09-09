@@ -5,107 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE45C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3096C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7295E20854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:41:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7295E20854
+	by mail.kernel.org (Postfix) with ESMTP id 838A620854
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:43:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 838A620854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbeIJAcT (ORCPT
+        id S1726792AbeIJAeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 20:32:19 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36697 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbeIJAcT (ORCPT
+        Sun, 9 Sep 2018 20:34:10 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37575 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbeIJAeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 20:32:19 -0400
-Received: by mail-oi0-f65.google.com with SMTP id r69-v6so36319401oie.3;
-        Sun, 09 Sep 2018 12:41:35 -0700 (PDT)
+        Sun, 9 Sep 2018 20:34:09 -0400
+Received: by mail-oi0-f66.google.com with SMTP id p84-v6so36304350oic.4;
+        Sun, 09 Sep 2018 12:43:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d/oB3qXrpiAr52+3SJpPftWE9bf8evMi4susKK5GVMo=;
-        b=tXfc635MepN2XNsu/YORM+g7bGTkC/msJssHeF7AINZcJYcXvGjwOwxLxxJc50p+qS
-         Rq6JWG1wuAOPu4Zs+eM+4UeCurfu61yBci7/Xrseuh/CIFTcEpl5D9OEZUEwU0hsIMMG
-         f/VvKYs3rFPdF8kEeqx4QYRXKj/EJUQ8xSi1nnv32/MzwBiOzdVx9He9AAyHzddekkN7
-         1l6v/+AX02xRNsO01KW7H/X0MrJhTe5K8134Zi7bXSOaofHuaCky2T5zSYIrKT4aH/jd
-         FchynBPju/s6CgYqf+cvCoddZDj8IKF8eYuuwkoFHO8dyo8/KhQsUAtuuUrq6Qedusm7
-         4HWw==
-X-Gm-Message-State: APzg51C9JeJfY5YTsiNEIgAGktW/XYx0vYexBvUa1QDUTkhUL0Ws2mqW
-        X3DCne4oqOjZAKXyuJL24G2P+O0LKaJ2x74SvrI=
-X-Google-Smtp-Source: ANB0Vdb4tKtn8QIsJbcGELNV515x4fHPLmXTgrpTy9g9GHIqfB7N83tGhABqko7iDIavznZJzW8OPRit35R75J9YY4g=
-X-Received: by 2002:aca:fd4f:: with SMTP id b76-v6mr19189790oii.307.1536522095264;
- Sun, 09 Sep 2018 12:41:35 -0700 (PDT)
+        bh=CeTOEPm+QZm1PMfjta63oYJtPNHoGwur7V22F3SzMyM=;
+        b=FLemqeZWc7Xkab2XNPaJSAGgnY9fa3HGnbSUYTWGirxGdz+6ZT37dxdTd/D+Z2yJn/
+         SIjIgaXzghGZ5ZFCrz6Avw3e0xJyjhes0wfeyFTpJrY71+p+q6zVn/QU7HuMbsRi1pGJ
+         2glOSoANOfzWAwGAQOAWerA6o9DbO2s/Y1+ym/o0JEYW21hbziM2NjDu2PiQWqPZKKpZ
+         nlXTuKl6j6APeBv6dADFHOrHyQGADhrNxf6WwP2geFdbZRgo9BvJ8Brcyg6K14XBtipI
+         D65ksx8VlJry2GkGoh25Z9SzGUzrGhyKa2qzUancDUzCg5He3HdvDOOpoQWHRlglsC/I
+         B3Sg==
+X-Gm-Message-State: APzg51BlpTQ8vMsHqadIvY+3ZO9O+t0JE0RkPM5S81p2lT3InsawqJbV
+        n8rBl7nD63KyRqDWckDWNrSlgmtVRE1LFlDs3m0=
+X-Google-Smtp-Source: ANB0VdZ/qw7dR32UylGev6EXdBwa1juogd1f5p+FJZeNbas8ov8f617DzakTfzJuUZ+mxqIWyLX5SfJofyP8j/LjXc8=
+X-Received: by 2002:aca:b844:: with SMTP id i65-v6mr19364658oif.177.1536522205036;
+ Sun, 09 Sep 2018 12:43:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180907185448.30987-1-kw@fieahl.im>
-In-Reply-To: <20180907185448.30987-1-kw@fieahl.im>
+References: <20180907200838.4966-1-kw@fieahl.im>
+In-Reply-To: <20180907200838.4966-1-kw@fieahl.im>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 9 Sep 2018 21:41:19 +0200
-Message-ID: <CAJZ5v0h7tbyi3vYtQVoWrLS_HJh_3mhvqy_sts73Jiwnr13zdw@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: enter_state: Don't needlessly calculate diff time
+Date:   Sun, 9 Sep 2018 21:43:09 +0200
+Message-ID: <CAJZ5v0jxKQv9x3wOAg-+XNQJ8LgzGDr0EPF9PcHZG1D4GAJObA@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: Remove unnecessary wrapper cpuidle_get_last_residency()
 To:     kw@fieahl.im
 Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 7, 2018 at 8:55 PM Fieah Lim <kw@fieahl.im> wrote:
+On Fri, Sep 7, 2018 at 10:09 PM Fieah Lim <kw@fieahl.im> wrote:
 >
-> ktime_us_delta() is not that cheap on some platform,
-> and I think this is also the right thing to do.
-> While at it, fix some coding style as well.
->
+> There's no magic inside, let's just make it more intuitive.
+
+Again, please fix the changelog.  It is not useful as is.
+
 > Signed-off-by: Fieah Lim <kw@fieahl.im>
 > ---
->  drivers/cpuidle/cpuidle.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
+>  drivers/cpuidle/governors/ladder.c |  2 +-
+>  drivers/cpuidle/governors/menu.c   |  2 +-
+>  include/linux/cpuidle.h            | 10 ----------
+>  3 files changed, 2 insertions(+), 12 deletions(-)
 >
-> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> index 6df894d65d9e..5f6b2c9b6555 100644
-> --- a/drivers/cpuidle/cpuidle.c
-> +++ b/drivers/cpuidle/cpuidle.c
-> @@ -247,21 +247,20 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
->         if (!cpuidle_state_is_coupled(drv, index))
->                 local_irq_enable();
+> diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
+> index 704880a6612a..f0dddc66af26 100644
+> --- a/drivers/cpuidle/governors/ladder.c
+> +++ b/drivers/cpuidle/governors/ladder.c
+> @@ -80,7 +80,7 @@ static int ladder_select_state(struct cpuidle_driver *drv,
 >
-> -       diff = ktime_us_delta(time_end, time_start);
-> -       if (diff > INT_MAX)
-> -               diff = INT_MAX;
+>         last_state = &ldev->states[last_idx];
+>
+> -       last_residency = cpuidle_get_last_residency(dev) - drv->states[last_idx].exit_latency;
+> +       last_residency = dev->last_residency - drv->states[last_idx].exit_latency;
+>
+>         /* consider promotion */
+>         if (last_idx < drv->state_count - 1 &&
+> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+> index 1aef60d160eb..715520e339da 100644
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -492,7 +492,7 @@ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+>                 measured_us = 9 * MAX_INTERESTING / 10;
+>         } else {
+>                 /* measured value */
+> -               measured_us = cpuidle_get_last_residency(dev);
+> +               measured_us = dev->last_residency;
+>
+>                 /* Deduct exit latency */
+>                 if (measured_us > 2 * target->exit_latency)
+> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+> index 4325d6fdde9b..d262f620890e 100644
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -99,16 +99,6 @@ struct cpuidle_device {
+>  DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
+>  DECLARE_PER_CPU(struct cpuidle_device, cpuidle_dev);
+>
+> -/**
+> - * cpuidle_get_last_residency - retrieves the last state's residency time
+> - * @dev: the target CPU
+> - */
+> -static inline int cpuidle_get_last_residency(struct cpuidle_device *dev)
+> -{
+> -       return dev->last_residency;
+> -}
 > -
-> -       dev->last_residency = (int) diff;
-> +       dev->last_residency = 0;
->
->         if (entered_state >= 0) {
-> -               /* Update cpuidle counters */
-> -               /* This can be moved to within driver enter routine
-> +               /* Update cpuidle counters
-> +                * This can be moved to within driver enter routine,
->                  * but that results in multiple copies of same code.
->                  */
-> +               diff = ktime_us_delta(time_end, time_start);
-> +               if (diff > INT_MAX)
-> +                       diff = INT_MAX;
-> +
-> +               dev->last_residency = (int)diff;
->                 dev->states_usage[entered_state].time += dev->last_residency;
->                 dev->states_usage[entered_state].usage++;
-> -       } else {
-> -               dev->last_residency = 0;
-
-Besides, what's wrong with this branch?
-
->         }
->
->         return entered_state;
+> -
+>  /****************************
+>   * CPUIDLE DRIVER INTERFACE *
+>   ****************************/
 > --
 > 2.18.0
 >
