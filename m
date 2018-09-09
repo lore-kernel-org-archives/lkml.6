@@ -5,47 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA561C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE45C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4C620854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:40:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4C620854
+	by mail.kernel.org (Postfix) with ESMTP id 7295E20854
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:41:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7295E20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeIJAbZ (ORCPT
+        id S1726859AbeIJAcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 20:31:25 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38666 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeIJAbZ (ORCPT
+        Sun, 9 Sep 2018 20:32:19 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36697 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbeIJAcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 20:31:25 -0400
-Received: by mail-oi0-f68.google.com with SMTP id x197-v6so36297828oix.5;
-        Sun, 09 Sep 2018 12:40:41 -0700 (PDT)
+        Sun, 9 Sep 2018 20:32:19 -0400
+Received: by mail-oi0-f65.google.com with SMTP id r69-v6so36319401oie.3;
+        Sun, 09 Sep 2018 12:41:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gSYORtRbh28CvZHLcFWHaJcDEtM+zIgifNx2TjhO/aI=;
-        b=HTXxnu/nZfcebLybrdACrM9owYArFk5tggx9gwjGJz0nhrDaXtSL3ee24Nfap92bFC
-         VZb4bWq60hTbbA0WLHfLF9eWYfz7RUeNxhavIrIS93pRxVP+Qzdzh88tR1dMI6V4w0AV
-         JWRi5xyG4bSpcpgp49FA26oY6Lx8fLUXq8zBIIX1C6VoDnbQs7kPQGd+IkNijk+t1BMA
-         1buAXHLLCTsqj3FgcuJX13dpBd4K+VCRwvEIMB/c/k7ZCbS8B1BxIKD3vG+3x2cetKZk
-         asKkrgyMEX5PoWKRiZ+kfy1UJ/xQ9OiwkmsTXT32y8OvbFE9Jx3ekcG9YlAQUNd0kxlG
-         zQzA==
-X-Gm-Message-State: APzg51Aubm14zEpBMBUHRLHnjtImLiXWBouQy92T5/+fub45gMMW7V8E
-        5vEqJprw0V0hg7fa7ahFpXESU+RSFERAZrdhYuUhMQ==
-X-Google-Smtp-Source: ANB0VdYw0bBVmv+T71HeNOEp+8n1VqAHRi/G+7Le+r3UNHERWBCHgtlA+4VJm29ksX85Rp95WfQvROEtJqzx+lSjEuY=
-X-Received: by 2002:aca:d098:: with SMTP id j24-v6mr18836417oiy.72.1536522041572;
- Sun, 09 Sep 2018 12:40:41 -0700 (PDT)
+        bh=d/oB3qXrpiAr52+3SJpPftWE9bf8evMi4susKK5GVMo=;
+        b=tXfc635MepN2XNsu/YORM+g7bGTkC/msJssHeF7AINZcJYcXvGjwOwxLxxJc50p+qS
+         Rq6JWG1wuAOPu4Zs+eM+4UeCurfu61yBci7/Xrseuh/CIFTcEpl5D9OEZUEwU0hsIMMG
+         f/VvKYs3rFPdF8kEeqx4QYRXKj/EJUQ8xSi1nnv32/MzwBiOzdVx9He9AAyHzddekkN7
+         1l6v/+AX02xRNsO01KW7H/X0MrJhTe5K8134Zi7bXSOaofHuaCky2T5zSYIrKT4aH/jd
+         FchynBPju/s6CgYqf+cvCoddZDj8IKF8eYuuwkoFHO8dyo8/KhQsUAtuuUrq6Qedusm7
+         4HWw==
+X-Gm-Message-State: APzg51C9JeJfY5YTsiNEIgAGktW/XYx0vYexBvUa1QDUTkhUL0Ws2mqW
+        X3DCne4oqOjZAKXyuJL24G2P+O0LKaJ2x74SvrI=
+X-Google-Smtp-Source: ANB0Vdb4tKtn8QIsJbcGELNV515x4fHPLmXTgrpTy9g9GHIqfB7N83tGhABqko7iDIavznZJzW8OPRit35R75J9YY4g=
+X-Received: by 2002:aca:fd4f:: with SMTP id b76-v6mr19189790oii.307.1536522095264;
+ Sun, 09 Sep 2018 12:41:35 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180907185448.30987-1-kw@fieahl.im>
 In-Reply-To: <20180907185448.30987-1-kw@fieahl.im>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 9 Sep 2018 21:40:25 +0200
-Message-ID: <CAJZ5v0jwQBWu_Vw=Wmao3BDgCnutsLTq68Niyb46Y9wZ6DZb+A@mail.gmail.com>
+Date:   Sun, 9 Sep 2018 21:41:19 +0200
+Message-ID: <CAJZ5v0h7tbyi3vYtQVoWrLS_HJh_3mhvqy_sts73Jiwnr13zdw@mail.gmail.com>
 Subject: Re: [PATCH] cpuidle: enter_state: Don't needlessly calculate diff time
 To:     kw@fieahl.im
 Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
@@ -65,10 +65,6 @@ On Fri, Sep 7, 2018 at 8:55 PM Fieah Lim <kw@fieahl.im> wrote:
 > While at it, fix some coding style as well.
 >
 > Signed-off-by: Fieah Lim <kw@fieahl.im>
-
-Fix your changelog at least to say that you optimize the code without
-changing its functionality.
-
 > ---
 >  drivers/cpuidle/cpuidle.c | 17 ++++++++---------
 >  1 file changed, 8 insertions(+), 9 deletions(-)
@@ -104,6 +100,9 @@ changing its functionality.
 >                 dev->states_usage[entered_state].usage++;
 > -       } else {
 > -               dev->last_residency = 0;
+
+Besides, what's wrong with this branch?
+
 >         }
 >
 >         return entered_state;
