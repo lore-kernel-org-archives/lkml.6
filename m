@@ -2,97 +2,120 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F73C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E57DC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB0F220857
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:19:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0F220857
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+	by mail.kernel.org (Postfix) with ESMTP id CF6CE20866
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 19:20:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="QXqoNm7+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6CE20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ettus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbeIJAJu (ORCPT
+        id S1726832AbeIJAKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 20:09:50 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:56225 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbeIJAJu (ORCPT
+        Sun, 9 Sep 2018 20:10:51 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:46211 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726599AbeIJAKv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 20:09:50 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id B08D020062;
-        Sun,  9 Sep 2018 21:19:04 +0200 (CEST)
-Date:   Sun, 9 Sep 2018 21:19:03 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH v2] kconfig: add hardened defconfig helpers
-Message-ID: <20180909191903.GA2344@ravnborg.org>
-References: <1536516257-30871-1-git-send-email-s.mesoraca16@gmail.com>
+        Sun, 9 Sep 2018 20:10:51 -0400
+Received: by mail-yw1-f65.google.com with SMTP id j131-v6so7102084ywc.13
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 12:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=KzWLIShI1wQK0hY9NzQtIf37kvhJiOXlzz0oUr5GF+4=;
+        b=QXqoNm7+mETEAcXRveALZbfbjBuuNhmU3jo/RZtMpd7FJe8yhymRfl2uEOHL5qSEJF
+         YzJnRoYRuQ+7l1p2u5T4DPpmNXZ5tK/VlVwVjWXYDvFdzBsuCwc/jRHT8+dxbybfNjaX
+         J6UNmtqLMUYHYiDLlYlJ0JTrGjZffFhMyN7azpP6h3ERukEClMb/0/6U05iM0YRm2mG1
+         KCEhGVh346E5X42oUFigsEQk4cRjNsR9ONYxtINq5FB5vQHacQ6lxgZN7rj13mnE5d0+
+         wH7Q0s6aDO7OGPQhlbipU0z2ROR1/PxLbmHCegp5szs2uoA1HrIPZcuV4gZpfPwKvOgy
+         rqAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=KzWLIShI1wQK0hY9NzQtIf37kvhJiOXlzz0oUr5GF+4=;
+        b=YCZ708RV7/snuUbaHwEPRZRlBG/+W1mZYEUmSvEXFlRenLBbFdkK/4SL3EO73m9M7g
+         ttWQ+gwNA+baA8pDe9pEOJ71hxYigZwgb8E0treCHmt4++NcIwzOX5rVh9nDHkLzM0N3
+         DhkCyHg2vzeWdspNq8CHj2aD+x33ItiL2ryDGg7IPe+si/XaRyglw1neF727YLHSgNsq
+         YeJSNn+VzpVHOJg0yxu9iQgEbmVwuGS5Mdot2+Jj0AMyGgZXXZiYOSdnZpDdPK0PUuDM
+         Wazo7qaT+mHbN3CVyasLAiMdQcsMof1m9XJostk4JdOmF8RcXOMJ3A6tVhQWl+QBCczb
+         o/uA==
+X-Gm-Message-State: APzg51DU2AHomDCtMMqDDonIfhPU3ASr4EsrRtqXXuaZKs99qveqQNFA
+        CUv7hPFNVSpmU4qP5EjQcLypwov1I4g5euClqxqAbw==
+X-Google-Smtp-Source: ANB0Vdb8IzWRDiiL5loRvrOquwoUt8Axmvoi1JkiVTj0U3wynXcoNa4YXTpTFofzgyptgYRGz7EbHBdWh3wxy/3aYu8=
+X-Received: by 2002:a81:346:: with SMTP id 67-v6mr8742562ywd.23.1536520810141;
+ Sun, 09 Sep 2018 12:20:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536516257-30871-1-git-send-email-s.mesoraca16@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=HtJaMnaozw0hSPeDYtIA:9 a=CjuIK1q_8ugA:10
+Received: by 2002:a0d:e106:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 12:20:09 -0700 (PDT)
+In-Reply-To: <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+ <1533318808-10781-4-git-send-email-jollys@xilinx.com> <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Sun, 9 Sep 2018 12:20:09 -0700
+Message-ID: <CAAtXAHfwpKagBUQSFLJ1bBsxvbvyg=+nCuQv11eD+nhuxD=1_A@mail.gmail.com>
+Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Jolly Shah <jolly.shah@xilinx.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        matt@codeblueprint.co.uk, Sudeep Holla <sudeep.holla@arm.com>,
+        hkallweit1@gmail.com, Kees Cook <keescook@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>, rajanv@xilinx.com,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, Jolly Shah <jollys@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Salvatore.
+Hi Olof,
 
-On Sun, Sep 09, 2018 at 08:04:17PM +0200, Salvatore Mesoraca wrote:
-> Adds 4 new defconfig helpers (hardenedlowconfig, hardenedmediumconfig,
-> hardenedhighconfig, hardenedextremeconfig) to enable various hardening
-> features.
-> The list of config options to enable is based on KSPP's Recommended
-> Settings and on kconfig-hardened-check, with some modifications.
-> These options are divided into 4 levels (low, medium, high, extreme)
-> based on their negative side effects, not on their usefulness.
-> 'Low' level collects all those protections that have (almost) no
-> negative side effects.
-> 'Extreme' level collects those protections that may have so many
-> negative side effects that most people wouldn't want to enable them.
-> Every feature in each level is briefly documented in
-> Documentation/security/hardenedconfig.rst, this file also contain a
-> better explanation of what every level means.
-> To prevent this file from drifting from what the various defconfigs
-> actually do, it is used to dynamically generate the config fragments.
+On Sat, Sep 8, 2018 at 6:18 PM, Olof Johansson <olof@lixom.net> wrote:
+> Hi,
+>
+> On Fri, Aug 3, 2018 at 10:53 AM, Jolly Shah <jolly.shah@xilinx.com> wrote:
+>> From: Rajan Vaja <rajanv@xilinx.com>
+>>
+>> Add ZynqMP firmware IOCTL API to control and configure
+>> devices like PLLs, SD, Gem, etc.
+>>
+>> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+>> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+>
+> This patch worries me somewhat. It's a transparent pass-through ioctl
+> driver. Is there a spec available for what the implemented IOCTLs are?
+>
+> Should some of them be proper drivers instead of an opaque
+> pass-through like this? Could some of them have stability impact on
+> the platform such that there are security concerns and the list of
+> arguments should somehow be sanitized?
 
-In the above you nicely describes what is done.
-But there is nothing about the target group for this feature.
-Who will benefit from this?
+I tend to agree with this, good catch.
 
-With respect to the actual implmentation we now
-have two ways to handle config fragments.
-Current solution is to save the config fragments in kernel/configs.
-And the new solution is to parse the config fragments from an rst file.
-The changelog fails to mentions why we need a new way to handle
-the config fragments.
+> What's the intended usecase anyway? Just a debug tool during
+> development, or something that you expect heavy use of by some
+> userspace middleware?
 
-If we want to go the "parse from rst file" way - can it then
-be abstracted in a way so this is the only way to handle
-these in-kernel config fragments?
-And then move the current config fragment to the new way.
+I suspect it is another attempt to make userspace clocks/plls work? Scary.
 
-It most be possible with a little careful design to make this
-a general solution and not a hardening thing only.
-
-	Sam
+Cheers,
+Moritz
