@@ -2,88 +2,64 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842D4C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 02:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E517C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 02:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 194662086B
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 02:03:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194662086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 535C420873
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 02:11:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPYqZ4xG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535C420873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbeIIGuR (ORCPT
+        id S1726598AbeIIG7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 02:50:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:57994 "EHLO mga01.intel.com"
+        Sun, 9 Sep 2018 02:59:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeIIGuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 02:50:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Sep 2018 19:02:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,349,1531810800"; 
-   d="scan'208";a="87187064"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Sep 2018 19:02:25 -0700
-Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: No video output on 4.19-rc1 on Dell XPS 13 9360
-To:     Dmitrii Tcvetkov <demfloro@demfloro.ru>
-References: <20180908165747.16c2843c@fire.localdomain>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <89dff474-7baa-83ce-d70d-fffc4699d3ce@linux.intel.com>
-Date:   Sun, 9 Sep 2018 10:01:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726084AbeIIG7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 02:59:19 -0400
+Received: from dragon (unknown [104.237.86.92])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CB552086B;
+        Sun,  9 Sep 2018 02:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1536459087;
+        bh=V9Yrxj1RBDKA1s76+vIy0EAl2CKF4rOA/abm6OAPRhU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tPYqZ4xGoi4kmkL8xPj0Ufa6Fa+U8AKp3a9YFnxcvCHuxvZhZJAlXMW2pZ5g0NPT+
+         k6vwOkVeSg68KgLakQBsmqFgzVtQpf9KY+DWj8oJhieOFy3STaO1PulpvdLv0RM6db
+         y8bVol4TL9Beg7nzOqXGQbiZmtcdq9SUSZ1QKEMo=
+Date:   Sun, 9 Sep 2018 10:10:02 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] ARM: dts: imx6ull: update iomux header
+Message-ID: <20180909021001.GB18838@dragon>
+References: <1535606405-8099-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180908165747.16c2843c@fire.localdomain>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535606405-8099-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Aug 30, 2018 at 01:20:05PM +0800, Anson Huang wrote:
+> Update i.MX6ULL iomux header according to latest reference
+> manual Rev.1, 11/2017.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-The fix has been posted here.
-
-https://lkml.org/lkml/2018/9/8/14
-
-Best regards,
-Lu Baolu
-
-On 09/08/2018 09:57 PM, Dmitrii Tcvetkov wrote:
-> I've sent the email[1] before to iommu and lkml mailing lists only, but
-> according to iommu mailing list archive it wasn't received[2]. I'm
-> resending it to Lu Baolu and Joerg Roedel with proper kernel .config
-> file. Sorry if the duplication is unnecessary.
-> 
-> Since 4.19-rc1 my laptop boots with vertical static set of rows of dots
-> on the screen instead of proper video output. SSH'ing into it allowed
-> to get dmesg-without-pt.log output, PCI device 00:02.0 is VGA
-> compatible controller: Intel Corporation HD Graphics 620 (rev 02)
-> 
-> Appending "iommu=pt" to kernel cmdline allowed to boot with functional
-> graphics, but gave dmesg-with-pt.log output.
-> 
-> Bisect between v4.18 and v4.19-rc1 tags led me to commit
-> a7fc93fed94b173e2 (iommu/vt-d: Allocate and free pasid table).
-> 
-> Reverting this commit allows to build kernel on current master
-> (a12ed06ba2d3fa60e), which boots with functional graphical output
-> without specifying "iommu=pt".
-> Dmesg output is in dmesg-with-revert.log.
-> 
-> Without the revert current master boots like 4.19-rc1.
-> 
-> [1] https://lkml.org/lkml/2018/9/7/1081
-> [2] https://lists.linuxfoundation.org/pipermail/iommu/2018-September/date.html
-> 
+Applied, thanks.
