@@ -7,104 +7,88 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89940C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 16:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CF8C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EDD120854
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 16:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3452075B
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 17:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7ECnImO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EDD120854
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yoo8NGjY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3452075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeIIVms (ORCPT
+        id S1726718AbeIIVuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 17:42:48 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40599 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbeIIVms (ORCPT
+        Sun, 9 Sep 2018 17:50:18 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:43551 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726615AbeIIVuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 17:42:48 -0400
-Received: by mail-qk1-f194.google.com with SMTP id c126-v6so12864551qkd.7;
-        Sun, 09 Sep 2018 09:52:33 -0700 (PDT)
+        Sun, 9 Sep 2018 17:50:18 -0400
+Received: by mail-qk1-f195.google.com with SMTP id 130-v6so12876888qkd.10
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 10:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=T8LzPJhmcf5KV53qGoszAMU+i/P3qLvCOxapSpBB+BI=;
-        b=K7ECnImOuCYEzfi/4IG7Vs9ucUBFDXOSZavq5L7UL/7iAvfRHugJCjqGcTxAIm7JiN
-         joOgKgbRBEg5SycVgKSmJm961xrtbX5EIBtWgdcUAMY3BY58IS54vQfASEpFcIy+j/us
-         gMLRrHe2mtVuhrTOmrB1lmwNd3PGtPTgR4v0egQHrZYDECE0DqxM1ft6JfbuvpTr5iYZ
-         RI387OAO7s2oPllAX3gyZz7u8NyW0KBzaSg5ZYmVOQmm26hDTeVzwd01p0+FbvzuEIjV
-         EtwPd3ir3OdIIViorBTcoojg6XIpPIPCnb/WrxvUmIoF78D7g6W4hR9uHcr1akPtGlFH
-         awxQ==
+        bh=xDKe0NhkEWT0/ZfyFzq8rK6vRYm4qxZAQIL9Iz/qWis=;
+        b=Yoo8NGjYPN44IsAmj2uWhJUgP87DFY+gqMuO8KEMBZdjfSBcOqjDtrmrknVRhC5wg8
+         r71qxxZPI+lzMRNyNZK9YrjmRC5lTIi3tGuByUWu4+iM287VC0dmQwkv4oH+aItlIDjX
+         hXfkgKfDQdn5oEDdUFU6T6211mQBYajjl0xGTipX1Izjp4l21kpP90280Mq7dhIAPkfh
+         mqm2AlWQLdLs4Mdf0N8rXNFvsOYBCqYuMnZmoVQJxaX5t6Lph94hU3RrDRoq5mtjkzVw
+         jXR3H50wg3WdfpIYd/NSqRGJ5YgIV4HLyopzjxhNgrz4X45kIMsQsUlhZob1a1J4b1Ef
+         vBaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=T8LzPJhmcf5KV53qGoszAMU+i/P3qLvCOxapSpBB+BI=;
-        b=HAGuYepPW5G3ghtzrfy6E143yrNc8msF+xHKNtDQ5Zg/KAELnvVcXLHrv7LChmmfTh
-         jyrX2dP6lsXGFqFNUjcJQek5fmC4SFGi0euLqfXBXyVt4BQXNEjFW3Ndt6F41nJkBS/G
-         RSjs6JjzpPsbSByL6qjd6zG76zkJR9l9eONWOsU/Dsku5DnKlbKwmAUuBzpw/ry79aN7
-         c6dDcrR7L2yNboB3JECULyt0mUm5oMXpo3k3jF4jNzZlAXjI6dd1DiRBhrxHFq6VgFaq
-         62y4X5v5/950LfLPMeIW+PDqHHxkSxD22GwZuN2MhG/KFbN9SPZM+OjLI5z7O3RfNDQh
-         tC0Q==
-X-Gm-Message-State: APzg51DDRj0XCGj9QNfCrx5icnNeL33++epzS6AHm8PmXC1pw8H8VnOc
-        u+u7Ke9cV1E8YmVOoD1AGWrNRAqD89RvfJs6kyw=
-X-Google-Smtp-Source: ANB0VdY0yrQ/SaPLgPz/VqH/k07WPOzxFvP1u00oP7RYL9arpcKPE+i2kbRIUuLnGKw0dI0TqHtLuj3RGV6ERZLzoJg=
-X-Received: by 2002:a37:6888:: with SMTP id d130-v6mr12406247qkc.192.1536511952913;
- Sun, 09 Sep 2018 09:52:32 -0700 (PDT)
+        bh=xDKe0NhkEWT0/ZfyFzq8rK6vRYm4qxZAQIL9Iz/qWis=;
+        b=Q8cWMckOilByu2iEY5kqOCcP7QsPifrfI1FcqoEXelMrEDQUhFgvnhGCOoX2dQk1ps
+         azfU3ERm8u0Djkaw/jxJo4F01a2DGtnyFnSDJ5hrOfGuqb6Ym02GBBN1CLFOb0kLi4us
+         fbyLALcURZ+3Q/m3Hl1lfkVOzCratIvZJYxLHkbd7lN7UTG4WI4kwcb/YCudN+BxfnM+
+         ldVkmW3ZkhJniMlptALMfAfzgVUwVr5brSNtYXzzwVy0PYMKycfXCIDeCk5pStW4z6hb
+         Mqu1Xf0xtO2eiBEQTkMy2dFsBR3vLFfL34TOi41aKfWQ7cGjq1bZNL2GsIKWPR0f3w9R
+         U4Ow==
+X-Gm-Message-State: APzg51DGl5L3LQGa9IHBkXC+vRIS8alDyclwJtavkpk8ZSW5KiIrjzWt
+        TGt0Tdg1RNBKaHnQpUn+3xxF08bBqpghqW/LGgs=
+X-Google-Smtp-Source: ANB0VdbfnZxq/gI0TzPn9acqeL3x01e1MEKDSk0fgrZ2Oiet9L5Fs9KAntaGMPUhdHwNq7jDsroZulBv9fb0Ls7/Ee0=
+X-Received: by 2002:a37:1383:: with SMTP id 3-v6mr12185127qkt.129.1536512401900;
+ Sun, 09 Sep 2018 10:00:01 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 09:52:12 -0700 (PDT)
-In-Reply-To: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
-References: <20180908212459.19736-1-miguel.ojeda.sandonis@gmail.com>
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 09:59:41 -0700 (PDT)
+In-Reply-To: <20180909164530.GB3873@zn.tnic>
+References: <20180908190553.GA4573@gmail.com> <20180909093611.GA4614@zn.tnic>
+ <CANiq72=RbankDmDSmD+jtvAFArGG-orMSayooGCAEa73_aOAuw@mail.gmail.com>
+ <20180909160601.GA3873@zn.tnic> <CANiq72mXK8EGt7x4EVgU6H0ve9c-wGWuV06=TUfLbzB89_qYeQ@mail.gmail.com>
+ <20180909164530.GB3873@zn.tnic>
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sun, 9 Sep 2018 18:52:12 +0200
-Message-ID: <CANiq72k5GYk8x37mbWQQCLNyP82YcyzYOVunvL_2OO8ycqVTeg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/13] Compiler Attributes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-sparse@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Date:   Sun, 9 Sep 2018 18:59:41 +0200
+Message-ID: <CANiq72m2H2Y5MqOq62i2wVCZswWJmG4Bv8ODDFjjy4ec9+WaMA@mail.gmail.com>
+Subject: Re: [PATCH] kernel/sched/core.c: Avoid unused variable on non-SMP configs
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-
-On Sat, Sep 8, 2018 at 11:24 PM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Sun, Sep 9, 2018 at 6:45 PM, Borislav Petkov <bp@alien8.de> wrote:
+> On Sun, Sep 09, 2018 at 06:36:01PM +0200, Miguel Ojeda wrote:
+>> No, you get a different warning depending on whether you have enabled
+>> CONFIG_PARAVIRT_TIME_ACCOUNTING or CONFIG_IRQ_TIME_ACCOUNTING.
 >
-> You can also fetch it from:
+> Ok.
 >
->   https://github.com/ojeda/linux/tree/compiler-attributes-v4
+> Still, adding __maybe_unused to both (or writing it before the name,
+> whatever works!) and dropping the ifdeffery is still better for
+> readability's sake than having more ifdeffery, IMO.
 
-In case it helps, I have also rebased it onto next-20180907 at:
-
-  https://github.com/ojeda/linux/tree/compiler-attributes-for-next
-
-The only conflict was the removal of __aligned_largest in f3569fd613f6
-("crypto: shash - Remove VLA usage in unaligned hashing").
-
-(Luc's Reviewed-by is not included in that version)
+Agreed, it is quite confusing already. I tried to keep the style of
+the code, but Ingo/Peter might prefer the cleanup. Let's see...
 
 Cheers,
 Miguel
