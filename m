@@ -2,85 +2,356 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862E2C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 04:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E76C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 04:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3150420865
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 04:18:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3150420865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id E205420870
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 04:22:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iZTru+Ls"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E205420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeIIJGl (ORCPT
+        id S1726628AbeIIJKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 05:06:41 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43028 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbeIIJGk (ORCPT
+        Sun, 9 Sep 2018 05:10:52 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37369 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbeIIJKv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 05:06:40 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fyr9W-0004TI-66; Sun, 09 Sep 2018 04:16:58 +0000
-Date:   Sun, 9 Sep 2018 05:16:50 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 03/11] compat_ioctl: remove translation for sound ioctls
-Message-ID: <20180909041632.GE19965@ZenIV.linux.org.uk>
-References: <20180908142837.2819693-1-arnd@arndb.de>
- <20180908142837.2819693-3-arnd@arndb.de>
+        Sun, 9 Sep 2018 05:10:51 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j8-v6so14910967lfb.4
+        for <linux-kernel@vger.kernel.org>; Sat, 08 Sep 2018 21:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MAAlgGOFmZq3vGm/4H9/9Sczul3XqD7LP4Otdna85h4=;
+        b=iZTru+LsvQLrSmCtazn7HwvAe8bzQfqm3Rrnn05YBwq7LVAi+mEHXAc6ski7QfDzVR
+         Nh45R3iUdKSMkyXLr/QYjBng013R+ERK4C/Y33n+LMuEAljRg4pJcaH6b1jvpYBowPgk
+         ZGchxx9J6ax6K0QDlDy7P7pfJ4TDQkIRMlHXI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MAAlgGOFmZq3vGm/4H9/9Sczul3XqD7LP4Otdna85h4=;
+        b=B3rI64Ql4fr7IuZpbeWZsHmzqR8SVbJpl+weM0NOSLFE9y6d6AQUMJNlPb0gYeQr2V
+         KtNq8YipVesuO4vuTfpJnw3fK8O5Otn3qqRR8J38gXLKZG93J9tnwdzn9kfQLRKTAchW
+         rrCydNRqFIkZEnlX4Yj6O9DKGn/0Tae2Oc/e2k3V0WwjqmWvVgyWvOQT8UZlQ9fWiXss
+         /VS42lQFIFf5e07AiHp5loTPo9uLB5SnsBCSZiY0M/RYtw7IxqNdiI3W/YNjUUeogfrs
+         dWD6NYyFKKCDIvVYPpko0vPU/bY/suZ7NBvP316xijetq2zmz8WzfKMsAUP1g7pg2Mi4
+         kWxQ==
+X-Gm-Message-State: APzg51BkXZy1CpXzXc7/f+OZTj9qyNVJKuSR1hKE3Z5jqBEjyBDh0cxb
+        p9hX/4BrbXGRjfw3YRrrQumeBHk5+ewEGDJ42FtdZw==
+X-Google-Smtp-Source: ANB0VdYT3J60tFzl/js4BQd1rCljlX0EKfsay/ko5tRNz9XLMbCLFzeEotZZ6Tncf3Hm0D/onTfVzMqZqajhXtPhrdA=
+X-Received: by 2002:a19:988a:: with SMTP id a132-v6mr8669105lfe.76.1536466956878;
+ Sat, 08 Sep 2018 21:22:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180908142837.2819693-3-arnd@arndb.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Sat, 8 Sep 2018 21:22:36 -0700 (PDT)
+In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
+References: <20180907210903.617721278@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Sun, 9 Sep 2018 09:52:36 +0530
+Message-ID: <CA+G9fYuNuf7+57bMbB3FVJ1f6tH64aBGO0XRySgJKnPjHXZM1w@mail.gmail.com>
+Subject: Re: [PATCH 4.18 000/145] 4.18.7-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2018 at 04:28:09PM +0200, Arnd Bergmann wrote:
-> The SNDCTL_* and SOUND_* commands are the old OSS user interface.
-> 
-> I checked all the sound ioctl commands listed in fs/compat_ioctl.c
-> to see if we still need the translation handlers. Here is what I
-> found:
-> 
-> - sound/oss/ is (almost) gone from the kernel, this is what actually
->   needed all the translations
-> - The ALSA emulation for OSS correctly handles all compat_ioctl
->   commands already.
-> - sound/oss/dmasound/ is the last holdout of the original OSS code,
->   this is only used on arch/m68k, which has no 64-bit mode and
->   hence needs no compat handlers
-> - arch/um/drivers/hostaudio_kern.c may run in 64-bit mode with
->   32-bit x86 user space underneath it. This rare corner case is
->   the only one that still needs the compat handlers.
-> 
-> By adding a simple redirect of .compat_ioctl to .unlocked_ioctl in the
-> UML driver, we can remove all the COMPATIBLE_IOCTL() annotations without
-> a change in functionality. For completeness, I'm adding the same thing
-> to the dmasound file, knowing that it makes no difference.
+On 8 September 2018 at 02:37, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.18.7 release.
+> There are 145 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun Sep  9 21:08:26 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.18.7-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.18.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> diff --git a/arch/um/drivers/hostaudio_kern.c b/arch/um/drivers/hostaudio_kern.c
-> index 7f9dbdbc4eb7..0278a642a622 100644
-> --- a/arch/um/drivers/hostaudio_kern.c
-> +++ b/arch/um/drivers/hostaudio_kern.c
-> @@ -298,6 +298,7 @@ static const struct file_operations hostaudio_fops = {
->  	.write          = hostaudio_write,
->  	.poll           = hostaudio_poll,
->  	.unlocked_ioctl	= hostaudio_ioctl,
-> +	.compat_ioctl	= hostaudio_ioctl,
 
-Umm...  OK, seeing that it's not going to be used on s390...  It's still
-not quite right, though, and I'm afraid that places where we have the
-same ->unlocked_ioctl and ->compat_ioctl need an audit - there probably
-had been other folks who'd stepped into the same.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64 and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.18.7-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.18.y
+git commit: 778167eee1b92f5bc2405840b2110af2f6bb9723
+git describe: v4.18.5-270-g778167eee1b9
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
+ild/v4.18.5-270-g778167eee1b9
+
+No regressions (compared to build v4.18.5-124-ga6a229cf7e7f)
+
+
+Boards, architectures and test suites:
+-------------------------------------
+
+dragonboard-410c - arm64
+* boot - pass: 20, fail: 1
+* kselftest - pass: 59, skip: 45, fail: 8
+* libhugetlbfs - pass: 88, skip: 1, fail: 2
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 26, skip: 9,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-fs-tests - pass: 60, skip: 6,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 14,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1016, skip: 133,
+* ltp-timers-tests - pass: 13,
+
+hi6220-hikey - arm64
+* boot - pass: 21,
+* kselftest - pass: 63, skip: 39, fail: 7
+* libhugetlbfs - pass: 89, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 27, skip: 8,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1015, skip: 134,
+* ltp-timers-tests - pass: 13,
+
+i386
+* boot - pass: 22,
+* kselftest - pass: 82, skip: 40, fail: 5
+* libhugetlbfs - pass: 1,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 27, skip: 4, fail: 4
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 60, skip: 6,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 18,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 8,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-open-posix-tests - pass: 1688, skip: 40, fail: 5
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1087, skip: 59, fail: 2
+* ltp-timers-tests - pass: 13,
+
+juno-r2 - arm64
+* boot - pass: 22,
+* libhugetlbfs - pass: 89, skip: 1, fail: 1
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 26, skip: 9,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-math-tests - pass: 11,
+* ltp-open-posix-tests - pass: 1689, skip: 41, fail: 5
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4,
+* ltp-securebits-tests - pass: 4,
+* ltp-timers-tests - pass: 13,
+
+qemu_arm
+* boot - pass: 21,
+* kselftest - pass: 50, skip: 53, fail: 5
+* libhugetlbfs - pass: 86, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 79, skip: 2,
+* ltp-cve-tests - pass: 23, skip: 12,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 61, skip: 5,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 8, skip: 6,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1050, skip: 99,
+* ltp-timers-tests - pass: 13,
+
+qemu_arm64
+* boot - pass: 21,
+* kselftest - pass: 57, skip: 47, fail: 8
+* libhugetlbfs - pass: 89, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 25, skip: 10,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 60, skip: 6,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 8, skip: 6,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 992, skip: 157,
+* ltp-timers-tests - pass: 13,
+
+qemu_i386
+* boot - pass: 21,
+* kselftest - pass: 82, skip: 45, fail: 4
+* libhugetlbfs - pass: 86, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 28, skip: 5, fail: 2
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 60, skip: 6,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 21, skip: 1,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 14,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1058, skip: 91,
+* ltp-timers-tests - pass: 13,
+
+qemu_x86_64
+* boot - pass: 21,
+* kselftest - pass: 77, skip: 48,
+* libhugetlbfs - pass: 89, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 30, skip: 5,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 60, skip: 6,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 14,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 993, skip: 156,
+* ltp-timers-tests - pass: 13,
+
+x15 - arm
+* boot - pass: 20,
+* libhugetlbfs - pass: 86, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-cve-tests - pass: 25, skip: 10,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 61, skip: 5,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 20, skip: 2,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-open-posix-tests - pass: 1690, skip: 40, fail: 5
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 14,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1071, skip: 78,
+* ltp-timers-tests - pass: 13,
+
+x86_64
+* boot - pass: 24,
+* kselftest - pass: 83, skip: 41,
+* kselftest-vsyscall-mode-native - pass: 83, skip: 43,
+* kselftest-vsyscall-mode-none - pass: 82, skip: 43,
+* libhugetlbfs - pass: 88, skip: 1, fail: 1
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - pass: 80, skip: 1,
+* ltp-cve-tests - pass: 30, skip: 5,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - pass: 61, skip: 5,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-open-posix-tests - pass: 1688, skip: 42, fail: 5
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - pass: 10, skip: 4,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - pass: 1031, skip: 118,
+* ltp-timers-tests - pass: 13,
+
+
+--=20
+Linaro QA (BETA)
+https://qa-reports.linaro.org
