@@ -2,122 +2,120 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6A5C4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEF9C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E6E20857
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E6E20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7408820857
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 20:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7408820857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeIJBNi (ORCPT
+        id S1726738AbeIJBSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 21:13:38 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37966 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbeIJBNi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 21:13:38 -0400
-Received: by mail-oi0-f66.google.com with SMTP id x197-v6so36400022oix.5;
-        Sun, 09 Sep 2018 13:22:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X+dMeOka9TY4dCNV3KChU1LDPCS+8dqySNYiXAZLRwc=;
-        b=VX1yre2ReG2TvdL59GaFhjxL6BsevMmAQSA6SYKkIs1HgJRz+BFAaSqJh82BC4TKjX
-         Fk73zsTwoNOd1RNAPwlm58Uz1vyZa0b5TFADqxY5pkgFmey5PJjx8t1TkapXzGwrsujm
-         h9W/G5WyyYh/+ZsS10NuTp0V266Mhdpa0PlTFdju0gwqlX8l76VB9akIAy6ef4jAzcqR
-         tWj00H2dLc0/hOf+9LzHUQlHPkQ9bZQQMUBOokWHpipUKZH1uMcdGP8kAovSSN4kf757
-         fzXeic3b/AJ0fR+eIxsvdfGkB1fCZduQbBl66MofNnIGF3GBArT782o7x3cuYEUDRu3C
-         qDng==
-X-Gm-Message-State: APzg51BGJfrRmac+tIXO0FtlVOTBgMjgUHlQbLBhXcY330MkGOSpOolP
-        oZ/6IRVMKxmP8zuQ0NcFo8sSqfbiyPaSy2CKJOQ=
-X-Google-Smtp-Source: ANB0VdbB2eZqYz8luHER+wdzfu4k50zLWBHL9dxl7NPS8zx0Uak7FUZRD9fGXV+/NHrnVNeYH2CvqRqQCjEL75e5DlE=
-X-Received: by 2002:aca:aa06:: with SMTP id t6-v6mr19425898oie.152.1536524566498;
- Sun, 09 Sep 2018 13:22:46 -0700 (PDT)
+        Sun, 9 Sep 2018 21:18:37 -0400
+Received: from ms.lwn.net ([45.79.88.28]:38220 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726609AbeIJBSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 21:18:37 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id E05D16D9;
+        Sun,  9 Sep 2018 20:27:43 +0000 (UTC)
+Date:   Sun, 9 Sep 2018 14:27:41 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v2] kconfig: add hardened defconfig helpers
+Message-ID: <20180909142741.3b87df76@lwn.net>
+In-Reply-To: <1536516257-30871-1-git-send-email-s.mesoraca16@gmail.com>
+References: <1536516257-30871-1-git-send-email-s.mesoraca16@gmail.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <1534181989-22536-1-git-send-email-rishabhb@quicinc.com>
-In-Reply-To: <1534181989-22536-1-git-send-email-rishabhb@quicinc.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sun, 9 Sep 2018 22:22:35 +0200
-Message-ID: <CAJZ5v0hEFGCu8xv6MvwmVvspOwLveD4sPzU-=ewKfbrV9omzBw@mail.gmail.com>
-Subject: Re: [PATCH v1] dd: Invoke one probe retry cycle after some initcall levels
-To:     rishabhb@quicinc.com
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sodagudi Prasad <psodagud@codeaurora.org>,
-        ckadabi@codeaurora.org, tsoni@codeaurora.org,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Vikram Mulukutla <markivx@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 13, 2018 at 7:40 PM Rishabh Bhatnagar <rishabhb@quicinc.com> wrote:
->
-> From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->
-> Drivers that are registered at an initcall level may have to
-> wait until late_init before the probe deferral mechanism can
-> retry their probe functions. It is possible that their
-> dependencies were resolved much earlier, in some cases even
-> before the next initcall level. Invoke one probe retry cycle
-> at every _sync initcall level after subsys initcall, allowing
-> these drivers to be probed earlier.
-> To give an example many Qualcomm drivers are dependent on the
-> regulator and bus driver. Both the regulator and bus driver
-> are probed in the subsys_initcall level. Now the probe of bus
-> driver requires regulator to be working. If the probe of bus
-> driver happens before regulator, then bus driver's probe will
-> be deferred and all other device's probes which depend on bus
-> driver will also be deferred.
-> The impact of this problem is reduced if we have this patch.
->
-> Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> ---
->
-> Changes since v0:
->  * Remove arch_initcall_sync(deferred_probe_initcall) from patch. This is not
->    really needed as none of the devices are re-probed in arch_initcall_sync
->    level.
->
->  drivers/base/dd.c | 32 ++++++++++++++++++++++++++------
->  1 file changed, 26 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 1435d72..9aa41aa 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -224,23 +224,43 @@ void device_unblock_probing(void)
->         driver_deferred_probe_trigger();
->  }
->
-> +static void enable_trigger_defer_cycle(void)
-> +{
-> +       driver_deferred_probe_enable = true;
+On Sun,  9 Sep 2018 20:04:17 +0200
+Salvatore Mesoraca <s.mesoraca16@gmail.com> wrote:
 
-Isn't it sufficient to enable it once?
+> +===============================
+> +Hardening Configuration Options
+> +===============================
+> +
+> +This is a list of configuration options that are useful for hardening purposes.
+> +These options are divided in 4 levels based on the magnitude of their negative
+> +side effects, not on their importance or usefulness:
+> +
+> +	- **Low**: Negligible performance impact. No user-space breakage.
+> +	- **Medium**: Some performance impact and/or user-space breakage for
+> +	  few users.
+> +	- **High**: Notable performance impact and/or user-space breakage for
+> +	  many users.
+> +	- **Extreme**: Big performance impact and/or user-space breakage for
+> +	  most users.
+> +
+> +In other words: **Low** level contains protections that *everybody* can and
+> +should use; **Medium** level should be usable by *most people* without issues;
+> +**High** level may cause *some trouble*, especially from a *performance*
+> +perspective; **Extreme** level contains protections that *few people* may want
+> +to enable, some people will probably *cherry-pick* some options from here based
+> +on their needs.
+> +
+> +For further details about which option is included in each level, please read
+> +the description below, for more information on any particular option refer to
+> +their help page.
+> +
+> +The content of this list is automatically translated into *config fragments*
+> +that can be used to apply the suggested hardening options to your current
+> +configuration.
+> +To use them you just need to run ``make hardened$LEVELconfig`` (e.g.
+> +``make hardenedhighconfig``).
 
-> +       driver_deferred_probe_trigger();
-> +       /*
-> +        * Sort as many dependencies as possible before the next initcall
-> +        * level
-> +        */
-> +       flush_work(&deferred_probe_work);
-> +}
+Some overall thoughts:
 
-I would call this function driver_deferred_probe_sync() or similar to
-indicate that it is a synchronization point.
+- As Sam asked: who are the users of this feature?  Presumably you have
+  some real people out there in mind for each of these levels, or you would
+  not have created them?
+
+- Who will maintain it?  The list of hardening-relevant configuration
+  options is always in high flux, as our understanding of the security
+  implications of each.  This feature will require some significant ongoing
+  attention or it will quickly become stale.  I think it needs a
+  MAINTAINERS entry.
+
+- It's a little strange to see an RST document used as the input for the
+  kernel configuration process.  Assuming this is really the best way to do
+  this (and I worry about things like duplicated descriptions of kernel
+  configuration options), you should, at a minimum, carefully document the
+  format of this file at the beginning.  Otherwise people will surely break
+  it.  In fact, they'll break it anyway, so more checking in the processing
+  script seems indicated.
+
+  Without having thought it through in great depth, I suspect that a better
+  approach might be to find a way to mark the hardening level in the
+  Kconfig entries.
+
+- You have ordered the options alphabetically, but that is, I would argue,
+  not the best way.  My guess is that people would read this file to answer
+  the question of "just how many bullets will hardening level H put into my
+  foot?"  So I would sort them by hardening level as the primary key.
 
 Thanks,
-Rafael
+
+jon
