@@ -2,124 +2,137 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9423CC4321E
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B63EC4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0309420833
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA86320833
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 15:56:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODpDdDFm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0309420833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTlsAYB+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA86320833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbeIIUqC (ORCPT
+        id S1726863AbeIIUqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 16:46:02 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:32833 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbeIIUqC (ORCPT
+        Sun, 9 Sep 2018 16:46:20 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:47018 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbeIIUqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 16:46:02 -0400
-Received: by mail-io1-f66.google.com with SMTP id r196-v6so5082329iod.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Sep 2018 08:55:56 -0700 (PDT)
+        Sun, 9 Sep 2018 16:46:20 -0400
+Received: by mail-oi0-f65.google.com with SMTP id y207-v6so35648135oie.13;
+        Sun, 09 Sep 2018 08:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fZKF5r8urd2yVRiHJG51pNBja/4zKr/DhfLHNDlE0Us=;
-        b=ODpDdDFmvRYLDnnkS0F8MmTQ+Riq/h24Fhky2ybrKZfVFZNsV6vdLQ1B3VsRGk9c9N
-         N1eR7jO2JEw0+ahKMmh4PW6/YEqLlk75vlCP1Cy1uh+Q5V8xdtkRol3z7hedybsmDSUD
-         CHW3C5SK7A2Q4h1I6Zcp1XrY7j7i6n/j046S4=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=o01vwN9b3qBQQyl7uoQ6lLdEl1cYhVJPME5sgVTqEqQ=;
+        b=CTlsAYB+t50V/x0askESPQQKTTV4iJJf6xk2xIsKM4c3iWabXs+B18KnWNIKc+gRB+
+         FP+Xsq7FDX8iNMGNts7s7ZL9RJqu94xOTvluo7K2HhNnnHHX+J9uFp3l0beqggMS0HIk
+         lz/ovLOFzayPAjZ1LlXwgc6HQ0v8ay8NZx5nk85gPXz2nixiuv25ODYPORErsY/8QHdt
+         BEyYtepgNYX9HTdzKCJUoTvzcuKboKjM3aefXDKkZjNy1aRfCDmFenqZhberP2YponLz
+         XQ692MU3s2kmEBeoTbw6TAVqmCOAzX85w9J2LEMOcwZkMQIqRdK+zIGhFCkt9+MIOj4a
+         89Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fZKF5r8urd2yVRiHJG51pNBja/4zKr/DhfLHNDlE0Us=;
-        b=XWBRS7pmCpcJwVXP8zfFNNmtpybMaTsv7QjCyCr3E+yW7i3DKqxFKIjXHXfolm3O6A
-         LvFGYRxgBvJtY/G4QIj7fcILcqZ4MYO+hSWNwVcYmu4leCmqRC/g6EUJ91tkTInUmkE/
-         kmgYbDendjxcClJvEI7DmtmHVlBh4YviLVgRRpAZVCGHK/x3S4dBbcdl6wk0PfCORPxP
-         fJBE0Rj+rlFMICpns1M/Ahjmbu/4Ac9P4DTn3QFTNcDXt4ZMGMkWB9zbaCmlVAxS0MII
-         vG9H8IGeWhIN0aWbaMfG2Md4Ws1CbRUCL6FI5tFnef4gnBMoiywZ/qdO+cBZFKkOUnJc
-         xK7Q==
-X-Gm-Message-State: APzg51AoJwBVQLpDaS8pbIshxCJwIP9eKUQC2dNRJziVc8GLQsMz0XMy
-        zt1w5zNhn2ctw5nikJfkl8spboaGvWDbDn8btkWfOw==
-X-Google-Smtp-Source: ANB0VdZyN97goDDaJS7PZB60rpV7melQW1+ASjDA929brsNBLbGsbHWT0hajClOQmib8sd2Waq5xR0AlDvXIRO3W9OU=
-X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr14360138ioa.60.1536508556327;
- Sun, 09 Sep 2018 08:55:56 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o01vwN9b3qBQQyl7uoQ6lLdEl1cYhVJPME5sgVTqEqQ=;
+        b=MOiaHaW+c+65J6RC8wMC7pUzWvdWyqUsfBKThAf6Hob+Lvwu+hGSQVzc4gxeulVWay
+         HmGn2FgAW12PtfN2tVgtUnRXabrLyzzHIUU0vGFxrai2EXemTgi9P9XpwMldBO51PZkJ
+         oFeyK2gIlJZynCNanJVASTH6KfhvvSYDSJPvBTL/EuWfCnl5wtTB6S1uAFwJTF6X6l6e
+         H30AS70oysK7KVoy/cyjKCizu8vy80Orgei/phTbOYf55VPnAhcuvSUThQVnWFvMjpcX
+         osupgdHwLs9v0r+UFCALqkDxqkHNU4Z0WxeDq4GBGWTaf1qupMKz+122PU3+8TJda7aN
+         LrPw==
+X-Gm-Message-State: APzg51DP7S5Fa/lGZjUt7oL9Qm4QgSGwTeCZvvFqkNlE93Hb4GfnWZYe
+        4NlQtfEa/TonFItLt+zMZjYkqmfQ
+X-Google-Smtp-Source: ANB0VdbFgNp8VyM5LBpS0ajMql4rD1cFI14UC6DL21XYi7jzc+R/OMroHHEAwLtmW54GgR0UAKrhvQ==
+X-Received: by 2002:aca:b702:: with SMTP id h2-v6mr18594169oif.66.1536508574030;
+        Sun, 09 Sep 2018 08:56:14 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id s145-v6sm26012111oih.16.2018.09.09.08.56.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Sep 2018 08:56:13 -0700 (PDT)
+Subject: Re: [PATCH 4.14 00/89] 4.14.69-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180907210852.341064285@linuxfoundation.org>
+ <7cfd62d8-e287-aff0-3e9e-2b59d7db42c7@roeck-us.net>
+ <20180909084346.GB14455@kroah.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <1f1cbe6c-e0a6-1672-d5ff-076a257ec0d4@roeck-us.net>
+Date:   Sun, 9 Sep 2018 08:56:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Sun, 9 Sep 2018 08:55:55 -0700 (PDT)
-In-Reply-To: <20180909110732.GA63296@iMac.local>
-References: <CAOesGMho8CfT7iDXadmkB5=7DoOi6n8qXcS9X643vf+Y0BbD6w@mail.gmail.com>
- <CAKv+Gu_mKU+RdPgg2Dfezy4-L+KDEEBx02R49ObomRhEkJJ6Mw@mail.gmail.com>
- <CAOesGMgLHx3+j1bWEsMWsN-yjGNZyLOpAjLg0Jut8gG=ADE25g@mail.gmail.com>
- <CAKv+Gu_x=bS4xJcD_LuEnnN=Lx4Jc87uK8J_ACdA9EeUqtM3Yg@mail.gmail.com>
- <CACxGe6uK+N5XUqZhH7gAQXoq+QXMvFPHF_i4WqivrufTU=0cog@mail.gmail.com>
- <bf917897-1697-a6c4-7f77-8dfa74dddc8a@broadcom.com> <CAKv+Gu8FK9K0G-GJygdpkwqKYzjvpDDj8TyGTC2u0SRxK3ez_w@mail.gmail.com>
- <1f8095f1-1f0c-0791-31c4-c7b986c4ce1f@broadcom.com> <CACxGe6tbuDzEaBqOD7Z3nWMW0Nkcf22MFbD3BL+KBqnKEo2tQw@mail.gmail.com>
- <dc26dc1b-c022-341b-18ba-c009275e5ee9@broadcom.com> <20180909110732.GA63296@iMac.local>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sun, 9 Sep 2018 17:55:55 +0200
-Message-ID: <CAKv+Gu_y9fzRR8DLS2gVmcW8U4jZAnxgQUjxrOO=QS=0NPq5Zw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Grant Likely <grant.likely@secretlab.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180909084346.GB14455@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 September 2018 at 13:07, Catalin Marinas <catalin.marinas@arm.com> wrote:
-> On Wed, Sep 05, 2018 at 11:04:36AM -0700, Scott Branden wrote:
->> On 18-09-05 11:00 AM, Grant Likely wrote:
->> > On Wed, Sep 5, 2018 at 6:27 PM Scott Branden <scott.branden@broadcom.com> wrote:
->> > > On 18-09-05 02:40 AM, Ard Biesheuvel wrote:
->> > > > On 4 September 2018 at 19:19, Scott Branden <scott.branden@broadcom.com> wrote:
->> > > > > Rather than introduce EFI_ARMSTUB_DTB_LOADER, why not have
->> > > > > the efistub use CONFIG_OF to determine whether it supports dtb= or not?
->> > > > >
->> > > > > That way ACPI-only distros disable devicetree support entirely.
->> > > > >
->> > > > Unfortunately, CONFIG_OF cannot be disabled on arm64 even on ACPI-only builds.
->> > > OF shouldn't be automatically selected in the arm64/Kconfig.  It should
->> > > have a config parmaeter like other archs as mips and arm.  I can
->> > > submit a patch so it functions the same way as other archs so it
->> > > is not always selected.  It will be good to add a USE_OF config
->> > > options like the other archs (or simply remove the select from the
->> > > Kconfig and choose OF directly in the defconfig. This will have
->> > > the added benefit of doing away with OF support when its not
->> > > needed on an ARM64 platform.  ACPI is already not automatically
->> > > selected for all ARM64 platforms, nor should devicetree.
->> > We don't do that on Arm because a devicetree is always required at
->> > boot time. Even on ACPI systems a tiny DTB is used containing just a
->> > /chosen node for passing the kernel command line and the initrd
->> > location.
+On 09/09/2018 01:43 AM, Greg Kroah-Hartman wrote:
+> On Sat, Sep 08, 2018 at 02:16:02PM -0700, Guenter Roeck wrote:
+>> On 09/07/2018 02:08 PM, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 4.14.69 release.
+>>> There are 89 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Sun Sep  9 21:08:28 UTC 2018.
+>>> Anything received after that time might be too late.
+>>>
 >>
->> Seems bizarre DTB is not needed for x86 to boot from UEFI with ACPI
->> support?  I'll look into it further at some point in order to remove such
->> anomaly.  There should be no need for such devicetree reliance.
->
-> I'd say don't waste time on this, the patch would not get merged ;). As
-> Grant said, we use a tiny dtb to pass the command line, initrd to the
-> kernel. You'd have to invent an alternative (setup_header, ATAGs) and I
-> really don't see the point of increased complexity just because of some
-> philosophical arguments against OF.
->
+>> Build results:
+>> 	total: 151 pass: 149 fail: 2
+>> Failed builds:
+>> 	powerpc:defconfig
+>> 	powerpc:allmodconfig
+>> Qemu test results:
+>> 	total: 311 pass: 293 fail: 18
+>> Failed tests:
+>> 	powerpc:mac99:ppc64_book3s_defconfig:nosmp:initrd
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:initrd
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:ide:rootfs
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:mmc:rootfs
+>> 	powerpc:mac99:ppc64_book3s_defconfig:smp:cpu4:scsi[DC395]:rootfs
+>> 	powerpc:pseries:pseries_defconfig:initrd
+>> 	powerpc:pseries:pseries_defconfig:scsi:rootfs
+>> 	powerpc:pseries:pseries_defconfig:mmc:rootfs
+>> 	powerpc:pseries:pseries_defconfig:nvme:rootfs
+>> 	powerpc:pseries:pseries_defconfig:sata-sii3112:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:initrd
+>> 	powerpc:pseries:pseries_defconfig:little:scsi:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:sata-sii3112:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:scsi[MEGASAS]:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:scsi[FUSION]:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:mmc:rootfs
+>> 	powerpc:pseries:pseries_defconfig:little:nvme:rootfs
+>> 	powerpc:powernv:powernv_defconfig:initrd
+>>
+>> Details are available at https://kerneltests.org/builders/.
+> 
+> Should now be fixed up, I've pushed out a -rc2 for this.
+> 
 
-Not just that: we also need of_match_table support for ACPI's PRP0001
-device (which is a horrible hack in itself, but currently supported in
-Linux/arm64 *and* Linux/x86 nonetheless)
+For v4.14.68-91-g3101c84a1a08:
+
+Build results:
+	total: 151 pass: 151 fail: 0
+Qemu test results:
+	total: 311 pass: 311 fail: 0
+
+Guenter
