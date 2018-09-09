@@ -2,80 +2,103 @@ Return-Path: <SRS0=M2MR=LX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BA5C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 11:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D593C4321E
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 11:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2A7620866
-	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 11:43:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2A7620866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id ABD5920857
+	for <linux-kernel@archiver.kernel.org>; Sun,  9 Sep 2018 11:52:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD5920857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbeIIQc0 (ORCPT
+        id S1726800AbeIIQlt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 9 Sep 2018 12:32:26 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37398 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726687AbeIIQc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 9 Sep 2018 12:32:26 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qpXx3Vzs8bRm; Sun,  9 Sep 2018 13:43:01 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BDD0A00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bdd:a00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 9 Sep 2018 12:41:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52138 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726662AbeIIQls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 9 Sep 2018 12:41:48 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D250A1EC0368;
-        Sun,  9 Sep 2018 13:43:00 +0200 (CEST)
-From:   Borislav Petkov <bp@alien8.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jason Baron <jbaron@akamai.com>
-Subject: [PATCH] jump_label: Use static_key_linked() accessor
-Date:   Sun,  9 Sep 2018 13:42:52 +0200
-Message-Id: <20180909114252.17575-1-bp@alien8.de>
-X-Mailer: git-send-email 2.17.0.582.gccdcbd54c
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B15126A81;
+        Sun,  9 Sep 2018 11:52:22 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D37EC112D184;
+        Sun,  9 Sep 2018 11:52:12 +0000 (UTC)
+Date:   Sun, 9 Sep 2018 19:52:07 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Xuewei Zhang <xueweiz@google.com>
+Cc:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aditya Kali <adityakali@google.com>, tytso@mit.edu,
+        Guenter Roeck <groeck@chromium.org>, maze@google.com
+Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
+ rotational device
+Message-ID: <20180909115205.GA17732@ming.t460p>
+References: <20180906203719.209399-1-xueweiz@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180906203719.209399-1-xueweiz@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sun, 09 Sep 2018 11:52:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Sun, 09 Sep 2018 11:52:22 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Thu, Sep 06, 2018 at 01:37:19PM -0700, Xuewei Zhang wrote:
+> Currently a scsi device won't contribute to kernel randomness when it
+> uses blk-mq. Since we commonly use scsi on rotational device with
+> blk-mq, it make sense to keep contributing to kernel randomness in these
+> cases. This is especially important for virtual machines.
+> 
+> commit b5b6e8c8d3b4 ("scsi: virtio_scsi: fix IO hang caused by automatic
+> irq vector affinity") made all virtio-scsi device to use blk-mq, which
+> does not contribute to randomness today. So for a virtual machine only
+> having virtio-scsi disk (which is common), it will simple stop getting
+> randomness from its disks in today's implementation.
+> 
+> With this patch, if the above VM has rotational virtio-scsi device, then
+> it can still benefit from the entropy generated from the disk.
+> 
+> Reported-by: Xuewei Zhang <xueweiz@google.com>
+> Signed-off-by: Xuewei Zhang <xueweiz@google.com>
+> ---
+>  drivers/scsi/sd.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index b79b366a94f7..5e4f10d28065 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -2959,6 +2959,9 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
+>  	if (rot == 1) {
+>  		blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
+>  		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+> +	} else {
+> +		blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
+> +		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
+>  	}
+>  
+>  	if (sdkp->device->type == TYPE_ZBC) {
+> -- 
+> 2.19.0.rc2.392.g5ba43deb5a-goog
+> 
 
-... instead of open-coding it, in static_key_mod().
+Look reasonable, especially the disk randomness is added by SCSI itself.
 
-No functional changes.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc: Jason Baron <jbaron@akamai.com>
----
- kernel/jump_label.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 2e62503bea0d..de97d8753b62 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -455,7 +455,7 @@ struct static_key_mod {
- 
- static inline struct static_key_mod *static_key_mod(struct static_key *key)
- {
--	WARN_ON_ONCE(!(key->type & JUMP_TYPE_LINKED));
-+	WARN_ON_ONCE(!static_key_linked(key));
- 	return (struct static_key_mod *)(key->type & ~JUMP_TYPE_MASK);
- }
- 
--- 
-2.17.0.582.gccdcbd54c
-
+Thanks,
+Ming
